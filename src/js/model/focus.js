@@ -1,6 +1,6 @@
 /**
- * @fileoverview Focus 관련 데이터 처리름 담당한다.
- * @author NHN Ent. FE Development Team
+ * @fileoverview Focus Model
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -12,7 +12,6 @@ var GridEvent = require('../event/gridEvent');
 
 /**
  * Focus model
- * RowList collection 이 focus class 를 listen 한다.
  * @param {Object} attrs - Attributes
  * @param {Object} options - Options
  * @module model/focus
@@ -21,7 +20,7 @@ var GridEvent = require('../event/gridEvent');
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
-        var editEventName = options.singleClickEdit ? 'clickCell' : 'dblclickCell';
+        var editEventName = options.singleClickEdit ? 'click:cell' : 'dblclick:cell';
         var domEventBus;
 
         Model.prototype.initialize.apply(this, arguments);
@@ -57,7 +56,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
          * column name of the current cell
          * @type {String}
          */
-        columnName: '',
+        columnName: null,
 
         /**
          * row key of the previously focused cell
@@ -83,7 +82,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _onResetData: function() {
-        this.unselect(true);
+        this.blur();
     },
 
     /**
@@ -99,17 +98,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Event handler for 'clickCell' or 'dblclickCell' event on domEventBus
+     * Event handler for 'click:cell' or 'dblclick:cell' event on domEventBus
      * @param {module:event/gridEvent} ev - event data
      * @private
      */
     _onMouseClickEdit: function(ev) {
-        var rowKey = ev.rowKey;
-        var columnName = ev.columnName;
-
-        if (!ev.isStopped() && !_.isNull(rowKey)) {
-            this.focusIn(rowKey, columnName);
-        }
+        this.focusIn(ev.rowKey, ev.columnName);
     },
 
     /**
@@ -230,17 +224,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Clear previous data.
-     * @private
-     */
-    _clearPrevious: function() {
-        this.set({
-            prevRowKey: null,
-            prevColumnName: ''
-        });
-    },
-
-    /**
      * Returns whether given rowKey and columnName is equal to current value
      * @param {(Number|String)} rowKey - row key
      * @param {String} columnName - column name
@@ -259,71 +242,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Selects the given row
-     * @param {Number|String} rowKey - Rowkey of the target row
-     * @returns {Boolean} True is success
-     */
-    select: function(rowKey) {
-        var eventData = new GridEvent();
-        var currentRowKey = this.get('rowKey');
-
-        if (String(currentRowKey) === String(rowKey)) {
-            return true;
-        }
-
-        eventData.setData({
-            rowKey: rowKey,
-            prevRowKey: currentRowKey,
-            rowData: this.dataModel.getRowData(rowKey)
-        });
-
-        /**
-         * Occurs when a table row is selected
-         * @api
-         * @event tui.Grid#selectRow
-         * @type {module:event/gridEvent}
-         * @property {number} rowKey - rowKey of the target row
-         * @property {number} prevRowKey - previously selected rowKey
-         * @property {Object} rowData - data of the target row
-         */
-        this.trigger('select', eventData);
-        if (eventData.isStopped()) {
-            this._cancelSelect();
-            return false;
-        }
-
-        this.set('rowKey', rowKey);
-        if (this.columnModel.get('selectType') === 'radio') {
-            this.dataModel.check(rowKey);
-        }
-        return true;
-    },
-
-    /**
-     * Cancel select
-     * @private
-     */
-    _cancelSelect: function() {
-        var prevColumnName = this.get('prevColumnName');
-
-        this.set('columnName', prevColumnName);
-        this.trigger('focus', this.get('rowKey'), prevColumnName);
-    },
-
-    /**
-     * 행을 unselect 한다.
-     * @param {boolean} blur - The boolean value whether to invoke blur
-     */
-    unselect: function(blur) {
-        if (blur) {
-            this.blur();
-        }
-        this.set({
-            rowKey: null
-        });
-    },
-
-    /**
      * Focus to the cell identified by given rowKey and columnName.
      * @param {Number|String} rowKey - rowKey
      * @param {String} columnName - columnName
@@ -337,15 +255,53 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             return true;
         }
 
-        this.blur();
-        if (!this.select(rowKey)) {
+        if (!this._triggerFocusChangeEvent(rowKey, columnName)) {
             return false;
         }
 
-        this.set('columnName', columnName);
+        this.blur();
+        this.set({
+            rowKey: rowKey,
+            columnName: columnName
+        });
+
         this.trigger('focus', rowKey, columnName, isScrollable);
 
+        if (this.columnModel.get('selectType') === 'radio') {
+            this.dataModel.check(rowKey);
+        }
+
         return true;
+    },
+
+    /**
+     * Trigger 'focusChange' event and returns the result
+     * @param {(number|string)} rowKey - rowKey
+     * @param {stringd} columnName - columnName
+     * @returns {boolean}
+     * @private
+     */
+    _triggerFocusChangeEvent: function(rowKey, columnName) {
+        var gridEvent = new GridEvent(null, {
+            rowKey: rowKey,
+            prevRowKey: this.get('rowKey'),
+            columnName: columnName,
+            prevColumnName: this.get('columnName')
+        });
+
+        /**
+         * Occurs when focused cell is about to change
+         * @api
+         * @event tui.Grid#focusChange
+         * @type {module:event/gridEvent}
+         * @property {number} rowKey - rowKey of the target cell
+         * @property {number} columnName - columnName of the target cell
+         * @property {number} prevRowKey - rowKey of the currently focused cell
+         * @property {number} prevColumnName - columnName of the currently focused cell
+         */
+        this.trigger('focusChange', gridEvent);
+
+        return !gridEvent.isStopped();
     },
 
     /**
@@ -438,8 +394,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
-        var columnName = this.get('columnName');
-
         if (!this.has()) {
             return this;
         }
@@ -448,10 +402,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             this._savePrevious();
         }
 
-        if (this.get('rowKey') !== null) {
-            this.set('columnName', '');
-        }
-        this.trigger('blur', this.get('rowKey'), columnName);
+        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
+
+        this.set({
+            rowKey: null,
+            columnName: null
+        });
 
         return this;
     },
@@ -508,6 +464,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         if (this._isValidCell(prevRowKey, prevColumnName)) {
             this.focus(prevRowKey, prevColumnName);
+            this.set({
+                prevRowKey: null,
+                prevColumnName: null
+            });
             restored = true;
         }
         return restored;

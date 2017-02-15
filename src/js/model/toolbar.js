@@ -19,11 +19,6 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
     },
 
     defaults: {
-        // deprecated (since 1.4.0)
-        hasControlPanel: false,
-        hasPagination: false,
-        hasResizeHandler: false,
-
         // excel button visibility
         isExcelButtonVisible: false,
         isExcelAllButtonVisible: false

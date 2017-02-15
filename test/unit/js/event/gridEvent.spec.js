@@ -3,14 +3,23 @@
 var GridEvent = require('event/gridEvent');
 
 describe('event/gridEvent', function() {
-    it('constructor copy all of the properties from given object', function() {
-        var ev = new GridEvent({
-            paramNum: 1,
-            paramStr: 'hi'
+    describe('contructor', function() {
+        it('set nativeEvent property with a first argument', function() {
+            var nativeEvent = {};
+            var gridEvent = new GridEvent(nativeEvent);
+
+            expect(gridEvent.nativeEvent).toBe(nativeEvent);
         });
 
-        expect(ev.paramNum).toBe(1);
-        expect(ev.paramStr).toBe('hi');
+        it('constructor copy all of the properties from given object', function() {
+            var ev = new GridEvent(null, {
+                paramNum: 1,
+                paramStr: 'hi'
+            });
+
+            expect(ev.paramNum).toBe(1);
+            expect(ev.paramStr).toBe('hi');
+        });
     });
 
     it('setData() copy all of the properties from given object', function() {

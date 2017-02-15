@@ -33,17 +33,6 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
     },
 
     /**
-     * Listen specified event and rename it to public name and trigger it.
-     * @param  {Object} target - Target object
-     * @param  {String} eventName - Event name
-     * @param  {String} publicEventName - New event name for public use
-     * @private
-     */
-    _listenForRename: function(target, eventName, publicEventName) {
-        this.listenTo(target, eventName, _.bind(this._triggerOnPublic, this, publicEventName));
-    },
-
-    /**
      * Trigger specified event on the public object.
      * @param  {String} eventName - Event name
      * @param  {Object} eventData - Event data
@@ -76,10 +65,8 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
             'click',
             'dblclick',
             'mousedown',
-            'clickCell',
-            'dblclickCell',
-            'mouseoverCell',
-            'mouseoutCell'
+            'mouseover',
+            'mouseout'
         ]);
     },
 
@@ -88,7 +75,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {module:model/focus} focusModel - Focus model
      */
     listenToFocusModel: function(focusModel) {
-        this._listenForRename(focusModel, 'select', 'selectRow');
+        this._listenForThrough(focusModel, ['focusChange']);
     }
 });
 

@@ -49,9 +49,6 @@ tui = window.tui = tui || {};
  *          expand with content.
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
  *          area expands to total height of rows.
- *      @param {number} [options.displayRowCount=10] - Deprecated.
- *          <del>The number of rows to be shown in the table area.
- *          Total height of grid will be set based on this value.</del>
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
  *      @param {Object} [options.copyOption] - Option object for clipboard copying
  *      @param {boolean} [options.copyOption.useFormattedValue] - Whether to use formatted values or original values
@@ -159,8 +156,6 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
-        options = util.enableDeprecatedOptions(options);
-
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -649,23 +644,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Selects the row identified by the rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
-     */
-    select: function(rowKey) {
-        var firstColumn = this.modelManager.columnModel.at(0, true);
-
-        this.modelManager.focusModel.focus(rowKey, firstColumn.columnName);
-    },
-
-    /**
-     * Unselects selected rows.
-     */
-    unselect: function() {
-        this.modelManager.focusModel.unselect(true);
-    },
-
-    /**
      * Sets the count of fixed column.
      * @param {number} count - The count of column to be fixed
      */
@@ -791,15 +769,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     getPagination: function() {
         return this.componentHolder.getInstance('pagination');
-    },
-
-    /**
-     * Sets the number of rows to be shown in the table area.
-     * @deprecated
-     * @param {number} count - The number of rows
-     */
-    setDisplayRowCount: function(count) {
-        this.modelManager.dimensionModel.setBodyHeightWithRowCount(count);
     },
 
     /**

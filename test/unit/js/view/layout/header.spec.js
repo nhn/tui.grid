@@ -350,7 +350,7 @@ describe('Header', function() {
             };
         });
 
-        it('trigger mousedown:header on domEventBus', function() {
+        it('trigger dratstart:header on domEventBus', function() {
             var eventSpy = jasmine.createSpy('eventSpy');
 
             header.domEventBus.on('dragstart:header', eventSpy);

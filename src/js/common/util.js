@@ -67,6 +67,34 @@ var util = {
     },
 
     /**
+     * Convert a string value to number.
+     * If the value cannot be converted to number, returns original value.
+     * @param {string} str - string value
+     * @returns {number|string}
+     */
+    strToNumber: function(str) {
+        var converted = Number(str);
+
+        return isNaN(converted) ? str : converted;
+    },
+
+    /**
+     * Omits all undefined or null properties of given object.
+     * @param {Object} obj - object
+     * @returns {Object}
+     */
+    pruneObject: function(obj) {
+        var pruned = {};
+        _.each(obj, function(value, key) {
+            if (!_.isUndefined(value) && !_.isNull(value)) {
+                pruned[key] = value;
+            }
+        });
+
+        return pruned;
+    },
+
+    /**
      * Returns the table height including height of rows and borders.
      * @memberof module:util
      * @param {number} rowCount - row count
@@ -326,43 +354,6 @@ var util = {
         }
 
         document.getElementsByTagName('head')[0].appendChild(style);
-    },
-
-    /**
-     * Converts deprecated option values to valid option values.
-     * (For toolbar option which is deprecated since 1.4.0)
-     * @param {Object} options - options (by user)
-     * @returns {Object} converted options
-     */
-    enableDeprecatedOptions: function(options) {
-        var toolbar = options.toolbar;
-        var toolbarDefault = {
-            hasControlPanel: true,
-            hasResizeHandler: true,
-            hasPagination: true
-        };
-
-        options = $.extend(true, {}, options);
-
-        if (_.isObject(toolbar)) {
-            _.defaults(toolbar, toolbarDefault);
-        } else {
-            toolbar = {};
-        }
-
-        if (!util.isOptionEnabled(options.pagination) && toolbar.hasPagination) {
-            options.pagination = true;
-        }
-        if (!util.isOptionEnabled(options.resizeHandle) && toolbar.hasResizeHandler) {
-            options.resizeHandle = true;
-        }
-        if (_.isObject(options.toolbar) && !toolbar.hasControlPanel) {
-            options.toolbar = false;
-        } else if (util.isOptionEnabled(options.toolbar)) {
-            options.toolbar = true;
-        }
-
-        return options;
     },
 
     /**

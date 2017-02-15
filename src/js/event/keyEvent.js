@@ -95,8 +95,7 @@ module.exports = {
         var gridEvent;
 
         if (commandInfo) {
-            gridEvent = new GridEvent(ev);
-            gridEvent.setData({
+            gridEvent = new GridEvent(ev, {
                 type: 'key:' + commandInfo[0],
                 command: commandInfo[1]
             });
