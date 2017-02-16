@@ -1,20 +1,29 @@
 {
     "example1": {
-        "title": "1. Basic Example"
+        "title": "1. Basic"
     },
     "example2": {
-        "title": "2. Using Relation List"
+        "title": "2. Formatter"
     },
     "example3": {
-        "title": "3. Using _extraData"
+        "title": "3. Column Merge"
     },
     "example4": {
-        "title": "4. Applying Themes"
+        "title": "4. Input Types"
     },
     "example5": {
-        "title": "5. Using Date-Picker Component"
+        "title": "5. Relation List"
     },
     "example6": {
-        "title": "6. Using Footer with column summary"
+        "title": "6. Using _extraData"
+    },
+    "example7": {
+        "title": "7. Applying Themes"
+    },
+    "example8": {
+        "title": "8. Using Date-Picker Component"
+    },
+    "example9": {
+        "title": "9. Using Footer with column summary"
     }
 }
