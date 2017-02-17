@@ -55,6 +55,8 @@ tui = window.tui = tui || {};
  *          as a string to be copied to the clipboard
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
+ *      @param {boolean} [options.virtualScrolling=true] - If set to true, use virtual-scrolling so that large
+ *          amount of data can be processed performantly.
  *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
  *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
@@ -152,7 +154,6 @@ tui = window.tui = tui || {};
  *              @param {function} [options.footer.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- * @param {Object} options - Options set by user
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {

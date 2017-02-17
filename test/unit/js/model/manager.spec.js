@@ -5,6 +5,7 @@ var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
 var DimensionModel = require('model/dimension');
+var SmartRenderModel = require('model/renderer-smart');
 var CoordRowModel = require('model/coordRow');
 var SummaryModel = require('model/summary');
 var ClipboardModel = require('model/clipboard');
@@ -80,6 +81,20 @@ describe('model/manager', function() {
             expect(renderModel.columnModel instanceof ColumnModel).toBe(true);
             expect(renderModel.dataModel instanceof DataModel).toBe(true);
             expect(renderModel.dimensionModel instanceof DimensionModel).toBe(true);
+        });
+
+        it('if virtualScrolling:false, instance should not be SmartRenderer', function() {
+            var manager = new ModelManager({
+                virtualScrolling: false
+            });
+
+            expect(manager.renderModel).not.toEqual(jasmine.any(SmartRenderModel));
+        });
+
+        it('if virtualScrolling:true, instance should be SmartRenderer', function() {
+            var manager = new ModelManager();
+
+            expect(manager.renderModel).toEqual(jasmine.any(SmartRenderModel));
         });
     });
 

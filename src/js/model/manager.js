@@ -32,7 +32,7 @@ var defaultOptions = {
     fitToParentHeight: false,
     showDummyRows: false,
     minimumColumnWidth: 50,
-    notUseSmartRendering: false,
+    virtualScrolling: true,
     columnMerge: [],
     copyOption: null,
     scrollX: true,
@@ -138,9 +138,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             isFixedHeight: options.isFixedHeight
         };
 
-        // isfixedRowHeight and notUseSmartRendering can not be false at the same time.
-        if (options.isFixedRowHeight === false && !options.notUseSmartRendering) {
-            util.warning('The isFixedRowHeight can\'t be false if the notUseSmartRendering is not set to false.');
+        if (options.isFixedRowHeight === false && options.virtualScrolling) {
+            util.warning('The isFixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
             attrs.isFixedRowHeight = true;
         }
 
@@ -258,7 +257,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             coordRowModel: this.coordRowModel,
             coordColumnModel: this.coordColumnModel
         };
-        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
+        Constructor = options.virtualScrolling ? SmartRenderModel : RenderModel;
 
         return new Constructor(attrs, renderOptions);
     },
