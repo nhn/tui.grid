@@ -67,7 +67,7 @@ tui = window.tui = tui || {};
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.toolbar=false] - If set to true, toolbar area will be shown.
- *      @param {boolean} [options.resizeHandle=false] - If set to true, a handle for resizing height will be shown.
+ *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
  *      @param {array} options.columnModelList - The configuration of the grid columns.
@@ -224,7 +224,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'resizeHandle', 'toolbar', 'footer'
+            'heightResizable', 'toolbar', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,

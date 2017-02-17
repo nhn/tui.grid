@@ -44,7 +44,7 @@ var ViewFactory = tui.util.defineClass({
 
         // view options
         this.footerOptions = options.footer;
-        this.resizeHandle = options.resizeHandle;
+        this.heightResizable = options.heightResizable;
     },
 
     /**
@@ -109,7 +109,7 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/resizeHandle} - New resize hander view instance
      */
     createHeightResizeHandle: function() {
-        if (!isOptionEnabled(this.resizeHandle)) {
+        if (!isOptionEnabled(this.heightResizable)) {
             return null;
         }
         return new HeightResizeHandleView({
