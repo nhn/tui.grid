@@ -33,7 +33,7 @@ var defaultOptions = {
     minimumColumnWidth: 50,
     virtualScrolling: true,
     columnMerge: [],
-    copyOption: null,
+    copyOptions: null,
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
@@ -79,7 +79,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
             columnMerge: options.columnMerge,
-            copyOption: options.copyOption,
+            copyOptions: options.copyOptions,
             columnModelList: options.columnModelList
         });
     },
@@ -288,7 +288,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             selectionModel: this.selectionModel,
             renderModel: this.renderModel,
             focusModel: this.focusModel,
-            copyOption: options.copyOption,
+            copyOptions: options.copyOptions,
             domEventBus: domEventBus
         });
     },

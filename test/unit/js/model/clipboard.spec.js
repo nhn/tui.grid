@@ -66,23 +66,23 @@ describe('grid paste test', function() {
             });
 
             it('with fommatedValue', function() {
-                clipboard.columnModel.getCopyOption = jasmine.createSpy().and.returnValue({
+                clipboard.columnModel.getCopyOptions = jasmine.createSpy().and.returnValue({
                     useFormattedValue: true
                 });
                 triggerCopyEvent('copy');
 
-                expect(clipboard.columnModel.getCopyOption).toHaveBeenCalledWith('c1');
+                expect(clipboard.columnModel.getCopyOptions).toHaveBeenCalledWith('c1');
                 expect(clipboard.renderModel.getCellData).toHaveBeenCalledWith(0, 'c1');
                 expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
             });
 
             it('with original value', function() {
-                clipboard.columnModel.getCopyOption = jasmine.createSpy().and.returnValue({
+                clipboard.columnModel.getCopyOptions = jasmine.createSpy().and.returnValue({
                     useFormattedValue: false
                 });
                 triggerCopyEvent('copy');
 
-                expect(clipboard.columnModel.getCopyOption).toHaveBeenCalledWith('c1');
+                expect(clipboard.columnModel.getCopyOptions).toHaveBeenCalledWith('c1');
                 expect(clipboard.dataModel.get).toHaveBeenCalledWith(0);
                 expect(rowDataMock.getValueString).toHaveBeenCalledWith('c1');
                 expect(clipboard.get('text')).toBe(SAMPLE_TEXT);

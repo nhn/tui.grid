@@ -147,12 +147,12 @@ describe('model/manager', function() {
 
     it('creates clipboard model', function() {
         var manager = new ModelManager({
-            copyOption: {
+            copyOptions: {
                 useFormattedValue: true
             }
         });
 
         expect(manager.clipboardModel).toEqual(jasmine.any(ClipboardModel));
-        expect(manager.clipboardModel.copyOption.useFormattedValue).toBe(true);
+        expect(manager.clipboardModel.copyOptions.useFormattedValue).toBe(true);
     });
 });

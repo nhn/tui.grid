@@ -109,7 +109,7 @@ describe('model/selection', function() {
 
             selection.start(0, 1);
             selection.update(2, 2);
-            selection.columnModel.set('copyOption', {
+            selection.columnModel.set('copyOptions', {
                 useFormattedValue: true
             });
             selection.renderModel = {

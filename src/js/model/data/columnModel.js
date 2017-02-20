@@ -39,7 +39,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         columnModelMap: {},
         relationListMap: {},
         columnMerge: [],
-        copyOption: {
+        copyOptions: {
             useFormattedValue: false
         }
     },
@@ -445,10 +445,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @param {string} columnName - column name
      * @returns {{useFormattedValue: boolean}}
      */
-    getCopyOption: function(columnName) {
+    getCopyOptions: function(columnName) {
         var columnModel = this.getColumnModel(columnName);
 
-        return _.extend({}, this.get('copyOption'), columnModel.copyOption);
+        return _.extend({}, this.get('copyOptions'), columnModel.copyOptions);
     },
 
     /**

@@ -50,8 +50,8 @@ tui = window.tui = tui || {};
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
  *          area expands to total height of rows.
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
- *      @param {Object} [options.copyOption] - Option object for clipboard copying
- *      @param {boolean} [options.copyOption.useFormattedValue] - Whether to use formatted values or original values
+ *      @param {Object} [options.copyOptions] - Option object for clipboard copying
+ *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
@@ -120,9 +120,9 @@ tui = window.tui = tui || {};
  *                  falsy(null|undefined|false), default UI will be shown.
  *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
- *              @param {Object} [options.columnModelList.copyOption] - Option object for clipboard copying.
- *                  This option is column specific, and overrides the global copyOption.
- *              @param {boolean} [options.columnModelList.copyOption.useFormattedValue] - Whether to use
+ *              @param {Object} [options.columnModelList.copyOptions] - Option object for clipboard copying.
+ *                  This option is column specific, and overrides the global copyOptions.
+ *              @param {boolean} [options.columnModelList.copyOptions.useFormattedValue] - Whether to use
  *                  formatted values or original values as a string to be copied to the clipboard
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.

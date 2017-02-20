@@ -618,7 +618,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var columnNames = this._getRangeColumnNames();
         var rowValues = _.map(rowList, function(row) {
             return _.map(columnNames, function(columnName) {
-                if (columnModel.getCopyOption(columnName).useFormattedValue) {
+                if (columnModel.getCopyOptions(columnName).useFormattedValue) {
                     return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
                 }
                 return row.getValueString(columnName);
