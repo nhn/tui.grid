@@ -19,10 +19,11 @@
 var grid = new tui.Grid({
     el: $('#grid'),
     selectType: 'checkbox',
-    columnFixCount: 0,
+    columnFixCount: 10,
     headerHeight: 30,
     resizeHandle: {},
-    displayRowCount: 15,
+    bodyHeight: 300,
+    isFixedHeight: true,
     minimumColumnWidth: 100,
     columnModelList: [
         {
@@ -50,7 +51,7 @@ var grid = new tui.Grid({
             editOption: {
                 type: 'text',
             }
-        },
+        }
     ],
     footer: {
         height: 50,

@@ -25,5 +25,8 @@
     },
     "example9": {
         "title": "9. Using Footer with column summary"
+    },
+    "example10": {
+        "title": "10. Binding to remote data"
     }
 }
