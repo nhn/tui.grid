@@ -108,9 +108,7 @@ var classNames = {
     BTN_EXCEL_PAGE: 'btn-excel-page',
     BTN_EXCEL_ALL: 'btn-excel-all',
 
-    // toolbar
-    TOOLBAR: 'toolbar',
-    TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
+    // height resize handle
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
     HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
 

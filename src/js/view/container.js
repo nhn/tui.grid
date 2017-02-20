@@ -55,7 +55,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createToolbar(),
             factory.createContentArea(),
             factory.createHeightResizeHandle(),
             factory.createPagination(),

@@ -26,17 +26,6 @@ describe('theme/styleGenerator: ', function() {
         expect(styleGen.grid(options)).toBe(expected);
     });
 
-    it('toolbar() generates a css string for a toolbar', function() {
-        var options = {
-            background: 'white',
-            border: 'green',
-            text: 'blue'
-        };
-        var expected = '.' + classNameConst.TOOLBAR + '{background-color:white;border-color:green}';
-
-        expect(styleGen.toolbar(options)).toBe(expected);
-    });
-
     it('scrollbar() generates a css string for scrollbars', function() {
         var options = {
             background: 'white',

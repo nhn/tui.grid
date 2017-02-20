@@ -92,28 +92,6 @@ describe('addon.net', function() {
                 });
             });
         });
-
-        describe('_showToolbarExcelBtns', function() {
-            it('If downloadExcel exist, toolbarModel.isExcelButtonVisible should be true', function() {
-                createNet({
-                    api: {
-                        readData: '/api/read',
-                        downloadExcel: '/'
-                    }
-                });
-                expect(net.toolbarModel.get('isExcelButtonVisible')).toBe(true);
-            });
-
-            it('If downloadExcelAll exist exsits, toolbarModel.isExcelAllButtonVisible should be true', function() {
-                createNet({
-                    api: {
-                        readData: '/api/read',
-                        downloadExcelAll: '/'
-                    }
-                });
-                expect(net.toolbarModel.get('isExcelAllButtonVisible')).toBe(true);
-            });
-        });
     });
 
     describe('_ajax', function() {

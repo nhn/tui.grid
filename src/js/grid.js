@@ -66,7 +66,6 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
- *      @param {boolean} [options.toolbar=false] - If set to true, toolbar area will be shown.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
@@ -224,7 +223,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'toolbar', 'footer'
+            'heightResizable', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
@@ -670,7 +669,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         if (name === 'Net') {
             options = _.assign({
                 domEventBus: this.domEventBus,
-                toolbarModel: this.modelManager.toolbarModel,
                 renderModel: this.modelManager.renderModel,
                 dataModel: this.modelManager.dataModel,
                 pagination: this.componentHolder.getInstance('pagination')
@@ -891,9 +889,6 @@ tui.Grid.getInstanceById = function(id) {
  *   @param {Object} [extOptions.selection] - Styles for a selection layer.
  *     @param {String} [extOptions.selection.background] - Background color of a selection layer.
  *     @param {String} [extOptions.selection.border] - Border color of a selection layer.
- *   @param {Object} [extOptions.toolbar] - Styles for a toolbar area.
- *     @param {String} [extOptions.toolbar.background] - Background color of a toolbar area.
- *     @param {String} [extOptions.toolbar.border] - Border color of a toolbar area.
  *   @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
  *     @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
  *     @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.

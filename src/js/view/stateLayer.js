@@ -96,12 +96,11 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         var dimensionModel = this.dimensionModel;
         var headerHeight = dimensionModel.get('headerHeight');
         var bodyHeight = dimensionModel.get('bodyHeight');
-        var toolbarHeight = dimensionModel.get('toolbarHeight');
         var scrollXHeight = dimensionModel.getScrollXHeight();
         var scrollYWidth = dimensionModel.getScrollYWidth();
 
         this.$el.css({
-            top: headerHeight + toolbarHeight - TABLE_BORDER_WIDTH,
+            top: headerHeight - TABLE_BORDER_WIDTH,
             height: bodyHeight - scrollXHeight - TABLE_BORDER_WIDTH,
             left: 0,
             right: scrollYWidth

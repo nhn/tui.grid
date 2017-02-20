@@ -8,7 +8,6 @@ var _ = require('underscore');
 
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
-var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
 var CoordRowModel = require('./coordRow');
 var CoordColumnModel = require('./coordColumn');
@@ -38,8 +37,7 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
-    useClientSort: true,
-    toolbar: null
+    useClientSort: true
 };
 
 /**
@@ -65,7 +63,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
-        this.toolbarModel = this._createToolbarModel(options);
         this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
 
@@ -103,16 +100,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             useClientSort: options.useClientSort
         });
-    },
-
-    /**
-     * Creates an instance of toolbar model and returns it.
-     * @param  {Object} options - Options
-     * @returns {module:model/toolbar} - A new instance
-     * @private
-     */
-    _createToolbarModel: function(options) {
-        return new ToolbarModel(options.toolbar);
     },
 
     /**
