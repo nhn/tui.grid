@@ -11,7 +11,7 @@ describe('view.painter.cell.base', function() {
 
     beforeEach(function() {
         grid = new ModelManager();
-        grid.columnModel.set('columnModelList', [
+        grid.columnModel.set('columns', [
             {
                 title: 'c1',
                 columnName: 'c1',
@@ -128,7 +128,7 @@ describe('view.painter.cell.base', function() {
 
         describe('beforeText와 afterText가 설정되었을 때 ', function() {
             beforeEach(function() {
-                grid.columnModel.set('columnModelList', [
+                grid.columnModel.set('columns', [
                     {
                         columnName: 'c1',
                         editOption: {

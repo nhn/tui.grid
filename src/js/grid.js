@@ -69,74 +69,74 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
- *      @param {array} options.columnModelList - The configuration of the grid columns.
- *          @param {string} options.columnModelList.columnName - The name of the column.
- *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used
+ *      @param {array} options.columns - The configuration of the grid columns.
+ *          @param {string} options.columns.columnName - The name of the column.
+ *          @param {boolean} [options.columns.isEllipsis=false] - If set to true, ellipsis will be used
  *              for overflowing content.
- *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content.
+ *          @param {string} [options.columns.align=left] - Horizontal alignment of the column content.
  *              Available values are 'left', 'center', 'right'.
- *          @param {string} [options.columnModelList.valign=middle] - Vertical alignment of the column content.
+ *          @param {string} [options.columns.valign=middle] - Vertical alignment of the column content.
  *              Available values are 'top', 'middle', 'bottom'.
- *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
+ *          @param {string} [options.columns.className] - The name of the class to be used for all cells of
  *              the column.
- *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
- *          @param {number} [options.columnModelList.width] - The width of the column. The unit is pixel.
- *          @param {boolean} [options.columnModelList.isHidden] - If set to true, the column will not be shown.
- *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column
+ *          @param {string} [options.columns.title] - The title of the column to be shown on the header.
+ *          @param {number} [options.columns.width] - The width of the column. The unit is pixel.
+ *          @param {boolean} [options.columns.isHidden] - If set to true, the column will not be shown.
+ *          @param {boolean} [options.columns.isFixedWidth=false] - If set to true, the width of the column
  *              will not be changed.
- *          @param {boolean} [options.columnModelList.isRequired=false] - If set to true, the data of the column
+ *          @param {boolean} [options.columns.isRequired=false] - If set to true, the data of the column
  *              will be checked to be not empty whenever data is changed or calling {@link tui.Grid#validate}.
- *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column
+ *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
- *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell.
+ *          @param {function} [options.columns.formatter] - The function that formats the value of the cell.
  *              The retrurn value of the function will be shown as the value of the cell.
- *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell
+ *          @param {boolean} [options.columns.notUseHtmlEntity=false] - If set to true, the value of the cell
  *              will not be encoded as HTML entities.
- *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be
+ *          @param {boolean} [options.columns.isIgnore=false] - If set to true, the value of the column will be
  *               ignored when setting up the list of modified rows.
- *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on
+ *          @param {boolean} [options.columns.isSortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
- *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
- *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies
+ *          @param {Array} [options.columns.editOption] - The object for configuring editing UI.
+ *              @param {string} [options.columns.editOption.type='normal'] - The string value that specifies
  *                  the type of the editing UI.
  *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
- *              @param {boolean} [options.columnModelList.editOption.useViewMode=true] - If set to true, default mode
+ *              @param {boolean} [options.columns.editOption.useViewMode=true] - If set to true, default mode
  *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
  *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
  *                  input elements as a default.
- *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the
+ *              @param {Array} [options.columns.editOption.list] - Specifies the option list for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be
+ *              @param {function} [options.columns.editOption.changeBeforeCallback] - The function that will be
  *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
+ *              @param {function} [options.columns.editOption.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
- *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
+ *              @param {(string|function)} [options.columns.editOption.beforeContent] - The HTML string to be
  *                  shown left to the value. If it's a function, the return value will be used.
- *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be
+ *              @param {(string|function)} [options.columns.editOption.afterContent] - The HTML string to be
  *                  shown right to the value. If it's a function, the return value will be used.
- *              @param {function} [options.columnModelList.editOption.converter] - The function whose
+ *              @param {function} [options.columns.editOption.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
+ *              @param {Object} [options.columns.editOption.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
- *              @param {Object} [options.columnModelList.copyOptions] - Option object for clipboard copying.
+ *              @param {Object} [options.columns.copyOptions] - Option object for clipboard copying.
  *                  This option is column specific, and overrides the global copyOptions.
- *              @param {boolean} [options.columnModelList.copyOptions.useFormattedValue] - Whether to use
+ *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use
  *                  formatted values or original values as a string to be copied to the clipboard
- *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
- *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
- *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns
+ *          @param {Array} [options.columns.relationList] - Specifies relation between this and other column.
+ *              @param {array} [options.columns.relationList.columnList] - Array of the names of target columns.
+ *              @param {function} [options.columns.relationList.isDisabled] - If returns true, target columns
  *                  will be disabled.
- *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns
+ *              @param {function} [options.columns.relationList.isEditable] - If returns true, target columns
  *                  will be editable.
- *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return
+ *              @param {function} [options.columns.relationList.optionListChange] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
- *          @param {Object} [options.columnModelList.component] - Option for using tui-component
- *              @param {string} [options.columnModelList.component.name] - The name of the compnent to use
+ *          @param {Object} [options.columns.component] - Option for using tui-component
+ *              @param {string} [options.columns.component.name] - The name of the compnent to use
  *                  for this column
- *              @param {Object} [options.columnModelList.component.option] - The option object to be used for
+ *              @param {Object} [options.columns.component.option] - The option object to be used for
  *                  creating the component
  *      @param {array} [options.columnMerge] - The array that specifies the merged column.
  *          This options does not merge the cells of multiple columns into a single cell.
@@ -575,8 +575,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns a list of the column model.
      * @returns {Array} - A list of the column model.
      */
-    getColumnModelList: function() {
-        return this.modelManager.columnModel.get('dataColumnModelList');
+    getColumns: function() {
+        return this.modelManager.columnModel.get('dataColumns');
     },
 
     /**
@@ -588,7 +588,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      *          the row data for internal use.
      *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed
      *          rows will be returned.
-     *      @param {Array} [options.filteringColumnList] - A list of column name to be excluded.
+     *      @param {Array} [options.filteringColumns] - A list of column name to be excluded.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
     getModifiedRowList: function(options) {
@@ -653,10 +653,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the list of column model.
-     * @param {Array} columnModelList - A new list of column model
+     * @param {Array} columns - A new list of column model
      */
-    setColumnModelList: function(columnModelList) {
-        this.modelManager.columnModel.set('columnModelList', columnModelList);
+    setColumns: function(columns) {
+        this.modelManager.columnModel.set('columns', columns);
     },
 
     /**

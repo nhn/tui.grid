@@ -9,7 +9,7 @@ var Model = require('base/model');
 var classNameConst = require('common/classNameConst');
 
 describe('model.rowList', function() {
-    var columnModelList = [
+    var columns = [
         {
             title: 'c1',
             columnName: 'c1'
@@ -41,7 +41,7 @@ describe('model.rowList', function() {
     beforeEach(function() {
         columnModel = new ColumnModelData({
             selectType: 'checkbox',
-            columnModelList: columnModelList
+            columns: columns
         });
         dataModel = new RowListData([], {
             columnModel: columnModel
@@ -284,7 +284,7 @@ describe('model.rowList', function() {
         });
 
         function checkAllDataDisabled(row, expectedValue) {
-            var columnNames = _.pluck(columnModel.getVisibleColumnModelList(null, true), 'columnName');
+            var columnNames = _.pluck(columnModel.getVisibleColumns(null, true), 'columnName');
 
             return _.every(columnNames, function(columnName) {
                 var data = row.get(columnName);

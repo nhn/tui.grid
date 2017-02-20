@@ -64,13 +64,13 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      * Reset the width of each column by using initial setting of column models.
      */
     resetColumnWidths: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
+        var columns = this.columnModel.getVisibleColumns(null, true);
         var commonMinWidth = this.dimensionModel.get('minimumColumnWidth');
         var widthList = [];
         var fixedFlags = [];
         var minWidthList = [];
 
-        _.each(columnModelList, function(columnModel) {
+        _.each(columns, function(columnModel) {
             var width = columnModel.width > 0 ? columnModel.width : 0;
             var minWidth = Math.max(width, commonMinWidth);
 

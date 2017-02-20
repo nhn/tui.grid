@@ -11,7 +11,7 @@ var Model = require('base/model');
 var frameConst = require('common/constMap').frame;
 
 describe('model.renderer', function() {
-    var columnModelList = [
+    var columns = [
         {
             title: 'columnName1',
             columnName: 'columnName1'
@@ -137,7 +137,7 @@ describe('model.renderer', function() {
             hasNumberColumn: true,
             selectType: 'checkbox',
             columnFixCount: 2,
-            columnModelList: columnModelList
+            columns: columns
         });
         dataModel = new RowListData([], {
             columnModel: columnModel

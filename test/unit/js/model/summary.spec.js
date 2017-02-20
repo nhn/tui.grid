@@ -7,7 +7,7 @@ var typeConst = require('common/constMap').summaryType;
 
 function create(data, autoColumnNames) {
     var columnModel = new ColumnModelData({
-        columnModelList: [
+        columns: [
             {
                 columnName: 'c1',
                 editOption: {

@@ -8,7 +8,7 @@ var SelectionModel = require('model/selection');
 
 function create(rowList) {
     var columnModel = new ColumnModel({
-        columnModelList: [
+        columns: [
             {columnName: 'c1'},
             {columnName: 'c2'},
             {columnName: 'c3'}
@@ -353,7 +353,7 @@ describe('model/selection', function() {
 
             expect(range).toEqual({
                 row: [0, 0],
-                column: [0, columnModel.getVisibleColumnModelList().length - 1]
+                column: [0, columnModel.getVisibleColumns().length - 1]
             });
             expect(selection.focusModel.focusAt).toHaveBeenCalledWith(0, 0);
         });
@@ -383,7 +383,7 @@ describe('model/selection', function() {
 
             expect(range).toEqual({
                 row: [0, dataModel.length - 1],
-                column: [0, columnModel.getVisibleColumnModelList().length - 1]
+                column: [0, columnModel.getVisibleColumns().length - 1]
             });
         });
     });

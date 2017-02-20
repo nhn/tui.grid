@@ -5,7 +5,7 @@ var RowListData = require('model/data/rowList');
 var classNameConst = require('common/classNameConst');
 
 describe('Data.RowList - simple', function() {
-    var columnModelList = [
+    var columns = [
         {
             columnName: 'c1',
             title: 'c1',
@@ -24,7 +24,7 @@ describe('Data.RowList - simple', function() {
 
     beforeEach(function() {
         columnModel = new ColumnModelData();
-        columnModel.set('columnModelList', columnModelList);
+        columnModel.set('columns', columns);
         rowList = new RowListData([], {
             columnModel: columnModel
         });
@@ -237,7 +237,7 @@ describe('Data.RowList - simple', function() {
 
     describe('del()', function() {
         beforeEach(function() {
-            columnModel.set('columnModelList', [
+            columnModel.set('columns', [
                 {
                     columnName: 'c1',
                     editOption: {

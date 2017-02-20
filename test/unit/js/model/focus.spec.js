@@ -14,7 +14,7 @@ describe('model/focus', function() {
         var columnModel, dataModel;
 
         columnModel = new ColumnModelData({
-            columnModelList: [
+            columns: [
                 {
                     columnName: 'c1',
                     editOption: {

@@ -23,7 +23,7 @@ describe('view.painter.cell.base', function() {
 
     describe('Cell.List Base 클래스 테스트', function() {
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', [{
+            grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
                 editOption: {
@@ -81,7 +81,7 @@ describe('view.painter.cell.base', function() {
                     {text: 'text2', value: 2}
                 ]
             };
-            grid.columnModel.set('columnModelList', [options]);
+            grid.columnModel.set('columns', [options]);
             cellPainter = new SelectPainter({
                 grid: grid
             });
@@ -183,7 +183,7 @@ describe('view.painter.cell.base', function() {
         var cellData, $table, $td;
 
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', [{
+            grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
                 editOption: {

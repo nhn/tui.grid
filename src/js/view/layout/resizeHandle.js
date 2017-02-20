@@ -65,16 +65,16 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
 
     /**
      * Return an object that contains an array of column width and an array of column model.
-     * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
+     * @returns {{widths: (Array|*), columns: (Array|*)}} Column Data
      * @private
      */
     _getColumnData: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
-        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
         return {
-            widthList: columnWidthList,
-            modelList: columnModelList
+            widths: columnWidths,
+            columns: columns
         };
     },
 
@@ -85,9 +85,9 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      */
     _getResizeHandlerMarkup: function() {
         var columnData = this._getColumnData();
-        var columnModelList = columnData.modelList;
-        var length = columnModelList.length;
-        var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
+        var columns = columnData.columns;
+        var length = columns.length;
+        var resizeHandleMarkupList = _.map(columns, function(columnModel, index) {
             return this.template({
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
@@ -123,14 +123,14 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      */
     _refreshHandlerPosition: function() {
         var columnData = this._getColumnData();
-        var columnWidthList = columnData.widthList;
+        var columnWidths = columnData.widths;
         var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
         var handlerWidthHalf = Math.floor(RESIZE_HANDLE_WIDTH / 2);
         var curPos = 0;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             var $handler = $resizeHandleList.eq(index);
-            curPos += columnWidthList[index] + CELL_BORDER_WIDTH;
+            curPos += columnWidths[index] + CELL_BORDER_WIDTH;
             $handler.css('left', curPos - handlerWidthHalf);
         });
     },
@@ -142,11 +142,11 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      */
     _onMouseDown: function(ev) {
         var $target = $(ev.target);
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var columnIndex = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
         this.dragEmitter.start(ev, {
-            width: columnWidthList[columnIndex],
+            width: columnWidths[columnIndex],
             columnIndex: this._getHandlerColumnIndex(columnIndex),
             pageX: ev.pageX
         });

@@ -127,14 +127,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _getColGroupMarkup: function() {
         var columnData = this._getColumnData();
-        var columnWidthList = columnData.widthList;
-        var columnModelList = columnData.modelList;
+        var columnWidths = columnData.widths;
+        var columns = columnData.columns;
         var htmlList = [];
 
-        _.each(columnWidthList, function(width, index) {
+        _.each(columnWidths, function(width, index) {
             htmlList.push(this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
-                columnName: columnModelList[index].columnName,
+                columnName: columns[index].columnName,
                 width: width + CELL_BORDER_WIDTH
             }));
         }, this);
@@ -149,7 +149,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _getSelectedColumnNames: function() {
         var columnRange = this.selectionModel.get('range').column,
-            visibleColumns = this.columnModel.getVisibleColumnModelList(),
+            visibleColumns = this.columnModel.getVisibleColumns(),
             selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
 
         return _.pluck(selectedColumns, 'columnName');
@@ -304,11 +304,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $colList = this.$el.find('col');
         var coordRowModel = this.coordRowModel;
 
-        _.each(columnWidthList, function(columnWidth, index) {
+        _.each(columnWidths, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
 
@@ -397,16 +397,16 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 컬럼 정보를 반환한다.
-     * @returns {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
+     * @returns {{widths: (Array|*), columns: (Array|*)}}   columnWidths 와 columns 를 함께 반환한다.
      * @private
      */
     _getColumnData: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
-        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
         return {
-            widthList: columnWidthList,
-            modelList: columnModelList
+            widths: columnWidths,
+            columns: columns
         };
     },
 
@@ -497,10 +497,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnHierarchyList: function() {
-        var columnModelList = this._getColumnData().modelList,
+        var columns = this._getColumnData().columns,
             hierarchyList;
 
-        hierarchyList = _.map(columnModelList, function(columnModel) {
+        hierarchyList = _.map(columns, function(columnModel) {
             return this._getColumnHierarchy(columnModel).reverse();
         }, this);
 

@@ -16,7 +16,7 @@ describe('ResizeHandle', function() {
 
     function initialize() {
         columnModel = new ColumnModel({
-            columnModelList: [
+            columns: [
                 {
                     title: 'c1',
                     columnName: 'c1',

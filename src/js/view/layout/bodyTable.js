@@ -173,10 +173,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     _getColGroupMarkup: function() {
         var whichSide = this.whichSide;
         var columnWidthList = this.coordColumnModel.getColumnWidthList(whichSide);
-        var columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true);
+        var columns = this.columnModel.getVisibleColumns(whichSide, true);
         var html = '';
 
-        _.each(columnModelList, function(columnModel, index) {
+        _.each(columns, function(columnModel, index) {
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModel.columnName,

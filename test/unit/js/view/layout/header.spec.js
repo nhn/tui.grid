@@ -11,9 +11,9 @@ var constMap = require('common/constMap');
 var frameConst = constMap.frame;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
-function create(whichSide, columnModelList) {
+function create(whichSide, columns) {
     var columnModel = new ColumnModel({
-        columnModelList: columnModelList || [
+        columns: columns || [
             {columnName: 'c1'},
             {columnName: 'c2'}
         ]
@@ -80,10 +80,10 @@ describe('Header', function() {
         });
 
         describe('_getColumnData()', function() {
-            it('columnModelList와 columnWidthList를 반환하는지 확인한다.', function() {
+            it('columns와 columnWidthList를 반환하는지 확인한다.', function() {
                 var columnData = header._getColumnData();
-                expect(columnData.widthList.length).toBeGreaterThan(0);
-                expect(columnData.modelList.length).toBeGreaterThan(0);
+                expect(columnData.widths.length).toBeGreaterThan(0);
+                expect(columnData.columns.length).toBeGreaterThan(0);
             });
         });
     });
@@ -194,7 +194,7 @@ describe('Header', function() {
                 columnNameList: ['merge2', 'c4']
             }
         ];
-        var columnModelList = [
+        var columns = [
             {
                 title: 'c1',
                 columnName: 'c1',
@@ -220,7 +220,7 @@ describe('Header', function() {
         beforeEach(function() {
             header = create();
             header.columnModel.set({
-                columnModelList: columnModelList,
+                columns: columns,
                 columnMerge: columnMergeList
             });
             columnData = header._getColumnData();
@@ -228,27 +228,27 @@ describe('Header', function() {
 
         describe('_getColumnHierarchyList()', function() {
             it('Merge된 컬럼의 Hierarchy 데이터를 생성한다', function() {
-                var hList = header._getColumnHierarchyList(),
-                    column1 = hList[0],
-                    column3 = hList[2];
+                var hList = header._getColumnHierarchyList();
+                var column1 = hList[0];
+                var column3 = hList[2];
 
                 expect(column1.length).toBe(4);
                 expect(column1[0]).toEqual(columnMergeList[2]);
                 expect(column1[1]).toEqual(columnMergeList[1]);
                 expect(column1[2]).toEqual(columnMergeList[0]);
-                expect(column1[3]).toEqual(columnData.modelList[0]);
+                expect(column1[3]).toEqual(columnData.columns[0]);
 
                 expect(column3.length).toBe(3);
                 expect(column3[0]).toEqual(columnMergeList[2]);
                 expect(column3[1]).toEqual(columnMergeList[1]);
-                expect(column3[2]).toEqual(columnData.modelList[2]);
+                expect(column3[2]).toEqual(columnData.columns[2]);
             });
         });
 
         describe('_getHierarchyMaxRowCount()', function() {
             it('계층구조를 마크업으로 표현할때 생성해야할 최대 행 수를 반환한다.', function() {
-                var hierarchyList = header._getColumnHierarchyList(),
-                    maxRow = header._getHierarchyMaxRowCount(hierarchyList);
+                var hierarchyList = header._getColumnHierarchyList();
+                var maxRow = header._getHierarchyMaxRowCount(hierarchyList);
 
                 expect(maxRow).toEqual(4);
                 header.columnModel.set('columnMerge', [

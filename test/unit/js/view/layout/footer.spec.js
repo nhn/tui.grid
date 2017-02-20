@@ -21,7 +21,7 @@ describe('Footer', function() {
 
         beforeEach(function() {
             footer = create(frameConst.R, {
-                columnModelList: [
+                columns: [
                     {columnName: 'c1', width: 50},
                     {columnName: 'c2', width: 60}
                 ],
@@ -136,7 +136,7 @@ describe('Footer', function() {
 
     it('If the setFooterContent event occurs on columnModel, refresh <th>', function() {
         var footer = create(frameConst.R, {
-            columnModelList: [
+            columns: [
                 {columnName: 'c1'},
                 {columnName: 'c2'}
             ],
@@ -154,7 +154,7 @@ describe('Footer', function() {
 
     it('Refresh <th> whenever change event occurs on the summaryModel', function() {
         var footer = create(frameConst.R, {
-            columnModelList: [
+            columns: [
                 {columnName: 'c1'},
                 {columnName: 'c2'}
             ],

@@ -2,15 +2,15 @@
 
 describe('grid', function() {
     function createGrid(columnNames, options) {
-        var columnModelList = [];
+        var columns = [];
         _.each(columnNames, function(columnName) {
-            columnModelList.push({
+            columns.push({
                 columnName: columnName
             });
         });
         options = _.extend({
             el: $('<div>'),
-            columnModelList: columnModelList
+            columns: columns
         }, options);
 
         return new tui.Grid(options);

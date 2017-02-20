@@ -15,7 +15,7 @@ var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 
 function create(data) {
     var columnModel = new ColumnModel({
-        columnModelList: [
+        columns: [
             {columnName: '_number', width: 10},
             {columnName: 'c1', width: 30},
             {columnName: 'c2', width: 30},

@@ -72,7 +72,7 @@ describe('model.renderer', function() {
 
     describe('if showDummyRows:true', function() {
         beforeEach(function() {
-            columnModel.set('columnModelList', [
+            columnModel.set('columns', [
                 {columnName: 'c1'},
                 {columnName: 'c2'}
             ]);

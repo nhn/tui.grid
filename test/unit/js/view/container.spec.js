@@ -21,7 +21,7 @@ describe('view.container', function() {
     //     it('singleClickEdit 옵션이 true이고 text-convertible 셀인 경우 편집모드로 전환한다.', function(done) {
     //         var core = new Core({
     //             el: setFixtures('<div />'),
-    //             columnModelList: [
+    //             columns: [
     //                 {
     //                     title: 'c1',
     //                     columnName: 'c1',

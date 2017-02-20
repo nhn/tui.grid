@@ -17,7 +17,7 @@ describe('view.layout.body', function() {
         var viewFactory;
 
         modelManager = new ModelManager({
-            columnModelList: [
+            columns: [
                 {columnName: 'c1'},
                 {columnName: 'c2'}
             ]

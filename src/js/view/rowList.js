@@ -61,8 +61,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * Returns the list of column models in it's own side
      * @returns {Array} - Column model list
      */
-    _getColumnModelList: function() {
-        return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+    _getColumns: function() {
+        return this.columnModel.getVisibleColumns(this.whichSide, true);
     },
 
     /**
@@ -121,7 +121,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter(),
-            columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+            columnNames = _.pluck(this._getColumns(), 'columnName');
 
         return _.map(rows, function(row) {
             return rowPainter.generateHtml(row, columnNames);
@@ -215,7 +215,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _setFocusedRowClass: function(rowKey, focused) {
-        var columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+        var columnNames = _.pluck(this._getColumns(), 'columnName');
         var trMap = {};
 
         _.each(columnNames, function(columnName) {

@@ -4,7 +4,7 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 
 describe('data.rowList', function() {
-    var columnModelList = [
+    var columns = [
         {
             title: 'changeCallback',
             columnName: 'changeCallback',
@@ -290,7 +290,7 @@ describe('data.rowList', function() {
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
         columnModelInstance = new ColumnModelData();
-        columnModelInstance.set('columnModelList', columnModelList);
+        columnModelInstance.set('columns', columns);
         dataModelInstance = new RowListData([], {
             columnModel: columnModelInstance
         });
@@ -1683,10 +1683,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('filteringColumnList 옵션이 있을 때', function() {
+            describe('filteringColumns 옵션이 있을 때', function() {
                 function getModified() {
                     return dataModelInstance.getModifiedRowList({
-                        filteringColumnList: ['none']
+                        filteringColumns: ['none']
                     });
                 }
 

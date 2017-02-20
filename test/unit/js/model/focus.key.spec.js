@@ -12,7 +12,7 @@ describe('model/focus', function() {
         var columnModel, dataModel;
 
         columnModel = new ColumnModelData({
-            columnModelList: _.map(['c1', 'c2', 'c3', 'c4', 'c5'], function(name) {
+            columns: _.map(['c1', 'c2', 'c3', 'c4', 'c5'], function(name) {
                 return {
                     columnName: name,
                     editOption: {

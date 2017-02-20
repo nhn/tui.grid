@@ -19,7 +19,7 @@ describe('model.renderer', function() {
 
     function create() {
         var columnModel = new ColumnModelData({
-            columnModelList: [
+            columns: [
                 {columnName: 'c1'},
                 {columnName: 'c2'},
                 {columnName: 'c3'}

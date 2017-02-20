@@ -11,7 +11,7 @@ describe('view.painter.cell.normal', function() {
 
     beforeEach(function() {
         grid = new ModelManager();
-        grid.columnModel.set('columnModelList', [
+        grid.columnModel.set('columns', [
             {
                 title: 'c1',
                 columnName: 'c1',

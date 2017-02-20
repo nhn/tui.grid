@@ -41,7 +41,7 @@ describe('View.RowList', function() {
     beforeEach(function() {
         $container = setFixtures('<div />');
         grid = new ModelManager(null, new DomState($container));
-        grid.columnModel.set('columnModelList', [{
+        grid.columnModel.set('columns', [{
             columnName: 'c1',
             editOption: {
                 type: 'normal'
@@ -145,7 +145,7 @@ describe('View.RowList', function() {
             }());
 
             beforeEach(function() {
-                grid.columnModel.set('columnModelList', [{columnName: 'c1'}]);
+                grid.columnModel.set('columns', [{columnName: 'c1'}]);
                 init(sampleData);
             });
 
@@ -204,7 +204,7 @@ describe('View.RowList', function() {
             }());
 
             beforeEach(function() {
-                grid.columnModel.set('columnModelList', [{columnName: 'c1'}]);
+                grid.columnModel.set('columns', [{columnName: 'c1'}]);
                 grid.columnModel.set('keyColumnName', 'c1');
                 init(sampleData);
             });
@@ -237,7 +237,7 @@ describe('View.RowList', function() {
             }());
 
             beforeEach(function() {
-                grid.columnModel.set('columnModelList', [
+                grid.columnModel.set('columns', [
                     {columnName: 'c1'},
                     {columnName: 'c2'}
                 ]);

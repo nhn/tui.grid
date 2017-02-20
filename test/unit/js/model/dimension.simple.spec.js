@@ -60,7 +60,7 @@ describe('model.dimension', function() {
             });
 
             dimension.columnModel.set({
-                columnModelList: [
+                columns: [
                     {columnName: 'c1'},
                     {columnName: 'c2'},
                     {columnName: 'c3'}
@@ -90,7 +90,7 @@ describe('model.dimension', function() {
                 minimumColumnWidth: 20
             });
             dimension.columnModel.set({
-                columnModelList: [
+                columns: [
                     {columnName: 'c1'},
                     {columnName: 'c2'},
                     {columnName: 'c3'}

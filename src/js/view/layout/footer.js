@@ -107,10 +107,10 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     },
 
     _onChangeColumnWidth: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $ths = this.$el.find('th');
 
-        _.each(columnWidthList, function(columnWidth, index) {
+        _.each(columnWidths, function(columnWidth, index) {
             $ths.eq(index).css('width', columnWidth);
         });
     },
@@ -164,10 +164,10 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      */
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
-        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
-        return _.reduce(columnModelList, function(memo, column, index) {
+        return _.reduce(columns, function(memo, column, index) {
             var columnName = column.columnName;
             var valueMap;
 
@@ -179,7 +179,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnName,
                 className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
-                width: columnWidthList[index],
+                width: columnWidths[index],
                 value: this._generateValueHTML(columnName, valueMap)
             });
         }, '', this);

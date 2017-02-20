@@ -8,7 +8,7 @@ describe('Data.RowList - rowSpan', function() {
 
     beforeEach(function() {
         columnModel = new ColumnModelData({
-            columnModelList:  [
+            columns: [
                 {
                     columnName: 'c1',
                     title: 'c1',

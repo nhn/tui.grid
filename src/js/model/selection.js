@@ -130,7 +130,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _onKeySelect: function(ev) { // eslint-disable-line complexity
         var address = this._getRecentAddress();
         var lastRowIndex = this.dataModel.length - 1;
-        var lastColummnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
+        var lastColummnIndex = this.columnModel.getVisibleColumns().length - 1;
 
         switch (ev.command) {
             case 'up':
@@ -269,7 +269,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _getTypeByColumnIndex: function(columnIndex) {
-        var visibleColumns = this.columnModel.getVisibleColumnModelList(null, true);
+        var visibleColumns = this.columnModel.getVisibleColumns(null, true);
         var columnName = visibleColumns[columnIndex].columnName;
 
         switch (columnName) {
@@ -448,7 +448,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var inputRange = this.inputRange;
 
         if (this.selectionType === typeConst.ROW) {
-            columnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
+            columnIndex = this.columnModel.getVisibleColumns().length - 1;
         } else if (this.selectionType === typeConst.COLUMN) {
             rowIndex = this.dataModel.length - 1;
         }
@@ -532,7 +532,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (this.isEnabled()) {
             this.focusModel.focusAt(rowIndex, 0);
             this.start(rowIndex, 0, typeConst.ROW);
-            this.update(rowIndex, this.columnModel.getVisibleColumnModelList().length - 1);
+            this.update(rowIndex, this.columnModel.getVisibleColumns().length - 1);
         }
     },
 
@@ -554,7 +554,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     selectAll: function() {
         if (this.isEnabled()) {
             this.start(0, 0, typeConst.CELL);
-            this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumnModelList().length - 1);
+            this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumns().length - 1);
         }
     },
 
@@ -649,9 +649,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _getRangeColumnNames: function() {
         var columnRange = this.get('range').column;
-        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(columnRange[0], columnRange[1] + 1);
+        var columns = this.columnModel.getVisibleColumns().slice(columnRange[0], columnRange[1] + 1);
 
-        return _.pluck(columnModelList, 'columnName');
+        return _.pluck(columns, 'columnName');
     },
 
     /**
@@ -770,7 +770,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (columnRange) {
             columnRange[0] = Math.max(0, columnRange[0]);
-            columnRange[1] = Math.min(this.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
+            columnRange[1] = Math.min(this.columnModel.getVisibleColumns().length - 1, columnRange[1]);
         }
     },
 
@@ -840,7 +840,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
-        var columnModelList = this.columnModel.getVisibleColumnModelList()
+        var columns = this.columnModel.getVisibleColumns()
             .slice(spannedRange.column[0], spannedRange.column[1] + 1);
         var dataModel = this.dataModel;
         var startIndexList = [spannedRange.row[0]];
@@ -858,7 +858,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData();
 
         //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
-        _.each(columnModelList, function(columnModel) {
+        _.each(columns, function(columnModel) {
             columnName = columnModel.columnName;
             param = {
                 columnName: columnName,

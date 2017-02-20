@@ -22,7 +22,7 @@ var util = require('../common/util');
 
 var defaultOptions = {
     columnFixCount: 0,
-    columnModelList: [],
+    columns: [],
     keyColumnName: null,
     selectType: '',
     autoNumbering: true,
@@ -80,7 +80,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             selectType: options.selectType,
             columnMerge: options.columnMerge,
             copyOptions: options.copyOptions,
-            columnModelList: options.columnModelList
+            columns: options.columns
         });
     },
 

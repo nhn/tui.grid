@@ -5,7 +5,7 @@ var formUtil = require('common/formUtil');
 var renderStateMap = require('common/constMap').renderState;
 
 describe('addon.net', function() {
-    var columnModelList = [{
+    var columns = [{
         columnName: 'c1'
     }];
     var rowList = [
@@ -31,7 +31,7 @@ describe('addon.net', function() {
         $grid = $('#grid');
         grid = new tui.Grid({
             el: $grid,
-            columnModelList: columnModelList,
+            columns: columns,
             selectType: 'checkbox'
         });
         window.alert = function() {};

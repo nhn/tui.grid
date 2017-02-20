@@ -501,10 +501,10 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @private
      */
     _createDummyRow: function() {
-        var columnModelList = this.columnModel.get('dataColumnModelList'),
-            data = {};
+        var columns = this.columnModel.get('dataColumns');
+        var data = {};
 
-        _.each(columnModelList, function(columnModel) {
+        _.each(columns, function(columnModel) {
             data[columnModel.columnName] = '';
         }, this);
 
@@ -860,11 +860,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 해당 row가 수정된 Row인지 여부를 반환한다.
      * @param {Object} row - row 데이터
      * @param {Object} originalRow - 원본 row 데이터
-     * @param {Array} filteringColumnList - 비교에서 제외할 컬럼명
+     * @param {Array} filteringColumns - 비교에서 제외할 컬럼명
      * @returns {boolean} - 수정여부
      */
-    _isModifiedRow: function(row, originalRow, filteringColumnList) {
-        var filtered = _.omit(row, filteringColumnList);
+    _isModifiedRow: function(row, originalRow, filteringColumns) {
+        var filtered = _.omit(row, filteringColumns);
         var result = _.some(filtered, function(value, columnName) {
             if (typeof value === 'object') {
                 return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
@@ -881,7 +881,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
-     *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
+     *      @param {Array} [options.filteringColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
     getModifiedRowList: function(options) {
@@ -890,7 +890,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             isOnlyRowKeyList = options && options.isOnlyRowKeyList,
             original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
             current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
-            filteringColumnList = options && options.filteringColumnList,
+            filteringColumns = options && options.filteringColumns,
             result = {
                 createList: [],
                 updateList: [],
@@ -899,17 +899,17 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         original = _.indexBy(original, 'rowKey');
         current = _.indexBy(current, 'rowKey');
-        filteringColumnList = _.union(filteringColumnList, this.columnModel.getIgnoredColumnNameList());
+        filteringColumns = _.union(filteringColumns, this.columnModel.getIgnoredColumnNameList());
 
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
             var originalRow = original[rowKey],
-                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumnList);
+                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumns);
 
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
                     result.createList.push(item);
-                } else if (this._isModifiedRow(row, originalRow, filteringColumnList)) {
+                } else if (this._isModifiedRow(row, originalRow, filteringColumns)) {
                     result.updateList.push(item);
                 }
             }
@@ -917,7 +917,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumnList);
+            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumns);
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
@@ -998,7 +998,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {{row: Array.<number>, column: Array.<number>}} range - visible indexes
      */
     delRange: function(range) {
-        var columnModels = this.columnModel.getVisibleColumnModelList();
+        var columnModels = this.columnModel.getVisibleColumns();
         var rowIdxes = _.range(range.row[0], range.row[1] + 1);
         var columnIdxes = _.range(range.column[0], range.column[1] + 1);
         var rowKeys, columnNames;
@@ -1072,7 +1072,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     validate: function() {
         var errorRows = [],
-            requiredColumnNames = _.chain(this.columnModel.getVisibleColumnModelList())
+            requiredColumnNames = _.chain(this.columnModel.getVisibleColumns())
                 .filter(function(columnModel) {
                     return columnModel.isRequired === true;
                 })
@@ -1107,9 +1107,9 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getEndIndexToPaste: function(data, startIdx) {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(),
+        var columns = this.columnModel.getVisibleColumns(),
             rowIdx = data.length + startIdx.row - 1,
-            columnIdx = Math.min(data[0].length + startIdx.column, columnModelList.length) - 1;
+            columnIdx = Math.min(data[0].length + startIdx.column, columns.length) - 1;
 
         return {
             row: rowIdx,
