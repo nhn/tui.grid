@@ -219,7 +219,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.className) {
             classNameList.push(columnModel.className);
         }
-        if (columnModel.isEllipsis) {
+        if (columnModel.ellipsis) {
             classNameList.push(classNameConst.CELL_ELLIPSIS);
         }
         if (columnModel.isRequired) {

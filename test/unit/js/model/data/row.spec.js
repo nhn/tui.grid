@@ -86,9 +86,9 @@ describe('RowData', function() {
                 expect(row.getClassNameList('c1')).toContain('c1-class');
             });
 
-            it('containing \'ellipsis\' if columnModel.isEllipsis is true', function() {
+            it('containing \'ellipsis\' if columnModel.ellipsis is true', function() {
                 columnModel.set('columns', [
-                    {name: 'c1', isEllipsis: true}
+                    {name: 'c1', ellipsis: true}
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });

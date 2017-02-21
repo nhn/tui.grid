@@ -71,7 +71,7 @@ tui = window.tui = tui || {};
  *          If set to null or false, pagination will not be used.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
- *          @param {boolean} [options.columns.isEllipsis=false] - If set to true, ellipsis will be used
+ *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
  *              for overflowing content.
  *          @param {string} [options.columns.align=left] - Horizontal alignment of the column content.
  *              Available values are 'left', 'center', 'right'.
