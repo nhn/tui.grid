@@ -18,8 +18,8 @@ describe('view.layout.body', function() {
 
         modelManager = new ModelManager({
             columns: [
-                {columnName: 'c1'},
-                {columnName: 'c2'}
+                {name: 'c1'},
+                {name: 'c2'}
             ]
         }, domState);
         spyOn(modelManager.coordColumnModel, 'getColumnWidthList').and.returnValue([30, 40]);

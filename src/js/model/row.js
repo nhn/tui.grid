@@ -77,7 +77,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _getColumnNameList: function() {
         var columnModels = this.collection.columnModel.getVisibleColumns(null, true);
 
-        return _.pluck(columnModels, 'columnName');
+        return _.pluck(columnModels, 'name');
     },
 
     /**

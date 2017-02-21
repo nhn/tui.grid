@@ -7,13 +7,13 @@ var classNameConst = require('common/classNameConst');
 describe('Data.RowList - simple', function() {
     var columns = [
         {
-            columnName: 'c1',
+            name: 'c1',
             title: 'c1',
             editOption: {
                 type: 'text'
             }
         }, {
-            columnName: 'c2',
+            name: 'c2',
             title: 'c2',
             editOption: {
                 type: 'text'
@@ -239,13 +239,13 @@ describe('Data.RowList - simple', function() {
         beforeEach(function() {
             columnModel.set('columns', [
                 {
-                    columnName: 'c1',
+                    name: 'c1',
                     editOption: {
                         type: 'text'
                     }
                 },
                 {
-                    columnName: 'c2',
+                    name: 'c2',
                     editOption: {
                         type: 'normal'
                     }

@@ -317,7 +317,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var result = false;
 
         if (row && column) {
-            result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
+            result = this.focus(row.get('rowKey'), column.name, isScrollable);
         }
 
         return result;
@@ -360,7 +360,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var result = false;
 
         if (row && column) {
-            result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
+            result = this.focusIn(row.get('rowKey'), column.name, isScrollable);
         }
         return result;
     },
@@ -586,7 +586,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         if (this.has(true)) {
             index = Math.max(Math.min(columnIndex + offset, columns.length - 1), 0);
-            columnName = columns[index] && columns[index].columnName;
+            columnName = columns[index] && columns[index].name;
         }
         return columnName;
     },
@@ -749,7 +749,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     firstColumnName: function() {
         var columns = this.columnModel.getVisibleColumns();
 
-        return columns[0].columnName;
+        return columns[0].name;
     },
 
     /**
@@ -760,7 +760,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var columns = this.columnModel.getVisibleColumns();
         var lastIndex = columns.length - 1;
 
-        return columns[lastIndex].columnName;
+        return columns[lastIndex].name;
     },
 
     /**

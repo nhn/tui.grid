@@ -14,8 +14,8 @@ var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 function create(whichSide, columns) {
     var columnModel = new ColumnModel({
         columns: columns || [
-            {columnName: 'c1'},
-            {columnName: 'c2'}
+            {name: 'c1'},
+            {name: 'c2'}
         ]
     });
     var coordColumnModel = new Model();
@@ -117,17 +117,17 @@ describe('Header', function() {
             header = create(frameConst.R, [
                 {
                     title: 'c1',
-                    columnName: 'c1',
+                    name: 'c1',
                     isSortable: true
                 },
                 {
                     title: 'c2',
-                    columnName: 'c2',
+                    name: 'c2',
                     isSortable: true
                 },
                 {
                     title: 'c3',
-                    columnName: 'c3'
+                    name: 'c3'
                 }
             ]);
             header.render();
@@ -154,11 +154,11 @@ describe('Header', function() {
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
-            var $btns = header.$el.find('.' + classNameConst.BTN_SORT),
-                eventData = {
-                    columnName: 'c1',
-                    isAscending: true
-                };
+            var $btns = header.$el.find('.' + classNameConst.BTN_SORT);
+            var eventData = {
+                columnName: 'c1',
+                isAscending: true
+            };
 
             header.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(0)).toHaveClass(classNameConst.BTN_SORT_UP);
@@ -179,40 +179,40 @@ describe('Header', function() {
         var columnData, header;
         var columnMergeList = [
             {
-                columnName: 'merge1',
+                name: 'merge1',
                 title: 'c1-c2',
-                columnNameList: ['c1', 'c2']
+                childNames: ['c1', 'c2']
             },
             {
-                columnName: 'merge2',
+                name: 'merge2',
                 title: 'c1-c2-c3',
-                columnNameList: ['merge1', 'c3']
+                childNames: ['merge1', 'c3']
             },
             {
-                columnName: 'merge3',
+                name: 'merge3',
                 title: 'c1-c2-c3-c4',
-                columnNameList: ['merge2', 'c4']
+                childNames: ['merge2', 'c4']
             }
         ];
         var columns = [
             {
                 title: 'c1',
-                columnName: 'c1',
+                name: 'c1',
                 width: 30
             },
             {
                 title: 'c2',
-                columnName: 'c2',
+                name: 'c2',
                 width: 40
             },
             {
                 title: 'c3',
-                columnName: 'c3',
+                name: 'c3',
                 width: 45
             },
             {
                 title: 'c4',
-                columnName: 'c4',
+                name: 'c4',
                 width: 20
             }
         ];
@@ -253,9 +253,9 @@ describe('Header', function() {
                 expect(maxRow).toEqual(4);
                 header.columnModel.set('columnMerge', [
                     {
-                        columnName: 'merge1',
+                        name: 'merge1',
                         title: 'c1-c2',
-                        columnNameList: ['c1', 'c2']
+                        childNames: ['c1', 'c2']
                     }
                 ]);
                 hierarchyList = header._getColumnHierarchyList();
@@ -365,16 +365,16 @@ describe('Header', function() {
     describe('[selected]', function() {
         var header;
 
-        function isHeaderSelected(columnName) {
-            return header.$el.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']')
+        function isHeaderSelected(name) {
+            return header.$el.find('th[' + ATTR_COLUMN_NAME + '=' + name + ']')
                 .is('.' + classNameConst.CELL_SELECTED);
         }
 
         beforeEach(function() {
             header = create(frameConst.R, [
-                {columnName: 'c1'},
-                {columnName: 'c2'},
-                {columnName: 'c3'}
+                {name: 'c1'},
+                {name: 'c2'},
+                {name: 'c3'}
             ]);
         });
 
@@ -432,12 +432,12 @@ describe('Header', function() {
             it('add selected class to the merged header which contains selected headers', function() {
                 header.columnModel.set('columnMerge', [
                     {
-                        columnName: 'c1-c2',
-                        columnNameList: ['c1', 'c2']
+                        name: 'c1-c2',
+                        childNames: ['c1', 'c2']
                     },
                     {
-                        columnName: 'c1-c2-c3',
-                        columnNameList: ['c1-c2', 'c3']
+                        name: 'c1-c2-c3',
+                        childNames: ['c1-c2', 'c3']
                     }
                 ]);
                 header.render();

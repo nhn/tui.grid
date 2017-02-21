@@ -134,7 +134,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         _.each(columnWidths, function(width, index) {
             htmlList.push(this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
-                columnName: columns[index].columnName,
+                columnName: columns[index].name,
                 width: width + CELL_BORDER_WIDTH
             }));
         }, this);
@@ -148,11 +148,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @returns {Array.<String>}
      */
     _getSelectedColumnNames: function() {
-        var columnRange = this.selectionModel.get('range').column,
-            visibleColumns = this.columnModel.getVisibleColumns(),
-            selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
+        var columnRange = this.selectionModel.get('range').column;
+        var visibleColumns = this.columnModel.getVisibleColumns();
+        var selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
 
-        return _.pluck(selectedColumns, 'columnName');
+        return _.pluck(selectedColumns, 'name');
     },
 
     _onDragMove: function(gridEvent) {
@@ -171,8 +171,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getContainingMergedColumnNames: function(columnNames) {
-        var columnModel = this.columnModel,
-            mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'columnName');
+        var columnModel = this.columnModel;
+        var mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'name');
 
         return _.filter(mergedColumnNames, function(mergedColumnName) {
             var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
@@ -187,8 +187,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _refreshSelectedHeaders: function() {
-        var $ths = this.$el.find('th'),
-            columnNames, mergedColumnNames;
+        var $ths = this.$el.find('th');
+        var columnNames, mergedColumnNames;
 
         if (this.selectionModel.hasSelection()) {
             columnNames = this._getSelectedColumnNames();
@@ -371,6 +371,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._$currentSortBtn = this.$el.find(
             'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
+
         this._$currentSortBtn.addClass(sortOptions.isAscending ?
             classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
         );
@@ -420,7 +421,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
         var headerHeight = this.headerHeight;
         var rowMarkupList = new Array(maxRowCount);
-        var columnNameList = new Array(maxRowCount);
+        var columnNames = new Array(maxRowCount);
         var colSpanList = [];
         var rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1;
         var rowSpan = 1;
@@ -432,7 +433,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             var curHeight = 0;
 
             _.each(hierarchy, function(columnModel, j) {
-                var columnName = columnModel.columnName;
+                var columnName = columnModel.name;
                 var classNames = [
                     classNameConst.CELL,
                     classNameConst.CELL_HEAD
@@ -450,13 +451,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 } else {
                     curHeight += height + 1;
                 }
-                if (columnNameList[j] === columnName) {
+                if (columnNames[j] === columnName) {
                     rowMarkupList[j].pop();
                     colSpanList[j] += 1;
                 } else {
                     colSpanList[j] = 1;
                 }
-                columnNameList[j] = columnName;
+                columnNames[j] = columnName;
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
                     attrColumnName: ATTR_COLUMN_NAME,
@@ -485,9 +486,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _getHierarchyMaxRowCount: function(hierarchyList) {
         var lengthList = [0];
+
         _.each(hierarchyList, function(hierarchy) {
             lengthList.push(hierarchy.length);
         }, this);
+
         return Math.max.apply(Math, lengthList);
     },
 
@@ -497,11 +500,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnHierarchyList: function() {
-        var columns = this._getColumnData().columns,
-            hierarchyList;
+        var columns = this._getColumnData().columns;
+        var hierarchyList;
 
-        hierarchyList = _.map(columns, function(columnModel) {
-            return this._getColumnHierarchy(columnModel).reverse();
+        hierarchyList = _.map(columns, function(column) {
+            return this._getColumnHierarchy(column).reverse();
         }, this);
 
         return hierarchyList;
@@ -509,22 +512,20 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
-     *
-     * @param {Object} columnModel 컬럼모델
+     * @param {Object} column - column
      * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
      * @returns {Array} 계층구조 결과값
      * @private
      */
-    _getColumnHierarchy: function(columnModel, resultList) {
+    _getColumnHierarchy: function(column, resultList) {
         var columnMergeList = this.columnModel.get('columnMerge');
+
         resultList = resultList || [];
-        /* istanbul ignore else */
-        if (columnModel) {
-            resultList.push(columnModel);
-            /* istanbul ignore else */
+        if (column) {
+            resultList.push(column);
             if (columnMergeList) {
                 _.each(columnMergeList, function(columnMerge) {
-                    if ($.inArray(columnModel.columnName, columnMerge.columnNameList) !== -1) {
+                    if ($.inArray(column.name, columnMerge.childNames) !== -1) {
                         this._getColumnHierarchy(columnMerge, resultList);
                     }
                 }, this);

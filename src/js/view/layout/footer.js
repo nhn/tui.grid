@@ -50,7 +50,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
+        this.listenTo(this.columnModel, 'setFooterContent', this._setColumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
@@ -121,7 +121,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {string} contents - HTML string
      * @private
      */
-    _setcolumnContent: function(columnName, contents) {
+    _setColumnContent: function(columnName, contents) {
         var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
         $th.html(contents);
@@ -136,7 +136,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _onChangeSummaryValue: function(columnName, valueMap) {
         var contents = this._generateValueHTML(columnName, valueMap);
 
-        this._setcolumnContent(columnName, contents);
+        this._setColumnContent(columnName, contents);
     },
 
     /**
@@ -168,11 +168,11 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
         return _.reduce(columns, function(memo, column, index) {
-            var columnName = column.columnName;
+            var columnName = column.name;
             var valueMap;
 
             if (summaryModel) {
-                valueMap = summaryModel.getValue(column.columnName);
+                valueMap = summaryModel.getValue(column.name);
             }
 
             return memo + this.templateHeader({

@@ -79,7 +79,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     _initializeNumberColumn: function(metaColumns) {
         var hasNumberColumn = this.get('hasNumberColumn');
         var numberColumn = {
-            columnName: '_number',
+            name: '_number',
             align: 'center',
             title: 'No.',
             isFixedWidth: true,
@@ -101,14 +101,14 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     _initializeButtonColumn: function(metaColumns) {
         var selectType = this.get('selectType');
         var buttonColumn = {
-            columnName: '_button',
+            name: '_button',
             isHidden: false,
             align: 'center',
+            width: 40,
+            isFixedWidth: true,
             editOption: {
                 type: 'mainButton'
-            },
-            isFixedWidth: true,
-            width: 40
+            }
         };
 
         if (selectType === 'checkbox') {
@@ -130,8 +130,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _extendColumns: function(columnObj, columns) {
-        var columnName = columnObj.columnName;
-        var index = _.findIndex(columns, {columnName: columnName});
+        var columnName = columnObj.name;
+        var index = _.findIndex(columns, {name: columnName});
 
         if (index === -1) {
             columns.push(columnObj);
@@ -166,7 +166,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         } else {
             columns = this.get('dataColumns');
         }
-        return _.findIndex(columns, {columnName: columnName});
+        return _.findIndex(columns, {name: columnName});
     },
 
     /**
@@ -182,7 +182,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
-     * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleColumns를 반환한다.
+     * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList를 반환한다.
      * @param {boolean} [withMeta=false] 메타컬럼 포함 여부. 지정하지 않으면 데이터컬럼리스트 기준으로 반환한다.
      * @returns {Array}  조회한 컬럼모델 배열
      */
@@ -301,7 +301,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var relationListMap = {};
 
         _.each(columns, function(columnModel) {
-            var columnName = columnModel.columnName;
+            var columnName = columnModel.name;
             if (columnModel.relationList) {
                 relationListMap[columnName] = columnModel.relationList;
             }
@@ -315,14 +315,14 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('dataColumns');
-        var ignoreColumnNameList = [];
+        var ignoredColumnNames = [];
 
         _.each(columnModelLsit, function(columnModel) {
             if (columnModel.isIgnore) {
-                ignoreColumnNameList.push(columnModel.columnName);
+                ignoredColumnNames.push(columnModel.name);
             }
         });
-        return ignoreColumnNameList;
+        return ignoredColumnNames;
     },
 
     /**
@@ -341,7 +341,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         }
 
         division = _.partition(columns, function(model) {
-            return util.isMetaColumn(model.columnName);
+            return util.isMetaColumn(model.name);
         }, this);
         metaColumns = this._initializeMetaColumns(division[0]);
         dataColumns = division[1];
@@ -351,7 +351,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         this.set({
             metaColumns: metaColumns,
             dataColumns: dataColumns,
-            columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'columnName'),
+            columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'name'),
             relationListMap: relationListMap,
             columnFixCount: Math.max(0, columnFixCount),
             visibleColumns: visibleColumns
@@ -430,10 +430,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
                 searchedNames.push(name);
             } else {
                 columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
-                    columnName: name
+                    name: name
                 });
                 if (columnMergeInfoItem) {
-                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.columnNameList);
+                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.childNames);
                 }
             }
         }

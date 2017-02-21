@@ -11,7 +11,7 @@ function createColumns(names) {
     tui.util.forEachArray(names, function(name, editType) {
         models.push({
             title: name,
-            columnName: name,
+            name: name,
             editOption: {
                 type: editType || 'text'
             }

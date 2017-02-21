@@ -10,13 +10,13 @@ describe('data.rowList', function() {
         columnModel = new ColumnModelData({
             columns: [
                 {
-                    columnName: 'c1',
+                    name: 'c1',
                     title: 'c1',
                     editOption: {
                         type: 'text'
                     }
                 }, {
-                    columnName: 'c2',
+                    name: 'c2',
                     title: 'c2',
                     editOption: {
                         type: 'text'

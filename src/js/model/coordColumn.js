@@ -75,7 +75,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
             var minWidth = Math.max(width, commonMinWidth);
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
-            if (util.isMetaColumn(columnModel.columnName)) {
+            if (util.isMetaColumn(columnModel.name)) {
                 minWidth = width;
             }
 

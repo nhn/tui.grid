@@ -176,10 +176,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         var columns = this.columnModel.getVisibleColumns(whichSide, true);
         var html = '';
 
-        _.each(columns, function(columnModel, index) {
+        _.each(columns, function(column, index) {
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
-                columnName: columnModel.columnName,
+                columnName: column.name,
                 width: columnWidthList[index] + CELL_BORDER_WIDTH
             });
         }, this);

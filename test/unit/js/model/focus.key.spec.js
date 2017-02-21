@@ -14,7 +14,7 @@ describe('model/focus', function() {
         columnModel = new ColumnModelData({
             columns: _.map(['c1', 'c2', 'c3', 'c4', 'c5'], function(name) {
                 return {
-                    columnName: name,
+                    name: name,
                     editOption: {
                         type: 'text'
                     }

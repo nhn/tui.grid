@@ -61,9 +61,9 @@ describe('model.dimension', function() {
 
             dimension.columnModel.set({
                 columns: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'}
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'}
                 ],
                 columnFixCount: 3
             });
@@ -91,9 +91,9 @@ describe('model.dimension', function() {
             });
             dimension.columnModel.set({
                 columns: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'}
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'}
                 ],
                 columnFixCount: 3
             });

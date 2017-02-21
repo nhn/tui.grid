@@ -20,12 +20,12 @@ describe('view.layout.body', function() {
             columns: [
                 {
                     title: 'c1',
-                    columnName: 'c1',
+                    name: 'c1',
                     width: 30
                 },
                 {
                     title: 'c2',
-                    columnName: 'c2',
+                    name: 'c2',
                     width: 40
                 }
             ]

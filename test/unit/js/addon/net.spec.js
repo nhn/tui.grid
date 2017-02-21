@@ -6,7 +6,7 @@ var renderStateMap = require('common/constMap').renderState;
 
 describe('addon.net', function() {
     var columns = [{
-        columnName: 'c1'
+        name: 'c1'
     }];
     var rowList = [
         {c1: '0-1'},

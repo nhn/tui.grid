@@ -9,13 +9,13 @@ function create(data, autoColumnNames) {
     var columnModel = new ColumnModelData({
         columns: [
             {
-                columnName: 'c1',
+                name: 'c1',
                 editOption: {
                     type: 'text'
                 }
             },
             {
-                columnName: 'c2',
+                name: 'c2',
                 editOption: {
                     type: 'text'
                 }

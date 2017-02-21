@@ -73,8 +73,8 @@ describe('model.renderer', function() {
     describe('if showDummyRows:true', function() {
         beforeEach(function() {
             columnModel.set('columns', [
-                {columnName: 'c1'},
-                {columnName: 'c2'}
+                {name: 'c1'},
+                {name: 'c2'}
             ]);
             dimensionModel.set({
                 rowHeight: 10 - CELL_BORDER_WIDTH,

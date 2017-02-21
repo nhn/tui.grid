@@ -32,7 +32,7 @@ describe('view/focusLayer', function() {
 
         modelManager = createModelManager(1);
         modelManager.columnModel.set('columns', [
-            {columnName: 'c1'}, {columnName: 'c2'}
+            {name: 'c1'}, {name: 'c2'}
         ]);
         modelManager.dataModel.setRowList([
             {c1: '0-1', c2: '0-2'},

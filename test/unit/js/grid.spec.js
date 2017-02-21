@@ -1,11 +1,13 @@
 'use strict';
 
+var _ = require('underscore');
+
 describe('grid', function() {
     function createGrid(columnNames, options) {
         var columns = [];
         _.each(columnNames, function(columnName) {
             columns.push({
-                columnName: columnName
+                name: columnName
             });
         });
         options = _.extend({

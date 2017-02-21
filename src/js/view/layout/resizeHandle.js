@@ -91,7 +91,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
             return this.template({
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
-                columnName: columnModel.columnName,
+                columnName: columnModel.name,
                 height: this.headerHeight
             });
         }, this);

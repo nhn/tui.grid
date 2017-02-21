@@ -270,7 +270,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _getTypeByColumnIndex: function(columnIndex) {
         var visibleColumns = this.columnModel.getVisibleColumns(null, true);
-        var columnName = visibleColumns[columnIndex].columnName;
+        var columnName = visibleColumns[columnIndex].name;
 
         switch (columnName) {
             case '_button':
@@ -594,15 +594,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns whether given range is a single cell. (include merged cell)
-     * @param {Array.<String>} columnNameList - columnNameList
+     * @param {Array.<String>} columnNames - columnNames
      * @param {Array.<Object>} rowList - rowList
      * @returns {Boolean}
      */
-    _isSingleCell: function(columnNameList, rowList) {
-        var isSingleColumn = columnNameList.length === 1;
+    _isSingleCell: function(columnNames, rowList) {
+        var isSingleColumn = columnNames.length === 1;
         var isSingleRow = rowList.length === 1;
         var isSingleMergedCell = isSingleColumn && !isSingleRow &&
-            (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
+            (rowList[0].getRowSpanData(columnNames[0]).count === rowList.length);
 
         return (isSingleColumn && isSingleRow) || isSingleMergedCell;
     },
@@ -651,7 +651,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var columnRange = this.get('range').column;
         var columns = this.columnModel.getVisibleColumns().slice(columnRange[0], columnRange[1] + 1);
 
-        return _.pluck(columns, 'columnName');
+        return _.pluck(columns, 'name');
     },
 
     /**
@@ -848,7 +848,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var startRow = dataModel.at(spannedRange.row[0]);
         var endRow = dataModel.at(spannedRange.row[1]);
         var newSpannedRange = $.extend({}, spannedRange);
-        var startRowSpanDataMap, endRowSpanDataMap, columnName, param;
+        var startRowSpanDataMap, endRowSpanDataMap, param;
 
         if (!startRow || !endRow) {
             return newSpannedRange;
@@ -859,9 +859,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
         _.each(columns, function(columnModel) {
-            columnName = columnModel.columnName;
             param = {
-                columnName: columnName,
+                columnName: columnModel.name,
                 startIndex: spannedRange.row[0],
                 endIndex: spannedRange.row[1],
                 endRowSpanDataMap: endRowSpanDataMap,

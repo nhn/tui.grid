@@ -505,7 +505,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var data = {};
 
         _.each(columns, function(columnModel) {
-            data[columnModel.columnName] = '';
+            data[columnModel.name] = '';
         }, this);
 
         return data;
@@ -1008,7 +1008,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         }, this);
 
         columnNames = _.map(columnIdxes, function(idx) {
-            return columnModels[idx].columnName;
+            return columnModels[idx].name;
         });
 
         _.each(rowKeys, function(rowKey) {
@@ -1071,13 +1071,13 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         ]
      */
     validate: function() {
-        var errorRows = [],
-            requiredColumnNames = _.chain(this.columnModel.getVisibleColumns())
-                .filter(function(columnModel) {
-                    return columnModel.isRequired === true;
-                })
-                .pluck('columnName')
-                .value();
+        var errorRows = [];
+        var requiredColumnNames = _.chain(this.columnModel.getVisibleColumns())
+            .filter(function(columnModel) {
+                return columnModel.isRequired === true;
+            })
+            .pluck('name')
+            .value();
 
         this.each(function(row) {
             var errorCells = [];
@@ -1135,7 +1135,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             row = this.append({})[0];
         }
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
-            columnName = columnModel.at(columnIdx, true).columnName;
+            columnName = columnModel.at(columnIdx, true).name;
             cellState = row.getCellState(columnName);
             rowSpanData = row.getRowSpanData(columnName);
 

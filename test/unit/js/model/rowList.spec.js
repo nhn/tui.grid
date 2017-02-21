@@ -12,18 +12,18 @@ describe('model.rowList', function() {
     var columns = [
         {
             title: 'c1',
-            columnName: 'c1'
+            name: 'c1'
         },
         {
             title: 'c2',
-            columnName: 'c2',
+            name: 'c2',
             editOption: {
                 type: 'text'
             }
         },
         {
             title: 'c3',
-            columnName: 'c3',
+            name: 'c3',
             editOption: {
                 type: 'select',
                 list: [
@@ -284,7 +284,7 @@ describe('model.rowList', function() {
         });
 
         function checkAllDataDisabled(row, expectedValue) {
-            var columnNames = _.pluck(columnModel.getVisibleColumns(null, true), 'columnName');
+            var columnNames = _.pluck(columnModel.getVisibleColumns(null, true), 'name');
 
             return _.every(columnNames, function(columnName) {
                 var data = row.get(columnName);

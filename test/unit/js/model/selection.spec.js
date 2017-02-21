@@ -9,9 +9,9 @@ var SelectionModel = require('model/selection');
 function create(rowList) {
     var columnModel = new ColumnModel({
         columns: [
-            {columnName: 'c1'},
-            {columnName: 'c2'},
-            {columnName: 'c3'}
+            {name: 'c1'},
+            {name: 'c2'},
+            {name: 'c3'}
         ]
     });
     var dataModel = new DataModel(null, {
