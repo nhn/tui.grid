@@ -37,7 +37,10 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
-    useClientSort: true
+    useClientSort: true,
+    columnOptions: {
+        resizable: true
+    }
 };
 
 /**
@@ -58,7 +61,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
         this.focusModel = this._createFocusModel(options, domState, domEventBus);
-        this.coordColumnModel = this._createCoordColumnModel(domEventBus);
+        this.coordColumnModel = this._createCoordColumnModel(options.columnOptions, domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(domEventBus);
@@ -156,15 +159,17 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordColumn model and returns it
+     * @param  {Object} options - Column options
      * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/coordColumnModel}
      * @private
      */
-    _createCoordColumnModel: function(domEventBus) {
+    _createCoordColumnModel: function(options, domEventBus) {
         return new CoordColumnModel(null, {
             columnModel: this.columnModel,
             dimensionModel: this.dimensionModel,
-            domEventBus: domEventBus
+            domEventBus: domEventBus,
+            resizable: options.resizable
         });
     },
 

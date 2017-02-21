@@ -391,8 +391,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             tBody: this._getTableBodyMarkup()
         }));
 
-        this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
-        this.$el.append(this._renderChildren());
+        if (this.coordColumnModel.isResizable()) {
+            this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
+            this.$el.append(this._renderChildren());
+        }
+
         return this;
     },
 

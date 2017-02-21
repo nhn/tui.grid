@@ -20,6 +20,9 @@ function create(whichSide, columns) {
     });
     var coordColumnModel = new Model();
     coordColumnModel.getColumnWidthList = _.noop;
+    coordColumnModel.isResizable = function() {
+        return true;
+    };
 
     return new HeaderView({
         whichSide: whichSide || frameConst.R,
