@@ -178,7 +178,7 @@ describe('rowList.paste()', function() {
 
     it('숨겨진 컬럼은 제외하고 처리한다.', function() {
         var columns = createColumns(['c1', 'c2', 'c3']);
-        columns[1].isHidden = true;
+        columns[1].hidden = true;
         rowList = createRowList(columns);
         rowList.setRowList([
             {

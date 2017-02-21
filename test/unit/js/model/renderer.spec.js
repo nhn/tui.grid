@@ -95,7 +95,7 @@ describe('model.renderer', function() {
         {
             title: 'columnName7',
             name: 'columnName7',
-            isHidden: true
+            hidden: true
         }
     ];
     var originalRowList = [

@@ -146,7 +146,7 @@ describe('data.rowList', function() {
         {
             title: 'hidden',
             name: 'hidden',
-            isHidden: true
+            hidden: true
         }
     ];
     var originalData = [

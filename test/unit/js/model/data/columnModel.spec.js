@@ -80,7 +80,7 @@ describe('data.columnModel', function() {
             {
                 title: 'hidden',
                 name: 'hidden',
-                isHidden: true
+                hidden: true
             }
         ];
     });
@@ -121,14 +121,14 @@ describe('data.columnModel', function() {
     });
 
     describe('_initializeNumberColumn()', function() {
-        it('hasNumberColumn: false라면 _number 컬럼의 isHidden 프로퍼티를 true로 설정한다.', function() {
+        it('hasNumberColumn: false라면 _number 컬럼의 hidden 프로퍼티를 true로 설정한다.', function() {
             expectedColumnModel = {
                 name: '_number',
                 align: 'center',
                 isFixedWidth: true,
                 title: 'No.',
                 width: 60,
-                isHidden: true
+                hidden: true
             };
 
             columnModelInstance.set('hasNumberColumn', false, {silent: true});
@@ -158,7 +158,7 @@ describe('data.columnModel', function() {
                 title: '<input type="checkbox"/>',
                 name: '_button',
                 align: 'center',
-                isHidden: false,
+                hidden: false,
                 isFixedWidth: true,
                 editOption: {
                     type: 'mainButton'
@@ -176,7 +176,7 @@ describe('data.columnModel', function() {
                 title: '선택',
                 name: '_button',
                 align: 'center',
-                isHidden: false,
+                hidden: false,
                 isFixedWidth: true,
                 editOption: {
                     type: 'mainButton'
@@ -188,7 +188,7 @@ describe('data.columnModel', function() {
             expect(_.findWhere(sampleColumns, {name: '_button'})).toEqual(expectedColumnModel);
         });
 
-        it('selectType 이 없을때 isHidden: true 로 설정된다.', function() {
+        it('selectType 이 없을때 hidden: true 로 설정된다.', function() {
             var sampleColumnModel = {
                 name: '_button',
                 editOption: {
@@ -199,7 +199,7 @@ describe('data.columnModel', function() {
                 },
                 width: 40,
                 isFixedWidth: true,
-                isHidden: true
+                hidden: true
             };
             expectedColumnModel = $.extend(
                 _.findWhere(sampleColumns, {name: '_button'}),
@@ -228,15 +228,15 @@ describe('data.columnModel', function() {
     });
 
     describe('isLside()', function() {
-        it('isHidden 이 아닌 컬럼 중 ColumnFixCount 기준으로 L side 여부를 판단한다.', function() {
+        it('hidden 이 아닌 컬럼 중 ColumnFixCount 기준으로 L side 여부를 판단한다.', function() {
             sampleColumns = [
                 {
                     name: '_button',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: '_number',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2'
@@ -249,7 +249,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
@@ -270,11 +270,11 @@ describe('data.columnModel', function() {
         sampleColumns = [
             {
                 name: '_button',
-                isHidden: true
+                hidden: true
             },
             {
                 name: '_number',
-                isHidden: true
+                hidden: true
             },
             {
                 name: 'column2'
@@ -287,7 +287,7 @@ describe('data.columnModel', function() {
             },
             {
                 name: 'column5',
-                isHidden: true
+                hidden: true
             }
         ];
         columnModelInstance.set({
@@ -307,11 +307,11 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: 'column0',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2'
@@ -324,7 +324,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
@@ -360,19 +360,19 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: '_button',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: '_number',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column0',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2'
@@ -385,7 +385,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
@@ -394,7 +394,7 @@ describe('data.columnModel', function() {
             });
         });
 
-        it('_number, _button 을 제외하고 isHidden: true 가 아닌 columns 를 반환한다.', function() {
+        it('_number, _button 을 제외하고 hidden: true 가 아닌 columns 를 반환한다.', function() {
             var visibleColumns;
 
             visibleColumns = columnModelInstance.getVisibleColumns();
@@ -435,19 +435,19 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: '_button',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: '_number',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column0',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2'
@@ -460,7 +460,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
@@ -487,7 +487,7 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: 'column0',
-                    isHidden: true,
+                    hidden: true,
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
@@ -508,7 +508,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2',
@@ -549,7 +549,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
 
@@ -584,7 +584,7 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: 'column0',
-                    isHidden: true,
+                    hidden: true,
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
@@ -605,7 +605,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2',
@@ -646,7 +646,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
@@ -705,7 +705,7 @@ describe('data.columnModel', function() {
             expect(_.isEqual(visibleColumns, expectResult)).toBe(true);
         });
 
-        it('컬럼모델의 "isHidden"속성이 동적으로 변경되는지 확인한다.', function() {
+        it('컬럼모델의 "hidden"속성이 동적으로 변경되는지 확인한다.', function() {
             columnModelInstance.set('columnMerge', [
                 {
                     name: 'merge1',
@@ -715,24 +715,24 @@ describe('data.columnModel', function() {
             ]);
 
             columnModelInstance.setHidden(['column3', 'column4'], true);
-            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column4'].isHidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column4'].hidden).toBe(true);
 
             columnModelInstance.setHidden(['column1', 'column2', 'column3', 'column4'], false);
-            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column4'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column4'].hidden).toBe(false);
 
             columnModelInstance.setHidden(['merge1', 'column3'], true);
-            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(true);
 
             columnModelInstance.setHidden(['merge1', 'column3'], false);
-            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(false);
         });
     });
 
@@ -761,7 +761,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column1',
-                    isHidden: true
+                    hidden: true
                 },
                 {
                     name: 'column2',
@@ -802,7 +802,7 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column5',
-                    isHidden: true
+                    hidden: true
                 }
             ];
             columnModelInstance.set({
