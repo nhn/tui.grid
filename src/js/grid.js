@@ -82,7 +82,7 @@ tui = window.tui = tui || {};
  *          @param {string} [options.columns.title] - The title of the column to be shown on the header.
  *          @param {number} [options.columns.width] - The width of the column. The unit is pixel.
  *          @param {boolean} [options.columns.hidden] - If set to true, the column will not be shown.
- *          @param {boolean} [options.columns.isFixedWidth=false] - If set to true, the width of the column
+ *          @param {boolean} [options.columns.fixedWidth=false] - If set to true, the width of the column
  *              will not be changed.
  *          @param {boolean} [options.columns.isRequired=false] - If set to true, the data of the column
  *              will be checked to be not empty whenever data is changed or calling {@link tui.Grid#validate}.

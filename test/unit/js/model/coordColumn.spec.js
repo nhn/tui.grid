@@ -215,9 +215,9 @@ describe('CoordColumn', function() {
             it('50(fixed), 50(fixed), 50(fixed), 100, 100', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 50, isFixedWidth: true},
-                        {name: 'c2', width: 50, isFixedWidth: true},
-                        {name: 'c3', width: 50, isFixedWidth: true},
+                        {name: 'c1', width: 50, fixedWidth: true},
+                        {name: 'c2', width: 50, fixedWidth: true},
+                        {name: 'c3', width: 50, fixedWidth: true},
                         {name: 'c4', width: 100},
                         {name: 'c5', width: 100}
                     ],
@@ -230,11 +230,11 @@ describe('CoordColumn', function() {
             it('50(fixed), 50(fixed), 50(fixed), 50(fixed), 50(fixed)', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 50, isFixedWidth: true},
-                        {name: 'c2', width: 50, isFixedWidth: true},
-                        {name: 'c3', width: 50, isFixedWidth: true},
-                        {name: 'c4', width: 50, isFixedWidth: true},
-                        {name: 'c5', width: 50, isFixedWidth: true}
+                        {name: 'c1', width: 50, fixedWidth: true},
+                        {name: 'c2', width: 50, fixedWidth: true},
+                        {name: 'c3', width: 50, fixedWidth: true},
+                        {name: 'c4', width: 50, fixedWidth: true},
+                        {name: 'c5', width: 50, fixedWidth: true}
                     ],
                     hasNumberColumn: false
                 };
@@ -268,7 +268,7 @@ describe('CoordColumn', function() {
         it('does not change the fixed-width column', function() {
             var columnAttrs = {
                 columns: [
-                    {name: 'c1', width: 50, isFixedWidth: true},
+                    {name: 'c1', width: 50, fixedWidth: true},
                     {name: 'c2', width: 50},
                     {name: 'c3', width: 50}
                 ],

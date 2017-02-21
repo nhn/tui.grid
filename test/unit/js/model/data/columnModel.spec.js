@@ -125,7 +125,7 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 name: '_number',
                 align: 'center',
-                isFixedWidth: true,
+                fixedWidth: true,
                 title: 'No.',
                 width: 60,
                 hidden: true
@@ -140,7 +140,7 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 name: '_number',
                 align: 'center',
-                isFixedWidth: true,
+                fixedWidth: true,
                 title: 'No.',
                 width: 60
             };
@@ -159,7 +159,7 @@ describe('data.columnModel', function() {
                 name: '_button',
                 align: 'center',
                 hidden: false,
-                isFixedWidth: true,
+                fixedWidth: true,
                 editOption: {
                     type: 'mainButton'
                 },
@@ -177,7 +177,7 @@ describe('data.columnModel', function() {
                 name: '_button',
                 align: 'center',
                 hidden: false,
-                isFixedWidth: true,
+                fixedWidth: true,
                 editOption: {
                     type: 'mainButton'
                 },
@@ -198,7 +198,7 @@ describe('data.columnModel', function() {
                     }]
                 },
                 width: 40,
-                isFixedWidth: true,
+                fixedWidth: true,
                 hidden: true
             };
             expectedColumnModel = $.extend(

@@ -82,7 +82,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             name: '_number',
             align: 'center',
             title: 'No.',
-            isFixedWidth: true,
+            fixedWidth: true,
             width: 60
         };
 
@@ -105,7 +105,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             hidden: false,
             align: 'center',
             width: 40,
-            isFixedWidth: true,
+            fixedWidth: true,
             editOption: {
                 type: 'mainButton'
             }
