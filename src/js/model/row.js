@@ -310,14 +310,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = tui.util.isExisty;
-        var notUseHtmlEntity = column.notUseHtmlEntity;
+        var useHtmlEntity = column.useHtmlEntity;
         var defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
         }
 
-        if (isTextType && !notUseHtmlEntity && tui.util.hasEncodableString(value)) {
+        if (isTextType && useHtmlEntity && tui.util.hasEncodableString(value)) {
             value = tui.util.encodeHTMLEntity(value);
         }
 

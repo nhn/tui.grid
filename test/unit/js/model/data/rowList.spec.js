@@ -41,9 +41,9 @@ describe('data.rowList', function() {
             }
         },
         {
-            title: 'notUseHtmlEntity',
-            name: 'notUseHtmlEntity',
-            notUseHtmlEntity: true
+            title: 'useHtmlEntity',
+            name: 'useHtmlEntity',
+            useHtmlEntity: false
         },
         {
             title: 'relationList',
@@ -340,7 +340,7 @@ describe('data.rowList', function() {
                 var sampleList = [{
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
-                        'notUseHtmlEntity': '<html></html>',
+                        'useHtmlEntity': '<html></html>',
                         'relationList': false,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
@@ -352,7 +352,7 @@ describe('data.rowList', function() {
                     }, {
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
-                        'notUseHtmlEntity': '<html></html>',
+                        'useHtmlEntity': '<html></html>',
                         'relationList': true,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
@@ -368,7 +368,7 @@ describe('data.rowList', function() {
 
                 expect(row.getValueString('none')).toBe('nope');
                 expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
-                expect(row.getValueString('notUseHtmlEntity')).toBe('<html></html>');
+                expect(row.getValueString('useHtmlEntity')).toBe('<html></html>');
                 expect(row.getValueString('relationList')).toBe('false');
                 expect(row.getValueString('text')).toBe('text');
                 expect(row.getValueString('text-convertible')).toBe('convertible-text');
@@ -381,7 +381,7 @@ describe('data.rowList', function() {
                 row = dataModelInstance.at(1);
                 expect(row.getValueString('none')).toBe('nope');
                 expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
-                expect(row.getValueString('notUseHtmlEntity')).toBe('<html></html>');
+                expect(row.getValueString('useHtmlEntity')).toBe('<html></html>');
                 expect(row.getValueString('relationList')).toBe('true');
                 expect(row.getValueString('text')).toBe('text');
                 expect(row.getValueString('text-convertible')).toBe('convertible-text');

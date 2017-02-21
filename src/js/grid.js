@@ -90,8 +90,8 @@ tui = window.tui = tui || {};
  *              doesn't have a value.
  *          @param {function} [options.columns.formatter] - The function that formats the value of the cell.
  *              The retrurn value of the function will be shown as the value of the cell.
- *          @param {boolean} [options.columns.notUseHtmlEntity=false] - If set to true, the value of the cell
- *              will not be encoded as HTML entities.
+ *          @param {boolean} [options.columns.useHtmlEntity=true] - If set to true, the value of the cell
+ *              will be encoded as HTML entities.
  *          @param {boolean} [options.columns.ignored=false] - If set to true, the value of the column will be
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
