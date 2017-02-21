@@ -24,8 +24,8 @@ describe('painter/controller', function() {
                 columnName: 'c1'
             };
 
-            controller.columnModel.set('columnModelList', [{
-                columnName: 'c1',
+            controller.columnModel.set('columns', [{
+                name: 'c1',
                 editOption: {
                     useViewMode: false
                 }
@@ -44,8 +44,8 @@ describe('painter/controller', function() {
                 columnName: 'c1'
             };
 
-            controller.columnModel.set('columnModelList', [{
-                columnName: 'c1',
+            controller.columnModel.set('columns', [{
+                name: 'c1',
                 editOption: {
                     useViewMode: true
                 }
@@ -61,8 +61,8 @@ describe('painter/controller', function() {
     describe('setValue()', function() {
         it('string value should be trimmed', function() {
             var controller = create();
-            controller.columnModel.set('columnModelList', [{
-                columnName: 'c1'
+            controller.columnModel.set('columns', [{
+                name: 'c1'
             }]);
             spyOn(controller.dataModel, 'setValue');
             controller.setValue({
@@ -78,8 +78,8 @@ describe('painter/controller', function() {
 
             beforeEach(function() {
                 controller = create();
-                controller.columnModel.set('columnModelList', [{
-                    columnName: 'c1',
+                controller.columnModel.set('columns', [{
+                    name: 'c1',
                     dataType: 'number'
                 }]);
             });

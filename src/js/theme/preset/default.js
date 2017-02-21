@@ -14,10 +14,6 @@ module.exports = {
         background: '#4daaf9',
         border: '#004082'
     },
-    toolbar: {
-        border: 'transparent',
-        background: 'transparent'
-    },
     heightResizeHandle: {
         border: '#ccc',
         background: '#fff'

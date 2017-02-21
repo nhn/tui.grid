@@ -1,15 +1,42 @@
 'use strict';
 
 var Factory = require('view/factory');
-var ModelManager = require('model/manager');
 var FooterView = require('view/layout/footer');
+var HeightResizeHandleVeiw = require('view/heightResizeHandle');
 var frameConst = require('common/constMap').frame;
 
 describe('[view/factory] ', function() {
     var modelManager;
 
     beforeEach(function() {
-        modelManager = new ModelManager();
+        modelManager = {
+            columnModel: {},
+            renderModel: {},
+            dimesnionModel: {},
+            summaryModel: {}
+        };
+    });
+
+    describe('createResizeHandle()', function() {
+        it('create resizeHandle with options', function() {
+            var domEventBus = {};
+            var factory = new Factory({
+                modelManager: modelManager,
+                domEventBus: domEventBus,
+                heightResizable: true
+            });
+            var resizeHandle = factory.createHeightResizeHandle();
+
+            expect(resizeHandle instanceof HeightResizeHandleVeiw).toBe(true);
+            expect(resizeHandle.diemnsionModel).toBe(modelManager.dimensionModel);
+            expect(resizeHandle.domEventBus).toBe(domEventBus);
+        });
+
+        it('if heightResizable:false, return null', function() {
+            var factory = new Factory({heightResizable: false});
+
+            expect(factory.createHeightResizeHandle()).toBeNull();
+        });
     });
 
     describe('createFooter()', function() {

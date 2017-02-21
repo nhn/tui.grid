@@ -10,12 +10,12 @@ var SelectionModel = require('model/selection');
 function create() {
     var domEventBus = DomEventBus.create();
     var columnModel = new ColumnModel({
-        columnModelList: [
-            {columnName: 'c1'},
-            {columnName: 'c2'},
-            {columnName: 'c3'},
-            {columnName: 'c4'},
-            {columnName: 'c5'}
+        columns: [
+            {name: 'c1'},
+            {name: 'c2'},
+            {name: 'c3'},
+            {name: 'c4'},
+            {name: 'c5'}
         ]
     });
     var dataModel = new DataModel(null, {

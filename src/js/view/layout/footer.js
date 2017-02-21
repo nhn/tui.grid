@@ -50,7 +50,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
+        this.listenTo(this.columnModel, 'setFooterContent', this._setColumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
@@ -107,10 +107,10 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     },
 
     _onChangeColumnWidth: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $ths = this.$el.find('th');
 
-        _.each(columnWidthList, function(columnWidth, index) {
+        _.each(columnWidths, function(columnWidth, index) {
             $ths.eq(index).css('width', columnWidth);
         });
     },
@@ -121,7 +121,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {string} contents - HTML string
      * @private
      */
-    _setcolumnContent: function(columnName, contents) {
+    _setColumnContent: function(columnName, contents) {
         var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
         $th.html(contents);
@@ -136,7 +136,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _onChangeSummaryValue: function(columnName, valueMap) {
         var contents = this._generateValueHTML(columnName, valueMap);
 
-        this._setcolumnContent(columnName, contents);
+        this._setColumnContent(columnName, contents);
     },
 
     /**
@@ -164,22 +164,22 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      */
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
-        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
+        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
-        return _.reduce(columnModelList, function(memo, column, index) {
-            var columnName = column.columnName;
+        return _.reduce(columns, function(memo, column, index) {
+            var columnName = column.name;
             var valueMap;
 
             if (summaryModel) {
-                valueMap = summaryModel.getValue(column.columnName);
+                valueMap = summaryModel.getValue(column.name);
             }
 
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnName,
                 className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
-                width: columnWidthList[index],
+                width: columnWidths[index],
                 value: this._generateValueHTML(columnName, valueMap)
             });
         }, '', this);

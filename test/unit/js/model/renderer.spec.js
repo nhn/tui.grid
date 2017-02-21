@@ -11,21 +11,21 @@ var Model = require('base/model');
 var frameConst = require('common/constMap').frame;
 
 describe('model.renderer', function() {
-    var columnModelList = [
+    var columns = [
         {
             title: 'columnName1',
-            columnName: 'columnName1'
+            name: 'columnName1'
         },
         {
             title: 'columnName2',
-            columnName: 'columnName2',
+            name: 'columnName2',
             editOption: {
                 type: 'text'
             }
         },
         {
             title: 'columnName3',
-            columnName: 'columnName3',
+            name: 'columnName3',
             editOption: {
                 type: 'select',
                 list: [
@@ -38,7 +38,7 @@ describe('model.renderer', function() {
         },
         {
             title: 'columnName4',
-            columnName: 'columnName4',
+            name: 'columnName4',
             editOption: {
                 type: 'checkbox',
                 list: [
@@ -51,7 +51,7 @@ describe('model.renderer', function() {
         },
         {
             title: 'columnName5',
-            columnName: 'columnName5',
+            name: 'columnName5',
             editOption: {
                 type: 'radio',
                 list: [
@@ -64,7 +64,7 @@ describe('model.renderer', function() {
         },
         {
             title: 'columnName6',
-            columnName: 'columnName6',
+            name: 'columnName6',
             relationList: [
                 {
                     columnList: ['columnName3', 'columnName4', 'columnName5'],
@@ -94,7 +94,7 @@ describe('model.renderer', function() {
         },
         {
             title: 'columnName7',
-            columnName: 'columnName7',
+            name: 'columnName7',
             isHidden: true
         }
     ];
@@ -137,7 +137,7 @@ describe('model.renderer', function() {
             hasNumberColumn: true,
             selectType: 'checkbox',
             columnFixCount: 2,
-            columnModelList: columnModelList
+            columns: columns
         });
         dataModel = new RowListData([], {
             columnModel: columnModel

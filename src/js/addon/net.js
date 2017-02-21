@@ -112,7 +112,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         _.assign(this, {
             // models
             dataModel: options.dataModel,
-            toolbarModel: options.toolbarModel,
             renderModel: options.renderModel,
 
             // extra objects
@@ -137,7 +136,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._initializeDataModelNetwork();
         this._initializeRouter();
         this._initializePagination();
-        this._showToolbarExcelBtns();
 
         this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged);
         this.listenTo(this.domEventBus, 'click:excel', this._onClickExcel);
@@ -212,26 +210,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             if (!Backbone.History.started) {
                 Backbone.history.start();
             }
-        }
-    },
-
-    /**
-     * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
-     * @private
-     */
-    _showToolbarExcelBtns: function() {
-        var toolbarModel = this.toolbarModel;
-        var api = this.api;
-
-        if (!toolbarModel) {
-            return;
-        }
-
-        if (api.downloadExcel) {
-            toolbarModel.set('isExcelButtonVisible', true);
-        }
-        if (api.downloadExcelAll) {
-            toolbarModel.set('isExcelAllButtonVisible', true);
         }
     },
 

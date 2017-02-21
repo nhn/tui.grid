@@ -168,12 +168,12 @@ describe('CoordColumn', function() {
         describe('totalWidth:500, minWidth:50', function() {
             it('100, 100, 100, 0, 0', function() {
                 var columnAttrs = { 
-                    columnModelList: [
-                        {columnName: 'c1', width: 100},
-                        {columnName: 'c2', width: 100},
-                        {columnName: 'c3', width: 100},
-                        {columnName: 'c4'},
-                        {columnName: 'c5'}
+                    columns: [
+                        {name: 'c1', width: 100},
+                        {name: 'c2', width: 100},
+                        {name: 'c3', width: 100},
+                        {name: 'c4'},
+                        {name: 'c5'}
                     ],
                     hasNumberColumn: false
                 };
@@ -184,12 +184,12 @@ describe('CoordColumn', function() {
             // total minimum width of empty column is bigger than remain width.
             it('150, 150, 150, 0, 0', function() {
                 var columnAttrs = {
-                    columnModelList: [
-                        {columnName: 'c1', width: 150},
-                        {columnName: 'c2', width: 150},
-                        {columnName: 'c3', width: 150},
-                        {columnName: 'c4'},
-                        {columnName: 'c5'}
+                    columns: [
+                        {name: 'c1', width: 150},
+                        {name: 'c2', width: 150},
+                        {name: 'c3', width: 150},
+                        {name: 'c4'},
+                        {name: 'c5'}
                     ],
                     hasNumberColumn: false
                 };
@@ -199,12 +199,12 @@ describe('CoordColumn', function() {
 
             it('30, 30, 30, 100, 100', function() {
                 var columnAttrs = {
-                    columnModelList: [
-                        {columnName: 'c1', width: 30},
-                        {columnName: 'c2', width: 30},
-                        {columnName: 'c3', width: 30},
-                        {columnName: 'c4', width: 100},
-                        {columnName: 'c5', width: 100}
+                    columns: [
+                        {name: 'c1', width: 30},
+                        {name: 'c2', width: 30},
+                        {name: 'c3', width: 30},
+                        {name: 'c4', width: 100},
+                        {name: 'c5', width: 100}
                     ],
                     hasNumberColumn: false
                 };
@@ -214,12 +214,12 @@ describe('CoordColumn', function() {
 
             it('50(fixed), 50(fixed), 50(fixed), 100, 100', function() {
                 var columnAttrs = {
-                    columnModelList: [
-                        {columnName: 'c1', width: 50, isFixedWidth: true},
-                        {columnName: 'c2', width: 50, isFixedWidth: true},
-                        {columnName: 'c3', width: 50, isFixedWidth: true},
-                        {columnName: 'c4', width: 100},
-                        {columnName: 'c5', width: 100}
+                    columns: [
+                        {name: 'c1', width: 50, isFixedWidth: true},
+                        {name: 'c2', width: 50, isFixedWidth: true},
+                        {name: 'c3', width: 50, isFixedWidth: true},
+                        {name: 'c4', width: 100},
+                        {name: 'c5', width: 100}
                     ],
                     hasNumberColumn: false
                 };
@@ -229,12 +229,12 @@ describe('CoordColumn', function() {
 
             it('50(fixed), 50(fixed), 50(fixed), 50(fixed), 50(fixed)', function() {
                 var columnAttrs = {
-                    columnModelList: [
-                        {columnName: 'c1', width: 50, isFixedWidth: true},
-                        {columnName: 'c2', width: 50, isFixedWidth: true},
-                        {columnName: 'c3', width: 50, isFixedWidth: true},
-                        {columnName: 'c4', width: 50, isFixedWidth: true},
-                        {columnName: 'c5', width: 50, isFixedWidth: true}
+                    columns: [
+                        {name: 'c1', width: 50, isFixedWidth: true},
+                        {name: 'c2', width: 50, isFixedWidth: true},
+                        {name: 'c3', width: 50, isFixedWidth: true},
+                        {name: 'c4', width: 50, isFixedWidth: true},
+                        {name: 'c5', width: 50, isFixedWidth: true}
                     ],
                     hasNumberColumn: false
                 };
@@ -247,10 +247,10 @@ describe('CoordColumn', function() {
     describe('setColumnWidth()', function() {
         it('changes width of given column and set variables', function() {
             var columnAttrs = {
-                columnModelList: [
-                    {columnName: 'c1', width: 50},
-                    {columnName: 'c2', width: 50},
-                    {columnName: 'c3', width: 50}
+                columns: [
+                    {name: 'c1', width: 50},
+                    {name: 'c2', width: 50},
+                    {name: 'c3', width: 50}
                 ],
                 hasNumberColumn: false
             };
@@ -267,10 +267,10 @@ describe('CoordColumn', function() {
 
         it('does not change the fixed-width column', function() {
             var columnAttrs = {
-                columnModelList: [
-                    {columnName: 'c1', width: 50, isFixedWidth: true},
-                    {columnName: 'c2', width: 50},
-                    {columnName: 'c3', width: 50}
+                columns: [
+                    {name: 'c1', width: 50, isFixedWidth: true},
+                    {name: 'c2', width: 50},
+                    {name: 'c3', width: 50}
                 ],
                 hasNumberColumn: false
             };
@@ -288,12 +288,12 @@ describe('CoordColumn', function() {
     describe('getColumnWidthList()', function() {
         it('ColumnFixCount 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             var columnAttrs = {
-                columnModelList: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'},
-                    {columnName: 'c4'},
-                    {columnName: 'c5'}
+                columns: [
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'},
+                    {name: 'c4'},
+                    {name: 'c5'}
                 ],
                 hasNumberColumn: false,
                 columnFixCount: 2
@@ -343,10 +343,10 @@ describe('CoordColumn', function() {
 
         beforeEach(function() {
             coordColumn = createCoordColumn({
-                columnModelList: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'}
+                columns: [
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'}
                 ],
                 columnFixCount: 2
             });

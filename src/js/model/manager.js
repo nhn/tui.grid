@@ -8,7 +8,6 @@ var _ = require('underscore');
 
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
-var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
 var CoordRowModel = require('./coordRow');
 var CoordColumnModel = require('./coordColumn');
@@ -23,7 +22,7 @@ var util = require('../common/util');
 
 var defaultOptions = {
     columnFixCount: 0,
-    columnModelList: [],
+    columns: [],
     keyColumnName: null,
     selectType: '',
     autoNumbering: true,
@@ -32,14 +31,13 @@ var defaultOptions = {
     fitToParentHeight: false,
     showDummyRows: false,
     minimumColumnWidth: 50,
-    notUseSmartRendering: false,
+    virtualScrolling: true,
     columnMerge: [],
-    copyOption: null,
+    copyOptions: null,
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
-    useClientSort: true,
-    toolbar: null
+    useClientSort: true
 };
 
 /**
@@ -65,7 +63,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
-        this.toolbarModel = this._createToolbarModel(options);
         this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
 
@@ -82,8 +79,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
             columnMerge: options.columnMerge,
-            copyOption: options.copyOption,
-            columnModelList: options.columnModelList
+            copyOptions: options.copyOptions,
+            columns: options.columns
         });
     },
 
@@ -103,16 +100,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             useClientSort: options.useClientSort
         });
-    },
-
-    /**
-     * Creates an instance of toolbar model and returns it.
-     * @param  {Object} options - Options
-     * @returns {module:model/toolbar} - A new instance
-     * @private
-     */
-    _createToolbarModel: function(options) {
-        return new ToolbarModel(options.toolbar);
     },
 
     /**
@@ -138,9 +125,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             isFixedHeight: options.isFixedHeight
         };
 
-        // isfixedRowHeight and notUseSmartRendering can not be false at the same time.
-        if (options.isFixedRowHeight === false && !options.notUseSmartRendering) {
-            util.warning('The isFixedRowHeight can\'t be false if the notUseSmartRendering is not set to false.');
+        if (options.isFixedRowHeight === false && options.virtualScrolling) {
+            util.warning('The isFixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
             attrs.isFixedRowHeight = true;
         }
 
@@ -258,7 +244,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             coordRowModel: this.coordRowModel,
             coordColumnModel: this.coordColumnModel
         };
-        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
+        Constructor = options.virtualScrolling ? SmartRenderModel : RenderModel;
 
         return new Constructor(attrs, renderOptions);
     },
@@ -302,7 +288,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             selectionModel: this.selectionModel,
             renderModel: this.renderModel,
             focusModel: this.focusModel,
-            copyOption: options.copyOption,
+            copyOptions: options.copyOptions,
             domEventBus: domEventBus
         });
     },

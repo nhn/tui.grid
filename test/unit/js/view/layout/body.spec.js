@@ -17,15 +17,15 @@ describe('view.layout.body', function() {
         var painterManager, viewFactory;
 
         modelManager = new ModelManager({
-            columnModelList: [
+            columns: [
                 {
                     title: 'c1',
-                    columnName: 'c1',
+                    name: 'c1',
                     width: 30
                 },
                 {
                     title: 'c2',
-                    columnName: 'c2',
+                    name: 'c2',
                     width: 40
                 }
             ]

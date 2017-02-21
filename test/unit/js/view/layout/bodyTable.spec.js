@@ -17,9 +17,9 @@ describe('view.layout.body', function() {
         var viewFactory;
 
         modelManager = new ModelManager({
-            columnModelList: [
-                {columnName: 'c1'},
-                {columnName: 'c2'}
+            columns: [
+                {name: 'c1'},
+                {name: 'c2'}
             ]
         }, domState);
         spyOn(modelManager.coordColumnModel, 'getColumnWidthList').and.returnValue([30, 40]);

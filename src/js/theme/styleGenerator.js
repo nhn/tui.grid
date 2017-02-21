@@ -100,15 +100,6 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for a toolbar.
-     * @param {Object} options - options
-     * @returns {String}
-     */
-    toolbar: function(options) {
-        return bgBorderRuleString(classNameConst.TOOLBAR, options);
-    },
-
-    /**
      * Generates a css string for a resize-handle.
      * @param {Object} options - options
      * @returns {String}

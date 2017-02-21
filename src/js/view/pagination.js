@@ -1,5 +1,5 @@
 /**
- * @fileoverview Class for the pagination in the toolbar
+ * @fileoverview Class for the pagination
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -29,7 +29,7 @@ var defaultOptions = {
 };
 
 /**
- * Class for the pagination in the toolbar
+ * Class for the pagination
  * @module view/pagination
  * @extends module:base/view
  * @param {Object} options - Options

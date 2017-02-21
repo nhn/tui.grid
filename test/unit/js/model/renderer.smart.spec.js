@@ -19,10 +19,10 @@ describe('model.renderer', function() {
 
     function create() {
         var columnModel = new ColumnModelData({
-            columnModelList: [
-                {columnName: 'c1'},
-                {columnName: 'c2'},
-                {columnName: 'c3'}
+            columns: [
+                {name: 'c1'},
+                {name: 'c2'},
+                {name: 'c3'}
             ]
         });
         var dataModel = new RowListData([], {

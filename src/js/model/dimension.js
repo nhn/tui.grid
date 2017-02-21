@@ -49,7 +49,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         bodyHeight: 0,
         footerHeight: 0,
 
-        toolbarHeight: 0,
         resizeHandleHeight: 0,
         paginationHeight: 0,
 
@@ -219,8 +218,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('footerHeight') +
-            this.get('toolbarHeight') + TABLE_BORDER_WIDTH;
+        var extraHeight = this.get('headerHeight') + this.get('footerHeight') + TABLE_BORDER_WIDTH;
 
         return height - extraHeight;
     },
@@ -298,7 +296,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Number} Height
      */
     getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight') + this.get('toolbarHeight');
+        return this.get('bodyHeight') + this.get('headerHeight');
     },
 
     /**
@@ -324,7 +322,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {number}
      */
     getBodyOffsetTop: function() {
-        return this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+        return this.get('offsetTop') + this.get('headerHeight')
             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
     },
 

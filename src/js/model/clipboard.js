@@ -25,7 +25,7 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
             selectionModel: options.selectionModel,
             renderModel: options.renderModel,
             focusModel: options.focusModel,
-            copyOption: options.copyOption,
+            copyOptions: options.copyOptions,
             domEventBus: options.domEventBus
         });
 
@@ -150,13 +150,13 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     },
 
     /**
-     * Returns the useFormattedValue of copyOption of given column
+     * Returns the useFormattedValue of copyOptions of given column
      * @param {string} columnName - column name
      * @returns {boolean}
      * @private
      */
     _isUsingFormattedValue: function(columnName) {
-        return this.columnModel.getCopyOption(columnName).useFormattedValue;
+        return this.columnModel.getCopyOptions(columnName).useFormattedValue;
     }
 });
 

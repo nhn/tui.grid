@@ -317,7 +317,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var result = false;
 
         if (row && column) {
-            result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
+            result = this.focus(row.get('rowKey'), column.name, isScrollable);
         }
 
         return result;
@@ -360,7 +360,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var result = false;
 
         if (row && column) {
-            result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
+            result = this.focusIn(row.get('rowKey'), column.name, isScrollable);
         }
         return result;
     },
@@ -579,14 +579,14 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _findColumnName: function(offset) {
         var columnModel = this.columnModel;
-        var columnModelList = columnModel.getVisibleColumnModelList();
+        var columns = columnModel.getVisibleColumns();
         var columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
         var columnName = null;
         var index;
 
         if (this.has(true)) {
-            index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
-            columnName = columnModelList[index] && columnModelList[index].columnName;
+            index = Math.max(Math.min(columnIndex + offset, columns.length - 1), 0);
+            columnName = columns[index] && columns[index].name;
         }
         return columnName;
     },
@@ -747,9 +747,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {string} 첫번째 컬럼명
      */
     firstColumnName: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var columns = this.columnModel.getVisibleColumns();
 
-        return columnModelList[0].columnName;
+        return columns[0].name;
     },
 
     /**
@@ -757,10 +757,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {string} 마지막 컬럼명
      */
     lastColumnName: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList();
-        var lastIndex = columnModelList.length - 1;
+        var columns = this.columnModel.getVisibleColumns();
+        var lastIndex = columns.length - 1;
 
-        return columnModelList[lastIndex].columnName;
+        return columns[lastIndex].name;
     },
 
     /**

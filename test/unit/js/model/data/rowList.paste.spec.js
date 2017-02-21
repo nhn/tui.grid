@@ -6,12 +6,12 @@ var SelectionModel = require('model/selection');
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 
-function createColumnModelList(names) {
+function createColumns(names) {
     var models = [];
     tui.util.forEachArray(names, function(name, editType) {
         models.push({
             title: name,
-            columnName: name,
+            name: name,
             editOption: {
                 type: editType || 'text'
             }
@@ -20,9 +20,9 @@ function createColumnModelList(names) {
     return models;
 }
 
-function createRowList(columnModelList) {
+function createRowList(columns) {
     var columnModel = new ColumnModelData({
-            columnModelList: columnModelList
+            columns: columns
         });
 
     return new RowListData([], {
@@ -35,10 +35,10 @@ describe('rowList.paste()', function() {
 
     describe('텍스트 컬럼 (text, text-convertible)', function() {
         beforeEach(function() {
-            var columnModelList = createColumnModelList(['c1', 'c2', 'c3']);
-            columnModelList[1].editOption.type = 'text-convertible';
+            var columns = createColumns(['c1', 'c2', 'c3']);
+            columns[1].editOption.type = 'text-convertible';
 
-            rowList = createRowList(columnModelList);
+            rowList = createRowList(columns);
             rowList.setRowList([
                 {
                     c1: '0-1',
@@ -122,10 +122,10 @@ describe('rowList.paste()', function() {
 
     describe('편집 불가능한 셀은 값을 변경하지 않고 넘어간다', function() {
         it(': editOption이 없는 열', function() {
-            var columnModelList = createColumnModelList(['c1', 'c2']);
+            var columns = createColumns(['c1', 'c2']);
 
-            columnModelList[1].editOption = null; // disable to edit
-            rowList = createRowList(columnModelList);
+            columns[1].editOption = null; // disable to edit
+            rowList = createRowList(columns);
             rowList.setRowList([{
                     c1: '0-1',
                     c2: '0-2'
@@ -149,7 +149,7 @@ describe('rowList.paste()', function() {
         });
 
         it(': disabled', function() {
-            rowList = createRowList(createColumnModelList(['c1', 'c2']));
+            rowList = createRowList(createColumns(['c1', 'c2']));
             rowList.setRowList([
                 {
                     _extraData: {
@@ -177,9 +177,9 @@ describe('rowList.paste()', function() {
     });
 
     it('숨겨진 컬럼은 제외하고 처리한다.', function() {
-        var columnModelList = createColumnModelList(['c1', 'c2', 'c3']);
-        columnModelList[1].isHidden = true;
-        rowList = createRowList(columnModelList);
+        var columns = createColumns(['c1', 'c2', 'c3']);
+        columns[1].isHidden = true;
+        rowList = createRowList(columns);
         rowList.setRowList([
             {
                 c1: '0-1',
@@ -207,7 +207,7 @@ describe('rowList.paste()', function() {
     });
 
     it('RowSpan이 적용된 컬럼일 경우 MainRow의 값만 변경한다', function() {
-        rowList = createRowList(createColumnModelList(['c1', 'c2']))
+        rowList = createRowList(createColumns(['c1', 'c2']))
         rowList.setRowList([
             {
                 _extraData: {
@@ -236,7 +236,7 @@ describe('rowList.paste()', function() {
     });
 
     // it('셀렉션이 존재하는 경우 포커스된 셀이 아닌 셀렉션의 왼쪽 상단 셀을 기준으로 붙여넣기 한다', function() {
-    //     rowList = createRowList(createColumnModelList(['c1', 'c2', 'c3']));
+    //     rowList = createRowList(createColumns(['c1', 'c2', 'c3']));
     //     rowList.setRowList([
     //         {
     //             c1: '0-1',

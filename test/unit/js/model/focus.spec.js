@@ -14,19 +14,19 @@ describe('model/focus', function() {
         var columnModel, dataModel;
 
         columnModel = new ColumnModelData({
-            columnModelList: [
+            columns: [
                 {
-                    columnName: 'c1',
+                    name: 'c1',
                     editOption: {
                         type: 'text'
                     }
                 }, {
-                    columnName: 'c2',
+                    name: 'c2',
                     editOption: {
                         type: 'text'
                     }
                 }, {
-                    columnName: 'c3',
+                    name: 'c3',
                     editOption: {
                         type: 'text'
                     }

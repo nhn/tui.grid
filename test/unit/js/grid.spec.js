@@ -1,16 +1,18 @@
 'use strict';
 
+var _ = require('underscore');
+
 describe('grid', function() {
     function createGrid(columnNames, options) {
-        var columnModelList = [];
+        var columns = [];
         _.each(columnNames, function(columnName) {
-            columnModelList.push({
-                columnName: columnName
+            columns.push({
+                name: columnName
             });
         });
         options = _.extend({
             el: $('<div>'),
-            columnModelList: columnModelList
+            columns: columns
         }, options);
 
         return new tui.Grid(options);

@@ -354,8 +354,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _getColumnNamesOfEachSide: function() {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-        var columnModels = this.columnModel.getVisibleColumnModelList(null, true);
-        var columnNames = _.pluck(columnModels, 'columnName');
+        var columnModels = this.columnModel.getVisibleColumns(null, true);
+        var columnNames = _.pluck(columnModels, 'name');
 
         return {
             lside: columnNames.slice(0, columnFixCount),

@@ -4,10 +4,10 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 
 describe('data.rowList', function() {
-    var columnModelList = [
+    var columns = [
         {
             title: 'changeCallback',
-            columnName: 'changeCallback',
+            name: 'changeCallback',
             editOption: {
                 changeBeforeCallback: function(changeEvent) {
                     return !!changeEvent.value;
@@ -19,35 +19,35 @@ describe('data.rowList', function() {
         },
         {
             title: 'keyColumn',
-            columnName: 'keyColumn'
+            name: 'keyColumn'
         },
         {
             title: '_button',
-            columnName: '_button'
+            name: '_button'
         },
         {
             title: '_number',
-            columnName: '_number'
+            name: '_number'
         },
         {
             title: 'none',
-            columnName: 'none'
+            name: 'none'
         },
         {
             title: 'hasFormatter',
-            columnName: 'hasFormatter',
+            name: 'hasFormatter',
             formatter: function(value) {
                 return '<a href="http://www.testurl.com" >' + value + '</a> click<button> me</button>';
             }
         },
         {
             title: 'notUseHtmlEntity',
-            columnName: 'notUseHtmlEntity',
+            name: 'notUseHtmlEntity',
             notUseHtmlEntity: true
         },
         {
             title: 'relationList',
-            columnName: 'relationList',
+            name: 'relationList',
             relationList: [
                 {
                     columnList: ['select', 'checkbox', 'radio'],
@@ -78,21 +78,21 @@ describe('data.rowList', function() {
         },
         {
             title: 'text',
-            columnName: 'text',
+            name: 'text',
             editOption: {
                 type: 'text'
             }
         },
         {
             title: 'text-convertible',
-            columnName: 'text-convertible',
+            name: 'text-convertible',
             editOption: {
                 type: 'text-convertible'
             }
         },
         {
             title: 'select',
-            columnName: 'select',
+            name: 'select',
             editOption: {
                 type: 'select',
                 list: [
@@ -105,7 +105,7 @@ describe('data.rowList', function() {
         },
         {
             title: 'checkbox',
-            columnName: 'checkbox',
+            name: 'checkbox',
             editOption: {
                 type: 'checkbox',
                 list: [
@@ -118,7 +118,7 @@ describe('data.rowList', function() {
         },
         {
             title: 'radio',
-            columnName: 'radio',
+            name: 'radio',
             editOption: {
                 type: 'radio',
                 list: [
@@ -131,7 +131,7 @@ describe('data.rowList', function() {
         },
         {
             title: 'radioNoRelation',
-            columnName: 'radioNoRelation',
+            name: 'radioNoRelation',
             editOption: {
                 type: 'radio',
                 list: [
@@ -145,7 +145,7 @@ describe('data.rowList', function() {
 
         {
             title: 'hidden',
-            columnName: 'hidden',
+            name: 'hidden',
             isHidden: true
         }
     ];
@@ -290,7 +290,7 @@ describe('data.rowList', function() {
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
         columnModelInstance = new ColumnModelData();
-        columnModelInstance.set('columnModelList', columnModelList);
+        columnModelInstance.set('columns', columns);
         dataModelInstance = new RowListData([], {
             columnModel: columnModelInstance
         });
@@ -1683,10 +1683,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('filteringColumnList 옵션이 있을 때', function() {
+            describe('filteringColumns 옵션이 있을 때', function() {
                 function getModified() {
                     return dataModelInstance.getModifiedRowList({
-                        filteringColumnList: ['none']
+                        filteringColumns: ['none']
                     });
                 }
 

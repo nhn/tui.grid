@@ -8,7 +8,6 @@ var _ = require('underscore');
 
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
-var ToolbarView = require('./toolbar');
 var PaginationView = require('./pagination');
 var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');
@@ -44,7 +43,7 @@ var ViewFactory = tui.util.defineClass({
 
         // view options
         this.footerOptions = options.footer;
-        this.resizeHandle = options.resizeHandle;
+        this.heightResizable = options.heightResizable;
     },
 
     /**
@@ -75,23 +74,7 @@ var ViewFactory = tui.util.defineClass({
     },
 
     /**
-     * Creates toolbar view and returns it.
-     * @param {module:event/domEventBus} domEventBus - domEventBus
-     * @returns {module:view/toolbar} - New toolbar view instance
-     */
-    createToolbar: function() {
-        if (!this.modelManager.toolbarModel.isEnabled()) {
-            return null;
-        }
-        return new ToolbarView({
-            domEventBus: this.domEventBus,
-            dimensionModel: this.modelManager.dimensionModel,
-            toolbarModel: this.modelManager.toolbarModel
-        });
-    },
-
-    /**
-     * Creates toolbar pagination view and returns it.
+     * Creates pagination view and returns it.
      * @returns {module:view/pagination} - New pagination view instance
      */
     createPagination: function() {
@@ -109,7 +92,7 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/resizeHandle} - New resize hander view instance
      */
     createHeightResizeHandle: function() {
-        if (!isOptionEnabled(this.resizeHandle)) {
+        if (!isOptionEnabled(this.heightResizable)) {
             return null;
         }
         return new HeightResizeHandleView({

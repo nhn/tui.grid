@@ -65,8 +65,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _generateHtmlForDummyRow: function(rowNum, columnNames) {
-        var cellPainter = this.painterManager.getCellPainter('dummy'),
-            html = '';
+        var cellPainter = this.painterManager.getCellPainter('dummy');
+        var html = '';
 
         _.each(columnNames, function(columnName) {
             html += cellPainter.generateHtml(rowNum, columnName);
@@ -86,8 +86,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         var html = '';
 
         _.each(columnNames, function(columnName) {
-            var cellData = model.get(columnName),
-                editType, cellPainter;
+            var cellData = model.get(columnName);
+            var editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);

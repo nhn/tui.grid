@@ -61,8 +61,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * Returns the list of column models in it's own side
      * @returns {Array} - Column model list
      */
-    _getColumnModelList: function() {
-        return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+    _getColumns: function() {
+        return this.columnModel.getVisibleColumns(this.whichSide, true);
     },
 
     /**
@@ -84,8 +84,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @param {array} dupRowKeys 중복된 데이터의 rowKey 목록
      */
     _appendNewRows: function(rowKeys, dupRowKeys) {
-        var beforeRows = this.collection.slice(0, _.indexOf(rowKeys, dupRowKeys[0])),
-            afterRows = this.collection.slice(_.indexOf(rowKeys, _.last(dupRowKeys)) + 1);
+        var beforeRows = this.collection.slice(0, _.indexOf(rowKeys, dupRowKeys[0]));
+        var afterRows = this.collection.slice(_.indexOf(rowKeys, _.last(dupRowKeys)) + 1);
 
         this.$el.prepend(this._getRowsHtml(beforeRows));
         this.$el.append(this._getRowsHtml(afterRows));
@@ -96,8 +96,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _resetRows: function() {
-        var html = this._getRowsHtml(this.collection.models),
-            $tbody;
+        var html = this._getRowsHtml(this.collection.models);
+        var $tbody;
 
         if (RowList.isInnerHtmlOfTbodyReadOnly) {
             $tbody = this.bodyTableView.redrawTable(html);
@@ -120,8 +120,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @returns {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
-        var rowPainter = this.painterManager.getRowPainter(),
-            columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+        var rowPainter = this.painterManager.getRowPainter();
+        var columnNames = _.pluck(this._getColumns(), 'name');
 
         return _.map(rows, function(row) {
             return rowPainter.generateHtml(row, columnNames);
@@ -165,9 +165,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _filterRowsByIndexRange: function($rows, rowRange) {
-        var renderModel = this.renderModel,
-            renderStartIndex = renderModel.get('startIndex'),
-            startIndex, endIndex;
+        var renderModel = this.renderModel;
+        var renderStartIndex = renderModel.get('startIndex');
+        var startIndex, endIndex;
 
         startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
         endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
@@ -186,8 +186,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _filterRowByKey: function($rows, rowKey) {
-        var rowIndex = this.dataModel.indexOfRowKey(rowKey),
-            renderStartIndex = this.renderModel.get('startIndex');
+        var rowIndex = this.dataModel.indexOfRowKey(rowKey);
+        var renderStartIndex = this.renderModel.get('startIndex');
 
         if (renderStartIndex > rowIndex) {
             return $();
@@ -215,7 +215,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _setFocusedRowClass: function(rowKey, focused) {
-        var columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+        var columnNames = _.pluck(this._getColumns(), 'name');
         var trMap = {};
 
         _.each(columnNames, function(columnName) {

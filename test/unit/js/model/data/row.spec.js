@@ -17,9 +17,9 @@ describe('RowData', function() {
                 parse: true,
                 collection: {
                     columnModel: new ColumnModel({
-                        columnModelList: [
-                            {columnName: 'c1'},
-                            {columnName: 'c2'}
+                        columns: [
+                            {name: 'c1'},
+                            {name: 'c2'}
                         ]
                     })
                 }
@@ -53,9 +53,9 @@ describe('RowData', function() {
                 parse: true,
                 collection: {
                     columnModel: new ColumnModel({
-                        columnModelList: [
-                            {columnName: 'c1'},
-                            {columnName: 'c2'}
+                        columns: [
+                            {name: 'c1'},
+                            {name: 'c2'}
                         ]
                     })
                 }
@@ -80,29 +80,29 @@ describe('RowData', function() {
 
         describe('Returns array of className', function() {
             it('containing className of columnModel', function() {
-                columnModel.set('columnModelList', [
-                    {columnName: 'c1', className: 'c1-class'}
+                columnModel.set('columns', [
+                    {name: 'c1', className: 'c1-class'}
                 ]);
                 expect(row.getClassNameList('c1')).toContain('c1-class');
             });
 
             it('containing \'ellipsis\' if columnModel.isEllipsis is true', function() {
-                columnModel.set('columnModelList', [
-                    {columnName: 'c1', isEllipsis: true}
+                columnModel.set('columns', [
+                    {name: 'c1', isEllipsis: true}
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });
 
             it('containing \'required\' if columnModel.required is true', function() {
-                columnModel.set('columnModelList', [
-                    {columnName: 'c1', isRequired: true}
+                columnModel.set('columns', [
+                    {name: 'c1', isRequired: true}
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_REQUIRED);
             });
 
             it('containing row-added className', function() {
-                columnModel.set('columnModelList', [
-                    {columnName: 'c1'}
+                columnModel.set('columns', [
+                    {name: 'c1'}
                 ]);
                 row.addClassName('row-class');
                 expect(row.getClassNameList('c1')).toContain('row-class');
@@ -115,8 +115,8 @@ describe('RowData', function() {
 
         beforeEach(function() {
             columnModel = new ColumnModel({
-                columnModelList: [
-                    {columnName: 'c1', isRequired: true}
+                columns: [
+                    {name: 'c1', isRequired: true}
                 ]
             });
             rowList = new RowListData(null, {
@@ -220,18 +220,18 @@ describe('RowData', function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
             spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
-            columnModel.set('columnModelList', [
+            columnModel.set('columns', [
                 {
-                    columnName: 'c1'
+                    name: 'c1'
                 },
                 {
-                    columnName: 'c2',
+                    name: 'c2',
                     editOption: {
                         changeBeforeCallback: callbackSpy
                     }
                 },
                 {
-                    columnName: 'c3',
+                    name: 'c3',
                     editOption: {
                         changeBeforeCallback: function(ev) {
                             return true;
@@ -239,7 +239,7 @@ describe('RowData', function() {
                     }
                 },
                 {
-                    columnName: 'c4',
+                    name: 'c4',
                     editOption: {
                         changeBeforeCallback: function(ev) {
                             return false;
@@ -303,8 +303,8 @@ describe('RowData', function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
             spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
-            columnModel.set('columnModelList', [{
-                columnName: 'c1',
+            columnModel.set('columns', [{
+                name: 'c1',
                 editOption: {
                     changeAfterCallback: callbackSpy
                 }

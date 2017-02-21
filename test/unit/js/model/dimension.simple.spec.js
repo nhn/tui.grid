@@ -60,10 +60,10 @@ describe('model.dimension', function() {
             });
 
             dimension.columnModel.set({
-                columnModelList: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'}
+                columns: [
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'}
                 ],
                 columnFixCount: 3
             });
@@ -90,10 +90,10 @@ describe('model.dimension', function() {
                 minimumColumnWidth: 20
             });
             dimension.columnModel.set({
-                columnModelList: [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'},
-                    {columnName: 'c3'}
+                columns: [
+                    {name: 'c1'},
+                    {name: 'c2'},
+                    {name: 'c3'}
                 ],
                 columnFixCount: 3
             });

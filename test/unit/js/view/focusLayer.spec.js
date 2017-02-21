@@ -31,8 +31,8 @@ describe('view/focusLayer', function() {
         $wrapper = jasmine.getFixtures().set('<div>');
 
         modelManager = createModelManager(1);
-        modelManager.columnModel.set('columnModelList', [
-            {columnName: 'c1'}, {columnName: 'c2'}
+        modelManager.columnModel.set('columns', [
+            {name: 'c1'}, {name: 'c2'}
         ]);
         modelManager.dataModel.setRowList([
             {c1: '0-1', c2: '0-2'},

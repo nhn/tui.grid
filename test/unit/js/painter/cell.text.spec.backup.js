@@ -16,7 +16,7 @@ describe('view.painter.cell.text', function() {
         var options;
 
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', [{
+            grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
                 editOption: {
@@ -187,7 +187,7 @@ describe('view.painter.cell.text', function() {
         var options;
 
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', [{
+            grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
                 editOption: {

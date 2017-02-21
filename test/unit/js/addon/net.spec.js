@@ -5,8 +5,8 @@ var formUtil = require('common/formUtil');
 var renderStateMap = require('common/constMap').renderState;
 
 describe('addon.net', function() {
-    var columnModelList = [{
-        columnName: 'c1'
+    var columns = [{
+        name: 'c1'
     }];
     var rowList = [
         {c1: '0-1'},
@@ -31,7 +31,7 @@ describe('addon.net', function() {
         $grid = $('#grid');
         grid = new tui.Grid({
             el: $grid,
-            columnModelList: columnModelList,
+            columns: columns,
             selectType: 'checkbox'
         });
         window.alert = function() {};
@@ -90,28 +90,6 @@ describe('addon.net', function() {
                     });
                     expect(net.router).toBeNull();
                 });
-            });
-        });
-
-        describe('_showToolbarExcelBtns', function() {
-            it('If downloadExcel exist, toolbarModel.isExcelButtonVisible should be true', function() {
-                createNet({
-                    api: {
-                        readData: '/api/read',
-                        downloadExcel: '/'
-                    }
-                });
-                expect(net.toolbarModel.get('isExcelButtonVisible')).toBe(true);
-            });
-
-            it('If downloadExcelAll exist exsits, toolbarModel.isExcelAllButtonVisible should be true', function() {
-                createNet({
-                    api: {
-                        readData: '/api/read',
-                        downloadExcelAll: '/'
-                    }
-                });
-                expect(net.toolbarModel.get('isExcelAllButtonVisible')).toBe(true);
             });
         });
     });
