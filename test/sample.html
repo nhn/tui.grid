@@ -29,20 +29,19 @@
         selectType: 'checkbox',
         columnFixCount: 1,
         headerHeight: 30,
-        keyColumnName: 'c1',
-        toolbar: true,
-        resizeHandle: {},
+        virtualScrolling: false,
+        heightResizable: true,
         showDummyRows: true,
         displayRowCount: 15,
         minimumColumnWidth: 100,
         pagination: true,
-        columnModelList: [{
-                columnName: '_button',
+        columns: [{
+                name: '_button',
                 width: 30
             },
             {
                 title: 'c1',
-                columnName: 'c1',
+                name: 'c1',
                 isRequired: true,
                 width: 200,
                 editOption: {
@@ -61,10 +60,10 @@
             },
             {
                 title: 'c2',
-                isSortable: true,
+                sortable: true,
                 // defaultValue: 2,
                 width: 200,
-                columnName: 'c2',
+                name: 'c2',
                 editOption: {
                     type: 'select',
                     list: [{
@@ -80,7 +79,7 @@
             },
             {
                 title: 'c3',
-                columnName: 'c3',
+                name: 'c3',
                 width: 200,
                 defaultValue: 2,
                 editOption: {
@@ -97,7 +96,17 @@
                     ]
                 }
             }
-        ]
+        ],
+        footer: {
+            height: 30,
+            columnContent: {
+                c1: {
+                    template: function() {
+                        return 'Good!';
+                    }
+                }
+            }
+        }
     });
     var rowList = [];
     (function() {

@@ -467,7 +467,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                     colspan: colSpanList[j],
                     rowspan: rowSpan,
                     title: columnModel.title,
-                    btnSort: columnModel.isSortable ? this.markupBtnSort : ''
+                    btnSort: columnModel.sortable ? this.markupBtnSort : ''
                 }));
             }, this);
         }, this);

@@ -111,19 +111,19 @@ describe('Header', function() {
         });
     });
 
-    describe('isSortable 관련 테스트', function() {
+    describe('sortable 관련 테스트', function() {
         var header;
         beforeEach(function() {
             header = create(frameConst.R, [
                 {
                     title: 'c1',
                     name: 'c1',
-                    isSortable: true
+                    sortable: true
                 },
                 {
                     title: 'c2',
                     name: 'c2',
-                    isSortable: true
+                    sortable: true
                 },
                 {
                     title: 'c3',

@@ -94,7 +94,7 @@ tui = window.tui = tui || {};
  *              will not be encoded as HTML entities.
  *          @param {boolean} [options.columns.ignored=false] - If set to true, the value of the column will be
  *               ignored when setting up the list of modified rows.
- *          @param {boolean} [options.columns.isSortable=false] - If set to true, sort button will be shown on
+ *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
  *          @param {Array} [options.columns.editOption] - The object for configuring editing UI.
  *              @param {string} [options.columns.editOption.type='normal'] - The string value that specifies
