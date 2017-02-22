@@ -175,7 +175,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
                 valign: column.valign,
-                optionList: tui.util.pick(column, 'editOption', 'list'),
+                optionList: tui.util.pick(column, 'editOptions', 'listItems'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names
@@ -220,16 +220,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent');
-        var afterContent = tui.util.pick(column, 'editOption', 'afterContent');
-        var converter = tui.util.pick(column, 'editOption', 'converter');
+        var prefix = tui.util.pick(column, 'editOptions', 'prefix');
+        var postfix = tui.util.pick(column, 'editOptions', 'postfix');
+        var converter = tui.util.pick(column, 'editOptions', 'converter');
         var rowAttrs = row.toJSON();
 
         return {
             value: this._getValueToDisplay(value, column, isTextType),
             formattedValue: this._getFormattedValue(value, rowAttrs, column),
-            beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
-            afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+            prefix: this._getExtraContent(prefix, value, rowAttrs),
+            postfix: this._getExtraContent(postfix, value, rowAttrs),
             convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
         };
     },
@@ -261,7 +261,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Returns the value of the 'beforeContent' or 'afterContent'.
+     * Returns the value of the 'prefix' or 'postfix'.
      * @param {(String|Function)} content - content
      * @param {String} cellValue - cell value
      * @param {Object} rowAttrs - All attributes of the row
@@ -310,14 +310,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = tui.util.isExisty;
-        var notUseHtmlEntity = column.notUseHtmlEntity;
+        var useHtmlEntity = column.useHtmlEntity;
         var defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
         }
 
-        if (isTextType && !notUseHtmlEntity && tui.util.hasEncodableString(value)) {
+        if (isTextType && useHtmlEntity && tui.util.hasEncodableString(value)) {
             value = tui.util.encodeHTMLEntity(value);
         }
 
@@ -403,7 +403,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
-        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
         var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
         // Silent Cases

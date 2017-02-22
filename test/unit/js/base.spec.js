@@ -64,14 +64,5 @@ describe('core.base', function() {
             expect(childView1._children.length).toBe(0);
             expect(childView2._children.length).toBe(0);
         });
-
-        it('error()는 에러 객체를 생성한다.', function() {
-            var message = 'error message',
-                error = view.error(message);
-
-            expect(error instanceof Error).toBe(true);
-            expect(error.hasOwnProperty('name')).toBe(true);
-            expect(error.message).toBe(message);
-        });
     });
 });

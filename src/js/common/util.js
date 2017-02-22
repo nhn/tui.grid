@@ -280,7 +280,7 @@ var util = {
 
     /**
      * type 인자에 맞게 value type 을 convert 한다.
-     * Data.Row 의 List 형태에서 editOption.list 에서 검색을 위해,
+     * Data.Row 의 List 형태에서 editOptions.listItems 에서 검색을 위해,
      * value type 해당 type 에 맞게 변환한다.
      * @memberof module:util
      * @param {*} value 컨버팅할 value

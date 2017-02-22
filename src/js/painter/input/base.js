@@ -172,7 +172,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _isUsingViewMode: function(cellData) {
-        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+        return tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
     },
 
     /**

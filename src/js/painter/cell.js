@@ -71,31 +71,31 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
+     * Returns the HTML string of the contents containg the value of the 'prefix' and 'postfix'.
      * @param {Object} cellData - cell data
      * @returns {String}
      * @private
      */
     _getContentHtml: function(cellData) {
         var content = cellData.formattedValue;
-        var beforeContent = cellData.beforeContent;
-        var afterContent = cellData.afterContent;
+        var prefix = cellData.prefix;
+        var postfix = cellData.postfix;
         var fullContent;
 
         if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
 
             if (this._shouldContentBeWrapped() && !this._isUsingViewMode(cellData)) {
-                beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
-                afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
+                prefix = this._getSpanWrapContent(prefix, classNameConst.CELL_CONTENT_BEFORE);
+                postfix = this._getSpanWrapContent(postfix, classNameConst.CELL_CONTENT_AFTER);
                 content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
                 // notice the order of concatenation
-                fullContent = beforeContent + afterContent + content;
+                fullContent = prefix + postfix + content;
             }
         }
 
         if (!fullContent) {
-            fullContent = beforeContent + content + afterContent;
+            fullContent = prefix + content + postfix;
         }
 
         return this.contentTemplate({
@@ -112,7 +112,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _isUsingViewMode: function(cellData) {
-        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+        return tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
     },
 
     /**

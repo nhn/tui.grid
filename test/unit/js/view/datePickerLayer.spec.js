@@ -20,7 +20,7 @@ function createColumnModelStub(editType, compName, compOption) {
         getColumnModel: _.constant({
             component: {
                 name: compName,
-                option: compOption
+                options: compOption
             }
         }),
         getEditType: _.constant(editType)

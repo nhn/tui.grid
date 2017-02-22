@@ -111,7 +111,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      * @protected
      */
     _generateInputHtml: function(cellData) {
-        var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
+        var maxLength = tui.util.pick(cellData, 'columnModel', 'editOptions', 'maxLength');
         var params = {
             type: this.inputType,
             className: classNameConst.CELL_CONTENT_TEXT,
