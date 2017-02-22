@@ -31,7 +31,14 @@ function create(whichSide, columns) {
         coordColumnModel: coordColumnModel,
         domEventBus: DomEventBus.create(),
         viewFactory: {
-            createHeaderResizeHandle: jasmine.createSpy()
+            createHeaderResizeHandle: function() {
+                return {
+                    el: '<div class="resizeHandle"></div>',
+                    render: function() {
+                        return this;
+                    }
+                };
+            }
         }
     });
 }
@@ -85,6 +92,12 @@ describe('Header', function() {
                 expect(columnData.widths.length).toBeGreaterThan(0);
                 expect(columnData.columns.length).toBeGreaterThan(0);
             });
+        });
+
+        it('When "resizable" is true, resize handle should be rendered as a child.', function() {
+            header.coordColumnModel.set('resizable', true);
+            header.render();
+            expect(header.$el.find('.resizeHandle').length).toBe(1);
         });
     });
 

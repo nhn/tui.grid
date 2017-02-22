@@ -57,7 +57,8 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     },
 
     defaults: {
-        columnWidthList: []
+        columnWidthList: [],
+        resizable: true
     },
 
     /**
