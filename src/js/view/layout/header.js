@@ -439,7 +439,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                     classNameConst.CELL_HEAD
                 ];
 
-                if (columnModel.isRequired) {
+                if (columnModel.validation && columnModel.validation.required) {
                     classNames.push(classNameConst.CELL_REQRUIRED);
                 }
 

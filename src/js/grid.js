@@ -84,8 +84,12 @@ tui = window.tui = tui || {};
  *          @param {boolean} [options.columns.hidden] - If set to true, the column will not be shown.
  *          @param {boolean} [options.columns.fixedWidth=false] - If set to true, the width of the column
  *              will not be changed.
- *          @param {boolean} [options.columns.isRequired=false] - If set to true, the data of the column
- *              will be checked to be not empty whenever data is changed or calling {@link tui.Grid#validate}.
+ *          @param {Object} [options.columns.validation] - The options to be used for validation.
+ *              Validation is executed whenever data is changed or the {@link tui.Grid#validate} is called.
+ *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
+ *              will be checked to be not empty.
+ *          @param {boolean} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
+ *              Avilable types are 'string' and 'number'.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
  *          @param {function} [options.columns.formatter] - The function that formats the value of the cell.

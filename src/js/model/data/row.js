@@ -94,15 +94,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _validateCellData: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName);
-        var value = this.get(columnName);
+        var validation = this.columnModel.getColumnModel(columnName).validation;
         var errorCode = '';
+        var value;
 
-        if (columnModel.isRequired && util.isBlank(value)) {
-            errorCode = VALID_ERR_REQUIRED;
-        } else if (columnModel.dataType === 'number' && !_.isNumber(value)) {
-            errorCode = VALID_ERR_TYPE_NUMBER;
+        if (validation) {
+            value = this.get(columnName);
+
+            if (validation.required && util.isBlank(value)) {
+                errorCode = VALID_ERR_REQUIRED;
+            } else if (validation.dataType === 'number' && !_.isNumber(value)) {
+                errorCode = VALID_ERR_TYPE_NUMBER;
+            }
         }
+
         return errorCode;
     },
 
@@ -222,7 +227,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.ellipsis) {
             classNameList.push(classNameConst.CELL_ELLIPSIS);
         }
-        if (columnModel.isRequired) {
+        if (columnModel.validation && columnModel.validation.required) {
             classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {

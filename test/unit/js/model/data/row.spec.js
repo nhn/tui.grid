@@ -93,9 +93,14 @@ describe('RowData', function() {
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });
 
-            it('containing \'required\' if columnModel.required is true', function() {
+            it('containing CELL_REQUIRED if columnModel.validation.required is true', function() {
                 columnModel.set('columns', [
-                    {name: 'c1', isRequired: true}
+                    {
+                        name: 'c1',
+                        validation: {
+                            required: true
+                        }
+                    }
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_REQUIRED);
             });
@@ -116,7 +121,12 @@ describe('RowData', function() {
         beforeEach(function() {
             columnModel = new ColumnModel({
                 columns: [
-                    {name: 'c1', isRequired: true}
+                    {
+                        name: 'c1',
+                        validation: {
+                            required: true
+                        }
+                    }
                 ]
             });
             rowList = new RowListData(null, {

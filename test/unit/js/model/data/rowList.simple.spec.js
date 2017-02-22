@@ -320,8 +320,12 @@ describe('Data.RowList - simple', function() {
 
     describe('validate()', function() {
         beforeEach(function() {
-            columnModel.getColumnModel('c1').isRequired = true;
-            columnModel.getColumnModel('c2').isRequired = true;
+            columnModel.getColumnModel('c1').validation = {
+                required: true
+            };
+            columnModel.getColumnModel('c2').validation = {
+                required: true
+            };
             rowList.setRowList([
                 {
                     c1: '0-1',

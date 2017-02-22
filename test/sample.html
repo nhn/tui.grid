@@ -35,19 +35,23 @@
         displayRowCount: 15,
         minimumColumnWidth: 100,
         pagination: true,
-        columns: [{
+        columns: [
+            {
                 name: '_button',
                 width: 30
             },
             {
                 title: 'c1',
                 name: 'c1',
-                isRequired: true,
+                validation: {
+                    required: true
+                },
                 width: 200,
                 editOptions: {
                     // useViewMode: false,
                     type: 'text',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
@@ -66,7 +70,8 @@
                 name: 'c2',
                 editOptions: {
                     type: 'select',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
@@ -85,7 +90,8 @@
                 editOptions: {
                     useViewMode: false,
                     type: 'checkbox',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
