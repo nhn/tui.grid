@@ -136,7 +136,7 @@ tui = window.tui = tui || {};
  *          @param {Object} [options.columns.component] - Option for using tui-component
  *              @param {string} [options.columns.component.name] - The name of the compnent to use
  *                  for this column
- *              @param {Object} [options.columns.component.option] - The option object to be used for
+ *              @param {Object} [options.columns.component.options] - The options object to be used for
  *                  creating the component
  *      @param {array} [options.columnMerge] - The array that specifies the merged column.
  *          This options does not merge the cells of multiple columns into a single cell.

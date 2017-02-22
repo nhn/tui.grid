@@ -165,7 +165,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
         if (editType === 'text' && component && component.name === 'datePicker') {
             this.$el.css(this._calculatePosition($input)).show();
-            this._resetDatePicker(component.option || {}, $input);
+            this._resetDatePicker(component.options || {}, $input);
             this.datePicker.open();
         }
     },
