@@ -5,8 +5,8 @@
     <title>6. Using _extraData</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <style type="text/css">
-    .red.tui-grid-cell{background-color: #F8E0E0}
-    .blue.tui-grid-cell{background-color: #CEF6F5}
+    .red.tui-grid-cell{background-color: #f8e0e0;}
+    .blue.tui-grid-cell{background-color: #cef6f5;}
     </style>
 </head>
 <body>
@@ -25,26 +25,26 @@
 var grid = new tui.Grid({
     el: $('#grid'),
     selectType: 'checkbox',
-    columnModelList: [
+    columns: [
         {
             title: 'Name',
-            columnName: 'name'
+            name: 'name'
         },
         {
             title: 'Artist',
-            columnName: 'artist'
+            name: 'artist'
         },
         {
             title: 'Type',
-            columnName: 'type'
+            name: 'type'
         },
         {
             title: 'Release',
-            columnName: 'release'
+            name: 'release'
         },
         {
             title: 'Genre',
-            columnName: 'genre'
+            name: 'genre'
         }
     ]
 });
@@ -84,7 +84,10 @@ var rowData = [
         type: 'Deluxe',
         genre: 'Rock',
         _extraData: {
-            rowState: 'CHECKED' // A checkbox is already checked while rendering
+            rowState: 'CHECKED', // A checkbox is already checked while rendering
+            className: { // Add class name on a row
+                row: ['red']
+            }
         }
     },
     {
@@ -105,12 +108,7 @@ var rowData = [
         artist: 'Adele',
         release: '2011.01.21',
         type: 'Deluxe',
-        genre: 'Pop,R&B',
-        _extraData: {
-            className: {
-                row: ['red']
-            }
-        }
+        genre: 'Pop,R&B'
     },
     {
         name: '25',
@@ -119,9 +117,9 @@ var rowData = [
         type: 'EP',
         genre: 'Pop',
         _extraData: {
-            className: {
+            className: { // Add class name on each columns
                 column: {
-                    release: ['blue'],
+                    type: ['blue'],
                     genre: ['blue']
                 }
             }

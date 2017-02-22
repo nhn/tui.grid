@@ -25,30 +25,30 @@ var grid = new tui.Grid({
     bodyHeight: 300,
     isFixedHeight: true,
     minimumColumnWidth: 100,
-    columnModelList: [
+    columns: [
         {
             title: 'User ID',
-            columnName: 'c1',
+            name: 'c1',
             align: 'center',
             width: 200,
-            editOption: {
+            editOptions: {
                 type: 'text',
             }
         },
         {
             title: 'Score',
-            columnName: 'c2',
+            name: 'c2',
             className: 'clickable',
             width: 200,
-            editOption: {
+            editOptions: {
                 type: 'text',
             }
         },
         {
             title: 'Item Count',
             width: 200,
-            columnName: 'c3',
-            editOption: {
+            name: 'c3',
+            editOptions: {
                 type: 'text',
             }
         }

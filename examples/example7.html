@@ -90,17 +90,16 @@
 var grid = new tui.Grid({
     el: $('#grid'),
     headerHeight: 40,
-    displayRowCount: 15,
     minimumColumnWidth: 100,
     rowHeight: 35,
-    columnModelList: [
+    columns: [
         {
-            columnName: '_button',
+            name: '_button',
             width: 30
         },
         {
             title: 'ID',
-            columnName: 'c1',
+            name: 'c1',
             align: 'center',
             editOption: {
                 beforeContent: 'FE',
@@ -110,7 +109,7 @@ var grid = new tui.Grid({
         {
             title: 'Name',
             defaultValue: 2,
-            columnName: 'c2',
+            name: 'c2',
             align: 'center',
             editOption: {
                 type: 'text',
@@ -118,7 +117,7 @@ var grid = new tui.Grid({
         },
         {
             title: 'Score',
-            columnName: 'c3',
+            name: 'c3',
             align: 'center',
             editOption: {
                 type: 'text',

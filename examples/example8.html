@@ -23,21 +23,20 @@ var grid = new tui.Grid({
     headerHeight: 30,
     toolbar: null,
     headerHeight: 60,
-    displayRowCount: 15,
-    columnModelList: [
+    columns: [
         {
             title: 'DatePicker: Off',
-            columnName: 'c1',
-            editOption: {
-                useViewMode: false,
+            name: 'c1',
+            editOptions: {
+                editOnly: false,
                 type: 'text'
             }
         },
         {
             title: 'DatePicker: (yy/mm/dd)',
-            columnName: 'c2',
-            editOption: {
-                useViewMode: false,
+            name: 'c2',
+            editOptions: {
+                editOnly: false,
                 type: 'text'
             },
             component: {
@@ -50,8 +49,8 @@ var grid = new tui.Grid({
         },
         {
             title: 'DatePicker: (yyyy.mm.dd)',
-            columnName: 'c3',
-            editOption: {
+            name: 'c3',
+            editOptions: {
                 type: 'text'
             },
             component: {
@@ -64,8 +63,8 @@ var grid = new tui.Grid({
         },
         {
             title: 'DatePicker (selectableRanges)',
-            columnName: 'c4',
-            editOption: {
+            name: 'c4',
+            editOptions: {
                 type: 'text'
             },
             component: {
@@ -81,14 +80,14 @@ var grid = new tui.Grid({
     ],
     columnMerge: [
         {
-            columnName : 'c1-c2',
-            title : 'useViewMode: false',
-            columnNameList : ['c1', 'c2']
+            name : 'c1-c2',
+            title : 'editOnly: false',
+            nameList : ['c1', 'c2']
         },
         {
-            columnName : 'c3-c4',
-            title : 'useViewMode: true',
-            columnNameList : ['c3', 'c4']
+            name : 'c3-c4',
+            title : 'editOnly: true',
+            nameList : ['c3', 'c4']
         }
     ]
 });

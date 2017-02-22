@@ -128,23 +128,23 @@ var treeDepthData = {
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    columnModelList: [
+    columns: [
         {
             title: 'Category1',
-            columnName: 'category1',
-            editOption: {
+            name: 'category1',
+            editOptions: {
                 type: 'select',
-                list: [
+                listItems: [
                     { text: 'Select', value: '' },
                     { text: 'Domestic', value: '01' },
                     { text: 'Overseas', value: '02' },
                     { text: 'Etc', value: '03' }
                 ],
-                useViewMode: false
+                editOnly: false
             },
-            relationList: [
+            relations: [
                 {
-                    columnList: ['category2', 'selectedValue'],
+                    columnlistItems: ['category2', 'selectedValue'],
                     optionListChange: function(value) {
                         return twoDepthData[value];
                     },
@@ -156,15 +156,15 @@ var grid = new tui.Grid({
         },
         {
             title: 'Category2',
-            columnName: 'category2',
-            editOption: {
+            name: 'category2',
+            editOptions: {
                 type: 'select',
-                list: [],
-                useViewMode: false
+                listItems: [],
+                editOnly: false
             },
-            relationList: [
+            relations: [
                 {
-                    columnList: ['category3'],
+                    columnlistItems: ['category3'],
                     optionListChange: function(value) {
                         return treeDepthData[value];
                     },
@@ -176,11 +176,11 @@ var grid = new tui.Grid({
         },
         {
             title: 'Category3',
-            columnName: 'category3',
-            editOption: {
+            name: 'category3',
+            editOptions: {
                 type: 'select',
-                list: [],
-                useViewMode: false
+                listItems: [],
+                editOnly: false
             }
         }
     ]

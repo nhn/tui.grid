@@ -21,74 +21,74 @@
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    columnModelList: [
+    columns: [
         {
             title: 'Name',
-            columnName: 'name',
-            editOption: {
+            name: 'name',
+            editOptions: {
                 type: 'text',
-                useViewMode: true
+                editOnly: true
             }
         },
         {
             title: 'Artist',
-            columnName: 'artist',
-            editOption: {
+            name: 'artist',
+            editOptions: {
                 type: 'text',
                 maxLength: 10,
-                useViewMode: false
+                editOnly: false
             }
         },
         {
             title: 'Type',
-            columnName: 'typeCode',
-            editOption: {
+            name: 'typeCode',
+            editOptions: {
                 type: 'select',
-                list: [
+                listItems: [
                     { text: 'Deluxe', value: '1' },
                     { text: 'EP', value: '2' },
                     { text: 'Single', value: '3' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                useViewMode: true
+                editOnly: true
             }
         },
         {
             title: 'Genre',
-            columnName: 'genreCode',
-            editOption: {
+            name: 'genreCode',
+            editOptions: {
                 type: 'checkbox',
-                list: [
+                listItems: [
                     { text: 'Pop', value: '1' },
                     { text: 'Rock', value: '2' },
                     { text: 'R&B', value: '3' },
                     { text: 'Electronic', value: '4' },
                     { text: 'etc.', value: '5' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                useViewMode: true
+                editOnly: true
             }
         },
         {
             title: 'Grade',
-            columnName: 'grade',
-            editOption: {
+            name: 'grade',
+            editOptions: {
                 type: 'radio',
-                list: [
+                listItems: [
                     { text: '★☆☆☆☆', value: '1' },
                     { text: '★★☆☆☆', value: '2' },
                     { text: '★★★☆☆', value: '3' },
                     { text: '★★★★☆', value: '4' },
                     { text: '★★★★★', value: '5' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                useViewMode: true
+                editOnly: true
             }
         }
     ]
