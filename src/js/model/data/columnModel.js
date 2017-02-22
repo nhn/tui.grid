@@ -106,7 +106,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             align: 'center',
             width: 40,
             fixedWidth: true,
-            editOption: {
+            editOptions: {
                 type: 'mainButton'
             }
         };
@@ -268,8 +268,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
-        } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
-            editType = columnModel.editOption.type;
+        } else if (columnModel && columnModel.editOptions && columnModel.editOptions.type) {
+            editType = columnModel.editOptions.type;
         }
 
         return editType;

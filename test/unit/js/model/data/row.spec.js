@@ -226,13 +226,13 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c2',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: callbackSpy
                     }
                 },
                 {
                     name: 'c3',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: function(ev) {
                             return true;
                         }
@@ -240,7 +240,7 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c4',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: function(ev) {
                             return false;
                         }
@@ -305,7 +305,7 @@ describe('RowData', function() {
             spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
-                editOption: {
+                editOptions: {
                     changeAfterCallback: callbackSpy
                 }
             }]);

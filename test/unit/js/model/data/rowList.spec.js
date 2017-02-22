@@ -8,7 +8,7 @@ describe('data.rowList', function() {
         {
             title: 'changeCallback',
             name: 'changeCallback',
-            editOption: {
+            editOptions: {
                 changeBeforeCallback: function(changeEvent) {
                     return !!changeEvent.value;
                 },
@@ -79,21 +79,21 @@ describe('data.rowList', function() {
         {
             title: 'text',
             name: 'text',
-            editOption: {
+            editOptions: {
                 type: 'text'
             }
         },
         {
             title: 'text-convertible',
             name: 'text-convertible',
-            editOption: {
+            editOptions: {
                 type: 'text-convertible'
             }
         },
         {
             title: 'select',
             name: 'select',
-            editOption: {
+            editOptions: {
                 type: 'select',
                 list: [
                     {text: 'text1', value: 1},
@@ -106,7 +106,7 @@ describe('data.rowList', function() {
         {
             title: 'checkbox',
             name: 'checkbox',
-            editOption: {
+            editOptions: {
                 type: 'checkbox',
                 list: [
                     {text: 'text1', value: 1},
@@ -119,7 +119,7 @@ describe('data.rowList', function() {
         {
             title: 'radio',
             name: 'radio',
-            editOption: {
+            editOptions: {
                 type: 'radio',
                 list: [
                     {text: 'text1', value: 1},
@@ -132,7 +132,7 @@ describe('data.rowList', function() {
         {
             title: 'radioNoRelation',
             name: 'radioNoRelation',
-            editOption: {
+            editOptions: {
                 type: 'radio',
                 list: [
                     {text: 'text1', value: 1},

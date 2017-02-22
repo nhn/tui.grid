@@ -27,21 +27,21 @@ describe('data.columnModel', function() {
             {
                 title: 'text',
                 name: 'text',
-                editOption: {
+                editOptions: {
                     type: 'text'
                 }
             },
             {
                 title: 'text-convertible',
                 name: 'text-convertible',
-                editOption: {
+                editOptions: {
                     type: 'text-convertible'
                 }
             },
             {
                 title: 'select',
                 name: 'select',
-                editOption: {
+                editOptions: {
                     type: 'select',
                     list: [
                         {text: 'text1', value: 1},
@@ -54,7 +54,7 @@ describe('data.columnModel', function() {
             {
                 title: 'checkbox',
                 name: 'checkbox',
-                editOption: {
+                editOptions: {
                     type: 'checkbox',
                     list: [
                         {text: 'text1', value: 1},
@@ -67,7 +67,7 @@ describe('data.columnModel', function() {
             {
                 title: 'radio',
                 name: 'radio',
-                editOption: {
+                editOptions: {
                     type: 'radio',
                     list: [
                         {text: 'text1', value: 1},
@@ -160,7 +160,7 @@ describe('data.columnModel', function() {
                 align: 'center',
                 hidden: false,
                 fixedWidth: true,
-                editOption: {
+                editOptions: {
                     type: 'mainButton'
                 },
                 width: 40
@@ -178,7 +178,7 @@ describe('data.columnModel', function() {
                 align: 'center',
                 hidden: false,
                 fixedWidth: true,
-                editOption: {
+                editOptions: {
                     type: 'mainButton'
                 },
                 width: 40
@@ -191,7 +191,7 @@ describe('data.columnModel', function() {
         it('selectType 이 없을때 hidden: true 로 설정된다.', function() {
             var sampleColumnModel = {
                 name: '_button',
-                editOption: {
+                editOptions: {
                     type: '',
                     list: [{
                         value: 'selected'

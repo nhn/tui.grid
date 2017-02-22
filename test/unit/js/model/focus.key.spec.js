@@ -15,7 +15,7 @@ describe('model/focus', function() {
             columns: _.map(['c1', 'c2', 'c3', 'c4', 'c5'], function(name) {
                 return {
                     name: name,
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 };

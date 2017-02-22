@@ -12,7 +12,7 @@ function createColumns(names) {
         models.push({
             title: name,
             name: name,
-            editOption: {
+            editOptions: {
                 type: editType || 'text'
             }
         });
@@ -22,8 +22,8 @@ function createColumns(names) {
 
 function createRowList(columns) {
     var columnModel = new ColumnModelData({
-            columns: columns
-        });
+        columns: columns
+    });
 
     return new RowListData([], {
         columnModel: columnModel
@@ -36,7 +36,7 @@ describe('rowList.paste()', function() {
     describe('텍스트 컬럼 (text, text-convertible)', function() {
         beforeEach(function() {
             var columns = createColumns(['c1', 'c2', 'c3']);
-            columns[1].editOption.type = 'text-convertible';
+            columns[1].editOptions.type = 'text-convertible';
 
             rowList = createRowList(columns);
             rowList.setRowList([
@@ -124,7 +124,7 @@ describe('rowList.paste()', function() {
         it(': editOption이 없는 열', function() {
             var columns = createColumns(['c1', 'c2']);
 
-            columns[1].editOption = null; // disable to edit
+            columns[1].editOptions = null; // disable to edit
             rowList = createRowList(columns);
             rowList.setRowList([{
                     c1: '0-1',

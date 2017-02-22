@@ -19,14 +19,14 @@ describe('model.renderer', function() {
         {
             title: 'columnName2',
             name: 'columnName2',
-            editOption: {
+            editOptions: {
                 type: 'text'
             }
         },
         {
             title: 'columnName3',
             name: 'columnName3',
-            editOption: {
+            editOptions: {
                 type: 'select',
                 list: [
                     {text: 'text1', value: 1},
@@ -39,7 +39,7 @@ describe('model.renderer', function() {
         {
             title: 'columnName4',
             name: 'columnName4',
-            editOption: {
+            editOptions: {
                 type: 'checkbox',
                 list: [
                     {text: 'text1', value: 1},
@@ -52,7 +52,7 @@ describe('model.renderer', function() {
         {
             title: 'columnName5',
             name: 'columnName5',
-            editOption: {
+            editOptions: {
                 type: 'radio',
                 list: [
                     {text: 'text1', value: 1},

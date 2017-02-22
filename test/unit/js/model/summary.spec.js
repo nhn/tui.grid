@@ -10,13 +10,13 @@ function create(data, autoColumnNames) {
         columns: [
             {
                 name: 'c1',
-                editOption: {
+                editOptions: {
                     type: 'text'
                 }
             },
             {
                 name: 'c2',
-                editOption: {
+                editOptions: {
                     type: 'text'
                 }
             }

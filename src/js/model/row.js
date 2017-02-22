@@ -175,7 +175,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
                 valign: column.valign,
-                optionList: tui.util.pick(column, 'editOption', 'list'),
+                optionList: tui.util.pick(column, 'editOptions', 'list'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names
@@ -220,9 +220,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent');
-        var afterContent = tui.util.pick(column, 'editOption', 'afterContent');
-        var converter = tui.util.pick(column, 'editOption', 'converter');
+        var beforeContent = tui.util.pick(column, 'editOptions', 'beforeContent');
+        var afterContent = tui.util.pick(column, 'editOptions', 'afterContent');
+        var converter = tui.util.pick(column, 'editOptions', 'converter');
         var rowAttrs = row.toJSON();
 
         return {
@@ -403,7 +403,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
-        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
         var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
         // Silent Cases

@@ -26,7 +26,7 @@ describe('view.painter.cell.base', function() {
             grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
-                editOption: {
+                editOptions: {
                     type: 'checkbox',
                     list: [
                         {text: 'text1', value: 1},
@@ -64,7 +64,7 @@ describe('view.painter.cell.base', function() {
                 };
                 optionList = cellPainter.getOptionList(cellData);
 
-                expect(optionList).toEqual(grid.columnModel.getColumnModel('c1').editOption.list);
+                expect(optionList).toEqual(grid.columnModel.getColumnModel('c1').editOptions.list);
             });
         });
     });
@@ -186,7 +186,7 @@ describe('view.painter.cell.base', function() {
             grid.columnModel.set('columns', [{
                 title: 'c1',
                 columnName: 'c1',
-                editOption: {
+                editOptions: {
                     type: 'checkbox',
                     list: [
                         {text: 'text1', value: 1},
@@ -196,7 +196,7 @@ describe('view.painter.cell.base', function() {
             }, {
                 title: 'c2',
                 columnName: 'c2',
-                editOption: {
+                editOptions: {
                     type: 'radio',
                     list: [
                         {text: 'text1', value: 1},

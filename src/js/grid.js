@@ -96,29 +96,29 @@ tui = window.tui = tui || {};
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
- *          @param {Array} [options.columns.editOption] - The object for configuring editing UI.
- *              @param {string} [options.columns.editOption.type='normal'] - The string value that specifies
+ *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
+ *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
  *                  the type of the editing UI.
  *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
- *              @param {boolean} [options.columns.editOption.useViewMode=true] - If set to true, default mode
+ *              @param {boolean} [options.columns.editOptions.useViewMode=true] - If set to true, default mode
  *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
  *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
  *                  input elements as a default.
- *              @param {Array} [options.columns.editOption.list] - Specifies the option list for the
+ *              @param {Array} [options.columns.editOptions.list] - Specifies the option list for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOption.changeBeforeCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.changeBeforeCallback] - The function that will be
  *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columns.editOption.changeAfterCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
- *              @param {(string|function)} [options.columns.editOption.beforeContent] - The HTML string to be
+ *              @param {(string|function)} [options.columns.editOptions.beforeContent] - The HTML string to be
  *                  shown left to the value. If it's a function, the return value will be used.
- *              @param {(string|function)} [options.columns.editOption.afterContent] - The HTML string to be
+ *              @param {(string|function)} [options.columns.editOptions.afterContent] - The HTML string to be
  *                  shown right to the value. If it's a function, the return value will be used.
- *              @param {function} [options.columns.editOption.converter] - The function whose
+ *              @param {function} [options.columns.editOptions.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *              @param {Object} [options.columns.editOption.inputEvents] - The object that has an event name
+ *              @param {Object} [options.columns.editOptions.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
  *              @param {Object} [options.columns.copyOptions] - Option object for clipboard copying.
  *                  This option is column specific, and overrides the global copyOptions.
