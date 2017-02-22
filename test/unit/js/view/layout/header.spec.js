@@ -94,7 +94,7 @@ describe('Header', function() {
             });
         });
 
-        it('Resize handle should be rendered as a child.', function() {
+        it('When "resizable" is true, resize handle should be rendered as a child.', function() {
             header.coordColumnModel.set('resizable', true);
             header.render();
             expect(header.$el.find('.resizeHandle').length).toBe(1);
