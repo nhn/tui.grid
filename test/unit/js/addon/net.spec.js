@@ -624,20 +624,19 @@ describe('addon.net', function() {
         beforeEach(function() {
             createNet();
             net.pagination = {};
+            net.pagination.reset = jasmine.createSpy('reset');
             net.pagination.movePageTo = jasmine.createSpy('movePageTo');
-            net.pagination.setOption = jasmine.createSpy('setOption');
         });
 
-        it('responseData에 pagination 정보가 있다면 pagination instance에 설정한다.', function() {
+        it('When "responseData" has pagination information, current page is changed.', function() {
+            var currentPage = 10;
             net._onReadSuccess(dataModel, {
                 pagination: {
-                    page: 10,
+                    page: currentPage,
                     totalCount: 100
                 }
             });
-            expect(net.pagination.setOption).toHaveBeenCalledWith('itemPerPage', net.perPage);
-            expect(net.pagination.setOption).toHaveBeenCalledWith('itemCount', 100);
-            expect(net.pagination.movePageTo).toHaveBeenCalledWith(10);
+            expect(net.pagination.movePageTo).toHaveBeenCalledWith(currentPage);
         });
     });
 
