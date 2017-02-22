@@ -41,13 +41,6 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         this._minColumnWidthList = null;
 
         /**
-         * Whether each column are resizable or not
-         * @private
-         * @type {boolean}
-         */
-        this._resizable = options.resizable;
-
-        /**
          * Whether the column width is modified by user.
          * @type {boolean}
          */
@@ -64,7 +57,8 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     },
 
     defaults: {
-        columnWidthList: []
+        columnWidthList: [],
+        resizable: true
     },
 
     /**
@@ -497,14 +491,6 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var orgWidth = this.get('originalWidthList')[index];
 
         this.setColumnWidth(index, orgWidth);
-    },
-
-    /**
-     * Whether each columm are resizable or not
-     * @returns {boolean} State of resizable
-     */
-    isResizable: function() {
-        return this._resizable;
     }
 });
 

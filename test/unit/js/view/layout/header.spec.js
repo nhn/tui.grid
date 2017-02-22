@@ -20,8 +20,8 @@ function create(whichSide, columns) {
     });
     var coordColumnModel = new Model();
     coordColumnModel.getColumnWidthList = _.noop;
-    coordColumnModel.isResizable = function() {
-        return true;
+    coordColumnModel.get = function() {
+        return false;
     };
 
     return new HeaderView({
@@ -34,7 +34,14 @@ function create(whichSide, columns) {
         coordColumnModel: coordColumnModel,
         domEventBus: DomEventBus.create(),
         viewFactory: {
-            createHeaderResizeHandle: jasmine.createSpy()
+            createHeaderResizeHandle: function() {
+                return {
+                    el: '<div class="resizeHandle"></div>',
+                    render: function() {
+                        return this;
+                    }
+                };
+            }
         }
     });
 }
@@ -88,6 +95,12 @@ describe('Header', function() {
                 expect(columnData.widths.length).toBeGreaterThan(0);
                 expect(columnData.columns.length).toBeGreaterThan(0);
             });
+        });
+
+        it('When "resizable" is true, columns are enabled to resize.', function() {
+            spyOn(header.coordColumnModel, 'get').and.returnValue(true);
+            header.render();
+            expect(header.$el.find('.resizeHandle').length).toBe(1);
         });
     });
 

@@ -159,17 +159,19 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordColumn model and returns it
-     * @param  {Object} options - Column options
+     * @param  {Object} columnOptions - Column options
      * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/coordColumnModel}
      * @private
      */
-    _createCoordColumnModel: function(options, domEventBus) {
-        return new CoordColumnModel(null, {
+    _createCoordColumnModel: function(columnOptions, domEventBus) {
+        var attrs = {
+            resizable: columnOptions.resizable
+        };
+        return new CoordColumnModel(attrs, {
             columnModel: this.columnModel,
             dimensionModel: this.dimensionModel,
-            domEventBus: domEventBus,
-            resizable: options.resizable
+            domEventBus: domEventBus
         });
     },
 
