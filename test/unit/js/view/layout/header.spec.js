@@ -20,9 +20,6 @@ function create(whichSide, columns) {
     });
     var coordColumnModel = new Model();
     coordColumnModel.getColumnWidthList = _.noop;
-    coordColumnModel.get = function() {
-        return false;
-    };
 
     return new HeaderView({
         whichSide: whichSide || frameConst.R,
@@ -97,8 +94,8 @@ describe('Header', function() {
             });
         });
 
-        it('When "resizable" is true, columns are enabled to resize.', function() {
-            spyOn(header.coordColumnModel, 'get').and.returnValue(true);
+        it('Resize handle should be rendered as a child.', function() {
+            header.coordColumnModel.set('resizable', true);
             header.render();
             expect(header.$el.find('.resizeHandle').length).toBe(1);
         });
