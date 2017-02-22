@@ -12,14 +12,14 @@ describe('Data.RowList - rowSpan', function() {
                 {
                     name: 'c1',
                     title: 'c1',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 },
                 {
                     name: 'c2',
                     title: 'c2',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 }

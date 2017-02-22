@@ -9,13 +9,13 @@ describe('Data.RowList - simple', function() {
         {
             name: 'c1',
             title: 'c1',
-            editOption: {
+            editOptions: {
                 type: 'text'
             }
         }, {
             name: 'c2',
             title: 'c2',
-            editOption: {
+            editOptions: {
                 type: 'text'
             }
         }
@@ -240,15 +240,12 @@ describe('Data.RowList - simple', function() {
             columnModel.set('columns', [
                 {
                     name: 'c1',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 },
                 {
                     name: 'c2',
-                    editOption: {
-                        type: 'normal'
-                    }
                 }
             ]);
             rowList.setRowList([
@@ -323,8 +320,12 @@ describe('Data.RowList - simple', function() {
 
     describe('validate()', function() {
         beforeEach(function() {
-            columnModel.getColumnModel('c1').isRequired = true;
-            columnModel.getColumnModel('c2').isRequired = true;
+            columnModel.getColumnModel('c1').validation = {
+                required: true
+            };
+            columnModel.getColumnModel('c2').validation = {
+                required: true
+            };
             rowList.setRowList([
                 {
                     c1: '0-1',

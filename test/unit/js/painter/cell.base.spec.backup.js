@@ -131,7 +131,7 @@ describe('view.painter.cell.base', function() {
                 grid.columnModel.set('columns', [
                     {
                         columnName: 'c1',
-                        editOption: {
+                        editOptions: {
                             type: 'normal',
                             beforeText: 'Before',
                             afterText: 'After'

@@ -82,12 +82,12 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             name: '_number',
             align: 'center',
             title: 'No.',
-            isFixedWidth: true,
+            fixedWidth: true,
             width: 60
         };
 
         if (!hasNumberColumn) {
-            numberColumn.isHidden = true;
+            numberColumn.hidden = true;
         }
 
         this._extendColumns(numberColumn, metaColumns);
@@ -102,11 +102,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var selectType = this.get('selectType');
         var buttonColumn = {
             name: '_button',
-            isHidden: false,
+            hidden: false,
             align: 'center',
             width: 40,
-            isFixedWidth: true,
-            editOption: {
+            fixedWidth: true,
+            editOptions: {
                 type: 'mainButton'
             }
         };
@@ -116,7 +116,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         } else if (selectType === 'radio') {
             buttonColumn.title = '선택';
         } else {
-            buttonColumn.isHidden = true;
+            buttonColumn.hidden = true;
         }
 
         this._extendColumns(buttonColumn, metaColumns);
@@ -181,7 +181,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
-     * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
+     * 화면에 노출되는 (!hidden) 컬럼 모델 리스트를 반환한다.
      * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList를 반환한다.
      * @param {boolean} [withMeta=false] 메타컬럼 포함 여부. 지정하지 않으면 데이터컬럼리스트 기준으로 반환한다.
      * @returns {Array}  조회한 컬럼모델 배열
@@ -211,7 +211,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     getVisibleMetaColumnCount: function() {
         var models = this.get('metaColumns');
         var totalLength = models.length;
-        var hiddenLength = _.where(models, {isHidden: true}).length;
+        var hiddenLength = _.where(models, {hidden: true}).length;
 
         return (totalLength - hiddenLength);
     },
@@ -227,7 +227,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var visibleFixedColumns, visibleCount;
 
         visibleFixedColumns = _.filter(fixedColumns, function(column) {
-            return !column.isHidden;
+            return !column.hidden;
         });
         visibleCount = visibleFixedColumns.length;
 
@@ -268,18 +268,18 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
-        } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
-            editType = columnModel.editOption.type;
+        } else if (columnModel && columnModel.editOptions && columnModel.editOptions.type) {
+            editType = columnModel.editOptions.type;
         }
 
         return editType;
     },
 
     /**
-     * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
+     * 인자로 받은 컬럼 모델에서 !hidden을 만족하는 리스트를 추려서 반환한다.
      * @param {Array} metaColumns 메타 컬럼 모델 리스트
      * @param {Array} dataColumns 데이터 컬럼 모델 리스트
-     * @returns {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
+     * @returns {Array} hidden 이 설정되지 않은 전체 컬럼 모델 리스트
      * @private
      */
     _makeVisibleColumns: function(metaColumns, dataColumns) {
@@ -287,7 +287,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         dataColumns = dataColumns || this.get('dataColumns');
 
         return _.filter(metaColumns.concat(dataColumns), function(item) {
-            return !item.isHidden;
+            return !item.hidden;
         });
     },
 
@@ -310,15 +310,15 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
-     * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
-     * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
+     * ignored 가 true 로 설정된 columnName 의 list 를 반환한다.
+     * @returns {Array} ignored 가 true 로 설정된 columnName 배열.
      */
     getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('dataColumns');
         var ignoredColumnNames = [];
 
         _.each(columnModelLsit, function(columnModel) {
-            if (columnModel.isIgnore) {
+            if (columnModel.ignored) {
                 ignoredColumnNames.push(columnModel.name);
             }
         });
@@ -381,11 +381,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
-     * Set 'isHidden' property of column model to true or false
-     * @param {Array} columnNames - Column names to set 'isHidden' property
-     * @param {boolean} isHidden - Hidden flag for setting
+     * Set 'hidden' property of column model to true or false
+     * @param {Array} columnNames - Column names to set 'hidden' property
+     * @param {boolean} hidden - Hidden flag for setting
      */
-    setHidden: function(columnNames, isHidden) {
+    setHidden: function(columnNames, hidden) {
         var name, names, columnModel, visibleColumns;
 
         while (columnNames.length) {
@@ -393,7 +393,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             columnModel = this.getColumnModel(name);
 
             if (columnModel) {
-                columnModel.isHidden = isHidden;
+                columnModel.hidden = hidden;
             } else {
                 names = this.getUnitColumnNamesIfMerged(name);
                 columnNames.push.apply(columnNames, names);

@@ -52,7 +52,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      */
     _checkMaxLength: function(columnName, value) {
         var column = this.columnModel.getColumnModel(columnName);
-        var maxLength = tui.util.pick(column, 'editOption', 'maxLength');
+        var maxLength = tui.util.pick(column, 'editOptions', 'maxLength');
 
         if (maxLength > 0 && value.length > maxLength) {
             return value.substring(0, maxLength);
@@ -134,7 +134,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
             eventType = 'blur';
         }
 
-        eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventType);
+        eventHandler = tui.util.pick(columnModel, 'editOptions', 'inputEvents', eventType);
 
         if (_.isFunction(eventHandler)) {
             eventHandler.call(event.target, event, address);
@@ -167,7 +167,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     setValueIfNotUsingViewMode: function(address, value) {
         var columnModel = this.columnModel.getColumnModel(address.columnName);
 
-        if (!tui.util.pick(columnModel, 'editOption', 'useViewMode')) {
+        if (!tui.util.pick(columnModel, 'editOptions', 'useViewMode')) {
             this.setValue(address, value);
         }
     }

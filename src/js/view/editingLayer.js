@@ -37,7 +37,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     _startEditing: function(cellData) {
         var rowKey = cellData.rowKey;
         var columnName = cellData.columnName;
-        var editType = tui.util.pick(cellData, 'columnModel', 'editOption', 'type');
+        var editType = tui.util.pick(cellData, 'columnModel', 'editOptions', 'type');
         var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
         var painter = this.inputPainters[editType];
 

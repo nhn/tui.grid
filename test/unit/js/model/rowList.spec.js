@@ -17,14 +17,14 @@ describe('model.rowList', function() {
         {
             title: 'c2',
             name: 'c2',
-            editOption: {
+            editOptions: {
                 type: 'text'
             }
         },
         {
             title: 'c3',
             name: 'c3',
-            editOption: {
+            editOptions: {
                 type: 'select',
                 list: [
                     {text: 'text1', value: 1},

@@ -29,26 +29,29 @@
         selectType: 'checkbox',
         columnFixCount: 1,
         headerHeight: 30,
-        keyColumnName: 'c1',
-        toolbar: true,
-        resizeHandle: {},
+        virtualScrolling: false,
+        heightResizable: true,
         showDummyRows: true,
         displayRowCount: 15,
         minimumColumnWidth: 100,
         pagination: true,
-        columnModelList: [{
-                columnName: '_button',
+        columns: [
+            {
+                name: '_button',
                 width: 30
             },
             {
                 title: 'c1',
-                columnName: 'c1',
-                isRequired: true,
+                name: 'c1',
+                validation: {
+                    required: true
+                },
                 width: 200,
-                editOption: {
+                editOptions: {
                     // useViewMode: false,
                     type: 'text',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
@@ -61,13 +64,14 @@
             },
             {
                 title: 'c2',
-                isSortable: true,
+                sortable: true,
                 // defaultValue: 2,
                 width: 200,
-                columnName: 'c2',
-                editOption: {
+                name: 'c2',
+                editOptions: {
                     type: 'select',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
@@ -80,13 +84,14 @@
             },
             {
                 title: 'c3',
-                columnName: 'c3',
+                name: 'c3',
                 width: 200,
                 defaultValue: 2,
-                editOption: {
+                editOptions: {
                     useViewMode: false,
                     type: 'checkbox',
-                    list: [{
+                    listItems: [
+                        {
                             text: 1,
                             value: 1
                         },
@@ -97,7 +102,17 @@
                     ]
                 }
             }
-        ]
+        ],
+        footer: {
+            height: 30,
+            columnContent: {
+                c1: {
+                    template: function() {
+                        return 'Good!';
+                    }
+                }
+            }
+        }
     });
     var rowList = [];
     (function() {

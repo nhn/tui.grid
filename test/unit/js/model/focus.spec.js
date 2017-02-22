@@ -17,17 +17,17 @@ describe('model/focus', function() {
             columns: [
                 {
                     name: 'c1',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 }, {
                     name: 'c2',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 }, {
                     name: 'c3',
-                    editOption: {
+                    editOptions: {
                         type: 'text'
                     }
                 }

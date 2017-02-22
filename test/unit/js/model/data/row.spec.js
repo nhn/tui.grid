@@ -86,16 +86,21 @@ describe('RowData', function() {
                 expect(row.getClassNameList('c1')).toContain('c1-class');
             });
 
-            it('containing \'ellipsis\' if columnModel.isEllipsis is true', function() {
+            it('containing \'ellipsis\' if columnModel.ellipsis is true', function() {
                 columnModel.set('columns', [
-                    {name: 'c1', isEllipsis: true}
+                    {name: 'c1', ellipsis: true}
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });
 
-            it('containing \'required\' if columnModel.required is true', function() {
+            it('containing CELL_REQUIRED if columnModel.validation.required is true', function() {
                 columnModel.set('columns', [
-                    {name: 'c1', isRequired: true}
+                    {
+                        name: 'c1',
+                        validation: {
+                            required: true
+                        }
+                    }
                 ]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_REQUIRED);
             });
@@ -116,7 +121,12 @@ describe('RowData', function() {
         beforeEach(function() {
             columnModel = new ColumnModel({
                 columns: [
-                    {name: 'c1', isRequired: true}
+                    {
+                        name: 'c1',
+                        validation: {
+                            required: true
+                        }
+                    }
                 ]
             });
             rowList = new RowListData(null, {
@@ -226,13 +236,13 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c2',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: callbackSpy
                     }
                 },
                 {
                     name: 'c3',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: function(ev) {
                             return true;
                         }
@@ -240,7 +250,7 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c4',
-                    editOption: {
+                    editOptions: {
                         changeBeforeCallback: function(ev) {
                             return false;
                         }
@@ -305,7 +315,7 @@ describe('RowData', function() {
             spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
-                editOption: {
+                editOptions: {
                     changeAfterCallback: callbackSpy
                 }
             }]);

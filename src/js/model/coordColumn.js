@@ -86,7 +86,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
             // After then, minimum width will be applied by #_applyMinimumColumnWidth().
             widthList.push(width ? minWidth : 0);
             minWidthList.push(minWidth);
-            fixedFlags.push(!!columnModel.isFixedWidth);
+            fixedFlags.push(!!columnModel.fixedWidth);
         }, this);
 
         this._columnWidthFixedFlags = fixedFlags;

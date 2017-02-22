@@ -26,7 +26,7 @@ describe('painter/controller', function() {
 
             controller.columnModel.set('columns', [{
                 name: 'c1',
-                editOption: {
+                editOptions: {
                     useViewMode: false
                 }
             }]);
@@ -46,7 +46,7 @@ describe('painter/controller', function() {
 
             controller.columnModel.set('columns', [{
                 name: 'c1',
-                editOption: {
+                editOptions: {
                     useViewMode: true
                 }
             }]);
