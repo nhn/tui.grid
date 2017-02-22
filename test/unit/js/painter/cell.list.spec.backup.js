@@ -64,7 +64,7 @@ describe('view.painter.cell.base', function() {
                 };
                 optionList = cellPainter.getOptionList(cellData);
 
-                expect(optionList).toEqual(grid.columnModel.getColumnModel('c1').editOptions.list);
+                expect(optionList).toEqual(grid.columnModel.getColumnModel('c1').editOptions.listItems);
             });
         });
     });

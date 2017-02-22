@@ -104,7 +104,7 @@ tui = window.tui = tui || {};
  *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
  *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
  *                  input elements as a default.
- *              @param {Array} [options.columns.editOptions.list] - Specifies the option list for the
+ *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
  *              @param {function} [options.columns.editOptions.changeBeforeCallback] - The function that will be

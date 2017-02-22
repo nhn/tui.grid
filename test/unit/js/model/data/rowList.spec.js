@@ -95,7 +95,7 @@ describe('data.rowList', function() {
             name: 'select',
             editOptions: {
                 type: 'select',
-                list: [
+                listItems: [
                     {text: 'text1', value: 1},
                     {text: 'text2', value: 2},
                     {text: 'text3', value: 3},
@@ -108,7 +108,7 @@ describe('data.rowList', function() {
             name: 'checkbox',
             editOptions: {
                 type: 'checkbox',
-                list: [
+                listItems: [
                     {text: 'text1', value: 1},
                     {text: 'text2', value: 2},
                     {text: 'text3', value: 3},
@@ -121,7 +121,7 @@ describe('data.rowList', function() {
             name: 'radio',
             editOptions: {
                 type: 'radio',
-                list: [
+                listItems: [
                     {text: 'text1', value: 1},
                     {text: 'text2', value: 2},
                     {text: 'text3', value: 3},
@@ -134,7 +134,7 @@ describe('data.rowList', function() {
             name: 'radioNoRelation',
             editOptions: {
                 type: 'radio',
-                list: [
+                listItems: [
                     {text: 'text1', value: 1},
                     {text: 'text2', value: 2},
                     {text: 'text3', value: 3},

@@ -18,21 +18,6 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
-     * 에러 객체를 반환한다.
-     * @param {String} message - Error message
-     * @returns {error} 에러객체
-     */
-    error: function(message) {
-        var GridError = function() {
-            this.name = 'Grid Exception';
-            this.message = message || 'error';
-        };
-        GridError.prototype = new Error();
-
-        return new GridError();
-    },
-
-    /**
      * Add children views
      * @param {(Object|Array)} views - View instance of Array of view instances
      * @private

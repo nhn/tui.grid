@@ -398,7 +398,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
-     * List type 의 경우 데이터 값과 editOptions.list 의 text 값이 다르기 때문에
+     * List type 의 경우 데이터 값과 editOptions.listItems 의 text 값이 다르기 때문에
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
      *
      * @param {String} columnName   컬럼명
@@ -410,10 +410,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var columnModel = this.columnModel.getColumnModel(columnName);
         var resultOptionList, editOptionList, typeExpected, valueList;
 
-        if (tui.util.isExisty(tui.util.pick(columnModel, 'editOptions', 'list'))) {
+        if (tui.util.isExisty(tui.util.pick(columnModel, 'editOptions', 'listItems'))) {
             resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
             editOptionList = resultOptionList && resultOptionList.optionList ?
-                    resultOptionList.optionList : columnModel.editOptions.list;
+                    resultOptionList.optionList : columnModel.editOptions.listItems;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = util.toString(value).split(',');
@@ -472,10 +472,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var value = this.get(columnName);
 
         if (this._isListType(editType)) {
-            if (tui.util.isExisty(tui.util.pick(column, 'editOptions', 'list', 0, 'value'))) {
+            if (tui.util.isExisty(tui.util.pick(column, 'editOptions', 'listItems', 0, 'value'))) {
                 value = this._getListTypeVisibleText(columnName);
             } else {
-                throw this.error('Check "' + columnName + '"\'s editOptions.list property out in your ColumnModel.');
+                throw new Error('Check "' + columnName +
+                    '"\'s editOptions.listItems property out in your ColumnModel.');
             }
         } else if (editType === 'password') {
             value = '';
