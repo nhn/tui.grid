@@ -220,16 +220,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var beforeContent = tui.util.pick(column, 'editOptions', 'beforeContent');
-        var afterContent = tui.util.pick(column, 'editOptions', 'afterContent');
+        var prefix = tui.util.pick(column, 'editOptions', 'prefix');
+        var postfix = tui.util.pick(column, 'editOptions', 'postfix');
         var converter = tui.util.pick(column, 'editOptions', 'converter');
         var rowAttrs = row.toJSON();
 
         return {
             value: this._getValueToDisplay(value, column, isTextType),
             formattedValue: this._getFormattedValue(value, rowAttrs, column),
-            beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
-            afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+            prefix: this._getExtraContent(prefix, value, rowAttrs),
+            postfix: this._getExtraContent(postfix, value, rowAttrs),
             convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
         };
     },
@@ -261,7 +261,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Returns the value of the 'beforeContent' or 'afterContent'.
+     * Returns the value of the 'prefix' or 'postfix'.
      * @param {(String|Function)} content - content
      * @param {String} cellValue - cell value
      * @param {Object} rowAttrs - All attributes of the row

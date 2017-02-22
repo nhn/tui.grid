@@ -111,10 +111,10 @@ tui = window.tui = tui || {};
  *                  called before changing the value of the cell. If returns false, the changing will be canceled.
  *              @param {function} [options.columns.editOptions.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
- *              @param {(string|function)} [options.columns.editOptions.beforeContent] - The HTML string to be
- *                  shown left to the value. If it's a function, the return value will be used.
- *              @param {(string|function)} [options.columns.editOptions.afterContent] - The HTML string to be
- *                  shown right to the value. If it's a function, the return value will be used.
+ *              @param {(string|function)} [options.columns.editOptions.prefix] - The HTML string to be
+ *                  shown left to the input element. If it's a function, the return value will be used.
+ *              @param {(string|function)} [options.columns.editOptions.postfix] - The HTML string to be
+ *                  shown right to the input element. If it's a function, the return value will be used.
  *              @param {function} [options.columns.editOptions.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
