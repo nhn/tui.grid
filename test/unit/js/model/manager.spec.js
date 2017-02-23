@@ -22,7 +22,9 @@ describe('model/manager', function() {
                 fitToParentHeight: true,
                 scrollX: true,
                 scrollY: true,
-                minimumColumnWidth: 192
+                columnOptions: {
+                    minWidth: 192
+                }
             }, domState);
 
             dimension = manager.dimensionModel;

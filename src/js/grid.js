@@ -49,7 +49,10 @@ tui = window.tui = tui || {};
  *          expand with content.
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
  *          area expands to total height of rows.
- *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
+ *      @param {Object} [options.columnOptions] - Option object for all columns
+ *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
+ *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
+ *          will be shown.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard

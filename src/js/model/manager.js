@@ -30,7 +30,6 @@ var defaultOptions = {
     rowHeight: 27,
     fitToParentHeight: false,
     showDummyRows: false,
-    minimumColumnWidth: 50,
     virtualScrolling: true,
     columnMerge: [],
     copyOptions: null,
@@ -39,6 +38,7 @@ var defaultOptions = {
     singleClickEdit: false,
     useClientSort: true,
     columnOptions: {
+        minWidth: 50,
         resizable: true
     }
 };
@@ -123,7 +123,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth,
+            minimumColumnWidth: options.columnOptions.minWidth,
             isFixedRowHeight: options.isFixedRowHeight,
             isFixedHeight: options.isFixedHeight
         };
