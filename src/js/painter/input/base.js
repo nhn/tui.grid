@@ -70,12 +70,10 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     /**
      * Executes the custom handler (defined by user) of the input events.
      * @param {Event} event - DOM event object
+     * @param {{rowKey: number, columnName: string}} address - target cell address
      * @private
      */
     _executeCustomEventHandler: function(event, address) {
-        // var $input = $(event.target);
-        // var address = this._getCellAddress($input);
-
         this.controller.executeCustomInputEventHandler(event, address);
     },
 

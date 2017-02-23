@@ -152,17 +152,17 @@ describe('model.rowList', function() {
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
 
-                expect(formatted._button.isEditable).toBe(true);
-                expect(formatted._button.isDisabled).toBe(false);
+                expect(formatted._button.editable).toBe(true);
+                expect(formatted._button.disabled).toBe(false);
 
-                expect(formatted.c1.isEditable).toBe(false);
-                expect(formatted.c1.isDisabled).toBe(false);
+                expect(formatted.c1.editable).toBe(false);
+                expect(formatted.c1.disabled).toBe(false);
 
-                expect(formatted.c2.isEditable).toBe(true);
-                expect(formatted.c2.isDisabled).toBe(false);
+                expect(formatted.c2.editable).toBe(true);
+                expect(formatted.c2.disabled).toBe(false);
 
-                expect(formatted.c3.isEditable).toBe(true);
-                expect(formatted.c3.isDisabled).toBe(false);
+                expect(formatted.c3.editable).toBe(true);
+                expect(formatted.c3.disabled).toBe(false);
             });
 
             it('if the rowState is CHECKED', function() {
@@ -216,10 +216,10 @@ describe('model.rowList', function() {
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
 
-                expect(formatted._button.isDisabled).toBe(true);
-                expect(formatted.c1.isDisabled).toBe(true);
-                expect(formatted.c2.isDisabled).toBe(true);
-                expect(formatted.c3.isDisabled).toBe(true);
+                expect(formatted._button.disabled).toBe(true);
+                expect(formatted.c1.disabled).toBe(true);
+                expect(formatted.c2.disabled).toBe(true);
+                expect(formatted.c3.disabled).toBe(true);
             });
 
             it('rowState 가 DISABLED_CHECK 일 때', function() {
@@ -246,10 +246,10 @@ describe('model.rowList', function() {
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
 
-                expect(formatted._button.isDisabled).toBe(true);
-                expect(formatted.c1.isDisabled).toBe(false);
-                expect(formatted.c2.isDisabled).toBe(false);
-                expect(formatted.c3.isDisabled).toBe(false);
+                expect(formatted._button.disabled).toBe(true);
+                expect(formatted.c1.disabled).toBe(false);
+                expect(formatted.c2.disabled).toBe(false);
+                expect(formatted.c3.disabled).toBe(false);
             });
         });
     });
@@ -288,11 +288,11 @@ describe('model.rowList', function() {
 
             return _.every(columnNames, function(columnName) {
                 var data = row.get(columnName);
-                return !data || data.isDisabled === expectedValue;
+                return !data || data.disabled === expectedValue;
             });
         }
 
-        it('if dataModel changed to disabled, set isDisabled of all row to true', function() {
+        it('if dataModel changed to disabled, set disabled of all row to true', function() {
             dataModel.setDisabled(true);
 
             expect(checkAllDataDisabled(rowListModel.at(0), true)).toBe(true);
@@ -300,7 +300,7 @@ describe('model.rowList', function() {
             expect(checkAllDataDisabled(rowListModel.at(2), true)).toBe(true);
         });
 
-        it('if dataModel changed to enabled, set isDisabled of all row to false', function() {
+        it('if dataModel changed to enabled, set disabled of all row to false', function() {
             dataModel.setDisabled(true);
             dataModel.setDisabled(false);
             expect(checkAllDataDisabled(rowListModel.at(0), false)).toBe(true);
@@ -308,7 +308,7 @@ describe('model.rowList', function() {
             expect(checkAllDataDisabled(rowListModel.at(2), false)).toBe(true);
         });
 
-        it('isDisabled of dataModel has higher priority than individual disbled state', function() {
+        it('disabled of dataModel has higher priority than individual disbled state', function() {
             dataModel.setDisabled(true);
             dataModel.enableRow(0);
 
@@ -371,7 +371,7 @@ describe('model.rowList', function() {
                 dataModel.get(3).setRowState('DISABLED');
 
                 mainRow = rowListModel.get(1);
-                expect(mainRow.get('c1').isDisabled).toBe(false);
+                expect(mainRow.get('c1').disabled).toBe(false);
                 expect(mainRow.get('c1').className).toBe('');
             });
 
@@ -382,23 +382,23 @@ describe('model.rowList', function() {
                 var cell3 = rowListModel.get(0).get('c3');
 
                 expect(cell0.value).toBe(false);
-                expect(cell0.isEditable).toBe(true);
-                expect(cell0.isDisabled).toBe(false);
+                expect(cell0.editable).toBe(true);
+                expect(cell0.disabled).toBe(false);
                 expect(cell0.className).toBe(classNameConst.CELL_HEAD);
 
                 expect(cell1.value).toBe('c1');
-                expect(cell1.isEditable).toBe(false);
-                expect(cell1.isDisabled).toBe(false);
+                expect(cell1.editable).toBe(false);
+                expect(cell1.disabled).toBe(false);
                 expect(cell1.className).toBe('');
 
                 expect(cell2.value).toBe('c2');
-                expect(cell2.isEditable).toBe(true);
-                expect(cell2.isDisabled).toBe(false);
+                expect(cell2.editable).toBe(true);
+                expect(cell2.disabled).toBe(false);
                 expect(cell2.className).toBe(classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toBe('c3');
-                expect(cell3.isEditable).toBe(true);
-                expect(cell3.isDisabled).toBe(false);
+                expect(cell3.editable).toBe(true);
+                expect(cell3.disabled).toBe(false);
                 expect(cell3.className).toBe(classNameConst.CELL_EDITABLE);
             });
 
@@ -413,23 +413,23 @@ describe('model.rowList', function() {
                 cell3 = rowListModel.get(0).get('c3');
 
                 expect(cell0.value).toEqual(false);
-                expect(cell0.isEditable).toEqual(true);
-                expect(cell0.isDisabled).toEqual(true);
+                expect(cell0.editable).toEqual(true);
+                expect(cell0.disabled).toEqual(true);
                 expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
-                expect(cell1.isEditable).toEqual(false);
-                expect(cell1.isDisabled).toEqual(true);
+                expect(cell1.editable).toEqual(false);
+                expect(cell1.disabled).toEqual(true);
                 expect(cell1.className).toEqual(classNameConst.CELL_DISABLED);
 
                 expect(cell2.value).toEqual('c2');
-                expect(cell2.isEditable).toEqual(true);
-                expect(cell2.isDisabled).toEqual(true);
+                expect(cell2.editable).toEqual(true);
+                expect(cell2.disabled).toEqual(true);
                 expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell3.value).toEqual('c3');
-                expect(cell3.isEditable).toEqual(true);
-                expect(cell3.isDisabled).toEqual(true);
+                expect(cell3.editable).toEqual(true);
+                expect(cell3.disabled).toEqual(true);
                 expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE + ' ' + classNameConst.CELL_DISABLED);
             });
 
@@ -445,23 +445,23 @@ describe('model.rowList', function() {
                 cell3 = rowModel.get('c3');
 
                 expect(cell0.value).toEqual(false);
-                expect(cell0.isEditable).toEqual(true);
-                expect(cell0.isDisabled).toEqual(true);
+                expect(cell0.editable).toEqual(true);
+                expect(cell0.disabled).toEqual(true);
                 expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
-                expect(cell1.isEditable).toEqual(false);
-                expect(cell1.isDisabled).toEqual(false);
+                expect(cell1.editable).toEqual(false);
+                expect(cell1.disabled).toEqual(false);
                 expect(cell1.className).toEqual('');
 
                 expect(cell2.value).toEqual('c2');
-                expect(cell2.isEditable).toEqual(true);
-                expect(cell2.isDisabled).toEqual(false);
+                expect(cell2.editable).toEqual(true);
+                expect(cell2.disabled).toEqual(false);
                 expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toEqual('c3');
-                expect(cell3.isEditable).toEqual(true);
-                expect(cell3.isDisabled).toEqual(false);
+                expect(cell3.editable).toEqual(true);
+                expect(cell3.disabled).toEqual(false);
                 expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE);
             });
 
@@ -486,23 +486,23 @@ describe('model.rowList', function() {
                 cell3 = rowModel.get('c3');
 
                 expect(cell0.value).toEqual(false);
-                expect(cell0.isEditable).toEqual(true);
-                expect(cell0.isDisabled).toEqual(false);
+                expect(cell0.editable).toEqual(true);
+                expect(cell0.disabled).toEqual(false);
                 expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_HEAD);
 
                 expect(cell1.value).toEqual('c1');
-                expect(cell1.isEditable).toEqual(false);
-                expect(cell1.isDisabled).toEqual(false);
+                expect(cell1.editable).toEqual(false);
+                expect(cell1.disabled).toEqual(false);
                 expect(cell1.className).toEqual('rowClass column1Class1 column1Class2');
 
                 expect(cell2.value).toEqual('c2');
-                expect(cell2.isEditable).toEqual(true);
-                expect(cell2.isDisabled).toEqual(false);
+                expect(cell2.editable).toEqual(true);
+                expect(cell2.disabled).toEqual(false);
                 expect(cell2.className).toEqual('rowClass column2Class1 column2Class2 ' + classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toEqual('c3');
-                expect(cell3.isEditable).toEqual(true);
-                expect(cell3.isDisabled).toEqual(false);
+                expect(cell3.editable).toEqual(true);
+                expect(cell3.disabled).toEqual(false);
                 expect(cell3.className).toEqual('rowClass ' + classNameConst.CELL_EDITABLE);
             });
         });
@@ -569,9 +569,9 @@ describe('model.rowList', function() {
                 rowSpan: 'changed',
                 isMainRow: 'changed',
                 mainRowKey: 'changed',
-                isEditable: 'changed',
-                isDisabled: 'changed',
-                optionList: ['changed'],
+                editable: 'changed',
+                disabled: 'changed',
+                listItems: ['changed'],
                 className: 'changed'
             });
 
@@ -580,9 +580,9 @@ describe('model.rowList', function() {
             expect(rowListModel.get(0).get('c1').rowSpan).toEqual('changed');
             expect(rowListModel.get(0).get('c1').isMainRow).toEqual('changed');
             expect(rowListModel.get(0).get('c1').mainRowKey).toEqual('changed');
-            expect(rowListModel.get(0).get('c1').isEditable).toEqual('changed');
-            expect(rowListModel.get(0).get('c1').isDisabled).toEqual('changed');
-            expect(rowListModel.get(0).get('c1').optionList).toEqual(['changed']);
+            expect(rowListModel.get(0).get('c1').editable).toEqual('changed');
+            expect(rowListModel.get(0).get('c1').disabled).toEqual('changed');
+            expect(rowListModel.get(0).get('c1').listItems).toEqual(['changed']);
             expect(rowListModel.get(0).get('c1').className).toEqual('changed');
         });
 
@@ -593,9 +593,9 @@ describe('model.rowList', function() {
                 rowSpan: 'changed',
                 isMainRow: 'changed',
                 mainRowKey: 'changed',
-                isEditable: 'changed',
-                isDisabled: 'changed',
-                optionList: ['changed'],
+                editable: 'changed',
+                disabled: 'changed',
+                listItems: ['changed'],
                 className: 'changed'
             };
 
@@ -605,9 +605,9 @@ describe('model.rowList', function() {
             expect(rowListModel.get(0).get('c1').changed).toContain('rowSpan');
             expect(rowListModel.get(0).get('c1').changed).toContain('isMainRow');
             expect(rowListModel.get(0).get('c1').changed).toContain('mainRowKey');
-            expect(rowListModel.get(0).get('c1').changed).toContain('isEditable');
-            expect(rowListModel.get(0).get('c1').changed).toContain('isDisabled');
-            expect(rowListModel.get(0).get('c1').changed).toContain('optionList');
+            expect(rowListModel.get(0).get('c1').changed).toContain('editable');
+            expect(rowListModel.get(0).get('c1').changed).toContain('disabled');
+            expect(rowListModel.get(0).get('c1').changed).toContain('listItems');
             expect(rowListModel.get(0).get('c1').changed).toContain('className');
             expect(rowListModel.get(0).get('c1').changed).not.toContain('value');
         });
@@ -623,9 +623,9 @@ describe('model.rowList', function() {
                 rowSpan: 'changed',
                 isMainRow: 'changed',
                 mainRowKey: 'changed',
-                isEditable: 'changed',
-                isDisabled: 'changed',
-                optionList: ['changed'],
+                editable: 'changed',
+                disabled: 'changed',
+                listItems: ['changed'],
                 className: 'abd'
             });
             expect(callback.calls.count()).toEqual(1);
@@ -642,9 +642,9 @@ describe('model.rowList', function() {
                 rowSpan: 'changed',
                 isMainRow: 'changed',
                 mainRowKey: 'changed',
-                isEditable: 'changed',
-                isDisabled: 'changed',
-                optionList: ['changed'],
+                editable: 'changed',
+                disabled: 'changed',
+                listItems: ['changed'],
                 className: 'abd'
             });
             expect(callback).not.toHaveBeenCalled();

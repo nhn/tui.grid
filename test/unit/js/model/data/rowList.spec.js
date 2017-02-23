@@ -46,12 +46,12 @@ describe('data.rowList', function() {
             useHtmlEntity: false
         },
         {
-            title: 'relationList',
-            name: 'relationList',
-            relationList: [
+            title: 'relations',
+            name: 'relations',
+            relations: [
                 {
-                    columnList: ['select', 'checkbox', 'radio'],
-                    optionListChange: function(value) {
+                    targetNames: ['select', 'checkbox', 'radio'],
+                    listItems: function(value) {
                         if (value === true) {
                             return [
                                 {text: '하나', value: 1},
@@ -63,12 +63,12 @@ describe('data.rowList', function() {
                     }
                 },
                 {
-                    columnList: ['text'],
-                    isDisabled: function(value) {
+                    targetNames: ['text'],
+                    disabled: function(value) {
                         //false 면 true 를 반환
                         return value === false;
                     },
-                    isEditable: function(value) {
+                    editable: function(value) {
                         //false 면 false 를 반환
                         return value !== false;
                     }
@@ -317,7 +317,7 @@ describe('data.rowList', function() {
 
             it('changeOptionList Relation 이 걸려있을 경우에도 정상 동작하는지 확인한다.', function() {
                 var sampleList = [{
-                        'relationList': true,
+                        'relations': true,
                         'select': 1,
                         'radio': 2,
                         'radioNoRelation': 2,
@@ -341,7 +341,7 @@ describe('data.rowList', function() {
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
                         'useHtmlEntity': '<html></html>',
-                        'relationList': false,
+                        'relations': false,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
                         'select': 1,
@@ -353,7 +353,7 @@ describe('data.rowList', function() {
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
                         'useHtmlEntity': '<html></html>',
-                        'relationList': true,
+                        'relations': true,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
                         'select': 1,
@@ -369,7 +369,7 @@ describe('data.rowList', function() {
                 expect(row.getValueString('none')).toBe('nope');
                 expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
                 expect(row.getValueString('useHtmlEntity')).toBe('<html></html>');
-                expect(row.getValueString('relationList')).toBe('false');
+                expect(row.getValueString('relations')).toBe('false');
                 expect(row.getValueString('text')).toBe('text');
                 expect(row.getValueString('text-convertible')).toBe('convertible-text');
                 expect(row.getValueString('select')).toBe('1');
@@ -382,7 +382,7 @@ describe('data.rowList', function() {
                 expect(row.getValueString('none')).toBe('nope');
                 expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
                 expect(row.getValueString('useHtmlEntity')).toBe('<html></html>');
-                expect(row.getValueString('relationList')).toBe('true');
+                expect(row.getValueString('relations')).toBe('true');
                 expect(row.getValueString('text')).toBe('text');
                 expect(row.getValueString('text-convertible')).toBe('convertible-text');
                 expect(row.getValueString('select')).toBe('1');
@@ -401,18 +401,18 @@ describe('data.rowList', function() {
                             'row': ['rowClass0', 'rowClass1']
                         }
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
                     '_extraData': {
                         'className': {
                             'column': {
                                 'text': ['textClass1', 'textClass2'],
-                                'relationList': ['relationClass1']
+                                'relations': ['relationClass1']
                             }
                         }
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
                     '_extraData': {
@@ -420,14 +420,14 @@ describe('data.rowList', function() {
                             'row': ['rowClass0'],
                             'column': {
                                 'text': ['textClass1', 'textClass2'],
-                                'relationList': ['relationClass1']
+                                'relations': ['relationClass1']
                             }
                         }
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }],
                 row0, row1, row2, row3;
@@ -443,42 +443,42 @@ describe('data.rowList', function() {
                 row2 = dataModelInstance.get(2);
                 row3 = dataModelInstance.get(3);
 
-                expect(row0.getClassNameList('relationList').length).toEqual(2);
-                expect(row0.getClassNameList('relationList')).toContain('rowClass0');
-                expect(row0.getClassNameList('relationList')).toContain('rowClass1');
+                expect(row0.getClassNameList('relations').length).toEqual(2);
+                expect(row0.getClassNameList('relations')).toContain('rowClass0');
+                expect(row0.getClassNameList('relations')).toContain('rowClass1');
                 expect(row0.getClassNameList('text').length).toEqual(3);
                 expect(row0.getClassNameList('text')).toContain('rowClass0');
                 expect(row0.getClassNameList('text')).toContain('rowClass1');
 
-                expect(row1.getClassNameList('relationList').length).toEqual(1);
-                expect(row1.getClassNameList('relationList')).toContain('relationClass1');
+                expect(row1.getClassNameList('relations').length).toEqual(1);
+                expect(row1.getClassNameList('relations')).toContain('relationClass1');
                 expect(row1.getClassNameList('text').length).toEqual(3);
                 expect(row1.getClassNameList('text')).toContain('textClass1');
                 expect(row1.getClassNameList('text')).toContain('textClass2');
 
-                expect(row2.getClassNameList('relationList').length).toEqual(2);
-                expect(row2.getClassNameList('relationList')).toContain('rowClass0');
-                expect(row2.getClassNameList('relationList')).toContain('relationClass1');
+                expect(row2.getClassNameList('relations').length).toEqual(2);
+                expect(row2.getClassNameList('relations')).toContain('rowClass0');
+                expect(row2.getClassNameList('relations')).toContain('relationClass1');
 
                 expect(row2.getClassNameList('text').length).toEqual(4);
                 expect(row2.getClassNameList('text')).toContain('rowClass0');
                 expect(row2.getClassNameList('text')).toContain('textClass1');
                 expect(row2.getClassNameList('text')).toContain('textClass2');
 
-                expect(row3.getClassNameList('relationList').length).toEqual(0);
+                expect(row3.getClassNameList('relations').length).toEqual(0);
                 expect(row3.getClassNameList('text').length).toEqual(1);
             });
         });
 
-        describe('getCellState() relation list 결과와 rowState 를 종합한 결과를 통해 isDisabled, isEditable 을 반환한다.', function() {
+        describe('getCellState() relation list 결과와 rowState 를 종합한 결과를 통해 disabled, editable 을 반환한다.', function() {
             var sampleList;
 
             beforeEach(function() {
                 sampleList = [{
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'text': 'sample2'
                 }];
                 columnModelInstance.set({
@@ -490,20 +490,20 @@ describe('data.rowList', function() {
 
             it('결과값에 맞게 반환하는지 확인한다.', function() {
                 expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
-                    isDisabled: false,
-                    isEditable: true
+                    disabled: false,
+                    editable: true
                 });
                 expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
-                    isDisabled: false,
-                    isEditable: false
+                    disabled: false,
+                    editable: false
                 });
                 expect(dataModelInstance.at(0).getCellState('text')).toEqual({
-                    isDisabled: true,
-                    isEditable: false
+                    disabled: true,
+                    editable: false
                 });
                 expect(dataModelInstance.at(1).getCellState('text')).toEqual({
-                    isDisabled: false,
-                    isEditable: true
+                    disabled: false,
+                    editable: true
                 });
             });
 
@@ -512,25 +512,25 @@ describe('data.rowList', function() {
                     '_extraData': {
                         'rowState': 'DISABLED'
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'text': 'sample2'
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
                 expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
-                    isDisabled: true,
-                    isEditable: true
+                    disabled: true,
+                    editable: true
                 });
                 expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
-                    isDisabled: true,
-                    isEditable: false
+                    disabled: true,
+                    editable: false
                 });
                 expect(dataModelInstance.at(0).getCellState('text')).toEqual({
-                    isDisabled: true,
-                    isEditable: false
+                    disabled: true,
+                    editable: false
                 });
             });
 
@@ -539,62 +539,62 @@ describe('data.rowList', function() {
                     '_extraData': {
                         'rowState': 'DISABLED_CHECK'
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'text': 'sample2'
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
                 expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
-                    isDisabled: true,
-                    isEditable: true
+                    disabled: true,
+                    editable: true
                 });
                 expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
-                    isDisabled: false,
-                    isEditable: false
+                    disabled: false,
+                    editable: false
                 });
                 expect(dataModelInstance.at(0).getCellState('text')).toEqual({
-                    isDisabled: true,
-                    isEditable: false
+                    disabled: true,
+                    editable: false
                 });
             });
         });
 
-        describe('isDisabled() cellState 를 사용하는 메서드이므로 파라미터에 대해 동작하는지 간단하게 확인한다..', function() {
-            it('columnName 을 전달했을경우 정상적으로 isDisabled 값을 반환한다..', function() {
+        describe('disabled() cellState 를 사용하는 메서드이므로 파라미터에 대해 동작하는지 간단하게 확인한다..', function() {
+            it('columnName 을 전달했을경우 정상적으로 disabled 값을 반환한다..', function() {
                 var sampleList = [{
                     '_extraData': {
                         'rowState': 'DISABLED'
                     },
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'text': 'sample2'
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
                 expect(dataModelInstance.at(0).isDisabled('_button')).toEqual(true);
                 expect(dataModelInstance.at(0).isDisabled('_number')).toEqual(true);
-                expect(dataModelInstance.at(0).isDisabled('relationList')).toEqual(true);
+                expect(dataModelInstance.at(0).isDisabled('relations')).toEqual(true);
                 expect(dataModelInstance.at(0).isDisabled('text')).toEqual(true);
 
                 expect(dataModelInstance.at(1).isDisabled('_button')).toEqual(false);
                 expect(dataModelInstance.at(1).isDisabled('_number')).toEqual(false);
-                expect(dataModelInstance.at(1).isDisabled('relationList')).toEqual(false);
+                expect(dataModelInstance.at(1).isDisabled('relations')).toEqual(false);
                 expect(dataModelInstance.at(1).isDisabled('text')).toEqual(false);
             });
         });
 
-        describe('isEditable() cellState 를 사용하는 메서드이므로, cellState 를 이용하지 않을때 정상 동작하는지 확인한다.', function() {
+        describe('editable() cellState 를 사용하는 메서드이므로, cellState 를 이용하지 않을때 정상 동작하는지 확인한다.', function() {
             it('_number, normal type 의 경우 false 를 리턴하는지 확인한다.', function() {
                 var sampleList = [{
-                    'relationList': false,
+                    'relations': false,
                     'text': 'sample1'
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'text': 'sample2'
                 }];
                 columnModelInstance.set({
@@ -611,13 +611,13 @@ describe('data.rowList', function() {
             var sampleList, row;
             beforeEach(function() {
                 sampleList = [{
-                    'relationList': false,
+                    'relations': false,
                     'select': 1,
                     'radio': 2,
                     'checkbox': '1,2,3',
                     'radioNoRelation': 2
                 }, {
-                    'relationList': true,
+                    'relations': true,
                     'select': 1,
                     'radio': 2,
                     'checkbox': '1,2,3',
@@ -630,24 +630,24 @@ describe('data.rowList', function() {
                 row = dataModelInstance.at(0);
                 expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
-                        optionList: undefined
+                        listItems: undefined
                     },
                     checkbox: {
-                        optionList: undefined
+                        listItems: undefined
                     },
                     radio: {
-                        optionList: undefined
+                        listItems: undefined
                     },
                     text: {
-                        isDisabled: true,
-                        isEditable: false
+                        disabled: true,
+                        editable: false
                     }
                 });
 
                 row = dataModelInstance.at(1);
                 expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -655,7 +655,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     checkbox: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -663,7 +663,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     radio: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -671,17 +671,17 @@ describe('data.rowList', function() {
                         ]
                     },
                     text: {
-                        isDisabled: false,
-                        isEditable: true
+                        disabled: false,
+                        editable: true
                     }
                 });
             });
 
             it('원하는 callbackNameList에 맞게 relationResult 를 반환한다.', function() {
                 row = dataModelInstance.at(1);
-                expect(row.executeRelationCallbacksAll(['optionListChange'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['listItems'])).toEqual({
                     select: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -689,7 +689,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     checkbox: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -697,7 +697,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     radio: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -706,9 +706,9 @@ describe('data.rowList', function() {
                     }
                 });
 
-                expect(row.executeRelationCallbacksAll(['optionListChange', 'isEditable'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['listItems', 'editable'])).toEqual({
                     select: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -716,7 +716,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     checkbox: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -724,7 +724,7 @@ describe('data.rowList', function() {
                         ]
                     },
                     radio: {
-                        optionList: [
+                        listItems: [
                             {text: '하나', value: 1},
                             {text: '둘', value: 2},
                             {text: '셋', value: 3},
@@ -732,16 +732,16 @@ describe('data.rowList', function() {
                         ]
                     },
                     text: {
-                        isEditable: true
+                        editable: true
                     }
                 });
 
-                expect(row.executeRelationCallbacksAll(['isEditable'])).toEqual({
-                    text: {isEditable: true}
+                expect(row.executeRelationCallbacksAll(['editable'])).toEqual({
+                    text: {editable: true}
                 });
 
-                expect(row.executeRelationCallbacksAll(['isEditable', 'isDisabled'])).toEqual({
-                    text: {isDisabled: false, isEditable: true}
+                expect(row.executeRelationCallbacksAll(['editable', 'disabled'])).toEqual({
+                    text: {disabled: false, editable: true}
                 });
             });
         });

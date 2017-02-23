@@ -65,10 +65,10 @@ describe('model.renderer', function() {
         {
             title: 'columnName6',
             name: 'columnName6',
-            relationList: [
+            relations: [
                 {
-                    columnList: ['columnName3', 'columnName4', 'columnName5'],
-                    optionListChange: function(value) {
+                    targetNames: ['columnName3', 'columnName4', 'columnName5'],
+                    listItems: function(value) {
                         if (value === true) {
                             return [
                                 {text: '하나', value: 1},
@@ -81,11 +81,11 @@ describe('model.renderer', function() {
                     }
                 },
                 {
-                    columnList: ['columnName2'],
-                    isDisabled: function(value) {
+                    targetNames: ['columnName2'],
+                    disabled: function(value) {
                         return value === false;
                     },
-                    isEditable: function(value) {
+                    editable: function(value) {
                         return value !== false;
                     }
                 }

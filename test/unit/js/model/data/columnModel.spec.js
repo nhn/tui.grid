@@ -481,26 +481,26 @@ describe('data.columnModel', function() {
     });
 
     describe('_getRelationListMap()', function() {
-        it('각 columnModel 의 relationList 를 모아 주체가 되는 name 기준으로 relationListMap 를 생성하여 반환한다.', function() {
-            var expectResult, relationListMap;
+        it('각 columnModel 의 relations 를 모아 주체가 되는 name 기준으로 relationsMap 를 생성하여 반환한다.', function() {
+            var expectResult, relationsMap;
 
             sampleColumns = [
                 {
                     name: 'column0',
                     hidden: true,
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column1', 'column5'],
-                            isDisabled: function(value) {
+                            targetNames: ['column1', 'column5'],
+                            disabled: function(value) {
                                 return value === 2;
                             },
-                            isEditable: function(value) {
+                            editable: function(value) {
                                 return value !== 3;
                             }
                         },
                         {
-                            columnList: ['column2'],
-                            isDisabled: function(value) {
+                            targetNames: ['column2'],
+                            disabled: function(value) {
                                 return value === 2;
                             }
                         }
@@ -512,10 +512,10 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column2',
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column3', 'column4'],
-                            optionListChange: function(value) {
+                            targetNames: ['column3', 'column4'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},
@@ -527,8 +527,8 @@ describe('data.columnModel', function() {
                             }
                         },
                         {
-                            columnList: ['column5'],
-                            optionListChange: function(value) {
+                            targetNames: ['column5'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},
@@ -554,11 +554,11 @@ describe('data.columnModel', function() {
             ];
 
             expectResult = {
-                'column0': sampleColumns[0].relationList,
-                'column2': sampleColumns[2].relationList
+                'column0': sampleColumns[0].relations,
+                'column2': sampleColumns[2].relations
             };
-            relationListMap = columnModelInstance._getRelationListMap(sampleColumns);
-            expect(relationListMap).toEqual(expectResult);
+            relationsMap = columnModelInstance._getRelationListMap(sampleColumns);
+            expect(relationsMap).toEqual(expectResult);
         });
     });
 
@@ -585,19 +585,19 @@ describe('data.columnModel', function() {
                 {
                     name: 'column0',
                     hidden: true,
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column1', 'column5'],
-                            isDisabled: function(value) {
+                            targetNames: ['column1', 'column5'],
+                            disalbed: function(value) {
                                 return value === 2;
                             },
-                            isEditable: function(value) {
+                            editable: function(value) {
                                 return value !== 3;
                             }
                         },
                         {
-                            columnList: ['column2'],
-                            isDisabled: function(value) {
+                            targetNames: ['column2'],
+                            disabled: function(value) {
                                 return value === 2;
                             }
                         }
@@ -609,10 +609,10 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column2',
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column3', 'column4'],
-                            optionListChange: function(value) {
+                            targetNames: ['column3', 'column4'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},
@@ -624,8 +624,8 @@ describe('data.columnModel', function() {
                             }
                         },
                         {
-                            columnList: ['column5'],
-                            optionListChange: function(value) {
+                            targetNames: ['column5'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},
@@ -675,13 +675,13 @@ describe('data.columnModel', function() {
         });
 
         it('relationListMap가 저장 되었는지 확인한다.', function() {
-            var relationListMap = columnModelInstance.get('relationListMap'),
+            var relationsMap = columnModelInstance.get('relationsMap'),
                 expectResult = {
-                    'column0': sampleColumns[0].relationList,
-                    'column2': sampleColumns[2].relationList
+                    'column0': sampleColumns[0].relations,
+                    'column2': sampleColumns[2].relations
                 };
 
-            expect(_.isEqual(relationListMap, expectResult)).toBe(true);
+            expect(_.isEqual(relationsMap, expectResult)).toBe(true);
         });
 
         it('columnFixCount가 저장 되었는지 확인한다.', function() {
@@ -693,7 +693,7 @@ describe('data.columnModel', function() {
                 expectResult = [
                     {
                         name: 'column2',
-                        relationList: sampleColumns[2].relationList
+                        relations: sampleColumns[2].relations
                     },
                     {
                         name: 'column3'
@@ -741,19 +741,19 @@ describe('data.columnModel', function() {
             sampleColumns = [
                 {
                     name: 'column0',
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column1', 'column5'],
-                            isDisabled: function(value) {
+                            targetNames: ['column1', 'column5'],
+                            disabled: function(value) {
                                 return value === 2;
                             },
-                            isEditable: function(value) {
+                            editable: function(value) {
                                 return value !== 3;
                             }
                         },
                         {
-                            columnList: ['column2'],
-                            isDisabled: function(value) {
+                            targetNames: ['column2'],
+                            disabled: function(value) {
                                 return value === 2;
                             }
                         }
@@ -765,10 +765,10 @@ describe('data.columnModel', function() {
                 },
                 {
                     name: 'column2',
-                    relationList: [
+                    relations: [
                         {
-                            columnList: ['column3', 'column4'],
-                            optionListChange: function(value) {
+                            targetNames: ['column3', 'column4'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},
@@ -780,8 +780,8 @@ describe('data.columnModel', function() {
                             }
                         },
                         {
-                            columnList: ['column5'],
-                            optionListChange: function(value) {
+                            targetNames: ['column5'],
+                            listItems: function(value) {
                                 if (value === 2) {
                                     return [
                                         {text: '하나', value: 1},

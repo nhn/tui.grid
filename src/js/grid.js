@@ -132,13 +132,13 @@ tui = window.tui = tui || {};
  *                  This option is column specific, and overrides the global copyOptions.
  *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use
  *                  formatted values or original values as a string to be copied to the clipboard
- *          @param {Array} [options.columns.relationList] - Specifies relation between this and other column.
- *              @param {array} [options.columns.relationList.columnList] - Array of the names of target columns.
- *              @param {function} [options.columns.relationList.isDisabled] - If returns true, target columns
+ *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
+ *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
+ *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
  *                  will be disabled.
- *              @param {function} [options.columns.relationList.isEditable] - If returns true, target columns
+ *              @param {function} [options.columns.relations.editable] - If returns true, target columns
  *                  will be editable.
- *              @param {function} [options.columns.relationList.optionListChange] - The function whose return
+ *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
  *          @param {Object} [options.columns.component] - Option for using tui-component

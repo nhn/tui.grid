@@ -88,14 +88,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this.rowData.isDisabled(columnName),
+                disabled: this.rowData.isDisabled(columnName),
                 className: this._getClassNameString(columnName)
             });
         }, this);
     },
 
     /**
-     * Sets the 'isDisabled', 'isEditable', 'className' property of each cell data.
+     * Sets the 'disabled', 'editable', 'className' property of each cell data.
      * @private
      */
     _setRowExtraData: function() {
@@ -111,8 +111,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 cellState = this.rowData.getCellState(columnName);
 
                 this.setCell(columnName, {
-                    isDisabled: cellState.isDisabled,
-                    isEditable: cellState.isEditable,
+                    disabled: cellState.disabled,
+                    editable: cellState.editable,
                     className: this._getClassNameString(columnName)
                 });
             }
@@ -170,8 +170,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,
                 mainRowKey: rowSpanData.mainRowKey,
-                isEditable: cellState.isEditable,
-                isDisabled: cellState.isDisabled,
+                editable: cellState.editable,
+                disabled: cellState.disabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
                 valign: column.valign,

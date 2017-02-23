@@ -185,18 +185,18 @@ describe('RowData', function() {
 
         it('default', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: false,
-                isChecked: false
+                disabled: false,
+                disabledCheck: false,
+                checked: false
             };
             expect(row.getRowState()).toEqual(expected);
         });
 
         it('set DISABLED', function() {
             var expected = {
-                isDisabled: true,
-                isDisabledCheck: true,
-                isChecked: false
+                disabled: true,
+                disabledCheck: true,
+                checked: false
             };
 
             row.setRowState('DISABLED');
@@ -205,9 +205,9 @@ describe('RowData', function() {
 
         it('set CHECKED', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: false,
-                isChecked: true
+                disabled: false,
+                disabledCheck: false,
+                checked: true
             };
 
             row.setRowState('CHECKED');
@@ -216,9 +216,9 @@ describe('RowData', function() {
 
         it('set DISABLE_CHECK', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: true,
-                isChecked: false
+                disabled: false,
+                disabledCheck: true,
+                checked: false
             };
 
             row.setRowState('DISABLED_CHECK');

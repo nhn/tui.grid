@@ -47,24 +47,24 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
     /**
      * Returns the object that contains rowState info.
-     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{disabled: boolean, disabledCheck: boolean, checked: boolean}} rowState 정보
      */
     getRowState: function() {
         var result = {
-            isDisabledCheck: false,
-            isDisabled: false,
-            isChecked: false
+            disabledCheck: false,
+            disabled: false,
+            checked: false
         };
 
         switch (this.data.rowState) {
             case 'DISABLED':
-                result.isDisabled = true;
+                result.disabled = true;
                 // intentional no break
             case 'DISABLED_CHECK': // eslint-disable-line no-fallthrough
-                result.isDisabledCheck = true;
+                result.disabledCheck = true;
                 break;
             case 'CHECKED':
-                result.isChecked = true;
+                result.checked = true;
             default: // eslint-disable-line no-fallthrough
         }
         return result;
