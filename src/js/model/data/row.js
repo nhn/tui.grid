@@ -78,11 +78,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             if (!columnModel) {
                 return;
             }
-            if (!this._executeChangeBeforeCallback(columnName)) {
+            if (!this._executeOnBeforeChange(columnName)) {
                 return;
             }
             this.collection.syncRowSpannedData(this, columnName, value);
-            this._executeChangeAfterCallback(columnName);
+            this._executeOnAfterChange(columnName);
             this.validateCell(columnName, true);
         }, this);
     },
@@ -153,20 +153,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
-     * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {boolean} changeBeforeCallback 수행 결과값
+     * Executes the onChangeBefore callback function.
+     * onChangeBefore 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
+     * @param {String} columnName - column name
+     * @returns {boolean}
      * @private
      */
-    _executeChangeBeforeCallback: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            changeEvent, obj;
+    _executeOnBeforeChange: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var changeEvent, obj;
 
-        if (columnModel.editOptions && columnModel.editOptions.changeBeforeCallback) {
+        if (columnModel.editOptions && columnModel.editOptions.onBeforeChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
-            if (columnModel.editOptions.changeBeforeCallback(changeEvent) === false) {
+            if (columnModel.editOptions.onBeforeChange(changeEvent) === false) {
                 obj = {};
                 obj[columnName] = this.previous(columnName);
                 this.set(obj);
@@ -178,19 +178,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     * @param {String} columnName - 컬럼명
-     * @returns {boolean} changeAfterCallback 수행 결과값
+     * Execuetes the onAfterChange callback function.
+     * @param {String} columnName - column name
+     * @returns {boolean}
      * @private
      */
-    _executeChangeAfterCallback: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            changeEvent;
+    _executeOnAfterChange: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var changeEvent;
 
-        if (columnModel.editOptions && columnModel.editOptions.changeAfterCallback) {
+        if (columnModel.editOptions && columnModel.editOptions.onAfterChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
-            return !!(columnModel.editOptions.changeAfterCallback(changeEvent));
+            return !!(columnModel.editOptions.onAfterChange(changeEvent));
         }
+
         return true;
     },
 
@@ -216,10 +217,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @returns {Array.<String>} - An array of classNames
      */
     getClassNameList: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            isMetaColumn = util.isMetaColumn(columnName),
-            classNameList = this.extraDataManager.getClassNameList(columnName),
-            cellState = this.getCellState(columnName);
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var isMetaColumn = util.isMetaColumn(columnName);
+        var classNameList = this.extraDataManager.getClassNameList(columnName);
+        var cellState = this.getCellState(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);

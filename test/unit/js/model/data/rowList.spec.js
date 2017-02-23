@@ -9,10 +9,10 @@ describe('data.rowList', function() {
             title: 'changeCallback',
             name: 'changeCallback',
             editOptions: {
-                changeBeforeCallback: function(changeEvent) {
+                onBeforeChange: function(changeEvent) {
                     return !!changeEvent.value;
                 },
-                changeAfterCallback: function(changeEvent) {
+                onAfterChange: function(changeEvent) {
                     return !!changeEvent.value;
                 }
             }

@@ -111,10 +111,16 @@ tui = window.tui = tui || {};
  *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOptions.changeBeforeCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.onBeforeChange] - The function that will be
  *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columns.editOptions.changeAfterCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.onAfterChange] - The function that will be
  *                  called after changing the value of the cell.
+ *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
+ *                  called when a 'focus' event occurred on an input element
+ *              @param {function} [options.columns.editOptions.onBlur] - The function that will be
+ *                  called when a 'blur' event occurred on an input element
+ *              @param {function} [options.columns.editOptions.onKeyDown] - The function that will be
+ *                  called when a 'keydown' event occurred on an input element
  *              @param {(string|function)} [options.columns.editOptions.prefix] - The HTML string to be
  *                  shown left to the input element. If it's a function, the return value will be used.
  *              @param {(string|function)} [options.columns.editOptions.postfix] - The HTML string to be
@@ -122,8 +128,6 @@ tui = window.tui = tui || {};
  *              @param {function} [options.columns.editOptions.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *              @param {Object} [options.columns.editOptions.inputEvents] - The object that has an event name
- *                  as a key and event handler as a value for events on input element.
  *              @param {Object} [options.columns.copyOptions] - Option object for clipboard copying.
  *                  This option is column specific, and overrides the global copyOptions.
  *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use

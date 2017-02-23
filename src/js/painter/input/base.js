@@ -72,9 +72,9 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @param {Event} event - DOM event object
      * @private
      */
-    _executeCustomEventHandler: function(event) {
-        var $input = $(event.target);
-        var address = this._getCellAddress($input);
+    _executeCustomEventHandler: function(event, address) {
+        // var $input = $(event.target);
+        // var address = this._getCellAddress($input);
 
         this.controller.executeCustomInputEventHandler(event, address);
     },
@@ -102,7 +102,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         // as button-type(checkbox, radio) defers finishing editing for detecting blurred state.
         // see {@link module:painter/input/button#_onFocusOut}
         _.defer(function() {
-            self._executeCustomEventHandler(event);
+            self._executeCustomEventHandler(event, address);
             self.trigger('focusIn', $target, address);
             self.controller.startEditing(address);
         });
@@ -117,7 +117,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var $target = $(event.target);
         var address = this._getCellAddress($target);
 
-        this._executeCustomEventHandler(event);
+        this._executeCustomEventHandler(event, address);
         this.trigger('focusOut', $target, address);
         this.controller.finishEditing(address, false, $target.val());
     },
@@ -139,7 +139,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
             value: $target.val()
         };
 
-        this._executeCustomEventHandler(event);
+        this._executeCustomEventHandler(event, param.address);
 
         if (action) {
             action.call(this, param);

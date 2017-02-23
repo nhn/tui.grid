@@ -48,7 +48,18 @@
                 },
                 width: 200,
                 editOptions: {
-                    // useViewMode: false,
+                    onBeforeChange: function(ev) {
+                        console.log('ev', ev);
+                    },
+                    onKeyDown: function(ev) {
+                        console.log('keydown ev', ev);
+                    },
+                    onFocus: function(ev) {
+                        console.log('focus ev', ev);
+                    },
+                    onBlur: function(ev) {
+                        console.log('blur ev', ev);
+                    },
                     type: 'text',
                     listItems: [
                         {
