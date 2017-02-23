@@ -44,6 +44,8 @@ tui = window.tui = tui || {};
  *          to each rows when rendering time.
  *      @param {Object} [options.header] - Options object for header
  *      @param {number} [options.header.height=35] - The height of the header area.
+ *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
+ *          which includes the headers of spcified columns, and sets up the hierarchy.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
  *      @param {boolean} [options.fixedRowHeight=false] - If set to true, the height of each rows does not
  *          expand with content.
@@ -151,10 +153,6 @@ tui = window.tui = tui || {};
  *                  for this column
  *              @param {Object} [options.columns.component.options] - The options object to be used for
  *                  creating the component
- *      @param {array} [options.columnMerge] - The array that specifies the merged column.
- *          This options does not merge the cells of multiple columns into a single cell.
- *          This options only effects to the headers of the multiple columns, creates a new parent header
- *          that includes the headers of spcified columns, and sets up the hierarchy.
  *      @param {Object} [options.footer] - The object for configuring footer area.
  *          @param {number} [options.footer.height] - The height of the footer area.
  *          @param {Object.<string, Object>} [options.footer.columnContent]

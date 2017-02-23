@@ -27,7 +27,12 @@ var defaultOptions = {
     selectType: '',
     autoNumbering: true,
     header: {
-        height: 35
+        height: 35,
+        complexColumns: []
+    },
+    columnOptions: {
+        minWidth: 50,
+        resizable: true
     },
     rowHeight: 27,
     fitToParentHeight: false,
@@ -35,16 +40,11 @@ var defaultOptions = {
     fixedHeight: true,
     showDummyRows: false,
     virtualScrolling: true,
-    columnMerge: [],
     copyOptions: null,
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
-    useClientSort: true,
-    columnOptions: {
-        minWidth: 50,
-        resizable: true
-    }
+    useClientSort: true
 };
 
 /**
@@ -85,7 +85,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             keyColumnName: options.keyColumnName,
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
-            columnMerge: options.columnMerge,
+            complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,
             columns: options.columns
         });

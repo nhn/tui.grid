@@ -706,7 +706,7 @@ describe('data.columnModel', function() {
         });
 
         it('컬럼모델의 "hidden"속성이 동적으로 변경되는지 확인한다.', function() {
-            columnModelInstance.set('columnMerge', [
+            columnModelInstance.set('complexHeaderColumns', [
                 {
                     name: 'merge1',
                     title: 'merge1',

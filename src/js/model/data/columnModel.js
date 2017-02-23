@@ -38,7 +38,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         selectType: '',
         columnModelMap: {},
         relationsMap: {},
-        columnMerge: [],
+        complexHeaderColumns: [],
         copyOptions: {
             useFormattedValue: false
         }
@@ -416,10 +416,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {Array.<string>} Unit column names
      */
     getUnitColumnNamesIfMerged: function(columnName) {
-        var columnMergeInfoList = this.get('columnMerge');
+        var complexHeaderColumns = this.get('complexHeaderColumns');
         var stackForSearch = [];
         var searchedNames = [];
-        var name, columnModel, columnMergeInfoItem;
+        var name, columnModel, complexHeaderColumn;
 
         stackForSearch.push(columnName);
         while (stackForSearch.length) {
@@ -429,11 +429,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             if (columnModel) {
                 searchedNames.push(name);
             } else {
-                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                complexHeaderColumn = _.findWhere(complexHeaderColumns, {
                     name: name
                 });
-                if (columnMergeInfoItem) {
-                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.childNames);
+                if (complexHeaderColumn) {
+                    stackForSearch.push.apply(stackForSearch, complexHeaderColumn.childNames);
                 }
             }
         }

@@ -28,12 +28,23 @@
         el: $('#grid'),
         selectType: 'checkbox',
         columnFixCount: 1,
-        headerHeight: 30,
+        header: {
+            height: 50,
+            complexColumns: [
+                {
+                    name: 'c2-c3',
+                    title: 'c2-c3',
+                    childNames: ['c2', 'c3']
+                }
+            ]
+        },
         virtualScrolling: false,
         heightResizable: true,
         showDummyRows: true,
-        displayRowCount: 15,
-        minimumColumnWidth: 100,
+        bodyHeight: 300,
+        columnOptions: {
+            minWidth: 200,
+        },
         pagination: true,
         columns: [
             {
