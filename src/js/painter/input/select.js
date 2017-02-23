@@ -86,7 +86,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
         return this.template({
             name: util.getUniqueKey(),
-            disabled: cellData.isDisabled ? 'disabled' : '',
+            disabled: cellData.disabled ? 'disabled' : '',
             options: optionHtml
         });
     }

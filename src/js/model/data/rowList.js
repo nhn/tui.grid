@@ -40,7 +40,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
              * This state is not related to individual state of each rows.
              * @type {Boolean}
              */
-            isDisabled: false
+            disabled: false
         });
 
         if (!this.sortOptions.useClient) {
@@ -639,8 +639,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
         var obj = {},
             cellState = {
-                isDisabled: false,
-                isEditable: true
+                disabled: false,
+                editable: true
             };
 
         obj[columnName] = columnValue;
@@ -650,7 +650,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             if (isCheckCellState) {
                 cellState = row.getCellState(columnName);
             }
-            if (!cellState.isDisabled && cellState.isEditable) {
+            if (!cellState.disabled && cellState.editable) {
                 row.set(obj, {
                     silent: silent
                 });
@@ -683,11 +683,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * Enables or Disables all rows.
-     * @param  {Boolean} isDisabled - Whether disabled or not
+     * @param  {Boolean} disabled - Whether disabled or not
      */
-    setDisabled: function(isDisabled) {
-        if (this.isDisabled !== isDisabled) {
-            this.isDisabled = isDisabled;
+    setDisabled: function(disabled) {
+        if (this.disabled !== disabled) {
+            this.disabled = disabled;
             this.trigger('disabledChanged');
         }
     },
@@ -988,7 +988,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             editType = this.columnModel.getEditType(columnName),
             isDeletableType = _.contains(['text', 'password'], editType);
 
-        if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
+        if (isDeletableType && cellState.editable && !cellState.disabled) {
             this.setValue(mainRowKey, columnName, '', silent);
         }
     },
@@ -1139,7 +1139,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             cellState = row.getCellState(columnName);
             rowSpanData = row.getRowSpanData(columnName);
 
-            if (cellState.isEditable && !cellState.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
+            if (cellState.editable && !cellState.disabled && (!rowSpanData || rowSpanData.count >= 0)) {
                 attributes[columnName] = rowData[columnIdx - columnStartIdx];
             }
         }
@@ -1169,7 +1169,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         this.forEach(function(row) {
             var buttonState = row.getCellState('_button');
 
-            if (!buttonState.isDisabled && buttonState.isEditable) {
+            if (!buttonState.disabled && buttonState.editable) {
                 available += 1;
                 if (row.get('_button')) {
                     checked += 1;

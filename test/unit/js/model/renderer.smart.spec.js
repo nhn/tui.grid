@@ -31,7 +31,7 @@ describe('model.renderer', function() {
         var dimensionModel = new Dimension({
             headerHeight: 0,
             scrollX: false,
-            isFixedHeight: true
+            fixedHeight: true
         }, {
             dataModel: dataModel,
             columnModel: columnModel

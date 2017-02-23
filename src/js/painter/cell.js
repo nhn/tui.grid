@@ -23,7 +23,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         Painter.apply(this, arguments);
 
         this.editType = options.editType;
-        this.isFixedRowHeight = options.isFixedRowHeight;
+        this.fixedRowHeight = options.fixedRowHeight;
         this.inputPainter = options.inputPainter;
         this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
     },
@@ -63,7 +63,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (whiteSpace) {
             styles.push('white-space:' + whiteSpace);
         }
-        if (this.isFixedRowHeight) {
+        if (this.fixedRowHeight) {
             styles.push('max-height:' + cellData.height + 'px');
         }
 
@@ -209,8 +209,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var contentProps = ['value', 'isEditing', 'isDisabled', 'optionList'];
-        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+        var contentProps = ['value', 'iEditing', 'disabled', 'listItems'];
+        var editingChangedToTrue = _.contains(cellData.changed, 'iEditing') && cellData.iEditing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 

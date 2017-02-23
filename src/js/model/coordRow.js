@@ -35,10 +35,10 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
          */
         this.rowOffsets = [];
 
-        // Sync height and offest data when dataModel is changed only if the isFixedRowHeight is true.
-        // If the isFixedRowHeight is false, as the height of each row should be synced with DOM,
+        // Sync height and offest data when dataModel is changed only if the fixedRowHeight is true.
+        // If the fixedRowHeight is false, as the height of each row should be synced with DOM,
         // syncWithDom() method is called instead at the end of rendering process.
-        if (this.dimensionModel.get('isFixedRowHeight')) {
+        if (this.dimensionModel.get('fixedRowHeight')) {
             this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel);
         }
     },
@@ -50,7 +50,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         var domRowHeights, dataRowHeights, rowHeights;
         var i, len;
 
-        if (this.dimensionModel.get('isFixedRowHeight')) {
+        if (this.dimensionModel.get('fixedRowHeight')) {
             return;
         }
 
