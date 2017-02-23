@@ -29,6 +29,8 @@ var defaultOptions = {
     headerHeight: 35,
     rowHeight: 27,
     fitToParentHeight: false,
+    fixedRowHeight: true,
+    fixedHeight: true,
     showDummyRows: false,
     virtualScrolling: true,
     columnMerge: [],
@@ -124,13 +126,13 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
             minimumColumnWidth: options.columnOptions.minWidth,
-            isFixedRowHeight: options.isFixedRowHeight,
-            isFixedHeight: options.isFixedHeight
+            fixedRowHeight: options.fixedRowHeight,
+            fixedHeight: options.fixedHeight
         };
 
-        if (options.isFixedRowHeight === false && options.virtualScrolling) {
-            util.warning('The isFixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
-            attrs.isFixedRowHeight = true;
+        if (options.fixedRowHeight === false && options.virtualScrolling) {
+            util.warning('The fixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
+            attrs.fixedRowHeight = true;
         }
 
         dimensionModel = new DimensionModel(attrs, {

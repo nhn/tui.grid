@@ -45,7 +45,7 @@ tui = window.tui = tui || {};
  *      @param {number} [options.headerHeight=35] - The height of the header area.
  *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
+ *      @param {boolean} [options.fixedRowHeight=false] - If set to true, the height of each rows does not
  *          expand with content.
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
  *          area expands to total height of rows.
@@ -220,7 +220,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new PainterManager({
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
-            isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
+            fixedRowHeight: this.modelManager.dimensionModel.get('fixedRowHeight'),
             domEventBus: this.domEventBus,
             controller: controller
         });
