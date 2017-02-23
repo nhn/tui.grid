@@ -26,7 +26,9 @@ var defaultOptions = {
     keyColumnName: null,
     selectType: '',
     autoNumbering: true,
-    headerHeight: 35,
+    header: {
+        height: 35
+    },
     rowHeight: 27,
     fitToParentHeight: false,
     fixedRowHeight: true,
@@ -118,7 +120,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
         var attrs = {
-            headerHeight: options.headerHeight,
+            headerHeight: options.header.height,
             bodyHeight: options.bodyHeight,
             footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
