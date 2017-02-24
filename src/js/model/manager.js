@@ -37,7 +37,7 @@ var defaultOptions = {
     rowHeight: 27,
     fitToParentHeight: false,
     fixedRowHeight: true,
-    fixedHeight: true,
+    fixedHeight: false,
     showDummyRows: false,
     virtualScrolling: true,
     copyOptions: null,

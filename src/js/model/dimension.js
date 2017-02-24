@@ -64,7 +64,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         scrollX: true,
         scrollY: true,
         fitToParentHeight: false,
-        fixedHeight: true
+        fixedHeight: false
     },
 
     /**
