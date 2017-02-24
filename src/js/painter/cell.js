@@ -209,8 +209,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var contentProps = ['value', 'iEditing', 'disabled', 'listItems'];
-        var editingChangedToTrue = _.contains(cellData.changed, 'iEditing') && cellData.iEditing;
+        var contentProps = ['value', 'editing', 'disabled', 'listItems'];
+        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 

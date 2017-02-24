@@ -184,7 +184,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
         if (!_.isNull(cellData.convertedHTML)) {
             result = cellData.convertedHTML;
-        } else if (!this._isUsingViewMode(cellData) || cellData.isEditing) {
+        } else if (!this._isUsingViewMode(cellData) || cellData.editing) {
             result = this._generateInputHtml(cellData);
         } else {
             result = this._getDisplayValue(cellData);
