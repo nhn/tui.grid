@@ -1,5 +1,5 @@
 /*!
- * bundle created at "Mon Feb 13 2017 10:19:09 GMT+0900 (KST)"
+ * bundle created at "Fri Feb 24 2017 10:23:30 GMT+0900 (KST)"
  * version: 1.8.0
  */
 .tui-grid-container {
@@ -417,18 +417,6 @@
   position: absolute;
   right: 17px;
   width: 1px;
-}
-.tui-grid-toolbar {
-  height: 30px;
-  position: relative;
-  border-style: solid;
-  border-width: 1px 1px 0;
-  border-color: transparent;
-}
-.tui-grid-toolbar div {
-  position: absolute;
-  right: 10px;
-  top: 4px;
 }
 .tui-grid-height-resize-handle {
   overflow: hidden;
