@@ -392,19 +392,19 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Replace all rows with the specified list. This will not change the original data.
-     * @param {Array} rowList - A list of new rows
+     * @param {Array} data - A list of new rows
      */
-    replaceRowList: function(rowList) {
-        this.modelManager.dataModel.replaceRowList(rowList);
+    resetData: function(data) {
+        this.modelManager.dataModel.resetData(data);
     },
 
     /**
      * Replace all rows with the specified list. This will change the original data.
-     * @param {Array} rowList - A list of new rows
+     * @param {Array} data - A list of new rows
      * @param {function} callback - The function that will be called when done.
      */
-    setRowList: function(rowList, callback) {
-        this.modelManager.dataModel.setRowList(rowList, true, callback);
+    setData: function(data, callback) {
+        this.modelManager.dataModel.setData(data, true, callback);
     },
 
     /**
@@ -504,7 +504,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Removes all rows.
      */
     clear: function() {
-        this.modelManager.dataModel.setRowList([]);
+        this.modelManager.dataModel.setData([]);
     },
 
     /**
@@ -527,15 +527,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes all checked rows.
-     * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
+     * @param {boolean} showConfirm - If set to true, confirm message will be shown before remove.
      * @returns {boolean} - True if there's at least one row removed.
      */
-    removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.getCheckedRowKeyList(),
-            message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
+    removeCheckedRows: function(showConfirm) {
+        var rowKeys = this.getCheckedRowKeys();
+        var message = rowKeys.length + '건의 데이터를 삭제하시겠습니까?';
 
-        if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-            _.each(rowKeyList, function(rowKey) {
+        if (rowKeys.length > 0 && (!showConfirm || confirm(message))) {
+            _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
             return true;
@@ -564,8 +564,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
-    getCheckedRowKeyList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+    getCheckedRowKeys: function(isJsonString) {
+        var checkedRowList = this.modelManager.dataModel.getRows(true);
         var checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
 
         return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
@@ -573,13 +573,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of the checked rows.
-     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+     * @param {Boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
-    getCheckedRowList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+    getCheckedRows: function(useJson) {
+        var checkedRowList = this.modelManager.dataModel.getRows(true);
 
-        return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
+        return useJson ? JSON.stringify(checkedRowList) : checkedRowList;
     },
 
     /**
@@ -602,8 +602,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      *      @param {Array} [options.filteringColumns] - A list of column name to be excluded.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
-    getModifiedRowList: function(options) {
-        return this.modelManager.dataModel.getModifiedRowList(options);
+    getModifiedRows: function(options) {
+        return this.modelManager.dataModel.getModifiedRows(options);
     },
 
     /**
@@ -648,7 +648,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Restores the data to the original data.
-     * (Original data is set by {@link tui.Grid#setRowList|setRowList}
+     * (Original data is set by {@link tui.Grid#setData|setData}
      */
     restore: function() {
         this.modelManager.dataModel.restore();
@@ -695,8 +695,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns a list of all rows.
      * @returns {Array} - A list of all rows
      */
-    getRowList: function() {
-        return this.modelManager.dataModel.getRowList();
+    getRows: function() {
+        return this.modelManager.dataModel.getRows();
     },
 
     /**

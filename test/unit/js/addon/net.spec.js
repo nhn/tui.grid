@@ -8,7 +8,7 @@ describe('addon.net', function() {
     var columns = [{
         name: 'c1'
     }];
-    var rowList = [
+    var data= [
         {c1: '0-1'},
         {c1: '1-1'},
         {c1: '2-1'},
@@ -209,7 +209,7 @@ describe('addon.net', function() {
         request = jasmine.Ajax.requests.mostRecent();
         beforeRequesteData = $.extend(true, {}, request.data());
 
-        //request 요청 후 form data 를 변경한다.
+        //request 요청 후 form data를 변경한다.
         net._setFormData({
             input1: 'data1',
             input2: 'data2'
@@ -260,7 +260,7 @@ describe('addon.net', function() {
             var param, createList;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             grid.checkAll();
@@ -281,7 +281,7 @@ describe('addon.net', function() {
             var param, createList;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             param = net._getDataParam('createData', {isOnlyChecked: false});
@@ -304,11 +304,11 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             param = net._getDataParam('createData', {isOnlyChecked: false, isOnlyModified: false});
-            expect(param.data.rowList).toBeDefined();
+            expect(param.data.data).toBeDefined();
             expect(param.data.createList).not.toBeDefined();
             expect(param.data.updateList).not.toBeDefined();
             expect(param.data.deleteList).not.toBeDefined();
@@ -319,7 +319,7 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             grid.checkAll();
@@ -339,7 +339,7 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             param = net._getDataParam('updateData', {isOnlyChecked: false});
@@ -361,7 +361,7 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             param = net._getDataParam('deleteData');
@@ -374,7 +374,7 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             grid.checkAll();
@@ -396,7 +396,7 @@ describe('addon.net', function() {
             var param;
 
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             messUp();
             param = net._getDataParam('modifyData', {isOnlyChecked: false});
@@ -435,7 +435,7 @@ describe('addon.net', function() {
     describe('request', function() {
         beforeEach(function() {
             createNet();
-            grid.setRowList(rowList);
+            grid.setData(data);
 
             grid.appendRow();
             net._ajax = jasmine.createSpy('ajax');

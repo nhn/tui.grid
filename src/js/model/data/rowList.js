@@ -11,7 +11,7 @@ var Row = require('./row');
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
- * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
+ * Grid.setData 를 사용하여 콜렉션을 설정한다.
  * @module model/data/rowList
  * @extends module:base/collection
  * @param {Array} models - 콜랙션에 추가할 model 리스트
@@ -331,7 +331,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      * @returns {Array} Row List
      */
-    getRowList: function(isOnlyChecked, isRaw) {
+    getRows: function(isOnlyChecked, isRaw) {
         var rowList, checkedRowList;
 
         if (isOnlyChecked) {
@@ -674,7 +674,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
-        var modifiedRowsArr = _.values(this.getModifiedRowList());
+        var modifiedRowsArr = _.values(this.getModifiedRows());
 
         return _.some(modifiedRowsArr, function(modifiedRows) {
             return modifiedRows.length > 0;
@@ -884,7 +884,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *      @param {Array} [options.filteringColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
-    getModifiedRowList: function(options) {
+    getModifiedRows: function(options) {
         var isRaw = options && options.isRaw,
             isOnlyChecked = options && options.isOnlyChecked,
             isOnlyRowKeyList = options && options.isOnlyRowKeyList,
@@ -926,23 +926,23 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
-     * @param {Array} rowList 설정할 데이터 배열 값
-     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * data 를 설정한다. setData 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+     * @param {Array} data - 설정할 데이터 배열 값
+     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
      * @param {Function} [callback] callback function
      */
-    replaceRowList: function(rowList, isParse, callback) {
-        if (!rowList) {
-            rowList = [];
+    resetData: function(data, parse, callback) {
+        if (!data) {
+            data = [];
         }
-        if (_.isUndefined(isParse)) {
-            isParse = true;
+        if (_.isUndefined(parse)) {
+            parse = true;
         }
-        this.trigger('beforeReset', rowList.length);
+        this.trigger('beforeReset', data.length);
 
         this.lastRowKey = -1;
-        this.reset(rowList, {
-            parse: isParse
+        this.reset(data, {
+            parse: parse
         });
 
         if (_.isFunction(callback)) {
@@ -951,12 +951,12 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
-     * @param {Array} rowList 설정할 데이터 배열 값
-     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * data 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+     * @param {Array} data - 설정할 데이터 배열 값
+     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
      * @param {function} [callback] 완료시 호출될 함수
      */
-    setRowList: function(rowList, isParse, callback) {
+    setData: function(data, parse, callback) {
         var wrappedCallback = _.bind(function() {
             this.setOriginalRowList();
             if (_.isFunction(callback)) {
@@ -964,16 +964,16 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             }
         }, this);
 
-        this.replaceRowList(rowList, isParse, wrappedCallback);
+        this.resetData(data, parse, wrappedCallback);
     },
 
     /**
-     * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+     * setData()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
      * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
      */
     restore: function() {
         var originalRowList = this.getOriginalRowList();
-        this.replaceRowList(originalRowList, true);
+        this.resetData(originalRowList, true);
     },
 
     /**

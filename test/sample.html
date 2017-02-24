@@ -58,6 +58,7 @@
                     required: true
                 },
                 width: 200,
+                fixedWidth: true,
                 editOptions: {
                     onBeforeChange: function(ev) {
                         console.log('ev', ev);
@@ -136,17 +137,17 @@
             }
         }
     });
-    var rowList = [];
+    var data = [];
     (function() {
         _.times(50, function(number) {
-            rowList.push({
+            data.push({
                 _number: number + 1,
                 'c1': String(number * 10),
                 'c2': 2
             });
         })
     })();
-    grid.setRowList(rowList.slice(0, 10));
+    grid.setData(data.slice(0, 10));
     var pagination = grid.getPagination();
     var itemCount = 50;
     pagination.reset(50);
@@ -156,7 +157,7 @@
         var start = 10 * (page - 1);
 
         setTimeout(function() {
-            grid.setRowList(rowList.slice(start, start + 10));
+            grid.setData(data.slice(start, start + 10));
             pagination.movePageTo(page, true);
         }, 10);
         return false;

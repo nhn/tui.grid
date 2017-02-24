@@ -28,7 +28,7 @@ describe('Data.RowList - simple', function() {
         rowList = new RowListData([], {
             columnModel: columnModel
         });
-        rowList.setRowList([
+        rowList.setData([
             {
                 c1: '0-1',
                 c2: '0-2'
@@ -248,7 +248,7 @@ describe('Data.RowList - simple', function() {
                     name: 'c2',
                 }
             ]);
-            rowList.setRowList([
+            rowList.setData([
                 {
                     c1: '0-1',
                     c2: '0-2'
@@ -326,7 +326,7 @@ describe('Data.RowList - simple', function() {
             columnModel.getColumnModel('c2').validation = {
                 required: true
             };
-            rowList.setRowList([
+            rowList.setData([
                 {
                     c1: '0-1',
                     c2: ''

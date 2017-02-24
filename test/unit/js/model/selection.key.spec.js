@@ -22,7 +22,7 @@ function create() {
         columnModel: columnModel
     });
 
-    dataModel.setRowList([
+    dataModel.setData([
         {}, {}, {}, {}, {}
     ]);
 

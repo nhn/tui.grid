@@ -40,7 +40,7 @@ describe('CoordRow', function() {
         });
 
         it('when data is reset', function() {
-            coordRow.dataModel.setRowList([{}, {}]);
+            coordRow.dataModel.setData([{}, {}]);
 
             expect(syncSpy).toHaveBeenCalled();
         });
@@ -52,7 +52,7 @@ describe('CoordRow', function() {
         });
 
         it('when a row is removed', function() {
-            coordRow.dataModel.setRowList([{}, {}]);
+            coordRow.dataModel.setData([{}, {}]);
             syncSpy.calls.reset();
 
             coordRow.dataModel.removeRow(1);
@@ -65,7 +65,7 @@ describe('CoordRow', function() {
         it('with dimension.rowHeight if extraData.height is undefined', function() {
             var coordRow = create();
 
-            coordRow.dataModel.setRowList([{}, {}]);
+            coordRow.dataModel.setData([{}, {}]);
             coordRow.syncWithDataModel();
 
             expect(coordRow.getHeight(0)).toBe(ROW_DEF_HEIGHT);
@@ -78,7 +78,7 @@ describe('CoordRow', function() {
         it('with extraData.height if exist', function() {
             var coordRow = create();
 
-            coordRow.dataModel.setRowList([
+            coordRow.dataModel.setData([
                 {
                     _extraData: {
                         height: 15
@@ -105,7 +105,7 @@ describe('CoordRow', function() {
             var coordRow = create();
             var domState = coordRow.domState;
 
-            coordRow.dataModel.setRowList([{
+            coordRow.dataModel.setData([{
                 _extraData: {
                     height: 50
                 }
@@ -123,7 +123,7 @@ describe('CoordRow', function() {
             var coordRow = create();
             var domState = coordRow.domState;
 
-            coordRow.dataModel.setRowList([{}, {}]);
+            coordRow.dataModel.setData([{}, {}]);
             coordRow.dimensionModel.set('fixedRowHeight', true);
             spyOn(domState, 'getRowHeights').and.returnValue([20, 30]);
             coordRow.syncWithDom();
