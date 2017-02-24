@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Footer-and-Summary" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -19,37 +22,33 @@
 var grid = new tui.Grid({
     el: $('#grid'),
     selectType: 'checkbox',
-    columnFixCount: 10,
-    headerHeight: 30,
-    resizeHandle: {},
     bodyHeight: 300,
-    isFixedHeight: true,
-    minimumColumnWidth: 100,
+    fixedHeight: true,
+    columnOptions: {
+        minWidth: 100
+    },
     columns: [
         {
             title: 'User ID',
             name: 'c1',
             align: 'center',
-            width: 200,
             editOptions: {
-                type: 'text',
+                type: 'text'
             }
         },
         {
             title: 'Score',
             name: 'c2',
             className: 'clickable',
-            width: 200,
             editOptions: {
-                type: 'text',
+                type: 'text'
             }
         },
         {
             title: 'Item Count',
-            width: 200,
             name: 'c3',
             editOptions: {
-                type: 'text',
+                type: 'text'
             }
         }
     ],
