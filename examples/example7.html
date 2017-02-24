@@ -14,6 +14,9 @@
     </style>
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Applying-Themes" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 <div id="theme">
@@ -89,18 +92,21 @@
 <script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
     el: $('#grid'),
-    headerHeight: 40,
-    displayRowCount: 15,
-    minimumColumnWidth: 100,
     rowHeight: 35,
-    columnModelList: [
+    header: {
+        height: 40
+    },
+    columnOptions: {
+        minWidth: 100
+    },
+    columns: [
         {
-            columnName: '_button',
+            name: '_button',
             width: 30
         },
         {
             title: 'ID',
-            columnName: 'c1',
+            name: 'c1',
             align: 'center',
             editOption: {
                 beforeContent: 'FE',
@@ -110,7 +116,7 @@ var grid = new tui.Grid({
         {
             title: 'Name',
             defaultValue: 2,
-            columnName: 'c2',
+            name: 'c2',
             align: 'center',
             editOption: {
                 type: 'text',
@@ -118,7 +124,7 @@ var grid = new tui.Grid({
         },
         {
             title: 'Score',
-            columnName: 'c3',
+            name: 'c3',
             align: 'center',
             editOption: {
                 type: 'text',

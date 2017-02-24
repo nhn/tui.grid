@@ -78,15 +78,15 @@ describe('Data.RowList - simple', function() {
     });
 
     describe('disableRow(), enableRow()', function() {
-        it('rowState의 isDisabled 속성을 변경한다.', function() {
+        it('rowState의 disabled 속성을 변경한다.', function() {
             var row = rowList.get(0);
-            expect(row.getRowState().isDisabled).toBe(false);
+            expect(row.getRowState().disabled).toBe(false);
 
             rowList.disableRow(0);
-            expect(row.getRowState().isDisabled).toBe(true);
+            expect(row.getRowState().disabled).toBe(true);
 
             rowList.enableRow(0);
-            expect(row.getRowState().isDisabled).toBe(false);
+            expect(row.getRowState().disabled).toBe(false);
         });
     });
 
@@ -100,23 +100,23 @@ describe('Data.RowList - simple', function() {
             });
         });
 
-        it('sets isDisabled', function() {
-            rowList.isDisabled = false;
+        it('sets disabled', function() {
+            rowList.disabled = false;
             rowList.setDisabled(true);
-            expect(rowList.isDisabled).toBe(true);
+            expect(rowList.disabled).toBe(true);
 
             rowList.setDisabled(false);
-            expect(rowList.isDisabled).toBe(false);
+            expect(rowList.disabled).toBe(false);
         });
 
-        it('if isDisabled is changed, trigger disabledChanged event', function() {
-            rowList.isDisabled = false;
+        it('if disabled is changed, trigger disabledChanged event', function() {
+            rowList.disabled = false;
             rowList.setDisabled(true);
             expect(triggered).toBe(true);
         });
 
-        it('if isDisabled is not changed, does not trigger disabledChanged event', function() {
-            rowList.isDisabled = true;
+        it('if disabled is not changed, does not trigger disabledChanged event', function() {
+            rowList.disabled = true;
             rowList.setDisabled(true);
             expect(triggered).toBe(false);
         });
@@ -144,7 +144,7 @@ describe('Data.RowList - simple', function() {
     describe('disableCheck()', function() {
         it('disableCheck 되는지 확인한다.', function() {
             rowList.disableCheck(0);
-            expect(rowList.get(0).getRowState().isDisabledCheck).toBe(true);
+            expect(rowList.get(0).getRowState().disabledCheck).toBe(true);
         });
     });
 
@@ -152,7 +152,7 @@ describe('Data.RowList - simple', function() {
         it('enableCheck 되는지 확인한다.', function() {
             rowList.disableCheck(0);
             rowList.enableCheck(0);
-            expect(rowList.get(0).getRowState().isDisabledCheck).toBe(false);
+            expect(rowList.get(0).getRowState().disabledCheck).toBe(false);
         });
     });
 

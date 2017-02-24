@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Relation-between-columns" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -128,13 +131,13 @@ var treeDepthData = {
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    columnModelList: [
+    columns: [
         {
             title: 'Category1',
-            columnName: 'category1',
-            editOption: {
+            name: 'category1',
+            editOptions: {
                 type: 'select',
-                list: [
+                listItems: [
                     { text: 'Select', value: '' },
                     { text: 'Domestic', value: '01' },
                     { text: 'Overseas', value: '02' },
@@ -142,13 +145,13 @@ var grid = new tui.Grid({
                 ],
                 useViewMode: false
             },
-            relationList: [
+            relations: [
                 {
-                    columnList: ['category2', 'selectedValue'],
-                    optionListChange: function(value) {
+                    targetNames: ['category2', 'selectedValue'],
+                    listItems: function(value) {
                         return twoDepthData[value];
                     },
-                    isDisabled: function(value) {
+                    disabled: function(value) {
                         return !(value);
                     }
                 }
@@ -156,19 +159,19 @@ var grid = new tui.Grid({
         },
         {
             title: 'Category2',
-            columnName: 'category2',
-            editOption: {
+            name: 'category2',
+            editOptions: {
                 type: 'select',
-                list: [],
+                listItems: [],
                 useViewMode: false
             },
-            relationList: [
+            relations: [
                 {
-                    columnList: ['category3'],
-                    optionListChange: function(value) {
+                    targetNames: ['category3'],
+                    listItems: function(value) {
                         return treeDepthData[value];
                     },
-                    isDisabled: function(value) {
+                    disabled: function(value) {
                         return !(value);
                     }
                 }
@@ -176,10 +179,10 @@ var grid = new tui.Grid({
         },
         {
             title: 'Category3',
-            columnName: 'category3',
-            editOption: {
+            name: 'category3',
+            editOptions: {
                 type: 'select',
-                list: [],
+                listItems: [],
                 useViewMode: false
             }
         }

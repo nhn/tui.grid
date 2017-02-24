@@ -37,8 +37,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         hasNumberColumn: true,
         selectType: '',
         columnModelMap: {},
-        relationListMap: {},
-        columnMerge: [],
+        relationsMap: {},
+        complexHeaderColumns: [],
         copyOptions: {
             useFormattedValue: false
         }
@@ -292,21 +292,21 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
-     * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
+     * 각 columnModel 의 relations 를 모아 주체가 되는 columnName 기준으로 relationsMap 를 생성하여 반환한다.
      * @param {Array} columns - Column Model List
-     * @returns {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
+     * @returns {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationsMap
      * @private
      */
     _getRelationListMap: function(columns) {
-        var relationListMap = {};
+        var relationsMap = {};
 
         _.each(columns, function(columnModel) {
             var columnName = columnModel.name;
-            if (columnModel.relationList) {
-                relationListMap[columnName] = columnModel.relationList;
+            if (columnModel.relations) {
+                relationsMap[columnName] = columnModel.relations;
             }
         });
-        return relationListMap;
+        return relationsMap;
     },
 
     /**
@@ -333,7 +333,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _setColumns: function(columns, columnFixCount) {
-        var division, relationListMap, visibleColumns, metaColumns, dataColumns;
+        var division, relationsMap, visibleColumns, metaColumns, dataColumns;
 
         columns = $.extend(true, [], columns);
         if (tui.util.isUndefined(columnFixCount)) {
@@ -346,13 +346,13 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         metaColumns = this._initializeMetaColumns(division[0]);
         dataColumns = division[1];
 
-        relationListMap = this._getRelationListMap(dataColumns);
+        relationsMap = this._getRelationListMap(dataColumns);
         visibleColumns = this._makeVisibleColumns(metaColumns, dataColumns);
         this.set({
             metaColumns: metaColumns,
             dataColumns: dataColumns,
             columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'name'),
-            relationListMap: relationListMap,
+            relationsMap: relationsMap,
             columnFixCount: Math.max(0, columnFixCount),
             visibleColumns: visibleColumns
         }, {
@@ -416,10 +416,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {Array.<string>} Unit column names
      */
     getUnitColumnNamesIfMerged: function(columnName) {
-        var columnMergeInfoList = this.get('columnMerge');
+        var complexHeaderColumns = this.get('complexHeaderColumns');
         var stackForSearch = [];
         var searchedNames = [];
-        var name, columnModel, columnMergeInfoItem;
+        var name, columnModel, complexHeaderColumn;
 
         stackForSearch.push(columnName);
         while (stackForSearch.length) {
@@ -429,11 +429,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             if (columnModel) {
                 searchedNames.push(name);
             } else {
-                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                complexHeaderColumn = _.findWhere(complexHeaderColumns, {
                     name: name
                 });
-                if (columnMergeInfoItem) {
-                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.childNames);
+                if (complexHeaderColumn) {
+                    stackForSearch.push.apply(stackForSearch, complexHeaderColumn.childNames);
                 }
             }
         }

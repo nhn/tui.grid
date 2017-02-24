@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Input-types" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -14,26 +17,25 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" src="./data/basic-dummy.js"></script>
 <script type="text/javascript" class="code-js">
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    columnModelList: [
+    columns: [
         {
             title: 'Name',
-            columnName: 'name',
-            editOption: {
+            name: 'name',
+            editOptions: {
                 type: 'text',
                 useViewMode: true
             }
         },
         {
             title: 'Artist',
-            columnName: 'artist',
-            editOption: {
+            name: 'artist',
+            editOptions: {
                 type: 'text',
                 maxLength: 10,
                 useViewMode: false
@@ -41,15 +43,15 @@ var grid = new tui.Grid({
         },
         {
             title: 'Type',
-            columnName: 'typeCode',
-            editOption: {
+            name: 'typeCode',
+            editOptions: {
                 type: 'select',
-                list: [
+                listItems: [
                     { text: 'Deluxe', value: '1' },
                     { text: 'EP', value: '2' },
                     { text: 'Single', value: '3' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
                 useViewMode: true
@@ -57,17 +59,17 @@ var grid = new tui.Grid({
         },
         {
             title: 'Genre',
-            columnName: 'genreCode',
-            editOption: {
+            name: 'genreCode',
+            editOptions: {
                 type: 'checkbox',
-                list: [
+                listItems: [
                     { text: 'Pop', value: '1' },
                     { text: 'Rock', value: '2' },
                     { text: 'R&B', value: '3' },
                     { text: 'Electronic', value: '4' },
                     { text: 'etc.', value: '5' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
                 useViewMode: true
@@ -75,17 +77,17 @@ var grid = new tui.Grid({
         },
         {
             title: 'Grade',
-            columnName: 'grade',
-            editOption: {
+            name: 'grade',
+            editOptions: {
                 type: 'radio',
-                list: [
+                listItems: [
                     { text: '★☆☆☆☆', value: '1' },
                     { text: '★★☆☆☆', value: '2' },
                     { text: '★★★☆☆', value: '3' },
                     { text: '★★★★☆', value: '4' },
                     { text: '★★★★★', value: '5' }
                 ],
-                changeBeforeCallback: function(ev){
+                onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
                 useViewMode: true

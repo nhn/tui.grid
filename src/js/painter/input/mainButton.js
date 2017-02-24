@@ -82,7 +82,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
             type: this.inputType,
             name: this.gridId,
             checked: cellData.value ? 'checked' : '',
-            disabled: cellData.isDisabled ? 'disabled' : ''
+            disabled: cellData.disabled ? 'disabled' : ''
         });
     }
 });

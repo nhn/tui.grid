@@ -9,7 +9,7 @@ var DomState = require('domState');
 var CELL_BORDER_WIDTH = require('common/constMap').dimension.CELL_BORDER_WIDTH;
 var ROW_DEF_HEIGHT = 10;
 
-function create(isFixedRowHeight) {
+function create(fixedRowHeight) {
     var columnModel = new ColumnModel();
     var dataModel = new DataModel([], {
         columnModel: columnModel
@@ -18,7 +18,7 @@ function create(isFixedRowHeight) {
     var coordRowModel;
 
     dimensionMock.set({
-        isFixedRowHeight: isFixedRowHeight,
+        fixedRowHeight: fixedRowHeight,
         rowHeight: ROW_DEF_HEIGHT
     });
     coordRowModel = new CoordRow(null, {
@@ -31,7 +31,7 @@ function create(isFixedRowHeight) {
 }
 
 describe('CoordRow', function() {
-    describe('If the isFixedRowHeight:true, syncWithDataModel() should be called', function() {
+    describe('If the fixedRowHeight:true, syncWithDataModel() should be called', function() {
         var coordRow, syncSpy;
 
         beforeEach(function() {
@@ -119,12 +119,12 @@ describe('CoordRow', function() {
             expect(coordRow.getHeightAt(2)).toBe(40);
         });
 
-        it('should not reset rowHeights if dimensionModel.isFixedRowHeight is true', function() {
+        it('should not reset rowHeights if dimensionModel.fixedRowHeight is true', function() {
             var coordRow = create();
             var domState = coordRow.domState;
 
             coordRow.dataModel.setRowList([{}, {}]);
-            coordRow.dimensionModel.set('isFixedRowHeight', true);
+            coordRow.dimensionModel.set('fixedRowHeight', true);
             spyOn(domState, 'getRowHeights').and.returnValue([20, 30]);
             coordRow.syncWithDom();
 

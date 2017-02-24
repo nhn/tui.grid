@@ -88,14 +88,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this.rowData.isDisabled(columnName),
+                disabled: this.rowData.isDisabled(columnName),
                 className: this._getClassNameString(columnName)
             });
         }, this);
     },
 
     /**
-     * Sets the 'isDisabled', 'isEditable', 'className' property of each cell data.
+     * Sets the 'disabled', 'editable', 'className' property of each cell data.
      * @private
      */
     _setRowExtraData: function() {
@@ -111,8 +111,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 cellState = this.rowData.getCellState(columnName);
 
                 this.setCell(columnName, {
-                    isDisabled: cellState.isDisabled,
-                    isEditable: cellState.isEditable,
+                    disabled: cellState.disabled,
+                    editable: cellState.editable,
                     className: this._getClassNameString(columnName)
                 });
             }
@@ -170,12 +170,12 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,
                 mainRowKey: rowSpanData.mainRowKey,
-                isEditable: cellState.isEditable,
-                isDisabled: cellState.isDisabled,
-                isEditing: focusModel.isEditingCell(rowKey, columnName),
+                editable: cellState.editable,
+                disabled: cellState.disabled,
+                editing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
                 valign: column.valign,
-                optionList: tui.util.pick(column, 'editOptions', 'listItems'),
+                listItems: tui.util.pick(column, 'editOptions', 'listItems'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names
@@ -402,14 +402,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _shouldSetSilently: function(cellData, valueChanged) {
-        var valueChangedOnEditing = cellData.isEditing && valueChanged;
+        var valueChangedOnEditing = cellData.editing && valueChanged;
         var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
-        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 
         // Silent Cases
-        // 1: If values have been changed while the isEditing is true,
+        // 1: If values have been changed while the editing is true,
         //    prevent the related cell-view from changing its value-state until editing is finished.
-        // 2: If useViewMode is true and isEditing is changing to true,
+        // 2: If useViewMode is true and editing is changing to true,
         //    prevent the related cell-view from changing its state to enable editing,
         //    as the editing-layer will be used for editing instead.
         return valueChangedOnEditing || (useViewMode && editingChangedToTrue);

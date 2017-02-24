@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Using-DatePicker-in-Grid" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -20,25 +23,39 @@
 <script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
     el: $('#grid'),
-    headerHeight: 30,
-    toolbar: null,
-    headerHeight: 60,
-    displayRowCount: 15,
-    columnModelList: [
+    header: {
+        height: 60,
+        complexColumns: [
+            {
+                title : 'useViewMode: false',
+                name : 'c1-c2',
+                childNames : ['c1', 'c2']
+            },
+            {
+                title : 'useViewMode: true',
+                name : 'c3-c4',
+                childNames : ['c3', 'c4']
+            }
+        ]
+    },
+    columnOptions: {
+        minWidth: 100
+    },
+    columns: [
         {
             title: 'DatePicker: Off',
-            columnName: 'c1',
-            editOption: {
-                useViewMode: false,
-                type: 'text'
+            name: 'c1',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
             }
         },
         {
             title: 'DatePicker: (yy/mm/dd)',
-            columnName: 'c2',
-            editOption: {
-                useViewMode: false,
-                type: 'text'
+            name: 'c2',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
             },
             component: {
                 name: 'datePicker',
@@ -50,13 +67,13 @@ var grid = new tui.Grid({
         },
         {
             title: 'DatePicker: (yyyy.mm.dd)',
-            columnName: 'c3',
-            editOption: {
+            name: 'c3',
+            editOptions: {
                 type: 'text'
             },
             component: {
                 name: 'datePicker',
-                option: {
+                options: {
                     dateForm: 'yyyy.mm.dd',
                     date: {year: 2017, month: 1, date: 1}
                 }
@@ -64,31 +81,19 @@ var grid = new tui.Grid({
         },
         {
             title: 'DatePicker (selectableRanges)',
-            columnName: 'c4',
-            editOption: {
+            name: 'c4',
+            editOptions: {
                 type: 'text'
             },
             component: {
                 name: 'datePicker',
-                option: {
+                options: {
                     date: {year: 2014, month: 4, date: 10},
                     selectableRanges: [
                         [{year: 2014, month: 4, date: 10}, {year: 2014, month: 6, date: 20}]
                     ]
                 }
             }
-        }
-    ],
-    columnMerge: [
-        {
-            columnName : 'c1-c2',
-            title : 'useViewMode: false',
-            columnNameList : ['c1', 'c2']
-        },
-        {
-            columnName : 'c3-c4',
-            title : 'useViewMode: true',
-            columnNameList : ['c3', 'c4']
         }
     ]
 });

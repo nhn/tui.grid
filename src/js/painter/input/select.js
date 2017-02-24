@@ -61,7 +61,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @protected
      */
     _getDisplayValue: function(cellData) {
-        var selectedOption = _.find(cellData.optionList, function(item) {
+        var selectedOption = _.find(cellData.listItems, function(item) {
             return String(item.value) === String(cellData.value);
         });
 
@@ -76,7 +76,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @protected
      */
     _generateInputHtml: function(cellData) {
-        var optionHtml = _.reduce(cellData.optionList, function(html, item) {
+        var optionHtml = _.reduce(cellData.listItems, function(html, item) {
             return html + this.optionTemplate({
                 value: item.value,
                 text: item.text,
@@ -86,7 +86,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
         return this.template({
             name: util.getUniqueKey(),
-            disabled: cellData.isDisabled ? 'disabled' : '',
+            disabled: cellData.disabled ? 'disabled' : '',
             options: optionHtml
         });
     }

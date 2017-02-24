@@ -26,21 +26,25 @@ var defaultOptions = {
     keyColumnName: null,
     selectType: '',
     autoNumbering: true,
-    headerHeight: 35,
+    header: {
+        height: 35,
+        complexColumns: []
+    },
+    columnOptions: {
+        minWidth: 50,
+        resizable: true
+    },
     rowHeight: 27,
     fitToParentHeight: false,
+    fixedRowHeight: true,
+    fixedHeight: false,
     showDummyRows: false,
-    minimumColumnWidth: 50,
     virtualScrolling: true,
-    columnMerge: [],
     copyOptions: null,
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
-    useClientSort: true,
-    columnOptions: {
-        resizable: true
-    }
+    useClientSort: true
 };
 
 /**
@@ -81,7 +85,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             keyColumnName: options.keyColumnName,
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
-            columnMerge: options.columnMerge,
+            complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,
             columns: options.columns
         });
@@ -116,21 +120,21 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
         var attrs = {
-            headerHeight: options.headerHeight,
+            headerHeight: options.header.height,
             bodyHeight: options.bodyHeight,
             footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth,
-            isFixedRowHeight: options.isFixedRowHeight,
-            isFixedHeight: options.isFixedHeight
+            minimumColumnWidth: options.columnOptions.minWidth,
+            fixedRowHeight: options.fixedRowHeight,
+            fixedHeight: options.fixedHeight
         };
 
-        if (options.isFixedRowHeight === false && options.virtualScrolling) {
-            util.warning('The isFixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
-            attrs.isFixedRowHeight = true;
+        if (options.fixedRowHeight === false && options.virtualScrolling) {
+            util.warning('The fixedRowHeight can\'t be false if the virtualScrolling is not set to false.');
+            attrs.fixedRowHeight = true;
         }
 
         dimensionModel = new DimensionModel(attrs, {
