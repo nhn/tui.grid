@@ -134,7 +134,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _onEditingStateChanged: function(cellData) {
-        if (cellData.isEditing) {
+        if (cellData.editing) {
             this._startEditing(cellData);
         } else {
             this._finishEditing();

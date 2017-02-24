@@ -172,7 +172,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             editing = false;
         }
         this._updateCellData(target.rowKey, target.columnName, {
-            isEditing: editing
+            editing: editing
         });
 
         this._triggerEditingStateChanged(target.rowKey, target.columnName);
