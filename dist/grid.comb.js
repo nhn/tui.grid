@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Feb 13 2017 10:19:09 GMT+0900 (KST)"
- * version: 1.8.0
+ * bundle created at "Fri Feb 24 2017 16:41:07 GMT+0900 (KST)"
+ * version: 1.8.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -11323,9 +11323,9 @@
 	     * @private
 	     */
 	    _getStartRowSpanMinCount: function(startIndex) {
-	        var firstRow = this.dataModel.at(startIndex),
-	            result = 0,
-	            counts;
+	        var firstRow = this.dataModel.at(startIndex);
+	        var result = 0;
+	        var counts;
 
 	        if (firstRow) {
 	            counts = _.pluck(firstRow.getRowSpanData(), 'count');
@@ -11342,15 +11342,21 @@
 	     * @private
 	     */
 	    _getEndRowSpanMaxCount: function(endIndex) {
-	        var lastRow = this.dataModel.at(endIndex),
-	            result = 0,
-	            counts;
+	        var lastRow = this.dataModel.at(endIndex);
+	        var result = 0;
+	        var counts;
 
 	        if (lastRow) {
 	            counts = _.pluck(lastRow.getRowSpanData(), 'count');
 	            counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
 	            result = _.max(counts);
 	        }
+
+	        // subtract 1, as the count includes main-cell itself
+	        if (result > 0) {
+	            result -= 1;
+	        }
+
 	        return result;
 	    },
 
