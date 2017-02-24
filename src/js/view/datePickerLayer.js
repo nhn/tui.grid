@@ -6,20 +6,8 @@
 
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
-var DEFAULT_DATE_FORMAT = 'yyyy-mm-dd';
+var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 var DatePickerLayer;
-
-/**
- * Returns a HTML string of a span element to represent an arrow-icon
- * @param {String} dirClassName - className to indicate direction of the arrow
- * @returns {String}
- * @ignore
- */
-function arrowHTML(dirClassName) {
-    var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
-
-    return '<span class="' + classNameStr + '"></span>';
-}
 
 /**
  * Layer View class which contains the 'tui-component-date-picker'
@@ -33,10 +21,9 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;
         this.domState = options.domState;
-        this.calendar = this._createCalendar();
         this.datePicker = this._createDatePicker();
 
-        this._customizeCalendarBtns();
+        this._preventCalendarEvent();
 
         this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
         this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
@@ -45,78 +32,39 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     className: classNameConst.LAYER_DATE_PICKER,
 
     /**
-     * Creates an instance of 'tui-component-calendar'
-     * @returns {tui.component.Calendar}
-     * @private
-     */
-    _createCalendar: function() {
-        var $calendarEl = $('<div>').addClass(classNameConst.CALENDAR);
-
-        // prevent blur event from occuring in the input element
-        $calendarEl.mousedown(function(ev) {
-            ev.preventDefault();
-            ev.target.unselectable = true;  // trick for IE8
-            return false;
-        });
-
-        return new tui.component.Calendar({
-            element: $calendarEl,
-            classPrefix: classNameConst.CALENDAR + '-'
-        });
-    },
-
-    /**
-     * Customize the buttons of the calendar.
-     * @private
-     */
-    _customizeCalendarBtns: function() {
-        var $header = this.calendar.$header;
-        var leftArrowHTML = arrowHTML(classNameConst.ICO_ARROW_LEFT);
-        var rightArrowHTML = arrowHTML(classNameConst.ICO_ARROW_RIGHT);
-
-        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_YEAR).html(leftArrowHTML + leftArrowHTML);
-        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_YEAR).html(rightArrowHTML + rightArrowHTML);
-        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_MONTH).html(leftArrowHTML);
-        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_MONTH).html(rightArrowHTML);
-    },
-
-    /**
      * Creates an instance of 'tui-component-date-picker'
      * @returns {tui.component.DatePicker}
      * @private
      */
     _createDatePicker: function() {
-        var datePicker = new tui.component.DatePicker({
-            parentElement: this.$el,
-            enableSetDateByEnterKey: false,
-            selectableClassName: classNameConst.CALENDAR_SELECTABLE,
-            selectedClassName: classNameConst.CALENDAR_SELECTED,
-            pos: {
-                top: 0,
-                left: 0
+        var datePicker = new tui.component.Datepicker(this.$el, {
+            date: new Date(),
+            input: {
+                format: 'yyyy-MM-dd'
+            },
+            calendar: {
+                showToday: false
             }
-        }, this.calendar);
+        });
 
-        datePicker.on('update', function() {
-            datePicker.close();
+        datePicker.on('change', function() {
+            console.log('date change');
         });
 
         return datePicker;
     },
 
     /**
-     * Creates date object for now
-     * @returns {{year: Number, month: Number, date: Number}}
-     * @private
+     * Prevent event of calendar
      */
-    _createDateForNow: function() {
-        var now = new Date();
+    _preventCalendarEvent: function() {
+        var calendar = this.datePicker.getCalendar();
 
-        return {
-            year: now.getFullYear(),
-            month: now.getMonth() + 1,
-            date: now.getDate()
-        };
+        calendar._$element.mousedown(function(ev) {
+            ev.preventDefault();
+            ev.target.unselectable = true;  // trick for IE8
+            return false;
+        });
     },
 
     /**
@@ -127,12 +75,15 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _resetDatePicker: function(options, $input) {
         var datePicker = this.datePicker;
-        var date = options.date || this._createDateForNow();
+        var date = datePicker.getDate() || (new Date());
+        var selectableRanges = options.selectableRanges;
 
-        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORMAT);
-        datePicker.setRanges(options.selectableRanges || []);
-        datePicker.setDate(date.year, date.month, date.date);
-        datePicker.setElement($input);
+        datePicker.setDateFormat(options.format || DEFAULT_DATE_FORMAT);
+        if (selectableRanges) {
+            datePicker.setRanges(options.selectableRanges);
+        }
+        datePicker.setDate(date);
+        datePicker.setInput($input);
     },
 
     /**
