@@ -1,6 +1,6 @@
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
- * @author NHN Ent. FE Development Team
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -78,11 +78,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             if (!columnModel) {
                 return;
             }
-            if (!this._executeChangeBeforeCallback(columnName)) {
+            if (!this._executeOnBeforeChange(columnName)) {
                 return;
             }
             this.collection.syncRowSpannedData(this, columnName, value);
-            this._executeChangeAfterCallback(columnName);
+            this._executeOnAfterChange(columnName);
             this.validateCell(columnName, true);
         }, this);
     },
@@ -153,20 +153,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
-     * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {boolean} changeBeforeCallback 수행 결과값
+     * Executes the onChangeBefore callback function.
+     * onChangeBefore 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
+     * @param {String} columnName - column name
+     * @returns {boolean}
      * @private
      */
-    _executeChangeBeforeCallback: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            changeEvent, obj;
+    _executeOnBeforeChange: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var changeEvent, obj;
 
-        if (columnModel.editOptions && columnModel.editOptions.changeBeforeCallback) {
+        if (columnModel.editOptions && columnModel.editOptions.onBeforeChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
-            if (columnModel.editOptions.changeBeforeCallback(changeEvent) === false) {
+            if (columnModel.editOptions.onBeforeChange(changeEvent) === false) {
                 obj = {};
                 obj[columnName] = this.previous(columnName);
                 this.set(obj);
@@ -178,19 +178,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     * @param {String} columnName - 컬럼명
-     * @returns {boolean} changeAfterCallback 수행 결과값
+     * Execuetes the onAfterChange callback function.
+     * @param {String} columnName - column name
+     * @returns {boolean}
      * @private
      */
-    _executeChangeAfterCallback: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            changeEvent;
+    _executeOnAfterChange: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var changeEvent;
 
-        if (columnModel.editOptions && columnModel.editOptions.changeAfterCallback) {
+        if (columnModel.editOptions && columnModel.editOptions.onAfterChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
-            return !!(columnModel.editOptions.changeAfterCallback(changeEvent));
+            return !!(columnModel.editOptions.onAfterChange(changeEvent));
         }
+
         return true;
     },
 
@@ -204,7 +205,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the object that contains rowState info.
-     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{disabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         return this.extraDataManager.getRowState();
@@ -216,10 +217,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @returns {Array.<String>} - An array of classNames
      */
     getClassNameList: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            isMetaColumn = util.isMetaColumn(columnName),
-            classNameList = this.extraDataManager.getClassNameList(columnName),
-            cellState = this.getCellState(columnName);
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var isMetaColumn = util.isMetaColumn(columnName);
+        var classNameList = this.extraDataManager.getClassNameList(columnName);
+        var cellState = this.getCellState(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);
@@ -232,10 +233,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         }
         if (isMetaColumn) {
             classNameList.push(classNameConst.CELL_HEAD);
-        } else if (cellState.isEditable) {
+        } else if (cellState.editable) {
             classNameList.push(classNameConst.CELL_EDITABLE);
         }
-        if (cellState.isDisabled) {
+        if (cellState.disabled) {
             classNameList.push(classNameConst.CELL_DISABLED);
         }
 
@@ -255,37 +256,37 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Returns the state of the cell identified by a given column name.
      * @param {String} columnName - column name
-     * @returns {{isEditable: boolean, isDisabled: boolean}}
+     * @returns {{editable: boolean, disabled: boolean}}
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
             columnModel = this.columnModel,
-            isDisabled = this.collection.isDisabled,
-            isEditable = true,
+            disabled = this.collection.disabled,
+            editable = true,
             editType = columnModel.getEditType(columnName),
             rowState, relationResult;
 
-        relationResult = this.executeRelationCallbacksAll(['isDisabled', 'isEditable'])[columnName];
+        relationResult = this.executeRelationCallbacksAll(['disabled', 'editable'])[columnName];
         rowState = this.getRowState();
 
-        if (!isDisabled) {
+        if (!disabled) {
             if (columnName === '_button') {
-                isDisabled = rowState.isDisabledCheck;
+                disabled = rowState.disabledCheck;
             } else {
-                isDisabled = rowState.isDisabled;
+                disabled = rowState.disabled;
             }
-            isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
+            disabled = disabled || !!(relationResult && relationResult.disabled);
         }
 
         if (_.contains(notEditableTypeList, editType)) {
-            isEditable = false;
+            editable = false;
         } else {
-            isEditable = !(relationResult && relationResult.isEditable === false);
+            editable = !(relationResult && relationResult.editable === false);
         }
 
         return {
-            isEditable: isEditable,
-            isDisabled: isDisabled
+            editable: editable,
+            disabled: disabled
         };
     },
 
@@ -297,7 +298,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     isEditable: function(columnName) {
         var cellState = this.getCellState(columnName);
 
-        return !cellState.isDisabled && cellState.isEditable;
+        return !cellState.disabled && cellState.editable;
     },
 
     /**
@@ -308,7 +309,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     isDisabled: function(columnName) {
         var cellState = this.getCellState(columnName);
 
-        return cellState.isDisabled;
+        return cellState.disabled;
     },
 
     /**
@@ -413,12 +414,12 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     _getListTypeVisibleText: function(columnName) {
         var value = this.get(columnName);
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var resultOptionList, editOptionList, typeExpected, valueList;
+        var resultListItems, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOptions', 'listItems'))) {
-            resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
-            editOptionList = resultOptionList && resultOptionList.optionList ?
-                    resultOptionList.optionList : columnModel.editOptions.listItems;
+            resultListItems = this.executeRelationCallbacksAll(['listItems'])[columnName];
+            editOptionList = resultListItems && resultListItems.listItems ?
+                    resultListItems.listItems : columnModel.editOptions.listItems;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = util.toString(value).split(',');
@@ -492,24 +493,24 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
-     * @param {Array} callbackNameList 반환값의 결과를 확인할 대상 callbackList.
-     *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
+     * @param {Array} attrNames 반환값의 결과를 확인할 대상 callbackList.
+     *        (default : ['listItems', 'disabled', 'editable'])
      * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
-    executeRelationCallbacksAll: function(callbackNameList) {
-        var rowData = this.attributes,
-            relationListMap = this.columnModel.get('relationListMap'),
-            result = {};
+    executeRelationCallbacksAll: function(attrNames) {
+        var rowData = this.attributes;
+        var relationsMap = this.columnModel.get('relationsMap');
+        var result = {};
 
-        if (_.isEmpty(callbackNameList)) {
-            callbackNameList = ['optionListChange', 'isDisabled', 'isEditable'];
+        if (_.isEmpty(attrNames)) {
+            attrNames = ['listItems', 'disabled', 'editable'];
         }
 
-        _.each(relationListMap, function(relationList, columnName) {
+        _.each(relationsMap, function(relationList, columnName) {
             var value = rowData[columnName];
 
             _.each(relationList, function(relation) {
-                this._executeRelationCallback(relation, callbackNameList, value, rowData, result);
+                this._executeRelationCallback(relation, attrNames, value, rowData, result);
             }, this);
         }, this);
 
@@ -517,54 +518,32 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * Returns a name of attribute matching given callbackName.
-     * @param {string} callbackName - callback name
-     * @private
-     * @returns {string}
-     */
-    _getRelationResultAttrName: function(callbackName) {
-        switch (callbackName) {
-            case 'optionListChange':
-                return 'optionList';
-            case 'isDisabled':
-                return 'isDisabled';
-            case 'isEditable':
-                return 'isEditable';
-            default:
-                return '';
-        }
-    },
-
-    /**
      * Executes relation callback
      * @param {object} relation - relation object
-     *   @param {array} relation.columnList - target column list
-     *   @param {function} [relation.isDisabled] - callback function for isDisabled attribute
-     *   @param {function} [relation.isEditable] - callback function for isDisabled attribute
-     *   @param {function} [relation.optionListChange] - callback function for changing option list
-     * @param {array} callbackNameList - an array of callback names
+     *   @param {array} relation.targetNames - target column list
+     *   @param {function} [relation.disabled] - callback function for disabled attribute
+     *   @param {function} [relation.editable] - callback function for disabled attribute
+     *   @param {function} [relation.listItems] - callback function for changing option list
+     * @param {array} attrNames - an array of callback names
      * @param {(string|number)} value - cell value
      * @param {object} rowData - all value of the row
      * @param {object} result - object to store the result of callback functions
      * @private
      */
-    _executeRelationCallback: function(relation, callbackNameList, value, rowData, result) {
-        var rowState = this.getRowState(),
-            targetColumnNames = relation.columnList;
+    _executeRelationCallback: function(relation, attrNames, value, rowData, result) {
+        var rowState = this.getRowState();
+        var targetNames = relation.targetNames;
 
-        _.each(callbackNameList, function(callbackName) {
-            var attrName, callback;
+        _.each(attrNames, function(attrName) {
+            var callback;
 
-            if (!rowState.isDisabled || callbackName !== 'isDisabled') {
-                callback = relation[callbackName];
+            if (!rowState.disabled || attrName !== 'disabled') {
+                callback = relation[attrName];
                 if (typeof callback === 'function') {
-                    attrName = this._getRelationResultAttrName(callbackName);
-                    if (attrName) {
-                        _.each(targetColumnNames, function(targetColumnName) {
-                            result[targetColumnName] = result[targetColumnName] || {};
-                            result[targetColumnName][attrName] = callback(value, rowData);
-                        }, this);
-                    }
+                    _.each(targetNames, function(targetName) {
+                        result[targetName] = result[targetName] || {};
+                        result[targetName][attrName] = callback(value, rowData);
+                    }, this);
                 }
             }
         }, this);

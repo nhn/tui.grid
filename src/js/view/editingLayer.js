@@ -65,8 +65,6 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _finishEditing: function() {
-        this.$el.removeAttr(attrNameConst.ROW_KEY);
-        this.$el.removeAttr(attrNameConst.COLUMN_NAME);
         this.$el.empty().hide();
     },
 

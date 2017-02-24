@@ -562,8 +562,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
          rowSpan: rowSpanData.count,
          isMainRow: rowSpanData.isMainRow,
          mainRowKey: rowSpanData.mainRowKey,
-         isEditable: isEditable,
-         isDisabled: isDisabled,
+         editable: editable,
+         disabled: disabled,
          optionList: [],
          className: row.getClassNameList(columnName).join(' '),
          changed: []    //names of changed properties

@@ -172,7 +172,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _getContainingMergedColumnNames: function(columnNames) {
         var columnModel = this.columnModel;
-        var mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'name');
+        var mergedColumnNames = _.pluck(columnModel.get('complexHeaderColumns'), 'name');
 
         return _.filter(mergedColumnNames, function(mergedColumnName) {
             var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
@@ -514,27 +514,27 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
+     * complexHeaderColumns 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
      * @param {Object} column - column
-     * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
-     * @returns {Array} 계층구조 결과값
+     * @param {Array} [results] - 결과로 메모이제이션을 이용하기 위한 인자값
+     * @returns {Array}
      * @private
      */
-    _getColumnHierarchy: function(column, resultList) {
-        var columnMergeList = this.columnModel.get('columnMerge');
+    _getColumnHierarchy: function(column, results) {
+        var complexHeaderColumns = this.columnModel.get('complexHeaderColumns');
 
-        resultList = resultList || [];
+        results = results || [];
         if (column) {
-            resultList.push(column);
-            if (columnMergeList) {
-                _.each(columnMergeList, function(columnMerge) {
-                    if ($.inArray(column.name, columnMerge.childNames) !== -1) {
-                        this._getColumnHierarchy(columnMerge, resultList);
+            results.push(column);
+            if (complexHeaderColumns) {
+                _.each(complexHeaderColumns, function(headerColumn) {
+                    if ($.inArray(column.name, headerColumn.childNames) !== -1) {
+                        this._getColumnHierarchy(headerColumn, results);
                     }
                 }, this);
             }
         }
-        return resultList;
+        return results;
     }
 });
 

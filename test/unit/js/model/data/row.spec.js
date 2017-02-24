@@ -1,5 +1,8 @@
 'use strict';
 
+var _ = require('underscore');
+var Backbone = require('backbone');
+
 var RowData = require('model/data/row');
 var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
@@ -182,18 +185,18 @@ describe('RowData', function() {
 
         it('default', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: false,
-                isChecked: false
+                disabled: false,
+                disabledCheck: false,
+                checked: false
             };
             expect(row.getRowState()).toEqual(expected);
         });
 
         it('set DISABLED', function() {
             var expected = {
-                isDisabled: true,
-                isDisabledCheck: true,
-                isChecked: false
+                disabled: true,
+                disabledCheck: true,
+                checked: false
             };
 
             row.setRowState('DISABLED');
@@ -202,9 +205,9 @@ describe('RowData', function() {
 
         it('set CHECKED', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: false,
-                isChecked: true
+                disabled: false,
+                disabledCheck: false,
+                checked: true
             };
 
             row.setRowState('CHECKED');
@@ -213,9 +216,9 @@ describe('RowData', function() {
 
         it('set DISABLE_CHECK', function() {
             var expected = {
-                isDisabled: false,
-                isDisabledCheck: true,
-                isChecked: false
+                disabled: false,
+                disabledCheck: true,
+                checked: false
             };
 
             row.setRowState('DISABLED_CHECK');
@@ -237,13 +240,13 @@ describe('RowData', function() {
                 {
                     name: 'c2',
                     editOptions: {
-                        changeBeforeCallback: callbackSpy
+                        onBeforeChange: callbackSpy
                     }
                 },
                 {
                     name: 'c3',
                     editOptions: {
-                        changeBeforeCallback: function(ev) {
+                        onBeforeChange: function() {
                             return true;
                         }
                     }
@@ -251,7 +254,7 @@ describe('RowData', function() {
                 {
                     name: 'c4',
                     editOptions: {
-                        changeBeforeCallback: function(ev) {
+                        onBeforeChange: function() {
                             return false;
                         }
                     }
@@ -272,13 +275,13 @@ describe('RowData', function() {
             });
         });
 
-        it('changeBeforeCallback이 정의되지 않았을 경우 true 를 리턴한다.', function() {
-            var result = row._executeChangeBeforeCallback('c1');
+        it('If the onBeforeChange is not defined, returns true', function() {
+            var result = row._executeOnBeforeChange('c1');
             expect(result).toBe(true);
         });
 
-        it('changeBeforeCallback이 정의된 경우, event를 파라미터로 넘겨준다.', function() {
-            row._executeChangeBeforeCallback('c2');
+        it('If the onBeforeChange is defined, pass an event object as an argument', function() {
+            row._executeOnBeforeChange('c2');
             expect(callbackSpy).toHaveBeenCalledWith({
                 rowKey: 1,
                 columnName: 'c2',
@@ -287,15 +290,14 @@ describe('RowData', function() {
             });
         });
 
-        describe('changeBeforeCallback의 결과값에 따른 동작 확인', function() {
+        describe('onBeforeChange의 결과값에 따른 동작 확인', function() {
             it('callback 결과 값이 true 인 경우 정상적으로 값이 변경된다.', function() {
                 row.set('c3', 'value3 new');
                 expect(row.get('c3')).toBe('value3 new');
             });
 
             it('callback결과 값이 false인 경우 restore이벤트 발생후 이전값으로 복원된다.', function() {
-                var listenModel = new Backbone.Model(),
-                    callbackSpy = jasmine.createSpy('callback');
+                var listenModel = new Backbone.Model();
 
                 listenModel.listenTo(row, 'restore', callbackSpy);
                 row.set('c4', 'value4 new');
@@ -316,7 +318,7 @@ describe('RowData', function() {
             columnModel.set('columns', [{
                 name: 'c1',
                 editOptions: {
-                    changeAfterCallback: callbackSpy
+                    onAfterChange: callbackSpy
                 }
             }]);
             row = new RowData({
@@ -331,7 +333,7 @@ describe('RowData', function() {
             });
         });
 
-        it('데이터 변경이 완료된 이후 changeAfterCallback 을 수행한다.', function() {
+        it('데이터 변경이 완료된 이후 onAfterChange을 수행한다.', function() {
             row.set('c1', 'value1 new');
             expect(callbackSpy).toHaveBeenCalledWith({
                 rowKey: 1,

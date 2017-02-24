@@ -24,7 +24,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     init: function(options) {
         this.gridId = options.gridId;
         this.selectType = options.selectType;
-        this.isFixedRowHeight = options.isFixedRowHeight;
+        this.fixedRowHeight = options.fixedRowHeight;
 
         this.inputPainters = this._createInputPainters(options.controller);
         this.cellPainters = this._createCellPainters(options.controller, options.domEventBus);
@@ -83,7 +83,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             normal: new CellPainter({
                 domEventBus: domEventBus,
                 controller: controller,
-                isFixedRowHeight: this.isFixedRowHeight,
+                fixedRowHeight: this.fixedRowHeight,
                 editType: 'normal'
             })
         };
@@ -92,7 +92,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             cellPainters[editType] = new CellPainter({
                 editType: editType,
                 controller: controller,
-                isFixedRowHeight: this.isFixedRowHeight,
+                fixedRowHeight: this.fixedRowHeight,
                 inputPainter: inputPainter
             });
         }, this);
