@@ -506,10 +506,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             attrNames = ['listItems', 'disabled', 'editable'];
         }
 
-        _.each(relationsMap, function(relationList, columnName) {
+        _.each(relationsMap, function(relations, columnName) {
             var value = rowData[columnName];
 
-            _.each(relationList, function(relation) {
+            _.each(relations, function(relation) {
                 this._executeRelationCallback(relation, attrNames, value, rowData, result);
             }, this);
         }, this);
