@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Feb 24 2017 10:23:30 GMT+0900 (KST)"
- * version: 1.8.0
+ * bundle created at "Fri Feb 24 2017 17:15:06 GMT+0900 (KST)"
+ * version: 1.8.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -1152,7 +1152,7 @@
 	    rowHeight: 27,
 	    fitToParentHeight: false,
 	    fixedRowHeight: true,
-	    fixedHeight: true,
+	    fixedHeight: false,
 	    showDummyRows: false,
 	    virtualScrolling: true,
 	    copyOptions: null,
@@ -4132,10 +4132,10 @@
 	            attrNames = ['listItems', 'disabled', 'editable'];
 	        }
 
-	        _.each(relationsMap, function(relationList, columnName) {
+	        _.each(relationsMap, function(relations, columnName) {
 	            var value = rowData[columnName];
 
-	            _.each(relationList, function(relation) {
+	            _.each(relations, function(relation) {
 	                this._executeRelationCallback(relation, attrNames, value, rowData, result);
 	            }, this);
 	        }, this);
@@ -4610,7 +4610,7 @@
 	        scrollX: true,
 	        scrollY: true,
 	        fitToParentHeight: false,
-	        fixedHeight: true
+	        fixedHeight: false
 	    },
 
 	    /**
@@ -6970,7 +6970,7 @@
 	            editing = false;
 	        }
 	        this._updateCellData(target.rowKey, target.columnName, {
-	            isEditing: editing
+	            editing: editing
 	        });
 
 	        this._triggerEditingStateChanged(target.rowKey, target.columnName);
@@ -7362,7 +7362,7 @@
 	         mainRowKey: rowSpanData.mainRowKey,
 	         editable: editable,
 	         disabled: disabled,
-	         optionList: [],
+	         listItems: [],
 	         className: row.getClassNameList(columnName).join(' '),
 	         changed: []    //names of changed properties
 	     }
@@ -7618,10 +7618,10 @@
 	                mainRowKey: rowSpanData.mainRowKey,
 	                editable: cellState.editable,
 	                disabled: cellState.disabled,
-	                isEditing: focusModel.isEditingCell(rowKey, columnName),
+	                editing: focusModel.isEditingCell(rowKey, columnName),
 	                whiteSpace: column.whiteSpace || 'nowrap',
 	                valign: column.valign,
-	                optionList: tui.util.pick(column, 'editOptions', 'listItems'),
+	                listItems: tui.util.pick(column, 'editOptions', 'listItems'),
 	                className: this._getClassNameString(columnName, row, focusModel),
 	                columnModel: column,
 	                changed: [] //changed property names
@@ -7848,14 +7848,14 @@
 	     * @private
 	     */
 	    _shouldSetSilently: function(cellData, valueChanged) {
-	        var valueChangedOnEditing = cellData.isEditing && valueChanged;
+	        var valueChangedOnEditing = cellData.editing && valueChanged;
 	        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
-	        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+	        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 
 	        // Silent Cases
-	        // 1: If values have been changed while the isEditing is true,
+	        // 1: If values have been changed while the editing is true,
 	        //    prevent the related cell-view from changing its value-state until editing is finished.
-	        // 2: If useViewMode is true and isEditing is changing to true,
+	        // 2: If useViewMode is true and editing is changing to true,
 	        //    prevent the related cell-view from changing its state to enable editing,
 	        //    as the editing-layer will be used for editing instead.
 	        return valueChangedOnEditing || (useViewMode && editingChangedToTrue);
@@ -7960,9 +7960,9 @@
 	     * @private
 	     */
 	    _getStartRowSpanMinCount: function(startIndex) {
-	        var firstRow = this.dataModel.at(startIndex),
-	            result = 0,
-	            counts;
+	        var firstRow = this.dataModel.at(startIndex);
+	        var result = 0;
+	        var counts;
 
 	        if (firstRow) {
 	            counts = _.pluck(firstRow.getRowSpanData(), 'count');
@@ -7979,15 +7979,21 @@
 	     * @private
 	     */
 	    _getEndRowSpanMaxCount: function(endIndex) {
-	        var lastRow = this.dataModel.at(endIndex),
-	            result = 0,
-	            counts;
+	        var lastRow = this.dataModel.at(endIndex);
+	        var result = 0;
+	        var counts;
 
 	        if (lastRow) {
 	            counts = _.pluck(lastRow.getRowSpanData(), 'count');
 	            counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
 	            result = _.max(counts);
 	        }
+
+	        // subtract 1, as the count includes main-cell itself
+	        if (result > 0) {
+	            result -= 1;
+	        }
+
 	        return result;
 	    },
 
@@ -13008,7 +13014,7 @@
 	     * @private
 	     */
 	    _onEditingStateChanged: function(cellData) {
-	        if (cellData.isEditing) {
+	        if (cellData.editing) {
 	            this._startEditing(cellData);
 	        } else {
 	            this._finishEditing();
@@ -14208,8 +14214,8 @@
 	     * @param {jQuery} $td - cell element
 	     */
 	    refresh: function(cellData, $td) {
-	        var contentProps = ['value', 'iEditing', 'disabled', 'listItems'];
-	        var editingChangedToTrue = _.contains(cellData.changed, 'iEditing') && cellData.iEditing;
+	        var contentProps = ['value', 'editing', 'disabled', 'listItems'];
+	        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 	        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 	        var attrs = this._getAttributes(cellData);
 
@@ -14641,7 +14647,7 @@
 
 	        if (!_.isNull(cellData.convertedHTML)) {
 	            result = cellData.convertedHTML;
-	        } else if (!this._isUsingViewMode(cellData) || cellData.isEditing) {
+	        } else if (!this._isUsingViewMode(cellData) || cellData.editing) {
 	            result = this._generateInputHtml(cellData);
 	        } else {
 	            result = this._getDisplayValue(cellData);
@@ -16668,7 +16674,7 @@
 	     * @protected
 	     */
 	    _getDisplayValue: function(cellData) {
-	        var selectedOption = _.find(cellData.optionList, function(item) {
+	        var selectedOption = _.find(cellData.listItems, function(item) {
 	            return String(item.value) === String(cellData.value);
 	        });
 
@@ -16683,7 +16689,7 @@
 	     * @protected
 	     */
 	    _generateInputHtml: function(cellData) {
-	        var optionHtml = _.reduce(cellData.optionList, function(html, item) {
+	        var optionHtml = _.reduce(cellData.listItems, function(html, item) {
 	            return html + this.optionTemplate({
 	                value: item.value,
 	                text: item.text,
@@ -16910,7 +16916,7 @@
 	        var checkedSet = this._getCheckedValueSet(cellData.value);
 	        var optionTexts = [];
 
-	        _.each(cellData.optionList, function(item) {
+	        _.each(cellData.listItems, function(item) {
 	            if (checkedSet[item.value]) {
 	                optionTexts.push(item.text);
 	            }
@@ -16931,7 +16937,7 @@
 	        var name = util.getUniqueKey();
 	        var contentHtml = '';
 
-	        _.each(cellData.optionList, function(item) {
+	        _.each(cellData.listItems, function(item) {
 	            var id = name + '_' + item.value;
 
 	            contentHtml += this.inputTemplate({
