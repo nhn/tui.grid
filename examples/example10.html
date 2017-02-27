@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>10. Binding to remote data</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.component.pagination/2.0.0/dist/tui-component-pagination.css" />
 </head>
 <body>
 <div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
@@ -18,7 +19,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.pagination/2.1.0/dist/tui-component-pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" src="./data/basic-dummy.js"></script>
 <script type="text/javascript">
@@ -31,12 +32,12 @@ $.mockjax({
         var perPage = settings.data.perPage;
         var start = (page - 1) * perPage;
         var end = start + perPage;
-        var pageData = rowData.slice(start, end);
+        var data = rowData.slice(start, end);
 
         this.responseText = JSON.stringify({
             result: true,
             data: {
-                contents: pageData,
+                contents: data,
                 pagination: {
                     page: page,
                     totalCount: 20
@@ -77,7 +78,7 @@ var grid = new tui.Grid({
 });
 
 grid.use('Net', {
-    perPage: 5,
+    perPage: 3,
     readDataMethod: 'GET',
     api: {
         readData: 'api/readData'

@@ -36,16 +36,16 @@ describe('[view/pagination] ', function() {
 
         it('options in the componentHolder will be used for creating component', function() {
             var pagination = create({
-                pagePerPageList: 10,
-                isCenterAlign: false
+                itemsPerPage: 10,
+                centerAlign: false
             });
             var compInstance;
 
             pagination.render();
             compInstance = pagination.componentHolder.getInstance('pagination');
 
-            expect(compInstance.getOption('pagePerPageList')).toBe(10);
-            expect(compInstance.getOption('isCenterAlign')).toBe(false);
+            expect(compInstance._options.itemsPerPage).toBe(10);
+            expect(compInstance._options.centerAlign).toBe(false);
         });
 
         it('if tui.compoent.Pagination does not exist, throw an error', function() {

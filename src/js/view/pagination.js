@@ -7,26 +7,13 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var classNameConst = require('../common/classNameConst');
-
-var HTML_BTNS =
-    '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
-    '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
-    '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
-    '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
-    '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
-    '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
-    '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
-    '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>';
-
 var defaultOptions = {
-    classPrefix: classNameConst.PREFIX,
-    itemCount: 1,
-    pagePerPageList: 5,
-    itemPerPage: 10,
-    isCenterAlign: true,
-    moveUnit: 'page'
+    totalItems: 1,
+    itemsPerPage: 10,
+    visiblePages: 5,
+    centerAlign: true
 };
+var TUI_PAGINATION_CLASSNAME = 'tui-pagination';
 
 /**
  * Class for the pagination
@@ -39,10 +26,13 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.componentHolder = options.componentHolder;
+
+        this._stopEventPropagation();
+
         this.on('appended', this._onAppended);
     },
 
-    className: classNameConst.PAGINATION,
+    className: TUI_PAGINATION_CLASSNAME,
 
     /**
      * Render
@@ -50,10 +40,18 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
      */
     render: function() {
         this._destroyChildren();
-        this.$el.empty().html(HTML_BTNS);
-
         this.componentHolder.setInstance('pagination', this._createComponent());
         return this;
+    },
+
+    /**
+     * Stop propagation of mouse down event
+     * @private
+     */
+    _stopEventPropagation: function() {
+        this.$el.mousedown(function(ev) {
+            ev.stopPropagation();
+        });
     },
 
     /**
@@ -70,18 +68,12 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
      */
     _createOptionObject: function() {
         var customOptions = this.componentHolder.getOptions('pagination');
-        var btnOptions = {
-            $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
-            $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
-            $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
-            $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
-        };
 
         if (customOptions === true) {
             customOptions = {};
         }
 
-        return _.assign({}, defaultOptions, btnOptions, customOptions);
+        return _.assign({}, defaultOptions, customOptions);
     },
 
     /**
@@ -95,7 +87,8 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
         if (!ComponentClass) {
             throw new Error('Cannot find component \'tui.component.Pagination\'');
         }
-        return new ComponentClass(this._createOptionObject(), this.$el);
+
+        return new ComponentClass(this.$el, this._createOptionObject());
     }
 });
 
