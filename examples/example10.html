@@ -19,7 +19,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.pagination/2.0.0/dist/tui-component-pagination.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.pagination/2.1.0/dist/tui-component-pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" src="./data/basic-dummy.js"></script>
 <script type="text/javascript">
@@ -52,10 +52,7 @@ $.mockjax({
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    pagination: {
-        itemsPerPage: 6,
-        visiblePages: 2
-    },
+    pagination: true,
     columns: [
         {
             title: 'Name',
@@ -81,7 +78,7 @@ var grid = new tui.Grid({
 });
 
 grid.use('Net', {
-    perPage: 6,
+    perPage: 3,
     readDataMethod: 'GET',
     api: {
         readData: 'api/readData'

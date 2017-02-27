@@ -161,6 +161,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         var pagination = this.pagination;
 
         if (pagination) {
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(1);
             pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
         }
     },
@@ -322,8 +324,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (pagination && responseData.pagination) {
             page = responseData.pagination.page;
             totalCount = responseData.pagination.totalCount;
-            // If the totalCount is 0, set itemCount to 1 to show pagination
-            pagination.reset(totalCount);
+
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(totalCount);
             pagination.movePageTo(page);
             this.curPage = page;
         }

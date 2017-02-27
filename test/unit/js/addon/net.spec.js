@@ -624,19 +624,21 @@ describe('addon.net', function() {
         beforeEach(function() {
             createNet();
             net.pagination = {};
-            net.pagination.reset = jasmine.createSpy('reset');
+            net.pagination.setTotalItems = jasmine.createSpy('setTotalItems');
+            net.pagination.setItemsPerPage = jasmine.createSpy('setItemsPerPage');
             net.pagination.movePageTo = jasmine.createSpy('movePageTo');
         });
 
         it('When "responseData" has pagination information, current page is changed.', function() {
-            var currentPage = 10;
             net._onReadSuccess(dataModel, {
                 pagination: {
-                    page: currentPage,
+                    page: 10,
                     totalCount: 100
                 }
             });
-            expect(net.pagination.movePageTo).toHaveBeenCalledWith(currentPage);
+            expect(net.pagination.setItemsPerPage).toHaveBeenCalledWith(net.perPage);
+            expect(net.pagination.setTotalItems).toHaveBeenCalledWith(100);
+            expect(net.pagination.movePageTo).toHaveBeenCalledWith(10);
         });
     });
 
