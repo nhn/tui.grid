@@ -459,7 +459,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Makes view ready to get keyboard input.
      */
-    readyForKeyControl: function() {
+    activateFocus: function() {
         this.modelManager.focusModel.focusClipboard();
     },
 
