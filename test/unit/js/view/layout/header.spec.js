@@ -188,9 +188,9 @@ describe('Header', function() {
         });
     });
 
-    describe('columnMerge 관련 메서드 테스트', function() {
+    describe('complexHeaderColumns 관련 메서드 테스트', function() {
         var columnData, header;
-        var columnMergeList = [
+        var complexHeaderColumns = [
             {
                 name: 'merge1',
                 title: 'c1-c2',
@@ -234,7 +234,7 @@ describe('Header', function() {
             header = create();
             header.columnModel.set({
                 columns: columns,
-                columnMerge: columnMergeList
+                complexHeaderColumns: complexHeaderColumns
             });
             columnData = header._getColumnData();
         });
@@ -246,14 +246,14 @@ describe('Header', function() {
                 var column3 = hList[2];
 
                 expect(column1.length).toBe(4);
-                expect(column1[0]).toEqual(columnMergeList[2]);
-                expect(column1[1]).toEqual(columnMergeList[1]);
-                expect(column1[2]).toEqual(columnMergeList[0]);
+                expect(column1[0]).toEqual(complexHeaderColumns[2]);
+                expect(column1[1]).toEqual(complexHeaderColumns[1]);
+                expect(column1[2]).toEqual(complexHeaderColumns[0]);
                 expect(column1[3]).toEqual(columnData.columns[0]);
 
                 expect(column3.length).toBe(3);
-                expect(column3[0]).toEqual(columnMergeList[2]);
-                expect(column3[1]).toEqual(columnMergeList[1]);
+                expect(column3[0]).toEqual(complexHeaderColumns[2]);
+                expect(column3[1]).toEqual(complexHeaderColumns[1]);
                 expect(column3[2]).toEqual(columnData.columns[2]);
             });
         });
@@ -264,7 +264,7 @@ describe('Header', function() {
                 var maxRow = header._getHierarchyMaxRowCount(hierarchyList);
 
                 expect(maxRow).toEqual(4);
-                header.columnModel.set('columnMerge', [
+                header.columnModel.set('complexHeaderColumns', [
                     {
                         name: 'merge1',
                         title: 'c1-c2',
@@ -443,7 +443,7 @@ describe('Header', function() {
             });
 
             it('add selected class to the merged header which contains selected headers', function() {
-                header.columnModel.set('columnMerge', [
+                header.columnModel.set('complexHeaderColumns', [
                     {
                         name: 'c1-c2',
                         childNames: ['c1', 'c2']

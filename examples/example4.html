@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Input-types" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -14,7 +17,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" src="./data/basic-dummy.js"></script>
 <script type="text/javascript" class="code-js">
@@ -27,7 +29,7 @@ var grid = new tui.Grid({
             name: 'name',
             editOptions: {
                 type: 'text',
-                editOnly: true
+                useViewMode: true
             }
         },
         {
@@ -36,7 +38,7 @@ var grid = new tui.Grid({
             editOptions: {
                 type: 'text',
                 maxLength: 10,
-                editOnly: false
+                useViewMode: false
             }
         },
         {
@@ -52,7 +54,7 @@ var grid = new tui.Grid({
                 onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                editOnly: true
+                useViewMode: true
             }
         },
         {
@@ -70,7 +72,7 @@ var grid = new tui.Grid({
                 onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                editOnly: true
+                useViewMode: true
             }
         },
         {
@@ -88,7 +90,7 @@ var grid = new tui.Grid({
                 onBeforeChange: function(ev){
                     console.log('chaged value:' + ev.value);
                 },
-                editOnly: true
+                useViewMode: true
             }
         }
     ]

@@ -42,14 +42,21 @@ tui = window.tui = tui || {};
  *          If not specified, the button column will not be shown.
  *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
  *          to each rows when rendering time.
- *      @param {number} [options.headerHeight=35] - The height of the header area.
- *          When rows in header are multiple (merged column), this value must be the total height of rows.
+ *      @param {Object} [options.header] - Options object for header
+ *      @param {number} [options.header.height=35] - The height of the header area.
+ *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
+ *          which includes the headers of spcified columns, and sets up the hierarchy.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
+ *      @param {boolean} [options.fixedRowHeight=false] - If set to true, the height of each rows does not
  *          expand with content.
+ *      @param {boolean} [options.fixedHeight=true] - If set to true, height of the body area does not expand
+ *          with the height of table.
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
  *          area expands to total height of rows.
- *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
+ *      @param {Object} [options.columnOptions] - Option object for all columns
+ *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
+ *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
+ *          will be shown.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
@@ -111,10 +118,16 @@ tui = window.tui = tui || {};
  *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOptions.changeBeforeCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.onBeforeChange] - The function that will be
  *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columns.editOptions.changeAfterCallback] - The function that will be
+ *              @param {function} [options.columns.editOptions.onAfterChange] - The function that will be
  *                  called after changing the value of the cell.
+ *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
+ *                  called when a 'focus' event occurred on an input element
+ *              @param {function} [options.columns.editOptions.onBlur] - The function that will be
+ *                  called when a 'blur' event occurred on an input element
+ *              @param {function} [options.columns.editOptions.onKeyDown] - The function that will be
+ *                  called when a 'keydown' event occurred on an input element
  *              @param {(string|function)} [options.columns.editOptions.prefix] - The HTML string to be
  *                  shown left to the input element. If it's a function, the return value will be used.
  *              @param {(string|function)} [options.columns.editOptions.postfix] - The HTML string to be
@@ -122,19 +135,17 @@ tui = window.tui = tui || {};
  *              @param {function} [options.columns.editOptions.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *              @param {Object} [options.columns.editOptions.inputEvents] - The object that has an event name
- *                  as a key and event handler as a value for events on input element.
  *              @param {Object} [options.columns.copyOptions] - Option object for clipboard copying.
  *                  This option is column specific, and overrides the global copyOptions.
  *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use
  *                  formatted values or original values as a string to be copied to the clipboard
- *          @param {Array} [options.columns.relationList] - Specifies relation between this and other column.
- *              @param {array} [options.columns.relationList.columnList] - Array of the names of target columns.
- *              @param {function} [options.columns.relationList.isDisabled] - If returns true, target columns
+ *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
+ *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
+ *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
  *                  will be disabled.
- *              @param {function} [options.columns.relationList.isEditable] - If returns true, target columns
+ *              @param {function} [options.columns.relations.editable] - If returns true, target columns
  *                  will be editable.
- *              @param {function} [options.columns.relationList.optionListChange] - The function whose return
+ *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
  *          @param {Object} [options.columns.component] - Option for using tui-component
@@ -142,10 +153,6 @@ tui = window.tui = tui || {};
  *                  for this column
  *              @param {Object} [options.columns.component.options] - The options object to be used for
  *                  creating the component
- *      @param {array} [options.columnMerge] - The array that specifies the merged column.
- *          This options does not merge the cells of multiple columns into a single cell.
- *          This options only effects to the headers of the multiple columns, creates a new parent header
- *          that includes the headers of spcified columns, and sets up the hierarchy.
  *      @param {Object} [options.footer] - The object for configuring footer area.
  *          @param {number} [options.footer.height] - The height of the footer area.
  *          @param {Object.<string, Object>} [options.footer.columnContent]
@@ -213,7 +220,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new PainterManager({
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
-            isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
+            fixedRowHeight: this.modelManager.dimensionModel.get('fixedRowHeight'),
             domEventBus: this.domEventBus,
             controller: controller
         });

@@ -125,19 +125,18 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      */
     executeCustomInputEventHandler: function(event, address) {
         var columnModel = this.columnModel.getColumnModel(address.columnName);
-        var eventType = event.type;
-        var eventHandler;
+        var eventType, editOptions, handler;
 
-        if (eventType === 'focusin') {
-            eventType = 'focus';
-        } else if (eventType === 'focusout') {
-            eventType = 'blur';
+        if (!columnModel) {
+            return;
         }
 
-        eventHandler = tui.util.pick(columnModel, 'editOptions', 'inputEvents', eventType);
+        eventType = event.type;
+        editOptions = columnModel.editOptions || {};
+        handler = editOptions[getEventHandlerName(eventType)];
 
-        if (_.isFunction(eventHandler)) {
-            eventHandler.call(event.target, event, address);
+        if (_.isFunction(handler)) {
+            handler.call(event.target, event, address);
         }
     },
 
@@ -188,6 +187,24 @@ function convertToNumber(value) {
         return value;
     }
     return Number(value);
+}
+
+/**
+ * Returns a property name of a custom event handler matched to the given eventType
+ * @param {string} eventType - event type
+ * @returns {string}
+ */
+function getEventHandlerName(eventType) {
+    switch (eventType) {
+        case 'focusin':
+            return 'onFocus';
+        case 'focusout':
+            return 'onBlur';
+        case 'keydown':
+            return 'onKeyDown';
+        default:
+            return '';
+    }
 }
 
 module.exports = PainterController;

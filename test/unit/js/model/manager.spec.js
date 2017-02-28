@@ -17,12 +17,16 @@ describe('model/manager', function() {
         it('with options', function() {
             var manager, dimension;
             manager = new ModelManager({
-                headerHeight: 281,
+                header: {
+                    height: 281
+                },
                 rowHeight: 72,
                 fitToParentHeight: true,
                 scrollX: true,
                 scrollY: true,
-                minimumColumnWidth: 192
+                columnOptions: {
+                    minWidth: 192
+                }
             }, domState);
 
             dimension = manager.dimensionModel;

@@ -161,8 +161,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         var pagination = this.pagination;
 
         if (pagination) {
-            pagination.setOption('itemPerPage', this.perPage);
-            pagination.setOption('itemCount', 1);
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(1);
             pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
         }
     },
@@ -324,9 +324,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (pagination && responseData.pagination) {
             page = responseData.pagination.page;
             totalCount = responseData.pagination.totalCount;
-            pagination.setOption('itemPerPage', this.perPage);
-            // If the totalCount is 0, set itemCount to 1 to show pagination
-            pagination.setOption('itemCount', totalCount || 1);
+
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(totalCount);
             pagination.movePageTo(page);
             this.curPage = page;
         }

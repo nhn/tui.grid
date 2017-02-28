@@ -172,7 +172,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             editing = false;
         }
         this._updateCellData(target.rowKey, target.columnName, {
-            isEditing: editing
+            editing: editing
         });
 
         this._triggerEditingStateChanged(target.rowKey, target.columnName);
@@ -562,9 +562,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
          rowSpan: rowSpanData.count,
          isMainRow: rowSpanData.isMainRow,
          mainRowKey: rowSpanData.mainRowKey,
-         isEditable: isEditable,
-         isDisabled: isDisabled,
-         optionList: [],
+         editable: editable,
+         disabled: disabled,
+         listItems: [],
          className: row.getClassNameList(columnName).join(' '),
          changed: []    //names of changed properties
      }

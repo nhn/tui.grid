@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Relation-between-columns" target="_blank">Tutorial</a>
+</div>
 <div class="code-html">
 <div id="grid"></div>
 </div>
@@ -140,15 +143,15 @@ var grid = new tui.Grid({
                     { text: 'Overseas', value: '02' },
                     { text: 'Etc', value: '03' }
                 ],
-                editOnly: false
+                useViewMode: false
             },
             relations: [
                 {
-                    columnlistItems: ['category2', 'selectedValue'],
-                    optionListChange: function(value) {
+                    targetNames: ['category2', 'selectedValue'],
+                    listItems: function(value) {
                         return twoDepthData[value];
                     },
-                    isDisabled: function(value) {
+                    disabled: function(value) {
                         return !(value);
                     }
                 }
@@ -160,15 +163,15 @@ var grid = new tui.Grid({
             editOptions: {
                 type: 'select',
                 listItems: [],
-                editOnly: false
+                useViewMode: false
             },
             relations: [
                 {
-                    columnlistItems: ['category3'],
-                    optionListChange: function(value) {
+                    targetNames: ['category3'],
+                    listItems: function(value) {
                         return treeDepthData[value];
                     },
-                    isDisabled: function(value) {
+                    disabled: function(value) {
                         return !(value);
                     }
                 }
@@ -180,7 +183,7 @@ var grid = new tui.Grid({
             editOptions: {
                 type: 'select',
                 listItems: [],
-                editOnly: false
+                useViewMode: false
             }
         }
     ]

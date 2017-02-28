@@ -28,7 +28,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.dataModel = options.dataModel;
         this.domState = options.domState;
 
-        this.on('change:isFixedHeight', this._resetSyncHeightHandler);
+        this.on('change:fixedHeight', this._resetSyncHeightHandler);
 
         if (options.domEventBus) {
             this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
@@ -54,7 +54,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         rowHeight: 0,
         totalRowHeight: 0,
-        isFixedRowHeight: true,
+        fixedRowHeight: true,
 
         rsideWidth: 0,
         lsideWidth: 0,
@@ -64,7 +64,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         scrollX: true,
         scrollY: true,
         fitToParentHeight: false,
-        isFixedHeight: false
+        fixedHeight: false
     },
 
     /**
@@ -87,11 +87,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the isFixedHeight.
+     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
      * @private
      */
     _resetSyncHeightHandler: function() {
-        if (this.get('isFixedHeight')) {
+        if (this.get('fixedHeight')) {
             this.off('change:totalRowHeight');
         } else {
             this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);

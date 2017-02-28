@@ -117,7 +117,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
             className: classNameConst.CELL_CONTENT_TEXT,
             value: cellData.value,
             name: util.getUniqueKey(),
-            disabled: cellData.isDisabled ? 'disabled' : '',
+            disabled: cellData.disabled ? 'disabled' : '',
             maxLength: maxLength
         };
 

@@ -202,7 +202,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         var checkedSet = this._getCheckedValueSet(cellData.value);
         var optionTexts = [];
 
-        _.each(cellData.optionList, function(item) {
+        _.each(cellData.listItems, function(item) {
             if (checkedSet[item.value]) {
                 optionTexts.push(item.text);
             }
@@ -223,7 +223,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         var name = util.getUniqueKey();
         var contentHtml = '';
 
-        _.each(cellData.optionList, function(item) {
+        _.each(cellData.listItems, function(item) {
             var id = name + '_' + item.value;
 
             contentHtml += this.inputTemplate({
