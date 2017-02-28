@@ -353,11 +353,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Returns the rowKey of the currently selected row.
-     * @returns {(number|string)} - The rowKey of the row
+     * Returns data of currently focused cell
+     * @returns {number} rowKey - The unique key of the row
+     * @returns {string} columnName - The name of the column
+     * @returns {string} value - The value of the cell
      */
-    getSelectedRowKey: function() {
-        return this.modelManager.focusModel.which().rowKey;
+    getFocusedCell: function() {
+        var addr = this.modelManager.focusModel.which();
+        var value = this.getValue(addr.rowKey, addr.columnName);
+
+        return {
+            rowKey: addr.rowKey,
+            columnName: addr.columnName,
+            value: value
+        };
     },
 
     /**
