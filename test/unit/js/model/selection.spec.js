@@ -38,7 +38,7 @@ function create(rowList) {
         ];
     }
 
-    dataModel.setRowList(rowList);
+    dataModel.setData(rowList);
 
     return new SelectionModel(null, {
         columnModel: columnModel,

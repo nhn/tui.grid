@@ -27,7 +27,6 @@
     var grid = new tui.Grid({
         el: $('#grid'),
         selectType: 'checkbox',
-        columnFixCount: 1,
         header: {
             height: 50,
             complexColumns: [
@@ -44,24 +43,25 @@
         bodyHeight: 300,
         columnOptions: {
             minWidth: 200,
+            frozenCount: 1
         },
         pagination: true,
         columns: [
             {
-                name: '_button',
-                width: 30
-            },
-            {
-                title: 'c1',
                 name: 'c1',
+                title: 'c1',
                 validation: {
                     required: true
                 },
                 width: 200,
+                fixedWidth: true,
+                onBeforeChange: function(ev) {
+                    console.log('before change! ev', ev);
+                },
+                onAfterChange: function(ev) {
+                    console.log('after change! ev', ev);
+                },
                 editOptions: {
-                    onBeforeChange: function(ev) {
-                        console.log('ev', ev);
-                    },
                     onKeyDown: function(ev) {
                         console.log('keydown ev', ev);
                     },
@@ -85,11 +85,10 @@
                 }
             },
             {
+                name: 'c2',
                 title: 'c2',
                 sortable: true,
-                // defaultValue: 2,
                 width: 200,
-                name: 'c2',
                 editOptions: {
                     type: 'select',
                     listItems: [
@@ -105,8 +104,8 @@
                 }
             },
             {
-                title: 'c3',
                 name: 'c3',
+                title: 'c3',
                 width: 200,
                 defaultValue: 2,
                 editOptions: {
@@ -136,17 +135,17 @@
             }
         }
     });
-    var rowList = [];
+    var data = [];
     (function() {
         _.times(50, function(number) {
-            rowList.push({
+            data.push({
                 _number: number + 1,
                 'c1': String(number * 10),
                 'c2': 2
             });
         })
     })();
-    grid.setRowList(rowList.slice(0, 10));
+    grid.setData(data.slice(0, 10));
     var pagination = grid.getPagination();
     var itemCount = 50;
     pagination.reset(50);
@@ -156,7 +155,7 @@
         var start = 10 * (page - 1);
 
         setTimeout(function() {
-            grid.setRowList(rowList.slice(start, start + 10));
+            grid.setData(data.slice(start, start + 10));
             pagination.movePageTo(page, true);
         }, 10);
         return false;

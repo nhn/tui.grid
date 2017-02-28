@@ -79,21 +79,21 @@ describe('ResizeHandle', function() {
 
     describe('_getHandlerColumnIndex', function() {
         beforeEach(function() {
-            columnModel.set('columnFixCount', 2);
+            columnModel.set('frozenCount', 2);
         });
 
         afterEach(function() {
-            columnModel.set('columnFixCount', 0);
+            columnModel.set('frozenCount', 0);
         });
 
-        it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
+        it('R side 일때 frozenCount 고려하여 실제 columnIndex 를 계산한다.', function() {
             handler.whichSide = frameConst.R;
             expect(handler._getHandlerColumnIndex(0)).toBe(3);
             expect(handler._getHandlerColumnIndex(1)).toBe(4);
             expect(handler._getHandlerColumnIndex(2)).toBe(5);
         });
 
-        it('L side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
+        it('L side 일때 frozenCount 고려하여 실제 columnIndex 를 계산한다.', function() {
             handler.whichSide = frameConst.L;
             expect(handler._getHandlerColumnIndex(0)).toBe(0);
             expect(handler._getHandlerColumnIndex(1)).toBe(1);
@@ -111,7 +111,7 @@ describe('ResizeHandle', function() {
             });
         });
 
-        it('columnWidthList 에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
+        it('columnWidths에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
             handler._refreshHandlerPosition();
             expect($handles.eq(0).css('left')).toEqual('28px');
             expect($handles.eq(1).css('left')).toEqual('69px');

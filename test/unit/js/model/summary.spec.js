@@ -25,7 +25,7 @@ function create(data, autoColumnNames) {
     var dataModel = new RowListData([], {
         columnModel: columnModel
     });
-    dataModel.setRowList(data);
+    dataModel.setData(data);
 
     return new Summary(null, {
         dataModel: dataModel,
@@ -99,7 +99,7 @@ describe('model/summary', function() {
         });
 
         it('Reset', function() {
-            summary.dataModel.setRowList([
+            summary.dataModel.setData([
                 {c1: 3, c2: 4},
                 {c1: 3, c2: 4}
             ]);

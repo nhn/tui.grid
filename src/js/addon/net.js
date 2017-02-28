@@ -558,7 +558,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (options.hasDataParam) {
             if (options.isOnlyModified) {
                 //{createList: [], updateList:[], deleteList: []} 에 담는다.
-                dataMap = dataModel.getModifiedRowList({
+                dataMap = dataModel.getModifiedRows({
                     isOnlyChecked: options.isOnlyChecked
                 });
                 _.each(dataMap, function(list, name) {
@@ -568,9 +568,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                     }
                 }, this);
             } else {
-                //{rowList: []} 에 담는다.
-                data.rowList = dataModel.getRowList(options.isOnlyChecked);
-                count = data.rowList.length;
+                //{data: []} 에 담는다.
+                data.data = dataModel.getRows(options.isOnlyChecked);
+                count = data.data.length;
             }
         }
 

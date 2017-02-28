@@ -115,19 +115,19 @@ var CoordConverter = Model.extend(/**@lends module:model/coordConverter.prototyp
     _getCellHorizontalPosition: function(columnName) {
         var columnModel = this.columnModel;
         var metaColumnCount = columnModel.getVisibleMetaColumnCount();
-        var columnWidthList = this.coordColumnModel.get('columnWidthList');
-        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
+        var widths = this.coordColumnModel.get('widths');
+        var leftColumnCount = columnModel.getVisibleFrozenCount() + metaColumnCount;
         var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
         var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
         var left = 0;
 
         for (; idx < targetIdx; idx += 1) {
-            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
+            left += widths[idx] + CELL_BORDER_WIDTH;
         }
 
         return {
             left: left,
-            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
+            right: left + widths[targetIdx] + CELL_BORDER_WIDTH
         };
     },
 

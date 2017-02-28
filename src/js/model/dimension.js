@@ -115,7 +115,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Boolean}
      */
     isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleColumnFixCount() > 0;
+        return this.columnModel.getVisibleFrozenCount() > 0;
     },
 
     /**
@@ -249,13 +249,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getMinLeftSideWidth: function() {
         var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
         var minWidth = 0;
         var borderWidth;
 
-        if (columnFixCount) {
-            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
+        if (columnFrozenCount) {
+            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
+            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
         }
 
         return minWidth;

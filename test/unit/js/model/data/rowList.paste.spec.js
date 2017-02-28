@@ -39,7 +39,7 @@ describe('rowList.paste()', function() {
             columns[1].editOptions.type = 'text-convertible';
 
             rowList = createRowList(columns);
-            rowList.setRowList([
+            rowList.setData([
                 {
                     c1: '0-1',
                     c2: '0-2',
@@ -102,22 +102,6 @@ describe('rowList.paste()', function() {
             expect(rowList.getValue(3, 'c2')).toBe('New3-2');
             expect(rowList.getValue(3, 'c3')).toBe('New3-3');
         });
-
-        // it('붙여넣기가 끝나면 변경된 범위만큼 셀렉션을 만들어준다.', function() {
-        //     var startIdx, endIdx;
-        //     rowList.grid.focusModel.focus(0, 'c1');
-        //     rowList.paste([
-        //         ['New1-1', 'New1-2'],
-        //         ['New2-1', 'New2-2']
-        //     ]);
-        //     startIdx = rowList.grid.selectionModel.getStartIndex();
-        //     endIdx = rowList.grid.selectionModel.getEndIndex();
-        //
-        //     expect(startIdx.row).toBe(0);
-        //     expect(startIdx.column).toBe(0);
-        //     expect(endIdx.row).toBe(1);
-        //     expect(endIdx.column).toBe(1);
-        // });
     });
 
     describe('편집 불가능한 셀은 값을 변경하지 않고 넘어간다', function() {
@@ -126,10 +110,12 @@ describe('rowList.paste()', function() {
 
             columns[1].editOptions = null; // disable to edit
             rowList = createRowList(columns);
-            rowList.setRowList([{
+            rowList.setData([
+                {
                     c1: '0-1',
                     c2: '0-2'
-                }, {
+                },
+                {
                     c1: '1-1',
                     c2: '1-2'
                 }
@@ -150,7 +136,7 @@ describe('rowList.paste()', function() {
 
         it(': disabled', function() {
             rowList = createRowList(createColumns(['c1', 'c2']));
-            rowList.setRowList([
+            rowList.setData([
                 {
                     _extraData: {
                         rowState: 'DISABLED'
@@ -180,7 +166,7 @@ describe('rowList.paste()', function() {
         var columns = createColumns(['c1', 'c2', 'c3']);
         columns[1].hidden = true;
         rowList = createRowList(columns);
-        rowList.setRowList([
+        rowList.setData([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -207,8 +193,8 @@ describe('rowList.paste()', function() {
     });
 
     it('RowSpan이 적용된 컬럼일 경우 MainRow의 값만 변경한다', function() {
-        rowList = createRowList(createColumns(['c1', 'c2']))
-        rowList.setRowList([
+        rowList = createRowList(createColumns(['c1', 'c2']));
+        rowList.setData([
             {
                 _extraData: {
                     rowSpan: {
@@ -237,7 +223,7 @@ describe('rowList.paste()', function() {
 
     // it('셀렉션이 존재하는 경우 포커스된 셀이 아닌 셀렉션의 왼쪽 상단 셀을 기준으로 붙여넣기 한다', function() {
     //     rowList = createRowList(createColumns(['c1', 'c2', 'c3']));
-    //     rowList.setRowList([
+    //     rowList.setData([
     //         {
     //             c1: '0-1',
     //             c2: '0-2',

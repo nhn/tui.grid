@@ -21,7 +21,6 @@ var ClipboardModel = require('./clipboard');
 var util = require('../common/util');
 
 var defaultOptions = {
-    columnFixCount: 0,
     columns: [],
     keyColumnName: null,
     selectType: '',
@@ -32,7 +31,8 @@ var defaultOptions = {
     },
     columnOptions: {
         minWidth: 50,
-        resizable: true
+        resizable: true,
+        frozenCount: 0
     },
     rowHeight: 27,
     fitToParentHeight: false,
@@ -83,7 +83,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         return new ColumnModelData({
             hasNumberColumn: options.autoNumbering,
             keyColumnName: options.keyColumnName,
-            columnFixCount: options.columnFixCount,
+            frozenCount: options.columnOptions.frozenCount,
             selectType: options.selectType,
             complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,

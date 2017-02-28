@@ -34,9 +34,6 @@ tui = window.tui = tui || {};
  * Grid public API
  * @class
  * @param {PropertiesHash} options
- *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
- *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
- *          can be used for setting this value dynamically.
  *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
  *          The string value 'checkbox' or 'radio' can be used.
  *          If not specified, the button column will not be shown.
@@ -57,6 +54,9 @@ tui = window.tui = tui || {};
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
  *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
  *          will be shown.
+ *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
+ *          The columns indexed from 0 to this value will always be shown on the left side.
+ *          {@link tui.Grid#setFrozenColumnCount} can be used for setting this value dynamically.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
@@ -107,6 +107,10 @@ tui = window.tui = tui || {};
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
+ *          @param {function} [options.columns.onBeforeChange] - The function that will be
+ *              called before changing the value of the cell. If returns false, the changing will be canceled.
+ *          @param {function} [options.columns.onAfterChange] - The function that will be
+ *              called after changing the value of the cell.
  *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
  *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
  *                  the type of the editing UI.
@@ -118,10 +122,6 @@ tui = window.tui = tui || {};
  *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOptions.onBeforeChange] - The function that will be
- *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columns.editOptions.onAfterChange] - The function that will be
- *                  called after changing the value of the cell.
  *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
  *                  called when a 'focus' event occurred on an input element
  *              @param {function} [options.columns.editOptions.onBlur] - The function that will be
@@ -353,11 +353,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Returns the rowKey of the currently selected row.
-     * @returns {(number|string)} - The rowKey of the row
+     * Returns data of currently focused cell
+     * @returns {number} rowKey - The unique key of the row
+     * @returns {string} columnName - The name of the column
+     * @returns {string} value - The value of the cell
      */
-    getSelectedRowKey: function() {
-        return this.modelManager.focusModel.which().rowKey;
+    getFocusedCell: function() {
+        var addr = this.modelManager.focusModel.which();
+        var value = this.getValue(addr.rowKey, addr.columnName);
+
+        return {
+            rowKey: addr.rowKey,
+            columnName: addr.columnName,
+            value: value
+        };
     },
 
     /**
@@ -392,19 +401,19 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Replace all rows with the specified list. This will not change the original data.
-     * @param {Array} rowList - A list of new rows
+     * @param {Array} data - A list of new rows
      */
-    replaceRowList: function(rowList) {
-        this.modelManager.dataModel.replaceRowList(rowList);
+    resetData: function(data) {
+        this.modelManager.dataModel.resetData(data);
     },
 
     /**
      * Replace all rows with the specified list. This will change the original data.
-     * @param {Array} rowList - A list of new rows
+     * @param {Array} data - A list of new rows
      * @param {function} callback - The function that will be called when done.
      */
-    setRowList: function(rowList, callback) {
-        this.modelManager.dataModel.setRowList(rowList, true, callback);
+    setData: function(data, callback) {
+        this.modelManager.dataModel.setData(data, true, callback);
     },
 
     /**
@@ -459,7 +468,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Makes view ready to get keyboard input.
      */
-    readyForKeyControl: function() {
+    activateFocus: function() {
         this.modelManager.focusModel.focusClipboard();
     },
 
@@ -504,7 +513,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Removes all rows.
      */
     clear: function() {
-        this.modelManager.dataModel.setRowList([]);
+        this.modelManager.dataModel.setData([]);
     },
 
     /**
@@ -527,15 +536,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes all checked rows.
-     * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
+     * @param {boolean} showConfirm - If set to true, confirm message will be shown before remove.
      * @returns {boolean} - True if there's at least one row removed.
      */
-    removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.getCheckedRowKeyList(),
-            message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
+    removeCheckedRows: function(showConfirm) {
+        var rowKeys = this.getCheckedRowKeys();
+        var message = rowKeys.length + '건의 데이터를 삭제하시겠습니까?';
 
-        if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-            _.each(rowKeyList, function(rowKey) {
+        if (rowKeys.length > 0 && (!showConfirm || confirm(message))) {
+            _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
             return true;
@@ -564,8 +573,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
-    getCheckedRowKeyList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+    getCheckedRowKeys: function(isJsonString) {
+        var checkedRowList = this.modelManager.dataModel.getRows(true);
         var checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
 
         return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
@@ -573,13 +582,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of the checked rows.
-     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+     * @param {Boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
-    getCheckedRowList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+    getCheckedRows: function(useJson) {
+        var checkedRowList = this.modelManager.dataModel.getRows(true);
 
-        return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
+        return useJson ? JSON.stringify(checkedRowList) : checkedRowList;
     },
 
     /**
@@ -602,8 +611,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      *      @param {Array} [options.filteringColumns] - A list of column name to be excluded.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
-    getModifiedRowList: function(options) {
-        return this.modelManager.dataModel.getModifiedRowList(options);
+    getModifiedRows: function(options) {
+        return this.modelManager.dataModel.getModifiedRows(options);
     },
 
     /**
@@ -648,18 +657,18 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Restores the data to the original data.
-     * (Original data is set by {@link tui.Grid#setRowList|setRowList}
+     * (Original data is set by {@link tui.Grid#setData|setData}
      */
     restore: function() {
         this.modelManager.dataModel.restore();
     },
 
     /**
-     * Sets the count of fixed column.
-     * @param {number} count - The count of column to be fixed
+     * Sets the count of frozen columns.
+     * @param {number} count - The count of columns to be frozen
      */
-    setColumnFixCount: function(count) {
-        this.modelManager.columnModel.set('columnFixCount', count);
+    setFrozenColumnCount: function(count) {
+        this.modelManager.columnModel.set('frozenCount', count);
     },
 
     /**
@@ -695,8 +704,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns a list of all rows.
      * @returns {Array} - A list of all rows
      */
-    getRowList: function() {
-        return this.modelManager.dataModel.getRowList();
+    getRows: function() {
+        return this.modelManager.dataModel.getRows();
     },
 
     /**
