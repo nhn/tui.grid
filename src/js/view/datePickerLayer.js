@@ -7,6 +7,7 @@
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
 var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
+var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 var DatePickerLayer;
 
 /**
@@ -23,7 +24,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         this.domState = options.domState;
         this.datePicker = this._createDatePicker();
 
-        this._preventCalendarEvent();
+        this._preventMousedownEvent();
 
         this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
         this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
@@ -47,20 +48,14 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
             }
         });
 
-        datePicker.on('change', function() {
-            console.log('date change');
-        });
-
         return datePicker;
     },
 
     /**
-     * Prevent event of calendar
+     * Prevent mousedown event on calendar layer
      */
-    _preventCalendarEvent: function() {
-        var calendar = this.datePicker.getCalendar();
-
-        calendar._$element.mousedown(function(ev) {
+    _preventMousedownEvent: function() {
+        this.$el.mousedown(function(ev) {
             ev.preventDefault();
             ev.target.unselectable = true;  // trick for IE8
             return false;
@@ -75,15 +70,25 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _resetDatePicker: function(options, $input) {
         var datePicker = this.datePicker;
-        var date = datePicker.getDate() || (new Date());
+        var format = options.format || DEFAULT_DATE_FORMAT;
+        var date = options.date || (new Date());
         var selectableRanges = options.selectableRanges;
 
-        datePicker.setDateFormat(options.format || DEFAULT_DATE_FORMAT);
+        datePicker.setInput($input, {
+            format: format,
+            syncFromInput: true
+        });
+
         if (selectableRanges) {
-            datePicker.setRanges(options.selectableRanges);
+            datePicker.setRanges(selectableRanges);
+        } else {
+            datePicker.setRanges(FULL_RANGES);
         }
-        datePicker.setDate(date);
-        datePicker.setInput($input);
+
+        if ($input.val() === '') {
+            datePicker.setDate(date);
+            $input.val('');
+        }
     },
 
     /**

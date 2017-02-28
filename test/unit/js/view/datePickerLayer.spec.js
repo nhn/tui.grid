@@ -40,70 +40,59 @@ describe('[DatePickerLayer] ', function() {
     });
 
     it('creates calendar and datepicker instance when initializing', function() {
-        expect(layer.calendar).toEqual(jasmine.any(tui.component.Calendar));
-        expect(layer.datePicker).toEqual(jasmine.any(tui.component.DatePicker));
-    });
-
-    describe('datePicker:', function() {
-        it('wrapper element should be a child of the layer element', function() {
-            var $wrapper = layer.datePicker._$wrapperElement;
-
-            expect($wrapper.parent()[0]).toBe(layer.$el[0]);
-        });
-
-        it('should call close() when \'update\' event occur', function() {
-            var datePicker = layer.datePicker;
-            spyOn(datePicker, 'close');
-
-            datePicker.fire('update');
-
-            expect(datePicker.close).toHaveBeenCalled();
-        });
+        expect(layer.datePicker).toEqual(jasmine.any(tui.component.Datepicker));
     });
 
     describe('when \'focusIn\' event occur on the text-painter ', function() {
         describe('and editType is \'text\' and component name is \'datePicker\', ', function() {
             it('set component options to datePicker instance', function() {
-                var setDateFormSpy = spyOn(layer.datePicker, 'setDateForm');
+                var setInputSpy = spyOn(layer.datePicker, 'setInput');
                 var setRangesSpy = spyOn(layer.datePicker, 'setRanges');
                 var setDateSpy = spyOn(layer.datePicker, 'setDate');
                 var options = {
-                    date: {year: 2015, month: 11, date: 20},
-                    dateForm: 'yyyy-mm-dd',
+                    date: new Date(2015, 10, 20),
+                    format: 'yyyy-MM-dd',
                     selectableRanges: [
-                         [{year: 2015, month: 11, date: 17}, {year: 2016, month: 2, date: 15}]
+                         [new Date(2015, 10, 27), new Date(2016, 1, 15)]
                     ]
                 };
+                var $input = $('<input>');
                 layer.columnModel = createColumnModelStub('text', 'datePicker', options);
 
-                layer.textPainter.trigger('focusIn', $('<input>'), {});
+                layer.textPainter.trigger('focusIn', $input, {});
 
-                expect(setDateFormSpy).toHaveBeenCalledWith(options.dateForm);
+                expect(setInputSpy).toHaveBeenCalledWith(
+                    $input,
+                    {
+                        format: options.format,
+                        syncFromInput: true
+                    }
+                );
                 expect(setRangesSpy).toHaveBeenCalledWith(options.selectableRanges);
-                expect(setDateSpy).toHaveBeenCalledWith(2015, 11, 20);
+                expect(setDateSpy).toHaveBeenCalledWith(options.date);
             });
 
             it('set date with current time if option.date is not specified', function() {
                 var setDateSpy = spyOn(layer.datePicker, 'setDate');
                 var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth() + 1;
-                var date = today.getDate();
 
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
                 layer.textPainter.trigger('focusIn', $('<input>'), {});
 
-                expect(setDateSpy).toHaveBeenCalledWith(year, month, date);
+                expect(setDateSpy).toHaveBeenCalledWith(today);
             });
 
             it('change input element and set date to today', function() {
-                var setElementSpy = spyOn(layer.datePicker, 'setElement');
+                var setElementSpy = spyOn(layer.datePicker, 'setInput');
                 var $input = $('<input>');
 
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
                 layer.textPainter.trigger('focusIn', $input, {});
 
-                expect(setElementSpy).toHaveBeenCalledWith($input);
+                expect(setElementSpy).toHaveBeenCalledWith($input, {
+                    format: 'yyyy-MM-dd',
+                    syncFromInput: true
+                });
             });
 
             it('datePicker should be opened and visible', function() {
