@@ -111,7 +111,7 @@ describe('ResizeHandle', function() {
             });
         });
 
-        it('columnWidthList 에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
+        it('columnWidths에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
             handler._refreshHandlerPosition();
             expect($handles.eq(0).css('left')).toEqual('28px');
             expect($handles.eq(1).css('left')).toEqual('69px');

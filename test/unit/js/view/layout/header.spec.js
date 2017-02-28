@@ -19,7 +19,7 @@ function create(whichSide, columns) {
         ]
     });
     var coordColumnModel = new Model();
-    coordColumnModel.getColumnWidthList = _.noop;
+    coordColumnModel.getWidths = _.noop;
 
     return new HeaderView({
         whichSide: whichSide || frameConst.R,
@@ -49,7 +49,7 @@ describe('Header', function() {
 
         beforeEach(function() {
             header = create();
-            header.coordColumnModel.getColumnWidthList = function() {
+            header.coordColumnModel.getWidths = function() {
                 return [50, 60];
             };
         });
@@ -87,7 +87,7 @@ describe('Header', function() {
         });
 
         describe('_getColumnData()', function() {
-            it('columns와 columnWidthList를 반환하는지 확인한다.', function() {
+            it('columns와 widths를 반환하는지 확인한다.', function() {
                 var columnData = header._getColumnData();
                 expect(columnData.widths.length).toBeGreaterThan(0);
                 expect(columnData.columns.length).toBeGreaterThan(0);
@@ -106,7 +106,7 @@ describe('Header', function() {
 
         beforeEach(function() {
             header = create(frameConst.L);
-            header.coordColumnModel.getColumnWidthList = function() {
+            header.coordColumnModel.getWidths = function() {
                 return [10];
             };
         });

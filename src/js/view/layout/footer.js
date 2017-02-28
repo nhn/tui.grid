@@ -107,7 +107,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     },
 
     _onChangeColumnWidth: function() {
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var $ths = this.$el.find('th');
 
         _.each(columnWidths, function(columnWidth, index) {
@@ -165,7 +165,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
         var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 
         return _.reduce(columns, function(memo, column, index) {
             var columnName = column.name;

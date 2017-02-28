@@ -16,7 +16,6 @@ var frameConst = require('../common/constMap').frame;
  * @module view/selectionLayer
  * @extends module:base/view
  * @param {object} options Options
- * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
  * @ignore
  */
 var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
@@ -29,7 +28,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             columnModel: options.columnModel,
             selectionModel: options.selectionModel
         });
-        this._updateColumnWidthList();
+        this._updateColumnWidths();
 
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
         this.listenTo(this.selectionModel, 'change:range', this.render);
@@ -38,11 +37,11 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
     className: classNameConst.LAYER_SELECTION,
 
     /**
-     * Updates this.columnWidthList
+     * Updates this.columnWidths
      * @private
      */
-    _updateColumnWidthList: function() {
-        this.columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+    _updateColumnWidths: function() {
+        this.columnWidths = this.coordColumnModel.getWidths(this.whichSide);
     },
 
     /**
@@ -50,7 +49,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @private
      */
     _onChangeColumnWidth: function() {
-        this._updateColumnWidthList();
+        this._updateColumnWidths();
         this.render();
     },
 
@@ -105,7 +104,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{left: string, width: string}} - css values
      */
     _getHorizontalStyles: function(columnRange) {
-        var columnWidthList = this.columnWidthList;
+        var columnWidths = this.columnWidths;
         var metaColumnCount = this.columnModel.getVisibleMetaColumnCount();
         var startIndex = columnRange[0];
         var endIndex = columnRange[1];
@@ -117,13 +116,13 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             startIndex += metaColumnCount;
             endIndex += metaColumnCount;
         }
-        endIndex = Math.min(endIndex, columnWidthList.length - 1);
+        endIndex = Math.min(endIndex, columnWidths.length - 1);
 
         for (; i <= endIndex; i += 1) {
             if (i < startIndex) {
-                left += columnWidthList[i] + CELL_BORDER_WIDTH;
+                left += columnWidths[i] + CELL_BORDER_WIDTH;
             } else {
-                width += columnWidthList[i] + CELL_BORDER_WIDTH;
+                width += columnWidths[i] + CELL_BORDER_WIDTH;
             }
         }
         width -= CELL_BORDER_WIDTH; // subtract last border width

@@ -61,10 +61,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var $colList = this.$el.find('col');
 
-        _.each(columnWidthList, function(width, index) {
+        _.each(columnWidths, function(width, index) {
             $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
         }, this);
     },
@@ -172,7 +172,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      */
     _getColGroupMarkup: function() {
         var whichSide = this.whichSide;
-        var columnWidthList = this.coordColumnModel.getColumnWidthList(whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(whichSide);
         var columns = this.columnModel.getVisibleColumns(whichSide, true);
         var html = '';
 
@@ -180,7 +180,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: column.name,
-                width: columnWidthList[index] + CELL_BORDER_WIDTH
+                width: columnWidths[index] + CELL_BORDER_WIDTH
             });
         }, this);
 

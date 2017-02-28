@@ -304,7 +304,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var $colList = this.$el.find('col');
         var coordRowModel = this.coordRowModel;
 
@@ -405,7 +405,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnData: function() {
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
         return {
