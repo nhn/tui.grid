@@ -107,6 +107,10 @@ tui = window.tui = tui || {};
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
+ *          @param {function} [options.columns.onBeforeChange] - The function that will be
+ *              called before changing the value of the cell. If returns false, the changing will be canceled.
+ *          @param {function} [options.columns.onAfterChange] - The function that will be
+ *              called after changing the value of the cell.
  *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
  *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
  *                  the type of the editing UI.
@@ -118,10 +122,6 @@ tui = window.tui = tui || {};
  *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOptions.onBeforeChange] - The function that will be
- *                  called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columns.editOptions.onAfterChange] - The function that will be
- *                  called after changing the value of the cell.
  *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
  *                  called when a 'focus' event occurred on an input element
  *              @param {function} [options.columns.editOptions.onBlur] - The function that will be

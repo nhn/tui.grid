@@ -48,21 +48,20 @@
         pagination: true,
         columns: [
             {
-                name: '_button',
-                width: 30
-            },
-            {
-                title: 'c1',
                 name: 'c1',
+                title: 'c1',
                 validation: {
                     required: true
                 },
                 width: 200,
                 fixedWidth: true,
+                onBeforeChange: function(ev) {
+                    console.log('before change! ev', ev);
+                },
+                onAfterChange: function(ev) {
+                    console.log('after change! ev', ev);
+                },
                 editOptions: {
-                    onBeforeChange: function(ev) {
-                        console.log('ev', ev);
-                    },
                     onKeyDown: function(ev) {
                         console.log('keydown ev', ev);
                     },
@@ -86,11 +85,10 @@
                 }
             },
             {
+                name: 'c2',
                 title: 'c2',
                 sortable: true,
-                // defaultValue: 2,
                 width: 200,
-                name: 'c2',
                 editOptions: {
                     type: 'select',
                     listItems: [
@@ -106,8 +104,8 @@
                 }
             },
             {
-                title: 'c3',
                 name: 'c3',
+                title: 'c3',
                 width: 200,
                 defaultValue: 2,
                 editOptions: {

@@ -8,13 +8,11 @@ describe('data.rowList', function() {
         {
             title: 'changeCallback',
             name: 'changeCallback',
-            editOptions: {
-                onBeforeChange: function(changeEvent) {
-                    return !!changeEvent.value;
-                },
-                onAfterChange: function(changeEvent) {
-                    return !!changeEvent.value;
-                }
+            onBeforeChange: function(changeEvent) {
+                return !!changeEvent.value;
+            },
+            onAfterChange: function(changeEvent) {
+                return !!changeEvent.value;
             }
         },
         {
