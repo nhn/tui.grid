@@ -34,9 +34,6 @@ tui = window.tui = tui || {};
  * Grid public API
  * @class
  * @param {PropertiesHash} options
- *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
- *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
- *          can be used for setting this value dynamically.
  *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
  *          The string value 'checkbox' or 'radio' can be used.
  *          If not specified, the button column will not be shown.
@@ -57,6 +54,9 @@ tui = window.tui = tui || {};
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
  *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
  *          will be shown.
+ *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
+ *          The columns indexed from 0 to this value will always be shown on the left side.
+ *          {@link tui.Grid#setFrozenColumnCount} can be used for setting this value dynamically.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
@@ -664,11 +664,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Sets the count of fixed column.
-     * @param {number} count - The count of column to be fixed
+     * Sets the count of frozen columns.
+     * @param {number} count - The count of columns to be frozen
      */
-    setColumnFixCount: function(count) {
-        this.modelManager.columnModel.set('columnFixCount', count);
+    setFrozenColumnCount: function(count) {
+        this.modelManager.columnModel.set('frozenCount', count);
     },
 
     /**

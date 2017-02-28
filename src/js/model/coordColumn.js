@@ -122,11 +122,11 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
         var totalWidth = this.dimensionModel.get('width');
         var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
         var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
-        lsideWidthList = columnWidthList.slice(0, columnFixCount);
-        rsideWidthList = columnWidthList.slice(columnFixCount);
+        lsideWidthList = columnWidthList.slice(0, columnFrozenCount);
+        rsideWidthList = columnWidthList.slice(columnFrozenCount);
 
         lsideWidth = this._getFrameWidth(lsideWidthList);
         if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
@@ -151,7 +151,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     },
 
     /**
-     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+     * columnFrozenCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
      * @param {Number} totalWidth   grid 전체 너비
      * @returns {Array} 열고정 영역의 너비 리스트
@@ -400,15 +400,15 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
         var columnWidthList = [];
 
         switch (whichSide) {
             case frameConst.L:
-                columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
+                columnWidthList = this.get('columnWidthList').slice(0, columnFrozenCount);
                 break;
             case frameConst.R:
-                columnWidthList = this.get('columnWidthList').slice(columnFixCount);
+                columnWidthList = this.get('columnWidthList').slice(columnFrozenCount);
                 break;
             default :
                 columnWidthList = this.get('columnWidthList');
@@ -424,11 +424,11 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      * @returns {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
         var columnWidthList = this.getColumnWidthList(whichSide);
         var frameWidth = this._getFrameWidth(columnWidthList);
 
-        if (_.isUndefined(whichSide) && columnFixCount > 0) {
+        if (_.isUndefined(whichSide) && columnFrozenCount > 0) {
             frameWidth += CELL_BORDER_WIDTH;
         }
 

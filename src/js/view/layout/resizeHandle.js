@@ -188,7 +188,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
+        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleFrozenCount(true)) : index;
     }
 });
 

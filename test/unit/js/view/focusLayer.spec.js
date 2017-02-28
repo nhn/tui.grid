@@ -5,10 +5,12 @@ var DomState = require('domState');
 var FocusLayer = require('view/focusLayer');
 var frameConst = require('common/constMap').frame;
 
-function createModelManager(columnFixCount) {
+function createModelManager(frozenCount) {
     return new ModelManager({
         domState: new DomState($('<div>')),
-        columnFixCount: columnFixCount
+        columnOptions: {
+            frozenCount: frozenCount
+        }
     });
 }
 

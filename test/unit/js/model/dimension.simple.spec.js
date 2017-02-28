@@ -65,7 +65,7 @@ describe('model.dimension', function() {
                     {name: 'c2'},
                     {name: 'c3'}
                 ],
-                columnFixCount: 3
+                frozenCount: 3
             });
             expect(dimension._getMinLeftSideWidth()).toEqual(85);
         });
@@ -77,7 +77,7 @@ describe('model.dimension', function() {
 
             dimension.columnModel.set({
                 hasNumberColumn: false,
-                columnFixCount: 0
+                frozenCount: 0
             });
             expect(dimension._getMinLeftSideWidth()).toEqual(0);
         });
@@ -95,7 +95,7 @@ describe('model.dimension', function() {
                     {name: 'c2'},
                     {name: 'c3'}
                 ],
-                columnFixCount: 3
+                frozenCount: 3
             });
 
             expect(dimension.getMaxLeftSideWidth()).toEqual(90);

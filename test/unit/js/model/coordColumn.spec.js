@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var ColumnModel = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
@@ -296,7 +297,7 @@ describe('CoordColumn', function() {
                     {name: 'c5'}
                 ],
                 hasNumberColumn: false,
-                columnFixCount: 2
+                frozenCount: 2
             };
             var coordColumn = createCoordColumn(columnAttrs);
 
@@ -309,7 +310,7 @@ describe('CoordColumn', function() {
             expect(coordColumn.getColumnWidthList(frameConst.R)).toEqual([30, 40, 50]);
 
             coordColumn.columnModel.set({
-                columnFixCount: 4
+                frozenCount: 4
             });
             coordColumn.set({
                 columnWidthList: [10, 20, 30, 40, 50]
@@ -348,7 +349,7 @@ describe('CoordColumn', function() {
                     {name: 'c2'},
                     {name: 'c3'}
                 ],
-                columnFixCount: 2
+                frozenCount: 2
             });
             coordColumn.set('columnWidthList', [10, 20, 30, 40, 50]);
         });

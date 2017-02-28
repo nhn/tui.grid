@@ -79,21 +79,21 @@ describe('ResizeHandle', function() {
 
     describe('_getHandlerColumnIndex', function() {
         beforeEach(function() {
-            columnModel.set('columnFixCount', 2);
+            columnModel.set('frozenCount', 2);
         });
 
         afterEach(function() {
-            columnModel.set('columnFixCount', 0);
+            columnModel.set('frozenCount', 0);
         });
 
-        it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
+        it('R side 일때 frozenCount 고려하여 실제 columnIndex 를 계산한다.', function() {
             handler.whichSide = frameConst.R;
             expect(handler._getHandlerColumnIndex(0)).toBe(3);
             expect(handler._getHandlerColumnIndex(1)).toBe(4);
             expect(handler._getHandlerColumnIndex(2)).toBe(5);
         });
 
-        it('L side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
+        it('L side 일때 frozenCount 고려하여 실제 columnIndex 를 계산한다.', function() {
             handler.whichSide = frameConst.L;
             expect(handler._getHandlerColumnIndex(0)).toBe(0);
             expect(handler._getHandlerColumnIndex(1)).toBe(1);

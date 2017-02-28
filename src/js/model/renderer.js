@@ -348,18 +348,18 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Returns the object that contains two array of column names splitted by columnFixCount.
+     * Returns the object that contains two array of column names splitted by frozenCount.
      * @returns {{lside: Array, rside: Array}} - Column names map
      * @private
      */
     _getColumnNamesOfEachSide: function() {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var frozenCount = this.columnModel.getVisibleFrozenCount(true);
         var columnModels = this.columnModel.getVisibleColumns(null, true);
         var columnNames = _.pluck(columnModels, 'name');
 
         return {
-            lside: columnNames.slice(0, columnFixCount),
-            rside: columnNames.slice(columnFixCount)
+            lside: columnNames.slice(0, frozenCount),
+            rside: columnNames.slice(frozenCount)
         };
     },
 

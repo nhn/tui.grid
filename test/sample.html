@@ -27,7 +27,6 @@
     var grid = new tui.Grid({
         el: $('#grid'),
         selectType: 'checkbox',
-        columnFixCount: 1,
         header: {
             height: 50,
             complexColumns: [
@@ -44,6 +43,7 @@
         bodyHeight: 300,
         columnOptions: {
             minWidth: 200,
+            frozenCount: 1
         },
         pagination: true,
         columns: [

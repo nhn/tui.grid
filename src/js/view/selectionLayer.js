@@ -61,20 +61,20 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount();
+        var frozenCount = this.columnModel.getVisibleFrozenCount();
         var ownColumnRange = null;
 
         if (this.whichSide === frameConst.L) {
-            if (columnRange[0] < columnFixCount) {
+            if (columnRange[0] < frozenCount) {
                 ownColumnRange = [
                     columnRange[0],
-                    Math.min(columnRange[1], columnFixCount - 1)
+                    Math.min(columnRange[1], frozenCount - 1)
                 ];
             }
-        } else if (columnRange[1] >= columnFixCount) {
+        } else if (columnRange[1] >= frozenCount) {
             ownColumnRange = [
-                Math.max(columnRange[0], columnFixCount) - columnFixCount,
-                columnRange[1] - columnFixCount
+                Math.max(columnRange[0], frozenCount) - frozenCount,
+                columnRange[1] - frozenCount
             ];
         }
 

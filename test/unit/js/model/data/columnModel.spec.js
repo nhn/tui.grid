@@ -253,7 +253,7 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnFixCount: 2,
+                frozenCount: 2,
                 columns: sampleColumns
             });
 
@@ -390,7 +390,7 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 columns: sampleColumns,
-                columnFixCount: 4
+                frozenCount: 4
             });
         });
 
@@ -465,7 +465,7 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 columns: sampleColumns,
-                columnFixCount: 2
+                frozenCount: 2
             });
             //_button 과 _number 는 가공되었기 때문에, 인자로 넘긴 columnModel 과는 달라야 한다.
             expect(columnModelInstance.getColumnModel('_button')).not.toEqual(sampleColumns[0]);
@@ -650,7 +650,7 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnFixCount: 2,
+                frozenCount: 2,
                 hasNumberColumn: false,
                 columns: sampleColumns
             });
@@ -684,8 +684,8 @@ describe('data.columnModel', function() {
             expect(_.isEqual(relationsMap, expectResult)).toBe(true);
         });
 
-        it('columnFixCount가 저장 되었는지 확인한다.', function() {
-            expect(columnModelInstance.get('columnFixCount')).toEqual(2);
+        it('frozenCount가 저장 되었는지 확인한다.', function() {
+            expect(columnModelInstance.get('frozenCount')).toEqual(2);
         });
 
         it('visibleColumns 저장 되었는지 확인한다.', function() {
@@ -806,7 +806,7 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnFixCount: 3,
+                frozenCount: 3,
                 hasNumberColumn: true,
                 selectType: 'checkbox',
                 columns: sampleColumns
@@ -814,7 +814,7 @@ describe('data.columnModel', function() {
         });
 
         it('visibleColumnFixCount를 확인한다', function() {
-            var count = columnModelInstance.getVisibleColumnFixCount();
+            var count = columnModelInstance.getVisibleFrozenCount();
 
             expect(count).toEqual(2);
         });
