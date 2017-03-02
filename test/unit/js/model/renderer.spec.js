@@ -98,7 +98,7 @@ describe('model.renderer', function() {
             hidden: true
         }
     ];
-    var originalRowList = [
+    var originalRows = [
         {
             'columnName1': 'normal',
             'columnName2': 'text',
@@ -132,7 +132,7 @@ describe('model.renderer', function() {
     var coordRowModel, coordColumnModel;
 
     beforeEach(function() {
-        rowList = $.extend(true, [], originalRowList);
+        rowList = $.extend(true, [], originalRows);
         columnModel = new ColumnModelData({
             hasNumberColumn: true,
             selectType: 'checkbox',

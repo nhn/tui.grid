@@ -313,11 +313,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * ignored 가 true 로 설정된 columnName 의 list 를 반환한다.
      * @returns {Array} ignored 가 true 로 설정된 columnName 배열.
      */
-    getIgnoredColumnNameList: function() {
-        var columnModelLsit = this.get('dataColumns');
+    getIgnoredColumnNames: function() {
+        var dataColumns = this.get('dataColumns');
         var ignoredColumnNames = [];
 
-        _.each(columnModelLsit, function(columnModel) {
+        _.each(dataColumns, function(columnModel) {
             if (columnModel.ignored) {
                 ignoredColumnNames.push(columnModel.name);
             }

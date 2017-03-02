@@ -256,7 +256,7 @@ describe('addon.net', function() {
             grid.removeRow(3);
         }
 
-        it('createData, {isOnlyModified: true, isOnlyChecked: true}', function() {
+        it('createData, {modifiedOnly: true, checkedOnly: true}', function() {
             var param, createList;
 
             createNet();
@@ -277,14 +277,14 @@ describe('addon.net', function() {
             expect(param.createList).toBeUndefined();
         });
 
-        it('createData, {isOnlyChecked: false}', function() {
+        it('createData, {checkedOnly: false}', function() {
             var param, createList;
 
             createNet();
             grid.setData(data);
 
             messUp();
-            param = net._getDataParam('createData', {isOnlyChecked: false});
+            param = net._getDataParam('createData', {checkedOnly: false});
             createList = $.parseJSON(param.data.createList);
 
             expect(createList.length).toBe(2);
@@ -293,21 +293,21 @@ describe('addon.net', function() {
             expect(param.count).toBe(2);
 
             grid.uncheckAll();
-            param = net._getDataParam('createData', {isOnlyChecked: false});
+            param = net._getDataParam('createData', {checkedOnly: false});
             createList = $.parseJSON(param.data.createList);
 
             expect(createList.length).toBe(2);
             expect(param.count).toBe(2);
         });
 
-        it('createData, {isOnlyModified: false, isOnlyChecked: false}', function() {
+        it('createData, {modifiedOnly: false, checkedOnly: false}', function() {
             var param;
 
             createNet();
             grid.setData(data);
 
             messUp();
-            param = net._getDataParam('createData', {isOnlyChecked: false, isOnlyModified: false});
+            param = net._getDataParam('createData', {checkedOnly: false, modifiedOnly: false});
             expect(param.data.data).toBeDefined();
             expect(param.data.createList).not.toBeDefined();
             expect(param.data.updateList).not.toBeDefined();
@@ -315,7 +315,7 @@ describe('addon.net', function() {
             expect(param.count).toBe(grid.getRowCount());
         });
 
-        it('updateData, {isOnlyModified: true, isOnlyChecked: true} ', function() {
+        it('updateData, {modifiedOnly: true, checkedOnly: true} ', function() {
             var param;
 
             createNet();
@@ -335,29 +335,29 @@ describe('addon.net', function() {
             expect(param.data.updateList).not.toBeDefined();
         });
 
-        it('updateData, {isOnlyChecked: false}', function() {
+        it('updateData, {checkedOnly: false}', function() {
             var param;
 
             createNet();
             grid.setData(data);
 
             messUp();
-            param = net._getDataParam('updateData', {isOnlyChecked: false});
+            param = net._getDataParam('updateData', {checkedOnly: false});
             expect(param.count).toBe(3);
             expect($.parseJSON(param.data.updateList).length).toBe(3);
             expect(param.data.createList).not.toBeDefined();
             expect(param.data.deleteList).not.toBeDefined();
 
             grid.uncheckAll();
-            param = net._getDataParam('updateData', {isOnlyChecked: false});
+            param = net._getDataParam('updateData', {checkedOnly: false});
             expect(param.count).toBe(3);
             expect($.parseJSON(param.data.updateList).length).toBe(3);
             expect(param.data.createList).not.toBeDefined();
             expect(param.data.deleteList).not.toBeDefined();
         });
 
-        it('deleteData, {isOnlyModified: true, isOnlyChecked: true}', function() {
-            // deleteData는 isOnlyModified, isOnlyChecked 옵션과 관계없음
+        it('deleteData, {modifiedOnly: true, checkedOnly: true}', function() {
+            // deleteData는 modifiedOnly, checkedOnly 옵션과 관계없음
             var param;
 
             createNet();
@@ -370,7 +370,7 @@ describe('addon.net', function() {
             expect(param.data.updateList).not.toBeDefined();
         });
 
-        it('modifyData, {isOnlyModified: true, isOnlyChecked: true}', function() {
+        it('modifyData, {modifiedOnly: true, checkedOnly: true}', function() {
             var param;
 
             createNet();
@@ -392,21 +392,21 @@ describe('addon.net', function() {
             expect($.parseJSON(param.data.deleteList).length).toBe(1);
         });
 
-        it('modifyData, {isOnlyChecked: false}', function() {
+        it('modifyData, {checkedOnly: false}', function() {
             var param;
 
             createNet();
             grid.setData(data);
 
             messUp();
-            param = net._getDataParam('modifyData', {isOnlyChecked: false});
+            param = net._getDataParam('modifyData', {checkedOnly: false});
             expect($.parseJSON(param.data.createList).length).toBe(2);
             expect($.parseJSON(param.data.updateList).length).toBe(3);
             expect($.parseJSON(param.data.deleteList).length).toBe(1);
             expect(param.count).toBe(6);
 
             grid.uncheckAll();
-            param = net._getDataParam('modifyData', {isOnlyChecked: false});
+            param = net._getDataParam('modifyData', {checkedOnly: false});
             expect($.parseJSON(param.data.createList).length).toBe(2);
             expect($.parseJSON(param.data.updateList).length).toBe(3);
             expect($.parseJSON(param.data.deleteList).length).toBe(1);
@@ -454,10 +454,10 @@ describe('addon.net', function() {
             expect(net._ajax).not.toHaveBeenCalled();
         });
 
-        it('call setOriginalRowList() if isUpdateOriginal is true', function() {
+        it('call setOriginalRowList() if updateOriginal is true', function() {
             spyOn(net.dataModel, 'setOriginalRowList');
             net.request('updateData', {
-                isUpdateOriginal: true
+                updateOriginal: true
             });
             expect(net.dataModel.setOriginalRowList).toHaveBeenCalled();
         });
