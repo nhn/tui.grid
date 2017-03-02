@@ -76,6 +76,7 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
+ *      @param {boolean} [options.language] - Options for setting locale messages.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
@@ -167,6 +168,8 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
+        options.language = options.language || 'en';
+
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -185,6 +188,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
 
         this.addOn = {};
+        this.language = options.language;
+
         instanceMap[this.id] = this;
     },
 
@@ -234,7 +239,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'footer'
+            'heightResizable', 'footer', 'language'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
@@ -682,7 +687,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
                 domEventBus: this.domEventBus,
                 renderModel: this.modelManager.renderModel,
                 dataModel: this.modelManager.dataModel,
-                pagination: this.componentHolder.getInstance('pagination')
+                pagination: this.componentHolder.getInstance('pagination'),
+                language: this.language
             }, options);
 
             this.addOn.Net = new NetAddOn(options);

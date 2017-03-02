@@ -223,4 +223,16 @@ describe('core.util', function() {
         expect($divEl.width()).toBe(100);
         expect($divEl.height()).toBe(100);
     });
+
+    it('replaceText() replace text including "{{*}} pattern" to matched value.', function() {
+        var replaceValue = {
+            prop: 'hello'
+        };
+        var text = '{{prop}} world';
+        var replacedText;
+
+        replacedText = util.replaceText(text, replaceValue);
+
+        expect(replacedText).toBe('hello world');
+    });
 });

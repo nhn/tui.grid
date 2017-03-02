@@ -10,6 +10,7 @@ var View = require('../../base/view');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var DragEventEmitter = require('../../event/dragEventEmitter');
+var message = require('../../common/message').resizeHandle;
 var attrNameConst = constMap.attrName;
 var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -29,7 +30,8 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
             coordColumnModel: options.coordColumnModel,
             domEventBus: options.domEventBus,
             headerHeight: options.headerHeight,
-            whichSide: options.whichSide || frameConst.R
+            whichSide: options.whichSide || frameConst.R,
+            language: options.language
         });
 
         this.dragEmitter = new DragEventEmitter({
@@ -59,7 +61,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
         attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
         'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
         'style="<%=height%>" ' +
-        'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
+        'title="<%=title%>">' +
         '</div>'
     ),
 
@@ -92,7 +94,8 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.name,
-                height: this.headerHeight
+                height: this.headerHeight,
+                title: message[this.language]
             });
         }, this);
 

@@ -245,7 +245,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
         attrs = {
             emptyMessage: options.emptyMessage,
-            showDummyRows: options.showDummyRows
+            showDummyRows: options.showDummyRows,
+            language: options.language
         };
         renderOptions = {
             columnModel: this.columnModel,

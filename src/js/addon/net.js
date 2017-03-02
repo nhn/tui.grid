@@ -14,6 +14,7 @@ var formUtil = require('../common/formUtil');
 var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
+var messages = require('../common/message').net;
 var DELAY_FOR_LOADING_STATE = 200;
 
 /**
@@ -130,7 +131,10 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             timeoutIdForDelay: null,
             requestedFormData: null,
             isLocked: false,
-            lastRequestedReadData: null
+            lastRequestedReadData: null,
+
+            // request & response messages
+            messages: messages[options.language]
         });
 
         this._initializeDataModelNetwork();
@@ -645,22 +649,21 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getConfirmMessage: function(requestType, count) {
-        var textMap = {
-            createData: '입력',
-            updateData: '수정',
-            deleteData: '삭제',
-            modifyData: '반영'
-        };
+        var textMap = this.messages.requestType;
         var actionName = textMap[requestType];
+        var replacedValues = {
+            count: count,
+            actionName: actionName
+        };
         var message;
 
         if (count > 0) {
-            message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
+            message = this.messages.hasData;
         } else {
-            message = actionName + '할 데이터가 없습니다.';
+            message = this.messages.noData;
         }
 
-        return message;
+        return util.replaceText(message, replacedValues);
     },
 
     /**
@@ -792,6 +795,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
+        var message = this.messages.errorResponse;
         this.renderModel.set('state', renderStateMap.DONE);
 
         this.trigger('response', eventData);
@@ -813,7 +817,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         if (jqXHR.readyState > 1) {
-            alert('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
+            alert(message);
         }
     }
 });

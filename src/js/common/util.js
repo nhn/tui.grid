@@ -7,6 +7,7 @@
 var _ = require('underscore');
 
 var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
+var REGEXP_PATTERN = /\{\{(\w*)\}\}/g;
 
 /**
 * util 모듈
@@ -366,6 +367,18 @@ var util = {
             console.warn(message);
         }
         /* eslint-enable no-console */
+    },
+
+    /**
+     * Replace text
+     * @param {string} text - Text
+     * @param {Object} values - Replaced values
+     * @returns {string} Replaced text
+     */
+    replaceText: function(text, values) {
+        return text.replace(REGEXP_PATTERN, function(value, prop) {
+            return values.hasOwnProperty(prop) ? values[prop] : '';
+        });
     }
 };
 
