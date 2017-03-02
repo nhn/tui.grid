@@ -47,7 +47,7 @@ function create(data) {
         dimensionModel: dimensionModel
     });
 
-    dataModel.setRowList(data);
+    dataModel.setData(data);
 
     return new CoordConverter(null, {
         dataModel: dataModel,

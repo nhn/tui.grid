@@ -30,7 +30,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     defaults: {
         keyColumnName: null,
-        columnFixCount: 0,
+        frozenCount: 0,
         metaColumns: [],
         dataColumns: [],
         visibleColumns: [], // 이 리스트는 메타컬럼/데이터컬럼 구분하지 않고 저장
@@ -177,7 +177,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
 
-        return (index > -1) && (index < this.get('columnFixCount'));
+        return (index > -1) && (index < this.get('frozenCount'));
     },
 
     /**
@@ -188,7 +188,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     getVisibleColumns: function(whichSide, withMeta) {
         var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount();
-        var visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta);
+        var visibleColumnFixCount = this.getVisibleFrozenCount(withMeta);
         var columns;
 
         whichSide = whichSide && whichSide.toUpperCase();
@@ -219,10 +219,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
      * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
-     * @returns {number} Visible columnFix count
+     * @returns {number} Visible frozen count
      */
-    getVisibleColumnFixCount: function(withMeta) {
-        var count = this.get('columnFixCount');
+    getVisibleFrozenCount: function(withMeta) {
+        var count = this.get('frozenCount');
         var fixedColumns = _.first(this.get('dataColumns'), count);
         var visibleFixedColumns, visibleCount;
 
@@ -313,11 +313,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * ignored 가 true 로 설정된 columnName 의 list 를 반환한다.
      * @returns {Array} ignored 가 true 로 설정된 columnName 배열.
      */
-    getIgnoredColumnNameList: function() {
-        var columnModelLsit = this.get('dataColumns');
+    getIgnoredColumnNames: function() {
+        var dataColumns = this.get('dataColumns');
         var ignoredColumnNames = [];
 
-        _.each(columnModelLsit, function(columnModel) {
+        _.each(dataColumns, function(columnModel) {
             if (columnModel.ignored) {
                 ignoredColumnNames.push(columnModel.name);
             }
@@ -329,15 +329,15 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
      * 메타컬럼과 데이터컬럼을 분리하여 저장한다.
      * @param {Array} columns   컬럼모델 배열
-     * @param {number} [columnFixCount]   열고정 카운트
+     * @param {number} [frozenCount]   열고정 카운트
      * @private
      */
-    _setColumns: function(columns, columnFixCount) {
+    _setColumns: function(columns, frozenCount) {
         var division, relationsMap, visibleColumns, metaColumns, dataColumns;
 
         columns = $.extend(true, [], columns);
-        if (tui.util.isUndefined(columnFixCount)) {
-            columnFixCount = this.get('columnFixCount');
+        if (tui.util.isUndefined(frozenCount)) {
+            frozenCount = this.get('frozenCount');
         }
 
         division = _.partition(columns, function(model) {
@@ -353,7 +353,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             dataColumns: dataColumns,
             columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'name'),
             relationsMap: relationsMap,
-            columnFixCount: Math.max(0, columnFixCount),
+            frozenCount: Math.max(0, frozenCount),
             visibleColumns: visibleColumns
         }, {
             silent: true
@@ -371,13 +371,13 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     _onChange: function(model) {
         var changed = model.changed;
-        var columnFixCount = changed.columnFixCount;
+        var frozenCount = changed.frozenCount;
         var columns = changed.columns;
 
         if (!columns) {
             columns = this.get('dataColumns');
         }
-        this._setColumns(columns, columnFixCount);
+        this._setColumns(columns, frozenCount);
     },
 
     /**

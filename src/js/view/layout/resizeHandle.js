@@ -71,7 +71,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      * @private
      */
     _getColumnData: function() {
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
         return {
@@ -145,7 +145,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      */
     _onMouseDown: function(ev) {
         var $target = $(ev.target);
-        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
         var columnIndex = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
         this.dragEmitter.start(ev, {
@@ -191,7 +191,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
+        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleFrozenCount(true)) : index;
     }
 });
 

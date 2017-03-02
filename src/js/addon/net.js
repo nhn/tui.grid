@@ -473,25 +473,25 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @param {object} options - Options
      *      @param {String} [options.url] - URL to send the request
      *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
-     *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
-     *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
-     *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
-     *      @param {String} [options.isUpdateOriginal=false] - Whether to update original data with current data
+     *      @param {String} [options.checkedOnly=true] - Whether the request param only contains checked rows
+     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
      */
     request: function(requestType, options) {
         var newOptions = _.extend({
             url: this.api[requestType],
             type: null,
             hasDataParam: true,
-            isOnlyChecked: true,
-            isOnlyModified: true,
-            isSkipConfirm: false,
-            isUpdateOriginal: false
+            checkedOnly: true,
+            modifiedOnly: true,
+            showConfirm: true,
+            updateOriginal: false
         }, options);
         var param = this._getRequestParam(requestType, newOptions);
 
         if (param) {
-            if (newOptions.isUpdateOriginal) {
+            if (newOptions.updateOriginal) {
                 this.dataModel.setOriginalRowList();
             }
             this._ajax(param);
@@ -534,8 +534,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Object} [options] Options
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
-     *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
-     *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
      * @returns {{count: number, data: {requestType: string, url: string, data: object,
      *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
      * @private
@@ -555,15 +555,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         options = _.defaults(options || {}, {
             hasDataParam: true,
-            isOnlyModified: true,
-            isOnlyChecked: true
+            modifiedOnly: true,
+            checkedOnly: true
         });
 
         if (options.hasDataParam) {
-            if (options.isOnlyModified) {
+            if (options.modifiedOnly) {
                 //{createList: [], updateList:[], deleteList: []} 에 담는다.
-                dataMap = dataModel.getModifiedRowList({
-                    isOnlyChecked: options.isOnlyChecked
+                dataMap = dataModel.getModifiedRows({
+                    checkedOnly: options.checkedOnly
                 });
                 _.each(dataMap, function(list, name) {
                     if (_.contains(checkList, name) && list.length) {
@@ -572,9 +572,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                     }
                 }, this);
             } else {
-                //{rowList: []} 에 담는다.
-                data.rowList = dataModel.getRowList(options.isOnlyChecked);
-                count = data.rowList.length;
+                //{data: []} 에 담는다.
+                data.data = dataModel.getRows(options.checkedOnly);
+                count = data.data.length;
             }
         }
 
@@ -592,8 +592,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
      *      @param {String} [options.type='POST'] request method 타입
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
-     *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
-     *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
      * @returns {{requestType: string, url: string, data: object, type: string, dataType: string}}
      *      ajax 호출시 사용될 option 파라미터
      * @private
@@ -603,14 +603,14 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             url: this.api[requestType],
             type: null,
             hasDataParam: true,
-            isOnlyModified: true,
-            isOnlyChecked: true
+            modifiedOnly: true,
+            checkedOnly: true
         };
         var newOptions = $.extend(defaultOptions, options);
         var dataParam = this._getDataParam(requestType, newOptions);
         var param = null;
 
-        if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
+        if (!newOptions.showConfirm || this._isConfirmed(requestType, dataParam.count)) {
             param = {
                 requestType: requestType,
                 url: newOptions.url,

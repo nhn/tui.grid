@@ -296,8 +296,7 @@ var ViewFactory = tui.util.defineClass({
      */
     createDatePickerLayer: function() {
         if (!tui.component ||
-            !tui.component.DatePicker ||
-            !tui.component.Calendar) {
+            !tui.component.Datepicker) {
             return null;
         }
 

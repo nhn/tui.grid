@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>그리드 기본 예제</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+    <link rel="stylesheet" type="text/css" href="../lib/tui-component-pagination/dist/tui-component-pagination.css" />
     <style media="screen">
         #wrapper {
             width: 100%;
@@ -21,13 +22,12 @@
 <script src="../lib/underscore/underscore.js"></script>
 <script src="../lib/backbone/backbone.js"></script>
 <script src="../lib/tui-code-snippet/code-snippet.js"></script>
-<script src="../lib/tui-component-pagination/pagination.js"></script>
+<script src="../lib/tui-component-pagination/dist/tui-component-pagination.js"></script>
 <script src="../dist/grid.js"></script>
 <script>
     var grid = new tui.Grid({
         el: $('#grid'),
         selectType: 'checkbox',
-        columnFixCount: 1,
         header: {
             height: 50,
             complexColumns: [
@@ -44,24 +44,25 @@
         bodyHeight: 300,
         columnOptions: {
             minWidth: 200,
+            frozenCount: 1
         },
         pagination: true,
         columns: [
             {
-                name: '_button',
-                width: 30
-            },
-            {
-                title: 'c1',
                 name: 'c1',
+                title: 'c1',
                 validation: {
                     required: true
                 },
                 width: 200,
+                fixedWidth: true,
+                onBeforeChange: function(ev) {
+                    console.log('before change! ev', ev);
+                },
+                onAfterChange: function(ev) {
+                    console.log('after change! ev', ev);
+                },
                 editOptions: {
-                    onBeforeChange: function(ev) {
-                        console.log('ev', ev);
-                    },
                     onKeyDown: function(ev) {
                         console.log('keydown ev', ev);
                     },
@@ -85,11 +86,10 @@
                 }
             },
             {
+                name: 'c2',
                 title: 'c2',
                 sortable: true,
-                // defaultValue: 2,
                 width: 200,
-                name: 'c2',
                 editOptions: {
                     type: 'select',
                     listItems: [
@@ -105,8 +105,8 @@
                 }
             },
             {
-                title: 'c3',
                 name: 'c3',
+                title: 'c3',
                 width: 200,
                 defaultValue: 2,
                 editOptions: {
@@ -136,29 +136,31 @@
             }
         }
     });
-    var rowList = [];
+    var data = [];
     (function() {
         _.times(50, function(number) {
-            rowList.push({
+            data.push({
                 _number: number + 1,
                 'c1': String(number * 10),
                 'c2': 2
             });
         })
     })();
-    grid.setRowList(rowList.slice(0, 10));
+
+    grid.setData(data.slice(0, 10));
+
     var pagination = grid.getPagination();
     var itemCount = 50;
-    pagination.reset(50);
 
+    pagination.reset(50);
     pagination.on('beforeMove', function(ev) {
         var page = ev.page;
         var start = 10 * (page - 1);
 
         setTimeout(function() {
-            grid.setRowList(rowList.slice(start, start + 10));
-            pagination.movePageTo(page, true);
+            grid.setData(data.slice(start, start + 10));
         }, 10);
+
         return false;
     });
 

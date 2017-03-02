@@ -50,29 +50,29 @@ describe('grid', function() {
 
         beforeEach(function() {
             grid = createGrid(['c1'], {selectType: 'checkbox'});
-            grid.setRowList([
+            grid.setData([
                 {}, {}, {}, {}
             ]);
         });
 
-        it('getCheckedRowList', function() {
+        it('getCheckedRows', function() {
             var checkedRows;
 
             grid.check(1);
             grid.check(3);
-            checkedRows = grid.getCheckedRowList();
+            checkedRows = grid.getCheckedRows();
 
             expect(checkedRows.length).toBe(2);
             expect(checkedRows[0].rowKey).toBe(1);
             expect(checkedRows[1].rowKey).toBe(3);
         });
 
-        it('getCheckedRowKeyList', function() {
+        it('getCheckedRowKeys', function() {
             var checkedRowKeys;
 
             grid.check(1);
             grid.check(3);
-            checkedRowKeys = grid.getCheckedRowKeyList();
+            checkedRowKeys = grid.getCheckedRowKeys();
 
             expect(checkedRowKeys.length).toBe(2);
             expect(checkedRowKeys[0]).toBe(1);
@@ -80,16 +80,16 @@ describe('grid', function() {
         });
 
         it('removeCheckedRows', function() {
-            var rowList;
+            var rows;
 
             grid.check(0);
             grid.check(2);
             grid.removeCheckedRows();
-            rowList = grid.getRowList();
+            rows = grid.getRows();
 
-            expect(rowList.length).toBe(2);
-            expect(rowList[0].rowKey).toBe(1);
-            expect(rowList[1].rowKey).toBe(3);
+            expect(rows.length).toBe(2);
+            expect(rows[0].rowKey).toBe(1);
+            expect(rows[1].rowKey).toBe(3);
         });
     });
 

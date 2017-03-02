@@ -11,7 +11,7 @@ var Row = require('./row');
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
- * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
+ * Grid.setData 를 사용하여 콜렉션을 설정한다.
  * @module model/data/rowList
  * @extends module:base/collection
  * @param {Array} models - 콜랙션에 추가할 model 리스트
@@ -26,7 +26,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             domState: options.domState,
             gridId: options.gridId,
             lastRowKey: -1,
-            originalRowList: [],
+            originalRows: [],
             originalRowMap: {},
             startIndex: options.startIndex || 1,
             sortOptions: {
@@ -193,14 +193,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * originalRowList 와 originalRowMap 을 생성한다.
-     * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
+     * originalRows 와 originalRowMap 을 생성한다.
+     * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRows 로 저장한다.
      * @returns {Array} format 을 거친 데이터 리스트.
      */
     setOriginalRowList: function(rowList) {
-        this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
-        this.originalRowMap = _.indexBy(this.originalRowList, 'rowKey');
-        return this.originalRowList;
+        this.originalRows = rowList ? this._formatData(rowList) : this.toJSON();
+        this.originalRowMap = _.indexBy(this.originalRows, 'rowKey');
+        return this.originalRows;
     },
 
     /**
@@ -210,7 +210,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getOriginalRowList: function(isClone) {
         isClone = _.isUndefined(isClone) ? true : isClone;
-        return isClone ? _.clone(this.originalRowList) : this.originalRowList;
+        return isClone ? _.clone(this.originalRows) : this.originalRows;
     },
 
     /**
@@ -327,25 +327,25 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * rowList 를 반환한다.
-     * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-     * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+     * @param {boolean} [checkedOnly=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+     * @param {boolean} [withRawData=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      * @returns {Array} Row List
      */
-    getRowList: function(isOnlyChecked, isRaw) {
-        var rowList, checkedRowList;
+    getRows: function(checkedOnly, withRawData) {
+        var rows, checkedRows;
 
-        if (isOnlyChecked) {
-            checkedRowList = this.where({
+        if (checkedOnly) {
+            checkedRows = this.where({
                 '_button': true
             });
-            rowList = [];
-            _.each(checkedRowList, function(checkedRow) {
-                rowList.push(checkedRow.attributes);
+            rows = [];
+            _.each(checkedRows, function(checkedRow) {
+                rows.push(checkedRow.attributes);
             }, this);
         } else {
-            rowList = this.toJSON();
+            rows = this.toJSON();
         }
-        return isRaw ? rowList : this._removePrivateProp(rowList);
+        return withRawData ? rows : this._removePrivateProp(rows);
     },
 
     /**
@@ -674,7 +674,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
-        var modifiedRowsArr = _.values(this.getModifiedRowList());
+        var modifiedRowsArr = _.values(this.getModifiedRows());
 
         return _.some(modifiedRowsArr, function(modifiedRows) {
             return modifiedRows.length > 0;
@@ -860,11 +860,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 해당 row가 수정된 Row인지 여부를 반환한다.
      * @param {Object} row - row 데이터
      * @param {Object} originalRow - 원본 row 데이터
-     * @param {Array} filteringColumns - 비교에서 제외할 컬럼명
+     * @param {Array} ignoredColumns - 비교에서 제외할 컬럼명
      * @returns {boolean} - 수정여부
      */
-    _isModifiedRow: function(row, originalRow, filteringColumns) {
-        var filtered = _.omit(row, filteringColumns);
+    _isModifiedRow: function(row, originalRow, ignoredColumns) {
+        var filtered = _.omit(row, ignoredColumns);
         var result = _.some(filtered, function(value, columnName) {
             if (typeof value === 'object') {
                 return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
@@ -878,38 +878,38 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 수정된 rowList 를 반환한다.
      * @param {Object} options 옵션 객체
-     *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-     *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
-     *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
-     *      @param {Array} [options.filteringColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
+     *      @param {boolean} [options.checkedOnly=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+     *      @param {boolean} [options.withRawData=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+     *      @param {boolean} [options.rowKeyOnly=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
+     *      @param {Array} [options.ignoredColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
      * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
-    getModifiedRowList: function(options) {
-        var isRaw = options && options.isRaw,
-            isOnlyChecked = options && options.isOnlyChecked,
-            isOnlyRowKeyList = options && options.isOnlyRowKeyList,
-            original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
-            current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
-            filteringColumns = options && options.filteringColumns,
-            result = {
-                createList: [],
-                updateList: [],
-                deleteList: []
-            };
+    getModifiedRows: function(options) {
+        var withRawData = options && options.withRawData;
+        var checkedOnly = options && options.checkedOnly;
+        var rowKeyOnly = options && options.rowKeyOnly;
+        var original = withRawData ? this.originalRows : this._removePrivateProp(this.originalRows);
+        var current = withRawData ? this.toJSON() : this._removePrivateProp(this.toJSON());
+        var ignoredColumns = options && options.ignoredColumns;
+        var result = {
+            createList: [],
+            updateList: [],
+            deleteList: []
+        };
 
         original = _.indexBy(original, 'rowKey');
         current = _.indexBy(current, 'rowKey');
-        filteringColumns = _.union(filteringColumns, this.columnModel.getIgnoredColumnNameList());
+        ignoredColumns = _.union(ignoredColumns, this.columnModel.getIgnoredColumnNames());
 
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
             var originalRow = original[rowKey],
-                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumns);
+                item = rowKeyOnly ? row.rowKey : _.omit(row, ignoredColumns);
 
-            if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+            if (!checkedOnly || (checkedOnly && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
                     result.createList.push(item);
-                } else if (this._isModifiedRow(row, originalRow, filteringColumns)) {
+                } else if (this._isModifiedRow(row, originalRow, ignoredColumns)) {
                     result.updateList.push(item);
                 }
             }
@@ -917,7 +917,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumns);
+            var item = rowKeyOnly ? obj.rowKey : _.omit(obj, ignoredColumns);
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
@@ -926,23 +926,23 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
-     * @param {Array} rowList 설정할 데이터 배열 값
-     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * data 를 설정한다. setData 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+     * @param {Array} data - 설정할 데이터 배열 값
+     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
      * @param {Function} [callback] callback function
      */
-    replaceRowList: function(rowList, isParse, callback) {
-        if (!rowList) {
-            rowList = [];
+    resetData: function(data, parse, callback) {
+        if (!data) {
+            data = [];
         }
-        if (_.isUndefined(isParse)) {
-            isParse = true;
+        if (_.isUndefined(parse)) {
+            parse = true;
         }
-        this.trigger('beforeReset', rowList.length);
+        this.trigger('beforeReset', data.length);
 
         this.lastRowKey = -1;
-        this.reset(rowList, {
-            parse: isParse
+        this.reset(data, {
+            parse: parse
         });
 
         if (_.isFunction(callback)) {
@@ -951,12 +951,12 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
-     * @param {Array} rowList 설정할 데이터 배열 값
-     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * data 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+     * @param {Array} data - 설정할 데이터 배열 값
+     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
      * @param {function} [callback] 완료시 호출될 함수
      */
-    setRowList: function(rowList, isParse, callback) {
+    setData: function(data, parse, callback) {
         var wrappedCallback = _.bind(function() {
             this.setOriginalRowList();
             if (_.isFunction(callback)) {
@@ -964,16 +964,16 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             }
         }, this);
 
-        this.replaceRowList(rowList, isParse, wrappedCallback);
+        this.resetData(data, parse, wrappedCallback);
     },
 
     /**
-     * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+     * setData()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
      * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
      */
     restore: function() {
-        var originalRowList = this.getOriginalRowList();
-        this.replaceRowList(originalRowList, true);
+        var originalRows = this.getOriginalRowList();
+        this.resetData(originalRows, true);
     },
 
     /**

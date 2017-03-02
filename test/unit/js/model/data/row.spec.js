@@ -239,24 +239,18 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c2',
-                    editOptions: {
-                        onBeforeChange: callbackSpy
-                    }
+                    onBeforeChange: callbackSpy
                 },
                 {
                     name: 'c3',
-                    editOptions: {
-                        onBeforeChange: function() {
-                            return true;
-                        }
+                    onBeforeChange: function() {
+                        return true;
                     }
                 },
                 {
                     name: 'c4',
-                    editOptions: {
-                        onBeforeChange: function() {
-                            return false;
-                        }
+                    onBeforeChange: function() {
+                        return false;
                     }
                 }
             ]);
@@ -317,9 +311,7 @@ describe('RowData', function() {
             spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
-                editOptions: {
-                    onAfterChange: callbackSpy
-                }
+                onAfterChange: callbackSpy
             }]);
             row = new RowData({
                 rowKey: 1,

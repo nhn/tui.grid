@@ -98,7 +98,7 @@ describe('model.renderer', function() {
             hidden: true
         }
     ];
-    var originalRowList = [
+    var originalRows = [
         {
             'columnName1': 'normal',
             'columnName2': 'text',
@@ -132,11 +132,11 @@ describe('model.renderer', function() {
     var coordRowModel, coordColumnModel;
 
     beforeEach(function() {
-        rowList = $.extend(true, [], originalRowList);
+        rowList = $.extend(true, [], originalRows);
         columnModel = new ColumnModelData({
             hasNumberColumn: true,
             selectType: 'checkbox',
-            columnFixCount: 2,
+            frozenCount: 2,
             columns: columns
         });
         dataModel = new RowListData([], {
@@ -196,7 +196,7 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
-            columnModel.set('columnFixCount', 3);
+            columnModel.set('frozenCount', 3);
             dataModel.set(rowList, {parse: true});
             renderModel.refresh();
             lside = renderModel.get('lside');
@@ -243,7 +243,7 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
-            columnModel.set('columnFixCount', 3);
+            columnModel.set('frozenCount', 3);
             dataModel.set(rowList, {parse: true});
             renderModel.refresh();
 
@@ -260,7 +260,7 @@ describe('model.renderer', function() {
 
     describe('refresh()', function() {
         beforeEach(function() {
-            columnModel.set('columnFixCount', 3);
+            columnModel.set('frozenCount', 3);
             dataModel.set(rowList, {parse: true});
         });
 
@@ -348,7 +348,7 @@ describe('model.renderer', function() {
                 });
                 listenModel.listenTo(renderModel, 'columnModelChanged', callback);
                 columnModel.set({
-                    columnFixCount: 4
+                    frozenCount: 4
                 });
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();

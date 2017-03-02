@@ -8,13 +8,11 @@ describe('data.rowList', function() {
         {
             title: 'changeCallback',
             name: 'changeCallback',
-            editOptions: {
-                onBeforeChange: function(changeEvent) {
-                    return !!changeEvent.value;
-                },
-                onAfterChange: function(changeEvent) {
-                    return !!changeEvent.value;
-                }
+            onBeforeChange: function(changeEvent) {
+                return !!changeEvent.value;
+            },
+            onAfterChange: function(changeEvent) {
+                return !!changeEvent.value;
             }
         },
         {
@@ -1053,7 +1051,7 @@ describe('data.rowList', function() {
             });
 
             describe('getOriginalRowList()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                it('set 에서 parse 후 originalRows 가 정상적으로 생성되었는지 확인한다.', function() {
                     var expectResult;
                     dataModelInstance.lastRowKey = -1;
                     expectResult = dataModelInstance._formatData(originalData);
@@ -1066,7 +1064,7 @@ describe('data.rowList', function() {
             });
 
             describe('getOriginalRow()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                it('set 에서 parse 후 originalRows 가 정상적으로 생성되었는지 확인한다.', function() {
                     var expectResultList;
                     dataModelInstance.lastRowKey = -1;
                     expectResultList = dataModelInstance._formatData(originalData);
@@ -1078,7 +1076,7 @@ describe('data.rowList', function() {
             });
 
             describe('getOriginal()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                it('set 에서 parse 후 originalRows 가 정상적으로 생성되었는지 확인한다.', function() {
                     var expectResultList = dataModelInstance._formatData(originalData);
 
                     expect(dataModelInstance.get(0).get('none')).toBe(expectResultList[0]['none']);
@@ -1103,8 +1101,8 @@ describe('data.rowList', function() {
             });
         });
 
-        describe('getRowList', function() {
-            it('isRaw 옵션값이 설정되어 있으면 내부용 데이터를 제거하지 않고 반환한다.', function() {
+        describe('getRows', function() {
+            it('withRawData 옵션값이 설정되어 있으면 내부용 데이터를 제거하지 않고 반환한다.', function() {
                 var myRowList;
                 columnModelInstance.set({
                     hasNumberColumn: true,
@@ -1113,12 +1111,12 @@ describe('data.rowList', function() {
                 dataModelInstance.set(rowList, {
                     parse: true
                 });
-                myRowList = dataModelInstance.getRowList();
+                myRowList = dataModelInstance.getRows();
                 expect(myRowList[0]._button).not.toBeDefined();
                 expect(myRowList[0]._extraData).not.toBeDefined();
                 expect(myRowList[0]._number).not.toBeDefined();
 
-                myRowList = dataModelInstance.getRowList(false, true);
+                myRowList = dataModelInstance.getRows(false, true);
                 expect(myRowList[0]._button).toBeDefined();
                 expect(myRowList[0]._extraData).toBeDefined();
                 expect(myRowList[0]._number).toBeDefined();
@@ -1138,12 +1136,12 @@ describe('data.rowList', function() {
                 dataModelInstance.at(2).set('_button', true);
                 dataModelInstance.at(3).set('_button', true);
 
-                myRowList = dataModelInstance.getRowList(true);
+                myRowList = dataModelInstance.getRows(true);
                 expect(myRowList.length).toBe(3);
                 expect(myRowList[1].keyColumn).toBe(12);
                 expect(myRowList[1]._extraData).not.toBeDefined();
 
-                myRowList = dataModelInstance.getRowList(true, true);
+                myRowList = dataModelInstance.getRows(true, true);
                 expect(myRowList[1]._extraData).toBeDefined();
             });
         });
@@ -1284,30 +1282,30 @@ describe('data.rowList', function() {
             });
 
             it('row 가 삭제되는지 확인한다.', function() {
-                var originalRowList;
-                originalRowList = dataModelInstance.getOriginalRowList();
+                var originalRows;
+                originalRows = dataModelInstance.getOriginalRowList();
                 expect(dataModelInstance.length).toBe(5);
                 expect(dataModelInstance.get(0)).toBeDefined();
                 expect(dataModelInstance.get(1)).toBeDefined();
                 expect(dataModelInstance.get(2)).toBeDefined();
                 expect(dataModelInstance.get(3)).toBeDefined();
                 expect(dataModelInstance.get(4)).toBeDefined();
-                expect(originalRowList.length).toBe(5);
+                expect(originalRows.length).toBe(5);
 
                 dataModelInstance.removeRow(3);
-                originalRowList = dataModelInstance.getOriginalRowList();
+                originalRows = dataModelInstance.getOriginalRowList();
                 expect(dataModelInstance.length).toBe(4);
                 expect(dataModelInstance.get(0)).toBeDefined();
                 expect(dataModelInstance.get(1)).toBeDefined();
                 expect(dataModelInstance.get(2)).toBeDefined();
                 expect(dataModelInstance.get(3)).not.toBeDefined();
                 expect(dataModelInstance.get(4)).toBeDefined();
-                expect(originalRowList.length).toBe(5);
+                expect(originalRows.length).toBe(5);
             });
 
             it('isRemoveOriginalData 옵션을 주었을 때 originalData 도 함께 삭제되는지 확인한다.', function() {
-                var originalRowList;
-                originalRowList = dataModelInstance.getOriginalRowList();
+                var originalRows;
+                originalRows = dataModelInstance.getOriginalRowList();
                 expect(dataModelInstance.length).toBe(5);
                 expect(dataModelInstance.get(0)).toBeDefined();
                 expect(dataModelInstance.get(1)).toBeDefined();
@@ -1316,12 +1314,12 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.get(4)).toBeDefined();
 
                 expect(dataModelInstance.getOriginalRow(3)).toBeDefined();
-                expect(originalRowList.length).toBe(5);
+                expect(originalRows.length).toBe(5);
 
                 dataModelInstance.removeRow(3, {
                     removeOriginalData: true
                 });
-                originalRowList = dataModelInstance.getOriginalRowList();
+                originalRows = dataModelInstance.getOriginalRowList();
                 expect(dataModelInstance.length).toBe(4);
                 expect(dataModelInstance.get(0)).toBeDefined();
                 expect(dataModelInstance.get(1)).toBeDefined();
@@ -1329,7 +1327,7 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.get(3)).not.toBeDefined();
                 expect(dataModelInstance.get(4)).toBeDefined();
                 expect(dataModelInstance.getOriginalRow(3)).not.toBeDefined();
-                expect(originalRowList.length).toBe(4);
+                expect(originalRows.length).toBe(4);
             });
         });
 
@@ -1434,7 +1432,7 @@ describe('data.rowList', function() {
             });
         });
 
-        describe('getModifiedRowList()', function() {
+        describe('getModifiedRows()', function() {
             var sampleRowList;
 
             function append() {
@@ -1455,19 +1453,12 @@ describe('data.rowList', function() {
                 dataModelInstance.remove(rowKey);
             }
 
-            function refreshOriginal() {
-                dataModelInstance.setOriginalRowList();
-            }
-
             function spoil(rowKey, columnName) {
                 columnName = columnName || 'none';
                 dataModelInstance.get(rowKey).set(columnName, 'dirty');
             }
             function check(rowKey) {
                 dataModelInstance.get(rowKey).set('_button', true);
-            }
-            function uncheck(rowKey) {
-                dataModelInstance.get(rowKey).set('_button', false);
             }
             function checkAll() {
                 dataModelInstance.forEach(function(row) {
@@ -1480,8 +1471,8 @@ describe('data.rowList', function() {
                 });
             }
             function getModified() {
-                return dataModelInstance.getModifiedRowList({
-                    isOnlyChecked: true
+                return dataModelInstance.getModifiedRows({
+                    checkedOnly: true
                 });
             }
             function messUp() {
@@ -1525,7 +1516,7 @@ describe('data.rowList', function() {
                 dataModelInstance.setOriginalRowList();
             });
 
-            describe('isOnlyChecked 옵션 true 일 때.', function() {
+            describe('checkedOnly 옵션 true 일 때.', function() {
                 it('check 된 리스트가 존재하지 않을 경우 removeList 를 제외하고 createList, updateList는 빈 배열을 반환한다.', function() {
                     var modifiedList;
                     messUp();
@@ -1557,7 +1548,7 @@ describe('data.rowList', function() {
                     });
                 });
 
-                it('모두 check 되었다면 isOnlyChecked === false 와 동일한 결과를 반환한다.', function() {
+                it('모두 check 되었다면 checkedOnly === false 와 동일한 결과를 반환한다.', function() {
                     var modifiedList;
                     messUp();
                     checkAll();
@@ -1579,10 +1570,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('isOnlyChecked 옵션 false 일 때.', function() {
+            describe('checkedOnly 옵션 false 일 때.', function() {
                 function getModified() {
-                    return dataModelInstance.getModifiedRowList({
-                        isOnlyChecked: false
+                    return dataModelInstance.getModifiedRows({
+                        checkedOnly: false
                     });
                 }
 
@@ -1683,10 +1674,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('filteringColumns 옵션이 있을 때', function() {
+            describe('ignoredColumns 옵션이 있을 때', function() {
                 function getModified() {
-                    return dataModelInstance.getModifiedRowList({
-                        filteringColumns: ['none']
+                    return dataModelInstance.getModifiedRows({
+                        ignoredColumns: ['none']
                     });
                 }
 
@@ -1711,10 +1702,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('isOnlyRowKeyList 옵션 true 일 때.', function() {
+            describe('rowKeyOnly 옵션 true 일 때.', function() {
                 function getModified() {
-                    return dataModelInstance.getModifiedRowList({
-                        isOnlyRowKeyList: true
+                    return dataModelInstance.getModifiedRows({
+                        rowKeyOnly: true
                     });
                 }
 
@@ -1740,10 +1731,10 @@ describe('data.rowList', function() {
                 });
             });
 
-            describe('isRaw 옵션 true 일 때.', function() {
+            describe('withRawData 옵션 true 일 때.', function() {
                 function getModified() {
-                    return dataModelInstance.getModifiedRowList({
-                        isRaw: true
+                    return dataModelInstance.getModifiedRows({
+                        withRawData: true
                     });
                 }
 

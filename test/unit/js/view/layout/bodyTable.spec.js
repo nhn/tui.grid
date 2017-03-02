@@ -22,7 +22,7 @@ describe('view.layout.body', function() {
                 {name: 'c2'}
             ]
         }, domState);
-        spyOn(modelManager.coordColumnModel, 'getColumnWidthList').and.returnValue([30, 40]);
+        spyOn(modelManager.coordColumnModel, 'getWidths').and.returnValue([30, 40]);
         painterManager = new PainterManager({
             modelManager: modelManager
         });

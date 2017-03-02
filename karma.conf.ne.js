@@ -40,7 +40,7 @@ module.exports = function(config) {
             {pattern: 'lib/underscore/underscore.js', watched: false},
             {pattern: 'lib/backbone/backbone.js', watched: false},
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/tui-component-pagination/pagination.js', watched: false},
+            {pattern: 'lib/tui-component-pagination/dist/tui-component-pagination.js', watched: false},
             {pattern: 'lib/tui-component-date-picker/date-picker.js', watched: false},
             {pattern: 'lib/tui-component-calendar/calendar.js', watched: false},
 

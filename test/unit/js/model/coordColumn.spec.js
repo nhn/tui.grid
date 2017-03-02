@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var ColumnModel = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
@@ -64,7 +65,7 @@ describe('CoordColumn', function() {
         });
     });
 
-    describe('_fillEmptyColumnWidth() - total:500', function() {
+    describe('_fillEmptyWidth() - total:500', function() {
         var coordColumn;
 
         beforeEach(function() {
@@ -78,18 +79,18 @@ describe('CoordColumn', function() {
             var input = [100, 100, 0, 0, 0],
                 output = [100, 100, 100, 100, 100];
 
-            expect(coordColumn._fillEmptyColumnWidth(input)).toEqual(output);
+            expect(coordColumn._fillEmptyWidth(input)).toEqual(output);
         });
 
         it('[200, 200, 0, 0, 0]', function() {
             var input = [200, 200, 0, 0, 0],
                 output = [200, 200, 33, 33, 34];
 
-            expect(coordColumn._fillEmptyColumnWidth(input)).toEqual(output);
+            expect(coordColumn._fillEmptyWidth(input)).toEqual(output);
         });
     });
 
-    describe('_adjustColumnWidthList()', function() {
+    describe('_adjustWidths()', function() {
         var coordColumn;
 
         describe('available:500, minWidth:50', function() {
@@ -104,16 +105,16 @@ describe('CoordColumn', function() {
                 var input = [50, 50, 100, 100, 100],
                     output = [50, 50, 133, 133, 134];
 
-                coordColumn._columnWidthFixedFlags = [true, true, false, false, false];
-                expect(coordColumn._adjustColumnWidthList(input)).toEqual(output);
+                coordColumn._fixedWidthFlags = [true, true, false, false, false];
+                expect(coordColumn._adjustWidths(input)).toEqual(output);
             });
 
             it('50, 50, 50, 50, 50 (fixed all)', function() {
                 var input = [50, 50, 50, 50, 50],
                     output = [50, 50, 50, 50, 300];
 
-                coordColumn._columnWidthFixedFlags = [true, true, true, true, true];
-                expect(coordColumn._adjustColumnWidthList(input)).toEqual(output);
+                coordColumn._fixedWidthFlags = [true, true, true, true, true];
+                expect(coordColumn._adjustWidths(input)).toEqual(output);
             });
         });
 
@@ -123,22 +124,22 @@ describe('CoordColumn', function() {
                     width: 306,
                     minimumColumnWidth: 50
                 });
-                coordColumn._minColumnWidthList = [50, 50, 50, 50, 50];
-                coordColumn._columnWidthFixedFlags = [false, false, false, false, false];
+                coordColumn._minWidths = [50, 50, 50, 50, 50];
+                coordColumn._fixedWidthFlags = [false, false, false, false, false];
             });
 
             it('100, 100, 100, 50, 50', function() {
                 var input = [100, 100, 100, 100, 100];
                 var output = [60, 60, 60, 60, 60];
 
-                expect(coordColumn._adjustColumnWidthList(input, true)).toEqual(output);
+                expect(coordColumn._adjustWidths(input, true)).toEqual(output);
             });
 
             it('100, 100, 70, 70, 70', function() {
                 var input = [100, 100, 70, 70, 70];
                 var output = [75, 75, 50, 50, 50];
 
-                expect(coordColumn._adjustColumnWidthList(input, true)).toEqual(output);
+                expect(coordColumn._adjustWidths(input, true)).toEqual(output);
             });
 
             it('50, 50, 50, 50, 50', function() {
@@ -146,15 +147,15 @@ describe('CoordColumn', function() {
                 var output = [50, 50, 50, 50, 50];
 
                 coordColumn.dimensionModel.set('width', 206);
-                expect(coordColumn._adjustColumnWidthList(input, true)).toEqual(output);
+                expect(coordColumn._adjustWidths(input, true)).toEqual(output);
             });
 
             it('100(fixed), 100(fixed), 100(fixed), 100, 100', function() {
                 var input = [100, 100, 100, 100, 100],
                     output = [100, 100, 100, 50, 50];
 
-                coordColumn._columnWidthFixedFlags = [true, true, true, false, false];
-                expect(_.isEqual(coordColumn._adjustColumnWidthList(input, true), output)).toBe(true);
+                coordColumn._fixedWidthFlags = [true, true, true, false, false];
+                expect(_.isEqual(coordColumn._adjustWidths(input, true), output)).toBe(true);
             });
         });
     });
@@ -178,7 +179,7 @@ describe('CoordColumn', function() {
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('columnWidthList')).toEqual([100, 100, 100, 100, 100]);
+                expect(coordColumn.get('widths')).toEqual([100, 100, 100, 100, 100]);
             });
 
             // total minimum width of empty column is bigger than remain width.
@@ -194,7 +195,7 @@ describe('CoordColumn', function() {
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('columnWidthList')).toEqual([150, 150, 150, 50, 50]);
+                expect(coordColumn.get('widths')).toEqual([150, 150, 150, 50, 50]);
             });
 
             it('30, 30, 30, 100, 100', function() {
@@ -209,7 +210,7 @@ describe('CoordColumn', function() {
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('columnWidthList')).toEqual([80, 80, 80, 130, 130]);
+                expect(coordColumn.get('widths')).toEqual([80, 80, 80, 130, 130]);
             });
 
             it('50(fixed), 50(fixed), 50(fixed), 100, 100', function() {
@@ -224,7 +225,7 @@ describe('CoordColumn', function() {
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('columnWidthList')).toEqual([50, 50, 50, 175, 175]);
+                expect(coordColumn.get('widths')).toEqual([50, 50, 50, 175, 175]);
             });
 
             it('50(fixed), 50(fixed), 50(fixed), 50(fixed), 50(fixed)', function() {
@@ -239,7 +240,7 @@ describe('CoordColumn', function() {
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('columnWidthList')).toEqual([50, 50, 50, 50, 300]);
+                expect(coordColumn.get('widths')).toEqual([50, 50, 50, 50, 300]);
             });
         });
     });
@@ -262,7 +263,7 @@ describe('CoordColumn', function() {
 
             coordColumn.setColumnWidth(0, 60);
 
-            expect(coordColumn.get('columnWidthList')).toEqual([60, 50, 50]);
+            expect(coordColumn.get('widths')).toEqual([60, 50, 50]);
         });
 
         it('does not change the fixed-width column', function() {
@@ -281,11 +282,11 @@ describe('CoordColumn', function() {
             var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
 
             coordColumn.setColumnWidth(0, 60);
-            expect(coordColumn.get('columnWidthList')).toEqual([50, 50, 50]);
+            expect(coordColumn.get('widths')).toEqual([50, 50, 50]);
         });
     });
 
-    describe('getColumnWidthList()', function() {
+    describe('getWidths()', function() {
         it('ColumnFixCount 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             var columnAttrs = {
                 columns: [
@@ -296,45 +297,45 @@ describe('CoordColumn', function() {
                     {name: 'c5'}
                 ],
                 hasNumberColumn: false,
-                columnFixCount: 2
+                frozenCount: 2
             };
             var coordColumn = createCoordColumn(columnAttrs);
 
             coordColumn.set({
-                columnWidthList: [10, 20, 30, 40, 50]
+                widths: [10, 20, 30, 40, 50]
             });
 
-            expect(coordColumn.getColumnWidthList()).toEqual([10, 20, 30, 40, 50]);
-            expect(coordColumn.getColumnWidthList(frameConst.L)).toEqual([10, 20]);
-            expect(coordColumn.getColumnWidthList(frameConst.R)).toEqual([30, 40, 50]);
+            expect(coordColumn.getWidths()).toEqual([10, 20, 30, 40, 50]);
+            expect(coordColumn.getWidths(frameConst.L)).toEqual([10, 20]);
+            expect(coordColumn.getWidths(frameConst.R)).toEqual([30, 40, 50]);
 
             coordColumn.columnModel.set({
-                columnFixCount: 4
+                frozenCount: 4
             });
             coordColumn.set({
-                columnWidthList: [10, 20, 30, 40, 50]
+                widths: [10, 20, 30, 40, 50]
             });
-            expect(coordColumn.getColumnWidthList(frameConst.L)).toEqual([10, 20, 30, 40]);
-            expect(coordColumn.getColumnWidthList(frameConst.R)).toEqual([50]);
+            expect(coordColumn.getWidths(frameConst.L)).toEqual([10, 20, 30, 40]);
+            expect(coordColumn.getWidths(frameConst.R)).toEqual([50]);
         });
     });
 
-    describe('_adjustLeftSideWidthList()', function() {
-        var coordColumn, widthList;
+    describe('_adjustLeftSideWidths()', function() {
+        var coordColumn, widths;
 
         beforeEach(function() {
             coordColumn = createCoordColumn(null, {
                 minimumColumnWidth: 10
             });
-            widthList = [100, 80, 60, 40, 30, 20, 10];
+            widths = [100, 80, 60, 40, 30, 20, 10];
         });
 
         it('Adjust width of columns  to given total width', function() {
-            expect(coordColumn._adjustLeftSideWidthList(widthList, 300)).toEqual([100, 80, 60, 22, 10, 10, 10]);
+            expect(coordColumn._adjustLeftSideWidths(widths, 300)).toEqual([100, 80, 60, 22, 10, 10, 10]);
         });
 
         it('Each column should be equal or greater than the minimumColumnWidth', function() {
-            expect(coordColumn._adjustLeftSideWidthList(widthList, 50)).toEqual([10, 10, 10, 10, 10, 10, 10]);
+            expect(coordColumn._adjustLeftSideWidths(widths, 50)).toEqual([10, 10, 10, 10, 10, 10, 10]);
         });
     });
 
@@ -348,9 +349,9 @@ describe('CoordColumn', function() {
                     {name: 'c2'},
                     {name: 'c3'}
                 ],
-                columnFixCount: 2
+                frozenCount: 2
             });
-            coordColumn.set('columnWidthList', [10, 20, 30, 40, 50]);
+            coordColumn.set('widths', [10, 20, 30, 40, 50]);
         });
 
         it('Returns width of whole columns if called without arguments', function() {

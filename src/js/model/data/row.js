@@ -163,10 +163,10 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var columnModel = this.columnModel.getColumnModel(columnName);
         var changeEvent, obj;
 
-        if (columnModel.editOptions && columnModel.editOptions.onBeforeChange) {
+        if (columnModel.onBeforeChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
-            if (columnModel.editOptions.onBeforeChange(changeEvent) === false) {
+            if (columnModel.onBeforeChange(changeEvent) === false) {
                 obj = {};
                 obj[columnName] = this.previous(columnName);
                 this.set(obj);
@@ -187,9 +187,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var columnModel = this.columnModel.getColumnModel(columnName);
         var changeEvent;
 
-        if (columnModel.editOptions && columnModel.editOptions.onAfterChange) {
+        if (columnModel.onAfterChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
-            return !!(columnModel.editOptions.onAfterChange(changeEvent));
+            return !!(columnModel.onAfterChange(changeEvent));
         }
 
         return true;

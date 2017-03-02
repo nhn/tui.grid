@@ -5,10 +5,12 @@ var DomState = require('domState');
 var FocusLayer = require('view/focusLayer');
 var frameConst = require('common/constMap').frame;
 
-function createModelManager(columnFixCount) {
+function createModelManager(frozenCount) {
     return new ModelManager({
         domState: new DomState($('<div>')),
-        columnFixCount: columnFixCount
+        columnOptions: {
+            frozenCount: frozenCount
+        }
     });
 }
 
@@ -34,7 +36,7 @@ describe('view/focusLayer', function() {
         modelManager.columnModel.set('columns', [
             {name: 'c1'}, {name: 'c2'}
         ]);
-        modelManager.dataModel.setRowList([
+        modelManager.dataModel.setData([
             {c1: '0-1', c2: '0-2'},
             {c1: '1-1', c2: '1-2'}
         ]);

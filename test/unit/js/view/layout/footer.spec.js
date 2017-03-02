@@ -43,15 +43,15 @@ describe('Footer', function() {
             expect(footer.$el.find('table').height()).toBe(30);
         });
 
-        it('width of each column should be the same as the result of coordColumnModel.getColumnWidthList()', function() {
-            var widthList, $ths;
+        it('width of each column should be the same as the result of coordColumnModel.getWidths()', function() {
+            var widths, $ths;
 
             footer.render();
 
-            widthList = footer.coordColumnModel.getColumnWidthList(frameConst.R);
+            widths = footer.coordColumnModel.getWidths(frameConst.R);
             $ths = footer.$el.find('th');
-            expect($ths.eq(0).width()).toBe(widthList[0]);
-            expect($ths.eq(1).width()).toBe(widthList[1]);
+            expect($ths.eq(0).width()).toBe(widths[0]);
+            expect($ths.eq(1).width()).toBe(widths[1]);
         });
 
         it('If the summaryModel does not exist, values should be empty', function() {

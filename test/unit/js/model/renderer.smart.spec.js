@@ -62,15 +62,15 @@ describe('model.renderer', function() {
     }
 
     function setSampleRows() {
-        var rowList = [], i;
+        var data = [], i;
         for (i = 0; i < 50; i += 1) {
-            rowList.push({
+            data.push({
                 c1: '1',
                 c2: '2',
                 c3: '3'
             });
         }
-        renderer.dataModel.setRowList(rowList);
+        renderer.dataModel.setData(data);
     }
 
     describe('_setRenderingRange()', function() {
