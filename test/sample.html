@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>그리드 기본 예제</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+    <link rel="stylesheet" type="text/css" href="../lib/tui-component-pagination/dist/tui-component-pagination.css" />
     <style media="screen">
         #wrapper {
             width: 100%;
@@ -21,7 +22,7 @@
 <script src="../lib/underscore/underscore.js"></script>
 <script src="../lib/backbone/backbone.js"></script>
 <script src="../lib/tui-code-snippet/code-snippet.js"></script>
-<script src="../lib/tui-component-pagination/pagination.js"></script>
+<script src="../lib/tui-component-pagination/dist/tui-component-pagination.js"></script>
 <script src="../dist/grid.js"></script>
 <script>
     var grid = new tui.Grid({
@@ -145,19 +146,21 @@
             });
         })
     })();
+
     grid.setData(data.slice(0, 10));
+
     var pagination = grid.getPagination();
     var itemCount = 50;
-    pagination.reset(50);
 
+    pagination.reset(50);
     pagination.on('beforeMove', function(ev) {
         var page = ev.page;
         var start = 10 * (page - 1);
 
         setTimeout(function() {
             grid.setData(data.slice(start, start + 10));
-            pagination.movePageTo(page, true);
         }, 10);
+
         return false;
     });
 
