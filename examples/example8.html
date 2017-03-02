@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>8. Using Date-Picker Component</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.component.date-picker/2.0.0/dist/tui-component-datepicker.css" />
 </head>
 <body>
 <div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
@@ -17,8 +18,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.calendar/1.1.2/calendar.js"></script>
-<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.date-picker/1.3.1/date-picker.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.date-picker/2.1.0/dist/tui-component-datepicker.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
@@ -51,7 +51,7 @@ var grid = new tui.Grid({
             }
         },
         {
-            title: 'DatePicker: (yy/mm/dd)',
+            title: 'DatePicker: (yy/MM/dd)',
             name: 'c2',
             editOptions: {
                 type: 'text',
@@ -59,14 +59,14 @@ var grid = new tui.Grid({
             },
             component: {
                 name: 'datePicker',
-                option: {
-                    dateForm: 'yy/mm/dd',
-                    date: {year: 2017, month: 1, date: 1}
+                options: {
+                    format: 'yy/MM/dd',
+                    date: new Date(2017, 0, 1)
                 }
             }
         },
         {
-            title: 'DatePicker: (yyyy.mm.dd)',
+            title: 'DatePicker: (yyyy.MM.dd)',
             name: 'c3',
             editOptions: {
                 type: 'text'
@@ -74,8 +74,8 @@ var grid = new tui.Grid({
             component: {
                 name: 'datePicker',
                 options: {
-                    dateForm: 'yyyy.mm.dd',
-                    date: {year: 2017, month: 1, date: 1}
+                    format: 'yyyy.MM.dd',
+                    date: new Date(2017, 0, 1)
                 }
             }
         },
@@ -88,9 +88,9 @@ var grid = new tui.Grid({
             component: {
                 name: 'datePicker',
                 options: {
-                    date: {year: 2014, month: 4, date: 10},
+                    date: new Date(2014, 3, 10),
                     selectableRanges: [
-                        [{year: 2014, month: 4, date: 10}, {year: 2014, month: 6, date: 20}]
+                        [new Date(2014, 3, 10), new Date(2014, 5, 20)]
                     ]
                 }
             }
