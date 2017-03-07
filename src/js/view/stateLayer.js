@@ -106,7 +106,4 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     }
 });
 
-StateLayer.MESSAGE_LOADING = message.get('onLoading');
-StateLayer.MESSAGE_EMPTY = message.get('noData');
-
 module.exports = StateLayer;

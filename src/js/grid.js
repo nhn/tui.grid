@@ -543,12 +543,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     removeCheckedRows: function(showConfirm) {
         var rowKeys = this.getCheckedRowKeys();
-        var fullMessage = message.get('requestConfirm', {
+        var confirmMessage = message.get('requestConfirm', {
             count: rowKeys.length,
             actionName: 'deleteAction'
         });
 
-        if (rowKeys.length > 0 && (!showConfirm || confirm(fullMessage))) {
+        if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
             _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
