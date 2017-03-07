@@ -17,6 +17,7 @@ var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var ComponentHolder = require('./componentHolder');
 var util = require('./common/util');
+var message = require('./common/message');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
 
@@ -185,6 +186,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
 
         this.addOn = {};
+
         instanceMap[this.id] = this;
     },
 
@@ -541,9 +543,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     removeCheckedRows: function(showConfirm) {
         var rowKeys = this.getCheckedRowKeys();
-        var message = rowKeys.length + '건의 데이터를 삭제하시겠습니까?';
+        var confirmMessage = message.get('requestConfirm', {
+            count: rowKeys.length,
+            actionName: 'deleteAction'
+        });
 
-        if (rowKeys.length > 0 && (!showConfirm || confirm(message))) {
+        if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
             _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
@@ -972,4 +977,15 @@ tui.Grid.applyTheme('striped', {
  */
 tui.Grid.applyTheme = function(presetName, extOptions) {
     themeManager.apply(presetName, extOptions);
+};
+
+/**
+ * Set language for messages
+ * @static
+ * @param {string} langCode - Language code ('en' or 'ko')
+ * @example
+ * tui.Grid.setLanguage('ko');
+ */
+tui.Grid.setLanguage = function(langCode) {
+    message.setLanguage(langCode);
 };

@@ -76,13 +76,17 @@ describe('[DatePickerLayer] ', function() {
                 var setDateSpy = spyOn(layer.datePicker, 'setDate');
                 var today = new Date();
 
+                jasmine.clock().install();
+                jasmine.clock().mockDate(today);
+
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
                 layer.textPainter.trigger('focusIn', $('<input>'), {});
 
-                expect(setDateSpy).toHaveBeenCalledWith(today);
+                expect(setDateSpy.calls.argsFor(0)[0].getTime()).toBe(today.getTime());
+                jasmine.clock().uninstall();
             });
 
-            it('change input element and set date to today', function() {
+            it('change input element and set date as value of element', function() {
                 var setElementSpy = spyOn(layer.datePicker, 'setInput');
                 var $input = $('<input>');
 

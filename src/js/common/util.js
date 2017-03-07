@@ -366,6 +366,18 @@ var util = {
             console.warn(message);
         }
         /* eslint-enable no-console */
+    },
+
+    /**
+     * Replace text
+     * @param {string} text - Text including handlebar expression
+     * @param {Object} values - Replaced values
+     * @returns {string} Replaced text
+     */
+    replaceText: function(text, values) {
+        return text.replace(/\{\{(\w*)\}\}/g, function(value, prop) {
+            return values.hasOwnProperty(prop) ? values[prop] : '';
+        });
     }
 };
 

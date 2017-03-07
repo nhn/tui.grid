@@ -34,6 +34,7 @@ describe('addon.net', function() {
             columns: columns,
             selectType: 'checkbox'
         });
+        tui.Grid.setLanguage('ko');
         window.alert = function() {};
         window.confirm = function() {
             return true;

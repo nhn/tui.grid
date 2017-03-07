@@ -11,6 +11,7 @@ var View = require('../base/view');
 var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
+var message = require('../common/message');
 var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
@@ -645,22 +646,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getConfirmMessage: function(requestType, count) {
-        var textMap = {
-            createData: '입력',
-            updateData: '수정',
-            deleteData: '삭제',
-            modifyData: '반영'
+        var replacedKey = requestType.replace('Data', 'Action');
+        var actionName = message.get(replacedKey);
+        var replacedValues = {
+            count: count,
+            actionName: actionName
         };
-        var actionName = textMap[requestType];
-        var message;
+        var messageKey = (count > 0) ? 'requestConfirm' : 'noDataResponse';
 
-        if (count > 0) {
-            message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
-        } else {
-            message = actionName + '할 데이터가 없습니다.';
-        }
-
-        return message;
+        return message.get(messageKey, replacedValues);
     },
 
     /**
@@ -813,7 +807,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         if (jqXHR.readyState > 1) {
-            alert('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
+            alert(message.get('errorResponse'));
         }
     }
 });

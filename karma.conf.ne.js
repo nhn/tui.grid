@@ -18,21 +18,9 @@ module.exports = function(config) {
         browserDisconnectTimeout: 60000,
         browserNoActivityTimeout: 60000,
 
-        plugins: [
-            'karma-jasmine',
-            'karma-webpack',
-            'karma-sourcemap-loader',
-            'karma-chrome-launcher',
-            'karma-webdriver-launcher',
-            'karma-coverage',
-            'karma-junit-reporter'
-        ],
-
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: [
-            'jasmine'
-        ],
+        frameworks: ['jasmine', 'es5-shim'],
 
         // list of files / patterns to load in the browser
         files: [
@@ -41,8 +29,7 @@ module.exports = function(config) {
             {pattern: 'lib/backbone/backbone.js', watched: false},
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
             {pattern: 'lib/tui-component-pagination/dist/tui-component-pagination.js', watched: false},
-            {pattern: 'lib/tui-component-date-picker/date-picker.js', watched: false},
-            {pattern: 'lib/tui-component-calendar/calendar.js', watched: false},
+            {pattern: 'lib/tui-component-date-picker/dist/tui-component-datepicker.js', watched: false},
 
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
             {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},
