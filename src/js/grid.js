@@ -17,6 +17,7 @@ var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var ComponentHolder = require('./componentHolder');
 var util = require('./common/util');
+var message = require('./common/message');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
 
@@ -168,7 +169,7 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
-        options.language = options.language || 'en';
+        message.setLanguage(options.language || 'en');
 
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
@@ -188,7 +189,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
 
         this.addOn = {};
-        this.language = options.language;
 
         instanceMap[this.id] = this;
     },
@@ -239,7 +239,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'footer', 'language'
+            'heightResizable', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
@@ -546,9 +546,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     removeCheckedRows: function(showConfirm) {
         var rowKeys = this.getCheckedRowKeys();
-        var message = rowKeys.length + '건의 데이터를 삭제하시겠습니까?';
+        var fullMessage = tui.Grid.getMessage('requestConfirm', {
+            count: rowKeys.length,
+            actionName: 'deleteAction'
+        });
 
-        if (rowKeys.length > 0 && (!showConfirm || confirm(message))) {
+        if (rowKeys.length > 0 && (!showConfirm || confirm(fullMessage))) {
             _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
@@ -978,4 +981,15 @@ tui.Grid.applyTheme('striped', {
  */
 tui.Grid.applyTheme = function(presetName, extOptions) {
     themeManager.apply(presetName, extOptions);
+};
+
+/**
+ * Get message
+ * @static
+ * @param {string} key - Key to find message
+ * @param {?object} [replacedValues] - Replaced values
+ * @returns {string} Message
+ */
+tui.Grid.getMessage = function(key, replacedValues) {
+    return message.get(key, replacedValues);
 };

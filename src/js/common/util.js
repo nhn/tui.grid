@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
-var REGEXP_PATTERN = /\{\{(\w*)\}\}/g;
 
 /**
 * util 모듈
@@ -371,12 +370,12 @@ var util = {
 
     /**
      * Replace text
-     * @param {string} text - Text
+     * @param {string} text - Text including handlebar expression
      * @param {Object} values - Replaced values
      * @returns {string} Replaced text
      */
     replaceText: function(text, values) {
-        return text.replace(REGEXP_PATTERN, function(value, prop) {
+        return text.replace(/\{\{(\w*)\}\}/g, function(value, prop) {
             return values.hasOwnProperty(prop) ? values[prop] : '';
         });
     }

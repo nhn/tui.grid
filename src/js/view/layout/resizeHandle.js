@@ -10,7 +10,6 @@ var View = require('../../base/view');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var DragEventEmitter = require('../../event/dragEventEmitter');
-var message = require('../../common/message').resizeHandle;
 var attrNameConst = constMap.attrName;
 var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -30,8 +29,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
             coordColumnModel: options.coordColumnModel,
             domEventBus: options.domEventBus,
             headerHeight: options.headerHeight,
-            whichSide: options.whichSide || frameConst.R,
-            language: options.language
+            whichSide: options.whichSide || frameConst.R
         });
 
         this.dragEmitter = new DragEventEmitter({
@@ -95,7 +93,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
                 columnIndex: index,
                 columnName: columnModel.name,
                 height: this.headerHeight,
-                title: message[this.language]
+                title: tui.Grid.getMessage('resizeHandleGuide')
             });
         }, this);
 

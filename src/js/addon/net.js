@@ -14,7 +14,6 @@ var formUtil = require('../common/formUtil');
 var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
-var messages = require('../common/message').net;
 var DELAY_FOR_LOADING_STATE = 200;
 
 /**
@@ -131,10 +130,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             timeoutIdForDelay: null,
             requestedFormData: null,
             isLocked: false,
-            lastRequestedReadData: null,
-
-            // request & response messages
-            messages: messages[options.language]
+            lastRequestedReadData: null
         });
 
         this._initializeDataModelNetwork();
@@ -649,21 +645,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getConfirmMessage: function(requestType, count) {
-        var textMap = this.messages.requestType;
-        var actionName = textMap[requestType];
+        var replacedKey = requestType.replace('Data', 'Action');
+        var actionName = tui.Grid.getMessage(replacedKey);
         var replacedValues = {
             count: count,
             actionName: actionName
         };
-        var message;
+        var messageKey = (count > 0) ? 'requestConfirm' : 'emptyResponse';
 
-        if (count > 0) {
-            message = this.messages.hasData;
-        } else {
-            message = this.messages.noData;
-        }
-
-        return util.replaceText(message, replacedValues);
+        return tui.Grid.getMessage(messageKey, replacedValues);
     },
 
     /**
@@ -795,7 +785,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
-        var message = this.messages.errorResponse;
         this.renderModel.set('state', renderStateMap.DONE);
 
         this.trigger('response', eventData);
@@ -817,7 +806,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         if (jqXHR.readyState > 1) {
-            alert(message);
+            alert(tui.Grid.getMessage('errorResponse'));
         }
     }
 });

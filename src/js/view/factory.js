@@ -44,7 +44,6 @@ var ViewFactory = tui.util.defineClass({
         // view options
         this.footerOptions = options.footer;
         this.heightResizable = options.heightResizable;
-        this.language = options.language;
     },
 
     /**
@@ -201,8 +200,7 @@ var ViewFactory = tui.util.defineClass({
             headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             columnModel: this.modelManager.columnModel,
             coordColumnModel: this.modelManager.coordColumnModel,
-            domEventBus: this.domEventBus,
-            language: this.language
+            domEventBus: this.domEventBus
         });
     },
 
