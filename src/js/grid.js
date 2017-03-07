@@ -77,7 +77,6 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
- *      @param {boolean} [options.language] - Options for setting locale messages.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
@@ -169,8 +168,6 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
-        message.setLanguage(options.language || 'en');
-
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -546,7 +543,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     removeCheckedRows: function(showConfirm) {
         var rowKeys = this.getCheckedRowKeys();
-        var fullMessage = tui.Grid.getMessage('requestConfirm', {
+        var fullMessage = message.get('requestConfirm', {
             count: rowKeys.length,
             actionName: 'deleteAction'
         });
@@ -699,8 +696,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
                 domEventBus: this.domEventBus,
                 renderModel: this.modelManager.renderModel,
                 dataModel: this.modelManager.dataModel,
-                pagination: this.componentHolder.getInstance('pagination'),
-                language: this.language
+                pagination: this.componentHolder.getInstance('pagination')
             }, options);
 
             this.addOn.Net = new NetAddOn(options);
@@ -984,12 +980,12 @@ tui.Grid.applyTheme = function(presetName, extOptions) {
 };
 
 /**
- * Get message
+ * Set language for messages
  * @static
- * @param {string} key - Key to find message
- * @param {?object} [replacedValues] - Replaced values
- * @returns {string} Message
+ * @param {string} langCode - Language code ('en' or 'ko')
+ * @example
+ * tui.Grid.setLanguage('ko');
  */
-tui.Grid.getMessage = function(key, replacedValues) {
-    return message.get(key, replacedValues);
+tui.Grid.setLanguage = function(langCode) {
+    message.setLanguage(langCode);
 };

@@ -32,9 +32,9 @@ describe('addon.net', function() {
         grid = new tui.Grid({
             el: $grid,
             columns: columns,
-            selectType: 'checkbox',
-            language: 'ko'
+            selectType: 'checkbox'
         });
+        tui.Grid.setLanguage('ko');
         window.alert = function() {};
         window.confirm = function() {
             return true;

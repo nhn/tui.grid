@@ -9,10 +9,8 @@ var _ = require('underscore');
 var View = require('../base/view');
 var stateConst = require('../common/constMap').renderState;
 var classNameConst = require('../common/classNameConst');
+var message = require('../common/message');
 var TABLE_BORDER_WIDTH = require('../common/constMap').dimension.TABLE_BORDER_WIDTH;
-
-var MESSAGE_LOADING = '요청을 처리 중입니다.';
-var MESSAGE_EMPTY = '데이터가 존재하지 않습니다.';
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -80,9 +78,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     _getMessage: function(renderState) {
         switch (renderState) {
             case stateConst.LOADING:
-                return MESSAGE_LOADING;
+                return message.get('onLoading');
             case stateConst.EMPTY:
-                return (this.renderModel.get('emptyMessage') || MESSAGE_EMPTY);
+                return (this.renderModel.get('emptyMessage') || message.get('noData'));
             default:
                 return null;
         }
@@ -108,7 +106,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     }
 });
 
-StateLayer.MESSAGE_LOADING = MESSAGE_LOADING;
-StateLayer.MESSAGE_EMPTY = MESSAGE_EMPTY;
+StateLayer.MESSAGE_LOADING = message.get('onLoading');
+StateLayer.MESSAGE_EMPTY = message.get('noData');
 
 module.exports = StateLayer;

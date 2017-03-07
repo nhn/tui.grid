@@ -11,6 +11,7 @@ var View = require('../base/view');
 var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
+var message = require('../common/message');
 var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
@@ -646,14 +647,14 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getConfirmMessage: function(requestType, count) {
         var replacedKey = requestType.replace('Data', 'Action');
-        var actionName = tui.Grid.getMessage(replacedKey);
+        var actionName = message.get(replacedKey);
         var replacedValues = {
             count: count,
             actionName: actionName
         };
-        var messageKey = (count > 0) ? 'requestConfirm' : 'emptyResponse';
+        var messageKey = (count > 0) ? 'requestConfirm' : 'noDataResponse';
 
-        return tui.Grid.getMessage(messageKey, replacedValues);
+        return message.get(messageKey, replacedValues);
     },
 
     /**
@@ -806,7 +807,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         if (jqXHR.readyState > 1) {
-            alert(tui.Grid.getMessage('errorResponse'));
+            alert(message.get('errorResponse'));
         }
     }
 });
