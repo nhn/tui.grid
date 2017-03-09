@@ -63,14 +63,16 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
         var startIndex = Math.max(coordRowModel.indexOf(scrollTop - bufferSize), 0);
         var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + bufferSize), dataModel.length - 1);
-        var top = coordRowModel.getOffsetAt(startIndex);
-        var bottom = coordRowModel.getOffsetAt(endIndex) +
-            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
+        var top, bottom;
 
         if (dataModel.isRowSpanEnable()) {
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
+
+        top = coordRowModel.getOffsetAt(startIndex);
+        bottom = coordRowModel.getOffsetAt(endIndex) +
+            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
 
         this.set({
             top: top,
