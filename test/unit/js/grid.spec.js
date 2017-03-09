@@ -124,4 +124,38 @@ describe('grid', function() {
         expect(foundRowList[0]).toEqual(rowList[0]);
         expect(foundRowList[1]).toEqual(rowList[1]);
     });
+
+    describe('Using "keyColumnName" option', function() {
+        var grid;
+
+        beforeEach(function() {
+            grid = createGrid(['c1', 'c2'], {
+                keyColumnName: 'c2'
+            });
+        });
+
+        it('and key column\'s value is string type, event object has "rowKey" of string type.', function() {
+            grid.setRowList([{c1: 100, c2: 200}]);
+
+            spyOn(grid.container, 'trigger');
+
+            grid.container._onClick({
+                target: grid.getElement(200, 'c2')
+            });
+
+            expect(grid.container.trigger.calls.argsFor(0)[1].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string type, event object has "rowKey" of string type.', function() {
+            grid.setRowList([{c1: 'a', c2: 'b'}]);
+
+            spyOn(grid.container, 'trigger');
+
+            grid.container._onClick({
+                target: grid.getElement('b', 'c2')
+            });
+
+            expect(grid.container.trigger.calls.argsFor(0)[1].rowKey).toBe('b');
+        });
+    });
 });
