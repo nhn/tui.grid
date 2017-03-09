@@ -126,36 +126,44 @@ describe('grid', function() {
     });
 
     describe('Using "keyColumnName" option', function() {
-        var grid;
+        var grid, spy;
 
         beforeEach(function() {
+            spy = jasmine.createSpy();
             grid = createGrid(['c1', 'c2'], {
                 keyColumnName: 'c2'
             });
+            grid.on('clickCell', spy);
         });
 
-        it('and key column\'s value is string type, event object has "rowKey" of string type.', function() {
+        it('and key column\'s value is number, event object has "rowKey" of number type.', function() {
             grid.setRowList([{c1: 100, c2: 200}]);
-
-            spyOn(grid.container, 'trigger');
 
             grid.container._onClick({
                 target: grid.getElement(200, 'c2')
             });
 
-            expect(grid.container.trigger.calls.argsFor(0)[1].rowKey).toBe(200);
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
         });
 
-        it('and key column\'s value is string type, event object has "rowKey" of string type.', function() {
-            grid.setRowList([{c1: 'a', c2: 'b'}]);
+        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+            grid.setRowList([{c1: '100', c2: '200'}]);
 
-            spyOn(grid.container, 'trigger');
+            grid.container._onClick({
+                target: grid.getElement('200', 'c2')
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string, event object has "rowKey" of string type.', function() {
+            grid.setRowList([{c1: 'a', c2: 'b'}]);
 
             grid.container._onClick({
                 target: grid.getElement('b', 'c2')
             });
 
-            expect(grid.container.trigger.calls.argsFor(0)[1].rowKey).toBe('b');
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe('b');
         });
     });
 });
