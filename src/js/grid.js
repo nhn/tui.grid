@@ -261,6 +261,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var emitter = new PublicEventEmitter(this);
 
         emitter.listenToFocusModel(this.modelManager.focusModel);
+        emitter.listenToDataModel(this.modelManager.dataModel);
         emitter.listenToContainerView(this.container);
 
         return emitter;
@@ -882,6 +883,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     validate: function() {
         return this.modelManager.dataModel.validate();
+    },
+
+    /**
+     * Find rows by conditions
+     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
+     * @returns {array} Row list
+     */
+    findRows: function(conditions) {
+        var rowList = this.modelManager.dataModel.getRowList();
+        return _.where(rowList, conditions);
     },
 
     /**

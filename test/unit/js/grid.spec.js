@@ -106,4 +106,22 @@ describe('grid', function() {
             expect(columnModel.setFooterContent).toHaveBeenCalledWith('c1', 'contents');
         });
     });
+
+    it('"findRows" should find rows by conditions.', function() {
+        var grid = createGrid(['c1', 'c2', 'c3']);
+        var rowList, foundRowList;
+
+        grid.setRowList([
+            {c1: 'a', c2: 'b', c3: 'c'},
+            {c1: 'b', c2: 'b', c3: 'c'},
+            {c1: 'a', c2: 'c', c3: 'b'}
+        ]);
+
+        rowList = grid.getRowList();
+        foundRowList = grid.findRows({c2: 'b', c3: 'c'});
+
+        expect(foundRowList.length).toBe(2);
+        expect(foundRowList[0]).toEqual(rowList[0]);
+        expect(foundRowList[1]).toEqual(rowList[1]);
+    });
 });

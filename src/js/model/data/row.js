@@ -63,12 +63,28 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
+     * Event handler for change event in _button (=checkbox)
+     * @param {boolean} checked - Checked state
+     * @private
+     */
+    _triggerCheckboxChangeEvent: function(checked) {
+        var eventName = checked ? 'check' : 'uncheck';
+        this.trigger(eventName, {
+            rowKey: this.get('rowKey')
+        });
+    },
+
+    /**
      * Event handler for 'change' event.
      * Executes callback functions, sync rowspan data, and validate data.
      * @private
      */
     _onChange: function() {
         var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+        if (_.has(this.changed, '_button')) {
+            this._triggerCheckboxChangeEvent(this.changed._button);
+        }
 
         if (this.isDuplicatedPublicChanged(publicChanged)) {
             return;
