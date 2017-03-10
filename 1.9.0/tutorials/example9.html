@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>9. Using Footer with column summary</title>
+    <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+</head>
+<body>
+<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<a href="https://github.com/nhnent/tui.grid/wiki/Footer-and-Summary" target="_blank">Tutorial</a>
+</div>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
+<script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
+<script type="text/javascript" src="../dist/grid.js"></script>
+<script type="text/javascript" class="code-js">
+var grid = new tui.Grid({
+    el: $('#grid'),
+    selectType: 'checkbox',
+    bodyHeight: 300,
+    fixedHeight: true,
+    columnOptions: {
+        minWidth: 100
+    },
+    columns: [
+        {
+            title: 'User ID',
+            name: 'c1',
+            align: 'center',
+            editOptions: {
+                type: 'text'
+            }
+        },
+        {
+            title: 'Score',
+            name: 'c2',
+            className: 'clickable',
+            editOptions: {
+                type: 'text'
+            }
+        },
+        {
+            title: 'Item Count',
+            name: 'c3',
+            editOptions: {
+                type: 'text'
+            }
+        }
+    ],
+    footer: {
+        height: 50,
+        columnContent: {
+            c2: {
+                template: function(valueMap) {
+                    return 'MAX: ' + valueMap.max + '<br>MIN: ' + valueMap.min;
+                }
+            },
+            c3: {
+                template: function(valueMap) {
+                    return 'TOTAL: ' + valueMap.sum + '<br>AVG: ' + valueMap.avg.toFixed(2);
+                }
+            }
+        }
+    }
+});
+
+var rowList = [];
+(function() {
+    _.times(120, function(number) {
+        rowList.push({
+            c1: 'User' + (number + 1),
+            c2: ((number + 5) % 8) * 100 + number,
+            c3: ((number + 3) % 7) * 60
+        });
+    });
+})();
+
+grid.setRowList(rowList);
+</script>
+</html>
