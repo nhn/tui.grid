@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Feb 24 2017 16:41:07 GMT+0900 (KST)"
- * version: 1.8.1
+ * bundle created at "Fri Mar 10 2017 14:45:43 GMT+0900 (KST)"
+ * version: 1.9.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -311,6 +311,7 @@
 	        var emitter = new PublicEventEmitter(this);
 
 	        emitter.listenToFocusModel(this.modelManager.focusModel);
+	        emitter.listenToDataModel(this.modelManager.dataModel);
 	        emitter.listenToContainerView(this.container);
 
 	        return emitter;
@@ -932,6 +933,16 @@
 	     */
 	    validate: function() {
 	        return this.modelManager.dataModel.validate();
+	    },
+
+	    /**
+	     * Find rows by conditions
+	     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
+	     * @returns {array} Row list
+	     */
+	    findRows: function(conditions) {
+	        var rowList = this.modelManager.dataModel.getRowList();
+	        return _.where(rowList, conditions);
 	    },
 
 	    /**
@@ -3735,12 +3746,45 @@
 	    },
 
 	    /**
+	     * Event handler for change event in _button (=checkbox)
+	     * @param {boolean} checked - Checked state
+	     * @private
+	     */
+	    _triggerCheckboxChangeEvent: function(checked) {
+	        var eventObj = {
+	            rowKey: this.get('rowKey')
+	        };
+
+	        if (checked) {
+	            /**
+	             * Occurs when a checkbox in row header is checked.
+	             * @event tui.Grid#check
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the checked row
+	             */
+	            this.trigger('check', eventObj);
+	        } else {
+	            /**
+	             * Occurs when a checkbox in row header is unchecked.
+	             * @event tui.Grid#uncheck
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the unchecked row
+	             */
+	            this.trigger('uncheck', eventObj);
+	        }
+	    },
+
+	    /**
 	     * Event handler for 'change' event.
 	     * Executes callback functions, sync rowspan data, and validate data.
 	     * @private
 	     */
 	    _onChange: function() {
 	        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+	        if (_.has(this.changed, '_button')) {
+	            this._triggerCheckboxChangeEvent(this.changed._button);
+	        }
 
 	        if (this.isDuplicatedPublicChanged(publicChanged)) {
 	            return;
@@ -7822,14 +7866,16 @@
 	        var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
 	        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - bufferSize), 0);
 	        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + bufferSize), dataModel.length - 1);
-	        var top = coordRowModel.getOffsetAt(startIndex);
-	        var bottom = coordRowModel.getOffsetAt(endIndex) +
-	            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
+	        var top, bottom;
 
 	        if (dataModel.isRowSpanEnable()) {
 	            startIndex += this._getStartRowSpanMinCount(startIndex);
 	            endIndex += this._getEndRowSpanMaxCount(endIndex);
 	        }
+
+	        top = coordRowModel.getOffsetAt(startIndex);
+	        bottom = coordRowModel.getOffsetAt(endIndex) +
+	            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
 
 	        this.set({
 	            top: top,
@@ -9169,6 +9215,7 @@
 	        if (eventData.isStopped()) {
 	            return;
 	        }
+
 	        if (this._isCellElement($target, true)) {
 	            cellInfo = this._getCellInfoFromElement($target.closest('td'));
 	            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
@@ -9314,14 +9361,11 @@
 	     * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
 	     */
 	    _getCellInfoFromElement: function($cell) {
-	        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
+	        var rowKey = $cell.attr(attrNameConst.ROW_KEY);
 	        var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
-	        if (isNaN(rowKey)) {
-	            rowKey = null;
-	        }
 	        return {
-	            rowKey: rowKey,
+	            rowKey: isNaN(rowKey) ? rowKey : Number(rowKey),
 	            columnName: columnName,
 	            rowData: this.dataModel.getRowData(rowKey)
 	        };
@@ -13688,6 +13732,17 @@
 	     */
 	    listenToFocusModel: function(focusModel) {
 	        this._listenForRename(focusModel, 'select', 'selectRow');
+	    },
+
+	    /**
+	     * Listen to RowList model
+	     * @param {module:model/rowList} dataModel - RowList model
+	     */
+	    listenToDataModel: function(dataModel) {
+	        this._listenForThrough(dataModel, [
+	            'check',
+	            'uncheck'
+	        ]);
 	    }
 	});
 
