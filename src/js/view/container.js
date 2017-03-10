@@ -114,6 +114,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         if (eventData.isStopped()) {
             return;
         }
+
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
             if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
@@ -259,14 +260,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
+        var rowKey = $cell.attr(attrNameConst.ROW_KEY);
         var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
-        if (isNaN(rowKey)) {
-            rowKey = null;
-        }
         return {
-            rowKey: rowKey,
+            rowKey: isNaN(rowKey) ? rowKey : Number(rowKey),
             columnName: columnName,
             rowData: this.dataModel.getRowData(rowKey)
         };

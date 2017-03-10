@@ -124,4 +124,46 @@ describe('grid', function() {
         expect(foundRowList[0]).toEqual(rowList[0]);
         expect(foundRowList[1]).toEqual(rowList[1]);
     });
+
+    describe('Using "keyColumnName" option', function() {
+        var grid, spy;
+
+        beforeEach(function() {
+            spy = jasmine.createSpy();
+            grid = createGrid(['c1', 'c2'], {
+                keyColumnName: 'c2'
+            });
+            grid.on('clickCell', spy);
+        });
+
+        it('and key column\'s value is number, event object has "rowKey" of number type.', function() {
+            grid.setRowList([{c1: 100, c2: 200}]);
+
+            grid.container._onClick({
+                target: grid.getElement(200, 'c2')
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+            grid.setRowList([{c1: '100', c2: '200'}]);
+
+            grid.container._onClick({
+                target: grid.getElement('200', 'c2')
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string, event object has "rowKey" of string type.', function() {
+            grid.setRowList([{c1: 'a', c2: 'b'}]);
+
+            grid.container._onClick({
+                target: grid.getElement('b', 'c2')
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe('b');
+        });
+    });
 });
