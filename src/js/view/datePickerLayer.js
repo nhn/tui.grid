@@ -39,10 +39,6 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _createDatePicker: function() {
         var datePicker = new tui.component.Datepicker(this.$el, {
-            date: new Date(),
-            input: {
-                format: DEFAULT_DATE_FORMAT
-            },
             calendar: {
                 showToday: false
             }

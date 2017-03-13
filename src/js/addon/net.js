@@ -712,7 +712,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
-        var message = responseData && responseData.message;
+        var responseMessage = responseData && responseData.message;
         var gridEvent = new GridEvent(null, {
             httpStatus: status,
             requestType: options.requestType,
@@ -764,8 +764,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             if (gridEvent.isStopped()) {
                 return;
             }
-            if (message) {
-                alert(message);
+            if (responseMessage) {
+                alert(responseMessage);
             }
         }
     },
