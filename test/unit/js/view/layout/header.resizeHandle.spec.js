@@ -16,6 +16,7 @@ describe('ResizeHandle', function() {
 
     function initialize() {
         columnModel = new ColumnModel({
+            rowHeaders: ['rowNum'],
             columns: [
                 {
                     title: 'c1',

@@ -49,7 +49,9 @@ describe('grid', function() {
         var grid;
 
         beforeEach(function() {
-            grid = createGrid(['c1'], {selectType: 'checkbox'});
+            grid = createGrid(['c1'], {
+                rowHeaders: ['checkbox']
+            });
             grid.setData([
                 {}, {}, {}, {}
             ]);

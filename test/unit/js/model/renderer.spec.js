@@ -134,8 +134,7 @@ describe('model.renderer', function() {
     beforeEach(function() {
         rowList = $.extend(true, [], originalRows);
         columnModel = new ColumnModelData({
-            hasNumberColumn: true,
-            selectType: 'checkbox',
+            rowHeaders: ['rowNum', 'checkbox'],
             frozenCount: 2,
             columns: columns
         });
@@ -243,7 +242,10 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
-            columnModel.set('frozenCount', 3);
+            columnModel.set({
+                frozenCount: 3,
+                rowHeaders: ['rowNum', 'checkbox']
+            });
             dataModel.set(rowList, {parse: true});
             renderModel.refresh();
 

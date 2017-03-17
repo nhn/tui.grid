@@ -5,21 +5,23 @@ var ColumnModelData = require('model/data/columnModel');
 var frameConst = require('common/constMap').frame;
 
 describe('data.columnModel', function() {
-    var columnModelInstance,
-        sampleColumns,
-        expectedColumnModel;
+    var columnModelInstance, expectedColumnModel;
+    var rowHeadersData, columnsData;
 
     beforeEach(function() {
         columnModelInstance = new ColumnModelData();
-        sampleColumns = [
+        rowHeadersData = [
             {
                 title: '_number',
                 name: '_number'
             },
             {
                 title: '_button',
-                name: '_button'
-            },
+                name: '_button',
+                type: 'checkbox'
+            }
+        ];
+        columnsData = [
             {
                 title: 'none',
                 name: 'none'
@@ -85,136 +87,10 @@ describe('data.columnModel', function() {
         ];
     });
 
-    describe('_extendColumns', function() {
-        var length;
-
-        beforeEach(function() {
-            length = sampleColumns.length;
-        });
-
-        it('columnName에 해당하는 컬럼 모델이 존재하지 않는다면, 해당 리스트에 push 한다.', function() {
-            var newLength;
-            expectedColumnModel = {
-                name: 'not_exist',
-                title: 'Not exist column.',
-                width: 60
-            };
-            columnModelInstance._extendColumns(expectedColumnModel, sampleColumns);
-
-            newLength = sampleColumns.length;
-            expect(newLength).toBe(length + 1);
-            expect(sampleColumns[newLength - 1]).toEqual(expectedColumnModel);
-        });
-
-        it('columnName에 해당하는 컬럼 모델이 존재한다면, 해당 컬럼 모델을 확장한다.', function() {
-            var sampleColumn = {
-                name: 'none',
-                title: 'exist column.',
-                width: 300
-            };
-            columnModelInstance._extendColumns(sampleColumn, sampleColumns);
-            expectedColumnModel = $.extend(sampleColumn, _.findWhere(sampleColumns, {name: 'none'}));
-
-            expect(sampleColumns.length).toBe(length);
-            expect(_.findWhere(sampleColumns, {name: 'none'})).toEqual(expectedColumnModel);
-        });
-    });
-
-    describe('_initializeNumberColumn()', function() {
-        it('hasNumberColumn: false라면 _number 컬럼의 hidden 프로퍼티를 true로 설정한다.', function() {
-            expectedColumnModel = {
-                name: '_number',
-                align: 'center',
-                fixedWidth: true,
-                title: 'No.',
-                width: 60,
-                hidden: true
-            };
-
-            columnModelInstance.set('hasNumberColumn', false, {silent: true});
-            columnModelInstance._initializeNumberColumn(sampleColumns);
-            expect(_.findWhere(sampleColumns, {name: '_number'})).toEqual(expectedColumnModel);
-        });
-
-        it('hasNumberColumn: true일 때 _number 컬럼이 정상적으로 생성된다.', function() {
-            expectedColumnModel = {
-                name: '_number',
-                align: 'center',
-                fixedWidth: true,
-                title: 'No.',
-                width: 60
-            };
-
-            columnModelInstance.set('hasNumberColumn', true, {silent: true});
-            columnModelInstance._initializeNumberColumn(sampleColumns);
-            expect(_.findWhere(sampleColumns, {name: '_number'})).toEqual(expectedColumnModel);
-        });
-    });
-
-    describe('_initializeButtonColumn()', function() {
-        it('selectType: checkbox 일 때 ', function() {
-            var selectType = 'checkbox';
-            expectedColumnModel = {
-                title: '<input type="checkbox"/>',
-                name: '_button',
-                align: 'center',
-                hidden: false,
-                fixedWidth: true,
-                editOptions: {
-                    type: 'mainButton'
-                },
-                width: 40
-            };
-            columnModelInstance.set('selectType', selectType, {silent: true});
-            columnModelInstance._initializeButtonColumn(sampleColumns);
-            expect(_.findWhere(sampleColumns, {name: '_button'})).toEqual(expectedColumnModel);
-        });
-
-        it('selectType: radio 일 때', function() {
-            var selectType = 'radio';
-            expectedColumnModel = {
-                title: '선택',
-                name: '_button',
-                align: 'center',
-                hidden: false,
-                fixedWidth: true,
-                editOptions: {
-                    type: 'mainButton'
-                },
-                width: 40
-            };
-            columnModelInstance.set('selectType', selectType, {silent: true});
-            columnModelInstance._initializeButtonColumn(sampleColumns);
-            expect(_.findWhere(sampleColumns, {name: '_button'})).toEqual(expectedColumnModel);
-        });
-
-        it('selectType 이 없을때 hidden: true 로 설정된다.', function() {
-            var sampleColumnModel = {
-                name: '_button',
-                editOptions: {
-                    type: '',
-                    list: [{
-                        value: 'selected'
-                    }]
-                },
-                width: 40,
-                fixedWidth: true,
-                hidden: true
-            };
-            expectedColumnModel = $.extend(
-                _.findWhere(sampleColumns, {name: '_button'}),
-                sampleColumnModel
-            );
-            columnModelInstance.set('selectType', '', {silent: true});
-            columnModelInstance._initializeButtonColumn(sampleColumns);
-            expect(_.findWhere(sampleColumns, {name: '_button'})).toEqual(expectedColumnModel);
-        });
-    });
-
     describe('getEditType()', function() {
         it('컬럼모델에 정의된 editType 속성값을 반환한다. 없다면 normal을 반환한다.', function() {
             columnModelInstance.set({
-                columns: sampleColumns
+                columns: columnsData
             });
             expect(columnModelInstance.getEditType('hidden')).toBe('normal');
             expect(columnModelInstance.getEditType('none')).toBe('normal');
@@ -229,15 +105,7 @@ describe('data.columnModel', function() {
 
     describe('isLside()', function() {
         it('hidden 이 아닌 컬럼 중 ColumnFixCount 기준으로 L side 여부를 판단한다.', function() {
-            sampleColumns = [
-                {
-                    name: '_button',
-                    hidden: true
-                },
-                {
-                    name: '_number',
-                    hidden: true
-                },
+            columnsData = [
                 {
                     name: 'column2'
                 },
@@ -254,7 +122,7 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 frozenCount: 2,
-                columns: sampleColumns
+                columns: columnsData
             });
 
             expect(columnModelInstance.isLside('_button')).toBe(false);
@@ -266,16 +134,8 @@ describe('data.columnModel', function() {
         });
     });
 
-    it('indexOfColumnName(), _number와 _button컬럼을 제외하고 계산한다.', function() {
-        sampleColumns = [
-            {
-                name: '_button',
-                hidden: true
-            },
-            {
-                name: '_number',
-                hidden: true
-            },
+    it('indexOfColumnName() should return index caclulated except hidden columns.', function() {
+        columnsData = [
             {
                 name: 'column2'
             },
@@ -291,7 +151,7 @@ describe('data.columnModel', function() {
             }
         ];
         columnModelInstance.set({
-            columns: sampleColumns
+            columns: columnsData
         });
 
         expect(columnModelInstance.indexOfColumnName('column2', true)).toBe(0);
@@ -304,7 +164,7 @@ describe('data.columnModel', function() {
 
     describe('at() 의 동작을 확인한다.', function() {
         beforeEach(function() {
-            sampleColumns = [
+            columnsData = [
                 {
                     name: 'column0',
                     hidden: true
@@ -328,23 +188,23 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columns: sampleColumns
+                columns: columnsData
             });
         });
 
         it('isVisible 이 기본값 (=false) 라면 실제 보이는 컬럼일 때 정상동작 하는지 확인한다.', function() {
-            expect(columnModelInstance.at(0)).toEqual(sampleColumns[0]);
-            expect(columnModelInstance.at(1)).toEqual(sampleColumns[1]);
-            expect(columnModelInstance.at(2)).toEqual(sampleColumns[2]);
-            expect(columnModelInstance.at(3)).toEqual(sampleColumns[3]);
-            expect(columnModelInstance.at(4)).toEqual(sampleColumns[4]);
-            expect(columnModelInstance.at(5)).toEqual(sampleColumns[5]);
+            expect(columnModelInstance.at(0)).toEqual(columnsData[0]);
+            expect(columnModelInstance.at(1)).toEqual(columnsData[1]);
+            expect(columnModelInstance.at(2)).toEqual(columnsData[2]);
+            expect(columnModelInstance.at(3)).toEqual(columnsData[3]);
+            expect(columnModelInstance.at(4)).toEqual(columnsData[4]);
+            expect(columnModelInstance.at(5)).toEqual(columnsData[5]);
         });
 
         it('isVisible: true 일 때 정상동작 하는지 확인한다.', function() {
-            expect(columnModelInstance.at(0, true)).toEqual(sampleColumns[2]);
-            expect(columnModelInstance.at(1, true)).toEqual(sampleColumns[3]);
-            expect(columnModelInstance.at(2, true)).toEqual(sampleColumns[4]);
+            expect(columnModelInstance.at(0, true)).toEqual(columnsData[2]);
+            expect(columnModelInstance.at(1, true)).toEqual(columnsData[3]);
+            expect(columnModelInstance.at(2, true)).toEqual(columnsData[4]);
 
             expect(columnModelInstance.at(3, true)).not.toBeDefined();
             expect(columnModelInstance.at(4, true)).not.toBeDefined();
@@ -357,15 +217,7 @@ describe('data.columnModel', function() {
     //@todo TC추가: whichSdie, withMeta - option args
     describe('getVisibleColumns()', function() {
         beforeEach(function() {
-            sampleColumns = [
-                {
-                    name: '_button',
-                    hidden: true
-                },
-                {
-                    name: '_number',
-                    hidden: true
-                },
+            columnsData = [
                 {
                     name: 'column0',
                     hidden: true
@@ -389,12 +241,12 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columns: sampleColumns,
+                columns: columnsData,
                 frozenCount: 4
             });
         });
 
-        it('_number, _button 을 제외하고 hidden: true 가 아닌 columns 를 반환한다.', function() {
+        it('should return visible columns except row headers.', function() {
             var visibleColumns;
 
             visibleColumns = columnModelInstance.getVisibleColumns();
@@ -432,15 +284,7 @@ describe('data.columnModel', function() {
 
     describe('getColumnModel()', function() {
         it('name 에 해당하는 columnModel 을 반환한다.', function() {
-            sampleColumns = [
-                {
-                    name: '_button',
-                    hidden: true
-                },
-                {
-                    name: '_number',
-                    hidden: true
-                },
+            columnsData = [
                 {
                     name: 'column0',
                     hidden: true
@@ -464,19 +308,19 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columns: sampleColumns,
+                rowHeaders: ['rowNum', 'checkbox'],
+                columns: columnsData,
                 frozenCount: 2
             });
-            //_button 과 _number 는 가공되었기 때문에, 인자로 넘긴 columnModel 과는 달라야 한다.
-            expect(columnModelInstance.getColumnModel('_button')).not.toEqual(sampleColumns[0]);
-            expect(columnModelInstance.getColumnModel('_number')).not.toEqual(sampleColumns[1]);
+            expect(columnModelInstance.getColumnModel('_button')).not.toBe(null);
+            expect(columnModelInstance.getColumnModel('_number')).not.toBe(null);
 
-            expect(columnModelInstance.getColumnModel('column0')).toEqual(sampleColumns[2]);
-            expect(columnModelInstance.getColumnModel('column1')).toEqual(sampleColumns[3]);
-            expect(columnModelInstance.getColumnModel('column2')).toEqual(sampleColumns[4]);
-            expect(columnModelInstance.getColumnModel('column3')).toEqual(sampleColumns[5]);
-            expect(columnModelInstance.getColumnModel('column4')).toEqual(sampleColumns[6]);
-            expect(columnModelInstance.getColumnModel('column5')).toEqual(sampleColumns[7]);
+            expect(columnModelInstance.getColumnModel('column0')).toEqual(columnsData[0]);
+            expect(columnModelInstance.getColumnModel('column1')).toEqual(columnsData[1]);
+            expect(columnModelInstance.getColumnModel('column2')).toEqual(columnsData[2]);
+            expect(columnModelInstance.getColumnModel('column3')).toEqual(columnsData[3]);
+            expect(columnModelInstance.getColumnModel('column4')).toEqual(columnsData[4]);
+            expect(columnModelInstance.getColumnModel('column5')).toEqual(columnsData[5]);
         });
     });
 
@@ -484,7 +328,7 @@ describe('data.columnModel', function() {
         it('각 columnModel 의 relations 를 모아 주체가 되는 name 기준으로 relationsMap 를 생성하여 반환한다.', function() {
             var expectResult, relationsMap;
 
-            sampleColumns = [
+            columnsData = [
                 {
                     name: 'column0',
                     hidden: true,
@@ -554,10 +398,10 @@ describe('data.columnModel', function() {
             ];
 
             expectResult = {
-                'column0': sampleColumns[0].relations,
-                'column2': sampleColumns[2].relations
+                'column0': columnsData[0].relations,
+                'column2': columnsData[2].relations
             };
-            relationsMap = columnModelInstance._getRelationListMap(sampleColumns);
+            relationsMap = columnModelInstance._getRelationListMap(columnsData);
             expect(relationsMap).toEqual(expectResult);
         });
     });
@@ -565,7 +409,7 @@ describe('data.columnModel', function() {
     describe('isTextType()', function() {
         it('textType 인지 확인한다.', function() {
             columnModelInstance.set({
-                columns: sampleColumns
+                columns: columnsData
             });
             expect(columnModelInstance.isTextType('none')).toBe(true);
             expect(columnModelInstance.isTextType('_number')).toBe(false);
@@ -581,7 +425,7 @@ describe('data.columnModel', function() {
 
     describe('_onChange, _setColumns(), setHidden()', function() {
         beforeEach(function() {
-            sampleColumns = [
+            columnsData = [
                 {
                     name: 'column0',
                     hidden: true,
@@ -651,14 +495,14 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 frozenCount: 2,
-                hasNumberColumn: false,
-                columns: sampleColumns
+                columns: columnsData,
+                rowHeaders: ['rowNum', 'checkbox']
             });
         });
 
         describe('columns가 정상적으로 가공되었는지 확인한다.', function() {
-            it('_button, _checkbox 가 생성 되었는지 확인한다.', function() {
-                var columns = columnModelInstance.get('metaColumns');
+            it('rowNum, checkbox 가 생성 되었는지 확인한다.', function() {
+                var columns = columnModelInstance.get('rowHeaders');
                 var length = columns.length;
 
                 expect(length).toBe(2);
@@ -667,9 +511,9 @@ describe('data.columnModel', function() {
 
         it('columnModelMap이 정상적으로 가공되었는지 확인한다.', function() {
             var dataColumns = columnModelInstance.get('dataColumns');
-            var metaColumns = columnModelInstance.get('metaColumns');
+            var rowHeaders = columnModelInstance.get('rowHeaders');
             var columnModelMap = columnModelInstance.get('columnModelMap');
-            var expectResult = _.indexBy(_.union(metaColumns, dataColumns), 'name');
+            var expectResult = _.indexBy(_.union(rowHeaders, dataColumns), 'name');
 
             expect(columnModelMap).toEqual(expectResult);
         });
@@ -677,8 +521,8 @@ describe('data.columnModel', function() {
         it('relationListMap가 저장 되었는지 확인한다.', function() {
             var relationsMap = columnModelInstance.get('relationsMap'),
                 expectResult = {
-                    'column0': sampleColumns[0].relations,
-                    'column2': sampleColumns[2].relations
+                    'column0': columnsData[0].relations,
+                    'column2': columnsData[2].relations
                 };
 
             expect(_.isEqual(relationsMap, expectResult)).toBe(true);
@@ -689,20 +533,9 @@ describe('data.columnModel', function() {
         });
 
         it('visibleColumns 저장 되었는지 확인한다.', function() {
-            var visibleColumns = columnModelInstance.get('visibleColumns'),
-                expectResult = [
-                    {
-                        name: 'column2',
-                        relations: sampleColumns[2].relations
-                    },
-                    {
-                        name: 'column3'
-                    },
-                    {
-                        name: 'column4'
-                    }
-                ];
-            expect(_.isEqual(visibleColumns, expectResult)).toBe(true);
+            var visibleColumns = columnModelInstance.get('visibleColumns');
+
+            expect(visibleColumns.length).toBe(5);
         });
 
         it('컬럼모델의 "hidden"속성이 동적으로 변경되는지 확인한다.', function() {
@@ -738,7 +571,7 @@ describe('data.columnModel', function() {
 
     describe('columFixCount', function() {
         beforeEach(function() {
-            sampleColumns = [
+            columnsData = [
                 {
                     name: 'column0',
                     relations: [
@@ -809,7 +642,7 @@ describe('data.columnModel', function() {
                 frozenCount: 3,
                 hasNumberColumn: true,
                 selectType: 'checkbox',
-                columns: sampleColumns
+                columns: columnsData
             });
         });
 
@@ -817,6 +650,65 @@ describe('data.columnModel', function() {
             var count = columnModelInstance.getVisibleFrozenCount();
 
             expect(count).toEqual(2);
+        });
+    });
+
+    describe('_getRowHeadersData', function() {
+        var defaultRowHeaders = ColumnModelData._defaultRowHeaders;
+        var options;
+
+        it('when the options is empty, the row header data have empty array.', function() {
+            rowHeadersData = columnModelInstance._getRowHeadersData([]);
+            expect(rowHeadersData.length).toBe(0);
+        });
+
+        it('when options have string value, the row header data is object of matching type.', function() {
+            rowHeadersData = columnModelInstance._getRowHeadersData(['rowNum']);
+            expect(rowHeadersData[0]).toEqual(defaultRowHeaders.rowNum);
+
+            rowHeadersData = columnModelInstance._getRowHeadersData(['checkbox']);
+            expect(rowHeadersData[0]).toEqual(defaultRowHeaders.checkbox);
+
+            rowHeadersData = columnModelInstance._getRowHeadersData(['radio']);
+            expect(rowHeadersData[0]).toEqual(defaultRowHeaders.radio);
+        });
+
+        it('when the options have object value, ' +
+            'the row header data is overwrite as object of matching type.', function() {
+            options = [
+                {
+                    type: 'rowNum',
+                    title: 'Row Number',
+                    align: 'left',
+                    width: 10
+                },
+                {
+                    type: 'radio',
+                    title: 'test'
+                }
+            ];
+
+            rowHeadersData = columnModelInstance._getRowHeadersData(options);
+
+            expect(rowHeadersData[0].title).toEqual(options[0].title);
+            expect(rowHeadersData[0].align).toEqual(options[0].align);
+            expect(rowHeadersData[0].width).toEqual(options[0].width);
+
+            expect(rowHeadersData[1].title).toEqual(options[1].title);
+        });
+
+        it('when the options have both "checkbox" and "radio", ' +
+            'the row headers data only has the latest input.', function() {
+            options = ['checkbox', 'radio'];
+            rowHeadersData = columnModelInstance._getRowHeadersData(options);
+
+            expect(rowHeadersData[0].type).toBe('checkbox');
+
+            options = ['radio', 'rowNum', 'checkbox'];
+            rowHeadersData = columnModelInstance._getRowHeadersData(options);
+
+            expect(rowHeadersData[0].type).toBe('radio');
+            expect(rowHeadersData[1].type).toBe('rowNum');
         });
     });
 });

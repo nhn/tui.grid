@@ -40,7 +40,7 @@ describe('model.rowList', function() {
 
     beforeEach(function() {
         columnModel = new ColumnModelData({
-            selectType: 'checkbox',
+            rowHeaders: ['rowNum', 'checkbox'],
             columns: columns
         });
         dataModel = new RowListData([], {
@@ -55,10 +55,7 @@ describe('model.rowList', function() {
     /* eslint-disable max-nested-callbacks */
     describe('_formatData()', function() {
         beforeEach(function() {
-            columnModel.set({
-                hasNumberColumn: true,
-                selectType: 'checkbox'
-            });
+            columnModel.set('rowHeaders', ['rowNum', 'checkbox']);
         });
 
         describe('rowspan test: ', function() {

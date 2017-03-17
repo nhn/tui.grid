@@ -81,13 +81,12 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      */
     _createColumnModel: function(options) {
         return new ColumnModelData({
-            hasNumberColumn: options.autoNumbering,
             keyColumnName: options.keyColumnName,
             frozenCount: options.columnOptions.frozenCount,
-            selectType: options.selectType,
             complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,
-            columns: options.columns
+            columns: options.columns,
+            rowHeaders: options.rowHeaders
         });
     },
 

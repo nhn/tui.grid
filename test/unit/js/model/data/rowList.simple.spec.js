@@ -24,7 +24,10 @@ describe('Data.RowList - simple', function() {
 
     beforeEach(function() {
         columnModel = new ColumnModelData();
-        columnModel.set('columns', columns);
+        columnModel.set({
+            rowHeaders: ['checkbox'],
+            columns: columns
+        });
         rowList = new RowListData([], {
             columnModel: columnModel
         });

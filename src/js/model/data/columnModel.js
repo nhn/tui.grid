@@ -7,8 +7,43 @@
 var _ = require('underscore');
 
 var Model = require('../../base/model');
-var util = require('../../common/util');
 var frameConst = require('../../common/constMap').frame;
+
+var defaultRowHeaders = {
+    rowNum: {
+        type: 'rowNum',
+        title: 'No.',
+        name: '_number',
+        align: 'center',
+        fixedWidth: true,
+        width: 60,
+        hidden: false
+    },
+    checkbox: {
+        type: 'checkbox',
+        title: '<input type="checkbox" />',
+        name: '_button',
+        align: 'center',
+        fixedWidth: true,
+        width: 40,
+        hidden: false,
+        editOptions: {
+            type: 'mainButton'
+        }
+    },
+    radio: {
+        type: 'radio',
+        title: 'select',
+        name: '_button',
+        align: 'center',
+        fixedWidth: true,
+        width: 40,
+        hidden: false,
+        editOptions: {
+            type: 'mainButton'
+        }
+    }
+};
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
@@ -24,119 +59,22 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             text: true,
             password: true
         };
-        this._setColumns(this.get('columns'));
+        this._setColumns(this.get('rowHeaders'), this.get('columns'));
         this.on('change', this._onChange, this);
     },
 
     defaults: {
         keyColumnName: null,
         frozenCount: 0,
-        metaColumns: [],
+        rowHeaders: [],
         dataColumns: [],
         visibleColumns: [], // 이 리스트는 메타컬럼/데이터컬럼 구분하지 않고 저장
-        hasNumberColumn: true,
         selectType: '',
         columnModelMap: {},
         relationsMap: {},
         complexHeaderColumns: [],
         copyOptions: {
             useFormattedValue: false
-        }
-    },
-
-    /**
-     * 메타컬럼모델들을 초기화한다.
-     * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-     * @returns {Array} dest - 초기화가 완료된 메타컬럼 모델 리스트
-     * @private
-     */
-    _initializeMetaColumns: function(source) {
-        var dest = [];
-
-        this._initializeButtonColumn(dest);
-        this._initializeNumberColumn(dest);
-        this._overwriteColumns(dest, source);
-        return dest;
-    },
-
-    /**
-     * overwrite column model list
-     * @param {Array} dest - destination model list
-     * @param {Array} source - source model list
-     * @private
-     */
-    _overwriteColumns: function(dest, source) {
-        _.each(source, function(columnModel) {
-            this._extendColumns(columnModel, dest);
-        }, this);
-    },
-
-    /**
-     * 인자로 넘어온 metaColumns 에 설정값에 맞게 number column 을 추가한다.
-     * @param {Array} metaColumns - Meta column model list
-     * @private
-     */
-    _initializeNumberColumn: function(metaColumns) {
-        var hasNumberColumn = this.get('hasNumberColumn');
-        var numberColumn = {
-            name: '_number',
-            align: 'center',
-            title: 'No.',
-            fixedWidth: true,
-            width: 60
-        };
-
-        if (!hasNumberColumn) {
-            numberColumn.hidden = true;
-        }
-
-        this._extendColumns(numberColumn, metaColumns);
-    },
-
-    /**
-     * 인자로 넘어온 metaColumns 에 설정값에 맞게 button column 을 추가한다.
-     * @param {Array} metaColumns - Meta column model listt
-     * @private
-     */
-    _initializeButtonColumn: function(metaColumns) {
-        var selectType = this.get('selectType');
-        var buttonColumn = {
-            name: '_button',
-            hidden: false,
-            align: 'center',
-            width: 40,
-            fixedWidth: true,
-            editOptions: {
-                type: 'mainButton'
-            }
-        };
-
-        if (selectType === 'checkbox') {
-            buttonColumn.title = '<input type="checkbox"/>';
-        } else if (selectType === 'radio') {
-            buttonColumn.title = '선택';
-        } else {
-            buttonColumn.hidden = true;
-        }
-
-        this._extendColumns(buttonColumn, metaColumns);
-    },
-
-    /**
-     * column을 추가(push)한다.
-     * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
-     * @param {object} columnObj 추가할 컬럼모델
-     * @param {Array} columns 컬럼모델 배열
-     * @private
-     */
-    _extendColumns: function(columnObj, columns) {
-        var columnName = columnObj.name;
-        var index = _.findIndex(columns, {name: columnName});
-
-        if (index === -1) {
-            columns.push(columnObj);
-        } else {
-            columns[index] = $.extend(columns[index], columnObj);
         }
     },
 
@@ -209,7 +147,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {number} count
      */
     getVisibleMetaColumnCount: function() {
-        var models = this.get('metaColumns');
+        var models = this.get('rowHeaders');
         var totalLength = models.length;
         var hiddenLength = _.where(models, {hidden: true}).length;
 
@@ -277,16 +215,16 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 받은 컬럼 모델에서 !hidden을 만족하는 리스트를 추려서 반환한다.
-     * @param {Array} metaColumns 메타 컬럼 모델 리스트
+     * @param {Array} rowHeaders 메타 컬럼 모델 리스트
      * @param {Array} dataColumns 데이터 컬럼 모델 리스트
      * @returns {Array} hidden 이 설정되지 않은 전체 컬럼 모델 리스트
      * @private
      */
-    _makeVisibleColumns: function(metaColumns, dataColumns) {
-        metaColumns = metaColumns || this.get('metaColumns');
+    _makeVisibleColumns: function(rowHeaders, dataColumns) {
+        rowHeaders = rowHeaders || this.get('rowHeaders');
         dataColumns = dataColumns || this.get('dataColumns');
 
-        return _.filter(metaColumns.concat(dataColumns), function(item) {
+        return _.filter(rowHeaders.concat(dataColumns), function(item) {
             return !item.hidden;
         });
     },
@@ -326,42 +264,83 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
-     * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
-     * 메타컬럼과 데이터컬럼을 분리하여 저장한다.
-     * @param {Array} columns   컬럼모델 배열
-     * @param {number} [frozenCount]   열고정 카운트
+     * Set column model by data
+     * @param {array} rowHeaders - Data of row headers
+     * @param {array} columns - Data of columns
+     * @param {number} [frozenCount] Count of frozen column
      * @private
      */
-    _setColumns: function(columns, frozenCount) {
-        var division, relationsMap, visibleColumns, metaColumns, dataColumns;
+    _setColumns: function(rowHeaders, columns, frozenCount) {
+        var relationsMap, visibleColumns, dataColumns;
 
-        columns = $.extend(true, [], columns);
         if (tui.util.isUndefined(frozenCount)) {
             frozenCount = this.get('frozenCount');
         }
 
-        division = _.partition(columns, function(model) {
-            return util.isMetaColumn(model.name);
-        }, this);
-        metaColumns = this._initializeMetaColumns(division[0]);
-        dataColumns = division[1];
+        rowHeaders = this._getRowHeadersData(rowHeaders);
+        dataColumns = $.extend(true, [], columns);
 
         relationsMap = this._getRelationListMap(dataColumns);
-        visibleColumns = this._makeVisibleColumns(metaColumns, dataColumns);
+        visibleColumns = this._makeVisibleColumns(rowHeaders, dataColumns);
+
         this.set({
-            metaColumns: metaColumns,
+            selectType: this._getSelectType(rowHeaders),
+            rowHeaders: rowHeaders,
             dataColumns: dataColumns,
-            columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'name'),
+            columnModelMap: _.indexBy(rowHeaders.concat(dataColumns), 'name'),
             relationsMap: relationsMap,
             frozenCount: Math.max(0, frozenCount),
             visibleColumns: visibleColumns
         }, {
             silent: true
         });
+
         this.unset('columns', {
             silent: true
         });
         this.trigger('columnModelChange');
+    },
+
+    /**
+     * Get data of row headers
+     * @param {object} options - Options to set each row header
+     * @returns {array} Row headers data
+     * @private
+     */
+    _getRowHeadersData: function(options) {
+        var rowHeadersData = [];
+        var type, isObject;
+        var defaultData;
+
+        _.each(options, function(data) {
+            isObject = _.isObject(data);
+            type = isObject ? data.type : data;
+            defaultData = defaultRowHeaders[type];
+
+            if (!isObject) {
+                data = defaultData;
+            } else {
+                data = $.extend({}, defaultData, data);
+            }
+
+            // "checkbox" and "radio" should not exist in duplicate
+            if (_.findIndex(rowHeadersData, {name: data.name}) === -1) {
+                rowHeadersData.push(data);
+            }
+        }, this);
+
+        return rowHeadersData;
+    },
+
+    /**
+     * Get select type in row headers
+     * @param {array} rowHeaders - Row headers data
+     * @returns {string} Select type
+     * @private
+     */
+    _getSelectType: function(rowHeaders) {
+        var rowHeader = _.findWhere(rowHeaders, {name: '_button'});
+        return rowHeader ? rowHeader.type : '';
     },
 
     /**
@@ -372,12 +351,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     _onChange: function(model) {
         var changed = model.changed;
         var frozenCount = changed.frozenCount;
-        var columns = changed.columns;
+        var columns = changed.columns || this.get('dataColumns');
+        var rowHeaders = changed.rowHeaders || this.get('rowHeaders');
 
-        if (!columns) {
-            columns = this.get('dataColumns');
-        }
-        this._setColumns(columns, frozenCount);
+        this._setColumns(rowHeaders, columns, frozenCount);
     },
 
     /**
@@ -401,7 +378,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         }
 
         visibleColumns = this._makeVisibleColumns(
-            this.get('metaColumns'),
+            this.get('rowHeaders'),
             this.get('dataColumns')
         );
         this.set('visibleColumns', visibleColumns, {
@@ -461,5 +438,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         this.trigger('setFooterContent', columnName, contents);
     }
 });
+
+ColumnModel._defaultRowHeaders = defaultRowHeaders;
 
 module.exports = ColumnModel;

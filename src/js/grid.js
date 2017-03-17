@@ -35,11 +35,6 @@ tui = window.tui = tui || {};
  * Grid public API
  * @class
  * @param {PropertiesHash} options
- *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
- *          The string value 'checkbox' or 'radio' can be used.
- *          If not specified, the button column will not be shown.
- *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
- *          to each rows when rendering time.
  *      @param {Object} [options.header] - Options object for header
  *      @param {number} [options.header.height=35] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
@@ -53,7 +48,7 @@ tui = window.tui = tui || {};
  *          area expands to total height of rows.
  *      @param {Object} [options.columnOptions] - Option object for all columns
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
- *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
+ *      @param {boolean} [options.columnOptions.resizable=true] - If set to true, resize-handles of each columns
  *          will be shown.
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
@@ -77,6 +72,11 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
+ *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
+ *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
+ *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
+ *          @param {Object} [options.rowHeaders.title] - The title of the row header on the grid header area.
+ *          @param {Object} [options.rowHeaders.width] - The width of the row header.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used

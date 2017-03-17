@@ -60,6 +60,7 @@ describe('model.dimension', function() {
             });
 
             dimension.columnModel.set({
+                rowHeaders: ['rowNum'],
                 columns: [
                     {name: 'c1'},
                     {name: 'c2'},

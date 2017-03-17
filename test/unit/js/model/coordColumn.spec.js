@@ -168,7 +168,7 @@ describe('CoordColumn', function() {
 
         describe('totalWidth:500, minWidth:50', function() {
             it('100, 100, 100, 0, 0', function() {
-                var columnAttrs = { 
+                var columnAttrs = {
                     columns: [
                         {name: 'c1', width: 100},
                         {name: 'c2', width: 100},
@@ -344,6 +344,7 @@ describe('CoordColumn', function() {
 
         beforeEach(function() {
             coordColumn = createCoordColumn({
+                rowHeaders: ['rowNum'],
                 columns: [
                     {name: 'c1'},
                     {name: 'c2'},

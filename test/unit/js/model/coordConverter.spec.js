@@ -15,8 +15,10 @@ var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 
 function create(data) {
     var columnModel = new ColumnModel({
+        rowHeaders: [
+            {type: 'rowNum', width: 10}
+        ],
         columns: [
-            {name: '_number', width: 10},
             {name: 'c1', width: 30},
             {name: 'c2', width: 30},
             {name: 'c3', width: 30}
@@ -132,9 +134,7 @@ describe('CoordConverter', function() {
                 bodyHeight: 50,
                 width: 50
             });
-            converter.columnModel.set({
-                hasNumberColumn: false
-            });
+            converter.columnModel.set('rowHeaders', []);
 
             expect(converter.getScrollPosition(0, 'c1')).toEqual({});
             expect(converter.getScrollPosition(1, 'c1')).toEqual({

@@ -112,13 +112,13 @@ describe('Header', function() {
         });
 
         it('header에 checkbox가 랜더링 되었을 때, checkbox를 잘 가져오는지 확인한다.', function() {
-            header.columnModel.set('selectType', 'checkbox');
+            header.columnModel.set('rowHeaders', ['checkbox']);
             header.render();
             expect(header._getHeaderMainCheckbox().length).toBe(1);
         });
 
         it('header에 checkbox 가 랜더링 되지 않았을 때', function() {
-            header.columnModel.set('selectType', 'radio');
+            header.columnModel.set('rowHeaders', ['radio']);
             header.render();
             expect(header._getHeaderMainCheckbox().length).toBe(0);
         });
@@ -283,7 +283,9 @@ describe('Header', function() {
 
         beforeEach(function() {
             header = create(frameConst.L);
-            header.columnModel.set('selectType', 'checkbox');
+            header.columnModel.set({
+                rowHeaders: ['checkbox']
+            });
             header.render();
             $checkbox = header._getHeaderMainCheckbox();
         });
@@ -326,7 +328,7 @@ describe('Header', function() {
 
         beforeEach(function() {
             header = create(frameConst.L);
-            header.columnModel.set('selectType', 'checkbox');
+            header.columnModel.set('rowHeaders', ['checkbox']);
             header.render();
 
             $input = header._getHeaderMainCheckbox();
