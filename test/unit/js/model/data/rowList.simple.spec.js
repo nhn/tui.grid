@@ -419,4 +419,32 @@ describe('Data.RowList - simple', function() {
             });
         });
     });
+
+    describe('When checkbox is changed in row,', function() {
+        var rowKey = 0;
+        var row, mock;
+
+        beforeEach(function() {
+            row = rowList.get(rowKey);
+        });
+
+        it('"check" event is fired with rowKey.', function() {
+            mock = jasmine.createSpy('check event handler');
+
+            row.on('check', mock);
+            rowList.setValue(rowKey, '_button', true);
+
+            expect(mock).toHaveBeenCalledWith({rowKey: rowKey});
+        });
+
+        it('"uncheck" event is fired with rowKey.', function() {
+            mock = jasmine.createSpy('uncheck event handler');
+
+            row.on('uncheck', mock);
+            rowList.setValue(rowKey, '_button', true);
+            rowList.setValue(rowKey, '_button', false);
+
+            expect(mock).toHaveBeenCalledWith({rowKey: rowKey});
+        });
+    });
 });

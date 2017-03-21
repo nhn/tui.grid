@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Feb 24 2017 17:15:06 GMT+0900 (KST)"
- * version: 1.8.1
+ * bundle created at "Tue Mar 21 2017 12:07:27 GMT+0900 (KST)"
+ * version: 1.9.0
  */
 .tui-grid-container {
   width: 100%;
@@ -185,6 +185,11 @@
 }
 .tui-grid-layer-datepicker {
   position: absolute;
+  z-index: 100;
+  box-sizing: border-box;
+}
+.tui-grid-layer-datepicker * {
+  box-sizing: border-box;
 }
 .tui-grid-table {
   border-width: 1px;

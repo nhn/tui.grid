@@ -83,4 +83,18 @@ describe('publicEventEmitter', function() {
             testTrigger(target, publicObject, 'focusChange');
         });
     });
+
+    describe('listenToDataModel', function() {
+        beforeEach(function() {
+            emitter.listenToDataModel(target);
+        });
+
+        it('should listen check event', function() {
+            testTrigger(target, publicObject, 'check');
+        });
+
+        it('should listen uncheck event', function() {
+            testTrigger(target, publicObject, 'uncheck');
+        });
+    });
 });

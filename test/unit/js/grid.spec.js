@@ -11,7 +11,7 @@ describe('grid', function() {
             });
         });
         options = _.extend({
-            el: $('<div>'),
+            el: jasmine.getFixtures().set('<div></div>'),
             columns: columns
         }, options);
 
@@ -108,6 +108,75 @@ describe('grid', function() {
             grid.setFooterColumnContent('c1', 'contents');
 
             expect(columnModel.setFooterContent).toHaveBeenCalledWith('c1', 'contents');
+        });
+    });
+
+    it('"findRows" should find rows by conditions.', function() {
+        var grid = createGrid(['c1', 'c2', 'c3']);
+        var rowList, foundRowList;
+
+        grid.setData([
+            {c1: 'a', c2: 'b', c3: 'c'},
+            {c1: 'b', c2: 'b', c3: 'c'},
+            {c1: 'a', c2: 'c', c3: 'b'}
+        ]);
+
+        rowList = grid.getRows();
+        foundRowList = grid.findRows({c2: 'b', c3: 'c'});
+
+        expect(foundRowList.length).toBe(2);
+        expect(foundRowList[0]).toEqual(rowList[0]);
+        expect(foundRowList[1]).toEqual(rowList[1]);
+    });
+
+    describe('Using "keyColumnName" option', function() {
+        var grid, spy, point;
+
+        beforeEach(function() {
+            spy = jasmine.createSpy();
+            grid = createGrid(['c1', 'c2'], {
+                keyColumnName: 'c2'
+            });
+            grid.on('click', spy);
+        });
+
+        it('and key column\'s value is number, event object has "rowKey" of number type.', function() {
+            grid.setData([{c1: 100, c2: 200}]);
+
+            point = grid.getElement(200, 'c2').offset();
+
+            grid.container._onClick({
+                pageX: point.left,
+                pageY: point.top
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+            grid.setData([{c1: '100', c2: '200'}]);
+
+            point = grid.getElement('200', 'c2').offset();
+
+            grid.container._onClick({
+                pageX: point.left,
+                pageY: point.top
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
+        });
+
+        it('and key column\'s value is string, event object has "rowKey" of string type.', function() {
+            grid.setData([{c1: 'a', c2: 'b'}]);
+
+            point = grid.getElement('b', 'c2').offset();
+
+            grid.container._onClick({
+                pageX: point.left,
+                pageY: point.top
+            });
+
+            expect(spy.calls.argsFor(0)[0].rowKey).toBe('b');
         });
     });
 });

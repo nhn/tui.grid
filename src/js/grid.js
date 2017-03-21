@@ -271,6 +271,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
         emitter.listenToFocusModel(this.modelManager.focusModel);
         emitter.listenToDomEventBus(this.domEventBus);
+        emitter.listenToDataModel(this.modelManager.dataModel);
 
         return emitter;
     },
@@ -878,6 +879,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     validate: function() {
         return this.modelManager.dataModel.validate();
+    },
+
+    /**
+     * Find rows by conditions
+     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
+     * @returns {array} Row list
+     */
+    findRows: function(conditions) {
+        var rowList = this.modelManager.dataModel.getRows();
+        return _.where(rowList, conditions);
     },
 
     /**

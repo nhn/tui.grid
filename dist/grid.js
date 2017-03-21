@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Feb 24 2017 17:15:06 GMT+0900 (KST)"
- * version: 1.8.1
+ * bundle created at "Tue Mar 21 2017 12:07:27 GMT+0900 (KST)"
+ * version: 1.9.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -59,20 +59,21 @@
 	var View = __webpack_require__(2);
 	var ModelManager = __webpack_require__(4);
 	var ViewFactory = __webpack_require__(27);
-	var DomEventBus = __webpack_require__(49);
-	var DomState = __webpack_require__(50);
-	var PublicEventEmitter = __webpack_require__(51);
-	var PainterManager = __webpack_require__(52);
-	var PainterController = __webpack_require__(64);
-	var NetAddOn = __webpack_require__(65);
-	var ComponentHolder = __webpack_require__(68);
-	var util = __webpack_require__(7);
-	var themeManager = __webpack_require__(69);
-	var themeNameConst = __webpack_require__(8).themeName;
+	var DomEventBus = __webpack_require__(50);
+	var DomState = __webpack_require__(51);
+	var PublicEventEmitter = __webpack_require__(52);
+	var PainterManager = __webpack_require__(53);
+	var PainterController = __webpack_require__(65);
+	var NetAddOn = __webpack_require__(66);
+	var ComponentHolder = __webpack_require__(69);
+	var util = __webpack_require__(12);
+	var message = __webpack_require__(34);
+	var themeManager = __webpack_require__(70);
+	var themeNameConst = __webpack_require__(7).themeName;
 
 	var instanceMap = {};
 
-	__webpack_require__(75);
+	__webpack_require__(76);
 
 	 /**
 	  * Toast UI Namespace
@@ -84,14 +85,6 @@
 	 * Grid public API
 	 * @class
 	 * @param {PropertiesHash} options
-	 *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
-	 *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
-	 *          can be used for setting this value dynamically.
-	 *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
-	 *          The string value 'checkbox' or 'radio' can be used.
-	 *          If not specified, the button column will not be shown.
-	 *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
-	 *          to each rows when rendering time.
 	 *      @param {Object} [options.header] - Options object for header
 	 *      @param {number} [options.header.height=35] - The height of the header area.
 	 *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
@@ -105,8 +98,11 @@
 	 *          area expands to total height of rows.
 	 *      @param {Object} [options.columnOptions] - Option object for all columns
 	 *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
-	 *      @param {boolean} [options.columnOptions.resizable=50] - If set to true, resize-handles of each columns
+	 *      @param {boolean} [options.columnOptions.resizable=true] - If set to true, resize-handles of each columns
 	 *          will be shown.
+	 *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
+	 *          The columns indexed from 0 to this value will always be shown on the left side.
+	 *          {@link tui.Grid#setFrozenColumnCount} can be used for setting this value dynamically.
 	 *      @param {Object} [options.copyOptions] - Option object for clipboard copying
 	 *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
 	 *          as a string to be copied to the clipboard
@@ -126,6 +122,11 @@
 	 *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
 	 *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
 	 *          If set to null or false, pagination will not be used.
+	 *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
+	 *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
+	 *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
+	 *          @param {Object} [options.rowHeaders.title] - The title of the row header on the grid header area.
+	 *          @param {Object} [options.rowHeaders.width] - The width of the row header.
 	 *      @param {array} options.columns - The configuration of the grid columns.
 	 *          @param {string} options.columns.name - The name of the column.
 	 *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
@@ -157,6 +158,10 @@
 	 *               ignored when setting up the list of modified rows.
 	 *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
 	 *              the right side of the column header, which executes the sort action when clicked.
+	 *          @param {function} [options.columns.onBeforeChange] - The function that will be
+	 *              called before changing the value of the cell. If returns false, the changing will be canceled.
+	 *          @param {function} [options.columns.onAfterChange] - The function that will be
+	 *              called after changing the value of the cell.
 	 *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
 	 *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
 	 *                  the type of the editing UI.
@@ -168,10 +173,6 @@
 	 *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
 	 *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
 	 *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
-	 *              @param {function} [options.columns.editOptions.onBeforeChange] - The function that will be
-	 *                  called before changing the value of the cell. If returns false, the changing will be canceled.
-	 *              @param {function} [options.columns.editOptions.onAfterChange] - The function that will be
-	 *                  called after changing the value of the cell.
 	 *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
 	 *                  called when a 'focus' event occurred on an input element
 	 *              @param {function} [options.columns.editOptions.onBlur] - The function that will be
@@ -235,6 +236,7 @@
 	        }
 
 	        this.addOn = {};
+
 	        instanceMap[this.id] = this;
 	    },
 
@@ -319,6 +321,7 @@
 
 	        emitter.listenToFocusModel(this.modelManager.focusModel);
 	        emitter.listenToDomEventBus(this.domEventBus);
+	        emitter.listenToDataModel(this.modelManager.dataModel);
 
 	        return emitter;
 	    },
@@ -403,11 +406,20 @@
 	    },
 
 	    /**
-	     * Returns the rowKey of the currently selected row.
-	     * @returns {(number|string)} - The rowKey of the row
+	     * Returns data of currently focused cell
+	     * @returns {number} rowKey - The unique key of the row
+	     * @returns {string} columnName - The name of the column
+	     * @returns {string} value - The value of the cell
 	     */
-	    getSelectedRowKey: function() {
-	        return this.modelManager.focusModel.which().rowKey;
+	    getFocusedCell: function() {
+	        var addr = this.modelManager.focusModel.which();
+	        var value = this.getValue(addr.rowKey, addr.columnName);
+
+	        return {
+	            rowKey: addr.rowKey,
+	            columnName: addr.columnName,
+	            value: value
+	        };
 	    },
 
 	    /**
@@ -442,19 +454,19 @@
 
 	    /**
 	     * Replace all rows with the specified list. This will not change the original data.
-	     * @param {Array} rowList - A list of new rows
+	     * @param {Array} data - A list of new rows
 	     */
-	    replaceRowList: function(rowList) {
-	        this.modelManager.dataModel.replaceRowList(rowList);
+	    resetData: function(data) {
+	        this.modelManager.dataModel.resetData(data);
 	    },
 
 	    /**
 	     * Replace all rows with the specified list. This will change the original data.
-	     * @param {Array} rowList - A list of new rows
+	     * @param {Array} data - A list of new rows
 	     * @param {function} callback - The function that will be called when done.
 	     */
-	    setRowList: function(rowList, callback) {
-	        this.modelManager.dataModel.setRowList(rowList, true, callback);
+	    setData: function(data, callback) {
+	        this.modelManager.dataModel.setData(data, true, callback);
 	    },
 
 	    /**
@@ -509,7 +521,7 @@
 	    /**
 	     * Makes view ready to get keyboard input.
 	     */
-	    readyForKeyControl: function() {
+	    activateFocus: function() {
 	        this.modelManager.focusModel.focusClipboard();
 	    },
 
@@ -554,7 +566,7 @@
 	     * Removes all rows.
 	     */
 	    clear: function() {
-	        this.modelManager.dataModel.setRowList([]);
+	        this.modelManager.dataModel.setData([]);
 	    },
 
 	    /**
@@ -577,15 +589,18 @@
 
 	    /**
 	     * Removes all checked rows.
-	     * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
+	     * @param {boolean} showConfirm - If set to true, confirm message will be shown before remove.
 	     * @returns {boolean} - True if there's at least one row removed.
 	     */
-	    removeCheckedRows: function(isConfirm) {
-	        var rowKeyList = this.getCheckedRowKeyList(),
-	            message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
+	    removeCheckedRows: function(showConfirm) {
+	        var rowKeys = this.getCheckedRowKeys();
+	        var confirmMessage = message.get('requestConfirm', {
+	            count: rowKeys.length,
+	            actionName: 'deleteAction'
+	        });
 
-	        if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-	            _.each(rowKeyList, function(rowKey) {
+	        if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
+	            _.each(rowKeys, function(rowKey) {
 	                this.modelManager.dataModel.removeRow(rowKey);
 	            }, this);
 	            return true;
@@ -614,8 +629,8 @@
 	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
 	     */
-	    getCheckedRowKeyList: function(isJsonString) {
-	        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+	    getCheckedRowKeys: function(isJsonString) {
+	        var checkedRowList = this.modelManager.dataModel.getRows(true);
 	        var checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
 
 	        return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
@@ -623,13 +638,13 @@
 
 	    /**
 	     * Returns a list of the checked rows.
-	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+	     * @param {Boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
 	     */
-	    getCheckedRowList: function(isJsonString) {
-	        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+	    getCheckedRows: function(useJson) {
+	        var checkedRowList = this.modelManager.dataModel.getRows(true);
 
-	        return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
+	        return useJson ? JSON.stringify(checkedRowList) : checkedRowList;
 	    },
 
 	    /**
@@ -644,16 +659,16 @@
 	     * Returns the object that contains the lists of changed data compared to the original data.
 	     * The object has properties 'createList', 'updateList', 'deleteList'.
 	     * @param {Object} [options] Options
-	     *      @param {boolean} [options.isOnlyChecked=false] - If set to true, only checked rows will be considered.
-	     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains
+	     *      @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+	     *      @param {boolean} [options.withRawData=false] - If set to true, the data will contains
 	     *          the row data for internal use.
-	     *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed
+	     *      @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
 	     *          rows will be returned.
-	     *      @param {Array} [options.filteringColumns] - A list of column name to be excluded.
+	     *      @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
 	     * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
 	     */
-	    getModifiedRowList: function(options) {
-	        return this.modelManager.dataModel.getModifiedRowList(options);
+	    getModifiedRows: function(options) {
+	        return this.modelManager.dataModel.getModifiedRows(options);
 	    },
 
 	    /**
@@ -698,18 +713,18 @@
 
 	    /**
 	     * Restores the data to the original data.
-	     * (Original data is set by {@link tui.Grid#setRowList|setRowList}
+	     * (Original data is set by {@link tui.Grid#setData|setData}
 	     */
 	    restore: function() {
 	        this.modelManager.dataModel.restore();
 	    },
 
 	    /**
-	     * Sets the count of fixed column.
-	     * @param {number} count - The count of column to be fixed
+	     * Sets the count of frozen columns.
+	     * @param {number} count - The count of columns to be frozen
 	     */
-	    setColumnFixCount: function(count) {
-	        this.modelManager.columnModel.set('columnFixCount', count);
+	    setFrozenColumnCount: function(count) {
+	        this.modelManager.columnModel.set('frozenCount', count);
 	    },
 
 	    /**
@@ -745,8 +760,8 @@
 	     * Returns a list of all rows.
 	     * @returns {Array} - A list of all rows
 	     */
-	    getRowList: function() {
-	        return this.modelManager.dataModel.getRowList();
+	    getRows: function() {
+	        return this.modelManager.dataModel.getRows();
 	    },
 
 	    /**
@@ -917,6 +932,16 @@
 	    },
 
 	    /**
+	     * Find rows by conditions
+	     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
+	     * @returns {array} Row list
+	     */
+	    findRows: function(conditions) {
+	        var rowList = this.modelManager.dataModel.getRows();
+	        return _.where(rowList, conditions);
+	    },
+
+	    /**
 	     * Destroys the instance.
 	     */
 	    destroy: function() {
@@ -1013,6 +1038,17 @@
 	 */
 	tui.Grid.applyTheme = function(presetName, extOptions) {
 	    themeManager.apply(presetName, extOptions);
+	};
+
+	/**
+	 * Set language for messages
+	 * @static
+	 * @param {string} langCode - Language code ('en' or 'ko')
+	 * @example
+	 * tui.Grid.setLanguage('ko');
+	 */
+	tui.Grid.setLanguage = function(langCode) {
+	    message.setLanguage(langCode);
 	};
 
 
@@ -1122,7 +1158,7 @@
 	var _ = __webpack_require__(1);
 
 	var ColumnModelData = __webpack_require__(5);
-	var RowListData = __webpack_require__(9);
+	var RowListData = __webpack_require__(8);
 	var DimensionModel = __webpack_require__(14);
 	var CoordRowModel = __webpack_require__(15);
 	var CoordColumnModel = __webpack_require__(16);
@@ -1133,10 +1169,9 @@
 	var SelectionModel = __webpack_require__(24);
 	var SummaryModel = __webpack_require__(25);
 	var ClipboardModel = __webpack_require__(26);
-	var util = __webpack_require__(7);
+	var util = __webpack_require__(12);
 
 	var defaultOptions = {
-	    columnFixCount: 0,
 	    columns: [],
 	    keyColumnName: null,
 	    selectType: '',
@@ -1147,7 +1182,8 @@
 	    },
 	    columnOptions: {
 	        minWidth: 50,
-	        resizable: true
+	        resizable: true,
+	        frozenCount: 0
 	    },
 	    rowHeight: 27,
 	    fitToParentHeight: false,
@@ -1196,13 +1232,12 @@
 	     */
 	    _createColumnModel: function(options) {
 	        return new ColumnModelData({
-	            hasNumberColumn: options.autoNumbering,
 	            keyColumnName: options.keyColumnName,
-	            columnFixCount: options.columnFixCount,
-	            selectType: options.selectType,
+	            frozenCount: options.columnOptions.frozenCount,
 	            complexHeaderColumns: options.header.complexColumns,
 	            copyOptions: options.copyOptions,
-	            columns: options.columns
+	            columns: options.columns,
+	            rowHeaders: options.rowHeaders
 	        });
 	    },
 
@@ -1451,8 +1486,43 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var util = __webpack_require__(7);
-	var frameConst = __webpack_require__(8).frame;
+	var frameConst = __webpack_require__(7).frame;
+
+	var defaultRowHeaders = {
+	    rowNum: {
+	        type: 'rowNum',
+	        title: 'No.',
+	        name: '_number',
+	        align: 'center',
+	        fixedWidth: true,
+	        width: 60,
+	        hidden: false
+	    },
+	    checkbox: {
+	        type: 'checkbox',
+	        title: '<input type="checkbox" />',
+	        name: '_button',
+	        align: 'center',
+	        fixedWidth: true,
+	        width: 40,
+	        hidden: false,
+	        editOptions: {
+	            type: 'mainButton'
+	        }
+	    },
+	    radio: {
+	        type: 'radio',
+	        title: 'select',
+	        name: '_button',
+	        align: 'center',
+	        fixedWidth: true,
+	        width: 40,
+	        hidden: false,
+	        editOptions: {
+	            type: 'mainButton'
+	        }
+	    }
+	};
 
 	/**
 	 * 컬럼 모델 데이터를 다루는 객체
@@ -1468,119 +1538,22 @@
 	            text: true,
 	            password: true
 	        };
-	        this._setColumns(this.get('columns'));
+	        this._setColumns(this.get('rowHeaders'), this.get('columns'));
 	        this.on('change', this._onChange, this);
 	    },
 
 	    defaults: {
 	        keyColumnName: null,
-	        columnFixCount: 0,
-	        metaColumns: [],
+	        frozenCount: 0,
+	        rowHeaders: [],
 	        dataColumns: [],
 	        visibleColumns: [], // 이 리스트는 메타컬럼/데이터컬럼 구분하지 않고 저장
-	        hasNumberColumn: true,
 	        selectType: '',
 	        columnModelMap: {},
 	        relationsMap: {},
 	        complexHeaderColumns: [],
 	        copyOptions: {
 	            useFormattedValue: false
-	        }
-	    },
-
-	    /**
-	     * 메타컬럼모델들을 초기화한다.
-	     * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-	     * @returns {Array} dest - 초기화가 완료된 메타컬럼 모델 리스트
-	     * @private
-	     */
-	    _initializeMetaColumns: function(source) {
-	        var dest = [];
-
-	        this._initializeButtonColumn(dest);
-	        this._initializeNumberColumn(dest);
-	        this._overwriteColumns(dest, source);
-	        return dest;
-	    },
-
-	    /**
-	     * overwrite column model list
-	     * @param {Array} dest - destination model list
-	     * @param {Array} source - source model list
-	     * @private
-	     */
-	    _overwriteColumns: function(dest, source) {
-	        _.each(source, function(columnModel) {
-	            this._extendColumns(columnModel, dest);
-	        }, this);
-	    },
-
-	    /**
-	     * 인자로 넘어온 metaColumns 에 설정값에 맞게 number column 을 추가한다.
-	     * @param {Array} metaColumns - Meta column model list
-	     * @private
-	     */
-	    _initializeNumberColumn: function(metaColumns) {
-	        var hasNumberColumn = this.get('hasNumberColumn');
-	        var numberColumn = {
-	            name: '_number',
-	            align: 'center',
-	            title: 'No.',
-	            fixedWidth: true,
-	            width: 60
-	        };
-
-	        if (!hasNumberColumn) {
-	            numberColumn.hidden = true;
-	        }
-
-	        this._extendColumns(numberColumn, metaColumns);
-	    },
-
-	    /**
-	     * 인자로 넘어온 metaColumns 에 설정값에 맞게 button column 을 추가한다.
-	     * @param {Array} metaColumns - Meta column model listt
-	     * @private
-	     */
-	    _initializeButtonColumn: function(metaColumns) {
-	        var selectType = this.get('selectType');
-	        var buttonColumn = {
-	            name: '_button',
-	            hidden: false,
-	            align: 'center',
-	            width: 40,
-	            fixedWidth: true,
-	            editOptions: {
-	                type: 'mainButton'
-	            }
-	        };
-
-	        if (selectType === 'checkbox') {
-	            buttonColumn.title = '<input type="checkbox"/>';
-	        } else if (selectType === 'radio') {
-	            buttonColumn.title = '선택';
-	        } else {
-	            buttonColumn.hidden = true;
-	        }
-
-	        this._extendColumns(buttonColumn, metaColumns);
-	    },
-
-	    /**
-	     * column을 추가(push)한다.
-	     * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
-	     * @param {object} columnObj 추가할 컬럼모델
-	     * @param {Array} columns 컬럼모델 배열
-	     * @private
-	     */
-	    _extendColumns: function(columnObj, columns) {
-	        var columnName = columnObj.name;
-	        var index = _.findIndex(columns, {name: columnName});
-
-	        if (index === -1) {
-	            columns.push(columnObj);
-	        } else {
-	            columns[index] = $.extend(columns[index], columnObj);
 	        }
 	    },
 
@@ -1621,7 +1594,7 @@
 	    isLside: function(columnName) {
 	        var index = this.indexOfColumnName(columnName, true);
 
-	        return (index > -1) && (index < this.get('columnFixCount'));
+	        return (index > -1) && (index < this.get('frozenCount'));
 	    },
 
 	    /**
@@ -1632,7 +1605,7 @@
 	     */
 	    getVisibleColumns: function(whichSide, withMeta) {
 	        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount();
-	        var visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta);
+	        var visibleColumnFixCount = this.getVisibleFrozenCount(withMeta);
 	        var columns;
 
 	        whichSide = whichSide && whichSide.toUpperCase();
@@ -1653,7 +1626,7 @@
 	     * @returns {number} count
 	     */
 	    getVisibleMetaColumnCount: function() {
-	        var models = this.get('metaColumns');
+	        var models = this.get('rowHeaders');
 	        var totalLength = models.length;
 	        var hiddenLength = _.where(models, {hidden: true}).length;
 
@@ -1663,10 +1636,10 @@
 	    /**
 	     * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
 	     * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
-	     * @returns {number} Visible columnFix count
+	     * @returns {number} Visible frozen count
 	     */
-	    getVisibleColumnFixCount: function(withMeta) {
-	        var count = this.get('columnFixCount');
+	    getVisibleFrozenCount: function(withMeta) {
+	        var count = this.get('frozenCount');
 	        var fixedColumns = _.first(this.get('dataColumns'), count);
 	        var visibleFixedColumns, visibleCount;
 
@@ -1721,16 +1694,16 @@
 
 	    /**
 	     * 인자로 받은 컬럼 모델에서 !hidden을 만족하는 리스트를 추려서 반환한다.
-	     * @param {Array} metaColumns 메타 컬럼 모델 리스트
+	     * @param {Array} rowHeaders 메타 컬럼 모델 리스트
 	     * @param {Array} dataColumns 데이터 컬럼 모델 리스트
 	     * @returns {Array} hidden 이 설정되지 않은 전체 컬럼 모델 리스트
 	     * @private
 	     */
-	    _makeVisibleColumns: function(metaColumns, dataColumns) {
-	        metaColumns = metaColumns || this.get('metaColumns');
+	    _makeVisibleColumns: function(rowHeaders, dataColumns) {
+	        rowHeaders = rowHeaders || this.get('rowHeaders');
 	        dataColumns = dataColumns || this.get('dataColumns');
 
-	        return _.filter(metaColumns.concat(dataColumns), function(item) {
+	        return _.filter(rowHeaders.concat(dataColumns), function(item) {
 	            return !item.hidden;
 	        });
 	    },
@@ -1757,11 +1730,11 @@
 	     * ignored 가 true 로 설정된 columnName 의 list 를 반환한다.
 	     * @returns {Array} ignored 가 true 로 설정된 columnName 배열.
 	     */
-	    getIgnoredColumnNameList: function() {
-	        var columnModelLsit = this.get('dataColumns');
+	    getIgnoredColumnNames: function() {
+	        var dataColumns = this.get('dataColumns');
 	        var ignoredColumnNames = [];
 
-	        _.each(columnModelLsit, function(columnModel) {
+	        _.each(dataColumns, function(columnModel) {
 	            if (columnModel.ignored) {
 	                ignoredColumnNames.push(columnModel.name);
 	            }
@@ -1770,42 +1743,83 @@
 	    },
 
 	    /**
-	     * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
-	     * 메타컬럼과 데이터컬럼을 분리하여 저장한다.
-	     * @param {Array} columns   컬럼모델 배열
-	     * @param {number} [columnFixCount]   열고정 카운트
+	     * Set column model by data
+	     * @param {array} rowHeaders - Data of row headers
+	     * @param {array} columns - Data of columns
+	     * @param {number} [frozenCount] Count of frozen column
 	     * @private
 	     */
-	    _setColumns: function(columns, columnFixCount) {
-	        var division, relationsMap, visibleColumns, metaColumns, dataColumns;
+	    _setColumns: function(rowHeaders, columns, frozenCount) {
+	        var relationsMap, visibleColumns, dataColumns;
 
-	        columns = $.extend(true, [], columns);
-	        if (tui.util.isUndefined(columnFixCount)) {
-	            columnFixCount = this.get('columnFixCount');
+	        if (tui.util.isUndefined(frozenCount)) {
+	            frozenCount = this.get('frozenCount');
 	        }
 
-	        division = _.partition(columns, function(model) {
-	            return util.isMetaColumn(model.name);
-	        }, this);
-	        metaColumns = this._initializeMetaColumns(division[0]);
-	        dataColumns = division[1];
+	        rowHeaders = this._getRowHeadersData(rowHeaders);
+	        dataColumns = $.extend(true, [], columns);
 
 	        relationsMap = this._getRelationListMap(dataColumns);
-	        visibleColumns = this._makeVisibleColumns(metaColumns, dataColumns);
+	        visibleColumns = this._makeVisibleColumns(rowHeaders, dataColumns);
+
 	        this.set({
-	            metaColumns: metaColumns,
+	            selectType: this._getSelectType(rowHeaders),
+	            rowHeaders: rowHeaders,
 	            dataColumns: dataColumns,
-	            columnModelMap: _.indexBy(metaColumns.concat(dataColumns), 'name'),
+	            columnModelMap: _.indexBy(rowHeaders.concat(dataColumns), 'name'),
 	            relationsMap: relationsMap,
-	            columnFixCount: Math.max(0, columnFixCount),
+	            frozenCount: Math.max(0, frozenCount),
 	            visibleColumns: visibleColumns
 	        }, {
 	            silent: true
 	        });
+
 	        this.unset('columns', {
 	            silent: true
 	        });
 	        this.trigger('columnModelChange');
+	    },
+
+	    /**
+	     * Get data of row headers
+	     * @param {object} options - Options to set each row header
+	     * @returns {array} Row headers data
+	     * @private
+	     */
+	    _getRowHeadersData: function(options) {
+	        var rowHeadersData = [];
+	        var type, isObject;
+	        var defaultData;
+
+	        _.each(options, function(data) {
+	            isObject = _.isObject(data);
+	            type = isObject ? data.type : data;
+	            defaultData = defaultRowHeaders[type];
+
+	            if (!isObject) {
+	                data = defaultData;
+	            } else {
+	                data = $.extend({}, defaultData, data);
+	            }
+
+	            // "checkbox" and "radio" should not exist in duplicate
+	            if (_.findIndex(rowHeadersData, {name: data.name}) === -1) {
+	                rowHeadersData.push(data);
+	            }
+	        }, this);
+
+	        return rowHeadersData;
+	    },
+
+	    /**
+	     * Get select type in row headers
+	     * @param {array} rowHeaders - Row headers data
+	     * @returns {string} Select type
+	     * @private
+	     */
+	    _getSelectType: function(rowHeaders) {
+	        var rowHeader = _.findWhere(rowHeaders, {name: '_button'});
+	        return rowHeader ? rowHeader.type : '';
 	    },
 
 	    /**
@@ -1815,13 +1829,11 @@
 	     */
 	    _onChange: function(model) {
 	        var changed = model.changed;
-	        var columnFixCount = changed.columnFixCount;
-	        var columns = changed.columns;
+	        var frozenCount = changed.frozenCount;
+	        var columns = changed.columns || this.get('dataColumns');
+	        var rowHeaders = changed.rowHeaders || this.get('rowHeaders');
 
-	        if (!columns) {
-	            columns = this.get('dataColumns');
-	        }
-	        this._setColumns(columns, columnFixCount);
+	        this._setColumns(rowHeaders, columns, frozenCount);
 	    },
 
 	    /**
@@ -1845,7 +1857,7 @@
 	        }
 
 	        visibleColumns = this._makeVisibleColumns(
-	            this.get('metaColumns'),
+	            this.get('rowHeaders'),
 	            this.get('dataColumns')
 	        );
 	        this.set('visibleColumns', visibleColumns, {
@@ -1906,6 +1918,8 @@
 	    }
 	});
 
+	ColumnModel._defaultRowHeaders = defaultRowHeaders;
+
 	module.exports = ColumnModel;
 
 
@@ -1933,384 +1947,6 @@
 
 /***/ },
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	* @fileoverview 유틸리티 메서드 모음
-	* @author NHN Ent. FE Development Team
-	*/
-	'use strict';
-
-	var _ = __webpack_require__(1);
-
-	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
-
-	/**
-	* util 모듈
-	* @module util
-	* @ignore
-	*/
-	var util = {
-	    uniqueId: 0,
-	    /**
-	     * HTML Attribute 설정 시 필요한 문자열을 가공한다.
-	     * @memberof module:util
-	     * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
-	     * @returns {string} html 마크업에 포함될 문자열
-	     * @example
-	     var str = util.getAttributesString({
-	            'class': 'focused disabled',
-	            'width': '100',
-	            'height': '200'
-	      });
-
-	     =>
-	     class="focused disabled" width="100" height="200"
-	     */
-	    getAttributesString: function(attributes) {
-	        var str = '';
-	        _.each(attributes, function(value, key) {
-	            str += ' ' + key + '="' + value + '"';
-	        }, this);
-
-	        return str;
-	    },
-
-	    /**
-	     * 배열의 합을 반환한다.
-	     * @memberof module:util
-	     * @param {number[]} list   총 합을 구할 number 타입 배열
-	     * @returns {number} 합산한 결과값
-	     */
-	    sum: function(list) {
-	        return _.reduce(list, function(memo, value) {
-	            memo += value;
-
-	            return memo;
-	        }, 0);
-	    },
-
-	    /**
-	     * Returns the minimum value and the maximum value of the values in array.
-	     * @param {Array} arr - Target array
-	     * @returns {{min: number, max: number}} Min and Max
-	     * @see {@link http://jsperf.com/getminmax}
-	     */
-	    getMinMax: function(arr) {
-	        return {
-	            min: Math.min.apply(null, arr),
-	            max: Math.max.apply(null, arr)
-	        };
-	    },
-
-	    /**
-	     * Convert a string value to number.
-	     * If the value cannot be converted to number, returns original value.
-	     * @param {string} str - string value
-	     * @returns {number|string}
-	     */
-	    strToNumber: function(str) {
-	        var converted = Number(str);
-
-	        return isNaN(converted) ? str : converted;
-	    },
-
-	    /**
-	     * Omits all undefined or null properties of given object.
-	     * @param {Object} obj - object
-	     * @returns {Object}
-	     */
-	    pruneObject: function(obj) {
-	        var pruned = {};
-	        _.each(obj, function(value, key) {
-	            if (!_.isUndefined(value) && !_.isNull(value)) {
-	                pruned[key] = value;
-	            }
-	        });
-
-	        return pruned;
-	    },
-
-	    /**
-	     * Returns the table height including height of rows and borders.
-	     * @memberof module:util
-	     * @param {number} rowCount - row count
-	     * @param {number} rowHeight - row height
-	     * @returns {number}
-	     */
-	    getHeight: function(rowCount, rowHeight) {
-	        return rowCount === 0 ? rowCount : rowCount * (rowHeight + CELL_BORDER_WIDTH);
-	    },
-
-	    /**
-	     * Returns the total number of rows by using the table height and row height.
-	     * @memberof module:util
-	     * @param {number} tableHeight - table height
-	     * @param {number} rowHeight - individual row height
-	     * @returns {number}
-	     */
-	    getDisplayRowCount: function(tableHeight, rowHeight) {
-	        return Math.ceil(tableHeight / (rowHeight + CELL_BORDER_WIDTH));
-	    },
-
-	    /**
-	     * Returns the individual height of a row bsaed on the total number of rows and table height.
-	     * @memberof module:util
-	     * @param {number} rowCount - row count
-	     * @param {number} tableHeight - table height
-	     * @returns {number} 한 행당 높이값
-	     */
-	    getRowHeight: function(rowCount, tableHeight) {
-	        return rowCount === 0 ? 0 : Math.floor(((tableHeight - CELL_BORDER_WIDTH) / rowCount));
-	    },
-
-	    /**
-	     * Returns whether the column of a given name is meta-column.
-	     * @param {String} columnName - column name
-	     * @returns {Boolean}
-	     */
-	    isMetaColumn: function(columnName) {
-	        return _.contains(['_button', '_number'], columnName);
-	    },
-
-	    /**
-	     * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
-	     * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
-	     * @memberof module:util
-	     * @param {*} target    동등 비교할 target
-	     * @param {*} dist      동등 비교할 dist
-	     * @returns {boolean}    동일한지 여부
-	     */
-	    isEqual: function(target, dist) {
-	        var isDiff,
-	            compareObject = function(targetObj, distObj) {
-	                var result = false;
-
-	                tui.util.forEach(targetObj, function(item, key) {
-	                    result = (item === distObj[key]);
-	                    return result;
-	                });
-	                return result;
-	            };
-
-	        if (typeof target !== typeof dist) {
-	            return false;
-	        } else if (_.isArray(target) && target.length !== dist.length) {
-	            return false;
-	        } else if (_.isObject(target)) {
-	            isDiff = !compareObject(target, dist) || !compareObject(dist, target);
-	            return !isDiff;
-	        } else if (target !== dist) {
-	            return false;
-	        }
-	        return true;
-	    },
-
-	    /**
-	     * Returns whether the string blank.
-	     * @memberof module:util
-	     * @param {*} target - target object
-	     * @returns {boolean} True if target is undefined or null or ''
-	     */
-	    isBlank: function(target) {
-	        if (_.isString(target)) {
-	            return !target.length;
-	        }
-	        return _.isUndefined(target) || _.isNull(target);
-	    },
-
-	    /**
-	     * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
-	     * @memberof module:util
-	     * @param {string} htmlString   html 마크업 문자열
-	     * @returns {String} HTML tag 에 해당하는 부분을 제거한 문자열
-	     */
-	    stripTags: function(htmlString) {
-	        var matchResult;
-	        htmlString = htmlString.replace(/[\n\r\t]/g, '');
-	        if (tui.util.hasEncodableString(htmlString)) {
-	            if (/<img/i.test(htmlString)) {
-	                matchResult = htmlString.match(/<img[^>]*\ssrc=["']?([^>"']+)["']?[^>]*>/i);
-	                htmlString = matchResult ? matchResult[1] : '';
-	            } else {
-	                htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
-	            }
-	            htmlString = $.trim(tui.util.decodeHTMLEntity(
-	                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
-	            ));
-	        }
-	        return htmlString;
-	    },
-
-	    /**
-	     * Converts the given value to String and returns it.
-	     * If the value is undefined or null, returns the empty string.
-	     * @param {*} value - value
-	     * @returns {String}
-	     */
-	    toString: function(value) {
-	        if (_.isUndefined(value) || _.isNull(value)) {
-	            return '';
-	        }
-	        return String(value);
-	    },
-
-	    /**
-	     * Create unique key
-	     * @memberof module:util
-	     * @returns {number} unique key 를 반환한다.
-	     */
-	    getUniqueKey: function() {
-	        this.uniqueId += 1;
-	        return this.uniqueId;
-	    },
-
-	    /**
-	     * object 를 query string 으로 변경한다.
-	     * @memberof module:util
-	     * @param {object} dataObj  쿼리 문자열으로 반환할 객체
-	     * @returns {string} 변환된 쿼리 문자열
-	     */
-	    toQueryString: function(dataObj) {
-	        var queryList = [];
-
-	        _.each(dataObj, function(value, name) {
-	            if (!_.isString(value) && !_.isNumber(value)) {
-	                value = JSON.stringify(value);
-	            }
-	            value = encodeURIComponent(value);
-	            if (value) {
-	                queryList.push(name + '=' + value);
-	            }
-	        });
-
-	        return queryList.join('&');
-	    },
-
-	    /**
-	     * queryString 을 object 형태로 변형한다.
-	     * @memberof module:util
-	     * @param {String} queryString 쿼리 문자열
-	     * @returns {Object} 변환한 Object
-	     */
-	    toQueryObject: function(queryString) {
-	        var queryList = queryString.split('&'),
-	            obj = {};
-
-	        _.each(queryList, function(query) {
-	            var tmp = query.split('='),
-	                key, value;
-
-	            key = tmp[0];
-	            value = decodeURIComponent(tmp[1]);
-	            try {
-	                value = JSON.parse(value);
-	            } catch(e) {} // eslint-disable-line
-
-	            if (!_.isNull(value)) {
-	                obj[key] = value;
-	            }
-	        });
-
-	        return obj;
-	    },
-
-	    /**
-	     * type 인자에 맞게 value type 을 convert 한다.
-	     * Data.Row 의 List 형태에서 editOptions.listItems 에서 검색을 위해,
-	     * value type 해당 type 에 맞게 변환한다.
-	     * @memberof module:util
-	     * @param {*} value 컨버팅할 value
-	     * @param {String} type 컨버팅 될 타입
-	     * @returns {*}  타입 컨버팅된 value
-	     */
-	    convertValueType: function(value, type) {
-	        if (type === 'string') {
-	            return String(value);
-	        } else if (type === 'number') {
-	            return Number(value);
-	        } else if (type === 'boolean') {
-	            return Boolean(value);
-	        }
-	        return value;
-	    },
-
-	    /**
-	     * Capitalize first character of the target string.
-	     * @param  {string} string Target string
-	     * @returns {string} Converted new string
-	     */
-	    toUpperCaseFirstLetter: function(string) {
-	        return string.charAt(0).toUpperCase() + string.slice(1);
-	    },
-
-	    /**
-	     * Returns a number whose value is limited to the given range.
-	     * @param {Number} value - A number to force within given min-max range
-	     * @param {Number} min - The lower boundary of the output range
-	     * @param {Number} max - The upper boundary of the output range
-	     * @returns {number} A number in the range [min, max]
-	     * @Example
-	     *      // limit the output of this computation to between 0 and 255
-	     *      value = clamp(value, 0, 255);
-	     */
-	    clamp: function(value, min, max) {
-	        var temp;
-	        if (min > max) { // swap
-	            temp = min;
-	            min = max;
-	            max = temp;
-	        }
-	        return Math.max(min, Math.min(value, max));
-	    },
-
-	    /**
-	     * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
-	     * @param {*} option - option value
-	     * @returns {Boolean}
-	     */
-	    isOptionEnabled: function(option) {
-	        return _.isObject(option) || option === true;
-	    },
-
-	    /**
-	     * create style element and append it into the head element.
-	     * @param {String} id - element id
-	     * @param {String} cssString - css string
-	     */
-	    appendStyleElement: function(id, cssString) {
-	        var style = document.createElement('style');
-
-	        style.type = 'text/css';
-	        style.id = id;
-
-	        if (style.styleSheet) {
-	            style.styleSheet.cssText = cssString;
-	        } else {
-	            style.appendChild(document.createTextNode(cssString));
-	        }
-
-	        document.getElementsByTagName('head')[0].appendChild(style);
-	    },
-
-	    /**
-	     * Outputs a warning message to the web console.
-	     * @param {string} message - message
-	     */
-	    warning: function(message) {
-	        /* eslint-disable no-console */
-	        if (console && console.warn) {
-	            console.warn(message);
-	        }
-	        /* eslint-enable no-console */
-	    }
-	};
-
-	module.exports = util;
-
-
-/***/ },
-/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2392,7 +2028,7 @@
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2403,12 +2039,12 @@
 
 	var _ = __webpack_require__(1);
 
-	var Collection = __webpack_require__(10);
-	var Row = __webpack_require__(11);
+	var Collection = __webpack_require__(9);
+	var Row = __webpack_require__(10);
 
 	/**
 	 * Raw 데이터 RowList 콜렉션. (DataSource)
-	 * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
+	 * Grid.setData 를 사용하여 콜렉션을 설정한다.
 	 * @module model/data/rowList
 	 * @extends module:base/collection
 	 * @param {Array} models - 콜랙션에 추가할 model 리스트
@@ -2423,7 +2059,7 @@
 	            domState: options.domState,
 	            gridId: options.gridId,
 	            lastRowKey: -1,
-	            originalRowList: [],
+	            originalRows: [],
 	            originalRowMap: {},
 	            startIndex: options.startIndex || 1,
 	            sortOptions: {
@@ -2590,14 +2226,14 @@
 	    },
 
 	    /**
-	     * originalRowList 와 originalRowMap 을 생성한다.
-	     * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
+	     * originalRows 와 originalRowMap 을 생성한다.
+	     * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRows 로 저장한다.
 	     * @returns {Array} format 을 거친 데이터 리스트.
 	     */
 	    setOriginalRowList: function(rowList) {
-	        this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
-	        this.originalRowMap = _.indexBy(this.originalRowList, 'rowKey');
-	        return this.originalRowList;
+	        this.originalRows = rowList ? this._formatData(rowList) : this.toJSON();
+	        this.originalRowMap = _.indexBy(this.originalRows, 'rowKey');
+	        return this.originalRows;
 	    },
 
 	    /**
@@ -2607,7 +2243,7 @@
 	     */
 	    getOriginalRowList: function(isClone) {
 	        isClone = _.isUndefined(isClone) ? true : isClone;
-	        return isClone ? _.clone(this.originalRowList) : this.originalRowList;
+	        return isClone ? _.clone(this.originalRows) : this.originalRows;
 	    },
 
 	    /**
@@ -2724,25 +2360,25 @@
 
 	    /**
 	     * rowList 를 반환한다.
-	     * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-	     * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+	     * @param {boolean} [checkedOnly=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+	     * @param {boolean} [withRawData=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
 	     * @returns {Array} Row List
 	     */
-	    getRowList: function(isOnlyChecked, isRaw) {
-	        var rowList, checkedRowList;
+	    getRows: function(checkedOnly, withRawData) {
+	        var rows, checkedRows;
 
-	        if (isOnlyChecked) {
-	            checkedRowList = this.where({
+	        if (checkedOnly) {
+	            checkedRows = this.where({
 	                '_button': true
 	            });
-	            rowList = [];
-	            _.each(checkedRowList, function(checkedRow) {
-	                rowList.push(checkedRow.attributes);
+	            rows = [];
+	            _.each(checkedRows, function(checkedRow) {
+	                rows.push(checkedRow.attributes);
 	            }, this);
 	        } else {
-	            rowList = this.toJSON();
+	            rows = this.toJSON();
 	        }
-	        return isRaw ? rowList : this._removePrivateProp(rowList);
+	        return withRawData ? rows : this._removePrivateProp(rows);
 	    },
 
 	    /**
@@ -3071,7 +2707,7 @@
 	     * @returns {boolean} - True if there are at least one row changed.
 	     */
 	    isChanged: function() {
-	        var modifiedRowsArr = _.values(this.getModifiedRowList());
+	        var modifiedRowsArr = _.values(this.getModifiedRows());
 
 	        return _.some(modifiedRowsArr, function(modifiedRows) {
 	            return modifiedRows.length > 0;
@@ -3257,11 +2893,11 @@
 	     * 해당 row가 수정된 Row인지 여부를 반환한다.
 	     * @param {Object} row - row 데이터
 	     * @param {Object} originalRow - 원본 row 데이터
-	     * @param {Array} filteringColumns - 비교에서 제외할 컬럼명
+	     * @param {Array} ignoredColumns - 비교에서 제외할 컬럼명
 	     * @returns {boolean} - 수정여부
 	     */
-	    _isModifiedRow: function(row, originalRow, filteringColumns) {
-	        var filtered = _.omit(row, filteringColumns);
+	    _isModifiedRow: function(row, originalRow, ignoredColumns) {
+	        var filtered = _.omit(row, ignoredColumns);
 	        var result = _.some(filtered, function(value, columnName) {
 	            if (typeof value === 'object') {
 	                return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
@@ -3275,38 +2911,38 @@
 	    /**
 	     * 수정된 rowList 를 반환한다.
 	     * @param {Object} options 옵션 객체
-	     *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-	     *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
-	     *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
-	     *      @param {Array} [options.filteringColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
+	     *      @param {boolean} [options.checkedOnly=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+	     *      @param {boolean} [options.withRawData=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+	     *      @param {boolean} [options.rowKeyOnly=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
+	     *      @param {Array} [options.ignoredColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
 	     * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
 	     */
-	    getModifiedRowList: function(options) {
-	        var isRaw = options && options.isRaw,
-	            isOnlyChecked = options && options.isOnlyChecked,
-	            isOnlyRowKeyList = options && options.isOnlyRowKeyList,
-	            original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
-	            current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
-	            filteringColumns = options && options.filteringColumns,
-	            result = {
-	                createList: [],
-	                updateList: [],
-	                deleteList: []
-	            };
+	    getModifiedRows: function(options) {
+	        var withRawData = options && options.withRawData;
+	        var checkedOnly = options && options.checkedOnly;
+	        var rowKeyOnly = options && options.rowKeyOnly;
+	        var original = withRawData ? this.originalRows : this._removePrivateProp(this.originalRows);
+	        var current = withRawData ? this.toJSON() : this._removePrivateProp(this.toJSON());
+	        var ignoredColumns = options && options.ignoredColumns;
+	        var result = {
+	            createList: [],
+	            updateList: [],
+	            deleteList: []
+	        };
 
 	        original = _.indexBy(original, 'rowKey');
 	        current = _.indexBy(current, 'rowKey');
-	        filteringColumns = _.union(filteringColumns, this.columnModel.getIgnoredColumnNameList());
+	        ignoredColumns = _.union(ignoredColumns, this.columnModel.getIgnoredColumnNames());
 
 	        // 추가/ 수정된 행 추출
 	        _.each(current, function(row, rowKey) {
 	            var originalRow = original[rowKey],
-	                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumns);
+	                item = rowKeyOnly ? row.rowKey : _.omit(row, ignoredColumns);
 
-	            if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+	            if (!checkedOnly || (checkedOnly && this.get(rowKey).get('_button'))) {
 	                if (!originalRow) {
 	                    result.createList.push(item);
-	                } else if (this._isModifiedRow(row, originalRow, filteringColumns)) {
+	                } else if (this._isModifiedRow(row, originalRow, ignoredColumns)) {
 	                    result.updateList.push(item);
 	                }
 	            }
@@ -3314,7 +2950,7 @@
 
 	        //삭제된 행 추출
 	        _.each(original, function(obj, rowKey) {
-	            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumns);
+	            var item = rowKeyOnly ? obj.rowKey : _.omit(obj, ignoredColumns);
 	            if (!current[rowKey]) {
 	                result.deleteList.push(item);
 	            }
@@ -3323,23 +2959,23 @@
 	    },
 
 	    /**
-	     * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
-	     * @param {Array} rowList 설정할 데이터 배열 값
-	     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+	     * data 를 설정한다. setData 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+	     * @param {Array} data - 설정할 데이터 배열 값
+	     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
 	     * @param {Function} [callback] callback function
 	     */
-	    replaceRowList: function(rowList, isParse, callback) {
-	        if (!rowList) {
-	            rowList = [];
+	    resetData: function(data, parse, callback) {
+	        if (!data) {
+	            data = [];
 	        }
-	        if (_.isUndefined(isParse)) {
-	            isParse = true;
+	        if (_.isUndefined(parse)) {
+	            parse = true;
 	        }
-	        this.trigger('beforeReset', rowList.length);
+	        this.trigger('beforeReset', data.length);
 
 	        this.lastRowKey = -1;
-	        this.reset(rowList, {
-	            parse: isParse
+	        this.reset(data, {
+	            parse: parse
 	        });
 
 	        if (_.isFunction(callback)) {
@@ -3348,12 +2984,12 @@
 	    },
 
 	    /**
-	     * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
-	     * @param {Array} rowList 설정할 데이터 배열 값
-	     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+	     * data 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+	     * @param {Array} data - 설정할 데이터 배열 값
+	     * @param {boolean} [parse=true]  backbone 의 parse 로직을 수행할지 여부
 	     * @param {function} [callback] 완료시 호출될 함수
 	     */
-	    setRowList: function(rowList, isParse, callback) {
+	    setData: function(data, parse, callback) {
 	        var wrappedCallback = _.bind(function() {
 	            this.setOriginalRowList();
 	            if (_.isFunction(callback)) {
@@ -3361,16 +2997,16 @@
 	            }
 	        }, this);
 
-	        this.replaceRowList(rowList, isParse, wrappedCallback);
+	        this.resetData(data, parse, wrappedCallback);
 	    },
 
 	    /**
-	     * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+	     * setData()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
 	     * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
 	     */
 	    restore: function() {
-	        var originalRowList = this.getOriginalRowList();
-	        this.replaceRowList(originalRowList, true);
+	        var originalRows = this.getOriginalRowList();
+	        this.resetData(originalRows, true);
 	    },
 
 	    /**
@@ -3585,7 +3221,7 @@
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3621,7 +3257,7 @@
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3633,8 +3269,8 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var ExtraDataManager = __webpack_require__(12);
-	var util = __webpack_require__(7);
+	var ExtraDataManager = __webpack_require__(11);
+	var util = __webpack_require__(12);
 	var classNameConst = __webpack_require__(13);
 
 	// Propertie names that indicate meta data
@@ -3689,12 +3325,45 @@
 	    },
 
 	    /**
+	     * Event handler for change event in _button (=checkbox)
+	     * @param {boolean} checked - Checked state
+	     * @private
+	     */
+	    _triggerCheckboxChangeEvent: function(checked) {
+	        var eventObj = {
+	            rowKey: this.get('rowKey')
+	        };
+
+	        if (checked) {
+	            /**
+	             * Occurs when a checkbox in row header is checked.
+	             * @event tui.Grid#check
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the checked row
+	             */
+	            this.trigger('check', eventObj);
+	        } else {
+	            /**
+	             * Occurs when a checkbox in row header is unchecked.
+	             * @event tui.Grid#uncheck
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the unchecked row
+	             */
+	            this.trigger('uncheck', eventObj);
+	        }
+	    },
+
+	    /**
 	     * Event handler for 'change' event.
 	     * Executes callback functions, sync rowspan data, and validate data.
 	     * @private
 	     */
 	    _onChange: function() {
 	        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+	        if (_.has(this.changed, '_button')) {
+	            this._triggerCheckboxChangeEvent(this.changed._button);
+	        }
 
 	        if (this.isDuplicatedPublicChanged(publicChanged)) {
 	            return;
@@ -3789,10 +3458,10 @@
 	        var columnModel = this.columnModel.getColumnModel(columnName);
 	        var changeEvent, obj;
 
-	        if (columnModel.editOptions && columnModel.editOptions.onBeforeChange) {
+	        if (columnModel.onBeforeChange) {
 	            changeEvent = this._createChangeCallbackEvent(columnName);
 
-	            if (columnModel.editOptions.onBeforeChange(changeEvent) === false) {
+	            if (columnModel.onBeforeChange(changeEvent) === false) {
 	                obj = {};
 	                obj[columnName] = this.previous(columnName);
 	                this.set(obj);
@@ -3813,9 +3482,9 @@
 	        var columnModel = this.columnModel.getColumnModel(columnName);
 	        var changeEvent;
 
-	        if (columnModel.editOptions && columnModel.editOptions.onAfterChange) {
+	        if (columnModel.onAfterChange) {
 	            changeEvent = this._createChangeCallbackEvent(columnName);
-	            return !!(columnModel.editOptions.onAfterChange(changeEvent));
+	            return !!(columnModel.onAfterChange(changeEvent));
 	        }
 
 	        return true;
@@ -4182,7 +3851,7 @@
 
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4405,6 +4074,396 @@
 
 
 /***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	* @fileoverview 유틸리티 메서드 모음
+	* @author NHN Ent. FE Development Team
+	*/
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
+
+	/**
+	* util 모듈
+	* @module util
+	* @ignore
+	*/
+	var util = {
+	    uniqueId: 0,
+	    /**
+	     * HTML Attribute 설정 시 필요한 문자열을 가공한다.
+	     * @memberof module:util
+	     * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
+	     * @returns {string} html 마크업에 포함될 문자열
+	     * @example
+	     var str = util.getAttributesString({
+	            'class': 'focused disabled',
+	            'width': '100',
+	            'height': '200'
+	      });
+
+	     =>
+	     class="focused disabled" width="100" height="200"
+	     */
+	    getAttributesString: function(attributes) {
+	        var str = '';
+	        _.each(attributes, function(value, key) {
+	            str += ' ' + key + '="' + value + '"';
+	        }, this);
+
+	        return str;
+	    },
+
+	    /**
+	     * 배열의 합을 반환한다.
+	     * @memberof module:util
+	     * @param {number[]} list   총 합을 구할 number 타입 배열
+	     * @returns {number} 합산한 결과값
+	     */
+	    sum: function(list) {
+	        return _.reduce(list, function(memo, value) {
+	            memo += value;
+
+	            return memo;
+	        }, 0);
+	    },
+
+	    /**
+	     * Returns the minimum value and the maximum value of the values in array.
+	     * @param {Array} arr - Target array
+	     * @returns {{min: number, max: number}} Min and Max
+	     * @see {@link http://jsperf.com/getminmax}
+	     */
+	    getMinMax: function(arr) {
+	        return {
+	            min: Math.min.apply(null, arr),
+	            max: Math.max.apply(null, arr)
+	        };
+	    },
+
+	    /**
+	     * Convert a string value to number.
+	     * If the value cannot be converted to number, returns original value.
+	     * @param {string} str - string value
+	     * @returns {number|string}
+	     */
+	    strToNumber: function(str) {
+	        var converted = Number(str);
+
+	        return isNaN(converted) ? str : converted;
+	    },
+
+	    /**
+	     * Omits all undefined or null properties of given object.
+	     * @param {Object} obj - object
+	     * @returns {Object}
+	     */
+	    pruneObject: function(obj) {
+	        var pruned = {};
+	        _.each(obj, function(value, key) {
+	            if (!_.isUndefined(value) && !_.isNull(value)) {
+	                pruned[key] = value;
+	            }
+	        });
+
+	        return pruned;
+	    },
+
+	    /**
+	     * Returns the table height including height of rows and borders.
+	     * @memberof module:util
+	     * @param {number} rowCount - row count
+	     * @param {number} rowHeight - row height
+	     * @returns {number}
+	     */
+	    getHeight: function(rowCount, rowHeight) {
+	        return rowCount === 0 ? rowCount : rowCount * (rowHeight + CELL_BORDER_WIDTH);
+	    },
+
+	    /**
+	     * Returns the total number of rows by using the table height and row height.
+	     * @memberof module:util
+	     * @param {number} tableHeight - table height
+	     * @param {number} rowHeight - individual row height
+	     * @returns {number}
+	     */
+	    getDisplayRowCount: function(tableHeight, rowHeight) {
+	        return Math.ceil(tableHeight / (rowHeight + CELL_BORDER_WIDTH));
+	    },
+
+	    /**
+	     * Returns the individual height of a row bsaed on the total number of rows and table height.
+	     * @memberof module:util
+	     * @param {number} rowCount - row count
+	     * @param {number} tableHeight - table height
+	     * @returns {number} 한 행당 높이값
+	     */
+	    getRowHeight: function(rowCount, tableHeight) {
+	        return rowCount === 0 ? 0 : Math.floor(((tableHeight - CELL_BORDER_WIDTH) / rowCount));
+	    },
+
+	    /**
+	     * Returns whether the column of a given name is meta-column.
+	     * @param {String} columnName - column name
+	     * @returns {Boolean}
+	     */
+	    isMetaColumn: function(columnName) {
+	        return _.contains(['_button', '_number'], columnName);
+	    },
+
+	    /**
+	     * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
+	     * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
+	     * @memberof module:util
+	     * @param {*} target    동등 비교할 target
+	     * @param {*} dist      동등 비교할 dist
+	     * @returns {boolean}    동일한지 여부
+	     */
+	    isEqual: function(target, dist) {
+	        var isDiff,
+	            compareObject = function(targetObj, distObj) {
+	                var result = false;
+
+	                tui.util.forEach(targetObj, function(item, key) {
+	                    result = (item === distObj[key]);
+	                    return result;
+	                });
+	                return result;
+	            };
+
+	        if (typeof target !== typeof dist) {
+	            return false;
+	        } else if (_.isArray(target) && target.length !== dist.length) {
+	            return false;
+	        } else if (_.isObject(target)) {
+	            isDiff = !compareObject(target, dist) || !compareObject(dist, target);
+	            return !isDiff;
+	        } else if (target !== dist) {
+	            return false;
+	        }
+	        return true;
+	    },
+
+	    /**
+	     * Returns whether the string blank.
+	     * @memberof module:util
+	     * @param {*} target - target object
+	     * @returns {boolean} True if target is undefined or null or ''
+	     */
+	    isBlank: function(target) {
+	        if (_.isString(target)) {
+	            return !target.length;
+	        }
+	        return _.isUndefined(target) || _.isNull(target);
+	    },
+
+	    /**
+	     * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
+	     * @memberof module:util
+	     * @param {string} htmlString   html 마크업 문자열
+	     * @returns {String} HTML tag 에 해당하는 부분을 제거한 문자열
+	     */
+	    stripTags: function(htmlString) {
+	        var matchResult;
+	        htmlString = htmlString.replace(/[\n\r\t]/g, '');
+	        if (tui.util.hasEncodableString(htmlString)) {
+	            if (/<img/i.test(htmlString)) {
+	                matchResult = htmlString.match(/<img[^>]*\ssrc=["']?([^>"']+)["']?[^>]*>/i);
+	                htmlString = matchResult ? matchResult[1] : '';
+	            } else {
+	                htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
+	            }
+	            htmlString = $.trim(tui.util.decodeHTMLEntity(
+	                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
+	            ));
+	        }
+	        return htmlString;
+	    },
+
+	    /**
+	     * Converts the given value to String and returns it.
+	     * If the value is undefined or null, returns the empty string.
+	     * @param {*} value - value
+	     * @returns {String}
+	     */
+	    toString: function(value) {
+	        if (_.isUndefined(value) || _.isNull(value)) {
+	            return '';
+	        }
+	        return String(value);
+	    },
+
+	    /**
+	     * Create unique key
+	     * @memberof module:util
+	     * @returns {number} unique key 를 반환한다.
+	     */
+	    getUniqueKey: function() {
+	        this.uniqueId += 1;
+	        return this.uniqueId;
+	    },
+
+	    /**
+	     * object 를 query string 으로 변경한다.
+	     * @memberof module:util
+	     * @param {object} dataObj  쿼리 문자열으로 반환할 객체
+	     * @returns {string} 변환된 쿼리 문자열
+	     */
+	    toQueryString: function(dataObj) {
+	        var queryList = [];
+
+	        _.each(dataObj, function(value, name) {
+	            if (!_.isString(value) && !_.isNumber(value)) {
+	                value = JSON.stringify(value);
+	            }
+	            value = encodeURIComponent(value);
+	            if (value) {
+	                queryList.push(name + '=' + value);
+	            }
+	        });
+
+	        return queryList.join('&');
+	    },
+
+	    /**
+	     * queryString 을 object 형태로 변형한다.
+	     * @memberof module:util
+	     * @param {String} queryString 쿼리 문자열
+	     * @returns {Object} 변환한 Object
+	     */
+	    toQueryObject: function(queryString) {
+	        var queryList = queryString.split('&'),
+	            obj = {};
+
+	        _.each(queryList, function(query) {
+	            var tmp = query.split('='),
+	                key, value;
+
+	            key = tmp[0];
+	            value = decodeURIComponent(tmp[1]);
+	            try {
+	                value = JSON.parse(value);
+	            } catch(e) {} // eslint-disable-line
+
+	            if (!_.isNull(value)) {
+	                obj[key] = value;
+	            }
+	        });
+
+	        return obj;
+	    },
+
+	    /**
+	     * type 인자에 맞게 value type 을 convert 한다.
+	     * Data.Row 의 List 형태에서 editOptions.listItems 에서 검색을 위해,
+	     * value type 해당 type 에 맞게 변환한다.
+	     * @memberof module:util
+	     * @param {*} value 컨버팅할 value
+	     * @param {String} type 컨버팅 될 타입
+	     * @returns {*}  타입 컨버팅된 value
+	     */
+	    convertValueType: function(value, type) {
+	        if (type === 'string') {
+	            return String(value);
+	        } else if (type === 'number') {
+	            return Number(value);
+	        } else if (type === 'boolean') {
+	            return Boolean(value);
+	        }
+	        return value;
+	    },
+
+	    /**
+	     * Capitalize first character of the target string.
+	     * @param  {string} string Target string
+	     * @returns {string} Converted new string
+	     */
+	    toUpperCaseFirstLetter: function(string) {
+	        return string.charAt(0).toUpperCase() + string.slice(1);
+	    },
+
+	    /**
+	     * Returns a number whose value is limited to the given range.
+	     * @param {Number} value - A number to force within given min-max range
+	     * @param {Number} min - The lower boundary of the output range
+	     * @param {Number} max - The upper boundary of the output range
+	     * @returns {number} A number in the range [min, max]
+	     * @Example
+	     *      // limit the output of this computation to between 0 and 255
+	     *      value = clamp(value, 0, 255);
+	     */
+	    clamp: function(value, min, max) {
+	        var temp;
+	        if (min > max) { // swap
+	            temp = min;
+	            min = max;
+	            max = temp;
+	        }
+	        return Math.max(min, Math.min(value, max));
+	    },
+
+	    /**
+	     * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
+	     * @param {*} option - option value
+	     * @returns {Boolean}
+	     */
+	    isOptionEnabled: function(option) {
+	        return _.isObject(option) || option === true;
+	    },
+
+	    /**
+	     * create style element and append it into the head element.
+	     * @param {String} id - element id
+	     * @param {String} cssString - css string
+	     */
+	    appendStyleElement: function(id, cssString) {
+	        var style = document.createElement('style');
+
+	        style.type = 'text/css';
+	        style.id = id;
+
+	        if (style.styleSheet) {
+	            style.styleSheet.cssText = cssString;
+	        } else {
+	            style.appendChild(document.createTextNode(cssString));
+	        }
+
+	        document.getElementsByTagName('head')[0].appendChild(style);
+	    },
+
+	    /**
+	     * Outputs a warning message to the web console.
+	     * @param {string} message - message
+	     */
+	    warning: function(message) {
+	        /* eslint-disable no-console */
+	        if (console && console.warn) {
+	            console.warn(message);
+	        }
+	        /* eslint-enable no-console */
+	    },
+
+	    /**
+	     * Replace text
+	     * @param {string} text - Text including handlebar expression
+	     * @param {Object} values - Replaced values
+	     * @returns {string} Replaced text
+	     */
+	    replaceText: function(text, values) {
+	        return text.replace(/\{\{(\w*)\}\}/g, function(value, prop) {
+	            return values.hasOwnProperty(prop) ? values[prop] : '';
+	        });
+	    }
+	};
+
+	module.exports = util;
+
+
+/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -4553,7 +4612,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var dimensionConstMap = __webpack_require__(8).dimension;
+	var dimensionConstMap = __webpack_require__(7).dimension;
 
 	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
@@ -4661,7 +4720,7 @@
 	     * @returns {Boolean}
 	     */
 	    isDivisionBorderDoubled: function() {
-	        return this.columnModel.getVisibleColumnFixCount() > 0;
+	        return this.columnModel.getVisibleFrozenCount() > 0;
 	    },
 
 	    /**
@@ -4795,13 +4854,13 @@
 	     */
 	    _getMinLeftSideWidth: function() {
 	        var minimumColumnWidth = this.get('minimumColumnWidth');
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
 	        var minWidth = 0;
 	        var borderWidth;
 
-	        if (columnFixCount) {
-	            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
-	            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
+	        if (columnFrozenCount) {
+	            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
+	            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
 	        }
 
 	        return minWidth;
@@ -4905,9 +4964,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var util = __webpack_require__(7);
+	var util = __webpack_require__(12);
 	var Model = __webpack_require__(6);
-	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
+	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
 
 	/**
 	 * @module model/coordRow
@@ -5103,8 +5162,8 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var util = __webpack_require__(7);
-	var constMap = __webpack_require__(8);
+	var util = __webpack_require__(12);
+	var constMap = __webpack_require__(7);
 	var dimensionConst = constMap.dimension;
 	var frameConst = constMap.frame;
 
@@ -5127,14 +5186,14 @@
 	         * @private
 	         * @type {boolean[]}
 	         */
-	        this._columnWidthFixedFlags = null;
+	        this._fixedWidthFlags = null;
 
 	        /**
 	         * An array of the minimum width of the columns
 	         * @private
 	         * @type {number[]}
 	         */
-	        this._minColumnWidthList = null;
+	        this._minWidths = null;
 
 	        /**
 	         * Whether the column width is modified by user.
@@ -5153,7 +5212,7 @@
 	    },
 
 	    defaults: {
-	        columnWidthList: [],
+	        widths: [],
 	        resizable: true
 	    },
 
@@ -5163,9 +5222,9 @@
 	    resetColumnWidths: function() {
 	        var columns = this.columnModel.getVisibleColumns(null, true);
 	        var commonMinWidth = this.dimensionModel.get('minimumColumnWidth');
-	        var widthList = [];
+	        var widths = [];
 	        var fixedFlags = [];
-	        var minWidthList = [];
+	        var minWidths = [];
 
 	        _.each(columns, function(columnModel) {
 	            var width = columnModel.width > 0 ? columnModel.width : 0;
@@ -5178,17 +5237,17 @@
 
 	            // If the width is not assigned (in other words, the width is not positive number),
 	            // set it to zero (no need to worry about minimum width at this point)
-	            // so that #_fillEmptyColumnWidth() can detect which one is empty.
-	            // After then, minimum width will be applied by #_applyMinimumColumnWidth().
-	            widthList.push(width ? minWidth : 0);
-	            minWidthList.push(minWidth);
+	            // so that #_fillEmptyWidth() can detect which one is empty.
+	            // After then, minimum width will be applied by #_applyMinimumWidth().
+	            widths.push(width ? minWidth : 0);
+	            minWidths.push(minWidth);
 	            fixedFlags.push(!!columnModel.fixedWidth);
 	        }, this);
 
-	        this._columnWidthFixedFlags = fixedFlags;
-	        this._minColumnWidthList = minWidthList;
+	        this._fixedWidthFlags = fixedFlags;
+	        this._minWidths = minWidths;
 
-	        this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
+	        this._setColumnWidthVariables(this._calculateColumnWidth(widths), true);
 	    },
 
 	    /**
@@ -5210,115 +5269,115 @@
 	    },
 
 	    /**
-	     * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
-	     * @param {array} columnWidthList - 컬럼 넓이값 배열
-	     * @param {boolean} [isSaveWidthList] - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
+	     * widths 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
+	     * @param {array} widths - 컬럼 넓이값 배열
+	     * @param {boolean} [saveWidths] - 저장 여부. true이면 넓이값 배열을 originalWidths로 저장한다.
 	     * @private
 	     */
-	    _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
+	    _setColumnWidthVariables: function(widths, saveWidths) {
 	        var totalWidth = this.dimensionModel.get('width');
 	        var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+	        var frozenCount = this.columnModel.getVisibleFrozenCount(true);
+	        var rsideWidth, lsideWidth, lsideWidths, rsideWidths;
 
-	        lsideWidthList = columnWidthList.slice(0, columnFixCount);
-	        rsideWidthList = columnWidthList.slice(columnFixCount);
+	        lsideWidths = widths.slice(0, frozenCount);
+	        rsideWidths = widths.slice(frozenCount);
 
-	        lsideWidth = this._getFrameWidth(lsideWidthList);
+	        lsideWidth = this._getFrameWidth(lsideWidths);
 	        if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
-	            lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
-	            lsideWidth = this._getFrameWidth(lsideWidthList);
-	            columnWidthList = lsideWidthList.concat(rsideWidthList);
+	            lsideWidths = this._adjustLeftSideWidths(lsideWidths, maxLeftSideWidth);
+	            lsideWidth = this._getFrameWidth(lsideWidths);
+	            widths = lsideWidths.concat(rsideWidths);
 	        }
 	        rsideWidth = totalWidth - lsideWidth;
 
 	        this.set({
-	            columnWidthList: columnWidthList
+	            widths: widths
 	        });
 	        this.dimensionModel.set({
 	            rsideWidth: rsideWidth,
 	            lsideWidth: lsideWidth
 	        });
 
-	        if (isSaveWidthList) {
-	            this.set('originalWidthList', _.clone(columnWidthList));
+	        if (saveWidths) {
+	            this.set('originalWidths', _.clone(widths));
 	        }
 	        this.trigger('columnWidthChanged');
 	    },
 
 	    /**
-	     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
-	     * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
+	     * columnFrozenCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+	     * @param {Array} lsideWidths    열고정 영역의 너비 리스트 배열
 	     * @param {Number} totalWidth   grid 전체 너비
 	     * @returns {Array} 열고정 영역의 너비 리스트
 	     * @private
 	     */
-	    _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
-	        var i = lsideWidthList.length - 1;
+	    _adjustLeftSideWidths: function(lsideWidths, totalWidth) {
+	        var i = lsideWidths.length - 1;
 	        var minimumColumnWidth = this.dimensionModel.get('minimumColumnWidth');
-	        var currentWidth = this._getFrameWidth(lsideWidthList);
+	        var currentWidth = this._getFrameWidth(lsideWidths);
 	        var diff = currentWidth - totalWidth;
 	        var changedWidth;
 
 	        if (diff > 0) {
 	            while (i >= 0 && diff > 0) {
-	                changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
-	                diff -= lsideWidthList[i] - changedWidth;
-	                lsideWidthList[i] = changedWidth;
+	                changedWidth = Math.max(minimumColumnWidth, lsideWidths[i] - diff);
+	                diff -= lsideWidths[i] - changedWidth;
+	                lsideWidths[i] = changedWidth;
 	                i -= 1;
 	            }
 	        } else if (diff < 0) {
-	            lsideWidthList[i] += Math.abs(diff);
+	            lsideWidths[i] += Math.abs(diff);
 	        }
 
-	        return lsideWidthList;
+	        return lsideWidths;
 	    },
 
 	    /**
 	     * calculate column width list
-	     * @param {Array.<Number>} widthList - widthList
+	     * @param {Array.<Number>} widths - widths
 	     * @returns {Array.<Number>}
 	     * @private
 	     */
-	    _calculateColumnWidth: function(widthList) {
-	        widthList = this._fillEmptyColumnWidth(widthList);
-	        widthList = this._applyMinimumColumnWidth(widthList);
-	        widthList = this._adjustColumnWidthList(widthList);
+	    _calculateColumnWidth: function(widths) {
+	        widths = this._fillEmptyWidth(widths);
+	        widths = this._applyMinimumWidth(widths);
+	        widths = this._adjustWidths(widths);
 
-	        return widthList;
+	        return widths;
 	    },
 
 	    /**
 	     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
-	     * @param {number[]} columnWidthList - An array of column widths
+	     * @param {number[]} widths - An array of column widths
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _fillEmptyColumnWidth: function(columnWidthList) {
-	        var totalWidth = this.dimensionModel.getAvailableTotalWidth(columnWidthList.length);
-	        var remainTotalWidth = totalWidth - util.sum(columnWidthList);
+	    _fillEmptyWidth: function(widths) {
+	        var totalWidth = this.dimensionModel.getAvailableTotalWidth(widths.length);
+	        var remainTotalWidth = totalWidth - util.sum(widths);
 	        var emptyIndexes = [];
 
-	        _.each(columnWidthList, function(width, index) {
+	        _.each(widths, function(width, index) {
 	            if (!width) {
 	                emptyIndexes.push(index);
 	            }
 	        });
 
-	        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
+	        return this._distributeExtraWidthEqually(widths, remainTotalWidth, emptyIndexes);
 	    },
 
 	    /**
-	     * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
-	     * @param {Array} widthList 너비 리스트 배열
+	     * widths 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
+	     * @param {Array} widths 너비 리스트 배열
 	     * @returns {Number} 계산된 frame 너비값
 	     * @private
 	     */
-	    _getFrameWidth: function(widthList) {
+	    _getFrameWidth: function(widths) {
 	        var frameWidth = 0;
 
-	        if (widthList.length) {
-	            frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
+	        if (widths.length) {
+	            frameWidth = util.sum(widths) + ((widths.length + 1) * CELL_BORDER_WIDTH);
 	        }
 
 	        return frameWidth;
@@ -5326,13 +5385,13 @@
 
 	    /**
 	     * Adds extra widths of the column equally.
-	     * @param {number[]} columnWidthList - An array of column widths
+	     * @param {number[]} widths - An array of column widths
 	     * @param {number} totalExtraWidth - Total extra width
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
-	        var fixedFlags = this._columnWidthFixedFlags;
+	    _addExtraColumnWidth: function(widths, totalExtraWidth) {
+	        var fixedFlags = this._fixedWidthFlags;
 	        var columnIndexes = [];
 
 	        _.each(fixedFlags, function(flag, index) {
@@ -5340,44 +5399,44 @@
 	                columnIndexes.push(index);
 	            }
 	        });
-	        return this._distributeExtraWidthEqually(columnWidthList, totalExtraWidth, columnIndexes);
+	        return this._distributeExtraWidthEqually(widths, totalExtraWidth, columnIndexes);
 	    },
 
 	    /**
 	     * Reduces excess widths of the column equally.
-	     * @param {number[]} columnWidthList - An array of column widths
+	     * @param {number[]} widths - An array of column widths
 	     * @param {number} totalExcessWidth - Total excess width (negative number)
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
-	        var minWidthList = this._minColumnWidthList;
-	        var fixedFlags = this._columnWidthFixedFlags;
+	    _reduceExcessColumnWidth: function(widths, totalExcessWidth) {
+	        var minWidths = this._minWidths;
+	        var fixedFlags = this._fixedWidthFlags;
 	        var availableList = [];
 
-	        _.each(columnWidthList, function(width, index) {
+	        _.each(widths, function(width, index) {
 	            if (!fixedFlags[index]) {
 	                availableList.push({
 	                    index: index,
-	                    width: width - minWidthList[index]
+	                    width: width - minWidths[index]
 	                });
 	            }
 	        });
 
-	        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
+	        return this._reduceExcessColumnWidthSub(_.clone(widths), totalExcessWidth, availableList);
 	    },
 
 	    /**
 	     * Reduce the (remaining) excess widths of the column.
 	     * This method will be called recursively by _reduceExcessColumnWidth.
-	     * @param {number[]} columnWidthList - An array of column Width
+	     * @param {number[]} widths - An array of column Width
 	     * @param {number} totalRemainWidth - Remaining excess width (negative number)
 	     * @param {object[]} availableList - An array of infos about available column.
 	     *                                 Each item of the array has {index:number, width:number}.
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
+	    _reduceExcessColumnWidthSub: function(widths, totalRemainWidth, availableList) {
 	        var avgValue = Math.round(totalRemainWidth / availableList.length);
 	        var newAvailableList = [];
 	        var columnIndexes;
@@ -5386,33 +5445,33 @@
 	            // note that totalRemainWidth and avgValue are negative number.
 	            if (available.width < Math.abs(avgValue)) {
 	                totalRemainWidth += available.width;
-	                columnWidthList[available.index] -= available.width;
+	                widths[available.index] -= available.width;
 	            } else {
 	                newAvailableList.push(available);
 	            }
 	        });
 	        // call recursively until all available width are less than average
 	        if (availableList.length > newAvailableList.length) {
-	            return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
+	            return this._reduceExcessColumnWidthSub(widths, totalRemainWidth, newAvailableList);
 	        }
 	        columnIndexes = _.pluck(availableList, 'index');
 
-	        return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
+	        return this._distributeExtraWidthEqually(widths, totalRemainWidth, columnIndexes);
 	    },
 
 	    /**
 	     * Distributes the extra width equally to each column at specified indexes.
-	     * @param {number[]} columnWidthList - An array of column width
+	     * @param {number[]} widths - An array of column width
 	     * @param {number} extraWidth - Extra width
 	     * @param {number[]} columnIndexes - An array of indexes of target columns
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
+	    _distributeExtraWidthEqually: function(widths, extraWidth, columnIndexes) {
 	        var length = columnIndexes.length;
 	        var avgValue = Math.round(extraWidth / length);
 	        var errorValue = (avgValue * length) - extraWidth; // to correct total width
-	        var resultList = _.clone(columnWidthList);
+	        var resultList = _.clone(widths);
 
 	        _.each(columnIndexes, function(columnIndex) {
 	            resultList[columnIndex] += avgValue;
@@ -5427,16 +5486,16 @@
 
 	    /**
 	     * Makes all width of columns not less than minimumColumnWidth.
-	     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
+	     * @param {number[]} widths - 컬럼 넓이값 배열
 	     * @returns {number[]} - 수정된 새로운 넓이값 배열
 	     * @private
 	     */
-	    _applyMinimumColumnWidth: function(columnWidthList) {
-	        var minWidthList = this._minColumnWidthList;
-	        var appliedList = _.clone(columnWidthList);
+	    _applyMinimumWidth: function(widths) {
+	        var minWidths = this._minWidths;
+	        var appliedList = _.clone(widths);
 
 	        _.each(appliedList, function(width, index) {
-	            var minWidth = minWidthList[index];
+	            var minWidth = minWidths[index];
 	            if (width < minWidth) {
 	                appliedList[index] = minWidth;
 	            }
@@ -5447,31 +5506,31 @@
 
 	    /**
 	     * Adjust the column widths to make them fit into the dimension.
-	     * @param {number[]} columnWidthList - An array of column width
+	     * @param {number[]} widths - An array of column width
 	     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
 	     *                                    the column widths will be reduced.
 	     * @returns {number[]} - A new array of column widths
 	     * @private
 	     */
-	    _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
-	        var columnLength = columnWidthList.length;
+	    _adjustWidths: function(widths, fitToReducedTotal) {
+	        var columnLength = widths.length;
 	        var availableWidth = this.dimensionModel.getAvailableTotalWidth(columnLength);
-	        var totalExtraWidth = availableWidth - util.sum(columnWidthList);
-	        var fixedCount = _.filter(this._columnWidthFixedFlags).length;
+	        var totalExtraWidth = availableWidth - util.sum(widths);
+	        var fixedCount = _.filter(this._fixedWidthFlags).length;
 	        var adjustedList;
 
 	        if (totalExtraWidth > 0) {
 	            if (columnLength > fixedCount) {
-	                adjustedList = this._addExtraColumnWidth(columnWidthList, totalExtraWidth);
+	                adjustedList = this._addExtraColumnWidth(widths, totalExtraWidth);
 	            } else {
 	                // If all column has fixed width, add extra width to the last column.
-	                adjustedList = _.clone(columnWidthList);
+	                adjustedList = _.clone(widths);
 	                adjustedList[columnLength - 1] += totalExtraWidth;
 	            }
 	        } else if (fitToReducedTotal && totalExtraWidth < 0) {
-	            adjustedList = this._reduceExcessColumnWidth(columnWidthList, totalExtraWidth);
+	            adjustedList = this._reduceExcessColumnWidth(widths, totalExtraWidth);
 	        } else {
-	            adjustedList = columnWidthList;
+	            adjustedList = widths;
 	        }
 
 	        return adjustedList;
@@ -5482,36 +5541,36 @@
 	     * @private
 	     */
 	    _onDimensionWidthChange: function() {
-	        var widthList = this.get('columnWidthList');
+	        var widths = this.get('widths');
 
 	        if (!this._isModified) {
-	            widthList = this._adjustColumnWidthList(widthList, true);
+	            widths = this._adjustWidths(widths, true);
 	        }
-	        this._setColumnWidthVariables(widthList);
+	        this._setColumnWidthVariables(widths);
 	    },
 
 	    /**
-	     * L side 와 R side 에 따른 columnWidthList 를 반환한다.
+	     * L side 와 R side 에 따른 widths 를 반환한다.
 	     * @param {String} [whichSide] 어느 영역인지 여부. L,R 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
-	     * @returns {Array}  조회한 영역의 columnWidthList
+	     * @returns {Array}  조회한 영역의 widths
 	     */
-	    getColumnWidthList: function(whichSide) {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var columnWidthList = [];
+	    getWidths: function(whichSide) {
+	        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
+	        var widths = [];
 
 	        switch (whichSide) {
 	            case frameConst.L:
-	                columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
+	                widths = this.get('widths').slice(0, columnFrozenCount);
 	                break;
 	            case frameConst.R:
-	                columnWidthList = this.get('columnWidthList').slice(columnFixCount);
+	                widths = this.get('widths').slice(columnFrozenCount);
 	                break;
 	            default :
-	                columnWidthList = this.get('columnWidthList');
+	                widths = this.get('widths');
 	                break;
 	        }
 
-	        return columnWidthList;
+	        return widths;
 	    },
 
 	    /**
@@ -5520,11 +5579,11 @@
 	     * @returns {Number} 해당 frame 의 너비
 	     */
 	    getFrameWidth: function(whichSide) {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var columnWidthList = this.getColumnWidthList(whichSide);
-	        var frameWidth = this._getFrameWidth(columnWidthList);
+	        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
+	        var widths = this.getWidths(whichSide);
+	        var frameWidth = this._getFrameWidth(widths);
 
-	        if (_.isUndefined(whichSide) && columnFixCount > 0) {
+	        if (_.isUndefined(whichSide) && columnFrozenCount > 0) {
 	            frameWidth += CELL_BORDER_WIDTH;
 	        }
 
@@ -5537,13 +5596,13 @@
 	     * @param {Number} width    변경할 너비 pixel값
 	     */
 	    setColumnWidth: function(index, width) {
-	        var columnWidthList = this.get('columnWidthList');
-	        var fixedFlags = this._columnWidthFixedFlags;
-	        var minWidth = this._minColumnWidthList[index];
+	        var widths = this.get('widths');
+	        var fixedFlags = this._fixedWidthFlags;
+	        var minWidth = this._minWidths[index];
 
-	        if (!fixedFlags[index] && columnWidthList[index]) {
-	            columnWidthList[index] = Math.max(width, minWidth);
-	            this._setColumnWidthVariables(columnWidthList);
+	        if (!fixedFlags[index] && widths[index]) {
+	            widths[index] = Math.max(width, minWidth);
+	            this._setColumnWidthVariables(widths);
 	            this._isModified = true;
 	        }
 	    },
@@ -5556,15 +5615,15 @@
 	     * @private
 	     */
 	    indexOf: function(posX, withMeta) {
-	        var columnWidthList = this.getColumnWidthList();
+	        var widths = this.getWidths();
 	        var totalColumnWidth = this.getFrameWidth();
 	        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
 	        var columnIndex = 0;
 
 	        if (posX >= totalColumnWidth) {
-	            columnIndex = columnWidthList.length - 1;
+	            columnIndex = widths.length - 1;
 	        } else {
-	            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
+	            tui.util.forEachArray(widths, function(width, index) { // eslint-disable-line consistent-return
 	                width += CELL_BORDER_WIDTH;
 	                columnIndex = index;
 
@@ -5584,7 +5643,7 @@
 	     * @param {Number} index - target column index
 	     */
 	    restoreColumnWidth: function(index) {
-	        var orgWidth = this.get('originalWidthList')[index];
+	        var orgWidth = this.get('originalWidths')[index];
 
 	        this.setColumnWidth(index, orgWidth);
 	    }
@@ -5604,7 +5663,7 @@
 	'use strict';
 
 	var Model = __webpack_require__(6);
-	var dimensionConstMap = __webpack_require__(8).dimension;
+	var dimensionConstMap = __webpack_require__(7).dimension;
 
 	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
@@ -5714,19 +5773,19 @@
 	    _getCellHorizontalPosition: function(columnName) {
 	        var columnModel = this.columnModel;
 	        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
-	        var columnWidthList = this.coordColumnModel.get('columnWidthList');
-	        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
+	        var widths = this.coordColumnModel.get('widths');
+	        var leftColumnCount = columnModel.getVisibleFrozenCount() + metaColumnCount;
 	        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
 	        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
 	        var left = 0;
 
 	        for (; idx < targetIdx; idx += 1) {
-	            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
+	            left += widths[idx] + CELL_BORDER_WIDTH;
 	        }
 
 	        return {
 	            left: left,
-	            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
+	            right: left + widths[targetIdx] + CELL_BORDER_WIDTH
 	        };
 	    },
 
@@ -5867,7 +5926,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var util = __webpack_require__(7);
+	var util = __webpack_require__(12);
 	var GridEvent = __webpack_require__(19);
 
 	/**
@@ -6695,8 +6754,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var util = __webpack_require__(7);
-	var attrNameConst = __webpack_require__(8).attrName;
+	var util = __webpack_require__(12);
+	var attrNameConst = __webpack_require__(7).attrName;
 	var targetTypeConst = {
 	    ROW_HEAD: 'rowHead',
 	    COLUMN_HEAD: 'columnHead',
@@ -6806,8 +6865,8 @@
 
 	var Model = __webpack_require__(6);
 	var RowList = __webpack_require__(21);
-	var renderStateMap = __webpack_require__(8).renderState;
-	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
+	var renderStateMap = __webpack_require__(7).renderState;
+	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
 
 	var DATA_LENGTH_FOR_LOADING = 1000;
 
@@ -7146,18 +7205,18 @@
 	    },
 
 	    /**
-	     * Returns the object that contains two array of column names splitted by columnFixCount.
+	     * Returns the object that contains two array of column names splitted by frozenCount.
 	     * @returns {{lside: Array, rside: Array}} - Column names map
 	     * @private
 	     */
 	    _getColumnNamesOfEachSide: function() {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var frozenCount = this.columnModel.getVisibleFrozenCount(true);
 	        var columnModels = this.columnModel.getVisibleColumns(null, true);
 	        var columnNames = _.pluck(columnModels, 'name');
 
 	        return {
-	            lside: columnNames.slice(0, columnFixCount),
-	            rside: columnNames.slice(columnFixCount)
+	            lside: columnNames.slice(0, frozenCount),
+	            rside: columnNames.slice(frozenCount)
 	        };
 	    },
 
@@ -7414,7 +7473,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Collection = __webpack_require__(10);
+	var Collection = __webpack_require__(9);
 	var Row = __webpack_require__(22);
 
 	/**
@@ -7453,7 +7512,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var util = __webpack_require__(7);
+	var util = __webpack_require__(12);
 
 	/**
 	 * Row Model
@@ -7878,7 +7937,7 @@
 	var _ = __webpack_require__(1);
 
 	var Renderer = __webpack_require__(20);
-	var dimensionConst = __webpack_require__(8).dimension;
+	var dimensionConst = __webpack_require__(7).dimension;
 
 	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
@@ -7934,14 +7993,16 @@
 	        var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
 	        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - bufferSize), 0);
 	        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + bufferSize), dataModel.length - 1);
-	        var top = coordRowModel.getOffsetAt(startIndex);
-	        var bottom = coordRowModel.getOffsetAt(endIndex) +
-	            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
+	        var top, bottom;
 
 	        if (dataModel.isRowSpanEnable()) {
 	            startIndex += this._getStartRowSpanMinCount(startIndex);
 	            endIndex += this._getEndRowSpanMaxCount(endIndex);
 	        }
+
+	        top = coordRowModel.getOffsetAt(startIndex);
+	        bottom = coordRowModel.getOffsetAt(endIndex) +
+	            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
 
 	        this.set({
 	            top: top,
@@ -8037,8 +8098,8 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var util = __webpack_require__(7);
-	var typeConst = __webpack_require__(8).selectionType;
+	var util = __webpack_require__(12);
+	var typeConst = __webpack_require__(7).selectionType;
 
 	/**
 	 * Selection Model class
@@ -8924,7 +8985,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
-	var typeConst = __webpack_require__(8).summaryType;
+	var typeConst = __webpack_require__(7).summaryType;
 
 	/**
 	 * Summary Model
@@ -9264,21 +9325,21 @@
 	var PaginationView = __webpack_require__(30);
 	var HeightResizeHandleView = __webpack_require__(31);
 	var StateLayerView = __webpack_require__(33);
-	var ClipboardView = __webpack_require__(34);
-	var LsideFrameView = __webpack_require__(36);
-	var RsideFrameView = __webpack_require__(38);
-	var HeaderView = __webpack_require__(39);
-	var HeaderResizeHandleView = __webpack_require__(40);
-	var BodyView = __webpack_require__(41);
-	var BodyTableView = __webpack_require__(42);
-	var FooterView = __webpack_require__(43);
-	var RowListView = __webpack_require__(44);
-	var SelectionLayerView = __webpack_require__(45);
-	var EditingLayerView = __webpack_require__(46);
-	var DatePickeLayerView = __webpack_require__(47);
-	var FocusLayerView = __webpack_require__(48);
-	var isOptionEnabled = __webpack_require__(7).isOptionEnabled;
-	var frameConst = __webpack_require__(8).frame;
+	var ClipboardView = __webpack_require__(35);
+	var LsideFrameView = __webpack_require__(37);
+	var RsideFrameView = __webpack_require__(39);
+	var HeaderView = __webpack_require__(40);
+	var HeaderResizeHandleView = __webpack_require__(41);
+	var BodyView = __webpack_require__(42);
+	var BodyTableView = __webpack_require__(43);
+	var FooterView = __webpack_require__(44);
+	var RowListView = __webpack_require__(45);
+	var SelectionLayerView = __webpack_require__(46);
+	var EditingLayerView = __webpack_require__(47);
+	var DatePickeLayerView = __webpack_require__(48);
+	var FocusLayerView = __webpack_require__(49);
+	var isOptionEnabled = __webpack_require__(12).isOptionEnabled;
+	var frameConst = __webpack_require__(7).frame;
 
 	/**
 	 * View Factory
@@ -9547,8 +9608,7 @@
 	     */
 	    createDatePickerLayer: function() {
 	        if (!tui.component ||
-	            !tui.component.DatePicker ||
-	            !tui.component.Calendar) {
+	            !tui.component.Datepicker) {
 	            return null;
 	        }
 
@@ -9593,7 +9653,7 @@
 	var View = __webpack_require__(2);
 	var GridEvent = __webpack_require__(19);
 	var targetTypeConst = GridEvent.targetTypeConst;
-	var attrNameConst = __webpack_require__(8).attrName;
+	var attrNameConst = __webpack_require__(7).attrName;
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -9673,6 +9733,7 @@
 	     * @private
 	     */
 	    _onSetWidth: function() {
+	        console.log('set width');
 	        this.$el.width(this.dimensionModel.get('width'));
 	    },
 
@@ -9836,7 +9897,7 @@
 
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(13);
-	var frameConst = __webpack_require__(8).frame;
+	var frameConst = __webpack_require__(7).frame;
 	var ContentArea;
 
 	/**
@@ -9925,26 +9986,13 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(13);
-
-	var HTML_BTNS =
-	    '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
-	    '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
-	    '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
-	    '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
-	    '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
-	    '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
-	    '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
-	    '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>';
-
 	var defaultOptions = {
-	    classPrefix: classNameConst.PREFIX,
-	    itemCount: 1,
-	    pagePerPageList: 5,
-	    itemPerPage: 10,
-	    isCenterAlign: true,
-	    moveUnit: 'page'
+	    totalItems: 1,
+	    itemsPerPage: 10,
+	    visiblePages: 5,
+	    centerAlign: true
 	};
+	var TUI_PAGINATION_CLASSNAME = 'tui-pagination';
 
 	/**
 	 * Class for the pagination
@@ -9957,10 +10005,13 @@
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.componentHolder = options.componentHolder;
+
+	        this._stopEventPropagation();
+
 	        this.on('appended', this._onAppended);
 	    },
 
-	    className: classNameConst.PAGINATION,
+	    className: TUI_PAGINATION_CLASSNAME,
 
 	    /**
 	     * Render
@@ -9968,10 +10019,18 @@
 	     */
 	    render: function() {
 	        this._destroyChildren();
-	        this.$el.empty().html(HTML_BTNS);
-
 	        this.componentHolder.setInstance('pagination', this._createComponent());
 	        return this;
+	    },
+
+	    /**
+	     * Stop propagation of mouse down event
+	     * @private
+	     */
+	    _stopEventPropagation: function() {
+	        this.$el.mousedown(function(ev) {
+	            ev.stopPropagation();
+	        });
 	    },
 
 	    /**
@@ -9988,18 +10047,12 @@
 	     */
 	    _createOptionObject: function() {
 	        var customOptions = this.componentHolder.getOptions('pagination');
-	        var btnOptions = {
-	            $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
-	            $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
-	            $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
-	            $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
-	        };
 
 	        if (customOptions === true) {
 	            customOptions = {};
 	        }
 
-	        return _.assign({}, defaultOptions, btnOptions, customOptions);
+	        return _.assign({}, defaultOptions, customOptions);
 	    },
 
 	    /**
@@ -10013,7 +10066,8 @@
 	        if (!ComponentClass) {
 	            throw new Error('Cannot find component \'tui.component.Pagination\'');
 	        }
-	        return new ComponentClass(this._createOptionObject(), this.$el);
+
+	        return new ComponentClass(this.$el, this._createOptionObject());
 	    }
 	});
 
@@ -10264,12 +10318,10 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var stateConst = __webpack_require__(8).renderState;
+	var stateConst = __webpack_require__(7).renderState;
 	var classNameConst = __webpack_require__(13);
-	var TABLE_BORDER_WIDTH = __webpack_require__(8).dimension.TABLE_BORDER_WIDTH;
-
-	var MESSAGE_LOADING = '요청을 처리 중입니다.';
-	var MESSAGE_EMPTY = '데이터가 존재하지 않습니다.';
+	var message = __webpack_require__(34);
+	var TABLE_BORDER_WIDTH = __webpack_require__(7).dimension.TABLE_BORDER_WIDTH;
 
 	/**
 	 * Layer class that represents the state of rendering phase.
@@ -10337,9 +10389,9 @@
 	    _getMessage: function(renderState) {
 	        switch (renderState) {
 	            case stateConst.LOADING:
-	                return MESSAGE_LOADING;
+	                return message.get('onLoading');
 	            case stateConst.EMPTY:
-	                return (this.renderModel.get('emptyMessage') || MESSAGE_EMPTY);
+	                return (this.renderModel.get('emptyMessage') || message.get('noData'));
 	            default:
 	                return null;
 	        }
@@ -10365,14 +10417,80 @@
 	    }
 	});
 
-	StateLayer.MESSAGE_LOADING = MESSAGE_LOADING;
-	StateLayer.MESSAGE_EMPTY = MESSAGE_EMPTY;
-
 	module.exports = StateLayer;
 
 
 /***/ },
 /* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Locale messages
+	 * @author NHN Ent. Fe Development Lab
+	 */
+	'use strict';
+
+	var util = __webpack_require__(12);
+
+	var messages = {
+	    en: {
+	        createAction: 'create',
+	        updateAction: 'update',
+	        deleteAction: 'delete',
+	        modifyAction: 'modify',
+	        requestConfirm: 'Are you sure you want to {{actionName}} {{count}} data?',
+	        noDataResponse: 'No data to {{actionName}}.',
+	        errorResponse: 'An error occurred while requesting data.\n\nPlease try again.',
+	        noData: 'No data.',
+	        onLoading: 'Your request is being processed.',
+	        resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+	                            'and initialize the width by double-clicking.'
+	    },
+	    ko: {
+	        createAction: '입력',
+	        updateAction: '수정',
+	        deleteAction: '삭제',
+	        modifyAction: '반영',
+	        requestConfirm: '{{count}}건의 데이터를 {{actionName}}하시겠습니까?',
+	        noDataResponse: '{{actionName}}할 데이터가 없습니다.',
+	        errorResponse: '데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.',
+	        noData: '데이터가 존재하지 않습니다.',
+	        onLoading: '요청을 처리 중입니다.',
+	        resizeHandleGuide: '마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고, ' +
+	                            '더블클릭을 통해 넓이를 초기화할 수 있습니다.'
+	    }
+	};
+	var localeMessages = {};
+
+	module.exports = {
+	    /**
+	     * Set messages
+	     * @param {string} langCode - Language code to decide locale messages
+	     */
+	    setLanguage: function(langCode) {
+	        localeMessages = messages[langCode];
+	    },
+
+	    /**
+	     * Get messeage
+	     * @param {string} key - Key to find message
+	     * @param {?object} [replacements] - Values to replace string
+	     * @returns {string} Message
+	     */
+	    get: function(key, replacements) {
+	        var message = localeMessages[key];
+
+	        if (replacements) {
+	            message = util.replaceText(message, replacements);
+	        }
+
+	        return message;
+	    }
+	};
+
+
+/***/ },
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10384,7 +10502,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var keyEvent = __webpack_require__(35);
+	var keyEvent = __webpack_require__(36);
 	var classNameConst = __webpack_require__(13);
 	var PASTE_DEBOUNCE_TIME = 300;
 	var KEYDOWN_LOCK_TIME = 10;
@@ -10578,7 +10696,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10690,7 +10808,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10701,9 +10819,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Frame = __webpack_require__(37);
+	var Frame = __webpack_require__(38);
 	var classNameConst = __webpack_require__(13);
-	var frameConst = __webpack_require__(8).frame;
+	var frameConst = __webpack_require__(7).frame;
 
 	/**
 	 * Left Side Frame
@@ -10761,7 +10879,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10773,7 +10891,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var frameConst = __webpack_require__(8).frame;
+	var frameConst = __webpack_require__(7).frame;
 
 	/**
 	 * Base class for frame view.
@@ -10836,7 +10954,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10847,9 +10965,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Frame = __webpack_require__(37);
+	var Frame = __webpack_require__(38);
 	var classNameConst = __webpack_require__(13);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -10978,7 +11096,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10990,8 +11108,8 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var util = __webpack_require__(7);
-	var constMap = __webpack_require__(8);
+	var util = __webpack_require__(12);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 	var GridEvent = __webpack_require__(19);
 	var DragEventEmitter = __webpack_require__(32);
@@ -11287,7 +11405,7 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var $colList = this.$el.find('col');
 	        var coordRowModel = this.coordRowModel;
 
@@ -11388,7 +11506,7 @@
 	     * @private
 	     */
 	    _getColumnData: function() {
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
 	        return {
@@ -11527,7 +11645,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11539,9 +11657,10 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 	var DragEventEmitter = __webpack_require__(32);
+	var message = __webpack_require__(34);
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -11591,7 +11710,7 @@
 	        attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
 	        'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
 	        'style="<%=height%>" ' +
-	        'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
+	        'title="<%=title%>">' +
 	        '</div>'
 	    ),
 
@@ -11601,7 +11720,7 @@
 	     * @private
 	     */
 	    _getColumnData: function() {
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
 
 	        return {
@@ -11624,7 +11743,8 @@
 	                lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
 	                columnIndex: index,
 	                columnName: columnModel.name,
-	                height: this.headerHeight
+	                height: this.headerHeight,
+	                title: message.get('resizeHandleGuide')
 	            });
 	        }, this);
 
@@ -11674,7 +11794,7 @@
 	     */
 	    _onMouseDown: function(ev) {
 	        var $target = $(ev.target);
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var columnIndex = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
 	        this.dragEmitter.start(ev, {
@@ -11720,7 +11840,7 @@
 	     * @private
 	     */
 	    _getHandlerColumnIndex: function(index) {
-	        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
+	        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleFrozenCount(true)) : index;
 	    }
 	});
 
@@ -11728,7 +11848,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11742,7 +11862,7 @@
 	var View = __webpack_require__(2);
 	var DragEventEmitter = __webpack_require__(32);
 	var GridEvent = __webpack_require__(19);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 	var frameConst = constMap.frame;
 
@@ -11990,7 +12110,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12002,7 +12122,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -12056,10 +12176,10 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var $colList = this.$el.find('col');
 
-	        _.each(columnWidthList, function(width, index) {
+	        _.each(columnWidths, function(width, index) {
 	            $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
 	        }, this);
 	    },
@@ -12167,7 +12287,7 @@
 	     */
 	    _getColGroupMarkup: function() {
 	        var whichSide = this.whichSide;
-	        var columnWidthList = this.coordColumnModel.getColumnWidthList(whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(whichSide);
 	        var columns = this.columnModel.getVisibleColumns(whichSide, true);
 	        var html = '';
 
@@ -12175,7 +12295,7 @@
 	            html += this.templateCol({
 	                attrColumnName: ATTR_COLUMN_NAME,
 	                columnName: column.name,
-	                width: columnWidthList[index] + CELL_BORDER_WIDTH
+	                width: columnWidths[index] + CELL_BORDER_WIDTH
 	            });
 	        }, this);
 
@@ -12187,7 +12307,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12199,7 +12319,7 @@
 	var _ = __webpack_require__(1);
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(13);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var frameConst = constMap.frame;
 
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -12299,7 +12419,7 @@
 	    },
 
 	    _onChangeColumnWidth: function() {
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	        var $ths = this.$el.find('th');
 
 	        _.each(columnWidths, function(columnWidth, index) {
@@ -12357,7 +12477,7 @@
 	    _generateTbodyHTML: function() {
 	        var summaryModel = this.summaryModel;
 	        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
-	        var columnWidths = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 
 	        return _.reduce(columns, function(memo, column, index) {
 	            var columnName = column.name;
@@ -12400,7 +12520,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12412,7 +12532,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 
 	var attrNameConst = constMap.attrName;
@@ -12707,7 +12827,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12720,15 +12840,14 @@
 
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(13);
-	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
-	var frameConst = __webpack_require__(8).frame;
+	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
+	var frameConst = __webpack_require__(7).frame;
 
 	/**
 	 * Class for the selection layer
 	 * @module view/selectionLayer
 	 * @extends module:base/view
 	 * @param {object} options Options
-	 * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
 	 * @ignore
 	 */
 	var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
@@ -12741,7 +12860,7 @@
 	            columnModel: options.columnModel,
 	            selectionModel: options.selectionModel
 	        });
-	        this._updateColumnWidthList();
+	        this._updateColumnWidths();
 
 	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
 	        this.listenTo(this.selectionModel, 'change:range', this.render);
@@ -12750,11 +12869,11 @@
 	    className: classNameConst.LAYER_SELECTION,
 
 	    /**
-	     * Updates this.columnWidthList
+	     * Updates this.columnWidths
 	     * @private
 	     */
-	    _updateColumnWidthList: function() {
-	        this.columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	    _updateColumnWidths: function() {
+	        this.columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 	    },
 
 	    /**
@@ -12762,7 +12881,7 @@
 	     * @private
 	     */
 	    _onChangeColumnWidth: function() {
-	        this._updateColumnWidthList();
+	        this._updateColumnWidths();
 	        this.render();
 	    },
 
@@ -12773,20 +12892,20 @@
 	     * @returns {array} - Relative column range indexes. [start, end]
 	     */
 	    _getOwnSideColumnRange: function(columnRange) {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount();
+	        var frozenCount = this.columnModel.getVisibleFrozenCount();
 	        var ownColumnRange = null;
 
 	        if (this.whichSide === frameConst.L) {
-	            if (columnRange[0] < columnFixCount) {
+	            if (columnRange[0] < frozenCount) {
 	                ownColumnRange = [
 	                    columnRange[0],
-	                    Math.min(columnRange[1], columnFixCount - 1)
+	                    Math.min(columnRange[1], frozenCount - 1)
 	                ];
 	            }
-	        } else if (columnRange[1] >= columnFixCount) {
+	        } else if (columnRange[1] >= frozenCount) {
 	            ownColumnRange = [
-	                Math.max(columnRange[0], columnFixCount) - columnFixCount,
-	                columnRange[1] - columnFixCount
+	                Math.max(columnRange[0], frozenCount) - frozenCount,
+	                columnRange[1] - frozenCount
 	            ];
 	        }
 
@@ -12817,7 +12936,7 @@
 	     * @returns {{left: string, width: string}} - css values
 	     */
 	    _getHorizontalStyles: function(columnRange) {
-	        var columnWidthList = this.columnWidthList;
+	        var columnWidths = this.columnWidths;
 	        var metaColumnCount = this.columnModel.getVisibleMetaColumnCount();
 	        var startIndex = columnRange[0];
 	        var endIndex = columnRange[1];
@@ -12829,13 +12948,13 @@
 	            startIndex += metaColumnCount;
 	            endIndex += metaColumnCount;
 	        }
-	        endIndex = Math.min(endIndex, columnWidthList.length - 1);
+	        endIndex = Math.min(endIndex, columnWidths.length - 1);
 
 	        for (; i <= endIndex; i += 1) {
 	            if (i < startIndex) {
-	                left += columnWidthList[i] + CELL_BORDER_WIDTH;
+	                left += columnWidths[i] + CELL_BORDER_WIDTH;
 	            } else {
-	                width += columnWidthList[i] + CELL_BORDER_WIDTH;
+	                width += columnWidths[i] + CELL_BORDER_WIDTH;
 	            }
 	        }
 	        width -= CELL_BORDER_WIDTH; // subtract last border width
@@ -12875,7 +12994,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12887,8 +13006,8 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
-	var attrNameConst = __webpack_require__(8).attrName;
+	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
+	var attrNameConst = __webpack_require__(7).attrName;
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -13038,7 +13157,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13049,20 +13168,9 @@
 
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(13);
-	var DEFAULT_DATE_FORMAT = 'yyyy-mm-dd';
+	var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
+	var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 	var DatePickerLayer;
-
-	/**
-	 * Returns a HTML string of a span element to represent an arrow-icon
-	 * @param {String} dirClassName - className to indicate direction of the arrow
-	 * @returns {String}
-	 * @ignore
-	 */
-	function arrowHTML(dirClassName) {
-	    var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
-
-	    return '<span class="' + classNameStr + '"></span>';
-	}
 
 	/**
 	 * Layer View class which contains the 'tui-component-date-picker'
@@ -13076,10 +13184,9 @@
 	        this.textPainter = options.textPainter;
 	        this.columnModel = options.columnModel;
 	        this.domState = options.domState;
-	        this.calendar = this._createCalendar();
 	        this.datePicker = this._createDatePicker();
 
-	        this._customizeCalendarBtns();
+	        this._preventMousedownEvent();
 
 	        this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
 	        this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
@@ -13088,78 +13195,29 @@
 	    className: classNameConst.LAYER_DATE_PICKER,
 
 	    /**
-	     * Creates an instance of 'tui-component-calendar'
-	     * @returns {tui.component.Calendar}
-	     * @private
-	     */
-	    _createCalendar: function() {
-	        var $calendarEl = $('<div>').addClass(classNameConst.CALENDAR);
-
-	        // prevent blur event from occuring in the input element
-	        $calendarEl.mousedown(function(ev) {
-	            ev.preventDefault();
-	            ev.target.unselectable = true;  // trick for IE8
-	            return false;
-	        });
-
-	        return new tui.component.Calendar({
-	            element: $calendarEl,
-	            classPrefix: classNameConst.CALENDAR + '-'
-	        });
-	    },
-
-	    /**
-	     * Customize the buttons of the calendar.
-	     * @private
-	     */
-	    _customizeCalendarBtns: function() {
-	        var $header = this.calendar.$header;
-	        var leftArrowHTML = arrowHTML(classNameConst.ICO_ARROW_LEFT);
-	        var rightArrowHTML = arrowHTML(classNameConst.ICO_ARROW_RIGHT);
-
-	        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_YEAR).html(leftArrowHTML + leftArrowHTML);
-	        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_YEAR).html(rightArrowHTML + rightArrowHTML);
-	        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_MONTH).html(leftArrowHTML);
-	        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_MONTH).html(rightArrowHTML);
-	    },
-
-	    /**
 	     * Creates an instance of 'tui-component-date-picker'
 	     * @returns {tui.component.DatePicker}
 	     * @private
 	     */
 	    _createDatePicker: function() {
-	        var datePicker = new tui.component.DatePicker({
-	            parentElement: this.$el,
-	            enableSetDateByEnterKey: false,
-	            selectableClassName: classNameConst.CALENDAR_SELECTABLE,
-	            selectedClassName: classNameConst.CALENDAR_SELECTED,
-	            pos: {
-	                top: 0,
-	                left: 0
+	        var datePicker = new tui.component.Datepicker(this.$el, {
+	            calendar: {
+	                showToday: false
 	            }
-	        }, this.calendar);
-
-	        datePicker.on('update', function() {
-	            datePicker.close();
 	        });
 
 	        return datePicker;
 	    },
 
 	    /**
-	     * Creates date object for now
-	     * @returns {{year: Number, month: Number, date: Number}}
-	     * @private
+	     * Prevent mousedown event on calendar layer
 	     */
-	    _createDateForNow: function() {
-	        var now = new Date();
-
-	        return {
-	            year: now.getFullYear(),
-	            month: now.getMonth() + 1,
-	            date: now.getDate()
-	        };
+	    _preventMousedownEvent: function() {
+	        this.$el.mousedown(function(ev) {
+	            ev.preventDefault();
+	            ev.target.unselectable = true;  // trick for IE8
+	            return false;
+	        });
 	    },
 
 	    /**
@@ -13170,12 +13228,25 @@
 	     */
 	    _resetDatePicker: function(options, $input) {
 	        var datePicker = this.datePicker;
-	        var date = options.date || this._createDateForNow();
+	        var format = options.format || DEFAULT_DATE_FORMAT;
+	        var date = options.date || (new Date());
+	        var selectableRanges = options.selectableRanges;
 
-	        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORMAT);
-	        datePicker.setRanges(options.selectableRanges || []);
-	        datePicker.setDate(date.year, date.month, date.date);
-	        datePicker.setElement($input);
+	        datePicker.setInput($input, {
+	            format: format,
+	            syncFromInput: true
+	        });
+
+	        if (selectableRanges) {
+	            datePicker.setRanges(selectableRanges);
+	        } else {
+	            datePicker.setRanges(FULL_RANGES);
+	        }
+
+	        if ($input.val() === '') {
+	            datePicker.setDate(date);
+	            $input.val('');
+	        }
 	    },
 
 	    /**
@@ -13236,7 +13307,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13248,7 +13319,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var constMap = __webpack_require__(8);
+	var constMap = __webpack_require__(7);
 	var classNameConst = __webpack_require__(13);
 
 	var frameConst = constMap.frame;
@@ -13381,7 +13452,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13397,7 +13468,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13408,7 +13479,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var attrNameConst = __webpack_require__(8).attrName;
+	var attrNameConst = __webpack_require__(7).attrName;
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -13515,7 +13586,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13596,6 +13667,17 @@
 	     */
 	    listenToFocusModel: function(focusModel) {
 	        this._listenForThrough(focusModel, ['focusChange']);
+	    },
+
+	    /**
+	     * Listen to RowList model
+	     * @param {module:model/rowList} dataModel - RowList model
+	     */
+	    listenToDataModel: function(dataModel) {
+	        this._listenForThrough(dataModel, [
+	            'check',
+	            'uncheck'
+	        ]);
 	    }
 	});
 
@@ -13605,7 +13687,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13616,13 +13698,13 @@
 
 	var _ = __webpack_require__(1);
 
-	var RowPainter = __webpack_require__(53);
-	var CellPainter = __webpack_require__(55);
-	var DummyCellPainter = __webpack_require__(56);
-	var TextPainter = __webpack_require__(57);
-	var SelectPainter = __webpack_require__(61);
-	var ButtonPainter = __webpack_require__(62);
-	var MainButtonPainter = __webpack_require__(63);
+	var RowPainter = __webpack_require__(54);
+	var CellPainter = __webpack_require__(56);
+	var DummyCellPainter = __webpack_require__(57);
+	var TextPainter = __webpack_require__(58);
+	var SelectPainter = __webpack_require__(62);
+	var ButtonPainter = __webpack_require__(63);
+	var MainButtonPainter = __webpack_require__(64);
 
 	/**
 	 * Painter manager
@@ -13765,7 +13847,7 @@
 
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13776,8 +13858,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(54);
-	var constMap = __webpack_require__(8);
+	var Painter = __webpack_require__(55);
+	var constMap = __webpack_require__(7);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -13920,7 +14002,7 @@
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13930,7 +14012,7 @@
 	'use strict';
 
 	var _ = __webpack_require__(1);
-	var attrNameConst = __webpack_require__(8).attrName;
+	var attrNameConst = __webpack_require__(7).attrName;
 
 	/**
 	 * Base class for Painters
@@ -14000,7 +14082,7 @@
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14011,9 +14093,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(54);
-	var util = __webpack_require__(7);
-	var attrNameConst = __webpack_require__(8).attrName;
+	var Painter = __webpack_require__(55);
+	var util = __webpack_require__(12);
+	var attrNameConst = __webpack_require__(7).attrName;
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -14234,7 +14316,7 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14245,9 +14327,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(54);
-	var util = __webpack_require__(7);
-	var attrNameConst = __webpack_require__(8).attrName;
+	var Painter = __webpack_require__(55);
+	var util = __webpack_require__(12);
+	var attrNameConst = __webpack_require__(7).attrName;
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -14308,7 +14390,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14319,8 +14401,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(58);
-	var util = __webpack_require__(7);
+	var InputPainter = __webpack_require__(59);
+	var util = __webpack_require__(12);
 	var classNameConst = __webpack_require__(13);
 
 	var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
@@ -14458,7 +14540,7 @@
 
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14468,10 +14550,10 @@
 	'use strict';
 
 	var _ = __webpack_require__(1);
-	var Backbone = __webpack_require__(59);
+	var Backbone = __webpack_require__(60);
 
-	var Painter = __webpack_require__(54);
-	var keyNameMap = __webpack_require__(8).keyName;
+	var Painter = __webpack_require__(55);
+	var keyNameMap = __webpack_require__(7).keyName;
 
 	/**
 	 * Input Painter Base
@@ -14675,7 +14757,7 @@
 
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
@@ -14694,7 +14776,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(60), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(61), exports], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -16602,13 +16684,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = $;
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16619,8 +16701,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(58);
-	var util = __webpack_require__(7);
+	var InputPainter = __webpack_require__(59);
+	var util = __webpack_require__(12);
 
 	/**
 	 * Painter class for 'select' input.
@@ -16709,7 +16791,7 @@
 
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16720,8 +16802,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(58);
-	var util = __webpack_require__(7);
+	var InputPainter = __webpack_require__(59);
+	var util = __webpack_require__(12);
 
 	/**
 	 * Painter class for 'checkbox' and 'radio button'.
@@ -16981,7 +17063,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16992,9 +17074,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(54);
+	var Painter = __webpack_require__(55);
 	var classNameConst = __webpack_require__(13);
-	var keyCodeMap = __webpack_require__(8).keyCode;
+	var keyCodeMap = __webpack_require__(7).keyCode;
 
 	/**
 	 * Main Button Painter
@@ -17077,7 +17159,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17087,7 +17169,7 @@
 	'use strict';
 
 	var _ = __webpack_require__(1);
-	var util = __webpack_require__(7);
+	var util = __webpack_require__(12);
 
 	/**
 	 * Controller class to handle actions from the painters
@@ -17293,7 +17375,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17306,12 +17388,13 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var Router = __webpack_require__(66);
-	var util = __webpack_require__(7);
-	var formUtil = __webpack_require__(67);
+	var Router = __webpack_require__(67);
+	var util = __webpack_require__(12);
+	var formUtil = __webpack_require__(68);
+	var message = __webpack_require__(34);
 	var GridEvent = __webpack_require__(19);
 
-	var renderStateMap = __webpack_require__(8).renderState;
+	var renderStateMap = __webpack_require__(7).renderState;
 	var DELAY_FOR_LOADING_STATE = 200;
 
 	/**
@@ -17459,8 +17542,8 @@
 	        var pagination = this.pagination;
 
 	        if (pagination) {
-	            pagination.setOption('itemPerPage', this.perPage);
-	            pagination.setOption('itemCount', 1);
+	            pagination.setItemsPerPage(this.perPage);
+	            pagination.setTotalItems(1);
 	            pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
 	        }
 	    },
@@ -17622,9 +17705,9 @@
 	        if (pagination && responseData.pagination) {
 	            page = responseData.pagination.page;
 	            totalCount = responseData.pagination.totalCount;
-	            pagination.setOption('itemPerPage', this.perPage);
-	            // If the totalCount is 0, set itemCount to 1 to show pagination
-	            pagination.setOption('itemCount', totalCount || 1);
+
+	            pagination.setItemsPerPage(this.perPage);
+	            pagination.setTotalItems(totalCount);
 	            pagination.movePageTo(page);
 	            this.curPage = page;
 	        }
@@ -17767,25 +17850,25 @@
 	     * @param {object} options - Options
 	     *      @param {String} [options.url] - URL to send the request
 	     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
-	     *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
-	     *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
-	     *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
-	     *      @param {String} [options.isUpdateOriginal=false] - Whether to update original data with current data
+	     *      @param {String} [options.checkedOnly=true] - Whether the request param only contains checked rows
+	     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+	     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+	     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
 	     */
 	    request: function(requestType, options) {
 	        var newOptions = _.extend({
 	            url: this.api[requestType],
 	            type: null,
 	            hasDataParam: true,
-	            isOnlyChecked: true,
-	            isOnlyModified: true,
-	            isSkipConfirm: false,
-	            isUpdateOriginal: false
+	            checkedOnly: true,
+	            modifiedOnly: true,
+	            showConfirm: true,
+	            updateOriginal: false
 	        }, options);
 	        var param = this._getRequestParam(requestType, newOptions);
 
 	        if (param) {
-	            if (newOptions.isUpdateOriginal) {
+	            if (newOptions.updateOriginal) {
 	                this.dataModel.setOriginalRowList();
 	            }
 	            this._ajax(param);
@@ -17828,8 +17911,8 @@
 	     * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
 	     * @param {Object} [options] Options
 	     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
-	     *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
-	     *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+	     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+	     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
 	     * @returns {{count: number, data: {requestType: string, url: string, data: object,
 	     *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
 	     * @private
@@ -17849,15 +17932,15 @@
 
 	        options = _.defaults(options || {}, {
 	            hasDataParam: true,
-	            isOnlyModified: true,
-	            isOnlyChecked: true
+	            modifiedOnly: true,
+	            checkedOnly: true
 	        });
 
 	        if (options.hasDataParam) {
-	            if (options.isOnlyModified) {
+	            if (options.modifiedOnly) {
 	                //{createList: [], updateList:[], deleteList: []} 에 담는다.
-	                dataMap = dataModel.getModifiedRowList({
-	                    isOnlyChecked: options.isOnlyChecked
+	                dataMap = dataModel.getModifiedRows({
+	                    checkedOnly: options.checkedOnly
 	                });
 	                _.each(dataMap, function(list, name) {
 	                    if (_.contains(checkList, name) && list.length) {
@@ -17866,9 +17949,9 @@
 	                    }
 	                }, this);
 	            } else {
-	                //{rowList: []} 에 담는다.
-	                data.rowList = dataModel.getRowList(options.isOnlyChecked);
-	                count = data.rowList.length;
+	                //{data: []} 에 담는다.
+	                data.data = dataModel.getRows(options.checkedOnly);
+	                count = data.data.length;
 	            }
 	        }
 
@@ -17886,8 +17969,8 @@
 	     *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
 	     *      @param {String} [options.type='POST'] request method 타입
 	     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
-	     *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
-	     *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+	     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+	     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
 	     * @returns {{requestType: string, url: string, data: object, type: string, dataType: string}}
 	     *      ajax 호출시 사용될 option 파라미터
 	     * @private
@@ -17897,14 +17980,14 @@
 	            url: this.api[requestType],
 	            type: null,
 	            hasDataParam: true,
-	            isOnlyModified: true,
-	            isOnlyChecked: true
+	            modifiedOnly: true,
+	            checkedOnly: true
 	        };
 	        var newOptions = $.extend(defaultOptions, options);
 	        var dataParam = this._getDataParam(requestType, newOptions);
 	        var param = null;
 
-	        if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
+	        if (!newOptions.showConfirm || this._isConfirmed(requestType, dataParam.count)) {
 	            param = {
 	                requestType: requestType,
 	                url: newOptions.url,
@@ -17943,22 +18026,15 @@
 	     * @private
 	     */
 	    _getConfirmMessage: function(requestType, count) {
-	        var textMap = {
-	            createData: '입력',
-	            updateData: '수정',
-	            deleteData: '삭제',
-	            modifyData: '반영'
+	        var replacedKey = requestType.replace('Data', 'Action');
+	        var actionName = message.get(replacedKey);
+	        var replacedValues = {
+	            count: count,
+	            actionName: actionName
 	        };
-	        var actionName = textMap[requestType];
-	        var message;
+	        var messageKey = (count > 0) ? 'requestConfirm' : 'noDataResponse';
 
-	        if (count > 0) {
-	            message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
-	        } else {
-	            message = actionName + '할 데이터가 없습니다.';
-	        }
-
-	        return message;
+	        return message.get(messageKey, replacedValues);
 	    },
 
 	    /**
@@ -18016,7 +18092,7 @@
 	     * @private
 	     */
 	    _onSuccess: function(callback, options, responseData, status, jqXHR) {
-	        var message = responseData && responseData.message;
+	        var responseMessage = responseData && responseData.message;
 	        var gridEvent = new GridEvent(null, {
 	            httpStatus: status,
 	            requestType: options.requestType,
@@ -18068,8 +18144,8 @@
 	            if (gridEvent.isStopped()) {
 	                return;
 	            }
-	            if (message) {
-	                alert(message);
+	            if (responseMessage) {
+	                alert(responseMessage);
 	            }
 	        }
 	    },
@@ -18111,7 +18187,7 @@
 	        }
 
 	        if (jqXHR.readyState > 1) {
-	            alert('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
+	            alert(message.get('errorResponse'));
 	        }
 	    }
 	});
@@ -18120,7 +18196,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18151,7 +18227,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18380,7 +18456,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports) {
 
 	/**
@@ -18436,7 +18512,7 @@
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18445,16 +18521,16 @@
 	*/
 	'use strict';
 
-	var util = __webpack_require__(7);
-	var styleGen = __webpack_require__(70);
-	var themeNameConst = __webpack_require__(8).themeName;
+	var util = __webpack_require__(12);
+	var styleGen = __webpack_require__(71);
+	var themeNameConst = __webpack_require__(7).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(72);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(73);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(74);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(73);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(74);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(75);
 
 	/**
 	 * build css string with given options.
@@ -18532,7 +18608,7 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18543,7 +18619,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var builder = __webpack_require__(71);
+	var builder = __webpack_require__(72);
 	var classNameConst = __webpack_require__(13);
 
 	/**
@@ -18802,7 +18878,7 @@
 
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18987,7 +19063,7 @@
 
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports) {
 
 	/**
@@ -19061,7 +19137,7 @@
 
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19070,7 +19146,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(72);
+	var presetDefault = __webpack_require__(73);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -19096,7 +19172,7 @@
 
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19105,7 +19181,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(72);
+	var presetDefault = __webpack_require__(73);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -19132,7 +19208,7 @@
 
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

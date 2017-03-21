@@ -63,12 +63,45 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
+     * Event handler for change event in _button (=checkbox)
+     * @param {boolean} checked - Checked state
+     * @private
+     */
+    _triggerCheckboxChangeEvent: function(checked) {
+        var eventObj = {
+            rowKey: this.get('rowKey')
+        };
+
+        if (checked) {
+            /**
+             * Occurs when a checkbox in row header is checked.
+             * @event tui.Grid#check
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the checked row
+             */
+            this.trigger('check', eventObj);
+        } else {
+            /**
+             * Occurs when a checkbox in row header is unchecked.
+             * @event tui.Grid#uncheck
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the unchecked row
+             */
+            this.trigger('uncheck', eventObj);
+        }
+    },
+
+    /**
      * Event handler for 'change' event.
      * Executes callback functions, sync rowspan data, and validate data.
      * @private
      */
     _onChange: function() {
         var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+        if (_.has(this.changed, '_button')) {
+            this._triggerCheckboxChangeEvent(this.changed._button);
+        }
 
         if (this.isDuplicatedPublicChanged(publicChanged)) {
             return;

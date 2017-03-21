@@ -76,6 +76,17 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      */
     listenToFocusModel: function(focusModel) {
         this._listenForThrough(focusModel, ['focusChange']);
+    },
+
+    /**
+     * Listen to RowList model
+     * @param {module:model/rowList} dataModel - RowList model
+     */
+    listenToDataModel: function(dataModel) {
+        this._listenForThrough(dataModel, [
+            'check',
+            'uncheck'
+        ]);
     }
 });
 
