@@ -65,7 +65,7 @@ describe('model/focus', function() {
             var domEventBus = DomEventBus.create();
             var focusModel = create({
                 domEventBus: domEventBus,
-                singleClickEdit: true
+                editingEvent: 'click'
             });
 
             spyOn(focusModel, 'focusIn');

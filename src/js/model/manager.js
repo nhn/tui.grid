@@ -42,8 +42,8 @@ var defaultOptions = {
     copyOptions: null,
     scrollX: true,
     scrollY: true,
-    singleClickEdit: false,
     useClientSort: true,
+    editingEvent: 'dblclick',
     rowHeight: 'auto',
     bodyHeight: 'auto',
     minRowHeight: 27,
@@ -221,7 +221,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             coordRowModel: this.coordRowModel,
             domEventBus: domEventBus,
             domState: domState,
-            singleClickEdit: options.singleClickEdit
+            editingEvent: options.editingEvent
         });
     },
 

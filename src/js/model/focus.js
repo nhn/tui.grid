@@ -20,7 +20,7 @@ var GridEvent = require('../event/gridEvent');
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
-        var editEventName = options.singleClickEdit ? 'click:cell' : 'dblclick:cell';
+        var editEventName = options.editingEvent + ':cell';
         var domEventBus;
 
         Model.prototype.initialize.apply(this, arguments);
