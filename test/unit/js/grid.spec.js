@@ -180,4 +180,24 @@ describe('grid', function() {
             expect(spy.calls.argsFor(0)[0].rowKey).toBe('b');
         });
     });
+
+    describe('Using "data" option', function() {
+        var data, grid;
+
+        beforeEach(function() {
+            data = [
+                {c1: 'test'},
+                {c2: 'test2'}
+            ];
+            grid = createGrid(['c1'], {
+                data: data
+            });
+        });
+
+        it('the rows are created and each cell set to data.', function() {
+            expect(grid.getRowCount()).toBe(data.length);
+            expect(grid.getRow(0).c1).toEqual(data[0].c1);
+            expect(grid.getRow(1).c1).toEqual(data[1].c1);
+        });
+    });
 });

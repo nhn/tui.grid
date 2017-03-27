@@ -35,6 +35,7 @@ tui = window.tui = tui || {};
  * Grid public API
  * @class
  * @param {PropertiesHash} options
+ *      @param {Array} [data] - Grid data for making rows.
  *      @param {Object} [options.header] - Options object for header
  *      @param {number} [options.header.height=35] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
@@ -190,6 +191,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.addOn = {};
 
         instanceMap[this.id] = this;
+
+        if (options.data) {
+            this.setData(options.data);
+        }
     },
 
     /**
