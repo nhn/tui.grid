@@ -59,8 +59,9 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
         attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
         attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
         'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
-        'style="<%=height%>" ' +
-        'title="<%=title%>">' +
+        'height="<%=height%>" ' +
+        'title="<%=title%>"' +
+        'style="display:<%=displayType%>">' +
         '</div>'
     ),
 
@@ -94,7 +95,8 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
                 columnIndex: index,
                 columnName: columnModel.name,
                 height: this.headerHeight,
-                title: message.get('resizeHandleGuide')
+                title: message.get('resizeHandleGuide'),
+                displayType: (columnModel.resizable === false) ? 'none' : 'block'
             });
         }, this);
 

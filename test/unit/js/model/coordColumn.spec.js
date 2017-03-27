@@ -111,7 +111,7 @@ describe('CoordColumn', function() {
 
             it('50, 50, 50, 50, 50 (fixed all)', function() {
                 var input = [50, 50, 50, 50, 50],
-                    output = [50, 50, 50, 50, 300];
+                    output = [50, 50, 50, 50, 50];
 
                 coordColumn._fixedWidthFlags = [true, true, true, true, true];
                 expect(coordColumn._adjustWidths(input)).toEqual(output);
@@ -162,17 +162,17 @@ describe('CoordColumn', function() {
 
     describe('_initColumnWidthVariables()', function() {
         var dimensionAttrs = {
-            width: 506,
+            width: 506, // border fixel is 6
             minimumColumnWidth: 50
         };
 
         describe('totalWidth:500, minWidth:50', function() {
-            it('100, 100, 100, 0, 0', function() {
+            it('All columns are not fixed.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 100},
-                        {name: 'c2', width: 100},
-                        {name: 'c3', width: 100},
+                        {name: 'c1'},
+                        {name: 'c2'},
+                        {name: 'c3'},
                         {name: 'c4'},
                         {name: 'c5'}
                     ],
@@ -182,8 +182,8 @@ describe('CoordColumn', function() {
                 expect(coordColumn.get('widths')).toEqual([100, 100, 100, 100, 100]);
             });
 
-            // total minimum width of empty column is bigger than remain width.
-            it('150, 150, 150, 0, 0', function() {
+            // Each minimum width of "auto" column is smaller than default mininum width.
+            it('150, 150, 150, "auto", "auto"', function() {
                 var columnAttrs = {
                     columns: [
                         {name: 'c1', width: 150},
@@ -198,14 +198,15 @@ describe('CoordColumn', function() {
                 expect(coordColumn.get('widths')).toEqual([150, 150, 150, 50, 50]);
             });
 
-            it('30, 30, 30, 100, 100', function() {
+            // Each minimum width of "auto" column is larger than default mininum width.
+            it('30, 30, 30, "auto", "auto"', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 30},
-                        {name: 'c2', width: 30},
-                        {name: 'c3', width: 30},
-                        {name: 'c4', width: 100},
-                        {name: 'c5', width: 100}
+                        {name: 'c1', width: 80},
+                        {name: 'c2', width: 80},
+                        {name: 'c3', width: 80},
+                        {name: 'c4'},
+                        {name: 'c5'}
                     ],
                     hasNumberColumn: false
                 };
@@ -213,34 +214,50 @@ describe('CoordColumn', function() {
                 expect(coordColumn.get('widths')).toEqual([80, 80, 80, 130, 130]);
             });
 
-            it('50(fixed), 50(fixed), 50(fixed), 100, 100', function() {
+            it('All columns are fixed with 50px.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 50, fixedWidth: true},
-                        {name: 'c2', width: 50, fixedWidth: true},
-                        {name: 'c3', width: 50, fixedWidth: true},
-                        {name: 'c4', width: 100},
-                        {name: 'c5', width: 100}
+                        {name: 'c1', width: 50},
+                        {name: 'c2', width: 50},
+                        {name: 'c3', width: 50},
+                        {name: 'c4', width: 50},
+                        {name: 'c5', width: 50}
                     ],
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('widths')).toEqual([50, 50, 50, 175, 175]);
+                expect(coordColumn.get('widths')).toEqual([50, 50, 50, 50, 50]);
             });
 
-            it('50(fixed), 50(fixed), 50(fixed), 50(fixed), 50(fixed)', function() {
+            it('When minimum width set, width of each "auto" column is expaneded by minimum width.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 50, fixedWidth: true},
-                        {name: 'c2', width: 50, fixedWidth: true},
-                        {name: 'c3', width: 50, fixedWidth: true},
-                        {name: 'c4', width: 50, fixedWidth: true},
-                        {name: 'c5', width: 50, fixedWidth: true}
+                        {name: 'c1', minWidth: 150},
+                        {name: 'c2', minWidth: 150},
+                        {name: 'c3', minWidth: 150},
+                        {name: 'c4'},
+                        {name: 'c5'}
                     ],
                     hasNumberColumn: false
                 };
                 var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-                expect(coordColumn.get('widths')).toEqual([50, 50, 50, 50, 300]);
+                expect(coordColumn.get('widths')).toEqual([150, 150, 150, 50, 50]);
+            });
+
+            it('When width set with minimum width and minimum width is larger than width, ' +
+                'width is replaced by minimum width.', function() {
+                var columnAttrs = {
+                    columns: [
+                        {name: 'c1', width: 100, minWidth: 10},
+                        {name: 'c2', width: 10, minWidth: 100},
+                        {name: 'c3'},
+                        {name: 'c4'},
+                        {name: 'c5'}
+                    ],
+                    hasNumberColumn: false
+                };
+                var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
+                expect(coordColumn.get('widths')).toEqual([100, 100, 100, 100, 100]);
             });
         });
     });
@@ -264,25 +281,6 @@ describe('CoordColumn', function() {
             coordColumn.setColumnWidth(0, 60);
 
             expect(coordColumn.get('widths')).toEqual([60, 50, 50]);
-        });
-
-        it('does not change the fixed-width column', function() {
-            var columnAttrs = {
-                columns: [
-                    {name: 'c1', width: 50, fixedWidth: true},
-                    {name: 'c2', width: 50},
-                    {name: 'c3', width: 50}
-                ],
-                hasNumberColumn: false
-            };
-            var dimensionAttrs = {
-                width: 154,
-                minimumColumnWidth: 10
-            };
-            var coordColumn = createCoordColumn(columnAttrs, dimensionAttrs);
-
-            coordColumn.setColumnWidth(0, 60);
-            expect(coordColumn.get('widths')).toEqual([50, 50, 50]);
         });
     });
 

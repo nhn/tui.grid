@@ -21,7 +21,6 @@ describe('model/manager', function() {
                     height: 281
                 },
                 rowHeight: 72,
-                fitToParentHeight: true,
                 scrollX: true,
                 scrollY: true,
                 columnOptions: {
@@ -32,7 +31,6 @@ describe('model/manager', function() {
             dimension = manager.dimensionModel;
             expect(dimension.get('headerHeight')).toBe(281);
             expect(dimension.get('rowHeight')).toBe(72);
-            expect(dimension.get('fitToParentHeight')).toBe(true);
             expect(dimension.get('scrollX')).toBe(true);
             expect(dimension.get('scrollY')).toBe(true);
             expect(dimension.get('minimumColumnWidth')).toBe(192);
@@ -41,13 +39,13 @@ describe('model/manager', function() {
         it('with options (boolean)', function() {
             var manager, dimension;
             manager = new ModelManager({
-                fitToParentHeight: false,
+                bodyHeight: 'fitToParent',
                 scrollX: false,
                 scrollY: false
             });
 
             dimension = manager.dimensionModel;
-            expect(dimension.get('fitToParentHeight')).toBe(false);
+            expect(dimension.get('fitToParentHeight')).toBe(true);
             expect(dimension.get('scrollX')).toBe(false);
             expect(dimension.get('scrollY')).toBe(false);
         });
@@ -96,7 +94,10 @@ describe('model/manager', function() {
         });
 
         it('if virtualScrolling:true, instance should be SmartRenderer', function() {
-            var manager = new ModelManager();
+            var manager = new ModelManager({
+                rowHeight: 10,
+                virtualScrolling: true
+            });
 
             expect(manager.renderModel).toEqual(jasmine.any(SmartRenderModel));
         });

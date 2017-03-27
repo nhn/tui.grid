@@ -55,6 +55,7 @@ describe('grid', function() {
             grid.setData([
                 {}, {}, {}, {}
             ]);
+            tui.Grid.setLanguage('ko');
         });
 
         it('getCheckedRows', function() {

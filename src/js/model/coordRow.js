@@ -61,6 +61,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
             rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
         }
+
         this._reset(rowHeights);
     },
 

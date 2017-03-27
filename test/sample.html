@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="../lib/tui-component-pagination/dist/tui-component-pagination.css" />
     <style media="screen">
         #wrapper {
-            width: 100%;
+            width: 300px;
         }
     </style>
 </head>
@@ -33,23 +33,22 @@
         // keyColumnName: 'c1',
         toolbar: true,
         resizeHandle: {},
+        minHeight: 300,
         showDummyRows: true,
-        bodyHeight: 300,
+        heightResizable: true,
         columnOptions: {
-            minWidth: 200,
-            frozenCount: 1
+            // frozenCount: 1
         },
         pagination: true,
-        rowHeaders: ['checkbox'],
+        // rowHeaders: ['checkbox'],
         columns: [
             {
                 name: 'c1',
                 title: 'c1',
+                width: 30,
                 validation: {
                     required: true
                 },
-                width: 200,
-                fixedWidth: true,
                 onBeforeChange: function(ev) {
                     console.log('before change! ev', ev);
                 },
@@ -83,7 +82,6 @@
                 name: 'c2',
                 title: 'c2',
                 sortable: true,
-                width: 200,
                 editOptions: {
                     type: 'select',
                     listItems: [
@@ -101,7 +99,6 @@
             {
                 name: 'c3',
                 title: 'c3',
-                width: 200,
                 defaultValue: 2,
                 editOptions: {
                     useViewMode: false,

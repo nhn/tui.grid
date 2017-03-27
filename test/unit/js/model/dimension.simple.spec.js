@@ -46,10 +46,10 @@ describe('model.dimension', function() {
 
         it('fit to parent height if fitToParentHeight options is true', function() {
             dimension.set('fitToParentHeight', true);
-            spyOn(dimension, '_setHeight');
+            spyOn(dimension, 'setHeight');
             dimension.refreshLayout();
 
-            expect(dimension._setHeight).toHaveBeenCalledWith(PARENT_HEIGHT);
+            expect(dimension.setHeight).toHaveBeenCalledWith(PARENT_HEIGHT);
         });
     });
 

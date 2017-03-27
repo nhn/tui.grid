@@ -7,6 +7,7 @@ var frameConst = require('common/constMap').frame;
 
 function createModelManager(frozenCount) {
     return new ModelManager({
+        rowHeight: 10,
         domState: new DomState($('<div>')),
         columnOptions: {
             frozenCount: frozenCount

@@ -83,11 +83,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * Event handler for 'setSize' event on Dimension
+     * Event handler for 'setWidth' event on Dimension
      * @private
      */
     _onSetWidth: function() {
-        console.log('set width');
         this.$el.width(this.dimensionModel.get('width'));
     },
 

@@ -72,21 +72,30 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var minWidths = [];
 
         _.each(columns, function(columnModel) {
-            var width = columnModel.width > 0 ? columnModel.width : 0;
-            var minWidth = Math.max(width, commonMinWidth);
+            var columnWidth = columnModel.width || 'auto';
+            var fixedWidth = !isNaN(columnWidth);
+            var width, minWidth;
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
             if (util.isMetaColumn(columnModel.name)) {
                 minWidth = width;
+            } else {
+                minWidth = columnModel.minWidth || commonMinWidth;
+            }
+
+            width = fixedWidth ? columnWidth : minWidth;
+
+            if (width < minWidth) {
+                width = minWidth;
             }
 
             // If the width is not assigned (in other words, the width is not positive number),
             // set it to zero (no need to worry about minimum width at this point)
             // so that #_fillEmptyWidth() can detect which one is empty.
             // After then, minimum width will be applied by #_applyMinimumWidth().
-            widths.push(width ? minWidth : 0);
+            widths.push(width);
             minWidths.push(minWidth);
-            fixedFlags.push(!!columnModel.fixedWidth);
+            fixedFlags.push(fixedWidth);
         }, this);
 
         this._fixedWidthFlags = fixedFlags;
@@ -362,23 +371,17 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var availableWidth = this.dimensionModel.getAvailableTotalWidth(columnLength);
         var totalExtraWidth = availableWidth - util.sum(widths);
         var fixedCount = _.filter(this._fixedWidthFlags).length;
-        var adjustedList;
+        var adjustedWidths;
 
-        if (totalExtraWidth > 0) {
-            if (columnLength > fixedCount) {
-                adjustedList = this._addExtraColumnWidth(widths, totalExtraWidth);
-            } else {
-                // If all column has fixed width, add extra width to the last column.
-                adjustedList = _.clone(widths);
-                adjustedList[columnLength - 1] += totalExtraWidth;
-            }
+        if (totalExtraWidth > 0 && (columnLength > fixedCount)) {
+            adjustedWidths = this._addExtraColumnWidth(widths, totalExtraWidth);
         } else if (fitToReducedTotal && totalExtraWidth < 0) {
-            adjustedList = this._reduceExcessColumnWidth(widths, totalExtraWidth);
+            adjustedWidths = this._reduceExcessColumnWidth(widths, totalExtraWidth);
         } else {
-            adjustedList = widths;
+            adjustedWidths = widths;
         }
 
-        return adjustedList;
+        return adjustedWidths;
     },
 
     /**
@@ -442,10 +445,9 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      */
     setColumnWidth: function(index, width) {
         var widths = this.get('widths');
-        var fixedFlags = this._fixedWidthFlags;
         var minWidth = this._minWidths[index];
 
-        if (!fixedFlags[index] && widths[index]) {
+        if (widths[index]) {
             widths[index] = Math.max(width, minWidth);
             this._setColumnWidthVariables(widths);
             this._isModified = true;

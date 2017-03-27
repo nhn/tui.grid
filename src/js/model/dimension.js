@@ -64,7 +64,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         scrollX: true,
         scrollY: true,
         fitToParentHeight: false,
-        fixedHeight: false
+        fixedHeight: false,
+
+        minRowHeight: 0,
+        minBodyHeight: 0
     },
 
     /**
@@ -83,7 +86,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _onDragMoveForHeight: function(ev) {
         var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
 
-        this.setSize(null, height);
+        this.setHeight(height);
     },
 
     /**
@@ -229,17 +232,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMinBodyHeight: function() {
-        return this.get('rowHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    _setHeight: function(height) {
-        this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
+        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
     },
 
     /**
@@ -277,17 +270,25 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Sets the width and height of the dimension.
-     * @param {(Number|Null)} width - Width
-     * @param {(Number|Null)} height - Height
+     * Set the width of the dimension.
+     * @param {number} width - Width
      */
-    setSize: function(width, height) {
+    setWidth: function(width) {
         if (width > 0) {
             this.set('width', width);
             this.trigger('setWidth', width);
         }
+    },
+
+    /**
+     * Sets the height of the dimension.
+     * (Resets the bodyHeight relative to the dimension height)
+     * @param  {number} height - The height of the dimension
+     * @private
+     */
+    setHeight: function(height) {
         if (height > 0) {
-            this._setHeight(height);
+            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
         }
     },
 
@@ -313,7 +314,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         });
 
         if (this.get('fitToParentHeight')) {
-            this._setHeight(domState.getParentHeight());
+            this.setHeight(domState.getParentHeight());
         }
     },
 

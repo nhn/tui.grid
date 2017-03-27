@@ -39,13 +39,15 @@ tui = window.tui = tui || {};
  *      @param {number} [options.header.height=35] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
- *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {boolean} [options.fixedRowHeight=false] - If set to true, the height of each rows does not
- *          expand with content.
- *      @param {boolean} [options.fixedHeight=true] - If set to true, height of the body area does not expand
- *          with the height of table.
- *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
- *          area expands to total height of rows.
+ *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
+ *          the height of each rows expands to dom's height. If set to number, the height is fixed.
+ *      @param {number} [options.minRowHeight=27] - The minimum height of each rows. When this value is larger than
+ *          the row's height, it set to the row's height.
+ *      @param {string|number} [options.bodyHeight] - The height of body area. The default value is 'auto',
+ *          the height of body area expands to total height of rows. If set to 'fitToParent', the height of the grid
+ *          will expand to fit the height of parent element. If set to number, the height is fixed.
+ *      @param {number} [options.minBodyHeight=minRowHeight] - The minimum height of body area. When this value
+ *          is larger than the body's height, it set to the body's height.
  *      @param {Object} [options.columnOptions] - Option object for all columns
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
  *      @param {boolean} [options.columnOptions.resizable=true] - If set to true, resize-handles of each columns
@@ -64,8 +66,6 @@ tui = window.tui = tui || {};
  *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
- *      @param {boolean} [options.fitToParentHeight=false] - If set to true, the height of the grid will expand to
- *          fit the height of parent element.
  *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
@@ -88,9 +88,11 @@ tui = window.tui = tui || {};
  *          @param {string} [options.columns.className] - The name of the class to be used for all cells of
  *              the column.
  *          @param {string} [options.columns.title] - The title of the column to be shown on the header.
- *          @param {number} [options.columns.width] - The width of the column. The unit is pixel.
+ *          @param {number} [options.columns.width] - The width of the column. The unit is pixel. If this value
+ *              isn't set, the column's width is automatically resized.
+ *          @param {number} [options.columns.minWidth=50] - The minimum width of the column. The unit is pixel.
  *          @param {boolean} [options.columns.hidden] - If set to true, the column will not be shown.
- *          @param {boolean} [options.columns.fixedWidth=false] - If set to true, the width of the column
+ *          @param {boolean} [options.columns.resizable] - If set to false, the width of the column
  *              will not be changed.
  *          @param {Object} [options.columns.validation] - The options to be used for validation.
  *              Validation is executed whenever data is changed or the {@link tui.Grid#validate} is called.
@@ -797,12 +799,19 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Sets the width and height of the dimension.
-     * @param  {(number|null)} width - The width of the dimension
-     * @param  {(number|null)} height - The height of the dimension
+     * Set the width of the dimension.
+     * @param {number} width - The width of the dimension
      */
-    setSize: function(width, height) {
-        this.modelManager.dimensionModel.setSize(width, height);
+    setWidth: function(width) {
+        this.modelManager.dimensionModel.setWidth(width);
+    },
+
+    /**
+     * Set the height of the dimension.
+     * @param {number} height - The height of the dimension
+     */
+    setHeight: function(height) {
+        this.modelManager.dimensionModel.setHeight(height);
     },
 
     /**
