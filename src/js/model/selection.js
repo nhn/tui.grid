@@ -249,7 +249,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         rowKey = row.get('rowKey');
-        columnName = column.columnName;
+        columnName = column.name;
         scrollPosition = this.coordConverterModel.getScrollPosition(rowKey, columnName);
         if (scrollPosition) {
             selectionType = this.getType();
