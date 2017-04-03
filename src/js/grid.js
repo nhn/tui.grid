@@ -614,7 +614,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the object that contains the lists of changed data compared to the original data.
-     * The object has properties 'createList', 'updateList', 'deleteList'.
+     * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
      * @param {Object} [options] Options
      *      @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
      *      @param {boolean} [options.withRawData=false] - If set to true, the data will contains
@@ -622,7 +622,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      *      @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
      *          rows will be returned.
      *      @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
-     * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
+     * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
      */
     getModifiedRows: function(options) {
         return this.modelManager.dataModel.getModifiedRows(options);

@@ -1517,31 +1517,31 @@ describe('data.rowList', function() {
             });
 
             describe('checkedOnly 옵션 true 일 때.', function() {
-                it('check 된 리스트가 존재하지 않을 경우 removeList 를 제외하고 createList, updateList는 빈 배열을 반환한다.', function() {
+                it('check 된 리스트가 존재하지 않을 경우 removeList 를 제외하고 createdRows, updatedRows는 빈 배열을 반환한다.', function() {
                     var modifiedList;
                     messUp();
                     uncheckAll();
                     modifiedList = getModified();
                     expect(modifiedList).toEqual({
-                        createList: [],
-                        updateList: [],
-                        deleteList: [
+                        createdRows: [],
+                        updatedRows: [],
+                        deletedRows: [
                             {none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2},
                             {none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3}
                         ]
                     });
                 });
 
-                it('변경 사항이 없는 행에만 check 가 되었을 경우 removeList 를 제외하고 createList, updateList 는 빈 배열을 반환한다.', function() {
+                it('변경 사항이 없는 행에만 check 가 되었을 경우 removeList 를 제외하고 createdRows, updatedRows 는 빈 배열을 반환한다.', function() {
                     var modifiedList;
                     messUp();
                     uncheckAll();
                     check(5);
                     modifiedList = getModified();
                     expect(modifiedList).toEqual({
-                        createList: [],
-                        updateList: [],
-                        deleteList: [
+                        createdRows: [],
+                        updatedRows: [],
+                        deletedRows: [
                             {none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2},
                             {none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3}
                         ]
@@ -1553,20 +1553,20 @@ describe('data.rowList', function() {
                     messUp();
                     checkAll();
                     modifiedList = getModified();
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
 
-                    expect(modifiedList.updateList).toBeDefined();
-                    expect(modifiedList.updateList.length).toBe(2);
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.updatedRows).toBeDefined();
+                    expect(modifiedList.updatedRows.length).toBe(2);
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
 
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deleteList).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(2);
+                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
+                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
                 });
             });
 
@@ -1581,54 +1581,54 @@ describe('data.rowList', function() {
                     var modifiedList;
                     modifiedList = getModified();
                     expect(modifiedList).toEqual({
-                        createList: [],
-                        updateList: [],
-                        deleteList: []
+                        createdRows: [],
+                        updatedRows: [],
+                        deletedRows: []
                     });
                 });
 
-                it('추가 사항이 있을 경우 createList 에 추가하여 반환한다.', function() {
+                it('추가 사항이 있을 경우 createdRows 에 추가하여 반환한다.', function() {
                     var modifiedList;
                     append();
                     prepend();
 
                     modifiedList = getModified();
 
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
-                    expect(modifiedList.updateList.length).toBe(0);
-                    expect(modifiedList.deleteList.length).toBe(0);
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.updatedRows.length).toBe(0);
+                    expect(modifiedList.deletedRows.length).toBe(0);
                 });
 
-                it('변경 사항이 있을 경우 updateList 에 추가하여 반환한다.', function() {
+                it('변경 사항이 있을 경우 updatedRows 에 추가하여 반환한다.', function() {
                     var modifiedList;
                     spoil(0);
                     spoil(1);
 
                     modifiedList = getModified();
 
-                    expect(modifiedList.updateList).toBeDefined();
-                    expect(modifiedList.updateList.length).toBe(2);
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
-                    expect(modifiedList.createList.length).toBe(0);
-                    expect(modifiedList.deleteList.length).toBe(0);
+                    expect(modifiedList.updatedRows).toBeDefined();
+                    expect(modifiedList.updatedRows.length).toBe(2);
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.createdRows.length).toBe(0);
+                    expect(modifiedList.deletedRows.length).toBe(0);
                 });
 
-                it('삭제 사항이 있을 경우 deleteList 에 추가하여 반환한다.', function() {
+                it('삭제 사항이 있을 경우 deletedRows 에 추가하여 반환한다.', function() {
                     var modifiedList;
                     remove(0);
                     remove(1);
 
                     modifiedList = getModified();
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.deleteList).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
-                    expect(modifiedList.createList.length).toBe(0);
-                    expect(modifiedList.updateList.length).toBe(0);
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(2);
+                    expect(modifiedList.deletedRows).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
+                    expect(modifiedList.deletedRows).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.createdRows.length).toBe(0);
+                    expect(modifiedList.updatedRows.length).toBe(0);
                 });
 
                 it('추가/변경/삭제 종합 테스트. 변경한 행을 삭제한 경우', function() {
@@ -1638,39 +1638,39 @@ describe('data.rowList', function() {
                     remove(1);
                     modifiedList = getModified();
 
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
 
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(4);
-                    expect(modifiedList.deleteList).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.deleteList).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
-                    expect(modifiedList.deleteList).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deleteList).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(4);
+                    expect(modifiedList.deletedRows).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
+                    expect(modifiedList.deletedRows).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
+                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
 
-                    expect(modifiedList.updateList.length).toBe(0);
+                    expect(modifiedList.updatedRows.length).toBe(0);
                 });
 
                 it('추가/변경/삭제 종합 테스트', function() {
                     var modifiedList;
                     messUp();
                     modifiedList = getModified();
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
 
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deleteList).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(2);
+                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
+                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
 
-                    expect(modifiedList.updateList).toBeDefined();
-                    expect(modifiedList.updateList.length).toBe(2);
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updateList).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.updatedRows).toBeDefined();
+                    expect(modifiedList.updatedRows.length).toBe(2);
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
+                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
                 });
             });
 
@@ -1686,19 +1686,19 @@ describe('data.rowList', function() {
                     messUp();
                     spoil(4, 'text');
                     modifiedList = getModified();
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain({text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createdRows).toContain({text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
 
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain({text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deleteList).toContain({text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(2);
+                    expect(modifiedList.deletedRows).toContain({text: 'text3', hidden: 'hidden3', rowKey: 2});
+                    expect(modifiedList.deletedRows).toContain({text: 'text4', hidden: 'hidden4', rowKey: 3});
 
-                    expect(modifiedList.updateList).toBeDefined();
-                    expect(modifiedList.updateList.length).toBe(1);
-                    expect(modifiedList.updateList).toContain({text: 'dirty', hidden: 'hidden5', rowKey: 4});
+                    expect(modifiedList.updatedRows).toBeDefined();
+                    expect(modifiedList.updatedRows.length).toBe(1);
+                    expect(modifiedList.updatedRows).toContain({text: 'dirty', hidden: 'hidden5', rowKey: 4});
                 });
             });
 
@@ -1714,20 +1714,20 @@ describe('data.rowList', function() {
                     messUp();
                     modifiedList = getModified();
 
-                    expect(modifiedList.createList).toBeDefined();
-                    expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain(6);
-                    expect(modifiedList.createList).toContain(7);
+                    expect(modifiedList.createdRows).toBeDefined();
+                    expect(modifiedList.createdRows.length).toBe(2);
+                    expect(modifiedList.createdRows).toContain(6);
+                    expect(modifiedList.createdRows).toContain(7);
 
-                    expect(modifiedList.updateList).toBeDefined();
-                    expect(modifiedList.updateList.length).toBe(2);
-                    expect(modifiedList.updateList).toContain(0);
-                    expect(modifiedList.updateList).toContain(1);
+                    expect(modifiedList.updatedRows).toBeDefined();
+                    expect(modifiedList.updatedRows.length).toBe(2);
+                    expect(modifiedList.updatedRows).toContain(0);
+                    expect(modifiedList.updatedRows).toContain(1);
 
-                    expect(modifiedList.deleteList).toBeDefined();
-                    expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain(2);
-                    expect(modifiedList.deleteList).toContain(3);
+                    expect(modifiedList.deletedRows).toBeDefined();
+                    expect(modifiedList.deletedRows.length).toBe(2);
+                    expect(modifiedList.deletedRows).toContain(2);
+                    expect(modifiedList.deletedRows).toContain(3);
                 });
             });
 
@@ -1742,17 +1742,17 @@ describe('data.rowList', function() {
                     var modifiedList;
                     messUp();
                     modifiedList = getModified();
-                    expect(modifiedList.createList[0]._button).toBeDefined();
-                    expect(modifiedList.createList[0]._extraData).toBeDefined();
-                    expect(modifiedList.createList[0].rowKey).toBeDefined();
+                    expect(modifiedList.createdRows[0]._button).toBeDefined();
+                    expect(modifiedList.createdRows[0]._extraData).toBeDefined();
+                    expect(modifiedList.createdRows[0].rowKey).toBeDefined();
 
-                    expect(modifiedList.updateList[0]._button).toBeDefined();
-                    expect(modifiedList.updateList[0]._extraData).toBeDefined();
-                    expect(modifiedList.updateList[0].rowKey).toBeDefined();
+                    expect(modifiedList.updatedRows[0]._button).toBeDefined();
+                    expect(modifiedList.updatedRows[0]._extraData).toBeDefined();
+                    expect(modifiedList.updatedRows[0].rowKey).toBeDefined();
 
-                    expect(modifiedList.deleteList[0]._button).toBeDefined();
-                    expect(modifiedList.deleteList[0]._extraData).toBeDefined();
-                    expect(modifiedList.deleteList[0].rowKey).toBeDefined();
+                    expect(modifiedList.deletedRows[0]._button).toBeDefined();
+                    expect(modifiedList.deletedRows[0]._extraData).toBeDefined();
+                    expect(modifiedList.deletedRows[0].rowKey).toBeDefined();
                 });
             });
         });

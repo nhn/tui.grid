@@ -258,7 +258,7 @@ describe('addon.net', function() {
         }
 
         it('createData, {modifiedOnly: true, checkedOnly: true}', function() {
-            var param, createList;
+            var param, createdRows;
 
             createNet();
             grid.setData(data);
@@ -266,38 +266,38 @@ describe('addon.net', function() {
             messUp();
             grid.checkAll();
             param = net._getDataParam('createData');
-            createList = $.parseJSON(param.data.createList);
+            createdRows = $.parseJSON(param.data.createdRows);
 
-            expect(createList.length).toBe(2);
-            expect(param.data.updateList).toBeUndefined();
-            expect(param.data.deleteList).toBeUndefined();
+            expect(createdRows.length).toBe(2);
+            expect(param.data.updatedRows).toBeUndefined();
+            expect(param.data.deletedRows).toBeUndefined();
             expect(param.count).toBe(2);
 
             grid.uncheckAll();
             param = net._getDataParam('createData');
-            expect(param.createList).toBeUndefined();
+            expect(param.createdRows).toBeUndefined();
         });
 
         it('createData, {checkedOnly: false}', function() {
-            var param, createList;
+            var param, createdRows;
 
             createNet();
             grid.setData(data);
 
             messUp();
             param = net._getDataParam('createData', {checkedOnly: false});
-            createList = $.parseJSON(param.data.createList);
+            createdRows = $.parseJSON(param.data.createdRows);
 
-            expect(createList.length).toBe(2);
-            expect(param.data.updateList).not.toBeDefined();
-            expect(param.data.deleteList).not.toBeDefined();
+            expect(createdRows.length).toBe(2);
+            expect(param.data.updatedRows).not.toBeDefined();
+            expect(param.data.deletedRows).not.toBeDefined();
             expect(param.count).toBe(2);
 
             grid.uncheckAll();
             param = net._getDataParam('createData', {checkedOnly: false});
-            createList = $.parseJSON(param.data.createList);
+            createdRows = $.parseJSON(param.data.createdRows);
 
-            expect(createList.length).toBe(2);
+            expect(createdRows.length).toBe(2);
             expect(param.count).toBe(2);
         });
 
@@ -309,10 +309,10 @@ describe('addon.net', function() {
 
             messUp();
             param = net._getDataParam('createData', {checkedOnly: false, modifiedOnly: false});
-            expect(param.data.data).toBeDefined();
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.updateList).not.toBeDefined();
-            expect(param.data.deleteList).not.toBeDefined();
+            expect(param.data.rows).toBeDefined();
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.updatedRows).not.toBeDefined();
+            expect(param.data.deletedRows).not.toBeDefined();
             expect(param.count).toBe(grid.getRowCount());
         });
 
@@ -326,14 +326,14 @@ describe('addon.net', function() {
             grid.checkAll();
             param = net._getDataParam('updateData');
             expect(param.count).toBe(3);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.deleteList).not.toBeDefined();
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.deletedRows).not.toBeDefined();
 
             grid.uncheckAll();
             param = net._getDataParam('updateData');
             expect(param.count).toBe(0);
-            expect(param.data.updateList).not.toBeDefined();
+            expect(param.data.updatedRows).not.toBeDefined();
         });
 
         it('updateData, {checkedOnly: false}', function() {
@@ -345,16 +345,16 @@ describe('addon.net', function() {
             messUp();
             param = net._getDataParam('updateData', {checkedOnly: false});
             expect(param.count).toBe(3);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.deleteList).not.toBeDefined();
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.deletedRows).not.toBeDefined();
 
             grid.uncheckAll();
             param = net._getDataParam('updateData', {checkedOnly: false});
             expect(param.count).toBe(3);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.deleteList).not.toBeDefined();
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.deletedRows).not.toBeDefined();
         });
 
         it('deleteData, {modifiedOnly: true, checkedOnly: true}', function() {
@@ -367,8 +367,8 @@ describe('addon.net', function() {
             messUp();
             param = net._getDataParam('deleteData');
             expect(param.count).toBe(1);
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.updateList).not.toBeDefined();
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.updatedRows).not.toBeDefined();
         });
 
         it('modifyData, {modifiedOnly: true, checkedOnly: true}', function() {
@@ -381,16 +381,16 @@ describe('addon.net', function() {
             grid.checkAll();
             param = net._getDataParam('modifyData');
             expect(param.count).toBe(6);
-            expect($.parseJSON(param.data.createList).length).toBe(2);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect($.parseJSON(param.data.deleteList).length).toBe(1);
+            expect($.parseJSON(param.data.createdRows).length).toBe(2);
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect($.parseJSON(param.data.deletedRows).length).toBe(1);
 
             grid.uncheckAll();
             param = net._getDataParam('modifyData');
             expect(param.count).toBe(1);
-            expect(param.data.createList).not.toBeDefined();
-            expect(param.data.updateList).not.toBeDefined();
-            expect($.parseJSON(param.data.deleteList).length).toBe(1);
+            expect(param.data.createdRows).not.toBeDefined();
+            expect(param.data.updatedRows).not.toBeDefined();
+            expect($.parseJSON(param.data.deletedRows).length).toBe(1);
         });
 
         it('modifyData, {checkedOnly: false}', function() {
@@ -401,16 +401,16 @@ describe('addon.net', function() {
 
             messUp();
             param = net._getDataParam('modifyData', {checkedOnly: false});
-            expect($.parseJSON(param.data.createList).length).toBe(2);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect($.parseJSON(param.data.deleteList).length).toBe(1);
+            expect($.parseJSON(param.data.createdRows).length).toBe(2);
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect($.parseJSON(param.data.deletedRows).length).toBe(1);
             expect(param.count).toBe(6);
 
             grid.uncheckAll();
             param = net._getDataParam('modifyData', {checkedOnly: false});
-            expect($.parseJSON(param.data.createList).length).toBe(2);
-            expect($.parseJSON(param.data.updateList).length).toBe(3);
-            expect($.parseJSON(param.data.deleteList).length).toBe(1);
+            expect($.parseJSON(param.data.createdRows).length).toBe(2);
+            expect($.parseJSON(param.data.updatedRows).length).toBe(3);
+            expect($.parseJSON(param.data.deletedRows).length).toBe(1);
             expect(param.count).toBe(6);
         });
     });

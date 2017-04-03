@@ -530,20 +530,20 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * 서버로 요청시 사용될 파라미터 중 Grid 의 데이터에 해당하는 데이터를 Option 에 맞추어 반환한다.
      * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Object} [options] Options
-     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
-     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
-     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-     * @returns {{count: number, data: {requestType: string, url: string, data: object,
+     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rows 관련 데이터가 포함될 지 여부.
+     *      @param {boolean} [options.modifiedOnly=true] rows 관련 데이터 중 수정된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.checkedOnly=true] rows 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+     * @returns {{count: number, data: {requestType: string, url: string, rows: object,
      *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
      * @private
      */
     _getDataParam: function(requestType, options) {
         var dataModel = this.dataModel,
             checkMap = {
-                createData: ['createList'],
-                updateData: ['updateList'],
-                deleteData: ['deleteList'],
-                modifyData: ['createList', 'updateList', 'deleteList']
+                createData: ['createdRows'],
+                updateData: ['updatedRows'],
+                deleteData: ['deletedRows'],
+                modifyData: ['createdRows', 'updatedRows', 'deletedRows']
             },
             checkList = checkMap[requestType],
             data = {},
@@ -558,7 +558,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         if (options.hasDataParam) {
             if (options.modifiedOnly) {
-                //{createList: [], updateList:[], deleteList: []} 에 담는다.
+                //{createdRows: [], updatedRows:[], deletedRows: []} 에 담는다.
                 dataMap = dataModel.getModifiedRows({
                     checkedOnly: options.checkedOnly
                 });
@@ -569,9 +569,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                     }
                 }, this);
             } else {
-                //{data: []} 에 담는다.
-                data.data = dataModel.getRows(options.checkedOnly);
-                count = data.data.length;
+                //{rows: []} 에 담는다.
+                data.rows = dataModel.getRows(options.checkedOnly);
+                count = data.rows.length;
             }
         }
 

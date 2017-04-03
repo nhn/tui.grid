@@ -882,7 +882,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *      @param {boolean} [options.withRawData=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.rowKeyOnly=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
      *      @param {Array} [options.ignoredColumns]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-     * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
+     * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
     getModifiedRows: function(options) {
         var withRawData = options && options.withRawData;
@@ -892,9 +892,9 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var current = withRawData ? this.toJSON() : this._removePrivateProp(this.toJSON());
         var ignoredColumns = options && options.ignoredColumns;
         var result = {
-            createList: [],
-            updateList: [],
-            deleteList: []
+            createdRows: [],
+            updatedRows: [],
+            deletedRows: []
         };
 
         original = _.indexBy(original, 'rowKey');
@@ -908,9 +908,9 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
             if (!checkedOnly || (checkedOnly && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
-                    result.createList.push(item);
+                    result.createdRows.push(item);
                 } else if (this._isModifiedRow(row, originalRow, ignoredColumns)) {
-                    result.updateList.push(item);
+                    result.updatedRows.push(item);
                 }
             }
         }, this);
@@ -919,7 +919,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         _.each(original, function(obj, rowKey) {
             var item = rowKeyOnly ? obj.rowKey : _.omit(obj, ignoredColumns);
             if (!current[rowKey]) {
-                result.deleteList.push(item);
+                result.deletedRows.push(item);
             }
         }, this);
         return result;
