@@ -36,7 +36,7 @@ tui = window.tui = tui || {};
  * @class
  * @param {PropertiesHash} options
  *      @param {Array} [data] - Grid data for making rows.
- *      @param {Object} [options.header] - Options object for header
+ *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=35] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
@@ -63,7 +63,7 @@ tui = window.tui = tui || {};
  *          without server.
  *      @param {boolean} [options.virtualScrolling=true] - If set to true, use virtual-scrolling so that large
  *          amount of data can be processed performantly.
- *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
+ *      @param {boolean} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
  *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
@@ -152,6 +152,8 @@ tui = window.tui = tui || {};
  *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
+ *          @param {Array} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
+ *              by fitting to the column's width.
  *          @param {Object} [options.columns.component] - Option for using tui-component
  *              @param {string} [options.columns.component.name] - The name of the compnent to use
  *                  for this column
