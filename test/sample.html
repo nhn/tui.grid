@@ -40,7 +40,7 @@
             // frozenCount: 1
         },
         pagination: true,
-        // rowHeaders: ['checkbox'],
+        rowHeaders: ['checkbox'],
         columns: [
             {
                 name: 'c1',
@@ -51,20 +51,13 @@
                 },
                 onBeforeChange: function(ev) {
                     console.log('before change! ev', ev);
+                    return false;
                 },
                 onAfterChange: function(ev) {
                     console.log('after change! ev', ev);
                 },
                 editOptions: {
-                    onKeyDown: function(ev) {
-                        console.log('keydown ev', ev);
-                    },
-                    onFocus: function(ev) {
-                        console.log('focus ev', ev);
-                    },
-                    onBlur: function(ev) {
-                        console.log('blur ev', ev);
-                    },
+
                     type: 'text',
                     listItems: [
                         {

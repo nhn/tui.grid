@@ -283,23 +283,6 @@ describe('RowData', function() {
                 instance: gridInstance
             });
         });
-
-        describe('onBeforeChange의 결과값에 따른 동작 확인', function() {
-            it('callback 결과 값이 true 인 경우 정상적으로 값이 변경된다.', function() {
-                row.set('c3', 'value3 new');
-                expect(row.get('c3')).toBe('value3 new');
-            });
-
-            it('callback결과 값이 false인 경우 restore이벤트 발생후 이전값으로 복원된다.', function() {
-                var listenModel = new Backbone.Model();
-
-                listenModel.listenTo(row, 'restore', callbackSpy);
-                row.set('c4', 'value4 new');
-
-                expect(callbackSpy).toHaveBeenCalled();
-                expect(row.get('c4')).toBe('value4');
-            });
-        });
     });
 
     describe('_executeChangeAfterCallback()', function() {

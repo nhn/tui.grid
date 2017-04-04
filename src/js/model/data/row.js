@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var Backbone = require('backbone');
 
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
@@ -39,6 +40,44 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     idAttribute: 'rowKey',
+
+    /**
+     * Overrides Backbone's set method for executing onBeforeChange before firing change event.
+     * @override
+     * @param {object|string} key - Model's attribute(s)
+     * @param {*} value - Model's value or options when type of key paramater is object
+     * @param {*} options - The value of key or the options object
+     */
+    set: function(key, value, options) {
+        var isObject = _.isObject(key);
+        var changedColumns;
+
+        // When the "key" parameter's type is object,
+        // the "options" parameter is replaced by the "value" parameter.
+        if (isObject) {
+            options = value;
+        }
+
+        // When calling set method on initialize, the value of columnModel is undefined.
+        if (this.columnModel && options && !options.silent) {
+            if (isObject) {
+                changedColumns = key;
+            } else {
+                changedColumns = {};
+                changedColumns[key] = value;
+            }
+
+            _.each(changedColumns, function(columnValue, columnName) {
+                if (!this._executeOnBeforeChange(columnName)) {
+                    delete changedColumns[columnName];
+                }
+            }, this);
+
+            Backbone.Model.prototype.set.call(this, changedColumns, options);
+        } else {
+            Backbone.Model.prototype.set.apply(this, arguments);
+        }
+    },
 
     /**
      * Overrides Backbone's parse method for extraData not to be null.
@@ -106,14 +145,14 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (this.isDuplicatedPublicChanged(publicChanged)) {
             return;
         }
+
         _.each(publicChanged, function(value, columnName) {
             var columnModel = this.columnModel.getColumnModel(columnName);
+
             if (!columnModel) {
                 return;
             }
-            if (!this._executeOnBeforeChange(columnName)) {
-                return;
-            }
+
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeOnAfterChange(columnName);
             this.validateCell(columnName, true);
@@ -187,23 +226,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Executes the onChangeBefore callback function.
-     * onChangeBefore 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
      * @param {String} columnName - column name
      * @returns {boolean}
      * @private
      */
     _executeOnBeforeChange: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var changeEvent, obj;
+        var changeEvent;
 
-        if (columnModel.onBeforeChange) {
+        if (columnModel && columnModel.onBeforeChange) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
             if (columnModel.onBeforeChange(changeEvent) === false) {
-                obj = {};
-                obj[columnName] = this.previous(columnName);
-                this.set(obj);
-                this.trigger('restore', columnName);
                 return false;
             }
         }
