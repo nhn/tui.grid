@@ -6,6 +6,7 @@ var Backbone = require('backbone');
 var RowData = require('model/data/row');
 var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
+var GridEvent = require('event/gridEvent');
 var classNameConst = require('common/classNameConst');
 
 describe('RowData', function() {
@@ -226,7 +227,7 @@ describe('RowData', function() {
         });
     });
 
-    describe('_executeChangeBeforeCallback()', function() {
+    describe('onBeforeChange', function() {
         var row, callbackSpy, gridInstance = {};
 
         beforeEach(function() {
@@ -243,14 +244,14 @@ describe('RowData', function() {
                 },
                 {
                     name: 'c3',
-                    onBeforeChange: function() {
-                        return true;
+                    onBeforeChange: function(ev) {
+                        ev.stop();
                     }
                 },
                 {
                     name: 'c4',
-                    onBeforeChange: function() {
-                        return false;
+                    onBeforeChange: function(ev) {
+                        ev.stop();
                     }
                 }
             ]);
@@ -269,29 +270,27 @@ describe('RowData', function() {
             });
         });
 
-        it('If the onBeforeChange is not defined, returns true', function() {
-            var result = row._executeOnBeforeChange('c1');
-            expect(result).toBe(true);
-        });
-
         it('If the onBeforeChange is defined, pass an event object as an argument', function() {
-            row._executeOnBeforeChange('c2');
-            expect(callbackSpy).toHaveBeenCalledWith({
+            row.set('c2', 'value2-1');
+            expect(callbackSpy).toHaveBeenCalledWith(new GridEvent(null, {
                 rowKey: 1,
                 columnName: 'c2',
-                value: 'value2',
-                instance: gridInstance
-            });
+                value: 'value2-1'
+            }));
+        });
+
+        it('If the onBeforeChange is defined and the event is stopped, the value should not be changed', function() {
+            row.set('c3', 'value2');
+            expect(row.get('c3')).not.toBe('value2');
         });
     });
 
-    describe('_executeChangeAfterCallback()', function() {
-        var callbackSpy, row, gridInstance = {};
+    describe('onAfterChange', function() {
+        var callbackSpy, row;
 
         beforeEach(function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
-            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
                 onAfterChange: callbackSpy
@@ -310,12 +309,11 @@ describe('RowData', function() {
 
         it('데이터 변경이 완료된 이후 onAfterChange을 수행한다.', function() {
             row.set('c1', 'value1 new');
-            expect(callbackSpy).toHaveBeenCalledWith({
+            expect(callbackSpy).toHaveBeenCalledWith(new GridEvent(null, {
                 rowKey: 1,
                 columnName: 'c1',
-                value: 'value1 new',
-                instance: gridInstance
-            });
+                value: 'value1 new'
+            }));
         });
     });
 });

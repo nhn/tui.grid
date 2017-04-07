@@ -6,16 +6,6 @@ var RowListData = require('model/data/rowList');
 describe('data.rowList', function() {
     var columns = [
         {
-            title: 'changeCallback',
-            name: 'changeCallback',
-            onBeforeChange: function(changeEvent) {
-                return !!changeEvent.value;
-            },
-            onAfterChange: function(changeEvent) {
-                return !!changeEvent.value;
-            }
-        },
-        {
             title: 'keyColumn',
             name: 'keyColumn'
         },

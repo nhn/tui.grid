@@ -9,6 +9,8 @@ var Backbone = require('backbone');
 
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
+var GridEvent = require('../../event/gridEvent');
+
 var util = require('../../common/util');
 var classNameConst = require('../../common/classNameConst');
 
@@ -44,9 +46,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Overrides Backbone's set method for executing onBeforeChange before firing change event.
      * @override
-     * @param {object|string} key - Model's attribute(s)
+     * @param {(Object|string)} key - Model's attribute(s)
      * @param {*} value - Model's value or options when type of key paramater is object
-     * @param {*} options - The value of key or the options object
+     * @param {?Object} options - The value of key or the options object
      */
     set: function(key, value, options) {
         var isObject = _.isObject(key);
@@ -59,7 +61,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         }
 
         // When calling set method on initialize, the value of columnModel is undefined.
-        if (this.columnModel && options && !options.silent) {
+        if (this.columnModel && !(options && options.silent)) {
             if (isObject) {
                 changedColumns = key;
             } else {
@@ -68,7 +70,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
 
             _.each(changedColumns, function(columnValue, columnName) {
-                if (!this._executeOnBeforeChange(columnName)) {
+                if (!this._executeOnBeforeChange(columnName, columnValue)) {
                     delete changedColumns[columnName];
                 }
             }, this);
@@ -82,8 +84,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Overrides Backbone's parse method for extraData not to be null.
      * @override
-     * @param  {object} data - initial data
-     * @returns {object} - parsed data
+     * @param  {Object} data - initial data
+     * @returns {Object} - parsed data
      */
     parse: function(data) {
         if (!data._extraData) {
@@ -209,54 +211,56 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
-     * @param {String} columnName 컬럼명
-     * @returns {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}}
-     *          changeCallback 에 전달될 이벤트 객체
+     * Create the GridEvent object when executing changeCallback defined on columnModel
+     * @param {String} columnName - Column name
+     * @param {?String} columnValue - Column value
+     * @returns {GridEvent} Event object to be passed to changeCallback
      * @private
      */
-    _createChangeCallbackEvent: function(columnName) {
-        return {
+    _createChangeCallbackEvent: function(columnName, columnValue) {
+        return new GridEvent(null, {
             rowKey: this.get('rowKey'),
             columnName: columnName,
-            value: this.get(columnName),
-            instance: tui.Grid.getInstanceById(this.collection.gridId)
-        };
+            value: columnValue
+        });
     },
 
     /**
      * Executes the onChangeBefore callback function.
-     * @param {String} columnName - column name
+     * @param {String} columnName - Column name
+     * @param {String} columnValue - Column value
      * @returns {boolean}
      * @private
      */
-    _executeOnBeforeChange: function(columnName) {
+    _executeOnBeforeChange: function(columnName, columnValue) {
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var changeEvent;
+        var gridEvent;
 
         if (columnModel && columnModel.onBeforeChange) {
-            changeEvent = this._createChangeCallbackEvent(columnName);
+            gridEvent = this._createChangeCallbackEvent(columnName, columnValue);
+            columnModel.onBeforeChange(gridEvent);
 
-            if (columnModel.onBeforeChange(changeEvent) === false) {
-                return false;
-            }
+            return !gridEvent.isStopped();
         }
         return true;
     },
 
     /**
      * Execuetes the onAfterChange callback function.
-     * @param {String} columnName - column name
+     * @param {String} columnName - Column name
      * @returns {boolean}
      * @private
      */
     _executeOnAfterChange: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var changeEvent;
+        var columnValue = this.get(columnName);
+        var gridEvent;
 
         if (columnModel.onAfterChange) {
-            changeEvent = this._createChangeCallbackEvent(columnName);
-            return !!(columnModel.onAfterChange(changeEvent));
+            gridEvent = this._createChangeCallbackEvent(columnName, columnValue);
+            columnModel.onAfterChange(gridEvent);
+
+            return !gridEvent.isStopped();
         }
 
         return true;
@@ -412,7 +416,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * rowSpanData를 설정한다.
      * @param {string} columnName - 컬럼명
-     * @param {object} data - rowSpan 정보를 가진 객체
+     * @param {Object} data - rowSpan 정보를 가진 객체
      */
     setRowSpanData: function(columnName, data) {
         this.extraDataManager.setRowSpanData(columnName, data);
@@ -518,7 +522,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
      * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
-     * @param {object} publicChanged 비교할 객체
+     * @param {Object} publicChanged 비교할 객체
      * @returns {boolean} 중복이면 true, 아니면 false
      */
     isDuplicatedPublicChanged: function(publicChanged) {
@@ -586,15 +590,15 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Executes relation callback
-     * @param {object} relation - relation object
+     * @param {Object} relation - relation object
      *   @param {array} relation.targetNames - target column list
      *   @param {function} [relation.disabled] - callback function for disabled attribute
      *   @param {function} [relation.editable] - callback function for disabled attribute
      *   @param {function} [relation.listItems] - callback function for changing option list
      * @param {array} attrNames - an array of callback names
      * @param {(string|number)} value - cell value
-     * @param {object} rowData - all value of the row
-     * @param {object} result - object to store the result of callback functions
+     * @param {Object} rowData - all value of the row
+     * @param {Object} result - object to store the result of callback functions
      * @private
      */
     _executeRelationCallback: function(relation, attrNames, value, rowData, result) {

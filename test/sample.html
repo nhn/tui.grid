@@ -51,7 +51,7 @@
                 },
                 onBeforeChange: function(ev) {
                     console.log('before change! ev', ev);
-                    return false;
+                    console.log(grid.getValue(ev.rowKey, ev.columnName));
                 },
                 onAfterChange: function(ev) {
                     console.log('after change! ev', ev);
