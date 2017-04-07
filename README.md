@@ -14,6 +14,7 @@ The Toast UI Grid is a powerful widget which allows you to visualize and edit da
 * Validation
 * Selection
 * Pagination
+* Picking date
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns
@@ -41,9 +42,8 @@ You can also see the older versions of API page on the [releases page](https://g
 * backbone ~1.1.2
 * tui-code-snippet ~1.0.2
 * component (optional)
-  * tui-component-pagination ~1.0.0
-  * tui-component-calendar ~1.1.1
-  * tui-component-date-picker ~1.3.0
+  * tui-component-pagination ~2.1.0
+  * tui-component-date-picker ~2.1.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
