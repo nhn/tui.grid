@@ -9,7 +9,7 @@ var _ = require('underscore');
 var View = require('../base/view');
 var keyEvent = require('../event/keyEvent');
 var classNameConst = require('../common/classNameConst');
-var PASTE_DEBOUNCE_TIME = 300;
+var PASTE_DEBOUNCE_TIME = 100;
 var KEYDOWN_LOCK_TIME = 10;
 var Clipboard;
 
@@ -50,7 +50,7 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         });
 
         this._triggerPasteEventDebounced = _.debounce(
-            _.bind(this._triggerPasteEvent, this), PASTE_DEBOUNCE_TIME, true
+            _.bind(this._triggerPasteEvent, this), PASTE_DEBOUNCE_TIME
         );
 
         this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
@@ -148,12 +148,13 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             return;
         }
 
-        this._lock();
-
         gridEvent = keyEvent.generate(ev);
+
         if (!gridEvent) {
             return;
         }
+
+        this._lock();
 
         if (shouldPreventDefault(gridEvent)) {
             ev.preventDefault();
