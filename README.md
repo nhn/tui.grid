@@ -39,8 +39,8 @@ You can also see the older versions of API page on the [releases page](https://g
 ## Dependency
 * jquery ~1.8.3
 * underscore >=1.5.0
-* backbone ~1.1.2
-* tui-code-snippet ~1.0.2
+* backbone ~1.3.3
+* tui-code-snippet ~1.2.0
 * component (optional)
   * tui-component-pagination ~2.1.0
   * tui-component-date-picker ~2.1.0
