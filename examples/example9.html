@@ -2,12 +2,13 @@
 <html lang="ko">
 <head>
 	<meta charset="utf-8">
-	<title>9. Using Footer with column summary</title>
+	<title>9. Footer and Summary</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Footer-and-Summary" target="_blank">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Footer-and-Summary" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -19,13 +20,13 @@
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" class="code-js">
+
 var grid = new tui.Grid({
     el: $('#grid'),
-    selectType: 'checkbox',
+    rowHeaders: ['rowNum'],
     bodyHeight: 300,
-    fixedHeight: true,
     columnOptions: {
-        minWidth: 100
+        width: 100
     },
     columns: [
         {
@@ -69,10 +70,10 @@ var grid = new tui.Grid({
     }
 });
 
-var rowList = [];
+var gridData = [];
 (function() {
     _.times(120, function(number) {
-        rowList.push({
+        gridData.push({
             c1: 'User' + (number + 1),
             c2: ((number + 5) % 8) * 100 + number,
             c3: ((number + 3) % 7) * 60
@@ -80,6 +81,7 @@ var rowList = [];
     });
 })();
 
-grid.setData(rowList);
+grid.setData(gridData);
+
 </script>
 </html>

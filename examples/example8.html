@@ -2,13 +2,14 @@
 <html lang="ko">
 <head>
 	<meta charset="utf-8">
-	<title>8. Using Date-Picker Component</title>
+	<title>8. Using Date-Picker component</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.component.date-picker/2.0.0/dist/tui-component-datepicker.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Using-DatePicker-in-Grid" target="_blank">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Using-DatePicker-component" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -21,8 +22,10 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.date-picker/2.1.0/dist/tui-component-datepicker.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" class="code-js">
+
 var grid = new tui.Grid({
     el: $('#grid'),
+    rowHeaders: ['rowNum'],
     header: {
         height: 60,
         complexColumns: [
@@ -39,7 +42,7 @@ var grid = new tui.Grid({
         ]
     },
     columnOptions: {
-        minWidth: 100
+        width: 100
     },
     columns: [
         {
@@ -98,13 +101,14 @@ var grid = new tui.Grid({
     ]
 });
 
-var rowList = [];
+var gridData = [];
 (function() {
     _.times(20, function(number) {
-        rowList.push({ });
+        gridData.push({ });
     })
 })();
 
-grid.setData(rowList);
+grid.setData(gridData);
+
 </script>
 </html>

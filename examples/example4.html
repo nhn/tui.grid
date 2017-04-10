@@ -2,12 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>4. Input Types</title>
+    <title>4. Input types</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Input-types" target="_blank">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Input-types" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -23,6 +24,7 @@
 
 var grid = new tui.Grid({
     el: $('#grid'),
+    rowHeaders: ['rowNum'],
     columns: [
         {
             title: 'Name',
@@ -96,6 +98,7 @@ var grid = new tui.Grid({
     ]
 });
 
-grid.setData(rowData);
+grid.setData(gridData);
+
 </script>
 </html>

@@ -3,12 +3,13 @@
 <head>
     <meta charset="utf-8">
     <title>10. Binding to remote data</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.component.pagination/2.0.0/dist/tui-component-pagination.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Binding-to-remote-data">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Binding-to-remote-data" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -32,7 +33,7 @@ $.mockjax({
         var perPage = settings.data.perPage;
         var start = (page - 1) * perPage;
         var end = start + perPage;
-        var data = rowData.slice(start, end);
+        var data = gridData.slice(start, end);
 
         this.responseText = JSON.stringify({
             result: true,
@@ -52,6 +53,7 @@ $.mockjax({
 
 var grid = new tui.Grid({
     el: $('#grid'),
+    rowHeaders: ['rowNum'],
     pagination: true,
     columns: [
         {

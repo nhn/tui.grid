@@ -6,13 +6,13 @@
         "title": "2. Formatter"
     },
     "example3": {
-        "title": "3. Column Merge"
+        "title": "3. Complex columns"
     },
     "example4": {
-        "title": "4. Input Types"
+        "title": "4. Input types"
     },
     "example5": {
-        "title": "5. Relation List"
+        "title": "5. Relation between columns"
     },
     "example6": {
         "title": "6. Using _extraData"
@@ -21,10 +21,10 @@
         "title": "7. Applying Themes"
     },
     "example8": {
-        "title": "8. Using Date-Picker Component"
+        "title": "8. Using Date-Picker component"
     },
     "example9": {
-        "title": "9. Using Footer with column summary"
+        "title": "9. Footer and Summary"
     },
     "example10": {
         "title": "10. Binding to remote data"

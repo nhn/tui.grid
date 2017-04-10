@@ -24,7 +24,7 @@
 
 var grid = new tui.Grid({
     el: $('#grid'),
-    selectType: 'checkbox',
+    rowHeaders: ['checkbox'],
     columns: [
         {
             title: 'Name',
@@ -49,7 +49,7 @@ var grid = new tui.Grid({
     ]
 });
 
-var rowData = [
+var gridData = [
     {
         name: 'Beautiful Lies',
         artist: 'Birdy',
@@ -127,6 +127,6 @@ var rowData = [
     }
 ];
 
-grid.setData(rowData);
+grid.setData(gridData);
 </script>
 </html>

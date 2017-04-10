@@ -3,10 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>2. Formatter</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
+<div class="explain">
 Each "Cover Image", "Name", "Artist", "Release" column's data is changed by "formatter".
 </div>
 <div class="code-html">
@@ -24,6 +25,7 @@ Each "Cover Image", "Name", "Artist", "Release" column's data is changed by "for
 var grid = new tui.Grid({
     el: $('#grid'),
     rowHeight: 50,
+    rowHeaders: ['rowNum'],
     columns: [
         {
             title: 'Cover Image',
@@ -74,6 +76,7 @@ var grid = new tui.Grid({
     ]
 });
 
-grid.setData(rowData);
+grid.setData(gridData);
+
 </script>
 </html>

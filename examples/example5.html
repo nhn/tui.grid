@@ -2,12 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>5. Relation List</title>
+    <title>5. Relation between columns</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Relation-between-columns" target="_blank">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Relation-between-columns" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -131,6 +132,7 @@ var treeDepthData = {
 
 var grid = new tui.Grid({
     el: $('#grid'),
+    rowHeight: 30,
     columns: [
         {
             title: 'Category1',
@@ -189,7 +191,7 @@ var grid = new tui.Grid({
     ]
 });
 
-var rowData = [ // initial data
+var gridData = [ // initial data
     {
         category1: '',
         category2 : '',
@@ -207,6 +209,7 @@ var rowData = [ // initial data
     }
 ];
 
-grid.setData(rowData);
+grid.setData(gridData);
+
 </script>
 </html>

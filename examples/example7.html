@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>7. Applying Themes</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <style>
     #grid {width: 600px; float:left; margin-right:20px;}
@@ -14,8 +15,8 @@
     </style>
 </head>
 <body>
-<div class="explain" style="padding:10px;margin-bottom:20px;border:1px dashed #777;border-radius:5px;font-size:14px;">
-<a href="https://github.com/nhnent/tui.grid/wiki/Applying-Themes" target="_blank">Tutorial</a>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Applying-Themes" target="_blank">here</a>.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -90,20 +91,18 @@
 <script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" class="code-js">
+
 var grid = new tui.Grid({
     el: $('#grid'),
     rowHeight: 35,
+    rowHeaders: ['rowNum'],
     header: {
         height: 40
     },
     columnOptions: {
-        minWidth: 100
+        width: 100
     },
     columns: [
-        {
-            name: '_button',
-            width: 30
-        },
         {
             title: 'ID',
             name: 'c1',
@@ -134,7 +133,7 @@ var grid = new tui.Grid({
     ]
 });
 
-var rowList = [
+var gridData = [
     {
         c1: '100013',
         c2: 'Mustafa Cosme',
@@ -233,7 +232,7 @@ var rowList = [
         c3: 89123
     }
 ];
-grid.setData(rowList);
+grid.setData(gridData);
 grid.disableRow(6);
 
 var currentPresetName = 'default';
@@ -248,5 +247,6 @@ $('.btn-custom').click(function() {
     var options = eval('(' + $('#custom-text').val() + ')');
     tui.Grid.applyTheme(currentPresetName, options);
 });
+
 </script>
 </html>

@@ -1,4 +1,5 @@
-var rowData = [
+/* eslint-disable */
+var gridData = [
     {
         id: 549731,
         name: 'Beautiful Lies',
