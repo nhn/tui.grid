@@ -654,11 +654,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Returns true if there are at least one row changed.
-     * @returns {boolean} - True if there are at least one row changed.
+     * Returns true if there are at least one row modified.
+     * @returns {boolean} - True if there are at least one row modified.
      */
-    isChanged: function() {
-        return this.modelManager.dataModel.isChanged();
+    isModified: function() {
+        return this.modelManager.dataModel.isModified();
     },
 
     /**
@@ -726,11 +726,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Sorts all rows by the specified column.
      * @param {string} columnName - The name of the column to be used to compare the rows
-     * @param {boolean} [isAscending] - Whether the sort order is ascending.
+     * @param {boolean} [ascending] - Whether the sort order is ascending.
      *        If not specified, use the negative value of the current order.
      */
-    sort: function(columnName, isAscending) {
-        this.modelManager.dataModel.sortByField(columnName, isAscending);
+    sort: function(columnName, ascending) {
+        this.modelManager.dataModel.sortByField(columnName, ascending);
     },
 
     /**

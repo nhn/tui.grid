@@ -190,9 +190,9 @@ describe('Data.RowList - simple', function() {
         });
     });
 
-    describe('isChanged()', function() {
+    describe('isModified()', function() {
         it('변경사항이 없을때 false 를 반환한다.', function() {
-            expect(rowList.isChanged()).toBe(false);
+            expect(rowList.isModified()).toBe(false);
         });
 
         it('데이터가 append 추가되었을때 변경사항을 감지한다.', function() {
@@ -200,17 +200,17 @@ describe('Data.RowList - simple', function() {
                 c1: '2-1',
                 c2: '2-2'
             });
-            expect(rowList.isChanged()).toBe(true);
+            expect(rowList.isModified()).toBe(true);
         });
 
         it('데이터가 remove 되었을때 변경사항을 감지한다.', function() {
             rowList.removeRow(1);
-            expect(rowList.isChanged()).toBe(true);
+            expect(rowList.isModified()).toBe(true);
         });
 
         it('데이터가 변경 되었을때 변경사항을 감지한다.', function() {
             rowList.setValue(0, 'c1', 'New0-1');
-            expect(rowList.isChanged()).toBe(true);
+            expect(rowList.isModified()).toBe(true);
         });
     });
 
@@ -225,9 +225,9 @@ describe('Data.RowList - simple', function() {
         });
 
         it('변경후 restore 하면 원상태로 돌아오는지 확인한다.', function() {
-            expect(rowList.isChanged()).toBe(true);
+            expect(rowList.isModified()).toBe(true);
             rowList.restore();
-            expect(rowList.isChanged()).toBe(false);
+            expect(rowList.isModified()).toBe(false);
         });
     });
 

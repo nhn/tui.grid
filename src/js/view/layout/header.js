@@ -362,7 +362,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      * @param {object} sortOptions 정렬 옵션
      * @param {string} sortOptions.columnName 정렬할 컬럼명
-     * @param {boolean} sortOptions.isAscending 오름차순 여부
+     * @param {boolean} sortOptions.ascending 오름차순 여부
      */
     _updateBtnSortState: function(sortOptions) {
         if (this._$currentSortBtn) {
@@ -372,7 +372,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
 
-        this._$currentSortBtn.addClass(sortOptions.isAscending ?
+        this._$currentSortBtn.addClass(sortOptions.ascending ?
             classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
         );
     },

@@ -170,7 +170,7 @@ describe('Header', function() {
             var $btns = header.$el.find('.' + classNameConst.BTN_SORT);
             var eventData = {
                 columnName: 'c1',
-                isAscending: true
+                ascending: true
             };
 
             header.dataModel.trigger('sortChanged', eventData);
@@ -181,7 +181,7 @@ describe('Header', function() {
             expect($btns.eq(0)).not.toHaveClass(classNameConst.BTN_SORT_UP);
             expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_UP);
 
-            eventData.isAscending = false;
+            eventData.ascending = false;
             header.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(1)).not.toHaveClass(classNameConst.BTN_SORT_UP);
             expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_DOWN);

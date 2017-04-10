@@ -47,10 +47,10 @@ function createResponseData(contents, page) {
     };
 }
 
-function sortRowData(columnName, isAscending) {
+function sortRowData(columnName, ascending) {
     rowData.sort(function(a, b) {
         var result = a[columnName] - b[columnName];
-        if (!isAscending) {
+        if (!ascending) {
             result = -result;
         }
         return result;

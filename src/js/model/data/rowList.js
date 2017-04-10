@@ -31,7 +31,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             startIndex: options.startIndex || 1,
             sortOptions: {
                 columnName: 'rowKey',
-                isAscending: true,
+                ascending: true,
                 useClient: (_.isBoolean(options.useClientSort) ? options.useClientSort : true)
             },
 
@@ -278,31 +278,31 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 정렬옵션 객체의 값을 변경하고, 변경된 값이 있을 경우 sortChanged 이벤트를 발생시킨다.
      * @param {string} columnName 정렬할 컬럼명
-     * @param {boolean} isAscending 오름차순 여부
-     * @param {boolean} isRequireFetch 서버 데이타의 갱신이 필요한지 여부
+     * @param {boolean} ascending 오름차순 여부
+     * @param {boolean} requireFetch 서버 데이타의 갱신이 필요한지 여부
      */
-    setSortOptionValues: function(columnName, isAscending, isRequireFetch) {
+    setSortOptionValues: function(columnName, ascending, requireFetch) {
         var options = this.sortOptions,
             isChanged = false;
 
         if (_.isUndefined(columnName)) {
             columnName = 'rowKey';
         }
-        if (_.isUndefined(isAscending)) {
-            isAscending = true;
+        if (_.isUndefined(ascending)) {
+            ascending = true;
         }
 
-        if (options.columnName !== columnName || options.isAscending !== isAscending) {
+        if (options.columnName !== columnName || options.ascending !== ascending) {
             isChanged = true;
         }
         options.columnName = columnName;
-        options.isAscending = isAscending;
+        options.ascending = ascending;
 
         if (isChanged) {
             this.trigger('sortChanged', {
                 columnName: columnName,
-                isAscending: isAscending,
-                isRequireFetch: isRequireFetch
+                ascending: ascending,
+                requireFetch: requireFetch
             });
         }
     },
@@ -310,15 +310,15 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 주어진 컬럼명을 기준으로 오름/내림차순 정렬한다.
      * @param {string} columnName 정렬할 컬럼명
-     * @param {boolean} isAscending 오름차순 여부
+     * @param {boolean} ascending 오름차순 여부
      */
-    sortByField: function(columnName, isAscending) {
+    sortByField: function(columnName, ascending) {
         var options = this.sortOptions;
 
-        if (_.isUndefined(isAscending)) {
-            isAscending = (options.columnName === columnName) ? !options.isAscending : true;
+        if (_.isUndefined(ascending)) {
+            ascending = (options.columnName === columnName) ? !options.ascending : true;
         }
-        this.setSortOptionValues(columnName, isAscending, !options.useClient);
+        this.setSortOptionValues(columnName, ascending, !options.useClient);
 
         if (options.useClient) {
             this.sort();
@@ -381,7 +381,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     comparator: function(a, b) {
         var columnName = this.sortOptions.columnName;
-        var isAscending = this.sortOptions.isAscending;
+        var ascending = this.sortOptions.ascending;
         var valueA = a.get(columnName);
         var valueB = b.get(columnName);
 
@@ -399,7 +399,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             result = 1;
         }
 
-        if (!isAscending) {
+        if (!ascending) {
             result = -result;
         }
         return result;
@@ -670,10 +670,10 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * Returns true if there are at least one row changed.
-     * @returns {boolean} - True if there are at least one row changed.
+     * Returns true if there are at least one row modified.
+     * @returns {boolean} - True if there are at least one row modified.
      */
-    isChanged: function() {
+    isModified: function() {
         var modifiedRowsArr = _.values(this.getModifiedRows());
 
         return _.some(modifiedRowsArr, function(modifiedRows) {

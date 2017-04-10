@@ -415,10 +415,10 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      * @param {object} sortOptions 정렬 옵션
      * @param {string} sortOptions.sortColumn 정렬할 컬럼명
-     * @param {boolean} sortOptions.isAscending 오름차순 여부
+     * @param {boolean} sortOptions.ascending 오름차순 여부
      */
     _onSortChanged: function(sortOptions) {
-        if (sortOptions.isRequireFetch) {
+        if (sortOptions.requireFetch) {
             this._readDataAt(1, true, sortOptions);
         }
     },
@@ -429,7 +429,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @param {object} data 데이터 객체
      * @param {object} sortOptions 정렬 옵션
      * @param {string} sortOptions.sortColumn 정렬할 컬럼명
-     * @param {boolean} sortOptions.isAscending 오름차순 여부
+     * @param {boolean} sortOptions.ascending 오름차순 여부
      */
     _changeSortOptions: function(data, sortOptions) {
         if (!sortOptions) {
@@ -440,7 +440,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             delete data.sortAscending;
         } else {
             data.sortColumn = sortOptions.columnName;
-            data.sortAscending = sortOptions.isAscending;
+            data.sortAscending = sortOptions.ascending;
         }
     },
 
@@ -450,7 +450,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @param {Boolean} [isUsingRequestedData=true] page 단위 검색이므로, form 수정여부와 관계없이 처음 보낸 form 데이터로 조회할지 여부를 결정한다.
      * @param {object} sortOptions 정렬 옵션
      * @param {string} sortOptions.sortColumn 정렬할 컬럼명
-     * @param {boolean} sortOptions.isAscending 오름차순 여부
+     * @param {boolean} sortOptions.ascending 오름차순 여부
      * @private
      */
     _readDataAt: function(page, isUsingRequestedData, sortOptions) {

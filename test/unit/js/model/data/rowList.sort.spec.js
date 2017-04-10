@@ -64,15 +64,15 @@ describe('data.rowList', function() {
             dataModel.setSortOptionValues('c1', false);
 
             expect(options.columnName).toBe('c1');
-            expect(options.isAscending).toBe(false);
+            expect(options.ascending).toBe(false);
         });
 
-        it('columnName값이 없으면 rowKey, isAscending값이 없으면 true가 설정된다.', function() {
+        it('columnName값이 없으면 rowKey, ascending값이 없으면 true가 설정된다.', function() {
             dataModel.setSortOptionValues('c1', false);
             dataModel.setSortOptionValues();
 
             expect(options.columnName).toBe('rowKey');
-            expect(options.isAscending).toBe(true);
+            expect(options.ascending).toBe(true);
         });
 
         it('변경된 값이 있으면 sortChanged 이벤트를 발생시키며, 파라미터 값들을 객체로 묶어 넘겨준다.', function() {
@@ -81,8 +81,8 @@ describe('data.rowList', function() {
 
             expect(spyHandler).toHaveBeenCalledWith({
                 columnName: 'c1',
-                isAscending: false,
-                isRequireFetch: true
+                ascending: false,
+                requireFetch: true
             });
         });
 
@@ -143,7 +143,7 @@ describe('data.rowList', function() {
             expect(dataModel.at(2).get('rowKey')).toBe(2);
         });
 
-        it('기존 컬럼과 같을 경우 isAsecnding값이 없으면 기존의 isAscending 값을 반대로 설정한다.', function() {
+        it('기존 컬럼과 같을 경우 isAsecnding값이 없으면 기존의 ascending 값을 반대로 설정한다.', function() {
             dataModel.sortByField('c1', true);
             dataModel.sortByField('c1');
 
