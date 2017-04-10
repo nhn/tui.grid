@@ -741,6 +741,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Get state of the sorted column in rows
+     * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
+     */
+    getSortState: function() {
+        return this.modelManager.dataModel.sortOptions;
+    },
+
+    /**
      * Adds the specified css class to cell element identified by the rowKey and className
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
