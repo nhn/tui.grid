@@ -1,5 +1,5 @@
 /*!
- * bundle created at "Mon Apr 10 2017 22:30:20 GMT+0900 (KST)"
+ * bundle created at "Tue Apr 11 2017 11:53:06 GMT+0900 (KST)"
  * version: 2.0.0
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -75,10 +75,6 @@
 
 	__webpack_require__(74);
 
-	 /**
-	  * Toast UI Namespace
-	  * @namespace
-	  */
 	tui = window.tui = tui || {};
 
 	/**
@@ -977,7 +973,6 @@
 
 	/**
 	 * Returns an instance of the grid associated to the id.
-	 * @api
 	 * @static
 	 * @param  {number} id - ID of the target grid
 	 * @returns {tui.Grid} - Grid instance
@@ -988,7 +983,6 @@
 
 	/**
 	 * Apply theme to all grid instances with the preset options of a given name.
-	 * @api
 	 * @static
 	 * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
 	 * @param {Object} [extOptions] - if exist, extend preset options with this object.
@@ -9825,12 +9819,11 @@
 	        /**
 	         * Occurs when a mouse button is clicked on the Grid.
 	         * The properties of the event object is the same as the native MouseEvent.
-	         * @api
+	         * @event tui.Grid#click
+	         * @type {module:event/gridEvent}
 	         * @property {string} targetType - type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
-	         * @event tui.Grid#click
-	         * @type {module:event/gridEvent}
 	         */
 	        this.domEventBus.trigger('click', gridEvent);
 
@@ -9851,7 +9844,6 @@
 	        /**
 	         * Occurs when a mouse button is double clicked on the Grid.
 	         * The event object has all properties copied from the native MouseEvent.
-	         * @api
 	         * @event tui.Grid#dblclick
 	         * @type {module:event/gridEvent}
 	         * @property {string} targetType - type of event target
@@ -9875,12 +9867,11 @@
 	        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
 	        /**
-	         * Occurs when a mouse pointer is moved onto a table cell
+	         * Occurs when a mouse pointer is moved onto the Grid.
 	         * The event object has all properties copied from the native MouseEvent.
-	         * @api
-	         * @event tui.Grid#mouseoverCell
+	         * @event tui.Grid#mouseover
 	         * @type {module:event/gridEvent}
-	         * @property {string} targetType - type of event target
+	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
 	         */
@@ -9897,12 +9888,11 @@
 	        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
 	        /**
-	         * Occurs when a mouse pointer is moved off from a table cell
+	         * Occurs when a mouse pointer is moved off from the Grid.
 	         * The event object has all properties copied from the native MouseEvent.
-	         * @api
-	         * @event tui.Grid#mouseoutCell
+	         * @event tui.Grid#mouseout
 	         * @type {module:event/gridEvent}
-	         * @property {string} targetType - type of event target
+	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
 	         */
@@ -9925,6 +9915,15 @@
 	            // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
 	            $target[0].unselectable = true;
 
+	            /**
+	             * Occurs when a mouse button is downed on the Grid.
+	             * The event object has all properties copied from the native MouseEvent.
+	             * @event tui.Grid#mousedown
+	             * @type {module:event/gridEvent}
+	             * @property {string} targetType - Type of event target
+	             * @property {number} rowKey - rowKey of the target cell
+	             * @property {string} columnName - columnName of the target cell
+	             */
 	            this.domEventBus.trigger('mousedown:focus', gridEvent);
 	        }
 	    },
@@ -10588,6 +10587,7 @@
 	 * Returns whether the ev.preventDefault should be called
 	 * @param {module:event/gridEvent} gridEvent - GridEvent
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function shouldPreventDefault(gridEvent) {
 	    return gridEvent.type !== 'key:clipboard';
@@ -10597,6 +10597,7 @@
 	 * Returns whether given GrivEvent instance is paste event
 	 * @param {module:event/gridEvent} gridEvent - GridEvent
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isPasteEvent(gridEvent) {
 	    return gridEvent.type === 'key:clipboard' && gridEvent.command === 'paste';
@@ -10811,6 +10812,7 @@
 	 * K: keystroke (order : ctrl -> shift -> keyName)
 	 * V: [key event type, command]
 	 * @type {Object}
+	 * @ignore
 	 */
 	var keyStrokeCommandMap = {
 	    'up': ['move', 'up'],
@@ -10847,6 +10849,7 @@
 	 * Returns the keyStroke string
 	 * @param {Event} ev - Keyboard event
 	 * @returns {String}
+	 * @ignore
 	 */
 	function getKeyStrokeString(ev) {
 	    var keys = [];
