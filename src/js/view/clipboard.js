@@ -17,6 +17,7 @@ var Clipboard;
  * Returns whether the ev.preventDefault should be called
  * @param {module:event/gridEvent} gridEvent - GridEvent
  * @returns {boolean}
+ * @ignore
  */
 function shouldPreventDefault(gridEvent) {
     return gridEvent.type !== 'key:clipboard';
@@ -26,6 +27,7 @@ function shouldPreventDefault(gridEvent) {
  * Returns whether given GrivEvent instance is paste event
  * @param {module:event/gridEvent} gridEvent - GridEvent
  * @returns {boolean}
+ * @ignore
  */
 function isPasteEvent(gridEvent) {
     return gridEvent.type === 'key:clipboard' && gridEvent.command === 'paste';

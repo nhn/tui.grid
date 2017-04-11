@@ -25,10 +25,6 @@ var instanceMap = {};
 
 require('../css/index.styl');
 
- /**
-  * Toast UI Namespace
-  * @namespace
-  */
 tui = window.tui = tui || {};
 
 /**
@@ -927,7 +923,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
 /**
  * Returns an instance of the grid associated to the id.
- * @api
  * @static
  * @param  {number} id - ID of the target grid
  * @returns {tui.Grid} - Grid instance
@@ -938,7 +933,6 @@ tui.Grid.getInstanceById = function(id) {
 
 /**
  * Apply theme to all grid instances with the preset options of a given name.
- * @api
  * @static
  * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
  * @param {Object} [extOptions] - if exist, extend preset options with this object.

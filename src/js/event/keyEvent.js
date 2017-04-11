@@ -33,6 +33,7 @@ var keyNameMap = _.invert(keyCodeMap);
  * K: keystroke (order : ctrl -> shift -> keyName)
  * V: [key event type, command]
  * @type {Object}
+ * @ignore
  */
 var keyStrokeCommandMap = {
     'up': ['move', 'up'],
@@ -69,6 +70,7 @@ var keyStrokeCommandMap = {
  * Returns the keyStroke string
  * @param {Event} ev - Keyboard event
  * @returns {String}
+ * @ignore
  */
 function getKeyStrokeString(ev) {
     var keys = [];
