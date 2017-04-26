@@ -234,16 +234,14 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     _executeOnBeforeChange: function(columnName, columnValue) {
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var changed = (this.get(columnName) !== columnValue);
         var gridEvent;
 
-        if (changed && columnModel && columnModel.onBeforeChange) {
+        if (columnModel && columnModel.onBeforeChange) {
             gridEvent = this._createChangeCallbackEvent(columnName, columnValue);
             columnModel.onBeforeChange(gridEvent);
 
             return !gridEvent.isStopped();
         }
-
         return true;
     },
 

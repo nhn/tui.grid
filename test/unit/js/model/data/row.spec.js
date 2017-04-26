@@ -283,11 +283,6 @@ describe('RowData', function() {
             row.set('c3', 'value2');
             expect(row.get('c3')).not.toBe('value2');
         });
-
-        fit('If the value is not changed, onBeforeChange is not executing.', function() {
-            row.set('c2', 'value2');
-            expect(callbackSpy).not.toHaveBeenCalled();
-        });
     });
 
     describe('onAfterChange', function() {
