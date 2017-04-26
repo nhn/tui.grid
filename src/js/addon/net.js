@@ -474,6 +474,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
      *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
      *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
+     * @returns {boolean} Whether requests or not
      */
     request: function(requestType, options) {
         var newOptions = _.extend({
@@ -493,6 +494,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
             this._ajax(param);
         }
+
+        return !!param;
     },
 
     /**

@@ -241,7 +241,7 @@ var util = {
             if (!_.isString(value) && !_.isNumber(value)) {
                 value = JSON.stringify(value);
             }
-            value = encodeURIComponent(value);
+            value = encodeURIComponent(unescape(value));
             if (value) {
                 queryList.push(name + '=' + value);
             }
@@ -265,7 +265,7 @@ var util = {
                 key, value;
 
             key = tmp[0];
-            value = decodeURIComponent(tmp[1]);
+            value = decodeURIComponent(escape(tmp[1]));
             try {
                 value = JSON.parse(value);
             } catch(e) {} // eslint-disable-line
