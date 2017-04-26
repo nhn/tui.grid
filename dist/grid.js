@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Tue Apr 11 2017 11:53:06 GMT+0900 (KST)"
- * version: 2.0.0
+ * bundle created at "Wed Apr 26 2017 23:01:30 GMT+0900 (KST)"
+ * version: 2.1.0-a
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -46,7 +46,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview The tui.Grid class for the external API.
@@ -119,6 +119,7 @@
 	 *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
 	 *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
 	 *          If set to null or false, pagination will not be used.
+	 *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
 	 *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
 	 *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
 	 *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
@@ -161,7 +162,7 @@
 	 *              called before changing the value of the cell. If returns false, the changing will be canceled.
 	 *          @param {function} [options.columns.onAfterChange] - The function that will be
 	 *              called after changing the value of the cell.
-	 *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
+	 *          @param {Object} [options.columns.editOptions] - The object for configuring editing UI.
 	 *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
 	 *                  the type of the editing UI.
 	 *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
@@ -327,6 +328,7 @@
 	        emitter.listenToFocusModel(this.modelManager.focusModel);
 	        emitter.listenToDomEventBus(this.domEventBus);
 	        emitter.listenToDataModel(this.modelManager.dataModel);
+	        emitter.listenToSelectionModel(this.modelManager.selectionModel);
 
 	        return emitter;
 	    },
@@ -664,12 +666,12 @@
 	     * Returns the object that contains the lists of changed data compared to the original data.
 	     * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
 	     * @param {Object} [options] Options
-	     *      @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
-	     *      @param {boolean} [options.withRawData=false] - If set to true, the data will contains
-	     *          the row data for internal use.
-	     *      @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
-	     *          rows will be returned.
-	     *      @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
+	     *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+	     *     @param {boolean} [options.withRawData=false] - If set to true, the data will contains
+	     *         the row data for internal use.
+	     *     @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
+	     *         rows will be returned.
+	     *     @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
 	     * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
 	     */
 	    getModifiedRows: function(options) {
@@ -852,6 +854,15 @@
 	    },
 
 	    /**
+	     * Returns the index of the column indentified by the column name.
+	     * @param {string} columnName - The unique key of the column
+	     * @returns {number} - The index of the column
+	     */
+	    getIndexOfColumn: function(columnName) {
+	        return this.modelManager.columnModel.indexOfColumnName(columnName);
+	    },
+
+	    /**
 	     * Returns an instance of tui.component.Pagination.
 	     * @returns {tui.component.Pagination}
 	     */
@@ -959,6 +970,33 @@
 	    findRows: function(conditions) {
 	        var rowList = this.modelManager.dataModel.getRows();
 	        return _.where(rowList, conditions);
+	    },
+
+	    /**
+	     * Copy to clipboard
+	     */
+	    copyToClipboard: function() {
+	        this.modelManager.clipboardModel.setClipboardText();
+
+	        if (!window.clipboardData) { // Accessing the clipboard is a security concern on chrome
+	            document.execCommand('copy');
+	        }
+	    },
+
+	    /**
+	     * Select cells or rows by range
+	     * @param {object} range - Selection range
+	     *     @param {array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+	     *     @param {array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+	     */
+	    selection: function(range) {
+	        var selectionModel = this.modelManager.selectionModel;
+	        var start = range.start;
+	        var end = range.end;
+	        var unit = selectionModel.getSelectionUnit();
+
+	        selectionModel.start(start[0], start[1], unit);
+	        selectionModel.update(end[0], end[1], unit);
 	    },
 
 	    /**
@@ -1070,15 +1108,15 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = _;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Views
@@ -1157,15 +1195,15 @@
 	module.exports = View;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = Backbone;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Model Manager
@@ -1216,7 +1254,8 @@
 	    rowHeight: 'auto',
 	    bodyHeight: 'auto',
 	    minRowHeight: 27,
-	    minBodyHeight: 0
+	    minBodyHeight: 0,
+	    selectionUnit: 'cell'
 	};
 
 	/**
@@ -1240,7 +1279,7 @@
 	        this.coordColumnModel = this._createCoordColumnModel(options.columnOptions, domEventBus);
 	        this.renderModel = this._createRenderModel(options);
 	        this.coordConverterModel = this._createCoordConverterModel();
-	        this.selectionModel = this._createSelectionModel(domEventBus);
+	        this.selectionModel = this._createSelectionModel(options, domEventBus);
 	        this.summaryModel = this._createSummaryModel(options.footer);
 	        this.clipboardModel = this._createClipboardModel(options, domEventBus);
 	    },
@@ -1396,12 +1435,15 @@
 
 	    /**
 	     * Creates an instance of seleciton model and returns it.
+	     * @param {Object} options - options
 	     * @param {module:event/domEventBus} domEventBus - domEventBus
 	     * @returns {module:model/selection} - A new instance
 	     * @private
 	     */
-	    _createSelectionModel: function(domEventBus) {
-	        return new SelectionModel(null, {
+	    _createSelectionModel: function(options, domEventBus) {
+	        return new SelectionModel({
+	            selectionUnit: options.selectionUnit
+	        }, {
 	            columnModel: this.columnModel,
 	            dataModel: this.dataModel,
 	            dimensionModel: this.dimensionModel,
@@ -1502,9 +1544,9 @@
 	module.exports = ModelManager;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview 컬럼 모델
@@ -1952,9 +1994,9 @@
 	module.exports = ColumnModel;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Models
@@ -1974,9 +2016,9 @@
 	module.exports = Model;
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview Object that conatins constant values
@@ -2056,9 +2098,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
@@ -3249,9 +3291,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Collections
@@ -3285,9 +3327,9 @@
 	module.exports = Collection;
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
@@ -3525,14 +3567,16 @@
 	     */
 	    _executeOnBeforeChange: function(columnName, columnValue) {
 	        var columnModel = this.columnModel.getColumnModel(columnName);
+	        var changed = (this.get(columnName) !== columnValue);
 	        var gridEvent;
 
-	        if (columnModel && columnModel.onBeforeChange) {
+	        if (changed && columnModel && columnModel.onBeforeChange) {
 	            gridEvent = this._createChangeCallbackEvent(columnName, columnValue);
 	            columnModel.onBeforeChange(gridEvent);
 
 	            return !gridEvent.isStopped();
 	        }
+
 	        return true;
 	    },
 
@@ -3917,9 +3961,9 @@
 	module.exports = Row;
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
@@ -4140,9 +4184,9 @@
 	module.exports = ExtraDataManager;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Event class for public event of Grid
@@ -4249,9 +4293,9 @@
 	module.exports = GridEvent;
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview 유틸리티 메서드 모음
@@ -4262,13 +4306,41 @@
 	var _ = __webpack_require__(1);
 
 	var CELL_BORDER_WIDTH = __webpack_require__(7).dimension.CELL_BORDER_WIDTH;
+	var util;
+
+	/**
+	 * Decode URI
+	 * @param {string} uri - URI
+	 * @param {boolean} mod - Whether maintaining "%25" or not
+	 * @returns {string} Decoded URI
+	 */
+	function decodeURIComponentSafe(uri, mod) {
+	    var decodedURI = '';
+	    var i = 0;
+	    var length, arr, tempDecodedURI;
+
+	    mod = !!(mod);
+	    arr = uri.split(/(%(?:d0|d1)%.{2})/);
+
+	    for (length = arr.length; i < length; i += 1) {
+	        try {
+	            tempDecodedURI = decodeURIComponent(arr[i]);
+	        } catch (e) {
+	            tempDecodedURI = mod ? arr[i].replace(/%(?!\d+)/g, '%25') : arr[i];
+	        }
+
+	        decodedURI += tempDecodedURI;
+	    }
+
+	    return decodedURI;
+	}
 
 	/**
 	* util 모듈
 	* @module util
 	* @ignore
 	*/
-	var util = {
+	util = {
 	    uniqueId: 0,
 	    /**
 	     * HTML Attribute 설정 시 필요한 문자열을 가공한다.
@@ -4496,7 +4568,7 @@
 	            if (!_.isString(value) && !_.isNumber(value)) {
 	                value = JSON.stringify(value);
 	            }
-	            value = encodeURIComponent(value);
+	            value = encodeURIComponent(unescape(value));
 	            if (value) {
 	                queryList.push(name + '=' + value);
 	            }
@@ -4520,7 +4592,8 @@
 	                key, value;
 
 	            key = tmp[0];
-	            value = decodeURIComponent(tmp[1]);
+	            value = decodeURIComponentSafe(tmp[1]);
+
 	            try {
 	                value = JSON.parse(value);
 	            } catch(e) {} // eslint-disable-line
@@ -4639,9 +4712,9 @@
 	module.exports = util;
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview class name constants.
@@ -4775,9 +4848,9 @@
 	module.exports = exports;
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview module:model/dimension
@@ -5129,9 +5202,9 @@
 	module.exports = Dimension;
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Manage coordinates of rows
@@ -5327,9 +5400,9 @@
 	module.exports = CoordRow;
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Manage coordinates of rows
@@ -5832,9 +5905,9 @@
 	module.exports = CoordColumn;
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Converts coordinates to index of rows and columns
@@ -6093,9 +6166,9 @@
 	module.exports = CoordConverter;
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Focus Model
@@ -6922,9 +6995,9 @@
 	module.exports = Focus;
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Rendering 모델
@@ -7532,9 +7605,9 @@
 	module.exports = Renderer;
 
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RowList 클래스파일
@@ -7570,9 +7643,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Row Model for Rendering (View Model)
@@ -7995,9 +8068,9 @@
 	module.exports = Row;
 
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Render model to be used for smart-rendering
@@ -8156,9 +8229,9 @@
 	module.exports = SmartRenderer;
 
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Selection Model class
@@ -8169,6 +8242,8 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(6);
+	var GridEvent = __webpack_require__(12);
+
 	var util = __webpack_require__(13);
 	var typeConst = __webpack_require__(7).selectionType;
 
@@ -8201,7 +8276,8 @@
 	            intervalIdForAutoScroll: null,
 	            scrollPixelScale: 40,
 	            enabled: true,
-	            selectionType: typeConst.CELL
+	            selectionType: typeConst.CELL,
+	            selectionUnit: attr.selectionUnit
 	        });
 
 	        this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -8218,6 +8294,8 @@
 	            this.listenTo(domEventBus, 'key:select', this._onKeySelect);
 	            this.listenTo(domEventBus, 'key:delete', this._onKeyDelete);
 	        }
+
+	        this.on('change:range', this._triggerSelectionEvent);
 	    },
 
 	    defaults: {
@@ -8336,7 +8414,7 @@
 	        }
 
 	        if (address) {
-	            this.update(address.row, address.column);
+	            this.update(address.row, address.column, this.getSelectionUnit());
 	            this._scrollTo(address.row, address.column);
 	        }
 	    },
@@ -8479,7 +8557,7 @@
 	    _onDragMoveBody: function(gridEvent) {
 	        var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
 
-	        this.update(address.row, address.column);
+	        this.update(address.row, address.column, this.getSelectionUnit());
 	        this._setScrolling(gridEvent.pageX, gridEvent.pageY);
 	    },
 
@@ -8525,11 +8603,19 @@
 	    },
 
 	    /**
-	     * Return the selection type
+	     * Returns the selection type (using internal state)
 	     * @returns {string} type - Selection type (CELL, ROW, COLUMN)
 	     */
 	    getType: function() {
 	        return this.selectionType;
+	    },
+
+	    /**
+	     * Returns the selection unit (by options)
+	     * @returns {string} unit - Selection unit (CELL, ROW)
+	     */
+	    getSelectionUnit: function() {
+	        return this.get('selectionUnit').toUpperCase();
 	    },
 
 	    /**
@@ -8591,7 +8677,11 @@
 
 	        if (!this.hasSelection()) {
 	            focusedIndex = this.focusModel.indexOf();
-	            this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
+	            if (type === typeConst.ROW) {
+	                this.start(focusedIndex.row, 0, typeConst.ROW);
+	            } else {
+	                this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
+	            }
 	        } else {
 	            this.setType(type);
 	        }
@@ -8919,6 +9009,47 @@
 	    },
 
 	    /**
+	     * Trigger 'selection' event
+	     * @private
+	     */
+	    _triggerSelectionEvent: function() {
+	        var range = this.get('range');
+	        var rowRange, columnRange, dataModel, columnModel, gridEvent;
+
+	        if (!range) {
+	            return;
+	        }
+
+	        rowRange = range.row;
+	        columnRange = range.column;
+	        dataModel = this.dataModel;
+	        columnModel = this.columnModel;
+
+	        gridEvent = new GridEvent(null, {
+	            range: {
+	                start: [
+	                    dataModel.getRowDataAt(rowRange[0]).rowKey,
+	                    columnModel.at(columnRange[0]).name
+	                ],
+	                end: [
+	                    dataModel.getRowDataAt(rowRange[1]).rowKey,
+	                    columnModel.at(columnRange[1]).name
+	                ]
+	            }
+	        });
+
+	         /**
+	          * Occurs when selecting cells.
+	          * @event tui.Grid#selection
+	          * @type {module:common/gridEvent}
+	          * @property {Object} range - Range of selection
+	          * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
+	          * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+	          */
+	        this.trigger('selection', gridEvent);
+	    },
+
+	    /**
 	     * Set min, max value of range(row, column)
 	     * @param {Array} rowRange - Row range
 	     * @param {Array} columnRange - Column range
@@ -9043,9 +9174,9 @@
 	module.exports = Selection;
 
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
@@ -9210,9 +9341,9 @@
 	module.exports = Summary;
 
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Clipboard Model
@@ -9257,6 +9388,13 @@
 	    },
 
 	    /**
+	     * Set clipboard text to trigger event
+	     */
+	    setClipboardText: function() {
+	        this.set('text', this._getClipboardText());
+	    },
+
+	    /**
 	     * Event handler for key:clipboard event on the domEventBus
 	     * @param {module:event/gridEvent} gridEvent - GridEvent
 	     * @private
@@ -9265,7 +9403,7 @@
 	        var command = gridEvent.command;
 
 	        if (command === 'copy') {
-	            this.set('text', this._getClipboardText());
+	            this.setClipboardText();
 	        } else if (command === 'paste') {
 	            this._pasteClipboardTextToGrid(gridEvent.text);
 	        }
@@ -9379,9 +9517,9 @@
 	module.exports = Clipboard;
 
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview View factory
@@ -9711,9 +9849,9 @@
 	module.exports = ViewFactory;
 
 
-/***/ },
+/***/ }),
 /* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview View class that conaints a top element of the DOM structure of the grid.
@@ -9960,9 +10098,9 @@
 	module.exports = Container;
 
 
-/***/ },
+/***/ }),
 /* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the content area
@@ -10048,9 +10186,9 @@
 	module.exports = ContentArea;
 
 
-/***/ },
+/***/ }),
 /* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the pagination
@@ -10149,9 +10287,9 @@
 	module.exports = Pagination;
 
 
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the height resize handle
@@ -10225,9 +10363,9 @@
 	module.exports = HeightResizeHandle;
 
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Drag event emitter
@@ -10380,9 +10518,9 @@
 	module.exports = DragEventEmitter;
 
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
@@ -10495,9 +10633,9 @@
 	module.exports = StateLayer;
 
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Locale messages
@@ -10564,9 +10702,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Hidden Textarea View for handling key navigation events and emulating clipboard actions
@@ -10773,9 +10911,9 @@
 	module.exports = Clipboard;
 
 
-/***/ },
+/***/ }),
 /* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Key event generator
@@ -10887,9 +11025,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Left Side Frame
@@ -10958,9 +11096,9 @@
 	module.exports = LsideFrame;
 
 
-/***/ },
+/***/ }),
 /* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Frame Base
@@ -11033,9 +11171,9 @@
 	module.exports = Frame;
 
 
-/***/ },
+/***/ }),
 /* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Right Side Frame
@@ -11175,9 +11313,9 @@
 	module.exports = RsideFrame;
 
 
-/***/ },
+/***/ }),
 /* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Header View
@@ -11724,9 +11862,9 @@
 	module.exports = Header;
 
 
-/***/ },
+/***/ }),
 /* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview ResizeHandle for the Header
@@ -11929,9 +12067,9 @@
 	module.exports = ResizeHandle;
 
 
-/***/ },
+/***/ }),
 /* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the body layout
@@ -12191,9 +12329,9 @@
 	module.exports = Body;
 
 
-/***/ },
+/***/ }),
 /* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the table layout in the body(data) area
@@ -12388,9 +12526,9 @@
 	module.exports = BodyTable;
 
 
-/***/ },
+/***/ }),
 /* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Footer
@@ -12601,9 +12739,9 @@
 	module.exports = Footer;
 
 
-/***/ },
+/***/ }),
 /* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RowList View
@@ -12908,9 +13046,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the selection layer
@@ -13075,9 +13213,9 @@
 	module.exports = SelectionLayer;
 
 
-/***/ },
+/***/ }),
 /* 47 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
@@ -13238,9 +13376,9 @@
 	module.exports = EditingLayer;
 
 
-/***/ },
+/***/ }),
 /* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer View class which contains the 'tui-component-date-picker'
@@ -13388,9 +13526,9 @@
 	module.exports = DatePickerLayer;
 
 
-/***/ },
+/***/ }),
 /* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the layer view that represents the currently focused cell
@@ -13533,9 +13671,9 @@
 	module.exports = FocusLayer;
 
 
-/***/ },
+/***/ }),
 /* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -13549,9 +13687,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This class offers methods that can be used to get the current state of DOM element.
@@ -13667,9 +13805,9 @@
 	module.exports = DomState;
 
 
-/***/ },
+/***/ }),
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Public Event Emitter
@@ -13760,6 +13898,10 @@
 	            'check',
 	            'uncheck'
 	        ]);
+	    },
+
+	    listenToSelectionModel: function(selectionModel) {
+	        this._listenForThrough(selectionModel, ['selection']);
 	    }
 	});
 
@@ -13768,9 +13910,9 @@
 	module.exports = PublicEventEmitter;
 
 
-/***/ },
+/***/ }),
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter Manager
@@ -13928,9 +14070,9 @@
 	module.exports = PainterManager;
 
 
-/***/ },
+/***/ }),
 /* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for the row(TR) views
@@ -14083,9 +14225,9 @@
 	module.exports = RowPainter;
 
 
-/***/ },
+/***/ }),
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Painters
@@ -14163,9 +14305,9 @@
 	module.exports = Painter;
 
 
-/***/ },
+/***/ }),
 /* 56 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for cell(TD) views
@@ -14397,9 +14539,9 @@
 	module.exports = Cell;
 
 
-/***/ },
+/***/ }),
 /* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Dummy cell painter
@@ -14471,9 +14613,9 @@
 	module.exports = DummyCell;
 
 
-/***/ },
+/***/ }),
 /* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
@@ -14621,9 +14763,9 @@
 	module.exports = TextPainter;
 
 
-/***/ },
+/***/ }),
 /* 59 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for the Input Painter
@@ -14838,9 +14980,9 @@
 	module.exports = InputPainter;
 
 
-/***/ },
+/***/ }),
 /* 60 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for 'select' input.
@@ -14939,9 +15081,9 @@
 	module.exports = SelectPainter;
 
 
-/***/ },
+/***/ }),
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for 'checkbox' and 'radio button'.
@@ -15211,9 +15353,9 @@
 	module.exports = ButtonPainter;
 
 
-/***/ },
+/***/ }),
 /* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Main Button Painter
@@ -15307,9 +15449,9 @@
 	module.exports = InputPainter;
 
 
-/***/ },
+/***/ }),
 /* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Controller class to handle actions from the painters
@@ -15523,9 +15665,9 @@
 	module.exports = PainterController;
 
 
-/***/ },
+/***/ }),
 /* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Add-on for binding to remote data
@@ -16003,6 +16145,7 @@
 	     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
 	     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
 	     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
+	     * @returns {boolean} Whether requests or not
 	     */
 	    request: function(requestType, options) {
 	        var newOptions = _.extend({
@@ -16022,6 +16165,8 @@
 	            }
 	            this._ajax(param);
 	        }
+
+	        return !!param;
 	    },
 
 	    /**
@@ -16344,9 +16489,9 @@
 	module.exports = Net;
 
 
-/***/ },
+/***/ }),
 /* 65 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Router for Addon.Net
@@ -16375,9 +16520,9 @@
 	module.exports = Router;
 
 
-/***/ },
+/***/ }),
 /* 66 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Utilities for form data, form element
@@ -16604,9 +16749,9 @@
 	module.exports = formUtil;
 
 
-/***/ },
+/***/ }),
 /* 67 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Component holder
@@ -16660,9 +16805,9 @@
 	module.exports = ComponentHolder;
 
 
-/***/ },
+/***/ }),
 /* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview theme manager
@@ -16756,9 +16901,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 69 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview css style generator
@@ -17026,9 +17171,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 70 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview CSS Rule string builder
@@ -17211,9 +17356,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 71 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	* @fileoverview default theme preset
@@ -17285,9 +17430,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 72 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview default theme preset
@@ -17320,9 +17465,9 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 73 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview default theme preset
@@ -17356,11 +17501,11 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 74 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
-/***/ }
+/***/ })
 /******/ ]);
