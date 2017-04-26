@@ -13,7 +13,6 @@ You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Bindin
 </div>
 <div class="code-html">
 <div id="grid"></div>
-<button id="btn-add">add</button>
 </div>
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
@@ -49,42 +48,12 @@ $.mockjax({
     }
 });
 
-$.mockjax({
-    url: 'api/deleteData',
-    responseTime: 0,
-    response: function(settings) {
-        var page = settings.data.page;
-        var perPage = settings.data.perPage;
-        var start = (page - 1) * perPage;
-        var end = start + perPage;
-        var data = gridData.slice(start, end);
-
-        this.responseText = JSON.stringify({
-            result: true,
-            data: [
-            {
-                id: 436461,
-                name: 'X',
-                artist: 'Ed Sheeran',
-                release: '2014.06.24',
-                type: 'Deluxe',
-                typeCode: '1',
-                genre: 'Pop',
-                genreCode: '1',
-                grade: '5',
-                price: 20000,
-                downloadCount: 1000,
-                listenCount: 5000
-            }
-        ]});
-    }
-});
-
 </script>
 <script type="text/javascript" class="code-js">
+
 var grid = new tui.Grid({
     el: $('#grid'),
-    rowHeaders: ['rowNum', 'checkbox'],
+    rowHeaders: ['rowNum'],
     pagination: true,
     columns: [
         {
@@ -114,82 +83,9 @@ grid.use('Net', {
     perPage: 3,
     readDataMethod: 'GET',
     api: {
-        readData: 'api/readData',
-        deleteData: 'api/deleteData'
+        readData: 'api/readData'
     }
 });
-
-var net = grid.getAddOn("Net");
-var rowKeys = [];
-
-tui.Grid.setLanguage('ko');
-
-var options = {};
-
-$('#btn-add').on('click', function() {
-    options.searchText = ' Galaxy%';
-    options.sortColumn = "deviceModelName";
-    options.sortAscending = false;
-
-    var net = grid.getAddOn("Net");
-    net.readData(1, options, true);
-});
-
-// $('#btn-add').on('click', function() {
-//     var requested;
-//
-//     _.each(rowKeys, function(rowKey) {
-//         grid.removeRow(rowKey, {
-//             removeOriginalData: false
-//         });
-//     });
-//     //
-//     //
-//     net.request("deleteData");
-//     //
-//     // if (!requested) {
-//     //     grid.restore();
-//     // }
-// });
-//
-// grid.on('check', function(ev) {
-//     rowKeys.push(ev.rowKey);
-// });
-//
-// grid.on('beforeRequest', function(ev) {
-//     if (!ev.deleteRows) {
-//         ev.stop();
-//         grid.restore();
-//     }
-//     // before sending a request
-// }).on('response', function(data) {
-//     // when receiving response regardless of success/fail
-// }).on('successResponse', function(data) {
-//     if (data.requestType === 'deleteData') {
-//         grid.setData([
-//             {
-//                 id: 436461,
-//                 name: 'X',
-//                 artist: 'Ed Sheeran',
-//                 release: '2014.06.24',
-//                 type: 'Deluxe',
-//                 typeCode: '1',
-//                 genre: 'Pop',
-//                 genreCode: '1',
-//                 grade: '5',
-//                 price: 20000,
-//                 downloadCount: 1000,
-//                 listenCount: 5000
-//             }
-//         ]);
-//     }
-//     // when the result is true
-// }).on('failResponse', function(data) {
-//     // when the result is false
-// }).on('errorResponse', function(data) {
-//     // when an error occurred
-// });
-
 
 </script>
 </html>

@@ -27,71 +27,28 @@ var grid = new tui.Grid({
     data: gridData,
     scrollX: false,
     scrollY: false,
-    // rowHeaders: ['rowNum'],
-    selectionUnit: 'row',
     columns: [
         {
             title: 'Name',
-            name: 'name',
-            editOptions: {
-                type: 'text'
-            }
+            name: 'name'
         },
         {
             title: 'Artist',
-            name: 'artist',
-            editOptions: {
-                type: 'text'
-            }
+            name: 'artist'
         },
         {
             title: 'Type',
-            name: 'type',
-            editOptions: {
-                type: 'text'
-            }
+            name: 'type'
         },
         {
             title: 'Release',
-            name: 'release',
-            editOptions: {
-                type: 'text'
-            }
+            name: 'release'
         },
         {
             title: 'Genre',
-            name: 'genre',
-            editOptions: {
-                type: 'text'
-            }
+            name: 'genre'
         }
     ]
-});
-
-grid.on('click', function(ev) {
-    var rowKeyIndex;
-
-    if (ev.rowKey) {
-        // ev.stop();
-
-        // grid.focus(ev.rowKey, ev.columnName);
-
-        rowKeyIndex = grid.getIndexOfRow(ev.rowKey);
-        // console.log(ev);
-        // grid.focus(ev.rowKey, ev.columnName);
-        grid.selection({
-            start: [rowKeyIndex, 0],
-            end: [rowKeyIndex, grid.getColumns().length - 1]
-        });
-
-
-
-
-    }
-});
-
-grid.on('selection', function(ev) {
-    console.log(ev);
 });
 
 </script>
