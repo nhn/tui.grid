@@ -97,4 +97,14 @@ describe('publicEventEmitter', function() {
             testTrigger(target, publicObject, 'uncheck');
         });
     });
+
+    describe('listenToSelectionModel', function() {
+        beforeEach(function() {
+            emitter.listenToSelectionModel(target);
+        });
+
+        it('should listen selection event', function() {
+            testTrigger(target, publicObject, 'selection');
+        });
+    });
 });

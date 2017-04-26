@@ -87,6 +87,10 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
             'check',
             'uncheck'
         ]);
+    },
+
+    listenToSelectionModel: function(selectionModel) {
+        this._listenForThrough(selectionModel, ['selection']);
     }
 });
 

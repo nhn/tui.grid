@@ -69,6 +69,7 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
+ *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
  *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
  *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
@@ -111,7 +112,7 @@ tui = window.tui = tui || {};
  *              called before changing the value of the cell. If returns false, the changing will be canceled.
  *          @param {function} [options.columns.onAfterChange] - The function that will be
  *              called after changing the value of the cell.
- *          @param {Array} [options.columns.editOptions] - The object for configuring editing UI.
+ *          @param {Object} [options.columns.editOptions] - The object for configuring editing UI.
  *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
  *                  the type of the editing UI.
  *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
@@ -277,6 +278,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         emitter.listenToFocusModel(this.modelManager.focusModel);
         emitter.listenToDomEventBus(this.domEventBus);
         emitter.listenToDataModel(this.modelManager.dataModel);
+        emitter.listenToSelectionModel(this.modelManager.selectionModel);
 
         return emitter;
     },
@@ -802,6 +804,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Returns the index of the column indentified by the column name.
+     * @param {string} columnName - The unique key of the column
+     * @returns {number} - The index of the column
+     */
+    getIndexOfColumn: function(columnName) {
+        return this.modelManager.columnModel.indexOfColumnName(columnName);
+    },
+
+    /**
      * Returns an instance of tui.component.Pagination.
      * @returns {tui.component.Pagination}
      */
@@ -909,6 +920,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     findRows: function(conditions) {
         var rowList = this.modelManager.dataModel.getRows();
         return _.where(rowList, conditions);
+    },
+
+    /**
+     * Select cells or rows by range
+     * @param {Object} range - [description]
+     */
+    selection: function(range) {
+        var selectionModel = this.modelManager.selectionModel;
+        var start = range.start;
+        var end = range.end;
+        var unit = selectionModel.getSelectionUnit();
+
+        selectionModel.start(start[0], start[1], unit);
+        selectionModel.update(end[0], end[1], unit);
     },
 
     /**

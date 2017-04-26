@@ -47,7 +47,8 @@ var defaultOptions = {
     rowHeight: 'auto',
     bodyHeight: 'auto',
     minRowHeight: 27,
-    minBodyHeight: 0
+    minBodyHeight: 0,
+    selectionUnit: 'cell'
 };
 
 /**
@@ -71,7 +72,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.coordColumnModel = this._createCoordColumnModel(options.columnOptions, domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
-        this.selectionModel = this._createSelectionModel(domEventBus);
+        this.selectionModel = this._createSelectionModel(options, domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
         this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
@@ -227,12 +228,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of seleciton model and returns it.
+     * @param {Object} options - options
      * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/selection} - A new instance
      * @private
      */
-    _createSelectionModel: function(domEventBus) {
-        return new SelectionModel(null, {
+    _createSelectionModel: function(options, domEventBus) {
+        return new SelectionModel({
+            selectionUnit: options.selectionUnit
+        }, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,

@@ -7,6 +7,8 @@
 var _ = require('underscore');
 
 var Model = require('../base/model');
+var GridEvent = require('../event/gridEvent');
+
 var util = require('../common/util');
 var typeConst = require('../common/constMap').selectionType;
 
@@ -39,7 +41,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             enabled: true,
-            selectionType: typeConst.CELL
+            selectionType: typeConst.CELL,
+            selectionUnit: attr.selectionUnit
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -56,6 +59,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             this.listenTo(domEventBus, 'key:select', this._onKeySelect);
             this.listenTo(domEventBus, 'key:delete', this._onKeyDelete);
         }
+
+        this.on('change:range', this._triggerSelectionEvent);
     },
 
     defaults: {
@@ -174,7 +179,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         if (address) {
-            this.update(address.row, address.column);
+            this.update(address.row, address.column, this.getSelectionUnit());
             this._scrollTo(address.row, address.column);
         }
     },
@@ -317,7 +322,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _onDragMoveBody: function(gridEvent) {
         var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
 
-        this.update(address.row, address.column);
+        this.update(address.row, address.column, this.getSelectionUnit());
         this._setScrolling(gridEvent.pageX, gridEvent.pageY);
     },
 
@@ -363,11 +368,19 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Return the selection type
+     * Returns the selection type (using internal state)
      * @returns {string} type - Selection type (CELL, ROW, COLUMN)
      */
     getType: function() {
         return this.selectionType;
+    },
+
+    /**
+     * Returns the selection unit (by options)
+     * @returns {string} unit - Selection unit (CELL, ROW)
+     */
+    getSelectionUnit: function() {
+        return this.get('selectionUnit').toUpperCase();
     },
 
     /**
@@ -429,7 +442,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
-            this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
+            if (type === typeConst.ROW) {
+                this.start(focusedIndex.row, 0, typeConst.ROW);
+            } else {
+                this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
+            }
         } else {
             this.setType(type);
         }
@@ -754,6 +771,47 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         this.set('range', spannedRange);
+    },
+
+    /**
+     * Trigger 'selection' event
+     * @private
+     */
+    _triggerSelectionEvent: function() {
+        var range = this.get('range');
+        var rowRange, columnRange, dataModel, columnModel, gridEvent;
+
+        if (!range) {
+            return;
+        }
+
+        rowRange = range.row;
+        columnRange = range.column;
+        dataModel = this.dataModel;
+        columnModel = this.columnModel;
+
+        gridEvent = new GridEvent(null, {
+            range: {
+                start: [
+                    dataModel.getRowDataAt(rowRange[0]).rowKey,
+                    columnModel.at(columnRange[0]).name
+                ],
+                end: [
+                    dataModel.getRowDataAt(rowRange[1]).rowKey,
+                    columnModel.at(columnRange[1]).name
+                ]
+            }
+        });
+
+         /**
+          * Occurs when selecting cells.
+          * @event tui.Grid#selection
+          * @type {module:common/gridEvent}
+          * @property {Object} range - Range of selection
+          * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
+          * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+          */
+        this.trigger('selection', gridEvent);
     },
 
     /**

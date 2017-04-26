@@ -11,7 +11,8 @@ function create(rowList) {
         columns: [
             {name: 'c1'},
             {name: 'c2'},
-            {name: 'c3'}
+            {name: 'c3'},
+            {name: 'c4'}
         ]
     });
     var dataModel = new DataModel(null, {
@@ -23,24 +24,29 @@ function create(rowList) {
             {
                 c1: '0-1',
                 c2: '0-2',
-                c3: '0-3'
+                c3: '0-3',
+                c4: '0-4'
             },
             {
                 c1: '1-1',
                 c2: '1-2',
-                c3: '1-3'
+                c3: '1-3',
+                c4: '1-4'
             },
             {
                 c1: '2-1',
                 c2: '2-2',
-                c3: '2-3'
+                c3: '2-3',
+                c4: '2-4'
             }
         ];
     }
 
     dataModel.setData(rowList);
 
-    return new SelectionModel(null, {
+    return new SelectionModel({
+        selectionUnit: 'cell'
+    }, {
         columnModel: columnModel,
         dataModel: dataModel
     });
@@ -133,7 +139,7 @@ describe('model/selection', function() {
         var selection = create();
 
         selection.selectAll();
-        expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
+        expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 3]});
     });
 
     describe('_adjustScroll', function() {
