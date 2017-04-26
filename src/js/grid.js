@@ -616,12 +616,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns the object that contains the lists of changed data compared to the original data.
      * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
      * @param {Object} [options] Options
-     *      @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
-     *      @param {boolean} [options.withRawData=false] - If set to true, the data will contains
-     *          the row data for internal use.
-     *      @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
-     *          rows will be returned.
-     *      @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
+     *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+     *     @param {boolean} [options.withRawData=false] - If set to true, the data will contains
+     *         the row data for internal use.
+     *     @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
+     *         rows will be returned.
+     *     @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
      * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
      */
     getModifiedRows: function(options) {
@@ -923,8 +923,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Copy to clipboard
+     */
+    copyToClipboard: function() {
+        this.modelManager.clipboardModel.setClipboardText();
+
+        if (!window.clipboardData) { // Accessing the clipboard is a security concern on chrome
+            document.execCommand('copy');
+        }
+    },
+
+    /**
      * Select cells or rows by range
-     * @param {Object} range - [description]
+     * @param {object} range - Selection range
+     *     @param {array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+     *     @param {array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
      */
     selection: function(range) {
         var selectionModel = this.modelManager.selectionModel;

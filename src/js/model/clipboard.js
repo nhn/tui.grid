@@ -41,6 +41,13 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     },
 
     /**
+     * Set clipboard text to trigger event
+     */
+    setClipboardText: function() {
+        this.set('text', this._getClipboardText());
+    },
+
+    /**
      * Event handler for key:clipboard event on the domEventBus
      * @param {module:event/gridEvent} gridEvent - GridEvent
      * @private
@@ -49,7 +56,7 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
         var command = gridEvent.command;
 
         if (command === 'copy') {
-            this.set('text', this._getClipboardText());
+            this.setClipboardText();
         } else if (command === 'paste') {
             this._pasteClipboardTextToGrid(gridEvent.text);
         }

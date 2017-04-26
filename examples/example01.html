@@ -25,28 +25,73 @@ You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Gettin
 var grid = new tui.Grid({
     el: $('#grid'),
     data: gridData,
+    scrollX: false,
+    scrollY: false,
+    // rowHeaders: ['rowNum'],
+    selectionUnit: 'row',
     columns: [
         {
             title: 'Name',
-            name: 'name'
+            name: 'name',
+            editOptions: {
+                type: 'text'
+            }
         },
         {
             title: 'Artist',
-            name: 'artist'
+            name: 'artist',
+            editOptions: {
+                type: 'text'
+            }
         },
         {
             title: 'Type',
-            name: 'type'
+            name: 'type',
+            editOptions: {
+                type: 'text'
+            }
         },
         {
             title: 'Release',
-            name: 'release'
+            name: 'release',
+            editOptions: {
+                type: 'text'
+            }
         },
         {
             title: 'Genre',
-            name: 'genre'
+            name: 'genre',
+            editOptions: {
+                type: 'text'
+            }
         }
     ]
+});
+
+grid.on('click', function(ev) {
+    var rowKeyIndex;
+
+    if (ev.rowKey) {
+        // ev.stop();
+
+        // grid.focus(ev.rowKey, ev.columnName);
+
+        rowKeyIndex = grid.getIndexOfRow(ev.rowKey);
+        // console.log(ev);
+        // grid.focus(ev.rowKey, ev.columnName);
+        grid.selection({
+            start: [rowKeyIndex, 0],
+            end: [rowKeyIndex, grid.getColumns().length - 1]
+        });
+
+
+
+
+    }
+});
+
+grid.on('selection', function(ev) {
+    console.log(ev);
 });
 
 </script>
