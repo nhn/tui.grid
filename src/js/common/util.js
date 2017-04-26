@@ -7,13 +7,41 @@
 var _ = require('underscore');
 
 var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
+var util;
+
+/**
+ * Decode URI
+ * @param {string} uri - URI
+ * @param {boolean} mod - Whether maintaining "%25" or not
+ * @returns {string} Decoded URI
+ */
+function decodeURIComponentSafe(uri, mod) {
+    var decodedURI = '';
+    var i = 0;
+    var length, arr, tempDecodedURI;
+
+    mod = !!(mod);
+    arr = uri.split(/(%(?:d0|d1)%.{2})/);
+
+    for (length = arr.length; i < length; i += 1) {
+        try {
+            tempDecodedURI = decodeURIComponent(arr[i]);
+        } catch (e) {
+            tempDecodedURI = mod ? arr[i].replace(/%(?!\d+)/g, '%25') : arr[i];
+        }
+
+        decodedURI += tempDecodedURI;
+    }
+
+    return decodedURI;
+}
 
 /**
 * util 모듈
 * @module util
 * @ignore
 */
-var util = {
+util = {
     uniqueId: 0,
     /**
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
@@ -265,7 +293,8 @@ var util = {
                 key, value;
 
             key = tmp[0];
-            value = decodeURIComponent(escape(tmp[1]));
+            value = decodeURIComponentSafe(tmp[1]);
+
             try {
                 value = JSON.parse(value);
             } catch(e) {} // eslint-disable-line
