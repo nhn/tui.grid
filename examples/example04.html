@@ -29,6 +29,12 @@ var grid = new tui.Grid({
         {
             title: 'Name',
             name: 'name',
+            onBeforeChange: function(ev) {
+                console.log('Before change: ' + ev);
+            },
+            onAfterChange: function(ev) {
+                console.log('After change: ' + ev);
+            },
             editOptions: {
                 type: 'text',
                 useViewMode: true
@@ -37,6 +43,13 @@ var grid = new tui.Grid({
         {
             title: 'Artist',
             name: 'artist',
+            onBeforeChange: function(ev) {
+                console.log('Before change: ' + ev);
+                ev.stop();
+            },
+            onAfterChange: function(ev) {
+                console.log('After change: ' + ev);
+            },
             editOptions: {
                 type: 'text',
                 maxLength: 10,
@@ -46,6 +59,12 @@ var grid = new tui.Grid({
         {
             title: 'Type',
             name: 'typeCode',
+            onBeforeChange: function(ev) {
+                console.log('Before change: ' + ev);
+            },
+            onAfterChange: function(ev) {
+                console.log('After change: ' + ev);
+            },
             editOptions: {
                 type: 'select',
                 listItems: [
@@ -53,15 +72,18 @@ var grid = new tui.Grid({
                     { text: 'EP', value: '2' },
                     { text: 'Single', value: '3' }
                 ],
-                onBeforeChange: function(ev){
-                    console.log('chaged value:' + ev.value);
-                },
                 useViewMode: true
             }
         },
         {
             title: 'Genre',
             name: 'genreCode',
+            onBeforeChange: function(ev) {
+                console.log('Before change: ' + ev);
+            },
+            onAfterChange: function(ev) {
+                console.log('After change: ' + ev);
+            },
             editOptions: {
                 type: 'checkbox',
                 listItems: [
@@ -71,8 +93,11 @@ var grid = new tui.Grid({
                     { text: 'Electronic', value: '4' },
                     { text: 'etc.', value: '5' }
                 ],
-                onBeforeChange: function(ev){
-                    console.log('chaged value:' + ev.value);
+                onBlur: function(ev, ev1) {
+                    console.log(ev.target);
+                },
+                onFocus: function(ev) {
+                    console.log('*****', ev);
                 },
                 useViewMode: true
             }
@@ -80,6 +105,12 @@ var grid = new tui.Grid({
         {
             title: 'Grade',
             name: 'grade',
+            onBeforeChange: function(ev) {
+                console.log('Before change: ' + ev);
+            },
+            onAfterChange: function(ev) {
+                console.log('After change: ' + ev);
+            },
             editOptions: {
                 type: 'radio',
                 listItems: [
@@ -89,9 +120,6 @@ var grid = new tui.Grid({
                     { text: '★★★★☆', value: '4' },
                     { text: '★★★★★', value: '5' }
                 ],
-                onBeforeChange: function(ev){
-                    console.log('chaged value:' + ev.value);
-                },
                 useViewMode: true
             }
         }
