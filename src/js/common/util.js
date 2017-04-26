@@ -14,6 +14,7 @@ var util;
  * @param {string} uri - URI
  * @param {boolean} mod - Whether maintaining "%25" or not
  * @returns {string} Decoded URI
+ * @ignore
  */
 function decodeURIComponentSafe(uri, mod) {
     var decodedURI = '';
