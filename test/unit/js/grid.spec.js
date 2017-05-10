@@ -138,17 +138,14 @@ describe('grid', function() {
             grid = createGrid(['c1', 'c2'], {
                 keyColumnName: 'c2'
             });
-            grid.on('click', spy);
+            grid.on('dblclick', spy);
         });
 
         it('and key column\'s value is number, event object has "rowKey" of number type.', function() {
             grid.setData([{c1: 100, c2: 200}]);
 
-            point = grid.getElement(200, 'c2').offset();
-
-            grid.container._onClick({
-                pageX: point.left,
-                pageY: point.top
+            grid.container._onDblClick({
+                target: grid.getElement(200, 'c2')
             });
 
             expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
@@ -157,11 +154,8 @@ describe('grid', function() {
         it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
             grid.setData([{c1: '100', c2: '200'}]);
 
-            point = grid.getElement('200', 'c2').offset();
-
-            grid.container._onClick({
-                pageX: point.left,
-                pageY: point.top
+            grid.container._onDblClick({
+                target: grid.getElement('200', 'c2')
             });
 
             expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
@@ -170,11 +164,8 @@ describe('grid', function() {
         it('and key column\'s value is string, event object has "rowKey" of string type.', function() {
             grid.setData([{c1: 'a', c2: 'b'}]);
 
-            point = grid.getElement('b', 'c2').offset();
-
-            grid.container._onClick({
-                pageX: point.left,
-                pageY: point.top
+            grid.container._onDblClick({
+                target: grid.getElement('b', 'c2')
             });
 
             expect(spy.calls.argsFor(0)[0].rowKey).toBe('b');
