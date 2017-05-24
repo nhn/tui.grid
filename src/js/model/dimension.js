@@ -103,13 +103,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Sets the bodyHeight value based on the totalRowHeight value.
+     * @param {object} model - Model fired 'change:totalRowHeight' event
      * @private
      */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var currBodyHeight = this.get('bodyHeight');
+    _syncBodyHeightWithTotalRowHeight: function(model) {
         var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
+        var minBodyHeight = this.get('minBodyHeight');
+        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
 
-        this.set('bodyHeight', Math.max(currBodyHeight, realBodyHeight));
+        this.set('bodyHeight', bodyHeight);
     },
 
     /**
