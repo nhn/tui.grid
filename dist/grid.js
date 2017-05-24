@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Wed Apr 26 2017 23:22:55 GMT+0900 (KST)"
- * version: 2.1.0-a
+ * bundle created at "Wed May 24 2017 17:04:47 GMT+0900 (KST)"
+ * version: 2.1.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -122,9 +122,11 @@
 	 *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
 	 *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
 	 *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
-	 *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
-	 *          @param {Object} [options.rowHeaders.title] - The title of the row header on the grid header area.
-	 *          @param {Object} [options.rowHeaders.width] - The width of the row header.
+	 *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
+	 *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
+	 *          @param {number} [options.rowHeaders.width] - The width of the row header.
+	 *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
+	 *              the row header. This function takes a parameter an K-V object as a parameter to match template values.
 	 *      @param {array} options.columns - The configuration of the grid columns.
 	 *          @param {string} options.columns.name - The name of the column.
 	 *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
@@ -1861,6 +1863,7 @@
 	        var rowHeadersData = [];
 	        var type, isObject;
 	        var defaultData;
+	        var hasTitle;
 
 	        _.each(options, function(data) {
 	            isObject = _.isObject(data);
@@ -1870,7 +1873,18 @@
 	            if (!isObject) {
 	                data = defaultData;
 	            } else {
+	                hasTitle = data.title;
 	                data = $.extend({}, defaultData, data);
+	            }
+
+	            // Customizing the cell data in the row header
+	            if (data.template && !hasTitle && type !== 'rowNum') {
+	                data.title = data.template({
+	                    className: '',
+	                    name: '',
+	                    disabled: '',
+	                    checked: ''
+	                });
 	            }
 
 	            // "checkbox" and "radio" should not exist in duplicate
@@ -3448,17 +3462,17 @@
 
 	        if (checked) {
 	            /**
-	             * Occurs when a checkbox in row header is checked.
+	             * Occurs when a checkbox in row header is checked
 	             * @event tui.Grid#check
-	             * @type {module:common/gridEvent}
+	             * @type {module:event/gridEvent}
 	             * @property {number} rowKey - rowKey of the checked row
 	             */
 	            this.trigger('check', eventObj);
 	        } else {
 	            /**
-	             * Occurs when a checkbox in row header is unchecked.
+	             * Occurs when a checkbox in row header is unchecked
 	             * @event tui.Grid#uncheck
-	             * @type {module:common/gridEvent}
+	             * @type {module:event/gridEvent}
 	             * @property {number} rowKey - rowKey of the unchecked row
 	             */
 	            this.trigger('uncheck', eventObj);
@@ -4210,7 +4224,6 @@
 	 * Event class for public event of Grid
 	 * @module event/gridEvent
 	 * @param {Object} data - Event data for handler
-	 * @ignore
 	 */
 	var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype */{
 	    init: function(nativeEvent, data) {
@@ -4226,6 +4239,7 @@
 	    /**
 	     * Sets data
 	     * @param {Object} data - data
+	     * @ignore
 	     */
 	    setData: function(data) {
 	        _.extend(this, data);
@@ -4233,7 +4247,6 @@
 
 	    /**
 	     * Stops propogation of this event.
-	     * @api
 	     */
 	    stop: function() {
 	        this._stopped = true;
@@ -4242,6 +4255,7 @@
 	    /**
 	     * Returns whether this event is stopped.
 	     * @returns {Boolean}
+	     * @ignore
 	     */
 	    isStopped: function() {
 	        return this._stopped;
@@ -4961,10 +4975,11 @@
 	     * @private
 	     */
 	    _syncBodyHeightWithTotalRowHeight: function() {
-	        var currBodyHeight = this.get('bodyHeight');
 	        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
+	        var minBodyHeight = this.get('minBodyHeight');
+	        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
 
-	        this.set('bodyHeight', Math.max(currBodyHeight, realBodyHeight));
+	        this.set('bodyHeight', bodyHeight);
 	    },
 
 	    /**
@@ -9040,9 +9055,9 @@
 	        });
 
 	         /**
-	          * Occurs when selecting cells.
+	          * Occurs when selecting cells
 	          * @event tui.Grid#selection
-	          * @type {module:common/gridEvent}
+	          * @type {module:event/gridEvent}
 	          * @property {Object} range - Range of selection
 	          * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
 	          * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
@@ -9823,9 +9838,11 @@
 	        }
 
 	        return new DatePickeLayerView({
+	            focusModel: this.modelManager.focusModel,
 	            columnModel: this.modelManager.columnModel,
 	            textPainter: this.painterManager.getInputPainters().text,
-	            domState: this.domState
+	            domState: this.domState,
+	            domEventBus: this.domEventBus
 	        });
 	    },
 
@@ -9957,10 +9974,11 @@
 
 	        /**
 	         * Occurs when a mouse button is clicked on the Grid.
-	         * The properties of the event object is the same as the native MouseEvent.
+	         * The properties of the event object include the native event object.
 	         * @event tui.Grid#click
 	         * @type {module:event/gridEvent}
-	         * @property {string} targetType - type of event target
+	         * @property {jQueryEvent} nativeEvent - Event object
+	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
 	         */
@@ -9982,10 +10000,11 @@
 
 	        /**
 	         * Occurs when a mouse button is double clicked on the Grid.
-	         * The event object has all properties copied from the native MouseEvent.
+	         * The properties of the event object include the native event object.
 	         * @event tui.Grid#dblclick
 	         * @type {module:event/gridEvent}
-	         * @property {string} targetType - type of event target
+	         * @property {jQueryEvent} nativeEvent - Event object
+	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
 	         */
@@ -10007,12 +10026,13 @@
 
 	        /**
 	         * Occurs when a mouse pointer is moved onto the Grid.
-	         * The event object has all properties copied from the native MouseEvent.
+	         * The properties of the event object include the native MouseEvent object.
 	         * @event tui.Grid#mouseover
 	         * @type {module:event/gridEvent}
+	         * @property {jQueryEvent} nativeEvent - Event object
 	         * @property {string} targetType - Type of event target
-	         * @property {number} rowKey - rowKey of the target cell
-	         * @property {string} columnName - columnName of the target cell
+	         * @property {number} [rowKey] - rowKey of the target cell
+	         * @property {string} [columnName] - columnName of the target cell
 	         */
 	        this.domEventBus.trigger('mouseover', gridEvent);
 	    },
@@ -10031,6 +10051,7 @@
 	         * The event object has all properties copied from the native MouseEvent.
 	         * @event tui.Grid#mouseout
 	         * @type {module:event/gridEvent}
+	         * @property {jQueryEvent} nativeEvent - Event object
 	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
@@ -10047,8 +10068,9 @@
 	        var $target = $(ev.target);
 	        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 	        var shouldFocus = !$target.is('input, a, button, select, textarea');
+	        var mainButton = gridEvent.columnName === '_button' && $target.parent().is('label');
 
-	        if (shouldFocus) {
+	        if (shouldFocus && !mainButton) {
 	            ev.preventDefault();
 
 	            // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
@@ -10059,6 +10081,7 @@
 	             * The event object has all properties copied from the native MouseEvent.
 	             * @event tui.Grid#mousedown
 	             * @type {module:event/gridEvent}
+	             * @property {jQueryEvent} nativeEvent - Event object
 	             * @property {string} targetType - Type of event target
 	             * @property {number} rowKey - rowKey of the target cell
 	             * @property {string} columnName - columnName of the target cell
@@ -13387,6 +13410,8 @@
 	 */
 	'use strict';
 
+	var _ = __webpack_require__(1);
+
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(14);
 	var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
@@ -13402,42 +13427,84 @@
 	 */
 	DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
 	    initialize: function(options) {
+	        this.focusModel = options.focusModel;
 	        this.textPainter = options.textPainter;
 	        this.columnModel = options.columnModel;
 	        this.domState = options.domState;
-	        this.datePicker = this._createDatePicker();
+	        this.datePickerMap = this._createDatePickers();
 
-	        this._preventMousedownEvent();
+	        /**
+	         * Current focused input element
+	         * @type {jQuery}
+	         */
+	        this.$focusedInput = null;
 
 	        this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
-	        this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
+	        this.listenTo(options.domEventBus, 'windowResize', this._closeDatePickerLayer);
 	    },
 
 	    className: classNameConst.LAYER_DATE_PICKER,
 
-	    /**
-	     * Creates an instance of 'tui-component-date-picker'
-	     * @returns {tui.component.DatePicker}
-	     * @private
-	     */
-	    _createDatePicker: function() {
-	        var datePicker = new tui.component.Datepicker(this.$el, {
-	            calendar: {
-	                showToday: false
-	            }
-	        });
-
-	        return datePicker;
+	    events: {
+	        click: '_onClick'
 	    },
 
 	    /**
-	     * Prevent mousedown event on calendar layer
+	     * Event handler for the 'click' event on the datepicker layer.
+	     * @param {MouseEvent} ev - MouseEvent object
+	     * @private
 	     */
-	    _preventMousedownEvent: function() {
-	        this.$el.mousedown(function(ev) {
-	            ev.preventDefault();
-	            ev.target.unselectable = true;  // trick for IE8
-	            return false;
+	    _onClick: function(ev) {
+	        ev.stopPropagation();
+	    },
+
+	    /**
+	     * Creates instances map of 'tui-component-date-picker'
+	     * @returns {Object.<string, DatePicker>}
+	     * @private
+	     */
+	    _createDatePickers: function() {
+	        var datePickerMap = {};
+	        var columnModelMap = this.columnModel.get('columnModelMap');
+
+	        _.each(columnModelMap, function(columnModel) {
+	            var name = columnModel.name;
+	            var component = columnModel.component;
+	            var options;
+
+	            if (component && component.name === 'datePicker') {
+	                options = component.options || {};
+
+	                datePickerMap[name] = new tui.component.Datepicker(this.$el, options);
+
+	                this._bindEventOnDatePicker(datePickerMap[name]);
+	            }
+	        }, this);
+
+	        return datePickerMap;
+	    },
+
+	    /**
+	     * Bind custom event on the DatePicker instance
+	     * @param {DatePicker} datePicker - instance of DatePicker
+	     * @private
+	     */
+	    _bindEventOnDatePicker: function(datePicker) {
+	        var self = this;
+
+	        datePicker.on('open', function() {
+	            self.textPainter.blockFocusingOut();
+	        });
+
+	        datePicker.on('close', function() {
+	            var focusModel = self.focusModel;
+	            var address = focusModel.which();
+	            var changedValue = self.$focusedInput.val();
+
+	            self.textPainter.unblockFocusingOut();
+
+	            focusModel.dataModel.setValue(address.rowKey, address.columnName, changedValue);
+	            focusModel.finishEditing();
 	        });
 	    },
 
@@ -13445,10 +13512,11 @@
 	     * Resets date picker options
 	     * @param {Object} options - datePicker options
 	     * @param {jQuery} $input - target input element
+	     * @param {string} columnName - name to find the DatePicker instance created on each column
 	     * @private
 	     */
-	    _resetDatePicker: function(options, $input) {
-	        var datePicker = this.datePicker;
+	    _resetDatePicker: function(options, $input, columnName) {
+	        var datePicker = this.datePickerMap[columnName];
 	        var format = options.format || DEFAULT_DATE_FORMAT;
 	        var date = options.date || (new Date());
 	        var selectableRanges = options.selectableRanges;
@@ -13497,21 +13565,30 @@
 	        var columnName = address.columnName;
 	        var component = this.columnModel.getColumnModel(columnName).component;
 	        var editType = this.columnModel.getEditType(columnName);
+	        var options;
 
 	        if (editType === 'text' && component && component.name === 'datePicker') {
+	            options = component.options || {};
+
+	            this.$focusedInput = $input;
+
 	            this.$el.css(this._calculatePosition($input)).show();
-	            this._resetDatePicker(component.options || {}, $input);
-	            this.datePicker.open();
+	            this._resetDatePicker(options, $input, columnName);
+	            this.datePickerMap[columnName].open();
 	        }
 	    },
 
 	    /**
-	     * Event handler for 'focusOut' event of module:painter/input/text
+	     * Close the date picker layer that is already opend
 	     * @private
 	     */
-	    _onFocusOutTextInput: function() {
-	        this.datePicker.close();
-	        this.$el.hide();
+	    _closeDatePickerLayer: function() {
+	        var name = this.focusModel.which().columnName;
+	        var datePicker = this.datePickerMap[name];
+
+	        if (datePicker && datePicker.isOpened()) {
+	            datePicker.close();
+	        }
 	    },
 
 	    /**
@@ -14389,10 +14466,11 @@
 	     * @private
 	     */
 	    _getContentHtml: function(cellData) {
+	        var customTemplate = cellData.columnModel.template;
 	        var content = cellData.formattedValue;
 	        var prefix = cellData.prefix;
 	        var postfix = cellData.postfix;
-	        var fullContent;
+	        var fullContent, template;
 
 	        if (this.inputPainter) {
 	            content = this.inputPainter.generateHtml(cellData);
@@ -14410,11 +14488,19 @@
 	            fullContent = prefix + content + postfix;
 	        }
 
-	        return this.contentTemplate({
-	            content: fullContent,
-	            className: classNameConst.CELL_CONTENT,
-	            style: this._getContentStyle(cellData)
-	        });
+	        if (cellData.columnName === '_number' && _.isFunction(customTemplate)) {
+	            template = customTemplate({
+	                content: fullContent
+	            });
+	        } else {
+	            template = this.contentTemplate({
+	                content: fullContent,
+	                className: classNameConst.CELL_CONTENT,
+	                style: this._getContentStyle(cellData)
+	            });
+	        }
+
+	        return template;
 	    },
 
 	    /**
@@ -14525,11 +14611,14 @@
 	        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 	        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 	        var attrs = this._getAttributes(cellData);
+	        var mainButton = this.editType === 'mainButton';
 
 	        $td.attr(attrs);
 
 	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
 	            this.inputPainter.focus($td);
+	        } else if (mainButton) {
+	            $td.find(this.inputPainter.selector).prop('checked', cellData.value);
 	        } else if (shouldUpdateContent) {
 	            $td.html(this._getContentHtml(cellData));
 	            $td.scrollLeft(0);
@@ -14790,6 +14879,12 @@
 	var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
 	    init: function() {
 	        Painter.apply(this, arguments);
+
+	        /**
+	         * State of finishing to edit
+	         * @type {Boolean}
+	         */
+	        this._finishedEditing = false;
 	    },
 
 	    /**
@@ -14885,9 +14980,11 @@
 	        var $target = $(event.target);
 	        var address = this._getCellAddress($target);
 
-	        this._executeCustomEventHandler(event, address);
-	        this.trigger('focusOut', $target, address);
-	        this.controller.finishEditing(address, false, $target.val());
+	        if (!this._finishedEditing) {
+	            this._executeCustomEventHandler(event, address);
+	            this.trigger('focusOut', $target, address);
+	            this.controller.finishEditing(address, false, $target.val());
+	        }
 	    },
 
 	    /**
@@ -14973,6 +15070,20 @@
 	        if (!$input.is(':focus')) {
 	            $input.eq(0).focus();
 	        }
+	    },
+
+	    /**
+	     * Block focusing out
+	     */
+	    blockFocusingOut: function() {
+	        this._finishedEditing = true;
+	    },
+
+	    /**
+	     * Unblock focusing out
+	     */
+	    unblockFocusingOut: function() {
+	        this._finishedEditing = false;
 	    }
 	});
 
@@ -15370,6 +15481,8 @@
 	var classNameConst = __webpack_require__(14);
 	var keyCodeMap = __webpack_require__(7).keyCode;
 
+	var className = classNameConst.CELL_MAIN_BUTTON;
+
 	/**
 	 * Main Button Painter
 	 * (This class does not extend from module:painter/input/base but from module:base/painter directly)
@@ -15382,7 +15495,7 @@
 	    init: function(options) {
 	        Painter.apply(this, arguments);
 
-	        this.selector = 'input.' + classNameConst.CELL_MAIN_BUTTON;
+	        this.selector = 'input.' + className;
 	        this.inputType = options.inputType;
 	        this.gridId = options.gridId;
 	    },
@@ -15401,8 +15514,8 @@
 	     * @returns {String}
 	     */
 	    template: _.template(
-	        '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
-	        ' type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
+	        '<input class="<%=className%>" ' +
+	        'type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
 	    ),
 
 	     /**
@@ -15438,12 +15551,27 @@
 	     * @implements {module:painter/input/base}
 	     */
 	    generateHtml: function(cellData) {
-	        return this.template({
+	        var customTemplate = cellData.columnModel.template;
+	        var convertedHTML = null;
+	        var props = {
 	            type: this.inputType,
 	            name: this.gridId,
-	            checked: cellData.value ? 'checked' : '',
-	            disabled: cellData.disabled ? 'disabled' : ''
-	        });
+	            className: className
+	        };
+
+	        if (_.isFunction(customTemplate)) {
+	            convertedHTML = customTemplate(_.extend(props, {
+	                checked: cellData.value,
+	                disabled: cellData.disabled
+	            }));
+	        } else {
+	            convertedHTML = this.template(_.extend(props, {
+	                checked: cellData.value ? 'checked' : '',
+	                disabled: cellData.disabled ? 'disabled' : ''
+	            }));
+	        }
+
+	        return convertedHTML;
 	    }
 	});
 

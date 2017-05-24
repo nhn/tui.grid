@@ -76,8 +76,7 @@ tui = window.tui = tui || {};
  *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
  *          @param {number} [options.rowHeaders.width] - The width of the row header.
  *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
- *              the row header. This function takes two parameters that the first parameter is the original template and
- *              the second parameter is properties to match template values.
+ *              the row header. This function takes a parameter an K-V object as a parameter to match template values.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used

@@ -104,8 +104,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object include the native event object.
          * @event tui.Grid#click
          * @type {module:event/gridEvent}
-         * @property {jQueryEvent} nativeEvent - event object
-         * @property {string} targetType - type of event target
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
          */
@@ -130,8 +130,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object include the native event object.
          * @event tui.Grid#dblclick
          * @type {module:event/gridEvent}
-         * @property {jQueryEvent} nativeEvent - event object
-         * @property {string} targetType - type of event target
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
          */
@@ -156,7 +156,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object include the native MouseEvent object.
          * @event tui.Grid#mouseover
          * @type {module:event/gridEvent}
-         * @property {jQueryEvent} nativeEvent - event object
+         * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} [rowKey] - rowKey of the target cell
          * @property {string} [columnName] - columnName of the target cell
@@ -178,7 +178,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The event object has all properties copied from the native MouseEvent.
          * @event tui.Grid#mouseout
          * @type {module:event/gridEvent}
-         * @property {jQueryEvent} nativeEvent - event object
+         * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
@@ -208,7 +208,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @event tui.Grid#mousedown
              * @type {module:event/gridEvent}
-             * @property {jQueryEvent} nativeEvent - event object
+             * @property {jQueryEvent} nativeEvent - Event object
              * @property {string} targetType - Type of event target
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell

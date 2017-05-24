@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Wed Apr 26 2017 23:22:55 GMT+0900 (KST)"
- * version: 2.1.0-a
+ * bundle created at "Wed May 24 2017 17:04:47 GMT+0900 (KST)"
+ * version: 2.1.0
  */
 .tui-grid-container {
   width: 100%;
@@ -201,6 +201,7 @@
   margin: 0;
 }
 .tui-grid-lside-area .tui-grid-table {
+  width: 100%;
   border-right-width: 0;
 }
 .tui-grid-foot-area .tui-grid-table {
@@ -229,7 +230,7 @@
   padding: 0;
   text-align: center;
 }
-.tui-grid-cell-ellipsis {
+.tui-grid-cell-ellipsis .tui-grid-cell-content {
   text-overflow: ellipsis;
 }
 .tui-grid-cell-content .tui-grid-content-before {
