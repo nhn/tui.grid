@@ -710,5 +710,23 @@ describe('data.columnModel', function() {
             expect(rowHeadersData[0].type).toBe('radio');
             expect(rowHeadersData[1].type).toBe('rowNum');
         });
+
+        it('When the type of option is checkbox and the option has template, ' +
+            'the title is replaced by template.', function() {
+            var replacedHtml = '<input type="checkbox">';
+
+            options = [
+                {
+                    type: 'checkbox',
+                    template: function() {
+                        return replacedHtml;
+                    }
+                }
+            ];
+
+            rowHeadersData = columnModelInstance._getRowHeadersData(options);
+
+            expect(rowHeadersData[0].title).toBe(replacedHtml);
+        })
     });
 });

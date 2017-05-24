@@ -10,6 +10,113 @@
         #wrapper {
             width: 300px;
         }
+
+        .Checkbox_checkbox {
+            position: relative;
+            display: inline-block
+        }
+
+        .Checkbox_checkbox+.Checkbox_checkbox {
+            margin-left: 36px
+        }
+
+        .Checkbox_checkbox+.Checkbox_checkbox:first-child {
+            margin-left: 0
+        }
+
+        .Checkbox_input[type=checkbox] {
+            display: none;
+            box-sizing: border-box
+        }
+
+        .Checkbox_indicator {
+            cursor: pointer;
+            position: relative;
+            padding: 0;
+            display: inline;
+            display: -ms-flexbox;
+            display: flex
+        }
+
+        .Checkbox_indicator:before {
+            transition: .2s ease-out;
+            content: "";
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            background: #f7f9f9;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            vertical-align: middle
+        }
+
+        .Checkbox_indicator:after {
+            transition: .2s ease-out;
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 8px;
+            top: 3px;
+            left: 6px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg)
+        }
+
+        .Checkbox_label {
+            margin-left: 8px;
+            margin-top: 8px;
+            color: #242727
+        }
+
+        input[type=checkbox][disabled]~.Checkbox_indicator {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        input[type=checkbox]:checked~.Checkbox_indicator:before {
+            background: #ccc;
+            border: 1px solid #ccc
+        }
+
+        input[type=checkbox]:checked~.Checkbox_indicator.Checkbox_isTypeSecondary:before {
+            background: #39a898;
+            border: 1px solid #39a898
+        }
+
+        input[type=checkbox]~.Checkbox_indicator:after {
+            visibility: hidden
+        }
+
+        input[type=checkbox]:checked~.Checkbox_indicator:after {
+            visibility: visible;
+            visibility: initial
+        }
+
+        input[type=checkbox]+.Checkbox_indicator+.Checkbox_label {
+            font-weight: 700;
+            color: #648089
+        }
+
+        input[type=checkbox]:checked+.Checkbox_indicator+.Checkbox_label {
+            font-weight: 700;
+            color: #242727
+        }
+
+        input[type=checkbox]+.Checkbox_indicator>.Checkbox_label, input[type=checkbox]:checked+.Checkbox_indicator>.Checkbox_label {
+            font-weight: 500;
+            color: #242727
+        }
+
+        input[type=checkbox]+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
+            font-weight: 700;
+            color: #648089
+        }
+
+        input[type=checkbox]:checked+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
+            font-weight: 700;
+            color: #242727
+        }
     </style>
 </head>
 
@@ -25,22 +132,40 @@
 <script src="../lib/tui-component-pagination/dist/tui-component-pagination.js"></script>
 <script src="../dist/grid.js"></script>
 <script>
+
     var grid = new tui.Grid({
         el: $('#grid'),
-        selectType: 'checkbox',
-        columnFixCount: 1,
-        headerHeight: 30,
         // keyColumnName: 'c1',
         toolbar: true,
-        resizeHandle: {},
-        minHeight: 300,
-        showDummyRows: true,
-        heightResizable: true,
         columnOptions: {
             // frozenCount: 1
         },
         pagination: true,
-        rowHeaders: ['checkbox'],
+        // rowHeaders: ['checkbox', 'rowNum'],
+        rowHeaders: [
+            {
+                type: 'checkbox',
+                template: function(props) {
+                    tmpl = '<div class="Checkbox_checkbox">';
+                    tmpl += '<label>';
+                    tmpl += '<input class="Checkbox_input <%=className%>" type="checkbox" name="<%=name%>" ';
+                    tmpl += '<%= disabled ? "disabled" : "" %> ';
+                    tmpl += '<%= checked ? "checked" : "" %> />';
+                    tmpl += '<div class="Checkbox_indicator"></div>';
+                    tmpl += '</label>';
+                    tmpl += '</div>';
+
+                    return _.template(tmpl)(props);
+                }
+            },
+            {
+                type: 'rowNum',
+                template: function(props) {
+                    tmpl = '<%=content%>번';
+                    return _.template(tmpl)(props);
+                }
+            }
+        ],
         columns: [
             {
                 name: 'c1',
@@ -57,7 +182,6 @@
                     console.log('after change! ev', ev);
                 },
                 editOptions: {
-
                     type: 'text',
                     listItems: [
                         {
@@ -140,11 +264,11 @@
         {
             c1: 'b',
             c2: 10,
-            _extraData: {
-                rowSpan: {
-                    c1: 3
-                }
-            }
+            // _extraData: {
+            //     rowSpan: {
+            //         c1: 3
+            //     }
+            // }
         },
         {
             c1: 'b',
@@ -187,16 +311,16 @@
                 grid.uncheck(row.rowKey);
             }
         });
-
-        console.log(type);
     }
 
     grid.on('check', function(ev) {
-        toggleCheck(ev.rowKey, 'check');
+        console.log('check');
+        // toggleCheck(ev.rowKey, 'check');
     });
 
     grid.on('uncheck', function(ev) {
-        toggleCheck(ev.rowKey, 'uncheck');
+        console.log('uncheck');
+        // toggleCheck(ev.rowKey, 'uncheck');
     });
 
     // grid.use('Net', {

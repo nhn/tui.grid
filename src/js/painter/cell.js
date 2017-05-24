@@ -77,10 +77,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getContentHtml: function(cellData) {
+        var customTemplate = cellData.columnModel.template;
         var content = cellData.formattedValue;
         var prefix = cellData.prefix;
         var postfix = cellData.postfix;
-        var fullContent;
+        var fullContent, template;
 
         if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
@@ -98,11 +99,19 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             fullContent = prefix + content + postfix;
         }
 
-        return this.contentTemplate({
-            content: fullContent,
-            className: classNameConst.CELL_CONTENT,
-            style: this._getContentStyle(cellData)
-        });
+        if (cellData.columnName === '_number' && _.isFunction(customTemplate)) {
+            template = customTemplate({
+                content: fullContent
+            });
+        } else {
+            template = this.contentTemplate({
+                content: fullContent,
+                className: classNameConst.CELL_CONTENT,
+                style: this._getContentStyle(cellData)
+            });
+        }
+
+        return template;
     },
 
     /**
@@ -213,11 +222,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
+        var mainButton = this.editType === 'mainButton';
 
         $td.attr(attrs);
 
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
             this.inputPainter.focus($td);
+        } else if (mainButton) {
+            $td.find(this.inputPainter.selector).prop('checked', cellData.value);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
             $td.scrollLeft(0);

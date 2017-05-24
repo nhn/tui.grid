@@ -10,6 +10,8 @@ var Painter = require('../../base/painter');
 var classNameConst = require('../../common/classNameConst');
 var keyCodeMap = require('../../common/constMap').keyCode;
 
+var className = classNameConst.CELL_MAIN_BUTTON;
+
 /**
  * Main Button Painter
  * (This class does not extend from module:painter/input/base but from module:base/painter directly)
@@ -22,7 +24,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.selector = 'input.' + classNameConst.CELL_MAIN_BUTTON;
+        this.selector = 'input.' + className;
         this.inputType = options.inputType;
         this.gridId = options.gridId;
     },
@@ -41,8 +43,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @returns {String}
      */
     template: _.template(
-        '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
-        ' type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
+        '<input class="<%=className%>" ' +
+        'type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
     ),
 
      /**
@@ -78,12 +80,27 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @implements {module:painter/input/base}
      */
     generateHtml: function(cellData) {
-        return this.template({
+        var customTemplate = cellData.columnModel.template;
+        var convertedHTML = null;
+        var props = {
             type: this.inputType,
             name: this.gridId,
-            checked: cellData.value ? 'checked' : '',
-            disabled: cellData.disabled ? 'disabled' : ''
-        });
+            className: className
+        };
+
+        if (_.isFunction(customTemplate)) {
+            convertedHTML = customTemplate(_.extend(props, {
+                checked: cellData.value,
+                disabled: cellData.disabled
+            }));
+        } else {
+            convertedHTML = this.template(_.extend(props, {
+                checked: cellData.value ? 'checked' : '',
+                disabled: cellData.disabled ? 'disabled' : ''
+            }));
+        }
+
+        return convertedHTML;
     }
 });
 

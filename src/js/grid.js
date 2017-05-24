@@ -72,9 +72,12 @@ tui = window.tui = tui || {};
  *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
  *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
- *          @param {Object} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
- *          @param {Object} [options.rowHeaders.title] - The title of the row header on the grid header area.
- *          @param {Object} [options.rowHeaders.width] - The width of the row header.
+ *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
+ *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
+ *          @param {number} [options.rowHeaders.width] - The width of the row header.
+ *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
+ *              the row header. This function takes two parameters that the first parameter is the original template and
+ *              the second parameter is properties to match template values.
  *      @param {array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used

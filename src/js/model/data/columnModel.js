@@ -311,6 +311,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var rowHeadersData = [];
         var type, isObject;
         var defaultData;
+        var hasTitle;
 
         _.each(options, function(data) {
             isObject = _.isObject(data);
@@ -320,7 +321,18 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             if (!isObject) {
                 data = defaultData;
             } else {
+                hasTitle = data.title;
                 data = $.extend({}, defaultData, data);
+            }
+
+            // Customizing the cell data in the row header
+            if (data.template && !hasTitle && type !== 'rowNum') {
+                data.title = data.template({
+                    className: '',
+                    name: '',
+                    disabled: '',
+                    checked: ''
+                });
             }
 
             // "checkbox" and "radio" should not exist in duplicate

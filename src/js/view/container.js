@@ -191,8 +191,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var $target = $(ev.target);
         var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
         var shouldFocus = !$target.is('input, a, button, select, textarea');
+        var mainButton = gridEvent.columnName === '_button' && $target.parent().is('label');
 
-        if (shouldFocus) {
+        if (shouldFocus && !mainButton) {
             ev.preventDefault();
 
             // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
