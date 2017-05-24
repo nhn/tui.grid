@@ -60,14 +60,14 @@ var grid = new tui.Grid({
         },
         {
             type: 'rowNum',
-            title: '행 번호',
+            title: 'No.',
             /**
              * Customizing when row header type is 'rowNum'
              * @param {object} props
              *     @param {string} props.content - Original data
              */
             template: function(props) {
-                tmpl = '<%=content%>번';
+                tmpl = '<span>No.<%=content%></span>';
                 return _.template(tmpl)(props); // underscore template function
             }
         }

@@ -43,7 +43,7 @@ var twoDepthData = {
     ]
 };
 
-var treeDepthData = {
+var threeDepthData = {
     '01_01': [
         { text: 'Select', value: '' },
         { text: 'I Miss You', value: '01_01_0001' },
@@ -132,6 +132,8 @@ var treeDepthData = {
 
 var grid = new tui.Grid({
     el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
     rowHeight: 30,
     columns: [
         {
@@ -171,7 +173,7 @@ var grid = new tui.Grid({
                 {
                     targetNames: ['category3'],
                     listItems: function(value) {
-                        return treeDepthData[value];
+                        return threeDepthData[value];
                     },
                     disabled: function(value) {
                         return !(value);

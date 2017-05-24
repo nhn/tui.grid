@@ -45,7 +45,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
     /**
      * Event handler for the 'click' event on the datepicker layer.
-     * @param {MouseEvent} event - MouseEvent object
+     * @param {MouseEvent} ev - MouseEvent object
      * @private
      */
     _onClick: function(ev) {
