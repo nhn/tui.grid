@@ -20,7 +20,6 @@ var targetTypeConst = {
  * Event class for public event of Grid
  * @module event/gridEvent
  * @param {Object} data - Event data for handler
- * @ignore
  */
 var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype */{
     init: function(nativeEvent, data) {
@@ -36,6 +35,7 @@ var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype 
     /**
      * Sets data
      * @param {Object} data - data
+     * @ignore
      */
     setData: function(data) {
         _.extend(this, data);
@@ -43,7 +43,6 @@ var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype 
 
     /**
      * Stops propogation of this event.
-     * @api
      */
     stop: function() {
         this._stopped = true;
@@ -52,6 +51,7 @@ var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype 
     /**
      * Returns whether this event is stopped.
      * @returns {Boolean}
+     * @ignore
      */
     isStopped: function() {
         return this._stopped;

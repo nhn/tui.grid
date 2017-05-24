@@ -101,9 +101,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         /**
          * Occurs when a mouse button is clicked on the Grid.
-         * The properties of the event object is the same as the native MouseEvent.
+         * The properties of the event object include the native event object.
          * @event tui.Grid#click
          * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - event object
          * @property {string} targetType - type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
@@ -126,9 +127,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         /**
          * Occurs when a mouse button is double clicked on the Grid.
-         * The event object has all properties copied from the native MouseEvent.
+         * The properties of the event object include the native event object.
          * @event tui.Grid#dblclick
          * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - event object
          * @property {string} targetType - type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
@@ -151,12 +153,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         /**
          * Occurs when a mouse pointer is moved onto the Grid.
-         * The event object has all properties copied from the native MouseEvent.
+         * The properties of the event object include the native MouseEvent object.
          * @event tui.Grid#mouseover
          * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - event object
          * @property {string} targetType - Type of event target
-         * @property {number} rowKey - rowKey of the target cell
-         * @property {string} columnName - columnName of the target cell
+         * @property {number} [rowKey] - rowKey of the target cell
+         * @property {string} [columnName] - columnName of the target cell
          */
         this.domEventBus.trigger('mouseover', gridEvent);
     },
@@ -175,6 +178,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The event object has all properties copied from the native MouseEvent.
          * @event tui.Grid#mouseout
          * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
          * @property {string} columnName - columnName of the target cell
@@ -204,6 +208,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @event tui.Grid#mousedown
              * @type {module:event/gridEvent}
+             * @property {jQueryEvent} nativeEvent - event object
              * @property {string} targetType - Type of event target
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell

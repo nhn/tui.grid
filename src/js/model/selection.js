@@ -804,9 +804,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         });
 
          /**
-          * Occurs when selecting cells.
+          * Occurs when selecting cells
           * @event tui.Grid#selection
-          * @type {module:common/gridEvent}
+          * @type {module:event/gridEvent}
           * @property {Object} range - Range of selection
           * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
           * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
