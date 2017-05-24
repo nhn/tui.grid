@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>11. Customizing the row headers</title>
+    <title>11. Customizing Row headers</title>
     <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <link rel="stylesheet" type="text/css" href="./css/checkbox.css" />
@@ -100,7 +100,7 @@ grid.on('check', function(ev) {
     console.log('check', ev);
 });
 
-grid.on('uncheck', function() {
+grid.on('uncheck', function(ev) {
     console.log('uncheck', ev);
 });
 
