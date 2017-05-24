@@ -115,17 +115,17 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         if (checked) {
             /**
-             * Occurs when a checkbox in row header is checked.
+             * Occurs when a checkbox in row header is checked
              * @event tui.Grid#check
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the checked row
              */
             this.trigger('check', eventObj);
         } else {
             /**
-             * Occurs when a checkbox in row header is unchecked.
+             * Occurs when a checkbox in row header is unchecked
              * @event tui.Grid#uncheck
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the unchecked row
              */
             this.trigger('uncheck', eventObj);

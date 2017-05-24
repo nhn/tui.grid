@@ -96,12 +96,12 @@ var grid = new tui.Grid({
     ]
 });
 
-grid.on('check', function() {
-    console.log('check');
+grid.on('check', function(ev) {
+    console.log('check', ev);
 });
 
 grid.on('uncheck', function() {
-    console.log('uncheck');
+    console.log('uncheck', ev);
 });
 
 </script>
