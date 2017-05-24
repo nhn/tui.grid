@@ -2,16 +2,21 @@
 
 var DatePickerLayer = require('view/datePickerLayer');
 var classNameConst = require('common/classNameConst');
+var ColumnModel = require('model/data/columnModel');
 
-function createDatePickerLayer() {
+function createDatePickerLayer(columnModelData) {
     return new DatePickerLayer({
-        textPainter: _.assign({}, Backbone.Events),
+        textPainter: _.assign({
+            blockFocusingOut: function() {},
+            unblockFocusingOut: function() {}
+        }, Backbone.Events),
         domState: {
             getOffset: _.constant({
                 top: 0,
                 left: 0
             })
-        }
+        },
+        columnModel: new ColumnModel(columnModelData)
     });
 }
 
@@ -27,11 +32,31 @@ function createColumnModelStub(editType, compName, compOption) {
     };
 }
 
+function createFocusModelStub(rowKey, columnName) {
+    return {
+        which: _.constant({
+            rowKey: rowKey,
+            columnName: columnName
+        })
+    };
+}
+
 describe('[DatePickerLayer] ', function() {
     var layer;
+    var columnModelData;
 
     beforeEach(function() {
-        layer = createDatePickerLayer();
+        columnModelData = {
+            columns: [
+                {
+                    name: 'c1',
+                    component: {
+                        name: 'datePicker'
+                    }
+                }
+            ]
+        };
+        layer = createDatePickerLayer(columnModelData);
         layer.render();
     });
 
@@ -39,16 +64,17 @@ describe('[DatePickerLayer] ', function() {
         expect(layer.$el).toHaveClass(classNameConst.LAYER_DATE_PICKER);
     });
 
-    it('creates calendar and datepicker instance when initializing', function() {
-        expect(layer.datePicker).toEqual(jasmine.any(tui.component.Datepicker));
+    it('creates datepickers instance when initializing', function() {
+        expect(layer.datePickerMap.c1).toEqual(jasmine.any(tui.component.Datepicker));
     });
 
     describe('when \'focusIn\' event occur on the text-painter ', function() {
         describe('and editType is \'text\' and component name is \'datePicker\', ', function() {
             it('set component options to datePicker instance', function() {
-                var setInputSpy = spyOn(layer.datePicker, 'setInput');
-                var setRangesSpy = spyOn(layer.datePicker, 'setRanges');
-                var setDateSpy = spyOn(layer.datePicker, 'setDate');
+                var datePicker = layer.datePickerMap.c1;
+                var setInputSpy = spyOn(datePicker, 'setInput');
+                var setRangesSpy = spyOn(datePicker, 'setRanges');
+                var setDateSpy = spyOn(datePicker, 'setDate');
                 var options = {
                     date: new Date(2015, 10, 20),
                     format: 'yyyy-MM-dd',
@@ -57,9 +83,12 @@ describe('[DatePickerLayer] ', function() {
                     ]
                 };
                 var $input = $('<input>');
-                layer.columnModel = createColumnModelStub('text', 'datePicker', options);
 
-                layer.textPainter.trigger('focusIn', $input, {});
+                layer.focusModel = createFocusModelStub(0, 'c1');
+                layer.columnModel = createColumnModelStub('text', 'datePicker', options);
+                layer.textPainter.trigger('focusIn', $input, {
+                    columnName: 'c1'
+                });
 
                 expect(setInputSpy).toHaveBeenCalledWith(
                     $input,
@@ -73,25 +102,31 @@ describe('[DatePickerLayer] ', function() {
             });
 
             it('set date with current time if option.date is not specified', function() {
-                var setDateSpy = spyOn(layer.datePicker, 'setDate');
+                var setDateSpy = spyOn(layer.datePickerMap.c1, 'setDate');
                 var today = new Date();
 
                 jasmine.clock().install();
                 jasmine.clock().mockDate(today);
 
+                layer.focusModel = createFocusModelStub(0, 'c1');
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
-                layer.textPainter.trigger('focusIn', $('<input>'), {});
+                layer.textPainter.trigger('focusIn', $('<input>'), {
+                    columnName: 'c1'
+                });
 
                 expect(setDateSpy.calls.argsFor(0)[0].getTime()).toBe(today.getTime());
                 jasmine.clock().uninstall();
             });
 
             it('change input element and set date as value of element', function() {
-                var setElementSpy = spyOn(layer.datePicker, 'setInput');
+                var setElementSpy = spyOn(layer.datePickerMap.c1, 'setInput');
                 var $input = $('<input>');
 
+                layer.focusModel = createFocusModelStub(0, 'c1');
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
-                layer.textPainter.trigger('focusIn', $input, {});
+                layer.textPainter.trigger('focusIn', $input, {
+                    columnName: 'c1'
+                });
 
                 expect(setElementSpy).toHaveBeenCalledWith($input, {
                     format: 'yyyy-MM-dd',
@@ -100,10 +135,13 @@ describe('[DatePickerLayer] ', function() {
             });
 
             it('datePicker should be opened and visible', function() {
-                var spyOpen = spyOn(layer.datePicker, 'open').and.callThrough();
-                layer.columnModel = createColumnModelStub('text', 'datePicker');
+                var spyOpen = spyOn(layer.datePickerMap.c1, 'open').and.callThrough();
 
-                layer.textPainter.trigger('focusIn', $('<input>'), {});
+                layer.focusModel = createFocusModelStub(0, 'c1');
+                layer.columnModel = createColumnModelStub('text', 'datePicker');
+                layer.textPainter.trigger('focusIn', $('<input>'), {
+                    columnName: 'c1'
+                });
 
                 expect(layer.$el.css('display')).toBe('block');
                 expect(spyOpen).toHaveBeenCalled();
@@ -112,9 +150,10 @@ describe('[DatePickerLayer] ', function() {
 
         describe('and editType is not \'text\'', function() {
             it('datePicker should not be opened and the layer should be hidden', function() {
-                var spyOpen = spyOn(layer.datePicker, 'open');
-                layer.columnModel = createColumnModelStub('select', 'datePicker');
+                var spyOpen = spyOn(layer.datePickerMap.c1, 'open');
 
+                layer.focusModel = createFocusModelStub(0, 'c1');
+                layer.columnModel = createColumnModelStub('select', 'datePicker');
                 layer.textPainter.trigger('focusIn', $('<input>'), {});
 
                 expect(layer.$el).toBeHidden();
@@ -124,31 +163,15 @@ describe('[DatePickerLayer] ', function() {
 
         describe('and component name is not \'datePicker\'', function() {
             it('datePicker should not be opened and the layer should be hidden', function() {
-                var spyOpen = spyOn(layer.datePicker, 'open');
-                layer.columnModel = createColumnModelStub('text', 'autocomplete');
+                var spyOpen = spyOn(layer.datePickerMap.c1, 'open');
 
+                layer.focusModel = createFocusModelStub(0, 'c1');
+                layer.columnModel = createColumnModelStub('text', 'autocomplete');
                 layer.textPainter.trigger('focusIn', $('<input>'), {});
 
                 expect(layer.$el).toBeHidden();
                 expect(spyOpen).not.toHaveBeenCalled();
             });
-        });
-    });
-
-    describe('when \'focusOut\' event occur on the text painter, ', function() {
-        it('close datePicker', function() {
-            var spyClose = spyOn(layer.datePicker, 'close');
-
-            layer.textPainter.trigger('focusOut');
-
-            expect(spyClose).toHaveBeenCalled();
-        });
-
-        it('the element should be hidden', function() {
-            layer.$el.show();
-            layer.textPainter.trigger('focusOut');
-
-            expect(layer.$el).toBeHidden();
         });
     });
 });

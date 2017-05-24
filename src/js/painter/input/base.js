@@ -20,6 +20,12 @@ var keyNameMap = require('../../common/constMap').keyName;
 var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
     init: function() {
         Painter.apply(this, arguments);
+
+        /**
+         * State of finishing to edit
+         * @type {Boolean}
+         */
+        this._finishedEditing = false;
     },
 
     /**
@@ -115,9 +121,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var $target = $(event.target);
         var address = this._getCellAddress($target);
 
-        this._executeCustomEventHandler(event, address);
-        this.trigger('focusOut', $target, address);
-        this.controller.finishEditing(address, false, $target.val());
+        if (!this._finishedEditing) {
+            this._executeCustomEventHandler(event, address);
+            this.trigger('focusOut', $target, address);
+            this.controller.finishEditing(address, false, $target.val());
+        }
     },
 
     /**
@@ -203,6 +211,20 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         if (!$input.is(':focus')) {
             $input.eq(0).focus();
         }
+    },
+
+    /**
+     * Block focusing out
+     */
+    blockFocusingOut: function() {
+        this._finishedEditing = true;
+    },
+
+    /**
+     * Unblock focusing out
+     */
+    unblockFocusingOut: function() {
+        this._finishedEditing = false;
     }
 });
 

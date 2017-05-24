@@ -299,9 +299,11 @@ var ViewFactory = tui.util.defineClass({
         }
 
         return new DatePickeLayerView({
+            focusModel: this.modelManager.focusModel,
             columnModel: this.modelManager.columnModel,
             textPainter: this.painterManager.getInputPainters().text,
-            domState: this.domState
+            domState: this.domState,
+            domEventBus: this.domEventBus
         });
     },
 

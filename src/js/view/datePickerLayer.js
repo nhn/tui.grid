@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
 var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
@@ -19,42 +21,84 @@ var DatePickerLayer;
  */
 DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
     initialize: function(options) {
+        this.focusModel = options.focusModel;
         this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;
         this.domState = options.domState;
-        this.datePicker = this._createDatePicker();
+        this.datePickerMap = this._createDatePickers();
 
-        this._preventMousedownEvent();
+        /**
+         * Current focused input element
+         * @type {jQuery}
+         */
+        this.$focusedInput = null;
 
         this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
-        this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
+        this.listenTo(options.domEventBus, 'windowResize', this._closeDatePickerLayer);
     },
 
     className: classNameConst.LAYER_DATE_PICKER,
 
-    /**
-     * Creates an instance of 'tui-component-date-picker'
-     * @returns {tui.component.DatePicker}
-     * @private
-     */
-    _createDatePicker: function() {
-        var datePicker = new tui.component.Datepicker(this.$el, {
-            calendar: {
-                showToday: false
-            }
-        });
-
-        return datePicker;
+    events: {
+        click: '_onClick'
     },
 
     /**
-     * Prevent mousedown event on calendar layer
+     * Event handler for the 'click' event on the datepicker layer.
+     * @param {MouseEvent} event - MouseEvent object
+     * @private
      */
-    _preventMousedownEvent: function() {
-        this.$el.mousedown(function(ev) {
-            ev.preventDefault();
-            ev.target.unselectable = true;  // trick for IE8
-            return false;
+    _onClick: function(ev) {
+        ev.stopPropagation();
+    },
+
+    /**
+     * Creates instances map of 'tui-component-date-picker'
+     * @returns {Object.<string, DatePicker>}
+     * @private
+     */
+    _createDatePickers: function() {
+        var datePickerMap = {};
+        var columnModelMap = this.columnModel.get('columnModelMap');
+
+        _.each(columnModelMap, function(columnModel) {
+            var name = columnModel.name;
+            var component = columnModel.component;
+            var options;
+
+            if (component && component.name === 'datePicker') {
+                options = component.options || {};
+
+                datePickerMap[name] = new tui.component.Datepicker(this.$el, options);
+
+                this._bindEventOnDatePicker(datePickerMap[name]);
+            }
+        }, this);
+
+        return datePickerMap;
+    },
+
+    /**
+     * Bind custom event on the DatePicker instance
+     * @param {DatePicker} datePicker - instance of DatePicker
+     * @private
+     */
+    _bindEventOnDatePicker: function(datePicker) {
+        var self = this;
+
+        datePicker.on('open', function() {
+            self.textPainter.blockFocusingOut();
+        });
+
+        datePicker.on('close', function() {
+            var focusModel = self.focusModel;
+            var address = focusModel.which();
+            var changedValue = self.$focusedInput.val();
+
+            self.textPainter.unblockFocusingOut();
+
+            focusModel.dataModel.setValue(address.rowKey, address.columnName, changedValue);
+            focusModel.finishEditing();
         });
     },
 
@@ -62,10 +106,11 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      * Resets date picker options
      * @param {Object} options - datePicker options
      * @param {jQuery} $input - target input element
+     * @param {string} columnName - name to find the DatePicker instance created on each column
      * @private
      */
-    _resetDatePicker: function(options, $input) {
-        var datePicker = this.datePicker;
+    _resetDatePicker: function(options, $input, columnName) {
+        var datePicker = this.datePickerMap[columnName];
         var format = options.format || DEFAULT_DATE_FORMAT;
         var date = options.date || (new Date());
         var selectableRanges = options.selectableRanges;
@@ -114,21 +159,27 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         var columnName = address.columnName;
         var component = this.columnModel.getColumnModel(columnName).component;
         var editType = this.columnModel.getEditType(columnName);
+        var options;
 
         if (editType === 'text' && component && component.name === 'datePicker') {
+            options = component.options || {};
+
+            this.$focusedInput = $input;
+
             this.$el.css(this._calculatePosition($input)).show();
-            this._resetDatePicker(component.options || {}, $input);
-            this.datePicker.open();
+            this._resetDatePicker(options, $input, columnName);
+            this.datePickerMap[columnName].open();
         }
     },
 
     /**
-     * Event handler for 'focusOut' event of module:painter/input/text
+     * Close the date picker layer that is already opend
      * @private
      */
-    _onFocusOutTextInput: function() {
-        this.datePicker.close();
-        this.$el.hide();
+    _closeDatePickerLayer: function() {
+        if (this.$el.show()) {
+            this.$el.hide();
+        }
     },
 
     /**
