@@ -177,8 +177,11 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      * @private
      */
     _closeDatePickerLayer: function() {
-        if (this.$el.show()) {
-            this.$el.hide();
+        var name = this.focusModel.which().columnName;
+        var datePicker = this.datePickerMap[name];
+
+        if (datePicker && datePicker.isOpened()) {
+            datePicker.close();
         }
     },
 
