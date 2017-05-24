@@ -1,0 +1,47 @@
+{
+  "name": "tui-component-date-picker",
+  "authors": [
+    "NHNent. FE Development Lab <dl_javascript@nhnent.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src",
+    "server",
+    "data.js",
+    "Gruntfile.js",
+    "gulpfile.js",
+    "karma.*.js",
+    "jsdoc-conf.json",
+    "package.json",
+    ".gitignore",
+    "samples",
+    "index.js",
+    "jsdoc-conf.json"
+  ],
+  "dependencies": {
+    "jquery": "~1.8.3",
+    "tui-code-snippet": "~1.2.0"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "~2.1.0"
+  },
+  "resolutions": {
+    "jquery": "~1.8.3"
+  },
+  "homepage": "https://github.com/nhnent/tui.component.date-picker",
+  "version": "2.1.0",
+  "_release": "2.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.1.0",
+    "commit": "c8f2c4053a622076162cc0b658b2ae8afab5936d"
+  },
+  "_source": "https://github.com/nhnent/tui.component.date-picker.git",
+  "_target": "2.1.0",
+  "_originalSource": "tui-component-date-picker"
+}

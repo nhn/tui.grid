@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Default calendar sample (no markup & option)</title>
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="-1">
+        <link href="../dist/tui-component-datepicker.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="code-html">
+            <table>
+                <tbody>
+                <tr>
+                    <td><div id="timepicker-selectbox"></div></td>
+                    <td><div id="timepicker-selectbox-meridiem"></div></td>
+                </tr>
+                <tr>
+                    <td><div id="timepicker-spinbox"></div></td>
+                    <td><div id="timepicker-spinbox-meridiem"></div></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="../dist/tui-component-datepicker.js"></script>
+        <script type="text/javascript" class="code-js">
+            var tpSelectbox = new tui.component.Timepicker('#timepicker-selectbox', {
+                initialHour: 15,
+                initialMinute: 13,
+                inputType: 'selectbox'
+            });
+            var tpSelectboxMeridiem = new tui.component.Timepicker('#timepicker-selectbox-meridiem', {
+                initialHour: 12,
+                initialMinute: 13,
+                inputType: 'selectbox',
+                showMeridiem: true
+            });
+            var tpSpinbox = new tui.component.Timepicker('#timepicker-spinbox', {
+                initialHour: 22,
+                initialMinute: 33,
+                inputType: 'spinbox'
+            });
+            var tpSpinboxMeridiem = new tui.component.Timepicker('#timepicker-spinbox-meridiem', {
+                initialHour: 16,
+                initialMinute: 25,
+                inputType: 'spinbox',
+                showMeridiem: true
+            });
+        </script>
+    </body>
+</html>

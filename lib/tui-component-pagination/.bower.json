@@ -1,0 +1,44 @@
+{
+  "name": "tui-component-pagination",
+  "authors": [
+    "NHN Ent. FE Dev team.<dl_javascript@nhnent.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src",
+    "server",
+    "data.js",
+    "Gruntfile.js",
+    "gulpfile.js",
+    "karma.*.js",
+    "conf.json",
+    "package.json",
+    ".gitignore",
+    "examples",
+    "index.js",
+    "jsdoc-conf.json",
+    "webpack.config.js"
+  ],
+  "dependencies": {
+    "tui-code-snippet": "~1.2.0"
+  },
+  "devDependencies": {
+    "jquery": "~1.8.3"
+  },
+  "homepage": "https://github.com/nhnent/tui.component.pagination",
+  "version": "2.1.0",
+  "_release": "2.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.1.0",
+    "commit": "067ef6610ef406c637d05cf9851bdf4bf808c07f"
+  },
+  "_source": "https://github.com/nhnent/tui.component.pagination.git",
+  "_target": "2.1.0",
+  "_originalSource": "tui-component-pagination"
+}

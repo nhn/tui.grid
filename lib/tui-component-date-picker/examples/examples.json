@@ -1,0 +1,26 @@
+{
+  "datepicker-basic": {
+    "title": "Datepicker basic"
+  },
+  "datepicker-inline": {
+    "title": "Inline datepicker"
+  },
+  "datepicker-selectable-ranges": {
+    "title": "Datepicker having selectable ranges"
+  },
+  "datetimepicker": {
+    "title": "Date-Time picker"
+  },
+  "month-year-pickers": {
+    "title": "Month/Year picker examples"
+  },
+  "calendars": {
+    "title": "Calendar examples"
+  },
+  "timepickers": {
+    "title": "Timepicker examples"
+  },
+  "daterangepicker": {
+    "title": "DateRange-picker example"
+  }
+}

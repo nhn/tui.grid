@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datepickers</title>
+    <link href="../dist/tui-component-datepicker.css" rel="stylesheet">
+    <style>
+        .datepicker-table {width: 630px;}
+        .datepicker-cell {height: 240px;}
+    </style>
+</head>
+<body>
+    <div class="code-html">
+        <table class="datepicker-table">
+        <tbody>
+            <tr>
+                <td><div class="datepicker-cell" id="datepicker-month-ko"></div></td>
+                <td><div class="datepicker-cell" id="datepicker-month-en"></div></td>
+                <td><div class="datepicker-cell" id="datepicker-month-chinese-character"></div></td>
+            </tr>
+            <tr>
+                <td><div class="datepicker-cell" id="datepicker-year-ko"></div></td>
+                <td><div class="datepicker-cell" id="datepicker-year-en"></div></td>
+                <td><div class="datepicker-cell" id="datepicker-year-chinese-character"></div></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+    <script type="text/javascript" src="../dist/tui-component-datepicker.js"></script>
+    <script type="text/javascript" class="code-js">
+        tui.component.Datepicker.localeTexts['Chinese character'] = {
+            titles: {
+                DD: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+                D: ['日', '月', '火', '水', '木', '金', '土'],
+                MMM: ['1月', '2月', '3月', '4月', '5月', '6月',
+                    '7月', '8月', '9月', '10月', '11月', '12月'],
+                MMMM: ['一月', '二月', '三月', '四月', '五月', '六月',
+                    '七月', '八月', '九月', '十月', '十一月', '十二月']
+            },
+            titleFormat: 'yyyy年 MMM',
+            todayFormat: 'yyyy年 MMM d日 (DD)'
+        };
+
+        var calMonthEn = new tui.component.Datepicker('#datepicker-month-en', {
+            date: new Date(),
+            language: 'en',
+            type: 'month',
+            showAlways: true
+        });
+        var calMonthKo = new tui.component.Datepicker('#datepicker-month-ko', {
+            date: new Date(),
+            language: 'ko',
+            type: 'month',
+            showAlways: true
+        });
+        var calMonthChineseCharacter = new tui.component.Datepicker('#datepicker-month-chinese-character', {
+            date: new Date(),
+            language: 'Chinese character',
+            type: 'month',
+            showAlways: true
+        });
+
+        var calYearEn = new tui.component.Datepicker('#datepicker-year-en', {
+            date: new Date(),
+            language: 'en',
+            type: 'year',
+            showAlways: true
+        });
+        var calYearKo = new tui.component.Datepicker('#datepicker-year-ko', {
+            date: new Date(),
+            language: 'ko',
+            type: 'year',
+            showAlways: true
+        });
+        var calYearChineseCharacter = new tui.component.Datepicker('#datepicker-year-chinese-character', {
+            date: new Date(),
+            language: 'Chinese character',
+            type: 'year',
+            showAlways: true
+        });
+    </script>
+</body>
+</html>
