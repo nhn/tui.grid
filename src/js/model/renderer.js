@@ -213,7 +213,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _triggerEditingStateChanged: function(rowKey, columnName) {
         var cellData = this.getCellData(rowKey, columnName);
 
-        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false) {
+        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false &&
+            cellData.convertedHTML === null) {
             this.trigger('editingStateChanged', cellData);
         }
     },
