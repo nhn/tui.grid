@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/grid.js",
   "scripts": {

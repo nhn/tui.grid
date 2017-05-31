@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Mar 10 2017 14:45:43 GMT+0900 (KST)"
- * version: 1.9.0
+ * bundle created at "Tue May 30 2017 17:33:36 GMT+0900 (KST)"
+ * version: 1.9.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -46,7 +46,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview The tui.Grid class for the external API.
@@ -1048,9 +1048,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
 	//     http://underscorejs.org
@@ -2602,9 +2602,9 @@
 	}.call(this));
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Views
@@ -2703,9 +2703,9 @@
 	module.exports = View;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
 
@@ -4630,15 +4630,15 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = $;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Mixin object for base class
@@ -4668,9 +4668,9 @@
 	module.exports = common;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Model Manager
@@ -4975,9 +4975,9 @@
 	module.exports = ModelManager;
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview 컬럼 모델
@@ -5448,9 +5448,9 @@
 	module.exports = ColumnModel;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Models
@@ -5476,9 +5476,9 @@
 	module.exports = Model;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview 유틸리티 메서드 모음
@@ -5863,9 +5863,9 @@
 	module.exports = util;
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview Object that conatins constant values
@@ -5945,9 +5945,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
@@ -7110,9 +7110,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Collections
@@ -7152,9 +7152,9 @@
 	module.exports = Collection;
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
@@ -7761,9 +7761,9 @@
 	module.exports = Row;
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
@@ -7984,9 +7984,9 @@
 	module.exports = ExtraDataManager;
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview class name constants.
@@ -8122,9 +8122,9 @@
 	module.exports = exports;
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Toolbar model class
@@ -8169,9 +8169,9 @@
 	module.exports = Toolbar;
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview module:model/dimension
@@ -8512,9 +8512,9 @@
 	module.exports = Dimension;
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Manage coordinates of rows
@@ -8687,9 +8687,9 @@
 	module.exports = CoordRow;
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Manage coordinates of rows
@@ -9164,9 +9164,9 @@
 	module.exports = CoordColumn;
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Converts coordinates to index of rows and columns
@@ -9425,9 +9425,9 @@
 	module.exports = CoordConverter;
 
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
@@ -10149,9 +10149,9 @@
 	module.exports = Focus;
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Event class for public event of Grid
@@ -10201,9 +10201,9 @@
 	module.exports = GridEvent;
 
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Rendering 모델
@@ -10420,7 +10420,8 @@
 	    _triggerEditingStateChanged: function(rowKey, columnName) {
 	        var cellData = this.getCellData(rowKey, columnName);
 
-	        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false) {
+	        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false &&
+	            cellData.convertedHTML === null) {
 	            this.trigger('editingStateChanged', cellData);
 	        }
 	    },
@@ -10811,9 +10812,9 @@
 	module.exports = Renderer;
 
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RowList 클래스파일
@@ -10847,9 +10848,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Row Model for Rendering (View Model)
@@ -11272,9 +11273,9 @@
 	module.exports = Row;
 
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Render model to be used for smart-rendering
@@ -11433,9 +11434,9 @@
 	module.exports = SmartRenderer;
 
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Selection Model class
@@ -12051,9 +12052,9 @@
 	module.exports = Selection;
 
 
-/***/ },
+/***/ }),
 /* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
@@ -12216,9 +12217,9 @@
 	module.exports = Summary;
 
 
-/***/ },
+/***/ }),
 /* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview View factory
@@ -12570,9 +12571,9 @@
 	module.exports = ViewFactory;
 
 
-/***/ },
+/***/ }),
 /* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview View class that conaints a top element of the DOM structure of the grid.
@@ -12910,9 +12911,9 @@
 	module.exports = Container;
 
 
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the content area
@@ -12998,9 +12999,9 @@
 	module.exports = ContentArea;
 
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Toolbar View
@@ -13107,9 +13108,9 @@
 	module.exports = Toolbar;
 
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the pagination in the toolbar
@@ -13215,9 +13216,9 @@
 	module.exports = Pagination;
 
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the height resize handle
@@ -13359,9 +13360,9 @@
 	module.exports = HeightResizeHandle;
 
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
@@ -13480,9 +13481,9 @@
 	module.exports = StateLayer;
 
 
-/***/ },
+/***/ }),
 /* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
@@ -14071,9 +14072,9 @@
 	module.exports = Clipboard;
 
 
-/***/ },
+/***/ }),
 /* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Left Side Frame
@@ -14140,9 +14141,9 @@
 	module.exports = LsideFrame;
 
 
-/***/ },
+/***/ }),
 /* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Frame Base
@@ -14213,9 +14214,9 @@
 	module.exports = Frame;
 
 
-/***/ },
+/***/ }),
 /* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Right Side Frame
@@ -14352,9 +14353,9 @@
 	module.exports = RsideFrame;
 
 
-/***/ },
+/***/ }),
 /* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Header View
@@ -14974,9 +14975,9 @@
 	module.exports = Header;
 
 
-/***/ },
+/***/ }),
 /* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview ResizeHandler for the Header
@@ -15253,9 +15254,9 @@
 	module.exports = ResizeHandler;
 
 
-/***/ },
+/***/ }),
 /* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the body layout
@@ -15602,9 +15603,9 @@
 	module.exports = Body;
 
 
-/***/ },
+/***/ }),
 /* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the table layout in the body(data) area
@@ -15799,9 +15800,9 @@
 	module.exports = BodyTable;
 
 
-/***/ },
+/***/ }),
 /* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Footer
@@ -16012,9 +16013,9 @@
 	module.exports = Footer;
 
 
-/***/ },
+/***/ }),
 /* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview RowList View
@@ -16319,9 +16320,9 @@
 	module.exports = RowList;
 
 
-/***/ },
+/***/ }),
 /* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the selection layer
@@ -16487,9 +16488,9 @@
 	module.exports = SelectionLayer;
 
 
-/***/ },
+/***/ }),
 /* 47 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
@@ -16652,9 +16653,9 @@
 	module.exports = EditingLayer;
 
 
-/***/ },
+/***/ }),
 /* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Layer View class which contains the 'tui-component-date-picker'
@@ -16850,9 +16851,9 @@
 	module.exports = DatePickerLayer;
 
 
-/***/ },
+/***/ }),
 /* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Class for the layer view that represents the currently focused cell
@@ -16995,9 +16996,9 @@
 	module.exports = FocusLayer;
 
 
-/***/ },
+/***/ }),
 /* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This class offers methods that can be used to get the current state of DOM element.
@@ -17111,9 +17112,9 @@
 	module.exports = DomState;
 
 
-/***/ },
+/***/ }),
 /* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Public Event Emitter
@@ -17226,9 +17227,9 @@
 	module.exports = PublicEventEmitter;
 
 
-/***/ },
+/***/ }),
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter Manager
@@ -17384,9 +17385,9 @@
 	module.exports = PainterManager;
 
 
-/***/ },
+/***/ }),
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for the row(TR) views
@@ -17539,9 +17540,9 @@
 	module.exports = RowPainter;
 
 
-/***/ },
+/***/ }),
 /* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for Painters
@@ -17619,9 +17620,9 @@
 	module.exports = Painter;
 
 
-/***/ },
+/***/ }),
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for cell(TD) views
@@ -17874,9 +17875,9 @@
 	module.exports = Cell;
 
 
-/***/ },
+/***/ }),
 /* 56 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Dummy cell painter
@@ -17948,9 +17949,9 @@
 	module.exports = DummyCell;
 
 
-/***/ },
+/***/ }),
 /* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
@@ -18098,9 +18099,9 @@
 	module.exports = TextPainter;
 
 
-/***/ },
+/***/ }),
 /* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Base class for the Input Painter
@@ -18316,9 +18317,9 @@
 	module.exports = InputPainter;
 
 
-/***/ },
+/***/ }),
 /* 59 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for 'select' input.
@@ -18417,9 +18418,9 @@
 	module.exports = SelectPainter;
 
 
-/***/ },
+/***/ }),
 /* 60 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Painter class for 'checkbox' and 'radio button'.
@@ -18689,9 +18690,9 @@
 	module.exports = ButtonPainter;
 
 
-/***/ },
+/***/ }),
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Main Button Painter
@@ -18785,9 +18786,9 @@
 	module.exports = InputPainter;
 
 
-/***/ },
+/***/ }),
 /* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Controller class to handle actions from the painters
@@ -18984,9 +18985,9 @@
 	module.exports = PainterController;
 
 
-/***/ },
+/***/ }),
 /* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Add-on for binding to remote data
@@ -19821,9 +19822,9 @@
 	module.exports = Net;
 
 
-/***/ },
+/***/ }),
 /* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Router for Addon.Net
@@ -19852,9 +19853,9 @@
 	module.exports = Router;
 
 
-/***/ },
+/***/ }),
 /* 65 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Utilities for form data, form element
@@ -20081,9 +20082,9 @@
 	module.exports = formUtil;
 
 
-/***/ },
+/***/ }),
 /* 66 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Component holder
@@ -20137,9 +20138,9 @@
 	module.exports = ComponentHolder;
 
 
-/***/ },
+/***/ }),
 /* 67 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview theme manager
@@ -20234,9 +20235,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview css style generator
@@ -20513,9 +20514,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 69 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview CSS Rule string builder
@@ -20698,9 +20699,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 70 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	* @fileoverview default theme preset
@@ -20776,9 +20777,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 71 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview default theme preset
@@ -20811,9 +20812,9 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 72 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	* @fileoverview default theme preset
@@ -20850,11 +20851,11 @@
 	});
 
 
-/***/ },
+/***/ }),
 /* 73 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
-/***/ }
+/***/ })
 /******/ ]);
