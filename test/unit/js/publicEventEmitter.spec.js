@@ -4,7 +4,9 @@ var Backbone = require('backbone');
 var PublicEventEmitter = require('publicEventEmitter');
 
 function testTrigger(target, publicObject, eventName) {
-    var eventData = {};
+    var eventData = {
+        instance: publicObject
+    };
     var callbackSpy = jasmine.createSpy('callback');
 
     publicObject.on(eventName, callbackSpy);

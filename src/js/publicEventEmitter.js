@@ -39,7 +39,9 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @private
      */
     _triggerOnPublic: function(eventName, eventData) {
-        this.publicObject.trigger(eventName, eventData);
+        this.publicObject.trigger(eventName, _.extend(eventData, {
+            instance: this.publicObject
+        }));
     },
 
     /**

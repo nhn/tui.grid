@@ -275,7 +275,8 @@ describe('RowData', function() {
             expect(callbackSpy).toHaveBeenCalledWith(new GridEvent(null, {
                 rowKey: 1,
                 columnName: 'c2',
-                value: 'value2-1'
+                value: 'value2-1',
+                instance: gridInstance
             }));
         });
 
@@ -291,11 +292,12 @@ describe('RowData', function() {
     });
 
     describe('onAfterChange', function() {
-        var callbackSpy, row;
+        var callbackSpy, row, gridInstance = {};
 
         beforeEach(function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
+            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
                 onAfterChange: callbackSpy
@@ -317,7 +319,8 @@ describe('RowData', function() {
             expect(callbackSpy).toHaveBeenCalledWith(new GridEvent(null, {
                 rowKey: 1,
                 columnName: 'c1',
-                value: 'value1 new'
+                value: 'value1 new',
+                instance: gridInstance
             }));
         });
     });

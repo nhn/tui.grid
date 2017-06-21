@@ -218,10 +218,13 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _createChangeCallbackEvent: function(columnName, columnValue) {
+        var gridId = this.collection.gridId;
+
         return new GridEvent(null, {
             rowKey: this.get('rowKey'),
             columnName: columnName,
-            value: columnValue
+            value: columnValue,
+            instance: tui.Grid.getInstanceById(gridId)
         });
     },
 
