@@ -92,11 +92,14 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Event handler for click event
+     * The reason for using 'elementFromPoint' is because of the selection.
      * @param {MouseEvent} ev - Mouse event
      * @private
      */
     _onClick: function(ev) {
-        var $target = $(document.elementFromPoint(ev.pageX, ev.pageY));
+        var pointX = ev.pageX - window.pageXOffset;
+        var pointY = ev.pageY - window.pageYOffset;
+        var $target = $(document.elementFromPoint(pointX, pointY));
         var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
         /**

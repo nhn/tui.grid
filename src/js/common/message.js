@@ -34,7 +34,7 @@ var messages = {
                             '더블클릭을 통해 넓이를 초기화할 수 있습니다.'
     }
 };
-var localeMessages = {};
+var localeMessages = messages.en;
 
 module.exports = {
     /**

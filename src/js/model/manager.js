@@ -21,6 +21,7 @@ var ClipboardModel = require('./clipboard');
 var util = require('../common/util');
 
 var defaultOptions = {
+    data: [],
     columns: [],
     keyColumnName: null,
     selectType: '',
@@ -47,7 +48,7 @@ var defaultOptions = {
     rowHeight: 'auto',
     bodyHeight: 'auto',
     minRowHeight: 27,
-    minBodyHeight: 0,
+    minBodyHeight: 130,
     selectionUnit: 'cell'
 };
 
@@ -123,7 +124,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
         var fixedRowHeight = !isNaN(options.rowHeight);
-        var fixedHeight = !isNaN(options.bodyHeight);
+        var fixedHeight = options.bodyHeight !== 'auto';
         var minRowHeight = options.minRowHeight;
         var minBodyHeight = options.minBodyHeight;
         var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
