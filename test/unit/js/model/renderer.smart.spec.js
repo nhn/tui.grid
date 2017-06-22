@@ -203,4 +203,33 @@ describe('model.renderer', function() {
             expect(proto._setRenderingRange).not.toHaveBeenCalled();
         });
     });
+
+    describe('refresh() method ', function() {
+        beforeEach(function() {
+            renderer = create();
+            spyOn(renderer, 'refresh');
+        });
+
+        it('should be called when both the start and end indexs are changed.', function() {
+            renderer.set({
+                startIndex: 10,
+                endIndex: 20
+            });
+            expect(renderer.refresh).toHaveBeenCalled();
+        });
+
+        it('should be called when the end index is changed.', function() {
+            renderer.set({
+                endIndex: 20
+            });
+            expect(renderer.refresh).toHaveBeenCalled();
+        });
+
+        it('should not be called.', function() {
+            renderer.set({
+                scrollTop: 100
+            });
+            expect(renderer.refresh).not.toHaveBeenCalled();
+        });
+    });
 });

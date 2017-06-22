@@ -6,337 +6,130 @@
     <title>그리드 기본 예제</title>
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
     <link rel="stylesheet" type="text/css" href="../lib/tui-component-pagination/dist/tui-component-pagination.css" />
-    <style media="screen">
-        #wrapper {
-            width: 300px;
-        }
-
-        .Checkbox_checkbox {
-            position: relative;
-            display: inline-block
-        }
-
-        .Checkbox_checkbox+.Checkbox_checkbox {
-            margin-left: 36px
-        }
-
-        .Checkbox_checkbox+.Checkbox_checkbox:first-child {
-            margin-left: 0
-        }
-
-        .Checkbox_input[type=checkbox] {
-            display: none;
-            box-sizing: border-box
-        }
-
-        .Checkbox_indicator {
-            cursor: pointer;
-            position: relative;
-            padding: 0;
-            display: inline;
-            display: -ms-flexbox;
-            display: flex
-        }
-
-        .Checkbox_indicator:before {
-            transition: .2s ease-out;
-            content: "";
-            width: 16px;
-            height: 16px;
-            display: inline-block;
-            background: #f7f9f9;
-            border: 1px solid #ddd;
-            border-radius: 2px;
-            vertical-align: middle
-        }
-
-        .Checkbox_indicator:after {
-            transition: .2s ease-out;
-            content: "";
-            position: absolute;
-            width: 5px;
-            height: 8px;
-            top: 3px;
-            left: 6px;
-            border: solid #fff;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg)
-        }
-
-        .Checkbox_label {
-            margin-left: 8px;
-            margin-top: 8px;
-            color: #242727
-        }
-
-        input[type=checkbox][disabled]~.Checkbox_indicator {
-            opacity: .4;
-            cursor: not-allowed
-        }
-
-        input[type=checkbox]:checked~.Checkbox_indicator:before {
-            background: #ccc;
-            border: 1px solid #ccc
-        }
-
-        input[type=checkbox]:checked~.Checkbox_indicator.Checkbox_isTypeSecondary:before {
-            background: #39a898;
-            border: 1px solid #39a898
-        }
-
-        input[type=checkbox]~.Checkbox_indicator:after {
-            visibility: hidden
-        }
-
-        input[type=checkbox]:checked~.Checkbox_indicator:after {
-            visibility: visible;
-            visibility: initial
-        }
-
-        input[type=checkbox]+.Checkbox_indicator+.Checkbox_label {
-            font-weight: 700;
-            color: #648089
-        }
-
-        input[type=checkbox]:checked+.Checkbox_indicator+.Checkbox_label {
-            font-weight: 700;
-            color: #242727
-        }
-
-        input[type=checkbox]+.Checkbox_indicator>.Checkbox_label, input[type=checkbox]:checked+.Checkbox_indicator>.Checkbox_label {
-            font-weight: 500;
-            color: #242727
-        }
-
-        input[type=checkbox]+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
-            font-weight: 700;
-            color: #648089
-        }
-
-        input[type=checkbox]:checked+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
-            font-weight: 700;
-            color: #242727
-        }
-    </style>
 </head>
 
 <body>
     <div id="wrapper">
         <div id="grid"></div>
     </div>
+    <button id="btn-load">serach</button>
 </body>
 <script src="../lib/jquery/jquery.js"></script>
 <script src="../lib/underscore/underscore.js"></script>
 <script src="../lib/backbone/backbone.js"></script>
 <script src="../lib/tui-code-snippet/code-snippet.js"></script>
 <script src="../lib/tui-component-pagination/dist/tui-component-pagination.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
 <script src="../dist/grid.js"></script>
+<script type="text/javascript">
+    var rowList = [];
+
+    (function() {
+        _.times(500, function(number) {
+            rowList.push({
+                c1: 'test',
+                c2: 'test',
+                c3: 'test',
+                c4: 'test',
+                c5: 'test',
+                c6: 'test',
+                c7: 'test',
+                c8: 'test',
+                c9: 'test',
+                c10: 'test'
+            });
+        })
+    })();
+
+    $.mockjax({
+        url: 'api/readData',
+        responseTime: 0,
+        response: function(settings) {
+            var page = settings.data.page;
+            var perPage = settings.data.perPage;
+            var start = (page - 1) * perPage;
+            var end = start + perPage;
+
+            this.responseText = JSON.stringify({
+                result: true,
+                data: {
+                    contents: rowList,
+                    pagination: {
+                        page: page,
+                        totalCount: 20
+                    }
+                }
+            });
+        }
+    });
+
+</script>
 <script>
 
     var grid = new tui.Grid({
         el: $('#grid'),
-        // keyColumnName: 'c1',
-        toolbar: true,
-        columnOptions: {
-            // frozenCount: 1
-        },
-        pagination: true,
-        // rowHeaders: ['checkbox', 'rowNum'],
-        rowHeaders: [
-            {
-                type: 'checkbox',
-                template: function(props) {
-                    tmpl = '<div class="Checkbox_checkbox">';
-                    tmpl += '<label>';
-                    tmpl += '<input class="Checkbox_input <%=className%>" type="checkbox" name="<%=name%>" ';
-                    tmpl += '<%= disabled ? "disabled" : "" %> ';
-                    tmpl += '<%= checked ? "checked" : "" %> />';
-                    tmpl += '<div class="Checkbox_indicator"></div>';
-                    tmpl += '</label>';
-                    tmpl += '</div>';
-
-                    return _.template(tmpl)(props);
-                }
-            },
-            {
-                type: 'rowNum',
-                template: function(props) {
-                    tmpl = '<%=content%>번';
-                    return _.template(tmpl)(props);
-                }
-            }
-        ],
+        scrollX: false,
+        scrollY: true,
+        bodyHeight: 500,
+        virtualScrolling: true,
+        rowHeight: 27,
+        heightResizable: true,
         columns: [
             {
                 name: 'c1',
-                title: 'c1',
-                width: 30,
-                validation: {
-                    required: true
-                },
-                onBeforeChange: function(ev) {
-                    console.log('before change! ev', ev);
-                    console.log(grid.getValue(ev.rowKey, ev.columnName));
-                },
-                onAfterChange: function(ev) {
-                    console.log('after change! ev', ev);
-                },
-                editOptions: {
-                    type: 'text',
-                    listItems: [
-                        {
-                            text: 1,
-                            value: 1
-                        },
-                        {
-                            text: 2,
-                            value: 2
-                        }
-                    ]
-                }
+                title: 'c1'
             },
             {
                 name: 'c2',
-                title: 'c2',
-                sortable: true,
-                editOptions: {
-                    type: 'select',
-                    listItems: [
-                        {
-                            text: 1,
-                            value: 1
-                        },
-                        {
-                            text: 2,
-                            value: 2
-                        }
-                    ]
-                }
+                title: 'c2'
             },
             {
                 name: 'c3',
-                title: 'c3',
-                defaultValue: 2,
-                editOptions: {
-                    useViewMode: false,
-                    type: 'checkbox',
-                    listItems: [
-                        {
-                            text: 1,
-                            value: 1
-                        },
-                        {
-                            text: 2,
-                            value: 2
-                        }
-                    ]
-                }
+                title: 'c3'
+            },
+            {
+                name: 'c4',
+                title: 'c4'
+            },
+            {
+                name: 'c5',
+                title: 'c5'
+            },
+            {
+                name: 'c6',
+                title: 'c6'
+            },
+            {
+                name: 'c7',
+                title: 'c7'
+            },
+            {
+                name: 'c8',
+                title: 'c8'
+            },
+            {
+                name: 'c9',
+                title: 'c9'
+            },
+            {
+                name: 'c10',
+                title: 'c10'
             }
         ],
-        footer: {
-            height: 30,
-            columnContent: {
-                c1: {
-                    template: function() {
-                        return 'Good!';
-                    }
-                }
-            }
-        }
+        data: []
     });
 
-    var rowList = [];
-    // (function() {
-    //     _.times(50, function(number) {
-    //         rowList.push({
-    //             _number: number + 1,
-    //             'c1': String(number * 10),
-    //             'c2': 2
-    //         });
-    //     })
-    // })();
-
-    rowList = [
-        {
-            c1: 'a',
-            c2: 0
-        },
-        {
-            c1: 'b',
-            c2: 10,
-            // _extraData: {
-            //     rowSpan: {
-            //         c1: 3
-            //     }
-            // }
-        },
-        {
-            c1: 'b',
-            c2: 20
-        },
-        {
-            c1: 'b',
-            c2: 30
-        },
-        {
-            c1: 'c',
-            c2: 40
-        }
-    ];
-    grid.setData(rowList.slice(0, 10));
-
-    var pagination = grid.getPagination();
-    var itemCount = 50;
-
-    pagination.reset(50);
-    pagination.on('beforeMove', function(ev) {
-        var page = ev.page;
-        var start = 10 * (page - 1);
-
-        setTimeout(function() {
-            grid.setData(data.slice(start, start + 10));
-        }, 10);
-
-        return false;
-    });
-
-    function toggleCheck(rowKey, type) {
-        var findValue = grid.getRow(rowKey).c1;
-        var rows = grid.findRows({c1: findValue});
-
-        _.each(rows, function(row) {
-            if (type === 'check') {
-                grid.check(row.rowKey);
-            } else {
-                grid.uncheck(row.rowKey);
+    $('#btn-load').on('click', function() {
+        grid.use('Net', {
+            perPage: 100,
+            readDataMethod: 'GET',
+            api: {
+                readData: 'api/readData'
             }
         });
-    }
-
-    grid.on('check', function(ev) {
-        console.log('check');
-        // toggleCheck(ev.rowKey, 'check');
     });
 
-    grid.on('uncheck', function(ev) {
-        console.log('uncheck');
-        // toggleCheck(ev.rowKey, 'uncheck');
-    });
 
-    // grid.use('Net', {
-    // 	perPage: 5,
-    // 	api: {
-    // 		readData: '/sample',
-    // 		downloadExcel: '/download/excel',
-    // 		downloadExcelAll: '/download/excelAll'
-    // 		// updateData: '/update'
-    // 	}
-    // });
-
-    // var net = grid.getAddOn('Net');
-    // $('#btn-update').click(function() {
-    // 	net.request('updateData');
-    // });
 </script>
 
 </html>

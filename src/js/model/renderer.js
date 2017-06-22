@@ -65,7 +65,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this.on('change:dummyRowCount', this._resetDummyRows);
         }
 
-        this.on('change:startIndex change:endIndex', this.refresh);
+        this.on('change', this._onChangeIndex, this);
         this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
 
         this._updateMaxScrollLeft();
@@ -100,6 +100,20 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onChangeLayout: function() {
         this.focusModel.finishEditing();
         this.focusModel.focusClipboard();
+    },
+
+    /**
+     * Event handler for changing startIndex or endIndex.
+     * @param {Object} model - Renderer model fired event
+     */
+    _onChangeIndex: function(model) {
+        var changedData = model.changed;
+        var changedStartIndex = _.has(changedData, 'startIndex');
+        var changedEndIndex = _.has(changedData, 'endIndex');
+
+        if (changedStartIndex || changedEndIndex) {
+            this.refresh();
+        }
     },
 
     /**
