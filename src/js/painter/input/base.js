@@ -147,7 +147,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
         this._executeCustomEventHandler(event, param.address);
 
-        if (action) {
+        if (action && !event.shiftKey) {
             action.call(this, param);
             event.preventDefault();
         }

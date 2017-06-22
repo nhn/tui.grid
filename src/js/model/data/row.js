@@ -12,6 +12,7 @@ var ExtraDataManager = require('./extraDataManager');
 var GridEvent = require('../../event/gridEvent');
 
 var util = require('../../common/util');
+var clipboardUtil = require('../../common/clipboardUtil');
 var classNameConst = require('../../common/classNameConst');
 
 // Propertie names that indicate meta data
@@ -564,7 +565,13 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             value = '';
         }
 
-        return util.toString(value);
+        value = util.toString(value);
+
+        // When the value is indcluding newline text,
+        // adding one more quotation mark and putting quotation marks on both sides.
+        value = clipboardUtil.addDoubleQuotes(value);
+
+        return value;
     },
 
     /**

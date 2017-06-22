@@ -48,33 +48,15 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     },
 
     /**
-     * Event handler for key:clipboard event on the domEventBus
-     * @param {module:event/gridEvent} gridEvent - GridEvent
-     * @private
-     */
-    _onKeyClipboard: function(gridEvent) {
-        var command = gridEvent.command;
-
-        if (command === 'copy') {
-            this.setClipboardText();
-        } else if (command === 'paste') {
-            this._pasteClipboardTextToGrid(gridEvent.text);
-        }
-    },
-
-    /**
      * Paste the text from clipboard to Grid
-     * @param {String} text - clipboard text
-     * @private
+     * @param {array} data - clipboard data
      */
-    _pasteClipboardTextToGrid: function(text) {
+    pasteClipboardDataToGrid: function(data) {
         var selectionModel = this.selectionModel;
         var focusModel = this.focusModel;
         var dataModel = this.dataModel;
         var selRange, selRowLen, selColLen;
-        var startIdx, data;
-
-        data = this._parseClipboardText(text);
+        var startIdx;
 
         if (selectionModel.hasSelection()) {
             selRange = selectionModel.get('range');
@@ -87,6 +69,19 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
         }
 
         dataModel.paste(data, startIdx);
+    },
+
+    /**
+     * Event handler for key:clipboard event on the domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onKeyClipboard: function(gridEvent) {
+        var command = gridEvent.command;
+
+        if (command === 'copy') {
+            this.setClipboardText();
+        }
     },
 
     /**
@@ -121,18 +116,6 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
         });
 
         return result;
-    },
-
-    /**
-     * Parse the clipboard text for pasting to dataModel
-     * @param {String} text - text
-     * @returns {Array.<Array.<string>>}
-     * @private
-     */
-    _parseClipboardText: function(text) {
-        return _.map(text.split('\n'), function(row) {
-            return row.split('\t');
-        });
     },
 
     /**

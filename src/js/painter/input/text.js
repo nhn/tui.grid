@@ -121,7 +121,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
             maxLength: maxLength
         };
 
-        if (cellData.whiteSpace === 'normal') {
+        if (cellData.whiteSpace !== 'nowrap') {
             return this.templateTextArea(params);
         }
         return this.templateInput(params);

@@ -90,43 +90,6 @@ describe('grid paste test', function() {
         });
     });
 
-    describe('key:clipboard event with paste command', function() {
-        var clipboardText = 'a\tb\tc\nd\te\tf';
-        var data = [['a', 'b', 'c'], ['d', 'e', 'f']];
-        var startIndex = {
-            row: 0,
-            column: 0
-        };
-
-        beforeEach(function() {
-            clipboard.dataModel.paste = jasmine.createSpy('paste');
-        });
-
-        it('if selection exists, duplicate data and paste from start position of selection range', function() {
-            spyOn(clipboard, '_duplicateData').and.callFake(_.identity);
-            clipboard.selectionModel.hasSelection = _.constant(true);
-            clipboard.selectionModel.getStartIndex = _.constant(startIndex);
-            clipboard.selectionModel.set('range', {
-                row: [0, 2],
-                column: [0, 2]
-            });
-
-            triggerPasteEvent(clipboardText);
-
-            expect(clipboard._duplicateData).toHaveBeenCalledWith(data, 3, 3);
-            expect(clipboard.dataModel.paste).toHaveBeenCalledWith(data, startIndex);
-        });
-
-        it('if selection does not exist, paste data from focused position', function() {
-            clipboard.selectionModel.hasSelection = _.constant(false);
-            clipboard.focusModel.indexOf = _.constant(startIndex);
-
-            triggerPasteEvent(clipboardText);
-
-            expect(clipboard.dataModel.paste).toHaveBeenCalledWith(data, startIndex);
-        });
-    });
-
     describe('_duplicateData', function() {
         describe('should duplicate data', function() {
             it('when length of selection row range is multiple of data row length', function() {

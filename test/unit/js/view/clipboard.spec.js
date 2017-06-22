@@ -37,6 +37,21 @@ describe('view.clipboard', function() {
             expect(domEventSpy).toHaveBeenCalledWith(gridEventStub);
         });
 
+        it('should not trigger key event if the command type of key:clipboard is paste', function() {
+            var clipboard = create();
+            var gridEventStub = {
+                type: 'key:clipboard',
+                command: 'paste'
+            };
+            var domEventSpy = jasmine.createSpy('domEventSpy');
+            keyEvent.generate = _.constant(gridEventStub);
+
+            clipboard.domEventBus.on('key:clipboard', domEventSpy);
+            clipboard._onKeyDown(eventStub);
+
+            expect(domEventSpy).not.toHaveBeenCalledWith(gridEventStub);
+        });
+
         it('should call ev.preventDefault if the type is not key:clipboard', function() {
             var clipboard = create();
             var gridEventStub = {type: 'key:move'};
@@ -80,36 +95,6 @@ describe('view.clipboard', function() {
             expect(domEventSpy.calls.count()).toBe(2);
 
             jasmine.clock().uninstall();
-        });
-    });
-
-    describe('_onBlur', function() {
-        it('Call deffered function of the focusModel.refreshState()', function() {
-            var clipboard = create();
-            var focusModel = clipboard.focusModel;
-
-            jasmine.clock().install();
-
-            focusModel.refreshState = jasmine.createSpy('refreshState');
-            clipboard._onBlur();
-
-            expect(focusModel.refreshState).not.toHaveBeenCalled();
-            jasmine.clock().tick(1);
-            expect(focusModel.refreshState).toHaveBeenCalled();
-
-            jasmine.clock().uninstall();
-        });
-    });
-
-    describe('_onFocusClipboard', function() {
-        it('Focus on the $el and call focusModel.refreshState()', function() {
-            var clipboard = create();
-            var focusModel = clipboard.focusModel;
-
-            focusModel.refreshState = jasmine.createSpy('refreshState');
-            focusModel.trigger('focusClipboard');
-
-            expect(focusModel.refreshState).toHaveBeenCalled();
         });
     });
 });
