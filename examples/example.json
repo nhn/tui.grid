@@ -15,7 +15,7 @@
         "title": "5. Relation between columns"
     },
     "example06": {
-        "title": "6. Using _extraData"
+        "title": "6. Using _extraData option"
     },
     "example07": {
         "title": "7. Applying Themes"
@@ -31,5 +31,8 @@
     },
     "example11": {
         "title": "11. Customizing Row headers"
+    },
+    "example12": {
+        "title": "12. Using whiteSpace option"
     }
 }
