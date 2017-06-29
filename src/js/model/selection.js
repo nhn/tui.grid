@@ -779,7 +779,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _triggerSelectionEvent: function() {
         var range = this.get('range');
-        var rowRange, columnRange, dataModel, columnModel, gridEvent;
+        var dataModel = this.dataModel;
+        var columnModel = this.columnModel;
+        var rowRange, columnRange, gridEvent;
+        var startRow, endRow, startColumn, endColumn;
 
         if (!range) {
             return;
@@ -787,19 +790,20 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         rowRange = range.row;
         columnRange = range.column;
-        dataModel = this.dataModel;
-        columnModel = this.columnModel;
+
+        startRow = dataModel.getRowDataAt(rowRange[0]);
+        startColumn = columnModel.at(columnRange[0]);
+        endRow = dataModel.getRowDataAt(rowRange[1]);
+        endColumn = columnModel.at(columnRange[1]);
+
+        if (!startRow || !endRow || !startColumn || !endColumn) {
+            return;
+        }
 
         gridEvent = new GridEvent(null, {
             range: {
-                start: [
-                    dataModel.getRowDataAt(rowRange[0]).rowKey,
-                    columnModel.at(columnRange[0]).name
-                ],
-                end: [
-                    dataModel.getRowDataAt(rowRange[1]).rowKey,
-                    columnModel.at(columnRange[1]).name
-                ]
+                start: [startRow, startColumn],
+                end: [endRow, endColumn]
             }
         });
 
