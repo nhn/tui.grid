@@ -673,6 +673,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
          * Occurs before the http request is sent
          * @event tui.Grid#beforeRequest
          * @type {module:event/gridEvent}
+         * @property {Grid} instance - Current grid instance
          */
         this.trigger('beforeRequest', gridEvent);
         if (gridEvent.isStopped()) {
@@ -731,6 +732,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
          * @property {string} requestType - Request type
          * @property {string} requestParameter - Request parameters
          * @property {Object} responseData - response data
+         * @property {Grid} instance - Current grid instance
          */
         this.trigger('response', gridEvent);
         if (gridEvent.isStopped()) {
@@ -745,6 +747,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
              * @property {string} requestType - Request type
              * @property {string} requestParameter - Request parameter
              * @property {Object} responseData - response data
+             * @property {Grid} instance - Current grid instance
              */
             this.trigger('successResponse', gridEvent);
             if (gridEvent.isStopped()) {
@@ -762,6 +765,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
              * @property {string} requestType - Request type
              * @property {string} requestParameter - Request parameter
              * @property {Object} responseData - response data
+             * @property {Grid} instance - Current grid instance
              */
             this.trigger('failResponse', gridEvent);
             if (gridEvent.isStopped()) {
@@ -803,6 +807,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type
          * @property {string} requestParameter - Request parameters
+         * @property {Grid} instance - Current grid instance
          */
         this.trigger('errorResponse', eventData);
         if (eventData.isStopped()) {

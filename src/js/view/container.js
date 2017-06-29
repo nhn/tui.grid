@@ -110,7 +110,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
-         * @property {string} columnName - Column name of the target cell
+         * @property {string} columnName - columnName of the target cell
          * @property {Grid} instance - Current grid instance
          */
         this.domEventBus.trigger('click', gridEvent);
@@ -137,7 +137,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
-         * @property {string} columnName - Column name of the target cell
+         * @property {string} columnName - columnName of the target cell
          * @property {Grid} instance - Current grid instance
          */
         this.domEventBus.trigger('dblclick', gridEvent);
@@ -164,7 +164,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
-         * @property {string} columnName - Column name of the target cell
+         * @property {string} columnName - columnName of the target cell
          * @property {Grid} instance - Current grid instance
          */
         this.domEventBus.trigger('mouseover', gridEvent);
@@ -187,7 +187,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
          * @property {number} rowKey - rowKey of the target cell
-         * @property {string} columnName - Column name of the target cell
+         * @property {string} columnName - columnName of the target cell
          * @property {Grid} instance - Current grid instance
          */
         this.domEventBus.trigger('mouseout', gridEvent);
@@ -218,7 +218,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * @property {jQueryEvent} nativeEvent - Event object
              * @property {string} targetType - Type of event target
              * @property {number} rowKey - rowKey of the target cell
-             * @property {string} columnName - Column name of the target cell
+             * @property {string} columnName - columnName of the target cell
              * @property {Grid} instance - Current grid instance
              */
             this.domEventBus.trigger('mousedown:focus', gridEvent);

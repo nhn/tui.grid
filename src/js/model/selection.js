@@ -814,6 +814,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
           * @property {Object} range - Range of selection
           * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
           * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+          * @property {Grid} instance - Current grid instance
           */
         this.trigger('selection', gridEvent);
     },

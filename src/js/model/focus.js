@@ -298,6 +298,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
          * @property {number} columnName - columnName of the target cell
          * @property {number} prevRowKey - rowKey of the currently focused cell
          * @property {number} prevColumnName - columnName of the currently focused cell
+         * @property {Grid} instance - Current grid instance
          */
         this.trigger('focusChange', gridEvent);
 

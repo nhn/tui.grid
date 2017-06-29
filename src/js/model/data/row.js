@@ -120,6 +120,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
              * @event tui.Grid#check
              * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the checked row
+             * @property {Grid} instance - Current grid instance
              */
             this.trigger('check', eventObj);
         } else {
@@ -128,6 +129,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
              * @event tui.Grid#uncheck
              * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the unchecked row
+             * @property {Grid} instance - Current grid instance
              */
             this.trigger('uncheck', eventObj);
         }

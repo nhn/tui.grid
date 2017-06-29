@@ -153,7 +153,10 @@ tui = window.tui = tui || {};
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
  *          @param {Array} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
- *              by fitting to the column's width.
+ *              by fitting to the column's width. If set to 'pre', spaces are preserved and the text is braken by
+ *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
+ *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
+ *              the text line is broken by fitting to the column's width and new line characters.
  *          @param {Object} [options.columns.component] - Option for using tui-component
  *              @param {string} [options.columns.component.name] - The name of the compnent to use
  *                  for this column
