@@ -69,7 +69,8 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     events: {
         keydown: '_onKeyDown',
         copy: '_onCopy',
-        paste: '_onPaste'
+        paste: '_onPaste',
+        blur: '_onBlur'
     },
 
     /**
@@ -78,6 +79,18 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     render: function() {
         return this;
+    },
+
+    /**
+     * Event handler for blur event.
+     * @private
+     */
+    _onBlur: function() {
+        var focusModel = this.focusModel;
+
+        setTimeout(function() {
+            focusModel.refreshState();
+        }, 0);
     },
 
     /**

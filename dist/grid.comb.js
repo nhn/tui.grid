@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Wed May 24 2017 17:04:47 GMT+0900 (KST)"
- * version: 2.1.0
+ * bundle created at "Fri Jun 30 2017 12:13:38 GMT+0900 (KST)"
+ * version: 2.2.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -58,22 +58,22 @@
 
 	var View = __webpack_require__(2);
 	var ModelManager = __webpack_require__(5);
-	var ViewFactory = __webpack_require__(28);
-	var DomEventBus = __webpack_require__(51);
-	var DomState = __webpack_require__(52);
-	var PublicEventEmitter = __webpack_require__(53);
-	var PainterManager = __webpack_require__(54);
-	var PainterController = __webpack_require__(64);
-	var NetAddOn = __webpack_require__(65);
-	var ComponentHolder = __webpack_require__(68);
+	var ViewFactory = __webpack_require__(29);
+	var DomEventBus = __webpack_require__(52);
+	var DomState = __webpack_require__(53);
+	var PublicEventEmitter = __webpack_require__(54);
+	var PainterManager = __webpack_require__(55);
+	var PainterController = __webpack_require__(65);
+	var NetAddOn = __webpack_require__(66);
+	var ComponentHolder = __webpack_require__(69);
 	var util = __webpack_require__(14);
-	var message = __webpack_require__(35);
-	var themeManager = __webpack_require__(69);
+	var message = __webpack_require__(36);
+	var themeManager = __webpack_require__(70);
 	var themeNameConst = __webpack_require__(8).themeName;
 
 	var instanceMap = {};
 
-	__webpack_require__(75);
+	__webpack_require__(76);
 
 	tui = window.tui = tui || {};
 
@@ -161,7 +161,8 @@
 	 *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
 	 *              the right side of the column header, which executes the sort action when clicked.
 	 *          @param {function} [options.columns.onBeforeChange] - The function that will be
-	 *              called before changing the value of the cell. If returns false, the changing will be canceled.
+	 *              called before changing the value of the cell. If stop() method in event object is called,
+	 *              the changing will be canceled.
 	 *          @param {function} [options.columns.onAfterChange] - The function that will be
 	 *              called after changing the value of the cell.
 	 *          @param {Object} [options.columns.editOptions] - The object for configuring editing UI.
@@ -202,7 +203,10 @@
 	 *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
 	 *                  The options list of target columns will be replaced with the return value of this function.
 	 *          @param {Array} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
-	 *              by fitting to the column's width.
+	 *              by fitting to the column's width. If set to 'pre', spaces are preserved and the text is braken by
+	 *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
+	 *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
+	 *              the text line is broken by fitting to the column's width and new line characters.
 	 *          @param {Object} [options.columns.component] - Option for using tui-component
 	 *              @param {string} [options.columns.component.name] - The name of the compnent to use
 	 *                  for this column
@@ -232,6 +236,7 @@
 	        this.container = this.viewFactory.createContainer();
 	        this.publicEventEmitter = this._createPublicEventEmitter();
 
+	        this.setData(options.data);
 	        this.container.render();
 	        this.refreshLayout();
 
@@ -242,10 +247,6 @@
 	        this.addOn = {};
 
 	        instanceMap[this.id] = this;
-
-	        if (options.data) {
-	            this.setData(options.data);
-	        }
 	    },
 
 	    /**
@@ -4692,19 +4693,20 @@
 
 	var ColumnModelData = __webpack_require__(6);
 	var RowListData = __webpack_require__(9);
-	var DimensionModel = __webpack_require__(16);
-	var CoordRowModel = __webpack_require__(17);
-	var CoordColumnModel = __webpack_require__(18);
-	var CoordConverterModel = __webpack_require__(19);
-	var FocusModel = __webpack_require__(20);
-	var RenderModel = __webpack_require__(21);
-	var SmartRenderModel = __webpack_require__(24);
-	var SelectionModel = __webpack_require__(25);
-	var SummaryModel = __webpack_require__(26);
-	var ClipboardModel = __webpack_require__(27);
+	var DimensionModel = __webpack_require__(17);
+	var CoordRowModel = __webpack_require__(18);
+	var CoordColumnModel = __webpack_require__(19);
+	var CoordConverterModel = __webpack_require__(20);
+	var FocusModel = __webpack_require__(21);
+	var RenderModel = __webpack_require__(22);
+	var SmartRenderModel = __webpack_require__(25);
+	var SelectionModel = __webpack_require__(26);
+	var SummaryModel = __webpack_require__(27);
+	var ClipboardModel = __webpack_require__(28);
 	var util = __webpack_require__(14);
 
 	var defaultOptions = {
+	    data: [],
 	    columns: [],
 	    keyColumnName: null,
 	    selectType: '',
@@ -4731,7 +4733,7 @@
 	    rowHeight: 'auto',
 	    bodyHeight: 'auto',
 	    minRowHeight: 27,
-	    minBodyHeight: 0,
+	    minBodyHeight: 130,
 	    selectionUnit: 'cell'
 	};
 
@@ -4807,7 +4809,7 @@
 	    _createDimensionModel: function(options, domState, domEventBus) {
 	        var dimensionModel;
 	        var fixedRowHeight = !isNaN(options.rowHeight);
-	        var fixedHeight = !isNaN(options.bodyHeight);
+	        var fixedHeight = options.bodyHeight !== 'auto';
 	        var minRowHeight = options.minRowHeight;
 	        var minBodyHeight = options.minBodyHeight;
 	        var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
@@ -6834,7 +6836,8 @@
 	var GridEvent = __webpack_require__(13);
 
 	var util = __webpack_require__(14);
-	var classNameConst = __webpack_require__(15);
+	var clipboardUtil = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	// Propertie names that indicate meta data
 	var PRIVATE_PROPERTIES = [
@@ -6941,6 +6944,7 @@
 	             * @event tui.Grid#check
 	             * @type {module:event/gridEvent}
 	             * @property {number} rowKey - rowKey of the checked row
+	             * @property {Grid} instance - Current grid instance
 	             */
 	            this.trigger('check', eventObj);
 	        } else {
@@ -6949,6 +6953,7 @@
 	             * @event tui.Grid#uncheck
 	             * @type {module:event/gridEvent}
 	             * @property {number} rowKey - rowKey of the unchecked row
+	             * @property {Grid} instance - Current grid instance
 	             */
 	            this.trigger('uncheck', eventObj);
 	        }
@@ -7040,10 +7045,13 @@
 	     * @private
 	     */
 	    _createChangeCallbackEvent: function(columnName, columnValue) {
+	        var gridId = this.collection.gridId;
+
 	        return new GridEvent(null, {
 	            rowKey: this.get('rowKey'),
 	            columnName: columnName,
-	            value: columnValue
+	            value: columnValue,
+	            instance: tui.Grid.getInstanceById(gridId)
 	        });
 	    },
 
@@ -7383,7 +7391,13 @@
 	            value = '';
 	        }
 
-	        return util.toString(value);
+	        value = util.toString(value);
+
+	        // When the value is indcluding newline text,
+	        // adding one more quotation mark and putting quotation marks on both sides.
+	        value = clipboardUtil.addDoubleQuotes(value);
+
+	        return value;
 	    },
 
 	    /**
@@ -8207,6 +8221,160 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview Utilities for clipboard data
+	 * @author NHN Ent. Fe Development Team
+	 */
+	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	var CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
+	var CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
+	var CUSTOM_LF_REGEXP = new RegExp(CUSTOM_LF_SUBCHAR, 'g');
+	var CUSTOM_CR_REGEXP = new RegExp(CUSTOM_CR_SUBCHAR, 'g');
+	var LF = '\n';
+	var CR = '\r';
+
+	var clipboardUtil;
+
+	/**
+	 * Set to the data matrix as colspan & rowspan range
+	 * @param {string} value - Text from getting td element
+	 * @param {array} data - Data matrix to set value
+	 * @param {array} colspanRange - colspan range (ex: [start,Index endIndex])
+	 * @param {array} rowspanRange - rowspan range (ex: [start,Index endIndex])
+	 * @ignore
+	 */
+	function setDataInSpanRange(value, data, colspanRange, rowspanRange) {
+	    var startColspan = colspanRange[0];
+	    var endColspan = colspanRange[1];
+	    var startRowspan = rowspanRange[0];
+	    var endRowspan = rowspanRange[1];
+	    var cIndex, rIndex;
+
+	    for (rIndex = startRowspan; rIndex < endRowspan; rIndex += 1) {
+	        for (cIndex = startColspan; cIndex < endColspan; cIndex += 1) {
+	            data[rIndex][cIndex] = ((startRowspan === rIndex) &&
+	                                    (startColspan === cIndex)) ? value : ' ';
+	        }
+	    }
+	}
+
+	/**
+	 * @module clipboardUtil
+	 * @ignore
+	 */
+	clipboardUtil = {
+	    /**
+	     * Convert cell data of table to clipboard data
+	     * @param {HTMLElement} table - Table element
+	     * @returns {array} clipboard data (2*2 matrix)
+	     */
+	    convertTableToData: function(table) {
+	        var data = [];
+	        var rows = table.rows;
+	        var index = 0;
+	        var length = rows.length;
+	        var columnIndex, colspanRange, rowspanRange;
+
+	        // Step 1: Init the data matrix
+	        for (; index < length; index += 1) {
+	            data[index] = [];
+	        }
+
+	        // Step 2: Traverse the table
+	        _.each(rows, function(tr, rowIndex) {
+	            columnIndex = 0;
+
+	            _.each(tr.cells, function(td) {
+	                while (data[rowIndex][columnIndex]) {
+	                    columnIndex += 1;
+	                }
+
+	                colspanRange = [columnIndex, columnIndex + (td.colSpan || 1)];
+	                rowspanRange = [rowIndex, rowIndex + (td.rowSpan || 1)];
+
+	                // Step 3: Set the value of td element to the data matrix as colspan and rowspan ranges
+	                setDataInSpanRange(td.innerText, data, colspanRange, rowspanRange);
+
+	                columnIndex = colspanRange[1];
+	            });
+	        });
+
+	        return data;
+	    },
+
+	    /**
+	     * Convert plain text to clipboard data
+	     * @param {string} text - Copied plain text
+	     * @returns {array} clipboard data (2*2 matrix)
+	     */
+	    convertTextToData: function(text) {
+	        // Each newline cell data is wrapping double quotes in the text and
+	        // newline characters should be replaced with substitution characters temporarily
+	        // before spliting the text by newline characters.
+	        text = clipboardUtil.replaceNewlineToSubchar(text);
+
+	        return _.map(text.split(/\r?\n/), function(row) {
+	            return _.map(row.split('\t'), function(column) {
+	                column = clipboardUtil.removeDoubleQuotes(column);
+	                return column.replace(CUSTOM_LF_REGEXP, LF)
+	                                .replace(CUSTOM_CR_REGEXP, CR);
+	            });
+	        });
+	    },
+
+	    /**
+	     * Add double quotes on text when including newline characters
+	     * @param {string} text - Original text
+	     * @returns {string} Replaced text
+	     */
+	    addDoubleQuotes: function(text) {
+	        if (text.match(/\r?\n/g)) {
+	            text = '"' + text.replace(/"/g, '""') + '"';
+	        }
+
+	        return text;
+	    },
+
+	    /**
+	     * Remove double quetes on text when including substitution characters
+	     * @param {string} text - Original text
+	     * @returns {string} Replaced text
+	     */
+	    removeDoubleQuotes: function(text) {
+	        if (text.match(CUSTOM_LF_REGEXP)) {
+	            text = text.substring(1, text.length - 1)
+	                        .replace(/""/g, '"');
+	        }
+
+	        return text;
+	    },
+
+	    /**
+	     * Replace newline characters to substitution characters
+	     * @param {string} text - Original text
+	     * @returns {string} Replaced text
+	     */
+	    replaceNewlineToSubchar: function(text) {
+	        return text.replace(/"([^"]|"")*"/g, function(value) {
+	            return value.replace(LF, CUSTOM_LF_SUBCHAR)
+	                        .replace(CR, CUSTOM_CR_SUBCHAR);
+	        });
+	    }
+	};
+
+	clipboardUtil.CUSTOM_LF_SUBCHAR = CUSTOM_LF_SUBCHAR;
+	clipboardUtil.CUSTOM_CR_SUBCHAR = CUSTOM_CR_SUBCHAR;
+
+	module.exports = clipboardUtil;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
 	* @fileoverview class name constants.
 	* @author NHN Ent. FE Development Team
 	*/
@@ -8339,7 +8507,7 @@
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8694,7 +8862,7 @@
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8892,7 +9060,7 @@
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9397,7 +9565,7 @@
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9658,7 +9826,7 @@
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9961,6 +10129,7 @@
 	         * @property {number} columnName - columnName of the target cell
 	         * @property {number} prevRowKey - rowKey of the currently focused cell
 	         * @property {number} prevColumnName - columnName of the currently focused cell
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.trigger('focusChange', gridEvent);
 
@@ -10487,7 +10656,7 @@
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10499,7 +10668,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(7);
-	var RowList = __webpack_require__(22);
+	var RowList = __webpack_require__(23);
 	var renderStateMap = __webpack_require__(8).renderState;
 	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
 
@@ -10557,7 +10726,7 @@
 	            this.on('change:dummyRowCount', this._resetDummyRows);
 	        }
 
-	        this.on('change:startIndex change:endIndex', this.refresh);
+	        this.on('change', this._onChangeIndex, this);
 	        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
 
 	        this._updateMaxScrollLeft();
@@ -10592,6 +10761,20 @@
 	    _onChangeLayout: function() {
 	        this.focusModel.finishEditing();
 	        this.focusModel.focusClipboard();
+	    },
+
+	    /**
+	     * Event handler for changing startIndex or endIndex.
+	     * @param {Object} model - Renderer model fired event
+	     */
+	    _onChangeIndex: function(model) {
+	        var changedData = model.changed;
+	        var changedStartIndex = _.has(changedData, 'startIndex');
+	        var changedEndIndex = _.has(changedData, 'endIndex');
+
+	        if (changedStartIndex || changedEndIndex) {
+	            this.refresh();
+	        }
 	    },
 
 	    /**
@@ -10705,7 +10888,8 @@
 	    _triggerEditingStateChanged: function(rowKey, columnName) {
 	        var cellData = this.getCellData(rowKey, columnName);
 
-	        if (tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false) {
+	        if (tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false &&
+	            cellData.convertedHTML === null) {
 	            this.trigger('editingStateChanged', cellData);
 	        }
 	    },
@@ -11097,7 +11281,7 @@
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11109,7 +11293,7 @@
 	var _ = __webpack_require__(1);
 
 	var Collection = __webpack_require__(10);
-	var Row = __webpack_require__(23);
+	var Row = __webpack_require__(24);
 
 	/**
 	  * View Model rowList collection
@@ -11135,7 +11319,7 @@
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11560,7 +11744,7 @@
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11571,7 +11755,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Renderer = __webpack_require__(21);
+	var Renderer = __webpack_require__(22);
 	var dimensionConst = __webpack_require__(8).dimension;
 
 	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
@@ -11721,7 +11905,7 @@
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12505,7 +12689,10 @@
 	     */
 	    _triggerSelectionEvent: function() {
 	        var range = this.get('range');
-	        var rowRange, columnRange, dataModel, columnModel, gridEvent;
+	        var dataModel = this.dataModel;
+	        var columnModel = this.columnModel;
+	        var rowRange, columnRange, gridEvent;
+	        var startRow, endRow, startColumn, endColumn;
 
 	        if (!range) {
 	            return;
@@ -12513,19 +12700,20 @@
 
 	        rowRange = range.row;
 	        columnRange = range.column;
-	        dataModel = this.dataModel;
-	        columnModel = this.columnModel;
+
+	        startRow = dataModel.getRowDataAt(rowRange[0]);
+	        startColumn = columnModel.at(columnRange[0]);
+	        endRow = dataModel.getRowDataAt(rowRange[1]);
+	        endColumn = columnModel.at(columnRange[1]);
+
+	        if (!startRow || !endRow || !startColumn || !endColumn) {
+	            return;
+	        }
 
 	        gridEvent = new GridEvent(null, {
 	            range: {
-	                start: [
-	                    dataModel.getRowDataAt(rowRange[0]).rowKey,
-	                    columnModel.at(columnRange[0]).name
-	                ],
-	                end: [
-	                    dataModel.getRowDataAt(rowRange[1]).rowKey,
-	                    columnModel.at(columnRange[1]).name
-	                ]
+	                start: [startRow, startColumn],
+	                end: [endRow, endColumn]
 	            }
 	        });
 
@@ -12536,6 +12724,7 @@
 	          * @property {Object} range - Range of selection
 	          * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
 	          * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+	          * @property {Grid} instance - Current grid instance
 	          */
 	        this.trigger('selection', gridEvent);
 	    },
@@ -12666,7 +12855,7 @@
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12833,7 +13022,7 @@
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12886,33 +13075,15 @@
 	    },
 
 	    /**
-	     * Event handler for key:clipboard event on the domEventBus
-	     * @param {module:event/gridEvent} gridEvent - GridEvent
-	     * @private
-	     */
-	    _onKeyClipboard: function(gridEvent) {
-	        var command = gridEvent.command;
-
-	        if (command === 'copy') {
-	            this.setClipboardText();
-	        } else if (command === 'paste') {
-	            this._pasteClipboardTextToGrid(gridEvent.text);
-	        }
-	    },
-
-	    /**
 	     * Paste the text from clipboard to Grid
-	     * @param {String} text - clipboard text
-	     * @private
+	     * @param {array} data - clipboard data
 	     */
-	    _pasteClipboardTextToGrid: function(text) {
+	    pasteClipboardDataToGrid: function(data) {
 	        var selectionModel = this.selectionModel;
 	        var focusModel = this.focusModel;
 	        var dataModel = this.dataModel;
 	        var selRange, selRowLen, selColLen;
-	        var startIdx, data;
-
-	        data = this._parseClipboardText(text);
+	        var startIdx;
 
 	        if (selectionModel.hasSelection()) {
 	            selRange = selectionModel.get('range');
@@ -12925,6 +13096,19 @@
 	        }
 
 	        dataModel.paste(data, startIdx);
+	    },
+
+	    /**
+	     * Event handler for key:clipboard event on the domEventBus
+	     * @param {module:event/gridEvent} gridEvent - GridEvent
+	     * @private
+	     */
+	    _onKeyClipboard: function(gridEvent) {
+	        var command = gridEvent.command;
+
+	        if (command === 'copy') {
+	            this.setClipboardText();
+	        }
 	    },
 
 	    /**
@@ -12959,18 +13143,6 @@
 	        });
 
 	        return result;
-	    },
-
-	    /**
-	     * Parse the clipboard text for pasting to dataModel
-	     * @param {String} text - text
-	     * @returns {Array.<Array.<string>>}
-	     * @private
-	     */
-	    _parseClipboardText: function(text) {
-	        return _.map(text.split('\n'), function(row) {
-	            return row.split('\t');
-	        });
 	    },
 
 	    /**
@@ -13009,7 +13181,7 @@
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13020,24 +13192,24 @@
 
 	var _ = __webpack_require__(1);
 
-	var ContainerView = __webpack_require__(29);
-	var ContentAreaView = __webpack_require__(30);
-	var PaginationView = __webpack_require__(31);
-	var HeightResizeHandleView = __webpack_require__(32);
-	var StateLayerView = __webpack_require__(34);
-	var ClipboardView = __webpack_require__(36);
-	var LsideFrameView = __webpack_require__(38);
-	var RsideFrameView = __webpack_require__(40);
-	var HeaderView = __webpack_require__(41);
-	var HeaderResizeHandleView = __webpack_require__(42);
-	var BodyView = __webpack_require__(43);
-	var BodyTableView = __webpack_require__(44);
-	var FooterView = __webpack_require__(45);
-	var RowListView = __webpack_require__(46);
-	var SelectionLayerView = __webpack_require__(47);
-	var EditingLayerView = __webpack_require__(48);
-	var DatePickeLayerView = __webpack_require__(49);
-	var FocusLayerView = __webpack_require__(50);
+	var ContainerView = __webpack_require__(30);
+	var ContentAreaView = __webpack_require__(31);
+	var PaginationView = __webpack_require__(32);
+	var HeightResizeHandleView = __webpack_require__(33);
+	var StateLayerView = __webpack_require__(35);
+	var ClipboardView = __webpack_require__(37);
+	var LsideFrameView = __webpack_require__(39);
+	var RsideFrameView = __webpack_require__(41);
+	var HeaderView = __webpack_require__(42);
+	var HeaderResizeHandleView = __webpack_require__(43);
+	var BodyView = __webpack_require__(44);
+	var BodyTableView = __webpack_require__(45);
+	var FooterView = __webpack_require__(46);
+	var RowListView = __webpack_require__(47);
+	var SelectionLayerView = __webpack_require__(48);
+	var EditingLayerView = __webpack_require__(49);
+	var DatePickeLayerView = __webpack_require__(50);
+	var FocusLayerView = __webpack_require__(51);
 	var isOptionEnabled = __webpack_require__(14).isOptionEnabled;
 	var frameConst = __webpack_require__(8).frame;
 
@@ -13343,7 +13515,7 @@
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13356,7 +13528,7 @@
 	var GridEvent = __webpack_require__(13);
 	var targetTypeConst = GridEvent.targetTypeConst;
 	var attrNameConst = __webpack_require__(8).attrName;
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Container View
@@ -13440,11 +13612,14 @@
 
 	    /**
 	     * Event handler for click event
+	     * The reason for using 'elementFromPoint' is because of the selection.
 	     * @param {MouseEvent} ev - Mouse event
 	     * @private
 	     */
 	    _onClick: function(ev) {
-	        var $target = $(document.elementFromPoint(ev.pageX, ev.pageY));
+	        var pointX = ev.pageX - window.pageXOffset;
+	        var pointY = ev.pageY - window.pageYOffset;
+	        var $target = $(document.elementFromPoint(pointX, pointY));
 	        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
 	        /**
@@ -13456,6 +13631,7 @@
 	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.domEventBus.trigger('click', gridEvent);
 
@@ -13482,6 +13658,7 @@
 	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.domEventBus.trigger('dblclick', gridEvent);
 
@@ -13506,8 +13683,9 @@
 	         * @type {module:event/gridEvent}
 	         * @property {jQueryEvent} nativeEvent - Event object
 	         * @property {string} targetType - Type of event target
-	         * @property {number} [rowKey] - rowKey of the target cell
-	         * @property {string} [columnName] - columnName of the target cell
+	         * @property {number} rowKey - rowKey of the target cell
+	         * @property {string} columnName - columnName of the target cell
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.domEventBus.trigger('mouseover', gridEvent);
 	    },
@@ -13530,6 +13708,7 @@
 	         * @property {string} targetType - Type of event target
 	         * @property {number} rowKey - rowKey of the target cell
 	         * @property {string} columnName - columnName of the target cell
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.domEventBus.trigger('mouseout', gridEvent);
 	    },
@@ -13560,6 +13739,7 @@
 	             * @property {string} targetType - Type of event target
 	             * @property {number} rowKey - rowKey of the target cell
 	             * @property {string} columnName - columnName of the target cell
+	             * @property {Grid} instance - Current grid instance
 	             */
 	            this.domEventBus.trigger('mousedown:focus', gridEvent);
 	        }
@@ -13598,7 +13778,7 @@
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13608,7 +13788,7 @@
 	'use strict';
 
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var frameConst = __webpack_require__(8).frame;
 	var ContentArea;
 
@@ -13686,7 +13866,7 @@
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13787,7 +13967,7 @@
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13797,8 +13977,8 @@
 	'use strict';
 
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(15);
-	var DragEventEmitter = __webpack_require__(33);
+	var classNameConst = __webpack_require__(16);
+	var DragEventEmitter = __webpack_require__(34);
 
 	/**
 	 * Class for the height resize handle
@@ -13863,7 +14043,7 @@
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14018,7 +14198,7 @@
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14031,8 +14211,8 @@
 
 	var View = __webpack_require__(2);
 	var stateConst = __webpack_require__(8).renderState;
-	var classNameConst = __webpack_require__(15);
-	var message = __webpack_require__(35);
+	var classNameConst = __webpack_require__(16);
+	var message = __webpack_require__(36);
 	var TABLE_BORDER_WIDTH = __webpack_require__(8).dimension.TABLE_BORDER_WIDTH;
 
 	/**
@@ -14133,7 +14313,7 @@
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14172,7 +14352,7 @@
 	                            '더블클릭을 통해 넓이를 초기화할 수 있습니다.'
 	    }
 	};
-	var localeMessages = {};
+	var localeMessages = messages.en;
 
 	module.exports = {
 	    /**
@@ -14202,7 +14382,7 @@
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14214,11 +14394,14 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var keyEvent = __webpack_require__(37);
-	var classNameConst = __webpack_require__(15);
-	var PASTE_DEBOUNCE_TIME = 100;
+	var clipboardUtil = __webpack_require__(15);
+	var keyEvent = __webpack_require__(38);
+	var classNameConst = __webpack_require__(16);
 	var KEYDOWN_LOCK_TIME = 10;
 	var Clipboard;
+
+	var isEdge = tui.util.browser.edge;
+	var supportWindowClipboardData = !!window.clipboardData;
 
 	/**
 	 * Returns whether the ev.preventDefault should be called
@@ -14258,21 +14441,31 @@
 	            lockTimerId: null
 	        });
 
-	        this._triggerPasteEventDebounced = _.debounce(
-	            _.bind(this._triggerPasteEvent, this), PASTE_DEBOUNCE_TIME
-	        );
-
 	        this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
 	        this.listenTo(this.clipboardModel, 'change:text', this._onClipboardTextChange);
 	    },
 
-	    tagName: 'textarea',
+	    tagName: 'div',
 
 	    className: classNameConst.CLIPBOARD,
 
+	    attributes: {
+	        contenteditable: true
+	    },
+
 	    events: {
-	        'keydown': '_onKeyDown',
-	        'blur': '_onBlur'
+	        keydown: '_onKeyDown',
+	        copy: '_onCopy',
+	        paste: '_onPaste',
+	        blur: '_onBlur'
+	    },
+
+	    /**
+	     * Render
+	     * @returns {module:view/clipboard}
+	     */
+	    render: function() {
+	        return this;
 	    },
 
 	    /**
@@ -14285,63 +14478,6 @@
 	        setTimeout(function() {
 	            focusModel.refreshState();
 	        }, 0);
-	    },
-
-	    /**
-	     * Returns whether the element has focus
-	     * @returns {boolean}
-	     * @private
-	     */
-	    _hasFocus: function() {
-	        return this.$el.is(':focus');
-	    },
-
-	    /**
-	     * Event handler for 'focusClipboard' event on focusModel
-	     * @private
-	     */
-	    _onFocusClipboard: function() {
-	        try {
-	            if (!this._hasFocus()) {
-	                this.$el.focus();
-
-	                // bug fix for IE8 (calling focus() only once doesn't work)
-	                if (!this._hasFocus()) {
-	                    this.$el.focus();
-	                }
-	                this.focusModel.refreshState();
-	            }
-	        } catch (e) {
-	            // Do nothing.
-	            // This try/catch block is just for preventing 'Unspecified error'
-	            // in IE9(and under) when running test using karma.
-	        }
-	    },
-
-	    /**
-	     * Render
-	     * @returns {module:view/clipboard}
-	     */
-	    render: function() {
-	        return this;
-	    },
-
-	    /**
-	     * Lock for a moment to reduce event frequency
-	     * @private
-	     */
-	    _lock: function() {
-	        this.isLocked = true;
-	        this.lockTimerId = setTimeout(_.bind(this._unlock, this), KEYDOWN_LOCK_TIME);
-	    },
-
-	    /**
-	     * Unlock
-	     * @private
-	     */
-	    _unlock: function() {
-	        this.isLocked = false;
-	        this.lockTimerId = null;
 	    },
 
 	    /**
@@ -14369,11 +14505,69 @@
 	            ev.preventDefault();
 	        }
 
-	        if (isPasteEvent(gridEvent)) {
-	            this._triggerPasteEventDebounced(gridEvent);
-	            this.$el.val('');
-	        } else {
+	        if (!isPasteEvent(gridEvent)) {
 	            this.domEventBus.trigger(gridEvent.type, gridEvent);
+	        }
+	    },
+
+	    /**
+	     * oncopy event handler
+	     * - Step 1: When the keys(ctrl+c) are downed on grid, 'key:clipboard' is triggered.
+	     * - Step 2: To listen 'change:text event on the clipboard model.
+	     * - Step 3: When 'change:text' event is fired,
+	     *           IE browsers set copied data to window.clipboardData in event handler and
+	     *           other browsers append copied data and focus to contenteditable element.
+	     * - Step 4: Finally, when 'copy' event is fired on browsers except IE,
+	     *           setting copied data to ClipboardEvent.clipboardData.
+	     * @param {jQueryEvent} ev - Event object
+	     * @private
+	     */
+	    _onCopy: function(ev) {
+	        var text = this.clipboardModel.get('text');
+
+	        if (!supportWindowClipboardData) {
+	            (ev.originalEvent || ev).clipboardData.setData('text/plain', text);
+	        }
+
+	        ev.preventDefault();
+	    },
+
+	    /**
+	     * onpaste event handler
+	     * The original 'paste' event should be prevented on browsers except MS
+	     * to block that copied data is appending on contenteditable element.
+	     * @param {jQueryEvent} ev - Event object
+	     * @private
+	     */
+	    _onPaste: function(ev) {
+	        var clipboardData = (ev.originalEvent || ev).clipboardData || window.clipboardData;
+
+	        if (!isEdge && !supportWindowClipboardData) {
+	            ev.preventDefault();
+	            this._pasteInOtherBrowsers(clipboardData);
+	        } else {
+	            this._pasteInMSBrowsers(clipboardData);
+	        }
+	    },
+
+	    /**
+	     * Event handler for 'focusClipboard' event on focusModel
+	     * @private
+	     */
+	    _onFocusClipboard: function() {
+	        try {
+	            if (!this._hasFocus()) {
+	                this.$el.focus();
+
+	                // bug fix for IE8 (calling focus() only once doesn't work)
+	                if (!this._hasFocus()) {
+	                    this.$el.focus();
+	                }
+	            }
+	        } catch (e) {
+	            // Do nothing.
+	            // This try/catch block is just for preventing 'Unspecified error'
+	            // in IE9(and under) when running test using karma.
 	        }
 	    },
 
@@ -14384,24 +14578,92 @@
 	    _onClipboardTextChange: function() {
 	        var text = this.clipboardModel.get('text');
 
-	        if (window.clipboardData) {
+	        if (supportWindowClipboardData) {
 	            window.clipboardData.setData('Text', text);
 	        } else {
-	            this.$el.val(text).select();
+	            this.$el.html(text).focus();
 	        }
 	    },
 
 	    /**
-	     * Handle paste event.
-	     * This handler should be called with debounce applied for following reasons :
-	     * 1: should be called in the next frame to use the text pasted into the textarea by native action)
-	     * 2: should prevent repetitive execution
-	     * @param {module:event/gridEvent} gridEvent - GridEvent
+	     * Paste copied data in other browsers (chrome, safari, firefox)
+	     * [if] condition is copying from ms-excel,
+	     * [else] condition is copying from the grid or the copied data is plain text.
+	     * @param {object} clipboardData - clipboard object
 	     * @private
 	     */
-	    _triggerPasteEvent: function(gridEvent) {
-	        gridEvent.setData({text: this.$el.val()});
-	        this.domEventBus.trigger(gridEvent.type, gridEvent);
+	    _pasteInOtherBrowsers: function(clipboardData) {
+	        var clipboardModel = this.clipboardModel;
+	        var data = clipboardData.getData('text/html');
+	        var table;
+
+	        if (data && $(data).find('tbody').length > 0) {
+	            // step 1: Append copied data on contenteditable element to parsing correctly table data.
+	            this.$el.html('<table>' + $(data).find('tbody').html() + '</table>');
+
+	            // step 2: Make grid data from cell data of appended table element.
+	            table = this.$el.find('table')[0];
+	            data = clipboardUtil.convertTableToData(table);
+
+	            // step 3: Empty contenteditable element to reset.
+	            this.$el.html('');
+	        } else {
+	            data = clipboardData.getData('text/plain');
+	            data = clipboardUtil.convertTextToData(data);
+	        }
+
+	        clipboardModel.pasteClipboardDataToGrid(data);
+	    },
+
+	    /**
+	     * Paste copied data in MS-browsers (IE, edge)
+	     * @param {object} clipboardData - clipboard object
+	     * @private
+	     */
+	    _pasteInMSBrowsers: function(clipboardData) {
+	        var self = this;
+	        var clipboardModel = this.clipboardModel;
+	        var data = clipboardData.getData('Text');
+	        var table;
+
+	        data = clipboardUtil.convertTextToData(data);
+
+	        setTimeout(function() {
+	            if (self.$el.find('table').length > 0) {
+	                table = self.$el.find('table')[0];
+	                data = clipboardUtil.convertTableToData(table);
+	            }
+
+	            self.$el.html('');
+	            clipboardModel.pasteClipboardDataToGrid(data);
+	        }, 0);
+	    },
+
+	    /**
+	     * Lock for a moment to reduce event frequency
+	     * @private
+	     */
+	    _lock: function() {
+	        this.isLocked = true;
+	        this.lockTimerId = setTimeout(_.bind(this._unlock, this), KEYDOWN_LOCK_TIME);
+	    },
+
+	    /**
+	     * Unlock
+	     * @private
+	     */
+	    _unlock: function() {
+	        this.isLocked = false;
+	        this.lockTimerId = null;
+	    },
+
+	    /**
+	     * Returns whether the element has focus
+	     * @returns {boolean}
+	     * @private
+	     */
+	    _hasFocus: function() {
+	        return this.$el.is(':focus');
 	    }
 	});
 
@@ -14411,7 +14673,7 @@
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14525,7 +14787,7 @@
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14536,8 +14798,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var Frame = __webpack_require__(39);
-	var classNameConst = __webpack_require__(15);
+	var Frame = __webpack_require__(40);
+	var classNameConst = __webpack_require__(16);
 	var frameConst = __webpack_require__(8).frame;
 
 	/**
@@ -14596,7 +14858,7 @@
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14671,7 +14933,7 @@
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14682,8 +14944,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var Frame = __webpack_require__(39);
-	var classNameConst = __webpack_require__(15);
+	var Frame = __webpack_require__(40);
+	var classNameConst = __webpack_require__(16);
 	var constMap = __webpack_require__(8);
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -14813,7 +15075,7 @@
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14827,9 +15089,9 @@
 	var View = __webpack_require__(2);
 	var util = __webpack_require__(14);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var GridEvent = __webpack_require__(13);
-	var DragEventEmitter = __webpack_require__(33);
+	var DragEventEmitter = __webpack_require__(34);
 	var frameConst = constMap.frame;
 
 	var DELAY_SYNC_CHECK = 10;
@@ -15362,7 +15624,7 @@
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15375,9 +15637,9 @@
 
 	var View = __webpack_require__(2);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
-	var DragEventEmitter = __webpack_require__(33);
-	var message = __webpack_require__(35);
+	var classNameConst = __webpack_require__(16);
+	var DragEventEmitter = __webpack_require__(34);
+	var message = __webpack_require__(36);
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -15567,7 +15829,7 @@
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15579,10 +15841,10 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var DragEventEmitter = __webpack_require__(33);
+	var DragEventEmitter = __webpack_require__(34);
 	var GridEvent = __webpack_require__(13);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var frameConst = constMap.frame;
 
 	// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
@@ -15829,7 +16091,7 @@
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15842,7 +16104,7 @@
 
 	var View = __webpack_require__(2);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -16026,7 +16288,7 @@
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16037,7 +16299,7 @@
 
 	var _ = __webpack_require__(1);
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var constMap = __webpack_require__(8);
 	var frameConst = constMap.frame;
 
@@ -16239,7 +16501,7 @@
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16252,7 +16514,7 @@
 
 	var View = __webpack_require__(2);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
@@ -16546,7 +16808,7 @@
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16558,7 +16820,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
 	var frameConst = __webpack_require__(8).frame;
 
@@ -16713,7 +16975,7 @@
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16727,7 +16989,7 @@
 	var View = __webpack_require__(2);
 	var CELL_BORDER_WIDTH = __webpack_require__(8).dimension.CELL_BORDER_WIDTH;
 	var attrNameConst = __webpack_require__(8).attrName;
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Layer class that represents the state of rendering phase.
@@ -16876,7 +17138,7 @@
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16888,7 +17150,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 	var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 	var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 	var DatePickerLayer;
@@ -17080,7 +17342,7 @@
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17093,7 +17355,7 @@
 
 	var View = __webpack_require__(2);
 	var constMap = __webpack_require__(8);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -17225,7 +17487,7 @@
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17241,7 +17503,7 @@
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17253,7 +17515,7 @@
 	var _ = __webpack_require__(1);
 
 	var attrNameConst = __webpack_require__(8).attrName;
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Class for offering methods that can be used to get the current state of DOM element.
@@ -17359,7 +17621,7 @@
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17403,7 +17665,9 @@
 	     * @private
 	     */
 	    _triggerOnPublic: function(eventName, eventData) {
-	        this.publicObject.trigger(eventName, eventData);
+	        this.publicObject.trigger(eventName, _.extend(eventData, {
+	            instance: this.publicObject
+	        }));
 	    },
 
 	    /**
@@ -17464,7 +17728,7 @@
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17475,13 +17739,13 @@
 
 	var _ = __webpack_require__(1);
 
-	var RowPainter = __webpack_require__(55);
-	var CellPainter = __webpack_require__(57);
-	var DummyCellPainter = __webpack_require__(58);
-	var TextPainter = __webpack_require__(59);
-	var SelectPainter = __webpack_require__(61);
-	var ButtonPainter = __webpack_require__(62);
-	var MainButtonPainter = __webpack_require__(63);
+	var RowPainter = __webpack_require__(56);
+	var CellPainter = __webpack_require__(58);
+	var DummyCellPainter = __webpack_require__(59);
+	var TextPainter = __webpack_require__(60);
+	var SelectPainter = __webpack_require__(62);
+	var ButtonPainter = __webpack_require__(63);
+	var MainButtonPainter = __webpack_require__(64);
 
 	/**
 	 * Painter manager
@@ -17624,7 +17888,7 @@
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17635,7 +17899,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(56);
+	var Painter = __webpack_require__(57);
 	var constMap = __webpack_require__(8);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -17779,7 +18043,7 @@
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17859,7 +18123,7 @@
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17870,10 +18134,10 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(56);
+	var Painter = __webpack_require__(57);
 	var util = __webpack_require__(14);
 	var attrNameConst = __webpack_require__(8).attrName;
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Painter class for cell(TD) views
@@ -18105,7 +18369,7 @@
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18116,10 +18380,10 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(56);
+	var Painter = __webpack_require__(57);
 	var util = __webpack_require__(14);
 	var attrNameConst = __webpack_require__(8).attrName;
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Dummy Cell Painter
@@ -18179,7 +18443,7 @@
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18190,9 +18454,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(60);
+	var InputPainter = __webpack_require__(61);
 	var util = __webpack_require__(14);
-	var classNameConst = __webpack_require__(15);
+	var classNameConst = __webpack_require__(16);
 
 	var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
 	var SELECTOR_PASSWORD = 'input[type=password]';
@@ -18305,7 +18569,7 @@
 	            maxLength: maxLength
 	        };
 
-	        if (cellData.whiteSpace === 'normal') {
+	        if (cellData.whiteSpace !== 'nowrap') {
 	            return this.templateTextArea(params);
 	        }
 	        return this.templateInput(params);
@@ -18329,7 +18593,7 @@
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18341,7 +18605,7 @@
 	var _ = __webpack_require__(1);
 	var Backbone = __webpack_require__(3);
 
-	var Painter = __webpack_require__(56);
+	var Painter = __webpack_require__(57);
 	var keyNameMap = __webpack_require__(8).keyName;
 
 	/**
@@ -18481,7 +18745,7 @@
 
 	        this._executeCustomEventHandler(event, param.address);
 
-	        if (action) {
+	        if (action && !event.shiftKey) {
 	            action.call(this, param);
 	            event.preventDefault();
 	        }
@@ -18568,7 +18832,7 @@
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18579,7 +18843,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(60);
+	var InputPainter = __webpack_require__(61);
 	var util = __webpack_require__(14);
 
 	/**
@@ -18669,7 +18933,7 @@
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18680,7 +18944,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(60);
+	var InputPainter = __webpack_require__(61);
 	var util = __webpack_require__(14);
 
 	/**
@@ -18941,7 +19205,7 @@
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18952,8 +19216,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(56);
-	var classNameConst = __webpack_require__(15);
+	var Painter = __webpack_require__(57);
+	var classNameConst = __webpack_require__(16);
 	var keyCodeMap = __webpack_require__(8).keyCode;
 
 	var className = classNameConst.CELL_MAIN_BUTTON;
@@ -19054,7 +19318,7 @@
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19270,7 +19534,7 @@
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19283,10 +19547,10 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var Router = __webpack_require__(66);
+	var Router = __webpack_require__(67);
 	var util = __webpack_require__(14);
-	var formUtil = __webpack_require__(67);
-	var message = __webpack_require__(35);
+	var formUtil = __webpack_require__(68);
+	var message = __webpack_require__(36);
 	var GridEvent = __webpack_require__(13);
 
 	var renderStateMap = __webpack_require__(8).renderState;
@@ -19948,6 +20212,7 @@
 	         * Occurs before the http request is sent
 	         * @event tui.Grid#beforeRequest
 	         * @type {module:event/gridEvent}
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.trigger('beforeRequest', gridEvent);
 	        if (gridEvent.isStopped()) {
@@ -20006,6 +20271,7 @@
 	         * @property {string} requestType - Request type
 	         * @property {string} requestParameter - Request parameters
 	         * @property {Object} responseData - response data
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.trigger('response', gridEvent);
 	        if (gridEvent.isStopped()) {
@@ -20020,6 +20286,7 @@
 	             * @property {string} requestType - Request type
 	             * @property {string} requestParameter - Request parameter
 	             * @property {Object} responseData - response data
+	             * @property {Grid} instance - Current grid instance
 	             */
 	            this.trigger('successResponse', gridEvent);
 	            if (gridEvent.isStopped()) {
@@ -20037,6 +20304,7 @@
 	             * @property {string} requestType - Request type
 	             * @property {string} requestParameter - Request parameter
 	             * @property {Object} responseData - response data
+	             * @property {Grid} instance - Current grid instance
 	             */
 	            this.trigger('failResponse', gridEvent);
 	            if (gridEvent.isStopped()) {
@@ -20078,6 +20346,7 @@
 	         * @property {number} httpStatus - HTTP status
 	         * @property {string} requestType - Request type
 	         * @property {string} requestParameter - Request parameters
+	         * @property {Grid} instance - Current grid instance
 	         */
 	        this.trigger('errorResponse', eventData);
 	        if (eventData.isStopped()) {
@@ -20094,7 +20363,7 @@
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20125,7 +20394,7 @@
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20354,7 +20623,7 @@
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 	/**
@@ -20410,7 +20679,7 @@
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20420,15 +20689,15 @@
 	'use strict';
 
 	var util = __webpack_require__(14);
-	var styleGen = __webpack_require__(70);
+	var styleGen = __webpack_require__(71);
 	var themeNameConst = __webpack_require__(8).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(72);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(73);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(74);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(73);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(74);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(75);
 
 	/**
 	 * build css string with given options.
@@ -20506,7 +20775,7 @@
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20517,8 +20786,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var builder = __webpack_require__(71);
-	var classNameConst = __webpack_require__(15);
+	var builder = __webpack_require__(72);
+	var classNameConst = __webpack_require__(16);
 
 	/**
 	 * Shortcut for the builder.createClassRule() method.
@@ -20776,7 +21045,7 @@
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20961,7 +21230,7 @@
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports) {
 
 	/**
@@ -21035,7 +21304,7 @@
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21044,7 +21313,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(72);
+	var presetDefault = __webpack_require__(73);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -21070,7 +21339,7 @@
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21079,7 +21348,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(72);
+	var presetDefault = __webpack_require__(73);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -21106,7 +21375,7 @@
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
