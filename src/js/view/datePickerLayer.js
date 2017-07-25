@@ -93,11 +93,16 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         datePicker.on('close', function() {
             var focusModel = self.focusModel;
             var address = focusModel.which();
+            var rowKey = address.rowKey;
+            var columnName = address.columnName;
             var changedValue = self.$focusedInput.val();
 
             self.textPainter.unblockFocusingOut();
 
-            focusModel.dataModel.setValue(address.rowKey, address.columnName, changedValue);
+            // when the datePicker layer is closed, selected date must set on input element.
+            if (focusModel.isEditingCell(rowKey, columnName)) {
+                focusModel.dataModel.setValue(rowKey, columnName, changedValue);
+            }
             focusModel.finishEditing();
         });
     },
