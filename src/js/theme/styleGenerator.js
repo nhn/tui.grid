@@ -197,7 +197,7 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for focused cells.
+     * Generates a css string for focused cell.
      * @param {Object} options - options
      * @returns {String}
      */
@@ -206,6 +206,17 @@ module.exports = {
         var editingLayerRule = classRule(classNameConst.LAYER_EDITING).border(options.border);
 
         return builder.buildAll([focusLayerRule, editingLayerRule]);
+    },
+
+    /**
+     * Generates a css string for focus inactive cell.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellFocusedInactive: function(options) {
+        return builder.create('.' + classNameConst.LAYER_FOCUS_DEACTIVE + ' .' + classNameConst.LAYER_FOCUS_BORDER)
+            .bg(options.border)
+            .build();
     },
 
     /**

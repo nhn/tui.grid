@@ -46,6 +46,9 @@ module.exports = {
         focused: {
             border: '#418ed4'
         },
+        focusedInactive: {
+            border: '#aaa'
+        },
         required: {
             background: '#fffdeb'
         },

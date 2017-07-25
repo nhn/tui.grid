@@ -1012,6 +1012,8 @@ tui.Grid.getInstanceById = function(id) {
  *     @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
  *       @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
  *       @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
+ *     @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
+ *       @param {String} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
  *     @param {Object} [extOptions.cell.required] - Styles for required cells.
  *       @param {String} [extOptions.cell.required.background] - background color of required cells.
  *       @param {String} [extOptions.cell.required.text] - text color of required cells.

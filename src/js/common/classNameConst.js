@@ -28,6 +28,7 @@ var classNames = {
     LAYER_EDITING: 'layer-editing',
     LAYER_FOCUS: 'layer-focus',
     LAYER_FOCUS_BORDER: 'layer-focus-border',
+    LAYER_FOCUS_DEACTIVE: 'layer-focus-deactive',
     LAYER_SELECTION: 'layer-selection',
     LAYER_DATE_PICKER: 'layer-datepicker',
 

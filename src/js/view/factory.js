@@ -83,7 +83,8 @@ var ViewFactory = tui.util.defineClass({
         }
         return new PaginationView({
             componentHolder: this.componentHolder,
-            dimensionModel: this.modelManager.dimensionModel
+            dimensionModel: this.modelManager.dimensionModel,
+            focusModel: this.modelManager.focusModel
         });
     },
 

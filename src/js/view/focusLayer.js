@@ -13,6 +13,7 @@ var classNameConst = require('../common/classNameConst');
 var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
+var BLUR_CLASS_NAME = classNameConst.LAYER_FOCUS_DEACTIVE;
 
 /**
  * Class for the layer view that represents the currently focused cell
@@ -62,7 +63,11 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      * @private
      */
     _onBlur: function() {
-        this.$el.hide();
+        if (this.focusModel.has(true)) {
+            this.$el.addClass(BLUR_CLASS_NAME);
+        } else {
+            this.$el.hide();
+        }
     },
 
     /**
@@ -73,6 +78,10 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      */
     _onFocus: function(rowKey, columnName) {
         var targetSide = this.columnModel.isLside(columnName) ? frameConst.L : frameConst.R;
+
+        if (this.focusModel.has(true)) {
+            this.$el.removeClass(BLUR_CLASS_NAME);
+        }
 
         if (targetSide === this.whichSide) {
             this._refreshBorderLayout(rowKey, columnName);

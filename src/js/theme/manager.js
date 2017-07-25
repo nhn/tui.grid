@@ -44,7 +44,8 @@ function buildCssString(options) {
             styleGen.cellInvalid(cell.invalid),
             styleGen.cellCurrentRow(cell.currentRow),
             styleGen.cellSelectedHead(cell.selectedHead),
-            styleGen.cellFocused(cell.focused)
+            styleGen.cellFocused(cell.focused),
+            styleGen.cellFocusedInactive(cell.focusedInactive)
         ]);
     }
 

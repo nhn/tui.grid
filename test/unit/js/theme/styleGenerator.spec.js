@@ -159,6 +159,17 @@ describe('theme/styleGenerator: ', function() {
         expect(styleGen.cellFocused(options)).toBe(expected);
     });
 
+    it('cellFocusedInactive() generates a css string for deactived focus cells', function() {
+        var options = {
+            border: 'gray'
+        };
+        var expected = '.' + classNameConst.LAYER_FOCUS_DEACTIVE +
+                        ' .' + classNameConst.LAYER_FOCUS_BORDER +
+                        '{background-color:gray}';
+
+        expect(styleGen.cellFocusedInactive(options)).toBe(expected);
+    });
+
     it('cellEditable() generates a css string for editable cells', function() {
         var options = {
             background: 'white',
