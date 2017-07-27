@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var PainterController = require('painter/controller');
 var DataModel = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');

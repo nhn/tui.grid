@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 var Model = require('../base/model');
 

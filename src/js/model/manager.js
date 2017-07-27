@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
@@ -59,7 +61,7 @@ var defaultOptions = {
  * @param {module/domState} domState - DomState instance
  * @ignore
  */
-var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype */{
+var ModelManager = snippet.defineClass(/**@lends module:modelManager.prototype */{
     init: function(options, domState, domEventBus) {
         options = $.extend(true, {}, defaultOptions, options);
 
@@ -109,7 +111,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             domState: domState,
             domEventBus: domEventBus,
             columnModel: this.columnModel,
-            useClientSort: options.useClientSort
+            useClientSort: options.useClientSort,
+            publicObject: options.publicObject
         });
     },
 
@@ -324,10 +327,10 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      */
     destroy: function() {
         _.each(this, function(value, property) {
-            if (value && tui.util.isFunction(value._destroy)) {
+            if (value && snippet.isFunction(value._destroy)) {
                 value._destroy();
             }
-            if (value && tui.util.isFunction(value.stopListening)) {
+            if (value && snippet.isFunction(value.stopListening)) {
                 value.stopListening();
             }
             this[property] = null;

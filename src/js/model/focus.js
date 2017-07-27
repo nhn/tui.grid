@@ -292,7 +292,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         /**
          * Occurs when focused cell is about to change
          * @api
-         * @event tui.Grid#focusChange
+         * @event Grid#focusChange
          * @type {module:event/gridEvent}
          * @property {number} rowKey - rowKey of the target cell
          * @property {number} columnName - columnName of the target cell

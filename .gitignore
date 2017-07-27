@@ -45,3 +45,4 @@ tags
 
 # etc
 .agignore
+dist

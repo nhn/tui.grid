@@ -1,5 +1,7 @@
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 var DomState = require('domState');
 var FocusModel = require('model/focus');
 var SelectionModel = require('model/selection');
@@ -8,7 +10,7 @@ var RowListData = require('model/data/rowList');
 
 function createColumns(names) {
     var models = [];
-    tui.util.forEachArray(names, function(name, editType) {
+    snippet.forEachArray(names, function(name, editType) {
         models.push({
             title: name,
             name: name,

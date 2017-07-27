@@ -1,19 +1,24 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview webpack 설정파일
+ * @fileoverview webpack config file
  */
 'use strict';
 
 /* eslint-disable vars-on-top, no-process-env, require-jsdoc */
+var pkg = require('./package.json');
 var webpack = require('webpack');
 var path = require('path');
-var VERSION = require('./package.json').version;
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var SafeUmdPlugin = require('safe-umd-webpack-plugin');
+
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 var isCombined = process.argv.indexOf('--combine') >= 0;
-var ENTRY_PATH = './src/js/grid.js';
+
+var FILENAME = pkg.name;
+var VERSION = pkg.version;
+var ENTRY_PATH = './src/js/index.js';
 
 var eslintLoader = {
     test: /\.js$/,
@@ -31,9 +36,42 @@ var stylusLoader = {
 };
 
 var externals = {
-    'jquery': '$',
-    'backbone': 'Backbone',
-    'underscore': '_'
+    'jquery': {
+        'commonjs': 'jquery',
+        'commonjs2': 'jquery',
+        'amd': 'jquery',
+        'root': '$'
+    },
+    'backbone': {
+        'commonjs': 'backbone',
+        'commonjs2': 'backbone',
+        'amd': 'backbone',
+        'root': 'Backbone'
+    },
+    'underscore': {
+        'commonjs': 'underscore',
+        'commonjs2': 'underscore',
+        'amd': 'underscore',
+        'root': '_'
+    },
+    'tui-code-snippet': {
+        'commonjs': 'tui-code-snippet',
+        'commonjs2': 'tui-code-snippet',
+        'amd': 'tui-code-snippet',
+        'root': ['tui', 'util']
+    },
+    'tui-pagination': {
+        'commonjs': 'tui-pagination',
+        'commonjs2': 'tui-pagination',
+        'amd': 'tui-pagination',
+        'root': ['tui', 'Pagination']
+    },
+    'tui-date-picker': {
+        'commonjs': 'tui-date-picker',
+        'commonjs2': 'tui-date-picker',
+        'amd': 'tui-date-picker',
+        'root': ['tui', 'DatePicker']
+    }
 };
 
 function develop() {
@@ -41,7 +79,7 @@ function develop() {
         entry: ENTRY_PATH,
         output: {
             publicPath: '/dist/',
-            filename: 'grid.js'
+            filename: 'index.js'
         },
         plugins: [
             new ExtractTextPlugin('grid.css')
@@ -80,15 +118,18 @@ function production() {
         }));
     }
     pluginConfig.push(
+        new SafeUmdPlugin(),
         new webpack.BannerPlugin(bannerText, {entryOnly: true}),
-        new ExtractTextPlugin('grid' + (isMinified ? '.min' : '') + '.css')
+        new ExtractTextPlugin(FILENAME + (isMinified ? '.min' : '') + '.css')
     );
 
     return {
         entry: ENTRY_PATH,
         output: {
+            library: ['tui', 'Grid'],
+            libraryTarget: 'umd',
             path: path.join(__dirname, 'dist'),
-            filename: 'grid' + (isCombined ? '.comb' : '') + (isMinified ? '.min' : '') + '.js'
+            filename: FILENAME + (isCombined ? '.comb' : '') + (isMinified ? '.min' : '') + '.js'
         },
         module: {
             loaders: [fileLoader, stylusLoader]

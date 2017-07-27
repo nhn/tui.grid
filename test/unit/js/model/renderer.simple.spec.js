@@ -1,5 +1,8 @@
 'use strict';
 
+var $ = require('jquery');
+var _ = require('underscore');
+
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');

@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var InputPainter = require('./base');
 var util = require('../../common/util');
@@ -20,7 +21,7 @@ var SELECTOR_PASSWORD = 'input[type=password]';
  * @param {Object} options - options
  * @ignore
  */
-var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
+var TextPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
     init: function(options) {
         InputPainter.apply(this, arguments);
 
@@ -111,7 +112,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      * @protected
      */
     _generateInputHtml: function(cellData) {
-        var maxLength = tui.util.pick(cellData, 'columnModel', 'editOptions', 'maxLength');
+        var maxLength = snippet.pick(cellData, 'columnModel', 'editOptions', 'maxLength');
         var params = {
             type: this.inputType,
             className: classNameConst.CELL_CONTENT_TEXT,

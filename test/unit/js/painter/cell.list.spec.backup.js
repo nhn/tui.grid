@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var CellPainter = require('painter/cell');
 var ButtonPainter = require('painter/cell/button');

@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var util = require('common/util');
 
 describe('core.util', function() {

@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var View = require('../../base/view');
 var classNameConst = require('../../common/classNameConst');
 var frameConst = require('../../common/constMap').frame;

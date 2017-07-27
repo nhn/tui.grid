@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
 var typeConst = require('../common/constMap').summaryType;
@@ -153,7 +154,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
             return _.isUndefined(valueMap) ? null : valueMap;
         }
 
-        value = tui.util.pick(valueMap, summaryType);
+        value = snippet.pick(valueMap, summaryType);
         return _.isUndefined(value) ? null : value;
     }
 });

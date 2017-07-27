@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
@@ -16,16 +17,13 @@ var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var ComponentHolder = require('./componentHolder');
+
 var util = require('./common/util');
 var message = require('./common/message');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
 
 var instanceMap = {};
-
-require('../css/index.styl');
-
-tui = window.tui = tui || {};
 
 /**
  * Grid public API
@@ -51,7 +49,7 @@ tui = window.tui = tui || {};
  *          will be shown.
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
- *          {@link tui.Grid#setFrozenColumnCount} can be used for setting this value dynamically.
+ *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
@@ -95,7 +93,7 @@ tui = window.tui = tui || {};
  *          @param {boolean} [options.columns.resizable] - If set to false, the width of the column
  *              will not be changed.
  *          @param {Object} [options.columns.validation] - The options to be used for validation.
- *              Validation is executed whenever data is changed or the {@link tui.Grid#validate} is called.
+ *              Validation is executed whenever data is changed or the {@link Grid#validate} is called.
  *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
  *              will be checked to be not empty.
  *          @param {boolean} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
@@ -174,7 +172,7 @@ tui = window.tui = tui || {};
  *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  */
-tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
+var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
@@ -207,7 +205,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createModelManager: function(options) {
         var modelOptions = _.assign({}, options, {
-            gridId: this.id
+            gridId: this.id,
+            publicObject: this
         });
 
         _.omit(modelOptions, 'el');
@@ -539,7 +538,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      *     removed although the target is first cell of them.
      */
     removeRow: function(rowKey, options) {
-        if (tui.util.isBoolean(options) && options) {
+        if (snippet.isBoolean(options) && options) {
             options = {
                 removeOriginalData: true
             };
@@ -673,7 +672,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Restores the data to the original data.
-     * (Original data is set by {@link tui.Grid#setData|setData}
+     * (Original data is set by {@link Grid#setData|setData}
      */
     restore: function() {
         this.modelManager.dataModel.restore();
@@ -858,7 +857,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {...string} arguments - Column names to show
      */
     showColumn: function() {
-        var args = tui.util.toArray(arguments);
+        var args = snippet.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, false);
     },
 
@@ -867,7 +866,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {...string} arguments - Column names to hide
      */
     hideColumn: function() {
-        var args = tui.util.toArray(arguments);
+        var args = snippet.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, true);
     },
 
@@ -967,8 +966,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
  * @static
  * @param  {number} id - ID of the target grid
  * @returns {tui.Grid} - Grid instance
+ * var Grid = tui.Grid; // or reqire('tui-grid')
+ *
+ * Grid.getInstanceById(id);
  */
-tui.Grid.getInstanceById = function(id) {
+Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
@@ -1035,19 +1037,21 @@ tui.Grid.getInstanceById = function(id) {
  *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
  *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
-tui.Grid.applyTheme('striped', {
-    grid: {
-        border: '#aaa',
-        text: '#333'
-    },
-    cell: {
-        disabled: {
-            text: '#999'
-        }
-    }
-});
+ * var Grid = tui.Grid; // or reqire('tui-grid')
+ *
+ * Grid.applyTheme('striped', {
+ *     grid: {
+ *         border: '#aaa',
+ *         text: '#333'
+ *     },
+ *     cell: {
+ *         disabled: {
+ *             text: '#999'
+ *         }
+ *     }
+ * });
  */
-tui.Grid.applyTheme = function(presetName, extOptions) {
+Grid.applyTheme = function(presetName, extOptions) {
     themeManager.apply(presetName, extOptions);
 };
 
@@ -1056,8 +1060,12 @@ tui.Grid.applyTheme = function(presetName, extOptions) {
  * @static
  * @param {string} langCode - Language code ('en' or 'ko')
  * @example
- * tui.Grid.setLanguage('ko');
+ * var Grid = tui.Grid; // or reqire('tui-grid')
+ *
+ * Grid.setLanguage('ko');
  */
-tui.Grid.setLanguage = function(langCode) {
+Grid.setLanguage = function(langCode) {
     message.setLanguage(langCode);
 };
+
+module.exports = Grid;

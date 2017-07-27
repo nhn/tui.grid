@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var DomState = require('domState');
 
 it('domState:init', function() {

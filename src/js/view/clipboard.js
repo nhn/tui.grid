@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var View = require('../base/view');
 var clipboardUtil = require('../common/clipboardUtil');
@@ -13,7 +15,7 @@ var classNameConst = require('../common/classNameConst');
 var KEYDOWN_LOCK_TIME = 10;
 var Clipboard;
 
-var isEdge = tui.util.browser.edge;
+var isEdge = snippet.browser.edge;
 var supportWindowClipboardData = !!window.clipboardData;
 
 /**

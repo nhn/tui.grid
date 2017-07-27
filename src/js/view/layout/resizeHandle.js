@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var View = require('../../base/view');
 var constMap = require('../../common/constMap');
@@ -132,7 +134,7 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
         var handlerWidthHalf = Math.floor(RESIZE_HANDLE_WIDTH / 2);
         var curPos = 0;
 
-        tui.util.forEachArray($resizeHandleList, function(item, index) {
+        snippet.forEachArray($resizeHandleList, function(item, index) {
             var $handler = $resizeHandleList.eq(index);
             curPos += columnWidths[index] + CELL_BORDER_WIDTH;
             $handler.css('left', curPos - handlerWidthHalf);

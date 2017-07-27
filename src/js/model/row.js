@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
 var util = require('../common/util');
@@ -99,7 +100,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        if (tui.util.isUndefined(this.collection)) {
+        if (snippet.isUndefined(this.collection)) {
             return;
         }
 
@@ -107,7 +108,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             var cellData = this.get(columnName);
             var cellState;
 
-            if (!tui.util.isUndefined(cellData) && cellData.isMainRow) {
+            if (!snippet.isUndefined(cellData) && cellData.isMainRow) {
                 cellState = this.rowData.getCellState(columnName);
 
                 this.setCell(columnName, {
@@ -175,7 +176,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 editing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
                 valign: column.valign,
-                listItems: tui.util.pick(column, 'editOptions', 'listItems'),
+                listItems: snippet.pick(column, 'editOptions', 'listItems'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names
@@ -220,9 +221,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var prefix = tui.util.pick(column, 'editOptions', 'prefix');
-        var postfix = tui.util.pick(column, 'editOptions', 'postfix');
-        var converter = tui.util.pick(column, 'editOptions', 'converter');
+        var prefix = snippet.pick(column, 'editOptions', 'prefix');
+        var postfix = snippet.pick(column, 'editOptions', 'postfix');
+        var converter = snippet.pick(column, 'editOptions', 'converter');
         var rowAttrs = row.toJSON();
 
         return {
@@ -273,7 +274,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         if (_.isFunction(content)) {
             result = content(cellValue, rowAttrs);
-        } else if (tui.util.isExisty(content)) {
+        } else if (snippet.isExisty(content)) {
             result = content;
         }
 
@@ -309,7 +310,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueToDisplay: function(value, column, isTextType) {
-        var isExisty = tui.util.isExisty;
+        var isExisty = snippet.isExisty;
         var useHtmlEntity = column.useHtmlEntity;
         var defaultValue = column.defaultValue;
 
@@ -317,8 +318,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             value = isExisty(defaultValue) ? defaultValue : '';
         }
 
-        if (isTextType && useHtmlEntity && tui.util.hasEncodableString(value)) {
-            value = tui.util.encodeHTMLEntity(value);
+        if (isTextType && useHtmlEntity && snippet.hasEncodableString(value)) {
+            value = snippet.encodeHTMLEntity(value);
         }
 
         return value;
@@ -333,7 +334,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getRowSpanData: function(columnName, data, isRowSpanEnable) {
-        var rowSpanData = tui.util.pick(data, '_extraData', 'rowSpanData', columnName);
+        var rowSpanData = snippet.pick(data, '_extraData', 'rowSpanData', columnName);
 
         if (!isRowSpanEnable || !rowSpanData) {
             rowSpanData = {
@@ -403,7 +404,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.editing && valueChanged;
-        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
+        var useViewMode = snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
         var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 
         // Silent Cases

@@ -21,7 +21,7 @@ var clipboardUtil;
  * @param {array} data - Data matrix to set value
  * @param {array} colspanRange - colspan range (ex: [start,Index endIndex])
  * @param {array} rowspanRange - rowspan range (ex: [start,Index endIndex])
- * @ignore
+ * @private
  */
 function setDataInSpanRange(value, data, colspanRange, rowspanRange) {
     var startColspan = colspanRange[0];

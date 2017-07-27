@@ -4,7 +4,9 @@
 */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
 var util;
@@ -178,7 +180,7 @@ util = {
             compareObject = function(targetObj, distObj) {
                 var result = false;
 
-                tui.util.forEach(targetObj, function(item, key) {
+                snippet.forEach(targetObj, function(item, key) {
                     result = (item === distObj[key]);
                     return result;
                 });
@@ -220,14 +222,14 @@ util = {
     stripTags: function(htmlString) {
         var matchResult;
         htmlString = htmlString.replace(/[\n\r\t]/g, '');
-        if (tui.util.hasEncodableString(htmlString)) {
+        if (snippet.hasEncodableString(htmlString)) {
             if (/<img/i.test(htmlString)) {
                 matchResult = htmlString.match(/<img[^>]*\ssrc=["']?([^>"']+)["']?[^>]*>/i);
                 htmlString = matchResult ? matchResult[1] : '';
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
-            htmlString = $.trim(tui.util.decodeHTMLEntity(
+            htmlString = $.trim(snippet.decodeHTMLEntity(
                 htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
             ));
         }

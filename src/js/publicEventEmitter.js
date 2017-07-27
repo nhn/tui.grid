@@ -6,6 +6,7 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
+var snippet = require('tui-code-snippet');
 
 /**
  * Class that listens public events (for external user) to the other object and
@@ -15,7 +16,7 @@ var Backbone = require('backbone');
  *            This object should have methods of Backbone.Events.
  * @ignore
  */
-var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitter.prototype */{
+var PublicEventEmitter = snippet.defineClass(/**@lends module:publicEventEmitter.prototype */{
     init: function(publicObject) {
         this.publicObject = publicObject;
     },

@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../../base/model');
 var frameConst = require('../../common/constMap').frame;
@@ -273,7 +275,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     _setColumns: function(rowHeaders, columns, frozenCount) {
         var relationsMap, visibleColumns, dataColumns;
 
-        if (tui.util.isUndefined(frozenCount)) {
+        if (snippet.isUndefined(frozenCount)) {
             frozenCount = this.get('frozenCount');
         }
 

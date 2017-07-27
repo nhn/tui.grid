@@ -1,5 +1,8 @@
 'use strict';
 
+var $ = require('jquery');
+var _ = require('underscore');
+
 var DomState = require('domState');
 var ModelManager = require('model/manager');
 var PainterManager = require('painter/manager');

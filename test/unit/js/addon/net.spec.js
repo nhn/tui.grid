@@ -1,5 +1,8 @@
 'use strict';
 
+var $ = require('jquery');
+
+var Grid = require('grid');
 var Model = require('base/model');
 var formUtil = require('common/formUtil');
 var renderStateMap = require('common/constMap').renderState;
@@ -29,12 +32,12 @@ describe('addon.net', function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/unit/fixtures/addon.net.html');
         $grid = $('#grid');
-        grid = new tui.Grid({
+        grid = new Grid({
             el: $grid,
             columns: columns,
             selectType: 'checkbox'
         });
-        tui.Grid.setLanguage('ko');
+        Grid.setLanguage('ko');
         window.alert = function() {};
         window.confirm = function() {
             return true;

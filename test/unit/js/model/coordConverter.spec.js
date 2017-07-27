@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var DomState = require('domState');
 var DataModel = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');

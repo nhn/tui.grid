@@ -1,5 +1,9 @@
 'use strict';
 
+var $ = require('jquery');
+
+var snippet = require('tui-code-snippet');
+
 var util = require('common/util');
 var formUtil = require('common/formUtil');
 
@@ -28,7 +32,7 @@ describe('core.formUtil', function() {
 
         it('name에 해당하는 input요소들을 배열 형태로 반환한다.', function() {
             var names = ['delivery_number', 'user_name', 'weather'];
-            tui.util.forEachArray(names, function(name) {
+            snippet.forEachArray(names, function(name) {
                 var element = formUtil.getFormElement($form, name);
                 expect(element.length).toBe(1);
                 expect(element[0].name).toBe(name);

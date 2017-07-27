@@ -5,8 +5,8 @@
     ],
     "license": "MIT",
     "main": [
-        "dist/grid.js",
-        "dist/grid.css"
+        "dist/tui-grid.js",
+        "dist/tui-grid.css"
     ],
     "ignore": [
         ".*",
@@ -17,16 +17,17 @@
         "src",
         "test",
         "jsdoc.conf.json",
-        "webpack.config.js",
         "karma.conf.js",
-        "karma.conf.ne.js",
-        "package.json"
+        "package.json",
+        "webpack.config.js",
+        "wdio.conf.js"
     ],
     "dependencies": {
-        "backbone": "1.3.3",
-        "jquery": "1.8.3",
-        "tui-code-snippet": "1.2.1",
-        "tui-component-pagination": "2.1.0",
-        "tui-component-date-picker": "2.1.0"
+        "backbone": "~1.3.3",
+        "jquery": "~1.11.0",
+        "tui-code-snippet": "~1.2.5",
+        "tui-date-picker": "~3.0.0",
+        "tui-pagination": "~3.0.0",
+        "underscore": "~1.8.3"
     }
 }

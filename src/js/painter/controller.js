@@ -4,7 +4,10 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
 var util = require('../common/util');
 
 /**
@@ -13,7 +16,7 @@ var util = require('../common/util');
  * @param {Object} options - options
  * @ignore
  */
-var PainterController = tui.util.defineClass(/**@lends module:painter/controller.prototype */{
+var PainterController = snippet.defineClass(/**@lends module:painter/controller.prototype */{
     init: function(options) {
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
@@ -52,7 +55,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      */
     _checkMaxLength: function(columnName, value) {
         var column = this.columnModel.getColumnModel(columnName);
-        var maxLength = tui.util.pick(column, 'editOptions', 'maxLength');
+        var maxLength = snippet.pick(column, 'editOptions', 'maxLength');
 
         if (maxLength > 0 && value.length > maxLength) {
             return value.substring(0, maxLength);
@@ -166,7 +169,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     setValueIfNotUsingViewMode: function(address, value) {
         var columnModel = this.columnModel.getColumnModel(address.columnName);
 
-        if (!tui.util.pick(columnModel, 'editOptions', 'useViewMode')) {
+        if (!snippet.pick(columnModel, 'editOptions', 'useViewMode')) {
             this.setValue(address, value);
         }
     }

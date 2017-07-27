@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
 var RowList = require('./rowList');
@@ -227,7 +228,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _triggerEditingStateChanged: function(rowKey, columnName) {
         var cellData = this.getCellData(rowKey, columnName);
 
-        if (tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false &&
+        if (snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false &&
             cellData.convertedHTML === null) {
             this.trigger('editingStateChanged', cellData);
         }
@@ -267,7 +268,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @returns {Object} collection  해당 영역의 랜더 데이터 콜랙션
      */
     getCollection: function(whichSide) {
-        return this.get(tui.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
+        return this.get(snippet.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
     },
 
     /**

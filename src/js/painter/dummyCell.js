@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
@@ -17,7 +18,7 @@ var classNameConst = require('../common/classNameConst');
  * @extends module:base/painter
  * @ignore
  */
-var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
+var DummyCell = snippet.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
     init: function() {
         Painter.apply(this, arguments);
     },

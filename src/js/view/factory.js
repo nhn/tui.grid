@@ -5,6 +5,8 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+var DatePicker = require('tui-date-picker');
 
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
@@ -32,7 +34,7 @@ var frameConst = require('../common/constMap').frame;
  * @module viewFactory
  * @ignore
  */
-var ViewFactory = tui.util.defineClass({
+var ViewFactory = snippet.defineClass({
     init: function(options) {
         // dependencies
         this.domState = options.domState;
@@ -294,8 +296,7 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/datePickerLayer}
      */
     createDatePickerLayer: function() {
-        if (!tui.component ||
-            !tui.component.Datepicker) {
+        if (!DatePicker) {
             return null;
         }
 

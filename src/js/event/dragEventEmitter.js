@@ -4,14 +4,17 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
 var GridEvent = require('./gridEvent');
 
 /* Drag event emitter
  * @module event/dragEventEmitter
  * @ignore
  */
-var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmitter.prototype */{
+var DragEventEmitter = snippet.defineClass(/**@lends module:event/dragEventEmitter.prototype */{
     init: function(options) {
         _.assign(this, {
             type: options.type,

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 var Model = require('../base/model');
 var dimensionConstMap = require('../common/constMap').dimension;
 
@@ -205,7 +207,7 @@ var CoordConverter = Model.extend(/**@lends module:model/coordConverter.prototyp
         }
         scrollPosition = this.getScrollPosition(rowKey, columnName);
 
-        if (!tui.util.isEmpty(scrollPosition)) {
+        if (!snippet.isEmpty(scrollPosition)) {
             this.renderModel.set(scrollPosition);
         }
     },

@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var defaultOptionsMap = {
     pagination: null
 };
@@ -13,7 +16,7 @@ var defaultOptionsMap = {
  * @module componentHolder
  * @ignore
  */
-var ComponentHolder = tui.util.defineClass(/**@lends module:componentHolder.prototype */{
+var ComponentHolder = snippet.defineClass(/**@lends module:componentHolder.prototype */{
     init: function(optionsMap) {
         this.optionsMap = $.extend(true, defaultOptionsMap, optionsMap);
         this.instanceMap = {};

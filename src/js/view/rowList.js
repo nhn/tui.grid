@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var View = require('../base/view');
 var constMap = require('../common/constMap');
@@ -294,8 +296,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @memberof RowList
      * @static
      */
-    isInnerHtmlOfTbodyReadOnly: (tui.util.browser.msie &&
-        tui.util.browser.version <= 9) // eslint-disable-line no-magic-numbers
+    isInnerHtmlOfTbodyReadOnly: (snippet.browser.msie &&
+        snippet.browser.version <= 9) // eslint-disable-line no-magic-numbers
 });
 
 module.exports = RowList;

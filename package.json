@@ -1,12 +1,12 @@
 {
   "name": "tui-grid",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
-  "main": "dist/grid.js",
+  "main": "dist/tui-grid.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "test": "karma start karma.conf.js",
-    "test:ne": "karma start karma.conf.ne.js",
+    "test": "karma start --no-single-run",
+    "test:ne": "KARMA_SERVER=ne karma start",
     "test:e2e": "npm run sshot:clean && wdio wdio.conf.js",
     "sshot:clean": "del screenshots/diff screenshots/screen",
     "sshot:cleanRef": "del screenshots/reference",
@@ -15,12 +15,19 @@
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
     "docs": "npm run docs:jsdoc && npm run docs:copy",
     "docs:jsdoc": "jsdoc -c ./jsdoc.conf.json",
-    "docs:copy": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
+    "docs:copy": "cpy dist/tui-grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nhnent/tui.grid"
   },
+  "keywords": [
+    "nhnent",
+    "tui",
+    "application",
+    "grid",
+    "tui-grid"
+  ],
   "author": "NHN Ent. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
@@ -31,6 +38,7 @@
     "del-cli": "^0.2.1",
     "es5-shim": "^4.5.9",
     "eslint": "^3.5.0",
+    "eslint-config-tui": "^1.0.1",
     "eslint-loader": "^1.5.0",
     "express": "^4.12.4",
     "extract-text-webpack-plugin": "^1.0.1",
@@ -41,19 +49,22 @@
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "karma": "1.3.0",
-    "karma-es5-shim": "0.0.4",
     "karma-browserstack-launcher": "^0.1.10",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.1",
+    "karma-es5-shim": "0.0.4",
     "karma-htmlfile-reporter": "^0.2.2",
     "karma-jasmine": "1.0.2",
+    "karma-jasmine-ajax": "^0.1.13",
+    "karma-jquery": "^0.2.2",
     "karma-junit-reporter": "^1.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-simple-reporter": "^2.0.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webdriver-launcher": "git://github.com/nhnent/karma-webdriver-launcher.git",
+    "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git",
     "karma-webpack": "^1.8.0",
     "phantomjs": "^1.9.18",
+    "safe-umd-webpack-plugin": "^0.0.1",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
@@ -68,6 +79,11 @@
     "webpack-dev-server": "^1.16.1"
   },
   "dependencies": {
-    "backbone": "^1.1.2"
+    "backbone": "^1.3.3",
+    "jquery": "^1.11.0",
+    "tui-code-snippet": "^1.2.5",
+    "tui-date-picker": "^3.0.0",
+    "tui-pagination": "^3.0.0",
+    "underscore": "^1.8.3"
   }
 }

@@ -5,6 +5,8 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
 var attrNameConst = require('../common/constMap').attrName;
 
 /**
@@ -16,7 +18,7 @@ var attrNameConst = require('../common/constMap').attrName;
  * @param {Object} options - options
  * @ignore
  */
-var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
+var Painter = snippet.defineClass(/**@lends module:base/painter.prototype */{
     init: function(options) {
         this.controller = options.controller;
     },

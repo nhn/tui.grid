@@ -1,10 +1,12 @@
 /**
- * @fileoverview Layer View class which contains the 'tui-component-date-picker'
+ * @fileoverview Layer View class which contains the 'tui-date-picker'
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var _ = require('underscore');
+
+var DatePicker = require('tui-date-picker');
 
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
@@ -13,7 +15,7 @@ var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 var DatePickerLayer;
 
 /**
- * Layer View class which contains the 'tui-component-date-picker'
+ * Layer View class which contains the 'tui-date-picker'
  * @module view/datePickerLayer
  * @extends module:base/view
  * @param {Object} options - Options
@@ -53,7 +55,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     },
 
     /**
-     * Creates instances map of 'tui-component-date-picker'
+     * Creates instances map of 'tui-date-picker'
      * @returns {Object.<string, DatePicker>}
      * @private
      */
@@ -69,7 +71,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
             if (component && component.name === 'datePicker') {
                 options = component.options || {};
 
-                datePickerMap[name] = new tui.component.Datepicker(this.$el, options);
+                datePickerMap[name] = new DatePicker(this.$el, options);
 
                 this._bindEventOnDatePicker(datePickerMap[name]);
             }

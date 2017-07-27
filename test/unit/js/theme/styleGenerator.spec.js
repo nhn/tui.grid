@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var styleGen = require('theme/styleGenerator');
 var builder = require('theme/cssRuleBuilder');
 var classNameConst = require('common/classNameConst');

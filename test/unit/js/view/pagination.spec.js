@@ -1,5 +1,10 @@
 'use strict';
 
+var $ = require('jquery');
+var _ = require('underscore');
+
+var TuiPaginaton = require('tui-pagination');
+
 var PaginationView = require('view/pagination');
 var ComponentHolder = require('componentHolder');
 var Model = require('base/model');
@@ -31,7 +36,7 @@ describe('[view/pagination] ', function() {
             pagination.render();
             compInstance = pagination.componentHolder.getInstance('pagination');
 
-            expect(compInstance).toEqual(jasmine.any(tui.component.Pagination));
+            expect(compInstance).toEqual(jasmine.any(TuiPaginaton));
         });
 
         it('options in the componentHolder will be used for creating component', function() {
@@ -46,15 +51,6 @@ describe('[view/pagination] ', function() {
 
             expect(compInstance._options.itemsPerPage).toBe(10);
             expect(compInstance._options.centerAlign).toBe(false);
-        });
-
-        it('if tui.compoent.Pagination does not exist, throw an error', function() {
-            var pagination = create({});
-            var renderBound = _.bind(pagination.render, pagination);
-
-            tui.component.Pagination = null;
-
-            expect(renderBound).toThrowError('Cannot find component \'tui.component.Pagination\'');
         });
     });
 });

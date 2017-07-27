@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var RowListModel = require('model/rowList');

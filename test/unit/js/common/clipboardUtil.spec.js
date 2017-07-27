@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var util = require('common/clipboardUtil');
 
 jasmine.getFixtures().fixturesPath = 'base/';

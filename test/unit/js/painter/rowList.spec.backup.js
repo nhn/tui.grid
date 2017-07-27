@@ -2,6 +2,8 @@
 
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var RowListModel = require('model/rowList');
 var RowListView = require('view/rowList');

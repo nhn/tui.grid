@@ -6,6 +6,8 @@
 
 var _ = require('underscore');
 
+var TuiPaginaton = require('tui-pagination');
+
 var View = require('../base/view');
 var defaultOptions = {
     totalItems: 1,
@@ -82,7 +84,7 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
      * @private
      */
     _createComponent: function() {
-        var ComponentClass = tui.util.pick(tui, 'component', 'Pagination');
+        var ComponentClass = TuiPaginaton;
 
         if (!ComponentClass) {
             throw new Error('Cannot find component \'tui.component.Pagination\'');

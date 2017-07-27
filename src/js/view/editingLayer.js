@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
@@ -37,7 +38,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     _startEditing: function(cellData) {
         var rowKey = cellData.rowKey;
         var columnName = cellData.columnName;
-        var editType = tui.util.pick(cellData, 'columnModel', 'editOptions', 'type');
+        var editType = snippet.pick(cellData, 'columnModel', 'editOptions', 'type');
         var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
         var painter = this.inputPainters[editType];
 
@@ -89,7 +90,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _adjustCellOffsetValue: function(offsetValue) {
-        var browser = tui.util.browser;
+        var browser = snippet.browser;
         var result = offsetValue;
 
         if (browser.msie) {

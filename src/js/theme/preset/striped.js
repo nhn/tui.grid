@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var $ = require('jquery');
+
 var presetDefault = require('./default');
 
 module.exports = $.extend(true, {}, presetDefault, {

@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Painter = require('../base/painter');
 var constMap = require('../common/constMap');
@@ -18,7 +19,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * @param {object} options - Options
  * @ignore
  */
-var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prototype */{
+var RowPainter = snippet.defineClass(Painter, /**@lends module:painter/row.prototype */{
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;
@@ -52,7 +53,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _getEditType: function(columnName, cellData) {
-        var editType = tui.util.pick(cellData.columnModel, 'editOptions', 'type');
+        var editType = snippet.pick(cellData.columnModel, 'editOptions', 'type');
 
         return editType || 'normal';
     },

@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 /**
  * @module formUtil
@@ -63,7 +65,7 @@ var formUtil = {
          * @param {String} formValue - Form value
          */
         'select-one': function(targetElement, formValue) {
-            var options = tui.util.toArray(targetElement.options);
+            var options = snippet.toArray(targetElement.options);
 
             targetElement.selectedIndex = _.findIndex(options, function(option) {
                 return option.value === formValue || option.text === formValue;
@@ -77,7 +79,7 @@ var formUtil = {
          * @param {String} formValue - Form value
          */
         'select-multiple': function(targetElement, formValue) {
-            var options = tui.util.toArray(targetElement.options);
+            var options = snippet.toArray(targetElement.options);
 
             if (_.isArray(formValue)) {
                 formValue = this._changeToStringInArray(formValue);
@@ -111,7 +113,7 @@ var formUtil = {
     getFormData: function($form) {
         var result = {},
             valueList = $form.serializeArray(),
-            isExisty = tui.util.isExisty;
+            isExisty = snippet.isExisty;
 
         _.each(valueList, function(obj) {
             var value = obj.value || '',
@@ -181,8 +183,8 @@ var formUtil = {
             formValue = String(formValue);
         }
 
-        $elementList = tui.util.isHTMLTag($elementList) ? [$elementList] : $elementList;
-        $elementList = tui.util.toArray($elementList);
+        $elementList = snippet.isHTMLTag($elementList) ? [$elementList] : $elementList;
+        $elementList = snippet.toArray($elementList);
         _.each($elementList, function(targetElement) {
             type = this.setInput[targetElement.type] ? targetElement.type : 'defaultAction';
             this.setInput[type](targetElement, formValue);

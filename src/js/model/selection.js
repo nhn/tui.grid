@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 
 var Model = require('../base/model');
@@ -809,7 +810,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
          /**
           * Occurs when selecting cells
-          * @event tui.Grid#selection
+          * @event Grid#selection
           * @type {module:event/gridEvent}
           * @property {Object} range - Range of selection
           * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])

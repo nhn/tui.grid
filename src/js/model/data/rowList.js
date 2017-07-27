@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 
 var Collection = require('../../base/collection');
@@ -40,7 +41,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
              * This state is not related to individual state of each rows.
              * @type {Boolean}
              */
-            disabled: false
+            disabled: false,
+            publicObject: options.publicObject
         });
 
         if (!this.sortOptions.useClient) {

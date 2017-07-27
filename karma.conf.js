@@ -1,47 +1,154 @@
+/**
+ * karma.conf.js created on 2017. 07. 21.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var path = require('path');
+var webdriverConfig = {
+    hostname: 'fe.nhnent.com',
+    port: 4444,
+    remoteHost: true
+};
+
+function setConfig(defaultConfig, server) {
+    if (server === 'ne') {
+        defaultConfig.captureTimeout = 100000;
+
+        defaultConfig.customLaunchers = {
+            'IE8': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 8
+            },
+            'IE9': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 9
+            },
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            },
+            'Firefox-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
+            }
+        };
+
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        defaultConfig.browsers = [
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
+        ];
+
+        defaultConfig.webpack.module.preLoaders = [{
+            test: /\.js$/,
+            include: path.resolve('./src/js'),
+            loader: 'istanbul-instrumenter'
+        }];
+
+        // test results reporter to use
+        // possible values: 'dots', 'progress'
+        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+        defaultConfig.reporters = [
+            'dots',
+            'coverage',
+            'junit'
+        ];
+
+        // optionally, configure the reporter
+        defaultConfig.coverageReporter = {
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return 'report-cobertura/' + browser;
+                    },
+                    file: 'cobertura.txt'
+                }
+            ]
+        };
+
+        defaultConfig.junitReporter = {
+            outputDir: 'report/junit',
+            suite: ''
+        };
+    } else {
+        defaultConfig.captureTimeout = 60000;
+
+        defaultConfig.reporters = [
+            'karmaSimpleReporter'
+        ];
+
+        defaultConfig.specReporter = {
+            suppressPassed: true,
+            suppressSkipped: true,
+            suppressErrorSummary: true
+        };
+
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        defaultConfig.browsers = [
+            'Chrome'
+        ];
+    }
+}
 
 module.exports = function(config) {
-    config.set({
+    var defaultConfig = {
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
-        captureTimeout: 60000,
         browserDisconnectTimeout: 60000,
         browserNoActivityTimeout: 60000,
-
-        plugins: [
-            'karma-jasmine',
-            'karma-webpack',
-            'karma-simple-reporter',
-            'karma-sourcemap-loader',
-            'karma-chrome-launcher',
-            'karma-phantomjs-launcher'
-        ],
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: [
-            'jasmine'
+            'jquery-1.8.3',
+            'jasmine-ajax',
+            'jasmine',
+            'es5-shim' // for ie8
         ],
 
         // list of files / patterns to load in the browser
         files: [
-            {pattern: 'lib/jquery/jquery.js', watched: false},
-            {pattern: 'lib/underscore/underscore.js', watched: false},
-            {pattern: 'lib/backbone/backbone.js', watched: false},
-            {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/tui-component-pagination/dist/tui-component-pagination.js', watched: false},
-            {pattern: 'lib/tui-component-date-picker/dist/tui-component-datepicker.js', watched: false},
-
+            // reason for not using karma-jasmine-jquery framework is that including older jasmine-karma file
+            // included jasmine-karma version is 2.0.5 and this version don't support ie8
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
-            {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},
 
             {pattern: 'test/unit/fixtures/*.html', included: false},
             {pattern: 'images/*', included: false},
 
-            'src/js/grid.js',
             'test/unit/js/index.js'
         ],
 
@@ -51,7 +158,6 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/js/grid.js': ['webpack', 'sourcemap'],
             'test/unit/js/index.js': ['webpack', 'sourcemap']
         },
 
@@ -68,26 +174,7 @@ module.exports = function(config) {
                     test: /\.styl$/,
                     loader: 'css-loader!stylus-loader?paths=src/css/'
                 }]
-            },
-            externals: {
-                'jquery': '$',
-                'backbone': 'Backbone',
-                'underscore': '_'
             }
-        },
-
-        webpackMiddleware: {
-            noInfo: true
-        },
-
-        reporters: [
-            'karmaSimpleReporter'
-        ],
-
-        specReporter: {
-            suppressPassed: true,
-            suppressSkipped: true,
-            suppressErrorSummary: true
         },
 
         // web server port
@@ -105,14 +192,12 @@ module.exports = function(config) {
 
         autoWatchBatchDelay: 500,
 
-        // start these browsers
-        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'Chrome'
-        ]
-
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        // singleRun: true
-    });
+        singleRun: true
+    };
+
+    setConfig(defaultConfig, process.env.KARMA_SERVER);
+
+    config.set(defaultConfig);
 };

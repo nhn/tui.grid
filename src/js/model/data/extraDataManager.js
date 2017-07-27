@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
@@ -13,7 +14,7 @@ var _ = require('underscore');
  * @extends module:base/model
  * @ignore
  */
-var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
+var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData.prototype */{
     init: function(data) {
         this.data = data || {};
     },
@@ -128,7 +129,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
         classNameData = this.data.className || {};
         classNameList = classNameData.row || [];
 
-        if (tui.util.inArray(className, classNameList) === -1) {
+        if (snippet.inArray(className, classNameList) === -1) {
             classNameList.push(className);
             classNameData.row = classNameList;
             this.data.className = classNameData;
@@ -177,7 +178,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
     removeCellClassName: function(columnName, className) {
         var classNameData = this.data.className;
 
-        if (tui.util.pick(classNameData, 'column', columnName)) {
+        if (snippet.pick(classNameData, 'column', columnName)) {
             classNameData.column[columnName] =
                 this._removeClassNameFromArray(classNameData.column[columnName], className);
             this.data.className = classNameData;

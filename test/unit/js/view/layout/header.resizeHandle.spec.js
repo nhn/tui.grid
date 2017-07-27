@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var Collection = require('base/collection');
 var ColumnModel = require('model/data/columnModel');
 var DimensionModel = require('model/dimension');

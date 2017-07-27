@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var attrNameConst = require('./common/constMap').attrName;
 var classNameConst = require('./common/classNameConst');
@@ -15,7 +16,7 @@ var classNameConst = require('./common/classNameConst');
  * @param {jQuery} $el - jQuery object of the container element.
  * @ignore
  */
-var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
+var DomState = snippet.defineClass(/**@lends module:domState.prototype */{
     init: function($el) {
         this.$el = $el;
     },

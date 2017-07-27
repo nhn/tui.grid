@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var $ = require('jquery');
+
 var View = require('../base/view');
 var GridEvent = require('../event/gridEvent');
 var targetTypeConst = GridEvent.targetTypeConst;
@@ -105,7 +107,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         /**
          * Occurs when a mouse button is clicked on the Grid.
          * The properties of the event object include the native event object.
-         * @event tui.Grid#click
+         * @event Grid#click
          * @type {module:event/gridEvent}
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
@@ -132,7 +134,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         /**
          * Occurs when a mouse button is double clicked on the Grid.
          * The properties of the event object include the native event object.
-         * @event tui.Grid#dblclick
+         * @event Grid#dblclick
          * @type {module:event/gridEvent}
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
@@ -159,7 +161,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         /**
          * Occurs when a mouse pointer is moved onto the Grid.
          * The properties of the event object include the native MouseEvent object.
-         * @event tui.Grid#mouseover
+         * @event Grid#mouseover
          * @type {module:event/gridEvent}
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
@@ -182,7 +184,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         /**
          * Occurs when a mouse pointer is moved off from the Grid.
          * The event object has all properties copied from the native MouseEvent.
-         * @event tui.Grid#mouseout
+         * @event Grid#mouseout
          * @type {module:event/gridEvent}
          * @property {jQueryEvent} nativeEvent - Event object
          * @property {string} targetType - Type of event target
@@ -213,7 +215,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             /**
              * Occurs when a mouse button is downed on the Grid.
              * The event object has all properties copied from the native MouseEvent.
-             * @event tui.Grid#mousedown
+             * @event Grid#mousedown
              * @type {module:event/gridEvent}
              * @property {jQueryEvent} nativeEvent - Event object
              * @property {string} targetType - Type of event target

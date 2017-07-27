@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var keyEvent = require('event/keyEvent');
 
 describe('event.keyEvent', function() {

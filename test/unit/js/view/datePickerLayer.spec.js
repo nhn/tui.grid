@@ -1,5 +1,10 @@
 'use strict';
 
+var $ = require('jquery');
+var _ = require('underscore');
+
+var DatePicker = require('tui-date-picker');
+
 var DatePickerLayer = require('view/datePickerLayer');
 var classNameConst = require('common/classNameConst');
 var ColumnModel = require('model/data/columnModel');
@@ -65,7 +70,7 @@ describe('[DatePickerLayer] ', function() {
     });
 
     it('creates datepickers instance when initializing', function() {
-        expect(layer.datePickerMap.c1).toEqual(jasmine.any(tui.component.Datepicker));
+        expect(layer.datePickerMap.c1).toEqual(jasmine.any(DatePicker));
     });
 
     describe('when \'focusIn\' event occur on the text-painter ', function() {

@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var util = require('../common/util');
 var attrNameConst = require('../common/constMap').attrName;
@@ -21,7 +22,7 @@ var targetTypeConst = {
  * @module event/gridEvent
  * @param {Object} data - Event data for handler
  */
-var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype */{
+var GridEvent = snippet.defineClass(/**@lends module:event/gridEvent.prototype */{
     init: function(nativeEvent, data) {
         this._stopped = false;
         if (nativeEvent) {

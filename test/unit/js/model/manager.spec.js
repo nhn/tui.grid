@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');

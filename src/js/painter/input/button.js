@@ -4,7 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var InputPainter = require('./base');
 var util = require('../../common/util');
@@ -16,7 +18,7 @@ var util = require('../../common/util');
  * @param {Object} options - options
  * @ignore
  */
-var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
+var ButtonPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
     init: function(options) {
         InputPainter.apply(this, arguments);
 

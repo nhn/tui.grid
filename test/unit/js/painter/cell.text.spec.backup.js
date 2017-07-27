@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var TextPainter = require('painter/cell/text');
 var ConvertiblePainter = require('painter/cell/text-convertible');

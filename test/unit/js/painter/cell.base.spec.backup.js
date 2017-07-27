@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var CellPainter = require('painter/cell');
 var constMap = require('common/constMap');

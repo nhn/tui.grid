@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 /**
  * create css rule string and returns it
@@ -14,7 +15,7 @@ var _ = require('underscore');
  * @param {String} value - css value
  * @ignore
  */
-var CSSRuleBuilder = tui.util.defineClass({
+var CSSRuleBuilder = snippet.defineClass({
     init: function(selector) {
         if (!_.isString(selector) || !selector) {
             throw new Error('The Selector must be a string and not be empty.');

@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
 var util = require('../common/util');
@@ -470,7 +471,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         if (posX >= totalColumnWidth) {
             columnIndex = widths.length - 1;
         } else {
-            tui.util.forEachArray(widths, function(width, index) { // eslint-disable-line consistent-return
+            snippet.forEachArray(widths, function(width, index) { // eslint-disable-line consistent-return
                 width += CELL_BORDER_WIDTH;
                 columnIndex = index;
 

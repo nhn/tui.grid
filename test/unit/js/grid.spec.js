@@ -2,6 +2,8 @@
 
 var _ = require('underscore');
 
+var Grid = require('grid');
+
 describe('grid', function() {
     function createGrid(columnNames, options) {
         var columns = [];
@@ -15,7 +17,7 @@ describe('grid', function() {
             columns: columns
         }, options);
 
-        return new tui.Grid(options);
+        return new Grid(options);
     }
 
     describe('dataModel delegations', function() {
@@ -55,7 +57,7 @@ describe('grid', function() {
             grid.setData([
                 {}, {}, {}, {}
             ]);
-            tui.Grid.setLanguage('ko');
+            Grid.setLanguage('ko');
         });
 
         it('getCheckedRows', function() {

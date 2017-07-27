@@ -4,8 +4,10 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
+var snippet = require('tui-code-snippet');
 
 var Painter = require('../../base/painter');
 var keyNameMap = require('../../common/constMap').keyName;
@@ -17,7 +19,7 @@ var keyNameMap = require('../../common/constMap').keyName;
  * @param {Object} options - options
  * @ignore
  */
-var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
+var InputPainter = snippet.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
     init: function() {
         Painter.apply(this, arguments);
 
@@ -178,7 +180,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _isUsingViewMode: function(cellData) {
-        return tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
+        return snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
     },
 
     /**

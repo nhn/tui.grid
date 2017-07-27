@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
@@ -18,7 +19,7 @@ var classNameConst = require('../common/classNameConst');
  * @param {Object} options - options
  * @ignore
  */
-var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
+var Cell = snippet.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     init: function(options) {
         Painter.apply(this, arguments);
 
@@ -121,7 +122,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _isUsingViewMode: function(cellData) {
-        return tui.util.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
+        return snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
     },
 
     /**
@@ -141,7 +142,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getSpanWrapContent: function(content, className) {
-        if (tui.util.isFalsy(content)) {
+        if (snippet.isFalsy(content)) {
             content = '';
         }
 

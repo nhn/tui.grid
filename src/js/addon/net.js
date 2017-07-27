@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var $ = require('jquery');
 var Backbone = require('backbone');
 var _ = require('underscore');
 
@@ -671,7 +672,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs before the http request is sent
-         * @event tui.Grid#beforeRequest
+         * @event Grid#beforeRequest
          * @type {module:event/gridEvent}
          * @property {Grid} instance - Current grid instance
          */
@@ -726,7 +727,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs when the response is received from the server
-         * @event tui.Grid#reponse
+         * @event Grid#reponse
          * @type {module:event/gridEvent}
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type
@@ -741,7 +742,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (responseData && responseData.result) {
             /**
              * Occurs after the response event, if the result is true
-             * @event tui.Grid#successReponse
+             * @event Grid#successReponse
              * @type {module:event/gridEvent}
              * @property {number} httpStatus - HTTP status
              * @property {string} requestType - Request type
@@ -759,7 +760,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         } else {
             /**
              * Occurs after the response event, if the result is false
-             * @event tui.Grid#failResponse
+             * @event Grid#failResponse
              * @type {module:event/gridEvent}
              * @property {number} httpStatus - HTTP status
              * @property {string} requestType - Request type
@@ -802,7 +803,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs after the response event, if the response is Error
-         * @event tui.Grid#errorResponse
+         * @event Grid#errorResponse
          * @type {module:event/gridEvent}
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type

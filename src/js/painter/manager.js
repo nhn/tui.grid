@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
@@ -20,7 +21,7 @@ var MainButtonPainter = require('./input/mainButton');
  * @param {Object} options - Options
  * @ignore
  */
-var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
+var PainterManager = snippet.defineClass(/**@lends module:painter/manager.prototype */{
     init: function(options) {
         this.gridId = options.gridId;
         this.selectType = options.selectType;

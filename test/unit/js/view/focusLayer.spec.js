@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var FocusLayer = require('view/focusLayer');

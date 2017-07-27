@@ -1,5 +1,8 @@
 'use strict';
 
+var $ = require('jquery');
+var _ = require('underscore');
+
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var Frame = require('view/layout/frame');

@@ -4,6 +4,7 @@
 */
 'use strict';
 
+var $ = require('jquery');
 var util = require('../common/util');
 var styleGen = require('./styleGenerator');
 var themeNameConst = require('../common/constMap').themeName;

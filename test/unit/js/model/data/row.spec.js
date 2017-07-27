@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 
+var Grid = require('grid');
 var RowData = require('model/data/row');
 var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
@@ -233,7 +234,7 @@ describe('RowData', function() {
         beforeEach(function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
-            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
+            spyOn(Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [
                 {
                     name: 'c1'
@@ -265,7 +266,8 @@ describe('RowData', function() {
                 parse: true,
                 collection: {
                     columnModel: columnModel,
-                    syncRowSpannedData: function() {}
+                    syncRowSpannedData: function() {},
+                    publicObject: gridInstance
                 }
             });
         });
@@ -297,7 +299,6 @@ describe('RowData', function() {
         beforeEach(function() {
             var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
-            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
             columnModel.set('columns', [{
                 name: 'c1',
                 onAfterChange: callbackSpy
@@ -309,7 +310,8 @@ describe('RowData', function() {
                 parse: true,
                 collection: {
                     columnModel: columnModel,
-                    syncRowSpannedData: function() {}
+                    syncRowSpannedData: function() {},
+                    publicObject: gridInstance
                 }
             });
         });

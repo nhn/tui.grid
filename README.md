@@ -23,42 +23,79 @@ The Toast UI Grid is a powerful widget which allows you to visualize and edit da
 
 <br>
 The video below shows the major features of Toast UI Grid briefly.<br>
-*(Click the image to play!)*
+(Click the image to play!)
 
 [![screen shot 2016-03-07 at 5 25 01 pm](https://cloud.githubusercontent.com/assets/12269489/13564023/c0fe3bf0-e489-11e5-924b-265118c40c76.png)](https://www.youtube.com/watch?v=pyPlOFhexQk)
 
 Check more detailed explanation on https://github.com/nhnent/tui.grid/wiki.
 
 ## Documentation
-* **API** : https://nhnent.github.io/tui.grid/api
-* **Tutorial** : https://github.com/nhnent/tui.grid/wiki/Getting-Started
-* **Example** : https://nhnent.github.io/tui.grid/api/tutorial-example01.html
+* **API** : [https://nhnent.github.io/tui.grid/api](https://nhnent.github.io/tui.grid/api)
+* **Tutorial** : [https://github.com/nhnent/tui.grid/wiki/Getting-Started](https://github.com/nhnent/tui.grid/wiki/Getting-Started)
+* **Example** : [https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html](https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.grid/releases).
 
-## Dependency
-* jquery ~1.8.3
-* underscore >=1.5.0
+## Dependencies
+* jquery ~1.11.0
+* underscore ~1.8.3
 * backbone ~1.3.3
-* tui-code-snippet ~1.2.0
+* tui-code-snippet ~1.2.5
 * component (optional)
-  * tui-component-pagination ~2.1.0
-  * tui-component-date-picker ~2.1.0
+  * tui-pagination ~3.0.0
+  * tui-date-picker ~3.0.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
-
 
 ## Browser Support
 * IE8~11
 * Chrome
 * Firefox
 
-## Download/Install
-* Bower
-   * Latest version: `bower install tui-grid`
-   * Specific version: `bower install tui-grid#[tagName]`
-* Download
-   * https://github.com/nhnent/tui.grid/tree/master/dist
+## Usage
+### Use `npm`
+
+Install the latest version using `npm` command:
+
+```
+$ npm install tui-grid --save
+```
+
+or want to install the each version:
+
+```
+$ npm install tui-grid@<tag> --save
+```
+
+To access as module format in your code:
+
+```javascript
+var Grid = require('tui-grid');
+var instance = new Grid(...);
+```
+
+### Use `bower`
+Install the latest version using `bower` command:
+
+```
+$ bower install tui-grid
+```
+
+or want to install the each version:
+
+```
+$ bower install tui-grid#<tag>
+```
+
+To access as namespace format in your code:
+
+```javascript
+var instance = new tui.Grid(...);
+```
+
+### Download
+* [Download bundle files from `dist` folder.](https://github.com/nhnent/tui.grid/tree/production/dist)
+* [Download all sources for each version.](https://github.com/nhnent/tui.grid/releases)
 
 ## License
 This software is licensed under the [MIT License](https://github.com/nhnent/tui.grid/blob/master/LICENSE).

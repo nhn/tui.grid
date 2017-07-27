@@ -6,6 +6,7 @@
 
 var _ = require('underscore');
 var Backbone = require('backbone');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
@@ -117,7 +118,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (checked) {
             /**
              * Occurs when a checkbox in row header is checked
-             * @event tui.Grid#check
+             * @event Grid#check
              * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the checked row
              * @property {Grid} instance - Current grid instance
@@ -126,7 +127,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         } else {
             /**
              * Occurs when a checkbox in row header is unchecked
-             * @event tui.Grid#uncheck
+             * @event Grid#uncheck
              * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the unchecked row
              * @property {Grid} instance - Current grid instance
@@ -221,13 +222,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _createChangeCallbackEvent: function(columnName, columnValue) {
-        var gridId = this.collection.gridId;
-
         return new GridEvent(null, {
             rowKey: this.get('rowKey'),
             columnName: columnName,
             value: columnValue,
-            instance: tui.Grid.getInstanceById(gridId)
+            instance: this.collection.publicObject
         });
     },
 
@@ -495,7 +494,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var columnModel = this.columnModel.getColumnModel(columnName);
         var resultListItems, editOptionList, typeExpected, valueList;
 
-        if (tui.util.isExisty(tui.util.pick(columnModel, 'editOptions', 'listItems'))) {
+        if (snippet.isExisty(snippet.pick(columnModel, 'editOptions', 'listItems'))) {
             resultListItems = this.executeRelationCallbacksAll(['listItems'])[columnName];
             editOptionList = resultListItems && resultListItems.listItems ?
                     resultListItems.listItems : columnModel.editOptions.listItems;
@@ -557,7 +556,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var value = this.get(columnName);
 
         if (this._isListType(editType)) {
-            if (tui.util.isExisty(tui.util.pick(column, 'editOptions', 'listItems', 0, 'value'))) {
+            if (snippet.isExisty(snippet.pick(column, 'editOptions', 'listItems', 0, 'value'))) {
                 value = this._getListTypeVisibleText(columnName);
             } else {
                 throw new Error('Check "' + columnName +
