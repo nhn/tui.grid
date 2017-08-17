@@ -202,8 +202,8 @@ describe('model/focus', function() {
             });
             focusModel.blur();
             expect(focusModel.which()).toEqual({
-                rowKey: 1,
-                columnName: 'c1'
+                rowKey: null,
+                columnName: null
             });
         });
     });
@@ -265,7 +265,7 @@ describe('model/focus', function() {
             expect(focusModel.has()).toBe(true);
 
             focusModel.blur();
-            expect(focusModel.has()).toBe(true);
+            expect(focusModel.has()).toBe(false);
         });
 
         it('If called with true and focused cell is not valid, return false', function() {

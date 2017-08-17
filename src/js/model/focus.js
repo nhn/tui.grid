@@ -405,6 +405,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.trigger('blur', this.get('rowKey'), this.get('columnName'));
 
+        this.set({
+            rowKey: null,
+            columnName: null
+        });
+
         return this;
     },
 
