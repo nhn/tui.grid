@@ -78,8 +78,10 @@ function develop() {
     return {
         entry: ENTRY_PATH,
         output: {
+            library: ['tui', 'Grid'],
+            libraryTarget: 'umd',
             publicPath: '/dist/',
-            filename: 'index.js'
+            filename: FILENAME + '.js'
         },
         plugins: [
             new ExtractTextPlugin('grid.css')
