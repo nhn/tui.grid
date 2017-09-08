@@ -9,6 +9,7 @@ var snippet = require('tui-code-snippet');
 
 var Painter = require('../base/painter');
 var constMap = require('../common/constMap');
+var classNameConst = require('../common/classNameConst');
 var attrNameConst = constMap.attrName;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -109,7 +110,7 @@ var RowPainter = snippet.defineClass(Painter, /**@lends module:painter/row.proto
     generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey');
         var rowNum = model.get('rowNum');
-        var className = '';
+        var className = (rowNum % 2) ? classNameConst.ROW_ODD : classNameConst.ROW_EVEN;
         var rowKeyAttr = '';
         var html;
 

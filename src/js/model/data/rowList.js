@@ -448,7 +448,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
-        this.trigger('remove');
+        this.trigger('remove', rowKey);
     },
 
     /**

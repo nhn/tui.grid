@@ -157,8 +157,15 @@ var PainterController = snippet.defineClass(/**@lends module:painter/controller.
         if (columnModel.dataType === 'number') {
             value = convertToNumber(value);
         }
-
-        this.dataModel.setValue(address.rowKey, address.columnName, value);
+        if (columnModel.name === '_button') {
+            if (value) {
+                this.dataModel.check(address.rowKey);
+            } else {
+                this.dataModel.uncheck(address.rowKey);
+            }
+        } else {
+            this.dataModel.setValue(address.rowKey, address.columnName, value);
+        }
     },
 
     /**

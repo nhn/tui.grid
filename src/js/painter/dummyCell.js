@@ -51,8 +51,7 @@ var DummyCell = snippet.defineClass(Painter, /**@lends module:painter/dummyCell.
     generateHtml: function(rowNum, columnName) {
         var classNames = [
             classNameConst.CELL,
-            classNameConst.CELL_DUMMY,
-            (rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+            classNameConst.CELL_DUMMY
         ];
 
         if (util.isMetaColumn(columnName)) {

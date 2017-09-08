@@ -43,14 +43,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         lside = new RowList([], rowListOptions);
         rside = new RowList([], rowListOptions);
+
         this.set({
             lside: lside,
-            rside: rside
+            rside: rside,
+            partialLside: new RowList([], rowListOptions),
+            partialRside: new RowList([], rowListOptions)
         });
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
-            .listenTo(this.dataModel, 'add', this._onAddDataModel)
+            .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'delRange', this._onRangeDataModelChange)
+            .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
+            .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(lside, 'valueChange', this._executeRelation)
@@ -91,7 +96,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         emptyMessage: null,
 
         // constMap.renderState
-        state: renderStateMap.DONE
+        state: renderStateMap.DONE,
+
+        partialLside: null,
+        partialRside: null
     },
 
     /**
@@ -106,6 +114,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * Event handler for changing startIndex or endIndex.
      * @param {Object} model - Renderer model fired event
+     * @private
      */
     _onChangeIndex: function(model) {
         var changedData = model.changed;
@@ -268,7 +277,18 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @returns {Object} collection  해당 영역의 랜더 데이터 콜랙션
      */
     getCollection: function(whichSide) {
-        return this.get(snippet.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
+        var attrName = this._getPartialWhichSideType(whichSide);
+        return this.get(attrName);
+    },
+
+    /**
+     * Get string of partial which side type
+     * @param {string} whichSide - Type of which side (L|R)
+     * @returns {string} String of appened prefix value 'partial'
+     * @private
+     */
+    _getPartialWhichSideType: function(whichSide) {
+        return snippet.isString(whichSide) ? 'partial' + whichSide + 'side' : 'partialRside';
     },
 
     /**
@@ -280,6 +300,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this._setRenderingRange(true);
 
         this.refresh({
+            change: false,
             columnModelChanged: true
         });
     },
@@ -288,7 +309,74 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Event handler for changing data list
      * @private
      */
-    _onDataListChange: function() {
+    _onDataModelChange: function() {
+        _.each(['lside', 'rside'], function(attrName) {
+            this.get(attrName).reset();
+        }, this);
+
+        this._setRenderingRange(true);
+
+        this.refresh({
+            type: 'reset',
+            dataListChanged: true
+        });
+    },
+
+    /**
+     * Event handler for adding data list
+     * @param {array} modelList - List of added item
+     * @param {object} options - Info of added item
+     * @private
+     */
+    _onAddDataModelChange: function(modelList, options) {
+        var viewModelList = this.get('lside').length ? this.get('lside') : this.get('rside');
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var at = options.at;
+        var height, viewData, rowNum;
+
+        if (at > viewModelList.length - 1) {
+            return;
+        }
+
+        // the type of modelList is array or collection
+        modelList = _.isArray(modelList) ? modelList : modelList.models;
+
+        _.each(modelList, function(model, index) {
+            height = this.coordRowModel.getHeightAt(index);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                rowNum = at + index + 1;
+                viewData = this._createViewDataFromDataModel(
+                    model, columnNamesMap[attrName], height, rowNum);
+
+                this.get(attrName).add([viewData], {
+                    parse: true,
+                    at: at + index
+                });
+            }, this);
+        }, this);
+
+        this.refresh({
+            type: 'add',
+            dataListChanged: true
+        });
+
+        if (options.focus) {
+            this.focusModel.focusAt(options.at, 0);
+        }
+    },
+
+    /**
+     * Event handler for removing data list
+     * @param {number|string} rowKey - rowKey of the removed row
+     * @private
+     */
+    _onRemoveDataModelChange: function(rowKey) {
+        _.each(['lside', 'rside'], function(attrName) {
+            var collection = this.get(attrName);
+            collection.remove(collection.get(rowKey));
+        }, this);
+
         this._setRenderingRange(true);
 
         this.refresh({
@@ -297,15 +385,38 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'add' event on dataModel.
-     * @param  {module:model/data/rowList} dataModel - data model
-     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+     * Event handler for deleting cell data
+     * @param {array} rowKeys - List of row key
+     * @param {array} columnNames - List of colum name
      * @private
      */
-    _onAddDataModel: function(dataModel, options) {
-        if (options.focus) {
-            this.focusModel.focusAt(options.at, 0);
-        }
+    _onRangeDataModelChange: function(rowKeys, columnNames) {
+        var columnModel = this.columnModel;
+
+        this._setRenderingRange(true);
+
+        _.each(['partialLside', 'partialRside'], function(attrName) {
+            _.each(this.get(attrName).models, function(model) {
+                var rowKey = model.get('rowKey');
+                var changedRow = _.contains(rowKeys, rowKey);
+
+                if (changedRow) {
+                    _.each(columnNames, function(columnName) {
+                        if (columnModel.getColumnModel(columnName).editOptions) {
+                            this._updateCellData(rowKey, columnName, {
+                                value: '',
+                                formattedValue: ''
+                            });
+                        }
+                    }, this);
+                }
+            }, this);
+        }, this);
+
+        this.refresh({
+            type: 'delRange',
+            dataListChanged: true
+        });
     },
 
     /**
@@ -345,8 +456,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
-            height: height,
             rowNum: rowNum,
+            height: height,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
@@ -380,43 +491,103 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Resets specified view model list.
-     * @param  {String} attrName - 'lside' or 'rside'
-     * @param  {Object} viewData - Converted data for rendering view
+     * Add view model list by range
+     * @param {number} startIndex - Index of start row
+     * @param {number} endIndex - Index of end row
      * @private
      */
-    _resetViewModelList: function(attrName, viewData) {
-        this.get(attrName).clear().reset(viewData, {
-            parse: true
-        });
+    _addViewModelListWithRange: function(startIndex, endIndex) {
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var rowDataModel, height, index;
+
+        if (startIndex >= 0 && endIndex >= 0) {
+            for (index = startIndex; index <= endIndex; index += 1) {
+                rowDataModel = this.dataModel.at(index);
+                height = this.coordRowModel.getHeightAt(index);
+
+                this._addViewModelList(rowDataModel, columnNamesMap, height, index);
+            }
+        }
     },
 
     /**
-     * Resets both sides(lside, rside) of view model list with given range of data model list.
-     * @param  {Number} startIndex - Start index
-     * @param  {Number} endIndex - End index
+     * Add view model list on each side
+     * @param {object} rowDataModel - Data model of row
+     * @param {object} columnNamesMap - Map of column names
+     * @param {number} height - Height of row
+     * @param {number} index - Index of row
      * @private
      */
-    _resetAllViewModelListWithRange: function(startIndex, endIndex) {
-        var columnNamesMap = this._getColumnNamesOfEachSide();
-        var rowNum = this.get('startNumber') + startIndex;
-        var lsideData = [];
-        var rsideData = [];
-        var rowDataModel, height, i;
+    _addViewModelList: function(rowDataModel, columnNamesMap, height, index) {
+        _.each(['lside', 'rside'], function(attrName) {
+            var rowKey = rowDataModel.get('rowKey');
+            var viewData;
 
-        if (startIndex >= 0 && endIndex >= 0) {
-            for (i = startIndex; i <= endIndex; i += 1) {
-                rowDataModel = this.dataModel.at(i);
-                height = this.coordRowModel.getHeightAt(i);
+            if (!this.get(attrName).get(rowKey)) {
+                viewData = this._createViewDataFromDataModel(
+                    rowDataModel, columnNamesMap[attrName], height, index + 1);
 
-                lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-                rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
-                rowNum += 1;
+                this.get(attrName).add([viewData], {
+                    parse: true,
+                    at: index
+                });
+            }
+        }, this);
+    },
+
+    /**
+     * Update the row number
+     * @param {number} startIndex - Start index
+     * @param {number} endIndex - End index
+     * @private
+     */
+    _updateRowNumber: function(startIndex, endIndex) {
+        var collection = this.get('lside');
+        var index = startIndex;
+        var currentModel, rowNum, newRowNum;
+
+        for (; index <= endIndex; index += 1) {
+            currentModel = collection.at(index);
+            newRowNum = index + 1;
+
+            if (currentModel) {
+                rowNum = currentModel.get('rowNum');
+                newRowNum = index + 1;
+
+                if (rowNum !== newRowNum) {
+                    currentModel.set({
+                        rowNum: newRowNum
+                    }, {
+                        silent: true
+                    });
+
+                    currentModel.setCell('_number', {
+                        formattedValue: newRowNum,
+                        value: newRowNum
+                    });
+                }
             }
         }
+    },
 
-        this._resetViewModelList('lside', lsideData);
-        this._resetViewModelList('rside', rsideData);
+    /**
+     * Reset partial view model list
+     * @param {number} startIndex - Index of start row
+     * @param {number} endIndex - Index of end row
+     * @private
+     */
+    _resetPartialViewModelList: function(startIndex, endIndex) {
+        var originalWhichSide, partialWhichSide;
+        var viewModelList, patialViewModelList;
+
+        _.each(['L', 'R'], function(whichSide) {
+            originalWhichSide = whichSide.toLowerCase() + 'side';
+            partialWhichSide = this._getPartialWhichSideType(whichSide);
+            viewModelList = this.get(originalWhichSide);
+            patialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+
+            this.get(partialWhichSide).reset(patialViewModelList);
+        }, this);
     },
 
     /**
@@ -489,19 +660,30 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {Object} options - options
-     * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
-     * @param {Boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
+     * @param {object} options - options
+     * @param {boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
+     * @param {boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
+     * @param {string} [options.type] - Event type (reset|add|remove)
      */
+    /* eslint-disable complexity */
     refresh: function(options) {
         var columnModelChanged = !!options && options.columnModelChanged;
         var dataListChanged = !!options && options.dataListChanged;
+        var eventType = !!options && options.type;
         var startIndex, endIndex, i;
 
         startIndex = this.get('startIndex');
         endIndex = this.get('endIndex');
 
-        this._resetAllViewModelListWithRange(startIndex, endIndex);
+        if (eventType !== 'add' && eventType !== 'delRange') {
+            this._addViewModelListWithRange(startIndex, endIndex);
+        }
+
+        if (eventType !== 'delRange') {
+            this._updateRowNumber(startIndex, endIndex);
+        }
+
+        this._resetPartialViewModelList(startIndex, endIndex);
         this._fillDummyRows();
 
         if (startIndex >= 0 && endIndex >= 0) {
@@ -520,6 +702,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         }
         this._refreshState();
     },
+    /* eslint-enable complexity */
 
     /**
      * Set state value based on the DataModel.length

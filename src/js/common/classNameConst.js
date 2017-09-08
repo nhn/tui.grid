@@ -77,6 +77,10 @@ var classNames = {
     // table
     TABLE: 'table',
 
+    // row style
+    ROW_ODD: 'row-odd',
+    ROW_EVEN: 'row-even',
+
     // cell style
     CELL: 'cell',
     CELL_HEAD: 'cell-head',

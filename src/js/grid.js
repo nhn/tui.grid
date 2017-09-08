@@ -184,7 +184,6 @@ var Grid = View.extend(/** @lends Grid.prototype */{
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
 
-        this.setData(options.data);
         this.container.render();
         this.refreshLayout();
 
@@ -195,6 +194,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
         this.addOn = {};
 
         instanceMap[this.id] = this;
+
+        if (options.data) {
+            this.setData(options.data);
+        }
     },
 
     /**

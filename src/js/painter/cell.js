@@ -158,8 +158,7 @@ var Cell = snippet.defineClass(Painter, /**@lends module:painter/cell.prototype 
     _getAttributes: function(cellData) {
         var classNames = [
             cellData.className,
-            classNameConst.CELL,
-            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+            classNameConst.CELL
         ];
         var attrs = {
             'align': cellData.columnModel.align || 'left'

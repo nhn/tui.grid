@@ -168,7 +168,7 @@ module.exports = {
      * @returns {String}
      */
     cellEvenRow: function(options) {
-        return classRule(classNameConst.CELL_ROW_EVEN)
+        return classRule(classNameConst.ROW_EVEN + '>td')
             .bg(options.background)
             .build();
     },
@@ -179,7 +179,7 @@ module.exports = {
      * @returns {String}
      */
     cellOddRow: function(options) {
-        return classRule(classNameConst.CELL_ROW_ODD)
+        return classRule(classNameConst.ROW_ODD + '>td')
             .bg(options.background)
             .build();
     },
