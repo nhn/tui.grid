@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: view/layout/frame-rside.js | Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-formatter.html">2. Formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-formatter_sub"></div></li><li><a href="tutorial-example03-complex-columns.html">3. Complex columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-complex-columns_sub"></div></li><li><a href="tutorial-example04-input-types.html">4. Input types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-input-types_sub"></div></li><li><a href="tutorial-example05-relation-columns.html">5. Relation between columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-relation-columns_sub"></div></li><li><a href="tutorial-example06-using-extradata.html">6. Using _extraData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-using-extradata_sub"></div></li><li><a href="tutorial-example07-applying-themes.html">7. Applying Themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-applying-themes_sub"></div></li><li><a href="tutorial-example08-using-datepicker.html">8. Using DatePicker component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-using-datepicker_sub"></div></li><li><a href="tutorial-example09-footer-summary.html">9. Footer and Summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-footer-summary_sub"></div></li><li><a href="tutorial-example10-using-net.html">10. Binding to remote data using net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-using-net_sub"></div></li><li><a href="tutorial-example11-customizing-rowheaders.html">11. Customizing Row headers</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-example12-using-whitespace.html">11. Using whiteSpace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-using-whitespace_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li><li><a href="module-event_gridEvent.html">event/gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:event/gridEvent_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-event_gridEvent.html#stop">stop</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Right Side Frame
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var $ = require('jquery');
+var _ = require('underscore');
+
+var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
+var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+
+/**
+ * right side frame class
+ * @module view/layout/frame-rside
+ * @extends module:view/layout/frame
+ * @ignore
+ */
+var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
+    initialize: function() {
+        Frame.prototype.initialize.apply(this, arguments);
+
+        _.assign(this, {
+            whichSide: frameConst.R,
+            $scrollBorder: null
+        });
+        this.listenTo(this.dimensionModel, 'change:lsideWidth change:rsideWidth', this._onFrameWidthChanged);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight change:headerHeight',
+            this._resetScrollBorderHeight);
+    },
+
+    className: classNameConst.RSIDE_AREA,
+
+    /**
+     * Event handler for 'change:rsideWidth' event on dimensionModel
+     * @private
+     * @override
+     */
+    _onFrameWidthChanged: function() {
+        this._refreshLayout();
+    },
+
+    /**
+     * Refresh layout
+     * @private
+     */
+    _refreshLayout: function() {
+        var dimensionModel = this.dimensionModel;
+        var width = dimensionModel.get('rsideWidth');
+        var marginLeft = dimensionModel.get('lsideWidth');
+
+        // If the left side exists and the division border should not be doubled,
+        // left side should cover the right side by border-width to hide the left border of the right side.
+        if (marginLeft > 0 &amp;&amp; !dimensionModel.isDivisionBorderDoubled()) {
+            width += CELL_BORDER_WIDTH;
+            marginLeft -= CELL_BORDER_WIDTH;
+        }
+
+        this.$el.css({
+            width: width,
+            marginLeft: marginLeft
+        });
+    },
+
+    /**
+     * Resets the height of a vertical scroll-bar border
+     * @private
+     */
+    _resetScrollBorderHeight: function() {
+        var dimensionModel, height;
+
+        if (this.$scrollBorder) {
+            dimensionModel = this.dimensionModel;
+            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+            this.$scrollBorder.height(height);
+        }
+    },
+
+    /**
+     * To be called at the beginning of the 'render' method.
+     * @override
+     */
+    beforeRender: function() {
+        this.$el.css('display', 'block');
+        this._refreshLayout();
+    },
+
+    /**
+     * To be called at the end of the 'render' method.
+     * @override
+     */
+    afterRender: function() {
+        var dimensionModel = this.dimensionModel;
+        var headerHeight, footerHeight;
+        var $space, $scrollBorder;
+
+        if (!dimensionModel.get('scrollY')) {
+            return;
+        }
+        headerHeight = dimensionModel.get('headerHeight');
+        footerHeight = dimensionModel.get('footerHeight');
+
+        // Empty DIV for hiding scrollbar in the header area
+        $space = $('&lt;div />').addClass(classNameConst.SCROLLBAR_HEAD);
+
+        // Empty DIV for showing a left-border of vertical scrollbar in the body area
+        $scrollBorder = $('&lt;div />').addClass(classNameConst.SCROLLBAR_BORDER);
+
+        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
+        $scrollBorder.css('top', headerHeight + 'px');
+
+        this.$el.append($space, $scrollBorder);
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        if (dimensionModel.get('scrollX')) {
+            this.$el.append($('&lt;div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+        }
+
+        // Empty DIV for filling gray color in the right side of the footer.
+        if (footerHeight &amp;&amp; dimensionModel.get('scrollY')) {
+            this.$el.append($('&lt;div>')
+                .addClass(classNameConst.FOOT_AREA_RIGHT)
+                .css('height', footerHeight - CELL_BORDER_WIDTH)
+            );
+        }
+
+        this.$scrollBorder = $scrollBorder;
+        this._resetScrollBorderHeight();
+    }
+});
+
+module.exports = RsideFrame;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

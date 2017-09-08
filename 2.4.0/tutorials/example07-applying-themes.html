@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>7. Applying Themes</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <style>
+    #grid {width: 600px; float:left; margin-right:20px;}
+    #theme {width: 200px; float:left;}
+    #custom-text {width: 300px; height:520px; font-size:12px;}
+    h4 {margin: 5px 0;}
+    .preset {margin-bottom:15px;}
+    .custom p {margin: 5px 0}
+    </style>
+</head>
+<body>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Applying-Themes" target="_blank">here</a>.
+</div>
+<div class="code-html">
+<div id="grid"></div>
+<div id="theme">
+    <div class="preset">
+        <h4>Preset</h4>
+        <button class="btn-theme" data-preset="default">default</button>
+        <button class="btn-theme" data-preset="striped">striped</button>
+        <button class="btn-theme" data-preset="clean">clean</button>
+    </div>
+    <div class="custom">
+        <h4>Custom options</h4>
+        <p><textarea id="custom-text">
+{
+    grid: {
+        background: '#fff',
+        border: '#ccc',
+        text: '#444'
+    },
+    selection: {
+        background: '#4daaf9',
+        border: '#004082'
+    },
+    toolbar: {
+        border: '#ccc',
+        background: '#fff'
+    },
+    scrollbar: {
+        background: '#f5f5f5',
+        thumb: '#d9d9d9',
+        active: '#c1c1c1'
+    },
+    cell: {
+        normal: {
+            background: '#fbfbfb',
+            border: '#e0e0e0'
+        },
+        head: {
+            background: '#eee',
+            border: '#ccc'
+        },
+        editable: {
+            background: '#fbfbfb'
+        },
+        selectedHead: {
+            background: '#d8d8d8'
+        },
+        focused: {
+            border: '#418ed4'
+        },
+        disabled: {
+            text: '#b0b0b0'
+        },
+        evenRow: {
+            background: '#fbfbfb'
+        },
+        currentRow: {
+            background: '#e0ffe0'
+        }
+    }
+}
+        </textarea></p>
+        <p><button class="btn-custom">Apply</button></p>
+    </div>
+</div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" class="code-js">
+
+var grid = new tui.Grid({
+    el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
+    rowHeight: 35,
+    rowHeaders: ['rowNum'],
+    header: {
+        height: 40
+    },
+    columnOptions: {
+        width: 100
+    },
+    columns: [
+        {
+            title: 'ID',
+            name: 'c1',
+            align: 'center',
+            editOption: {
+                beforeContent: 'FE',
+                type: 'text'
+            }
+        },
+        {
+            title: 'Name',
+            defaultValue: 2,
+            name: 'c2',
+            align: 'center',
+            editOption: {
+                type: 'text',
+            }
+        },
+        {
+            title: 'Score',
+            name: 'c3',
+            align: 'center',
+            editOption: {
+                type: 'text',
+                afterContent: ' Point',
+            }
+        }
+    ]
+});
+
+var gridData = [
+    {
+        c1: '100013',
+        c2: 'Mustafa Cosme',
+        c3: 291232
+    },
+    {
+        c1: '201212',
+        c2: 'Gunnar Fausto',
+        c3: 32123
+    },
+    {
+
+        c1: '241221',
+        c2: 'Junior Morgan',
+        c3: 88823
+    },
+    {
+        c1: '991232',
+        c2: 'Tódor Ingo',
+        c3: 9981
+    },
+    {
+        c1: '299921',
+        c2: 'Zezé Obadiah',
+        c3: 140212
+    },
+    {
+        c1: '772193',
+        c2: 'Alfwin Damir',
+        c3: 30012
+    },
+    {
+        c1: '991232',
+        c2: 'Feroz Fredrik',
+        c3: 111023
+    },
+    {
+        c1: '572812',
+        c2: 'Archer Beniamino',
+        c3: 229123
+    },
+    {
+        c1: '310832',
+        c2: 'Dado Shaul',
+        c3: 123
+    },
+    {
+        c1: '321232',
+        c2: 'Svetoslav Eder',
+        c3: 81252
+    },
+    {
+        c1: '229123',
+        c2: 'Lauri Gligor',
+        c3: 230923
+    },
+    {
+        c1: '589282',
+        c2: 'Ruben Bèr',
+        c3: 11523
+    },
+    {
+        c1: '321234',
+        c2: 'Vicenç Hadrien',
+        c3: 29912
+    },
+    {
+        c1: '632123',
+        c2: 'Borna Rochus',
+        c3: 62842
+    },
+
+    {
+        c1: '122123',
+        c2: 'Kristijonas Tate',
+        c3: 199823
+    },
+    {
+        c1: '211232',
+        c2: 'Kumara Archimedes',
+        c3: 112522
+    },
+    {
+        c1: '487297',
+        c2: 'Hershel Radomil',
+        c3: 399123
+    },
+    {
+        c1: '232123',
+        c2: 'Toma Levan',
+        c3: 231253
+    },
+    {
+        c1: '828723',
+        c2: 'Njord Thoko',
+        c3: 89123
+    }
+];
+grid.setData(gridData);
+grid.disableRow(6);
+
+var currentPresetName = 'default';
+
+$('.btn-theme').click(function() {
+    var preset = $(this).data('preset');
+    currentPresetName = preset;
+	tui.Grid.applyTheme(preset);
+});
+
+$('.btn-custom').click(function() {
+    var options = eval('(' + $('#custom-text').val() + ')');
+    tui.Grid.applyTheme(currentPresetName, options);
+});
+
+</script>
+</html>

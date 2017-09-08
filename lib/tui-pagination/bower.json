@@ -1,0 +1,24 @@
+{
+    "name": "tui-pagination",
+    "authors": [
+        "NHN Ent. FE Dev team.<dl_javascript@nhnent.com>"
+    ],
+    "main": [
+        "dist/tui-pagination.js",
+        "dist/tui-pagination.css"
+    ],
+    "license": "MIT",
+    "ignore": [
+        ".*",
+        "examples",
+        "src",
+        "test",
+        "jsdoc.conf.json",
+        "karma.conf.js",
+        "webpack.config.js",
+        "package.json"
+    ],
+    "dependencies": {
+        "tui-code-snippet": "~1.2.5"
+    }
+}

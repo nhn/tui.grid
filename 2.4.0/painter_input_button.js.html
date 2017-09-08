@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: painter/input/button.js | Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-formatter.html">2. Formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-formatter_sub"></div></li><li><a href="tutorial-example03-complex-columns.html">3. Complex columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-complex-columns_sub"></div></li><li><a href="tutorial-example04-input-types.html">4. Input types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-input-types_sub"></div></li><li><a href="tutorial-example05-relation-columns.html">5. Relation between columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-relation-columns_sub"></div></li><li><a href="tutorial-example06-using-extradata.html">6. Using _extraData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-using-extradata_sub"></div></li><li><a href="tutorial-example07-applying-themes.html">7. Applying Themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-applying-themes_sub"></div></li><li><a href="tutorial-example08-using-datepicker.html">8. Using DatePicker component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-using-datepicker_sub"></div></li><li><a href="tutorial-example09-footer-summary.html">9. Footer and Summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-footer-summary_sub"></div></li><li><a href="tutorial-example10-using-net.html">10. Binding to remote data using net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-using-net_sub"></div></li><li><a href="tutorial-example11-customizing-rowheaders.html">11. Customizing Row headers</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-example12-using-whitespace.html">11. Using whiteSpace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-using-whitespace_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li><li><a href="module-event_gridEvent.html">event/gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:event/gridEvent_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-event_gridEvent.html#stop">stop</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Painter class for 'checkbox' and 'radio button'.
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var $ = require('jquery');
+var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
+var InputPainter = require('./base');
+var util = require('../../common/util');
+
+/**
+ * Painter class for 'checkbox' and 'radio button'.
+ * @module painter/input/button
+ * @extends module:painter/input/base
+ * @param {Object} options - options
+ * @ignore
+ */
+var ButtonPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
+    init: function(options) {
+        InputPainter.apply(this, arguments);
+
+        this.inputType = options.inputType;
+
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'fieldset[data-type=' + this.inputType + ']';
+
+        this._extendEvents({
+            mousedown: '_onMouseDown'
+        });
+
+        this._extendKeydownActions({
+            TAB: function(param) {
+                var value;
+                if (!this._focusNextInput(param.$target, param.shiftKey)) {
+                    value = this._getCheckedValueString(param.$target);
+                    this.controller.finishEditing(param.address, true, value);
+                    this.controller.focusInToNextCell(param.shiftKey);
+                }
+            },
+            ENTER: function(param) {
+                var value = this._getCheckedValueString(param.$target);
+                this.controller.finishEditing(param.address, true, value);
+            },
+            LEFT_ARROW: function(param) {
+                this._focusNextInput(param.$target, true);
+            },
+            RIGHT_ARROW: function(param) {
+                this._focusNextInput(param.$target);
+            },
+            UP_ARROW: function() {},
+            DOWN_ARROW: function() {}
+        });
+    },
+
+    /**
+     * fieldset markup template
+     * @returns {String}
+     */
+    template: _.template(
+        '&lt;fieldset data-type="&lt;%=type%>">&lt;%=content%>&lt;/fieldset>'
+    ),
+
+    /**
+     * Input markup template
+     * @returns {String}
+     */
+    inputTemplate: _.template(
+        '&lt;input type="&lt;%=type%>" data-value-type="&lt;%=valueType%>" name="&lt;%=name%>" id="&lt;%=id%>" value="&lt;%=value%>"' +
+        ' &lt;%=checked%> &lt;%=disabled%> />'
+    ),
+
+    /**
+     * Label markup template
+     * @returns {String}
+     */
+    labelTemplate: _.template(
+        '&lt;label for="&lt;%=id%>">&lt;%=labelText%>&lt;/label>'
+    ),
+
+    /**
+     * Event handler for 'change' event
+     * @param {Event} ev - DOM Event
+     */
+    _onChange: function(ev) {
+        var $target = $(ev.target);
+        var address = this._getCellAddress($target);
+        var value = this._getCheckedValueString($target);
+
+        this.controller.setValueIfNotUsingViewMode(address, value);
+    },
+
+    /**
+     * Event handler for 'blur' event
+     * @param {Event} event - event object
+     * @override
+     * @private
+     */
+    _onFocusOut: function(event) {
+        var $target = $(event.target);
+        var self = this;
+
+        _.defer(function() {
+            var address, value;
+
+            if (!$target.siblings('input:focus').length) {
+                address = self._getCellAddress($target);
+                value = self._getCheckedValueString($target);
+                self.controller.finishEditing(address, false, value);
+            }
+        });
+    },
+
+    /**
+     * Event handler for 'mousedown' DOM event
+     * @param {MouseEvent} event - mouse event object
+     * @private
+     */
+    _onMouseDown: function(event) {
+        var $target = $(event.target);
+        var hasFocusedInput = $target.closest('fieldset').find('input:focus').length > 0;
+
+        if (!$target.is('input') &amp;&amp; hasFocusedInput) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Moves focus to the next input element.
+     * @param {jquery} $target - target element
+     * @param {Boolean} reverse - if set to true, find previous element instead of next element.
+     * @returns {Boolean} - false if no element exist, true otherwise.
+     * @private
+     */
+    _focusNextInput: function($target, reverse) {
+        var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
+            $nextInputs = $target[traverseFuncName]('input');
+
+        if ($nextInputs.length) {
+            $nextInputs.first().focus();
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns the comma seperated value of all checked inputs
+     * @param {jQuery} $target - target element
+     * @returns {String}
+     * @private
+     */
+    _getCheckedValueString: function($target) {
+        var $checkedInputs = $target.parent().find('input:checked');
+        var checkedValues = [];
+        var result;
+
+        $checkedInputs.each(function() {
+            var $input = $(this);
+            var valueType = $input.attr('data-value-type');
+            var value = util.convertValueType($input.val(), valueType);
+
+            checkedValues.push(value);
+        });
+
+        if (checkedValues.length === 1) {
+            result = checkedValues[0];
+        } else {
+            result = checkedValues.join(',');
+        }
+
+        return result;
+    },
+
+    /**
+     * Returns the set object that contains the checked value.
+     * @param {String} value - value
+     * @returns {Object}
+     * @private
+     */
+    _getCheckedValueSet: function(value) {
+        var checkedMap = {};
+
+        _.each(String(value).split(','), function(itemValue) {
+            checkedMap[itemValue] = true;
+        });
+
+        return checkedMap;
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var optionTexts = [];
+
+        _.each(cellData.listItems, function(item) {
+            if (checkedSet[item.value]) {
+                optionTexts.push(item.text);
+            }
+        });
+
+        return optionTexts.join(',');
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var name = util.getUniqueKey();
+        var contentHtml = '';
+
+        _.each(cellData.listItems, function(item) {
+            var id = name + '_' + item.value;
+
+            contentHtml += this.inputTemplate({
+                type: this.inputType,
+                id: id,
+                name: name,
+                value: item.value,
+                valueType: typeof item.value,
+                checked: checkedSet[item.value] ? 'checked' : '',
+                disabled: cellData.isDisabled ? 'disabled' : ''
+            });
+            if (item.text) {
+                contentHtml += this.labelTemplate({
+                    id: id,
+                    labelText: item.text
+                });
+            }
+        }, this);
+
+        return this.template({
+            type: this.inputType,
+            content: contentHtml
+        });
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     * @override
+     */
+    focus: function($parent) {
+        var $input = $parent.find('input');
+
+        if (!$input.is(':focus')) {
+            $input.eq(0).focus();
+        }
+    }
+});
+
+module.exports = ButtonPainter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
