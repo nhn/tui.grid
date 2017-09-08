@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Jul 27 2017 17:25:25 GMT+0900 (KST)"
- * version: 2.3.0
+ * bundle created at "Fri Sep 08 2017 17:16:54 GMT+0900 (KST)"
+ * version: 2.4.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -226,6 +226,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  This option is column specific, and overrides the global copyOptions.
 	 *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use
 	 *                  formatted values or original values as a string to be copied to the clipboard
+	 *              @param {boolean} [options.columns.copyOptions.useListItemText] - Whether to use
+	 *                  concatenated text or original values as a string to be copied to the clipboard
 	 *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
 	 *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
 	 *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
@@ -269,7 +271,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.container = this.viewFactory.createContainer();
 	        this.publicEventEmitter = this._createPublicEventEmitter();
 
-	        this.setData(options.data);
 	        this.container.render();
 	        this.refreshLayout();
 
@@ -280,6 +281,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addOn = {};
 
 	        instanceMap[this.id] = this;
+
+	        if (options.data) {
+	            this.setData(options.data);
+	        }
 	    },
 
 	    /**
@@ -1830,6 +1835,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Whether copying the visible text or not
+	     * @param {string} columnName - Column name
+	     * @returns {boolena} State
+	     */
+	    copyVisibleTextOfEditingColumn: function(columnName) {
+	        var columnModel = this.getColumnModel(columnName);
+
+	        if (snippet.pick(columnModel, 'editOptions', 'listItems')) {
+	            return !!snippet.pick(columnModel, 'copyOptions', 'useListItemText');
+	        }
+
+	        return false;
+	    },
+
+	    /**
 	     * 인자로 받은 컬럼 모델에서 !hidden을 만족하는 리스트를 추려서 반환한다.
 	     * @param {Array} rowHeaders 메타 컬럼 모델 리스트
 	     * @param {Array} dataColumns 데이터 컬럼 모델 리스트
@@ -2630,7 +2650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options && options.removeOriginalData) {
 	            this.setOriginalRowList();
 	        }
-	        this.trigger('remove');
+	        this.trigger('remove', rowKey);
 	    },
 
 	    /**
@@ -3898,11 +3918,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * List type 의 경우 데이터 값과 editOptions.listItems 의 text 값이 다르기 때문에
 	     * text 로 전환해서 반환할 때 처리를 하여 변환한다.
 	     *
-	     * @param {String} columnName   컬럼명
-	     * @returns {String} text 형태로 가공된 문자열
+	     * @param {string} columnName - Column name
+	     * @param {boolean} useText - Whether returns concatenated text or values
+	     * @returns {string} Concatenated text or values of "listItems" option
 	     * @private
 	     */
-	    _getListTypeVisibleText: function(columnName) {
+	    _getStringOfListItems: function(columnName, useText) {
 	        var value = this.get(columnName);
 	        var columnModel = this.columnModel.getColumnModel(columnName);
 	        var resultListItems, editOptionList, typeExpected, valueList;
@@ -3914,14 +3935,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            typeExpected = typeof editOptionList[0].value;
 	            valueList = util.toString(value).split(',');
+
 	            if (typeExpected !== typeof valueList[0]) {
 	                valueList = _.map(valueList, function(val) {
 	                    return util.convertValueType(val, typeExpected);
 	                });
 	            }
+
 	            _.each(valueList, function(val, index) {
 	                var item = _.findWhere(editOptionList, {value: val});
-	                valueList[index] = item && item.value || '';
+	                var str = item && (useText ? item.text : item.value) || '';
+
+	                valueList[index] = str;
 	            }, this);
 
 	            return valueList.join(',');
@@ -3960,17 +3985,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the text string to be used when copying the cell value to clipboard.
-	     * @param {String} columnName - column name
-	     * @returns {String}
+	     * @param {string} columnName - column name
+	     * @returns {string}
 	     */
 	    getValueString: function(columnName) {
-	        var editType = this.columnModel.getEditType(columnName);
-	        var column = this.columnModel.getColumnModel(columnName);
+	        var columnModel = this.columnModel;
+	        var copyText = columnModel.copyVisibleTextOfEditingColumn(columnName);
+	        var editType = columnModel.getEditType(columnName);
+	        var column = columnModel.getColumnModel(columnName);
 	        var value = this.get(columnName);
 
 	        if (this._isListType(editType)) {
 	            if (snippet.isExisty(snippet.pick(column, 'editOptions', 'listItems', 0, 'value'))) {
-	                value = this._getListTypeVisibleText(columnName);
+	                value = this._getStringOfListItems(columnName, copyText);
 	            } else {
 	                throw new Error('Check "' + columnName +
 	                    '"\'s editOptions.listItems property out in your ColumnModel.');
@@ -5044,6 +5071,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // table
 	    TABLE: 'table',
+
+	    // row style
+	    ROW_ODD: 'row-odd',
+	    ROW_EVEN: 'row-even',
 
 	    // cell style
 	    CELL: 'cell',
@@ -6832,6 +6863,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
 
+	        this.set({
+	            rowKey: null,
+	            columnName: null
+	        });
+
 	        return this;
 	    },
 
@@ -7295,14 +7331,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        lside = new RowList([], rowListOptions);
 	        rside = new RowList([], rowListOptions);
+
 	        this.set({
 	            lside: lside,
-	            rside: rside
+	            rside: rside,
+	            partialLside: new RowList([], rowListOptions),
+	            partialRside: new RowList([], rowListOptions)
 	        });
 
 	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-	            .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
-	            .listenTo(this.dataModel, 'add', this._onAddDataModel)
+	            .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
+	            .listenTo(this.dataModel, 'delRange', this._onRangeDataModelChange)
+	            .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
+	            .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
 	            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
 	            .listenTo(lside, 'valueChange', this._executeRelation)
@@ -7343,7 +7384,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        emptyMessage: null,
 
 	        // constMap.renderState
-	        state: renderStateMap.DONE
+	        state: renderStateMap.DONE,
+
+	        partialLside: null,
+	        partialRside: null
 	    },
 
 	    /**
@@ -7358,6 +7402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Event handler for changing startIndex or endIndex.
 	     * @param {Object} model - Renderer model fired event
+	     * @private
 	     */
 	    _onChangeIndex: function(model) {
 	        var changedData = model.changed;
@@ -7520,7 +7565,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {Object} collection  해당 영역의 랜더 데이터 콜랙션
 	     */
 	    getCollection: function(whichSide) {
-	        return this.get(snippet.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
+	        var attrName = this._getPartialWhichSideType(whichSide);
+	        return this.get(attrName);
+	    },
+
+	    /**
+	     * Get string of partial which side type
+	     * @param {string} whichSide - Type of which side (L|R)
+	     * @returns {string} String of appened prefix value 'partial'
+	     * @private
+	     */
+	    _getPartialWhichSideType: function(whichSide) {
+	        return snippet.isString(whichSide) ? 'partial' + whichSide + 'side' : 'partialRside';
 	    },
 
 	    /**
@@ -7532,6 +7588,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setRenderingRange(true);
 
 	        this.refresh({
+	            change: false,
 	            columnModelChanged: true
 	        });
 	    },
@@ -7540,7 +7597,74 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Event handler for changing data list
 	     * @private
 	     */
-	    _onDataListChange: function() {
+	    _onDataModelChange: function() {
+	        _.each(['lside', 'rside'], function(attrName) {
+	            this.get(attrName).reset();
+	        }, this);
+
+	        this._setRenderingRange(true);
+
+	        this.refresh({
+	            type: 'reset',
+	            dataListChanged: true
+	        });
+	    },
+
+	    /**
+	     * Event handler for adding data list
+	     * @param {array} modelList - List of added item
+	     * @param {object} options - Info of added item
+	     * @private
+	     */
+	    _onAddDataModelChange: function(modelList, options) {
+	        var viewModelList = this.get('lside').length ? this.get('lside') : this.get('rside');
+	        var columnNamesMap = this._getColumnNamesOfEachSide();
+	        var at = options.at;
+	        var height, viewData, rowNum;
+
+	        if (at > viewModelList.length - 1) {
+	            return;
+	        }
+
+	        // the type of modelList is array or collection
+	        modelList = _.isArray(modelList) ? modelList : modelList.models;
+
+	        _.each(modelList, function(model, index) {
+	            height = this.coordRowModel.getHeightAt(index);
+
+	            _.each(['lside', 'rside'], function(attrName) {
+	                rowNum = at + index + 1;
+	                viewData = this._createViewDataFromDataModel(
+	                    model, columnNamesMap[attrName], height, rowNum);
+
+	                this.get(attrName).add([viewData], {
+	                    parse: true,
+	                    at: at + index
+	                });
+	            }, this);
+	        }, this);
+
+	        this.refresh({
+	            type: 'add',
+	            dataListChanged: true
+	        });
+
+	        if (options.focus) {
+	            this.focusModel.focusAt(options.at, 0);
+	        }
+	    },
+
+	    /**
+	     * Event handler for removing data list
+	     * @param {number|string} rowKey - rowKey of the removed row
+	     * @private
+	     */
+	    _onRemoveDataModelChange: function(rowKey) {
+	        _.each(['lside', 'rside'], function(attrName) {
+	            var collection = this.get(attrName);
+	            collection.remove(collection.get(rowKey));
+	        }, this);
+
 	        this._setRenderingRange(true);
 
 	        this.refresh({
@@ -7549,15 +7673,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Event handler for 'add' event on dataModel.
-	     * @param  {module:model/data/rowList} dataModel - data model
-	     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+	     * Event handler for deleting cell data
+	     * @param {array} rowKeys - List of row key
+	     * @param {array} columnNames - List of colum name
 	     * @private
 	     */
-	    _onAddDataModel: function(dataModel, options) {
-	        if (options.focus) {
-	            this.focusModel.focusAt(options.at, 0);
-	        }
+	    _onRangeDataModelChange: function(rowKeys, columnNames) {
+	        var columnModel = this.columnModel;
+
+	        this._setRenderingRange(true);
+
+	        _.each(['partialLside', 'partialRside'], function(attrName) {
+	            _.each(this.get(attrName).models, function(model) {
+	                var rowKey = model.get('rowKey');
+	                var changedRow = _.contains(rowKeys, rowKey);
+
+	                if (changedRow) {
+	                    _.each(columnNames, function(columnName) {
+	                        if (columnModel.getColumnModel(columnName).editOptions) {
+	                            this._updateCellData(rowKey, columnName, {
+	                                value: '',
+	                                formattedValue: ''
+	                            });
+	                        }
+	                    }, this);
+	                }
+	            }, this);
+	        }, this);
+
+	        this.refresh({
+	            type: 'delRange',
+	            dataListChanged: true
+	        });
 	    },
 
 	    /**
@@ -7597,8 +7744,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
 	        var viewData = {
-	            height: height,
 	            rowNum: rowNum,
+	            height: height,
 	            rowKey: rowDataModel.get('rowKey'),
 	            _extraData: rowDataModel.get('_extraData')
 	        };
@@ -7632,43 +7779,103 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Resets specified view model list.
-	     * @param  {String} attrName - 'lside' or 'rside'
-	     * @param  {Object} viewData - Converted data for rendering view
+	     * Add view model list by range
+	     * @param {number} startIndex - Index of start row
+	     * @param {number} endIndex - Index of end row
 	     * @private
 	     */
-	    _resetViewModelList: function(attrName, viewData) {
-	        this.get(attrName).clear().reset(viewData, {
-	            parse: true
-	        });
+	    _addViewModelListWithRange: function(startIndex, endIndex) {
+	        var columnNamesMap = this._getColumnNamesOfEachSide();
+	        var rowDataModel, height, index;
+
+	        if (startIndex >= 0 && endIndex >= 0) {
+	            for (index = startIndex; index <= endIndex; index += 1) {
+	                rowDataModel = this.dataModel.at(index);
+	                height = this.coordRowModel.getHeightAt(index);
+
+	                this._addViewModelList(rowDataModel, columnNamesMap, height, index);
+	            }
+	        }
 	    },
 
 	    /**
-	     * Resets both sides(lside, rside) of view model list with given range of data model list.
-	     * @param  {Number} startIndex - Start index
-	     * @param  {Number} endIndex - End index
+	     * Add view model list on each side
+	     * @param {object} rowDataModel - Data model of row
+	     * @param {object} columnNamesMap - Map of column names
+	     * @param {number} height - Height of row
+	     * @param {number} index - Index of row
 	     * @private
 	     */
-	    _resetAllViewModelListWithRange: function(startIndex, endIndex) {
-	        var columnNamesMap = this._getColumnNamesOfEachSide();
-	        var rowNum = this.get('startNumber') + startIndex;
-	        var lsideData = [];
-	        var rsideData = [];
-	        var rowDataModel, height, i;
+	    _addViewModelList: function(rowDataModel, columnNamesMap, height, index) {
+	        _.each(['lside', 'rside'], function(attrName) {
+	            var rowKey = rowDataModel.get('rowKey');
+	            var viewData;
 
-	        if (startIndex >= 0 && endIndex >= 0) {
-	            for (i = startIndex; i <= endIndex; i += 1) {
-	                rowDataModel = this.dataModel.at(i);
-	                height = this.coordRowModel.getHeightAt(i);
+	            if (!this.get(attrName).get(rowKey)) {
+	                viewData = this._createViewDataFromDataModel(
+	                    rowDataModel, columnNamesMap[attrName], height, index + 1);
 
-	                lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-	                rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
-	                rowNum += 1;
+	                this.get(attrName).add([viewData], {
+	                    parse: true,
+	                    at: index
+	                });
+	            }
+	        }, this);
+	    },
+
+	    /**
+	     * Update the row number
+	     * @param {number} startIndex - Start index
+	     * @param {number} endIndex - End index
+	     * @private
+	     */
+	    _updateRowNumber: function(startIndex, endIndex) {
+	        var collection = this.get('lside');
+	        var index = startIndex;
+	        var currentModel, rowNum, newRowNum;
+
+	        for (; index <= endIndex; index += 1) {
+	            currentModel = collection.at(index);
+	            newRowNum = index + 1;
+
+	            if (currentModel) {
+	                rowNum = currentModel.get('rowNum');
+	                newRowNum = index + 1;
+
+	                if (rowNum !== newRowNum) {
+	                    currentModel.set({
+	                        rowNum: newRowNum
+	                    }, {
+	                        silent: true
+	                    });
+
+	                    currentModel.setCell('_number', {
+	                        formattedValue: newRowNum,
+	                        value: newRowNum
+	                    });
+	                }
 	            }
 	        }
+	    },
 
-	        this._resetViewModelList('lside', lsideData);
-	        this._resetViewModelList('rside', rsideData);
+	    /**
+	     * Reset partial view model list
+	     * @param {number} startIndex - Index of start row
+	     * @param {number} endIndex - Index of end row
+	     * @private
+	     */
+	    _resetPartialViewModelList: function(startIndex, endIndex) {
+	        var originalWhichSide, partialWhichSide;
+	        var viewModelList, patialViewModelList;
+
+	        _.each(['L', 'R'], function(whichSide) {
+	            originalWhichSide = whichSide.toLowerCase() + 'side';
+	            partialWhichSide = this._getPartialWhichSideType(whichSide);
+	            viewModelList = this.get(originalWhichSide);
+	            patialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+
+	            this.get(partialWhichSide).reset(patialViewModelList);
+	        }, this);
 	    },
 
 	    /**
@@ -7741,19 +7948,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Refreshes the rendering range and the list of view models, and triggers events.
-	     * @param {Object} options - options
-	     * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
-	     * @param {Boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
+	     * @param {object} options - options
+	     * @param {boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
+	     * @param {boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
+	     * @param {string} [options.type] - Event type (reset|add|remove)
 	     */
+	    /* eslint-disable complexity */
 	    refresh: function(options) {
 	        var columnModelChanged = !!options && options.columnModelChanged;
 	        var dataListChanged = !!options && options.dataListChanged;
+	        var eventType = !!options && options.type;
 	        var startIndex, endIndex, i;
 
 	        startIndex = this.get('startIndex');
 	        endIndex = this.get('endIndex');
 
-	        this._resetAllViewModelListWithRange(startIndex, endIndex);
+	        if (eventType !== 'add' && eventType !== 'delRange') {
+	            this._addViewModelListWithRange(startIndex, endIndex);
+	        }
+
+	        if (eventType !== 'delRange') {
+	            this._updateRowNumber(startIndex, endIndex);
+	        }
+
+	        this._resetPartialViewModelList(startIndex, endIndex);
 	        this._fillDummyRows();
 
 	        if (startIndex >= 0 && endIndex >= 0) {
@@ -7772,6 +7990,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        this._refreshState();
 	    },
+	    /* eslint-enable complexity */
 
 	    /**
 	     * Set state value based on the DataModel.length
@@ -8046,7 +8265,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    parse: function(data, options) {
 	        var collection = options.collection;
-
 	        return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
 	    },
 
@@ -8062,7 +8280,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _formatData: function(data, dataModel, columnModel, focusModel) {
 	        var rowKey = data.rowKey;
-	        var rowNum = data.rowNum;
 	        var rowHeight = data.height;
 	        var columnData, row;
 
@@ -8081,7 +8298,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            data[columnName] = {
 	                rowKey: rowKey,
-	                rowNum: rowNum,
 	                height: rowHeight,
 	                columnName: columnName,
 	                rowSpan: rowSpanData.count,
@@ -10648,7 +10864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {Object} this object
 	     */
 	    render: function() {
-	        this.$el.html('<a href="#"><span></span></a>');
+	        this.$el.html('<button><span></span></button>');
 
 	        return this;
 	    }
@@ -14551,6 +14767,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Painter = __webpack_require__(65);
 	var constMap = __webpack_require__(14);
+	var classNameConst = __webpack_require__(22);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -14651,7 +14868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    generateHtml: function(model, columnNames) {
 	        var rowKey = model.get('rowKey');
 	        var rowNum = model.get('rowNum');
-	        var className = '';
+	        var className = (rowNum % 2) ? classNameConst.ROW_ODD : classNameConst.ROW_EVEN;
 	        var rowKeyAttr = '';
 	        var html;
 
@@ -14938,8 +15155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getAttributes: function(cellData) {
 	        var classNames = [
 	            cellData.className,
-	            classNameConst.CELL,
-	            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+	            classNameConst.CELL
 	        ];
 	        var attrs = {
 	            'align': cellData.columnModel.align || 'left'
@@ -15010,7 +15226,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
 	            this.inputPainter.focus($td);
 	        } else if (mainButton) {
-	            $td.find(this.inputPainter.selector).prop('checked', cellData.value);
+	            $td.find(this.inputPainter.selector).prop({
+	                checked: cellData.value,
+	                disabled: cellData.disabled
+	            });
 	        } else if (shouldUpdateContent) {
 	            $td.html(this._getContentHtml(cellData));
 	            $td.scrollLeft(0);
@@ -15078,8 +15297,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    generateHtml: function(rowNum, columnName) {
 	        var classNames = [
 	            classNameConst.CELL,
-	            classNameConst.CELL_DUMMY,
-	            (rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+	            classNameConst.CELL_DUMMY
 	        ];
 
 	        if (util.isMetaColumn(columnName)) {
@@ -16143,8 +16361,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (columnModel.dataType === 'number') {
 	            value = convertToNumber(value);
 	        }
-
-	        this.dataModel.setValue(address.rowKey, address.columnName, value);
+	        if (columnModel.name === '_button') {
+	            if (value) {
+	                this.dataModel.check(address.rowKey);
+	            } else {
+	                this.dataModel.uncheck(address.rowKey);
+	            }
+	        } else {
+	            this.dataModel.setValue(address.rowKey, address.columnName, value);
+	        }
 	    },
 
 	    /**
@@ -17622,7 +17847,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellEvenRow: function(options) {
-	        return classRule(classNameConst.CELL_ROW_EVEN)
+	        return classRule(classNameConst.ROW_EVEN + '>td')
 	            .bg(options.background)
 	            .build();
 	    },
@@ -17633,7 +17858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellOddRow: function(options) {
-	        return classRule(classNameConst.CELL_ROW_ODD)
+	        return classRule(classNameConst.ROW_ODD + '>td')
 	            .bg(options.background)
 	            .build();
 	    },

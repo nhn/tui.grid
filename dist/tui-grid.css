@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Jul 27 2017 17:25:25 GMT+0900 (KST)"
- * version: 2.3.0
+ * bundle created at "Fri Sep 08 2017 17:16:54 GMT+0900 (KST)"
+ * version: 2.4.0
  */
 .tui-grid-container {
   width: 100%;
@@ -434,15 +434,21 @@
   font-size: 0;
   text-align: center;
 }
-.tui-grid-height-resize-handle a {
+.tui-grid-height-resize-handle button {
   display: block;
+  width: 100%;
   cursor: row-resize;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  border: 0;
+  background-color: #f5f5f5;
 }
-.tui-grid-height-resize-handle a span {
+.tui-grid-height-resize-handle button span {
   background: url(images/icons.gif) no-repeat -70px -60px;
   display: inline-block;
   width: 17px;
-  height: 6px;
+  height: 9px;
   margin-top: 3px;
 }
 .tui-grid-pagination {
