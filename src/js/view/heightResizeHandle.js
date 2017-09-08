@@ -61,7 +61,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
      * @returns {Object} this object
      */
     render: function() {
-        this.$el.html('<a href="#"><span></span></a>');
+        this.$el.html('<button><span></span></button>');
 
         return this;
     }
