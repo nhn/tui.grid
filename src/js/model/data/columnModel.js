@@ -216,6 +216,21 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     },
 
     /**
+     * Whether copying the visible text or not
+     * @param {string} columnName - Column name
+     * @returns {boolena} State
+     */
+    copyVisibleTextOfEditingColumn: function(columnName) {
+        var columnModel = this.getColumnModel(columnName);
+
+        if (snippet.pick(columnModel, 'editOptions', 'listItems')) {
+            return !!snippet.pick(columnModel, 'copyOptions', 'useListItemText');
+        }
+
+        return false;
+    },
+
+    /**
      * 인자로 받은 컬럼 모델에서 !hidden을 만족하는 리스트를 추려서 반환한다.
      * @param {Array} rowHeaders 메타 컬럼 모델 리스트
      * @param {Array} dataColumns 데이터 컬럼 모델 리스트

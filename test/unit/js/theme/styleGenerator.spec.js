@@ -124,7 +124,7 @@ describe('theme/styleGenerator: ', function() {
         var options = {
             background: 'blue'
         };
-        var expected = '.' + classNameConst.CELL_ROW_ODD + '{background-color:blue}';
+        var expected = '.' + classNameConst.ROW_ODD + '>td{background-color:blue}';
 
         expect(styleGen.cellOddRow(options)).toBe(expected);
     });
@@ -133,7 +133,7 @@ describe('theme/styleGenerator: ', function() {
         var options = {
             background: 'blue'
         };
-        var expected = '.' + classNameConst.CELL_ROW_EVEN + '{background-color:blue}';
+        var expected = '.' + classNameConst.ROW_EVEN + '>td{background-color:blue}';
 
         expect(styleGen.cellEvenRow(options)).toBe(expected);
     });

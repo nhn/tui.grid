@@ -184,12 +184,12 @@ describe('model.renderer', function() {
 
     describe('getCollection()', function() {
         it('인자가 없다면 rside 콜렉션을 반환한다.', function() {
-            expect(renderModel.getCollection()).toEqual(renderModel.get('rside'));
+            expect(renderModel.getCollection()).toEqual(renderModel.get('partialRside'));
         });
 
         it('인자가 있다면 L R 중 하나의 콜렉션을 반환한다.', function() {
-            expect(renderModel.getCollection(frameConst.R)).toEqual(renderModel.get('rside'));
-            expect(renderModel.getCollection(frameConst.L)).toEqual(renderModel.get('lside'));
+            expect(renderModel.getCollection(frameConst.R)).toEqual(renderModel.get('partialRside'));
+            expect(renderModel.getCollection(frameConst.L)).toEqual(renderModel.get('partialLside'));
         });
     });
 

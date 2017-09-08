@@ -95,6 +95,9 @@ var grid = new tui.Grid({
                     { text: 'etc.', value: '5' }
                 ],
                 useViewMode: true
+            },
+            copyOptions: {
+                useListItemText: true // when this option is used, the copy value is concatenated text
             }
         },
         {
@@ -105,6 +108,9 @@ var grid = new tui.Grid({
             },
             onAfterChange: function(ev){
                 console.log('After change:' + ev);
+            },
+            copyOptions: {
+                useListItemText: true
             },
             editOptions: {
                 type: 'radio',

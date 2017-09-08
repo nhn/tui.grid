@@ -130,7 +130,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     parse: function(data, options) {
         var collection = options.collection;
-
         return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
     },
 
@@ -146,7 +145,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _formatData: function(data, dataModel, columnModel, focusModel) {
         var rowKey = data.rowKey;
-        var rowNum = data.rowNum;
         var rowHeight = data.height;
         var columnData, row;
 
@@ -165,7 +163,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
             data[columnName] = {
                 rowKey: rowKey,
-                rowNum: rowNum,
                 height: rowHeight,
                 columnName: columnName,
                 rowSpan: rowSpanData.count,

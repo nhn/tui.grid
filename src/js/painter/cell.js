@@ -158,8 +158,7 @@ var Cell = snippet.defineClass(Painter, /**@lends module:painter/cell.prototype 
     _getAttributes: function(cellData) {
         var classNames = [
             cellData.className,
-            classNameConst.CELL,
-            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+            classNameConst.CELL
         ];
         var attrs = {
             'align': cellData.columnModel.align || 'left'
@@ -230,7 +229,10 @@ var Cell = snippet.defineClass(Painter, /**@lends module:painter/cell.prototype 
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
             this.inputPainter.focus($td);
         } else if (mainButton) {
-            $td.find(this.inputPainter.selector).prop('checked', cellData.value);
+            $td.find(this.inputPainter.selector).prop({
+                checked: cellData.value,
+                disabled: cellData.disabled
+            });
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
             $td.scrollLeft(0);
