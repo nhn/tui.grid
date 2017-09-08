@@ -729,4 +729,59 @@ describe('data.columnModel', function() {
             expect(rowHeadersData[0].title).toBe(replacedHtml);
         })
     });
+
+    describe('copyVisibleTextOfEditingColumn', function() {
+        var result;
+
+        beforeEach(function() {
+            columnsData = [
+                {
+                    name: 'column0'
+                },
+                {
+                    name: 'column1',
+                    editOptions: {
+                        type: 'select',
+                        listItems: [
+                            { text: 'Deluxe', value: '1' },
+                            { text: 'EP', value: '2' },
+                            { text: 'Single', value: '3' }
+                        ]
+                    }
+                },
+                {
+                    name: 'column2',
+                    copyOptions: {
+                        useListItemText: true
+                    },
+                    editOptions: {
+                        type: 'checkbox',
+                        listItems: [
+                            { text: 'Pop', value: '1' },
+                            { text: 'Rock', value: '2' },
+                            { text: 'R&B', value: '3' },
+                            { text: 'Electronic', value: '4' },
+                            { text: 'etc.', value: '5' }
+                        ]
+                    }
+                }
+            ];
+            columnModelInstance.set('columns', columnsData);
+        });
+
+        it('when "editOptions" is not set, the result is false.', function() {
+            result = columnModelInstance.copyVisibleTextOfEditingColumn('column0');
+            expect(result).toEqual(false);
+        });
+
+        it('when "copyOptions.useListItemText" option is not set, the result is false.', function() {
+            result = columnModelInstance.copyVisibleTextOfEditingColumn('column1');
+            expect(result).toEqual(false);
+        });
+
+        it('when "copyOptions.useListItemText" option is set, the result is true.', function() {
+            result = columnModelInstance.copyVisibleTextOfEditingColumn('column2');
+            expect(result).toEqual(true);
+        });
+    });
 });

@@ -287,7 +287,7 @@ describe('data.rowList', function() {
     });
 
     describe('Model 테스트', function() {
-        describe('_getListTypeVisibleText()', function() {
+        describe('_getStringOfListItems()', function() {
             it('List Type 의 경우 columnModel 의 editOptionList 에 정의된 Value를 반환한다.', function() {
                 var sampleList = [{
                         'select': 1,
@@ -299,10 +299,10 @@ describe('data.rowList', function() {
                 dataModelInstance.set(sampleList, {parse: true});
                 row = dataModelInstance.at(0);
 
-                expect(row._getListTypeVisibleText('select')).toBe('1');
-                expect(row._getListTypeVisibleText('radio')).toBe('2');
-                expect(row._getListTypeVisibleText('checkbox')).toBe('1,2,3');
-                expect(row._getListTypeVisibleText('none')).toBe('');
+                expect(row._getStringOfListItems('select')).toBe('1');
+                expect(row._getStringOfListItems('radio')).toBe('2');
+                expect(row._getStringOfListItems('checkbox')).toBe('1,2,3');
+                expect(row._getStringOfListItems('none')).toBe('');
             });
 
             it('changeOptionList Relation 이 걸려있을 경우에도 정상 동작하는지 확인한다.', function() {
@@ -318,10 +318,28 @@ describe('data.rowList', function() {
                 dataModelInstance.set(sampleList, {parse: true});
                 row = dataModelInstance.at(0);
 
-                expect(row._getListTypeVisibleText('select')).toBe('1');
-                expect(row._getListTypeVisibleText('radio')).toBe('2');
-                expect(row._getListTypeVisibleText('checkbox')).toBe('1,2,3');
-                expect(row._getListTypeVisibleText('radioNoRelation')).toBe('2');
+                expect(row._getStringOfListItems('select')).toBe('1');
+                expect(row._getStringOfListItems('radio')).toBe('2');
+                expect(row._getStringOfListItems('checkbox')).toBe('1,2,3');
+                expect(row._getStringOfListItems('radioNoRelation')).toBe('2');
+            });
+
+            it('when second paramter is set, the method returns concatenated text of list items.', function() {
+                var sampleList = [{
+                    'select': 1,
+                    'radio': 2,
+                    'checkbox': '1,2,3',
+                    'none': 1
+                }];
+                var row;
+
+                dataModelInstance.set(sampleList, {parse: true});
+                row = dataModelInstance.at(0);
+
+                expect(row._getStringOfListItems('select', true)).toBe('text1');
+                expect(row._getStringOfListItems('radio', true)).toBe('text2');
+                expect(row._getStringOfListItems('checkbox', true)).toBe('text1,text2,text3');
+                expect(row._getStringOfListItems('none', true)).toBe('');
             });
         });
 

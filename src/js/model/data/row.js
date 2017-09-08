@@ -485,11 +485,12 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * List type 의 경우 데이터 값과 editOptions.listItems 의 text 값이 다르기 때문에
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
      *
-     * @param {String} columnName   컬럼명
-     * @returns {String} text 형태로 가공된 문자열
+     * @param {string} columnName - Column name
+     * @param {boolean} useText - Whether returns concatenated text or values
+     * @returns {string} Concatenated text or values of "listItems" option
      * @private
      */
-    _getListTypeVisibleText: function(columnName) {
+    _getStringOfListItems: function(columnName, useText) {
         var value = this.get(columnName);
         var columnModel = this.columnModel.getColumnModel(columnName);
         var resultListItems, editOptionList, typeExpected, valueList;
@@ -501,14 +502,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
             typeExpected = typeof editOptionList[0].value;
             valueList = util.toString(value).split(',');
+
             if (typeExpected !== typeof valueList[0]) {
                 valueList = _.map(valueList, function(val) {
                     return util.convertValueType(val, typeExpected);
                 });
             }
+
             _.each(valueList, function(val, index) {
                 var item = _.findWhere(editOptionList, {value: val});
-                valueList[index] = item && item.value || '';
+                var str = item && (useText ? item.text : item.value) || '';
+
+                valueList[index] = str;
             }, this);
 
             return valueList.join(',');
@@ -547,17 +552,19 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the text string to be used when copying the cell value to clipboard.
-     * @param {String} columnName - column name
-     * @returns {String}
+     * @param {string} columnName - column name
+     * @returns {string}
      */
     getValueString: function(columnName) {
-        var editType = this.columnModel.getEditType(columnName);
-        var column = this.columnModel.getColumnModel(columnName);
+        var columnModel = this.columnModel;
+        var copyText = columnModel.copyVisibleTextOfEditingColumn(columnName);
+        var editType = columnModel.getEditType(columnName);
+        var column = columnModel.getColumnModel(columnName);
         var value = this.get(columnName);
 
         if (this._isListType(editType)) {
             if (snippet.isExisty(snippet.pick(column, 'editOptions', 'listItems', 0, 'value'))) {
-                value = this._getListTypeVisibleText(columnName);
+                value = this._getStringOfListItems(columnName, copyText);
             } else {
                 throw new Error('Check "' + columnName +
                     '"\'s editOptions.listItems property out in your ColumnModel.');
