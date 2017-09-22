@@ -339,7 +339,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var at = options.at;
         var height, viewData, rowNum;
-        var tempModel;
+        var viewModel;
 
         this._setRenderingRange(true);
 
@@ -354,7 +354,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 viewData = this._createViewDataFromDataModel(
                     model, columnNamesMap[attrName], height, rowNum);
 
-                tempModel = new Row(viewData, {
+                viewModel = new Row(viewData, {
                     parse: true,
                     collection: {
                         dataModel: this.dataModel,
@@ -363,7 +363,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                     }
                 });
 
-                this.get(attrName).splice(at + index, 0, tempModel);
+                this.get(attrName).splice(at + index, 0, viewModel);
             }, this);
         }, this);
 
