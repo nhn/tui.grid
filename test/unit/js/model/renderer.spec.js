@@ -200,8 +200,8 @@ describe('model.renderer', function() {
             columnModel.set('frozenCount', 3);
             dataModel.set(rowList, {parse: true});
             renderModel.refresh();
-            lside = renderModel.get('lside');
-            rside = renderModel.get('rside');
+            lside = renderModel.get('partialLside');
+            rside = renderModel.get('partialRside');
             expect(renderModel._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
@@ -274,8 +274,8 @@ describe('model.renderer', function() {
 
             beforeEach(function() {
                 renderModel.refresh();
-                lsideResult = renderModel.get('lside').at(0).toJSON();
-                rsideResult = renderModel.get('rside').at(0).toJSON();
+                lsideResult = renderModel.get('partialLside').at(0).toJSON();
+                rsideResult = renderModel.get('partialRside').at(0).toJSON();
             });
 
             it('rowKey와 extraData가 할당되어 있어야 한다.', function() {

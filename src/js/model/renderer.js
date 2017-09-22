@@ -8,6 +8,7 @@ var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
+var Row = require('./row');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
@@ -24,7 +25,8 @@ var DATA_LENGTH_FOR_LOADING = 1000;
  */
 var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     initialize: function(attrs, options) {
-        var lside, rside, rowListOptions;
+        var rowListOptions;
+        var partialLside, partialRside;
 
         _.assign(this, {
             dataModel: options.dataModel,
@@ -41,14 +43,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             focusModel: this.focusModel
         };
 
-        lside = new RowList([], rowListOptions);
-        rside = new RowList([], rowListOptions);
+        partialLside = new RowList([], rowListOptions);
+        partialRside = new RowList([], rowListOptions);
 
         this.set({
-            lside: lside,
-            rside: rside,
-            partialLside: new RowList([], rowListOptions),
-            partialRside: new RowList([], rowListOptions)
+            lside: [],
+            rside: [],
+            partialLside: partialLside,
+            partialRside: partialRside
         });
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
@@ -58,8 +60,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
-            .listenTo(lside, 'valueChange', this._executeRelation)
-            .listenTo(rside, 'valueChange', this._executeRelation)
+            .listenTo(partialLside, 'valueChange', this._executeRelation)
+            .listenTo(partialRside, 'valueChange', this._executeRelation)
             .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
@@ -89,6 +91,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         startNumber: 1,
         lside: null,
         rside: null,
+        partialLside: null,
+        partialRside: null,
         showDummyRows: false,
         dummyRowCount: 0,
 
@@ -96,10 +100,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         emptyMessage: null,
 
         // constMap.renderState
-        state: renderStateMap.DONE,
-
-        partialLside: null,
-        partialRside: null
+        state: renderStateMap.DONE
     },
 
     /**
@@ -132,16 +133,22 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _onChangeRowHeights: function() {
         var coordRowModel = this.coordRowModel;
-        var lside = this.get('lside');
-        var rside = this.get('rside');
-        var len = lside.length;
+        var lside = this.get('partialLside');
+        var rside = this.get('partialRside');
+        var length = lside.length;
         var i = 0;
         var height;
 
-        for (; i < len; i += 1) {
+        for (; i < length; i += 1) {
             height = coordRowModel.getHeightAt(i);
-            lside.at(i).set('height', height);
-            rside.at(i).set('height', height);
+
+            if (lside[i]) {
+                lside[i].set('height', height);
+            }
+
+            if (rside[i]) {
+                rside[i].set('height', height);
+            }
         }
     },
 
@@ -311,7 +318,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _onDataModelChange: function() {
         _.each(['lside', 'rside'], function(attrName) {
-            this.get(attrName).reset();
+            this.set(attrName, new Array(this.dataModel.length));
         }, this);
 
         this._setRenderingRange(true);
@@ -329,14 +336,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onAddDataModelChange: function(modelList, options) {
-        var viewModelList = this.get('lside').length ? this.get('lside') : this.get('rside');
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var at = options.at;
         var height, viewData, rowNum;
+        var tempModel;
 
-        if (at > viewModelList.length - 1) {
-            return;
-        }
+        this._setRenderingRange(true);
 
         // the type of modelList is array or collection
         modelList = _.isArray(modelList) ? modelList : modelList.models;
@@ -349,10 +354,16 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 viewData = this._createViewDataFromDataModel(
                     model, columnNamesMap[attrName], height, rowNum);
 
-                this.get(attrName).add([viewData], {
+                tempModel = new Row(viewData, {
                     parse: true,
-                    at: at + index
+                    collection: {
+                        dataModel: this.dataModel,
+                        columnModel: this.columnModel,
+                        focusModel: this.focusModel
+                    }
                 });
+
+                this.get(attrName).splice(at + index, 0, tempModel);
             }, this);
         }, this);
 
@@ -369,12 +380,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * Event handler for removing data list
      * @param {number|string} rowKey - rowKey of the removed row
+     * @param {number} removedIndex - Index of the removed row
      * @private
      */
-    _onRemoveDataModelChange: function(rowKey) {
+    _onRemoveDataModelChange: function(rowKey, removedIndex) {
         _.each(['lside', 'rside'], function(attrName) {
-            var collection = this.get(attrName);
-            collection.remove(collection.get(rowKey));
+            this.get(attrName).splice(removedIndex, 1);
         }, this);
 
         this._setRenderingRange(true);
@@ -520,16 +531,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _addViewModelList: function(rowDataModel, columnNamesMap, height, index) {
         _.each(['lside', 'rside'], function(attrName) {
-            var rowKey = rowDataModel.get('rowKey');
             var viewData;
 
-            if (!this.get(attrName).get(rowKey)) {
+            if (!this.get(attrName)[index]) {
                 viewData = this._createViewDataFromDataModel(
                     rowDataModel, columnNamesMap[attrName], height, index + 1);
 
-                this.get(attrName).add([viewData], {
+                this.get(attrName)[index] = new Row(viewData, {
                     parse: true,
-                    at: index
+                    collection: {
+                        dataModel: this.dataModel,
+                        columnModel: this.columnModel,
+                        focusModel: this.focusModel
+                    }
                 });
             }
         }, this);
@@ -547,7 +561,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var currentModel, rowNum, newRowNum;
 
         for (; index <= endIndex; index += 1) {
-            currentModel = collection.at(index);
+            currentModel = collection[index];
             newRowNum = index + 1;
 
             if (currentModel) {
@@ -578,15 +592,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _resetPartialViewModelList: function(startIndex, endIndex) {
         var originalWhichSide, partialWhichSide;
-        var viewModelList, patialViewModelList;
+        var viewModelList, partialViewModelList;
 
         _.each(['L', 'R'], function(whichSide) {
             originalWhichSide = whichSide.toLowerCase() + 'side';
             partialWhichSide = this._getPartialWhichSideType(whichSide);
             viewModelList = this.get(originalWhichSide);
-            patialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+            partialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
 
-            this.get(partialWhichSide).reset(patialViewModelList);
+            this.get(partialWhichSide).reset(partialViewModelList);
         }, this);
     },
 
@@ -648,11 +662,18 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
             _.times(dummyRowCount, function() {
                 _.each(['lside', 'rside'], function(listName) {
-                    this.get(listName).add({
+                    this.get(listName).push(new Row({
                         height: rowHeight,
                         rowNum: rowNum
-                    });
+                    }, {
+                        collection: {
+                            dataModel: this.dataModel,
+                            columnModel: this.columnModel,
+                            focusModel: this.focusModel
+                        }
+                    }));
                 }, this);
+
                 rowNum += 1;
             }, this);
         }
@@ -723,13 +744,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _getCollectionByColumnName: function(columnName) {
-        var lside = this.get('lside');
+        var lside = this.get('partialLside');
         var collection;
 
         if (lside.at(0) && lside.at(0).get(columnName)) {
             collection = lside;
         } else {
-            collection = this.get('rside');
+            collection = this.get('partialRside');
         }
         return collection;
     },
@@ -753,7 +774,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @param {String} columnName   컬럼명
      * @returns {object} cellData 셀 데이터
      * @example
-     =>
      {
          rowKey: rowKey,
          columnName: columnName,
