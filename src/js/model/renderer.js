@@ -136,11 +136,11 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var coordRowModel = this.coordRowModel;
         var lside = this.get('partialLside');
         var rside = this.get('partialRside');
-        var length = lside.length;
         var i = 0;
+        var len = lside.length;
         var height;
 
-        for (; i < length; i += 1) {
+        for (; i < len; i += 1) {
             height = coordRowModel.getHeightAt(i);
 
             lside.at(i).set('height', height);
