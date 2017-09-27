@@ -142,13 +142,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         for (; i < length; i += 1) {
             height = coordRowModel.getHeightAt(i);
 
-            if (lside[i]) {
-                lside[i].set('height', height);
-            }
-
-            if (rside[i]) {
-                rside[i].set('height', height);
-            }
+            lside.at(i).set('height', height);
+            rside.at(i).set('height', height);
         }
     },
 
@@ -354,14 +349,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 viewData = this._createViewDataFromDataModel(
                     model, columnNamesMap[attrName], height, rowNum);
 
-                viewModel = new Row(viewData, {
-                    parse: true,
-                    collection: {
-                        dataModel: this.dataModel,
-                        columnModel: this.columnModel,
-                        focusModel: this.focusModel
-                    }
-                });
+                viewModel = this._createRowModel(viewData, true);
 
                 this.get(attrName).splice(at + index, 0, viewModel);
             }, this);
@@ -537,14 +525,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 viewData = this._createViewDataFromDataModel(
                     rowDataModel, columnNamesMap[attrName], height, index + 1);
 
-                this.get(attrName)[index] = new Row(viewData, {
-                    parse: true,
-                    collection: {
-                        dataModel: this.dataModel,
-                        columnModel: this.columnModel,
-                        focusModel: this.focusModel
-                    }
-                });
+                this.get(attrName)[index] = this._createRowModel(viewData, true);
             }
         }, this);
     },
@@ -662,15 +643,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
             _.times(dummyRowCount, function() {
                 _.each(['lside', 'rside'], function(listName) {
-                    this.get(listName).push(new Row({
+                    this.get(listName).push(this._createRowModel({
                         height: rowHeight,
                         rowNum: rowNum
-                    }, {
-                        collection: {
-                            dataModel: this.dataModel,
-                            columnModel: this.columnModel,
-                            focusModel: this.focusModel
-                        }
                     }));
                 }, this);
 
@@ -817,6 +792,21 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 rowModel.setCell(columnName, changes);
             }
         }, this);
+    },
+
+    /**
+     * Create row model
+     * @param {object} attrs - Attributes to create
+     * @param {boolean} parse - Whether calling parse or not
+     * @returns {object} Row model
+     */
+    _createRowModel: function(attrs, parse) {
+        return new Row(attrs, {
+            parse: parse,
+            dataModel: this.dataModel,
+            columnModel: this.columnModel,
+            focusModel: this.focusModel
+        });
     }
 });
 
