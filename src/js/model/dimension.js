@@ -325,7 +325,9 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
      * @returns {number}
      */
     getBodyOffsetTop: function() {
-        return this.get('offsetTop') + this.get('headerHeight')
+        var offsetTop = this.domState.getOffset().top;
+
+        return offsetTop + this.get('headerHeight')
             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
     },
 
@@ -337,7 +339,7 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
      * @private
      */
     getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.get('offsetLeft');
+        var bodyOffsetX = this.domState.getOffset().left;
         var bodyOffsetY = this.getBodyOffsetTop();
 
         return {

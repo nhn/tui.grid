@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
+var _ = require('underscore');
 
 var DomState = require('domState');
 var DataModel = require('model/data/rowList');
@@ -15,7 +16,7 @@ var dimensionConstMap = require('common/constMap').dimension;
 var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 
-function create(data) {
+function create(data, domStateOffset) {
     var columnModel = new ColumnModel({
         rowHeaders: [
             {
@@ -50,7 +51,10 @@ function create(data) {
         minimumColumnWidth: 10
     }, {
         columnModel: columnModel,
-        dataModel: dataModel
+        dataModel: dataModel,
+        domState: {
+            getOffset: _.constant(domStateOffset)
+        }
     });
 
     var coordRowModel = new CoordRowModel(null, {
@@ -82,7 +86,11 @@ function create(data) {
 describe('CoordConverter', function() {
     describe('getIndexFromMousePosition()', function() {
         it('Returns indexs of cell based on mouse position', function() {
-            var converter = create([{}, {}, {}]);
+            var domStateOffset = {
+                top: 0,
+                left: 0
+            };
+            var converter = create([{}, {}, {}], domStateOffset);
 
             expect(converter.getIndexFromMousePosition(50, 50, true)).toEqual({
                 row: 1,

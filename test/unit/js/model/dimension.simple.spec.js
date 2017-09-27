@@ -159,6 +159,12 @@ describe('model.dimension', function() {
                 scrollX: false,
                 scrollY: false
             });
+            dimension.domState = {
+                getOffset: _.constant({
+                    top: 10,
+                    left: 10
+                })
+            };
             bodyOffsetX = 10;
             bodyOffsetY = dimension.getBodyOffsetTop();
             limitX = 110;
