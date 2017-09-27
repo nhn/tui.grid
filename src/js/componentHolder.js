@@ -2,6 +2,7 @@
  * @fileoverview Component holder
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -16,7 +17,7 @@ var defaultOptionsMap = {
  * @module componentHolder
  * @ignore
  */
-var ComponentHolder = snippet.defineClass(/**@lends module:componentHolder.prototype */{
+var ComponentHolder = snippet.defineClass(/** @lends module:componentHolder.prototype */{
     init: function(optionsMap) {
         this.optionsMap = $.extend(true, defaultOptionsMap, optionsMap);
         this.instanceMap = {};

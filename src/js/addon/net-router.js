@@ -2,6 +2,7 @@
  * @fileoverview Router for Addon.Net
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var Backbone = require('backbone');
@@ -12,7 +13,7 @@ var Backbone = require('backbone');
  * @param  {object} attributes - Attributes
  * @ignore
  */
-var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype */{
+var Router = Backbone.Router.extend(/** @lends module:addon/net-router.prototype */{
     initialize: function(attributes) {
         this.net = attributes.net;
     },

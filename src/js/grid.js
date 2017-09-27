@@ -2,6 +2,7 @@
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -567,8 +568,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
+
             return true;
         }
+
         return false;
     },
 
@@ -717,6 +720,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
         }
+
         return this;
     },
 
@@ -926,6 +930,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     findRows: function(conditions) {
         var rowList = this.modelManager.dataModel.getRows();
+
         return _.where(rowList, conditions);
     },
 

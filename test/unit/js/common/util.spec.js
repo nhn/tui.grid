@@ -43,20 +43,46 @@ describe('core.util', function() {
     describe('isEqual()', function() {
         it('Object 형을 비교할 수 있다.', function() {
             expect(util.isEqual(
-                {'prop1': 1, 'prop2': 2},
-                {'prop1': 1, 'prop2': 2}
+                {
+                    'prop1': 1,
+                    'prop2': 2
+                },
+                {
+                    'prop1': 1,
+                    'prop2': 2
+                }
             )).toBe(true);
             expect(util.isEqual(
-                {'prop1': 1, 'prop2': 2, 'prop3': 3},
-                {'prop1': 1, 'prop2': 2}
+                {
+                    'prop1': 1,
+                    'prop2': 2,
+                    'prop3': 3
+                },
+                {
+                    'prop1': 1,
+                    'prop2': 2
+                }
             )).toBe(false);
             expect(util.isEqual(
-                {'prop1': 1, 'prop2': 2},
-                {'prop1': 1, 'prop2': 2, 'prop3': 3}
+                {
+                    'prop1': 1,
+                    'prop2': 2
+                },
+                {
+                    'prop1': 1,
+                    'prop2': 2,
+                    'prop3': 3
+                }
             )).toBe(false);
             expect(util.isEqual(
-                {'prop1': 1, 'prop2': '2'},
-                {'prop1': 1, 'prop2': 2}
+                {
+                    'prop1': 1,
+                    'prop2': '2'
+                },
+                {
+                    'prop1': 1,
+                    'prop2': 2
+                }
             )).toBe(false);
         });
 

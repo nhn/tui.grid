@@ -2,6 +2,7 @@
  * @fileoverview Add-on for binding to remote data
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -91,7 +92,7 @@ var DELAY_FOR_LOADING_STATE = 200;
  *      net.request('modifyData');
  *   </script>
  */
-var Net = View.extend(/**@lends module:addon/net.prototype */{
+var Net = View.extend(/** @lends module:addon/net.prototype */{
     initialize: function(options) {
         var defaultOptions = {
             initialRequest: true,
@@ -386,12 +387,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             this.requestedFormData = _.clone(data);
             this.curPage = data.page || this.curPage;
-            startNumber = (this.curPage - 1) * this.perPage + 1;
+            startNumber = ((this.curPage - 1) * this.perPage) + 1;
             this.renderModel.set({
                 startNumber: startNumber
             });
 
-            //마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
+            // 마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
             this.lastRequestedReadData = _.clone(data);
             this.dataModel.fetch({
                 requestType: 'readData',
@@ -562,7 +563,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         if (options.hasDataParam) {
             if (options.modifiedOnly) {
-                //{createdRows: [], updatedRows:[], deletedRows: []} 에 담는다.
+                // {createdRows: [], updatedRows:[], deletedRows: []} 에 담는다.
                 dataMap = dataModel.getModifiedRows({
                     checkedOnly: options.checkedOnly
                 });
@@ -573,7 +574,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                     }
                 }, this);
             } else {
-                //{rows: []} 에 담는다.
+                // {rows: []} 에 담는다.
                 data.rows = dataModel.getRows(options.checkedOnly);
                 count = data.rows.length;
             }
@@ -707,6 +708,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._unlock();
     },
 
+    /* eslint-disable complexity */
     /**
      * ajax success 이벤트 핸들러
      * @param {Function} callback Callback function
@@ -777,6 +779,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
         }
     },
+    /* eslint-enable complexity */
 
     /**
      * ajax error 이벤트 핸들러

@@ -2,6 +2,7 @@
  * @fileoverview Manage coordinates of rows
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -17,7 +18,7 @@ var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDT
  * @extends module:base/model
  * @ignore
  */
-var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
+var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     initialize: function(attrs, options) {
         this.dataModel = options.dataModel;
         this.dimensionModel = options.dimensionModel;
@@ -139,6 +140,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
      */
     getHeight: function(rowKey) {
         var index = this.dataModel.indexOfRowKey(rowKey);
+
         return this.getHeightAt(index);
     },
 
@@ -149,6 +151,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
      */
     getOffset: function(rowKey) {
         var index = this.dataModel.indexOfRowKey(rowKey);
+
         return this.getOffsetAt(index);
     },
 

@@ -16,7 +16,7 @@ var rowData = [];
             c3: parseInt(Math.random() * 100, 10)
         });
     }
-}());
+})();
 
 function getSampleData(query) {
     var page = Number(query.page),
@@ -53,10 +53,12 @@ function sortRowData(columnName, ascending) {
         if (!ascending) {
             result = -result;
         }
+
         return result;
     });
 }
 
+/* eslint-disable dot-notation */
 app.use(express.static(path.join(__dirname, '..')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

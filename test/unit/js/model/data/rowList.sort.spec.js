@@ -159,6 +159,5 @@ describe('data.rowList', function() {
 
             expect(dataModel.sort).not.toHaveBeenCalled();
         });
-
     });
 });

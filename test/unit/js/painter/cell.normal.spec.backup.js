@@ -136,7 +136,6 @@ describe('view.painter.cell.normal', function() {
             });
         });
 
-
         describe('getEditType', function() {
             it('_button 문자열을 반환한다.', function() {
                 expect(cellPainter.getEditType()).toEqual('_button');

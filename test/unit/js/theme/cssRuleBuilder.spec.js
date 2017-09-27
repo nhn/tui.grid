@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var builder = require('theme/cssRuleBuilder');
 
 describe('theme.cssRuleBuilder', function() {

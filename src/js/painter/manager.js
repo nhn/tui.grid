@@ -2,6 +2,7 @@
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -21,7 +22,7 @@ var MainButtonPainter = require('./input/mainButton');
  * @param {Object} options - Options
  * @ignore
  */
-var PainterManager = snippet.defineClass(/**@lends module:painter/manager.prototype */{
+var PainterManager = snippet.defineClass(/** @lends module:painter/manager.prototype */{
     init: function(options) {
         this.gridId = options.gridId;
         this.selectType = options.selectType;

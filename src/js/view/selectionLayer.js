@@ -2,6 +2,7 @@
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,7 +19,7 @@ var frameConst = require('../common/constMap').frame;
  * @param {object} options Options
  * @ignore
  */
-var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
+var SelectionLayer = View.extend(/** @lends module:view/selectionLayer.prototype */{
     initialize: function(options) {
         _.assign(this, {
             whichSide: options.whichSide || frameConst.R,

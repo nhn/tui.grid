@@ -1,7 +1,8 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview webpack config file
+ * Configs file for bundling
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 /* eslint-disable vars-on-top, no-process-env, require-jsdoc */
@@ -80,6 +81,7 @@ function develop() {
         output: {
             library: ['tui', 'Grid'],
             libraryTarget: 'umd',
+            path: '/dist/',
             publicPath: '/dist/',
             filename: FILENAME + '.js'
         },

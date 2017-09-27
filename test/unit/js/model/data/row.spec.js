@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var Backbone = require('backbone');
 
 var Grid = require('grid');
 var RowData = require('model/data/row');
@@ -85,16 +84,18 @@ describe('RowData', function() {
 
         describe('Returns array of className', function() {
             it('containing className of columnModel', function() {
-                columnModel.set('columns', [
-                    {name: 'c1', className: 'c1-class'}
-                ]);
+                columnModel.set('columns', [{
+                    name: 'c1',
+                    className: 'c1-class'
+                }]);
                 expect(row.getClassNameList('c1')).toContain('c1-class');
             });
 
             it('containing \'ellipsis\' if columnModel.ellipsis is true', function() {
-                columnModel.set('columns', [
-                    {name: 'c1', ellipsis: true}
-                ]);
+                columnModel.set('columns', [{
+                    name: 'c1',
+                    ellipsis: true
+                }]);
                 expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });
 

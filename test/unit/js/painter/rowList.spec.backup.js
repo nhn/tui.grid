@@ -1,7 +1,6 @@
-/* global setFixtures */
-
 'use strict';
 
+var _ = require('underscore');
 var $ = require('jquery');
 
 var ModelManager = require('model/manager');
@@ -17,6 +16,7 @@ describe('View.RowList', function() {
 
     function redrawTable(html) {
         $tableContainer[0].innerHTML = '<table><tbody>' + html + '</tbody></table>';
+
         return $tableContainer.find('tbody');
     }
 
@@ -57,10 +57,13 @@ describe('View.RowList', function() {
             columnName: 'c3',
             editOption: {
                 type: 'select',
-                list: [
-                    {text: 's1', value: 's1'},
-                    {text: 's2', vlaue: 's2'}
-                ]
+                list: [{
+                    text: 's1',
+                    value: 's1'
+                }, {
+                    text: 's2',
+                    vlaue: 's2'
+                }]
             }
         }]);
 
@@ -112,7 +115,7 @@ describe('View.RowList', function() {
     });
 
     describe('SmartRender 사용시 RowList.render()', function() {
-        var smartRenderer, $trs;
+        var $trs;
 
         function init(sampleData) {
             grid.renderModel = new SmartRenderModel(null, {
@@ -143,8 +146,9 @@ describe('View.RowList', function() {
                 for (i = 0; i < 50; i += 1) {
                     data.push({c1: i});
                 }
+
                 return data;
-            }());
+            })();
 
             beforeEach(function() {
                 grid.columnModel.set('columns', [{columnName: 'c1'}]);
@@ -199,11 +203,13 @@ describe('View.RowList', function() {
         describe('keyColumnName이 지정되어 있고 일정하게 증가하지 않을 때', function() {
             var sampleData = (function() {
                 var data = [];
+
                 _.each([1, 3, 5, 6, 9, 10, 12, 13, 18, 20], function(num) {
                     data.push({c1: num});
                 });
+
                 return data;
-            }());
+            })();
 
             beforeEach(function() {
                 grid.columnModel.set('columns', [{columnName: 'c1'}]);
@@ -233,10 +239,14 @@ describe('View.RowList', function() {
             var sampleData = (function() {
                 var i, data = [];
                 for (i = 0; i < 15; i += 1) {
-                    data.push({c1: i, c2: 15 - i});
+                    data.push({
+                        c1: i,
+                        c2: 15 - i
+                    });
                 }
+
                 return data;
-            }());
+            })();
 
             beforeEach(function() {
                 grid.columnModel.set('columns', [
@@ -312,6 +322,7 @@ describe('View.RowList', function() {
 
             function isMetaCellsSelected(rowKey) {
                 var $metaCells = $trs.filter('[data-row-key=' + rowKey + ']').find('td.meta_column');
+
                 return $metaCells.not('.selected').length === 0;
             }
 

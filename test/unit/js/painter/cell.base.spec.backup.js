@@ -372,7 +372,7 @@ describe('view.painter.cell.base', function() {
 
             cellPainter.redraw = jasmine.createSpy('redraw');
             cellPainter.setElementAttribute = jasmine.createSpy('setElementAttribute');
-            //tr 은 Row Painter 에서 생성해주기 때문에 해당 test case 에서는 문자열로 넣어준다.
+            // tr 은 Row Painter 에서 생성해주기 때문에 해당 test case 에서는 문자열로 넣어준다.
             html = '<tr ' + attrNameMap.ROW_KEY + '="0">';
             html += cellPainter.getHtml({
                 columnName: 'c1',

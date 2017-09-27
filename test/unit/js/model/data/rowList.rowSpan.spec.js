@@ -28,8 +28,7 @@ describe('Data.RowList - rowSpan', function() {
         rowList = new RowListData([], {
             columnModel: columnModel
         });
-        rowList.set([
-        {
+        rowList.set([{
             _extraData: {
                 rowSpan: {c1: 3}
             },

@@ -2,6 +2,7 @@
  * @fileoverview Base class for the Input Painter
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -19,7 +20,7 @@ var keyNameMap = require('../../common/constMap').keyName;
  * @param {Object} options - options
  * @ignore
  */
-var InputPainter = snippet.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
+var InputPainter = snippet.defineClass(Painter, /** @lends module:painter/input/base.prototype */{
     init: function() {
         Painter.apply(this, arguments);
 

@@ -2,6 +2,7 @@
  * @fileoverview Class for the layer view that represents the currently focused cell
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -23,7 +24,7 @@ var BLUR_CLASS_NAME = classNameConst.LAYER_FOCUS_DEACTIVE;
  * @param {Object} options - Options
  * @ignore
  */
-var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
+var FocusLayer = View.extend(/** @lends module:view/focusLayer.prototype */{
     initialize: function(options) {
         this.focusModel = options.focusModel;
         this.columnModel = options.columnModel;

@@ -2,6 +2,7 @@
  * @fileoverview Footer
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -19,7 +20,7 @@ var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
  * @param {Object} options - Options
  * @ignore
  */
-var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
+var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
     initialize: function(options) {
         /**
          * Store template functions of each column

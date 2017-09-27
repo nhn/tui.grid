@@ -2,6 +2,7 @@
  * @fileoverview Rendering 모델
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -23,7 +24,7 @@ var DATA_LENGTH_FOR_LOADING = 1000;
  * @param {Object} options - Options
  * @ignore
  */
-var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
+var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     initialize: function(attrs, options) {
         var rowListOptions;
         var partialLside, partialRside;
@@ -280,6 +281,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     getCollection: function(whichSide) {
         var attrName = this._getPartialWhichSideType(whichSide);
+
         return this.get(attrName);
     },
 
@@ -727,6 +729,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         } else {
             collection = this.get('partialRside');
         }
+
         return collection;
     },
 

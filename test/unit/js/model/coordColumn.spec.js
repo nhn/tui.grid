@@ -186,11 +186,24 @@ describe('CoordColumn', function() {
             it('150, 150, 150, "auto", "auto"', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 150},
-                        {name: 'c2', width: 150},
-                        {name: 'c3', width: 150},
-                        {name: 'c4'},
-                        {name: 'c5'}
+                        {
+                            name: 'c1',
+                            width: 150
+                        },
+                        {
+                            name: 'c2',
+                            width: 150
+                        },
+                        {
+                            name: 'c3',
+                            width: 150
+                        },
+                        {
+                            name: 'c4'
+                        },
+                        {
+                            name: 'c5'
+                        }
                     ],
                     hasNumberColumn: false
                 };
@@ -202,11 +215,24 @@ describe('CoordColumn', function() {
             it('30, 30, 30, "auto", "auto"', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 80},
-                        {name: 'c2', width: 80},
-                        {name: 'c3', width: 80},
-                        {name: 'c4'},
-                        {name: 'c5'}
+                        {
+                            name: 'c1',
+                            width: 80
+                        },
+                        {
+                            name: 'c2',
+                            width: 80
+                        },
+                        {
+                            name: 'c3',
+                            width: 80
+                        },
+                        {
+                            name: 'c4'
+                        },
+                        {
+                            name: 'c5'
+                        }
                     ],
                     hasNumberColumn: false
                 };
@@ -217,11 +243,26 @@ describe('CoordColumn', function() {
             it('All columns are fixed with 50px.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 50},
-                        {name: 'c2', width: 50},
-                        {name: 'c3', width: 50},
-                        {name: 'c4', width: 50},
-                        {name: 'c5', width: 50}
+                        {
+                            name: 'c1',
+                            width: 50
+                        },
+                        {
+                            name: 'c2',
+                            width: 50
+                        },
+                        {
+                            name: 'c3',
+                            width: 50
+                        },
+                        {
+                            name: 'c4',
+                            width: 50
+                        },
+                        {
+                            name: 'c5',
+                            width: 50
+                        }
                     ],
                     hasNumberColumn: false
                 };
@@ -232,11 +273,24 @@ describe('CoordColumn', function() {
             it('When minimum width set, width of each "auto" column is expaneded by minimum width.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', minWidth: 150},
-                        {name: 'c2', minWidth: 150},
-                        {name: 'c3', minWidth: 150},
-                        {name: 'c4'},
-                        {name: 'c5'}
+                        {
+                            name: 'c1',
+                            minWidth: 150
+                        },
+                        {
+                            name: 'c2',
+                            minWidth: 150
+                        },
+                        {
+                            name: 'c3',
+                            minWidth: 150
+                        },
+                        {
+                            name: 'c4'
+                        },
+                        {
+                            name: 'c5'
+                        }
                     ],
                     hasNumberColumn: false
                 };
@@ -248,11 +302,22 @@ describe('CoordColumn', function() {
                 'width is replaced by minimum width.', function() {
                 var columnAttrs = {
                     columns: [
-                        {name: 'c1', width: 100, minWidth: 10},
-                        {name: 'c2', width: 10, minWidth: 100},
-                        {name: 'c3'},
-                        {name: 'c4'},
-                        {name: 'c5'}
+                        {
+                            name: 'c1',
+                            width: 100,
+                            minWidth: 10
+                        },
+                        {
+                            name: 'c2',
+                            width: 10,
+                            minWidth: 100
+                        },
+                        {
+                            name: 'c3'},
+                        {
+                            name: 'c4'},
+                        {
+                            name: 'c5'}
                     ],
                     hasNumberColumn: false
                 };
@@ -266,9 +331,18 @@ describe('CoordColumn', function() {
         it('changes width of given column and set variables', function() {
             var columnAttrs = {
                 columns: [
-                    {name: 'c1', width: 50},
-                    {name: 'c2', width: 50},
-                    {name: 'c3', width: 50}
+                    {
+                        name: 'c1',
+                        width: 50
+                    },
+                    {
+                        name: 'c2',
+                        width: 50
+                    },
+                    {
+                        name: 'c3',
+                        width: 50
+                    }
                 ],
                 hasNumberColumn: false
             };

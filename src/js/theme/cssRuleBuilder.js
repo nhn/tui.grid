@@ -2,6 +2,7 @@
 * @fileoverview CSS Rule string builder
 * @author NHN Ent. FE Development Team
 */
+
 'use strict';
 
 var _ = require('underscore');
@@ -34,6 +35,7 @@ var CSSRuleBuilder = snippet.defineClass({
         if (value) {
             this._propValues.push(property + ':' + value);
         }
+
         return this;
     },
 
@@ -68,6 +70,7 @@ var CSSRuleBuilder = snippet.defineClass({
             this.add('border-top-width', value)
                 .add('border-bottom-width', value);
         }
+
         return this;
     },
 

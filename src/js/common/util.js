@@ -2,6 +2,7 @@
 * @fileoverview 유틸리티 메서드 모음
 * @author NHN Ent. FE Development Team
 */
+
 'use strict';
 
 var $ = require('jquery');
@@ -182,8 +183,10 @@ util = {
 
                 snippet.forEach(targetObj, function(item, key) {
                     result = (item === distObj[key]);
+
                     return result;
                 });
+
                 return result;
             };
 
@@ -193,10 +196,12 @@ util = {
             return false;
         } else if (_.isObject(target)) {
             isDiff = !compareObject(target, dist) || !compareObject(dist, target);
+
             return !isDiff;
         } else if (target !== dist) {
             return false;
         }
+
         return true;
     },
 
@@ -210,6 +215,7 @@ util = {
         if (_.isString(target)) {
             return !target.length;
         }
+
         return _.isUndefined(target) || _.isNull(target);
     },
 
@@ -233,6 +239,7 @@ util = {
                 htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
             ));
         }
+
         return htmlString;
     },
 
@@ -246,6 +253,7 @@ util = {
         if (_.isUndefined(value) || _.isNull(value)) {
             return '';
         }
+
         return String(value);
     },
 
@@ -256,6 +264,7 @@ util = {
      */
     getUniqueKey: function() {
         this.uniqueId += 1;
+
         return this.uniqueId;
     },
 
@@ -327,6 +336,7 @@ util = {
         } else if (type === 'boolean') {
             return Boolean(value);
         }
+
         return value;
     },
 
@@ -356,6 +366,7 @@ util = {
             min = max;
             max = temp;
         }
+
         return Math.max(min, Math.min(value, max));
     },
 

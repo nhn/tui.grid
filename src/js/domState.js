@@ -2,6 +2,7 @@
  * @fileoverview This class offers methods that can be used to get the current state of DOM element.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -16,7 +17,7 @@ var classNameConst = require('./common/classNameConst');
  * @param {jQuery} $el - jQuery object of the container element.
  * @ignore
  */
-var DomState = snippet.defineClass(/**@lends module:domState.prototype */{
+var DomState = snippet.defineClass(/** @lends module:domState.prototype */{
     init: function($el) {
         this.$el = $el;
     },

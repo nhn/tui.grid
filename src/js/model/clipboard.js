@@ -2,6 +2,7 @@
  * @fileoverview Clipboard Model
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -16,7 +17,7 @@ var Model = require('../base/model');
  * @param {Object} options - Options
  * @ignore
  */
-var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
+var Clipboard = Model.extend(/** @lends module:model/clipboard.prototype*/{
     initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
 

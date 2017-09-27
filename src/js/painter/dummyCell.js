@@ -2,6 +2,7 @@
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,7 +19,7 @@ var classNameConst = require('../common/classNameConst');
  * @extends module:base/painter
  * @ignore
  */
-var DummyCell = snippet.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
+var DummyCell = snippet.defineClass(Painter, /** @lends module:painter/dummyCell.prototype */{
     init: function() {
         Painter.apply(this, arguments);
     },

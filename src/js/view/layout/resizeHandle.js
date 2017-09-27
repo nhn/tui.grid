@@ -2,6 +2,7 @@
  * @fileoverview ResizeHandle for the Header
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -25,7 +26,7 @@ var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
  * @param {Object} options - Options
  * @ignore
  */
-var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototype */ {
+var ResizeHandle = View.extend(/** @lends module:view/layout/resizeHandle.prototype */ {
     initialize: function(options) {
         _.assign(this, {
             columnModel: options.columnModel,

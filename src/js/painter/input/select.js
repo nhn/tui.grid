@@ -2,6 +2,7 @@
  * @fileoverview Painter class for 'select' input.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -17,7 +18,7 @@ var util = require('../../common/util');
  * @extends module:painter/input/base
  * @ignore
  */
-var SelectPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/select.prototype */{
+var SelectPainter = snippet.defineClass(InputPainter, /** @lends module:painter/input/select.prototype */{
     init: function() {
         InputPainter.apply(this, arguments);
 

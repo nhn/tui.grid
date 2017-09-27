@@ -84,8 +84,14 @@ describe('model.renderer', function() {
                 scrollX: false
             });
             dataModel.reset([
-                {c1: '0-1', c2: '0-2'},
-                {c1: '1-1', c2: '1-2'}
+                {
+                    c1: '0-1',
+                    c2: '0-2'
+                },
+                {
+                    c1: '1-1',
+                    c2: '1-2'
+                }
             ], {parse: true});
             renderModel = createRenderModel({
                 showDummyRows: true

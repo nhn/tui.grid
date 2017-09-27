@@ -2,6 +2,7 @@
  * @fileoverview Hidden Textarea View for handling key navigation events and emulating clipboard actions
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -45,7 +46,7 @@ function isPasteEvent(gridEvent) {
  * @param {Object} options - Options
  * @ignore
  */
-Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
+Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
     initialize: function(options) {
         _.assign(this, {
             focusModel: options.focusModel,
@@ -105,6 +106,7 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
         if (this.isLocked) {
             ev.preventDefault();
+
             return;
         }
 

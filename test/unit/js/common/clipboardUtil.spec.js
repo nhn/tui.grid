@@ -115,7 +115,7 @@ describe('common/clipboardUtil', function() {
             input = '"test' + customLFSubChar + '""test""' + customLFSubChar + '"';
             output = util.removeDoubleQuotes(input);
 
-            expect(output).toBe('test' + customLFSubChar + '"test"' + customLFSubChar + '');
+            expect(output).toBe('test' + customLFSubChar + '"test"' + customLFSubChar);
         });
 
         it('when the text don\'t include substitution characters, ' +
@@ -141,7 +141,7 @@ describe('common/clipboardUtil', function() {
             input = '"test\r\n""te""st"\r\ntest';
             output = util.replaceNewlineToSubchar(input);
 
-            expect(output).toBe('"test' + customCRSubChar  + customLFSubChar + '""te""st"\r\ntest');
+            expect(output).toBe('"test' + customCRSubChar + customLFSubChar + '""te""st"\r\ntest');
         });
 
         it('when the text include double quotes and don\'t include newline characters, ' +

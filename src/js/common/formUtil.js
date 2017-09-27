@@ -2,6 +2,7 @@
  * @fileoverview Utilities for form data, form element
  * @author NHN Ent. Fe Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');

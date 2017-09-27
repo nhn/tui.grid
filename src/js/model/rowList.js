@@ -2,6 +2,7 @@
  * @fileoverview RowList 클래스파일
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -17,7 +18,7 @@ var Row = require('./row');
   * @param {Object} options - Options
   * @ignore
   */
-var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
+var RowList = Collection.extend(/** @lends module:model/rowList.prototype */{
     initialize: function(rawData, options) {
         _.assign(this, {
             dataModel: options.dataModel,

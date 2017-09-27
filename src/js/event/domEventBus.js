@@ -1,3 +1,9 @@
+
+/**
+ * @fileoverview Creator of domEventBus
+ * @author NHN Ent. FE Development Lab
+ */
+
 'use strict';
 
 var _ = require('underscore');

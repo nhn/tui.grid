@@ -2,6 +2,7 @@
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -33,7 +34,7 @@ var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
  * @extends module:base/model
  * @ignore
  */
-var Row = Model.extend(/**@lends module:model/data/row.prototype */{
+var Row = Model.extend(/** @lends module:model/data/row.prototype */{
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
@@ -93,6 +94,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (!data._extraData) {
             data._extraData = {};
         }
+
         return data;
     },
 
@@ -289,6 +291,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         return this.extraDataManager.getRowState();
     },
 
+    /* eslint-disable complexity */
     /**
      * Returns an array of all className, related with given columnName.
      * @param {String} columnName - Column name
@@ -320,6 +323,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         return this._makeUniqueStringArray(classNameList);
     },
+    /* eslint-enable complexity */
 
     /**
      * Returns a new array, which splits all comma-separated strings in the targetList and removes duplicated item.
@@ -328,6 +332,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     _makeUniqueStringArray: function(targetArray) {
         var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
+
         return _.without(singleStringArray, '');
     },
 
@@ -493,12 +498,12 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     _getStringOfListItems: function(columnName, useText) {
         var value = this.get(columnName);
         var columnModel = this.columnModel.getColumnModel(columnName);
-        var resultListItems, editOptionList, typeExpected, valueList;
+        var resultListItems, editOptionList, typeExpected, valueList, hasListItems;
 
         if (snippet.isExisty(snippet.pick(columnModel, 'editOptions', 'listItems'))) {
             resultListItems = this.executeRelationCallbacksAll(['listItems'])[columnName];
-            editOptionList = resultListItems && resultListItems.listItems ?
-                    resultListItems.listItems : columnModel.editOptions.listItems;
+            hasListItems = resultListItems && resultListItems.listItems;
+            editOptionList = hasListItems ? resultListItems.listItems : columnModel.editOptions.listItems;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = util.toString(value).split(',');
@@ -511,13 +516,14 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
             _.each(valueList, function(val, index) {
                 var item = _.findWhere(editOptionList, {value: val});
-                var str = item && (useText ? item.text : item.value) || '';
+                var str = (item && (useText ? item.text : item.value)) || '';
 
                 valueList[index] = str;
             }, this);
 
             return valueList.join(',');
         }
+
         return '';
     },
 

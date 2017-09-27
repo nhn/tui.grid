@@ -118,14 +118,25 @@ describe('grid', function() {
         var grid = createGrid(['c1', 'c2', 'c3']);
         var rowList, foundRowList;
 
-        grid.setData([
-            {c1: 'a', c2: 'b', c3: 'c'},
-            {c1: 'b', c2: 'b', c3: 'c'},
-            {c1: 'a', c2: 'c', c3: 'b'}
-        ]);
+        grid.setData([{
+            c1: 'a',
+            c2: 'b',
+            c3: 'c'
+        }, {
+            c1: 'b',
+            c2: 'b',
+            c3: 'c'
+        }, {
+            c1: 'a',
+            c2: 'c',
+            c3: 'b'
+        }]);
 
         rowList = grid.getRows();
-        foundRowList = grid.findRows({c2: 'b', c3: 'c'});
+        foundRowList = grid.findRows({
+            c2: 'b',
+            c3: 'c'
+        });
 
         expect(foundRowList.length).toBe(2);
         expect(foundRowList[0]).toEqual(rowList[0]);
@@ -133,7 +144,7 @@ describe('grid', function() {
     });
 
     describe('Using "keyColumnName" option', function() {
-        var grid, spy, point;
+        var grid, spy;
 
         beforeEach(function() {
             spy = jasmine.createSpy();
@@ -144,7 +155,10 @@ describe('grid', function() {
         });
 
         it('and key column\'s value is number, event object has "rowKey" of number type.', function() {
-            grid.setData([{c1: 100, c2: 200}]);
+            grid.setData([{
+                c1: 100,
+                c2: 200
+            }]);
 
             grid.container._onDblClick({
                 target: grid.getElement(200, 'c2')
@@ -154,7 +168,10 @@ describe('grid', function() {
         });
 
         it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
-            grid.setData([{c1: '100', c2: '200'}]);
+            grid.setData([{
+                c1: '100',
+                c2: '200'
+            }]);
 
             grid.container._onDblClick({
                 target: grid.getElement('200', 'c2')
@@ -164,7 +181,10 @@ describe('grid', function() {
         });
 
         it('and key column\'s value is string, event object has "rowKey" of string type.', function() {
-            grid.setData([{c1: 'a', c2: 'b'}]);
+            grid.setData([{
+                c1: 'a',
+                c2: 'b'
+            }]);
 
             grid.container._onDblClick({
                 target: grid.getElement('b', 'c2')

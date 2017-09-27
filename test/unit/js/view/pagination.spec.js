@@ -1,8 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-var _ = require('underscore');
-
 var TuiPaginaton = require('tui-pagination');
 
 var PaginationView = require('view/pagination');

@@ -2,6 +2,7 @@
  * @fileoverview Header View
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -32,7 +33,7 @@ var MIN_INTERVAL_FOR_PAUSED = 200;
  * @param {String} [options.whichSide=R]  R: Right, L: Left
  * @ignore
  */
-var Header = View.extend(/**@lends module:view/layout/header.prototype */{
+var Header = View.extend(/** @lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
@@ -177,6 +178,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         return _.filter(mergedColumnNames, function(mergedColumnName) {
             var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
+
             return _.every(unitColumnNames, function(name) {
                 return _.contains(columnNames, name);
             });
@@ -366,6 +368,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @param {boolean} sortOptions.ascending 오름차순 여부
      */
     _updateBtnSortState: function(sortOptions) {
+        var className;
+
         if (this._$currentSortBtn) {
             this._$currentSortBtn.removeClass(classNameConst.BTN_SORT_DOWN + ' ' + classNameConst.BTN_SORT_UP);
         }
@@ -373,9 +377,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
 
-        this._$currentSortBtn.addClass(sortOptions.ascending ?
-            classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
-        );
+        className = sortOptions.ascending ? classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN;
+
+        this._$currentSortBtn.addClass(className);
     },
 
     /**
@@ -415,6 +419,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         };
     },
 
+    /* eslint-disable complexity */
     /**
      * Header 의 body markup 을 생성한다.
      * @returns {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
@@ -481,6 +486,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         return headerMarkupList.join('');
     },
+    /* eslint-enable complexity */
 
     /**
      * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
@@ -535,6 +541,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 }, this);
             }
         }
+
         return results;
     }
 });

@@ -2,6 +2,7 @@
  * @fileoverview Base class for Collections
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var Backbone = require('backbone');
@@ -11,7 +12,7 @@ var Backbone = require('backbone');
  * @module base/collection
  * @ignore
  */
-var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
+var Collection = Backbone.Collection.extend(/** @lends module:base/collection.prototype */{
     /**
      * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
      * @returns {object} this object

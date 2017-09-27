@@ -8,7 +8,7 @@ var ConvertiblePainter = require('painter/cell/text-convertible');
 var keyCodeMap = require('common/constMap').keyCode;
 
 describe('view.painter.cell.text', function() {
-    var grid, cellPainter, $container;
+    var grid, cellPainter;
 
     beforeEach(function() {
         grid = new ModelManager();
@@ -137,7 +137,7 @@ describe('view.painter.cell.text', function() {
 
             beforeEach(function() {
                 $input = $(cellPainter.getContentHtml(options));
-                //_onFocus 를 호출함으로서 originalText 를 설정한다.
+                // _onFocus 를 호출함으로서 originalText 를 설정한다.
                 cellPainter._onFocus({target: $input.get(0)});
             });
 
@@ -270,7 +270,7 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_startEdit', function() {
-            var html, $table, $td, $input;
+            var $table, $td, $input;
 
             beforeEach(function() {
                 $table = $('<table><tr data-row-key="0"></tr></table>');
@@ -348,7 +348,7 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_endEditingCell', function() {
-            var $table, $td, $input;
+            var $table, $td;
 
             beforeEach(function() {
                 var $wrapper = setFixtures('<div />');
@@ -357,7 +357,6 @@ describe('view.painter.cell.text', function() {
                 $td = $table.find('td').attr('columnname', 'c1');
                 $wrapper.append($table);
                 cellPainter._startEdit($td);
-                $input = $td.find('input');
             });
 
             it('Emit blur event on editing cell if exist', function() {

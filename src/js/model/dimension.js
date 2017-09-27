@@ -2,6 +2,7 @@
  * @fileoverview module:model/dimension
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -20,7 +21,7 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
  * @extends module:base/model
  * @ignore
  */
-var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
+var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
 
@@ -33,7 +34,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (options.domEventBus) {
             this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
             this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                    _.debounce(_.bind(this._onDragMoveForHeight, this)));
+                _.debounce(_.bind(this._onDragMoveForHeight, this)));
         }
 
         this._resetSyncHeightHandler();
@@ -324,7 +325,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {number}
      */
     getBodyOffsetTop: function() {
-        return this.get('offsetTop') + this.get('headerHeight')
+        var offsetTop = this.domState.getOffset().top;
+
+        return offsetTop + this.get('headerHeight')
             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
     },
 
@@ -336,7 +339,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.get('offsetLeft');
+        var bodyOffsetX = this.domState.getOffset().left;
         var bodyOffsetY = this.getBodyOffsetTop();
 
         return {
