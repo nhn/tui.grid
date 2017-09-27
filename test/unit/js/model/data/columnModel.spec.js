@@ -5,7 +5,7 @@ var ColumnModelData = require('model/data/columnModel');
 var frameConst = require('common/constMap').frame;
 
 describe('data.columnModel', function() {
-    var columnModelInstance, expectedColumnModel;
+    var columnModelInstance;
     var rowHeadersData, columnsData;
 
     beforeEach(function() {
@@ -45,12 +45,19 @@ describe('data.columnModel', function() {
                 name: 'select',
                 editOptions: {
                     type: 'select',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2},
-                        {text: 'text3', value: 3},
-                        {text: 'text4', value: 4}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }, {
+                        text: 'text3',
+                        value: 3
+                    }, {
+                        text: 'text4',
+                        value: 4
+                    }]
                 }
             },
             {
@@ -58,12 +65,19 @@ describe('data.columnModel', function() {
                 name: 'checkbox',
                 editOptions: {
                     type: 'checkbox',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2},
-                        {text: 'text3', value: 3},
-                        {text: 'text4', value: 4}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }, {
+                        text: 'text3',
+                        value: 3
+                    }, {
+                        text: 'text4',
+                        value: 4
+                    }]
                 }
             },
             {
@@ -71,12 +85,19 @@ describe('data.columnModel', function() {
                 name: 'radio',
                 editOptions: {
                     type: 'radio',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2},
-                        {text: 'text3', value: 3},
-                        {text: 'text4', value: 4}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }, {
+                        text: 'text3',
+                        value: 3
+                    }, {
+                        text: 'text4',
+                        value: 4
+                    }]
                 }
             },
             {
@@ -214,7 +235,7 @@ describe('data.columnModel', function() {
         });
     });
 
-    //@todo TC추가: whichSdie, withMeta - option args
+    // @todo TC추가: whichSdie, withMeta - option args
     describe('getVisibleColumns()', function() {
         beforeEach(function() {
             columnsData = [
@@ -361,26 +382,44 @@ describe('data.columnModel', function() {
                             targetNames: ['column3', 'column4'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         },
                         {
                             targetNames: ['column5'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         }
                     ]
@@ -458,26 +497,44 @@ describe('data.columnModel', function() {
                             targetNames: ['column3', 'column4'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         },
                         {
                             targetNames: ['column5'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         }
                     ]
@@ -548,24 +605,24 @@ describe('data.columnModel', function() {
             ]);
 
             columnModelInstance.setHidden(['column3', 'column4'], true);
-            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column4'].hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap').column3.hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap').column4.hidden).toBe(true);
 
             columnModelInstance.setHidden(['column1', 'column2', 'column3', 'column4'], false);
-            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column4'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column1.hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column2.hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column3.hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column4.hidden).toBe(false);
 
             columnModelInstance.setHidden(['merge1', 'column3'], true);
-            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(true);
-            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap').column1.hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap').column2.hidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap').column3.hidden).toBe(true);
 
             columnModelInstance.setHidden(['merge1', 'column3'], false);
-            expect(columnModelInstance.get('columnModelMap')['column1'].hidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column2'].hidden).toBe(false);
-            expect(columnModelInstance.get('columnModelMap')['column3'].hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column1.hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column2.hidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap').column3.hidden).toBe(false);
         });
     });
 
@@ -603,26 +660,44 @@ describe('data.columnModel', function() {
                             targetNames: ['column3', 'column4'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         },
                         {
                             targetNames: ['column5'],
                             listItems: function(value) {
                                 if (value === 2) {
-                                    return [
-                                        {text: '하나', value: 1},
-                                        {text: '둘', value: 2},
-                                        {text: '셋', value: 3},
-                                        {text: '넷', value: 4}
-                                    ];
+                                    return [{
+                                        text: '하나',
+                                        value: 1
+                                    }, {
+                                        text: '둘',
+                                        value: 2
+                                    }, {
+                                        text: '셋',
+                                        value: 3
+                                    }, {
+                                        text: '넷',
+                                        value: 4
+                                    }];
                                 }
+
+                                return false;
                             }
                         }
                     ]
@@ -727,7 +802,7 @@ describe('data.columnModel', function() {
             rowHeadersData = columnModelInstance._getRowHeadersData(options);
 
             expect(rowHeadersData[0].title).toBe(replacedHtml);
-        })
+        });
     });
 
     describe('copyVisibleTextOfEditingColumn', function() {
@@ -742,11 +817,16 @@ describe('data.columnModel', function() {
                     name: 'column1',
                     editOptions: {
                         type: 'select',
-                        listItems: [
-                            { text: 'Deluxe', value: '1' },
-                            { text: 'EP', value: '2' },
-                            { text: 'Single', value: '3' }
-                        ]
+                        listItems: [{
+                            text: 'Deluxe',
+                            value: '1'
+                        }, {
+                            text: 'EP',
+                            value: '2'
+                        }, {
+                            text: 'Single',
+                            value: '3'
+                        }]
                     }
                 },
                 {
@@ -756,13 +836,22 @@ describe('data.columnModel', function() {
                     },
                     editOptions: {
                         type: 'checkbox',
-                        listItems: [
-                            { text: 'Pop', value: '1' },
-                            { text: 'Rock', value: '2' },
-                            { text: 'R&B', value: '3' },
-                            { text: 'Electronic', value: '4' },
-                            { text: 'etc.', value: '5' }
-                        ]
+                        listItems: [{
+                            text: 'Pop',
+                            value: '1'
+                        }, {
+                            text: 'Rock',
+                            value: '2'
+                        }, {
+                            text: 'R&B',
+                            value: '3'
+                        }, {
+                            text: 'Electronic',
+                            value: '4'
+                        }, {
+                            text: 'etc.',
+                            value: '5'
+                        }]
                     }
                 }
             ];

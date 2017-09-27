@@ -18,12 +18,24 @@ var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 function create(data) {
     var columnModel = new ColumnModel({
         rowHeaders: [
-            {type: 'rowNum', width: 10}
+            {
+                type: 'rowNum',
+                width: 10
+            }
         ],
         columns: [
-            {name: 'c1', width: 30},
-            {name: 'c2', width: 30},
-            {name: 'c3', width: 30}
+            {
+                name: 'c1',
+                width: 30
+            },
+            {
+                name: 'c2',
+                width: 30
+            },
+            {
+                name: 'c3',
+                width: 30
+            }
         ]
     });
     var dataModel = new DataModel(null, {

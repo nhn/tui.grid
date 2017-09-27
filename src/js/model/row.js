@@ -2,6 +2,7 @@
  * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,7 +19,7 @@ var util = require('../common/util');
  * @extends module:base/model
  * @ignore
  */
-var Row = Model.extend(/**@lends module:model/row.prototype */{
+var Row = Model.extend(/** @lends module:model/row.prototype */{
     initialize: function(attributes) {
         var rowKey = attributes && attributes.rowKey;
         var dataModel = this.collection.dataModel;
@@ -130,6 +131,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     parse: function(data, options) {
         var collection = options.collection;
+
         return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
     },
 
@@ -176,7 +178,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 listItems: snippet.pick(column, 'editOptions', 'listItems'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
-                changed: [] //changed property names
+                changed: [] // changed property names
             };
             _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
         }, this);
@@ -295,6 +297,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (convertedHTML === false) {
             convertedHTML = null;
         }
+
         return convertedHTML;
     },
 
@@ -340,6 +343,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isMainRow: true
             };
         }
+
         return rowSpanData;
     },
 

@@ -37,20 +37,22 @@ Check more detailed explanation on https://github.com/nhnent/tui.grid/wiki.
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.grid/releases).
 
 ## Dependencies
-* jquery ~1.11.0
-* underscore ~1.8.3
-* backbone ~1.3.3
-* tui-code-snippet ~1.2.5
+* [jquery](https://jquery.com/) >=1.11.0
+* [underscore](http://underscorejs.org/) >=1.8.3
+* [backbone](http://backbonejs.org/) >=1.3.3
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.2.5
 * component (optional)
-  * tui-pagination ~3.0.0
-  * tui-date-picker ~3.0.0
+  * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.0.0
+  * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.0.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 ## Browser Support
 * IE8~11
+* Edge
 * Chrome
 * Firefox
+* Safari
 
 ## Usage
 ### Use `npm`
@@ -64,7 +66,7 @@ $ npm install tui-grid --save
 or want to install the each version:
 
 ```
-$ npm install tui-grid@<tag> --save
+$ npm install tui-grid@<version> --save
 ```
 
 To access as module format in your code:

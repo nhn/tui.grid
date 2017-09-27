@@ -2,6 +2,7 @@
  * @fileoverview Focus Model
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,7 +19,7 @@ var GridEvent = require('../event/gridEvent');
  * @extends module:base/model
  * @ignore
  */
-var Focus = Model.extend(/**@lends module:model/focus.prototype */{
+var Focus = Model.extend(/** @lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
         var editEventName = options.editingEvent + ':cell';
         var domEventBus;
@@ -106,12 +107,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.focusIn(ev.rowKey, ev.columnName);
     },
 
+    /* eslint-disable complexity */
     /**
      * Event handler for key:move event
      * @param {module:event/gridEvent} ev - GridEvent
      * @private
      */
-    _onKeyMove: function(ev) {  // eslint-disable-line complexity
+    _onKeyMove: function(ev) {
         var rowKey, columnName;
 
         switch (ev.command) {
@@ -155,6 +157,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.focus(rowKey, columnName, true);
     },
+    /* eslint-enable complexity */
 
     /**
      * Event handler for key:edit event
@@ -363,6 +366,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (row && column) {
             result = this.focusIn(row.get('rowKey'), column.name, isScrollable);
         }
+
         return result;
     },
 
@@ -451,6 +455,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (checkValid) {
             return this._isValidCell(rowKey, columnName);
         }
+
         return !util.isBlank(rowKey) && !util.isBlank(columnName);
     },
 
@@ -471,6 +476,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             });
             restored = true;
         }
+
         return restored;
     },
 
@@ -569,6 +575,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 rowKey = row.get('rowKey');
             }
         }
+
         return rowKey;
     },
 
@@ -589,6 +596,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             index = Math.max(Math.min(columnIndex + offset, columns.length - 1), 0);
             columnName = columns[index] && columns[index].name;
         }
+
         return columnName;
     },
 

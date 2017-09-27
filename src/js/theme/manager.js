@@ -2,6 +2,7 @@
 * @fileoverview theme manager
 * @author NHN Ent. FE Development Team
 */
+
 'use strict';
 
 var $ = require('jquery');

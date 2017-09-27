@@ -31,10 +31,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'select',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -44,10 +56,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'checkbox',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -57,10 +81,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'radio',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -73,12 +109,25 @@ describe('model.renderer', function() {
                     listItems: function(value) {
                         if (value === true) {
                             return [
-                                {text: '하나', value: 1},
-                                {text: '둘', value: 2},
-                                {text: '셋', value: 3},
-                                {text: '넷', value: 4}
+                                {
+                                    text: '하나',
+                                    value: 1
+                                },
+                                {
+                                    text: '둘',
+                                    value: 2
+                                },
+                                {
+                                    text: '셋',
+                                    value: 3
+                                },
+                                {
+                                    text: '넷',
+                                    value: 4
+                                }
                             ];
                         }
+
                         return [];
                     }
                 },

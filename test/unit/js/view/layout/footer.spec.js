@@ -23,10 +23,13 @@ describe('Footer', function() {
 
         beforeEach(function() {
             footer = create(frameConst.R, {
-                columns: [
-                    {name: 'c1', width: 50},
-                    {name: 'c2', width: 60}
-                ],
+                columns: [{
+                    name: 'c1',
+                    width: 50
+                }, {
+                    name: 'c2',
+                    width: 60
+                }],
                 footer: {}
             });
             footer.dimensionModel.set('footerHeight', 30);

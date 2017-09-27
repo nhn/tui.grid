@@ -2,6 +2,7 @@
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -14,7 +15,7 @@ var snippet = require('tui-code-snippet');
  * @extends module:base/model
  * @ignore
  */
-var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData.prototype */{
+var ExtraDataManager = snippet.defineClass(/** @lends module:model/data/extraData.prototype */{
     init: function(data) {
         this.data = data || {};
     },
@@ -43,6 +44,7 @@ var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData
                 mainRowKey: rowKey
             };
         }
+
         return rowSpanData;
     },
 
@@ -68,6 +70,7 @@ var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData
                 result.checked = true;
             default: // eslint-disable-line no-fallthrough
         }
+
         return result;
     },
 
@@ -154,6 +157,7 @@ var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData
                 arrayPush.apply(classNameList, classNameData.column[columnName]);
             }
         }
+
         return classNameList;
     },
 
@@ -165,8 +169,9 @@ var ExtraDataManager = snippet.defineClass(/**@lends module:model/data/extraData
      * @private
      */
     _removeClassNameFromArray: function(classNameList, className) {
-        //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
+        // 배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
         var singleNameList = classNameList.join(' ').split(' ');
+
         return _.without(singleNameList, className);
     },
 

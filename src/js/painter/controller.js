@@ -2,6 +2,7 @@
  * @fileoverview Controller class to handle actions from the painters
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -16,7 +17,7 @@ var util = require('../common/util');
  * @param {Object} options - options
  * @ignore
  */
-var PainterController = snippet.defineClass(/**@lends module:painter/controller.prototype */{
+var PainterController = snippet.defineClass(/** @lends module:painter/controller.prototype */{
     init: function(options) {
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
@@ -60,6 +61,7 @@ var PainterController = snippet.defineClass(/**@lends module:painter/controller.
         if (maxLength > 0 && value.length > maxLength) {
             return value.substring(0, maxLength);
         }
+
         return value;
     },
 
@@ -196,6 +198,7 @@ function convertToNumber(value) {
     if (_.isNumber(value) || isNaN(value) || util.isBlank(value)) {
         return value;
     }
+
     return Number(value);
 }
 

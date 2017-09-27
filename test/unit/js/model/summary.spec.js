@@ -57,8 +57,14 @@ describe('model/summary', function() {
             var summary = create([
                 {c1: 1},
                 {c2: '1'}, // change to number 1
-                {c1: null, c2: 'hoho'},
-                {c1: null, c2: false}
+                {
+                    c1: null,
+                    c2: 'hoho'
+                },
+                {
+                    c1: null,
+                    c2: false
+                }
             ], [
                 'c1', 'c2'
             ]);
@@ -73,13 +79,22 @@ describe('model/summary', function() {
 
         beforeEach(function() {
             summary = create([
-                {c1: 1, c2: 1},
-                {c1: 2, c2: 2}
+                {
+                    c1: 1,
+                    c2: 1
+                },
+                {
+                    c1: 2,
+                    c2: 2
+                }
             ], ['c1', 'c2']);
         });
 
         it('Add', function() {
-            summary.dataModel.append({c1: 3, c2: 3});
+            summary.dataModel.append({
+                c1: 3,
+                c2: 3
+            });
 
             expect(summary.getValue('c1', typeConst.SUM)).toBe(6);
             expect(summary.getValue('c2', typeConst.SUM)).toBe(6);
@@ -100,8 +115,14 @@ describe('model/summary', function() {
 
         it('Reset', function() {
             summary.dataModel.setData([
-                {c1: 3, c2: 4},
-                {c1: 3, c2: 4}
+                {
+                    c1: 3,
+                    c2: 4
+                },
+                {
+                    c1: 3,
+                    c2: 4
+                }
             ]);
 
             expect(summary.getValue('c1', typeConst.SUM)).toBe(6);
@@ -144,15 +165,24 @@ describe('model/summary', function() {
         beforeEach(function() {
             changeSpy = jasmine.createSpy();
             summary = create([
-                {c1: 1, c2: 1},
-                {c1: 2, c2: 2}
+                {
+                    c1: 1,
+                    c2: 1
+                },
+                {
+                    c1: 2,
+                    c2: 2
+                }
             ], ['c1', 'c2']);
 
             summary.on('change', changeSpy);
         });
 
         it('for each column', function() {
-            summary.dataModel.append({c1: 3, c2: 3});
+            summary.dataModel.append({
+                c1: 3,
+                c2: 3
+            });
 
             expect(changeSpy).toHaveBeenCalledWith('c1', summary.getValue('c1'));
             expect(changeSpy).toHaveBeenCalledWith('c2', summary.getValue('c2'));

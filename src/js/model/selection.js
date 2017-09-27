@@ -2,6 +2,7 @@
  * @fileoverview Selection Model class
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -21,7 +22,7 @@ var typeConst = require('../common/constMap').selectionType;
  * @param {Object} options - Options
  * @ignore
  */
-var Selection = Model.extend(/**@lends module:model/selection.prototype */{
+var Selection = Model.extend(/** @lends module:model/selection.prototype */{
     initialize: function(attr, options) {
         var domEventBus;
 
@@ -85,6 +86,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (_.some(columnNames, util.isMetaColumn)) {
             gridEvent.stop();
+
             return;
         }
 
@@ -226,6 +228,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                 index.column = selectionColumnRange[1];
             }
         }
+
         return index;
     },
 
@@ -639,6 +642,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                 if (columnModel.getCopyOptions(columnName).useFormattedValue) {
                     return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
                 }
+
                 return row.getValueString(columnName);
             }).join('\t');
         });
@@ -646,6 +650,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (this._isSingleCell(columnNames, rowList)) {
             return rowValues[0];
         }
+
         return rowValues.join('\n');
     },
 
@@ -750,6 +755,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         inputRange = inputRange || this.inputRange;
         if (!inputRange) {
             this.set('range', null);
+
             return;
         }
 
@@ -808,15 +814,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             }
         });
 
-         /**
-          * Occurs when selecting cells
-          * @event Grid#selection
-          * @type {module:event/gridEvent}
-          * @property {Object} range - Range of selection
-          * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
-          * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
-          * @property {Grid} instance - Current grid instance
-          */
+        /**
+         * Occurs when selecting cells
+         * @event Grid#selection
+         * @type {module:event/gridEvent}
+         * @property {Object} range - Range of selection
+         * @property {Array} range.start - Info of start cell (ex: [rowKey, columName])
+         * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+         * @property {Grid} instance - Current grid instance
+         */
         this.trigger('selection', gridEvent);
     },
 
@@ -921,7 +927,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData();
         endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData();
 
-        //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
+        // 모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
         _.each(columns, function(columnModel) {
             param = {
                 columnName: columnModel.name,
@@ -938,6 +944,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }, this);
 
         newSpannedRange.row = [Math.min.apply(null, startIndexList), Math.max.apply(null, endIndexList)];
+
         return newSpannedRange;
     }
 });

@@ -2,6 +2,7 @@
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -16,7 +17,7 @@ var snippet = require('tui-code-snippet');
  *            This object should have methods of Backbone.Events.
  * @ignore
  */
-var PublicEventEmitter = snippet.defineClass(/**@lends module:publicEventEmitter.prototype */{
+var PublicEventEmitter = snippet.defineClass(/** @lends module:publicEventEmitter.prototype */{
     init: function(publicObject) {
         this.publicObject = publicObject;
     },

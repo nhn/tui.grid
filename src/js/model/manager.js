@@ -2,6 +2,7 @@
  * @fileoverview Model Manager
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -61,7 +62,7 @@ var defaultOptions = {
  * @param {module/domState} domState - DomState instance
  * @ignore
  */
-var ModelManager = snippet.defineClass(/**@lends module:modelManager.prototype */{
+var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype */{
     init: function(options, domState, domEventBus) {
         options = $.extend(true, {}, defaultOptions, options);
 
@@ -187,6 +188,7 @@ var ModelManager = snippet.defineClass(/**@lends module:modelManager.prototype *
         var attrs = {
             resizable: columnOptions.resizable
         };
+
         return new CoordColumnModel(attrs, {
             columnModel: this.columnModel,
             dimensionModel: this.dimensionModel,

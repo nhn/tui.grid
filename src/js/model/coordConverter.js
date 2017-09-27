@@ -2,6 +2,7 @@
  * @fileoverview Converts coordinates to index of rows and columns
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var snippet = require('tui-code-snippet');
@@ -19,7 +20,7 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
  * @extends module:base/model
  * @ignore
  */
-var CoordConverter = Model.extend(/**@lends module:model/coordConverter.prototype */{
+var CoordConverter = Model.extend(/** @lends module:model/coordConverter.prototype */{
     initialize: function(attrs, options) {
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;

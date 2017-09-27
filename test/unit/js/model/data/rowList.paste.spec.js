@@ -2,9 +2,6 @@
 
 var snippet = require('tui-code-snippet');
 
-var DomState = require('domState');
-var FocusModel = require('model/focus');
-var SelectionModel = require('model/selection');
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 
@@ -19,6 +16,7 @@ function createColumns(names) {
             }
         });
     });
+
     return models;
 }
 

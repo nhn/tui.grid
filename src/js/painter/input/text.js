@@ -2,6 +2,7 @@
  * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -21,7 +22,7 @@ var SELECTOR_PASSWORD = 'input[type=password]';
  * @param {Object} options - options
  * @ignore
  */
-var TextPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
+var TextPainter = snippet.defineClass(InputPainter, /** @lends module:painter/input/text.prototype */{
     init: function(options) {
         InputPainter.apply(this, arguments);
 
@@ -125,6 +126,7 @@ var TextPainter = snippet.defineClass(InputPainter, /**@lends module:painter/inp
         if (cellData.whiteSpace !== 'nowrap') {
             return this.templateTextArea(params);
         }
+
         return this.templateInput(params);
     },
 

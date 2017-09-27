@@ -2,6 +2,7 @@
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -17,7 +18,7 @@ var frameConst = require('../../common/constMap').frame;
  *      @param {String} [options.whichSide=R] R for Right side, L for Left side
  * @ignore
  */
-var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
+var Frame = View.extend(/** @lends module:view/layout/frame.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

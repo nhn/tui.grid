@@ -2,6 +2,7 @@
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -53,7 +54,7 @@ var defaultRowHeaders = {
  * @extends module:base/model
  * @ignore
  */
-var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
+var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototype */{
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.textType = {
@@ -106,6 +107,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         } else {
             columns = this.get('dataColumns');
         }
+
         return _.findIndex(columns, {name: columnName});
     },
 
@@ -261,6 +263,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
                 relationsMap[columnName] = columnModel.relations;
             }
         });
+
         return relationsMap;
     },
 
@@ -277,6 +280,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
                 ignoredColumnNames.push(columnModel.name);
             }
         });
+
         return ignoredColumnNames;
     },
 
@@ -369,6 +373,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     _getSelectType: function(rowHeaders) {
         var rowHeader = _.findWhere(rowHeaders, {name: '_button'});
+
         return rowHeader ? rowHeader.type : '';
     },
 
@@ -443,6 +448,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
                 }
             }
         }
+
         return _.uniq(searchedNames);
     },
 

@@ -2,6 +2,7 @@
  * @fileoverview Base class for Views
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -12,7 +13,7 @@ var Backbone = require('backbone');
  * @module base/view
  * @ignore
  */
-var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
+var View = Backbone.View.extend(/** @lends module:base/view.prototype */{
     initialize: function() {
         this._children = [];
     },

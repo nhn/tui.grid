@@ -2,6 +2,7 @@
  * @fileoverview Render model to be used for smart-rendering
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -23,7 +24,7 @@ var BUFFER_HIT_RATIO = 0.1;
  * @extends module:model/renderer
  * @ignore
  */
-var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
+var SmartRenderer = Renderer.extend(/** @lends module:model/renderer-smart.prototype */{
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
 
@@ -100,6 +101,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             counts.push(0); // count가 음수인 경우(mainRow가 아닌 경우)에만 최소값을 구함. 없으면 0
             result = _.min(counts);
         }
+
         return result;
     },
 

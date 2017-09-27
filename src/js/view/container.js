@@ -2,6 +2,7 @@
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -19,7 +20,7 @@ var classNameConst = require('../common/classNameConst');
  * @param {Object} options - Options
  * @ignore
  */
-var Container = View.extend(/**@lends module:view/container.prototype */{
+var Container = View.extend(/** @lends module:view/container.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

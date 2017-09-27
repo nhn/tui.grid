@@ -2,6 +2,7 @@
  * @fileoverview Layer View class which contains the 'tui-date-picker'
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -21,7 +22,7 @@ var DatePickerLayer;
  * @param {Object} options - Options
  * @ignore
  */
-DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
+DatePickerLayer = View.extend(/** @lends module:view/datePickerLayer.prototype */{
     initialize: function(options) {
         this.focusModel = options.focusModel;
         this.textPainter = options.textPainter;
@@ -198,6 +199,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     render: function() {
         this.$el.hide();
+
         return this;
     }
 });

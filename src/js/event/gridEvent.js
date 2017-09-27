@@ -2,6 +2,7 @@
  * @fileoverview Event class for public event of Grid
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -22,7 +23,7 @@ var targetTypeConst = {
  * @module event/gridEvent
  * @param {Object} data - Event data for handler
  */
-var GridEvent = snippet.defineClass(/**@lends module:event/gridEvent.prototype */{
+var GridEvent = snippet.defineClass(/** @lends module:event/gridEvent.prototype */{
     init: function(nativeEvent, data) {
         this._stopped = false;
         if (nativeEvent) {

@@ -1,5 +1,6 @@
 'use strict';
 
+var Backbone = require('backbone');
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -83,9 +84,10 @@ describe('[DatePickerLayer] ', function() {
                 var options = {
                     date: new Date(2015, 10, 20),
                     format: 'yyyy-MM-dd',
-                    selectableRanges: [
-                         [new Date(2015, 10, 27), new Date(2016, 1, 15)]
-                    ]
+                    selectableRanges: [[
+                        new Date(2015, 10, 27),
+                        new Date(2016, 1, 15)
+                    ]]
                 };
                 var $input = $('<input>');
 

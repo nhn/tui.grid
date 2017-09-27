@@ -2,6 +2,7 @@
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -21,7 +22,7 @@ var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
  * @param {String} [options.whichSide='R'] L or R (which side)
  * @ignore
  */
-var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
+var BodyTable = View.extend(/** @lends module:view/layout/bodyTable.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
@@ -135,6 +136,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         // To prevent issue of appearing vertical scrollbar when dummy rows exists
         this._resetHeight();
         this._resetOverflow();
+
         return this;
     },
 

@@ -2,6 +2,7 @@
  * @fileoverview Class for the pagination
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -24,7 +25,7 @@ var TUI_PAGINATION_CLASSNAME = 'tui-pagination';
  * @param {Object} options - Options
  * @ignore
  */
-var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
+var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.componentHolder = options.componentHolder;
@@ -43,6 +44,7 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
     render: function() {
         this._destroyChildren();
         this.componentHolder.setInstance('pagination', this._createComponent());
+
         return this;
     },
 

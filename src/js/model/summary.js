@@ -2,6 +2,7 @@
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,7 +19,7 @@ var typeConst = require('../common/constMap').summaryType;
  * @param {Object} options - options
  * @ignore
  */
-var Summary = Model.extend(/**@lends module:model/summary.prototype */{
+var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     initialize: function(attr, options) {
         this.dataModel = options.dataModel;
 
@@ -155,6 +156,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         }
 
         value = snippet.pick(valueMap, summaryType);
+
         return _.isUndefined(value) ? null : value;
     }
 });
