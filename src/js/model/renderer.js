@@ -301,6 +301,8 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      */
     _onColumnModelChange: function() {
         this.set({scrollTop: 0}, {silent: true});
+
+        this._resetViewModelList();
         this._setRenderingRange(true);
 
         this.refresh({
@@ -314,10 +316,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _onDataModelChange: function() {
-        _.each(['lside', 'rside'], function(attrName) {
-            this.set(attrName, new Array(this.dataModel.length));
-        }, this);
-
+        this._resetViewModelList();
         this._setRenderingRange(true);
 
         this.refresh({
@@ -485,10 +484,12 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var columnModels = this.columnModel.getVisibleColumns(null, true);
         var columnNames = _.pluck(columnModels, 'name');
 
-        return {
+        var test = {
             lside: columnNames.slice(0, frozenCount),
             rside: columnNames.slice(frozenCount)
         };
+
+        return test;
     },
 
     /**
@@ -656,6 +657,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         }
     },
 
+    /* eslint-disable complexity */
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
      * @param {object} options - options
@@ -663,7 +665,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @param {boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
      * @param {string} [options.type] - Event type (reset|add|remove)
      */
-    /* eslint-disable complexity */
     refresh: function(options) {
         var columnModelChanged = !!options && options.columnModelChanged;
         var dataListChanged = !!options && options.dataListChanged;
@@ -802,6 +803,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @param {object} attrs - Attributes to create
      * @param {boolean} parse - Whether calling parse or not
      * @returns {object} Row model
+     * @private
      */
     _createRowModel: function(attrs, parse) {
         return new Row(attrs, {
@@ -810,6 +812,16 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             columnModel: this.columnModel,
             focusModel: this.focusModel
         });
+    },
+
+    /**
+     * Reset view models when value of columModel or dataModel is changed
+     * @private
+     */
+    _resetViewModelList: function() {
+        _.each(['lside', 'rside'], function(attrName) {
+            this.set(attrName, new Array(this.dataModel.length));
+        }, this);
     }
 });
 
