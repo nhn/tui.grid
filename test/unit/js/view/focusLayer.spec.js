@@ -75,7 +75,7 @@ describe('view/focusLayer', function() {
         it('and then blurred, hide layer element', function() {
             modelManager.focusModel.blur();
 
-            expect(layerLside.$el).toBeVisible();
+            expect(layerLside.$el).toBeHidden();
         });
     });
 });

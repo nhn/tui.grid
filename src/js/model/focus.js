@@ -75,7 +75,13 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
          * address of the editing cell
          * @type {{rowKey:(String|Number), columnName:String}}
          */
-        editingAddress: null
+        editingAddress: null,
+
+        /**
+         * Whether focus state is active or not
+         * @type {Boolean}
+         */
+        active: false
     },
 
     /**
@@ -244,6 +250,7 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         return String(curRowKey) === String(rowKey) && curColumnName === columnName;
     },
 
+    /* eslint-disable complexity */
     /**
      * Focus to the cell identified by given rowKey and columnName.
      * @param {Number|String} rowKey - rowKey
@@ -252,6 +259,10 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
      * @returns {Boolean} true if focused cell is changed
      */
     focus: function(rowKey, columnName, isScrollable) {
+        if (!this.get('active')) {
+            this.set('active', true);
+        }
+
         if (!this._isValidCell(rowKey, columnName) ||
             util.isMetaColumn(columnName) ||
             this.isCurrentCell(rowKey, columnName)) {
@@ -276,6 +287,7 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
 
         return true;
     },
+    /* eslint-enable complexity */
 
     /**
      * Trigger 'focusChange' event and returns the result
@@ -379,13 +391,13 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
 
     /**
      * If the grid has an element which has a focus, make sure that focusModel has a valid data,
-     * Otherwise call focusModel.blur().
+     * Otherwise change the focus state.
      */
     refreshState: function() {
         var restored;
 
         if (!this.domState.hasFocusedElement()) {
-            this.blur();
+            this.set('active', false);
         } else if (!this.has()) {
             restored = this.restore();
             if (!restored) {
@@ -395,7 +407,7 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
     },
 
     /**
-     * 디자인 blur 처리한다.
+     * Apply blur state on cell
      * @returns {Model.Focus} This object
      */
     blur: function() {
