@@ -29,10 +29,22 @@ describe('model.rowList', function() {
             editOptions: {
                 type: 'select',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         }
@@ -80,11 +92,9 @@ describe('model.rowList', function() {
                 ];
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
             });
 
@@ -138,11 +148,9 @@ describe('model.rowList', function() {
                     }
                 ];
                 var model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 var dataList, formatted;
 
@@ -179,11 +187,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
@@ -206,11 +212,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
@@ -236,11 +240,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
@@ -287,6 +289,7 @@ describe('model.rowList', function() {
 
             return _.every(columnNames, function(columnName) {
                 var data = row.get(columnName);
+
                 return !data || data.disabled === expectedValue;
             });
         }
@@ -517,7 +520,9 @@ describe('model.rowList', function() {
     describe('if restore event occur on the data model,', function() {
         beforeEach(function() {
             dataModel.set([{
-                c1: '1', c2: '2', c3: '3'
+                c1: '1',
+                c2: '2',
+                c3: '3'
             }], {parse: true});
 
             rowListModel = new RowListModel(dataModel.toJSON(), {

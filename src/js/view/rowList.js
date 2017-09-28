@@ -2,6 +2,7 @@
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -24,7 +25,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
  * @ignore
  */
-var RowList = View.extend(/**@lends module:view/rowList.prototype */{
+var RowList = View.extend(/** @lends module:view/rowList.prototype */{
     initialize: function(options) {
         var focusModel = options.focusModel;
         var renderModel = options.renderModel;
@@ -177,6 +178,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         if (!startIndex && !endIndex) {
             return $();
         }
+
         return $rows.slice(startIndex, endIndex);
     },
 
@@ -194,6 +196,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         if (renderStartIndex > rowIndex) {
             return $();
         }
+
         return $rows.eq(rowIndex - renderStartIndex);
     },
 

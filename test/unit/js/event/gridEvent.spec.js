@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var GridEvent = require('event/gridEvent');
 
 describe('event/gridEvent', function() {

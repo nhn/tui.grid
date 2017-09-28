@@ -11,7 +11,7 @@ describe('addon.net', function() {
     var columns = [{
         name: 'c1'
     }];
-    var data= [
+    var data = [
         {c1: '0-1'},
         {c1: '1-1'},
         {c1: '2-1'},
@@ -173,7 +173,7 @@ describe('addon.net', function() {
         });
 
         it('this.$el의 폼과 형식이 다른 경우 데이터가 설정되지 않는다.', function() {
-            createNet(); //form을 따로 지정하지 않으면 내부적으로 빈 form이 생성됨
+            createNet(); // form을 따로 지정하지 않으면 내부적으로 빈 form이 생성됨
             net._setFormData({
                 input: 'data1'
             });
@@ -213,7 +213,7 @@ describe('addon.net', function() {
         request = jasmine.Ajax.requests.mostRecent();
         beforeRequesteData = $.extend(true, {}, request.data());
 
-        //request 요청 후 form data를 변경한다.
+        // request 요청 후 form data를 변경한다.
         net._setFormData({
             input1: 'data1',
             input2: 'data2'
@@ -311,7 +311,10 @@ describe('addon.net', function() {
             grid.setData(data);
 
             messUp();
-            param = net._getDataParam('createData', {checkedOnly: false, modifiedOnly: false});
+            param = net._getDataParam('createData', {
+                checkedOnly: false,
+                modifiedOnly: false
+            });
             expect(param.data.rows).toBeDefined();
             expect(param.data.createdRows).not.toBeDefined();
             expect(param.data.updatedRows).not.toBeDefined();
@@ -513,9 +516,9 @@ describe('addon.net', function() {
         });
 
         it('정상이지만 successResponse 에서 stop 을 호출했을 때', function() {
-            grid.on('successResponse', function(eventData) {eventData.stop();})
-                .on('failResponse', failResponse)
-                .on('response', response);
+            grid.on('successResponse', function(eventData) {
+                eventData.stop();
+            }).on('failResponse', failResponse).on('response', response);
 
             net._onSuccess(callback, options, responseData.success, 200);
 
@@ -527,7 +530,9 @@ describe('addon.net', function() {
         it('정상이지만 response 에서 stop 을 호출했을 때', function() {
             grid.on('successResponse', successResponse)
                 .on('failResponse', failResponse)
-                .on('response', function(eventData) {eventData.stop();});
+                .on('response', function(eventData) {
+                    eventData.stop();
+                });
 
             net._onSuccess(callback, options, responseData.success, 200);
 
@@ -604,7 +609,9 @@ describe('addon.net', function() {
         it('response 에서 stop 을 호출했을 때', function() {
             window.alert = jasmine.createSpy('alert');
             grid.on('errorResponse', errorResponse)
-                .on('response', function(eventData) {eventData.stop();});
+                .on('response', function(eventData) {
+                    eventData.stop();
+                });
             net._onError(callback, options, {readyState: 10});
             expect(errorResponse).not.toHaveBeenCalled();
             expect(window.alert).not.toHaveBeenCalled();
@@ -612,8 +619,9 @@ describe('addon.net', function() {
 
         it('errorResponse 에서 stop 을 호출했을 때', function() {
             window.alert = jasmine.createSpy('alert');
-            grid.on('errorResponse', function(eventData) {eventData.stop();})
-                .on('response', response);
+            grid.on('errorResponse', function(eventData) {
+                eventData.stop();
+            }).on('response', response);
             net._onError(callback, options, {readyState: 10});
             expect(response).toHaveBeenCalled();
             expect(window.alert).not.toHaveBeenCalled();

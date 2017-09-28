@@ -2,6 +2,7 @@
 * @fileoverview css style generator
 * @author NHN Ent. FE Development Team
 */
+
 'use strict';
 
 var _ = require('underscore');

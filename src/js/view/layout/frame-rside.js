@@ -2,6 +2,7 @@
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -19,7 +20,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * @extends module:view/layout/frame
  * @ignore
  */
-var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
+var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
 

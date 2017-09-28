@@ -2,6 +2,7 @@
  * @fileoverview Main Button Painter
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -22,7 +23,7 @@ var className = classNameConst.CELL_MAIN_BUTTON;
  * @param {Object} options - options
  * @ignore
  */
-var InputPainter = snippet.defineClass(Painter, /**@lends module:painter/input/mainButton.prototype */{
+var InputPainter = snippet.defineClass(Painter, /** @lends module:painter/input/mainButton.prototype */{
     init: function(options) {
         Painter.apply(this, arguments);
 
@@ -49,7 +50,7 @@ var InputPainter = snippet.defineClass(Painter, /**@lends module:painter/input/m
         'type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
     ),
 
-     /**
+    /**
      * Event handler for 'change' DOM event.
      * @param {Event} event - DOM event object
      * @private

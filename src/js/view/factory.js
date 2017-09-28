@@ -2,6 +2,7 @@
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -83,6 +84,7 @@ var ViewFactory = snippet.defineClass({
         if (!isOptionEnabled(this.componentHolder.getOptions('pagination'))) {
             return null;
         }
+
         return new PaginationView({
             componentHolder: this.componentHolder,
             dimensionModel: this.modelManager.dimensionModel,
@@ -98,6 +100,7 @@ var ViewFactory = snippet.defineClass({
         if (!isOptionEnabled(this.heightResizable)) {
             return null;
         }
+
         return new HeightResizeHandleView({
             dimensionModel: this.modelManager.dimensionModel,
             domEventBus: this.domEventBus

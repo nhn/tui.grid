@@ -121,6 +121,7 @@ describe('model/selection', function() {
             selection.renderModel = {
                 getCellData: function(rowKey, columnName) {
                     var value = selection.dataModel.getValue(rowKey, columnName);
+
                     return {
                         formattedValue: '*' + value + '*'
                     };
@@ -139,7 +140,10 @@ describe('model/selection', function() {
         var selection = create();
 
         selection.selectAll();
-        expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 3]});
+        expect(selection.get('range')).toEqual({
+            row: [0, 2],
+            column: [0, 3]
+        });
     });
 
     describe('_adjustScroll', function() {

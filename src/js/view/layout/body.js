@@ -2,6 +2,7 @@
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -28,7 +29,7 @@ var MIN_DISATNCE_FOR_DRAG = 10;
  * @param {String} [options.whichSide=R] L or R (which side)
  * @ignore
  */
-var Body = View.extend(/**@lends module:view/layout/body.prototype */{
+var Body = View.extend(/** @lends module:view/layout/body.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
@@ -40,7 +41,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
-            whichSide: options && options.whichSide || frameConst.R
+            whichSide: (options && options.whichSide) || frameConst.R
         });
 
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
@@ -174,6 +175,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
                 result = (endTime - startTime) <= MIN_INTERVAL_FOR_PAUSED;
             }
         }
+
         return result;
     },
 

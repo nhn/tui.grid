@@ -2,6 +2,7 @@
  * @fileoverview Locale messages
  * @author NHN Ent. Fe Development Lab
  */
+
 'use strict';
 
 var util = require('./util');

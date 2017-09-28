@@ -2,6 +2,7 @@
  * @fileoverview Manage coordinates of rows
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -22,7 +23,7 @@ var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
  * @extends module:base/model
  * @ignore
  */
-var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
+var CoordColumn = Model.extend(/** @lends module:model/coordColumn.prototype */{
     initialize: function(attrs, options) {
         this.dimensionModel = options.dimensionModel;
         this.columnModel = options.columnModel;
@@ -254,6 +255,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
                 columnIndexes.push(index);
             }
         });
+
         return this._distributeExtraWidthEqually(widths, totalExtraWidth, columnIndexes);
     },
 

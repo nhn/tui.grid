@@ -2,6 +2,7 @@
  * @fileoverview Utilities for clipboard data
  * @author NHN Ent. Fe Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -96,8 +97,9 @@ clipboardUtil = {
         return _.map(text.split(/\r?\n/), function(row) {
             return _.map(row.split('\t'), function(column) {
                 column = clipboardUtil.removeDoubleQuotes(column);
+
                 return column.replace(CUSTOM_LF_REGEXP, LF)
-                                .replace(CUSTOM_CR_REGEXP, CR);
+                    .replace(CUSTOM_CR_REGEXP, CR);
             });
         });
     },
@@ -123,7 +125,7 @@ clipboardUtil = {
     removeDoubleQuotes: function(text) {
         if (text.match(CUSTOM_LF_REGEXP)) {
             text = text.substring(1, text.length - 1)
-                        .replace(/""/g, '"');
+                .replace(/""/g, '"');
         }
 
         return text;
@@ -137,7 +139,7 @@ clipboardUtil = {
     replaceNewlineToSubchar: function(text) {
         return text.replace(/"([^"]|"")*"/g, function(value) {
             return value.replace(LF, CUSTOM_LF_SUBCHAR)
-                        .replace(CR, CUSTOM_CR_SUBCHAR);
+                .replace(CR, CUSTOM_CR_SUBCHAR);
         });
     }
 };

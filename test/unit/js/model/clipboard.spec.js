@@ -17,13 +17,6 @@ describe('grid paste test', function() {
         clipboard.domEventBus.trigger('key:clipboard', {command: 'copy'});
     }
 
-    function triggerPasteEvent(text) {
-        clipboard.domEventBus.trigger('key:clipboard', {
-            command: 'paste',
-            text: text
-        });
-    }
-
     beforeEach(function() {
         clipboard = new Clipboard(null, {
             dataModel: new Model(),

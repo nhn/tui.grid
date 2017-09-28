@@ -3,7 +3,6 @@
 var $ = require('jquery');
 
 var ModelManager = require('model/manager');
-var CellPainter = require('painter/cell');
 var ButtonPainter = require('painter/cell/button');
 var SelectPainter = require('painter/cell/select');
 var ListPainter = require('painter/cell/list');
@@ -30,10 +29,13 @@ describe('view.painter.cell.base', function() {
                 columnName: 'c1',
                 editOptions: {
                     type: 'checkbox',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }]
                 }
             }]);
             cellPainter = new ListPainter({
@@ -46,10 +48,13 @@ describe('view.painter.cell.base', function() {
                 var cellData, optionList;
 
                 cellData = {
-                    optionList: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2}
-                    ]
+                    optionList: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }]
                 };
                 optionList = cellPainter.getOptionList(cellData);
 
@@ -77,11 +82,16 @@ describe('view.painter.cell.base', function() {
         beforeEach(function() {
             options = {
                 columnName: 'c1',
-                optionList: [
-                    {text: 'text0', value: 0},
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2}
-                ]
+                optionList: [{
+                    text: 'text0',
+                    value: 0
+                }, {
+                    text: 'text1',
+                    value: 1
+                }, {
+                    text: 'text2',
+                    value: 2
+                }]
             };
             grid.columnModel.set('columns', [options]);
             cellPainter = new SelectPainter({
@@ -144,7 +154,7 @@ describe('view.painter.cell.base', function() {
 
             it('grid 의 setValue 를 호출하는지 확인한다.', function() {
                 var changeEvent = {
-                      target: $select.get(0)
+                    target: $select.get(0)
                 };
                 grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onChange(changeEvent);
@@ -180,7 +190,6 @@ describe('view.painter.cell.base', function() {
         });
     });
 
-
     describe('View.Painter.Cell.List.Button 클래스 테스트', function() {
         var cellData, $table, $td;
 
@@ -190,28 +199,37 @@ describe('view.painter.cell.base', function() {
                 columnName: 'c1',
                 editOptions: {
                     type: 'checkbox',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }]
                 }
             }, {
                 title: 'c2',
                 columnName: 'c2',
                 editOptions: {
                     type: 'radio',
-                    list: [
-                        {text: 'text1', value: 1},
-                        {text: 'text2', value: 2}
-                    ]
+                    list: [{
+                        text: 'text1',
+                        value: 1
+                    }, {
+                        text: 'text2',
+                        value: 2
+                    }]
                 }
             }]);
 
             cellData = {
-                optionList: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2}
-                ]
+                optionList: [{
+                    text: 'text1',
+                    value: 1
+                }, {
+                    text: 'text2',
+                    value: 2
+                }]
             };
 
             cellPainter = new ButtonPainter({
@@ -458,14 +476,18 @@ describe('view.painter.cell.base', function() {
                 });
 
                 it('입력시 _focusNextInput의 결과값이 false 이면 grid.focusIn을 다음 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
-                    cellPainter._focusNextInput = function() {return false; };
+                    cellPainter._focusNextInput = function() {
+                        return false;
+                    };
                     cellPainter._executeKeyDownSwitch(getKeyEvent('TAB', $target));
                     expect(grid.focusModel.focusIn).toHaveBeenCalledWith(0, 'c2', true);
                 });
 
                 it('shift와 함께 입력시 _focusPrevInput의 결과값이 false 이면 grid.focusIn을 이전 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
                     var keyEvent = getKeyEvent('TAB', $target);
-                    cellPainter._focusPrevInput = function() {return false; };
+                    cellPainter._focusPrevInput = function() {
+                        return false;
+                    };
                     keyEvent.shiftKey = true;
 
                     grid.focusModel.focus(0, 'c2');

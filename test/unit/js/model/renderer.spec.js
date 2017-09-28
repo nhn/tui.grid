@@ -31,10 +31,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'select',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -44,10 +56,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'checkbox',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -57,10 +81,22 @@ describe('model.renderer', function() {
             editOptions: {
                 type: 'radio',
                 list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -73,12 +109,25 @@ describe('model.renderer', function() {
                     listItems: function(value) {
                         if (value === true) {
                             return [
-                                {text: '하나', value: 1},
-                                {text: '둘', value: 2},
-                                {text: '셋', value: 3},
-                                {text: '넷', value: 4}
+                                {
+                                    text: '하나',
+                                    value: 1
+                                },
+                                {
+                                    text: '둘',
+                                    value: 2
+                                },
+                                {
+                                    text: '셋',
+                                    value: 3
+                                },
+                                {
+                                    text: '넷',
+                                    value: 4
+                                }
                             ];
                         }
+
                         return [];
                     }
                 },
@@ -200,8 +249,8 @@ describe('model.renderer', function() {
             columnModel.set('frozenCount', 3);
             dataModel.set(rowList, {parse: true});
             renderModel.refresh();
-            lside = renderModel.get('lside');
-            rside = renderModel.get('rside');
+            lside = renderModel.get('partialLside');
+            rside = renderModel.get('partialRside');
             expect(renderModel._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
@@ -274,8 +323,8 @@ describe('model.renderer', function() {
 
             beforeEach(function() {
                 renderModel.refresh();
-                lsideResult = renderModel.get('lside').at(0).toJSON();
-                rsideResult = renderModel.get('rside').at(0).toJSON();
+                lsideResult = renderModel.get('partialLside').at(0).toJSON();
+                rsideResult = renderModel.get('partialRside').at(0).toJSON();
             });
 
             it('rowKey와 extraData가 할당되어 있어야 한다.', function() {

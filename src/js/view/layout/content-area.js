@@ -2,6 +2,7 @@
  * @fileoverview Class for the content area
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -29,7 +30,7 @@ function borderDIV(className) {
  * @param {Object} options - Options
  * @ignore
  */
-ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */{
+ContentArea = View.extend(/** @lends module:view/layout/content-area.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

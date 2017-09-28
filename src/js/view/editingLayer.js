@@ -2,6 +2,7 @@
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -19,7 +20,7 @@ var classNameConst = require('../common/classNameConst');
  * @param {Object} options - Options
  * @ignore
  */
-var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
+var EditingLayer = View.extend(/** @lends module:view/editingLayer.prototype */{
     initialize: function(options) {
         this.renderModel = options.renderModel;
         this.domState = options.domState;

@@ -2,6 +2,7 @@
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -27,9 +28,9 @@ var instanceMap = {};
 
 /**
  * Grid public API
- * @class
- * @param {PropertiesHash} options
- *      @param {Array} [data] - Grid data for making rows.
+ * @class Grid
+ * @param {object} options
+ *      @param {Array} [options.data] - Grid data for making rows.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=35] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
@@ -567,8 +568,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             _.each(rowKeys, function(rowKey) {
                 this.modelManager.dataModel.removeRow(rowKey);
             }, this);
+
             return true;
         }
+
         return false;
     },
 
@@ -717,6 +720,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
         }
+
         return this;
     },
 
@@ -926,6 +930,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     findRows: function(conditions) {
         var rowList = this.modelManager.dataModel.getRows();
+
         return _.where(rowList, conditions);
     },
 
@@ -971,7 +976,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
  * @static
  * @param  {number} id - ID of the target grid
  * @returns {tui.Grid} - Grid instance
- * var Grid = tui.Grid; // or reqire('tui-grid')
+ * var Grid = tui.Grid; // or require('tui-grid')
  *
  * Grid.getInstanceById(id);
  */
@@ -1042,7 +1047,7 @@ Grid.getInstanceById = function(id) {
  *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
  *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
- * var Grid = tui.Grid; // or reqire('tui-grid')
+ * var Grid = tui.Grid; // or require('tui-grid')
  *
  * Grid.applyTheme('striped', {
  *     grid: {
@@ -1065,7 +1070,7 @@ Grid.applyTheme = function(presetName, extOptions) {
  * @static
  * @param {string} langCode - Language code ('en' or 'ko')
  * @example
- * var Grid = tui.Grid; // or reqire('tui-grid')
+ * var Grid = tui.Grid; // or require('tui-grid')
  *
  * Grid.setLanguage('ko');
  */

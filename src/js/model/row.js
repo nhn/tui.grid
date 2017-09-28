@@ -2,6 +2,7 @@
  * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -18,15 +19,15 @@ var util = require('../common/util');
  * @extends module:base/model
  * @ignore
  */
-var Row = Model.extend(/**@lends module:model/row.prototype */{
-    initialize: function(attributes) {
+var Row = Model.extend(/** @lends module:model/row.prototype */{
+    initialize: function(attributes, options) {
         var rowKey = attributes && attributes.rowKey;
-        var dataModel = this.collection.dataModel;
+        var dataModel = options.dataModel;
         var rowData = dataModel.get(rowKey);
 
         this.dataModel = dataModel;
-        this.columnModel = this.collection.columnModel;
-        this.focusModel = this.collection.focusModel;
+        this.columnModel = options.columnModel;
+        this.focusModel = options.focusModel;
 
         if (rowData) {
             this.listenTo(rowData, 'change', this._onDataModelChange);
@@ -76,7 +77,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getColumnNameList: function() {
-        var columnModels = this.collection.columnModel.getVisibleColumns(null, true);
+        var columnModels = this.columnModel.getVisibleColumns(null, true);
 
         return _.pluck(columnModels, 'name');
     },
@@ -100,10 +101,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        if (snippet.isUndefined(this.collection)) {
-            return;
-        }
-
         _.each(this._getColumnNameList(), function(columnName) {
             var cellData = this.get(columnName);
             var cellState;
@@ -129,8 +126,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        var collection = options.collection;
-        return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
+        return this._formatData(data, options.dataModel, options.columnModel, options.focusModel);
     },
 
     /**
@@ -176,7 +172,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 listItems: snippet.pick(column, 'editOptions', 'listItems'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
-                changed: [] //changed property names
+                changed: [] // changed property names
             };
             _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
         }, this);
@@ -295,6 +291,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (convertedHTML === false) {
             convertedHTML = null;
         }
+
         return convertedHTML;
     },
 
@@ -340,6 +337,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isMainRow: true
             };
         }
+
         return rowSpanData;
     },
 
@@ -386,7 +384,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 silent: this._shouldSetSilently(data, isValueChanged)
             });
             if (isValueChanged) {
-                rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
+                rowIndex = this.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
         }

@@ -2,6 +2,7 @@
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -17,7 +18,7 @@ var frameConst = require('../../common/constMap').frame;
  * @extends module:view/layout/frame
  * @ignore
  */
-var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
+var LsideFrame = Frame.extend(/** @lends module:view/layout/frame-lside.prototype */{
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         _.assign(this, {

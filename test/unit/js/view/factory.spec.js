@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var Factory = require('view/factory');
 var FooterView = require('view/layout/footer');
 var HeightResizeHandleVeiw = require('view/heightResizeHandle');

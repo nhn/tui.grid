@@ -180,7 +180,7 @@ describe('Data.RowList - simple', function() {
             rowList.disableRow(1);
             rowList.setColumnValues('c1', 'changed');
             expect(rowList.getValue(0, 'c1')).toBe('changed');
-            expect(rowList.getValue(1, 'c1')).toBe('1-1'); //disabled
+            expect(rowList.getValue(1, 'c1')).toBe('1-1'); // disabled
         });
 
         it('isCheckCellState를 false 로 넘겼을 경우 열에 대한 데이터 모두를 상태에 관계없이 변경한다.', function() {
@@ -248,7 +248,7 @@ describe('Data.RowList - simple', function() {
                     }
                 },
                 {
-                    name: 'c2',
+                    name: 'c2'
                 }
             ]);
             rowList.setData([

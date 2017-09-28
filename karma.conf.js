@@ -1,7 +1,8 @@
 /**
- * karma.conf.js created on 2017. 07. 21.
+ * Config file for testing
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var path = require('path');
@@ -11,6 +12,11 @@ var webdriverConfig = {
     remoteHost: true
 };
 
+/**
+ * Set config by environment
+ * @param {object} defaultConfig - default config
+ * @param {string} server - server type ('ne' or local)
+ */
 function setConfig(defaultConfig, server) {
     if (server === 'ne') {
         defaultConfig.captureTimeout = 100000;
@@ -40,6 +46,11 @@ function setConfig(defaultConfig, server) {
                 browserName: 'internet explorer',
                 version: '11'
             },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
+            },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
@@ -49,6 +60,11 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'firefox'
+            },
+            'Safari-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'safari'
             }
         };
 
@@ -59,8 +75,10 @@ function setConfig(defaultConfig, server) {
             'IE9',
             'IE10',
             'IE11',
+            'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
+            // 'Safari-WebDriver' // active only when safari test is needed
         ];
 
         defaultConfig.webpack.module.preLoaders = [{
@@ -118,7 +136,7 @@ function setConfig(defaultConfig, server) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         defaultConfig.browsers = [
-            'Chrome'
+            'ChromeHeadless'
         ];
     }
 }
@@ -144,10 +162,18 @@ module.exports = function(config) {
         files: [
             // reason for not using karma-jasmine-jquery framework is that including older jasmine-karma file
             // included jasmine-karma version is 2.0.5 and this version don't support ie8
-            {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
-
-            {pattern: 'test/unit/fixtures/*.html', included: false},
-            {pattern: 'images/*', included: false},
+            {
+                pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+                watched: false
+            },
+            {
+                pattern: 'test/unit/fixtures/*.html',
+                included: false
+            },
+            {
+                pattern: 'images/*',
+                included: false
+            },
 
             'test/unit/js/index.js'
         ],
@@ -184,7 +210,8 @@ module.exports = function(config) {
         colors: true,
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR ||
+        // config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_WARN,
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -197,6 +224,7 @@ module.exports = function(config) {
         singleRun: true
     };
 
+    /* eslint-disable */
     setConfig(defaultConfig, process.env.KARMA_SERVER);
 
     config.set(defaultConfig);

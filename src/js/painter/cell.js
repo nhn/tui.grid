@@ -2,6 +2,7 @@
  * @fileoverview Painter class for cell(TD) views
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -19,7 +20,7 @@ var classNameConst = require('../common/classNameConst');
  * @param {Object} options - options
  * @ignore
  */
-var Cell = snippet.defineClass(Painter, /**@lends module:painter/cell.prototype */{
+var Cell = snippet.defineClass(Painter, /** @lends module:painter/cell.prototype */{
     init: function(options) {
         Painter.apply(this, arguments);
 

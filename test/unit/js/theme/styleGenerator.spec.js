@@ -1,7 +1,5 @@
 'use strict';
 
-var $ = require('jquery');
-
 var styleGen = require('theme/styleGenerator');
 var builder = require('theme/cssRuleBuilder');
 var classNameConst = require('common/classNameConst');
@@ -181,7 +179,6 @@ describe('theme/styleGenerator: ', function() {
 
         expect(styleGen.cellEditable(options)).toBe(expected);
     });
-
 
     it('cellRequired() generates a css string for required cells', function() {
         var options = {

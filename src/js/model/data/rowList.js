@@ -2,6 +2,7 @@
  * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -19,7 +20,7 @@ var Row = require('./row');
  * @param {Object} options - 생성자의 option 객체
  * @ignore
  */
-var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
+var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype */{
     initialize: function(models, options) {
         Collection.prototype.initialize.apply(this, arguments);
         _.assign(this, {
@@ -63,7 +64,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array}  파싱하여 가공된 데이터
      */
     parse: function(data) {
-        data = data && data.contents || data;
+        data = (data && data.contents) || data;
+
         return this._formatData(data);
     },
 
@@ -130,6 +132,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         row._extraData = $.extend(defaultExtraData, row._extraData);
         row._button = row._extraData.rowState === 'CHECKED';
         row.rowKey = rowKey;
+
         return row;
     },
 
@@ -140,6 +143,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     _createRowKey: function() {
         this.lastRowKey += 1;
+
         return this.lastRowKey;
     },
 
@@ -158,12 +162,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row._extraData;
+
             return !!(extraData.rowSpanData && extraData.rowSpanData[columnName]);
         }
         function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row._extraData;
-            extraData.rowSpanData = extraData && extraData.rowSpanData || {};
+            extraData.rowSpanData = (extraData && extraData.rowSpanData) || {};
             extraData.rowSpanData[columnName] = rowSpanData;
+
             return extraData;
         }
 
@@ -175,7 +181,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                         isMainRow: true,
                         mainRowKey: rowKey
                     });
-                    //rowSpan 된 row 의 자식 rowSpanData 를 가공한다.
+                    // rowSpan 된 row 의 자식 rowSpanData 를 가공한다.
                     subCount = -1;
                     for (i = index + 1; i < index + count; i += 1) {
                         childRow = rowList[i];
@@ -191,6 +197,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                 }
             });
         }
+
         return rowList;
     },
 
@@ -202,6 +209,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     setOriginalRowList: function(rowList) {
         this.originalRows = rowList ? this._formatData(rowList) : this.toJSON();
         this.originalRowMap = _.indexBy(this.originalRows, 'rowKey');
+
         return this.originalRows;
     },
 
@@ -212,6 +220,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getOriginalRowList: function(isClone) {
         isClone = _.isUndefined(isClone) ? true : isClone;
+
         return isClone ? _.clone(this.originalRows) : this.originalRows;
     },
 
@@ -247,6 +256,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             rowSpanData = row && row.getRowSpanData(columnName);
             rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
         }
+
         return rowKey;
     },
 
@@ -347,6 +357,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         } else {
             rows = this.toJSON();
         }
+
         return withRawData ? rows : this._removePrivateProp(rows);
     },
 
@@ -361,7 +372,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     syncRowSpannedData: function(row, columnName, value) {
         var index, rowSpanData, i;
 
-        //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
+        // 정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
         if (this.isRowSpanEnable()) {
             rowSpanData = row.getRowSpanData(columnName);
             if (!rowSpanData.isMainRow) {
@@ -375,6 +386,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         }
     },
 
+    /* eslint-disable complexity */
     /**
      * Backbone 에서 sort() 실행시 내부적으로 사용되는 메소드.
      * @param {Row} a 비교할 앞의 모델
@@ -404,8 +416,10 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         if (!ascending) {
             result = -result;
         }
+
         return result;
     },
+    /* eslint-enable complexity */
 
     /**
      * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
@@ -427,8 +441,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
     removeRow: function(rowKey, options) {
-        var row = this.get(rowKey),
-            rowSpanData, nextRow, removedData;
+        var row = this.get(rowKey);
+        var rowSpanData, nextRow, removedData, currentIndex;
 
         if (!row) {
             return;
@@ -437,8 +451,10 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         if (options && options.keepRowSpanData) {
             removedData = _.clone(row.attributes);
         }
+
+        currentIndex = this.indexOf(row);
         rowSpanData = _.clone(row.getRowSpanData());
-        nextRow = this.at(this.indexOf(row) + 1);
+        nextRow = this.at(currentIndex + 1);
 
         this.remove(row, {
             silent: true
@@ -448,7 +464,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
-        this.trigger('remove', rowKey);
+        this.trigger('remove', rowKey, currentIndex);
     },
 
     /**
@@ -535,6 +551,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         };
 
         this.add(modelList, addOptions);
+
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, options);
 
@@ -597,6 +614,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             row = this.get(rowKey);
             value = row && row.get(columnName);
         }
+
         return value;
     },
 
@@ -615,8 +633,10 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             row.set(columnName, value, {
                 silent: silent
             });
+
             return true;
         }
+
         return false;
     },
 
@@ -628,6 +648,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getColumnValues: function(columnName, isJsonString) {
         var valueList = this.pluck(columnName);
+
         return isJsonString ? JSON.stringify(valueList) : valueList;
     },
 
@@ -668,6 +689,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getRowSpanData: function(rowKey, columnName) {
         var row = this.get(rowKey);
+
         return row ? row.getRowSpanData(columnName) : null;
     },
 
@@ -871,6 +893,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             if (typeof value === 'object') {
                 return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
             }
+
             return value !== originalRow[columnName];
         }, this);
 
@@ -917,13 +940,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             }
         }, this);
 
-        //삭제된 행 추출
+        // 삭제된 행 추출
         _.each(original, function(obj, rowKey) {
             var item = rowKeyOnly ? obj.rowKey : _.omit(obj, ignoredColumns);
             if (!current[rowKey]) {
                 result.deletedRows.push(item);
             }
         }, this);
+
         return result;
     },
 
@@ -1099,6 +1123,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                 });
             }
         });
+
         return errorRows;
     },
 
@@ -1157,6 +1182,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getElement: function(rowKey, columnName) {
         var mainRowKey = this.getMainRowKey(rowKey, columnName);
+
         return this.domState.getElement(mainRowKey, columnName);
     },
 

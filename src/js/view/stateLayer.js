@@ -2,6 +2,7 @@
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -19,7 +20,7 @@ var TABLE_BORDER_WIDTH = require('../common/constMap').dimension.TABLE_BORDER_WI
  * @param {Object} options - Options
  * @ignore
  */
-var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
+var StateLayer = View.extend(/** @lends module:view/stateLayer.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.renderModel = options.renderModel;

@@ -44,22 +44,36 @@ describe('data.rowList', function() {
                     listItems: function(value) {
                         if (value === true) {
                             return [
-                                {text: '하나', value: 1},
-                                {text: '둘', value: 2},
-                                {text: '셋', value: 3},
-                                {text: '넷', value: 4}
+                                {
+                                    text: '하나',
+                                    value: 1
+                                },
+                                {
+                                    text: '둘',
+                                    value: 2
+                                },
+                                {
+                                    text: '셋',
+                                    value: 3
+                                },
+                                {
+                                    text: '넷',
+                                    value: 4
+                                }
                             ];
                         }
+
+                        return false;
                     }
                 },
                 {
                     targetNames: ['text'],
                     disabled: function(value) {
-                        //false 면 true 를 반환
+                        // false 면 true 를 반환
                         return value === false;
                     },
                     editable: function(value) {
-                        //false 면 false 를 반환
+                        // false 면 false 를 반환
                         return value !== false;
                     }
                 }
@@ -86,10 +100,22 @@ describe('data.rowList', function() {
             editOptions: {
                 type: 'select',
                 listItems: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -99,10 +125,22 @@ describe('data.rowList', function() {
             editOptions: {
                 type: 'checkbox',
                 listItems: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -112,10 +150,22 @@ describe('data.rowList', function() {
             editOptions: {
                 type: 'radio',
                 listItems: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -125,10 +175,22 @@ describe('data.rowList', function() {
             editOptions: {
                 type: 'radio',
                 listItems: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
+                    {
+                        text: 'text1',
+                        value: 1
+                    },
+                    {
+                        text: 'text2',
+                        value: 2
+                    },
+                    {
+                        text: 'text3',
+                        value: 3
+                    },
+                    {
+                        text: 'text4',
+                        value: 4
+                    }
                 ]
             }
         },
@@ -403,42 +465,45 @@ describe('data.rowList', function() {
 
         describe('getClassNameList()', function() {
             it('extraData 에 정의된 className 을 반환한다.', function() {
-                var sampleList = [{
-                    '_extraData': {
-                        'className': {
-                            'row': ['rowClass0', 'rowClass1']
-                        }
-                    },
-                    'relations': false,
-                    'text': 'sample1'
-                }, {
-                    '_extraData': {
-                        'className': {
-                            'column': {
-                                'text': ['textClass1', 'textClass2'],
-                                'relations': ['relationClass1']
+                var sampleList = [
+                    {
+                        '_extraData': {
+                            'className': {
+                                'row': ['rowClass0', 'rowClass1']
                             }
-                        }
+                        },
+                        'relations': false,
+                        'text': 'sample1'
                     },
-                    'relations': false,
-                    'text': 'sample1'
-                }, {
-                    '_extraData': {
-                        'className': {
-                            'row': ['rowClass0'],
-                            'column': {
-                                'text': ['textClass1', 'textClass2'],
-                                'relations': ['relationClass1']
+                    {
+                        '_extraData': {
+                            'className': {
+                                'column': {
+                                    'text': ['textClass1', 'textClass2'],
+                                    'relations': ['relationClass1']
+                                }
                             }
-                        }
-                    },
-                    'relations': false,
-                    'text': 'sample1'
-                }, {
-                    'relations': false,
-                    'text': 'sample1'
-                }],
-                row0, row1, row2, row3;
+                        },
+                        'relations': false,
+                        'text': 'sample1'
+                    }, {
+                        '_extraData': {
+                            'className': {
+                                'row': ['rowClass0'],
+                                'column': {
+                                    'text': ['textClass1', 'textClass2'],
+                                    'relations': ['relationClass1']
+                                }
+                            }
+                        },
+                        'relations': false,
+                        'text': 'sample1'
+                    }, {
+                        'relations': false,
+                        'text': 'sample1'
+                    }
+                ];
+                var row0, row1, row2, row3;
 
                 columnModelInstance.set({
                     'hasNumberColumn': true,
@@ -638,13 +703,13 @@ describe('data.rowList', function() {
                 row = dataModelInstance.at(0);
                 expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
-                        listItems: undefined
+                        listItems: false
                     },
                     checkbox: {
-                        listItems: undefined
+                        listItems: false
                     },
                     radio: {
-                        listItems: undefined
+                        listItems: false
                     },
                     text: {
                         disabled: true,
@@ -656,26 +721,62 @@ describe('data.rowList', function() {
                 expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     checkbox: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     radio: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     text: {
@@ -690,26 +791,62 @@ describe('data.rowList', function() {
                 expect(row.executeRelationCallbacksAll(['listItems'])).toEqual({
                     select: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     checkbox: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     radio: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     }
                 });
@@ -717,26 +854,62 @@ describe('data.rowList', function() {
                 expect(row.executeRelationCallbacksAll(['listItems', 'editable'])).toEqual({
                     select: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     checkbox: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     radio: {
                         listItems: [
-                            {text: '하나', value: 1},
-                            {text: '둘', value: 2},
-                            {text: '셋', value: 3},
-                            {text: '넷', value: 4}
+                            {
+                                text: '하나',
+                                value: 1
+                            },
+                            {
+                                text: '둘',
+                                value: 2
+                            },
+                            {
+                                text: '셋',
+                                value: 3
+                            },
+                            {
+                                text: '넷',
+                                value: 4
+                            }
                         ]
                     },
                     text: {
@@ -749,7 +922,10 @@ describe('data.rowList', function() {
                 });
 
                 expect(row.executeRelationCallbacksAll(['editable', 'disabled'])).toEqual({
-                    text: {disabled: false, editable: true}
+                    text: {
+                        disabled: false,
+                        editable: true
+                    }
                 });
             });
         });
@@ -891,7 +1067,7 @@ describe('data.rowList', function() {
             });
             describe('_setExtraRowSpanData()', function() {
                 it('자신과 자식 row 까지 rowSpanData를 잘 설정하는지 확인한다.', function() {
-                    //_baseFormat 을 타고 온다고 가정하기 때문에 셈플 데이터에 rowKey 를 할당한다
+                    // _baseFormat 을 타고 온다고 가정하기 때문에 셈플 데이터에 rowKey 를 할당한다
                     var testList = [
                         {
                             '_extraData': {
@@ -1066,7 +1242,7 @@ describe('data.rowList', function() {
                     dataModelInstance.lastRowKey = -1;
                     expectResult = dataModelInstance._formatData(originalData);
                     expect(dataModelInstance.toJSON()).toEqual(expectResult);
-                    //데이터 변경
+                    // 데이터 변경
                     dataModelInstance.get(0).set('none', '2222');
                     expect(dataModelInstance.toJSON()).not.toEqual(expectResult);
                     expect(dataModelInstance.getOriginalRowList()).toEqual(expectResult);
@@ -1089,11 +1265,11 @@ describe('data.rowList', function() {
                 it('set 에서 parse 후 originalRows 가 정상적으로 생성되었는지 확인한다.', function() {
                     var expectResultList = dataModelInstance._formatData(originalData);
 
-                    expect(dataModelInstance.get(0).get('none')).toBe(expectResultList[0]['none']);
-                    //데이터 변경
+                    expect(dataModelInstance.get(0).get('none')).toBe(expectResultList[0].none);
+                    // 데이터 변경
                     dataModelInstance.at(0).set('none', '2222');
-                    expect(dataModelInstance.get(0).get('none')).not.toBe(expectResultList[0]['none']);
-                    expect(dataModelInstance.getOriginal(0, 'none')).toBe(expectResultList[0]['none']);
+                    expect(dataModelInstance.get(0).get('none')).not.toBe(expectResultList[0].none);
+                    expect(dataModelInstance.getOriginal(0, 'none')).toBe(expectResultList[0].none);
                 });
             });
         });
@@ -1536,8 +1712,18 @@ describe('data.rowList', function() {
                         createdRows: [],
                         updatedRows: [],
                         deletedRows: [
-                            {none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2},
-                            {none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3}
+                            {
+                                none: 'none3',
+                                text: 'text3',
+                                hidden: 'hidden3',
+                                rowKey: 2
+                            },
+                            {
+                                none: 'none4',
+                                text: 'text4',
+                                hidden: 'hidden4',
+                                rowKey: 3
+                            }
                         ]
                     });
                 });
@@ -1552,8 +1738,18 @@ describe('data.rowList', function() {
                         createdRows: [],
                         updatedRows: [],
                         deletedRows: [
-                            {none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2},
-                            {none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3}
+                            {
+                                none: 'none3',
+                                text: 'text3',
+                                hidden: 'hidden3',
+                                rowKey: 2
+                            },
+                            {
+                                none: 'none4',
+                                text: 'text4',
+                                hidden: 'hidden4',
+                                rowKey: 3
+                            }
                         ]
                     });
                 });
@@ -1565,31 +1761,60 @@ describe('data.rowList', function() {
                     modifiedList = getModified();
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
-                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_appended',
+                        text: 'text_appended',
+                        hidden: 'hidden_appended',
+                        rowKey: 6
+                    });
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_prepended',
+                        text: 'text_prepended',
+                        hidden: 'hidden_prepended',
+                        rowKey: 7
+                    });
 
                     expect(modifiedList.updatedRows).toBeDefined();
                     expect(modifiedList.updatedRows.length).toBe(2);
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text1',
+                        hidden: 'hidden1',
+                        rowKey: 0
+                    });
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text2',
+                        hidden: 'hidden2',
+                        rowKey: 1
+                    });
 
                     expect(modifiedList.deletedRows).toBeDefined();
                     expect(modifiedList.deletedRows.length).toBe(2);
-                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none3',
+                        text: 'text3',
+                        hidden: 'hidden3',
+                        rowKey: 2
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none4',
+                        text: 'text4',
+                        hidden: 'hidden4',
+                        rowKey: 3
+                    });
                 });
             });
 
             describe('checkedOnly 옵션 false 일 때.', function() {
-                function getModified() {
+                var getModifiedList = function() {
                     return dataModelInstance.getModifiedRows({
                         checkedOnly: false
                     });
-                }
+                };
 
                 it('변경 사항이 없을 경우 아무 리스트도 반환하지 않는다.', function() {
-                    var modifiedList;
-                    modifiedList = getModified();
+                    var modifiedList = getModifiedList();
                     expect(modifiedList).toEqual({
                         createdRows: [],
                         updatedRows: [],
@@ -1602,12 +1827,22 @@ describe('data.rowList', function() {
                     append();
                     prepend();
 
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
 
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
-                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_appended',
+                        text: 'text_appended',
+                        hidden: 'hidden_appended',
+                        rowKey: 6
+                    });
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_prepended',
+                        text: 'text_prepended',
+                        hidden: 'hidden_prepended',
+                        rowKey: 7
+                    });
                     expect(modifiedList.updatedRows.length).toBe(0);
                     expect(modifiedList.deletedRows.length).toBe(0);
                 });
@@ -1617,12 +1852,22 @@ describe('data.rowList', function() {
                     spoil(0);
                     spoil(1);
 
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
 
                     expect(modifiedList.updatedRows).toBeDefined();
                     expect(modifiedList.updatedRows.length).toBe(2);
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text1',
+                        hidden: 'hidden1',
+                        rowKey: 0
+                    });
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text2',
+                        hidden: 'hidden2',
+                        rowKey: 1
+                    });
                     expect(modifiedList.createdRows.length).toBe(0);
                     expect(modifiedList.deletedRows.length).toBe(0);
                 });
@@ -1632,11 +1877,21 @@ describe('data.rowList', function() {
                     remove(0);
                     remove(1);
 
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
                     expect(modifiedList.deletedRows).toBeDefined();
                     expect(modifiedList.deletedRows.length).toBe(2);
-                    expect(modifiedList.deletedRows).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.deletedRows).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none1',
+                        text: 'text1',
+                        hidden: 'hidden1',
+                        rowKey: 0
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none2',
+                        text: 'text2',
+                        hidden: 'hidden2',
+                        rowKey: 1
+                    });
                     expect(modifiedList.createdRows.length).toBe(0);
                     expect(modifiedList.updatedRows.length).toBe(0);
                 });
@@ -1646,19 +1901,49 @@ describe('data.rowList', function() {
                     messUp();
                     remove(0);
                     remove(1);
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
 
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
-                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_appended',
+                        text: 'text_appended',
+                        hidden: 'hidden_appended',
+                        rowKey: 6
+                    });
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_prepended',
+                        text: 'text_prepended',
+                        hidden: 'hidden_prepended',
+                        rowKey: 7
+                    });
 
                     expect(modifiedList.deletedRows).toBeDefined();
                     expect(modifiedList.deletedRows.length).toBe(4);
-                    expect(modifiedList.deletedRows).toContain({none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.deletedRows).toContain({none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1});
-                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none1',
+                        text: 'text1',
+                        hidden: 'hidden1',
+                        rowKey: 0
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none2',
+                        text: 'text2',
+                        hidden: 'hidden2',
+                        rowKey: 1
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none3',
+                        text: 'text3',
+                        hidden: 'hidden3',
+                        rowKey: 2
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none4',
+                        text: 'text4',
+                        hidden: 'hidden4',
+                        rowKey: 3
+                    });
 
                     expect(modifiedList.updatedRows.length).toBe(0);
                 });
@@ -1666,63 +1951,113 @@ describe('data.rowList', function() {
                 it('추가/변경/삭제 종합 테스트', function() {
                     var modifiedList;
                     messUp();
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
-                    expect(modifiedList.createdRows).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createdRows).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_appended',
+                        text: 'text_appended',
+                        hidden: 'hidden_appended',
+                        rowKey: 6
+                    });
+                    expect(modifiedList.createdRows).toContain({
+                        none: 'none_prepended',
+                        text: 'text_prepended',
+                        hidden: 'hidden_prepended',
+                        rowKey: 7
+                    });
 
                     expect(modifiedList.deletedRows).toBeDefined();
                     expect(modifiedList.deletedRows.length).toBe(2);
-                    expect(modifiedList.deletedRows).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deletedRows).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none3',
+                        text: 'text3',
+                        hidden: 'hidden3',
+                        rowKey: 2
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        none: 'none4',
+                        text: 'text4',
+                        hidden: 'hidden4',
+                        rowKey: 3
+                    });
 
                     expect(modifiedList.updatedRows).toBeDefined();
                     expect(modifiedList.updatedRows.length).toBe(2);
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0});
-                    expect(modifiedList.updatedRows).toContain({none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1});
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text1',
+                        hidden: 'hidden1',
+                        rowKey: 0
+                    });
+                    expect(modifiedList.updatedRows).toContain({
+                        none: 'dirty',
+                        text: 'text2',
+                        hidden: 'hidden2',
+                        rowKey: 1
+                    });
                 });
             });
 
             describe('ignoredColumns 옵션이 있을 때', function() {
-                function getModified() {
+                var getModifiedList = function() {
                     return dataModelInstance.getModifiedRows({
                         ignoredColumns: ['none']
                     });
-                }
+                };
 
                 it('none', function() {
                     var modifiedList;
                     messUp();
                     spoil(4, 'text');
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
-                    expect(modifiedList.createdRows).toContain({text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createdRows).toContain({text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createdRows).toContain({
+                        text: 'text_appended',
+                        hidden: 'hidden_appended',
+                        rowKey: 6
+                    });
+                    expect(modifiedList.createdRows).toContain({
+                        text: 'text_prepended',
+                        hidden: 'hidden_prepended',
+                        rowKey: 7
+                    });
 
                     expect(modifiedList.deletedRows).toBeDefined();
                     expect(modifiedList.deletedRows.length).toBe(2);
-                    expect(modifiedList.deletedRows).toContain({text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deletedRows).toContain({text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deletedRows).toContain({
+                        text: 'text3',
+                        hidden: 'hidden3',
+                        rowKey: 2
+                    });
+                    expect(modifiedList.deletedRows).toContain({
+                        text: 'text4',
+                        hidden: 'hidden4',
+                        rowKey: 3
+                    });
 
                     expect(modifiedList.updatedRows).toBeDefined();
                     expect(modifiedList.updatedRows.length).toBe(1);
-                    expect(modifiedList.updatedRows).toContain({text: 'dirty', hidden: 'hidden5', rowKey: 4});
+                    expect(modifiedList.updatedRows).toContain({
+                        text: 'dirty',
+                        hidden: 'hidden5',
+                        rowKey: 4
+                    });
                 });
             });
 
             describe('rowKeyOnly 옵션 true 일 때.', function() {
-                function getModified() {
+                var getModifiedList = function() {
                     return dataModelInstance.getModifiedRows({
                         rowKeyOnly: true
                     });
-                }
+                };
 
                 it('변경한 행의 rowKey 만 추려서 반환한다.', function() {
                     var modifiedList;
                     messUp();
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
 
                     expect(modifiedList.createdRows).toBeDefined();
                     expect(modifiedList.createdRows.length).toBe(2);
@@ -1742,16 +2077,16 @@ describe('data.rowList', function() {
             });
 
             describe('withRawData 옵션 true 일 때.', function() {
-                function getModified() {
+                var getModifiedList = function() {
                     return dataModelInstance.getModifiedRows({
                         withRawData: true
                     });
-                }
+                };
 
                 it('row 의 private property 를 제거하지 않고 반환한다.', function() {
                     var modifiedList;
                     messUp();
-                    modifiedList = getModified();
+                    modifiedList = getModifiedList();
                     expect(modifiedList.createdRows[0]._button).toBeDefined();
                     expect(modifiedList.createdRows[0]._extraData).toBeDefined();
                     expect(modifiedList.createdRows[0].rowKey).toBeDefined();

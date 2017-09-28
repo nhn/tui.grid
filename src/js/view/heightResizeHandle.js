@@ -2,6 +2,7 @@
  * @fileoverview Class for the height resize handle
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var View = require('../base/view');
@@ -15,7 +16,7 @@ var DragEventEmitter = require('../event/dragEventEmitter');
  * @param {Object} options - Options
  * @ignore
  */
-var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
+var HeightResizeHandle = View.extend(/** @lends module:view/layout/heightResizeHandle.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.domEventBus = options.domEventBus;

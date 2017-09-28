@@ -2,6 +2,7 @@
  * @fileoverview Drag event emitter
  * @author NHN Ent. FE Development Lab
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -14,7 +15,7 @@ var GridEvent = require('./gridEvent');
  * @module event/dragEventEmitter
  * @ignore
  */
-var DragEventEmitter = snippet.defineClass(/**@lends module:event/dragEventEmitter.prototype */{
+var DragEventEmitter = snippet.defineClass(/** @lends module:event/dragEventEmitter.prototype */{
     init: function(options) {
         _.assign(this, {
             type: options.type,

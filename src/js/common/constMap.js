@@ -2,6 +2,7 @@
 * @fileoverview Object that conatins constant values
 * @author NHN Ent. FE Development Team
 */
+
 'use strict';
 
 var _ = require('underscore');

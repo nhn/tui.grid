@@ -2,6 +2,7 @@
  * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var _ = require('underscore');
@@ -20,7 +21,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * @param {object} options - Options
  * @ignore
  */
-var RowPainter = snippet.defineClass(Painter, /**@lends module:painter/row.prototype */{
+var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prototype */{
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;

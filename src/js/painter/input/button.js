@@ -2,6 +2,7 @@
  * @fileoverview Painter class for 'checkbox' and 'radio button'.
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -18,7 +19,7 @@ var util = require('../../common/util');
  * @param {Object} options - options
  * @ignore
  */
-var ButtonPainter = snippet.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
+var ButtonPainter = snippet.defineClass(InputPainter, /** @lends module:painter/input/button.prototype */{
     init: function(options) {
         InputPainter.apply(this, arguments);
 
@@ -144,8 +145,10 @@ var ButtonPainter = snippet.defineClass(InputPainter, /**@lends module:painter/i
 
         if ($nextInputs.length) {
             $nextInputs.first().focus();
+
             return true;
         }
+
         return false;
     },
 

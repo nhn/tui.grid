@@ -2,6 +2,7 @@
  * @fileoverview Class for the layer view that represents the currently focused cell
  * @author NHN Ent. FE Development Team
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -23,7 +24,7 @@ var BLUR_CLASS_NAME = classNameConst.LAYER_FOCUS_DEACTIVE;
  * @param {Object} options - Options
  * @ignore
  */
-var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
+var FocusLayer = View.extend(/** @lends module:view/focusLayer.prototype */{
     initialize: function(options) {
         this.focusModel = options.focusModel;
         this.columnModel = options.columnModel;
@@ -43,6 +44,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.listenTo(this.coordRowModel, 'reset', this._refreshCurrentLayout);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
+        this.listenTo(this.focusModel, 'change:active', this._onChangeActiveState);
     },
 
     className: classNameConst.LAYER_FOCUS,
@@ -64,11 +66,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      * @private
      */
     _onBlur: function() {
-        if (this.focusModel.has(true)) {
-            this.$el.addClass(BLUR_CLASS_NAME);
-        } else {
-            this.$el.hide();
-        }
+        this.$el.hide();
     },
 
     /**
@@ -80,13 +78,22 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
     _onFocus: function(rowKey, columnName) {
         var targetSide = this.columnModel.isLside(columnName) ? frameConst.L : frameConst.R;
 
-        if (this.focusModel.has(true)) {
-            this.$el.removeClass(BLUR_CLASS_NAME);
-        }
-
         if (targetSide === this.whichSide) {
             this._refreshBorderLayout(rowKey, columnName);
             this.$el.show();
+        }
+    },
+
+    /**
+     * Event handler for 'change:active' event on module:model/focus
+     * @param {object} model - Focus model
+     * @private
+     */
+    _onChangeActiveState: function(model) {
+        if (!model.changed.active) {
+            this.$el.addClass(BLUR_CLASS_NAME);
+        } else {
+            this.$el.removeClass(BLUR_CLASS_NAME);
         }
     },
 

@@ -2,6 +2,7 @@
 
 function isSameVisual() {
     var result = browser.checkViewport();
+
     return result[0].isWithinMisMatchTolerance;
 }
 

@@ -139,7 +139,8 @@ describe('model/focus', function() {
             expect(focusModel.get('columnName')).toBeNull();
         });
 
-        it('if the target is the same as current cell, trigger nothing', function() {
+        it('if the target is the same as current cell and the focus is not active,' +
+            'trigger nothing', function() {
             var callback = jasmine.createSpy();
 
             focusModel.focus('1', 'c1');
