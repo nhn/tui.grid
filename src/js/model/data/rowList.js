@@ -441,8 +441,8 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
     removeRow: function(rowKey, options) {
-        var row = this.get(rowKey),
-            rowSpanData, nextRow, removedData;
+        var row = this.get(rowKey);
+        var rowSpanData, nextRow, removedData, currentIndex;
 
         if (!row) {
             return;
@@ -451,8 +451,10 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         if (options && options.keepRowSpanData) {
             removedData = _.clone(row.attributes);
         }
+
+        currentIndex = this.indexOf(row);
         rowSpanData = _.clone(row.getRowSpanData());
-        nextRow = this.at(this.indexOf(row) + 1);
+        nextRow = this.at(currentIndex + 1);
 
         this.remove(row, {
             silent: true
@@ -462,7 +464,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
-        this.trigger('remove', rowKey);
+        this.trigger('remove', rowKey, currentIndex);
     },
 
     /**
@@ -549,6 +551,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         };
 
         this.add(modelList, addOptions);
+
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, options);
 

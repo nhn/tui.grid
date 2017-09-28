@@ -92,11 +92,9 @@ describe('model.rowList', function() {
                 ];
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
             });
 
@@ -150,11 +148,9 @@ describe('model.rowList', function() {
                     }
                 ];
                 var model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 var dataList, formatted;
 
@@ -191,11 +187,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
@@ -218,11 +212,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
@@ -248,11 +240,9 @@ describe('model.rowList', function() {
 
                 dataModel.set(rowList, {parse: true});
                 model = new RowModel(null, {
-                    collection: {
-                        columnModel: columnModel,
-                        dataModel: dataModel,
-                        focusModel: focusModel
-                    }
+                    columnModel: columnModel,
+                    dataModel: dataModel,
+                    focusModel: focusModel
                 });
                 dataList = dataModel.toJSON();
                 formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
