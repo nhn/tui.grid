@@ -112,14 +112,15 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
     },
 
     /**
-     * columnName 이 열고정 영역에 있는 column 인지 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
+     * Returns state that the column is included in left side by column name
+     * @param {String} columnName - Column name
+     * @returns {Boolean} Whether the column is included in left side or not
      */
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
+        var frozenCount = this.getVisibleFrozenCount(false);
 
-        return (index > -1) && (index < this.get('frozenCount'));
+        return (index > -1) && (index < frozenCount);
     },
 
     /**
