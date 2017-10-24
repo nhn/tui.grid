@@ -21,7 +21,7 @@ var HeaderView = require('./layout/header');
 var HeaderResizeHandleView = require('./layout/resizeHandle');
 var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
-var FooterView = require('./layout/footer');
+var SummaryView = require('./layout/summary');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
@@ -45,7 +45,7 @@ var ViewFactory = snippet.defineClass({
         this.componentHolder = options.componentHolder;
 
         // view options
-        this.footerOptions = options.footer;
+        this.summaryOptions = options.summary;
         this.heightResizable = options.heightResizable;
     },
 
@@ -167,24 +167,24 @@ var ViewFactory = snippet.defineClass({
     },
 
     /**
-     * Creates footer view and returns it.
+     * Creates summary view and returns it.
      * @param {string} whichSide - 'L'(left) or 'R'(right)
      * @returns {object}
      */
-    createFooter: function(whichSide) {
+    createSummary: function(whichSide) {
         var templateMap = {};
 
-        if (!this.footerOptions) {
+        if (!this.summaryOptions) {
             return null;
         }
 
-        _.each(this.footerOptions.columnContent, function(options, columnName) {
+        _.each(this.summaryOptions.columnContent, function(options, columnName) {
             if (_.isFunction(options.template)) {
                 templateMap[columnName] = options.template;
             }
         });
 
-        return new FooterView({
+        return new SummaryView({
             whichSide: whichSide,
             columnModel: this.modelManager.columnModel,
             renderModel: this.modelManager.renderModel,

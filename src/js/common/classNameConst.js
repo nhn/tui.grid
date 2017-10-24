@@ -46,8 +46,12 @@ var classNames = {
     RSIDE_AREA: 'rside-area',
     HEAD_AREA: 'head-area',
     BODY_AREA: 'body-area',
-    FOOT_AREA: 'foot-area',
-    FOOT_AREA_RIGHT: 'foot-area-right',
+    SUMMARY_AREA: 'summary-area',
+    SUMMARY_AREA_TOP: 'summary-area-top',
+    SUMMARY_AREA_BOTTOM: 'summary-area-bottom',
+    SUMMARY_AREA_RIGHT: 'summary-area-right',
+    SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
+    SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
 
     // header
     COLUMN_RESIZE_CONTAINER: 'column-resize-container',

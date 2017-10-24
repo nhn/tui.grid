@@ -52,13 +52,18 @@
     position relative
     overflow scroll
 
-.foot-area
+.summary-area
     position relative
-    border-width 1px 0 0
     border-style solid
     margin-top -18px
     overflow-y hidden
     overflow-x scroll
+
+.summary-area-top
+    border-width 0
+
+.summary-area-bottom
+    border-width 1px 0 0
 
 .lside-area
     display none
@@ -78,27 +83,31 @@
     display none
     overflow hidden
 
-    .head-area, .foot-area
+    .head-area, .summary-area
         margin-right 17px
 
 .no-scroll-y
     .rside-area
-        .head-area, .foot-area
+        .head-area, .summary-area
             margin-right 0
 
 .no-scroll-x
-    .foot-area
+    .summary-area
         margin-top 0
         overflow-x hidden
-    .foot-area-right
+    .summary-area-right
         bottom 0
 
-.foot-area-right
+.summary-area-right
     position absolute
     right 0
-    bottom 17px
     width 17px
     border-style solid
+
+.summary-area-right-top
+    border-width 0 0 1px 1px
+
+.summary-area-right-bottom
     border-width 1px 0 1px 1px
 
 .body-container

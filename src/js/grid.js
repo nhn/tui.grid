@@ -163,20 +163,36 @@ var instanceMap = {};
  *                  for this column
  *              @param {Object} [options.columns.component.options] - The options object to be used for
  *                  creating the component
- *      @param {Object} [options.footer] - The object for configuring footer area.
- *          @param {number} [options.footer.height] - The height of the footer area.
- *          @param {Object.<string, Object>} [options.footer.columnContent]
- *              The object for configuring each column in the footer.
+ *      @param {Object} [options.summary] - The object for configuring summary area.
+ *          @param {number} [options.summary.height] - The height of the summary area.
+ *          @param {Object.<string, Object>} [options.summary.columnContent]
+ *              The object for configuring each column in the summary.
  *              Sub options below are keyed by each column name.
- *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+ *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
  *                  If set to true, the summary value of each column is served as a paramater to the template
  *                  function whenever data is changed.
- *              @param {function} [options.footer.columnContent.template] - Template function which returns the
- *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
+ *              @param {function} [options.summary.columnContent.template] - Template function which returns the
+ *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
+ *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+ *      @param {Object} [options.footer] - Deprecated: The object for configuring summary area. This option is replaced by "summary" option.
+ *          @param {number} [options.footer.height] - Deprecated: The height of the summary area.
+ *          @param {Object.<string, Object>} [options.footer.columnContent]
+ *              Deprecated: The object for configuring each column in the summary.
+ *                          Sub options below are keyed by each column name.
+ *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+ *                  Deprecated: If set to true, the summary value of each column is served as a paramater to the template
+ *                              function whenever data is changed.
+ *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
+ *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
+        if (options.footer) {
+            util.warning('The "footer" option is deprecated since 2.5.0 and replaced by "summary" option.');
+            options.summary = options.footer;
+        }
+
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -250,7 +266,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'footer'
+            'heightResizable', 'summary'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
@@ -880,12 +896,22 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Sets the HTML string of given column footer.
+     * Sets the HTML string of given column summary.
+     * @param {string} columnName - column name
+     * @param {string} contents - HTML string
+     */
+    setSummaryColumnContent: function(columnName, contents) {
+        this.modelManager.columnModel.setSummaryContent(columnName, contents);
+    },
+
+    /**
+     * Sets the HTML string of given column summary.
+     * @deprecated since version 2.5.0 and is replaced by "setSummaryColumnContent" API
      * @param {string} columnName - column name
      * @param {string} contents - HTML string
      */
     setFooterColumnContent: function(columnName, contents) {
-        this.modelManager.columnModel.setFooterContent(columnName, contents);
+        this.modelManager.columnModel.setSummaryContent(columnName, contents);
     },
 
     /**

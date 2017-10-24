@@ -73,5 +73,9 @@ module.exports = {
         CNT: 'cnt',
         MAX: 'max',
         MIN: 'min'
+    },
+    summaryPosition: {
+        TOP: 'top',
+        BOTTOM: 'bottom'
     }
 };

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Footer
+ * @fileoverview Summary
  * @author NHN Ent. FE Development Team
  */
 
@@ -14,13 +14,13 @@ var frameConst = constMap.frame;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
 /**
- * Footer area
- * @module view/layout/footer
+ * Summary area
+ * @module view/layout/summary
  * @extends module:base/view
  * @param {Object} options - Options
  * @ignore
  */
-var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
+var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     initialize: function(options) {
         /**
          * Store template functions of each column
@@ -51,13 +51,13 @@ var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-        this.listenTo(this.columnModel, 'setFooterContent', this._setColumnContent);
+        this.listenTo(this.columnModel, 'setSummaryContent', this._setColumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
     },
 
-    className: classNameConst.FOOT_AREA,
+    className: classNameConst.SUMMARY_AREA,
 
     events: {
         scroll: '_onScrollView'
@@ -191,12 +191,16 @@ var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
      * @returns {object}
      */
     render: function() {
-        var footerHeight = this.dimensionModel.get('footerHeight');
+        var summaryHeight = this.dimensionModel.get('summaryHeight');
+        var summaryPosition = this.dimensionModel.get('summaryPosition');
+        var className = summaryPosition === 'top' ? classNameConst.SUMMARY_AREA_TOP : classNameConst.SUMMARY_AREA_BOTTOM;
 
-        if (footerHeight) {
+        this.$el.addClass(className);
+
+        if (summaryHeight) {
             this.$el.html(this.template({
                 className: classNameConst.TABLE,
-                height: footerHeight,
+                height: summaryHeight,
                 tbody: this._generateTbodyHTML()
             }));
         }
@@ -205,4 +209,4 @@ var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
     }
 });
 
-module.exports = Footer;
+module.exports = Summary;

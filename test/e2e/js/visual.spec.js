@@ -70,12 +70,12 @@ describe('date picker', function() {
     });
 });
 
-describe('footer', function() {
+describe('summary', function() {
     beforeEach(function() {
         loadExample('example6');
     });
 
-    it('footer', function() {
+    it('summary', function() {
         expect(isSameVisual()).toBe(true);
     });
 

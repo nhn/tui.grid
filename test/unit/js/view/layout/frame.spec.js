@@ -13,7 +13,7 @@ var frameConst = require('common/constMap').frame;
 
 describe('Frame', function() {
     var modelManager, frame;
-    var headerMock, bodyMock, footerMock;
+    var headerMock, bodyMock, summaryMock;
     var viewFactoryMock;
 
     headerMock = {
@@ -28,7 +28,7 @@ describe('Frame', function() {
             return this;
         }
     };
-    footerMock = {
+    summaryMock = {
         el: $('<div />'),
         render: function() {
             return this;
@@ -41,8 +41,8 @@ describe('Frame', function() {
         createBody: function() {
             return bodyMock;
         },
-        createFooter: function() {
-            return footerMock;
+        createSummary: function() {
+            return summaryMock;
         }
     };
 
@@ -185,6 +185,31 @@ describe('Frame', function() {
                     expect(frame.$scrollBorder.height()).toBe(scrollHeight);
                 });
             });
+        });
+    });
+
+    describe('create children view', function() {
+        it('if position of summary is not set, two children views are created.', function() {
+            modelManager.dimensionModel.set({
+                summaryHeight: 30,
+                scrollY: true
+            });
+            frame = createFrame(Frame);
+            frame.render();
+
+            expect(frame.$el.children().length).toBe(2);
+        });
+
+        it('if position of summary is set, three children views are created.', function() {
+            modelManager.dimensionModel.set({
+                summaryHeight: 30,
+                summaryPosition: 'top',
+                scrollY: true
+            });
+            frame = createFrame(Frame);
+            frame.render();
+
+            expect(frame.$el.children().length).toBe(3);
         });
     });
 });

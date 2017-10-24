@@ -1,7 +1,7 @@
 'use strict';
 
 var Factory = require('view/factory');
-var FooterView = require('view/layout/footer');
+var SummaryView = require('view/layout/summary');
 var HeightResizeHandleVeiw = require('view/heightResizeHandle');
 var frameConst = require('common/constMap').frame;
 
@@ -39,36 +39,36 @@ describe('[view/factory] ', function() {
         });
     });
 
-    describe('createFooter()', function() {
-        it('create Footer with options', function() {
+    describe('createSummary()', function() {
+        it('create Summary with options', function() {
             var factory = new Factory({
                 modelManager: modelManager,
-                footer: {}
+                summary: {}
             });
-            var footer = factory.createFooter(frameConst.R);
+            var summary = factory.createSummary(frameConst.R);
 
-            expect(footer instanceof FooterView).toBe(true);
-            expect(footer.whichSide).toBe(frameConst.R);
-            expect(footer.columnModel).toBe(modelManager.columnModel);
-            expect(footer.renderModel).toBe(modelManager.renderModel);
-            expect(footer.dimensionModel).toBe(modelManager.dimensionModel);
-            expect(footer.summaryModel).toBe(modelManager.summaryModel);
+            expect(summary instanceof SummaryView).toBe(true);
+            expect(summary.whichSide).toBe(frameConst.R);
+            expect(summary.columnModel).toBe(modelManager.columnModel);
+            expect(summary.renderModel).toBe(modelManager.renderModel);
+            expect(summary.dimensionModel).toBe(modelManager.dimensionModel);
+            expect(summary.summaryModel).toBe(modelManager.summaryModel);
         });
 
-        it('set formatters from footer options', function() {
+        it('set formatters from summary options', function() {
             var columnContent = {
                 c1: {template: function() {}},
                 c2: {template: function() {}}
             };
             var factory = new Factory({
                 modelManager: modelManager,
-                footer: {
+                summary: {
                     columnContent: columnContent
                 }
             });
-            var footer = factory.createFooter(frameConst.R);
+            var summary = factory.createSummary(frameConst.R);
 
-            expect(footer.columnTemplateMap).toEqual({
+            expect(summary.columnTemplateMap).toEqual({
                 c1: columnContent.c1.template,
                 c2: columnContent.c2.template
             });

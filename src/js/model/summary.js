@@ -98,7 +98,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _resetSummaryMap: function() {
-        this._resetFooterSummaryValue();
+        this._resetSummarySummaryValue();
     },
 
     /**
@@ -106,7 +106,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @param {Array.<string>} columnNames - An array of column names
      * @private
      */
-    _resetFooterSummaryValue: function(columnNames) {
+    _resetSummarySummaryValue: function(columnNames) {
         var targetColumnNames = this.autoColumnNames;
 
         if (columnNames) {
@@ -127,7 +127,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _onChangeData: function(model) {
-        this._resetFooterSummaryValue(_.keys(model.changed));
+        this._resetSummarySummaryValue(_.keys(model.changed));
     },
 
     /**
@@ -137,7 +137,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _onDeleteRangeData: function(rowKeys, columnNames) {
-        this._resetFooterSummaryValue(columnNames);
+        this._resetSummarySummaryValue(columnNames);
     },
 
     /**

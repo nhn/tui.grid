@@ -16,11 +16,11 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.CONTENT_AREA + '{border-color:green}',
             '.' + classNameConst.TABLE + '{border-color:green}',
             '.' + classNameConst.HEAD_AREA + '{border-color:green}',
-            '.' + classNameConst.FOOT_AREA + '{border-color:green}',
+            '.' + classNameConst.SUMMARY_AREA + '{border-color:green}',
             '.' + classNameConst.BORDER_LINE + '{background-color:green}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{border-color:green}',
             '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}',
-            '.' + classNameConst.FOOT_AREA_RIGHT + '{border-color:green}'
+            '.' + classNameConst.SUMMARY_AREA_RIGHT + '{border-color:green}'
         ].join('');
 
         expect(styleGen.grid(options)).toBe(expected);
@@ -39,7 +39,7 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.SCROLLBAR_RIGHT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}',
-            '.' + classNameConst.FOOT_AREA_RIGHT + '{background-color:white}',
+            '.' + classNameConst.SUMMARY_AREA_RIGHT + '{background-color:white}',
             '.' + classNameConst.BODY_AREA + '{background-color:white}'
         ].join('');
 
@@ -96,7 +96,7 @@ describe('theme/styleGenerator: ', function() {
             var expected =
               '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}' +
               '.' + classNameConst.HEAD_AREA + '{background-color:white}' +
-              '.' + classNameConst.FOOT_AREA + '{background-color:white}';
+              '.' + classNameConst.SUMMARY_AREA + '{background-color:white}';
 
             expect(styleGen.cellHead(options)).toBe(expected);
         });
