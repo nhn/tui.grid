@@ -24,7 +24,7 @@
         "title": "8. Using DatePicker component"
     },
     "example09-footer-summary": {
-        "title": "9. Footer and Summary"
+        "title": "9. Using Summary"
     },
     "example10-using-net": {
         "title": "10. Binding to remote data using net"
@@ -33,6 +33,6 @@
         "title": "11. Customizing Row headers"
     },
     "example12-using-whitespace": {
-        "title": "11. Using whiteSpace"
+        "title": "12. Using whiteSpace"
     }
 }

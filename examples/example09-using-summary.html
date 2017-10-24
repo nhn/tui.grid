@@ -2,13 +2,15 @@
 <html lang="ko">
 <head>
 	<meta charset="utf-8">
-	<title>9. Footer and Summary</title>
+	<title>9. Using Summary</title>
     <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
 </head>
 <body>
 <div class="explain">
-You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Footer-and-Summary" target="_blank">here</a>.
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Using-Summary" target="_blank">here</a>.
+The "footer" option to use summary feature is deprecated since 2.5.0 version and
+this option is replaced by the "summary" option.
 </div>
 <div class="code-html">
 <div id="grid"></div>
@@ -54,8 +56,9 @@ var grid = new tui.Grid({
             }
         }
     ],
-    footer: {
+    summary: {
         height: 50,
+		position: 'bottom', // or 'top'
         columnContent: {
             c2: {
                 template: function(valueMap) {
