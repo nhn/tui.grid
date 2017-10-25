@@ -197,12 +197,14 @@ var ViewFactory = snippet.defineClass({
 
     /**
      * Creates resize handler of header view and returns it.
-     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @param {string} whichSide - 'L'(left) or 'R'(right)
+     * @param {array} handleHeights - Height values of each resize handle
      * @returns {module:view/layout/header} New resize handler view instance
      */
-    createHeaderResizeHandle: function(whichSide) {
+    createHeaderResizeHandle: function(whichSide, handleHeights) {
         return new HeaderResizeHandleView({
             whichSide: whichSide,
+            handleHeights: handleHeights,
             headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             columnModel: this.modelManager.columnModel,
             coordColumnModel: this.modelManager.coordColumnModel,

@@ -48,7 +48,8 @@ describe('ResizeHandle', function() {
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             coordColumnModel: coordColumnModel,
-            whichSide: frameConst.R
+            whichSide: frameConst.R,
+            handleHeights: []
         });
     });
 
