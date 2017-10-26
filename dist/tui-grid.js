@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Sep 28 2017 10:34:09 GMT+0900 (KST)"
- * version: 2.4.1
+ * bundle created at "Thu Oct 26 2017 11:04:11 GMT+0900 (KST)"
+ * version: 2.5.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -248,20 +248,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  for this column
 	 *              @param {Object} [options.columns.component.options] - The options object to be used for
 	 *                  creating the component
-	 *      @param {Object} [options.footer] - The object for configuring footer area.
-	 *          @param {number} [options.footer.height] - The height of the footer area.
-	 *          @param {Object.<string, Object>} [options.footer.columnContent]
-	 *              The object for configuring each column in the footer.
+	 *      @param {Object} [options.summary] - The object for configuring summary area.
+	 *          @param {number} [options.summary.height] - The height of the summary area.
+	 *          @param {Object.<string, Object>} [options.summary.columnContent]
+	 *              The object for configuring each column in the summary.
 	 *              Sub options below are keyed by each column name.
-	 *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+	 *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
 	 *                  If set to true, the summary value of each column is served as a paramater to the template
 	 *                  function whenever data is changed.
-	 *              @param {function} [options.footer.columnContent.template] - Template function which returns the
-	 *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
+	 *              @param {function} [options.summary.columnContent.template] - Template function which returns the
+	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
+	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+	 *      @param {Object} [options.footer] - Deprecated: The object for configuring summary area. This option is replaced by "summary" option.
+	 *          @param {number} [options.footer.height] - Deprecated: The height of the summary area.
+	 *          @param {Object.<string, Object>} [options.footer.columnContent]
+	 *              Deprecated: The object for configuring each column in the summary.
+	 *                          Sub options below are keyed by each column name.
+	 *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+	 *                  Deprecated: If set to true, the summary value of each column is served as a paramater to the template
+	 *                              function whenever data is changed.
+	 *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
+	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
 	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
 	 */
 	var Grid = View.extend(/** @lends Grid.prototype */{
 	    initialize: function(options) {
+	        if (options.footer) {
+	            util.warning('The "footer" option is deprecated since 2.5.0 and replaced by "summary" option.');
+	            options.summary = options.footer;
+	        }
+
 	        this.id = util.getUniqueKey();
 	        this.domState = new DomState(this.$el);
 	        this.domEventBus = DomEventBus.create();
@@ -335,7 +351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _createViewFactory: function(options) {
 	        var viewOptions = _.pick(options, [
-	            'heightResizable', 'footer'
+	            'heightResizable', 'summary'
 	        ]);
 	        var dependencies = {
 	            modelManager: this.modelManager,
@@ -965,12 +981,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Sets the HTML string of given column footer.
+	     * Sets the HTML string of given column summary.
+	     * @param {string} columnName - column name
+	     * @param {string} contents - HTML string
+	     */
+	    setSummaryColumnContent: function(columnName, contents) {
+	        this.modelManager.columnModel.setSummaryContent(columnName, contents);
+	    },
+
+	    /**
+	     * Sets the HTML string of given column summary.
+	     * @deprecated since version 2.5.0 and is replaced by "setSummaryColumnContent" API
 	     * @param {string} columnName - column name
 	     * @param {string} contents - HTML string
 	     */
 	    setFooterColumnContent: function(columnName, contents) {
-	        this.modelManager.columnModel.setFooterContent(columnName, contents);
+	        this.modelManager.columnModel.setSummaryContent(columnName, contents);
 	    },
 
 	    /**
@@ -1349,7 +1375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.renderModel = this._createRenderModel(options);
 	        this.coordConverterModel = this._createCoordConverterModel();
 	        this.selectionModel = this._createSelectionModel(options, domEventBus);
-	        this.summaryModel = this._createSummaryModel(options.footer);
+	        this.summaryModel = this._createSummaryModel(options.summary);
 	        this.clipboardModel = this._createClipboardModel(options, domEventBus);
 	    },
 
@@ -1389,6 +1415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 
+	    /* eslint-disable complexity */
 	    /**
 	     * Creates an instance of dimension model and returns it.
 	     * @param  {Object} options - Options
@@ -1408,7 +1435,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var attrs = {
 	            headerHeight: options.header.height,
 	            bodyHeight: bodyHeight,
-	            footerHeight: options.footer ? options.footer.height : 0,
+	            summaryHeight: options.summary ? options.summary.height : 0,
+	            summaryPosition: options.summary ? (options.summary.position || 'bottom') : null,
 	            rowHeight: rowHeight,
 	            fitToParentHeight: (options.bodyHeight === 'fitToParent'),
 	            scrollX: !!options.scrollX,
@@ -1434,6 +1462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return dimensionModel;
 	    },
+	    /* eslint-enable complexity */
 
 	    /**
 	     * Creates an instance of coordRow model and returns it
@@ -1554,18 +1583,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Creates an instance of summary model and returns it.
-	     * @param  {Object} footerOptions - footer options
+	     * @param  {Object} summaryOptions - summary options
 	     * @returns {module:model/summary} - A new instance
 	     * @private
 	     */
-	    _createSummaryModel: function(footerOptions) {
+	    _createSummaryModel: function(summaryOptions) {
 	        var autoColumnNames = [];
 
-	        if (!footerOptions || !footerOptions.columnContent) {
+	        if (!summaryOptions || !summaryOptions.columnContent) {
 	            return null;
 	        }
 
-	        _.each(footerOptions.columnContent, function(options, columnName) {
+	        _.each(summaryOptions.columnContent, function(options, columnName) {
 	            if (_.isFunction(options.template) && options.useAutoSummary !== false) {
 	                autoColumnNames.push(columnName);
 	            }
@@ -1739,14 +1768,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * columnName 이 열고정 영역에 있는 column 인지 반환한다.
-	     * @param {String} columnName   컬럼명
-	     * @returns {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
+	     * Returns state that the column is included in left side by column name
+	     * @param {String} columnName - Column name
+	     * @returns {Boolean} Whether the column is included in left side or not
 	     */
 	    isLside: function(columnName) {
 	        var index = this.indexOfColumnName(columnName, true);
+	        var frozenCount = this.getVisibleFrozenCount(false);
 
-	        return (index > -1) && (index < this.get('frozenCount'));
+	        return (index > -1) && (index < frozenCount);
 	    },
 
 	    /**
@@ -2091,13 +2121,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Set footer contents.
-	     * (Just trigger 'setFooterContent')
+	     * Set summary contents.
+	     * (Just trigger 'setSummaryContent')
 	     * @param {string} columnName - columnName
 	     * @param {string} contents - HTML string
 	     */
-	    setFooterContent: function(columnName, contents) {
-	        this.trigger('setFooterContent', columnName, contents);
+	    setSummaryContent: function(columnName, contents) {
+	        this.trigger('setSummaryContent', columnName, contents);
 	    }
 	});
 
@@ -2208,6 +2238,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        CNT: 'cnt',
 	        MAX: 'max',
 	        MIN: 'min'
+	    },
+	    summaryPosition: {
+	        TOP: 'top',
+	        BOTTOM: 'bottom'
 	    }
 	};
 
@@ -5109,8 +5143,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RSIDE_AREA: 'rside-area',
 	    HEAD_AREA: 'head-area',
 	    BODY_AREA: 'body-area',
-	    FOOT_AREA: 'foot-area',
-	    FOOT_AREA_RIGHT: 'foot-area-right',
+	    SUMMARY_AREA: 'summary-area',
+	    SUMMARY_AREA_TOP: 'summary-area-top',
+	    SUMMARY_AREA_BOTTOM: 'summary-area-bottom',
+	    SUMMARY_AREA_RIGHT: 'summary-area-right',
+	    SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
+	    SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
 
 	    // header
 	    COLUMN_RESIZE_CONTAINER: 'column-resize-container',
@@ -5213,7 +5251,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(6);
 
 	var Model = __webpack_require__(13);
-	var dimensionConstMap = __webpack_require__(14).dimension;
+	var constMap = __webpack_require__(14);
+	var dimensionConstMap = constMap.dimension;
+	var summaryPositionConst = constMap.summaryPosition;
 
 	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
@@ -5253,7 +5293,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        headerHeight: 0,
 	        bodyHeight: 0,
-	        footerHeight: 0,
+
+	        summaryHeight: 0,
+	        summaryPosition: null,
 
 	        resizeHandleHeight: 0,
 	        paginationHeight: 0,
@@ -5428,7 +5470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _calcRealBodyHeight: function(height) {
-	        var extraHeight = this.get('headerHeight') + this.get('footerHeight') + TABLE_BORDER_WIDTH;
+	        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
 
 	        return height - extraHeight;
 	    },
@@ -5527,12 +5569,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the offset.top of body
-	     * @returns {number}
+	     * @returns    {number}
 	     */
 	    getBodyOffsetTop: function() {
 	        var offsetTop = this.domState.getOffset().top;
+	        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
 
-	        return offsetTop + this.get('headerHeight')
+	        return offsetTop + this.get('headerHeight') + summaryHeight
 	            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
 	    },
 
@@ -9899,7 +9942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _resetSummaryMap: function() {
-	        this._resetFooterSummaryValue();
+	        this._resetSummarySummaryValue();
 	    },
 
 	    /**
@@ -9907,7 +9950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<string>} columnNames - An array of column names
 	     * @private
 	     */
-	    _resetFooterSummaryValue: function(columnNames) {
+	    _resetSummarySummaryValue: function(columnNames) {
 	        var targetColumnNames = this.autoColumnNames;
 
 	        if (columnNames) {
@@ -9928,7 +9971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onChangeData: function(model) {
-	        this._resetFooterSummaryValue(_.keys(model.changed));
+	        this._resetSummarySummaryValue(_.keys(model.changed));
 	    },
 
 	    /**
@@ -9938,7 +9981,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onDeleteRangeData: function(rowKeys, columnNames) {
-	        this._resetFooterSummaryValue(columnNames);
+	        this._resetSummarySummaryValue(columnNames);
 	    },
 
 	    /**
@@ -10153,7 +10196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var HeaderResizeHandleView = __webpack_require__(51);
 	var BodyView = __webpack_require__(52);
 	var BodyTableView = __webpack_require__(53);
-	var FooterView = __webpack_require__(54);
+	var SummaryView = __webpack_require__(54);
 	var RowListView = __webpack_require__(55);
 	var SelectionLayerView = __webpack_require__(56);
 	var EditingLayerView = __webpack_require__(57);
@@ -10177,7 +10220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.componentHolder = options.componentHolder;
 
 	        // view options
-	        this.footerOptions = options.footer;
+	        this.summaryOptions = options.summary;
 	        this.heightResizable = options.heightResizable;
 	    },
 
@@ -10299,24 +10342,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Creates footer view and returns it.
+	     * Creates summary view and returns it.
 	     * @param {string} whichSide - 'L'(left) or 'R'(right)
 	     * @returns {object}
 	     */
-	    createFooter: function(whichSide) {
+	    createSummary: function(whichSide) {
 	        var templateMap = {};
 
-	        if (!this.footerOptions) {
+	        if (!this.summaryOptions) {
 	            return null;
 	        }
 
-	        _.each(this.footerOptions.columnContent, function(options, columnName) {
+	        _.each(this.summaryOptions.columnContent, function(options, columnName) {
 	            if (_.isFunction(options.template)) {
 	                templateMap[columnName] = options.template;
 	            }
 	        });
 
-	        return new FooterView({
+	        return new SummaryView({
 	            whichSide: whichSide,
 	            columnModel: this.modelManager.columnModel,
 	            renderModel: this.modelManager.renderModel,
@@ -10329,12 +10372,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Creates resize handler of header view and returns it.
-	     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+	     * @param {string} whichSide - 'L'(left) or 'R'(right)
+	     * @param {array} handleHeights - Height values of each resize handle
 	     * @returns {module:view/layout/header} New resize handler view instance
 	     */
-	    createHeaderResizeHandle: function(whichSide) {
+	    createHeaderResizeHandle: function(whichSide, handleHeights) {
 	        return new HeaderResizeHandleView({
 	            whichSide: whichSide,
+	            handleHeights: handleHeights,
 	            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
 	            columnModel: this.modelManager.columnModel,
 	            coordColumnModel: this.modelManager.coordColumnModel,
@@ -11857,7 +11902,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(6);
 
 	var View = __webpack_require__(8);
-	var frameConst = __webpack_require__(14).frame;
+	var constMap = __webpack_require__(14);
+	var frameConst = constMap.frame;
+	var summaryPositionConst = constMap.summaryPosition;
 
 	/**
 	 * Base class for frame view.
@@ -11886,17 +11933,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {module:view/layout/frame} This object
 	     */
 	    render: function() {
-	        var factory = this.viewFactory;
-
 	        this.$el.empty();
 	        this._destroyChildren();
 
 	        this.beforeRender();
-	        this._addChildren([
-	            factory.createHeader(this.whichSide),
-	            factory.createBody(this.whichSide),
-	            factory.createFooter(this.whichSide)
-	        ]);
+
+	        this._addChildren(this._createChildren());
 	        this.$el.append(this._renderChildren());
 	        this.afterRender();
 
@@ -11913,7 +11955,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * To be called at the end of the 'render' method.
 	     * @abstract
 	     */
-	    afterRender: function() {}
+	    afterRender: function() {},
+
+	    /**
+	     * Create children view to append on frame element
+	     * @returns {array} View elements
+	     * @private
+	     */
+	    _createChildren: function() {
+	        var factory = this.viewFactory;
+	        var summaryPosition = this.dimensionModel.get('summaryPosition');
+	        var header = factory.createHeader(this.whichSide);
+	        var body = factory.createBody(this.whichSide);
+	        var summary = factory.createSummary(this.whichSide, summaryPosition);
+	        var children;
+
+	        if (summaryPosition === summaryPositionConst.TOP) {
+	            children = [header, summary, body];
+	        } else if (summaryPosition === summaryPositionConst.BOTTOM) {
+	            children = [header, body, summary];
+	        } else {
+	            children = [header, body];
+	        }
+
+	        return children;
+	    }
 	});
 
 	module.exports = Frame;
@@ -11937,6 +12003,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var classNameConst = __webpack_require__(22);
 	var constMap = __webpack_require__(14);
 	var frameConst = constMap.frame;
+	var summaryPositionConst = constMap.summaryPosition;
+
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 	/**
@@ -12020,14 +12088,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    afterRender: function() {
 	        var dimensionModel = this.dimensionModel;
-	        var headerHeight, footerHeight;
+	        var headerHeight, summaryHeight;
 	        var $space, $scrollBorder;
 
 	        if (!dimensionModel.get('scrollY')) {
 	            return;
 	        }
 	        headerHeight = dimensionModel.get('headerHeight');
-	        footerHeight = dimensionModel.get('footerHeight');
+	        summaryHeight = dimensionModel.get('summaryHeight');
 
 	        // Empty DIV for hiding scrollbar in the header area
 	        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
@@ -12047,16 +12115,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
 	        }
 
-	        // Empty DIV for filling gray color in the right side of the footer.
-	        if (footerHeight && dimensionModel.get('scrollY')) {
-	            this.$el.append($('<div>')
-	                .addClass(classNameConst.FOOT_AREA_RIGHT)
-	                .css('height', footerHeight - CELL_BORDER_WIDTH)
-	            );
+	        // Empty DIV for filling gray color in the right side of the summary.
+	        if (summaryHeight && dimensionModel.get('scrollY')) {
+	            this._applyStyleToSummary(headerHeight, summaryHeight, dimensionModel.get('summaryPosition'));
 	        }
 
 	        this.$scrollBorder = $scrollBorder;
 	        this._resetScrollBorderHeight();
+	    },
+
+	    /**
+	     * Apply style to summary area on right-side frame
+	     * @param {number} headerHeight - Height of header area
+	     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+	     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+	     */
+	    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition) {
+	        var styles = {};
+	        var subClassName;
+
+	        if (summaryPosition === summaryPositionConst.TOP) {
+	            styles.top = headerHeight;
+	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
+	        } else {
+	            styles.bottom = 0;
+	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
+	        }
+
+	        styles.height = summaryHeight - CELL_BORDER_WIDTH;
+
+	        this.$el.append($('<div>')
+	            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
+	            .addClass(subClassName)
+	            .css(styles)
+	        );
 	    }
 	});
 
@@ -12094,6 +12186,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 	var MIN_INTERVAL_FOR_PAUSED = 200;
 
+	var Header;
+
+	/**
+	 * Get count of same columns in complex columns
+	 * @param {array} currentColumn - Current column's model
+	 * @param {array} prevColumn - Previous column's model
+	 * @returns {number} Count of same columns
+	 * @ignore
+	 */
+	function getSameColumnCount(currentColumn, prevColumn) {
+	    var index = 0;
+	    var len = Math.min(currentColumn.length, prevColumn.length);
+
+	    for (; index < len; index += 1) {
+	        if (currentColumn[index].name !== prevColumn[index].name) {
+	            break;
+	        }
+	    }
+
+	    return index;
+	}
+
 	/**
 	 * Header Layout View
 	 * @module view/layout/header
@@ -12102,7 +12216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {String} [options.whichSide=R]  R: Right, L: Left
 	 * @ignore
 	 */
-	var Header = View.extend(/** @lends module:view/layout/header.prototype */{
+	Header = View.extend(/** @lends module:view/layout/header.prototype */{
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -12456,6 +12570,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {View.Layout.Header} this
 	     */
 	    render: function() {
+	        var resizeHandleHeights;
+
 	        this._destroyChildren();
 
 	        this.$el.css({
@@ -12466,7 +12582,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }));
 
 	        if (this.coordColumnModel.get('resizable')) {
-	            this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
+	            resizeHandleHeights = this._getResizeHandleHeights();
+	            this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide, resizeHandleHeights));
 	            this.$el.append(this._renderChildren());
 	        }
 
@@ -12612,6 +12729,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return results;
+	    },
+
+	    /**
+	     * Get height values of resize handlers
+	     * @returns {array} Height values of resize handles
+	     */
+	    _getResizeHandleHeights: function() {
+	        var hierarchyList = this._getColumnHierarchyList();
+	        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
+	        var rowHeight = util.getRowHeight(maxRowCount, this.headerHeight) - 1;
+	        var handleHeights = [];
+	        var index = 1;
+	        var coulmnLen = hierarchyList.length;
+	        var sameColumnCount, handleHeight;
+
+	        for (; index < coulmnLen; index += 1) {
+	            sameColumnCount = getSameColumnCount(hierarchyList[index], hierarchyList[index - 1]);
+	            handleHeight = rowHeight * (maxRowCount - sameColumnCount);
+
+	            handleHeights.push(handleHeight);
+	        }
+
+	        handleHeights.push(rowHeight * maxRowCount); // last resize handle
+
+	        return handleHeights;
 	    }
 	});
 
@@ -12659,6 +12801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            coordColumnModel: options.coordColumnModel,
 	            domEventBus: options.domEventBus,
 	            headerHeight: options.headerHeight,
+	            handleHeights: options.handleHeights,
 	            whichSide: options.whichSide || frameConst.R
 	        });
 
@@ -12688,9 +12831,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
 	        attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
 	        'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
-	        'height="<%=height%>" ' +
 	        'title="<%=title%>"' +
-	        'style="display:<%=displayType%>">' +
+	        'style="height:<%=height%>;display:<%=displayType%>">' +
 	        '</div>'
 	    ),
 
@@ -12723,7 +12865,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
 	                columnIndex: index,
 	                columnName: columnModel.name,
-	                height: this.headerHeight,
+	                height: this.handleHeights[index] + 'px',
 	                title: message.get('resizeHandleGuide'),
 	                displayType: (columnModel.resizable === false) ? 'none' : 'block'
 	            });
@@ -12765,7 +12907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var $handler = $resizeHandleList.eq(index);
 	            curPos += columnWidths[index] + CELL_BORDER_WIDTH;
 	            $handler.css('left', curPos - handlerWidthHalf);
-	        });
+	        }, this);
 	    },
 
 	    /**
@@ -13297,7 +13439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Footer
+	 * @fileoverview Summary
 	 * @author NHN Ent. FE Development Team
 	 */
 
@@ -13312,13 +13454,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
 	/**
-	 * Footer area
-	 * @module view/layout/footer
+	 * Summary area
+	 * @module view/layout/summary
 	 * @extends module:base/view
 	 * @param {Object} options - Options
 	 * @ignore
 	 */
-	var Footer = View.extend(/** @lends module:view/layout/footer.prototype */{
+	var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
 	    initialize: function(options) {
 	        /**
 	         * Store template functions of each column
@@ -13349,13 +13491,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // events
 	        this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
 	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-	        this.listenTo(this.columnModel, 'setFooterContent', this._setColumnContent);
+	        this.listenTo(this.columnModel, 'setSummaryContent', this._setColumnContent);
 	        if (this.summaryModel) {
 	            this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
 	        }
 	    },
 
-	    className: classNameConst.FOOT_AREA,
+	    className: classNameConst.SUMMARY_AREA,
 
 	    events: {
 	        scroll: '_onScrollView'
@@ -13489,12 +13631,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {object}
 	     */
 	    render: function() {
-	        var footerHeight = this.dimensionModel.get('footerHeight');
+	        var summaryHeight = this.dimensionModel.get('summaryHeight');
+	        var summaryPosition = this.dimensionModel.get('summaryPosition');
+	        var className = summaryPosition === 'top' ? classNameConst.SUMMARY_AREA_TOP : classNameConst.SUMMARY_AREA_BOTTOM;
 
-	        if (footerHeight) {
+	        this.$el.addClass(className);
+
+	        if (summaryHeight) {
 	            this.$el.html(this.template({
 	                className: classNameConst.TABLE,
-	                height: footerHeight,
+	                height: summaryHeight,
 	                tbody: this._generateTbodyHTML()
 	            }));
 	        }
@@ -13503,7 +13649,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	});
 
-	module.exports = Footer;
+	module.exports = Summary;
 
 
 /***/ }),
@@ -17945,22 +18091,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
 	        var tableRule = classRule(classNameConst.TABLE).border(options.border);
 	        var headerRule = classRule(classNameConst.HEAD_AREA).border(options.border);
-	        var footerRule = classRule(classNameConst.FOOT_AREA).border(options.border);
+	        var summaryRule = classRule(classNameConst.SUMMARY_AREA).border(options.border);
 	        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
 	        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
-	        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).border(options.border);
+	        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).border(options.border);
 
 	        return builder.buildAll([
 	            containerRule,
 	            contentAreaRule,
 	            tableRule,
 	            headerRule,
-	            footerRule,
+	            summaryRule,
 	            borderLineRule,
 	            scrollHeadRule,
 	            scrollBorderRule,
-	            footerRightRule
+	            summaryRightRule
 	        ]);
 	    },
 
@@ -17975,7 +18121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
 	        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
-	        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).bg(options.background);
+	        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).bg(options.background);
 	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
 
 	        return builder.buildAll(webkitScrollbarRules.concat([
@@ -17983,7 +18129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rightBottomRule,
 	            leftBottomRule,
 	            scrollHeadRule,
-	            footerRightRule,
+	            summaryRightRule,
 	            bodyAreaRule
 	        ]));
 	    },
@@ -18045,10 +18191,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var headAreaRule = classRule(classNameConst.HEAD_AREA)
 	            .bg(options.background);
 
-	        var footerAreaRule = classRule(classNameConst.FOOT_AREA)
+	        var summaryAreaRule = classRule(classNameConst.SUMMARY_AREA)
 	            .bg(options.background);
 
-	        return builder.buildAll([headRule, headAreaRule, footerAreaRule]);
+	        return builder.buildAll([headRule, headAreaRule, summaryAreaRule]);
 	    },
 
 	    /**
