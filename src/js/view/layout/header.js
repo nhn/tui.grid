@@ -32,6 +32,7 @@ var Header;
  * @param {array} currentColumn - Current column's model
  * @param {array} prevColumn - Previous column's model
  * @returns {number} Count of same columns
+ * @ignore
  */
 function getSameColumnCount(currentColumn, prevColumn) {
     var index = 0;
