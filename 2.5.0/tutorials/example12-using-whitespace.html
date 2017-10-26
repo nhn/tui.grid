@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>12. Using whiteSpace option</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+</head>
+<body>
+<div class="explain">
+Adjust the column size to compare the differences.
+</div>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" class="code-js">
+
+var grid = new tui.Grid({
+    el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
+    columns: [
+        {
+            title: 'whiteSpace: \'nowrap\'',
+            name: 'nowrap',
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
+        },
+        {
+            title: 'whiteSpace: \'normal\'',
+            name: 'normal',
+            whiteSpace: 'normal',
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
+        },
+        {
+            title: 'whiteSpace: \'pre\'',
+            name: 'pre',
+            whiteSpace: 'pre',
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
+        },
+        {
+            title: 'whiteSpace: \'pre-wrap\'',
+            name: 'preWrap',
+            whiteSpace: 'pre-wrap',
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
+        },
+        {
+            title: 'whiteSpace: \'pre-line\'',
+            name: 'preLine',
+            whiteSpace: 'pre-line',
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
+        }
+    ]
+});
+
+var gridData = [];
+
+(function() {
+    _.times(10, function(number) {
+        var text = 'grid         example\ngrid newline and clipboard example\n\ngrid example';
+
+        gridData.push({
+            nowrap: text,
+            normal: text,
+            pre: text,
+            preWrap: text,
+            preLine: text
+        });
+    })
+})();
+
+grid.setData(gridData);
+
+</script>
+</html>

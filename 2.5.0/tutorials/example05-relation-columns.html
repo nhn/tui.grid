@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>5. Relation between columns</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+</head>
+<body>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Relation-between-columns" target="_blank">here</a>.
+</div>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" class="code-js">
+
+var twoDepthData = {
+    '01': [
+        { text: 'Select', value: '' },
+        { text: 'Balad/Dance/Pop', value: '01_01' },
+        { text: 'Hiphop/R&B', value: '01_02' },
+        { text: 'Indie', value: '01_03' }
+    ],
+    '02': [
+        { text: 'Select', value: '' },
+        { text: 'Pop', value: '02_01' },
+        { text: 'Hiphop', value: '02_02' },
+        { text: 'R&B', value: '02_03' }
+    ],
+    '03': [
+        { text: 'Select', value: '' },
+        { text: 'OST', value: '03_01' },
+        { text: 'Classic', value: '03_02' },
+        { text: 'New Age', value: '03_03' }
+    ]
+};
+
+var threeDepthData = {
+    '01_01': [
+        { text: 'Select', value: '' },
+        { text: 'I Miss You', value: '01_01_0001' },
+        { text: 'Russian Roulette', value: '01_01_0002' },
+        { text: 'TT', value: '01_01_0003' },
+        { text: 'Beautiful', value: '01_01_0004' },
+        { text: 'KNOCK KNOCK', value: '01_01_0005' },
+        { text: 'Rookie', value: '01_01_0006' },
+        { text: 'Round And Round', value: '01_01_0007' }
+    ],
+    '01_02': [
+        { text: 'Select', value: '' },
+        { text: 'BERMUDA TRIANGLE', value: '01_02_0001' },
+        { text: 'Day Day', value: '01_02_0002' },
+        { text: 'Bye bye my blue', value: '01_02_0003' },
+        { text: 'Comedian', value: '01_02_0004' },
+        { text: 'what2do', value: '01_02_0005' },
+        { text: 'Bye bye my blue', value: '01_02_0006' },
+        { text: 'I NEED U', value: '01_02_0007' }
+    ],
+    '01_03': [
+        { text: 'Select', value: '' },
+        { text: 'Madeleine Love', value: '01_03_0001' },
+        { text: 'Mood Indigo', value: '01_03_0002' },
+        { text: 'I Don\'t Wanna Love You', value: '01_03_0003' },
+        { text: 'Come Back Home', value: '01_03_0004' },
+        { text: 'MONSTER', value: '01_03_0005' },
+        { text: 'Free Somebody', value: '01_03_0006' },
+        { text: 'Vineyard', value: '01_03_0007' }
+    ],
+    '02_01': [
+        { text: 'Select', value: '' },
+        { text: 'Cave Me In', value: '02_01_0001' },
+        { text: 'Hello', value: '02_01_0002' },
+        { text: 'When We Were Young', value: '02_01_0003' },
+        { text: 'Stay With Me', value: '02_01_0004' },
+        { text: 'I\'m Not The Only One', value: '02_01_0005' },
+        { text: 'Youth', value: '02_01_0006' },
+        { text: 'Love On Top', value: '02_01_0007' }
+    ],
+    '02_02': [
+        { text: 'Select', value: '' },
+        { text: 'Love The Way You Lie', value: '02_02_0001' },
+        { text: 'Flower Dance', value: '02_02_0002' },
+        { text: 'I Feel It Coming', value: '02_02_0003' },
+        { text: 'Love The Way You Lie', value: '02_02_0004' },
+        { text: 'I Feel It Coming', value: '02_02_0005' },
+        { text: 'GDFR', value: '02_02_0006' },
+        { text: 'Love Me In Everything', value: '02_02_0007' }
+    ],
+    '02_03': [
+        { text: 'Select', value: '' },
+        { text: 'Marry You', value: '02_03_0001' },
+        { text: 'Hello', value: '02_03_0002' },
+        { text: 'Coastal Love', value: '02_03_0003' },
+        { text: 'Happy', value: '02_03_0004' },
+        { text: 'If You Wonder', value: '02_03_0005' },
+        { text: 'Want To Want Me', value: '02_03_0006' },
+        { text: 'Get Lucky', value: '02_03_0007' }
+    ],
+    '03_01': [
+        { text: 'Select', value: '' },
+        { text: 'City Of Stars', value: '03_01_0001' },
+        { text: 'You Are My Everything', value: '03_01_0002' },
+        { text: 'Summer Montage / Madeline', value: '03_01_0003' },
+        { text: 'Memory', value: '03_01_0004' },
+        { text: 'A Lovely Night', value: '03_01_0005' }
+    ],
+    '03_02': [
+        { text: 'Select', value: '' },
+        { text: 'Ravel: Pavane Pour Une Infant Defunte', value: '03_02_0001' },
+        { text: 'Elgar: Salut D`amour', value: '03_02_0002' },
+        { text: 'Refuse', value: '03_02_0003' },
+        { text: 'Liebestraume S541: No. 3 in A flat', value: '03_02_0004' },
+        { text: 'Three Romances Op94: nr 2 in A', value: '03_02_0005' }
+    ],
+    '03_03': [
+        { text: 'Select', value: '' },
+        { text: 'Kiss The Rain', value: '03_03_0001' },
+        { text: 'Blind Film', value: '03_03_0002' },
+        { text: 'Merry Christmas Mr.Lawrence', value: '03_03_0003' },
+        { text: 'After The Play', value: '03_03_0004' },
+        { text: 'River Flows In You', value: '03_03_0005' }
+    ]
+};
+
+var grid = new tui.Grid({
+    el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
+    rowHeight: 30,
+    columns: [
+        {
+            title: 'Category1',
+            name: 'category1',
+            editOptions: {
+                type: 'select',
+                listItems: [
+                    { text: 'Select', value: '' },
+                    { text: 'Domestic', value: '01' },
+                    { text: 'Overseas', value: '02' },
+                    { text: 'Etc', value: '03' }
+                ],
+                useViewMode: false
+            },
+            relations: [
+                {
+                    targetNames: ['category2', 'selectedValue'],
+                    listItems: function(value) {
+                        return twoDepthData[value];
+                    },
+                    disabled: function(value) {
+                        return !(value);
+                    }
+                }
+            ]
+        },
+        {
+            title: 'Category2',
+            name: 'category2',
+            editOptions: {
+                type: 'select',
+                listItems: [],
+                useViewMode: false
+            },
+            relations: [
+                {
+                    targetNames: ['category3'],
+                    listItems: function(value) {
+                        return threeDepthData[value];
+                    },
+                    disabled: function(value) {
+                        return !(value);
+                    }
+                }
+            ]
+        },
+        {
+            title: 'Category3',
+            name: 'category3',
+            editOptions: {
+                type: 'select',
+                listItems: [],
+                useViewMode: false
+            }
+        }
+    ]
+});
+
+var gridData = [ // initial data
+    {
+        category1: '',
+        category2 : '',
+        category3: ''
+    },
+    {
+        category1: '02',
+        category2: '02_03',
+        category3: '02_03_0001'
+    },
+    {
+        category1: '03',
+        category2: '03_01',
+        category3: '03_01_0001'
+    }
+];
+
+grid.setData(gridData);
+
+</script>
+</html>

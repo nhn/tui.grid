@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>8. Using Date-Picker component</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.time-picker/v1.0.0/dist/tui-time-picker.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/nhnent/tui.date-picker/v3.0.0/dist/tui-date-picker.css" />
+</head>
+<body>
+<div class="explain">
+You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Using-DatePicker-component" target="_blank">here</a>.
+</div>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.time-picker/v1.0.0/dist/tui-time-picker.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.date-picker/v3.0.0/dist/tui-date-picker.js"></script>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" class="code-js">
+
+var grid = new tui.Grid({
+    el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
+    header: {
+        height: 60,
+        complexColumns: [
+            {
+                title : 'useViewMode: false',
+                name : 'c1-c2',
+                childNames : ['c1', 'c2']
+            },
+            {
+                title : 'useViewMode: true',
+                name : 'c3-c4',
+                childNames : ['c3', 'c4']
+            },
+            {
+                title: 'DateTimePicker',
+                name: 'c5'
+            },
+            {
+                title: 'MonthPicker',
+                name: 'c6'
+            },
+            {
+                title: 'YearPicker',
+                name: 'c7'
+            }
+        ]
+    },
+    columnOptions: {
+        width: 100
+    },
+    columns: [
+        {
+            title: 'DatePicker (Off)',
+            name: 'c1',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
+            }
+        },
+        {
+            title: 'DatePicker (Default)',
+            name: 'c2',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
+            },
+            component: {
+                name: 'datePicker'
+            }
+        },
+        {
+            title: 'DatePicker (Using options)',
+            name: 'c3',
+            editOptions: {
+                type: 'text'
+            },
+            component: {
+                name: 'datePicker',
+                options: {
+                    date: new Date(2017, 3, 10),
+                    format: 'dd/MM/yyyy'
+                }
+            }
+        },
+        {
+            title: 'DatePicker (selectableRanges)',
+            name: 'c4',
+            editOptions: {
+                type: 'text'
+            },
+            component: {
+                name: 'datePicker',
+                options: {
+                    date: new Date(2014, 3, 10),
+                    selectableRanges: [
+                        [new Date(2014, 3, 10), new Date(2014, 5, 20)]
+                    ]
+                }
+            }
+        },
+        {
+            title: 'Date-TimePicker',
+            name: 'c5',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
+            },
+            component: {
+                name: 'datePicker',
+                options: {
+                    format: 'yyyy-MM-dd HH:mm A',
+                    timepicker: true
+                }
+            }
+        },
+        {
+            title: 'MonthPicker',
+            name: 'c6',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
+            },
+            component: {
+                name: 'datePicker',
+                options: {
+                    format: 'yyyy-MM',
+                    type: 'month'
+                }
+            }
+        },
+        {
+            title: 'YearPicker',
+            name: 'c7',
+            editOptions: {
+                type: 'text',
+                useViewMode: false
+            },
+            component: {
+                name: 'datePicker',
+                options: {
+                    format: 'yyyy',
+                    type: 'year'
+                }
+            }
+        }
+    ]
+});
+
+var gridData = [];
+(function() {
+    _.times(20, function(number) {
+        gridData.push({ });
+    })
+})();
+
+grid.setData(gridData);
+
+</script>
+</html>
