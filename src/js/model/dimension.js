@@ -8,7 +8,9 @@
 var _ = require('underscore');
 
 var Model = require('../base/model');
-var dimensionConstMap = require('../common/constMap').dimension;
+var constMap = require('../common/constMap');
+var dimensionConstMap = constMap.dimension;
+var summaryPositionConst = constMap.summaryPosition;
 
 var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
@@ -48,7 +50,9 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
-        footerHeight: 0,
+
+        summaryHeight: 0,
+        summaryPosition: null,
 
         resizeHandleHeight: 0,
         paginationHeight: 0,
@@ -223,7 +227,7 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
      * @private
      */
     _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('footerHeight') + TABLE_BORDER_WIDTH;
+        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
 
         return height - extraHeight;
     },
@@ -322,12 +326,13 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
 
     /**
      * Returns the offset.top of body
-     * @returns {number}
+     * @returns    {number}
      */
     getBodyOffsetTop: function() {
         var offsetTop = this.domState.getOffset().top;
+        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
 
-        return offsetTop + this.get('headerHeight')
+        return offsetTop + this.get('headerHeight') + summaryHeight
             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
     },
 

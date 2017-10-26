@@ -8,7 +8,9 @@
 var _ = require('underscore');
 
 var View = require('../../base/view');
-var frameConst = require('../../common/constMap').frame;
+var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
+var summaryPositionConst = constMap.summaryPosition;
 
 /**
  * Base class for frame view.
@@ -37,17 +39,12 @@ var Frame = View.extend(/** @lends module:view/layout/frame.prototype */{
      * @returns {module:view/layout/frame} This object
      */
     render: function() {
-        var factory = this.viewFactory;
-
         this.$el.empty();
         this._destroyChildren();
 
         this.beforeRender();
-        this._addChildren([
-            factory.createHeader(this.whichSide),
-            factory.createBody(this.whichSide),
-            factory.createFooter(this.whichSide)
-        ]);
+
+        this._addChildren(this._createChildren());
         this.$el.append(this._renderChildren());
         this.afterRender();
 
@@ -64,7 +61,31 @@ var Frame = View.extend(/** @lends module:view/layout/frame.prototype */{
      * To be called at the end of the 'render' method.
      * @abstract
      */
-    afterRender: function() {}
+    afterRender: function() {},
+
+    /**
+     * Create children view to append on frame element
+     * @returns {array} View elements
+     * @private
+     */
+    _createChildren: function() {
+        var factory = this.viewFactory;
+        var summaryPosition = this.dimensionModel.get('summaryPosition');
+        var header = factory.createHeader(this.whichSide);
+        var body = factory.createBody(this.whichSide);
+        var summary = factory.createSummary(this.whichSide, summaryPosition);
+        var children;
+
+        if (summaryPosition === summaryPositionConst.TOP) {
+            children = [header, summary, body];
+        } else if (summaryPosition === summaryPositionConst.BOTTOM) {
+            children = [header, body, summary];
+        } else {
+            children = [header, body];
+        }
+
+        return children;
+    }
 });
 
 module.exports = Frame;

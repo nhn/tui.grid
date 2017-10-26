@@ -12,6 +12,8 @@ var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
 var constMap = require('../../common/constMap');
 var frameConst = constMap.frame;
+var summaryPositionConst = constMap.summaryPosition;
+
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -95,14 +97,14 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
      */
     afterRender: function() {
         var dimensionModel = this.dimensionModel;
-        var headerHeight, footerHeight;
+        var headerHeight, summaryHeight;
         var $space, $scrollBorder;
 
         if (!dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');
-        footerHeight = dimensionModel.get('footerHeight');
+        summaryHeight = dimensionModel.get('summaryHeight');
 
         // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
@@ -122,16 +124,40 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
             this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
         }
 
-        // Empty DIV for filling gray color in the right side of the footer.
-        if (footerHeight && dimensionModel.get('scrollY')) {
-            this.$el.append($('<div>')
-                .addClass(classNameConst.FOOT_AREA_RIGHT)
-                .css('height', footerHeight - CELL_BORDER_WIDTH)
-            );
+        // Empty DIV for filling gray color in the right side of the summary.
+        if (summaryHeight && dimensionModel.get('scrollY')) {
+            this._applyStyleToSummary(headerHeight, summaryHeight, dimensionModel.get('summaryPosition'));
         }
 
         this.$scrollBorder = $scrollBorder;
         this._resetScrollBorderHeight();
+    },
+
+    /**
+     * Apply style to summary area on right-side frame
+     * @param {number} headerHeight - Height of header area
+     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     */
+    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition) {
+        var styles = {};
+        var subClassName;
+
+        if (summaryPosition === summaryPositionConst.TOP) {
+            styles.top = headerHeight;
+            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
+        } else {
+            styles.bottom = 0;
+            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
+        }
+
+        styles.height = summaryHeight - CELL_BORDER_WIDTH;
+
+        this.$el.append($('<div>')
+            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
+            .addClass(subClassName)
+            .css(styles)
+        );
     }
 });
 

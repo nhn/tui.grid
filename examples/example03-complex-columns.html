@@ -27,28 +27,33 @@ var grid = new tui.Grid({
     scrollX: false,
     scrollY: false,
     header: {
-        height: 100,
+        height: 120,
         complexColumns: [
             {
-                title: 'Detail',
+                title: 'Basic',
                 name: 'mergeColumn1',
+                childNames: ['name', 'artist']
+            },
+            {
+                title: 'Extra',
+                name: 'mergeColumn2',
                 childNames: ['type', 'release', 'genre']
             },
             {
-                title: 'Album Info',
-                name: 'mergeColumn2',
-                childNames: ['name', 'artist', 'mergeColumn1']
+                title: 'Detail',
+                name: 'mergeColumn3',
+                childNames: ['mergeColumn1', 'mergeColumn2']
             },
             {
-                title: 'Total Count',
-                name: 'mergeColumn3',
+                title: 'Count',
+                name: 'mergeColumn4',
                 childNames: ['downloadCount', 'listenCount']
             },
             {
-                title: 'Sales Info',
-                name: 'mergeColumn4',
-                childNames: ['price', 'mergeColumn3']
-            },
+                title: 'Album Info',
+                name: 'mergeColumn5',
+                childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+            }
         ]
     },
     columns: [

@@ -33,6 +33,7 @@ var ResizeHandle = View.extend(/** @lends module:view/layout/resizeHandle.protot
             coordColumnModel: options.coordColumnModel,
             domEventBus: options.domEventBus,
             headerHeight: options.headerHeight,
+            handleHeights: options.handleHeights,
             whichSide: options.whichSide || frameConst.R
         });
 
@@ -62,9 +63,8 @@ var ResizeHandle = View.extend(/** @lends module:view/layout/resizeHandle.protot
         attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
         attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
         'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
-        'height="<%=height%>" ' +
         'title="<%=title%>"' +
-        'style="display:<%=displayType%>">' +
+        'style="height:<%=height%>;display:<%=displayType%>">' +
         '</div>'
     ),
 
@@ -97,7 +97,7 @@ var ResizeHandle = View.extend(/** @lends module:view/layout/resizeHandle.protot
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.name,
-                height: this.headerHeight,
+                height: this.handleHeights[index] + 'px',
                 title: message.get('resizeHandleGuide'),
                 displayType: (columnModel.resizable === false) ? 'none' : 'block'
             });
@@ -139,7 +139,7 @@ var ResizeHandle = View.extend(/** @lends module:view/layout/resizeHandle.protot
             var $handler = $resizeHandleList.eq(index);
             curPos += columnWidths[index] + CELL_BORDER_WIDTH;
             $handler.css('left', curPos - handlerWidthHalf);
-        });
+        }, this);
     },
 
     /**

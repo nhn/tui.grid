@@ -11,18 +11,18 @@ function create(whichSide, options) {
     var modelManager = new ModelManager(options, new DomState($('<div>')));
     var viewFactory = new ViewFactory({
         modelManager: modelManager,
-        footer: options.footer
+        summary: options.summary
     });
 
-    return viewFactory.createFooter(whichSide);
+    return viewFactory.createSummary(whichSide);
 }
 
-describe('Footer', function() {
+describe('Summary', function() {
     describe('render()', function() {
-        var footer;
+        var summary;
 
         beforeEach(function() {
-            footer = create(frameConst.R, {
+            summary = create(frameConst.R, {
                 columns: [{
                     name: 'c1',
                     width: 50
@@ -30,31 +30,31 @@ describe('Footer', function() {
                     name: 'c2',
                     width: 60
                 }],
-                footer: {}
+                summary: {}
             });
-            footer.dimensionModel.set('footerHeight', 30);
+            summary.dimensionModel.set('summaryHeight', 30);
         });
 
-        it('render nothing if dimension.footerHeight is 0', function() {
-            footer.dimensionModel.set('footerHeight', 0);
-            footer.render();
+        it('render nothing if dimension.summaryHeight is 0', function() {
+            summary.dimensionModel.set('summaryHeight', 0);
+            summary.render();
 
-            expect(footer.$el).toBeEmpty();
+            expect(summary.$el).toBeEmpty();
         });
 
-        it('height of table should be same as dimension.footerHeight', function() {
-            footer.render();
+        it('height of table should be same as dimension.summaryHeight', function() {
+            summary.render();
 
-            expect(footer.$el.find('table').height()).toBe(30);
+            expect(summary.$el.find('table').height()).toBe(30);
         });
 
         it('width of each column should be the same as the result of coordColumnModel.getWidths()', function() {
             var widths, $ths;
 
-            footer.render();
+            summary.render();
 
-            widths = footer.coordColumnModel.getWidths(frameConst.R);
-            $ths = footer.$el.find('th');
+            widths = summary.coordColumnModel.getWidths(frameConst.R);
+            $ths = summary.$el.find('th');
             expect($ths.eq(0).width()).toBe(widths[0]);
             expect($ths.eq(1).width()).toBe(widths[1]);
         });
@@ -62,9 +62,9 @@ describe('Footer', function() {
         it('If the summaryModel does not exist, values should be empty', function() {
             var $ths;
 
-            footer.render();
+            summary.render();
 
-            $ths = footer.$el.find('th');
+            $ths = summary.$el.find('th');
             expect($ths.eq(0).html()).toBe('');
             expect($ths.eq(1).html()).toBe('');
         });
@@ -81,14 +81,14 @@ describe('Footer', function() {
             };
             var $ths;
 
-            footer.summaryModel = {
+            summary.summaryModel = {
                 getValue: function(columnName) {
                     return summaryMap[columnName];
                 }
             };
-            footer.render();
+            summary.render();
 
-            $ths = footer.$el.find('th');
+            $ths = summary.$el.find('th');
             expect($ths.eq(0).html('10, 0.4'));
             expect($ths.eq(1).html('10'));
         });
@@ -103,12 +103,12 @@ describe('Footer', function() {
                 return 'formatted2';
             }
 
-            footer.columnTemplateMap = {
+            summary.columnTemplateMap = {
                 c1: fmt1,
                 c2: fmt2
             };
-            footer.render();
-            $ths = footer.$el.find('th');
+            summary.render();
+            $ths = summary.$el.find('th');
 
             expect($ths.eq(0).html()).toBe(fmt1());
             expect($ths.eq(1).html()).toBe(fmt2());
@@ -122,48 +122,48 @@ describe('Footer', function() {
                 c2: {max: 5}
             };
 
-            footer.summaryModel = {
+            summary.summaryModel = {
                 getValue: function(columnName) {
                     return summaryMap[columnName];
                 }
             };
-            footer.columnTemplateMap = {
+            summary.columnTemplateMap = {
                 c1: fmt1,
                 c2: fmt2
             };
 
-            footer.render();
+            summary.render();
 
             expect(fmt1).toHaveBeenCalledWith(summaryMap.c1);
             expect(fmt2).toHaveBeenCalledWith(summaryMap.c2);
         });
     });
 
-    it('If the setFooterContent event occurs on columnModel, refresh <th>', function() {
-        var footer = create(frameConst.R, {
+    it('If the setSummaryContent event occurs on columnModel, refresh <th>', function() {
+        var summary = create(frameConst.R, {
             columns: [
                 {name: 'c1'},
                 {name: 'c2'}
             ],
-            footer: {
+            summary: {
                 height: 30,
                 columnContent: {}
             }
         });
 
-        footer.render();
-        footer.columnModel.trigger('setFooterContent', 'c1', 'contents');
+        summary.render();
+        summary.columnModel.trigger('setSummaryContent', 'c1', 'contents');
 
-        expect(footer.$el.find('th').eq(0).html()).toBe('contents');
+        expect(summary.$el.find('th').eq(0).html()).toBe('contents');
     });
 
     it('Refresh <th> whenever change event occurs on the summaryModel', function() {
-        var footer = create(frameConst.R, {
+        var summary = create(frameConst.R, {
             columns: [
                 {name: 'c1'},
                 {name: 'c2'}
             ],
-            footer: {
+            summary: {
                 height: 30,
                 columnContent: {
                     c1: {
@@ -175,11 +175,11 @@ describe('Footer', function() {
             }
         });
 
-        footer.render();
-        footer.summaryModel.trigger('change', 'c1', {
+        summary.render();
+        summary.summaryModel.trigger('change', 'c1', {
             sum: 10
         });
 
-        expect(footer.$el.find('th').eq(0).html()).toBe('10');
+        expect(summary.$el.find('th').eq(0).html()).toBe('10');
     });
 });

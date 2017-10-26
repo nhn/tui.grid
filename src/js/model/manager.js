@@ -77,7 +77,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(options, domEventBus);
-        this.summaryModel = this._createSummaryModel(options.footer);
+        this.summaryModel = this._createSummaryModel(options.summary);
         this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
 
@@ -117,6 +117,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
         });
     },
 
+    /* eslint-disable complexity */
     /**
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
@@ -136,7 +137,8 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
         var attrs = {
             headerHeight: options.header.height,
             bodyHeight: bodyHeight,
-            footerHeight: options.footer ? options.footer.height : 0,
+            summaryHeight: options.summary ? options.summary.height : 0,
+            summaryPosition: options.summary ? (options.summary.position || 'bottom') : null,
             rowHeight: rowHeight,
             fitToParentHeight: (options.bodyHeight === 'fitToParent'),
             scrollX: !!options.scrollX,
@@ -162,6 +164,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
 
         return dimensionModel;
     },
+    /* eslint-enable complexity */
 
     /**
      * Creates an instance of coordRow model and returns it
@@ -282,18 +285,18 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
 
     /**
      * Creates an instance of summary model and returns it.
-     * @param  {Object} footerOptions - footer options
+     * @param  {Object} summaryOptions - summary options
      * @returns {module:model/summary} - A new instance
      * @private
      */
-    _createSummaryModel: function(footerOptions) {
+    _createSummaryModel: function(summaryOptions) {
         var autoColumnNames = [];
 
-        if (!footerOptions || !footerOptions.columnContent) {
+        if (!summaryOptions || !summaryOptions.columnContent) {
             return null;
         }
 
-        _.each(footerOptions.columnContent, function(options, columnName) {
+        _.each(summaryOptions.columnContent, function(options, columnName) {
             if (_.isFunction(options.template) && options.useAutoSummary !== false) {
                 autoColumnNames.push(columnName);
             }

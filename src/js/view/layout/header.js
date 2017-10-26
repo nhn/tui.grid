@@ -25,6 +25,28 @@ var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
 
+var Header;
+
+/**
+ * Get count of same columns in complex columns
+ * @param {array} currentColumn - Current column's model
+ * @param {array} prevColumn - Previous column's model
+ * @returns {number} Count of same columns
+ * @ignore
+ */
+function getSameColumnCount(currentColumn, prevColumn) {
+    var index = 0;
+    var len = Math.min(currentColumn.length, prevColumn.length);
+
+    for (; index < len; index += 1) {
+        if (currentColumn[index].name !== prevColumn[index].name) {
+            break;
+        }
+    }
+
+    return index;
+}
+
 /**
  * Header Layout View
  * @module view/layout/header
@@ -33,7 +55,7 @@ var MIN_INTERVAL_FOR_PAUSED = 200;
  * @param {String} [options.whichSide=R]  R: Right, L: Left
  * @ignore
  */
-var Header = View.extend(/** @lends module:view/layout/header.prototype */{
+Header = View.extend(/** @lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
@@ -387,6 +409,8 @@ var Header = View.extend(/** @lends module:view/layout/header.prototype */{
      * @returns {View.Layout.Header} this
      */
     render: function() {
+        var resizeHandleHeights;
+
         this._destroyChildren();
 
         this.$el.css({
@@ -397,7 +421,8 @@ var Header = View.extend(/** @lends module:view/layout/header.prototype */{
         }));
 
         if (this.coordColumnModel.get('resizable')) {
-            this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
+            resizeHandleHeights = this._getResizeHandleHeights();
+            this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide, resizeHandleHeights));
             this.$el.append(this._renderChildren());
         }
 
@@ -543,6 +568,31 @@ var Header = View.extend(/** @lends module:view/layout/header.prototype */{
         }
 
         return results;
+    },
+
+    /**
+     * Get height values of resize handlers
+     * @returns {array} Height values of resize handles
+     */
+    _getResizeHandleHeights: function() {
+        var hierarchyList = this._getColumnHierarchyList();
+        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
+        var rowHeight = util.getRowHeight(maxRowCount, this.headerHeight) - 1;
+        var handleHeights = [];
+        var index = 1;
+        var coulmnLen = hierarchyList.length;
+        var sameColumnCount, handleHeight;
+
+        for (; index < coulmnLen; index += 1) {
+            sameColumnCount = getSameColumnCount(hierarchyList[index], hierarchyList[index - 1]);
+            handleHeight = rowHeight * (maxRowCount - sameColumnCount);
+
+            handleHeights.push(handleHeight);
+        }
+
+        handleHeights.push(rowHeight * maxRowCount); // last resize handle
+
+        return handleHeights;
     }
 });
 
