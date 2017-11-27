@@ -57,7 +57,7 @@ describe('grid', function() {
             grid.setData([
                 {}, {}, {}, {}
             ]);
-            Grid.setLanguage('ko');
+            Grid.setLanguage('en');
         });
 
         it('getCheckedRows', function() {

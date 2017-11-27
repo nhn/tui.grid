@@ -5,6 +5,10 @@
 
 'use strict';
 
+var Grid = require('./grid');
+
 require('../css/index.styl');
 
-module.exports = require('./grid');
+Grid.setLanguage('en');
+
+module.exports = Grid;

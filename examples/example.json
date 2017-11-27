@@ -34,5 +34,8 @@
     },
     "example12-using-whitespace": {
         "title": "12. Using whiteSpace"
+    },
+    "example13-i18n": {
+        "title": "13. Internationalization (i18n)"
     }
 }

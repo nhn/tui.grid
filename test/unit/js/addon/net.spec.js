@@ -5,6 +5,7 @@ var $ = require('jquery');
 var Grid = require('grid');
 var Model = require('base/model');
 var formUtil = require('common/formUtil');
+var i18n = require('common/i18n');
 var renderStateMap = require('common/constMap').renderState;
 
 describe('addon.net', function() {
@@ -37,7 +38,7 @@ describe('addon.net', function() {
             columns: columns,
             selectType: 'checkbox'
         });
-        Grid.setLanguage('ko');
+        Grid.setLanguage('en');
         window.alert = function() {};
         window.confirm = function() {
             return true;
@@ -422,20 +423,25 @@ describe('addon.net', function() {
     });
 
     describe('_getConfirmMessage', function() {
+        function getRequestMessage(key, count) {
+            return i18n.get(key, {
+                count: count
+            });
+        }
         beforeEach(function() {
             createNet();
         });
 
         it('createData', function() {
-            expect(net._getConfirmMessage('createData', 3)).toEqual('3건의 데이터를 입력하시겠습니까?');
-            expect(net._getConfirmMessage('updateData', 3)).toEqual('3건의 데이터를 수정하시겠습니까?');
-            expect(net._getConfirmMessage('deleteData', 3)).toEqual('3건의 데이터를 삭제하시겠습니까?');
-            expect(net._getConfirmMessage('modifyData', 3)).toEqual('3건의 데이터를 반영하시겠습니까?');
+            expect(net._getConfirmMessage('createData', 3)).toEqual(getRequestMessage('net.confirmCreate', 3));
+            expect(net._getConfirmMessage('updateData', 3)).toEqual(getRequestMessage('net.confirmUpdate', 3));
+            expect(net._getConfirmMessage('deleteData', 3)).toEqual(getRequestMessage('net.confirmDelete', 3));
+            expect(net._getConfirmMessage('modifyData', 3)).toEqual(getRequestMessage('net.confirmModify', 3));
 
-            expect(net._getConfirmMessage('createData', 0)).toEqual('입력할 데이터가 없습니다.');
-            expect(net._getConfirmMessage('updateData', 0)).toEqual('수정할 데이터가 없습니다.');
-            expect(net._getConfirmMessage('deleteData', 0)).toEqual('삭제할 데이터가 없습니다.');
-            expect(net._getConfirmMessage('modifyData', 0)).toEqual('반영할 데이터가 없습니다.');
+            expect(net._getConfirmMessage('createData', 0)).toEqual(i18n.get('net.noDataToCreate'));
+            expect(net._getConfirmMessage('updateData', 0)).toEqual(i18n.get('net.noDataToUpdate'));
+            expect(net._getConfirmMessage('deleteData', 0)).toEqual(i18n.get('net.noDataToDelete'));
+            expect(net._getConfirmMessage('modifyData', 0)).toEqual(i18n.get('net.noDataToModify'));
         });
     });
 
@@ -603,7 +609,7 @@ describe('addon.net', function() {
             net._onError(callback, options, {readyState: 10});
             expect(errorResponse).toHaveBeenCalled();
             expect(response).toHaveBeenCalled();
-            expect(window.alert).toHaveBeenCalledWith('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
+            expect(window.alert).toHaveBeenCalledWith(i18n.get('net.failResponse'));
         });
 
         it('response 에서 stop 을 호출했을 때', function() {
