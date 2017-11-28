@@ -484,12 +484,10 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var columnModels = this.columnModel.getVisibleColumns(null, true);
         var columnNames = _.pluck(columnModels, 'name');
 
-        var test = {
+        return {
             lside: columnNames.slice(0, frozenCount),
             rside: columnNames.slice(frozenCount)
         };
-
-        return test;
     },
 
     /**

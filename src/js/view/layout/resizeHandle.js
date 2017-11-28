@@ -20,7 +20,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
 /**
- * Reside Handler class
+ * Resize Handler class
  * @module view/layout/resizeHandle
  * @extends module:base/view
  * @param {Object} options - Options
