@@ -809,8 +809,8 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
 
         gridEvent = new GridEvent(null, {
             range: {
-                start: [startRow, startColumn],
-                end: [endRow, endColumn]
+                start: [startRow.rowKey, startColumn.name],
+                end: [endRow.rowKey, endColumn.name]
             }
         });
 
