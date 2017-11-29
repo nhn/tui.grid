@@ -165,7 +165,8 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         var idx = 0;
 
         position += CELL_BORDER_WIDTH;
-        while (rowOffsets[idx] <= position) {
+
+        while (rowOffsets[idx] - CELL_BORDER_WIDTH <= position) {
             idx += 1;
         }
 
