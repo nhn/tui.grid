@@ -89,6 +89,7 @@ module.exports = {
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
         var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).bg(options.background);
         var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
+        var frozenBorderRule = classRule(classNameConst.FROZEN_BORDER_BOTTOM).bg(options.background);
 
         return builder.buildAll(webkitScrollbarRules.concat([
             ieScrollbarRule,
@@ -96,7 +97,8 @@ module.exports = {
             leftBottomRule,
             scrollHeadRule,
             summaryRightRule,
-            bodyAreaRule
+            bodyAreaRule,
+            frozenBorderRule
         ]));
     },
 
@@ -138,8 +140,12 @@ module.exports = {
             .border(options.border)
             .borderWidth(options)
             .text(options.text);
+        var bodyAreaRule = classRule(classNameConst.BODY_AREA).border(options.border);
 
-        return cellRule.build();
+        return builder.buildAll([
+            cellRule,
+            bodyAreaRule
+        ]);
     },
 
     /*
@@ -155,7 +161,8 @@ module.exports = {
             .text(options.text);
 
         var headAreaRule = classRule(classNameConst.HEAD_AREA)
-            .bg(options.background);
+            .bg(options.background)
+            .border(options.border);
 
         var summaryAreaRule = classRule(classNameConst.SUMMARY_AREA)
             .bg(options.background);

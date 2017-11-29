@@ -51,6 +51,8 @@ var instanceMap = {};
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
  *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
+ *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
+ *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard

@@ -53,6 +53,9 @@ var classNames = {
     SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
     SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
 
+    FROZEN_BORDER_TOP: 'frozen-border-top',
+    FROZEN_BORDER_BOTTOM: 'frozen-border-bottom',
+
     // header
     COLUMN_RESIZE_CONTAINER: 'column-resize-container',
     COLUMN_RESIZE_HANDLE: 'column-resize-handle',

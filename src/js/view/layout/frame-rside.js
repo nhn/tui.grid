@@ -97,20 +97,49 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
      */
     afterRender: function() {
         var dimensionModel = this.dimensionModel;
-        var headerHeight, summaryHeight;
-        var $space, $scrollBorder;
+        var scrollX = dimensionModel.get('scrollX');
+        var scrollY = dimensionModel.get('scrollY');
+        var headerHeight = dimensionModel.get('headerHeight');
+        var summaryHeight = dimensionModel.get('summaryHeight');
+        var summaryPosition = dimensionModel.get('summaryPosition');
 
-        if (!dimensionModel.get('scrollY')) {
+        if (dimensionModel.hasFrozenBorder()) {
+            this._setFrozenBorder(headerHeight, scrollX);
+        }
+
+        if (!scrollY) {
             return;
         }
-        headerHeight = dimensionModel.get('headerHeight');
-        summaryHeight = dimensionModel.get('summaryHeight');
+
+        this._setScrollbar(headerHeight, summaryHeight, summaryPosition, scrollX);
+
+        if (summaryHeight) {
+            this._applyStyleToSummary(headerHeight, summaryHeight, summaryPosition, scrollX);
+        }
+
+        this._resetScrollBorderHeight();
+    },
+
+    /**
+     * Create scrollbar area and set styles
+     * @param {number} headerHeight - Height of the header area
+     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @private
+     */
+    _setScrollbar: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
+        var $space, $scrollBorder;
 
         // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
 
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
+
+        if (summaryPosition === summaryPositionConst.TOP) {
+            headerHeight += summaryHeight;
+        }
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
@@ -120,17 +149,40 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
         // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
         // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
         //  casues to be stuck in the same position in Chrome)
-        if (dimensionModel.get('scrollX')) {
+        if (scrollX) {
             this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
         }
 
-        // Empty DIV for filling gray color in the right side of the summary.
-        if (summaryHeight && dimensionModel.get('scrollY')) {
-            this._applyStyleToSummary(headerHeight, summaryHeight, dimensionModel.get('summaryPosition'));
-        }
-
         this.$scrollBorder = $scrollBorder;
-        this._resetScrollBorderHeight();
+    },
+
+    /**
+     * Create frozen border and set styles
+     * @param {number} headerHeight - Height of the header area
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @private
+     */
+    _setFrozenBorder: function(headerHeight, scrollX) {
+        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
+        var resizeHandleView = this.viewFactory.createHeaderResizeHandle(frameConst.L, [headerHeight], true);
+        var $el = this.$el;
+
+        $el.append(resizeHandleView.render().$el);
+
+        $el.find('.' + classNameConst.HEAD_AREA).css('border-left-width', frozenBorderWidth);
+        $el.find('.' + classNameConst.BODY_AREA).css('border-left-width', frozenBorderWidth);
+        $el.find('.' + classNameConst.SUMMARY_AREA).css('border-left-width', frozenBorderWidth);
+
+        // If you don't initialize the table left-border to 0,
+        // the left-border moves when the right side area is scrolled.
+        $el.find('.' + classNameConst.TABLE).css('border-left-width', 0);
+
+        if (scrollX) {
+            $el.append($('<div>')
+                .addClass(classNameConst.FROZEN_BORDER_BOTTOM)
+                .css('width', frozenBorderWidth)
+            );
+        }
     },
 
     /**
@@ -138,8 +190,10 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
      * @param {number} headerHeight - Height of header area
      * @param {number} summaryHeight - Height of summary area by setting "summary" option
      * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @private
      */
-    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition) {
+    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
         var styles = {};
         var subClassName;
 
@@ -147,11 +201,11 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
             styles.top = headerHeight;
             subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
         } else {
-            styles.bottom = 0;
+            styles.bottom = scrollX ? this.dimensionModel.getScrollXHeight() : 0;
             subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
         }
 
-        styles.height = summaryHeight - CELL_BORDER_WIDTH;
+        styles.height = summaryHeight;
 
         this.$el.append($('<div>')
             .addClass(classNameConst.SUMMARY_AREA_RIGHT)
