@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Oct 26 2017 11:04:11 GMT+0900 (KST)"
- * version: 2.5.0
+ * bundle created at "Thu Nov 30 2017 15:09:08 GMT+0900 (KST)"
+ * version: 2.6.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11,7 +11,7 @@
 		exports["Grid"] = factory(require("underscore"), require("tui-code-snippet"), require("backbone"), require("jquery"), require("tui-date-picker"), require("tui-pagination"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Grid"] = factory(root["_"], (root["tui"] && root["tui"]["util"]), root["Backbone"], root["$"], (root["tui"] && root["tui"]["DatePicker"]), (root["tui"] && root["tui"]["Pagination"]));
-})(this, function(__WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_36__, __WEBPACK_EXTERNAL_MODULE_40__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_36__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -65,22 +65,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	__webpack_require__(1);
+	var Grid = __webpack_require__(1);
 
-	module.exports = __webpack_require__(5);
+	__webpack_require__(80);
+
+	Grid.setLanguage('en');
+
+	module.exports = Grid;
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -90,24 +85,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var View = __webpack_require__(8);
-	var ModelManager = __webpack_require__(10);
-	var ViewFactory = __webpack_require__(35);
-	var DomEventBus = __webpack_require__(60);
-	var DomState = __webpack_require__(61);
-	var PublicEventEmitter = __webpack_require__(62);
-	var PainterManager = __webpack_require__(63);
-	var PainterController = __webpack_require__(73);
-	var NetAddOn = __webpack_require__(74);
-	var ComponentHolder = __webpack_require__(77);
+	var View = __webpack_require__(4);
+	var ModelManager = __webpack_require__(6);
+	var ViewFactory = __webpack_require__(31);
+	var DomEventBus = __webpack_require__(56);
+	var DomState = __webpack_require__(57);
+	var PublicEventEmitter = __webpack_require__(58);
+	var PainterManager = __webpack_require__(59);
+	var PainterController = __webpack_require__(69);
+	var NetAddOn = __webpack_require__(70);
+	var ComponentHolder = __webpack_require__(73);
 
-	var util = __webpack_require__(20);
-	var message = __webpack_require__(44);
-	var themeManager = __webpack_require__(78);
-	var themeNameConst = __webpack_require__(14).themeName;
+	var util = __webpack_require__(16);
+	var i18n = __webpack_require__(40);
+	var themeManager = __webpack_require__(74);
+	var themeNameConst = __webpack_require__(10).themeName;
 
 	var instanceMap = {};
 
@@ -136,6 +131,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
 	 *          The columns indexed from 0 to this value will always be shown on the left side.
 	 *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
+	 *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
+	 *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
 	 *      @param {Object} [options.copyOptions] - Option object for clipboard copying
 	 *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
 	 *          as a string to be copied to the clipboard
@@ -660,9 +657,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    removeCheckedRows: function(showConfirm) {
 	        var rowKeys = this.getCheckedRowKeys();
-	        var confirmMessage = message.get('requestConfirm', {
-	            count: rowKeys.length,
-	            actionName: 'deleteAction'
+	        var confirmMessage = i18n.get('net.confirmDelete', {
+	            count: rowKeys.length
 	        });
 
 	        if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
@@ -1177,35 +1173,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	/**
-	 * Set language for messages
+	 * Set language
 	 * @static
-	 * @param {string} langCode - Language code ('en' or 'ko')
+	 * @param {string} localeCode - Code to set locale messages and
+	 *     this is the language or language-region combination (ex: en-US)
+	 * @param {object} [data] - Messages using in Grid
 	 * @example
 	 * var Grid = tui.Grid; // or require('tui-grid')
 	 *
-	 * Grid.setLanguage('ko');
+	 * Grid.setLanguage('en'); // default and set English
+	 * Grid.setLanguage('ko'); // set Korean
+	 * Grid.setLanguage('en-US', { // set new language
+	 *      display: {
+	 *          noData: 'No data.',
+	 *          loadingData: 'Loading data.',
+	 *          resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+	 *                              'and initialize the width by double-clicking.'
+	 *      },
+	 *      net: {
+	 *          confirmCreate: 'Are you sure you want to create {{count}} data?',
+	 *          confirmUpdate: 'Are you sure you want to update {{count}} data?',
+	 *          confirmDelete: 'Are you sure you want to delete {{count}} data?',
+	 *          confirmModify: 'Are you sure you want to modify {{count}} data?',
+	 *          noDataToCreate: 'No data to create.',
+	 *          noDataToUpdate: 'No data to update.',
+	 *          noDataToDelete: 'No data to delete.',
+	 *          noDataToModify: 'No data to modify.',
+	 *          failResponse: 'An error occurred while requesting data.\nPlease try again.'
+	 *      }
+	 * });
 	 */
-	Grid.setLanguage = function(langCode) {
-	    message.setLanguage(langCode);
+	Grid.setLanguage = function(localeCode, data) {
+	    i18n.setLanguage(localeCode, data);
 	};
 
 	module.exports = Grid;
 
 
 /***/ }),
-/* 6 */
+/* 2 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ }),
-/* 7 */
+/* 3 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
-/* 8 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -1215,8 +1233,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var Backbone = __webpack_require__(9);
+	var _ = __webpack_require__(2);
+	var Backbone = __webpack_require__(5);
 
 	/**
 	 * Base class for Views
@@ -1287,13 +1305,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 9 */
+/* 5 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
 
 /***/ }),
-/* 10 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -1303,23 +1321,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var ColumnModelData = __webpack_require__(12);
-	var RowListData = __webpack_require__(15);
-	var DimensionModel = __webpack_require__(23);
-	var CoordRowModel = __webpack_require__(24);
-	var CoordColumnModel = __webpack_require__(25);
-	var CoordConverterModel = __webpack_require__(26);
-	var FocusModel = __webpack_require__(27);
-	var RenderModel = __webpack_require__(28);
-	var SmartRenderModel = __webpack_require__(31);
-	var SelectionModel = __webpack_require__(32);
-	var SummaryModel = __webpack_require__(33);
-	var ClipboardModel = __webpack_require__(34);
-	var util = __webpack_require__(20);
+	var ColumnModelData = __webpack_require__(8);
+	var RowListData = __webpack_require__(11);
+	var DimensionModel = __webpack_require__(19);
+	var CoordRowModel = __webpack_require__(20);
+	var CoordColumnModel = __webpack_require__(21);
+	var CoordConverterModel = __webpack_require__(22);
+	var FocusModel = __webpack_require__(23);
+	var RenderModel = __webpack_require__(24);
+	var SmartRenderModel = __webpack_require__(27);
+	var SelectionModel = __webpack_require__(28);
+	var SummaryModel = __webpack_require__(29);
+	var ClipboardModel = __webpack_require__(30);
+	var util = __webpack_require__(16);
 
 	var defaultOptions = {
 	    data: [],
@@ -1426,12 +1444,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _createDimensionModel: function(options, domState, domEventBus) {
 	        var dimensionModel;
+	        var columnOptions = options.columnOptions;
 	        var fixedRowHeight = !isNaN(options.rowHeight);
 	        var fixedHeight = options.bodyHeight !== 'auto';
 	        var minRowHeight = options.minRowHeight;
 	        var minBodyHeight = options.minBodyHeight;
 	        var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
 	        var bodyHeight = fixedHeight ? Math.max(minBodyHeight, options.bodyHeight) : minBodyHeight;
+	        var frozenBorderWidth = _.isUndefined(columnOptions.frozenBorderWidth) ? 1 : columnOptions.frozenBorderWidth;
 	        var attrs = {
 	            headerHeight: options.header.height,
 	            bodyHeight: bodyHeight,
@@ -1441,11 +1461,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            fitToParentHeight: (options.bodyHeight === 'fitToParent'),
 	            scrollX: !!options.scrollX,
 	            scrollY: !!options.scrollY,
-	            minimumColumnWidth: options.columnOptions.minWidth,
 	            fixedRowHeight: fixedRowHeight,
 	            fixedHeight: fixedHeight,
 	            minRowHeight: minRowHeight,
-	            minBodyHeight: minBodyHeight || rowHeight
+	            minBodyHeight: minBodyHeight || rowHeight,
+	            minimumColumnWidth: columnOptions.minWidth,
+	            frozenBorderWidth: columnOptions.frozenCount ? frozenBorderWidth : null
 	        };
 
 	        if (fixedRowHeight === false && options.virtualScrolling) {
@@ -1645,13 +1666,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 11 */
+/* 7 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 
 /***/ }),
-/* 12 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -1661,12 +1682,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var frameConst = __webpack_require__(14).frame;
+	var Model = __webpack_require__(9);
+	var frameConst = __webpack_require__(10).frame;
 
 	var defaultRowHeaders = {
 	    rowNum: {
@@ -2137,7 +2158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 13 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -2147,7 +2168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Backbone = __webpack_require__(9);
+	var Backbone = __webpack_require__(5);
 
 	/**
 	 * Base class for Models
@@ -2160,7 +2181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 14 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -2170,7 +2191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
 	var keyCode = {
 	    TAB: 9,
@@ -2247,7 +2268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 15 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -2257,11 +2278,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var Collection = __webpack_require__(16);
-	var Row = __webpack_require__(17);
+	var Collection = __webpack_require__(12);
+	var Row = __webpack_require__(13);
 
 	/**
 	 * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -3468,7 +3489,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 16 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -3478,7 +3499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Backbone = __webpack_require__(9);
+	var Backbone = __webpack_require__(5);
 
 	/**
 	 * Base class for Collection
@@ -3505,7 +3526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 17 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -3515,17 +3536,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var Backbone = __webpack_require__(9);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var Backbone = __webpack_require__(5);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var ExtraDataManager = __webpack_require__(18);
-	var GridEvent = __webpack_require__(19);
+	var Model = __webpack_require__(9);
+	var ExtraDataManager = __webpack_require__(14);
+	var GridEvent = __webpack_require__(15);
 
-	var util = __webpack_require__(20);
-	var clipboardUtil = __webpack_require__(21);
-	var classNameConst = __webpack_require__(22);
+	var util = __webpack_require__(16);
+	var clipboardUtil = __webpack_require__(17);
+	var classNameConst = __webpack_require__(18);
 
 	// Propertie names that indicate meta data
 	var PRIVATE_PROPERTIES = [
@@ -4163,7 +4184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 18 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4173,8 +4194,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
 	/**
 	 * Data 중 각 행의 데이터 모델 (DataSource)
@@ -4392,7 +4413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 19 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4402,11 +4423,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var util = __webpack_require__(20);
-	var attrNameConst = __webpack_require__(14).attrName;
+	var util = __webpack_require__(16);
+	var attrNameConst = __webpack_require__(10).attrName;
 	var targetTypeConst = {
 	    ROW_HEAD: 'rowHead',
 	    COLUMN_HEAD: 'columnHead',
@@ -4503,7 +4524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 20 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4513,11 +4534,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var CELL_BORDER_WIDTH = __webpack_require__(14).dimension.CELL_BORDER_WIDTH;
+	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 	var util;
 
 	/**
@@ -4936,7 +4957,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 21 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -4946,7 +4967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
 	var CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
 	var CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
@@ -5092,7 +5113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 22 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5102,7 +5123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
 	var PREFIX = 'tui-grid-';
 
@@ -5149,6 +5170,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SUMMARY_AREA_RIGHT: 'summary-area-right',
 	    SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
 	    SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
+
+	    FROZEN_BORDER_TOP: 'frozen-border-top',
+	    FROZEN_BORDER_BOTTOM: 'frozen-border-bottom',
 
 	    // header
 	    COLUMN_RESIZE_CONTAINER: 'column-resize-container',
@@ -5238,7 +5262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 23 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5248,10 +5272,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var Model = __webpack_require__(13);
-	var constMap = __webpack_require__(14);
+	var Model = __webpack_require__(9);
+	var constMap = __webpack_require__(10);
 	var dimensionConstMap = constMap.dimension;
 	var summaryPositionConst = constMap.summaryPosition;
 
@@ -5315,7 +5339,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        fixedHeight: false,
 
 	        minRowHeight: 0,
-	        minBodyHeight: 0
+	        minBodyHeight: 0,
+
+	        frozenBorderWidth: null
 	    },
 
 	    /**
@@ -5381,6 +5407,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
 	        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
 	        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
+
+	        if (this.hasFrozenBorder()) {
+	            availableTotalWidth -= this.get('frozenBorderWidth');
+	        }
 
 	        return availableTotalWidth;
 	    },
@@ -5594,6 +5624,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: pageX - bodyOffsetX,
 	            y: pageY - bodyOffsetY
 	        };
+	    },
+
+	    /**
+	     * Whether the frozen border width is set or not
+	     * @returns {boolean} State of the frozen border width
+	     */
+	    hasFrozenBorder: function() {
+	        return _.isNumber(this.get('frozenBorderWidth'));
 	    }
 	});
 
@@ -5601,7 +5639,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 24 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5611,11 +5649,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var util = __webpack_require__(20);
-	var Model = __webpack_require__(13);
-	var CELL_BORDER_WIDTH = __webpack_require__(14).dimension.CELL_BORDER_WIDTH;
+	var util = __webpack_require__(16);
+	var Model = __webpack_require__(9);
+	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 
 	/**
 	 * @module model/coordRow
@@ -5770,8 +5808,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var rowOffsets = this.rowOffsets;
 	        var idx = 0;
 
-	        position += CELL_BORDER_WIDTH;
-	        while (rowOffsets[idx] <= position) {
+	        position += CELL_BORDER_WIDTH * 2;
+
+	        while (rowOffsets[idx] - CELL_BORDER_WIDTH <= position) {
 	            idx += 1;
 	        }
 
@@ -5802,7 +5841,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 25 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5812,12 +5851,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var util = __webpack_require__(20);
-	var constMap = __webpack_require__(14);
+	var Model = __webpack_require__(9);
+	var util = __webpack_require__(16);
+	var constMap = __webpack_require__(10);
 	var dimensionConst = constMap.dimension;
 	var frameConst = constMap.frame;
 
@@ -6310,7 +6349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 26 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6320,10 +6359,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var snippet = __webpack_require__(7);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var dimensionConstMap = __webpack_require__(14).dimension;
+	var Model = __webpack_require__(9);
+	var dimensionConstMap = __webpack_require__(10).dimension;
 
 	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
@@ -6574,7 +6613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 27 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -6584,11 +6623,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var Model = __webpack_require__(13);
-	var util = __webpack_require__(20);
-	var GridEvent = __webpack_require__(19);
+	var Model = __webpack_require__(9);
+	var util = __webpack_require__(16);
+	var GridEvent = __webpack_require__(15);
 
 	/**
 	 * Focus model
@@ -7424,7 +7463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 28 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7434,14 +7473,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var Row = __webpack_require__(29);
-	var RowList = __webpack_require__(30);
-	var renderStateMap = __webpack_require__(14).renderState;
-	var CELL_BORDER_WIDTH = __webpack_require__(14).dimension.CELL_BORDER_WIDTH;
+	var Model = __webpack_require__(9);
+	var Row = __webpack_require__(25);
+	var RowList = __webpack_require__(26);
+	var renderStateMap = __webpack_require__(10).renderState;
+	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 
 	var DATA_LENGTH_FOR_LOADING = 1000;
 
@@ -7505,8 +7544,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.on('change', this._onChangeIndex, this);
 	        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
-
-	        this._updateMaxScrollLeft();
 	    },
 
 	    defaults: {
@@ -7578,7 +7615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Event handler for 'chage:width' event on Dimension.
+	     * Event handler for 'change:width' event on Dimension.
 	     * @private
 	     */
 	    _updateMaxScrollLeft: function() {
@@ -7738,6 +7775,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            change: false,
 	            columnModelChanged: true
 	        });
+
+	        this._updateMaxScrollLeft();
 	    },
 
 	    /**
@@ -7913,12 +7952,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var columnModels = this.columnModel.getVisibleColumns(null, true);
 	        var columnNames = _.pluck(columnModels, 'name');
 
-	        var test = {
+	        return {
 	            lside: columnNames.slice(0, frozenCount),
 	            rside: columnNames.slice(frozenCount)
 	        };
-
-	        return test;
 	    },
 
 	    /**
@@ -8258,7 +8295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 29 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8268,11 +8305,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var util = __webpack_require__(20);
+	var Model = __webpack_require__(9);
+	var util = __webpack_require__(16);
 
 	/**
 	 * Row Model
@@ -8679,7 +8716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 30 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8689,10 +8726,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var Collection = __webpack_require__(16);
-	var Row = __webpack_require__(29);
+	var Collection = __webpack_require__(12);
+	var Row = __webpack_require__(25);
 
 	/**
 	  * View Model rowList collection
@@ -8718,7 +8755,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 31 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8728,10 +8765,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var Renderer = __webpack_require__(28);
-	var dimensionConst = __webpack_require__(14).dimension;
+	var Renderer = __webpack_require__(24);
+	var dimensionConst = __webpack_require__(10).dimension;
 
 	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
@@ -8881,7 +8918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 32 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8891,14 +8928,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var Model = __webpack_require__(13);
-	var GridEvent = __webpack_require__(19);
+	var Model = __webpack_require__(9);
+	var GridEvent = __webpack_require__(15);
 
-	var util = __webpack_require__(20);
-	var typeConst = __webpack_require__(14).selectionType;
+	var util = __webpack_require__(16);
+	var typeConst = __webpack_require__(10).selectionType;
 
 	/**
 	 * Selection Model class
@@ -9695,8 +9732,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        gridEvent = new GridEvent(null, {
 	            range: {
-	                start: [startRow, startColumn],
-	                end: [endRow, endColumn]
+	                start: [startRow.rowKey, startColumn.name],
+	                end: [endRow.rowKey, endColumn.name]
 	            }
 	        });
 
@@ -9839,7 +9876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 33 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9849,11 +9886,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Model = __webpack_require__(13);
-	var typeConst = __webpack_require__(14).summaryType;
+	var Model = __webpack_require__(9);
+	var typeConst = __webpack_require__(10).summaryType;
 
 	/**
 	 * Summary Model
@@ -10009,7 +10046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 34 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10019,9 +10056,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var Model = __webpack_require__(13);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var Model = __webpack_require__(9);
 
 	/**
 	 * Clipboard Model
@@ -10170,7 +10207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 35 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10180,30 +10217,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
-	var DatePicker = __webpack_require__(36);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
+	var DatePicker = __webpack_require__(32);
 
-	var ContainerView = __webpack_require__(37);
-	var ContentAreaView = __webpack_require__(38);
-	var PaginationView = __webpack_require__(39);
-	var HeightResizeHandleView = __webpack_require__(41);
-	var StateLayerView = __webpack_require__(43);
-	var ClipboardView = __webpack_require__(45);
-	var LsideFrameView = __webpack_require__(47);
-	var RsideFrameView = __webpack_require__(49);
-	var HeaderView = __webpack_require__(50);
-	var HeaderResizeHandleView = __webpack_require__(51);
-	var BodyView = __webpack_require__(52);
-	var BodyTableView = __webpack_require__(53);
-	var SummaryView = __webpack_require__(54);
-	var RowListView = __webpack_require__(55);
-	var SelectionLayerView = __webpack_require__(56);
-	var EditingLayerView = __webpack_require__(57);
-	var DatePickeLayerView = __webpack_require__(58);
-	var FocusLayerView = __webpack_require__(59);
-	var isOptionEnabled = __webpack_require__(20).isOptionEnabled;
-	var frameConst = __webpack_require__(14).frame;
+	var ContainerView = __webpack_require__(33);
+	var ContentAreaView = __webpack_require__(34);
+	var PaginationView = __webpack_require__(35);
+	var HeightResizeHandleView = __webpack_require__(37);
+	var StateLayerView = __webpack_require__(39);
+	var ClipboardView = __webpack_require__(41);
+	var LsideFrameView = __webpack_require__(43);
+	var RsideFrameView = __webpack_require__(45);
+	var HeaderView = __webpack_require__(46);
+	var HeaderResizeHandleView = __webpack_require__(47);
+	var BodyView = __webpack_require__(48);
+	var BodyTableView = __webpack_require__(49);
+	var SummaryView = __webpack_require__(50);
+	var RowListView = __webpack_require__(51);
+	var SelectionLayerView = __webpack_require__(52);
+	var EditingLayerView = __webpack_require__(53);
+	var DatePickeLayerView = __webpack_require__(54);
+	var FocusLayerView = __webpack_require__(55);
+	var isOptionEnabled = __webpack_require__(16).isOptionEnabled;
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * View Factory
@@ -10374,14 +10411,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Creates resize handler of header view and returns it.
 	     * @param {string} whichSide - 'L'(left) or 'R'(right)
 	     * @param {array} handleHeights - Height values of each resize handle
+	     * @param {boolean} frozenBorder - Whether the resize handle is matching the frozen border or not
 	     * @returns {module:view/layout/header} New resize handler view instance
 	     */
-	    createHeaderResizeHandle: function(whichSide, handleHeights) {
+	    createHeaderResizeHandle: function(whichSide, handleHeights, frozenBorder) {
 	        return new HeaderResizeHandleView({
 	            whichSide: whichSide,
 	            handleHeights: handleHeights,
-	            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
+	            frozenBorder: frozenBorder,
 	            columnModel: this.modelManager.columnModel,
+	            dimensionModel: this.modelManager.dimensionModel,
 	            coordColumnModel: this.modelManager.coordColumnModel,
 	            domEventBus: this.domEventBus
 	        });
@@ -10511,13 +10550,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 36 */
+/* 32 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_36__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
 
 /***/ }),
-/* 37 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10527,13 +10566,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
+	var $ = __webpack_require__(7);
 
-	var View = __webpack_require__(8);
-	var GridEvent = __webpack_require__(19);
+	var View = __webpack_require__(4);
+	var GridEvent = __webpack_require__(15);
 	var targetTypeConst = GridEvent.targetTypeConst;
-	var attrNameConst = __webpack_require__(14).attrName;
-	var classNameConst = __webpack_require__(22);
+	var attrNameConst = __webpack_require__(10).attrName;
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Container View
@@ -10783,7 +10822,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 38 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10793,10 +10832,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var View = __webpack_require__(8);
-	var classNameConst = __webpack_require__(22);
-	var frameConst = __webpack_require__(14).frame;
+	var $ = __webpack_require__(7);
+	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(18);
+	var frameConst = __webpack_require__(10).frame;
 	var ContentArea;
 
 	/**
@@ -10873,7 +10912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 39 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10883,11 +10922,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var TuiPaginaton = __webpack_require__(40);
+	var TuiPaginaton = __webpack_require__(36);
 
-	var View = __webpack_require__(8);
+	var View = __webpack_require__(4);
 	var defaultOptions = {
 	    totalItems: 1,
 	    itemsPerPage: 10,
@@ -10978,13 +11017,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 40 */
+/* 36 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_40__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_36__;
 
 /***/ }),
-/* 41 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10994,9 +11033,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var View = __webpack_require__(8);
-	var classNameConst = __webpack_require__(22);
-	var DragEventEmitter = __webpack_require__(42);
+	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(18);
+	var DragEventEmitter = __webpack_require__(38);
 
 	/**
 	 * Class for the height resize handle
@@ -11061,7 +11100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11071,11 +11110,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var GridEvent = __webpack_require__(19);
+	var GridEvent = __webpack_require__(15);
 
 	/* Drag event emitter
 	 * @module event/dragEventEmitter
@@ -11220,7 +11259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11230,13 +11269,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var stateConst = __webpack_require__(14).renderState;
-	var classNameConst = __webpack_require__(22);
-	var message = __webpack_require__(44);
-	var TABLE_BORDER_WIDTH = __webpack_require__(14).dimension.TABLE_BORDER_WIDTH;
+	var View = __webpack_require__(4);
+	var stateConst = __webpack_require__(10).renderState;
+	var classNameConst = __webpack_require__(18);
+	var i18n = __webpack_require__(40);
+	var TABLE_BORDER_WIDTH = __webpack_require__(10).dimension.TABLE_BORDER_WIDTH;
 
 	/**
 	 * Layer class that represents the state of rendering phase.
@@ -11304,9 +11343,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getMessage: function(renderState) {
 	        switch (renderState) {
 	            case stateConst.LOADING:
-	                return message.get('onLoading');
+	                return i18n.get('display.loadingData');
 	            case stateConst.EMPTY:
-	                return (this.renderModel.get('emptyMessage') || message.get('noData'));
+	                return i18n.get('display.noData');
 	            default:
 	                return null;
 	        }
@@ -11336,65 +11375,115 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 44 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Locale messages
+	 * @fileoverview i18n module file
 	 * @author NHN Ent. Fe Development Lab
 	 */
 
 	'use strict';
 
-	var util = __webpack_require__(20);
+	var _ = __webpack_require__(2);
+	var util = __webpack_require__(16);
 
 	var messages = {
 	    en: {
-	        createAction: 'create',
-	        updateAction: 'update',
-	        deleteAction: 'delete',
-	        modifyAction: 'modify',
-	        requestConfirm: 'Are you sure you want to {{actionName}} {{count}} data?',
-	        noDataResponse: 'No data to {{actionName}}.',
-	        errorResponse: 'An error occurred while requesting data.\n\nPlease try again.',
-	        noData: 'No data.',
-	        onLoading: 'Your request is being processed.',
-	        resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
-	                            'and initialize the width by double-clicking.'
+	        display: {
+	            noData: 'No data.',
+	            loadingData: 'Loading data.',
+	            resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+	                                'and initialize the width by double-clicking.'
+	        },
+	        net: {
+	            confirmCreate: 'Are you sure you want to create {{count}} data?',
+	            confirmUpdate: 'Are you sure you want to update {{count}} data?',
+	            confirmDelete: 'Are you sure you want to delete {{count}} data?',
+	            confirmModify: 'Are you sure you want to modify {{count}} data?',
+	            noDataToCreate: 'No data to create.',
+	            noDataToUpdate: 'No data to update.',
+	            noDataToDelete: 'No data to delete.',
+	            noDataToModify: 'No data to modify.',
+	            failResponse: 'An error occurred while requesting data.\nPlease try again.'
+	        }
 	    },
 	    ko: {
-	        createAction: '입력',
-	        updateAction: '수정',
-	        deleteAction: '삭제',
-	        modifyAction: '반영',
-	        requestConfirm: '{{count}}건의 데이터를 {{actionName}}하시겠습니까?',
-	        noDataResponse: '{{actionName}}할 데이터가 없습니다.',
-	        errorResponse: '데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.',
-	        noData: '데이터가 존재하지 않습니다.',
-	        onLoading: '요청을 처리 중입니다.',
-	        resizeHandleGuide: '마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고, ' +
-	                            '더블클릭을 통해 넓이를 초기화할 수 있습니다.'
+	        display: {
+	            noData: '데이터가 존재하지 않습니다.',
+	            loadingData: '데이터를 불러오는 중입니다.',
+	            resizeHandleGuide: '마우스 드래그하여 컬럼 너비를 조정할 수 있고, ' +
+	                                '더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
+	        },
+	        net: {
+	            confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',
+	            confirmUpdate: '{{count}}건의 데이터를 수정하겠습니까?',
+	            confirmDelete: '{{count}}건의 데이터를 삭제하겠습니까?',
+	            confirmModify: '{{count}}건의 데이터를 처리하겠습니까?',
+	            noDataToCreate: '생성할 데이터가 없습니다.',
+	            noDataToUpdate: '수정할 데이터가 없습니다.',
+	            noDataToDelete: '삭제할 데이터가 없습니다.',
+	            noDataToModify: '처리할 데이터가 없습니다.',
+	            failResponse: '데이터 요청 중에 에러가 발생하였습니다.\n다시 시도하여 주시기 바랍니다.'
+	        }
 	    }
 	};
-	var localeMessages = messages.en;
+
+	var messageMap = {};
+
+	/**
+	 * Flatten message map
+	 * @param {object} data - Messages
+	 * @returns {object} Flatten message object (key foramt is 'key.subKey')
+	 * @ignore
+	 */
+	function flattenMessageMap(data) {
+	    var obj = {};
+	    var newKey;
+
+	    _.each(data, function(groupMessages, key) {
+	        _.each(groupMessages, function(message, subKey) {
+	            newKey = [key, subKey].join('.');
+	            obj[newKey] = message;
+	        });
+	    }, this);
+
+	    return obj;
+	}
 
 	module.exports = {
 	    /**
 	     * Set messages
-	     * @param {string} langCode - Language code to decide locale messages
+	     * @param {string} localeCode - Code to set locale messages and
+	     *     this is the language or language-region combination. (ex: en-US)
+	     * @param {object} [data] - Messages using in Grid
 	     */
-	    setLanguage: function(langCode) {
-	        localeMessages = messages[langCode];
+	    setLanguage: function(localeCode, data) {
+	        var localeMessages = messages[localeCode];
+	        var originData, newData;
+
+	        if (!localeMessages && !data) {
+	            throw new Error('You should set messages to map the locale code.');
+	        }
+
+	        newData = flattenMessageMap(data);
+
+	        if (localeMessages) {
+	            originData = flattenMessageMap(localeMessages);
+	            messageMap = _.extend(originData, newData);
+	        } else {
+	            messageMap = newData;
+	        }
 	    },
 
 	    /**
-	     * Get messeage
-	     * @param {string} key - Key to find message
-	     * @param {?object} [replacements] - Values to replace string
+	     * Get message
+	     * @param {string} key - Key to find message (ex: 'net.confirmCreate')
+	     * @param {object} [replacements] - Values to replace string
 	     * @returns {string} Message
 	     */
 	    get: function(key, replacements) {
-	        var message = localeMessages[key];
+	        var message = messageMap[key];
 
 	        if (replacements) {
 	            message = util.replaceText(message, replacements);
@@ -11406,7 +11495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11416,14 +11505,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var View = __webpack_require__(8);
-	var clipboardUtil = __webpack_require__(21);
-	var keyEvent = __webpack_require__(46);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var clipboardUtil = __webpack_require__(17);
+	var keyEvent = __webpack_require__(42);
+	var classNameConst = __webpack_require__(18);
 	var KEYDOWN_LOCK_TIME = 10;
 	var Clipboard;
 
@@ -11701,7 +11790,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11711,8 +11800,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var GridEvent = __webpack_require__(19);
+	var _ = __webpack_require__(2);
+	var GridEvent = __webpack_require__(15);
 
 	var keyCodeMap = {
 	    tab: 9,
@@ -11816,7 +11905,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11826,12 +11915,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var Frame = __webpack_require__(48);
-	var classNameConst = __webpack_require__(22);
-	var frameConst = __webpack_require__(14).frame;
+	var Frame = __webpack_require__(44);
+	var classNameConst = __webpack_require__(18);
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * Left Side Frame
@@ -11889,7 +11978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 48 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11899,10 +11988,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var constMap = __webpack_require__(14);
+	var View = __webpack_require__(4);
+	var constMap = __webpack_require__(10);
 	var frameConst = constMap.frame;
 	var summaryPositionConst = constMap.summaryPosition;
 
@@ -11986,7 +12075,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 49 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11996,12 +12085,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var Frame = __webpack_require__(48);
-	var classNameConst = __webpack_require__(22);
-	var constMap = __webpack_require__(14);
+	var Frame = __webpack_require__(44);
+	var classNameConst = __webpack_require__(18);
+	var constMap = __webpack_require__(10);
 	var frameConst = constMap.frame;
 	var summaryPositionConst = constMap.summaryPosition;
 
@@ -12088,20 +12177,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    afterRender: function() {
 	        var dimensionModel = this.dimensionModel;
-	        var headerHeight, summaryHeight;
-	        var $space, $scrollBorder;
+	        var scrollX = dimensionModel.get('scrollX');
+	        var scrollY = dimensionModel.get('scrollY');
+	        var headerHeight = dimensionModel.get('headerHeight');
+	        var summaryHeight = dimensionModel.get('summaryHeight');
+	        var summaryPosition = dimensionModel.get('summaryPosition');
 
-	        if (!dimensionModel.get('scrollY')) {
+	        if (dimensionModel.hasFrozenBorder()) {
+	            this._setFrozenBorder(headerHeight, scrollX);
+	        }
+
+	        if (!scrollY) {
 	            return;
 	        }
-	        headerHeight = dimensionModel.get('headerHeight');
-	        summaryHeight = dimensionModel.get('summaryHeight');
+
+	        this._setScrollbar(headerHeight, summaryHeight, summaryPosition, scrollX);
+
+	        if (summaryHeight) {
+	            this._applyStyleToSummary(headerHeight, summaryHeight, summaryPosition, scrollX);
+	        }
+
+	        this._resetScrollBorderHeight();
+	    },
+
+	    /**
+	     * Create scrollbar area and set styles
+	     * @param {number} headerHeight - Height of the header area
+	     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+	     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+	     * @private
+	     */
+	    _setScrollbar: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
+	        var $space, $scrollBorder;
 
 	        // Empty DIV for hiding scrollbar in the header area
 	        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
 
 	        // Empty DIV for showing a left-border of vertical scrollbar in the body area
 	        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
+
+	        if (summaryPosition === summaryPositionConst.TOP) {
+	            headerHeight += summaryHeight;
+	        }
 
 	        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
 	        $scrollBorder.css('top', headerHeight + 'px');
@@ -12111,17 +12229,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
 	        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
 	        //  casues to be stuck in the same position in Chrome)
-	        if (dimensionModel.get('scrollX')) {
+	        if (scrollX) {
 	            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
 	        }
 
-	        // Empty DIV for filling gray color in the right side of the summary.
-	        if (summaryHeight && dimensionModel.get('scrollY')) {
-	            this._applyStyleToSummary(headerHeight, summaryHeight, dimensionModel.get('summaryPosition'));
-	        }
-
 	        this.$scrollBorder = $scrollBorder;
-	        this._resetScrollBorderHeight();
+	    },
+
+	    /**
+	     * Create frozen border and set styles
+	     * @param {number} headerHeight - Height of the header area
+	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+	     * @private
+	     */
+	    _setFrozenBorder: function(headerHeight, scrollX) {
+	        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
+	        var resizeHandleView = this.viewFactory.createHeaderResizeHandle(frameConst.L, [headerHeight], true);
+	        var $el = this.$el;
+
+	        $el.append(resizeHandleView.render().$el);
+
+	        $el.find('.' + classNameConst.HEAD_AREA).css('border-left-width', frozenBorderWidth);
+	        $el.find('.' + classNameConst.BODY_AREA).css('border-left-width', frozenBorderWidth);
+	        $el.find('.' + classNameConst.SUMMARY_AREA).css('border-left-width', frozenBorderWidth);
+
+	        // If you don't initialize the table left-border to 0,
+	        // the left-border moves when the right side area is scrolled.
+	        $el.find('.' + classNameConst.TABLE).css('border-left-width', 0);
+
+	        if (scrollX) {
+	            $el.append($('<div>')
+	                .addClass(classNameConst.FROZEN_BORDER_BOTTOM)
+	                .css('width', frozenBorderWidth)
+	            );
+	        }
 	    },
 
 	    /**
@@ -12129,8 +12270,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} headerHeight - Height of header area
 	     * @param {number} summaryHeight - Height of summary area by setting "summary" option
 	     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+	     * @private
 	     */
-	    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition) {
+	    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
 	        var styles = {};
 	        var subClassName;
 
@@ -12138,11 +12281,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            styles.top = headerHeight;
 	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
 	        } else {
-	            styles.bottom = 0;
+	            styles.bottom = scrollX ? this.dimensionModel.getScrollXHeight() : 0;
 	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
 	        }
 
-	        styles.height = summaryHeight - CELL_BORDER_WIDTH;
+	        styles.height = summaryHeight;
 
 	        this.$el.append($('<div>')
 	            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
@@ -12156,7 +12299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 50 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12166,15 +12309,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var util = __webpack_require__(20);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
-	var GridEvent = __webpack_require__(19);
-	var DragEventEmitter = __webpack_require__(42);
+	var View = __webpack_require__(4);
+	var util = __webpack_require__(16);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
+	var GridEvent = __webpack_require__(15);
+	var DragEventEmitter = __webpack_require__(38);
 	var frameConst = constMap.frame;
 
 	var DELAY_SYNC_CHECK = 10;
@@ -12763,7 +12906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 51 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12773,22 +12916,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var View = __webpack_require__(8);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
-	var DragEventEmitter = __webpack_require__(42);
-	var message = __webpack_require__(44);
+	var View = __webpack_require__(4);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
+	var DragEventEmitter = __webpack_require__(38);
+	var i18n = __webpack_require__(40);
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
+
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
+	var EXTRA_WIDTH = 3;
+	var DEFAULT_WIDTH = 7;
+
 	/**
-	 * Reside Handler class
+	 * Resize Handler class
 	 * @module view/layout/resizeHandle
 	 * @extends module:base/view
 	 * @param {Object} options - Options
@@ -12799,10 +12946,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _.assign(this, {
 	            columnModel: options.columnModel,
 	            coordColumnModel: options.coordColumnModel,
+	            dimensionModel: options.dimensionModel,
 	            domEventBus: options.domEventBus,
-	            headerHeight: options.headerHeight,
 	            handleHeights: options.handleHeights,
-	            whichSide: options.whichSide || frameConst.R
+	            whichSide: options.whichSide || frameConst.R,
+	            frozenBorder: options.frozenBorder || false
 	        });
 
 	        this.dragEmitter = new DragEventEmitter({
@@ -12832,7 +12980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
 	        'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
 	        'title="<%=title%>"' +
-	        'style="height:<%=height%>;display:<%=displayType%>">' +
+	        'style="width:<%=width%>;height:<%=height%>;display:<%=displayType%>">' +
 	        '</div>'
 	    ),
 
@@ -12857,17 +13005,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _getResizeHandlerMarkup: function() {
-	        var columnData = this._getColumnData();
-	        var columns = columnData.columns;
+	        var frozenBorder = this.frozenBorder;
+	        var columns = this._getColumnData().columns;
 	        var length = columns.length;
-	        var resizeHandleMarkupList = _.map(columns, function(columnModel, index) {
+	        var width = frozenBorder ? this.dimensionModel.get('frozenBorderWidth') + EXTRA_WIDTH : DEFAULT_WIDTH;
+	        var resizeHandleMarkupList = _.map(frozenBorder ? [_.last(columns)] : columns, function(column, index) {
+	            var columnName = column.name;
+
 	            return this.template({
 	                lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
-	                columnIndex: index,
-	                columnName: columnModel.name,
+	                columnIndex: frozenBorder ? length - 1 : index,
+	                columnName: columnName,
+	                width: width + 'px',
 	                height: this.handleHeights[index] + 'px',
-	                title: message.get('resizeHandleGuide'),
-	                displayType: (columnModel.resizable === false) ? 'none' : 'block'
+	                title: i18n.get('resizeHandleGuide'),
+	                displayType: (column.resizable === false) ? 'none' : 'block'
 	            });
 	        }, this);
 
@@ -12879,14 +13031,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {module:view/layout/resizeHandle} This object
 	     */
 	    render: function() {
-	        var headerHeight = this.headerHeight;
+	        var headerHeight = this.dimensionModel.get('headerHeight');
 	        var htmlStr = this._getResizeHandlerMarkup();
-
-	        this.$el.empty().html(htmlStr).css({
-	            marginTop: -headerHeight,
-	            height: headerHeight,
+	        var styles = {
 	            display: 'block'
-	        });
+	        };
+
+	        if (this.frozenBorder) {
+	            this.$el.addClass(classNameConst.FROZEN_BORDER_TOP);
+	        } else {
+	            _.extend(styles, {
+	                marginTop: -headerHeight,
+	                height: headerHeight
+	            });
+	        }
+
+	        this.$el.empty().html(htmlStr).css(styles);
 	        this._refreshHandlerPosition();
 
 	        return this;
@@ -12902,11 +13062,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
 	        var handlerWidthHalf = Math.floor(RESIZE_HANDLE_WIDTH / 2);
 	        var curPos = 0;
+	        var left = 0;
 
 	        snippet.forEachArray($resizeHandleList, function(item, index) {
 	            var $handler = $resizeHandleList.eq(index);
-	            curPos += columnWidths[index] + CELL_BORDER_WIDTH;
-	            $handler.css('left', curPos - handlerWidthHalf);
+
+	            if (!this.frozenBorder) {
+	                curPos += columnWidths[index] + CELL_BORDER_WIDTH;
+	                left = curPos - handlerWidthHalf;
+	            }
+
+	            $handler.css('left', left);
 	        }, this);
 	    },
 
@@ -12971,7 +13137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 52 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12981,14 +13147,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var DragEventEmitter = __webpack_require__(42);
-	var GridEvent = __webpack_require__(19);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var DragEventEmitter = __webpack_require__(38);
+	var GridEvent = __webpack_require__(15);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
 	var frameConst = constMap.frame;
 
 	// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
@@ -13236,7 +13402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 53 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13246,11 +13412,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
 
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -13435,7 +13601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 54 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13445,13 +13611,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var View = __webpack_require__(8);
-	var classNameConst = __webpack_require__(22);
-	var constMap = __webpack_require__(14);
+	var _ = __webpack_require__(2);
+	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(18);
+	var constMap = __webpack_require__(10);
 	var frameConst = constMap.frame;
 
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 	/**
 	 * Summary area
@@ -13508,6 +13675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    template: _.template(
 	        '<table class="<%=className%>" style="height:<%=height%>px">' +
+	            '<colgroup><%=colgroup%></colgroup>' +
 	            '<tbody><%=tbody%></tbody>' +
 	        '</table>'
 	    ),
@@ -13518,10 +13686,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    templateHeader: _.template(
 	        '<th <%=attrColumnName%>="<%=columnName%>" ' +
 	            'class="<%=className%>" ' +
-	            'style="width:<%=width%>px"' +
 	        '>' +
 	        '<%=value%>' +
 	        '</th>'
+	    ),
+
+	    /**
+	     * Template for <col>
+	     */
+	    templateColgroup: _.template(
+	        '<col ' +
+	            '<%=attrColumnName%>="<%=columnName%>" ' +
+	            'style="width:<%=width%>px">'
 	    ),
 
 	    /**
@@ -13547,12 +13723,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 
+	    /**
+	     * Change column width
+	     * @private
+	     */
 	    _onChangeColumnWidth: function() {
 	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
-	        var $ths = this.$el.find('th');
+	        var $ths = this.$el.find('col');
 
 	        _.each(columnWidths, function(columnWidth, index) {
-	            $ths.eq(index).css('width', columnWidth);
+	            $ths.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
 	        });
 	    },
 
@@ -13599,6 +13779,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Generates a HTML string of <colgroup> and returns it
+	     * @returns {string} - HTML String
+	     * @private
+	     */
+	    _generateColgroupHTML: function() {
+	        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
+	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
+	        var htmlList = [];
+
+	        _.each(columnWidths, function(width, index) {
+	            htmlList.push(this.templateColgroup({
+	                attrColumnName: ATTR_COLUMN_NAME,
+	                columnName: columns[index].name,
+	                width: width + CELL_BORDER_WIDTH
+	            }));
+	        }, this);
+
+	        return htmlList.join('');
+	    },
+
+	    /**
 	     * Generates a HTML string of <tbody> and returns it
 	     * @returns {string} - HTML String
 	     * @private
@@ -13606,9 +13807,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _generateTbodyHTML: function() {
 	        var summaryModel = this.summaryModel;
 	        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
-	        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 
-	        return _.reduce(columns, function(memo, column, index) {
+	        return _.reduce(columns, function(memo, column) {
 	            var columnName = column.name;
 	            var valueMap;
 
@@ -13620,7 +13820,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                attrColumnName: ATTR_COLUMN_NAME,
 	                columnName: columnName,
 	                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
-	                width: columnWidths[index],
 	                value: this._generateValueHTML(columnName, valueMap)
 	            });
 	        }, '', this);
@@ -13641,7 +13840,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.$el.html(this.template({
 	                className: classNameConst.TABLE,
 	                height: summaryHeight,
-	                tbody: this._generateTbodyHTML()
+	                tbody: this._generateTbodyHTML(),
+	                colgroup: this._generateColgroupHTML()
 	            }));
 	        }
 
@@ -13653,7 +13853,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 55 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13663,13 +13863,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var View = __webpack_require__(8);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
 
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
@@ -13965,7 +14165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 56 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13975,12 +14175,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var classNameConst = __webpack_require__(22);
-	var CELL_BORDER_WIDTH = __webpack_require__(14).dimension.CELL_BORDER_WIDTH;
-	var frameConst = __webpack_require__(14).frame;
+	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(18);
+	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * Class for the selection layer
@@ -14133,7 +14333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 57 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14143,13 +14343,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var View = __webpack_require__(8);
-	var CELL_BORDER_WIDTH = __webpack_require__(14).dimension.CELL_BORDER_WIDTH;
-	var attrNameConst = __webpack_require__(14).attrName;
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
+	var attrNameConst = __webpack_require__(10).attrName;
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Layer class that represents the state of rendering phase.
@@ -14298,7 +14498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 58 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14308,12 +14508,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var DatePicker = __webpack_require__(36);
+	var DatePicker = __webpack_require__(32);
 
-	var View = __webpack_require__(8);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(18);
 	var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 	var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 	var DatePickerLayer;
@@ -14511,7 +14711,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 59 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14521,12 +14721,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
+	var View = __webpack_require__(4);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
 
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -14673,7 +14873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 60 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	
@@ -14684,8 +14884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var Backbone = __webpack_require__(9);
+	var _ = __webpack_require__(2);
+	var Backbone = __webpack_require__(5);
 
 	module.exports = {
 	    create: function() {
@@ -14695,7 +14895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 61 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14705,11 +14905,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var attrNameConst = __webpack_require__(14).attrName;
-	var classNameConst = __webpack_require__(22);
+	var attrNameConst = __webpack_require__(10).attrName;
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Class for offering methods that can be used to get the current state of DOM element.
@@ -14815,7 +15015,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 62 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14825,9 +15025,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var Backbone = __webpack_require__(9);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var Backbone = __webpack_require__(5);
+	var snippet = __webpack_require__(3);
 
 	/**
 	 * Class that listens public events (for external user) to the other object and
@@ -14924,7 +15124,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 63 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14934,16 +15134,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var RowPainter = __webpack_require__(64);
-	var CellPainter = __webpack_require__(66);
-	var DummyCellPainter = __webpack_require__(67);
-	var TextPainter = __webpack_require__(68);
-	var SelectPainter = __webpack_require__(70);
-	var ButtonPainter = __webpack_require__(71);
-	var MainButtonPainter = __webpack_require__(72);
+	var RowPainter = __webpack_require__(60);
+	var CellPainter = __webpack_require__(62);
+	var DummyCellPainter = __webpack_require__(63);
+	var TextPainter = __webpack_require__(64);
+	var SelectPainter = __webpack_require__(66);
+	var ButtonPainter = __webpack_require__(67);
+	var MainButtonPainter = __webpack_require__(68);
 
 	/**
 	 * Painter manager
@@ -15086,7 +15286,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 64 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15096,12 +15296,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(65);
-	var constMap = __webpack_require__(14);
-	var classNameConst = __webpack_require__(22);
+	var Painter = __webpack_require__(61);
+	var constMap = __webpack_require__(10);
+	var classNameConst = __webpack_require__(18);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -15244,7 +15444,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 65 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15254,10 +15454,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var attrNameConst = __webpack_require__(14).attrName;
+	var attrNameConst = __webpack_require__(10).attrName;
 
 	/**
 	 * Base class for Painters
@@ -15327,7 +15527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 66 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15337,13 +15537,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(65);
-	var util = __webpack_require__(20);
-	var attrNameConst = __webpack_require__(14).attrName;
-	var classNameConst = __webpack_require__(22);
+	var Painter = __webpack_require__(61);
+	var util = __webpack_require__(16);
+	var attrNameConst = __webpack_require__(10).attrName;
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Painter class for cell(TD) views
@@ -15577,7 +15777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 67 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15587,13 +15787,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(65);
-	var util = __webpack_require__(20);
-	var attrNameConst = __webpack_require__(14).attrName;
-	var classNameConst = __webpack_require__(22);
+	var Painter = __webpack_require__(61);
+	var util = __webpack_require__(16);
+	var attrNameConst = __webpack_require__(10).attrName;
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Dummy Cell Painter
@@ -15652,7 +15852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 68 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15662,12 +15862,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(69);
-	var util = __webpack_require__(20);
-	var classNameConst = __webpack_require__(22);
+	var InputPainter = __webpack_require__(65);
+	var util = __webpack_require__(16);
+	var classNameConst = __webpack_require__(18);
 
 	var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
 	var SELECTOR_PASSWORD = 'input[type=password]';
@@ -15805,7 +16005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 69 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15815,13 +16015,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var Backbone = __webpack_require__(9);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var Backbone = __webpack_require__(5);
+	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(65);
-	var keyNameMap = __webpack_require__(14).keyName;
+	var Painter = __webpack_require__(61);
+	var keyNameMap = __webpack_require__(10).keyName;
 
 	/**
 	 * Input Painter Base
@@ -16047,7 +16247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 70 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16057,12 +16257,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(69);
-	var util = __webpack_require__(20);
+	var InputPainter = __webpack_require__(65);
+	var util = __webpack_require__(16);
 
 	/**
 	 * Painter class for 'select' input.
@@ -16151,7 +16351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 71 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16161,12 +16361,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(69);
-	var util = __webpack_require__(20);
+	var InputPainter = __webpack_require__(65);
+	var util = __webpack_require__(16);
 
 	/**
 	 * Painter class for 'checkbox' and 'radio button'.
@@ -16428,7 +16628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 72 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16438,13 +16638,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(65);
-	var classNameConst = __webpack_require__(22);
-	var keyCodeMap = __webpack_require__(14).keyCode;
+	var Painter = __webpack_require__(61);
+	var classNameConst = __webpack_require__(18);
+	var keyCodeMap = __webpack_require__(10).keyCode;
 
 	var className = classNameConst.CELL_MAIN_BUTTON;
 
@@ -16544,7 +16744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 73 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16554,11 +16754,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
-	var util = __webpack_require__(20);
+	var util = __webpack_require__(16);
 
 	/**
 	 * Controller class to handle actions from the painters
@@ -16773,7 +16973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 74 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16783,19 +16983,32 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var Backbone = __webpack_require__(9);
-	var _ = __webpack_require__(6);
+	var $ = __webpack_require__(7);
+	var Backbone = __webpack_require__(5);
+	var _ = __webpack_require__(2);
 
-	var View = __webpack_require__(8);
-	var Router = __webpack_require__(75);
-	var util = __webpack_require__(20);
-	var formUtil = __webpack_require__(76);
-	var message = __webpack_require__(44);
-	var GridEvent = __webpack_require__(19);
+	var View = __webpack_require__(4);
+	var Router = __webpack_require__(71);
+	var util = __webpack_require__(16);
+	var formUtil = __webpack_require__(72);
+	var i18n = __webpack_require__(40);
+	var GridEvent = __webpack_require__(15);
 
-	var renderStateMap = __webpack_require__(14).renderState;
+	var renderStateMap = __webpack_require__(10).renderState;
 	var DELAY_FOR_LOADING_STATE = 200;
+
+	var requestMessageMap = {
+	    createData: 'net.confirmCreate',
+	    updateData: 'net.confirmUpdate',
+	    deleteData: 'net.confirmDelete',
+	    modifyData: 'net.confirmModify'
+	};
+	var errorMessageMap = {
+	    createData: 'net.noDataToCreate',
+	    updateData: 'net.noDataToUpdate',
+	    deleteData: 'net.noDataToDelete',
+	    modifyData: 'net.noDataToModify'
+	};
 
 	/**
 	 * Add-on for binding to remote data
@@ -17429,15 +17642,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _getConfirmMessage: function(requestType, count) {
-	        var replacedKey = requestType.replace('Data', 'Action');
-	        var actionName = message.get(replacedKey);
+	        var messageKey = (count > 0) ? requestMessageMap[requestType] : errorMessageMap[requestType];
 	        var replacedValues = {
-	            count: count,
-	            actionName: actionName
+	            count: count
 	        };
-	        var messageKey = (count > 0) ? 'requestConfirm' : 'noDataResponse';
 
-	        return message.get(messageKey, replacedValues);
+	        return i18n.get(messageKey, replacedValues);
 	    },
 
 	    /**
@@ -17597,7 +17807,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (jqXHR.readyState > 1) {
-	            alert(message.get('errorResponse'));
+	            alert(i18n.get('net.failResponse'));
 	        }
 	    }
 	});
@@ -17606,7 +17816,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 75 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17616,7 +17826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Backbone = __webpack_require__(9);
+	var Backbone = __webpack_require__(5);
 
 	/**
 	 * Router for Addon.Net
@@ -17638,7 +17848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 76 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17648,9 +17858,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
 	/**
 	 * @module formUtil
@@ -17870,7 +18080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 77 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17880,8 +18090,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var snippet = __webpack_require__(7);
+	var $ = __webpack_require__(7);
+	var snippet = __webpack_require__(3);
 
 	var defaultOptionsMap = {
 	    pagination: null
@@ -17930,7 +18140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 78 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17940,17 +18150,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
-	var util = __webpack_require__(20);
-	var styleGen = __webpack_require__(79);
-	var themeNameConst = __webpack_require__(14).themeName;
+	var $ = __webpack_require__(7);
+	var util = __webpack_require__(16);
+	var styleGen = __webpack_require__(75);
+	var themeNameConst = __webpack_require__(10).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(81);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(82);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(83);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(77);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(78);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(79);
 
 	/**
 	 * build css string with given options.
@@ -18029,7 +18239,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 79 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18039,10 +18249,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
+	var _ = __webpack_require__(2);
 
-	var builder = __webpack_require__(80);
-	var classNameConst = __webpack_require__(22);
+	var builder = __webpack_require__(76);
+	var classNameConst = __webpack_require__(18);
 
 	/**
 	 * Shortcut for the builder.createClassRule() method.
@@ -18123,6 +18333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
 	        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).bg(options.background);
 	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
+	        var frozenBorderRule = classRule(classNameConst.FROZEN_BORDER_BOTTOM).bg(options.background);
 
 	        return builder.buildAll(webkitScrollbarRules.concat([
 	            ieScrollbarRule,
@@ -18130,7 +18341,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            leftBottomRule,
 	            scrollHeadRule,
 	            summaryRightRule,
-	            bodyAreaRule
+	            bodyAreaRule,
+	            frozenBorderRule
 	        ]));
 	    },
 
@@ -18172,8 +18384,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            .border(options.border)
 	            .borderWidth(options)
 	            .text(options.text);
+	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).border(options.border);
 
-	        return cellRule.build();
+	        return builder.buildAll([
+	            cellRule,
+	            bodyAreaRule
+	        ]);
 	    },
 
 	    /*
@@ -18189,7 +18405,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            .text(options.text);
 
 	        var headAreaRule = classRule(classNameConst.HEAD_AREA)
-	            .bg(options.background);
+	            .bg(options.background)
+	            .border(options.border);
 
 	        var summaryAreaRule = classRule(classNameConst.SUMMARY_AREA)
 	            .bg(options.background);
@@ -18311,7 +18528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 80 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18321,8 +18538,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(6);
-	var snippet = __webpack_require__(7);
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
 
 	/**
 	 * create css rule string and returns it
@@ -18500,7 +18717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 81 */
+/* 77 */
 /***/ (function(module, exports) {
 
 	/**
@@ -18578,7 +18795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 82 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18588,9 +18805,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
+	var $ = __webpack_require__(7);
 
-	var presetDefault = __webpack_require__(81);
+	var presetDefault = __webpack_require__(77);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -18616,7 +18833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 83 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18626,9 +18843,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(11);
+	var $ = __webpack_require__(7);
 
-	var presetDefault = __webpack_require__(81);
+	var presetDefault = __webpack_require__(77);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -18653,6 +18870,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	});
 
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ])
