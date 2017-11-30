@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>13. Internationalization (i18n)</title>
+    <link rel="stylesheet" type="text/css" href="./css/explain.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+</head>
+<body>
+<div class="explain">
+Change the message in the locale language when there is no data.
+Select the locale code on the select box below.
+</div>
+<select id="locale-code" style="margin-bottom:10px;">
+    <option value="en" selected="selected">en</option>
+    <option value="ko">ko</option>
+    <option value="ja-JP">ja-JP</option>
+</select>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" class="code-js">
+
+var grid;
+var columnMap = {
+    en: {
+        'name': 'Name',
+        'artist': 'Artist',
+        'type': 'Type',
+        'release': 'Release',
+        'genre': 'Genre'
+    },
+    ko: {
+        'name': '제목',
+        'artist': '가수',
+        'type': '종류',
+        'release': '발매일',
+        'genre': '장르'
+    },
+    'ja-JP': {
+        'name': '曲のタイトル',
+        'artist': 'アーティスト名',
+        'type': '歌の種類',
+        'release': '発売日',
+        'genre': 'ジャンル'
+    }
+};
+var messageMap = {
+    'ja-JP': {
+        display: {
+            noData: 'データが存在していません。'
+        }
+    }
+};
+
+function createGrid(localeCode) {
+    return new tui.Grid({
+        el: $('#grid'),
+        data: [],
+        scrollX: false,
+        scrollY: false,
+        columns: createColumns(localeCode)
+    });
+}
+
+function createColumns(localeCode) {
+    var columnData = columnMap[localeCode];
+    var columns = [];
+
+    _.each(columnData, function(title, name) {
+        columns.push({
+            title: title,
+            name: name
+        });
+    });
+
+    return columns;
+}
+
+grid = createGrid('en'); // Set default language to English ('en')
+
+$('#locale-code').on('change', function() {
+    var localeCode = $(this).val();
+    var messages = messageMap[localeCode];
+
+    if (grid) {
+        grid.destroy();
+    }
+
+
+    tui.Grid.setLanguage(localeCode, messages); // Change language by locale code
+
+    grid = createGrid(localeCode);
+});
+
+</script>
+</html>
