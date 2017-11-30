@@ -16,7 +16,7 @@ var frameConst = require('common/constMap').frame;
 describe('ResizeHandle', function() {
     var columnModel, dimensionModel, coordColumnModel, handler, $handles;
 
-    function initialize() {
+    function createResizeHandle(whichSide, frozenBorder) {
         columnModel = new ColumnModel({
             rowHeaders: ['rowNum'],
             columns: [
@@ -40,17 +40,19 @@ describe('ResizeHandle', function() {
             dimensionModel: dimensionModel,
             columnModel: columnModel
         });
-    }
 
-    beforeEach(function() {
-        initialize();
-        handler = new ResizeHandle({
+        return new ResizeHandle({
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             coordColumnModel: coordColumnModel,
-            whichSide: frameConst.R,
-            handleHeights: []
+            whichSide: whichSide,
+            handleHeights: [],
+            frozenBorder: frozenBorder
         });
+    }
+
+    beforeEach(function() {
+        handler = createResizeHandle('R');
     });
 
     afterEach(function() {
@@ -74,10 +76,17 @@ describe('ResizeHandle', function() {
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
-            handler.headerHeight = 50;
+            handler.dimensionModel.set('headerHeight', 50);
             handler.render();
             expect(handler.$el.css('marginTop')).toBe('-50px');
             expect(handler.$el.height()).toBe(50);
+        });
+
+        it('If the resize handle acts as a frozen border, the class name is added.', function() {
+            handler = createResizeHandle('L', true);
+            handler.dimensionModel.set('frozenBorderWidth', 10);
+            handler.render();
+            expect(handler.$el.hasClass(classNameConst.FROZEN_BORDER_TOP)).toBe(true);
         });
     });
 

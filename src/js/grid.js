@@ -20,7 +20,7 @@ var NetAddOn = require('./addon/net');
 var ComponentHolder = require('./componentHolder');
 
 var util = require('./common/util');
-var message = require('./common/message');
+var i18n = require('./common/i18n');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
 
@@ -51,6 +51,8 @@ var instanceMap = {};
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
  *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
+ *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
+ *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
@@ -575,9 +577,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     removeCheckedRows: function(showConfirm) {
         var rowKeys = this.getCheckedRowKeys();
-        var confirmMessage = message.get('requestConfirm', {
-            count: rowKeys.length,
-            actionName: 'deleteAction'
+        var confirmMessage = i18n.get('net.confirmDelete', {
+            count: rowKeys.length
         });
 
         if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
@@ -1092,16 +1093,38 @@ Grid.applyTheme = function(presetName, extOptions) {
 };
 
 /**
- * Set language for messages
+ * Set language
  * @static
- * @param {string} langCode - Language code ('en' or 'ko')
+ * @param {string} localeCode - Code to set locale messages and
+ *     this is the language or language-region combination (ex: en-US)
+ * @param {object} [data] - Messages using in Grid
  * @example
  * var Grid = tui.Grid; // or require('tui-grid')
  *
- * Grid.setLanguage('ko');
+ * Grid.setLanguage('en'); // default and set English
+ * Grid.setLanguage('ko'); // set Korean
+ * Grid.setLanguage('en-US', { // set new language
+ *      display: {
+ *          noData: 'No data.',
+ *          loadingData: 'Loading data.',
+ *          resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+ *                              'and initialize the width by double-clicking.'
+ *      },
+ *      net: {
+ *          confirmCreate: 'Are you sure you want to create {{count}} data?',
+ *          confirmUpdate: 'Are you sure you want to update {{count}} data?',
+ *          confirmDelete: 'Are you sure you want to delete {{count}} data?',
+ *          confirmModify: 'Are you sure you want to modify {{count}} data?',
+ *          noDataToCreate: 'No data to create.',
+ *          noDataToUpdate: 'No data to update.',
+ *          noDataToDelete: 'No data to delete.',
+ *          noDataToModify: 'No data to modify.',
+ *          failResponse: 'An error occurred while requesting data.\nPlease try again.'
+ *      }
+ * });
  */
-Grid.setLanguage = function(langCode) {
-    message.setLanguage(langCode);
+Grid.setLanguage = function(localeCode, data) {
+    i18n.setLanguage(localeCode, data);
 };
 
 module.exports = Grid;

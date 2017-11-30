@@ -10,7 +10,7 @@ var _ = require('underscore');
 var View = require('../base/view');
 var stateConst = require('../common/constMap').renderState;
 var classNameConst = require('../common/classNameConst');
-var message = require('../common/message');
+var i18n = require('../common/i18n');
 var TABLE_BORDER_WIDTH = require('../common/constMap').dimension.TABLE_BORDER_WIDTH;
 
 /**
@@ -79,9 +79,9 @@ var StateLayer = View.extend(/** @lends module:view/stateLayer.prototype */{
     _getMessage: function(renderState) {
         switch (renderState) {
             case stateConst.LOADING:
-                return message.get('onLoading');
+                return i18n.get('display.loadingData');
             case stateConst.EMPTY:
-                return (this.renderModel.get('emptyMessage') || message.get('noData'));
+                return i18n.get('display.noData');
             default:
                 return null;
         }

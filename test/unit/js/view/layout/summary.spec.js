@@ -7,6 +7,8 @@ var DomState = require('domState');
 var ViewFactory = require('view/factory');
 var frameConst = require('common/constMap').frame;
 
+var CELL_BORDER_WIDTH = require('common/constMap').dimension.CELL_BORDER_WIDTH;
+
 function create(whichSide, options) {
     var modelManager = new ModelManager(options, new DomState($('<div>')));
     var viewFactory = new ViewFactory({
@@ -49,24 +51,24 @@ describe('Summary', function() {
         });
 
         it('width of each column should be the same as the result of coordColumnModel.getWidths()', function() {
-            var widths, $ths;
+            var widths, $cols;
 
             summary.render();
 
             widths = summary.coordColumnModel.getWidths(frameConst.R);
-            $ths = summary.$el.find('th');
-            expect($ths.eq(0).width()).toBe(widths[0]);
-            expect($ths.eq(1).width()).toBe(widths[1]);
+            $cols = summary.$el.find('col');
+            expect($cols.eq(0).width()).toBe(widths[0] + CELL_BORDER_WIDTH);
+            expect($cols.eq(1).width()).toBe(widths[1] + CELL_BORDER_WIDTH);
         });
 
         it('If the summaryModel does not exist, values should be empty', function() {
-            var $ths;
+            var $cols;
 
             summary.render();
 
-            $ths = summary.$el.find('th');
-            expect($ths.eq(0).html()).toBe('');
-            expect($ths.eq(1).html()).toBe('');
+            $cols = summary.$el.find('col');
+            expect($cols.eq(0).html()).toBe('');
+            expect($cols.eq(1).html()).toBe('');
         });
 
         it('If the summaryModel exists, use summary values for HTML of <th>', function() {

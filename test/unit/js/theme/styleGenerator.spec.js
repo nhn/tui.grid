@@ -40,7 +40,8 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}',
             '.' + classNameConst.SUMMARY_AREA_RIGHT + '{background-color:white}',
-            '.' + classNameConst.BODY_AREA + '{background-color:white}'
+            '.' + classNameConst.BODY_AREA + '{background-color:white}',
+            '.' + classNameConst.FROZEN_BORDER_BOTTOM + '{background-color:white}'
         ].join('');
 
         expect(styleGen.scrollbar(options)).toBe(expected);
@@ -64,7 +65,9 @@ describe('theme/styleGenerator: ', function() {
                 border: 'green',
                 text: 'blue'
             };
-            var expected = '.' + classNameConst.CELL + '{background-color:white;border-color:green;color:blue}';
+            var expected =
+                '.' + classNameConst.CELL + '{background-color:white;border-color:green;color:blue}' +
+                '.' + classNameConst.BODY_AREA + '{border-color:green}';
 
             expect(styleGen.cell(options)).toBe(expected);
         });
@@ -95,7 +98,7 @@ describe('theme/styleGenerator: ', function() {
             };
             var expected =
               '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}' +
-              '.' + classNameConst.HEAD_AREA + '{background-color:white}' +
+              '.' + classNameConst.HEAD_AREA + '{background-color:white;border-color:green}' +
               '.' + classNameConst.SUMMARY_AREA + '{background-color:white}';
 
             expect(styleGen.cellHead(options)).toBe(expected);

@@ -128,12 +128,14 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
      */
     _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
+        var columnOptions = options.columnOptions;
         var fixedRowHeight = !isNaN(options.rowHeight);
         var fixedHeight = options.bodyHeight !== 'auto';
         var minRowHeight = options.minRowHeight;
         var minBodyHeight = options.minBodyHeight;
         var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
         var bodyHeight = fixedHeight ? Math.max(minBodyHeight, options.bodyHeight) : minBodyHeight;
+        var frozenBorderWidth = _.isUndefined(columnOptions.frozenBorderWidth) ? 1 : columnOptions.frozenBorderWidth;
         var attrs = {
             headerHeight: options.header.height,
             bodyHeight: bodyHeight,
@@ -143,11 +145,12 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
             fitToParentHeight: (options.bodyHeight === 'fitToParent'),
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.columnOptions.minWidth,
             fixedRowHeight: fixedRowHeight,
             fixedHeight: fixedHeight,
             minRowHeight: minRowHeight,
-            minBodyHeight: minBodyHeight || rowHeight
+            minBodyHeight: minBodyHeight || rowHeight,
+            minimumColumnWidth: columnOptions.minWidth,
+            frozenBorderWidth: columnOptions.frozenCount ? frozenBorderWidth : null
         };
 
         if (fixedRowHeight === false && options.virtualScrolling) {

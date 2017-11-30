@@ -49,21 +49,24 @@
         border-bottom-width 1px
 
 .body-area
+    border-style solid
+    border-width 0
     position relative
     overflow scroll
 
 .summary-area
     position relative
     border-style solid
-    margin-top -18px
     overflow-y hidden
     overflow-x scroll
 
 .summary-area-top
-    border-width 0
+    border-width 0 0 1px;
+    margin-top 0
 
 .summary-area-bottom
     border-width 1px 0 0
+    margin-top -18px
 
 .lside-area
     display none
@@ -83,8 +86,23 @@
     display none
     overflow hidden
 
+    tr
+        th:first-child, td:first-child
+            border-left-width 0
+
     .head-area, .summary-area
         margin-right 17px
+
+    .frozen-border-top
+        position absolute
+        top 0
+
+        .column-resize-handle
+            top 0
+    .frozen-border-bottom
+        position absolute
+        bottom 0
+        height 17px
 
 .no-scroll-y
     .rside-area
@@ -108,7 +126,7 @@
     border-width 0 0 1px 1px
 
 .summary-area-right-bottom
-    border-width 1px 0 1px 1px
+    border-width 1px 0 0 1px
 
 .body-container
     position relative

@@ -12,6 +12,7 @@ var constMap = require('../../common/constMap');
 var frameConst = constMap.frame;
 
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * Summary area
@@ -68,6 +69,7 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
      */
     template: _.template(
         '<table class="<%=className%>" style="height:<%=height%>px">' +
+            '<colgroup><%=colgroup%></colgroup>' +
             '<tbody><%=tbody%></tbody>' +
         '</table>'
     ),
@@ -78,10 +80,18 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     templateHeader: _.template(
         '<th <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
-            'style="width:<%=width%>px"' +
         '>' +
         '<%=value%>' +
         '</th>'
+    ),
+
+    /**
+     * Template for <col>
+     */
+    templateColgroup: _.template(
+        '<col ' +
+            '<%=attrColumnName%>="<%=columnName%>" ' +
+            'style="width:<%=width%>px">'
     ),
 
     /**
@@ -107,12 +117,16 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
         }
     },
 
+    /**
+     * Change column width
+     * @private
+     */
     _onChangeColumnWidth: function() {
         var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
-        var $ths = this.$el.find('th');
+        var $ths = this.$el.find('col');
 
         _.each(columnWidths, function(columnWidth, index) {
-            $ths.eq(index).css('width', columnWidth);
+            $ths.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
     },
 
@@ -159,6 +173,27 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     },
 
     /**
+     * Generates a HTML string of <colgroup> and returns it
+     * @returns {string} - HTML String
+     * @private
+     */
+    _generateColgroupHTML: function() {
+        var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
+        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
+        var htmlList = [];
+
+        _.each(columnWidths, function(width, index) {
+            htmlList.push(this.templateColgroup({
+                attrColumnName: ATTR_COLUMN_NAME,
+                columnName: columns[index].name,
+                width: width + CELL_BORDER_WIDTH
+            }));
+        }, this);
+
+        return htmlList.join('');
+    },
+
+    /**
      * Generates a HTML string of <tbody> and returns it
      * @returns {string} - HTML String
      * @private
@@ -166,9 +201,8 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
         var columns = this.columnModel.getVisibleColumns(this.whichSide, true);
-        var columnWidths = this.coordColumnModel.getWidths(this.whichSide);
 
-        return _.reduce(columns, function(memo, column, index) {
+        return _.reduce(columns, function(memo, column) {
             var columnName = column.name;
             var valueMap;
 
@@ -180,7 +214,6 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnName,
                 className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
-                width: columnWidths[index],
                 value: this._generateValueHTML(columnName, valueMap)
             });
         }, '', this);
@@ -201,7 +234,8 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
             this.$el.html(this.template({
                 className: classNameConst.TABLE,
                 height: summaryHeight,
-                tbody: this._generateTbodyHTML()
+                tbody: this._generateTbodyHTML(),
+                colgroup: this._generateColgroupHTML()
             }));
         }
 

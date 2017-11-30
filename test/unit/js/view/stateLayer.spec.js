@@ -8,7 +8,7 @@ var StateLayer = require('view/stateLayer');
 
 var stateConst = require('common/constMap').renderState;
 var classNameConst = require('common/classNameConst');
-var message = require('common/message');
+var i18n = require('common/i18n');
 
 describe('view/stateLayer', function() {
     var $wrapper, stateLayer;
@@ -21,7 +21,7 @@ describe('view/stateLayer', function() {
             dimensionModel: modelManager.dimensionModel,
             renderModel: modelManager.renderModel
         });
-        message.setLanguage('ko');
+        i18n.setLanguage('en');
         $wrapper = jasmine.getFixtures().set('<div>').css('position', 'relative');
     });
 
@@ -43,7 +43,7 @@ describe('view/stateLayer', function() {
             $wrapper.append(stateLayer.render().el);
 
             expect(stateLayer.$el).toContainElement('.' + classNameConst.LAYER_STATE_CONTENT);
-            expect(stateLayer.$el.find('p').text()).toBe(message.get('noData'));
+            expect(stateLayer.$el.find('p').text()).toBe(i18n.get('display.noData'));
             expect(stateLayer.$el).toBeVisible();
         });
 
@@ -53,7 +53,7 @@ describe('view/stateLayer', function() {
 
             expect(stateLayer.$el).toContainElement('.' + classNameConst.LAYER_STATE_CONTENT);
             expect(stateLayer.$el).toContainElement('.' + classNameConst.LAYER_STATE_LOADING);
-            expect(stateLayer.$el.find('p').text()).toBe(message.get('onLoading'));
+            expect(stateLayer.$el.find('p').text()).toBe(i18n.get('display.loadingData'));
             expect(stateLayer.$el).toBeVisible();
         });
     });

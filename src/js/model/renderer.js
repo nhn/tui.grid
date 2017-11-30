@@ -76,8 +76,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
         this.on('change', this._onChangeIndex, this);
         this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
-
-        this._updateMaxScrollLeft();
     },
 
     defaults: {
@@ -149,7 +147,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'chage:width' event on Dimension.
+     * Event handler for 'change:width' event on Dimension.
      * @private
      */
     _updateMaxScrollLeft: function() {
@@ -309,6 +307,8 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             change: false,
             columnModelChanged: true
         });
+
+        this._updateMaxScrollLeft();
     },
 
     /**
@@ -484,12 +484,10 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var columnModels = this.columnModel.getVisibleColumns(null, true);
         var columnNames = _.pluck(columnModels, 'name');
 
-        var test = {
+        return {
             lside: columnNames.slice(0, frozenCount),
             rside: columnNames.slice(frozenCount)
         };
-
-        return test;
     },
 
     /**

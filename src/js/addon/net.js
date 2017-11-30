@@ -13,11 +13,24 @@ var View = require('../base/view');
 var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
-var message = require('../common/message');
+var i18n = require('../common/i18n');
 var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
 var DELAY_FOR_LOADING_STATE = 200;
+
+var requestMessageMap = {
+    createData: 'net.confirmCreate',
+    updateData: 'net.confirmUpdate',
+    deleteData: 'net.confirmDelete',
+    modifyData: 'net.confirmModify'
+};
+var errorMessageMap = {
+    createData: 'net.noDataToCreate',
+    updateData: 'net.noDataToUpdate',
+    deleteData: 'net.noDataToDelete',
+    modifyData: 'net.noDataToModify'
+};
 
 /**
  * Add-on for binding to remote data
@@ -651,15 +664,12 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      * @private
      */
     _getConfirmMessage: function(requestType, count) {
-        var replacedKey = requestType.replace('Data', 'Action');
-        var actionName = message.get(replacedKey);
+        var messageKey = (count > 0) ? requestMessageMap[requestType] : errorMessageMap[requestType];
         var replacedValues = {
-            count: count,
-            actionName: actionName
+            count: count
         };
-        var messageKey = (count > 0) ? 'requestConfirm' : 'noDataResponse';
 
-        return message.get(messageKey, replacedValues);
+        return i18n.get(messageKey, replacedValues);
     },
 
     /**
@@ -819,7 +829,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
         }
 
         if (jqXHR.readyState > 1) {
-            alert(message.get('errorResponse'));
+            alert(i18n.get('net.failResponse'));
         }
     }
 });
