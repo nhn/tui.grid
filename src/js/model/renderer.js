@@ -294,11 +294,14 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     },
 
     /**
-     * Data.ColumnModel 이 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+     * Event handler for regenerating left and right side frames when the Data.ColumnModel is changed
      * @private
      */
     _onColumnModelChange: function() {
-        this.set({scrollTop: 0}, {silent: true});
+        this.set({
+            scrollLeft: 0,
+            scrollTop: 0
+        }, {silent: true});
 
         this._resetViewModelList();
         this._setRenderingRange(true);
