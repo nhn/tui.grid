@@ -421,6 +421,25 @@ util = {
         return text.replace(/\{\{(\w*)\}\}/g, function(value, prop) {
             return values.hasOwnProperty(prop) ? values[prop] : '';
         });
+    },
+
+    /**
+     * Detect right button by mouse event
+     * @param {object} ev - Mouse event
+     * @returns {boolea} State
+     */
+    isRightClickEvent: function(ev) {
+        var rightClick;
+
+        ev = ev || window.event;
+
+        if (ev.which) {
+            rightClick = ev.which === 3;
+        } else if (ev.button) {
+            rightClick = ev.button === 2;
+        }
+
+        return rightClick;
     }
 };
 

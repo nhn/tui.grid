@@ -11,6 +11,7 @@ var _ = require('underscore');
 var View = require('../../base/view');
 var DragEventEmitter = require('../../event/dragEventEmitter');
 var GridEvent = require('../../event/gridEvent');
+var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var frameConst = constMap.frame;
@@ -142,6 +143,11 @@ var Body = View.extend(/** @lends module:view/layout/body.prototype */{
         if (isTargetInput && ev.shiftKey) {
             ev.preventDefault();
         }
+
+        if (util.isRightClickEvent(ev)) {
+            return;
+        }
+
         if (!isTargetInput || ev.shiftKey) {
             this.dragEmitter.start(ev, {
                 pageX: ev.pageX,
