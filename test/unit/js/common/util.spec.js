@@ -264,11 +264,11 @@ describe('core.util', function() {
         expect(replacedText).toBe('hello world');
     });
 
-    describe('detectRightButton() returns result of detecting right button by event', function() {
+    describe('isRightClickEvent() returns result of detecting right button by event', function() {
         var result;
 
         it('when mouse event has "which" property and this value is 3, the result is true.', function() {
-            result = util.detectRightButton({
+            result = util.isRightClickEvent({
                 which: 3
             });
 
@@ -276,7 +276,7 @@ describe('core.util', function() {
         });
 
         it('when mouse event has "button" property and this value is 2, the result is true.', function() {
-            result = util.detectRightButton({
+            result = util.isRightClickEvent({
                 button: 2
             });
 
