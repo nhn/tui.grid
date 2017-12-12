@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Nov 30 2017 15:09:08 GMT+0900 (KST)"
- * version: 2.6.0
+ * bundle created at "Tue Dec 12 2017 21:18:15 GMT+0900 (KST)"
+ * version: 2.6.1
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8419,6 +8419,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return text.replace(/\{\{(\w*)\}\}/g, function(value, prop) {
 	            return values.hasOwnProperty(prop) ? values[prop] : '';
 	        });
+	    },
+
+	    /**
+	     * Detect right button by mouse event
+	     * @param {object} ev - Mouse event
+	     * @returns {boolea} State
+	     */
+	    isRightClickEvent: function(ev) {
+	        var rightClick;
+
+	        ev = ev || window.event;
+
+	        if (ev.which) {
+	            rightClick = ev.which === 3;
+	        } else if (ev.button) {
+	            rightClick = ev.button === 2;
+	        }
+
+	        return rightClick;
 	    }
 	};
 
@@ -11231,11 +11250,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Data.ColumnModel 이 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+	     * Event handler for regenerating left and right side frames when the Data.ColumnModel is changed
 	     * @private
 	     */
 	    _onColumnModelChange: function() {
-	        this.set({scrollTop: 0}, {silent: true});
+	        this.set({
+	            scrollLeft: 0,
+	            scrollTop: 0
+	        }, {silent: true});
 
 	        this._resetViewModelList();
 	        this._setRenderingRange(true);
@@ -16622,6 +16644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var View = __webpack_require__(4);
 	var DragEventEmitter = __webpack_require__(38);
 	var GridEvent = __webpack_require__(15);
+	var util = __webpack_require__(16);
 	var constMap = __webpack_require__(10);
 	var classNameConst = __webpack_require__(18);
 	var frameConst = constMap.frame;
@@ -16753,6 +16776,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (isTargetInput && ev.shiftKey) {
 	            ev.preventDefault();
 	        }
+
+	        if (util.isRightClickEvent(ev)) {
+	            return;
+	        }
+
 	        if (!isTargetInput || ev.shiftKey) {
 	            this.dragEmitter.start(ev, {
 	                pageX: ev.pageX,
