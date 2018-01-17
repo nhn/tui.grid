@@ -218,14 +218,13 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         var postfix = snippet.pick(column, 'editOptions', 'postfix');
         var converter = snippet.pick(column, 'editOptions', 'converter');
         var rowAttrs = row.toJSON();
-        var useHtmlEntity = column.useHtmlEntity;
 
         return {
             value: this._getValueToDisplay(value, column, isTextType),
             formattedValue: this._getFormattedValue(value, rowAttrs, column),
-            prefix: this._getExtraContent(prefix, value, rowAttrs, useHtmlEntity),
-            postfix: this._getExtraContent(postfix, value, rowAttrs, useHtmlEntity),
-            convertedHTML: this._getConvertedHTML(converter, value, rowAttrs, useHtmlEntity)
+            prefix: this._getExtraContent(prefix, value, rowAttrs),
+            postfix: this._getExtraContent(postfix, value, rowAttrs),
+            convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
         };
     },
 
@@ -252,23 +251,18 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
             result = '';
         }
 
-        if (column.useHtmlEntity) {
-            result = snippet.encodeHTMLEntity(result);
-        }
-
         return result;
     },
 
     /**
      * Returns the value of the 'prefix' or 'postfix'.
-     * @param {(String|Function)} content - Content
-     * @param {String} cellValue - Cell value
+     * @param {(String|Function)} content - content
+     * @param {String} cellValue - cell value
      * @param {Object} rowAttrs - All attributes of the row
-     * @param {Boolean} useHtmlEntity - Whether html is encoded or not
      * @returns {string}
      * @private
      */
-    _getExtraContent: function(content, cellValue, rowAttrs, useHtmlEntity) {
+    _getExtraContent: function(content, cellValue, rowAttrs) {
         var result = '';
 
         if (_.isFunction(content)) {
@@ -277,17 +271,13 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
             result = content;
         }
 
-        if (useHtmlEntity) {
-            result = snippet.encodeHTMLEntity(result);
-        }
-
         return result;
     },
 
     /**
      * If the 'converter' function exist, execute it and returns the result.
-     * @param {Function} converter - Converter
-     * @param {String} cellValue - Cell value
+     * @param {Function} converter - converter
+     * @param {String} cellValue - cell value
      * @param {Object} rowAttrs - All attributes of the row
      * @returns {(String|Null)} - HTML string or Null
      * @private
@@ -298,7 +288,6 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         if (_.isFunction(converter)) {
             convertedHTML = converter(cellValue, rowAttrs);
         }
-
         if (convertedHTML === false) {
             convertedHTML = null;
         }
@@ -308,20 +297,22 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
 
     /**
      * Returns the value to display
-     * @param {String|Number} value - Cell value
-     * @param {Object} column - Column object
+     * @param {String|Number} value - value
+     * @param {String} column - column name
+     * @param {Boolean} isTextType - True if the cell is the text-typee
      * @returns {String}
      * @private
      */
-    _getValueToDisplay: function(value, column) {
+    _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = snippet.isExisty;
+        var useHtmlEntity = column.useHtmlEntity;
         var defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
         }
 
-        if (column.useHtmlEntity) {
+        if (isTextType && useHtmlEntity && snippet.hasEncodableString(value)) {
             value = snippet.encodeHTMLEntity(value);
         }
 
