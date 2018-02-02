@@ -49,7 +49,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
 
         this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
         this.listenTo(this.dataModel, 'change', this._onChangeData);
-        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+        this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
 
         this._resetSummaryMap();
     },
@@ -131,13 +131,12 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     },
 
     /**
-     * Event handler for 'changeRange' event on dataModel
-     * @param {Array.<number>} rowKeys - An array of rowkeys
-     * @param {Array.<number>} columnNames - An arrya of columnNames
+     * Event handler for 'deleteRange' event on dataModel
+     * @param {GridEvent} ev - event object when "delRange" event is fired
      * @private
      */
-    _onDeleteRangeData: function(rowKeys, columnNames) {
-        this._resetSummarySummaryValue(columnNames);
+    _onDeleteRangeData: function(ev) {
+        this._resetSummarySummaryValue(ev.columnNames);
     },
 
     /**

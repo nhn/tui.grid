@@ -89,7 +89,8 @@ var PublicEventEmitter = snippet.defineClass(/** @lends module:publicEventEmitte
     listenToDataModel: function(dataModel) {
         this._listenForThrough(dataModel, [
             'check',
-            'uncheck'
+            'uncheck',
+            'deleteRange'
         ]);
     },
 

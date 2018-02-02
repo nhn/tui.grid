@@ -613,14 +613,18 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
     },
 
     /**
-     * rowSpanData 를 반환한다.
-     * @param {Number|String} rowKey    조회할 데이터의 키값
-     * @param {String} columnName   컬럼명
-     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
+     * Returns data of rowSpan
+     * @param {Number|String} rowKey - Row key
+     * @param {String} columnName - Column name
+     * @returns {boolean|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpanData - Data of rowSpan
      * @private
      */
     _getRowSpanData: function(rowKey, columnName) {
-        return this.dataModel.get(rowKey).getRowSpanData(columnName);
+        if (rowKey && columnName) {
+            return this.dataModel.get(rowKey).getRowSpanData(columnName);
+        }
+
+        return false;
     },
 
     /**
@@ -680,14 +684,14 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset > 1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
             if (rowSpanData.isMainRow && rowSpanData.count > 0) {
                 rowKey = this._findRowKey(rowSpanData.count);
-            } else if (!rowSpanData.isMainRow) {
+            } else if (rowSpanData && !rowSpanData.isMainRow) {
                 count = rowSpanData.count;
                 rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
                 rowKey = this._findRowKey(rowSpanData.count + count);
@@ -716,12 +720,12 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset < -1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count - 1);
             } else {
                 rowKey = this._findRowKey(-1);
