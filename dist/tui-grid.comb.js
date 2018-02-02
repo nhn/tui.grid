@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Tue Dec 12 2017 21:18:15 GMT+0900 (KST)"
- * version: 2.6.1
+ * bundle created at "Fri Feb 02 2018 15:14:46 GMT+0900 (KST)"
+ * version: 2.7.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5752,6 +5752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Collection = __webpack_require__(12);
 	var Row = __webpack_require__(13);
+	var GridEvent = __webpack_require__(15);
 
 	/**
 	 * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -6762,7 +6763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Calls del() method for multiple cells silently, and trigger 'delRange' event
+	     * Calls del() method for multiple cells silently, and trigger 'deleteRange' event
 	     * @param {{row: Array.<number>, column: Array.<number>}} range - visible indexes
 	     */
 	    delRange: function(range) {
@@ -6786,7 +6787,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }, this);
 	        }, this);
 
-	        this.trigger('delRange', rowKeys, columnNames);
+	        /**
+	         * Occurs when cells are deleted by 'del' key
+	         * @event Grid#deleteRange
+	         * @type {module:event/gridEvent}
+	         * @property {Array} columnNames - columName list of deleted cell
+	         * @property {Array} rowKeys - rowKey list of deleted cell
+	         * @property {Grid} instance - Current grid instance
+	         */
+	        this.trigger('deleteRange', new GridEvent(null, {
+	            rowKeys: rowKeys,
+	            columnNames: columnNames
+	        }));
 	    },
 
 	    /**
@@ -10719,14 +10731,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * rowSpanData 를 반환한다.
-	     * @param {Number|String} rowKey    조회할 데이터의 키값
-	     * @param {String} columnName   컬럼명
-	     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
+	     * Returns data of rowSpan
+	     * @param {Number|String} rowKey - Row key
+	     * @param {String} columnName - Column name
+	     * @returns {boolean|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpanData - Data of rowSpan
 	     * @private
 	     */
 	    _getRowSpanData: function(rowKey, columnName) {
-	        return this.dataModel.get(rowKey).getRowSpanData(columnName);
+	        if (rowKey && columnName) {
+	            return this.dataModel.get(rowKey).getRowSpanData(columnName);
+	        }
+
+	        return false;
 	    },
 
 	    /**
@@ -10786,14 +10802,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (offset > 1) {
 	            rowKey = this._findRowKey(offset);
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-	            if (!rowSpanData.isMainRow) {
+	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count + offset);
 	            }
 	        } else {
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
 	            if (rowSpanData.isMainRow && rowSpanData.count > 0) {
 	                rowKey = this._findRowKey(rowSpanData.count);
-	            } else if (!rowSpanData.isMainRow) {
+	            } else if (rowSpanData && !rowSpanData.isMainRow) {
 	                count = rowSpanData.count;
 	                rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
 	                rowKey = this._findRowKey(rowSpanData.count + count);
@@ -10822,12 +10838,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (offset < -1) {
 	            rowKey = this._findRowKey(offset);
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-	            if (!rowSpanData.isMainRow) {
+	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count + offset);
 	            }
 	        } else {
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-	            if (!rowSpanData.isMainRow) {
+	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count - 1);
 	            } else {
 	                rowKey = this._findRowKey(-1);
@@ -11012,7 +11028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
 	            .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
-	            .listenTo(this.dataModel, 'delRange', this._onRangeDataModelChange)
+	            .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
 	            .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
@@ -11345,12 +11361,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Event handler for deleting cell data
-	     * @param {array} rowKeys - List of row key
-	     * @param {array} columnNames - List of colum name
+	     * @param {GridEvent} ev - event object when "delRange" event is fired
 	     * @private
 	     */
-	    _onRangeDataModelChange: function(rowKeys, columnNames) {
+	    _onRangeDataModelChange: function(ev) {
 	        var columnModel = this.columnModel;
+	        var rowKeys = ev.rowKeys;
+	        var columnNames = ev.columnNames;
 
 	        this._setRenderingRange(true);
 
@@ -11373,7 +11390,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, this);
 
 	        this.refresh({
-	            type: 'delRange',
+	            type: 'deleteRange',
 	            dataListChanged: true
 	        });
 	    },
@@ -11631,11 +11648,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        startIndex = this.get('startIndex');
 	        endIndex = this.get('endIndex');
 
-	        if (eventType !== 'add' && eventType !== 'delRange') {
+	        if (eventType !== 'add' && eventType !== 'deleteRange') {
 	            this._addViewModelListWithRange(startIndex, endIndex);
 	        }
 
-	        if (eventType !== 'delRange') {
+	        if (eventType !== 'deleteRange') {
 	            this._updateRowNumber(startIndex, endIndex);
 	        }
 
@@ -13421,7 +13438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
 	        this.listenTo(this.dataModel, 'change', this._onChangeData);
-	        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+	        this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
 
 	        this._resetSummaryMap();
 	    },
@@ -13503,13 +13520,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Event handler for 'changeRange' event on dataModel
-	     * @param {Array.<number>} rowKeys - An array of rowkeys
-	     * @param {Array.<number>} columnNames - An arrya of columnNames
+	     * Event handler for 'deleteRange' event on dataModel
+	     * @param {GridEvent} ev - event object when "delRange" event is fired
 	     * @private
 	     */
-	    _onDeleteRangeData: function(rowKeys, columnNames) {
-	        this._resetSummarySummaryValue(columnNames);
+	    _onDeleteRangeData: function(ev) {
+	        this._resetSummarySummaryValue(ev.columnNames);
 	    },
 
 	    /**
@@ -18606,7 +18622,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    listenToDataModel: function(dataModel) {
 	        this._listenForThrough(dataModel, [
 	            'check',
-	            'uncheck'
+	            'uncheck',
+	            'deleteRange'
 	        ]);
 	    },
 
