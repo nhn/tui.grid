@@ -56,7 +56,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
             .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
-            .listenTo(this.dataModel, 'delRange', this._onRangeDataModelChange)
+            .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
@@ -389,12 +389,13 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
     /**
      * Event handler for deleting cell data
-     * @param {array} rowKeys - List of row key
-     * @param {array} columnNames - List of colum name
+     * @param {GridEvent} ev - event object when "delRange" event is fired
      * @private
      */
-    _onRangeDataModelChange: function(rowKeys, columnNames) {
+    _onRangeDataModelChange: function(ev) {
         var columnModel = this.columnModel;
+        var rowKeys = ev.rowKeys;
+        var columnNames = ev.columnNames;
 
         this._setRenderingRange(true);
 
@@ -417,7 +418,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         }, this);
 
         this.refresh({
-            type: 'delRange',
+            type: 'deleteRange',
             dataListChanged: true
         });
     },
@@ -675,11 +676,11 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         startIndex = this.get('startIndex');
         endIndex = this.get('endIndex');
 
-        if (eventType !== 'add' && eventType !== 'delRange') {
+        if (eventType !== 'add' && eventType !== 'deleteRange') {
             this._addViewModelListWithRange(startIndex, endIndex);
         }
 
-        if (eventType !== 'delRange') {
+        if (eventType !== 'deleteRange') {
             this._updateRowNumber(startIndex, endIndex);
         }
 

@@ -10,6 +10,7 @@ var _ = require('underscore');
 
 var Collection = require('../../base/collection');
 var Row = require('./row');
+var GridEvent = require('../../event/gridEvent');
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -1020,7 +1021,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
     },
 
     /**
-     * Calls del() method for multiple cells silently, and trigger 'delRange' event
+     * Calls del() method for multiple cells silently, and trigger 'deleteRange' event
      * @param {{row: Array.<number>, column: Array.<number>}} range - visible indexes
      */
     delRange: function(range) {
@@ -1044,7 +1045,18 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             }, this);
         }, this);
 
-        this.trigger('delRange', rowKeys, columnNames);
+        /**
+         * Occurs when cells are deleted by 'del' key
+         * @event Grid#deleteRange
+         * @type {module:event/gridEvent}
+         * @property {Array} columnNames - columName list of deleted cell
+         * @property {Array} rowKeys - rowKey list of deleted cell
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('deleteRange', new GridEvent(null, {
+            rowKeys: rowKeys,
+            columnNames: columnNames
+        }));
     },
 
     /**

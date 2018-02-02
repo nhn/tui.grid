@@ -98,6 +98,10 @@ describe('publicEventEmitter', function() {
         it('should listen uncheck event', function() {
             testTrigger(target, publicObject, 'uncheck');
         });
+
+        it('should listen deleteRange event', function() {
+            testTrigger(target, publicObject, 'deleteRange');
+        });
     });
 
     describe('listenToSelectionModel', function() {

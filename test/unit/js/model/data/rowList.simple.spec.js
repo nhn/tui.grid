@@ -2,6 +2,8 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
+var GridEvent = require('event/gridEvent');
+
 var classNameConst = require('common/classNameConst');
 
 describe('Data.RowList - simple', function() {
@@ -308,16 +310,19 @@ describe('Data.RowList - simple', function() {
             expect(row2.validateCell).toHaveBeenCalledWith('c2', true);
         });
 
-        it('should trigger delRange event', function() {
+        it('should trigger "deleteRange" event', function() {
             var callback = jasmine.createSpy();
 
-            rowList.on('delRange', callback);
+            rowList.on('deleteRange', callback);
             rowList.delRange({
                 row: [0, 1],
                 column: [0, 1]
             });
 
-            expect(callback).toHaveBeenCalledWith([0, 1], ['c1', 'c2']);
+            expect(callback).toHaveBeenCalledWith(new GridEvent(null, {
+                rowKeys: [0, 1],
+                columnNames: ['c1', 'c2']
+            }));
         });
     });
 
