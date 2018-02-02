@@ -680,14 +680,14 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset > 1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
             if (rowSpanData.isMainRow && rowSpanData.count > 0) {
                 rowKey = this._findRowKey(rowSpanData.count);
-            } else if (!rowSpanData.isMainRow) {
+            } else if (rowSpanData && !rowSpanData.isMainRow) {
                 count = rowSpanData.count;
                 rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
                 rowKey = this._findRowKey(rowSpanData.count + count);
@@ -716,12 +716,12 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset < -1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
-            if (!rowSpanData.isMainRow) {
+            if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count - 1);
             } else {
                 rowKey = this._findRowKey(-1);
