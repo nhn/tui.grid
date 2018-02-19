@@ -9,6 +9,7 @@ var _ = require('underscore');
 var GridEvent = require('./gridEvent');
 
 var keyCodeMap = {
+    backspace: 8,
     tab: 9,
     enter: 13,
     ctrl: 17,
@@ -48,6 +49,7 @@ var keyStrokeCommandMap = {
     'enter': ['edit', 'currentCell'],
     'space': ['edit', 'currentCell'],
     'tab': ['edit', 'nextCell'],
+    'backspace': ['delete'],
     'del': ['delete'],
     'shift-tab': ['edit', 'prevCell'],
     'shift-up': ['select', 'up'],
