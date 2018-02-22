@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Feb 02 2018 15:14:46 GMT+0900 (KST)"
- * version: 2.7.0
+ * bundle created at "Thu Feb 22 2018 16:09:51 GMT+0900 (KST)"
+ * version: 2.8.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5330,6 +5330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.domState = options.domState;
 
 	        this.on('change:fixedHeight', this._resetSyncHeightHandler);
+	        this.on('change:bodyHeight', this._onChangeBodyHeight);
 
 	        if (options.domEventBus) {
 	            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
@@ -5392,6 +5393,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
 
 	        this.setHeight(height);
+	    },
+
+	    /**
+	     * Event handler for changing 'bodyHeight' value
+	     * @param {object} model - dimension model
+	     * @private
+	     */
+	    _onChangeBodyHeight: function(model) {
+	        var changed = model.changed;
+	        var changedTotalRowHeight = changed.totalRowHeight;
+	        var changedBodyHeight = changed.bodyHeight;
+
+	        if (!changedTotalRowHeight && changedBodyHeight) {
+	            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
+	        }
 	    },
 
 	    /**
@@ -11842,6 +11858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var GridEvent = __webpack_require__(15);
 
 	var keyCodeMap = {
+	    backspace: 8,
 	    tab: 9,
 	    enter: 13,
 	    ctrl: 17,
@@ -11881,6 +11898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'enter': ['edit', 'currentCell'],
 	    'space': ['edit', 'currentCell'],
 	    'tab': ['edit', 'nextCell'],
+	    'backspace': ['delete'],
 	    'del': ['delete'],
 	    'shift-tab': ['edit', 'prevCell'],
 	    'shift-up': ['select', 'up'],
