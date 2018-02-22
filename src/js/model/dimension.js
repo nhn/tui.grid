@@ -32,6 +32,7 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
         this.domState = options.domState;
 
         this.on('change:fixedHeight', this._resetSyncHeightHandler);
+        this.on('change:bodyHeight', this._onChangeBodyHeight);
 
         if (options.domEventBus) {
             this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
@@ -94,6 +95,21 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
         var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
 
         this.setHeight(height);
+    },
+
+    /**
+     * Event handler for changing 'bodyHeight' value
+     * @param {object} model - dimension model
+     * @private
+     */
+    _onChangeBodyHeight: function(model) {
+        var changed = model.changed;
+        var changedTotalRowHeight = changed.totalRowHeight;
+        var changedBodyHeight = changed.bodyHeight;
+
+        if (!changedTotalRowHeight && changedBodyHeight) {
+            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
+        }
     },
 
     /**
