@@ -5,6 +5,7 @@
   "main": "dist/tui-grid.js",
   "scripts": {
     "dev": "webpack-dev-server",
+    "dev:ie8": "webpack-dev-server -d",
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
     "test:e2e": "npm run sshot:clean && wdio wdio.conf.js",
