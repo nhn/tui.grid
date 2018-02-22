@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: view/layout/frame-rside.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,392 +58,223 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
+ * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
  */
 
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
+var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
+var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
 var summaryPositionConst = constMap.summaryPosition;
 
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
- * @param {Object} options - Options
- * @extends module:base/model
+ * right side frame class
+ * @module view/layout/frame-rside
+ * @extends module:view/layout/frame
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
+var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
+    initialize: function() {
+        Frame.prototype.initialize.apply(this, arguments);
 
-        this.columnModel = options.columnModel;
-        this.dataModel = options.dataModel;
-        this.domState = options.domState;
-
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
-
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
-        }
-
-        this._resetSyncHeightHandler();
-    },
-
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
-
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
-    },
-
-    /**
-     * Event handler for 'windowResize' event on domEventBus
-     * @private
-     */
-    _onResizeWindow: function() {
-        this.refreshLayout();
-    },
-
-    /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
-     * @private
-     */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
-
-        this.setHeight(height);
-    },
-
-    /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
-     * @private
-     */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
-
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-        }
-    },
-
-    /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
-     * @private
-     */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
-    },
-
-    /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
-     * @private
-     */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
-
-        this.set('bodyHeight', bodyHeight);
-    },
-
-    /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
-     * @private
-     */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
-    },
-
-    /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
-     * @private
-     */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
-        }
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
-
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
+        _.assign(this, {
+            whichSide: frameConst.R,
+            $scrollBorder: null
         });
+        this.listenTo(this.dimensionModel, 'change:lsideWidth change:rsideWidth', this._onFrameWidthChanged);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight change:headerHeight',
+            this._resetScrollBorderHeight);
+    },
 
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
+    className: classNameConst.RSIDE_AREA,
+
+    /**
+     * Event handler for 'change:rsideWidth' event on dimensionModel
+     * @private
+     * @override
+     */
+    _onFrameWidthChanged: function() {
+        this._refreshLayout();
+    },
+
+    /**
+     * Refresh layout
+     * @private
+     */
+    _refreshLayout: function() {
+        var dimensionModel = this.dimensionModel;
+        var width = dimensionModel.get('rsideWidth');
+        var marginLeft = dimensionModel.get('lsideWidth');
+
+        // If the left side exists and the division border should not be doubled,
+        // left side should cover the right side by border-width to hide the left border of the right side.
+        if (marginLeft > 0 &amp;&amp; !dimensionModel.isDivisionBorderDoubled()) {
+            width += CELL_BORDER_WIDTH;
+            marginLeft -= CELL_BORDER_WIDTH;
+        }
+
+        this.$el.css({
+            width: width,
+            marginLeft: marginLeft
+        });
+    },
+
+    /**
+     * Resets the height of a vertical scroll-bar border
+     * @private
+     */
+    _resetScrollBorderHeight: function() {
+        var dimensionModel, height;
+
+        if (this.$scrollBorder) {
+            dimensionModel = this.dimensionModel;
+            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+            this.$scrollBorder.height(height);
         }
     },
 
     /**
-     * Returns the offset.top of body
-     * @returns    {number}
+     * To be called at the beginning of the 'render' method.
+     * @override
      */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
+    beforeRender: function() {
+        this.$el.css('display', 'block');
+        this._refreshLayout();
     },
 
     /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
+     * To be called at the end of the 'render' method.
+     * @override
+     */
+    afterRender: function() {
+        var dimensionModel = this.dimensionModel;
+        var scrollX = dimensionModel.get('scrollX');
+        var scrollY = dimensionModel.get('scrollY');
+        var headerHeight = dimensionModel.get('headerHeight');
+        var summaryHeight = dimensionModel.get('summaryHeight');
+        var summaryPosition = dimensionModel.get('summaryPosition');
+
+        if (dimensionModel.hasFrozenBorder()) {
+            this._setFrozenBorder(headerHeight, scrollX);
+        }
+
+        if (!scrollY) {
+            return;
+        }
+
+        this._setScrollbar(headerHeight, summaryHeight, summaryPosition, scrollX);
+
+        if (summaryHeight) {
+            this._applyStyleToSummary(headerHeight, summaryHeight, summaryPosition, scrollX);
+        }
+
+        this._resetScrollBorderHeight();
+    },
+
+    /**
+     * Create scrollbar area and set styles
+     * @param {number} headerHeight - Height of the header area
+     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
      * @private
      */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
+    _setScrollbar: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
+        var $space, $scrollBorder;
 
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
+        // Empty DIV for hiding scrollbar in the header area
+        $space = $('&lt;div />').addClass(classNameConst.SCROLLBAR_HEAD);
+
+        // Empty DIV for showing a left-border of vertical scrollbar in the body area
+        $scrollBorder = $('&lt;div />').addClass(classNameConst.SCROLLBAR_BORDER);
+
+        if (summaryPosition === summaryPositionConst.TOP) {
+            headerHeight += summaryHeight;
+        }
+
+        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
+        $scrollBorder.css('top', headerHeight + 'px');
+
+        this.$el.append($space, $scrollBorder);
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        if (scrollX) {
+            this.$el.append($('&lt;div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+        }
+
+        this.$scrollBorder = $scrollBorder;
     },
 
     /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
+     * Create frozen border and set styles
+     * @param {number} headerHeight - Height of the header area
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @private
      */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+    _setFrozenBorder: function(headerHeight, scrollX) {
+        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
+        var resizeHandleView = this.viewFactory.createHeaderResizeHandle(frameConst.L, [headerHeight], true);
+        var $el = this.$el;
+
+        $el.append(resizeHandleView.render().$el);
+
+        $el.find('.' + classNameConst.HEAD_AREA).css('border-left-width', frozenBorderWidth);
+        $el.find('.' + classNameConst.BODY_AREA).css('border-left-width', frozenBorderWidth);
+        $el.find('.' + classNameConst.SUMMARY_AREA).css('border-left-width', frozenBorderWidth);
+
+        // If you don't initialize the table left-border to 0,
+        // the left-border moves when the right side area is scrolled.
+        $el.find('.' + classNameConst.TABLE).css('border-left-width', 0);
+
+        if (scrollX) {
+            $el.append($('&lt;div>')
+                .addClass(classNameConst.FROZEN_BORDER_BOTTOM)
+                .css('width', frozenBorderWidth)
+            );
+        }
+    },
+
+    /**
+     * Apply style to summary area on right-side frame
+     * @param {number} headerHeight - Height of header area
+     * @param {number} summaryHeight - Height of summary area by setting "summary" option
+     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @private
+     */
+    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
+        var styles = {};
+        var subClassName;
+
+        if (summaryPosition === summaryPositionConst.TOP) {
+            styles.top = headerHeight;
+            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
+        } else {
+            styles.bottom = scrollX ? this.dimensionModel.getScrollXHeight() : 0;
+            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
+        }
+
+        styles.height = summaryHeight;
+
+        this.$el.append($('&lt;div>')
+            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
+            .addClass(subClassName)
+            .css(styles)
+        );
     }
 });
 
-module.exports = Dimension;
+module.exports = RsideFrame;
 </code></pre>
         </article>
     </section>

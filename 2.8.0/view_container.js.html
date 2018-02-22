@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: view/container.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,392 +58,265 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
- * @author NHN Ent. FE Development Team
+ * @fileoverview View class that conaints a top element of the DOM structure of the grid.
+ * @author NHN Ent. FE Development Lab
  */
 
 'use strict';
 
-var _ = require('underscore');
+var $ = require('jquery');
 
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
-
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var View = require('../base/view');
+var GridEvent = require('../event/gridEvent');
+var targetTypeConst = GridEvent.targetTypeConst;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
+ * Container View
+ * @module view/container
+ * @extends module:base/view
  * @param {Object} options - Options
- * @extends module:base/model
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
+var Container = View.extend(/** @lends module:view/container.prototype */{
+    initialize: function(options) {
+        View.prototype.initialize.call(this);
 
-        this.columnModel = options.columnModel;
+        this.gridId = options.gridId;
+        this.dimensionModel = options.dimensionModel;
         this.dataModel = options.dataModel;
-        this.domState = options.domState;
+        this.viewFactory = options.viewFactory;
+        this.domEventBus = options.domEventBus;
 
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
+        this._createChildViews();
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
-        }
+        this.listenTo(this.dimensionModel, 'setWidth', this._onSetWidth);
+        $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
-        this._resetSyncHeightHandler();
+        this.__$el = this.$el.clone();
     },
 
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
+    events: {
+        'click': '_onClick',
+        'dblclick': '_onDblClick',
+        'mousedown': '_onMouseDown',
+        'mouseover': '_onMouseOver',
+        'mouseout': '_onMouseOut',
 
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
+        // for preventing drag
+        'selectstart': '_preventDrag',
+        'dragstart': '_preventDrag'
     },
 
     /**
-     * Event handler for 'windowResize' event on domEventBus
+     * 내부에서 사용할 view 인스턴스들을 초기화한다.
+     * @private
+     */
+    _createChildViews: function() {
+        var factory = this.viewFactory;
+
+        this._addChildren([
+            factory.createContentArea(),
+            factory.createHeightResizeHandle(),
+            factory.createPagination(),
+            factory.createStateLayer(),
+            factory.createEditingLayer(),
+            factory.createDatePickerLayer(),
+            factory.createClipboard()
+        ]);
+    },
+
+    /**
+     * Event handler for resize event on window.
      * @private
      */
     _onResizeWindow: function() {
-        this.refreshLayout();
+        this.domEventBus.trigger('windowResize');
     },
 
     /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
+     * drag 이벤트 발생시 이벤트 핸들러
+     * @returns {boolean} false
      * @private
      */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
-
-        this.setHeight(height);
+    _preventDrag: function() {
+        return false;
     },
 
     /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
+     * Event handler for 'setWidth' event on Dimension
      * @private
      */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
+    _onSetWidth: function() {
+        this.$el.width(this.dimensionModel.get('width'));
+    },
 
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
+    /**
+     * Event handler for click event
+     * The reason for using 'elementFromPoint' is because of the selection.
+     * @param {MouseEvent} ev - Mouse event
+     * @private
+     */
+    _onClick: function(ev) {
+        var pointX = ev.pageX - window.pageXOffset;
+        var pointY = ev.pageY - window.pageYOffset;
+        var $target = $(document.elementFromPoint(pointX, pointY));
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
+
+        /**
+         * Occurs when a mouse button is clicked on the Grid.
+         * The properties of the event object include the native event object.
+         * @event Grid#click
+         * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
+         * @property {number} rowKey - rowKey of the target cell
+         * @property {string} columnName - columnName of the target cell
+         * @property {Grid} instance - Current grid instance
+         */
+        this.domEventBus.trigger('click', gridEvent);
+
+        if (!gridEvent.isStopped() &amp;&amp; gridEvent.targetType === targetTypeConst.CELL) {
+            this.domEventBus.trigger('click:cell', gridEvent);
         }
     },
 
     /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
+     * Event handler for the dblclick event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
+    _onDblClick: function(ev) {
+        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
+
+        /**
+         * Occurs when a mouse button is double clicked on the Grid.
+         * The properties of the event object include the native event object.
+         * @event Grid#dblclick
+         * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
+         * @property {number} rowKey - rowKey of the target cell
+         * @property {string} columnName - columnName of the target cell
+         * @property {Grid} instance - Current grid instance
+         */
+        this.domEventBus.trigger('dblclick', gridEvent);
+
+        if (!gridEvent.isStopped() &amp;&amp; gridEvent.targetType === targetTypeConst.CELL) {
+            this.domEventBus.trigger('dblclick:cell', gridEvent);
         }
     },
 
     /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
+     * Event listener for the mouseover event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
+    _onMouseOver: function(ev) {
+        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
-        this.set('bodyHeight', bodyHeight);
+        /**
+         * Occurs when a mouse pointer is moved onto the Grid.
+         * The properties of the event object include the native MouseEvent object.
+         * @event Grid#mouseover
+         * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
+         * @property {number} rowKey - rowKey of the target cell
+         * @property {string} columnName - columnName of the target cell
+         * @property {Grid} instance - Current grid instance
+         */
+        this.domEventBus.trigger('mouseover', gridEvent);
     },
 
     /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
+     * Event listener for the mouseout event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
+    _onMouseOut: function(ev) {
+        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
 
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
+        /**
+         * Occurs when a mouse pointer is moved off from the Grid.
+         * The event object has all properties copied from the native MouseEvent.
+         * @event Grid#mouseout
+         * @type {module:event/gridEvent}
+         * @property {jQueryEvent} nativeEvent - Event object
+         * @property {string} targetType - Type of event target
+         * @property {number} rowKey - rowKey of the target cell
+         * @property {string} columnName - columnName of the target cell
+         * @property {Grid} instance - Current grid instance
+         */
+        this.domEventBus.trigger('mouseout', gridEvent);
     },
 
     /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} ev - Mouse event
      * @private
      */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
+    _onMouseDown: function(ev) {
+        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($target));
+        var shouldFocus = !$target.is('input, a, button, select, textarea');
+        var mainButton = gridEvent.columnName === '_button' &amp;&amp; $target.parent().is('label');
 
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
+        if (shouldFocus &amp;&amp; !mainButton) {
+            ev.preventDefault();
 
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
+            // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
+            $target[0].unselectable = true;
 
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
+            /**
+             * Occurs when a mouse button is downed on the Grid.
+             * The event object has all properties copied from the native MouseEvent.
+             * @event Grid#mousedown
+             * @type {module:event/gridEvent}
+             * @property {jQueryEvent} nativeEvent - Event object
+             * @property {string} targetType - Type of event target
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Grid} instance - Current grid instance
+             */
+            this.domEventBus.trigger('mousedown:focus', gridEvent);
         }
     },
 
     /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
+     * Render
+     * @returns {module:view/container} this object
      */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
+    render: function() {
+        var childElements = this._renderChildren();
+
+        this.$el.addClass(classNameConst.CONTAINER)
+            .attr(attrNameConst.GRID_ID, this.gridId)
+            .append(childElements);
+
+        this._triggerChildrenAppended();
+
+        return this;
     },
 
     /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
+     * Destroy
      */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
+    destroy: function() {
+        this.stopListening();
+        $(window).off('resize.grid');
+        this._destroyChildren();
 
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
-        });
-
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
-        }
-    },
-
-    /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-    },
-
-    /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
-
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
-    },
-
-    /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
-     */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+        this.$el.replaceWith(this.__$el);
+        this.$el = this.__$el = null;
     }
 });
 
-module.exports = Dimension;
+module.exports = Container;
 </code></pre>
         </article>
     </section>

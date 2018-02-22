@@ -1,10 +1,8 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Home | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -55,398 +53,171 @@
 
 
     
+
+
+
+
+
+
+
+
+
+    
+
+
     <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
- * @author NHN Ent. FE Development Team
- */
-
-'use strict';
-
-var _ = require('underscore');
-
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
-
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
-
-/**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
- * @param {Object} options - Options
- * @extends module:base/model
- * @ignore
- */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
-
-        this.columnModel = options.columnModel;
-        this.dataModel = options.dataModel;
-        this.domState = options.domState;
-
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
-
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
+        <article class="readme"><h1><img src="https://cloud.githubusercontent.com/assets/12269489/13489851/a5ca2490-e16c-11e5-8d80-3bf6fe3b940d.png" alt="toast ui grid"></h1><blockquote>
+<p>The powerful widget to show and edit data. It's free!</p>
+</blockquote>
+<p><a href="https://github.com/nhnent/tui.grid/releases/latest"><img src="https://img.shields.io/github/release/nhnent/tui.grid.svg" alt="GitHub release"></a><br><a href="https://www.npmjs.com/package/tui-grid"><img src="https://img.shields.io/npm/v/tui-grid.svg" alt="npm"></a><br><a href="https://github.com/nhnent/tui.grid/releases/latest"><img src="https://img.shields.io/bower/v/tui-grid.svg" alt="bower"></a><br><a href="https://github.com/nhnent/tui.grid/blob/production/LICENSE"><img src="https://img.shields.io/github/license/nhnent/tui.grid.svg" alt="GitHub license"></a><br><a href="https://github.com/nhnent/tui.grid/pulls"><img src="https://img.shields.io/badge/PRs-welcome-ff69b4.svg" alt="PRs welcome"></a><br><a href="https://github.com/nhnent"><img src="https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg" alt="code with hearth by NHN Entertainment"></a></p>
+<p><a href="https://www.youtube.com/watch?v=pyPlOFhexQk"><img src="https://user-images.githubusercontent.com/18183560/35043725-fde63120-fbd0-11e7-8952-66eb7750a8b5.png" alt="tui-grid-screenshot"></a></p>
+<p>☝️ 👀 ☝️ <em>Click the image above to play the video below shows the major features of TOAST UI Grid briefly!</em></p>
+<h2>🚩 Table of Contents</h2><ul>
+<li><a href="#-browser-support">Browser Support</a></li>
+<li><a href="#-features">Features</a></li>
+<li><a href="#-examples">Examples</a></li>
+<li><a href="#-install">Install</a><ul>
+<li><a href="#using-npm">Using npm</a></li>
+<li><a href="#using-bower">Using bower</a></li>
+<li><a href="#download">Download</a></li>
+</ul>
+</li>
+<li><a href="#-usage">Usage</a><ul>
+<li><a href="#html">HTML</a></li>
+<li><a href="#javascript">JavaScript</a></li>
+</ul>
+</li>
+<li><a href="#-development">Development</a><ul>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#local-test">Local Test</a></li>
+<li><a href="#run-server">Run Server</a></li>
+<li><a href="#bundle">Bundle</a></li>
+</ul>
+</li>
+<li><a href="#-documents">Documents</a></li>
+<li><a href="#-contributing">Contributing</a></li>
+<li><a href="#-toast-ui-family">TOAST UI Family</a></li>
+<li><a href="#-license">License</a></li>
+</ul>
+<h2>🌏 Browser Support</h2><table>
+<thead>
+<tr>
+<th style="text-align:center"><img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer</th>
+<th style="text-align:center"><img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge</th>
+<th style="text-align:center"><img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox</th>
+<th style="text-align:center"><img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome</th>
+<th style="text-align:center"><img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">8+</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+</tr>
+</tbody>
+</table>
+<h2>🎨 Features</h2><ul>
+<li>Various input types <em>(checkbox, radio, select, password, etc)</em></li>
+<li>Full keyboard navigation <em>(move, select, copy, paste, delete, etc)</em></li>
+<li>Virtual scrolling <em>(Handling large dataset without performance loses)</em></li>
+<li>Copy &amp; Paste using clipboard with 3rd party application <em>(Like MS-Excel or Google-spreadsheet)</em></li>
+<li>Column resize &amp; reorder &amp; show &amp; hide</li>
+<li>Multi column headers</li>
+<li>Custom cell formatter &amp; converter</li>
+<li>Inline Editing</li>
+<li>Validation</li>
+<li>Selection</li>
+<li>Pagination</li>
+<li>Picking date</li>
+<li>Sorting</li>
+<li>Merging cell</li>
+<li>Frozen(Pinned) columns</li>
+<li>Relation between each columns</li>
+<li>Binding to remote data</li>
+<li>Summarize all values of each column</li>
+<li>Customizing styles <em>(Three basic themes)</em></li>
+</ul>
+<p>In addition, you can implement desired functions using various options and APIs.</p>
+<h2>🐾 Examples</h2><ul>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html">Basic</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example03-complex-columns.html">Complex columns</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example04-input-types.html">Input types</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example05-relation-columns.html">Relation between columns</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example07-applying-themes.html">Applying Themes</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example08-using-datepicker.html">Using DatePicker component</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example09-using-summary.html">Using Summary</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api/tutorial-example10-using-net.html">Binding to remote data</a></li>
+</ul>
+<p>Here are more <a href="https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html">examples</a> and play with TOAST UI Grid!</p>
+<h2>💾 Install</h2><p>Install the module to use. TOAST UI products are registered in two package managers, <a href="https://www.npmjs.com/">npm</a> and <a href="https://bower.io/">bower</a>. You can download it directly from the github repository, but we highly recommend to install using the npm package manager.</p>
+<h3>Using npm</h3><pre class="prettyprint source lang-sh"><code>$ npm install --save tui-grid # latest version
+$ npm install --save tui-grid@&lt;version> # specific version</code></pre><h3>Using bower</h3><pre class="prettyprint source lang-sh"><code>$ bower install tui-grid # latest version
+$ bower install tui-grid#&lt;tag> # specific version</code></pre><h3>Download</h3><ul>
+<li><a href="https://github.com/nhnent/tui.grid/tree/production/dist">Download bundle files</a></li>
+<li><a href="https://github.com/nhnent/tui.grid/releases">Download all sources for each version</a></li>
+</ul>
+<h2>🔨 Usage</h2><h3>HTML</h3><p>Add the container element where TOAST UI Grid will be created.</p>
+<pre class="prettyprint source lang-html"><code>&lt;div id=&quot;grid&quot;>&lt;/div></code></pre><h3>JavaScript</h3><p>TOAST UI Grid can be used by creating an instance with the constructor function.<br>To get the constructor function, you should import the module using one of the following three ways depending on your environment.</p>
+<pre class="prettyprint source lang-javascript"><code>var Grid = tui.Grid; /* namespace */</code></pre><pre class="prettyprint source lang-javascript"><code>var Grid = require('tui-grid'); /* CommonJS in Node.js */</code></pre><pre class="prettyprint source lang-javascript"><code>import {Grid} from 'tui-grid'; /* ES6 in Node.js */</code></pre><p>You can create an instance with options and call various APIs after creating an instance.</p>
+<pre class="prettyprint source lang-javascript"><code>var instance = new Grid({
+    el: $('#grid'), // Container element
+    columns: [
+        {
+            title: 'Name',
+            name: 'name'
+        },
+        {
+            title: 'Artist',
+            name: 'artist'
+        },
+        {
+            title: 'Release',
+            name: 'release'
+        },
+        {
+            title: 'Genre',
+            name: 'genre'
         }
-
-        this._resetSyncHeightHandler();
-    },
-
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
-
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
-    },
-
-    /**
-     * Event handler for 'windowResize' event on domEventBus
-     * @private
-     */
-    _onResizeWindow: function() {
-        this.refreshLayout();
-    },
-
-    /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
-     * @private
-     */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
-
-        this.setHeight(height);
-    },
-
-    /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
-     * @private
-     */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
-
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-        }
-    },
-
-    /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
-     * @private
-     */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
-    },
-
-    /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
-     * @private
-     */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
-
-        this.set('bodyHeight', bodyHeight);
-    },
-
-    /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
-     * @private
-     */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
-    },
-
-    /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
-     * @private
-     */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
-        }
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
-
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
-        });
-
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
-        }
-    },
-
-    /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-    },
-
-    /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
-
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
-    },
-
-    /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
-     */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
-    }
+    ],
+    data: [
+      {
+        name: 'Beautiful Lies',
+        artist: 'Birdy',
+        release: '2016.03.26',
+        genre: 'Pop'
+      }
+    ]
 });
 
-module.exports = Dimension;
-</code></pre>
-        </article>
+instance.setData(newData); // Call API of instance's public method
+
+Grid.applyTheme('striped'); // Call API of static method</code></pre><h2>🔧 Development</h2><p>TOAST UI products are open source, so you can create a pull request after you fix <a href="https://github.com/nhnent/tui.grid/issues">issues</a>. Run npm scripts and develop yourself with the following process.</p>
+<h3>Setup</h3><pre class="prettyprint source lang-sh"><code>$ git clone https://github.com/nhnent/tui.grid.git
+$ cd tui.grid
+$ npm install</code></pre><h3>Local Test</h3><pre class="prettyprint source lang-sh"><code>$ npm run test</code></pre><h3>Run Server</h3><pre class="prettyprint source lang-sh"><code>$ npm run serve
+$ npm run serve:ie8 # Run on Internet Explorer 8</code></pre><h3>Bundle</h3><pre class="prettyprint source lang-sh"><code>$ npm run bundle</code></pre><h2>📙 Documents</h2><ul>
+<li><a href="https://github.com/nhnent/tui.grid/wiki/Getting-Started">Getting Started</a></li>
+<li><a href="https://github.com/nhnent/tui.grid/wiki">Tutorials</a></li>
+<li><a href="https://nhnent.github.io/tui.grid/api">APIs</a></li>
+</ul>
+<p>You can also see the older versions of API page on the <a href="https://github.com/nhnent/tui.grid/releases">releases page</a>.</p>
+<h2>💬 Contributing</h2><ul>
+<li><a href="CODE_OF_CONDUCT.md">Code of Conduct</a></li>
+<li><a href="CONTRIBUTING.md">Contributing guideline</a></li>
+<li><a href="https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md">Commit convention</a></li>
+</ul>
+<h2>🍞 TOAST UI Family</h2><ul>
+<li><a href="https://github.com/nhnent/tui.chart">TOAST UI Chart</a></li>
+<li><a href="https://github.com/nhnent/tui.editor">TOAST UI Editor</a></li>
+<li><a href="https://github.com/nhnent">TOAST UI Components</a></li>
+</ul>
+<h2>📜 License</h2><p>This software is licensed under the <a href="https://github.com/nhnent/tui.grid/blob/production/LICENSE">MIT</a> © <a href="https://github.com/nhnent">NHN Entertainment</a>.</p></article>
     </section>
+
+
 
 
 
@@ -463,7 +234,7 @@ module.exports = Dimension;
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
+        var id = 'package:undefined_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 

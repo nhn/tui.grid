@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: common/formUtil.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,392 +58,231 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
- * @author NHN Ent. FE Development Team
+ * @fileoverview Utilities for form data, form element
+ * @author NHN Ent. Fe Development Team
  */
 
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
-
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
-
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var snippet = require('tui-code-snippet');
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
- * @param {Object} options - Options
- * @extends module:base/model
+ * @module formUtil
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
-
-        this.columnModel = options.columnModel;
-        this.dataModel = options.dataModel;
-        this.domState = options.domState;
-
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
-
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
-        }
-
-        this._resetSyncHeightHandler();
-    },
-
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
-
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
-    },
-
+var formUtil = {
     /**
-     * Event handler for 'windowResize' event on domEventBus
-     * @private
+     * form 의 input 요소 값을 설정하기 위한 객체
+     * @alias form.setInput
+     * @memberof module:util
      */
-    _onResizeWindow: function() {
-        this.refreshLayout();
-    },
+    setInput: {
+        /**
+         * 배열의 값들을 전부 String 타입으로 변환한다.
+         * @ignore
+         * @param {Array}  arr 변환할 배열
+         * @returns {Array} 변환된 배열 결과 값
+         */
+        '_changeToStringInArray': function(arr) {
+            _.each(arr, function(value, i) {
+                arr[i] = String(value);
+            });
 
-    /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
-     * @private
-     */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
+            return arr;
+        },
 
-        this.setHeight(height);
-    },
+        /**
+         * radio type 의 input 요소의 값을 설정한다.
+         * @ignore
+         * @param {HTMLElement} targetElement - Target element
+         * @param {String} formValue - Form value
+         */
+        'radio': function(targetElement, formValue) {
+            targetElement.checked = (targetElement.value === formValue);
+        },
 
-    /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
-     * @private
-     */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
+        /**
+         * radio type 의 input 요소의 값을 설정한다.
+         * @ignore
+         * @memberof module:util
+         * @param {HTMLElement} targetElement - Target element
+         * @param {String} formValue - Form value
+         */
+        'checkbox': function(targetElement, formValue) {
+            if (_.isArray(formValue)) {
+                targetElement.checked = $.inArray(targetElement.value, this._changeToStringInArray(formValue)) !== -1;
+            } else {
+                targetElement.checked = (targetElement.value === formValue);
+            }
+        },
 
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-        }
-    },
+        /**
+         * select-one type 의 input 요소의 값을 설정한다.
+         * @ignore
+         * @param {HTMLElement} targetElement - Target element
+         * @param {String} formValue - Form value
+         */
+        'select-one': function(targetElement, formValue) {
+            var options = snippet.toArray(targetElement.options);
 
-    /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
-     * @private
-     */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
+            targetElement.selectedIndex = _.findIndex(options, function(option) {
+                return option.value === formValue || option.text === formValue;
+            });
+        },
+
+        /**
+         * select-multiple type 의 input 요소의 값을 설정한다.
+         * @ignore
+         * @param {HTMLElement} targetElement - Target element
+         * @param {String} formValue - Form value
+         */
+        'select-multiple': function(targetElement, formValue) {
+            var options = snippet.toArray(targetElement.options);
+
+            if (_.isArray(formValue)) {
+                formValue = this._changeToStringInArray(formValue);
+                _.each(options, function(targetOption) {
+                    targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
+                    $.inArray(targetOption.text, formValue) !== -1;
+                });
+            } else {
+                this['select-one'].apply(this, arguments);
+            }
+        },
+
+        /**
+         * input 요소의 값을 설정하는 default 로직
+         * @memberof module:util
+         * @param {HTMLElement} targetElement - Target element
+         * @param {String} formValue - Form value
+         */
+        'defaultAction': function(targetElement, formValue) {
+            targetElement.value = formValue;
         }
     },
 
     /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
-     * @private
-     */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
+     * $form 에 정의된 인풋 엘리먼트들의 값을 모아서 DataObject 로 구성하여 반환한다.
+     * @memberof module:util
+     * @alias form.getFormData
+     * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+     * @returns {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
+     **/
+    getFormData: function($form) {
+        var result = {},
+            valueList = $form.serializeArray(),
+            isExisty = snippet.isExisty;
 
-        this.set('bodyHeight', bodyHeight);
-    },
+        _.each(valueList, function(obj) {
+            var value = obj.value || '',
+                name = obj.name;
 
-    /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
-     * @private
-     */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
-    },
-
-    /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
-     * @private
-     */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
-        }
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
-
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
+            if (isExisty(result[name])) {
+                result[name] = [].concat(result[name], value);
+            } else {
+                result[name] = value;
+            }
         });
 
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
+        return result;
+    },
+
+    /**
+     * 폼 안에 있는 모든 인풋 엘리먼트를 배열로 리턴하거나, elementName에 해당하는 인풋 엘리먼트를 리턴한다.
+     * @memberof module:util
+     * @alias form.getFormElement
+     * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+     * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
+     * @returns {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
+     */
+    getFormElement: function($form, elementName) {
+        var formElement;
+        if ($form &amp;&amp; $form.length) {
+            if (elementName) {
+                formElement = $form.prop('elements')[String(elementName)];
+            } else {
+                formElement = $form.prop('elements');
+            }
         }
+
+        return $(formElement);
     },
 
     /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
+     * 파라미터로 받은 데이터 객체를 이용하여 폼내에 해당하는 input 요소들의 값을 설정한다.
+     * @memberof module:util
+     * @alias form.setFormData
+     * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+     * @param {Object} formData 폼에 설정할 폼 데이터 객체
+     **/
+    setFormData: function($form, formData) {
+        _.each(formData, function(value, property) {
+            this.setFormElementValue($form, property, value);
+        }, this);
     },
 
     /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
+     * elementName에 해당하는 인풋 엘리먼트에 formValue 값을 설정한다.
+     * -인풋 엘리먼트의 이름을 기준으로 하기에 라디오나 체크박스 엘리먼트에 대해서도 쉽게 값을 설정할 수 있다.
+     * @memberof module:util
+     * @alias form.setFormElementValue
+     * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+     * @param {String}  elementName 값을 설정할 인풋 엘리먼트의 이름
+     * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
+     **/
+    setFormElementValue: function($form, elementName, formValue) {
+        var $elementList = this.getFormElement($form, elementName),
+            type;
 
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
+        if (!$elementList.length) {
+            return;
+        }
+        if (!_.isArray(formValue)) {
+            formValue = String(formValue);
+        }
+
+        $elementList = snippet.isHTMLTag($elementList) ? [$elementList] : $elementList;
+        $elementList = snippet.toArray($elementList);
+        _.each($elementList, function(targetElement) {
+            type = this.setInput[targetElement.type] ? targetElement.type : 'defaultAction';
+            this.setInput[type](targetElement, formValue);
+        }, this);
     },
 
     /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
+     * input 타입의 엘리먼트의 커서를 가장 끝으로 이동한다.
+     * @memberof module:util
+     * @alias form.setCursorToEnd
+     * @param {HTMLElement} target HTML input 엘리먼트
      */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+    setCursorToEnd: function(target) {
+        var length = target.value.length,
+            range;
+
+        target.focus();
+        if (target.setSelectionRange) {
+            try {
+                target.setSelectionRange(length, length);
+            } catch (e) {
+                // to prevent unspecified error in IE (occurs when running test)
+            }
+        } else if (target.createTextRange) {
+            range = target.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', length);
+            range.moveStart('character', length);
+            try {
+                range.select();
+            } catch (e) {
+                // to prevent unspecified error in IE (occurs when running test)
+            }
+        }
     }
-});
+};
 
-module.exports = Dimension;
+module.exports = formUtil;
 </code></pre>
         </article>
     </section>

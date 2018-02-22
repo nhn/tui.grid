@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: view/editingLayer.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,392 +58,164 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
+ * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
  */
 
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
-
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var View = require('../base/view');
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
+ * Layer class that represents the state of rendering phase.
+ * @module view/editingLayer
+ * @extends module:base/view
  * @param {Object} options - Options
- * @extends module:base/model
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
-
-        this.columnModel = options.columnModel;
-        this.dataModel = options.dataModel;
+var EditingLayer = View.extend(/** @lends module:view/editingLayer.prototype */{
+    initialize: function(options) {
+        this.renderModel = options.renderModel;
         this.domState = options.domState;
+        this.inputPainters = options.inputPainters;
 
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
-
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
-        }
-
-        this._resetSyncHeightHandler();
+        this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
     },
 
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
-
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
-    },
+    className: classNameConst.LAYER_EDITING + ' ' + classNameConst.CELL_CONTENT,
 
     /**
-     * Event handler for 'windowResize' event on domEventBus
+     * Starts editing the given cell.
+     * @param {Object} cellData - cell data
      * @private
      */
-    _onResizeWindow: function() {
-        this.refreshLayout();
+    _startEditing: function(cellData) {
+        var rowKey = cellData.rowKey;
+        var columnName = cellData.columnName;
+        var editType = snippet.pick(cellData, 'columnModel', 'editOptions', 'type');
+        var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
+        var painter = this.inputPainters[editType];
+
+        this.$el.html(painter.generateHtml(cellData))
+            .attr(attrNameConst.ROW_KEY, rowKey)
+            .attr(attrNameConst.COLUMN_NAME, columnName)
+            .css(styleMap).show();
+
+        this._adjustLeftPosition();
+        painter.focus(this.$el);
     },
 
     /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
-     * @private
-     */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
-
-        this.setHeight(height);
-    },
-
-    /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
-     * @private
-     */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
-
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-        }
-    },
-
-    /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
-     * @private
-     */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
-    },
-
-    /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
-     * @private
-     */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
-
-        this.set('bodyHeight', bodyHeight);
-    },
-
-    /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
+     * Returns whether the width is expandable.
+     * @param {String} editType - edit type
      * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
      * @private
      */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
+    _isWidthExpandable: function(editType) {
+        return _.contains(['checkbox', 'radio'], editType);
     },
 
     /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
+     * Fisishes editing the current cell.
+     * @private
      */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
+    _finishEditing: function() {
+        this.$el.empty().hide();
+    },
+
+    /**
+     * Adjust the left position of the layer not to lay beyond the boundary of the grid.
+     * @private
+     */
+    _adjustLeftPosition: function() {
+        var gridWidth = this.domState.getWidth();
+        var layerWidth = this.$el.outerWidth();
+        var layerLeftPos = this.$el.position().left;
+
+        if (layerLeftPos + layerWidth > gridWidth) {
+            this.$el.css('left', gridWidth - layerWidth);
+        }
+    },
+
+    /**
+     * Adjust offset value of TD, because it varies from browsers to browsers when borders are callapsed.
+     * @param {Number} offsetValue - offset value (offset.top or offset.left)
+     * @returns {Number}
+     * @private
+     */
+    _adjustCellOffsetValue: function(offsetValue) {
+        var browser = snippet.browser;
+        var result = offsetValue;
+
+        if (browser.msie) {
+            if (browser.version === 9) {
+                result = offsetValue - 1;
+            } else if (browser.version > 9) {
+                result = Math.floor(offsetValue);
+            }
+        }
+
+        return result;
+    },
+
+    /**
+     * Calculates the position and the dimension of the layer and returns the object that contains css properties.
+     * @param {Stirng} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Boolean} expandable - true if the width of layer is expandable
+     * @returns {Object}
+     * @private
+     */
+    _calculateLayoutStyle: function(rowKey, columnName, expandable) {
+        var wrapperOffset = this.domState.getOffset();
+        var $cell = this.domState.getElement(rowKey, columnName);
+        var cellOffset = $cell.offset();
+        var cellHeight = $cell.outerHeight() + CELL_BORDER_WIDTH;
+        var cellWidth = $cell.outerWidth() + CELL_BORDER_WIDTH;
 
         return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
+            top: this._adjustCellOffsetValue(cellOffset.top) - wrapperOffset.top,
+            left: this._adjustCellOffsetValue(cellOffset.left) - wrapperOffset.left,
+            height: cellHeight,
+            minWidth: expandable ? cellWidth : '',
+            width: expandable ? '' : cellWidth,
+            lineHeight: cellHeight + 'px'
         };
     },
 
     /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
+     * Event handler for 'editingStateChanged' event on the render model.
+     * @param {Object} cellData - cell data
      * @private
      */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
+    _onEditingStateChanged: function(cellData) {
+        if (cellData.editing) {
+            this._startEditing(cellData);
+        } else {
+            this._finishEditing();
         }
     },
 
     /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
+     * Render
+     * @returns {Object} this instance
      */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
+    render: function() {
+        _.each(this.inputPainters, function(painter) {
+            painter.attachEventHandlers(this.$el, '');
+        }, this);
 
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
-        });
-
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
-        }
-    },
-
-    /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-    },
-
-    /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
-
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
-    },
-
-    /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
-     */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+        return this;
     }
 });
 
-module.exports = Dimension;
+module.exports = EditingLayer;
 </code></pre>
         </article>
     </section>

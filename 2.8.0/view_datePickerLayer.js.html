@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: view/datePickerLayer.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,7 +58,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
+ * @fileoverview Layer View class which contains the 'tui-date-picker'
  * @author NHN Ent. FE Development Team
  */
 
@@ -66,384 +66,204 @@
 
 var _ = require('underscore');
 
-var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
+var DatePicker = require('tui-date-picker');
 
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
+var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
+var DatePickerLayer;
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
+ * Layer View class which contains the 'tui-date-picker'
+ * @module view/datePickerLayer
+ * @extends module:base/view
  * @param {Object} options - Options
- * @extends module:base/model
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
-
+DatePickerLayer = View.extend(/** @lends module:view/datePickerLayer.prototype */{
+    initialize: function(options) {
+        this.focusModel = options.focusModel;
+        this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;
-        this.dataModel = options.dataModel;
         this.domState = options.domState;
+        this.datePickerMap = this._createDatePickers();
 
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
+        /**
+         * Current focused input element
+         * @type {jQuery}
+         */
+        this.$focusedInput = null;
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
-        }
-
-        this._resetSyncHeightHandler();
+        this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
+        this.listenTo(options.domEventBus, 'windowResize', this._closeDatePickerLayer);
     },
 
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
+    className: classNameConst.LAYER_DATE_PICKER,
 
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
+    events: {
+        click: '_onClick'
     },
 
     /**
-     * Event handler for 'windowResize' event on domEventBus
+     * Event handler for the 'click' event on the datepicker layer.
+     * @param {MouseEvent} ev - MouseEvent object
      * @private
      */
-    _onResizeWindow: function() {
-        this.refreshLayout();
+    _onClick: function(ev) {
+        ev.stopPropagation();
     },
 
     /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
+     * Creates instances map of 'tui-date-picker'
+     * @returns {Object.&lt;string, DatePicker>}
      * @private
      */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
+    _createDatePickers: function() {
+        var datePickerMap = {};
+        var columnModelMap = this.columnModel.get('columnModelMap');
 
-        this.setHeight(height);
+        _.each(columnModelMap, function(columnModel) {
+            var name = columnModel.name;
+            var component = columnModel.component;
+            var options;
+
+            if (component &amp;&amp; component.name === 'datePicker') {
+                options = component.options || {};
+
+                datePickerMap[name] = new DatePicker(this.$el, options);
+
+                this._bindEventOnDatePicker(datePickerMap[name]);
+            }
+        }, this);
+
+        return datePickerMap;
     },
 
     /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
+     * Bind custom event on the DatePicker instance
+     * @param {DatePicker} datePicker - instance of DatePicker
      * @private
      */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
+    _bindEventOnDatePicker: function(datePicker) {
+        var self = this;
 
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-        }
-    },
-
-    /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
-     * @private
-     */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
-    },
-
-    /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
-     * @private
-     */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
-
-        this.set('bodyHeight', bodyHeight);
-    },
-
-    /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
-     */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
-
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
-     * @private
-     */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
-    },
-
-    /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
-     * @private
-     */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
-        }
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
-
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
+        datePicker.on('open', function() {
+            self.textPainter.blockFocusingOut();
         });
 
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
+        datePicker.on('close', function() {
+            var focusModel = self.focusModel;
+            var address = focusModel.which();
+            var rowKey = address.rowKey;
+            var columnName = address.columnName;
+            var changedValue = self.$focusedInput.val();
+
+            self.textPainter.unblockFocusingOut();
+
+            // when the datePicker layer is closed, selected date must set on input element.
+            if (focusModel.isEditingCell(rowKey, columnName)) {
+                focusModel.dataModel.setValue(rowKey, columnName, changedValue);
+            }
+            focusModel.finishEditing();
+        });
+    },
+
+    /**
+     * Resets date picker options
+     * @param {Object} options - datePicker options
+     * @param {jQuery} $input - target input element
+     * @param {string} columnName - name to find the DatePicker instance created on each column
+     * @private
+     */
+    _resetDatePicker: function(options, $input, columnName) {
+        var datePicker = this.datePickerMap[columnName];
+        var format = options.format || DEFAULT_DATE_FORMAT;
+        var date = options.date || (new Date());
+        var selectableRanges = options.selectableRanges;
+
+        datePicker.setInput($input, {
+            format: format,
+            syncFromInput: true
+        });
+
+        if (selectableRanges) {
+            datePicker.setRanges(selectableRanges);
+        } else {
+            datePicker.setRanges(FULL_RANGES);
+        }
+
+        if ($input.val() === '') {
+            datePicker.setDate(date);
+            $input.val('');
         }
     },
 
     /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-    },
-
-    /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
+     * Calculates the position of the layer and returns the object that contains css properties.
+     * @param {jQuery} $input - input element
+     * @returns {Object}
      * @private
      */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
+    _calculatePosition: function($input) {
+        var inputOffset = $input.offset();
+        var inputHeight = $input.outerHeight();
+        var wrapperOffset = this.domState.getOffset();
 
         return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
+            top: inputOffset.top - wrapperOffset.top + inputHeight,
+            left: inputOffset.left - wrapperOffset.left
         };
     },
 
     /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
+     * Event handler for 'focusIn' event of module:painter/input/text
+     * @param {jQuery} $input - target input element
+     * @param {{rowKey: String, columnName: String}} address - target cell address
+     * @private
      */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+    _onFocusInTextInput: function($input, address) {
+        var columnName = address.columnName;
+        var component = this.columnModel.getColumnModel(columnName).component;
+        var editType = this.columnModel.getEditType(columnName);
+        var options;
+
+        if (editType === 'text' &amp;&amp; component &amp;&amp; component.name === 'datePicker') {
+            options = component.options || {};
+
+            this.$focusedInput = $input;
+
+            this.$el.css(this._calculatePosition($input)).show();
+            this._resetDatePicker(options, $input, columnName);
+            this.datePickerMap[columnName].open();
+        }
+    },
+
+    /**
+     * Close the date picker layer that is already opend
+     * @private
+     */
+    _closeDatePickerLayer: function() {
+        var name = this.focusModel.which().columnName;
+        var datePicker = this.datePickerMap[name];
+
+        if (datePicker &amp;&amp; datePicker.isOpened()) {
+            datePicker.close();
+        }
+    },
+
+    /**
+     * Render
+     * @returns {Object} this object
+     */
+    render: function() {
+        this.$el.hide();
+
+        return this;
     }
 });
 
-module.exports = Dimension;
+module.exports = DatePickerLayer;
 </code></pre>
         </article>
     </section>

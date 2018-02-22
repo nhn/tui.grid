@@ -1,10 +1,8 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: event/keyEvent.js | Grid</title>
+    <title>Tutorial: 5. Relation between columns | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -52,127 +50,286 @@
 <div class="main" id="main">
     
 
+<section>
+    <header>
+        
 
+        <h2>5. Relation between columns</h2>
+    </header>
 
     
-    <section>
+        
+
+        <ul id="example-nav" class="nav nav-tabs">
+            <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
+                <a href="#">Result</a>
+            </li>
+            <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
+                <a href="#">JS</a>
+            </li>
+            <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
+                <a href="#">HTML</a>
+            </li>
+        </ul>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @fileoverview Key event generator
- * @author NHN Ent. FE Development Lab
- */
+            
+            <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/example05-relation-columns.html></iframe>
+            <div id="example-js" class="hidden"><pre class="prettyprint source">
 
-'use strict';
-
-var _ = require('underscore');
-var GridEvent = require('./gridEvent');
-
-var keyCodeMap = {
-    backspace: 8,
-    tab: 9,
-    enter: 13,
-    ctrl: 17,
-    esc: 27,
-    left: 37,
-    up: 38,
-    right: 39,
-    down: 40,
-    a: 65,
-    c: 67,
-    v: 86,
-    space: 32,
-    pageUp: 33,
-    pageDown: 34,
-    home: 36,
-    end: 35,
-    del: 46
-};
-var keyNameMap = _.invert(keyCodeMap);
-
-/**
- * K-V object for matching keystroke and event command
- * K: keystroke (order : ctrl -> shift -> keyName)
- * V: [key event type, command]
- * @type {Object}
- * @ignore
- */
-var keyStrokeCommandMap = {
-    'up': ['move', 'up'],
-    'down': ['move', 'down'],
-    'left': ['move', 'left'],
-    'right': ['move', 'right'],
-    'pageUp': ['move', 'pageUp'],
-    'pageDown': ['move', 'pageDown'],
-    'home': ['move', 'firstColumn'],
-    'end': ['move', 'lastColumn'],
-    'enter': ['edit', 'currentCell'],
-    'space': ['edit', 'currentCell'],
-    'tab': ['edit', 'nextCell'],
-    'backspace': ['delete'],
-    'del': ['delete'],
-    'shift-tab': ['edit', 'prevCell'],
-    'shift-up': ['select', 'up'],
-    'shift-down': ['select', 'down'],
-    'shift-left': ['select', 'left'],
-    'shift-right': ['select', 'right'],
-    'shift-pageUp': ['select', 'pageUp'],
-    'shift-pageDown': ['select', 'pageDown'],
-    'shift-home': ['select', 'firstColumn'],
-    'shift-end': ['select', 'lastColumn'],
-    'ctrl-a': ['select', 'all'],
-    'ctrl-c': ['clipboard', 'copy'],
-    'ctrl-v': ['clipboard', 'paste'],
-    'ctrl-home': ['move', 'firstCell'],
-    'ctrl-end': ['move', 'lastCell'],
-    'ctrl-shift-home': ['select', 'firstCell'],
-    'ctrl-shift-end': ['select', 'lastCell']
+var twoDepthData = {
+    '01': [
+        { text: 'Select', value: '' },
+        { text: 'Balad/Dance/Pop', value: '01_01' },
+        { text: 'Hiphop/R&amp;B', value: '01_02' },
+        { text: 'Indie', value: '01_03' }
+    ],
+    '02': [
+        { text: 'Select', value: '' },
+        { text: 'Pop', value: '02_01' },
+        { text: 'Hiphop', value: '02_02' },
+        { text: 'R&amp;B', value: '02_03' }
+    ],
+    '03': [
+        { text: 'Select', value: '' },
+        { text: 'OST', value: '03_01' },
+        { text: 'Classic', value: '03_02' },
+        { text: 'New Age', value: '03_03' }
+    ]
 };
 
-/**
- * Returns the keyStroke string
- * @param {Event} ev - Keyboard event
- * @returns {String}
- * @ignore
- */
-function getKeyStrokeString(ev) {
-    var keys = [];
+var threeDepthData = {
+    '01_01': [
+        { text: 'Select', value: '' },
+        { text: 'I Miss You', value: '01_01_0001' },
+        { text: 'Russian Roulette', value: '01_01_0002' },
+        { text: 'TT', value: '01_01_0003' },
+        { text: 'Beautiful', value: '01_01_0004' },
+        { text: 'KNOCK KNOCK', value: '01_01_0005' },
+        { text: 'Rookie', value: '01_01_0006' },
+        { text: 'Round And Round', value: '01_01_0007' }
+    ],
+    '01_02': [
+        { text: 'Select', value: '' },
+        { text: 'BERMUDA TRIANGLE', value: '01_02_0001' },
+        { text: 'Day Day', value: '01_02_0002' },
+        { text: 'Bye bye my blue', value: '01_02_0003' },
+        { text: 'Comedian', value: '01_02_0004' },
+        { text: 'what2do', value: '01_02_0005' },
+        { text: 'Bye bye my blue', value: '01_02_0006' },
+        { text: 'I NEED U', value: '01_02_0007' }
+    ],
+    '01_03': [
+        { text: 'Select', value: '' },
+        { text: 'Madeleine Love', value: '01_03_0001' },
+        { text: 'Mood Indigo', value: '01_03_0002' },
+        { text: 'I Don\'t Wanna Love You', value: '01_03_0003' },
+        { text: 'Come Back Home', value: '01_03_0004' },
+        { text: 'MONSTER', value: '01_03_0005' },
+        { text: 'Free Somebody', value: '01_03_0006' },
+        { text: 'Vineyard', value: '01_03_0007' }
+    ],
+    '02_01': [
+        { text: 'Select', value: '' },
+        { text: 'Cave Me In', value: '02_01_0001' },
+        { text: 'Hello', value: '02_01_0002' },
+        { text: 'When We Were Young', value: '02_01_0003' },
+        { text: 'Stay With Me', value: '02_01_0004' },
+        { text: 'I\'m Not The Only One', value: '02_01_0005' },
+        { text: 'Youth', value: '02_01_0006' },
+        { text: 'Love On Top', value: '02_01_0007' }
+    ],
+    '02_02': [
+        { text: 'Select', value: '' },
+        { text: 'Love The Way You Lie', value: '02_02_0001' },
+        { text: 'Flower Dance', value: '02_02_0002' },
+        { text: 'I Feel It Coming', value: '02_02_0003' },
+        { text: 'Love The Way You Lie', value: '02_02_0004' },
+        { text: 'I Feel It Coming', value: '02_02_0005' },
+        { text: 'GDFR', value: '02_02_0006' },
+        { text: 'Love Me In Everything', value: '02_02_0007' }
+    ],
+    '02_03': [
+        { text: 'Select', value: '' },
+        { text: 'Marry You', value: '02_03_0001' },
+        { text: 'Hello', value: '02_03_0002' },
+        { text: 'Coastal Love', value: '02_03_0003' },
+        { text: 'Happy', value: '02_03_0004' },
+        { text: 'If You Wonder', value: '02_03_0005' },
+        { text: 'Want To Want Me', value: '02_03_0006' },
+        { text: 'Get Lucky', value: '02_03_0007' }
+    ],
+    '03_01': [
+        { text: 'Select', value: '' },
+        { text: 'City Of Stars', value: '03_01_0001' },
+        { text: 'You Are My Everything', value: '03_01_0002' },
+        { text: 'Summer Montage / Madeline', value: '03_01_0003' },
+        { text: 'Memory', value: '03_01_0004' },
+        { text: 'A Lovely Night', value: '03_01_0005' }
+    ],
+    '03_02': [
+        { text: 'Select', value: '' },
+        { text: 'Ravel: Pavane Pour Une Infant Defunte', value: '03_02_0001' },
+        { text: 'Elgar: Salut D`amour', value: '03_02_0002' },
+        { text: 'Refuse', value: '03_02_0003' },
+        { text: 'Liebestraume S541: No. 3 in A flat', value: '03_02_0004' },
+        { text: 'Three Romances Op94: nr 2 in A', value: '03_02_0005' }
+    ],
+    '03_03': [
+        { text: 'Select', value: '' },
+        { text: 'Kiss The Rain', value: '03_03_0001' },
+        { text: 'Blind Film', value: '03_03_0002' },
+        { text: 'Merry Christmas Mr.Lawrence', value: '03_03_0003' },
+        { text: 'After The Play', value: '03_03_0004' },
+        { text: 'River Flows In You', value: '03_03_0005' }
+    ]
+};
 
-    if (ev.ctrlKey || ev.metaKey) {
-        keys.push('ctrl');
+var grid = new tui.Grid({
+    el: $('#grid'),
+    scrollX: false,
+    scrollY: false,
+    rowHeight: 30,
+    columns: [
+        {
+            title: 'Category1',
+            name: 'category1',
+            editOptions: {
+                type: 'select',
+                listItems: [
+                    { text: 'Select', value: '' },
+                    { text: 'Domestic', value: '01' },
+                    { text: 'Overseas', value: '02' },
+                    { text: 'Etc', value: '03' }
+                ],
+                useViewMode: false
+            },
+            relations: [
+                {
+                    targetNames: ['category2', 'selectedValue'],
+                    listItems: function(value) {
+                        return twoDepthData[value];
+                    },
+                    disabled: function(value) {
+                        return !(value);
+                    }
+                }
+            ]
+        },
+        {
+            title: 'Category2',
+            name: 'category2',
+            editOptions: {
+                type: 'select',
+                listItems: [],
+                useViewMode: false
+            },
+            relations: [
+                {
+                    targetNames: ['category3'],
+                    listItems: function(value) {
+                        return threeDepthData[value];
+                    },
+                    disabled: function(value) {
+                        return !(value);
+                    }
+                }
+            ]
+        },
+        {
+            title: 'Category3',
+            name: 'category3',
+            editOptions: {
+                type: 'select',
+                listItems: [],
+                useViewMode: false
+            }
+        }
+    ]
+});
+
+var gridData = [ // initial data
+    {
+        category1: '',
+        category2 : '',
+        category3: ''
+    },
+    {
+        category1: '02',
+        category2: '02_03',
+        category3: '02_03_0001'
+    },
+    {
+        category1: '03',
+        category2: '03_01',
+        category3: '03_01_0001'
     }
-    if (ev.shiftKey) {
-        keys.push('shift');
-    }
-    keys.push(keyNameMap[ev.keyCode]);
+];
 
-    return keys.join('-');
-}
+grid.setData(gridData);
 
-/* Keyboard Event Generator
- * @module event/keyEvent
- * @ignore
- */
-module.exports = {
-    generate: function(ev) {
-        var keyStroke = getKeyStrokeString(ev);
-        var commandInfo = keyStrokeCommandMap[keyStroke];
-        var gridEvent;
+</pre></div>
+            <div id="example-html" class="hidden"><pre class="prettyprint source">
+&lt;div id="grid">&lt;/div>
+</pre></div>
+        </article>
+    
+</section>
 
-        if (commandInfo) {
-            gridEvent = new GridEvent(ev, {
-                type: 'key:' + commandInfo[0],
-                command: commandInfo[1]
-            });
+
+    <script>
+        var exampleResult = document.getElementById('example-result');
+        var exampleJs = document.getElementById('example-js');
+        var exampleHtml = document.getElementById('example-html');
+        var exampleResultBtn = document.getElementById('example-result-btn');
+        var exampleJsBtn = document.getElementById('example-js-btn');
+        var exampleHtmlBtn = document.getElementById('example-html-btn');
+
+        function setActive(el) {
+            el.className += ' active';
         }
 
-        return gridEvent;
-    }
-};
-</code></pre>
-        </article>
-    </section>
+        function setInactive(el) {
+            el.className = el.className.replace(/\s*active\s*/g, '');
+        }
 
+        function show(el) {
+            el.className = el.className.replace(/\s*hidden\s*/g, '');
+        }
 
+        function hide(el) {
+            el.className += ' hidden';
+        }
+
+        function showJs() {
+            hide(exampleHtml);
+            hide(exampleResult);
+            setInactive(exampleHtmlBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleJs);
+            setActive(exampleJsBtn);
+        }
+
+        function showHtml() {
+            hide(exampleJs);
+            hide(exampleResult);
+            setInactive(exampleJsBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleHtml);
+            setActive(exampleHtmlBtn);
+        }
+
+        function showResult() {
+            hide(exampleJs);
+            hide(exampleHtml);
+            setInactive(exampleJsBtn);
+            setInactive(exampleHtmlBtn);
+
+            show(exampleResult);
+            setActive(exampleResultBtn);
+        }
+    </script>
 
 
 </div>
@@ -187,13 +344,7 @@ module.exports = {
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
-        var selectedApi = document.getElementById(id); // do not use jquery selector
-        var $selectedApi = $(selectedApi);
-
-        $selectedApi.removeClass('hidden');
-        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-        showLnbApi();
+        showLnbExamples();
     </script>
 
 </body>

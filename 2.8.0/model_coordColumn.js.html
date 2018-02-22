@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: model/coordColumn.js | Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-formatter.html">2. Formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-formatter_sub"></div></li><li><a href="tutorial-example03-complex-columns.html">3. Complex columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-complex-columns_sub"></div></li><li><a href="tutorial-example04-input-types.html">4. Input types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-input-types_sub"></div></li><li><a href="tutorial-example05-relation-columns.html">5. Relation between columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-relation-columns_sub"></div></li><li><a href="tutorial-example06-using-extradata.html">6. Using _extraData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-using-extradata_sub"></div></li><li><a href="tutorial-example07-applying-themes.html">7. Applying Themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-applying-themes_sub"></div></li><li><a href="tutorial-example08-using-datepicker.html">8. Using DatePicker component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-using-datepicker_sub"></div></li><li><a href="tutorial-example09-using-summary.html">9. Using Summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-using-summary_sub"></div></li><li><a href="tutorial-example10-using-net.html">10. Binding to remote data using net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-using-net_sub"></div></li><li><a href="tutorial-example11-customizing-rowheaders.html">11. Customizing Row headers</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-example12-using-whitespace.html">12. Using whiteSpace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-using-whitespace_sub"></div></li><li><a href="tutorial-example13-i18n.html">13. Internationalization (i18n)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example13-i18n_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li><li><a href="module-event_gridEvent.html">event/gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:event/gridEvent_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-event_gridEvent.html#stop">stop</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setSummaryColumnContent">setSummaryColumnContent</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:deleteRange">deleteRange</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Manage coordinates of rows
+ * @author NHN Ent. FE Development Lab
+ */
+
+'use strict';
+
+var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
+var Model = require('../base/model');
+var util = require('../common/util');
+var constMap = require('../common/constMap');
+var dimensionConst = constMap.dimension;
+var frameConst = constMap.frame;
+
+var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+/**
+ * @module model/coordColumn
+ * @param {Object} attrs - Attributes
+ * @param {Object} options - Options
+ * @extends module:base/model
+ * @ignore
+ */
+var CoordColumn = Model.extend(/** @lends module:model/coordColumn.prototype */{
+    initialize: function(attrs, options) {
+        this.dimensionModel = options.dimensionModel;
+        this.columnModel = options.columnModel;
+
+        /**
+         * An array of the fixed flags of the columns
+         * @private
+         * @type {boolean[]}
+         */
+        this._fixedWidthFlags = null;
+
+        /**
+         * An array of the minimum width of the columns
+         * @private
+         * @type {number[]}
+         */
+        this._minWidths = null;
+
+        /**
+         * Whether the column width is modified by user.
+         * @type {boolean}
+         */
+        this._isModified = false;
+
+        this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
+        this.listenTo(this.dimensionModel, 'change:width', this._onDimensionWidthChange);
+
+        if (options.domEventBus) {
+            this.listenTo(options.domEventBus, 'dragmove:resizeColumn', this._onDragResize);
+            this.listenTo(options.domEventBus, 'dblclick:resizeColumn', this._onDblClick);
+        }
+        this.resetColumnWidths();
+    },
+
+    defaults: {
+        widths: [],
+        resizable: true
+    },
+
+    /**
+     * Reset the width of each column by using initial setting of column models.
+     */
+    resetColumnWidths: function() {
+        var columns = this.columnModel.getVisibleColumns(null, true);
+        var commonMinWidth = this.dimensionModel.get('minimumColumnWidth');
+        var widths = [];
+        var fixedFlags = [];
+        var minWidths = [];
+
+        _.each(columns, function(columnModel) {
+            var columnWidth = columnModel.width || 'auto';
+            var fixedWidth = !isNaN(columnWidth);
+            var width, minWidth;
+
+            // Meta columns are not affected by common 'minimumColumnWidth' value
+            if (util.isMetaColumn(columnModel.name)) {
+                minWidth = width;
+            } else {
+                minWidth = columnModel.minWidth || commonMinWidth;
+            }
+
+            width = fixedWidth ? columnWidth : minWidth;
+
+            if (width &lt; minWidth) {
+                width = minWidth;
+            }
+
+            // If the width is not assigned (in other words, the width is not positive number),
+            // set it to zero (no need to worry about minimum width at this point)
+            // so that #_fillEmptyWidth() can detect which one is empty.
+            // After then, minimum width will be applied by #_applyMinimumWidth().
+            widths.push(width);
+            minWidths.push(minWidth);
+            fixedFlags.push(fixedWidth);
+        }, this);
+
+        this._fixedWidthFlags = fixedFlags;
+        this._minWidths = minWidths;
+
+        this._setColumnWidthVariables(this._calculateColumnWidth(widths), true);
+    },
+
+    /**
+     * Event handler for dragmove event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onDragResize: function(ev) {
+        this.setColumnWidth(ev.columnIndex, ev.width);
+    },
+
+    /**
+     * Event handler for dblclick event on domEventBus
+     * @param {module:event/gridEventd} ev - GridEvent
+     * @private
+     */
+    _onDblClick: function(ev) {
+        this.restoreColumnWidth(ev.columnIndex);
+    },
+
+    /**
+     * widths 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
+     * @param {array} widths - 컬럼 넓이값 배열
+     * @param {boolean} [saveWidths] - 저장 여부. true이면 넓이값 배열을 originalWidths로 저장한다.
+     * @private
+     */
+    _setColumnWidthVariables: function(widths, saveWidths) {
+        var totalWidth = this.dimensionModel.get('width');
+        var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
+        var frozenCount = this.columnModel.getVisibleFrozenCount(true);
+        var rsideWidth, lsideWidth, lsideWidths, rsideWidths;
+
+        lsideWidths = widths.slice(0, frozenCount);
+        rsideWidths = widths.slice(frozenCount);
+
+        lsideWidth = this._getFrameWidth(lsideWidths);
+        if (maxLeftSideWidth &amp;&amp; maxLeftSideWidth &lt; lsideWidth) {
+            lsideWidths = this._adjustLeftSideWidths(lsideWidths, maxLeftSideWidth);
+            lsideWidth = this._getFrameWidth(lsideWidths);
+            widths = lsideWidths.concat(rsideWidths);
+        }
+        rsideWidth = totalWidth - lsideWidth;
+
+        this.set({
+            widths: widths
+        });
+        this.dimensionModel.set({
+            rsideWidth: rsideWidth,
+            lsideWidth: lsideWidth
+        });
+
+        if (saveWidths) {
+            this.set('originalWidths', _.clone(widths));
+        }
+        this.trigger('columnWidthChanged');
+    },
+
+    /**
+     * columnFrozenCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+     * @param {Array} lsideWidths    열고정 영역의 너비 리스트 배열
+     * @param {Number} totalWidth   grid 전체 너비
+     * @returns {Array} 열고정 영역의 너비 리스트
+     * @private
+     */
+    _adjustLeftSideWidths: function(lsideWidths, totalWidth) {
+        var i = lsideWidths.length - 1;
+        var minimumColumnWidth = this.dimensionModel.get('minimumColumnWidth');
+        var currentWidth = this._getFrameWidth(lsideWidths);
+        var diff = currentWidth - totalWidth;
+        var changedWidth;
+
+        if (diff > 0) {
+            while (i >= 0 &amp;&amp; diff > 0) {
+                changedWidth = Math.max(minimumColumnWidth, lsideWidths[i] - diff);
+                diff -= lsideWidths[i] - changedWidth;
+                lsideWidths[i] = changedWidth;
+                i -= 1;
+            }
+        } else if (diff &lt; 0) {
+            lsideWidths[i] += Math.abs(diff);
+        }
+
+        return lsideWidths;
+    },
+
+    /**
+     * calculate column width list
+     * @param {Array.&lt;Number>} widths - widths
+     * @returns {Array.&lt;Number>}
+     * @private
+     */
+    _calculateColumnWidth: function(widths) {
+        widths = this._fillEmptyWidth(widths);
+        widths = this._applyMinimumWidth(widths);
+        widths = this._adjustWidths(widths);
+
+        return widths;
+    },
+
+    /**
+     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
+     * @param {number[]} widths - An array of column widths
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _fillEmptyWidth: function(widths) {
+        var totalWidth = this.dimensionModel.getAvailableTotalWidth(widths.length);
+        var remainTotalWidth = totalWidth - util.sum(widths);
+        var emptyIndexes = [];
+
+        _.each(widths, function(width, index) {
+            if (!width) {
+                emptyIndexes.push(index);
+            }
+        });
+
+        return this._distributeExtraWidthEqually(widths, remainTotalWidth, emptyIndexes);
+    },
+
+    /**
+     * widths 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
+     * @param {Array} widths 너비 리스트 배열
+     * @returns {Number} 계산된 frame 너비값
+     * @private
+     */
+    _getFrameWidth: function(widths) {
+        var frameWidth = 0;
+
+        if (widths.length) {
+            frameWidth = util.sum(widths) + ((widths.length + 1) * CELL_BORDER_WIDTH);
+        }
+
+        return frameWidth;
+    },
+
+    /**
+     * Adds extra widths of the column equally.
+     * @param {number[]} widths - An array of column widths
+     * @param {number} totalExtraWidth - Total extra width
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _addExtraColumnWidth: function(widths, totalExtraWidth) {
+        var fixedFlags = this._fixedWidthFlags;
+        var columnIndexes = [];
+
+        _.each(fixedFlags, function(flag, index) {
+            if (!flag) {
+                columnIndexes.push(index);
+            }
+        });
+
+        return this._distributeExtraWidthEqually(widths, totalExtraWidth, columnIndexes);
+    },
+
+    /**
+     * Reduces excess widths of the column equally.
+     * @param {number[]} widths - An array of column widths
+     * @param {number} totalExcessWidth - Total excess width (negative number)
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _reduceExcessColumnWidth: function(widths, totalExcessWidth) {
+        var minWidths = this._minWidths;
+        var fixedFlags = this._fixedWidthFlags;
+        var availableList = [];
+
+        _.each(widths, function(width, index) {
+            if (!fixedFlags[index]) {
+                availableList.push({
+                    index: index,
+                    width: width - minWidths[index]
+                });
+            }
+        });
+
+        return this._reduceExcessColumnWidthSub(_.clone(widths), totalExcessWidth, availableList);
+    },
+
+    /**
+     * Reduce the (remaining) excess widths of the column.
+     * This method will be called recursively by _reduceExcessColumnWidth.
+     * @param {number[]} widths - An array of column Width
+     * @param {number} totalRemainWidth - Remaining excess width (negative number)
+     * @param {object[]} availableList - An array of infos about available column.
+     *                                 Each item of the array has {index:number, width:number}.
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _reduceExcessColumnWidthSub: function(widths, totalRemainWidth, availableList) {
+        var avgValue = Math.round(totalRemainWidth / availableList.length);
+        var newAvailableList = [];
+        var columnIndexes;
+
+        _.each(availableList, function(available) {
+            // note that totalRemainWidth and avgValue are negative number.
+            if (available.width &lt; Math.abs(avgValue)) {
+                totalRemainWidth += available.width;
+                widths[available.index] -= available.width;
+            } else {
+                newAvailableList.push(available);
+            }
+        });
+        // call recursively until all available width are less than average
+        if (availableList.length > newAvailableList.length) {
+            return this._reduceExcessColumnWidthSub(widths, totalRemainWidth, newAvailableList);
+        }
+        columnIndexes = _.pluck(availableList, 'index');
+
+        return this._distributeExtraWidthEqually(widths, totalRemainWidth, columnIndexes);
+    },
+
+    /**
+     * Distributes the extra width equally to each column at specified indexes.
+     * @param {number[]} widths - An array of column width
+     * @param {number} extraWidth - Extra width
+     * @param {number[]} columnIndexes - An array of indexes of target columns
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _distributeExtraWidthEqually: function(widths, extraWidth, columnIndexes) {
+        var length = columnIndexes.length;
+        var avgValue = Math.round(extraWidth / length);
+        var errorValue = (avgValue * length) - extraWidth; // to correct total width
+        var resultList = _.clone(widths);
+
+        _.each(columnIndexes, function(columnIndex) {
+            resultList[columnIndex] += avgValue;
+        });
+
+        if (columnIndexes.length) {
+            resultList[_.last(columnIndexes)] -= errorValue;
+        }
+
+        return resultList;
+    },
+
+    /**
+     * Makes all width of columns not less than minimumColumnWidth.
+     * @param {number[]} widths - 컬럼 넓이값 배열
+     * @returns {number[]} - 수정된 새로운 넓이값 배열
+     * @private
+     */
+    _applyMinimumWidth: function(widths) {
+        var minWidths = this._minWidths;
+        var appliedList = _.clone(widths);
+
+        _.each(appliedList, function(width, index) {
+            var minWidth = minWidths[index];
+            if (width &lt; minWidth) {
+                appliedList[index] = minWidth;
+            }
+        });
+
+        return appliedList;
+    },
+
+    /**
+     * Adjust the column widths to make them fit into the dimension.
+     * @param {number[]} widths - An array of column width
+     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
+     *                                    the column widths will be reduced.
+     * @returns {number[]} - A new array of column widths
+     * @private
+     */
+    _adjustWidths: function(widths, fitToReducedTotal) {
+        var columnLength = widths.length;
+        var availableWidth = this.dimensionModel.getAvailableTotalWidth(columnLength);
+        var totalExtraWidth = availableWidth - util.sum(widths);
+        var fixedCount = _.filter(this._fixedWidthFlags).length;
+        var adjustedWidths;
+
+        if (totalExtraWidth > 0 &amp;&amp; (columnLength > fixedCount)) {
+            adjustedWidths = this._addExtraColumnWidth(widths, totalExtraWidth);
+        } else if (fitToReducedTotal &amp;&amp; totalExtraWidth &lt; 0) {
+            adjustedWidths = this._reduceExcessColumnWidth(widths, totalExtraWidth);
+        } else {
+            adjustedWidths = widths;
+        }
+
+        return adjustedWidths;
+    },
+
+    /**
+     * width 값 변경시 각 column 별 너비를 계산한다.
+     * @private
+     */
+    _onDimensionWidthChange: function() {
+        var widths = this.get('widths');
+
+        if (!this._isModified) {
+            widths = this._adjustWidths(widths, true);
+        }
+        this._setColumnWidthVariables(widths);
+    },
+
+    /**
+     * L side 와 R side 에 따른 widths 를 반환한다.
+     * @param {String} [whichSide] 어느 영역인지 여부. L,R 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
+     * @returns {Array}  조회한 영역의 widths
+     */
+    getWidths: function(whichSide) {
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
+        var widths = [];
+
+        switch (whichSide) {
+            case frameConst.L:
+                widths = this.get('widths').slice(0, columnFrozenCount);
+                break;
+            case frameConst.R:
+                widths = this.get('widths').slice(columnFrozenCount);
+                break;
+            default :
+                widths = this.get('widths');
+                break;
+        }
+
+        return widths;
+    },
+
+    /**
+     * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
+     * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
+     * @returns {Number} 해당 frame 의 너비
+     */
+    getFrameWidth: function(whichSide) {
+        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
+        var widths = this.getWidths(whichSide);
+        var frameWidth = this._getFrameWidth(widths);
+
+        if (_.isUndefined(whichSide) &amp;&amp; columnFrozenCount > 0) {
+            frameWidth += CELL_BORDER_WIDTH;
+        }
+
+        return frameWidth;
+    },
+
+    /**
+     * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
+     * @param {Number} index    너비를 변경할 컬럼의 인덱스
+     * @param {Number} width    변경할 너비 pixel값
+     */
+    setColumnWidth: function(index, width) {
+        var widths = this.get('widths');
+        var minWidth = this._minWidths[index];
+
+        if (widths[index]) {
+            widths[index] = Math.max(width, minWidth);
+            this._setColumnWidthVariables(widths);
+            this._isModified = true;
+        }
+    },
+
+    /**
+     * Returns column index from X-position relative to the body-area
+     * @param {number} posX - X-position relative to the body-area
+     * @param {boolean} withMeta - Whether the meta columns go with this calculation
+     * @returns {number} Column index
+     * @private
+     */
+    indexOf: function(posX, withMeta) {
+        var widths = this.getWidths();
+        var totalColumnWidth = this.getFrameWidth();
+        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
+        var columnIndex = 0;
+
+        if (posX >= totalColumnWidth) {
+            columnIndex = widths.length - 1;
+        } else {
+            snippet.forEachArray(widths, function(width, index) { // eslint-disable-line consistent-return
+                width += CELL_BORDER_WIDTH;
+                columnIndex = index;
+
+                if (posX > width) {
+                    posX -= width;
+                } else {
+                    return false;
+                }
+            });
+        }
+
+        return Math.max(0, columnIndex - adjustableIndex);
+    },
+
+    /**
+     * Restore a column to the default width.
+     * @param {Number} index - target column index
+     */
+    restoreColumnWidth: function(index) {
+        var orgWidth = this.get('originalWidths')[index];
+
+        this.setColumnWidth(index, orgWidth);
+    }
+});
+
+module.exports = CoordColumn;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

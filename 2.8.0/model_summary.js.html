@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: model/dimension.js | Grid</title>
+    <title>Source: model/summary.js | Grid</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -58,392 +58,168 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview module:model/dimension
+ * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
  */
 
 'use strict';
 
 var _ = require('underscore');
+var snippet = require('tui-code-snippet');
 
 var Model = require('../base/model');
-var constMap = require('../common/constMap');
-var dimensionConstMap = constMap.dimension;
-var summaryPositionConst = constMap.summaryPosition;
-
-var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var typeConst = require('../common/constMap').summaryType;
 
 /**
- * Manage values about dimension (layout)
- * @module model/dimension
- * @param {Object} attrs - Attributes
- * @param {Object} options - Options
+ * Summary Model
+ * @module model/summary
  * @extends module:base/model
+ * @param {Object} attr - attributes
+ * @param {Object} options - options
  * @ignore
  */
-var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
-    initialize: function(attrs, options) {
-        Model.prototype.initialize.apply(this, arguments);
-
-        this.columnModel = options.columnModel;
+var Summary = Model.extend(/** @lends module:model/summary.prototype */{
+    initialize: function(attr, options) {
         this.dataModel = options.dataModel;
-        this.domState = options.domState;
 
-        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-        this.on('change:bodyHeight', this._onChangeBodyHeight);
+        /**
+         * An array of columnNames using auto calculation
+         * @type {Array.&lt;string>}
+         */
+        this.autoColumnNames = options.autoColumnNames;
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
-            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
-                _.debounce(_.bind(this._onDragMoveForHeight, this)));
+        /**
+         * Summary value map (KV)
+         * K: column name {string}
+         * V: value map {object}
+         * @type {object}
+         * @example
+         * {
+         *    columnName1: {
+         *        [typeConst.SUM]: 200,
+         *        [typeConst.AVG]: 200,
+         *    },
+         *    columnName2: {
+         *        [typeConst.MAX]: 100
+         *    }
+         * }
+         */
+        this.columnSummaryMap = {};
+
+        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
+        this.listenTo(this.dataModel, 'change', this._onChangeData);
+        this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
+
+        this._resetSummaryMap();
+    },
+
+    /**
+     * Calculate summaries of given array.
+     * Values which can not be converted to Number type will be considered as 0.
+     * @param {Array} values - An array of values (to be converted to Number type)
+     * @returns {Object}
+     * @private
+     */
+    _calculate: function(values) {
+        var min = Number.MAX_VALUE;
+        var max = Number.MIN_VALUE;
+        var sum = 0;
+        var count = values.length;
+        var resultMap = {};
+        var i, value;
+
+        for (i = 0; i &lt; count; i += 1) {
+            value = Number(values[i]);
+            if (isNaN(value)) {
+                value = 0;
+            }
+
+            sum += value;
+            if (min > value) {
+                min = value;
+            }
+            if (max &lt; value) {
+                max = value;
+            }
         }
 
-        this._resetSyncHeightHandler();
-    },
+        resultMap[typeConst.SUM] = sum;
+        resultMap[typeConst.MIN] = min;
+        resultMap[typeConst.MAX] = max;
+        resultMap[typeConst.AVG] = count ? (sum / count) : 0;
+        resultMap[typeConst.CNT] = count;
 
-    defaults: {
-        offsetLeft: 0,
-        offsetTop: 0,
-
-        width: 0,
-
-        headerHeight: 0,
-        bodyHeight: 0,
-
-        summaryHeight: 0,
-        summaryPosition: null,
-
-        resizeHandleHeight: 0,
-        paginationHeight: 0,
-
-        rowHeight: 0,
-        totalRowHeight: 0,
-        fixedRowHeight: true,
-
-        rsideWidth: 0,
-        lsideWidth: 0,
-
-        minimumColumnWidth: 0,
-        scrollBarSize: 17,
-        scrollX: true,
-        scrollY: true,
-        fitToParentHeight: false,
-        fixedHeight: false,
-
-        minRowHeight: 0,
-        minBodyHeight: 0,
-
-        frozenBorderWidth: null
+        return resultMap;
     },
 
     /**
-     * Event handler for 'windowResize' event on domEventBus
+     * Initialize summary map of columns specified in 'columnSummries' property.
      * @private
      */
-    _onResizeWindow: function() {
-        this.refreshLayout();
+    _resetSummaryMap: function() {
+        this._resetSummarySummaryValue();
     },
 
     /**
-     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
-     * @param {module:event/gridEvent} ev - GridEvent
+     * Reset summary values of given columnName
+     * @param {Array.&lt;string>} columnNames - An array of column names
      * @private
      */
-    _onDragMoveForHeight: function(ev) {
-        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
+    _resetSummarySummaryValue: function(columnNames) {
+        var targetColumnNames = this.autoColumnNames;
 
-        this.setHeight(height);
-    },
-
-    /**
-     * Event handler for changing 'bodyHeight' value
-     * @param {object} model - dimension model
-     * @private
-     */
-    _onChangeBodyHeight: function(model) {
-        var changed = model.changed;
-        var changedTotalRowHeight = changed.totalRowHeight;
-        var changedBodyHeight = changed.bodyHeight;
-
-        if (!changedTotalRowHeight &amp;&amp; changedBodyHeight) {
-            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
+        if (columnNames) {
+            targetColumnNames = _.intersection(columnNames, this.autoColumnNames);
         }
+        _.each(targetColumnNames, function(columnName) {
+            var values = this.dataModel.getColumnValues(columnName);
+            var valueMap = this._calculate(values);
+
+            this.columnSummaryMap[columnName] = valueMap;
+            this.trigger('change', columnName, valueMap);
+        }, this);
     },
 
     /**
-     * Attach/Detach event handler of change:totalRowHeight event based on the fixedHeight.
+     * Event handler for 'change' event on dataModel
+     * @param {object} model - row model
      * @private
      */
-    _resetSyncHeightHandler: function() {
-        if (this.get('fixedHeight')) {
-            this.off('change:totalRowHeight');
-        } else {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
+    _onChangeData: function(model) {
+        this._resetSummarySummaryValue(_.keys(model.changed));
     },
 
     /**
-     * Sets the bodyHeight value based on the totalRowHeight value.
+     * Event handler for 'deleteRange' event on dataModel
+     * @param {GridEvent} ev - event object when "delRange" event is fired
      * @private
      */
-    _syncBodyHeightWithTotalRowHeight: function() {
-        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
-        var minBodyHeight = this.get('minBodyHeight');
-        var bodyHeight = Math.max(minBodyHeight, realBodyHeight);
-
-        this.set('bodyHeight', bodyHeight);
+    _onDeleteRangeData: function(ev) {
+        this._resetSummarySummaryValue(ev.columnNames);
     },
 
     /**
-     * Returns whether division border (between meta column and data column) is doubled or not.
-     * Division border should be doubled only if visible fixed data column exists.
-     * @returns {Boolean}
+     * Returns the summary value of given column and type.
+     * If the summaryType is not specified, returns all values of types as an object
+     * @param {string} columnName - column name
+     * @param {string} [summaryType] - summary type
+     * @returns {number|Object}
      */
-    isDivisionBorderDoubled: function() {
-        return this.columnModel.getVisibleFrozenCount() > 0;
-    },
+    getValue: function(columnName, summaryType) {
+        var valueMap = this.columnSummaryMap[columnName];
+        var value;
 
-    /**
-     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-     * @param {number} columnLength - 컬럼의 개수
-     * @returns {number} 사용가능한 전체 셀의 넓이
-     * @private
-     */
-    getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width');
-        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
+        if (!summaryType) {
+            return _.isUndefined(valueMap) ? null : valueMap;
         }
 
-        return availableTotalWidth;
-    },
+        value = snippet.pick(valueMap, summaryType);
 
-    /**
-     * Calc body size of grid except scrollBar
-     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     */
-    getBodySize: function() {
-        var lsideWidth = this.get('lsideWidth'),
-            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
-            height = this.get('bodyHeight') - this.getScrollXHeight();
-
-        return {
-            height: height,
-            rsideWidth: rsideWidth,
-            totalWidth: lsideWidth + rsideWidth
-        };
-    },
-
-    /**
-     * Calc and get overflow values from container position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @returns {{x: number, y: number}} Mouse-overflow
-     */
-    getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this.getBodySize();
-
-        return this._judgeOverflow(containerPos, bodySize);
-    },
-
-    /**
-     * Judge overflow
-     * @param {{x: number, y: number}} containerPosition - Position values based on container
-     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
-     * @returns {{x: number, y: number}} Overflow values
-     * @private
-     */
-    _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x;
-        var containerY = containerPosition.y;
-        var overflowY = 0;
-        var overflowX = 0;
-
-        if (containerY &lt; 0) {
-            overflowY = -1;
-        } else if (containerY > bodySize.height) {
-            overflowY = 1;
-        }
-
-        if (containerX &lt; 0) {
-            overflowX = -1;
-        } else if (containerX > bodySize.totalWidth) {
-            overflowX = 1;
-        }
-
-        return {
-            x: overflowX,
-            y: overflowY
-        };
-    },
-
-    /**
-     * Return height of X-scrollBar.
-     * If no X-scrollBar, return 0
-     * @returns {number} Height of X-scrollBar
-     */
-    getScrollXHeight: function() {
-        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Return width of Y-scrollBar.
-     * If no Y-scrollBar, return 0
-     * @returns {number} Width of Y-scrollBar
-     */
-    getScrollYWidth: function() {
-        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * Returns the height of table body.
-     * @param  {number} height - The height of the dimension
-     * @returns {number} The height of the table body
-     * @private
-     */
-    _calcRealBodyHeight: function(height) {
-        var extraHeight = this.get('headerHeight') + this.get('summaryHeight') + TABLE_BORDER_WIDTH;
-
-        return height - extraHeight;
-    },
-
-    /**
-     * Returns the minimum height of table body.
-     * @returns {number} The minimum height of table body
-     * @private
-     */
-    _getMinBodyHeight: function() {
-        return this.get('minBodyHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
-    },
-
-    /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var columnFrozenCount = this.columnModel.getVisibleFrozenCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFrozenCount) {
-            borderWidth = (columnFrozenCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFrozenCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
-    },
-
-    /**
-     * Set the width of the dimension.
-     * @param {number} width - Width
-     */
-    setWidth: function(width) {
-        if (width > 0) {
-            this.set('width', width);
-            this.trigger('setWidth', width);
-        }
-    },
-
-    /**
-     * Sets the height of the dimension.
-     * (Resets the bodyHeight relative to the dimension height)
-     * @param  {number} height - The height of the dimension
-     * @private
-     */
-    setHeight: function(height) {
-        if (height > 0) {
-            this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        }
-    },
-
-    /**
-     * Returns the height of the dimension.
-     * @returns {Number} Height
-     */
-    getHeight: function() {
-        return this.get('bodyHeight') + this.get('headerHeight');
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    refreshLayout: function() {
-        var domState = this.domState;
-        var offset = domState.getOffset();
-
-        this.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: domState.getWidth()
-        });
-
-        if (this.get('fitToParentHeight')) {
-            this.setHeight(domState.getParentHeight());
-        }
-    },
-
-    /**
-     * Returns the offset.top of body
-     * @returns    {number}
-     */
-    getBodyOffsetTop: function() {
-        var offsetTop = this.domState.getOffset().top;
-        var summaryHeight = this.get('summaryPosition') === summaryPositionConst.TOP ? this.get('summaryHeight') : 0;
-
-        return offsetTop + this.get('headerHeight') + summaryHeight
-            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-    },
-
-    /**
-     * Returns the position relative to the body-area.
-     * @param {Number} pageX - x-pos relative to document
-     * @param {Number} pageY - y-pos relative to document
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    getPositionFromBodyArea: function(pageX, pageY) {
-        var bodyOffsetX = this.domState.getOffset().left;
-        var bodyOffsetY = this.getBodyOffsetTop();
-
-        return {
-            x: pageX - bodyOffsetX,
-            y: pageY - bodyOffsetY
-        };
-    },
-
-    /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
-     */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
+        return _.isUndefined(value) ? null : value;
     }
 });
 
-module.exports = Dimension;
+module.exports = Summary;
 </code></pre>
         </article>
     </section>
