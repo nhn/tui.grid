@@ -435,7 +435,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
      * @param {number} columnIndex - Column index
      * @param {string} [type] - Selection type
      */
-    update: function(rowIndex, columnIndex, type) {
+    update: function(rowIndex, columnIndex, type) { // eslint-disable-line complexity
         var focusedIndex;
 
         if (!this.enabled ||
@@ -633,17 +633,12 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
      * @returns {String}
      */
     getValuesToString: function() {
-        var renderModel = this.renderModel;
-        var columnModel = this.columnModel;
+        var self = this;
         var rowList = this._getRangeRowList();
         var columnNames = this._getRangeColumnNames();
         var rowValues = _.map(rowList, function(row) {
             return _.map(columnNames, function(columnName) {
-                if (columnModel.getCopyOptions(columnName).useFormattedValue) {
-                    return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
-                }
-
-                return row.getValueString(columnName);
+                return self.getValueToString(row.get('rowKey'), columnName);
             }).join('\t');
         });
 
@@ -652,6 +647,60 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         }
 
         return rowValues.join('\n');
+    },
+
+    /**
+     * Returns the string value of a single cell by copy options.
+     * @param {Nubmer} rowKey - Row key
+     * @param {Number} columnName - Column name
+     * @returns {String}
+     */
+    getValueToString: function(rowKey, columnName) {
+        var columnModel = this.columnModel;
+        var cellData = this.renderModel.getCellData(rowKey, columnName);
+        var copyOptions = columnModel.getCopyOptions(columnName);
+        var column = columnModel.getColumnModel(columnName);
+        var row = this.dataModel.get(rowKey);
+        var value = row.getValueString(columnName);
+        var text;
+
+        if (copyOptions.customValue) {
+            text = this._getCustomValue(
+                copyOptions.customValue,
+                value,
+                row.toJSON(),
+                column
+            );
+        } else if (copyOptions.useListItemText) {
+            text = value;
+        } else if (copyOptions.useFormattedValue) {
+            text = cellData.formattedValue;
+        } else {
+            text = value;
+        }
+
+        return text;
+    },
+
+    /**
+     * If the column has a 'copyOptions.customValue' function, exeucute it and returns the result.
+     * @param {String} customValue - value to display
+     * @param {String} value - value to display
+     * @param {Object} rowAttrs - All attributes of the row
+     * @param {Object} column - Column info
+     * @returns {String}
+     * @private
+     */
+    _getCustomValue: function(customValue, value, rowAttrs, column) {
+        var result;
+
+        if (_.isFunction(customValue)) {
+            result = customValue(value, rowAttrs, column);
+        } else {
+            result = customValue;
+        }
+
+        return result;
     },
 
     /**
@@ -748,7 +797,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
      * @param {{column: number[], row: number[]}} [inputRange] - Input range. Default is this.inputRange
      * @private
      */
-    _resetRangeAttribute: function(inputRange) {
+    _resetRangeAttribute: function(inputRange) { // eslint-disable-line complexity
         var dataModel = this.dataModel;
         var hasSpannedRange, spannedRange, tmpRowRange;
 

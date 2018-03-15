@@ -176,33 +176,34 @@ util = {
      * @param {*} dist      동등 비교할 dist
      * @returns {boolean}    동일한지 여부
      */
-    isEqual: function(target, dist) {
-        var isDiff,
-            compareObject = function(targetObj, distObj) {
-                var result = false;
+    isEqual: function(target, dist) { // eslint-disable-line complexity
+        var compareObject = function(targetObj, distObj) {
+            var result = false;
 
-                snippet.forEach(targetObj, function(item, key) {
-                    result = (item === distObj[key]);
-
-                    return result;
-                });
+            snippet.forEach(targetObj, function(item, key) {
+                result = (item === distObj[key]);
 
                 return result;
-            };
+            });
+
+            return result;
+        };
+        var result = true;
+        var isDiff;
 
         if (typeof target !== typeof dist) {
-            return false;
+            result = false;
         } else if (_.isArray(target) && target.length !== dist.length) {
-            return false;
+            result = false;
         } else if (_.isObject(target)) {
             isDiff = !compareObject(target, dist) || !compareObject(dist, target);
 
-            return !isDiff;
+            result = !isDiff;
         } else if (target !== dist) {
-            return false;
+            result = false;
         }
 
-        return true;
+        return result;
     },
 
     /**
@@ -329,15 +330,17 @@ util = {
      * @returns {*}  타입 컨버팅된 value
      */
     convertValueType: function(value, type) {
+        var result = value;
+
         if (type === 'string') {
-            return String(value);
+            result = String(value);
         } else if (type === 'number') {
-            return Number(value);
+            result = Number(value);
         } else if (type === 'boolean') {
-            return Boolean(value);
+            result = Boolean(value);
         }
 
-        return value;
+        return result;
     },
 
     /**

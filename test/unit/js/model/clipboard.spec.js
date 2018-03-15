@@ -40,46 +40,13 @@ describe('grid paste test', function() {
             expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
         });
 
-        describe('if selection does not exists, set text attribute to value of focused cell', function() {
-            var rowDataMock;
+        it('if selection does not exist, set text to values of a selected cell', function() {
+            clipboard.focusModel.which = _.constant({});
+            clipboard.selectionModel.hasSelection = _.constant(false);
+            clipboard.selectionModel.getValueToString = _.constant(SAMPLE_TEXT);
 
-            beforeEach(function() {
-                rowDataMock = {
-                    getValueString: jasmine.createSpy('getValueString').and.returnValue(SAMPLE_TEXT)
-                };
-                clipboard.dataModel.get = jasmine.createSpy('get').and.returnValue(rowDataMock);
-                clipboard.renderModel.getCellData =
-                    jasmine.createSpy('getCellData').and.returnValue({formattedValue: SAMPLE_TEXT});
-
-                clipboard.selectionModel.hasSelection = _.constant(false);
-                clipboard.focusModel.which = _.constant({
-                    rowKey: 0,
-                    columnName: 'c1'
-                });
-            });
-
-            it('with fommatedValue', function() {
-                clipboard.columnModel.getCopyOptions = jasmine.createSpy().and.returnValue({
-                    useFormattedValue: true
-                });
-                triggerCopyEvent('copy');
-
-                expect(clipboard.columnModel.getCopyOptions).toHaveBeenCalledWith('c1');
-                expect(clipboard.renderModel.getCellData).toHaveBeenCalledWith(0, 'c1');
-                expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
-            });
-
-            it('with original value', function() {
-                clipboard.columnModel.getCopyOptions = jasmine.createSpy().and.returnValue({
-                    useFormattedValue: false
-                });
-                triggerCopyEvent('copy');
-
-                expect(clipboard.columnModel.getCopyOptions).toHaveBeenCalledWith('c1');
-                expect(clipboard.dataModel.get).toHaveBeenCalledWith(0);
-                expect(rowDataMock.getValueString).toHaveBeenCalledWith('c1');
-                expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
-            });
+            triggerCopyEvent('copy');
+            expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
         });
     });
 
