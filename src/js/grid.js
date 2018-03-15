@@ -146,6 +146,8 @@ var instanceMap = {};
  *                  formatted values or original values as a string to be copied to the clipboard
  *              @param {boolean} [options.columns.copyOptions.useListItemText] - Whether to use
  *                  concatenated text or original values as a string to be copied to the clipboard
+ *              @param {function} [options.columns.copyOptions.customValue] - Whether to use
+ *                  customized value from "customValue" callback or original values as a string to be copied to the clipboard
  *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
  *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
  *              @param {function} [options.columns.relations.disabled] - If returns true, target columns

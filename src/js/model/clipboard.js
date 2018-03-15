@@ -132,23 +132,11 @@ var Clipboard = Model.extend(/** @lends module:model/clipboard.prototype*/{
 
         if (selectionModel.hasSelection()) {
             text = selectionModel.getValuesToString();
-        } else if (this._isUsingFormattedValue(focused.columnName)) {
-            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
         } else {
-            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
+            text = selectionModel.getValueToString(focused.rowKey, focused.columnName);
         }
 
         return text;
-    },
-
-    /**
-     * Returns the useFormattedValue of copyOptions of given column
-     * @param {string} columnName - column name
-     * @returns {boolean}
-     * @private
-     */
-    _isUsingFormattedValue: function(columnName) {
-        return this.columnModel.getCopyOptions(columnName).useFormattedValue;
     }
 });
 

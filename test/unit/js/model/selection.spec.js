@@ -48,7 +48,8 @@ function create(rowList) {
         selectionUnit: 'cell'
     }, {
         columnModel: columnModel,
-        dataModel: dataModel
+        dataModel: dataModel,
+        renderModel: new Model()
     });
 }
 
@@ -97,9 +98,14 @@ describe('model/selection', function() {
     });
 
     describe('getValuesToString', function() {
-        it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
-            var selection = create();
+        var selection;
 
+        beforeEach(function() {
+            selection = create();
+            selection.renderModel.getCellData = _.constant({});
+        });
+
+        it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
             selection.start(0, 1);
             selection.update(2, 2);
 
@@ -110,9 +116,7 @@ describe('model/selection', function() {
             );
         });
 
-        it('if useFormattedValue is true, use formatted value', function() {
-            var selection = create();
-
+        it('if copyOptions.useFormattedValue is true, use formatted value', function() {
             selection.start(0, 1);
             selection.update(2, 2);
             selection.columnModel.set('copyOptions', {
@@ -132,6 +136,76 @@ describe('model/selection', function() {
                 '*0-2*\t*0-3*\n' +
                 '*1-2*\t*1-3*\n' +
                 '*2-2*\t*2-3*'
+            );
+        });
+
+        it('if copyOptions.useFormattedValue is false, use the original value.', function() {
+            selection.start(0, 1);
+            selection.update(2, 2);
+            selection.columnModel.set('copyOptions', {
+                useFormattedValue: false
+            });
+            selection.renderModel = {
+                getCellData: function(rowKey, columnName) {
+                    var value = selection.dataModel.getValue(rowKey, columnName);
+
+                    return {
+                        formattedValue: '*' + value + '*'
+                    };
+                }
+            };
+
+            expect(selection.getValuesToString()).toEqual(
+                '0-2\t0-3\n' +
+                '1-2\t1-3\n' +
+                '2-2\t2-3'
+            );
+        });
+
+        it('if copyOptions.customValue set value, returns the custom value.', function() {
+            selection.start(0, 1);
+            selection.update(2, 2);
+            selection.columnModel.set('copyOptions', {
+                customValue: 'test'
+            });
+            selection.renderModel = {
+                getCellData: function() {
+                    return {
+                        customValue: selection.columnModel.get('copyOptions').customValue
+                    };
+                }
+            };
+
+            expect(selection.getValuesToString()).toEqual(
+                'test\ttest\n' +
+                'test\ttest\n' +
+                'test\ttest'
+            );
+        });
+
+        it('if copyOptions.customValue and copyOptions.useFormattedValue options are used together, ' +
+          'returns the custom value.', function() {
+            selection.start(0, 1);
+            selection.update(2, 2);
+            selection.columnModel.set('copyOptions', {
+                useFormattedValue: true,
+                customValue: 'test'
+            });
+            selection.renderModel = {
+                getCellData: function(rowKey, columnName) {
+                    var value = selection.dataModel.getValue(rowKey, columnName);
+
+                    return {
+                        formattedValue: '*' + value + '*',
+                        customValue: selection.columnModel.get('copyOptions').customValue
+                    };
+                }
+            };
+
+            expect(selection.getValuesToString()).toEqual(
+                'test\ttest\n' +
+                'test\ttest\n' +
+                'test\ttest'
             );
         });
     });

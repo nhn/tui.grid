@@ -416,7 +416,7 @@ var CoordColumn = Model.extend(/** @lends module:model/coordColumn.prototype */{
             case frameConst.R:
                 widths = this.get('widths').slice(columnFrozenCount);
                 break;
-            default :
+            default:
                 widths = this.get('widths');
                 break;
         }
