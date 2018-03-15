@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Feb 22 2018 16:09:51 GMT+0900 (KST)"
- * version: 2.8.0
+ * bundle created at "Thu Mar 15 2018 17:28:13 GMT+0900 (KST)"
+ * version: 2.9.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -226,6 +226,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  formatted values or original values as a string to be copied to the clipboard
 	 *              @param {boolean} [options.columns.copyOptions.useListItemText] - Whether to use
 	 *                  concatenated text or original values as a string to be copied to the clipboard
+	 *              @param {function} [options.columns.copyOptions.customValue] - Whether to use
+	 *                  customized value from "customValue" callback or original values as a string to be copied to the clipboard
 	 *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
 	 *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
 	 *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
@@ -4717,33 +4719,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {*} dist      동등 비교할 dist
 	     * @returns {boolean}    동일한지 여부
 	     */
-	    isEqual: function(target, dist) {
-	        var isDiff,
-	            compareObject = function(targetObj, distObj) {
-	                var result = false;
+	    isEqual: function(target, dist) { // eslint-disable-line complexity
+	        var compareObject = function(targetObj, distObj) {
+	            var result = false;
 
-	                snippet.forEach(targetObj, function(item, key) {
-	                    result = (item === distObj[key]);
-
-	                    return result;
-	                });
+	            snippet.forEach(targetObj, function(item, key) {
+	                result = (item === distObj[key]);
 
 	                return result;
-	            };
+	            });
+
+	            return result;
+	        };
+	        var result = true;
+	        var isDiff;
 
 	        if (typeof target !== typeof dist) {
-	            return false;
+	            result = false;
 	        } else if (_.isArray(target) && target.length !== dist.length) {
-	            return false;
+	            result = false;
 	        } else if (_.isObject(target)) {
 	            isDiff = !compareObject(target, dist) || !compareObject(dist, target);
 
-	            return !isDiff;
+	            result = !isDiff;
 	        } else if (target !== dist) {
-	            return false;
+	            result = false;
 	        }
 
-	        return true;
+	        return result;
 	    },
 
 	    /**
@@ -4870,15 +4873,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {*}  타입 컨버팅된 value
 	     */
 	    convertValueType: function(value, type) {
+	        var result = value;
+
 	        if (type === 'string') {
-	            return String(value);
+	            result = String(value);
 	        } else if (type === 'number') {
-	            return Number(value);
+	            result = Number(value);
 	        } else if (type === 'boolean') {
-	            return Boolean(value);
+	            result = Boolean(value);
 	        }
 
-	        return value;
+	        return result;
 	    },
 
 	    /**
@@ -6309,7 +6314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            case frameConst.R:
 	                widths = this.get('widths').slice(columnFrozenCount);
 	                break;
-	            default :
+	            default:
 	                widths = this.get('widths');
 	                break;
 	        }
@@ -9413,7 +9418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} columnIndex - Column index
 	     * @param {string} [type] - Selection type
 	     */
-	    update: function(rowIndex, columnIndex, type) {
+	    update: function(rowIndex, columnIndex, type) { // eslint-disable-line complexity
 	        var focusedIndex;
 
 	        if (!this.enabled ||
@@ -9611,17 +9616,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    getValuesToString: function() {
-	        var renderModel = this.renderModel;
-	        var columnModel = this.columnModel;
+	        var self = this;
 	        var rowList = this._getRangeRowList();
 	        var columnNames = this._getRangeColumnNames();
 	        var rowValues = _.map(rowList, function(row) {
 	            return _.map(columnNames, function(columnName) {
-	                if (columnModel.getCopyOptions(columnName).useFormattedValue) {
-	                    return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
-	                }
-
-	                return row.getValueString(columnName);
+	                return self.getValueToString(row.get('rowKey'), columnName);
 	            }).join('\t');
 	        });
 
@@ -9630,6 +9630,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return rowValues.join('\n');
+	    },
+
+	    /**
+	     * Returns the string value of a single cell by copy options.
+	     * @param {Nubmer} rowKey - Row key
+	     * @param {Number} columnName - Column name
+	     * @returns {String}
+	     */
+	    getValueToString: function(rowKey, columnName) {
+	        var columnModel = this.columnModel;
+	        var cellData = this.renderModel.getCellData(rowKey, columnName);
+	        var copyOptions = columnModel.getCopyOptions(columnName);
+	        var column = columnModel.getColumnModel(columnName);
+	        var row = this.dataModel.get(rowKey);
+	        var value = row.getValueString(columnName);
+	        var text;
+
+	        if (copyOptions.customValue) {
+	            text = this._getCustomValue(
+	                copyOptions.customValue,
+	                value,
+	                row.toJSON(),
+	                column
+	            );
+	        } else if (copyOptions.useListItemText) {
+	            text = value;
+	        } else if (copyOptions.useFormattedValue) {
+	            text = cellData.formattedValue;
+	        } else {
+	            text = value;
+	        }
+
+	        return text;
+	    },
+
+	    /**
+	     * If the column has a 'copyOptions.customValue' function, exeucute it and returns the result.
+	     * @param {String} customValue - value to display
+	     * @param {String} value - value to display
+	     * @param {Object} rowAttrs - All attributes of the row
+	     * @param {Object} column - Column info
+	     * @returns {String}
+	     * @private
+	     */
+	    _getCustomValue: function(customValue, value, rowAttrs, column) {
+	        var result;
+
+	        if (_.isFunction(customValue)) {
+	            result = customValue(value, rowAttrs, column);
+	        } else {
+	            result = customValue;
+	        }
+
+	        return result;
 	    },
 
 	    /**
@@ -9726,7 +9780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {{column: number[], row: number[]}} [inputRange] - Input range. Default is this.inputRange
 	     * @private
 	     */
-	    _resetRangeAttribute: function(inputRange) {
+	    _resetRangeAttribute: function(inputRange) { // eslint-disable-line complexity
 	        var dataModel = this.dataModel;
 	        var hasSpannedRange, spannedRange, tmpRowRange;
 
@@ -10237,23 +10291,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (selectionModel.hasSelection()) {
 	            text = selectionModel.getValuesToString();
-	        } else if (this._isUsingFormattedValue(focused.columnName)) {
-	            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
 	        } else {
-	            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
+	            text = selectionModel.getValueToString(focused.rowKey, focused.columnName);
 	        }
 
 	        return text;
-	    },
-
-	    /**
-	     * Returns the useFormattedValue of copyOptions of given column
-	     * @param {string} columnName - column name
-	     * @returns {boolean}
-	     * @private
-	     */
-	    _isUsingFormattedValue: function(columnName) {
-	        return this.columnModel.getCopyOptions(columnName).useFormattedValue;
 	    }
 	});
 
