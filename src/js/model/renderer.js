@@ -552,7 +552,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
             if (currentModel) {
                 rowNum = currentModel.get('rowNum');
-                newRowNum = index + 1;
+                newRowNum = index + this.get('startNumber');
 
                 if (rowNum !== newRowNum) {
                     currentModel.set({
