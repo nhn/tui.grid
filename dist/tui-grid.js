@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Mar 15 2018 17:28:13 GMT+0900 (KST)"
- * version: 2.9.0
+ * bundle created at "Tue Mar 27 2018 17:28:00 GMT+0900 (KST)"
+ * version: 2.9.1
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8076,7 +8076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (currentModel) {
 	                rowNum = currentModel.get('rowNum');
-	                newRowNum = index + 1;
+	                newRowNum = index + this.get('startNumber');
 
 	                if (rowNum !== newRowNum) {
 	                    currentModel.set({
