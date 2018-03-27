@@ -1,0 +1,926 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: addon/net.js | Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-Grid_.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setSummaryColumnContent">setSummaryColumnContent</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:deleteRange">deleteRange</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li><li><a href="tutorial-addon_net-router.js.html">addon_net-router.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="addon_net-router.js_sub"></div></li><li><a href="tutorial-addon_net.js.html">addon_net.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="addon_net.js_sub"></div></li><li><a href="tutorial-base_collection.js.html">base_collection.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="base_collection.js_sub"></div></li><li><a href="tutorial-base_model.js.html">base_model.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="base_model.js_sub"></div></li><li><a href="tutorial-base_painter.js.html">base_painter.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="base_painter.js_sub"></div></li><li><a href="tutorial-base_view.js.html">base_view.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="base_view.js_sub"></div></li><li><a href="tutorial-common_classNameConst.js.html">common_classNameConst.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_classNameConst.js_sub"></div></li><li><a href="tutorial-common_clipboardUtil.js.html">common_clipboardUtil.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_clipboardUtil.js_sub"></div></li><li><a href="tutorial-common_constMap.js.html">common_constMap.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_constMap.js_sub"></div></li><li><a href="tutorial-common_formUtil.js.html">common_formUtil.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_formUtil.js_sub"></div></li><li><a href="tutorial-common_i18n.js.html">common_i18n.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_i18n.js_sub"></div></li><li><a href="tutorial-common_message.js.html">common_message.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_message.js_sub"></div></li><li><a href="tutorial-common_util.js.html">common_util.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="common_util.js_sub"></div></li><li><a href="tutorial-componentHolder.js.html">componentHolder.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="componentHolder.js_sub"></div></li><li><a href="tutorial-domState.js.html">domState.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="domState.js_sub"></div></li><li><a href="tutorial-event_domEventBus.js.html">event_domEventBus.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="event_domEventBus.js_sub"></div></li><li><a href="tutorial-event_dragEventEmitter.js.html">event_dragEventEmitter.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="event_dragEventEmitter.js_sub"></div></li><li><a href="tutorial-event_gridEvent.js.html">event_gridEvent.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="event_gridEvent.js_sub"></div></li><li><a href="tutorial-event_keyEvent.js.html">event_keyEvent.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="event_keyEvent.js_sub"></div></li><li><a href="tutorial-grid.js.html">grid.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="grid.js_sub"></div></li><li><a href="tutorial-index_.html">index</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="index_sub"></div></li><li><a href="tutorial-index.js.html">index.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="index.js_sub"></div></li><li><a href="tutorial-model_clipboard.js.html">model_clipboard.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_clipboard.js_sub"></div></li><li><a href="tutorial-model_coordColumn.js.html">model_coordColumn.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_coordColumn.js_sub"></div></li><li><a href="tutorial-model_coordConverter.js.html">model_coordConverter.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_coordConverter.js_sub"></div></li><li><a href="tutorial-model_coordRow.js.html">model_coordRow.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_coordRow.js_sub"></div></li><li><a href="tutorial-model_data_columnModel.js.html">model_data_columnModel.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_data_columnModel.js_sub"></div></li><li><a href="tutorial-model_data_extraDataManager.js.html">model_data_extraDataManager.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_data_extraDataManager.js_sub"></div></li><li><a href="tutorial-model_data_row.js.html">model_data_row.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_data_row.js_sub"></div></li><li><a href="tutorial-model_data_rowList.js.html">model_data_rowList.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_data_rowList.js_sub"></div></li><li><a href="tutorial-model_dimension.js.html">model_dimension.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_dimension.js_sub"></div></li><li><a href="tutorial-model_focus.js.html">model_focus.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_focus.js_sub"></div></li><li><a href="tutorial-model_manager.js.html">model_manager.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_manager.js_sub"></div></li><li><a href="tutorial-model_renderer-smart.js.html">model_renderer-smart.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_renderer-smart.js_sub"></div></li><li><a href="tutorial-model_renderer.js.html">model_renderer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_renderer.js_sub"></div></li><li><a href="tutorial-model_row.js.html">model_row.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_row.js_sub"></div></li><li><a href="tutorial-model_rowList.js.html">model_rowList.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_rowList.js_sub"></div></li><li><a href="tutorial-model_selection.js.html">model_selection.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_selection.js_sub"></div></li><li><a href="tutorial-model_summary.js.html">model_summary.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="model_summary.js_sub"></div></li><li><a href="tutorial-module-addon_net_.html">module-addon_net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module-addon_net_sub"></div></li><li><a href="tutorial-module-event_gridEvent_.html">module-event_gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module-event_gridEvent_sub"></div></li><li><a href="tutorial-painter_cell.js.html">painter_cell.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_cell.js_sub"></div></li><li><a href="tutorial-painter_controller.js.html">painter_controller.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_controller.js_sub"></div></li><li><a href="tutorial-painter_dummyCell.js.html">painter_dummyCell.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_dummyCell.js_sub"></div></li><li><a href="tutorial-painter_input_base.js.html">painter_input_base.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_input_base.js_sub"></div></li><li><a href="tutorial-painter_input_button.js.html">painter_input_button.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_input_button.js_sub"></div></li><li><a href="tutorial-painter_input_mainButton.js.html">painter_input_mainButton.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_input_mainButton.js_sub"></div></li><li><a href="tutorial-painter_input_select.js.html">painter_input_select.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_input_select.js_sub"></div></li><li><a href="tutorial-painter_input_text.js.html">painter_input_text.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_input_text.js_sub"></div></li><li><a href="tutorial-painter_manager.js.html">painter_manager.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_manager.js_sub"></div></li><li><a href="tutorial-painter_row.js.html">painter_row.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="painter_row.js_sub"></div></li><li><a href="tutorial-publicEventEmitter.js.html">publicEventEmitter.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="publicEventEmitter.js_sub"></div></li><li><a href="tutorial-theme_cssRuleBuilder.js.html">theme_cssRuleBuilder.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_cssRuleBuilder.js_sub"></div></li><li><a href="tutorial-theme_manager.js.html">theme_manager.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_manager.js_sub"></div></li><li><a href="tutorial-theme_preset_clean.js.html">theme_preset_clean.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_preset_clean.js_sub"></div></li><li><a href="tutorial-theme_preset_default.js.html">theme_preset_default.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_preset_default.js_sub"></div></li><li><a href="tutorial-theme_preset_normal.js.html">theme_preset_normal.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_preset_normal.js_sub"></div></li><li><a href="tutorial-theme_preset_striped.js.html">theme_preset_striped.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_preset_striped.js_sub"></div></li><li><a href="tutorial-theme_styleGenerator.js.html">theme_styleGenerator.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="theme_styleGenerator.js_sub"></div></li><li><a href="tutorial-tutorial-example01-basic.html">tutorial-example01-basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example01-basic_sub"></div></li><li><a href="tutorial-tutorial-example02-formatter.html">tutorial-example02-formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example02-formatter_sub"></div></li><li><a href="tutorial-tutorial-example03-complex-columns.html">tutorial-example03-complex-columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example03-complex-columns_sub"></div></li><li><a href="tutorial-tutorial-example04-input-types.html">tutorial-example04-input-types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example04-input-types_sub"></div></li><li><a href="tutorial-tutorial-example05-relation-columns.html">tutorial-example05-relation-columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example05-relation-columns_sub"></div></li><li><a href="tutorial-tutorial-example06-using-extradata.html">tutorial-example06-using-extradata</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example06-using-extradata_sub"></div></li><li><a href="tutorial-tutorial-example07-applying-themes.html">tutorial-example07-applying-themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example07-applying-themes_sub"></div></li><li><a href="tutorial-tutorial-example08-using-datepicker.html">tutorial-example08-using-datepicker</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example08-using-datepicker_sub"></div></li><li><a href="tutorial-tutorial-example09-using-summary.html">tutorial-example09-using-summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example09-using-summary_sub"></div></li><li><a href="tutorial-tutorial-example10-using-net.html">tutorial-example10-using-net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example10-using-net_sub"></div></li><li><a href="tutorial-tutorial-example11-customizing-rowheaders.html">tutorial-example11-customizing-rowheaders</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-tutorial-example12-using-whitespace.html">tutorial-example12-using-whitespace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example12-using-whitespace_sub"></div></li><li><a href="tutorial-tutorial-example13-i18n.html">tutorial-example13-i18n</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example13-i18n_sub"></div></li><li><a href="tutorial-tutorial-example14-design.html">tutorial-example14-design</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-example14-design_sub"></div></li><li><a href="tutorial-tutorial-test.html">tutorial-test</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial-test_sub"></div></li><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-formatter.html">2. Formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-formatter_sub"></div></li><li><a href="tutorial-example03-complex-columns.html">3. Complex columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-complex-columns_sub"></div></li><li><a href="tutorial-example04-input-types.html">4. Input types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-input-types_sub"></div></li><li><a href="tutorial-example05-relation-columns.html">5. Relation between columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-relation-columns_sub"></div></li><li><a href="tutorial-example06-using-extradata.html">6. Using _extraData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-using-extradata_sub"></div></li><li><a href="tutorial-example07-applying-themes.html">7. Applying Themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-applying-themes_sub"></div></li><li><a href="tutorial-example08-using-datepicker.html">8. Using DatePicker component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-using-datepicker_sub"></div></li><li><a href="tutorial-example09-using-summary.html">9. Using Summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-using-summary_sub"></div></li><li><a href="tutorial-example10-using-net.html">10. Binding to remote data using net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-using-net_sub"></div></li><li><a href="tutorial-example11-customizing-rowheaders.html">11. Customizing Row headers</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-example12-using-whitespace.html">12. Using whiteSpace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-using-whitespace_sub"></div></li><li><a href="tutorial-example13-i18n.html">13. Internationalization (i18n)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example13-i18n_sub"></div></li><li><a href="tutorial-example14-design.html">example14-design</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example14-design_sub"></div></li><li><a href="tutorial-test.html">test</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="test_sub"></div></li><li><a href="tutorial-view_clipboard.js.html">view_clipboard.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_clipboard.js_sub"></div></li><li><a href="tutorial-view_container.js.html">view_container.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_container.js_sub"></div></li><li><a href="tutorial-view_datePickerLayer.js.html">view_datePickerLayer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_datePickerLayer.js_sub"></div></li><li><a href="tutorial-view_editingLayer.js.html">view_editingLayer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_editingLayer.js_sub"></div></li><li><a href="tutorial-view_factory.js.html">view_factory.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_factory.js_sub"></div></li><li><a href="tutorial-view_focusLayer.js.html">view_focusLayer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_focusLayer.js_sub"></div></li><li><a href="tutorial-view_heightResizeHandle.js.html">view_heightResizeHandle.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_heightResizeHandle.js_sub"></div></li><li><a href="tutorial-view_layout_body.js.html">view_layout_body.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_body.js_sub"></div></li><li><a href="tutorial-view_layout_bodyTable.js.html">view_layout_bodyTable.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_bodyTable.js_sub"></div></li><li><a href="tutorial-view_layout_content-area.js.html">view_layout_content-area.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_content-area.js_sub"></div></li><li><a href="tutorial-view_layout_frame-lside.js.html">view_layout_frame-lside.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_frame-lside.js_sub"></div></li><li><a href="tutorial-view_layout_frame-rside.js.html">view_layout_frame-rside.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_frame-rside.js_sub"></div></li><li><a href="tutorial-view_layout_frame.js.html">view_layout_frame.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_frame.js_sub"></div></li><li><a href="tutorial-view_layout_header.js.html">view_layout_header.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_header.js_sub"></div></li><li><a href="tutorial-view_layout_resizeHandle.js.html">view_layout_resizeHandle.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_resizeHandle.js_sub"></div></li><li><a href="tutorial-view_layout_summary.js.html">view_layout_summary.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_layout_summary.js_sub"></div></li><li><a href="tutorial-view_pagination.js.html">view_pagination.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_pagination.js_sub"></div></li><li><a href="tutorial-view_rowList.js.html">view_rowList.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_rowList.js_sub"></div></li><li><a href="tutorial-view_selectionLayer.js.html">view_selectionLayer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_selectionLayer.js_sub"></div></li><li><a href="tutorial-view_stateLayer.js.html">view_stateLayer.js</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="view_stateLayer.js_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li><li><a href="module-event_gridEvent.html">event/gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:event/gridEvent_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-event_gridEvent.html#stop">stop</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setSummaryColumnContent">setSummaryColumnContent</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:deleteRange">deleteRange</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Add-on for binding to remote data
+ * @author NHN Ent. FE Development Lab
+ */
+
+'use strict';
+
+var $ = require('jquery');
+var Backbone = require('backbone');
+var _ = require('underscore');
+
+var View = require('../base/view');
+var Router = require('./net-router');
+var util = require('../common/util');
+var formUtil = require('../common/formUtil');
+var i18n = require('../common/i18n');
+var GridEvent = require('../event/gridEvent');
+
+var renderStateMap = require('../common/constMap').renderState;
+var DELAY_FOR_LOADING_STATE = 200;
+
+var requestMessageMap = {
+    createData: 'net.confirmCreate',
+    updateData: 'net.confirmUpdate',
+    deleteData: 'net.confirmDelete',
+    modifyData: 'net.confirmModify'
+};
+var errorMessageMap = {
+    createData: 'net.noDataToCreate',
+    updateData: 'net.noDataToUpdate',
+    deleteData: 'net.noDataToDelete',
+    modifyData: 'net.noDataToModify'
+};
+
+/**
+ * Add-on for binding to remote data
+ * @module addon/net
+ * @param {object} options
+ *      @param {jquery} [options.el] - Form element (to be used for ajax request)
+ *      @param {boolean} [options.initialRequest=true] - Whether to request 'readData' after initialized
+ *      @param {string} [options.readDataMethod='POST'] - Http method to be used for 'readData' API ('POST' or 'GET')
+ *      @param {object} [options.api] - URL map
+ *          @param {string} [options.api.readData] - URL for read-data
+ *          @param {string} [options.api.createData] - URL for create
+ *          @param {string} [options.api.updateData] - URL for update
+ *          @param {string} [options.api.modifyData] - URL for modify (create/update/delete at once)
+ *          @param {string} [options.api.deleteData] - URL for delete
+ *          @param {string} [options.api.downloadExcel] - URL for download data of this page as an excel-file
+ *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
+ *      @param {number} [options.perPage=500] - The number of items to be shown in a page
+ *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
+ * @example
+ *   &lt;form id="data_form">
+ *   &lt;input type="text" name="query"/>
+ *   &lt;/form>
+ *   &lt;script>
+ *      var net;
+ *      var grid = new tui.Grid({
+ *          //...options...
+ *      });
+ *
+ *      // Activate 'Net' addon
+ *      grid.use('Net', {
+ *         el: $('#data_form'),
+ *         initialRequest: true,
+ *         readDataMethod: 'GET',
+ *         perPage: 500,
+ *         enableAjaxHistory: true,
+ *         api: {
+ *             'readData': './api/read',
+ *             'createData': './api/create',
+ *             'updateData': './api/update',
+ *             'deleteData': './api/delete',
+ *             'modifyData': './api/modify',
+ *             'downloadExcel': './api/download/excel',
+ *             'downloadExcelAll': './api/download/excelAll'
+ *         }
+ *      });
+ *
+ *      // Bind event handlers
+ *      grid.on('beforeRequest', function(data) {
+ *          // For all requests
+ *      }).on('response', function(data) {
+ *          // For all response (regardless of success or failure)
+ *      }).on('successResponse', function(data) {
+ *          // Only if response.result is true
+ *      }).on('failResponse', function(data) {
+ *          // Only if response.result is false
+ *      }).on('errorResponse', function(data) {
+ *          // For error response
+ *      });
+ *
+ *      net = grid.getAddOn('Net');
+ *
+ *      // Request create
+ *      net.request('createData');
+ *
+ *      // Request update
+ *      net.request('updateData');
+ *
+ *      // Request delete
+ *      net.request('deleteData');
+ *
+ *      // Request create/update/delete at once
+ *      net.request('modifyData');
+ *   &lt;/script>
+ */
+var Net = View.extend(/** @lends module:addon/net.prototype */{
+    initialize: function(options) {
+        var defaultOptions = {
+            initialRequest: true,
+            perPage: 500,
+            enableAjaxHistory: true
+        };
+        var defaultApi = {
+            readData: '',
+            createData: '',
+            updateData: '',
+            deleteData: '',
+            modifyData: '',
+            downloadExcel: '',
+            downloadExcelAll: ''
+        };
+
+        options = _.assign(defaultOptions, options);
+        options.api = _.assign(defaultApi, options.api);
+
+        _.assign(this, {
+            // models
+            dataModel: options.dataModel,
+            renderModel: options.renderModel,
+
+            // extra objects
+            router: null,
+            domEventBus: options.domEventBus,
+            pagination: options.pagination,
+
+            // configs
+            api: options.api,
+            enableAjaxHistory: options.enableAjaxHistory,
+            readDataMethod: options.readDataMethod || 'POST',
+            perPage: options.perPage,
+
+            // state data
+            curPage: 1,
+            timeoutIdForDelay: null,
+            requestedFormData: null,
+            isLocked: false,
+            lastRequestedReadData: null
+        });
+
+        this._initializeDataModelNetwork();
+        this._initializeRouter();
+        this._initializePagination();
+
+        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged);
+        this.listenTo(this.domEventBus, 'click:excel', this._onClickExcel);
+
+        if (options.initialRequest) {
+            if (!this.lastRequestedReadData) {
+                this._readDataAt(1, false);
+            }
+        }
+    },
+
+    tagName: 'form',
+
+    events: {
+        submit: '_onSubmit'
+    },
+
+    /**
+     * pagination instance 를 초기화 한다.
+     * @private
+     */
+    _initializePagination: function() {
+        var pagination = this.pagination;
+
+        if (pagination) {
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(1);
+            pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
+        }
+    },
+
+    /**
+     * Event listener for 'route:read' event on Router
+     * @param  {String} queryStr - Query string
+     * @private
+     */
+    _onRouterRead: function(queryStr) {
+        var data = util.toQueryObject(queryStr);
+        this._requestReadData(data);
+    },
+
+    /**
+     * Event listener for 'click:excel' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onClickExcel: function(gridEvent) {
+        var downloadType = (gridEvent.type === 'all') ? 'excelAll' : 'excel';
+        this.download(downloadType);
+    },
+
+    /**
+     * dataModel 이 network 통신을 할 수 있도록 설정한다.
+     * @private
+     */
+    _initializeDataModelNetwork: function() {
+        this.dataModel.url = this.api.readData;
+        this.dataModel.sync = $.proxy(this._sync, this);
+    },
+
+    /**
+     * ajax history 를 사용하기 위한 router 를 초기화한다.
+     * @private
+     */
+    _initializeRouter: function() {
+        if (this.enableAjaxHistory) {
+            this.router = new Router({
+                net: this
+            });
+            this.listenTo(this.router, 'route:read', this._onRouterRead);
+
+            if (!Backbone.History.started) {
+                Backbone.history.start();
+            }
+        }
+    },
+
+    /**
+     * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
+     * @param {{page:number}} customEvent pagination 으로부터 전달받는 이벤트 객체
+     * @private
+     */
+    _onPageBeforeMove: function(customEvent) {
+        var page = customEvent.page;
+        if (this.curPage !== page) {
+            this._readDataAt(page, true);
+        }
+    },
+
+    /**
+     * form 의 submit 이벤트 발생시 이벤트 핸들러
+     * @param {event} submitEvent   submit 이벤트 객체
+     * @private
+     */
+    _onSubmit: function(submitEvent) {
+        submitEvent.preventDefault();
+        this._readDataAt(1, false);
+    },
+
+    /**
+     * 폼 데이터를 설정한다.
+     * @param {Object} data - 폼 데이터 정보
+     * @private
+     */
+    _setFormData: function(data) {
+        var formData = _.clone(data);
+
+        _.each(this.lastRequestedReadData, function(value, key) {
+            if ((_.isUndefined(formData[key]) || _.isNull(formData[key])) &amp;&amp; value) {
+                formData[key] = '';
+            }
+        });
+        formUtil.setFormData(this.$el, formData);
+    },
+
+    /**
+     * fetch 수행 이후 custom ajax 동작 처리를 위해 Backbone 의 기본 sync 를 오버라이드 하기위한 메서드.
+     * @param {String} method   router 로부터 전달받은 method 명
+     * @param {Object} model    fetch 를 수행한 dataModel
+     * @param {Object} options  request 정보
+     * @private
+     */
+    _sync: function(method, model, options) {
+        var params;
+        if (method === 'read') {
+            options = options || {};
+            params = $.extend({}, options);
+            if (!options.url) {
+                params.url = _.result(model, 'url');
+            }
+            this._ajax(params);
+        } else {
+            Backbone.sync(Backbone, method, model, options);
+        }
+    },
+
+    /**
+     * network 통신에 대한 _lock 을 건다.
+     * @private
+     */
+    _lock: function() {
+        var renderModel = this.renderModel;
+
+        this.timeoutIdForDelay = setTimeout(function() {
+            renderModel.set('state', renderStateMap.LOADING);
+        }, DELAY_FOR_LOADING_STATE);
+
+        this.isLocked = true;
+    },
+
+    /**
+     * network 통신에 대해 unlock 한다.
+     * loading layer hide 는 rendering 하는 로직에서 수행한다.
+     * @private
+     */
+    _unlock: function() {
+        if (this.timeoutIdForDelay !== null) {
+            clearTimeout(this.timeoutIdForDelay);
+            this.timeoutIdForDelay = null;
+        }
+
+        this.isLocked = false;
+    },
+
+    /**
+     * form 으로 지정된 엘리먼트의 Data 를 반환한다.
+     * @returns {object} formData 데이터 오브젝트
+     * @private
+     */
+    _getFormData: function() {
+        return formUtil.getFormData(this.$el);
+    },
+
+    /**
+     * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
+     * @param {object} dataModel grid 의 dataModel
+     * @param {object} responseData 응답 데이터
+     * @private
+     */
+    _onReadSuccess: function(dataModel, responseData) {
+        var pagination = this.pagination;
+        var page, totalCount;
+
+        dataModel.setOriginalRowList();
+
+        if (pagination &amp;&amp; responseData.pagination) {
+            page = responseData.pagination.page;
+            totalCount = responseData.pagination.totalCount;
+
+            pagination.setItemsPerPage(this.perPage);
+            pagination.setTotalItems(totalCount);
+            pagination.movePageTo(page);
+            this.curPage = page;
+        }
+    },
+
+    /**
+     * DataModel 에서 Backbone.fetch 수행 이후 error 콜백
+     * @param {object} dataModel grid 의 dataModel
+     * @param {object} responseData 응답 데이터
+     * @param {object} options  ajax 요청 정보
+     * @private
+     */
+    _onReadError: function(dataModel, responseData, options) {}, // eslint-disable-line
+
+    /**
+     * Requests 'readData' with last requested data.
+     */
+    reloadData: function() {
+        this._requestReadData(this.lastRequestedReadData);
+    },
+
+    /**
+     * Requests 'readData' to the server. The last requested data will be extended with new data.
+     * @param {Number} page - Page number
+     * @param {Object} data - Data(parameters) to send to the server
+     * @param {Boolean} resetData - If set to true, last requested data will be ignored.
+     */
+    readData: function(page, data, resetData) {
+        if (resetData) {
+            if (!data) {
+                data = {};
+            }
+            data.perPage = this.perPage;
+            this._changeSortOptions(data, this.dataModel.sortOptions);
+        } else {
+            data = _.assign({}, this.lastRequestedReadData, data);
+        }
+        data.page = page;
+        this._requestReadData(data);
+    },
+
+    /**
+     * 데이터 조회 요청.
+     * @param {object} data 요청시 사용할 request 파라미터
+     * @private
+     */
+    _requestReadData: function(data) {
+        var startNumber = 1;
+
+        this._setFormData(data);
+
+        if (!this.isLocked) {
+            this.renderModel.initializeVariables();
+            this._lock();
+
+            this.requestedFormData = _.clone(data);
+            this.curPage = data.page || this.curPage;
+            startNumber = ((this.curPage - 1) * this.perPage) + 1;
+            this.renderModel.set({
+                startNumber: startNumber
+            });
+
+            // 마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
+            this.lastRequestedReadData = _.clone(data);
+            this.dataModel.fetch({
+                requestType: 'readData',
+                data: data,
+                type: this.readDataMethod,
+                success: $.proxy(this._onReadSuccess, this),
+                error: $.proxy(this._onReadError, this),
+                reset: true
+            });
+            this.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
+        }
+
+        if (this.router) {
+            this.router.navigate('read/' + util.toQueryString(data), {
+                trigger: false
+            });
+        }
+    },
+
+    /**
+     * sortChanged 이벤트 발생시 실행되는 함수
+     * @private
+     * @param {object} sortOptions 정렬 옵션
+     * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+     * @param {boolean} sortOptions.ascending 오름차순 여부
+     */
+    _onSortChanged: function(sortOptions) {
+        if (sortOptions.requireFetch) {
+            this._readDataAt(1, true, sortOptions);
+        }
+    },
+
+    /**
+     * 데이터 객체의 정렬 옵션 관련 값을 변경한다.
+     * @private
+     * @param {object} data 데이터 객체
+     * @param {object} sortOptions 정렬 옵션
+     * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+     * @param {boolean} sortOptions.ascending 오름차순 여부
+     */
+    _changeSortOptions: function(data, sortOptions) {
+        if (!sortOptions) {
+            return;
+        }
+        if (sortOptions.columnName === 'rowKey') {
+            delete data.sortColumn;
+            delete data.sortAscending;
+        } else {
+            data.sortColumn = sortOptions.columnName;
+            data.sortAscending = sortOptions.ascending;
+        }
+    },
+
+    /**
+     * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
+     * @param {Number} page 조회할 페이지 정보
+     * @param {Boolean} [isUsingRequestedData=true] page 단위 검색이므로, form 수정여부와 관계없이 처음 보낸 form 데이터로 조회할지 여부를 결정한다.
+     * @param {object} sortOptions 정렬 옵션
+     * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+     * @param {boolean} sortOptions.ascending 오름차순 여부
+     * @private
+     */
+    _readDataAt: function(page, isUsingRequestedData, sortOptions) {
+        var data;
+
+        isUsingRequestedData = _.isUndefined(isUsingRequestedData) ? true : isUsingRequestedData;
+        data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
+        data.page = page;
+        data.perPage = this.perPage;
+        this._changeSortOptions(data, sortOptions);
+        this._requestReadData(data);
+    },
+
+    /**
+     * Send request to server to sync data
+     * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+     * @param {object} options - Options
+     *      @param {String} [options.url] - URL to send the request
+     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+     *      @param {String} [options.checkedOnly=true] - Whether the request param only contains checked rows
+     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
+     * @returns {boolean} Whether requests or not
+     */
+    request: function(requestType, options) {
+        var newOptions = _.extend({
+            url: this.api[requestType],
+            type: null,
+            hasDataParam: true,
+            checkedOnly: true,
+            modifiedOnly: true,
+            showConfirm: true,
+            updateOriginal: false
+        }, options);
+        var param = this._getRequestParam(requestType, newOptions);
+
+        if (param) {
+            if (newOptions.updateOriginal) {
+                this.dataModel.setOriginalRowList();
+            }
+            this._ajax(param);
+        }
+
+        return !!param;
+    },
+
+    /**
+     * Change window.location to registered url for downloading data
+     * @param {string} type - Download type. 'excel' or 'excelAll'.
+     *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
+     */
+    download: function(type) {
+        var apiName = 'download' + util.toUpperCaseFirstLetter(type),
+            data = this.requestedFormData,
+            url = this.api[apiName],
+            paramStr;
+
+        if (type === 'excel') {
+            data.page = this.curPage;
+            data.perPage = this.perPage;
+        } else {
+            data = _.omit(data, 'page', 'perPage');
+        }
+
+        paramStr = $.param(data);
+        window.location = url + '?' + paramStr;
+    },
+
+    /**
+     * Set number of rows per page and reload current page
+     * @param {number} perPage - Number of rows per page
+     */
+    setPerPage: function(perPage) {
+        this.perPage = perPage;
+        this._readDataAt(1);
+    },
+
+    /**
+     * 서버로 요청시 사용될 파라미터 중 Grid 의 데이터에 해당하는 데이터를 Option 에 맞추어 반환한다.
+     * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+     * @param {Object} [options] Options
+     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rows 관련 데이터가 포함될 지 여부.
+     *      @param {boolean} [options.modifiedOnly=true] rows 관련 데이터 중 수정된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.checkedOnly=true] rows 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+     * @returns {{count: number, data: {requestType: string, url: string, rows: object,
+     *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
+     * @private
+     */
+    _getDataParam: function(requestType, options) {
+        var dataModel = this.dataModel,
+            checkMap = {
+                createData: ['createdRows'],
+                updateData: ['updatedRows'],
+                deleteData: ['deletedRows'],
+                modifyData: ['createdRows', 'updatedRows', 'deletedRows']
+            },
+            checkList = checkMap[requestType],
+            data = {},
+            count = 0,
+            dataMap;
+
+        options = _.defaults(options || {}, {
+            hasDataParam: true,
+            modifiedOnly: true,
+            checkedOnly: true
+        });
+
+        if (options.hasDataParam) {
+            if (options.modifiedOnly) {
+                // {createdRows: [], updatedRows:[], deletedRows: []} 에 담는다.
+                dataMap = dataModel.getModifiedRows({
+                    checkedOnly: options.checkedOnly
+                });
+                _.each(dataMap, function(list, name) {
+                    if (_.contains(checkList, name) &amp;&amp; list.length) {
+                        count += list.length;
+                        data[name] = JSON.stringify(list);
+                    }
+                }, this);
+            } else {
+                // {rows: []} 에 담는다.
+                data.rows = dataModel.getRows(options.checkedOnly);
+                count = data.rows.length;
+            }
+        }
+
+        return {
+            data: data,
+            count: count
+        };
+    },
+
+    /**
+     * requestType 에 따라 서버에 요청할 파라미터를 반환한다.
+     * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+     * @param {Object} [options] Options
+     *      @param {String} [options.url=this.api[requestType]] 요청할 url.
+     *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
+     *      @param {String} [options.type='POST'] request method 타입
+     *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
+     *      @param {boolean} [options.modifiedOnly=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+     *      @param {boolean} [options.checkedOnly=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+     * @returns {{requestType: string, url: string, data: object, type: string, dataType: string}}
+     *      ajax 호출시 사용될 option 파라미터
+     * @private
+     */
+    _getRequestParam: function(requestType, options) {
+        var defaultOptions = {
+            url: this.api[requestType],
+            type: null,
+            hasDataParam: true,
+            modifiedOnly: true,
+            checkedOnly: true
+        };
+        var newOptions = $.extend(defaultOptions, options);
+        var dataParam = this._getDataParam(requestType, newOptions);
+        var param = null;
+
+        if (!newOptions.showConfirm || this._isConfirmed(requestType, dataParam.count)) {
+            param = {
+                requestType: requestType,
+                url: newOptions.url,
+                data: dataParam.data,
+                type: newOptions.type
+            };
+        }
+
+        return param;
+    },
+
+    /**
+     * requestType 에 따른 컨펌 메세지를 노출한다.
+     * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+     * @param {Number} count   전송될 데이터 개수
+     * @returns {boolean}    계속 진행할지 여부를 반환한다.
+     * @private
+     */
+    _isConfirmed: function(requestType, count) {
+        var result = false;
+
+        if (count > 0) {
+            result = confirm(this._getConfirmMessage(requestType, count));
+        } else {
+            alert(this._getConfirmMessage(requestType, count));
+        }
+
+        return result;
+    },
+
+    /**
+     * confirm message 를 반환한다.
+     * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+     * @param {Number} count 전송될 데이터 개수
+     * @returns {string} 생성된 confirm 메세지
+     * @private
+     */
+    _getConfirmMessage: function(requestType, count) {
+        var messageKey = (count > 0) ? requestMessageMap[requestType] : errorMessageMap[requestType];
+        var replacedValues = {
+            count: count
+        };
+
+        return i18n.get(messageKey, replacedValues);
+    },
+
+    /**
+     * ajax 통신을 한다.
+     * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+     * @private
+     */
+    _ajax: function(options) {
+        var gridEvent = new GridEvent(null, options.data);
+        var params;
+
+        /**
+         * Occurs before the http request is sent
+         * @event Grid#beforeRequest
+         * @type {module:event/gridEvent}
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('beforeRequest', gridEvent);
+        if (gridEvent.isStopped()) {
+            return;
+        }
+
+        options = $.extend({requestType: ''}, options);
+        params = {
+            url: options.url,
+            data: options.data || {},
+            type: options.type || 'POST',
+            dataType: options.dataType || 'json',
+            complete: $.proxy(this._onComplete, this, options.complete, options),
+            success: $.proxy(this._onSuccess, this, options.success, options),
+            error: $.proxy(this._onError, this, options.error, options)
+        };
+        if (options.url) {
+            $.ajax(params);
+        }
+    },
+
+    /**
+     * ajax complete 이벤트 핸들러
+     * @param {Function} callback   통신 완료 이후 수행할 콜백함수
+     * @param {object} jqXHR    jqueryXHR  객체
+     * @param {number} status   http status 정보
+     * @private
+     */
+    _onComplete: function(callback, jqXHR, status) { // eslint-disable-line no-unused-vars
+        this._unlock();
+    },
+
+    /* eslint-disable complexity */
+    /**
+     * ajax success 이벤트 핸들러
+     * @param {Function} callback Callback function
+     * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+     * @param {Object} responseData 응답 데이터
+     * @param {number} status   http status 정보
+     * @param {object} jqXHR    jqueryXHR  객체
+     * @private
+     */
+    _onSuccess: function(callback, options, responseData, status, jqXHR) {
+        var responseMessage = responseData &amp;&amp; responseData.message;
+        var gridEvent = new GridEvent(null, {
+            httpStatus: status,
+            requestType: options.requestType,
+            requestParameter: options.data,
+            responseData: responseData
+        });
+
+        /**
+         * Occurs when the response is received from the server
+         * @event Grid#reponse
+         * @type {module:event/gridEvent}
+         * @property {number} httpStatus - HTTP status
+         * @property {string} requestType - Request type
+         * @property {string} requestParameter - Request parameters
+         * @property {Object} responseData - response data
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('response', gridEvent);
+        if (gridEvent.isStopped()) {
+            return;
+        }
+        if (responseData &amp;&amp; responseData.result) {
+            /**
+             * Occurs after the response event, if the result is true
+             * @event Grid#successReponse
+             * @type {module:event/gridEvent}
+             * @property {number} httpStatus - HTTP status
+             * @property {string} requestType - Request type
+             * @property {string} requestParameter - Request parameter
+             * @property {Object} responseData - response data
+             * @property {Grid} instance - Current grid instance
+             */
+            this.trigger('successResponse', gridEvent);
+            if (gridEvent.isStopped()) {
+                return;
+            }
+            if (_.isFunction(callback)) {
+                callback(responseData.data || {}, status, jqXHR);
+            }
+        } else {
+            /**
+             * Occurs after the response event, if the result is false
+             * @event Grid#failResponse
+             * @type {module:event/gridEvent}
+             * @property {number} httpStatus - HTTP status
+             * @property {string} requestType - Request type
+             * @property {string} requestParameter - Request parameter
+             * @property {Object} responseData - response data
+             * @property {Grid} instance - Current grid instance
+             */
+            this.trigger('failResponse', gridEvent);
+            if (gridEvent.isStopped()) {
+                return;
+            }
+            if (responseMessage) {
+                alert(responseMessage);
+            }
+        }
+    },
+    /* eslint-enable complexity */
+
+    /**
+     * ajax error 이벤트 핸들러
+     * @param {Function} callback Callback function
+     * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+     * @param {object} jqXHR    jqueryXHR  객체
+     * @param {number} status   http status 정보
+     * @param {String} errorMessage 에러 메세지
+     * @private
+     */
+    _onError: function(callback, options, jqXHR, status) {
+        var eventData = new GridEvent(null, {
+            httpStatus: status,
+            requestType: options.requestType,
+            requestParameter: options.data,
+            responseData: null
+        });
+        this.renderModel.set('state', renderStateMap.DONE);
+
+        this.trigger('response', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+
+        /**
+         * Occurs after the response event, if the response is Error
+         * @event Grid#errorResponse
+         * @type {module:event/gridEvent}
+         * @property {number} httpStatus - HTTP status
+         * @property {string} requestType - Request type
+         * @property {string} requestParameter - Request parameters
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('errorResponse', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+
+        if (jqXHR.readyState > 1) {
+            alert(i18n.get('net.failResponse'));
+        }
+    }
+});
+
+module.exports = Net;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
