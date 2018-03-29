@@ -213,4 +213,22 @@ describe('grid', function() {
             expect(grid.getRow(1).c1).toEqual(data[1].c1);
         });
     });
+
+    describe('Using "useStatistics" option', function() {
+        var grid;
+
+        it('when the value set to true by default, the image element is attached.', function() {
+            grid = createGrid(['c1']);
+
+            expect(grid.imgElement).not.toBeNull();
+        });
+
+        it('when the value set to true, the image element is detached.', function() {
+            grid = createGrid(['c1'], {
+                useStatistics: false
+            });
+
+            expect(grid.imgElement).toBeNull();
+        });
+    });
 });

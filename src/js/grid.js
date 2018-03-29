@@ -189,6 +189,8 @@ var instanceMap = {};
  *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+ *      @param {boolean} [options.useStatistics=true] Send hostname to google analytics.
+ *          If you do not want to send host infomation, set this option to false.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
@@ -197,6 +199,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             options.summary = options.footer;
         }
 
+        this.imgElement = null;
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -220,6 +223,20 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
         if (options.data) {
             this.setData(options.data);
+        }
+
+        this._setGA(options.useStatistics);
+    },
+
+    /**
+     * Set google analytics
+     * @param {boolean} useStatistics - Whether to use google analytics or not
+     */
+    _setGA: function(useStatistics) {
+        useStatistics = snippet.isExisty(useStatistics) ? useStatistics : true;
+
+        if (useStatistics) {
+            this.imgElement = util.sendHostNameToGA();
         }
     },
 
@@ -994,9 +1011,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * Destroys the instance.
      */
     destroy: function() {
+        this.imgElement.remove();
         this.modelManager.destroy();
         this.container.destroy();
-        this.modelManager = this.container = null;
+        this.modelManager = this.container = this.imgElement = null;
     }
 });
 
