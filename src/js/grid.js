@@ -1011,7 +1011,6 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * Destroys the instance.
      */
     destroy: function() {
-        this.imgElement.remove();
         this.modelManager.destroy();
         this.container.destroy();
         this.modelManager = this.container = this.imgElement = null;
