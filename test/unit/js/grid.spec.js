@@ -220,13 +220,13 @@ describe('grid', function() {
             spyOn(snippet, 'imagePing');
         });
 
-        it('when the value set to true by default, the host name send.', function() {
+        it('when the value set to true by default, the host name is send.', function() {
             createGrid(['c1']);
 
             expect(snippet.imagePing).toHaveBeenCalled();
         });
 
-        it('when the value set to false, the host name do not send.', function() {
+        it('when the value set to false, the host name is not send.', function() {
             createGrid(['c1'], {
                 usageStatistics: false
             });
