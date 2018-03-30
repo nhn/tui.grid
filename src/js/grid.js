@@ -189,8 +189,8 @@ var instanceMap = {};
  *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- *      @param {boolean} [options.usageStatistics=true] Send hostname to google analytics.
- *          If you do not want to send the host name, set this option to false.
+ *      @param {boolean} [options.usageStatistics=true] Send the host name to google analytics.
+ *          If you do not want to send the host name, this option set to false.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
