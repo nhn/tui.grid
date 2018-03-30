@@ -458,7 +458,7 @@ util = {
             tid: 'UA-115377265-7',
             cid: hostname,
             dp: hostname,
-            dh: hostname
+            dh: 'grid'
         });
     }
 };
