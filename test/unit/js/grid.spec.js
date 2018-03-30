@@ -3,6 +3,7 @@
 var _ = require('underscore');
 
 var Grid = require('grid');
+var snippet = require('tui-code-snippet');
 
 describe('grid', function() {
     function createGrid(columnNames, options) {
@@ -215,20 +216,22 @@ describe('grid', function() {
     });
 
     describe('Using "usageStatistics" option', function() {
-        var grid;
-
-        it('when the value set to true by default, the image element is attached.', function() {
-            grid = createGrid(['c1']);
-
-            expect(grid.imgElement).not.toBeNull();
+        beforeEach(function() {
+            spyOn(snippet, 'imagePing');
         });
 
-        it('when the value set to true, the image element is detached.', function() {
-            grid = createGrid(['c1'], {
+        it('when the value set to true by default, the host name send.', function() {
+            createGrid(['c1']);
+
+            expect(snippet.imagePing).toHaveBeenCalled();
+        });
+
+        it('when the value set to false, the host name do not send.', function() {
+            createGrid(['c1'], {
                 usageStatistics: false
             });
 
-            expect(grid.imgElement).toBeNull();
+            expect(snippet.imagePing).not.toHaveBeenCalled();
         });
     });
 });

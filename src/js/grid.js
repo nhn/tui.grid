@@ -190,16 +190,19 @@ var instanceMap = {};
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  *      @param {boolean} [options.usageStatistics=true] Send hostname to google analytics.
- *          If you do not want to send host infomation, set this option to false.
+ *          If you do not want to send the host name, set this option to false.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
+        options = snippet.extend({
+            usageStatistics: true
+        }, options);
+
         if (options.footer) {
             util.warning('The "footer" option is deprecated since 2.5.0 and replaced by "summary" option.');
             options.summary = options.footer;
         }
 
-        this.imgElement = null;
         this.id = util.getUniqueKey();
         this.domState = new DomState(this.$el);
         this.domEventBus = DomEventBus.create();
@@ -225,18 +228,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             this.setData(options.data);
         }
 
-        this._setGA(options.usageStatistics);
-    },
-
-    /**
-     * Set google analytics
-     * @param {boolean} usageStatistics - Whether to use google analytics or not
-     */
-    _setGA: function(usageStatistics) {
-        usageStatistics = snippet.isExisty(usageStatistics) ? usageStatistics : true;
-
-        if (usageStatistics) {
-            this.imgElement = util.sendHostNameToGA();
+        if (options.usageStatistics) {
+            util.sendHostNameToGA();
         }
     },
 
@@ -1013,7 +1006,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     destroy: function() {
         this.modelManager.destroy();
         this.container.destroy();
-        this.modelManager = this.container = this.imgElement = null;
+        this.modelManager = this.container = null;
     }
 });
 
