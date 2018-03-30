@@ -214,7 +214,7 @@ describe('grid', function() {
         });
     });
 
-    describe('Using "useStatistics" option', function() {
+    describe('Using "usageStatistics" option', function() {
         var grid;
 
         it('when the value set to true by default, the image element is attached.', function() {
@@ -225,7 +225,7 @@ describe('grid', function() {
 
         it('when the value set to true, the image element is detached.', function() {
             grid = createGrid(['c1'], {
-                useStatistics: false
+                usageStatistics: false
             });
 
             expect(grid.imgElement).toBeNull();

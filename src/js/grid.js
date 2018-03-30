@@ -189,7 +189,7 @@ var instanceMap = {};
  *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- *      @param {boolean} [options.useStatistics=true] Send hostname to google analytics.
+ *      @param {boolean} [options.usageStatistics=true] Send hostname to google analytics.
  *          If you do not want to send host infomation, set this option to false.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
@@ -225,17 +225,17 @@ var Grid = View.extend(/** @lends Grid.prototype */{
             this.setData(options.data);
         }
 
-        this._setGA(options.useStatistics);
+        this._setGA(options.usageStatistics);
     },
 
     /**
      * Set google analytics
-     * @param {boolean} useStatistics - Whether to use google analytics or not
+     * @param {boolean} usageStatistics - Whether to use google analytics or not
      */
-    _setGA: function(useStatistics) {
-        useStatistics = snippet.isExisty(useStatistics) ? useStatistics : true;
+    _setGA: function(usageStatistics) {
+        usageStatistics = snippet.isExisty(usageStatistics) ? usageStatistics : true;
 
-        if (useStatistics) {
+        if (usageStatistics) {
             this.imgElement = util.sendHostNameToGA();
         }
     },
