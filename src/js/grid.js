@@ -189,9 +189,15 @@ var instanceMap = {};
  *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+ *      @param {boolean} [options.usageStatistics=true] Send the host name to google analytics.
+ *          If you do not want to send the host name, this option set to false.
  */
 var Grid = View.extend(/** @lends Grid.prototype */{
     initialize: function(options) {
+        options = snippet.extend({
+            usageStatistics: true
+        }, options);
+
         if (options.footer) {
             util.warning('The "footer" option is deprecated since 2.5.0 and replaced by "summary" option.');
             options.summary = options.footer;
@@ -220,6 +226,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
         if (options.data) {
             this.setData(options.data);
+        }
+
+        if (options.usageStatistics) {
+            util.sendHostNameToGA();
         }
     },
 
