@@ -168,7 +168,7 @@ describe('grid', function() {
             expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
         });
 
-        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+        it('and value of key column is string having number, event object has "rowKey" of number type.', function() {
             grid.setData([{
                 c1: '100',
                 c2: '200'
