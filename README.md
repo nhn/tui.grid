@@ -1,4 +1,4 @@
-# ![toast ui grid](https://cloud.githubusercontent.com/assets/12269489/13489851/a5ca2490-e16c-11e5-8d80-3bf6fe3b940d.png)
+# ![TOAST UI Grid](http://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
 > The powerful widget to show and edit data. It's free!
 
@@ -67,16 +67,16 @@ In addition, you can implement desired functions using various options and APIs.
 
 ## 🐾 Examples
 
-* [Basic](https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html)
-* [Complex columns](https://nhnent.github.io/tui.grid/api/tutorial-example03-complex-columns.html)
-* [Input types](https://nhnent.github.io/tui.grid/api/tutorial-example04-input-types.html)
-* [Relation between columns](https://nhnent.github.io/tui.grid/api/tutorial-example05-relation-columns.html)
-* [Applying Themes](https://nhnent.github.io/tui.grid/api/tutorial-example07-applying-themes.html)
-* [Using DatePicker component](https://nhnent.github.io/tui.grid/api/tutorial-example08-using-datepicker.html)
-* [Using Summary](https://nhnent.github.io/tui.grid/api/tutorial-example09-using-summary.html)
-* [Binding to remote data](https://nhnent.github.io/tui.grid/api/tutorial-example10-using-net.html)
+* [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html)
+* [Complex columns](https://nhnent.github.io/tui.grid/latest/tutorial-example03-complex-columns.html)
+* [Input types](https://nhnent.github.io/tui.grid/latest/tutorial-example04-input-types.html)
+* [Relation between columns](https://nhnent.github.io/tui.grid/latest/tutorial-example05-relation-columns.html)
+* [Applying Themes](https://nhnent.github.io/tui.grid/latest/tutorial-example07-applying-themes.html)
+* [Using DatePicker component](https://nhnent.github.io/tui.grid/latest/tutorial-example08-using-datepicker.html)
+* [Using Summary](https://nhnent.github.io/tui.grid/latest/tutorial-example09-using-summary.html)
+* [Binding to remote data](https://nhnent.github.io/tui.grid/latest/tutorial-example10-using-net.html)
 
-Here are more [examples](https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html) and play with TOAST UI Grid!
+Here are more [examples](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html) and play with TOAST UI Grid!
 
 
 ## 💾 Install
@@ -135,6 +135,22 @@ tui.grid/
 ### Download Source Files
 * [Download bundle files](https://github.com/nhnent/tui.grid/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.grid/releases)
+
+
+## 🔩 Dependency
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.3.0
+* [tui-dom](https://github.com/nhnent/tui.dom) >=3.0.0
+
+## Dependencies
+* [jquery](https://jquery.com/) >=1.11.0
+* [underscore](http://underscorejs.org/) >=1.8.3
+* [backbone](http://backbonejs.org/) >=1.3.3
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.3.0
+* component (optional)
+  * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.2.0
+  * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.1.0
+
+You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 
 ## 🔨 Usage
@@ -204,55 +220,64 @@ instance.setData(newData); // Call API of instance's public method
 Grid.applyTheme('striped'); // Call API of static method
 ```
 
-## 🔧 Development
+## 🔧 Pull Request Steps
 
-TOAST UI products are open source, so you can create a pull request after you fix [issues](https://github.com/nhnent/tui.grid/issues). Run npm scripts and develop yourself with the following process.
+TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
+Run npm scripts and develop yourself with the following process.
 
 ### Setup
 
+Fork `develop` branch into your personal repository.
+Clone it to local computer. Install node modules.
+Before starting development, you should check to haveany errors.
+
 ``` sh
-$ git clone https://github.com/nhnent/tui.grid.git
+$ git clone https://github.com/{your-personal-repo}/tui.grid.git
 $ cd tui.grid
 $ npm install
+$ npm run test
 ```
 
-### Local Test
+### Develop
+
+Let's start development!
+You can see your code is reflected as soon as you saving the codes by running a server.
+Don't miss adding test cases and then make green rights.
+
+#### Run webpack-dev-server
+
+``` sh
+$ npm run dev
+$ npm run dev:ie8 # Run on Internet Explorer 8
+```
+
+#### Run karma test
 
 ``` sh
 $ npm run test
 ```
 
-### Run Server
+### Pull Request
 
-``` sh
-$ npm run serve
-$ npm run serve:ie8 # Run on Internet Explorer 8
-```
+Before PR, check to test lastly and then check any errors.
+If it has no error, commit and then push it!
 
-### Bundle
-
-``` sh
-$ npm run bundle
-```
-
-
-## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.3.0
-*
+For more information on PR's step, please see links of Contributing section.
 
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.grid/wiki/Getting-Started)
-* [Tutorials](https://github.com/nhnent/tui.grid/wiki)
-* [APIs](https://nhnent.github.io/tui.grid/api)
+* [Getting Started](https://github.com/nhnent/tui.grid/blob/production/docs/getting-started.md)
+* [Tutorials](https://github.com/nhnent/tui.grid/tree/production/docs)
+* [APIs](https://nhnent.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.grid/releases).
 
 
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhnent/tui.grid/blob/production/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/tui.grid/blob/production/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhnent/tui.grid/blob/production/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhnent/tui.grid/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 
 ## 🍞 TOAST UI Family
