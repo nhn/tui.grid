@@ -227,7 +227,7 @@ Run npm scripts and develop yourself with the following process.
 
 ### Setup
 
-Fork `develop` branch into your personal repository.
+Fork `master` branch into your personal repository.
 Clone it to local computer. Install node modules.
 Before starting development, you should check to haveany errors.
 
