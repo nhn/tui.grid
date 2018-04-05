@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Tue Mar 27 2018 17:28:00 GMT+0900 (KST)"
- * version: 2.9.1
+ * bundle created at "Thu Apr 05 2018 19:21:48 GMT+0900 (KST)"
+ * version: 2.10.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -269,9 +269,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
 	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
 	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+	 *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
+	 *          If you do not want to send the hostname, this option set to false.
 	 */
 	var Grid = View.extend(/** @lends Grid.prototype */{
 	    initialize: function(options) {
+	        options = snippet.extend({
+	            usageStatistics: true
+	        }, options);
+
 	        if (options.footer) {
 	            util.warning('The "footer" option is deprecated since 2.5.0 and replaced by "summary" option.');
 	            options.summary = options.footer;
@@ -300,6 +306,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (options.data) {
 	            this.setData(options.data);
+	        }
+
+	        if (options.usageStatistics) {
+	            util.sendHostNameToGA();
 	        }
 	    },
 
@@ -4986,6 +4996,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return rightClick;
+	    },
+
+	    /**
+	     * Send information to google analytics
+	     */
+	    sendHostNameToGA: function() {
+	        var hostname = location.hostname;
+
+	        snippet.imagePing('https://www.google-analytics.com/collect', {
+	            v: 1,
+	            t: 'event',
+	            tid: 'UA-115377265-9',
+	            cid: hostname,
+	            dp: hostname,
+	            dh: 'grid'
+	        });
 	    }
 	};
 
