@@ -447,12 +447,11 @@ util = {
 
     /**
      * Send information to google analytics
-     * @returns {HTMLElement} created <img /> element to request server
      */
     sendHostNameToGA: function() {
         var hostname = location.hostname;
 
-        return snippet.imagePing('https://www.google-analytics.com/collect', {
+        snippet.imagePing('https://www.google-analytics.com/collect', {
             v: 1,
             t: 'event',
             tid: 'UA-115377265-9',
