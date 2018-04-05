@@ -168,7 +168,7 @@ describe('grid', function() {
             expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
         });
 
-        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+        it('and value of key column is string having number, event object has "rowKey" of number type.', function() {
             grid.setData([{
                 c1: '100',
                 c2: '200'
@@ -220,13 +220,13 @@ describe('grid', function() {
             spyOn(snippet, 'imagePing');
         });
 
-        it('when the value set to true by default, the host name is send to server.', function() {
+        it('when the value set to true by default, the hostname is send to server.', function() {
             createGrid(['c1']);
 
             expect(snippet.imagePing).toHaveBeenCalled();
         });
 
-        it('when the value set to false, the host name is not send to server.', function() {
+        it('when the value set to false, the hostname is not send to server.', function() {
             createGrid(['c1'], {
                 usageStatistics: false
             });
