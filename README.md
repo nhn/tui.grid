@@ -1,4 +1,4 @@
-# ![toast ui grid](https://cloud.githubusercontent.com/assets/12269489/13489851/a5ca2490-e16c-11e5-8d80-3bf6fe3b940d.png)
+# ![TOAST UI Grid](http://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
 > The powerful widget to show and edit data. It's free!
 
@@ -18,26 +18,27 @@
 * [Features](#-features)
 * [Examples](#-examples)
 * [Install](#-install)
-  * [Using npm](#using-npm)
-  * [Using bower](#using-bower)
-  * [Download](#download)
+    * [Via Package Manager](#via-package-manager)
+    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
+    * [Download Source Files](#download-source-files)
 * [Usage](#-usage)
-  * [HTML](#html)
-  * [JavaScript](#javascript)
-* [Development](#-development)
-  * [Setup](#setup)
-  * [Local Test](#local-test)
-  * [Run Server](#run-server)
-  * [Bundle](#bundle)
+    * [HTML](#html)
+    * [JavaScript](#javascript)
+* [Pull Request Steps](#-pull-request-steps)
+    * [Setup](#setup)
+    * [Develop](#develop)
+    * [Pull Request Steps](#pull-request)
+* [Dependency](#-dependency)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [License](#-license)
 
+
 ## 🌏 Browser Support
-|<img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE / Edge" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="IE / Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari |
+| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
-| 8+ | Yes | Yes | Yes | Yes |
+| Yes | 8+ | Yes | Yes | Yes |
 
 
 ## 🎨 Features
@@ -63,41 +64,90 @@
 
 In addition, you can implement desired functions using various options and APIs.
 
+
 ## 🐾 Examples
 
-* [Basic](https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html)
-* [Complex columns](https://nhnent.github.io/tui.grid/api/tutorial-example03-complex-columns.html)
-* [Input types](https://nhnent.github.io/tui.grid/api/tutorial-example04-input-types.html)
-* [Relation between columns](https://nhnent.github.io/tui.grid/api/tutorial-example05-relation-columns.html)
-* [Applying Themes](https://nhnent.github.io/tui.grid/api/tutorial-example07-applying-themes.html)
-* [Using DatePicker component](https://nhnent.github.io/tui.grid/api/tutorial-example08-using-datepicker.html)
-* [Using Summary](https://nhnent.github.io/tui.grid/api/tutorial-example09-using-summary.html)
-* [Binding to remote data](https://nhnent.github.io/tui.grid/api/tutorial-example10-using-net.html)
+* [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html)
+* [Complex columns](https://nhnent.github.io/tui.grid/latest/tutorial-example03-complex-columns.html)
+* [Input types](https://nhnent.github.io/tui.grid/latest/tutorial-example04-input-types.html)
+* [Relation between columns](https://nhnent.github.io/tui.grid/latest/tutorial-example05-relation-columns.html)
+* [Applying Themes](https://nhnent.github.io/tui.grid/latest/tutorial-example07-applying-themes.html)
+* [Using DatePicker component](https://nhnent.github.io/tui.grid/latest/tutorial-example08-using-datepicker.html)
+* [Using Summary](https://nhnent.github.io/tui.grid/latest/tutorial-example09-using-summary.html)
+* [Binding to remote data](https://nhnent.github.io/tui.grid/latest/tutorial-example10-using-net.html)
 
-Here are more [examples](https://nhnent.github.io/tui.grid/api/tutorial-example01-basic.html) and play with TOAST UI Grid!
+Here are more [examples](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html) and play with TOAST UI Grid!
+
 
 ## 💾 Install
 
-Install the module to use. TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/). You can download it directly from the github repository, but we highly recommend to install using the npm package manager.
+TOAST UI products can be used by using the package manager or downloading the source directly.
+However, we highly recommend using the package manager.
 
-### Using npm
+### Via Package Manager
+
+TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
+You can conveniently install it using the commands provided by each package manager.
+When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
+
+#### npm
 
 ``` sh
-$ npm install --save tui-grid # latest version
-$ npm install --save tui-grid@<version> # specific version
+$ npm install --save tui-grid # Latest version
+$ npm install --save tui-grid@<version> # Specific version
 ```
 
-### Using bower
+#### bower
 
 ``` sh
-$ bower install tui-grid # latest version
-$ bower install tui-grid#<tag> # specific version
+$ bower install tui-grid # Latest version
+$ bower install tui-grid#<tag> # Specific version
 ```
 
-### Download
+### Via Contents Delivery Network (CDN)
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
 
+You can use the CDN as below.
+
+```html
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.grid/latest/tui-grid.css" />
+...
+<script src="https://uicdn.toast.com/tui.grid/latest/tui-grid.js"></script>
+```
+
+If you want to use a specific version, use the tag name instead of `latest` in the url's path.
+
+The CDN directory has the following structure.
+
+```
+tui.grid/
+├─ latest/
+│  ├─ tui-grid.comb.js // This file includes the backbone and underscore.
+│  ├─ tui-grid.comb.min.js
+│  ├─ tui-grid.css
+│  ├─ tui-grid.min.css
+│  ├─ tui-grid.js
+│  └─ tui-grid.min.js
+├─ v2.10.0/
+│  ├─ ...
+```
+
+### Download Source Files
 * [Download bundle files](https://github.com/nhnent/tui.grid/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.grid/releases)
+
+
+## 🔩 Dependency
+* [jquery](https://jquery.com/) >=1.11.0
+* [underscore](http://underscorejs.org/) >=1.8.3
+* [backbone](http://backbonejs.org/) >=1.3.3
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.3.0
+* component (optional)
+  * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.2.0
+  * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.1.0
+
+You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
+
 
 ## 🔨 Usage
 
@@ -112,16 +162,20 @@ Add the container element where TOAST UI Grid will be created.
 ### JavaScript
 
 TOAST UI Grid can be used by creating an instance with the constructor function.
-To get the constructor function, you should import the module using one of the following three ways depending on your environment.
+To get the constructor function, you should import the module using one of the following ways depending on your environment.
+
+#### Using namespace in browser environment
+``` javascript
+var Grid = tui.Grid;
+```
+
+#### Using module format in node environment
+``` javascript
+var Grid = require('tui-grid'); /* CommonJS */
+```
 
 ``` javascript
-var Grid = tui.Grid; /* namespace */
-```
-``` javascript
-var Grid = require('tui-grid'); /* CommonJS in Node.js */
-```
-``` javascript
-import {Grid} from 'tui-grid'; /* ES6 in Node.js */
+import {Grid} from 'tui-grid'; /* ES6 */
 ```
 
 You can create an instance with options and call various APIs after creating an instance.
@@ -162,54 +216,71 @@ instance.setData(newData); // Call API of instance's public method
 Grid.applyTheme('striped'); // Call API of static method
 ```
 
-## 🔧 Development
+## 🔧 Pull Request Steps
 
-TOAST UI products are open source, so you can create a pull request after you fix [issues](https://github.com/nhnent/tui.grid/issues). Run npm scripts and develop yourself with the following process.
+TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
+Run npm scripts and develop yourself with the following process.
 
 ### Setup
 
+Fork `master` branch into your personal repository.
+Clone it to local computer. Install node modules.
+Before starting development, you should check to haveany errors.
+
 ``` sh
-$ git clone https://github.com/nhnent/tui.grid.git
+$ git clone https://github.com/{your-personal-repo}/tui.grid.git
 $ cd tui.grid
 $ npm install
+$ npm run test
 ```
 
-### Local Test
+### Develop
+
+Let's start development!
+You can see your code is reflected as soon as you saving the codes by running a server.
+Don't miss adding test cases and then make green rights.
+
+#### Run webpack-dev-server
+
+``` sh
+$ npm run dev
+$ npm run dev:ie8 # Run on Internet Explorer 8
+```
+
+#### Run karma test
 
 ``` sh
 $ npm run test
 ```
 
-### Run Server
+### Pull Request
 
-``` sh
-$ npm run serve
-$ npm run serve:ie8 # Run on Internet Explorer 8
-```
+Before PR, check to test lastly and then check any errors.
+If it has no error, commit and then push it!
 
-### Bundle
-
-``` sh
-$ npm run bundle
-```
+For more information on PR's step, please see links of Contributing section.
 
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.grid/wiki/Getting-Started)
-* [Tutorials](https://github.com/nhnent/tui.grid/wiki)
-* [APIs](https://nhnent.github.io/tui.grid/api)
+* [Getting Started](https://github.com/nhnent/tui.grid/blob/production/docs/getting-started.md)
+* [Tutorials](https://github.com/nhnent/tui.grid/tree/production/docs)
+* [APIs](https://nhnent.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.grid/releases).
 
+
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhnent/tui.grid/blob/production/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/tui.grid/blob/production/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhnent/tui.grid/blob/production/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhnent/tui.grid/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+
 
 ## 🍞 TOAST UI Family
 * [TOAST UI Chart](https://github.com/nhnent/tui.chart)
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
 * [TOAST UI Components](https://github.com/nhnent)
+
 
 ## 📜 License
 This software is licensed under the [MIT](https://github.com/nhnent/tui.grid/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).

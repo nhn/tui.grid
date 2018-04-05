@@ -3,6 +3,7 @@
 var _ = require('underscore');
 
 var Grid = require('grid');
+var snippet = require('tui-code-snippet');
 
 describe('grid', function() {
     function createGrid(columnNames, options) {
@@ -167,7 +168,7 @@ describe('grid', function() {
             expect(spy.calls.argsFor(0)[0].rowKey).toBe(200);
         });
 
-        it('and key column\'s value is string having number, event object has "rowKey" of number type.', function() {
+        it('and value of key column is string having number, event object has "rowKey" of number type.', function() {
             grid.setData([{
                 c1: '100',
                 c2: '200'
@@ -211,6 +212,26 @@ describe('grid', function() {
             expect(grid.getRowCount()).toBe(data.length);
             expect(grid.getRow(0).c1).toEqual(data[0].c1);
             expect(grid.getRow(1).c1).toEqual(data[1].c1);
+        });
+    });
+
+    describe('Using "usageStatistics" option', function() {
+        beforeEach(function() {
+            spyOn(snippet, 'imagePing');
+        });
+
+        it('when the value set to true by default, the hostname is send to server.', function() {
+            createGrid(['c1']);
+
+            expect(snippet.imagePing).toHaveBeenCalled();
+        });
+
+        it('when the value set to false, the hostname is not send to server.', function() {
+            createGrid(['c1'], {
+                usageStatistics: false
+            });
+
+            expect(snippet.imagePing).not.toHaveBeenCalled();
         });
     });
 });
