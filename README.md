@@ -138,10 +138,6 @@ tui.grid/
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.3.0
-* [tui-dom](https://github.com/nhnent/tui.dom) >=3.0.0
-
-## Dependencies
 * [jquery](https://jquery.com/) >=1.11.0
 * [underscore](http://underscorejs.org/) >=1.8.3
 * [backbone](http://backbonejs.org/) >=1.3.3
