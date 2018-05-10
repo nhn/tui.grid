@@ -175,6 +175,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
                 changed: [] // changed property names
             };
             _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
+            _.assign(data[columnName], this._getTreeAttrs(value, row, column, columnModel));
         }, this);
 
         return data;
@@ -202,6 +203,33 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         classNames = row.getClassNameList(columnName);
 
         return classNames.join(' ');
+    },
+
+    /**
+     * Returns the tree values of the attributes related to the cell value.
+     * @param {String|Number} value - Value
+     * @param {module:model/data/row} row - Row data model
+     * @param {Object} column - Column model object
+     * @param {module:model/data/columnModel} columnModel - column model
+     * @returns {Object}
+     * @private
+     */
+    _getTreeAttrs: function(value, row, column, columnModel) {
+        var treeData;
+        var attrs = {};
+
+        if (columnModel.isTreeType(column.name)) {
+            treeData = row.get('_treeData');
+            attrs.tree = {
+                depth: treeData.depth,
+                isExpanded: false,
+                hasChildren: snippet.isArray(treeData.childrenRowKeys),
+                hasIcon: columnModel.useTreeIcon(),
+                hasNextSibling: !treeData.lastSibling
+            };
+        }
+
+        return attrs;
     },
 
     /**
