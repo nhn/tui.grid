@@ -217,6 +217,22 @@ var ExtraDataManager = snippet.defineClass(/** @lends module:model/data/extraDat
      */
     getHeight: function() {
         return this.data.height;
+    },
+
+    /**
+     * set tree state EXPAND/COLLAPSE
+     * @param {String} state - tree state EXPAND/COLLAPSE
+     */
+    setTreeState: function(state) {
+        this.data.treeState = state;
+    },
+
+    /**
+     * get tree state EXPAND/COLLAPSE
+     * @returns {String} - tree state EXPAND/COLLAPSE
+     */
+    getTreeState: function() {
+        return this.data.treeState;
     }
 });
 

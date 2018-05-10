@@ -15,6 +15,11 @@ var PRIVATE_PROPERTIES = [
     '_children'
 ];
 
+var treeState = {
+    EXPAND: 'EXPAND',
+    COLLAPSE: 'COLLAPSE'
+};
+
 /**
  * TreeRow class implementation
  * @module model/data/columnModel
@@ -28,9 +33,27 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      */
     getPrivateProperties: function() {
         return PRIVATE_PROPERTIES;
+    },
+
+    /**
+     * set tree state
+     * @param {boolean} state - true if expanded
+     */
+    setTreeExpanded: function(state) {
+        this.extraDataManager.setTreeState(state ? treeState.EXPAND : treeState.COLLAPSE);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * get tree state
+     * @returns {boolean} - true if expanded
+     */
+    getTreeExpanded: function() {
+        return this.extraDataManager.getTreeState() === treeState.EXPAND;
     }
 }, {
-    privateProperties: PRIVATE_PROPERTIES
+    privateProperties: PRIVATE_PROPERTIES,
+    treeState: treeState
 });
 
 module.exports = TreeRow;

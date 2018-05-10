@@ -222,7 +222,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
             treeData = row.get('_treeData');
             attrs.tree = {
                 depth: treeData.depth,
-                isExpanded: false,
+                isExpanded: row.getTreeExpanded(),
                 hasChildren: snippet.isArray(treeData.childrenRowKeys),
                 hasIcon: columnModel.useTreeIcon(),
                 hasNextSibling: !treeData.lastSibling
