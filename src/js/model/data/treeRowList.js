@@ -45,33 +45,38 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         return flattenedRow;
     },
 
-    _flattenRow: function(rowList, flattenedRow, parent) {
-        var firstSibling = rowList[0];
+    _flattenRow: function(rowList, flattenedRow, ancester) {
+        var parent, hasNextSibling;
         var lastSibling = rowList[rowList.length - 1];
 
-        parent = parent || {
-            _treeData: {
-                depth: -1
-            }
-        };
+        // it's a root node which is actually not exist.
+        ancester = ancester || [{
+            _treeData: {}
+        }];
+        parent = ancester[ancester.length - 1];
         parent._treeData.childrenRowKeys = [];
 
         _.each(rowList, function(row) {
             // sets rowKey property
             row = this._baseFormat(row);
 
+            hasNextSibling = _.map(ancester.slice(1), function(node) {
+                var nodeHasNextSibling = node._treeData.hasNextSibling;
+
+                return nodeHasNextSibling.slice(nodeHasNextSibling.length - 1)[0];
+            }).concat([lastSibling !== row]);
+
             row._treeData = {
                 parentRowKey: parent.rowKey,
-                depth: parent._treeData.depth + 1,
-                firstSibling: firstSibling === row,
-                lastSibling: lastSibling === row
+                depth: ancester.length - 1,
+                hasNextSibling: hasNextSibling
             };
             parent._treeData.childrenRowKeys.push(row.rowKey);
 
             flattenedRow.push(row);
 
             if (util.isArray(row._children)) {
-                this._flattenRow(row._children, flattenedRow, row);
+                this._flattenRow(row._children, flattenedRow, ancester.concat([row]));
                 delete row._children;
             }
         }, this);

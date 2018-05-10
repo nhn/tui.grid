@@ -91,24 +91,17 @@ describe('data.treeModel', function() {
             expect(flattenedRow[3]._treeData.childrenRowKeys[0]).toBe(flattenedRow[4].rowKey);
         });
 
-        it('should set first/last sibling', function() {
+        it('should set hasNextSibling', function() {
             var flattenedRow = [];
             treeRowList._flattenRow(treeData, flattenedRow);
 
-            expect(flattenedRow[0]._treeData.firstSibling).toBe(true);
-            expect(flattenedRow[0]._treeData.lastSibling).toBe(false);
-            expect(flattenedRow[1]._treeData.firstSibling).toBe(true);
-            expect(flattenedRow[1]._treeData.lastSibling).toBe(false);
-            expect(flattenedRow[2]._treeData.firstSibling).toBe(false);
-            expect(flattenedRow[2]._treeData.lastSibling).toBe(false);
-            expect(flattenedRow[3]._treeData.firstSibling).toBe(false);
-            expect(flattenedRow[3]._treeData.lastSibling).toBe(true);
-            expect(flattenedRow[4]._treeData.firstSibling).toBe(true);
-            expect(flattenedRow[4]._treeData.lastSibling).toBe(true);
-            expect(flattenedRow[5]._treeData.firstSibling).toBe(false);
-            expect(flattenedRow[5]._treeData.lastSibling).toBe(false);
-            expect(flattenedRow[6]._treeData.firstSibling).toBe(false);
-            expect(flattenedRow[6]._treeData.lastSibling).toBe(true);
+            expect(flattenedRow[0]._treeData.hasNextSibling).toEqual([true]);
+            expect(flattenedRow[1]._treeData.hasNextSibling).toEqual([true, true]);
+            expect(flattenedRow[2]._treeData.hasNextSibling).toEqual([true, true]);
+            expect(flattenedRow[3]._treeData.hasNextSibling).toEqual([true, false]);
+            expect(flattenedRow[4]._treeData.hasNextSibling).toEqual([true, false, false]);
+            expect(flattenedRow[5]._treeData.hasNextSibling).toEqual([true]);
+            expect(flattenedRow[6]._treeData.hasNextSibling).toEqual([false]);
         });
     });
 });

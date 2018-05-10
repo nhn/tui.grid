@@ -225,7 +225,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
                 isExpanded: row.getTreeExpanded(),
                 hasChildren: snippet.isArray(treeData.childrenRowKeys),
                 hasIcon: columnModel.useTreeIcon(),
-                hasNextSibling: !treeData.lastSibling
+                hasNextSibling: treeData.hasNextSibling
             };
         }
 
