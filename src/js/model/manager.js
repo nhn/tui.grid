@@ -95,7 +95,8 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
             complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,
             columns: options.columns,
-            rowHeaders: options.rowHeaders
+            rowHeaders: options.rowHeaders,
+            treeColumnOptions: options.treeColumnOptions
         });
     },
 
@@ -108,7 +109,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
      * @private
      */
     _createDataModel: function(options, domState, domEventBus) {
-        var isTreeGrid = !snippet.isUndefined(options.treeColumnOptions);
+        var isTreeGrid = this.columnModel.hasTreeColumn();
         var ListDataModel = isTreeGrid ? TreeRowListData : RowListData;
 
         return new ListDataModel([], {

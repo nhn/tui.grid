@@ -78,6 +78,11 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
         complexHeaderColumns: [],
         copyOptions: {
             useFormattedValue: false
+        },
+        treeColumnOptions: {
+            name: null,
+            useIcon: false,
+            showLine: false
         }
     },
 
@@ -198,6 +203,31 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     isTextType: function(columnName) {
         return !!this.textType[this.getEditType(columnName)];
+    },
+
+    /**
+     * test the column with given name is a tree column
+     * @param {String} columnName column name to test
+     * @returns {boolean} true if the column is tree column
+     */
+    isTreeType: function(columnName) {
+        return this.get('treeColumnOptions').name === columnName;
+    },
+
+    /**
+     * test if any one of columns has a tree column
+     * @returns {boolean} true if it has a tree column
+     */
+    hasTreeColumn: function() {
+        return snippet.isString(this.get('treeColumnOptions').name);
+    },
+
+    /**
+     * gets treeColumnOptions.useIcon
+     * @returns {boolean} whether use tree icon
+     */
+    useTreeIcon: function() {
+        return this.get('treeColumnOptions').useIcon;
     },
 
     /**
