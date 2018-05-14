@@ -1,0 +1,75 @@
+.btn-tree
+    position absolute
+    padding 2px
+    margin-bottom -7px
+    left 2px
+    bottom 50%
+    width 8px
+    height 8px
+    border 1px solid #ccc
+    border-radius 0
+    background-color #fff
+    outline none
+    font-size 0
+    vertical-align middle
+    cursor pointer
+
+    i
+        display inline-block
+        background url(../../images/tree-icons.png) no-repeat
+
+.tree-button-expand .btn-tree i
+    width 8px
+    height 5px
+    background-position -22px -28px
+
+.tree-button-collapse .btn-tree i
+    width 5px
+    height 8px
+    background-position -22px -35px
+
+.cell-tree
+    height inherit // to set pixel value on td's height
+    box-sizing border-box
+
+    .tree-wrapper-relative
+        display table
+        position relative
+        margin -1px 0 // cross-browsing margin bug
+        height 100%
+        width 100%
+
+    .tree-wrapper-valign-center
+        display table-cell
+        vertical-align middle
+
+    .tree-extra-content
+        position absolute
+        top 0
+        left 0
+        bottom 0
+
+    .tree-line-branch
+        display inline-block
+        width 12px
+        height 1px
+        position absolute
+        margin-left 9px
+        bottom 50%
+        background-color #aaa
+
+    .tree-line
+        display inline-block
+        position absolute
+        width 18px
+        top 0
+        bottom 0
+        background: url(../../images/tree-line.png) -295px -35px repeat-y
+
+        &.tree-line-half
+            top 0
+            bottom 50%
+
+        &.tree-line-half .tree-line-branch,
+        &.tree-line-half .btn-tree
+            bottom 0
