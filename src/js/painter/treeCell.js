@@ -181,7 +181,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var attrs = {};
 
         if (cellData.hasChildren) {
-            if (cellData.isExpand) {
+            if (cellData.isExpanded) {
                 classNames.push(classNameConst.TREE_BUTTON_EXPAND);
             } else {
                 classNames.push(classNameConst.TREE_BUTTON_COLLAPSE);
