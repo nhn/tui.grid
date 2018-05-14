@@ -1,5 +1,5 @@
 /**
- * @fileoverview Dummy cell painter
+ * @fileoverview Tree cell painter
  * @author NHN Ent. FE Development Team
  */
 
