@@ -94,7 +94,13 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
 
             if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+
+                if (cellData.isTreeColumn) {
+                    cellPainter = this.painterManager.getTreeCellPainter();
+                } else {
+                    cellPainter = this.painterManager.getCellPainter(editType);
+                }
+
                 html += cellPainter.generateHtml(cellData);
             }
         }, this);
@@ -142,7 +148,13 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
             if (columnName !== '_extraData') {
                 $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+
+                if (cellData.isTreeColumn) {
+                    cellPainter = this.painterManager.getTreeCellPainter();
+                } else {
+                    cellPainter = this.painterManager.getCellPainter(editType);
+                }
+
                 cellPainter.refresh(cellData, $td);
             }
         }, this);
