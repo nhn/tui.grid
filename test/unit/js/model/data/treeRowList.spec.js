@@ -68,19 +68,6 @@ describe('data.treeModel', function() {
             expect(flattenedRow[6]._treeData.parentRowKey).toBeFalsy();
         });
 
-        it('should set depth', function() {
-            var flattenedRow = [];
-            treeRowList._flattenRow(treeData, flattenedRow);
-
-            expect(flattenedRow[0]._treeData.depth).toBe(0);
-            expect(flattenedRow[1]._treeData.depth).toBe(1);
-            expect(flattenedRow[2]._treeData.depth).toBe(1);
-            expect(flattenedRow[3]._treeData.depth).toBe(1);
-            expect(flattenedRow[4]._treeData.depth).toBe(2);
-            expect(flattenedRow[5]._treeData.depth).toBe(0);
-            expect(flattenedRow[6]._treeData.depth).toBe(0);
-        });
-
         it('should set childrenRowKeys', function() {
             var flattenedRow = [];
             treeRowList._flattenRow(treeData, flattenedRow);

@@ -4,15 +4,21 @@ var TreeRow = require('model/data/treeRow');
 var ColumnModel = require('model/data/columnModel');
 
 describe('TreeRow', function() {
-    var treeRow, result;
+    var treeRow, result, rowData, parentData;
 
     beforeEach(function() {
-        treeRow = new TreeRow({
+        rowData = {
             c1: '0-1',
             c2: '0-2',
             _extraData: {
+            },
+            _treeData: {
+                depth: 2,
+                childrenRowKeys: [1, 2, 3],
+                hasNextSibling: [true, false, true]
             }
-        }, {
+        };
+        parentData ={
             parse: true,
             collection: {
                 columnModel: new ColumnModel({
@@ -22,7 +28,9 @@ describe('TreeRow', function() {
                     ]
                 })
             }
-        });
+        };
+
+        treeRow = new TreeRow(rowData, parentData);
     });
 
     describe('getTreeExpanded', function() {
@@ -64,6 +72,42 @@ describe('TreeRow', function() {
             treeRow.setTreeExpanded(true);
 
             expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('getDepth', function() {
+        it('should return it\'s depth', function() {
+            rowData._treeData.hasNextSibling = [false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getDepth()).toBe(0);
+
+            rowData._treeData.hasNextSibling = [false, false, false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getDepth()).toBe(2);
+        });
+    });
+
+    describe('hasChildren', function() {
+        it('should return whether it has children or not', function() {
+            delete rowData._treeData.childrenRowKeys;
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasChildren()).toBe(false);
+
+            rowData._treeData.childrenRowKeys = [1, 2];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasChildren()).toBe(true);
+        });
+    });
+
+    describe('hasNextSibling', function() {
+        it('should return whether it has one or more siblings and it\'s ancestors', function() {
+            rowData._treeData.hasNextSibling = [false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasNextSibling()).toEqual([false]);
+
+            rowData._treeData.hasNextSibling = [true, false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasNextSibling()).toEqual([true, false]);
         });
     });
 });
