@@ -103,6 +103,7 @@ var classNames = {
     CELL_ELLIPSIS: 'cell-ellipsis',
     CELL_CURRENT_ROW: 'cell-current-row',
     CELL_MAIN_BUTTON: 'cell-main-button',
+    CELL_TREE: 'cell-tree',
 
     // cell content
     CELL_CONTENT: 'cell-content',
@@ -120,6 +121,7 @@ var classNames = {
     BTN_EXCEL_ICON: 'btn-excel-icon',
     BTN_EXCEL_PAGE: 'btn-excel-page',
     BTN_EXCEL_ALL: 'btn-excel-all',
+    BTN_TREE: 'btn-tree',
 
     // height resize handle
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
@@ -132,7 +134,17 @@ var classNames = {
     CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
     CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
     CALENDAR_SELECTABLE: 'calendar-selectable',
-    CALENDAR_SELECTED: 'calendar-selected'
+    CALENDAR_SELECTED: 'calendar-selected',
+
+    // tree column
+    TREE_WARPPER_RELATIVE: 'tree-wrapper-relative',
+    TREE_WARPPER_VALIGN_CENTER: 'tree-wrapper-valign-center',
+    TREE_EXTRA_CONTENT: 'tree-extra-content',
+    TREE_LINE: 'tree-line',
+    TREE_LINE_HALF: 'tree-line-half',
+    TREE_LINE_BRANCH: 'tree-line-branch',
+    TREE_BUTTON_EXPAND: 'tree-button-expand',
+    TREE_BUTTON_COLLAPSE: 'tree-button-collapse'
 };
 
 var exports = _.mapObject(classNames, function(className) {

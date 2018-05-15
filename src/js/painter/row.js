@@ -61,6 +61,24 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
     },
 
     /**
+     * Get cell painter by value
+     * @param {boolean} treeCell - Whether the current cell is tree-cell or not
+     * @param {string} editType - When the current cell is normal, the cell type is selected
+     * @returns {object} cell painter
+     */
+    _getCellPainter: function(treeCell, editType) {
+        var cellPainter;
+
+        if (treeCell) {
+            cellPainter = this.painterManager.getTreeCellPainter();
+        } else {
+            cellPainter = this.painterManager.getCellPainter(editType);
+        }
+
+        return cellPainter;
+    },
+
+    /**
      * Returns the HTML string of all cells in Dummy row.
      * @param {Number} rowNum - row number
      * @param {Array.<String>} columnNames - An array of column names
@@ -90,11 +108,14 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
 
         _.each(columnNames, function(columnName) {
             var cellData = model.get(columnName);
-            var editType, cellPainter;
+            var treeCell, editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
+                treeCell = !!cellData.tree;
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+
+                cellPainter = this._getCellPainter(treeCell, editType);
+
                 html += cellPainter.generateHtml(cellData);
             }
         }, this);
@@ -137,12 +158,14 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      */
     refresh: function(changed, $tr) {
         _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter, $td;
+            var treeCell, editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
                 $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+                treeCell = !!cellData.tree;
+
+                cellPainter = this._getCellPainter(treeCell, editType);
                 cellPainter.refresh(cellData, $td);
             }
         }, this);
