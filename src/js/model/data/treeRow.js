@@ -50,21 +50,38 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
         return this.extraDataManager.getTreeState() === treeState.EXPAND;
     },
 
+    /**
+     * get tree data
+     * @returns {Object} - tree data
+     * @private
+     */
     _getTreeData: function() {
         return this.get('_treeData');
     },
 
-    getDepth: function() {
-        return this.hasNextSibling().length;
+    /**
+     * get tree depth of this row
+     * @returns {Number} - depth of this row
+     */
+    getTreeDepth: function() {
+        return this.hasTreeNextSibling().length;
     },
 
-    hasChildren: function() {
+    /**
+     * check whether this row has one or more children
+     * @returns {Boolean} - true if it has children
+     */
+    hasTreeChildren: function() {
         var childrenRowKeys = this._getTreeData().childrenRowKeys;
 
         return util.isArray(childrenRowKeys) && childrenRowKeys.length > 0;
     },
 
-    hasNextSibling: function() {
+    /**
+     * check whether this row has one or more next sibling
+     * @returns {Boolean} - true if this row has siblings
+     */
+    hasTreeNextSibling: function() {
         return this._getTreeData().hasNextSibling;
     }
 }, {

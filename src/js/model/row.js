@@ -219,11 +219,11 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
 
         if (columnModel.isTreeType(column.name)) {
             attrs.tree = {
-                depth: row.getDepth(),
+                depth: row.getTreeDepth(),
                 isExpanded: row.getTreeExpanded(),
-                hasChildren: row.hasChildren(),
+                hasChildren: row.hasTreeChildren(),
                 hasIcon: columnModel.useTreeIcon(),
-                hasNextSibling: row.hasNextSibling()
+                hasNextSibling: row.hasTreeNextSibling()
             };
         }
 

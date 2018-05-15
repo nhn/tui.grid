@@ -74,39 +74,39 @@ describe('TreeRow', function() {
         });
     });
 
-    describe('getDepth', function() {
+    describe('getTreeDepth', function() {
         it('should return it\'s depth', function() {
             rowData._treeData.hasNextSibling = [false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getDepth()).toBe(1);
+            expect(treeRow.getTreeDepth()).toBe(1);
 
             rowData._treeData.hasNextSibling = [false, false, false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getDepth()).toBe(3);
+            expect(treeRow.getTreeDepth()).toBe(3);
         });
     });
 
-    describe('hasChildren', function() {
+    describe('hasTreeChildren', function() {
         it('should return whether it has children or not', function() {
             delete rowData._treeData.childrenRowKeys;
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasChildren()).toBe(false);
+            expect(treeRow.hasTreeChildren()).toBe(false);
 
             rowData._treeData.childrenRowKeys = [1, 2];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasChildren()).toBe(true);
+            expect(treeRow.hasTreeChildren()).toBe(true);
         });
     });
 
-    describe('hasNextSibling', function() {
+    describe('hasTreeNextSibling', function() {
         it('should return whether it has one or more siblings and it\'s ancestors', function() {
             rowData._treeData.hasNextSibling = [false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasNextSibling()).toEqual([false]);
+            expect(treeRow.hasTreeNextSibling()).toEqual([false]);
 
             rowData._treeData.hasNextSibling = [true, false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasNextSibling()).toEqual([true, false]);
+            expect(treeRow.hasTreeNextSibling()).toEqual([true, false]);
         });
     });
 });
