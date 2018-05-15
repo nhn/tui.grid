@@ -1,26 +1,23 @@
 'use strict';
 
-var _ = require('underscore');
-
-var Grid = require('grid');
 var TreeRow = require('model/data/treeRow');
-var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
-var GridEvent = require('event/gridEvent');
-var classNameConst = require('common/classNameConst');
 
 describe('TreeRow', function() {
-    var treeRow, result, spy;
+    var treeRow, result, rowData, parentData;
 
     beforeEach(function() {
-        spy = jasmine.createSpy('callback');
-
-        treeRow = new TreeRow({
+        rowData = {
             c1: '0-1',
             c2: '0-2',
             _extraData: {
+            },
+            _treeData: {
+                childrenRowKeys: [1, 2, 3],
+                hasNextSibling: [true, false, true]
             }
-        }, {
+        };
+        parentData = {
             parse: true,
             collection: {
                 columnModel: new ColumnModel({
@@ -30,7 +27,9 @@ describe('TreeRow', function() {
                     ]
                 })
             }
-        });
+        };
+
+        treeRow = new TreeRow(rowData, parentData);
     });
 
     describe('getTreeExpanded', function() {
@@ -72,6 +71,42 @@ describe('TreeRow', function() {
             treeRow.setTreeExpanded(true);
 
             expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('getDepth', function() {
+        it('should return it\'s depth', function() {
+            rowData._treeData.hasNextSibling = [false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getDepth()).toBe(1);
+
+            rowData._treeData.hasNextSibling = [false, false, false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getDepth()).toBe(3);
+        });
+    });
+
+    describe('hasChildren', function() {
+        it('should return whether it has children or not', function() {
+            delete rowData._treeData.childrenRowKeys;
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasChildren()).toBe(false);
+
+            rowData._treeData.childrenRowKeys = [1, 2];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasChildren()).toBe(true);
+        });
+    });
+
+    describe('hasNextSibling', function() {
+        it('should return whether it has one or more siblings and it\'s ancestors', function() {
+            rowData._treeData.hasNextSibling = [false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasNextSibling()).toEqual([false]);
+
+            rowData._treeData.hasNextSibling = [true, false];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasNextSibling()).toEqual([true, false]);
         });
     });
 });

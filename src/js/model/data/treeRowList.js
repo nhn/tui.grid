@@ -74,7 +74,6 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
             row._treeData = {
                 parentRowKey: parent.rowKey,
-                depth: ancestors.length - 1,
                 hasNextSibling: hasNextSibling
             };
             parent._treeData.childrenRowKeys.push(row.rowKey);

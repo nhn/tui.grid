@@ -215,17 +215,15 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
      * @private
      */
     _getTreeAttrs: function(value, row, column, columnModel) {
-        var treeData;
         var attrs = {};
 
         if (columnModel.isTreeType(column.name)) {
-            treeData = row.get('_treeData');
             attrs.tree = {
-                depth: treeData.depth,
+                depth: row.getDepth(),
                 isExpanded: row.getTreeExpanded(),
-                hasChildren: snippet.isArray(treeData.childrenRowKeys),
+                hasChildren: row.hasChildren(),
                 hasIcon: columnModel.useTreeIcon(),
-                hasNextSibling: treeData.hasNextSibling
+                hasNextSibling: row.hasNextSibling()
             };
         }
 

@@ -5,6 +5,8 @@
 
 'use strict';
 
+var util = require('tui-code-snippet');
+
 var Row = require('./row');
 var treeState = require('../../common/constMap').treeState;
 
@@ -46,6 +48,24 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      */
     getTreeExpanded: function() {
         return this.extraDataManager.getTreeState() === treeState.EXPAND;
+    },
+
+    _getTreeData: function() {
+        return this.get('_treeData');
+    },
+
+    getDepth: function() {
+        return this.hasNextSibling().length;
+    },
+
+    hasChildren: function() {
+        var childrenRowKeys = this._getTreeData().childrenRowKeys;
+
+        return util.isArray(childrenRowKeys) && childrenRowKeys.length > 0;
+    },
+
+    hasNextSibling: function() {
+        return this._getTreeData().hasNextSibling;
     }
 }, {
     privateProperties: PRIVATE_PROPERTIES,
