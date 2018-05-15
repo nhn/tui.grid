@@ -78,5 +78,9 @@ module.exports = {
     summaryPosition: {
         TOP: 'top',
         BOTTOM: 'bottom'
+    },
+    treeState: {
+        EXPAND: 'EXPAND',
+        COLLAPSE: 'COLLAPSE'
     }
 };

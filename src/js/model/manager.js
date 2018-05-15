@@ -10,6 +10,7 @@ var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 
 var ColumnModelData = require('./data/columnModel');
+var TreeRowListData = require('./data/treeRowList');
 var RowListData = require('./data/rowList');
 var DimensionModel = require('./dimension');
 var CoordRowModel = require('./coordRow');
@@ -94,7 +95,8 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
             complexHeaderColumns: options.header.complexColumns,
             copyOptions: options.copyOptions,
             columns: options.columns,
-            rowHeaders: options.rowHeaders
+            rowHeaders: options.rowHeaders,
+            treeColumnOptions: options.treeColumnOptions
         });
     },
 
@@ -107,7 +109,10 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
      * @private
      */
     _createDataModel: function(options, domState, domEventBus) {
-        return new RowListData([], {
+        var isTreeGrid = this.columnModel.hasTreeColumn();
+        var ListDataModel = isTreeGrid ? TreeRowListData : RowListData;
+
+        return new ListDataModel([], {
             gridId: this.gridId,
             domState: domState,
             domEventBus: domEventBus,

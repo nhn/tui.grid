@@ -144,7 +144,7 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
      * @private
      */
     _onChange: function() {
-        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+        var publicChanged = _.omit(this.changed, this.getPrivateProperties());
 
         if (_.has(this.changed, '_button')) {
             this._triggerCheckboxChangeEvent(this.changed._button);
