@@ -1,20 +1,12 @@
 'use strict';
 
-var _ = require('underscore');
-
-var Grid = require('grid');
 var TreeRow = require('model/data/treeRow');
-var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
-var GridEvent = require('event/gridEvent');
-var classNameConst = require('common/classNameConst');
 
 describe('TreeRow', function() {
-    var treeRow, result, spy;
+    var treeRow, result;
 
     beforeEach(function() {
-        spy = jasmine.createSpy('callback');
-
         treeRow = new TreeRow({
             c1: '0-1',
             c2: '0-2',
