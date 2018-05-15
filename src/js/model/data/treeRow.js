@@ -55,7 +55,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
     },
 
     getDepth: function() {
-        return this.hasNextSibling().length - 1;
+        return this.hasNextSibling().length;
     },
 
     hasChildren: function() {

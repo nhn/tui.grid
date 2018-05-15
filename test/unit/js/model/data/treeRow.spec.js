@@ -13,12 +13,11 @@ describe('TreeRow', function() {
             _extraData: {
             },
             _treeData: {
-                depth: 2,
                 childrenRowKeys: [1, 2, 3],
                 hasNextSibling: [true, false, true]
             }
         };
-        parentData ={
+        parentData = {
             parse: true,
             collection: {
                 columnModel: new ColumnModel({
@@ -79,11 +78,11 @@ describe('TreeRow', function() {
         it('should return it\'s depth', function() {
             rowData._treeData.hasNextSibling = [false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getDepth()).toBe(0);
+            expect(treeRow.getDepth()).toBe(1);
 
             rowData._treeData.hasNextSibling = [false, false, false];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getDepth()).toBe(2);
+            expect(treeRow.getDepth()).toBe(3);
         });
     });
 
