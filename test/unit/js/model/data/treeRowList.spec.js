@@ -1,7 +1,6 @@
 'use strict';
 
 var $ = require('jquery');
-var _ = require('underscore');
 
 var ColumnModelData = require('model/data/columnModel');
 var TreeRowList = require('model/data/treeRowList');
@@ -13,9 +12,9 @@ var columns = [{
 var originalTreeData = [{
     text: 'a',
     _children: [{
-        text: 'a-a',
+        text: 'a-a'
     }, {
-        text: 'a-b',
+        text: 'a-b'
     }, {
         text: 'a-c',
         _children: [{
