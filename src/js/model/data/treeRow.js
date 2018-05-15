@@ -6,6 +6,7 @@
 'use strict';
 
 var Row = require('./row');
+var treeState = require('../../common/constMap').treeState;
 
 var PRIVATE_PROPERTIES = [
     '_button',
@@ -14,11 +15,6 @@ var PRIVATE_PROPERTIES = [
     '_treeData',
     '_children'
 ];
-
-var treeState = {
-    EXPAND: 'EXPAND',
-    COLLAPSE: 'COLLAPSE'
-};
 
 /**
  * TreeRow class implementation

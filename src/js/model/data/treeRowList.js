@@ -32,8 +32,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      */
     _formatData: function(data) {
         var rowList = _.filter(data, _.isObject);
-
         var flattenedRow = [];
+
         this._flattenRow(rowList, flattenedRow);
 
         _.each(flattenedRow, function(row, i) {
@@ -45,22 +45,28 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         return flattenedRow;
     },
 
-    _flattenRow: function(rowList, flattenedRow, ancester) {
+    /**
+     * Flatten nested tree data to 1-depth grid data.
+     * @param {Array} treeRows - nested rows having children
+     * @param {Array} flattenedRows - flattend rows. you should give an empty array at the initial call of this function
+     * @param {Array} ancestors - ancester rows
+     */
+    _flattenRow: function(treeRows, flattenedRows, ancestors) {
         var parent, hasNextSibling;
-        var lastSibling = rowList[rowList.length - 1];
+        var lastSibling = treeRows[treeRows.length - 1];
 
         // it's a root node which is actually not exist.
-        ancester = ancester || [{
+        ancestors = ancestors || [{
             _treeData: {}
         }];
-        parent = ancester[ancester.length - 1];
+        parent = ancestors[ancestors.length - 1];
         parent._treeData.childrenRowKeys = [];
 
-        _.each(rowList, function(row) {
+        _.each(treeRows, function(row) {
             // sets rowKey property
             row = this._baseFormat(row);
 
-            hasNextSibling = _.map(ancester.slice(1), function(node) {
+            hasNextSibling = _.map(ancestors.slice(1), function(node) {
                 var nodeHasNextSibling = node._treeData.hasNextSibling;
 
                 return nodeHasNextSibling.slice(nodeHasNextSibling.length - 1)[0];
@@ -68,15 +74,15 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
             row._treeData = {
                 parentRowKey: parent.rowKey,
-                depth: ancester.length - 1,
+                depth: ancestors.length - 1,
                 hasNextSibling: hasNextSibling
             };
             parent._treeData.childrenRowKeys.push(row.rowKey);
 
-            flattenedRow.push(row);
+            flattenedRows.push(row);
 
             if (util.isArray(row._children)) {
-                this._flattenRow(row._children, flattenedRow, ancester.concat([row]));
+                this._flattenRow(row._children, flattenedRows, ancestors.concat([row]));
                 delete row._children;
             }
         }, this);
