@@ -36,7 +36,8 @@ describe('painter.treeCell', function() {
     beforeEach(function() {
         treeCell = createTreeCellPainter();
         cellData = {
-            columnModel: {}
+            columnModel: {},
+            tree: {}
         };
     });
 
@@ -63,7 +64,9 @@ describe('painter.treeCell', function() {
 
         it('when the cell data has children, the cell has collapsed button.', function() {
             cellData = $.extend(cellData, {
-                hasChildren: true
+                tree: {
+                    hasChildren: true
+                }
             });
             cell = treeCell.generateHtml(cellData);
             result = $(cell).hasClass(classNameConst.TREE_BUTTON_COLLAPSE);
@@ -73,8 +76,10 @@ describe('painter.treeCell', function() {
 
         it('when the cell data has children and row is expanded, the cell has expanded button.', function() {
             cellData = $.extend(cellData, {
-                hasChildren: true,
-                isExpand: true
+                tree: {
+                    hasChildren: true,
+                    isExpanded: true
+                }
             });
             cell = treeCell.generateHtml(cellData);
             result = $(cell).hasClass(classNameConst.TREE_BUTTON_EXPAND);
@@ -91,7 +96,9 @@ describe('painter.treeCell', function() {
             var marginLeft = dimensionConst.INDENT_WIDTH * depth;
 
             cellData = $.extend(cellData, {
-                depth: depth
+                tree: {
+                    depth: depth
+                }
             });
             $element = $(treeCell._getContentHtml(cellData));
 
@@ -107,9 +114,11 @@ describe('painter.treeCell', function() {
             var $elements;
 
             cellData = $.extend(cellData, {
-                depth: depth
+                tree: {
+                    depth: depth
+                }
             });
-            content = treeCell._getExtraContentHtml(cellData);
+            content = treeCell._getExtraContentHtml(cellData.tree);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.length).toBe(depth);
@@ -120,10 +129,12 @@ describe('painter.treeCell', function() {
             var halfLineClassName = classNameConst.TREE_LINE_HALF;
 
             cellData = $.extend(cellData, {
-                depth: 3,
-                hasNextSibling: [true, true, false]
+                tree: {
+                    depth: 3,
+                    hasNextSibling: [true, true, false]
+                }
             });
-            content = treeCell._getExtraContentHtml(cellData);
+            content = treeCell._getExtraContentHtml(cellData.tree);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.eq(0).hasClass(halfLineClassName)).toBe(false);
@@ -136,10 +147,12 @@ describe('painter.treeCell', function() {
             var $elements;
 
             cellData = $.extend(cellData, {
-                depth: 3,
-                hasNextSibling: [false, false, false]
+                tree: {
+                    depth: 3,
+                    hasNextSibling: [false, false, false]
+                }
             });
-            content = treeCell._getExtraContentHtml(cellData);
+            content = treeCell._getExtraContentHtml(cellData.tree);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.eq(0).css('display')).toBe('none');
@@ -151,10 +164,12 @@ describe('painter.treeCell', function() {
             var $element;
 
             cellData = $.extend(cellData, {
-                depth: 3,
-                hasChildren: true
+                tree: {
+                    depth: 3,
+                    hasChildren: true
+                }
             });
-            content = treeCell._getExtraContentHtml(cellData);
+            content = treeCell._getExtraContentHtml(cellData.tree);
             $element = $(content).find('.' + classNameConst.TREE_LINE).last();
 
             expect($element.find('.' + classNameConst.BTN_TREE).length).toBe(1);
