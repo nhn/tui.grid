@@ -160,7 +160,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var depth = treeCellData.depth;
         var hasChildren = treeCellData.hasChildren;
         var hasNextSibling = treeCellData.hasNextSibling || [];
-        var hasIcon = treeCellData.hasIcon;
+        var useIcon = treeCellData.useIcon;
         var index = 0;
         var htmls = [];
         var lastDepth, leafRow;
@@ -172,7 +172,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             htmls.push(this._getLineHtml(index, lastDepth, leafRow, hasChildren));
         }
 
-        if (hasIcon) {
+        if (useIcon) {
             htmls.push(this._getIconHtml(depth));
         }
 
@@ -233,7 +233,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             styles.push('max-height:' + cellData.height + 'px');
         }
 
-        if (treeCellData.hasIcon) {
+        if (treeCellData.useIcon) {
             marginLeft += dimensionConst.INDENT_WIDTH;
         }
 
