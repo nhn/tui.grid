@@ -21,7 +21,10 @@ var originalTreeData = [{
         text: 'a-c',
         _children: [{
             text: 'a-c-a'
-        }]
+        }],
+        _extraData: {
+            treeState: 'COLLAPSE'
+        }
     }]
 }, {
     text: 'b'
@@ -158,6 +161,36 @@ describe('model.row', function() {
                     rowModelOptions
                 );
                 expect(rowModel.hasTreeNextSibling()).toEqual([true, false, false]);
+            });
+        });
+
+        describe('getTreeParentRowKey', function() {
+            it('should return it\'s parent row key', function() {
+                expect(rowModel.getTreeParentRowKey()).toBeFalsy();
+
+                rowModel = new RowModel(
+                    {rowKey: 4},
+                    rowModelOptions
+                );
+                expect(rowModel.getTreeParentRowKey()).toBe(3);
+            });
+        });
+
+        describe('isTreeShow', function() {
+            it('should return true if no ancestor is collapsed', function() {
+                expect(rowModel.isTreeShow()).toBe(true);
+
+                rowModel = new RowModel(
+                    {rowKey: 4},
+                    rowModelOptions
+                );
+                expect(rowModel.isTreeShow()).toBe(false);
+            });
+        });
+
+        describe('getTreeDescendentRowKeys', function() {
+            it('should return all of it\'s descendant', function() {
+                expect(rowModel.getTreeDescendentRowKeys()).toEqual([1, 2, 3, 4]);
             });
         });
     });

@@ -90,4 +90,37 @@ describe('data.treeModel', function() {
             expect(flattenedRow[6]._treeData.hasNextSibling).toEqual([false]);
         });
     });
+
+    describe('getTreeChildrenRowKeys', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return array of row keys of given row key', function() {
+            var childrenRowKeys = treeRowList.getTreeChildrenRowKeys(0);
+
+            expect(childrenRowKeys.length).toBe(3);
+            expect(childrenRowKeys).toEqual([1, 2, 3]);
+        });
+    });
+
+    describe('getTreeDescendentRowKeys', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return array of row keys of all of given row key', function() {
+            var descendentRowKeys = treeRowList.getTreeDescendentRowKeys(0);
+            expect(descendentRowKeys.length).toBe(4);
+
+            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(1);
+            expect(descendentRowKeys.length).toBe(0);
+
+            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(2);
+            expect(descendentRowKeys.length).toBe(0);
+
+            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(3);
+            expect(descendentRowKeys.length).toBe(1);
+        });
+    });
 });

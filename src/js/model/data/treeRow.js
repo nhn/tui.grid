@@ -5,8 +5,6 @@
 
 'use strict';
 
-var util = require('tui-code-snippet');
-
 var Row = require('./row');
 var treeState = require('../../common/constMap').treeState;
 
@@ -38,8 +36,13 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      * @param {boolean} state - true if expanded
      */
     setTreeExpanded: function(state) {
+        var prevState = this.getTreeExpanded();
+
         this.extraDataManager.setTreeState(state ? treeState.EXPAND : treeState.COLLAPSE);
-        this._triggerExtraDataChangeEvent();
+
+        if (state !== prevState) {
+            this._triggerExtraDataChangeEvent();
+        }
     },
 
     /**
@@ -72,9 +75,17 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      * @returns {Boolean} - true if it has children
      */
     hasTreeChildren: function() {
-        var childrenRowKeys = this._getTreeData().childrenRowKeys;
+        var childrenRowKeys = this.getTreeChildrenRowKeys();
 
-        return util.isArray(childrenRowKeys) && childrenRowKeys.length > 0;
+        return childrenRowKeys.length > 0;
+    },
+
+    /**
+     * gets children row keys
+     * @returns {(Number|String)[]} - array of children row keys
+     */
+    getTreeChildrenRowKeys: function() {
+        return this._getTreeData().childrenRowKeys || [];
     },
 
     /**
@@ -83,6 +94,14 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      */
     hasTreeNextSibling: function() {
         return this._getTreeData().hasNextSibling;
+    },
+
+    /**
+     * gets parent row key
+     * @returns {(Number|String)} - parent row key
+     */
+    getTreeParentRowKey: function() {
+        return this._getTreeData().parentRowKey;
     }
 }, {
     privateProperties: PRIVATE_PROPERTIES,
