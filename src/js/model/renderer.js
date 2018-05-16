@@ -60,6 +60,8 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+            .listenTo(this.dataModel, 'expand', this._onExpand)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
@@ -421,6 +423,10 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             type: 'deleteRange',
             dataListChanged: true
         });
+    },
+
+    _onExpand: function() {
+        console.log('expand');
     },
 
     /**

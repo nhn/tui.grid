@@ -181,6 +181,10 @@ var PainterController = snippet.defineClass(/** @lends module:painter/controller
         if (!snippet.pick(columnModel, 'editOptions', 'useViewMode')) {
             this.setValue(address, value);
         }
+    },
+
+    changeTreeExpanded: function(address) {
+        this.dataModel.expand(address.rowKey);
     }
 });
 

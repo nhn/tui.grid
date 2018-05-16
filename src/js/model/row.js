@@ -101,6 +101,8 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
+        console.log('??');
+
         _.each(this._getColumnNameList(), function(columnName) {
             var cellData = this.get(columnName);
             var cellState;

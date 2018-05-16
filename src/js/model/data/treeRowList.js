@@ -114,6 +114,18 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         rowKeys.shift();
 
         return rowKeys;
+    },
+
+    expand: function(rowKey) {
+        var row = this.get(rowKey);
+        var state = row.getTreeExpanded();
+
+        row.setTreeExpanded(state);
+
+        this.trigger('expand', {
+            rowKey: rowKey,
+            descendentRowKeys: this.getTreeDescendentRowKeys(rowKey)
+        });
     }
 });
 

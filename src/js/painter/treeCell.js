@@ -33,10 +33,10 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     },
 
     /**
-     * Selector for TD to bind events
+     * Selector of tree-button to bind events
      * @type {string}
      */
-    selector: '.' + classNameConst.CELL_TREE,
+    selector: '.' + classNameConst.BTN_TREE,
 
     events: {
         mousedown: '_onMouseDown'
@@ -91,7 +91,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var $target = $(ev.target);
         var address = this._getCellAddress($target);
 
-        this.controller.setExpandState(address);
+        this.controller.changeTreeExpanded(address);
     },
 
     /**
