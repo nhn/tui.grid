@@ -143,6 +143,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      * Get html of icon element in extra content
      * @param {number} depth - depth of current row
      * @returns {string} html string
+     * @private
      */
     _getIconHtml: function(depth) {
         var style = 'left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;';
