@@ -98,6 +98,13 @@ describe('TreeRow', function() {
         });
     });
 
+    describe('getTreeChildrenRowKeys', function() {
+        it('should return it\'s children', function() {
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getTreeChildrenRowKeys()).toEqual([1, 2, 3]);
+        });
+    });
+
     describe('hasTreeNextSibling', function() {
         it('should return whether it has one or more siblings and it\'s ancestors', function() {
             rowData._treeData.hasNextSibling = [false];
@@ -107,6 +114,16 @@ describe('TreeRow', function() {
             rowData._treeData.hasNextSibling = [true, false];
             treeRow = new TreeRow(rowData, parentData);
             expect(treeRow.hasTreeNextSibling()).toEqual([true, false]);
+        });
+    });
+
+    describe('getTreeParentRowKey', function() {
+        it('should return it\'s parent row key', function() {
+            expect(treeRow.getTreeParentRowKey()).toBeFalsy();
+
+            rowData._treeData.parentRowKey = 0;
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.getTreeParentRowKey()).toBe(0);
         });
     });
 });

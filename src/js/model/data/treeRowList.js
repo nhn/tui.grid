@@ -85,6 +85,35 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
                 delete row._children;
             }
         }, this);
+    },
+
+    /**
+     * get tree children of row of given rowKey
+     * @param {(Number|String)} rowKey - row key
+     * @returns {(Number|String)[]} - children of found row
+     */
+    getTreeChildrenRowKeys: function(rowKey) {
+        var row = this.get(rowKey);
+
+        return row.getTreeChildrenRowKeys();
+    },
+
+    /**
+     * get tree descendent of row of given rowKey
+     * @param {(Number|String)} rowKey - row key
+     * @returns {(Number|String)[]} - descendent of found row
+     */
+    getTreeDescendentRowKeys: function(rowKey) {
+        var index = 0;
+        var rowKeys = [rowKey];
+
+        while (index < rowKeys.length) {
+            rowKeys = rowKeys.concat(this.getTreeChildrenRowKeys(rowKeys[index]));
+            index += 1;
+        }
+        rowKeys.shift();
+
+        return rowKeys;
     }
 });
 

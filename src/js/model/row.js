@@ -466,6 +466,40 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
     },
 
     /**
+     * gets parent row key
+     * @returns {(Number|String)} - parent row key
+     */
+    getTreeParentRowKey: function() {
+        return this._getRowData().getTreeParentRowKey();
+    },
+
+    /**
+     * test if this row is to show
+     * @returns {Boolean} - true if to show
+     */
+    isTreeShow: function() {
+        var parent;
+        var show = true;
+        var parentRowKey = this.getTreeParentRowKey();
+
+        while (show && snippet.isExisty(parentRowKey)) {
+            parent = this.dataModel.get(parentRowKey);
+            show = show && parent.getTreeExpanded();
+            parentRowKey = parent.getTreeParentRowKey();
+        }
+
+        return show;
+    },
+
+    /**
+     * get tree descendent of row of given rowKey
+     * @returns {(Number|String)[]} - descendent of found row
+     */
+    getTreeDescendentRowKeys: function() {
+        return this.dataModel.getTreeDescendentRowKeys(this.get('rowKey'));
+    },
+
+    /**
      * Returns whether the 'set' method should be called silently.
      * @param {Object} cellData - cell data
      * @param {Boolean} valueChanged - true if value changed
