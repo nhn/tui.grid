@@ -219,11 +219,11 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
 
         if (columnModel.isTreeType(column.name)) {
             attrs.tree = {
-                depth: row.getDepth(),
+                depth: row.getTreeDepth(),
                 isExpanded: row.getTreeExpanded(),
-                hasChildren: row.hasChildren(),
+                hasChildren: row.hasTreeChildren(),
                 hasIcon: columnModel.useTreeIcon(),
-                hasNextSibling: row.hasNextSibling()
+                hasNextSibling: row.hasTreeNextSibling()
             };
         }
 
@@ -414,6 +414,55 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
                 this.trigger('valueChange', rowIndex);
             }
         }
+    },
+
+    /**
+     * get tree data
+     * @returns {Object} - tree data
+     * @private
+     */
+    _getRowData: function() {
+        return this.dataModel.get(this.get('rowKey'));
+    },
+
+    /**
+     * set tree state
+     * @param {boolean} state - true if expanded
+     */
+    setTreeExpanded: function(state) {
+        this._getRowData().setTreeExpanded(state);
+    },
+
+    /**
+     * get tree state
+     * @returns {boolean} - true if expanded
+     */
+    getTreeExpanded: function() {
+        return this._getRowData().getTreeExpanded();
+    },
+
+    /**
+     * get tree depth of this row
+     * @returns {Number} - depth of this row
+     */
+    getTreeDepth: function() {
+        return this._getRowData().getTreeDepth();
+    },
+
+    /**
+     * check whether this row has one or more children
+     * @returns {Boolean} - true if it has children
+     */
+    hasTreeChildren: function() {
+        return this._getRowData().hasTreeChildren();
+    },
+
+    /**
+     * check whether this row has one or more next sibling
+     * @returns {Boolean} - true if this row has siblings
+     */
+    hasTreeNextSibling: function() {
+        return this._getRowData().hasTreeNextSibling();
     },
 
     /**
