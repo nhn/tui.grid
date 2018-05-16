@@ -140,29 +140,46 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     },
 
     /**
+     * Get html of icon element in extra content
+     * @param {number} depth - depth of current row
+     * @returns {string} html string
+     */
+    _getIconHtml: function(depth) {
+        var style = 'left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;';
+
+        return '<span class="' + classNameConst.TREE_ICON + '" style="' + style + '"><i></i></span>';
+    },
+
+    /**
      * Get html of extra content that contains line and expand/collapse button elements
-     * @param {object} cellData - cell data
+     * @param {object} treeCellData - tree cell data
      * @returns {string} html string
      * @private
      */
-    _getExtraContentHtml: function(cellData) {
-        var depth = cellData.depth;
-        var hasChildren = cellData.hasChildren;
-        var hasNextSibling = cellData.hasNextSibling || [];
+    _getExtraContentHtml: function(treeCellData) {
+        var depth = treeCellData.depth;
+        var hasChildren = treeCellData.hasChildren;
+        var hasNextSibling = treeCellData.hasNextSibling || [];
+        var hasIcon = treeCellData.hasIcon;
         var index = 0;
-        var lineHtml = '';
+        var htmls = [];
         var lastDepth, leafRow;
 
         for (; index < depth; index += 1) {
             lastDepth = index === depth - 1;
             leafRow = !hasNextSibling[index];
-            lineHtml += this._getLineHtml(index, lastDepth, leafRow, hasChildren);
+
+            htmls.push(this._getLineHtml(index, lastDepth, leafRow, hasChildren));
+        }
+
+        if (hasIcon) {
+            htmls.push(this._getIconHtml(depth));
         }
 
         return this.contentTemplate({
             className: classNameConst.TREE_EXTRA_CONTENT,
             style: '',
-            content: lineHtml
+            content: htmls.join('')
         });
     },
 
@@ -179,9 +196,10 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             classNameConst.CELL_TREE
         ];
         var attrs = {};
+        var treeCellData = cellData.tree;
 
-        if (cellData.tree.hasChildren) {
-            if (cellData.tree.isExpanded) {
+        if (treeCellData.hasChildren) {
+            if (treeCellData.isExpanded) {
                 classNames.push(classNameConst.TREE_BUTTON_EXPAND);
             } else {
                 classNames.push(classNameConst.TREE_BUTTON_COLLAPSE);
@@ -203,8 +221,10 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      * @private
      */
     _getContentStyle: function(cellData) {
+        var treeCellData = cellData.tree;
         var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
         var styles = [];
+        var marginLeft = treeCellData.depth * dimensionConst.INDENT_WIDTH;
 
         if (whiteSpace) {
             styles.push('white-space:' + whiteSpace);
@@ -213,7 +233,11 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             styles.push('max-height:' + cellData.height + 'px');
         }
 
-        styles.push('margin-left:' + (cellData.tree.depth * dimensionConst.INDENT_WIDTH) + 'px');
+        if (treeCellData.hasIcon) {
+            marginLeft += dimensionConst.INDENT_WIDTH;
+        }
+
+        styles.push('margin-left:' + marginLeft + 'px');
 
         return styles.join(';');
     },

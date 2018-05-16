@@ -144,7 +144,8 @@ var classNames = {
     TREE_LINE_HALF: 'tree-line-half',
     TREE_LINE_BRANCH: 'tree-line-branch',
     TREE_BUTTON_EXPAND: 'tree-button-expand',
-    TREE_BUTTON_COLLAPSE: 'tree-button-collapse'
+    TREE_BUTTON_COLLAPSE: 'tree-button-collapse',
+    TREE_ICON: 'tree-icon'
 };
 
 var exports = _.mapObject(classNames, function(className) {

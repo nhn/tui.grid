@@ -174,5 +174,19 @@ describe('painter.treeCell', function() {
 
             expect($element.find('.' + classNameConst.BTN_TREE).length).toBe(1);
         });
+
+        it('when the current cell use icon, the icon is created in a cell.', function() {
+            var $element;
+
+            cellData = $.extend(cellData, {
+                tree: {
+                    hasIcon: true
+                }
+            });
+            content = treeCell._getExtraContentHtml(cellData.tree);
+            $element = $(content).find('.' + classNameConst.TREE_ICON);
+
+            expect($element.length).toBe(1);
+        });
     });
 });
