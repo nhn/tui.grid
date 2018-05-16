@@ -41,7 +41,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
         '<tr ' +
         '<%=rowKeyAttr%>" ' +
         'class="<%=className%>" ' +
-        'style="height: <%=height%>px;">' +
+        'style="height:<%=height%>px;display:<%=display%>">' +
         '<%=contents%>' +
         '</tr>'
     ),
@@ -146,6 +146,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
         return this.template({
             rowKeyAttr: rowKeyAttr,
             height: model.get('height') + CELL_BORDER_WIDTH,
+            display: model.isTreeShow() ? '' : 'none',
             contents: html,
             className: className
         });
