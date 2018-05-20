@@ -18,7 +18,7 @@ var TreeRow = require('./treeRow');
  * @ignore
  */
 var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype */{
-    initialize: function(models, options) {
+    initialize: function() {
         RowList.prototype.initialize.apply(this, arguments);
 
         /**
@@ -176,8 +176,51 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeExpand(topMostRowKey, true, true);
         }, this);
 
-        this.trigger('expanded', []);
+        this.trigger('expanded');
     },
+
+    /**
+     * collapse tree row
+     * @param {(Number|String)} rowKey - row key
+     * @param {Boolean} recursive - true for recursively expand all descendent
+     * @param {Boolean} silent - true to mute event
+     * @returns {(Number|String)[]} - children or descendent of given row
+     */
+    treeCollapse: function(rowKey, recursive, silent) {
+        var descendentRowKeys;
+        var row = this.get(rowKey);
+        row.setTreeExpanded(false);
+
+        if (recursive) {
+            descendentRowKeys = this.getTreeDescendentRowKeys(rowKey);
+            _.each(descendentRowKeys, function(descendentRowKey) {
+                var descendentRow = this.get(descendentRowKey);
+                if (descendentRow.hasTreeChildren()) {
+                    descendentRow.setTreeExpanded(false);
+                }
+            }, this);
+        } else {
+            descendentRowKeys = this.getTreeChildrenRowKeys(rowKey);
+        }
+
+        if (!silent) {
+            this.trigger('collapsed', descendentRowKeys.slice(0));
+        }
+
+        return descendentRowKeys;
+    },
+
+    /**
+     * collapse all rows
+     */
+    treeCollapseAll: function() {
+        var topMostRowKeys = this.getTopMostRowKeys();
+
+        _.each(topMostRowKeys, function(topMostRowKey) {
+            this.treeCollapse(topMostRowKey, true, true);
+        }, this);
+
+        this.trigger('collapsed');
     }
 });
 

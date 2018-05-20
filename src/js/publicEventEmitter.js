@@ -91,7 +91,8 @@ var PublicEventEmitter = snippet.defineClass(/** @lends module:publicEventEmitte
             'check',
             'uncheck',
             'deleteRange',
-            'expanded'
+            'expanded',
+            'collapsed'
         ]);
     },
 

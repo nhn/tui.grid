@@ -300,5 +300,39 @@ describe('grid', function() {
                 expect(spy).toHaveBeenCalled();
             });
         });
+
+        describe('collapse', function() {
+            it('should return children row keys of given row', function() {
+                var childrenRowKeys = grid.collapse(3);
+
+                expect(childrenRowKeys).toEqual([4, 5]);
+            });
+
+            it('should return descendent row keys of given row', function() {
+                var childrenRowKeys = grid.collapse(3, true);
+
+                expect(childrenRowKeys).toEqual([4, 5, 6]);
+            });
+
+            it('should trigger collapsed event', function() {
+                var spy = jasmine.createSpy('collapsed');
+                grid.on('collapsed', spy);
+
+                grid.collapse(0);
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+
+        describe('collapseAll', function() {
+            it('should trigger collapsed event', function() {
+                var spy = jasmine.createSpy('collapsed');
+                grid.on('collapsed', spy);
+
+                grid.collapseAll();
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
     });
 });

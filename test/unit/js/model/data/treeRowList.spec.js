@@ -18,7 +18,7 @@ var originalTreeData = [{
     }, {
         text: 'a-c', // 3
         _children: [{
-            text: 'a-c-a' //4
+            text: 'a-c-a' // 4
         }]
     }]
 }, {
@@ -147,6 +147,9 @@ describe('data.treeModel', function() {
 
     describe('treeExpand', function() {
         beforeEach(function(done) {
+            treeData[2]._extraData = {
+                treeState: 'COLLAPSE'
+            };
             treeRowList.setData(treeData, true, done);
         });
 
@@ -216,6 +219,99 @@ describe('data.treeModel', function() {
             treeRowList.on('expanded', spy);
 
             treeRowList.treeExpandAll();
+
+            expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('treeCollapse', function() {
+        beforeEach(function(done) {
+            treeData[0]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeData[0]._children[2]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeData[2]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should set collapse value of itself', function() {
+            treeRowList.treeCollapse(0);
+
+            expect(treeRowList.get(0).getTreeExpanded()).toBe(false);
+            expect(treeRowList.get(3).getTreeExpanded()).toBe(true);
+            expect(treeRowList.get(6).getTreeExpanded()).toBe(true);
+        });
+
+        it('should return children row keys of given row', function() {
+            var childrenRowKeys = treeRowList.treeCollapse(0);
+
+            expect(childrenRowKeys).toEqual([1, 2, 3]);
+        });
+
+        it('should set collapse value of descendant parents and itself', function() {
+            treeRowList.treeCollapse(0, true);
+
+            expect(treeRowList.get(0).getTreeExpanded()).toBe(false);
+            expect(treeRowList.get(3).getTreeExpanded()).toBe(false);
+            expect(treeRowList.get(6).getTreeExpanded()).toBe(true);
+        });
+
+        it('should return descendent row keys of given row', function() {
+            var childrenRowKeys = treeRowList.treeCollapse(0, true);
+
+            expect(childrenRowKeys).toEqual([1, 2, 3, 4]);
+        });
+
+        it('should trigger collapsed event', function() {
+            var spy = jasmine.createSpy('collapsed');
+            treeRowList.on('collapsed', spy);
+
+            treeRowList.treeCollapse(0);
+
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('should not trigger collapsed event if silent option enabled', function() {
+            var spy = jasmine.createSpy('collapsed');
+            treeRowList.on('collapsed', spy);
+
+            treeRowList.treeCollapse(0, false, true);
+
+            expect(spy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('treeCollapseAll', function() {
+        beforeEach(function(done) {
+            treeData[0]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeData[0]._children[2]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeData[2]._extraData = {
+                treeState: 'EXPAND'
+            };
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should set collapse value for all rows which have a child or children', function() {
+            treeRowList.treeCollapseAll();
+
+            expect(treeRowList.get(0).getTreeExpanded()).toBe(false);
+            expect(treeRowList.get(3).getTreeExpanded()).toBe(false);
+            expect(treeRowList.get(6).getTreeExpanded()).toBe(false);
+        });
+
+        it('should not trigger collapsed event', function() {
+            var spy = jasmine.createSpy('collapsed');
+            treeRowList.on('collapsed', spy);
+
+            treeRowList.treeCollapseAll();
 
             expect(spy).toHaveBeenCalled();
         });
