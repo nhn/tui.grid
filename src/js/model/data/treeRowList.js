@@ -18,6 +18,17 @@ var TreeRow = require('./treeRow');
  * @ignore
  */
 var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype */{
+    initialize: function(models, options) {
+        RowList.prototype.initialize.apply(this, arguments);
+
+        /**
+         * root row which actually does not exist.
+         * it keeps depth 1 rows as it's children
+         * @type {Object}
+         */
+        this._rootRow = {};
+    },
+
     model: TreeRow,
 
     /**
@@ -34,7 +45,11 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         var rowList = _.filter(data, _.isObject);
         var flattenedRow = [];
 
-        this._flattenRow(rowList, flattenedRow);
+        this._rootRow = {
+            _treeData: {}
+        };
+
+        this._flattenRow(rowList, flattenedRow, [this._rootRow]);
 
         _.each(flattenedRow, function(row, i) {
             if (this.isRowSpanEnable()) {
@@ -55,10 +70,6 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         var parent, hasNextSibling;
         var lastSibling = treeRows[treeRows.length - 1];
 
-        // it's a root node which is actually not exist.
-        ancestors = ancestors || [{
-            _treeData: {}
-        }];
         parent = ancestors[ancestors.length - 1];
         parent._treeData.childrenRowKeys = [];
 
@@ -88,6 +99,14 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
     },
 
     /**
+     * get top most row keys
+     * @returns {(Number|String)[]} - row keys
+     */
+    getTopMostRowKeys: function() {
+        return this._rootRow._treeData.childrenRowKeys;
+    },
+
+    /**
      * get tree children of row of given rowKey
      * @param {(Number|String)} rowKey - row key
      * @returns {(Number|String)[]} - children of found row
@@ -114,6 +133,51 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         rowKeys.shift();
 
         return rowKeys;
+    },
+
+    /**
+     * expand tree row
+     * @param {(Number|String)} rowKey - row key
+     * @param {Boolean} recursive - true for recursively expand all descendent
+     * @param {Boolean} silent - true to mute event
+     * @returns {(Number|String)[]} - children or descendent of given row
+     */
+    treeExpand: function(rowKey, recursive, silent) {
+        var descendentRowKeys;
+        var row = this.get(rowKey);
+        row.setTreeExpanded(true);
+
+        if (recursive) {
+            descendentRowKeys = this.getTreeDescendentRowKeys(rowKey);
+            util.forEachArray(descendentRowKeys, function(descendentRowKey) {
+                var descendentRow = this.get(descendentRowKey);
+                if (descendentRow.hasTreeChildren()) {
+                    descendentRow.setTreeExpanded(true);
+                }
+            }, this);
+        } else {
+            descendentRowKeys = this.getTreeChildrenRowKeys(rowKey);
+        }
+
+        if (!silent) {
+            this.trigger('expanded', descendentRowKeys.slice(0));
+        }
+
+        return descendentRowKeys;
+    },
+
+    /**
+     * expand all rows
+     */
+    treeExpandAll: function() {
+        var topMostRowKeys = this.getTopMostRowKeys();
+
+        _.each(topMostRowKeys, function(topMostRowKey) {
+            this.treeExpand(topMostRowKey, true, true);
+        }, this);
+
+        this.trigger('expanded', []);
+    },
     }
 });
 
