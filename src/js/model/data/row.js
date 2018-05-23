@@ -25,8 +25,15 @@ var PRIVATE_PROPERTIES = [
 ];
 
 // Error code for validtaion
-var VALID_ERR_REQUIRED = 'REQUIRED';
-var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
+var VALID_ERR_REQUIRED = 'INVALID';
+var VALID_ERR_TYPE_NUMBER = 'INVALID_NUMBER';
+var VALID_ERR_TYPE_EMAIL = 'INVALID_EMAIL';
+var VALID_ERR_TYPE_PHONE = 'INVALID_PHONE';
+
+var REGEXS = {
+    EMAIL: /^[a-z0-9_+.-]+@([a-z0-9-]+\.)+[a-z]{2,4}$/i,
+    PHONE: /^\d{2,3}-?\d{3,4}-?\d{4}$/
+};
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
@@ -181,10 +188,20 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
         if (validation) {
             value = this.get(columnName);
 
-            if (validation.required && util.isBlank(value)) {
-                errorCode = VALID_ERR_REQUIRED;
-            } else if (validation.dataType === 'number' && !_.isNumber(value)) {
-                errorCode = VALID_ERR_TYPE_NUMBER;
+            if (util.isBlank(value)) {
+                if (validation.required) {
+                    return VALID_ERR_REQUIRED;
+                }
+            } else {
+                if (validation.dataType === 'number' && isNaN(value)) {
+                    return VALID_ERR_TYPE_NUMBER;
+                }
+                if (validation.dataType === 'email' && !REGEXS.EMAIL.test(value)) {
+                    return VALID_ERR_TYPE_EMAIL;
+                }
+                if (validation.dataType === 'phone' && !REGEXS.PHONE.test(value)) {
+                    return VALID_ERR_TYPE_PHONE;
+                }
             }
         }
 
@@ -206,12 +223,13 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
         }
 
         errorCode = this._validateCellData(columnName);
+
+        this.removeCellClassName(columnName, classNameConst['CELL_' + this.validateMap[columnName]]);
+
         if (errorCode) {
-            this.addCellClassName(columnName, classNameConst.CELL_INVALID);
-        } else {
-            this.removeCellClassName(columnName, classNameConst.CELL_INVALID);
+            this.validateMap[columnName] = errorCode;
+            this.addCellClassName(columnName, classNameConst['CELL_' + errorCode]);
         }
-        this.validateMap[columnName] = errorCode;
 
         return errorCode;
     },

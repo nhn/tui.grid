@@ -51,6 +51,7 @@ var TextPainter = snippet.defineClass(InputPainter, /** @lends module:painter/in
         ' name="<%=name%>"' +
         ' align="center"' +
         ' maxLength="<%=maxLength%>"' +
+        ' placeholder="<%=validation.placeholder%>"' +
         ' <%=disabled%>' +
         '/>'
     ),
@@ -120,7 +121,10 @@ var TextPainter = snippet.defineClass(InputPainter, /** @lends module:painter/in
             value: cellData.value,
             name: util.getUniqueKey(),
             disabled: cellData.disabled ? 'disabled' : '',
-            maxLength: maxLength
+            maxLength: maxLength,
+            validation: {
+                placeholder: cellData.columnModel.validation.placeholder
+            }
         };
 
         if (cellData.whiteSpace !== 'nowrap') {
