@@ -89,9 +89,17 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      */
     _onMouseDown: function(ev) {
         var $target = $(ev.target);
+        var $td = $target.parents('td');
         var address = this._getCellAddress($target);
+        var state;
 
-        this.controller.changeTreeExpanded(address);
+        if ($td.hasClass(classNameConst.TREE_BUTTON_EXPAND)) {
+            state = false; // collapse
+        } else {
+            state = true; // expand
+        }
+
+        this.controller.changeTreeExpanded(address, state);
     },
 
     /**
@@ -180,8 +188,8 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         ];
         var attrs = {};
 
-        if (cellData.tree.hasChildren) {
-            if (cellData.tree.isExpanded) {
+        if (cellData.hasChildren) {
+            if (cellData.isExpanded) {
                 classNames.push(classNameConst.TREE_BUTTON_EXPAND);
             } else {
                 classNames.push(classNameConst.TREE_BUTTON_COLLAPSE);
@@ -213,7 +221,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             styles.push('max-height:' + cellData.height + 'px');
         }
 
-        styles.push('margin-left:' + (cellData.tree.depth * dimensionConst.INDENT_WIDTH) + 'px');
+        styles.push('margin-left:' + (cellData.depth * dimensionConst.INDENT_WIDTH) + 'px');
 
         return styles.join(';');
     },
@@ -285,7 +293,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      */
     generateHtml: function(cellData) {
         var attributeString = util.getAttributesString(this._getAttributes(cellData));
-        var extraContentHtml = this._getExtraContentHtml(cellData.tree);
+        var extraContentHtml = this._getExtraContentHtml(cellData);
         var contentHtml = this._getContentHtml(cellData);
 
         return this.template({
