@@ -1001,6 +1001,40 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
+     * expand tree row
+     * @param {(Number|String)} rowKey - row key
+     * @param {Boolean} recursive - true for recursively expand all descendent
+     * @returns {(Number|String)[]} - children or descendent of given row
+     */
+    expand: function(rowKey, recursive) {
+        return this.modelManager.dataModel.treeExpand(rowKey, recursive);
+    },
+
+    /**
+     * expand all tree row
+     */
+    expandAll: function() {
+        this.modelManager.dataModel.treeExpandAll();
+    },
+
+    /**
+     * expand tree row
+     * @param {(Number|String)} rowKey - row key
+     * @param {Boolean} recursive - true for recursively expand all descendent
+     * @returns {(Number|String)[]} - children or descendent of given row
+     */
+    collapse: function(rowKey, recursive) {
+        return this.modelManager.dataModel.treeCollapse(rowKey, recursive);
+    },
+
+    /**
+     * collapse all tree row
+     */
+    collapseAll: function() {
+        this.modelManager.dataModel.treeCollapseAll();
+    },
+
+    /**
      * Destroys the instance.
      */
     destroy: function() {
