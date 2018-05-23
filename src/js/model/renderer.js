@@ -60,7 +60,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
-            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
@@ -808,9 +807,9 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @param {number} rowKey - Parent row key
      */
     _showDescendantRows: function(rowKey) {
-        var model = this.dataModel.get(rowKey);
-        var isExpanded = model.getTreeExpanded();
-        var descendantRowKeys = model.getTreeChildrenRowKeys();
+        var dataModel = this.dataModel;
+        var isExpanded = dataModel.get(rowKey).getTreeExpanded();
+        var descendantRowKeys = dataModel.getTreeDescendentRowKeys(rowKey);
 
         this.trigger('updateRowsVisible', isExpanded, descendantRowKeys);
     },
