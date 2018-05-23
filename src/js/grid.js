@@ -675,6 +675,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
      *        has a rowspan data, the new row will extend the existing rowspan data.
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
+     * @param {Number} [options.offset] - Tree offset from first sibling
      */
     appendRow: function(row, options) {
         this.modelManager.dataModel.append(row, options);
