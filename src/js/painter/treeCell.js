@@ -90,16 +90,16 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     _onMouseDown: function(ev) {
         var $target = $(ev.target);
         var $td = $target.parents('td');
-        var address = this._getCellAddress($target);
+        var rowKey = this._getCellAddress($target).rowKey;
         var state;
 
         if ($td.hasClass(classNameConst.TREE_BUTTON_EXPAND)) {
-            state = false; // collapse
+            state = false;
         } else {
-            state = true; // expand
+            state = true;
         }
 
-        this.controller.changeTreeExpanded(address, state);
+        this.controller.changeTreeExpanded(rowKey, state);
     },
 
     /**
@@ -225,20 +225,23 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     /**
      * Get html of data content in tree-cell's right area
      * @param {object} cellData - cell data
-     * @returns {string} conneted string of styles
+     * @returns {string} concat string of styles
      * @private
      */
     _getContentStyle: function(cellData) {
-        var treeCellData = cellData.tree;
         var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+        var marginLeft = cellData.depth * dimensionConst.INDENT_WIDTH;
         var styles = [];
-        var marginLeft = treeCellData.depth * dimensionConst.INDENT_WIDTH;
 
         if (whiteSpace) {
             styles.push('white-space:' + whiteSpace);
         }
         if (this.fixedRowHeight) {
             styles.push('max-height:' + cellData.height + 'px');
+        }
+
+        if (cellData.useIcon) {
+            marginLeft += dimensionConst.INDENT_WIDTH;
         }
 
         styles.push('margin-left:' + marginLeft + 'px');

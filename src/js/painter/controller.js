@@ -185,12 +185,10 @@ var PainterController = snippet.defineClass(/** @lends module:painter/controller
 
     /**
      * Change tree expanded state
-     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {string} rowKey - Row key
      * @param {boolean} state - State to change
      */
-    changeTreeExpanded: function(address, state) {
-        var rowKey = address.rowKey;
-
+    changeTreeExpanded: function(rowKey, state) {
         this.dataModel.get(rowKey).setTreeExpanded(state);
     }
 });

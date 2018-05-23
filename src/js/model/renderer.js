@@ -805,6 +805,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     /**
      * Show decendant rows
      * @param {number} rowKey - Parent row key
+     * @private
      */
     _showDescendantRows: function(rowKey) {
         var dataModel = this.dataModel;
