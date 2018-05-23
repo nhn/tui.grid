@@ -61,10 +61,10 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
-            .listenTo(this.dataModel, 'expand', this._onExpand)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
+            .listenTo(partialRside, 'treeViewUpdate', this._showDescendantRows)
             .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
@@ -425,10 +425,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         });
     },
 
-    _onExpand: function() {
-        console.log('expand');
-    },
-
     /**
      * Resets dummy rows and trigger 'dataListChanged' event.
      * @private
@@ -707,6 +703,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
                 this.coordRowModel.syncWithDom();
             }
         }
+
         this._refreshState();
     },
     /* eslint-enable complexity */
@@ -804,6 +801,18 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
                 rowModel.setCell(columnName, changes);
             }
         }, this);
+    },
+
+    /**
+     * Show decendant rows
+     * @param {number} rowKey - Parent row key
+     */
+    _showDescendantRows: function(rowKey) {
+        var model = this.dataModel.get(rowKey);
+        var isExpanded = model.getTreeExpanded();
+        var descendantRowKeys = model.getTreeChildrenRowKeys();
+
+        this.trigger('updateRowsVisible', isExpanded, descendantRowKeys);
     },
 
     /**

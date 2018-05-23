@@ -51,7 +51,8 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render);
+            .listenTo(renderModel, 'rowListChanged', this.render)
+            .listenTo(renderModel, 'updateRowsVisible', this._showDescendantRows);
 
         if (this.whichSide === frameConst.L) {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -292,6 +293,26 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
 
         this.painterManager.getCellPainter(editType).refresh(cellData, $td);
         this.coordRowModel.syncWithDom();
+    },
+
+    /**
+     * Show decendant rows
+     * @param {boolean} isExpanded - Whether parent row's expanded state is true or not
+     * @param {array} rowKeys - Decendant row keys
+     * @private
+     */
+    _showDescendantRows: function(isExpanded, rowKeys) {
+        var i = 0;
+        var len = rowKeys.length;
+        var $rows = this.$el.find('tr');
+        var $row, style;
+
+        for (; i < len; i += 1) {
+            style = isExpanded ? '' : 'none';
+
+            $row = this._filterRowByKey($rows, rowKeys[i]);
+            $row.css('display', style);
+        }
     }
 }, {
     /**

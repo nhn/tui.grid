@@ -183,8 +183,15 @@ var PainterController = snippet.defineClass(/** @lends module:painter/controller
         }
     },
 
-    changeTreeExpanded: function(address) {
-        this.dataModel.expand(address.rowKey);
+    /**
+     * Change tree expanded state
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {boolean} state - State to change
+     */
+    changeTreeExpanded: function(address, state) {
+        var rowKey = address.rowKey;
+
+        this.dataModel.get(rowKey).setTreeExpanded(state);
     }
 });
 
