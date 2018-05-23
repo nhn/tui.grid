@@ -13,5 +13,9 @@ module.exports = {
         "tui": true,
         "setFixtures": true,
         "loadFixtures": true
+    },
+    rules: {
+        'linebreak-style': 0,
+        complexity: 0
     }
 };
