@@ -234,4 +234,105 @@ describe('grid', function() {
             expect(snippet.imagePing).not.toHaveBeenCalled();
         });
     });
+
+    describe('tree grid', function() {
+        var grid;
+
+        beforeEach(function(done) {
+            grid = createGrid('c1', {
+                treeColumnOptions: {
+                    name: 'c1'
+                }
+            });
+            grid.setData([{
+                c1: 'r1',
+                _children: [{
+                    c1: 'r2'
+                }, {
+                    c1: 'r3'
+                }]
+            }, {
+                c1: 'r4',
+                _children: [{
+                    c1: 'r5'
+                }, {
+                    c1: 'r6',
+                    _children: [{
+                        c1: 'r7'
+                    }],
+                    _extraData: {
+                        treeState: 'COLLAPSE'
+                    }
+                }]
+            }], done);
+        });
+
+        describe('expand', function() {
+            it('should return children row keys of given row', function() {
+                var childrenRowKeys = grid.expand(3);
+
+                expect(childrenRowKeys).toEqual([4, 5]);
+            });
+
+            it('should return descendent row keys of given row', function() {
+                var childrenRowKeys = grid.expand(3, true);
+
+                expect(childrenRowKeys).toEqual([4, 5, 6]);
+            });
+
+            it('should trigger expanded event', function() {
+                var spy = jasmine.createSpy('expanded');
+                grid.on('expanded', spy);
+
+                grid.expand(0);
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+
+        describe('expandAll', function() {
+            it('should trigger expanded event', function() {
+                var spy = jasmine.createSpy('expanded');
+                grid.on('expanded', spy);
+
+                grid.expandAll();
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+
+        describe('collapse', function() {
+            it('should return children row keys of given row', function() {
+                var childrenRowKeys = grid.collapse(3);
+
+                expect(childrenRowKeys).toEqual([4, 5]);
+            });
+
+            it('should return descendent row keys of given row', function() {
+                var childrenRowKeys = grid.collapse(3, true);
+
+                expect(childrenRowKeys).toEqual([4, 5, 6]);
+            });
+
+            it('should trigger collapsed event', function() {
+                var spy = jasmine.createSpy('collapsed');
+                grid.on('collapsed', spy);
+
+                grid.collapse(0);
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+
+        describe('collapseAll', function() {
+            it('should trigger collapsed event', function() {
+                var spy = jasmine.createSpy('collapsed');
+                grid.on('collapsed', spy);
+
+                grid.collapseAll();
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+    });
 });
