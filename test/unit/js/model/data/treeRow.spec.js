@@ -96,6 +96,12 @@ describe('TreeRow', function() {
             treeRow = new TreeRow(rowData, parentData);
             expect(treeRow.hasTreeChildren()).toBe(true);
         });
+
+        it('should return even if it has an empty array', function() {
+            rowData._treeData.childrenRowKeys = [];
+            treeRow = new TreeRow(rowData, parentData);
+            expect(treeRow.hasTreeChildren()).toBe(true);
+        });
     });
 
     describe('getTreeChildrenRowKeys', function() {

@@ -100,7 +100,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             row = this._baseFormat(row);
             row._treeData = {
                 parentRowKey: parent.rowKey,
-                hasNextSibling: parent._treeData.hasNextSibling.concat([lastSibling !== row])
+                hasNextSibling: parent._treeData.hasNextSibling.concat([lastSibling !== row]),
+                childrenRowKeys: row._children ? [] : null
             };
             parent._treeData.childrenRowKeys.push(row.rowKey);
 
