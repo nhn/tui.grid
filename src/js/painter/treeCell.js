@@ -91,15 +91,9 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var $target = $(ev.target);
         var $td = $target.parents('td');
         var rowKey = this._getCellAddress($target).rowKey;
-        var state;
+        var isExpanded = $td.hasClass(classNameConst.TREE_BUTTON_EXPAND);
 
-        if ($td.hasClass(classNameConst.TREE_BUTTON_EXPAND)) {
-            state = false;
-        } else {
-            state = true;
-        }
-
-        this.controller.changeTreeExpanded(rowKey, state);
+        this.controller.changeTreeExpanded(rowKey, isExpanded);
     },
 
     /**

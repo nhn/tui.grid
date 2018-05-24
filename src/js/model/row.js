@@ -410,7 +410,6 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
      */
     setCell: function(columnName, param) {
         var isValueChanged = false;
-        var isExpandedChanged = false;
         var changed = [];
         var rowIndex, rowKey, data;
 
@@ -424,7 +423,6 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         _.each(param, function(changeValue, name) {
             if (!util.isEqual(data[name], changeValue)) {
                 isValueChanged = (name === 'value') ? true : isValueChanged;
-                isExpandedChanged = (name === 'isExpanded') ? true : isExpandedChanged;
                 data[name] = changeValue;
                 changed.push(name);
             }
@@ -440,8 +438,6 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
             if (isValueChanged) {
                 rowIndex = this.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
-            } else if (isExpandedChanged) {
-                this.trigger('treeViewUpdate', rowKey, columnName);
             }
         }
     },

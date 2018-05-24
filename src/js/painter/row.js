@@ -127,7 +127,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      * Returns the HTML string of all cells in the given model (row).
      * @param {module:model/row} model - View model instance
      * @param {Array.<String>} columnNames - An array of column names
-     * @param {Boolean} hasTreeColumn - Whether grid has tree column or not
+     * @param {Boolean} hasTreeColumn - Whether the grid has tree column or not
      * @returns {String} HTLM string
      */
     generateHtml: function(model, columnNames, hasTreeColumn) {

@@ -63,7 +63,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
-            .listenTo(partialRside, 'treeViewUpdate', this._showDescendantRows)
             .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
@@ -800,19 +799,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
                 rowModel.setCell(columnName, changes);
             }
         }, this);
-    },
-
-    /**
-     * Show decendant rows
-     * @param {number} rowKey - Parent row key
-     * @private
-     */
-    _showDescendantRows: function(rowKey) {
-        var dataModel = this.dataModel;
-        var isExpanded = dataModel.get(rowKey).getTreeExpanded();
-        var descendantRowKeys = dataModel.getTreeDescendentRowKeys(rowKey);
-
-        this.trigger('updateRowsVisible', isExpanded, descendantRowKeys);
     },
 
     /**
