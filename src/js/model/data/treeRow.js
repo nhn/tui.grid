@@ -5,6 +5,7 @@
 
 'use strict';
 
+var _ = require('underscore');
 var Row = require('./row');
 var treeState = require('../../common/constMap').treeState;
 
@@ -86,6 +87,18 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      */
     getTreeChildrenRowKeys: function() {
         return this._getTreeData().childrenRowKeys || [];
+    },
+
+    /**
+     * remove a child key from children row keys
+     * @param {Number|String} rowKey - the key of the row to be removed
+     */
+    removeTreeChildrenRowKey: function(rowKey) {
+        var treeData = this._getTreeData();
+
+        treeData.childrenRowKeys = _.filter(treeData.childrenRowKeys, function(childRowKey) {
+            return childRowKey !== rowKey;
+        }, this);
     },
 
     /**

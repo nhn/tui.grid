@@ -4,6 +4,7 @@ var $ = require('jquery');
 
 var ColumnModelData = require('model/data/columnModel');
 var TreeRowList = require('model/data/treeRowList');
+var TreeRow = require('model/data/treeRow');
 
 var columns = [{
     title: 'text',
@@ -40,7 +41,7 @@ describe('data.treeModel', function() {
         treeRowList = new TreeRowList([], {
             columnModel: columnModel
         });
-        rootRow = {_treeData: {}};
+        rootRow = {_treeData: {hasNextSibling: []}};
     });
 
     describe('_flattenRow', function() {
@@ -314,6 +315,226 @@ describe('data.treeModel', function() {
             treeRowList.treeCollapseAll();
 
             expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('_indexOfParentRowKeyAndOffset', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return it\'s index from given parent row key and offset', function() {
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, 0)).toBe(0);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, -100)).toBe(0);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(null, 0)).toBe(0);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, 1)).toBe(5);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, 2)).toBe(6);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, 3)).toBe(8);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(-1, 100)).toBe(8);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(0, 0)).toBe(1);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(0, 1)).toBe(2);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(0, 2)).toBe(3);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(0, 3)).toBe(5);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(1, 0)).toBe(2);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(2, 0)).toBe(3);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(3, 0)).toBe(4);
+            expect(treeRowList._indexOfParentRowKeyAndOffset(3, 1)).toBe(5);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(5, 0)).toBe(6);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(6, 0)).toBe(7);
+
+            expect(treeRowList._indexOfParentRowKeyAndOffset(7, 0)).toBe(8);
+        });
+    });
+
+    describe('getTreeSiblingRowKeys', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return row keys of sibling and of itself', function() {
+            expect(treeRowList.getTreeSiblingRowKeys(0)).toEqual([0, 5, 6]);
+            expect(treeRowList.getTreeSiblingRowKeys(5)).toEqual([0, 5, 6]);
+            expect(treeRowList.getTreeSiblingRowKeys(6)).toEqual([0, 5, 6]);
+
+            expect(treeRowList.getTreeSiblingRowKeys(1)).toEqual([1, 2, 3]);
+            expect(treeRowList.getTreeSiblingRowKeys(2)).toEqual([1, 2, 3]);
+            expect(treeRowList.getTreeSiblingRowKeys(3)).toEqual([1, 2, 3]);
+        });
+    });
+
+    describe('getTreePrevSiblingRowKey', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return previous sibling row key', function() {
+            expect(treeRowList.getTreePrevSiblingRowKey(0)).toBe(null);
+            expect(treeRowList.getTreePrevSiblingRowKey(5)).toBe(0);
+            expect(treeRowList.getTreePrevSiblingRowKey(6)).toBe(5);
+        });
+    });
+
+    describe('getTreeNextSiblingRowKey', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return next sibling row key', function() {
+            expect(treeRowList.getTreeNextSiblingRowKey(0)).toBe(5);
+            expect(treeRowList.getTreeNextSiblingRowKey(5)).toBe(6);
+            expect(treeRowList.getTreeNextSiblingRowKey(6)).toBe(null);
+        });
+    });
+
+    describe('_syncHasTreeSiblingData', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should sync hasSibling of previous sibling for depth 1', function() {
+            treeRowList.get(0).hasTreeNextSibling()[0] = false;
+            treeRowList.get(5).hasTreeNextSibling()[0] = false;
+
+            treeRowList._syncHasTreeNextSiblingData(5);
+
+            expect(treeRowList.get(0).hasTreeNextSibling()).toEqual([true]);
+            expect(treeRowList.get(5).hasTreeNextSibling()).toEqual([true]);
+        });
+
+        it('should sync hasSibling of previous sibling for depth 2', function() {
+            treeRowList.get(1).hasTreeNextSibling()[1] = false;
+            treeRowList.get(2).hasTreeNextSibling()[1] = false;
+
+            treeRowList._syncHasTreeNextSiblingData(2);
+
+            expect(treeRowList.get(1).hasTreeNextSibling()).toEqual([true, true]);
+            expect(treeRowList.get(2).hasTreeNextSibling()).toEqual([true, true]);
+        });
+    });
+
+    describe('append', function() {
+        var appendData, appendOptions;
+
+        beforeEach(function(done) {
+            appendData = {
+                text: 'n',
+                _children: [{
+                    text: 'n-a'
+                }, {
+                    text: 'n-b'
+                }]
+            };
+            appendOptions = {
+                parentRowKey: 0,
+                offset: 3
+            };
+
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should add to model list', function() {
+            var result = treeRowList.append(appendData, appendOptions);
+
+            // length
+            expect(treeRowList.length).toBe(11);
+            // parent
+            expect(result[0].getTreeParentRowKey()).toBe(0);
+            expect(result[1].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
+            expect(result[2].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
+            // children
+            expect(treeRowList.get(0).getTreeChildrenRowKeys()).toContain(result[0].get('rowKey'));
+            expect(result[0].getTreeChildrenRowKeys()).toContain(result[1].get('rowKey'));
+            expect(result[0].getTreeChildrenRowKeys()).toContain(result[2].get('rowKey'));
+            expect(result[1].getTreeChildrenRowKeys().length).toBe(0);
+            expect(result[2].getTreeChildrenRowKeys().length).toBe(0);
+            // sibling
+            expect(treeRowList.get(3).hasTreeNextSibling()).toEqual([true, true]);
+            expect(result[0].hasTreeNextSibling()).toEqual([true, false]);
+            expect(result[1].hasTreeNextSibling()).toEqual([true, false, true]);
+            expect(result[2].hasTreeNextSibling()).toEqual([true, false, false]);
+        });
+
+        it('should add to model list as a top most row', function() {
+            appendOptions.parentRowKey = null;
+            var result = treeRowList.append(appendData, appendOptions);
+
+            // length
+            expect(treeRowList.length).toBe(11);
+            // parent
+            expect(result[0].getTreeParentRowKey()).not.toBeDefined();
+            expect(result[1].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
+            expect(result[2].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
+            // children
+            expect(treeRowList.getTopMostRowKeys()).toContain(result[0].get('rowKey'));
+            expect(result[0].getTreeChildrenRowKeys()).toContain(result[1].get('rowKey'));
+            expect(result[0].getTreeChildrenRowKeys()).toContain(result[2].get('rowKey'));
+            expect(result[1].getTreeChildrenRowKeys().length).toBe(0);
+            expect(result[2].getTreeChildrenRowKeys().length).toBe(0);
+            // sibling
+            expect(treeRowList.get(6).hasTreeNextSibling()).toEqual([true]);
+            expect(result[0].hasTreeNextSibling()).toEqual([false]);
+            expect(result[1].hasTreeNextSibling()).toEqual([false, true]);
+            expect(result[2].hasTreeNextSibling()).toEqual([false, false]);
+        });
+
+        it('should trigger add event', function() {
+            var spy = jasmine.createSpy('add');
+            treeRowList.on('add', spy);
+
+            treeRowList.append(appendData, appendOptions);
+
+            expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe('prepend', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should insert the given data to the top', function() {
+            treeRowList.prepend({
+                text: 'n',
+                _children: [{
+                    text: 'n-a'
+                }, {
+                    text: 'n-b'
+                }]
+            });
+
+            expect(treeRowList.at(0).get('text')).toBe('n');
+            expect(treeRowList.at(1).get('text')).toBe('n-a');
+            expect(treeRowList.at(2).get('text')).toBe('n-b');
+            expect(treeRowList.at(3).get('text')).toBe('a');
+        });
+    });
+
+    describe('remove', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should remove a child', function() {
+            treeRowList.removeRow(7);
+
+            expect(treeRowList.length).toBe(7);
+            expect(treeRowList.get(7)).not.toBeDefined();
+            expect(treeRowList.get(6).getTreeChildrenRowKeys().length).toBe(0);
+        });
+
+        it('should remove a child and it\'s descendant', function() {
+            treeRowList.removeRow(6);
+
+            expect(treeRowList.length).toBe(6);
+            expect(treeRowList.get(6)).not.toBeDefined();
+            expect(treeRowList.get(7)).not.toBeDefined();
+            expect(treeRowList.getTopMostRowKeys()).toEqual([0, 5]);
+            expect(treeRowList.get(5).hasTreeNextSibling()).toEqual([false]);
         });
     });
 });
