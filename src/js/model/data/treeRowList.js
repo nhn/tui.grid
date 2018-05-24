@@ -169,11 +169,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         prevSiblingRow = this.get(this.getTreePrevSiblingRowKey(rowKey));
         nextSiblingRow = this.get(this.getTreeNextSiblingRowKey(rowKey));
 
-        if (nextSiblingRow) {
-            currentRow.hasTreeNextSibling()[currentDepth - 1] = true;
-        } else {
-            currentRow.hasTreeNextSibling()[currentDepth - 1] = false;
-        }
+        currentRow.hasTreeNextSibling()[currentDepth - 1] = !!nextSiblingRow;
 
         if (prevSiblingRow) {
             prevSiblingRow.hasTreeNextSibling()[currentDepth - 1] = true;
@@ -316,7 +312,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         var siblingRowKeys = this.getTreeSiblingRowKeys(rowKey);
         var currentIndex = siblingRowKeys.indexOf(rowKey);
 
-        return currentIndex + 1 >= siblingRowKeys.length
+        return (currentIndex + 1 >= siblingRowKeys.length)
             ? null : siblingRowKeys[currentIndex + 1];
     },
 
