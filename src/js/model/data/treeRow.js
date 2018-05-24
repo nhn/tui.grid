@@ -76,9 +76,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      * @returns {Boolean} - true if it has children
      */
     hasTreeChildren: function() {
-        var childrenRowKeys = this.getTreeChildrenRowKeys();
-
-        return childrenRowKeys.length > 0;
+        return !!this._getTreeData().childrenRowKeys;
     },
 
     /**

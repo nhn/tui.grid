@@ -15,7 +15,8 @@ var originalTreeData = [{
     _children: [{
         text: 'a-a' // 1
     }, {
-        text: 'a-b' // 2
+        text: 'a-b', // 2
+        _children: true
     }, {
         text: 'a-c', // 3
         _children: [{
@@ -97,6 +98,13 @@ describe('data.treeModel', function() {
             expect(flattenedRow[5]._treeData.hasNextSibling).toEqual([true]);
             expect(flattenedRow[6]._treeData.hasNextSibling).toEqual([false]);
             expect(flattenedRow[7]._treeData.hasNextSibling).toEqual([false, false]);
+        });
+
+        it('should set childrenRowKeys for _children true value', function() {
+            var flattenedRow = [];
+            treeRowList._flattenRow(treeData, flattenedRow, [rootRow]);
+
+            expect(flattenedRow[2]._treeData.childrenRowKeys).toEqual([]);
         });
     });
 
