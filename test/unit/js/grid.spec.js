@@ -268,18 +268,6 @@ describe('grid', function() {
         });
 
         describe('expand', function() {
-            it('should return children row keys of given row', function() {
-                var childrenRowKeys = grid.expand(3);
-
-                expect(childrenRowKeys).toEqual([4, 5]);
-            });
-
-            it('should return descendant row keys of given row', function() {
-                var childrenRowKeys = grid.expand(3, true);
-
-                expect(childrenRowKeys).toEqual([4, 5, 6]);
-            });
-
             it('should trigger expanded event', function() {
                 var spy = jasmine.createSpy('expanded');
                 grid.on('expanded', spy);
@@ -302,18 +290,6 @@ describe('grid', function() {
         });
 
         describe('collapse', function() {
-            it('should return children row keys of given row', function() {
-                var childrenRowKeys = grid.collapse(3);
-
-                expect(childrenRowKeys).toEqual([4, 5]);
-            });
-
-            it('should return descendant row keys of given row', function() {
-                var childrenRowKeys = grid.collapse(3, true);
-
-                expect(childrenRowKeys).toEqual([4, 5, 6]);
-            });
-
             it('should trigger collapsed event', function() {
                 var spy = jasmine.createSpy('collapsed');
                 grid.on('collapsed', spy);
