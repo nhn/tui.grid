@@ -701,6 +701,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
                 this.coordRowModel.syncWithDom();
             }
         }
+
         this._refreshState();
     },
     /* eslint-enable complexity */

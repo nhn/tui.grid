@@ -31,6 +31,7 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
         var renderModel = options.renderModel;
         var selectionModel = options.selectionModel;
         var coordRowModel = options.coordRowModel;
+        var dataModel = options.dataModel;
         var whichSide = options.whichSide || 'R';
 
         _.assign(this, {
@@ -40,7 +41,7 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
             renderModel: renderModel,
             selectionModel: selectionModel,
             coordRowModel: coordRowModel,
-            dataModel: options.dataModel,
+            dataModel: dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
             painterManager: options.painterManager,
@@ -51,7 +52,9 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render);
+            .listenTo(renderModel, 'rowListChanged', this.render)
+            .listenTo(dataModel, 'expanded ', this._onExpanded)
+            .listenTo(dataModel, 'collapsed', this._onCollapsed);
 
         if (this.whichSide === frameConst.L) {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -125,9 +128,10 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter();
         var columnNames = _.pluck(this._getColumns(), 'name');
+        var hasTreeColumn = this.columnModel.hasTreeColumn();
 
         return _.map(rows, function(row) {
-            return rowPainter.generateHtml(row, columnNames);
+            return rowPainter.generateHtml(row, columnNames, hasTreeColumn);
         }).join('');
     },
 
@@ -292,6 +296,44 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
 
         this.painterManager.getCellPainter(editType).refresh(cellData, $td);
         this.coordRowModel.syncWithDom();
+    },
+
+    /**
+     * Event handler for 'expanded' event on module:model/treeRowList
+     * @param {Array.<number>} rowKeys - Row key list
+     * @private
+     */
+    _onExpanded: function(rowKeys) {
+        this._showDescendantRows(rowKeys, true);
+    },
+
+    /**
+     * Event handler for 'collapsed' event on module:model/treeRowList
+     * @param {Array.<number>} rowKeys - Row key list
+     * @private
+     */
+    _onCollapsed: function(rowKeys) {
+        this._showDescendantRows(rowKeys, false);
+    },
+
+    /**
+     * Show decendant rows
+     * @param {array} rowKeys - Decendant row keys
+     * @param {boolean} isExpanded - Whether parent row's expanded state is true or not
+     * @private
+     */
+    _showDescendantRows: function(rowKeys, isExpanded) {
+        var i = 0;
+        var len = rowKeys.length;
+        var $rows = this.$el.find('tr');
+        var $row, style;
+
+        for (; i < len; i += 1) {
+            style = isExpanded ? '' : 'none';
+
+            $row = this._filterRowByKey($rows, rowKeys[i]);
+            $row.css('display', style);
+        }
     }
 }, {
     /**

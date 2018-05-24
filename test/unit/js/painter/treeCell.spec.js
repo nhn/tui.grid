@@ -36,8 +36,7 @@ describe('painter.treeCell', function() {
     beforeEach(function() {
         treeCell = createTreeCellPainter();
         cellData = {
-            columnModel: {},
-            tree: {}
+            columnModel: {}
         };
     });
 
@@ -64,9 +63,7 @@ describe('painter.treeCell', function() {
 
         it('when the cell data has children, the cell has collapsed button.', function() {
             cellData = $.extend(cellData, {
-                tree: {
-                    hasChildren: true
-                }
+                hasChildren: true
             });
             cell = treeCell.generateHtml(cellData);
             result = $(cell).hasClass(classNameConst.TREE_BUTTON_COLLAPSE);
@@ -76,10 +73,8 @@ describe('painter.treeCell', function() {
 
         it('when the cell data has children and row is expanded, the cell has expanded button.', function() {
             cellData = $.extend(cellData, {
-                tree: {
-                    hasChildren: true,
-                    isExpanded: true
-                }
+                hasChildren: true,
+                isExpanded: true
             });
             cell = treeCell.generateHtml(cellData);
             result = $(cell).hasClass(classNameConst.TREE_BUTTON_EXPAND);
@@ -96,9 +91,7 @@ describe('painter.treeCell', function() {
             var marginLeft = dimensionConst.INDENT_WIDTH * depth;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    depth: depth
-                }
+                depth: depth
             });
             $element = $(treeCell._getContentHtml(cellData));
 
@@ -114,11 +107,9 @@ describe('painter.treeCell', function() {
             var $elements;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    depth: depth
-                }
+                depth: depth
             });
-            content = treeCell._getExtraContentHtml(cellData.tree);
+            content = treeCell._getExtraContentHtml(cellData);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.length).toBe(depth);
@@ -129,12 +120,10 @@ describe('painter.treeCell', function() {
             var halfLineClassName = classNameConst.TREE_LINE_HALF;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    depth: 3,
-                    hasNextSibling: [true, true, false]
-                }
+                depth: 3,
+                hasNextSibling: [true, true, false]
             });
-            content = treeCell._getExtraContentHtml(cellData.tree);
+            content = treeCell._getExtraContentHtml(cellData);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.eq(0).hasClass(halfLineClassName)).toBe(false);
@@ -147,12 +136,10 @@ describe('painter.treeCell', function() {
             var $elements;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    depth: 3,
-                    hasNextSibling: [false, false, false]
-                }
+                depth: 3,
+                hasNextSibling: [false, false, false]
             });
-            content = treeCell._getExtraContentHtml(cellData.tree);
+            content = treeCell._getExtraContentHtml(cellData);
             $elements = $(content).find('.' + classNameConst.TREE_LINE);
 
             expect($elements.eq(0).css('display')).toBe('none');
@@ -164,12 +151,10 @@ describe('painter.treeCell', function() {
             var $element;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    depth: 3,
-                    hasChildren: true
-                }
+                depth: 3,
+                hasChildren: true
             });
-            content = treeCell._getExtraContentHtml(cellData.tree);
+            content = treeCell._getExtraContentHtml(cellData);
             $element = $(content).find('.' + classNameConst.TREE_LINE).last();
 
             expect($element.find('.' + classNameConst.BTN_TREE).length).toBe(1);
@@ -179,11 +164,9 @@ describe('painter.treeCell', function() {
             var $element;
 
             cellData = $.extend(cellData, {
-                tree: {
-                    useIcon: true
-                }
+                useIcon: true
             });
-            content = treeCell._getExtraContentHtml(cellData.tree);
+            content = treeCell._getExtraContentHtml(cellData);
             $element = $(content).find('.' + classNameConst.TREE_ICON);
 
             expect($element.length).toBe(1);

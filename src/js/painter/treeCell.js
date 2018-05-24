@@ -33,10 +33,10 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     },
 
     /**
-     * Selector for TD to bind events
+     * Selector of tree-button to bind events
      * @type {string}
      */
-    selector: '.' + classNameConst.CELL_TREE,
+    selector: '.' + classNameConst.BTN_TREE,
 
     events: {
         mousedown: '_onMouseDown'
@@ -89,9 +89,11 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      */
     _onMouseDown: function(ev) {
         var $target = $(ev.target);
-        var address = this._getCellAddress($target);
+        var $td = $target.parents('td');
+        var rowKey = this._getCellAddress($target).rowKey;
+        var isExpanded = $td.hasClass(classNameConst.TREE_BUTTON_EXPAND);
 
-        this.controller.setExpandState(address);
+        this.controller.changeTreeExpanded(rowKey, isExpanded);
     },
 
     /**
@@ -197,10 +199,9 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             classNameConst.CELL_TREE
         ];
         var attrs = {};
-        var treeCellData = cellData.tree;
 
-        if (treeCellData.hasChildren) {
-            if (treeCellData.isExpanded) {
+        if (cellData.hasChildren) {
+            if (cellData.isExpanded) {
                 classNames.push(classNameConst.TREE_BUTTON_EXPAND);
             } else {
                 classNames.push(classNameConst.TREE_BUTTON_COLLAPSE);
@@ -218,14 +219,13 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     /**
      * Get html of data content in tree-cell's right area
      * @param {object} cellData - cell data
-     * @returns {string} conneted string of styles
+     * @returns {string} concat string of styles
      * @private
      */
     _getContentStyle: function(cellData) {
-        var treeCellData = cellData.tree;
         var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+        var marginLeft = cellData.depth * dimensionConst.INDENT_WIDTH;
         var styles = [];
-        var marginLeft = treeCellData.depth * dimensionConst.INDENT_WIDTH;
 
         if (whiteSpace) {
             styles.push('white-space:' + whiteSpace);
@@ -234,7 +234,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
             styles.push('max-height:' + cellData.height + 'px');
         }
 
-        if (treeCellData.useIcon) {
+        if (cellData.useIcon) {
             marginLeft += dimensionConst.INDENT_WIDTH;
         }
 
@@ -310,7 +310,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      */
     generateHtml: function(cellData) {
         var attributeString = util.getAttributesString(this._getAttributes(cellData));
-        var extraContentHtml = this._getExtraContentHtml(cellData.tree);
+        var extraContentHtml = this._getExtraContentHtml(cellData);
         var contentHtml = this._getContentHtml(cellData);
 
         return this.template({
