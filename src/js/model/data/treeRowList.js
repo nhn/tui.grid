@@ -394,7 +394,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeExpand(topMostRowKey, true, true);
         }, this);
 
-        this.trigger('expanded');
+        this.trigger('expandedAll');
     },
 
     /**
@@ -438,7 +438,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeCollapse(topMostRowKey, true, true);
         }, this);
 
-        this.trigger('collapsed');
+        this.trigger('collapsedAll');
     },
 
     /**

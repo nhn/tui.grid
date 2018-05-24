@@ -215,9 +215,9 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(6).getTreeExpanded()).toBe(true);
         });
 
-        it('should not trigger expanded event', function() {
-            var spy = jasmine.createSpy('expanded');
-            treeRowList.on('expanded', spy);
+        it('should trigger expandedAll event', function() {
+            var spy = jasmine.createSpy('expandedAll');
+            treeRowList.on('expandedAll', spy);
 
             treeRowList.treeExpandAll();
 
@@ -308,9 +308,9 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(6).getTreeExpanded()).toBe(false);
         });
 
-        it('should not trigger collapsed event', function() {
-            var spy = jasmine.createSpy('collapsed');
-            treeRowList.on('collapsed', spy);
+        it('should trigger collapsedAll event', function() {
+            var spy = jasmine.createSpy('collapsedAll');
+            treeRowList.on('collapsedAll', spy);
 
             treeRowList.treeCollapseAll();
 
