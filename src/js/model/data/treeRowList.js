@@ -361,20 +361,21 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @returns {(Number|String)[]} - children or descendant of given row
      */
     treeExpand: function(rowKey, recursive, silent) {
-        var descendantRowKeys;
+        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
         var row = this.get(rowKey);
         row.setTreeExpanded(true);
 
         if (recursive) {
-            descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
-            util.forEachArray(descendantRowKeys, function(descendantRowKey) {
+            _.each(descendantRowKeys, function(descendantRowKey) {
                 var descendantRow = this.get(descendantRowKey);
                 if (descendantRow.hasTreeChildren()) {
                     descendantRow.setTreeExpanded(true);
                 }
             }, this);
         } else {
-            descendantRowKeys = this.getTreeChildrenRowKeys(rowKey);
+            descendantRowKeys = _.filter(descendantRowKeys, function(descendantRowKey) {
+                return this.isTreeVisible(descendantRowKey);
+            }, this);
         }
 
         if (!silent) {
@@ -394,7 +395,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeExpand(topMostRowKey, true, true);
         }, this);
 
-        this.trigger('expanded');
+        this.trigger('expandedAll');
     },
 
     /**
@@ -405,12 +406,11 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @returns {(Number|String)[]} - children or descendant of given row
      */
     treeCollapse: function(rowKey, recursive, silent) {
-        var descendantRowKeys;
         var row = this.get(rowKey);
-        row.setTreeExpanded(false);
+
+        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
 
         if (recursive) {
-            descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
             _.each(descendantRowKeys, function(descendantRowKey) {
                 var descendantRow = this.get(descendantRowKey);
                 if (descendantRow.hasTreeChildren()) {
@@ -418,8 +418,12 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
                 }
             }, this);
         } else {
-            descendantRowKeys = this.getTreeChildrenRowKeys(rowKey);
+            descendantRowKeys = _.filter(descendantRowKeys, function(descendantRowKey) {
+                return this.isTreeVisible(descendantRowKey);
+            }, this);
         }
+
+        row.setTreeExpanded(false);
 
         if (!silent) {
             this.trigger('collapsed', descendantRowKeys.slice(0));
@@ -438,12 +442,12 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeCollapse(topMostRowKey, true, true);
         }, this);
 
-        this.trigger('collapsed');
+        this.trigger('collapsedAll');
     },
 
     /**
      * get the parent of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {TreeRow} - the parent row
      */
     getTreeParent: function(rowKey) {
@@ -458,7 +462,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the ancestors of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the ancestor rows
      */
     getTreeAncestors: function(rowKey) {
@@ -475,7 +479,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the children of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the children rows
      */
     getTreeChildren: function(rowKey) {
@@ -488,7 +492,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the descendants of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the descendant rows
      */
     getTreeDescendants: function(rowKey) {
@@ -501,7 +505,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the depth of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Number} - the depth
      */
     getTreeDepth: function(rowKey) {
@@ -513,6 +517,21 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         }
 
         return depth;
+    },
+
+    /**
+     * test if the row of given key should be visible
+     * @param {String|Number} rowKey - row key to test
+     * @returns {Boolean} - true if visible
+     */
+    isTreeVisible: function(rowKey) {
+        var visible = true;
+
+        _.each(this.getTreeAncestors(rowKey), function(ancestor) {
+            visible = visible && ancestor.getTreeExpanded();
+        }, this);
+
+        return visible;
     }
 });
 

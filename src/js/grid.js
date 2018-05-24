@@ -1038,7 +1038,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * get the ancestors of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the ancestor rows
      */
     getAncestors: function(rowKey) {
@@ -1047,7 +1047,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * get the descendants of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the descendant rows
      */
     getDescendants: function(rowKey) {
@@ -1056,7 +1056,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * get the parent of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {TreeRow} - the parent row
      */
     getParent: function(rowKey) {
@@ -1065,7 +1065,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * get the children of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {Number|String} rowKey - row key
      * @returns {Array.<TreeRow>} - the children rows
      */
     getChildren: function(rowKey) {
@@ -1074,7 +1074,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * get the depth of the row which has the given row key
-     * @param {Number|String} - row key
+     * @param {String|Number} rowKey - row key to test
      * @returns {Number} - the depth
      */
     getDepth: function(rowKey) {
