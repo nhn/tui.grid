@@ -126,9 +126,10 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter();
         var columnNames = _.pluck(this._getColumns(), 'name');
+        var hasTreeColumn = this.columnModel.hasTreeColumn();
 
         return _.map(rows, function(row) {
-            return rowPainter.generateHtml(row, columnNames);
+            return rowPainter.generateHtml(row, columnNames, hasTreeColumn);
         }).join('');
     },
 
