@@ -123,26 +123,26 @@ describe('data.treeModel', function() {
         });
     });
 
-    describe('getTreeDescendentRowKeys', function() {
+    describe('getTreeDescendantRowKeys', function() {
         beforeEach(function(done) {
             treeRowList.setData(treeData, true, done);
         });
 
         it('should return array of row keys of all of given row key', function() {
-            var descendentRowKeys = treeRowList.getTreeDescendentRowKeys(0);
-            expect(descendentRowKeys.length).toBe(4);
+            var descendantRowKeys = treeRowList.getTreeDescendantRowKeys(0);
+            expect(descendantRowKeys.length).toBe(4);
 
-            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(1);
-            expect(descendentRowKeys.length).toBe(0);
+            descendantRowKeys = treeRowList.getTreeDescendantRowKeys(1);
+            expect(descendantRowKeys.length).toBe(0);
 
-            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(2);
-            expect(descendentRowKeys.length).toBe(0);
+            descendantRowKeys = treeRowList.getTreeDescendantRowKeys(2);
+            expect(descendantRowKeys.length).toBe(0);
 
-            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(3);
-            expect(descendentRowKeys.length).toBe(1);
+            descendantRowKeys = treeRowList.getTreeDescendantRowKeys(3);
+            expect(descendantRowKeys.length).toBe(1);
 
-            descendentRowKeys = treeRowList.getTreeDescendentRowKeys(6);
-            expect(descendentRowKeys.length).toBe(1);
+            descendantRowKeys = treeRowList.getTreeDescendantRowKeys(6);
+            expect(descendantRowKeys.length).toBe(1);
         });
     });
 
@@ -177,7 +177,7 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(6).getTreeExpanded()).toBe(false);
         });
 
-        it('should return descendent row keys of given row', function() {
+        it('should return descendant row keys of given row', function() {
             var childrenRowKeys = treeRowList.treeExpand(0, true);
 
             expect(childrenRowKeys).toEqual([1, 2, 3, 4]);
@@ -261,7 +261,7 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(6).getTreeExpanded()).toBe(true);
         });
 
-        it('should return descendent row keys of given row', function() {
+        it('should return descendant row keys of given row', function() {
             var childrenRowKeys = treeRowList.treeCollapse(0, true);
 
             expect(childrenRowKeys).toEqual([1, 2, 3, 4]);
@@ -535,6 +535,97 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(7)).not.toBeDefined();
             expect(treeRowList.getTopMostRowKeys()).toEqual([0, 5]);
             expect(treeRowList.get(5).hasTreeNextSibling()).toEqual([false]);
+        });
+    });
+
+    describe('getParent', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return the parent of the row which has the given row key', function() {
+            expect(treeRowList.getTreeParent(0)).not.toBeDefined();
+            expect(treeRowList.getTreeParent(1).get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeParent(2).get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeParent(3).get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeParent(4).get('rowKey')).toBe(3);
+            expect(treeRowList.getTreeParent(5)).not.toBeDefined();
+            expect(treeRowList.getTreeParent(6)).not.toBeDefined();
+            expect(treeRowList.getTreeParent(7).get('rowKey')).toBe(6);
+        });
+    });
+
+    describe('getTreeAncestors', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return the ancestors of the row which has the given row key', function() {
+            expect(treeRowList.getTreeAncestors(0).length).toBe(0);
+            expect(treeRowList.getTreeAncestors(1)[0].get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeAncestors(2)[0].get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeAncestors(3)[0].get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeAncestors(4)[0].get('rowKey')).toBe(0);
+            expect(treeRowList.getTreeAncestors(4)[1].get('rowKey')).toBe(3);
+            expect(treeRowList.getTreeAncestors(5).length).toBe(0);
+            expect(treeRowList.getTreeAncestors(6).length).toBe(0);
+            expect(treeRowList.getTreeAncestors(7)[0].get('rowKey')).toBe(6);
+        });
+    });
+
+    describe('getTreeChildren', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return the children of the row which has the given row key', function() {
+            expect(treeRowList.getTreeChildren(0).length).toBe(3);
+            expect(treeRowList.getTreeChildren(0)[0].get('rowKey')).toBe(1);
+            expect(treeRowList.getTreeChildren(0)[1].get('rowKey')).toBe(2);
+            expect(treeRowList.getTreeChildren(0)[2].get('rowKey')).toBe(3);
+            expect(treeRowList.getTreeChildren(1).length).toBe(0);
+            expect(treeRowList.getTreeChildren(2).length).toBe(0);
+            expect(treeRowList.getTreeChildren(3).length).toBe(1);
+            expect(treeRowList.getTreeChildren(3)[0].get('rowKey')).toBe(4);
+            expect(treeRowList.getTreeChildren(4).length).toBe(0);
+            expect(treeRowList.getTreeChildren(5).length).toBe(0);
+            expect(treeRowList.getTreeChildren(6).length).toBe(1);
+            expect(treeRowList.getTreeChildren(6)[0].get('rowKey')).toBe(7);
+            expect(treeRowList.getTreeChildren(7).length).toBe(0);
+        });
+    });
+
+    describe('getTreeDescendants', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return the descendants of the row which has the given row key', function() {
+            expect(treeRowList.getTreeDescendants(0).length).toBe(4);
+            expect(treeRowList.getTreeDescendants(1).length).toBe(0);
+            expect(treeRowList.getTreeDescendants(2).length).toBe(0);
+            expect(treeRowList.getTreeDescendants(3).length).toBe(1);
+            expect(treeRowList.getTreeDescendants(4).length).toBe(0);
+            expect(treeRowList.getTreeDescendants(5).length).toBe(0);
+            expect(treeRowList.getTreeDescendants(6).length).toBe(1);
+            expect(treeRowList.getTreeDescendants(7).length).toBe(0);
+        });
+    });
+
+    describe('getTreeDepth', function() {
+        beforeEach(function(done) {
+            treeRowList.setData(treeData, true, done);
+        });
+
+        it('should return the depth of the row which has the given row key', function() {
+            expect(treeRowList.getTreeDepth(0)).toBe(1);
+            expect(treeRowList.getTreeDepth(1)).toBe(2);
+            expect(treeRowList.getTreeDepth(2)).toBe(2);
+            expect(treeRowList.getTreeDepth(3)).toBe(2);
+            expect(treeRowList.getTreeDepth(4)).toBe(3);
+            expect(treeRowList.getTreeDepth(5)).toBe(1);
+            expect(treeRowList.getTreeDepth(6)).toBe(1);
+            expect(treeRowList.getTreeDepth(7)).toBe(2);
         });
     });
 });

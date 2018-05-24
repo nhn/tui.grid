@@ -518,11 +518,11 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
     },
 
     /**
-     * get tree descendent of row of given rowKey
-     * @returns {(Number|String)[]} - descendent of found row
+     * get tree descendant of row of given rowKey
+     * @returns {(Number|String)[]} - descendant of found row
      */
-    getTreeDescendentRowKeys: function() {
-        return this.dataModel.getTreeDescendentRowKeys(this.get('rowKey'));
+    getTreeDescendantRowKeys: function() {
+        return this.dataModel.getTreeDescendantRowKeys(this.get('rowKey'));
     },
 
     /**

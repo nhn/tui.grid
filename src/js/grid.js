@@ -1005,8 +1005,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     /**
      * expand tree row
      * @param {(Number|String)} rowKey - row key
-     * @param {Boolean} recursive - true for recursively expand all descendent
-     * @returns {(Number|String)[]} - children or descendent of given row
+     * @param {Boolean} recursive - true for recursively expand all descendant
+     * @returns {(Number|String)[]} - children or descendant of given row
      */
     expand: function(rowKey, recursive) {
         return this.modelManager.dataModel.treeExpand(rowKey, recursive);
@@ -1022,8 +1022,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     /**
      * expand tree row
      * @param {(Number|String)} rowKey - row key
-     * @param {Boolean} recursive - true for recursively expand all descendent
-     * @returns {(Number|String)[]} - children or descendent of given row
+     * @param {Boolean} recursive - true for recursively expand all descendant
+     * @returns {(Number|String)[]} - children or descendant of given row
      */
     collapse: function(rowKey, recursive) {
         return this.modelManager.dataModel.treeCollapse(rowKey, recursive);
@@ -1034,6 +1034,51 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     collapseAll: function() {
         this.modelManager.dataModel.treeCollapseAll();
+    },
+
+    /**
+     * get the ancestors of the row which has the given row key
+     * @param {Number|String} - row key
+     * @returns {Array.<TreeRow>} - the ancestor rows
+     */
+    getAncestors: function(rowKey) {
+        return this.modelManager.dataModel.getTreeAncestors(rowKey);
+    },
+
+    /**
+     * get the descendants of the row which has the given row key
+     * @param {Number|String} - row key
+     * @returns {Array.<TreeRow>} - the descendant rows
+     */
+    getDescendants: function(rowKey) {
+        return this.modelManager.dataModel.getTreeDescendants(rowKey);
+    },
+
+    /**
+     * get the parent of the row which has the given row key
+     * @param {Number|String} - row key
+     * @returns {TreeRow} - the parent row
+     */
+    getParent: function(rowKey) {
+        return this.modelManager.dataModel.getTreeParent(rowKey);
+    },
+
+    /**
+     * get the children of the row which has the given row key
+     * @param {Number|String} - row key
+     * @returns {Array.<TreeRow>} - the children rows
+     */
+    getChildren: function(rowKey) {
+        return this.modelManager.dataModel.getTreeChildren(rowKey);
+    },
+
+    /**
+     * get the depth of the row which has the given row key
+     * @param {Number|String} - row key
+     * @returns {Number} - the depth
+     */
+    getDepth: function(rowKey) {
+        return this.modelManager.dataModel.getTreeDepth(rowKey);
     },
 
     /**

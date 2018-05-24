@@ -188,9 +188,9 @@ describe('model.row', function() {
             });
         });
 
-        describe('getTreeDescendentRowKeys', function() {
+        describe('getTreeDescendantRowKeys', function() {
             it('should return all of it\'s descendant', function() {
-                expect(rowModel.getTreeDescendentRowKeys()).toEqual([1, 2, 3, 4]);
+                expect(rowModel.getTreeDescendantRowKeys()).toEqual([1, 2, 3, 4]);
             });
         });
     });
