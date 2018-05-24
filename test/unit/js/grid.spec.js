@@ -291,9 +291,9 @@ describe('grid', function() {
         });
 
         describe('expandAll', function() {
-            it('should trigger expanded event', function() {
-                var spy = jasmine.createSpy('expanded');
-                grid.on('expanded', spy);
+            it('should trigger expandedAll event', function() {
+                var spy = jasmine.createSpy('expandedAll');
+                grid.on('expandedAll', spy);
 
                 grid.expandAll();
 
@@ -325,9 +325,9 @@ describe('grid', function() {
         });
 
         describe('collapseAll', function() {
-            it('should trigger collapsed event', function() {
-                var spy = jasmine.createSpy('collapsed');
-                grid.on('collapsed', spy);
+            it('should trigger collapsedAll event', function() {
+                var spy = jasmine.createSpy('collapsedAll');
+                grid.on('collapsedAll', spy);
 
                 grid.collapseAll();
 
