@@ -355,13 +355,13 @@ describe('Data.RowList - simple', function() {
                 rowKey: 0,
                 errors: [{
                     columnName: 'c2',
-                    errorCode: 'REQUIRED'
+                    errorCode: 'INVALID'
                 }]
             }, {
                 rowKey: 2,
                 errors: [{
                     columnName: 'c1',
-                    errorCode: 'REQUIRED'
+                    errorCode: 'INVALID'
                 }]
             }];
 
