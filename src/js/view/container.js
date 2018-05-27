@@ -64,7 +64,8 @@ var Container = View.extend(/** @lends module:view/container.prototype */{
             factory.createStateLayer(),
             factory.createEditingLayer(),
             factory.createDatePickerLayer(),
-            factory.createClipboard()
+            factory.createClipboard(),
+            factory.createFilterLayer()
         ]);
     },
 

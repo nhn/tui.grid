@@ -27,6 +27,7 @@ var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
+var FilterLayerView = require('./filterLayer');
 var isOptionEnabled = require('../common/util').isOptionEnabled;
 var frameConst = require('../common/constMap').frame;
 
@@ -161,6 +162,7 @@ var ViewFactory = snippet.defineClass({
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
             coordColumnModel: this.modelManager.coordColumnModel,
+            filterModel: this.modelManager.filterModel,
             domEventBus: this.domEventBus,
             viewFactory: this
         });
@@ -330,6 +332,19 @@ var ViewFactory = snippet.defineClass({
             coordRowModel: this.modelManager.coordRowModel,
             coordColumnModel: this.modelManager.coordColumnModel,
             coordConverterModel: this.modelManager.coordConverterModel
+        });
+    },
+
+    /**
+     * Creates filter layer view and returns it.
+     * @param  {String} columnName - columnName
+     * @returns {module:view/focusLayer} New filter layer view instance
+     */
+    createFilterLayer: function() {
+        return new FilterLayerView({
+            renderModel: this.modelManager.renderModel,
+            filterModel: this.modelManager.filterModel,
+            domEventBus: this.domEventBus
         });
     }
 });

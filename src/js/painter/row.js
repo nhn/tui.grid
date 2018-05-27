@@ -41,7 +41,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
         '<tr ' +
         '<%=rowKeyAttr%>" ' +
         'class="<%=className%>" ' +
-        'style="height: <%=height%>px;">' +
+        'style="height: <%=height%>px; <%if(filter){%>display: none;<%}%>">' +
         '<%=contents%>' +
         '</tr>'
     ),
@@ -111,6 +111,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
     generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey');
         var rowNum = model.get('rowNum');
+        var filter = model.rowData.filter;
         var className = (rowNum % 2) ? classNameConst.ROW_ODD : classNameConst.ROW_EVEN;
         var rowKeyAttr = '';
         var html;
@@ -126,7 +127,8 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
             rowKeyAttr: rowKeyAttr,
             height: model.get('height') + CELL_BORDER_WIDTH,
             contents: html,
-            className: className
+            className: className,
+            filter: filter
         });
     },
 

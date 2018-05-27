@@ -32,6 +32,7 @@ var classNames = {
     LAYER_FOCUS_DEACTIVE: 'layer-focus-deactive',
     LAYER_SELECTION: 'layer-selection',
     LAYER_DATE_PICKER: 'layer-datepicker',
+    LAYER_FILTER: 'layer-filter',
 
     // border line
     BORDER_LINE: 'border-line',
@@ -120,6 +121,9 @@ var classNames = {
     BTN_EXCEL_ICON: 'btn-excel-icon',
     BTN_EXCEL_PAGE: 'btn-excel-page',
     BTN_EXCEL_ALL: 'btn-excel-all',
+    BTN_FILTER: 'btn-filter',
+    BTN_FILTER_ON: 'btn-filter-on',
+    BTN_FILTER_OFF: 'btn-filter-off',
 
     // height resize handle
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
