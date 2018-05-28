@@ -99,16 +99,16 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     /**
      * Get className of each line element
      * @param {boolean} lastDepth - whether the current row is last depth or not
-     * @param {boolean} leafRow - whether the current row is leaf row or not
+     * @param {boolean} lastChildRow - whether the current row is last child row or not
      * @returns {string} connected class names
      * @private
      */
-    _getClassNameOfLine: function(lastDepth, leafRow) {
+    _getClassNameOfLine: function(lastDepth, lastChildRow) {
         var className = [
             classNameConst.TREE_LINE
         ];
 
-        if (lastDepth && leafRow) {
+        if (lastDepth && lastChildRow) {
             className.push(classNameConst.TREE_LINE_HALF);
         }
 
@@ -119,17 +119,17 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      * Get html of line element in extra content
      * @param {number} depth - depth of current row
      * @param {boolean} lastDepth - whether the current row is last depth or not
-     * @param {boolean} leafRow - whether the current row is leaf row or not
-     * @param {boolean} hasChildren - whether thr current row has children or not
+     * @param {boolean} lastChildRow - whether the current row is last child row or not
+     * @param {boolean} hasChildren - whether the current row has children or not
      * @returns {string} html string
      * @private
      */
-    _getLineHtml: function(depth, lastDepth, leafRow, hasChildren) {
-        var className = this._getClassNameOfLine(lastDepth, leafRow);
+    _getLineHtml: function(depth, lastDepth, lastChildRow, hasChildren) {
+        var className = this._getClassNameOfLine(lastDepth, lastChildRow);
         var hasButton = lastDepth && hasChildren;
         var style = ['left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;'];
 
-        if (!lastDepth && leafRow) {
+        if (!lastDepth && lastChildRow) {
             style.push('display:none;');
         }
 
@@ -155,24 +155,24 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
 
     /**
      * Get html of extra content that contains line and expand/collapse button elements
-     * @param {object} treeCellData - tree cell data
+     * @param {object} cellData - tree cell data
      * @returns {string} html string
      * @private
      */
-    _getExtraContentHtml: function(treeCellData) {
-        var depth = treeCellData.depth;
-        var hasChildren = treeCellData.hasChildren;
-        var hasNextSibling = treeCellData.hasNextSibling || [];
-        var useIcon = treeCellData.useIcon;
+    _getExtraContentHtml: function(cellData) {
+        var depth = cellData.depth;
+        var hasChildren = cellData.hasChildren;
+        var hasNextSibling = cellData.hasNextSibling || [];
+        var useIcon = cellData.useIcon;
         var index = 0;
         var htmls = [];
-        var lastDepth, leafRow;
+        var lastDepth, lastChildRow;
 
         for (; index < depth; index += 1) {
             lastDepth = index === depth - 1;
-            leafRow = !hasNextSibling[index];
+            lastChildRow = !hasNextSibling[index];
 
-            htmls.push(this._getLineHtml(index, lastDepth, leafRow, hasChildren));
+            htmls.push(this._getLineHtml(index, lastDepth, lastChildRow, hasChildren));
         }
 
         if (useIcon) {
