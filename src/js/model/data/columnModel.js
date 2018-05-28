@@ -82,7 +82,8 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
         treeColumnOptions: {
             name: null,
             useIcon: false,
-            showLine: false
+            showLine: false,
+            cascadingCheckbox: true
         }
     },
 
@@ -228,6 +229,16 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     useTreeIcon: function() {
         return this.get('treeColumnOptions').useIcon;
+    },
+
+    /**
+     * Get cascade usage in the tree-grid's checkbox
+     * @returns {boolean} Whether using the cascading checkbox or not
+     */
+    useCascadingCheckbox: function() {
+        var cascadingCheckbox = this.get('treeColumnOptions').cascadingCheckbox;
+
+        return _.isUndefined(cascadingCheckbox) ? true : cascadingCheckbox;
     },
 
     /**
@@ -502,6 +513,12 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     setSummaryContent: function(columnName, contents) {
         this.trigger('setSummaryContent', columnName, contents);
+    },
+
+    getTreeColumnOptions: function(columnName) {
+        var columnModel = this.getColumnModel(columnName);
+
+        return _.extend({}, this.get('treeColumnOptions'), columnModel.treeColumnOptions);
     }
 });
 
