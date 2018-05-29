@@ -74,16 +74,14 @@ describe('TreeRow', function() {
         });
     });
 
-    describe('getTreeDepth', function() {
-        it('should return it\'s depth', function() {
-            rowData._treeData.hasNextSibling = [false];
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getTreeDepth()).toBe(1);
+    it('getTreeDepth should return it\'s depth', function() {
+        rowData._treeData.hasNextSibling = [false];
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.getTreeDepth()).toBe(1);
 
-            rowData._treeData.hasNextSibling = [false, false, false];
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getTreeDepth()).toBe(3);
-        });
+        rowData._treeData.hasNextSibling = [false, false, false];
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.getTreeDepth()).toBe(3);
     });
 
     describe('hasTreeChildren', function() {
@@ -104,32 +102,26 @@ describe('TreeRow', function() {
         });
     });
 
-    describe('getTreeChildrenRowKeys', function() {
-        it('should return it\'s children', function() {
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getTreeChildrenRowKeys()).toEqual([1, 2, 3]);
-        });
+    it('getTreeChildrenRowKeys should return it\'s children', function() {
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.getTreeChildrenRowKeys()).toEqual([1, 2, 3]);
     });
 
-    describe('hasTreeNextSibling', function() {
-        it('should return whether it has one or more siblings and it\'s ancestors', function() {
-            rowData._treeData.hasNextSibling = [false];
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasTreeNextSibling()).toEqual([false]);
+    it('hasTreeNextSibling should return whether it has one or more siblings and it\'s ancestors', function() {
+        rowData._treeData.hasNextSibling = [false];
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.hasTreeNextSibling()).toEqual([false]);
 
-            rowData._treeData.hasNextSibling = [true, false];
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasTreeNextSibling()).toEqual([true, false]);
-        });
+        rowData._treeData.hasNextSibling = [true, false];
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.hasTreeNextSibling()).toEqual([true, false]);
     });
 
-    describe('getTreeParentRowKey', function() {
-        it('should return it\'s parent row key', function() {
-            expect(treeRow.getTreeParentRowKey()).toBeFalsy();
+    it('getTreeParentRowKey should return it\'s parent row key', function() {
+        expect(treeRow.getTreeParentRowKey()).toBeFalsy();
 
-            rowData._treeData.parentRowKey = 0;
-            treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.getTreeParentRowKey()).toBe(0);
-        });
+        rowData._treeData.parentRowKey = 0;
+        treeRow = new TreeRow(rowData, parentData);
+        expect(treeRow.getTreeParentRowKey()).toBe(0);
     });
 });

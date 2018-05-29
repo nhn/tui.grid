@@ -238,7 +238,7 @@ describe('grid', function() {
     describe('tree grid', function() {
         var grid;
 
-        beforeEach(function(done) {
+        beforeEach(function() {
             grid = createGrid('c1', {
                 treeColumnOptions: {
                     name: 'c1'
@@ -264,88 +264,70 @@ describe('grid', function() {
                         treeState: 'COLLAPSE'
                     }
                 }]
-            }], done);
+            }]);
         });
 
-        describe('expand', function() {
-            it('should trigger expanded event', function() {
-                var spy = jasmine.createSpy('expanded');
-                grid.on('expanded', spy);
+        it('expand should trigger expanded event', function() {
+            var spy = jasmine.createSpy('expanded');
+            grid.on('expanded', spy);
 
-                grid.expand(0);
+            grid.expand(0);
 
-                expect(spy).toHaveBeenCalled();
-            });
+            expect(spy).toHaveBeenCalled();
         });
 
-        describe('expandAll', function() {
-            it('should trigger expandedAll event', function() {
-                var spy = jasmine.createSpy('expandedAll');
-                grid.on('expandedAll', spy);
+        it('expandAll should trigger expandedAll event', function() {
+            var spy = jasmine.createSpy('expandedAll');
+            grid.on('expandedAll', spy);
 
-                grid.expandAll();
+            grid.expandAll();
 
-                expect(spy).toHaveBeenCalled();
-            });
+            expect(spy).toHaveBeenCalled();
         });
 
-        describe('collapse', function() {
-            it('should trigger collapsed event', function() {
-                var spy = jasmine.createSpy('collapsed');
-                grid.on('collapsed', spy);
+        it('collapse should trigger collapsed event', function() {
+            var spy = jasmine.createSpy('collapsed');
+            grid.on('collapsed', spy);
 
-                grid.collapse(0);
+            grid.collapse(0);
 
-                expect(spy).toHaveBeenCalled();
-            });
+            expect(spy).toHaveBeenCalled();
         });
 
-        describe('collapseAll', function() {
-            it('should trigger collapsedAll event', function() {
-                var spy = jasmine.createSpy('collapsedAll');
-                grid.on('collapsedAll', spy);
+        it('collapseAll should trigger collapsedAll event', function() {
+            var spy = jasmine.createSpy('collapsedAll');
+            grid.on('collapsedAll', spy);
 
-                grid.collapseAll();
+            grid.collapseAll();
 
-                expect(spy).toHaveBeenCalled();
-            });
+            expect(spy).toHaveBeenCalled();
         });
 
-        describe('getAncestors', function() {
-            it('should return the ancestor of the row which has the given row key', function() {
-                expect(grid.getAncestors(6).length).toEqual(2);
-                expect(grid.getAncestors(6)[0].get('rowKey')).toEqual(3);
-                expect(grid.getAncestors(6)[1].get('rowKey')).toEqual(5);
-            });
+        it('getAncestors should return the ancestor of the row which has the given row key', function() {
+            expect(grid.getAncestors(6).length).toEqual(2);
+            expect(grid.getAncestors(6)[0].get('rowKey')).toEqual(3);
+            expect(grid.getAncestors(6)[1].get('rowKey')).toEqual(5);
         });
 
-        describe('getDescendants', function() {
-            it('should return the descendants of the row which has the given row key', function() {
-                expect(grid.getDescendants(3).length).toBe(3);
-                expect(grid.getDescendants(3)[0].get('rowKey')).toEqual(4);
-                expect(grid.getDescendants(3)[1].get('rowKey')).toEqual(5);
-                expect(grid.getDescendants(3)[2].get('rowKey')).toEqual(6);
-            });
+        it('getDescendants should return the descendants of the row which has the given row key', function() {
+            expect(grid.getDescendants(3).length).toBe(3);
+            expect(grid.getDescendants(3)[0].get('rowKey')).toEqual(4);
+            expect(grid.getDescendants(3)[1].get('rowKey')).toEqual(5);
+            expect(grid.getDescendants(3)[2].get('rowKey')).toEqual(6);
         });
 
-        describe('getParent', function() {
-            it('should return the parent of the row which has the given row key', function() {
-                expect(grid.getParent(6).get('rowKey')).toBe(5);
-            });
+        it('getParent should return the parent of the row which has the given row key', function() {
+            expect(grid.getParent(6).get('rowKey')).toBe(5);
         });
 
-        describe('getChildren', function() {
-            it('should return the children of the row which has the given row key', function() {
-                expect(grid.getChildren(3).length).toBe(2);
-                expect(grid.getChildren(3)[0].get('rowKey')).toEqual(4);
-                expect(grid.getChildren(3)[1].get('rowKey')).toEqual(5);
-            });
+        it('getChildren should return the children of the row which has the given row key', function() {
+            expect(grid.getChildren(3).length).toBe(2);
+            expect(grid.getChildren(3)[0].get('rowKey')).toEqual(4);
+            expect(grid.getChildren(3)[1].get('rowKey')).toEqual(5);
         });
 
-        describe('getDepth', function() {
-            it('should return the depth of the row which has the given row key', function() {
-                expect(grid.getDepth(6)).toBe(3);
-            });
+        it('getDepth should return the depth of the row which has the given row key', function() {
+            expect(grid.getDepth(6)).toBe(3);
         });
     });
 });

@@ -93,7 +93,51 @@ var gridData = [
                         grade: '3',
                         price: 20000,
                         downloadCount: 1000,
-                        listenCount: 5000
+                        listenCount: 5000,
+                        _children: [
+                            {
+                                id: 490500,
+                                name: 'Blue Skies',
+                                release: '2015.03.18',
+                                artist: 'Lenka',
+                                type: 'Single',
+                                typeCode: '3',
+                                genre: 'Pop,Rock',
+                                genreCode: '1,2',
+                                grade: '5',
+                                price: 6000,
+                                downloadCount: 1000,
+                                listenCount: 5000
+                            },
+                            {
+                                id: 317659,
+                                name: 'I Won\'t Give Up',
+                                artist: 'Jason Mraz',
+                                release: '2012.01.03',
+                                type: 'Single',
+                                typeCode: '3',
+                                genre: 'Pop',
+                                genreCode: '1',
+                                grade: '2',
+                                price: 7000,
+                                downloadCount: 1000,
+                                listenCount: 5000
+                            },
+                            {
+                                id: 583551,
+                                name: 'Following My Intuition',
+                                artist: 'Craig David',
+                                release: '2016.10.01',
+                                type: 'Deluxe',
+                                typeCode: '1',
+                                genre: 'R&B,Electronic',
+                                genreCode: '3,4',
+                                grade: '5',
+                                price: 15000,
+                                downloadCount: 1000,
+                                listenCount: 5000
+                            }
+                        ]
                     }
                 ]
             }
@@ -253,48 +297,6 @@ var gridData = [
         genreCode: '1',
         grade: '3',
         price: 12000,
-        downloadCount: 1000,
-        listenCount: 5000
-    },
-    {
-        id: 317659,
-        name: 'I Won\'t Give Up',
-        artist: 'Jason Mraz',
-        release: '2012.01.03',
-        type: 'Single',
-        typeCode: '3',
-        genre: 'Pop',
-        genreCode: '1',
-        grade: '2',
-        price: 7000,
-        downloadCount: 1000,
-        listenCount: 5000
-    },
-    {
-        id: 583551,
-        name: 'Following My Intuition',
-        artist: 'Craig David',
-        release: '2016.10.01',
-        type: 'Deluxe',
-        typeCode: '1',
-        genre: 'R&B,Electronic',
-        genreCode: '3,4',
-        grade: '5',
-        price: 15000,
-        downloadCount: 1000,
-        listenCount: 5000
-    },
-    {
-        id: 490500,
-        name: 'Blue Skies',
-        release: '2015.03.18',
-        artist: 'Lenka',
-        type: 'Single',
-        typeCode: '3',
-        genre: 'Pop,Rock',
-        genreCode: '1,2',
-        grade: '5',
-        price: 6000,
         downloadCount: 1000,
         listenCount: 5000
     }

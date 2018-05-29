@@ -109,8 +109,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTopMostRowKeys', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return all top most rows', function() {
@@ -119,8 +119,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeChildrenRowKeys', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return array of row keys of given row key', function() {
@@ -132,8 +132,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeDescendantRowKeys', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return array of row keys of all of given row key', function() {
@@ -155,11 +155,11 @@ describe('data.treeModel', function() {
     });
 
     describe('treeExpand', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             treeData[2]._extraData = {
                 treeState: 'COLLAPSE'
             };
-            treeRowList.setData(treeData, true, done);
+            treeRowList.setData(treeData, true);
         });
 
         it('should set expand value of itself', function() {
@@ -219,8 +219,8 @@ describe('data.treeModel', function() {
     });
 
     describe('treeExpandAll', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should set expand value for all rows which have a child or children', function() {
@@ -242,7 +242,7 @@ describe('data.treeModel', function() {
     });
 
     describe('treeCollapse', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             treeData[0]._extraData = {
                 treeState: 'EXPAND'
             };
@@ -252,7 +252,7 @@ describe('data.treeModel', function() {
             treeData[2]._extraData = {
                 treeState: 'EXPAND'
             };
-            treeRowList.setData(treeData, true, done);
+            treeRowList.setData(treeData, true);
         });
 
         it('should set collapse value of itself', function() {
@@ -311,7 +311,7 @@ describe('data.treeModel', function() {
     });
 
     describe('treeCollapseAll', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             treeData[0]._extraData = {
                 treeState: 'EXPAND'
             };
@@ -321,7 +321,7 @@ describe('data.treeModel', function() {
             treeData[2]._extraData = {
                 treeState: 'EXPAND'
             };
-            treeRowList.setData(treeData, true, done);
+            treeRowList.setData(treeData, true);
         });
 
         it('should set collapse value for all rows which have a child or children', function() {
@@ -343,8 +343,8 @@ describe('data.treeModel', function() {
     });
 
     describe('_indexOfParentRowKeyAndOffset', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return it\'s index from given parent row key and offset', function() {
@@ -376,8 +376,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeSiblingRowKeys', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return row keys of sibling and of itself', function() {
@@ -392,8 +392,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreePrevSiblingRowKey', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return previous sibling row key', function() {
@@ -404,8 +404,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeNextSiblingRowKey', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return next sibling row key', function() {
@@ -416,8 +416,8 @@ describe('data.treeModel', function() {
     });
 
     describe('_syncHasTreeSiblingData', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should sync hasSibling of previous sibling for depth 1', function() {
@@ -444,7 +444,7 @@ describe('data.treeModel', function() {
     describe('append', function() {
         var appendData, appendOptions;
 
-        beforeEach(function(done) {
+        beforeEach(function() {
             appendData = {
                 text: 'n',
                 _children: [{
@@ -458,7 +458,7 @@ describe('data.treeModel', function() {
                 offset: 3
             };
 
-            treeRowList.setData(treeData, true, done);
+            treeRowList.setData(treeData, true);
         });
 
         it('should add to model list', function() {
@@ -484,8 +484,11 @@ describe('data.treeModel', function() {
         });
 
         it('should add to model list as a top most row', function() {
+            var result;
+
             appendOptions.parentRowKey = null;
-            var result = treeRowList.append(appendData, appendOptions);
+
+            result = treeRowList.append(appendData, appendOptions);
 
             // length
             expect(treeRowList.length).toBe(11);
@@ -517,8 +520,8 @@ describe('data.treeModel', function() {
     });
 
     describe('prepend', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should insert the given data to the top', function() {
@@ -539,8 +542,8 @@ describe('data.treeModel', function() {
     });
 
     describe('remove', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should remove a child', function() {
@@ -563,8 +566,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getParent', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return the parent of the row which has the given row key', function() {
@@ -580,8 +583,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeAncestors', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return the ancestors of the row which has the given row key', function() {
@@ -598,8 +601,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeChildren', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return the children of the row which has the given row key', function() {
@@ -620,8 +623,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeDescendants', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return the descendants of the row which has the given row key', function() {
@@ -637,8 +640,8 @@ describe('data.treeModel', function() {
     });
 
     describe('getTreeDepth', function() {
-        beforeEach(function(done) {
-            treeRowList.setData(treeData, true, done);
+        beforeEach(function() {
+            treeRowList.setData(treeData, true);
         });
 
         it('should return the depth of the row which has the given row key', function() {
@@ -654,7 +657,7 @@ describe('data.treeModel', function() {
     });
 
     describe('isTreeVisible', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             treeData = [{
                 text: 'a', // 0
                 _extraData: {
@@ -681,7 +684,7 @@ describe('data.treeModel', function() {
                     text: 'c-a' // 7
                 }]
             }];
-            treeRowList.setData(treeData, true, done);
+            treeRowList.setData(treeData, true);
         });
 
         it('should return true if no ancestor is collapsed', function() {
@@ -701,6 +704,38 @@ describe('data.treeModel', function() {
             expect(treeRowList.isTreeVisible(0)).toBe(true);
             expect(treeRowList.isTreeVisible(3)).toBe(true);
             expect(treeRowList.isTreeVisible(4)).toBe(false);
+        });
+    });
+
+    describe('check/uncheck', function() {
+        beforeEach(function() {
+            treeData = [{
+                text: 'a', // 0
+                _extraData: {
+                    treeState: 'EXPAND'
+                },
+                _children: [{
+                    text: 'a-a' // 1
+                }, {
+                    text: 'a-b' // 2
+                }, {
+                    text: 'a-c', // 3
+                    _extraData: {
+                        treeState: 'EXPAND'
+                    },
+                    _children: [{
+                        text: 'a-c-a' // 4
+                    }]
+                }]
+            }, {
+                text: 'b' // 5
+            }, {
+                text: 'c', // 6
+                _children: [{
+                    text: 'c-a' // 7
+                }]
+            }];
+            treeRowList.setData(treeData, true);
         });
     });
 });
