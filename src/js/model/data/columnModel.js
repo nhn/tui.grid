@@ -513,12 +513,6 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     setSummaryContent: function(columnName, contents) {
         this.trigger('setSummaryContent', columnName, contents);
-    },
-
-    getTreeColumnOptions: function(columnName) {
-        var columnModel = this.getColumnModel(columnName);
-
-        return _.extend({}, this.get('treeColumnOptions'), columnModel.treeColumnOptions);
     }
 });
 
