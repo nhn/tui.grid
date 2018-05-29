@@ -67,7 +67,7 @@ describe('model.row', function() {
     describe('tree functions', function() {
         var rowModel, treeRow, rowModelOptions;
 
-        beforeEach(function(done) {
+        beforeEach(function() {
             var focusModel, treeRowList;
             var columnModel = new ColumnModelData();
             var treeData = $.extend(true, [], originalTreeData);
@@ -91,107 +91,89 @@ describe('model.row', function() {
                     {rowKey: 0},
                     rowModelOptions
                 );
-
-                done();
             });
         });
 
-        describe('setTreeExpanded', function() {
-            it('should set tree expanded state', function() {
-                rowModel.setTreeExpanded(true);
-                expect(treeRow.getTreeExpanded()).toBe(true);
+        it('setTreeExpanded should set tree expanded state', function() {
+            rowModel.setTreeExpanded(true);
+            expect(treeRow.getTreeExpanded()).toBe(true);
 
-                rowModel.setTreeExpanded(false);
-                expect(treeRow.getTreeExpanded()).toBe(false);
-            });
+            rowModel.setTreeExpanded(false);
+            expect(treeRow.getTreeExpanded()).toBe(false);
         });
 
-        describe('getTreeExpanded', function() {
-            it('should get tree expended state', function() {
-                treeRow.setTreeExpanded(true);
-                expect(rowModel.getTreeExpanded()).toBe(true);
+        it('getTreeExpanded should get tree expended state', function() {
+            treeRow.setTreeExpanded(true);
+            expect(rowModel.getTreeExpanded()).toBe(true);
 
-                treeRow.setTreeExpanded(false);
-                expect(rowModel.getTreeExpanded()).toBe(false);
-            });
+            treeRow.setTreeExpanded(false);
+            expect(rowModel.getTreeExpanded()).toBe(false);
         });
 
-        describe('getTreeDepth', function() {
-            it('should return tree depth', function() {
-                expect(rowModel.getTreeDepth()).toBe(1);
+        it('getTreeDepth should return tree depth', function() {
+            expect(rowModel.getTreeDepth()).toBe(1);
 
-                rowModel = new RowModel(
-                    {rowKey: 1},
-                    rowModelOptions
-                );
-                expect(rowModel.getTreeDepth()).toBe(2);
+            rowModel = new RowModel(
+                {rowKey: 1},
+                rowModelOptions
+            );
+            expect(rowModel.getTreeDepth()).toBe(2);
 
-                rowModel = new RowModel(
-                    {rowKey: 4},
-                    rowModelOptions
-                );
-                expect(rowModel.getTreeDepth()).toBe(3);
-            });
+            rowModel = new RowModel(
+                {rowKey: 4},
+                rowModelOptions
+            );
+            expect(rowModel.getTreeDepth()).toBe(3);
         });
 
-        describe('getTreeChildren', function() {
-            it('should return whether it has tree children', function() {
-                expect(rowModel.hasTreeChildren()).toBe(true);
+        it('getTreeChildren should return whether it has tree children', function() {
+            expect(rowModel.hasTreeChildren()).toBe(true);
 
-                rowModel = new RowModel(
-                    {rowKey: 1},
-                    rowModelOptions
-                );
-                expect(rowModel.hasTreeChildren()).toBe(false);
-            });
+            rowModel = new RowModel(
+                {rowKey: 1},
+                rowModelOptions
+            );
+            expect(rowModel.hasTreeChildren()).toBe(false);
         });
 
-        describe('hasTreeSibling', function() {
-            it('should return an array whether the ancestor has sibling', function() {
-                expect(rowModel.hasTreeNextSibling()).toEqual([true]);
+        it('hasTreeSibling should return an array whether the ancestor has sibling', function() {
+            expect(rowModel.hasTreeNextSibling()).toEqual([true]);
 
-                rowModel = new RowModel(
-                    {rowKey: 1},
-                    rowModelOptions
-                );
-                expect(rowModel.hasTreeNextSibling()).toEqual([true, true]);
+            rowModel = new RowModel(
+                {rowKey: 1},
+                rowModelOptions
+            );
+            expect(rowModel.hasTreeNextSibling()).toEqual([true, true]);
 
-                rowModel = new RowModel(
-                    {rowKey: 4},
-                    rowModelOptions
-                );
-                expect(rowModel.hasTreeNextSibling()).toEqual([true, false, false]);
-            });
+            rowModel = new RowModel(
+                {rowKey: 4},
+                rowModelOptions
+            );
+            expect(rowModel.hasTreeNextSibling()).toEqual([true, false, false]);
         });
 
-        describe('getTreeParentRowKey', function() {
-            it('should return it\'s parent row key', function() {
-                expect(rowModel.getTreeParentRowKey()).toBeFalsy();
+        it('getTreeParentRowKey should return it\'s parent row key', function() {
+            expect(rowModel.getTreeParentRowKey()).toBeFalsy();
 
-                rowModel = new RowModel(
-                    {rowKey: 4},
-                    rowModelOptions
-                );
-                expect(rowModel.getTreeParentRowKey()).toBe(3);
-            });
+            rowModel = new RowModel(
+                {rowKey: 4},
+                rowModelOptions
+            );
+            expect(rowModel.getTreeParentRowKey()).toBe(3);
         });
 
-        describe('isTreeShow', function() {
-            it('should return true if no ancestor is collapsed', function() {
-                expect(rowModel.isTreeShow()).toBe(true);
+        it('isTreeShow should return true if no ancestor is collapsed', function() {
+            expect(rowModel.isTreeShow()).toBe(true);
 
-                rowModel = new RowModel(
-                    {rowKey: 4},
-                    rowModelOptions
-                );
-                expect(rowModel.isTreeShow()).toBe(false);
-            });
+            rowModel = new RowModel(
+                {rowKey: 4},
+                rowModelOptions
+            );
+            expect(rowModel.isTreeShow()).toBe(false);
         });
 
-        describe('getTreeDescendantRowKeys', function() {
-            it('should return all of it\'s descendant', function() {
-                expect(rowModel.getTreeDescendantRowKeys()).toEqual([1, 2, 3, 4]);
-            });
+        it('getTreeDescendantRowKeys should return all of it\'s descendant', function() {
+            expect(rowModel.getTreeDescendantRowKeys()).toEqual([1, 2, 3, 4]);
         });
     });
 });
