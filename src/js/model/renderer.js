@@ -401,9 +401,6 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
         this._setRenderingRange(true);
 
-        // the type of modelList is array or collection
-        modelList = _.isArray(modelList) ? modelList : modelList.models;
-
         _.each(modelList, function(model, index) {
             height = this.coordRowModel.getHeightAt(index);
 
