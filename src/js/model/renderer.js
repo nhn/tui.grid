@@ -60,6 +60,8 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+            .listenTo(this.dataModel, 'expanded ', this._onExpanded)
+            .listenTo(this.dataModel, 'collapsed ', this._onCollapsed)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
@@ -100,6 +102,63 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
         // constMap.renderState
         state: renderStateMap.DONE
+    },
+
+    /**
+     * Event handler for 'expanded' event on dataModel using tree
+     * @param {Array.<number|string>} rowKeys - List of row key
+     * @private
+     */
+    _onExpanded: function(rowKeys) {
+        var dataModel = this.dataModel;
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var height, viewData, rowNum;
+        var viewModel, index, row;
+
+        _.each(rowKeys, function(rowKey) {
+            index = dataModel.indexOfRowKey(rowKey);
+            row = dataModel.at(index);
+            height = this.coordRowModel.getHeightAt(index);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                rowNum = index + 1;
+                viewData = this._createViewDataFromDataModel(
+                    row, columnNamesMap[attrName], height, rowNum);
+
+                viewModel = this._createRowModel(viewData, true);
+
+                this.get(attrName)[index] = viewModel;
+            }, this);
+        }, this);
+
+        this._setRenderingRange();
+
+        this.refresh({
+            type: 'add',
+            dataListChanged: true
+        });
+    },
+
+    /**
+     * Event handler for 'collapsed' event on dataModel using tree
+     * @param {Array.<number|string>} rowKeys - List of row key
+     * @private
+     */
+    _onCollapsed: function(rowKeys) {
+        _.each(rowKeys, function(rowKey) {
+            var index = this.dataModel.indexOfRowKey(rowKey);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                delete this.get(attrName)[index];
+            }, this);
+        }, this);
+
+        this._setRenderingRange();
+
+        this.refresh({
+            type: 'deleteRange',
+            dataListChanged: true
+        });
     },
 
     /**
@@ -501,15 +560,16 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _addViewModelListWithRange: function(startIndex, endIndex) {
+        var dataModel = this.dataModel;
         var columnNamesMap = this._getColumnNamesOfEachSide();
-        var rowDataModel, height, index;
+        var index, row, height;
 
-        if (startIndex >= 0 && endIndex >= 0) {
-            for (index = startIndex; index <= endIndex; index += 1) {
-                rowDataModel = this.dataModel.at(index);
-                height = this.coordRowModel.getHeightAt(index);
+        for (index = startIndex; index < endIndex + 1; index += 1) {
+            row = this.dataModel.at(index);
+            height = this.coordRowModel.getHeightAt(index);
 
-                this._addViewModelList(rowDataModel, columnNamesMap, height, index);
+            if (dataModel.isVisibleRow(row.get('rowKey'))) {
+                this._addViewModelList(row, columnNamesMap, height, index);
             }
         }
     },
@@ -581,13 +641,38 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var viewModelList, partialViewModelList;
 
         _.each(['L', 'R'], function(whichSide) {
+            partialViewModelList = [];
             originalWhichSide = whichSide.toLowerCase() + 'side';
             partialWhichSide = this._getPartialWhichSideType(whichSide);
             viewModelList = this.get(originalWhichSide);
-            partialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+
+            partialViewModelList = this._getPartialViewModelList(viewModelList, startIndex, endIndex);
 
             this.get(partialWhichSide).reset(partialViewModelList);
         }, this);
+    },
+
+    /**
+     * Get partial view model list
+     * @param {Array.<obejct>} viewModelList - List of view model
+     * @param {number} startIndex - Index of start row
+     * @param {number} endIndex - Index of end row
+     * @returns {Array.<obejct>} List of partial view model
+     * @private
+     */
+    _getPartialViewModelList: function(viewModelList, startIndex, endIndex) {
+        var arr = viewModelList.slice(startIndex, endIndex + 1);
+        var i = 0;
+        var len = arr.length;
+        var partialViewModelList = [];
+
+        for (; i < len; i += 1) {
+            if (arr[i]) {
+                partialViewModelList.push(arr[i]);
+            }
+        }
+
+        return partialViewModelList;
     },
 
     /**
