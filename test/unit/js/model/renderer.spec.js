@@ -246,11 +246,12 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
+            dataModel.append(rowList);
             columnModel.set('frozenCount', 3);
-            dataModel.set(rowList, {parse: true});
-            renderModel.refresh();
+
             lside = renderModel.get('partialLside');
             rside = renderModel.get('partialRside');
+
             expect(renderModel._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
@@ -293,12 +294,11 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
+            dataModel.append(rowList);
             columnModel.set({
                 frozenCount: 3,
                 rowHeaders: ['rowNum', 'checkbox']
             });
-            dataModel.set(rowList, {parse: true});
-            renderModel.refresh();
 
             expect(renderModel.getCellData(0, '_number').value).toEqual(1);
             expect(renderModel.getCellData(0, '_button').value).toEqual(false);
@@ -313,8 +313,8 @@ describe('model.renderer', function() {
 
     describe('refresh()', function() {
         beforeEach(function() {
+            dataModel.append(rowList);
             columnModel.set('frozenCount', 3);
-            dataModel.set(rowList, {parse: true});
         });
 
         describe('lside 와 rside 에 해당하는 데이터가 할당되었는지 확인한다.', function() {
@@ -369,7 +369,7 @@ describe('model.renderer', function() {
                 listenModel = new Model();
             });
 
-            it('데이터가 변경되었을 경우 dataModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
+            it('데이터가 변경되었을 경우 rowListChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
                 renderModel = new Renderer(null, {
@@ -381,14 +381,14 @@ describe('model.renderer', function() {
                     coordColumnModel: coordColumnModel
                 });
                 listenModel.listenTo(renderModel, 'rowListChanged', callback);
-                dataModel.set([], {parse: true});
+                dataModel.append([]);
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();
                     done();
                 }, 100);
             });
 
-            it('컬럼 모델이 변경되었을 경우 isColumnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
+            it('컬럼 모델이 변경되었을 경우 columnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
                 renderModel = new Renderer(null, {
