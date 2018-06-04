@@ -446,6 +446,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
+
             if (type === typeConst.ROW) {
                 this.start(focusedIndex.row, 0, typeConst.ROW);
             } else {
@@ -710,8 +711,17 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
      */
     _getRangeRowList: function() {
         var rowRange = this.get('range').row;
+        var index = rowRange[0];
+        var len = rowRange[1] + 1;
+        var rowList = [];
 
-        return this.dataModel.slice(rowRange[0], rowRange[1] + 1);
+        for (; index < len; index += 1) {
+            if (this.coordRowModel.getHeightAt(index)) {
+                rowList.push(this.dataModel.at(index));
+            }
+        }
+
+        return rowList;
     },
 
     /**
