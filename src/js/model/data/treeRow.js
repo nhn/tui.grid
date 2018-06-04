@@ -88,6 +88,14 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
     },
 
     /**
+     * sets children row keys
+     * @param {(Number|String)[]} rowKeys - array of children row keys
+     */
+    setTreeChildrenRowKeys: function(rowKeys) {
+        this._getTreeData().childrenRowKeys = rowKeys;
+    },
+
+    /**
      * remove a child key from children row keys
      * @param {Number|String} rowKey - the key of the row to be removed
      */

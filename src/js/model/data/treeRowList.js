@@ -73,6 +73,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
         this._flattenRow(rowList, flattenedRow, [rootRow]);
 
+        if (parentRow) {
+            parentRow.setTreeChildrenRowKeys(rootRow._treeData.childrenRowKeys);
+        }
+
         _.each(flattenedRow, function(row, i) {
             if (this.isRowSpanEnable()) {
                 this._setExtraRowSpanData(flattenedRow, i);
