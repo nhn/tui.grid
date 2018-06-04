@@ -14,7 +14,7 @@ var gridData = [
         downloadCount: 1000,
         listenCount: 5000,
         _extraData: {
-            treeState: 'EXPAND'
+            treeState: 'COLLAPSE'
         },
         _children: [
             {
@@ -78,7 +78,7 @@ var gridData = [
                 downloadCount: 1000,
                 listenCount: 5000,
                 _extraData: {
-                    treeState: 'EXPAND'
+                    treeState: 'COLLAPSE'
                 },
                 _children: [
                     {
@@ -186,21 +186,40 @@ var gridData = [
         grade: '3',
         price: 25000,
         downloadCount: 1000,
-        listenCount: 5000
-    },
-    {
-        id: 265289,
-        name: '21',
-        artist: 'Adele',
-        release: '2011.01.21',
-        type: 'Deluxe',
-        typeCode: '1',
-        genre: 'Pop,R&B',
-        genreCode: '1,3',
-        grade: '5',
-        price: 15000,
-        downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
+        _extraData: {
+            treeState: 'COLLAPSE'
+        },
+        _children: [
+            {
+                id: 294574,
+                name: '4',
+                artist: 'Beyoncé',
+                release: '2011.07.26',
+                type: 'Deluxe',
+                typeCode: '1',
+                genre: 'Pop',
+                genreCode: '1',
+                grade: '3',
+                price: 12000,
+                downloadCount: 1000,
+                listenCount: 5000
+            },
+            {
+                id: 265289,
+                name: '21',
+                artist: 'Adele',
+                release: '2011.01.21',
+                type: 'Deluxe',
+                typeCode: '1',
+                genre: 'Pop,R&B',
+                genreCode: '1,3',
+                grade: '5',
+                price: 15000,
+                downloadCount: 1000,
+                listenCount: 5000
+            }
+        ]
     },
     {
         id: 555871,
@@ -283,20 +302,6 @@ var gridData = [
         genreCode: '5',
         grade: '5',
         price: 18000,
-        downloadCount: 1000,
-        listenCount: 5000
-    },
-    {
-        id: 294574,
-        name: '4',
-        artist: 'Beyoncé',
-        release: '2011.07.26',
-        type: 'Deluxe',
-        typeCode: '1',
-        genre: 'Pop',
-        genreCode: '1',
-        grade: '3',
-        price: 12000,
         downloadCount: 1000,
         listenCount: 5000
     }

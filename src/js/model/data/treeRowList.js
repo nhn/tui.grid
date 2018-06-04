@@ -73,6 +73,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
         this._flattenRow(rowList, flattenedRow, [rootRow]);
 
+        if (parentRow) {
+            parentRow.setTreeChildrenRowKeys(rootRow._treeData.childrenRowKeys);
+        }
+
         _.each(flattenedRow, function(row, i) {
             if (this.isRowSpanEnable()) {
                 this._setExtraRowSpanData(flattenedRow, i);
@@ -187,14 +191,14 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @returns {Array.<module:model/data/treeTow>} Row model list
      * @override
      */
-    append: function(rowData, options) {
+    appendRow: function(rowData, options) {
         var modelList;
 
         options = _.extend({
             at: this._indexOfParentRowKeyAndOffset(options.parentRowKey, options.offset)
         }, options);
 
-        modelList = this._append(rowData, options);
+        modelList = this._appendRow(rowData, options);
 
         this._syncHasTreeNextSiblingData(modelList[0].get('rowKey'));
         if (modelList.length > 1) {
@@ -213,12 +217,12 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/treeTow>} Row model list
      */
-    prepend: function(rowData, options) {
+    prependRow: function(rowData, options) {
         options = options || {};
         options.parentRowKey = null;
         options.offset = 0;
 
-        return this.append(rowData, options);
+        return this.appendRow(rowData, options);
     },
 
     _removeChildFromParent: function(childRowKey) {
@@ -543,6 +547,91 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      */
     isVisibleRow: function(rowKey) {
         return this.isTreeVisible(rowKey);
+    },
+
+    /**
+     * Check the checkbox input in the row header
+     * @param {number} rowKey - Current row key
+     * @override
+     */
+    check: function(rowKey) {
+        this._setCheckedState(rowKey, true);
+    },
+
+    /**
+     * Uncheck the checkbox input in the row header
+     * @param {number} rowKey - Current row key
+     * @override
+     */
+    uncheck: function(rowKey) {
+        this._setCheckedState(rowKey, false);
+    },
+
+    /**
+     * Set checked state by using a cascading option
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _setCheckedState: function(rowKey, state) {
+        var useCascadingCheckbox = this.columnModel.useCascadingCheckbox();
+
+        this.setValue(rowKey, '_button', state);
+
+        if (useCascadingCheckbox) {
+            this._updateDecendantsCheckedState(rowKey, state);
+            this._updateAncestorsCheckedState(rowKey);
+        }
+    },
+
+    /**
+     * Update checked state of all descendant rows
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _updateDecendantsCheckedState: function(rowKey, state) {
+        var descendants = this.getTreeDescendants(rowKey);
+
+        _.each(descendants, function(descendantRowKey) {
+            this.setValue(descendantRowKey, '_button', state);
+        }, this);
+    },
+
+    /**
+     * Update checked state of all ancestor rows
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _updateAncestorsCheckedState: function(rowKey) {
+        var parentRowKey = this.get(rowKey).getTreeParentRowKey();
+
+        while (parentRowKey > -1) {
+            this._setCheckedStateToParent(parentRowKey);
+            parentRowKey = this.get(parentRowKey).getTreeParentRowKey();
+        }
+    },
+
+    /**
+     * Set checked state of the parent row according to the checked children rows
+     * @param {number} rowKey - Current row key
+     * @private
+     */
+    _setCheckedStateToParent: function(rowKey) {
+        var childernRowKeys = this.get(rowKey).getTreeChildrenRowKeys();
+        var checkedChildrenCnt = 0;
+        var checkedState;
+
+        _.each(childernRowKeys, function(childRowKey) {
+            if (this.get(childRowKey).get('_button')) {
+                checkedChildrenCnt += 1;
+            }
+        }, this);
+
+        checkedState = checkedChildrenCnt === childernRowKeys.length;
+
+        this.setValue(rowKey, '_button', checkedState);
     }
 });
 

@@ -107,6 +107,14 @@ describe('TreeRow', function() {
         expect(treeRow.getTreeChildrenRowKeys()).toEqual([1, 2, 3]);
     });
 
+    it('setTreeChildrenRowKeys should set children tree data', function() {
+        treeRow = new TreeRow(rowData, parentData);
+
+        treeRow.setTreeChildrenRowKeys([1]);
+
+        expect(treeRow._getTreeData().childrenRowKeys).toEqual([1]);
+    });
+
     it('hasTreeNextSibling should return whether it has one or more siblings and it\'s ancestors', function() {
         rowData._treeData.hasNextSibling = [false];
         treeRow = new TreeRow(rowData, parentData);

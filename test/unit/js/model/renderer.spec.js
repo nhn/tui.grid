@@ -246,7 +246,7 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
-            dataModel.append(rowList);
+            dataModel.appendRow(rowList);
             columnModel.set('frozenCount', 3);
 
             lside = renderModel.get('partialLside');
@@ -294,7 +294,7 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
-            dataModel.append(rowList);
+            dataModel.appendRow(rowList);
             columnModel.set({
                 frozenCount: 3,
                 rowHeaders: ['rowNum', 'checkbox']
@@ -313,7 +313,7 @@ describe('model.renderer', function() {
 
     describe('refresh()', function() {
         beforeEach(function() {
-            dataModel.append(rowList);
+            dataModel.appendRow(rowList);
             columnModel.set('frozenCount', 3);
         });
 
@@ -381,7 +381,7 @@ describe('model.renderer', function() {
                     coordColumnModel: coordColumnModel
                 });
                 listenModel.listenTo(renderModel, 'rowListChanged', callback);
-                dataModel.append([]);
+                dataModel.appendRow([]);
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();
                     done();
