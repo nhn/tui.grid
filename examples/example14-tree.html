@@ -11,6 +11,11 @@
 You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Getting-Started" target="_blank">here</a>
 </div>
 <div class="code-html">
+
+<button id="append">append</button>
+<button id="prepend">prepend</button>
+<button id="remove">remove</button>
+
 <div id="grid"></div>
 </div>
 </body>
@@ -30,6 +35,9 @@ var grid = new tui.Grid({
         name: 'name',
         useIcon: false
     },
+    virtualScrolling: true,
+    rowHeight: 30,
+    // bodyHeight: 100,
     columns: [
         {
             title: 'Name',
@@ -52,6 +60,72 @@ var grid = new tui.Grid({
             name: 'genre'
         }
     ]
+});
+
+$('#append').on('click', function() {
+    grid.appendRow([
+        {
+            id: 502795,
+            name: '11111111',
+            artist: 'test111111',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000,
+            _extraData: {
+                treeState: 'EXPAND'
+            },
+            _children: [
+                {
+                    id: 502795,
+                    name: '3333',
+                    artist: 'test333333',
+                    release: '2015.05.12',
+                    type: 'EP',
+                    typeCode: '2',
+                    genre: 'Hiphop',
+                    genreCode: '5',
+                    grade: '5',
+                    price: 18000,
+                    downloadCount: 1000,
+                    listenCount: 5000,
+                }
+            ]
+        },
+        {
+            id: 502793,
+            name: '222222',
+            artist: 'test2222222',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000
+        }
+    ], {
+        parentRowKey: 1
+    });
+});
+
+$('#prepend').on('click', function() {
+
+});
+
+$('#remove').on('click', function() {
+    var rowKeys = grid.getCheckedRowKeys();
+
+    _.each(rowKeys, function(rowKey) {
+        grid.removeRow(rowKey);
+    });
 });
 
 </script>
