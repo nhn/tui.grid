@@ -440,7 +440,7 @@ describe('data.treeModel', function() {
         });
     });
 
-    describe('append', function() {
+    describe('appendRow', function() {
         var appendData, appendOptions;
 
         beforeEach(function() {
@@ -461,7 +461,7 @@ describe('data.treeModel', function() {
         });
 
         it('should add to model list', function() {
-            var result = treeRowList.append(appendData, appendOptions);
+            var result = treeRowList.appendRow(appendData, appendOptions);
 
             // length
             expect(treeRowList.length).toBe(11);
@@ -487,7 +487,7 @@ describe('data.treeModel', function() {
 
             appendOptions.parentRowKey = null;
 
-            result = treeRowList.append(appendData, appendOptions);
+            result = treeRowList.appendRow(appendData, appendOptions);
 
             // length
             expect(treeRowList.length).toBe(11);
@@ -512,7 +512,7 @@ describe('data.treeModel', function() {
             var spy = jasmine.createSpy('add');
             treeRowList.on('add', spy);
 
-            treeRowList.append(appendData, appendOptions);
+            treeRowList.appendRow(appendData, appendOptions);
 
             expect(spy).toHaveBeenCalled();
         });
@@ -524,7 +524,7 @@ describe('data.treeModel', function() {
         });
 
         it('should insert the given data to the top', function() {
-            treeRowList.prepend({
+            treeRowList.prependRow({
                 text: 'n',
                 _children: [{
                     text: 'n-a'

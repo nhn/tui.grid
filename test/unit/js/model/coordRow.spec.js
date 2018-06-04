@@ -48,7 +48,7 @@ describe('CoordRow', function() {
         });
 
         it('when a row is added to dataModel', function() {
-            coordRow.dataModel.append({});
+            coordRow.dataModel.appendRow({});
 
             expect(syncSpy).toHaveBeenCalled();
         });
