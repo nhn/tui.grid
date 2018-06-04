@@ -4,7 +4,6 @@ var $ = require('jquery');
 
 var ColumnModelData = require('model/data/columnModel');
 var TreeRowList = require('model/data/treeRowList');
-var TreeRow = require('model/data/treeRow');
 
 var columns = [{
     title: 'text',
