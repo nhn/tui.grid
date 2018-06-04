@@ -547,9 +547,9 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      */
     isVisibleRow: function(rowKey) {
         return this.isTreeVisible(rowKey);
-    }
-  
-   /**
+    },
+
+    /**
      * Check the checkbox input in the row header
      * @param {number} rowKey - Current row key
      * @override
