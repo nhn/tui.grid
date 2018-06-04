@@ -81,7 +81,7 @@ describe('model/focus', function() {
     describe('when new data appended with focus:true option', function() {
         it('focus to first cell of new added row', function() {
             var focusModel = create();
-            var newRows = focusModel.dataModel.append({}, {
+            var newRows = focusModel.dataModel.appendRow({}, {
                 focus: true
             });
             expect(focusModel.get('rowKey')).toBe(newRows[0].get('rowKey'));

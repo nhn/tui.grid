@@ -679,7 +679,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {Number} [options.offset] - Tree offset from first sibling
      */
     appendRow: function(row, options) {
-        this.modelManager.dataModel.append(row, options);
+        this.modelManager.dataModel.appendRow(row, options);
     },
 
     /**
@@ -689,7 +689,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
     prependRow: function(row, options) {
-        this.modelManager.dataModel.prepend(row, options);
+        this.modelManager.dataModel.prependRow(row, options);
     },
 
     /**

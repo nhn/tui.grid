@@ -536,7 +536,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         return data;
     },
 
-    _append: function(rowData, options) {
+    _appendRow: function(rowData, options) {
         var modelList;
 
         modelList = this._createModelList(rowData, options);
@@ -562,12 +562,12 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/row>} Row model list
      */
-    append: function(rowData, options) {
+    appendRow: function(rowData, options) {
         var modelList;
 
         options = _.extend({at: this.length}, options);
 
-        modelList = this._append(rowData, options);
+        modelList = this._appendRow(rowData, options);
 
         this.trigger('add', modelList, options);
 
@@ -581,11 +581,11 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/row>} Row model list
      */
-    prepend: function(rowData, options) {
+    prependRow: function(rowData, options) {
         options = options || {};
         options.at = 0;
 
-        return this.append(rowData, options);
+        return this.appendRow(rowData, options);
     },
 
     /**
@@ -1188,7 +1188,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             columnIdx, columnName, cellState, rowSpanData;
 
         if (!row) {
-            row = this.append({})[0];
+            row = this.appendRow({})[0];
         }
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
             columnName = columnModel.at(columnIdx, true).name;
