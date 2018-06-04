@@ -544,6 +544,91 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
     isVisibleRow: function(rowKey) {
         return this.isTreeVisible(rowKey);
     }
+  
+   /**
+     * Check the checkbox input in the row header
+     * @param {number} rowKey - Current row key
+     * @override
+     */
+    check: function(rowKey) {
+        this._setCheckedState(rowKey, true);
+    },
+
+    /**
+     * Uncheck the checkbox input in the row header
+     * @param {number} rowKey - Current row key
+     * @override
+     */
+    uncheck: function(rowKey) {
+        this._setCheckedState(rowKey, false);
+    },
+
+    /**
+     * Set checked state by using a cascading option
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _setCheckedState: function(rowKey, state) {
+        var useCascadingCheckbox = this.columnModel.useCascadingCheckbox();
+
+        this.setValue(rowKey, '_button', state);
+
+        if (useCascadingCheckbox) {
+            this._updateDecendantsCheckedState(rowKey, state);
+            this._updateAncestorsCheckedState(rowKey);
+        }
+    },
+
+    /**
+     * Update checked state of all descendant rows
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _updateDecendantsCheckedState: function(rowKey, state) {
+        var descendants = this.getTreeDescendants(rowKey);
+
+        _.each(descendants, function(descendantRowKey) {
+            this.setValue(descendantRowKey, '_button', state);
+        }, this);
+    },
+
+    /**
+     * Update checked state of all ancestor rows
+     * @param {number} rowKey - Current row key
+     * @param {boolean} state - Whether checking the input button or not
+     * @private
+     */
+    _updateAncestorsCheckedState: function(rowKey) {
+        var parentRowKey = this.get(rowKey).getTreeParentRowKey();
+
+        while (parentRowKey > -1) {
+            this._setCheckedStateToParent(parentRowKey);
+            parentRowKey = this.get(parentRowKey).getTreeParentRowKey();
+        }
+    },
+
+    /**
+     * Set checked state of the parent row according to the checked children rows
+     * @param {number} rowKey - Current row key
+     * @private
+     */
+    _setCheckedStateToParent: function(rowKey) {
+        var childernRowKeys = this.get(rowKey).getTreeChildrenRowKeys();
+        var checkedChildrenCnt = 0;
+        var checkedState;
+
+        _.each(childernRowKeys, function(childRowKey) {
+            if (this.get(childRowKey).get('_button')) {
+                checkedChildrenCnt += 1;
+            }
+        }, this);
+
+        checkedState = checkedChildrenCnt === childernRowKeys.length;
+
+        this.setValue(rowKey, '_button', checkedState);
+    }
 });
 
 function createEmptyTreeRowData() {
