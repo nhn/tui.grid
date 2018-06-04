@@ -738,4 +738,109 @@ describe('data.treeModel', function() {
             treeRowList.setData(treeData, true);
         });
     });
+
+    describe('check/uncheck - ', function() {
+        beforeEach(function() {
+            treeData = [{
+                text: 'a', // 0
+                _children: [{
+                    text: 'a-a' // 1
+                }, {
+                    text: 'a-b' // 2
+                }, {
+                    text: 'a-c', // 3
+                    _children: [{
+                        text: 'a-c-a' // 4
+                    }]
+                }]
+            }, {
+                text: 'b' // 5
+            }, {
+                text: 'c', // 6
+                _children: [{
+                    text: 'c-a' // 7
+                }, {
+                    text: 'c-b' // 8
+                }]
+            }];
+
+            treeRowList.setData(treeData, true);
+        });
+
+        it('if the current checked row is a parent row, all descendant rows are checked.', function() {
+            treeRowList.check(0);
+
+            expect(treeRowList.get(1).get('_button')).toBe(true);
+            expect(treeRowList.get(2).get('_button')).toBe(true);
+            expect(treeRowList.get(3).get('_button')).toBe(true);
+            expect(treeRowList.get(4).get('_button')).toBe(true);
+        });
+
+        it('if the current unchecked row is a parent row, all descendant rows are unchecked.', function() {
+            treeRowList.check(0);
+            treeRowList.uncheck(0);
+
+            expect(treeRowList.get(1).get('_button')).toBe(false);
+            expect(treeRowList.get(2).get('_button')).toBe(false);
+            expect(treeRowList.get(3).get('_button')).toBe(false);
+            expect(treeRowList.get(4).get('_button')).toBe(false);
+        });
+
+        it('if all children rows are checked, the parent row is checked.', function() {
+            treeRowList.check(7);
+            expect(treeRowList.get(6).get('_button')).toBe(false);
+
+            treeRowList.check(8);
+            expect(treeRowList.get(6).get('_button')).toBe(true);
+        });
+
+        it('if one child row is unchecked, the parent row is also unchecked.', function() {
+            treeRowList.check(6);
+            expect(treeRowList.get(6).get('_button')).toBe(true);
+
+            treeRowList.uncheck(7);
+            expect(treeRowList.get(6).get('_button')).toBe(false);
+        });
+    });
+
+    describe('check/uncheck when the cascading option is not used - ', function() {
+        beforeEach(function() {
+            treeData = [{
+                text: 'a', // 0
+                _children: [{
+                    text: 'a-a' // 1
+                }, {
+                    text: 'a-b' // 2
+                }]
+            }];
+
+            treeRowList.columnModel.set('treeColumnOptions', {
+                cascadingCheckbox: false
+            });
+            treeRowList.setData(treeData, true);
+        });
+
+        it('the children rows are not checked even if the parent is checked.', function() {
+            treeRowList.check(0);
+
+            expect(treeRowList.get(1).get('_button')).toBe(false);
+            expect(treeRowList.get(2).get('_button')).toBe(false);
+        });
+
+        it('the children rows are not unchecked even if the parent is unchecked.', function() {
+            treeRowList.check(0);
+            treeRowList.check(1);
+            treeRowList.check(2);
+            treeRowList.uncheck(0);
+
+            expect(treeRowList.get(1).get('_button')).toBe(true);
+            expect(treeRowList.get(2).get('_button')).toBe(true);
+        });
+
+        it('if all children rows are checked, the parent row is not checked.', function() {
+            treeRowList.check(1);
+            treeRowList.check(2);
+            expect(treeRowList.get(0).get('_button')).toBe(false);
+        });
+    });
 });
