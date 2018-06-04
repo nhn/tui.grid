@@ -52,9 +52,7 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render)
-            .listenTo(dataModel, 'expanded ', this._onExpanded)
-            .listenTo(dataModel, 'collapsed', this._onCollapsed);
+            .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === frameConst.L) {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)

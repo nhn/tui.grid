@@ -41,7 +41,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
         '<tr ' +
         '<%=rowKeyAttr%>" ' +
         'class="<%=className%>" ' +
-        'style="height:<%=height%>px;display:<%=display%>">' +
+        'style="height:<%=height%>px;">' +
         '<%=contents%>' +
         '</tr>'
     ),
@@ -127,15 +127,13 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      * Returns the HTML string of all cells in the given model (row).
      * @param {module:model/row} model - View model instance
      * @param {Array.<String>} columnNames - An array of column names
-     * @param {Boolean} hasTreeColumn - Whether the grid has tree column or not
      * @returns {String} HTLM string
      */
-    generateHtml: function(model, columnNames, hasTreeColumn) {
+    generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey');
         var rowNum = model.get('rowNum');
         var className = (rowNum % 2) ? classNameConst.ROW_ODD : classNameConst.ROW_EVEN;
         var rowKeyAttr = '';
-        var displayValue = '';
         var html;
 
         if (_.isUndefined(rowKey)) {
@@ -145,14 +143,9 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
             html = this._generateHtmlForActualRow(model, columnNames);
         }
 
-        if (hasTreeColumn) {
-            displayValue = model.isTreeShow() ? '' : 'none';
-        }
-
         return this.template({
             rowKeyAttr: rowKeyAttr,
             height: model.get('height') + CELL_BORDER_WIDTH,
-            display: displayValue,
             contents: html,
             className: className
         });

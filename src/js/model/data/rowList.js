@@ -1238,6 +1238,15 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             available: available,
             checked: checked
         };
+    },
+
+    /**
+     * Check whether the row is visible or not
+     * @returns {boolean} state
+     * @abstract
+     */
+    isVisibleRow: function() {
+        return true;
     }
 });
 

@@ -536,6 +536,16 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
     },
 
     /**
+     * Check whether the row is visible or not
+     * @returns {boolean} state
+     * @override
+     * @todo Change the method name from isTreeVisible to isVisibleRow
+     */
+    isVisibleRow: function(rowKey) {
+        return this.isTreeVisible(rowKey);
+    }
+  
+   /**
      * Check the checkbox input in the row header
      * @param {number} rowKey - Current row key
      * @override

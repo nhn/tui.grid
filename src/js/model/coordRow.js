@@ -40,8 +40,47 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         // If the fixedRowHeight is false, as the height of each row should be synced with DOM,
         // syncWithDom() method is called instead at the end of rendering process.
         if (this.dimensionModel.get('fixedRowHeight')) {
-            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel);
+            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel)
+                .listenTo(this.dataModel, 'expanded', this._onExpanded)
+                .listenTo(this.dataModel, 'collapsed', this._onCollapsed);
         }
+    },
+
+    /**
+     * Event handler for 'expanded' event on dataModel using tree
+     * @param {Array.<number|string>} rowKeys - array of row key
+     * @private
+     */
+    _onExpanded: function(rowKeys) {
+        var defHeight = this.dimensionModel.get('rowHeight');
+
+        _.each(rowKeys, function(rowKey) {
+            var index = this.dataModel.indexOfRowKey(rowKey);
+            var row = this.dataModel.at(index);
+
+            this.rowHeights[index] = (row.getHeight() || defHeight);
+        }, this);
+
+        this.rowOffsets = this._resetOffsets(this.rowHeights);
+
+        this._setTotalRowHeight();
+    },
+
+    /**
+     * Event handler for 'collapsed' event on dataModel using tree
+     * @param {Array.<number|string>} rowKeys - array of row key
+     * @private
+     */
+    _onCollapsed: function(rowKeys) {
+        _.each(rowKeys, function(rowKey) {
+            var index = this.dataModel.indexOfRowKey(rowKey);
+
+            this.rowHeights[index] = 0;
+        }, this);
+
+        this.rowOffsets = this._resetOffsets(this.rowHeights);
+
+        this._setTotalRowHeight();
     },
 
     /**
@@ -74,10 +113,17 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     _getHeightFromData: function() {
         var defHeight = this.dimensionModel.get('rowHeight');
         var rowHeights = [];
+        var height;
 
         this.dataModel.each(function(row, index) {
-            rowHeights[index] = (row.getHeight() || defHeight);
-        });
+            height = (row.getHeight() || defHeight);
+
+            if (!this.dataModel.isVisibleRow(row.get('rowKey'))) {
+                height = 0;
+            }
+
+            rowHeights[index] = height;
+        }, this);
 
         return rowHeights;
     },
@@ -90,28 +136,55 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     },
 
     /**
-     * Initialize the values of rowHeights and rowOffsets
+     * Reset the list of offset via the list of each row's height
      * @param {Array.<number>} rowHeights - array of row height
+     * @returns {Array.<number>} array of row offest
      * @private
      */
-    _reset: function(rowHeights) {
+    _resetOffsets: function(rowHeights) {
         var rowOffsets = [];
-        var totalRowHeight = 0;
 
         _.each(rowHeights, function(height, index) {
             var prevOffset = index ? (rowOffsets[index - 1] + CELL_BORDER_WIDTH) : 0;
             var prevHeight = index ? rowHeights[index - 1] : 0;
 
+            if (!height) {
+                prevOffset = rowOffsets[index - 1];
+            }
+
             rowOffsets[index] = prevOffset + prevHeight;
         });
 
-        this.rowHeights = rowHeights;
-        this.rowOffsets = rowOffsets;
+        return rowOffsets;
+    },
+
+    /**
+     * Set the height value of total row height via heights and offsets
+     * @private
+     */
+    _setTotalRowHeight: function() {
+        var totalRowHeight = 0;
+        var rowHeights = this.rowHeights;
+        var rowOffsets = this.rowOffsets;
 
         if (rowHeights.length) {
             totalRowHeight = _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH;
         }
+
         this.dimensionModel.set('totalRowHeight', totalRowHeight);
+    },
+
+    /**
+     * Initialize the values of rowHeights and rowOffsets
+     * @param {Array.<number>} rowHeights - array of row height
+     * @private
+     */
+    _reset: function(rowHeights) {
+        this.rowHeights = rowHeights;
+        this.rowOffsets = this._resetOffsets(rowHeights);
+
+        this._setTotalRowHeight();
+
         this.trigger('reset');
     },
 
