@@ -688,7 +688,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         for (; index < len; index += 1) {
             viewModel = viewModelList[index];
 
-            if (viewModel && this.coordRowModel.getHeightAt(index)) {
+            if (viewModel && this.dataModel.isVisibleRow(viewModel.get('rowKey'))) {
                 partialViewModelList.push(viewModel);
             }
         }
