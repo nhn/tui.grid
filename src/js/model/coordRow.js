@@ -48,7 +48,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'expanded' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of row key
+     * @param {Array.<number|string>} rowKeys - array of descendants row key
      * @private
      */
     _onExpanded: function(rowKeys) {
@@ -68,7 +68,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'collapsed' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of row key
+     * @param {Array.<number|string>} rowKeys - array of descendants row key
      * @private
      */
     _onCollapsed: function(rowKeys) {
