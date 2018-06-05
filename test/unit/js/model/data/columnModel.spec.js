@@ -921,4 +921,18 @@ describe('data.columnModel', function() {
             expect(result).toBe(true);
         });
     });
+
+    it('getTreeColumnName() should return name of tree column ', function() {
+        var result;
+        var columnName = 'c1';
+
+        columnModelInstance = new ColumnModelData({
+            treeColumnOptions: {
+                name: columnName
+            }
+        });
+        result = columnModelInstance.getTreeColumnName();
+
+        expect(result).toBe(columnName);
+    });
 });
