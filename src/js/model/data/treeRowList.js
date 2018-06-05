@@ -254,6 +254,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      */
     removeRow: function(rowKey, options) {
         var row = this.get(rowKey);
+        var parentRowKey = row.getTreeParentRowKey();
         var currentIndex = this.indexOf(row);
         var prevSiblingRowKey = this.getTreePrevSiblingRowKey(rowKey);
         var descendantRowKeys;
@@ -276,7 +277,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
-        this.trigger('remove', rowKey, currentIndex, descendantRowKeys);
+        this.trigger('remove', rowKey, currentIndex, descendantRowKeys, parentRowKey);
     },
 
     /**
