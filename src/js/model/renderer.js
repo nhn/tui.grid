@@ -433,21 +433,11 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys) {
-        var index, len;
+        var removedRowsCnt = descendantRowKeys ? descendantRowKeys.length : 1;
 
         _.each(['lside', 'rside'], function(attrName) {
-            delete this.get(attrName)[removedIndex];
+            this.get(attrName).splice(removedIndex, removedRowsCnt);
         }, this);
-
-        if (descendantRowKeys) {
-            index = removedIndex + 1;
-            len = index + descendantRowKeys.length + 1;
-
-            for (; index < len; index += 1) {
-                delete this.get('lside')[index];
-                delete this.get('rside')[index];
-            }
-        }
 
         this._setRenderingRange(true);
 
