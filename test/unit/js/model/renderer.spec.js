@@ -263,56 +263,56 @@ describe('model.renderer', function() {
         });
     });
 
-    describe('getCellData()', function() {
-        it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
-            rowList = [
-                {
-                    'columnName1': '1 normal',
-                    'columnName2': '1 text',
-                    'columnName3': 1,
-                    'columnName4': 1,
-                    'columnName5': 1,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                },
-                {
-                    'columnName1': '2 normal',
-                    'columnName2': '2 text',
-                    'columnName3': 2,
-                    'columnName4': 2,
-                    'columnName5': 2,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                },
-                {
-                    'columnName1': '3 normal',
-                    'columnName2': '3 text',
-                    'columnName3': 3,
-                    'columnName4': 3,
-                    'columnName5': 3,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                }
-            ];
-            dataModel.appendRow(rowList);
-            columnModel.set({
-                frozenCount: 3,
-                rowHeaders: ['rowNum', 'checkbox']
-            });
-
-            expect(renderModel.getCellData(0, '_number').value).toEqual(1);
-            expect(renderModel.getCellData(0, '_button').value).toEqual(false);
-            expect(renderModel.getCellData(0, 'columnName1').value).toEqual('1 normal');
-            expect(renderModel.getCellData(0, 'columnName2').value).toEqual('1 text');
-            expect(renderModel.getCellData(0, 'columnName3').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName4').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName5').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName6').value).toEqual(true);
+    it('getCellData() columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
+        rowList = [
+            {
+                'columnName1': '1 normal',
+                'columnName2': '1 text',
+                'columnName3': 1,
+                'columnName4': 1,
+                'columnName5': 1,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            },
+            {
+                'columnName1': '2 normal',
+                'columnName2': '2 text',
+                'columnName3': 2,
+                'columnName4': 2,
+                'columnName5': 2,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            },
+            {
+                'columnName1': '3 normal',
+                'columnName2': '3 text',
+                'columnName3': 3,
+                'columnName4': 3,
+                'columnName5': 3,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            }
+        ];
+        spyOn(renderModel.coordRowModel, 'getHeightAt').and.returnValue(1);
+        dataModel.appendRow(rowList);
+        columnModel.set({
+            frozenCount: 3,
+            rowHeaders: ['rowNum', 'checkbox']
         });
+
+        expect(renderModel.getCellData(0, '_number').value).toEqual(1);
+        expect(renderModel.getCellData(0, '_button').value).toEqual(false);
+        expect(renderModel.getCellData(0, 'columnName1').value).toEqual('1 normal');
+        expect(renderModel.getCellData(0, 'columnName2').value).toEqual('1 text');
+        expect(renderModel.getCellData(0, 'columnName3').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName4').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName5').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName6').value).toEqual(true);
     });
 
     describe('refresh()', function() {
         beforeEach(function() {
+            spyOn(renderModel.coordRowModel, 'getHeightAt').and.returnValue(1);
             dataModel.appendRow(rowList);
             columnModel.set('frozenCount', 3);
         });
