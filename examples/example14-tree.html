@@ -13,7 +13,6 @@ You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Gettin
 <div class="code-html">
 
 <button id="append">append</button>
-<button id="prepend">prepend</button>
 <button id="remove">remove</button>
 
 <div id="grid"></div>
@@ -33,11 +32,12 @@ var grid = new tui.Grid({
     rowHeaders: ['rowNum', 'checkbox'],
     treeColumnOptions: {
         name: 'name',
-        useIcon: false
+        useIcon: false,
+        cascadingCheckbox: false
     },
     virtualScrolling: true,
     rowHeight: 30,
-    // bodyHeight: 100,
+    // bodyHeight: 200,
     columns: [
         {
             title: 'Name',
@@ -63,6 +63,8 @@ var grid = new tui.Grid({
 });
 
 $('#append').on('click', function() {
+    var parentRowKey = grid.getCheckedRowKeys()[0];
+
     grid.appendRow([
         {
             id: 502795,
@@ -112,20 +114,14 @@ $('#append').on('click', function() {
             listenCount: 5000
         }
     ], {
-        parentRowKey: 1
+        parentRowKey: parentRowKey
     });
-});
-
-$('#prepend').on('click', function() {
-
 });
 
 $('#remove').on('click', function() {
-    var rowKeys = grid.getCheckedRowKeys();
+    var parentRowKey = grid.getCheckedRowKeys()[0];
 
-    _.each(rowKeys, function(rowKey) {
-        grid.removeRow(rowKey);
-    });
+    grid.removeRow(parentRowKey);
 });
 
 </script>

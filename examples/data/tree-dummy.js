@@ -29,7 +29,8 @@ var gridData = [
                 grade: '5',
                 price: 12000,
                 downloadCount: 1000,
-                listenCount: 5000
+                listenCount: 5000,
+                _children: true
             },
             {
                 id: 498896,
@@ -158,7 +159,8 @@ var gridData = [
         listenCount: 5000,
         _extraData: {
             treeState: 'EXPAND'
-        }
+        },
+        _children: []
     },
     {
         id: 295651,
