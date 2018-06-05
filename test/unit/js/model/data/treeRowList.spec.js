@@ -563,7 +563,7 @@ describe('data.treeModel', function() {
             expect(treeRowList.get(5).hasTreeNextSibling()).toEqual([false]);
         });
 
-        fit('should change parent\'s hasChildren state', function() {
+        it('should change parent\'s hasChildren state', function() {
             treeRowList.removeRow(4);
 
             expect(treeRowList.get(3).hasTreeChildren()).toBe(false);

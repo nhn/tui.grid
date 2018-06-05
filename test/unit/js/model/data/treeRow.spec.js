@@ -98,7 +98,7 @@ describe('TreeRow', function() {
         it('should return even if it has an empty array', function() {
             rowData._treeData.childrenRowKeys = [];
             treeRow = new TreeRow(rowData, parentData);
-            expect(treeRow.hasTreeChildren()).toBe(true);
+            expect(treeRow.hasTreeChildren()).toBe(false);
         });
     });
 
