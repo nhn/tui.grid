@@ -5,7 +5,6 @@
 
 'use strict';
 
-var $ = require('jquery');
 var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 
@@ -150,56 +149,71 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
     _refreshSelectedMetaColumns: function() {
         var $rows = this.$el.find('tr');
         var metaSelector = '.' + classNameConst.CELL_HEAD;
-        var $filteredRows;
+        var filteredRowList;
 
         if (this.selectionModel.hasSelection()) {
-            $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
+            filteredRowList = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
         } else {
-            $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
+            filteredRowList = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
         $rows.find(metaSelector).removeClass(classNameConst.CELL_SELECTED);
-        $filteredRows.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+
+        _.each(filteredRowList, function($row) {
+            $row.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+        });
     },
 
     /**
      * Filters the rows by given range(index) and returns them.
      * @param {jQuery} $rows - rows (tr elements)
      * @param {Array.<Number>} rowRange - [startIndex, endIndex]
-     * @returns {jQuery}
+     * @returns {Array.<jQuery>}
      * @private
      */
     _filterRowsByIndexRange: function($rows, rowRange) {
         var renderModel = this.renderModel;
         var renderStartIndex = renderModel.get('startIndex');
-        var startIndex, endIndex;
+        var rowList = [];
+        var startIndex, endIndex, index, len, rowKey;
 
         startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
         endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
 
         if (!startIndex && !endIndex) {
-            return $();
+            return rowList;
         }
 
-        return $rows.slice(startIndex, endIndex);
+        index = startIndex;
+        len = endIndex;
+
+        for (; index < len; index += 1) {
+            if (this.coordRowModel.getHeightAt(index)) {
+                rowKey = this.dataModel.at(index).get('rowKey');
+                rowList.push(this._getRowElement(rowKey));
+            }
+        }
+
+        return rowList;
     },
 
     /**
      * Filters the row by given rowKey
      * @param {jQuery} $rows - rows (tr elements)
      * @param {Number} rowKey - rowKey
-     * @returns {jQuery}
+     * @returns {Array.<jQuery>}
      * @private
      */
     _filterRowByKey: function($rows, rowKey) {
         var rowIndex = this.dataModel.indexOfRowKey(rowKey);
         var renderStartIndex = this.renderModel.get('startIndex');
+        var rowList = [];
 
         if (renderStartIndex > rowIndex) {
-            return $();
+            return rowList;
         }
 
-        return $rows.eq(rowIndex - renderStartIndex);
+        return rowList.push($rows.eq(rowIndex - renderStartIndex));
     },
 
     /**
@@ -294,44 +308,6 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
 
         this.painterManager.getCellPainter(editType).refresh(cellData, $td);
         this.coordRowModel.syncWithDom();
-    },
-
-    /**
-     * Event handler for 'expanded' event on module:model/treeRowList
-     * @param {Array.<number>} rowKeys - Row key list
-     * @private
-     */
-    _onExpanded: function(rowKeys) {
-        this._showDescendantRows(rowKeys, true);
-    },
-
-    /**
-     * Event handler for 'collapsed' event on module:model/treeRowList
-     * @param {Array.<number>} rowKeys - Row key list
-     * @private
-     */
-    _onCollapsed: function(rowKeys) {
-        this._showDescendantRows(rowKeys, false);
-    },
-
-    /**
-     * Show decendant rows
-     * @param {array} rowKeys - Decendant row keys
-     * @param {boolean} isExpanded - Whether parent row's expanded state is true or not
-     * @private
-     */
-    _showDescendantRows: function(rowKeys, isExpanded) {
-        var i = 0;
-        var len = rowKeys.length;
-        var $rows = this.$el.find('tr');
-        var $row, style;
-
-        for (; i < len; i += 1) {
-            style = isExpanded ? '' : 'none';
-
-            $row = this._filterRowByKey($rows, rowKeys[i]);
-            $row.css('display', style);
-        }
     }
 }, {
     /**

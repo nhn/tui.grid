@@ -145,13 +145,15 @@ describe('grid', function() {
     });
 
     describe('Using "keyColumnName" option', function() {
-        var grid, spy;
+        var grid, spy, coordRowModel;
 
         beforeEach(function() {
             spy = jasmine.createSpy();
             grid = createGrid(['c1', 'c2'], {
                 keyColumnName: 'c2'
             });
+            coordRowModel = grid.modelManager.coordRowModel;
+            spyOn(coordRowModel, 'getHeightAt').and.returnValue(1);
             grid.on('dblclick', spy);
         });
 

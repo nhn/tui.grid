@@ -48,7 +48,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'expanded' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of row key
+     * @param {Array.<number|string>} rowKeys - array of descendants row key
      * @private
      */
     _onExpanded: function(rowKeys) {
@@ -58,7 +58,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
             var index = this.dataModel.indexOfRowKey(rowKey);
             var row = this.dataModel.at(index);
 
-            this.rowHeights[index] = (row.getHeight() || defHeight);
+            this.rowHeights[index] = row.getHeight() || defHeight;
         }, this);
 
         this.rowOffsets = this._resetOffsets(this.rowHeights);
@@ -68,7 +68,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'collapsed' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of row key
+     * @param {Array.<number|string>} rowKeys - array of descendants row key
      * @private
      */
     _onCollapsed: function(rowKeys) {
@@ -116,7 +116,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         var height;
 
         this.dataModel.each(function(row, index) {
-            height = (row.getHeight() || defHeight);
+            height = row.getHeight() || defHeight;
 
             if (!this.dataModel.isVisibleRow(row.get('rowKey'))) {
                 height = 0;
@@ -143,16 +143,19 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
      */
     _resetOffsets: function(rowHeights) {
         var rowOffsets = [];
+        var prevIdx = 0;
+        var prevHeight, rowOffset;
 
         _.each(rowHeights, function(height, index) {
-            var prevOffset = index ? (rowOffsets[index - 1] + CELL_BORDER_WIDTH) : 0;
-            var prevHeight = index ? rowHeights[index - 1] : 0;
-
-            if (!height) {
-                prevOffset = rowOffsets[index - 1];
+            if (height) {
+                prevHeight = index ? rowHeights[prevIdx] : rowHeights[0];
+                rowOffset = index ? (prevHeight + rowOffsets[prevIdx] + CELL_BORDER_WIDTH) : 0;
+                prevIdx = index;
+            } else {
+                rowOffset = -1;
             }
 
-            rowOffsets[index] = prevOffset + prevHeight;
+            rowOffsets[index] = rowOffset;
         });
 
         return rowOffsets;
@@ -236,14 +239,21 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     indexOf: function(position) {
         var rowOffsets = this.rowOffsets;
         var idx = 0;
+        var visibleRowsCnt = 0;
 
         position += CELL_BORDER_WIDTH * 2;
 
         while (rowOffsets[idx] - CELL_BORDER_WIDTH <= position) {
+            if (rowOffsets[idx] > -1) {
+                visibleRowsCnt = 0;
+            } else {
+                visibleRowsCnt += 1;
+            }
+
             idx += 1;
         }
 
-        return idx - 1;
+        return idx - visibleRowsCnt - 1;
     },
 
     /**
