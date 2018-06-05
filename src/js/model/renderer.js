@@ -190,15 +190,15 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _onChangeRowHeights: function() {
-        var coordRowModel = this.coordRowModel;
         var lside = this.get('partialLside');
         var rside = this.get('partialRside');
         var i = 0;
         var len = lside.length;
-        var height;
+        var rowKey, height;
 
         for (; i < len; i += 1) {
-            height = coordRowModel.getHeightAt(i);
+            rowKey = lside.at(i).get('rowKey');
+            height = this.coordRowModel.getHeight(rowKey);
 
             lside.at(i).set('height', height);
             rside.at(i).set('height', height);
@@ -389,31 +389,31 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
     /**
      * Event handler for adding data list
-     * @param {array} modelList - List of added item
+     * @param {array} rowList - List of added item
      * @param {object} options - Info of added item
      * @private
      */
-    _onAddDataModelChange: function(modelList, options) {
+    _onAddDataModelChange: function(rowList, options) {
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var at = options.at;
         var height, viewData, rowNum;
         var viewModel;
 
-        this._setRenderingRange(true);
-
-        _.each(modelList, function(model, index) {
+        _.each(rowList, function(row, index) {
             height = this.coordRowModel.getHeightAt(index);
 
             _.each(['lside', 'rside'], function(attrName) {
                 rowNum = at + index + 1;
                 viewData = this._createViewDataFromDataModel(
-                    model, columnNamesMap[attrName], height, rowNum);
+                    row, columnNamesMap[attrName], height, rowNum);
 
                 viewModel = this._createRowModel(viewData, true);
 
                 this.get(attrName).splice(at + index, 0, viewModel);
             }, this);
         }, this);
+
+        this._setRenderingRange(true);
 
         this.refresh({
             type: 'add',
@@ -429,12 +429,25 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * Event handler for removing data list
      * @param {number|string} rowKey - rowKey of the removed row
      * @param {number} removedIndex - Index of the removed row
+     * @param {Array.<number>} [descendantRowKeys] - All descendants key when using tree
      * @private
      */
-    _onRemoveDataModelChange: function(rowKey, removedIndex) {
+    _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys) {
+        var index, len;
+
         _.each(['lside', 'rside'], function(attrName) {
-            this.get(attrName).splice(removedIndex, 1);
+            delete this.get(attrName)[removedIndex];
         }, this);
+
+        if (descendantRowKeys) {
+            index = removedIndex + 1;
+            len = index + descendantRowKeys.length + 1;
+
+            for (; index < len; index += 1) {
+                delete this.get('lside')[index];
+                delete this.get('rside')[index];
+            }
+        }
 
         this._setRenderingRange(true);
 
@@ -654,18 +667,20 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @param {Array.<obejct>} viewModelList - List of view model
      * @param {number} startIndex - Index of start row
      * @param {number} endIndex - Index of end row
-     * @returns {Array.<obejct>} List of partial view model
+     * @returns {Array.<module:model/data/row>}>} List of partial view model
      * @private
      */
     _getPartialViewModelList: function(viewModelList, startIndex, endIndex) {
-        var arr = viewModelList.slice(startIndex, endIndex + 1);
-        var i = 0;
-        var len = arr.length;
+        var index = startIndex;
+        var len = endIndex + 1;
         var partialViewModelList = [];
+        var viewModel;
 
-        for (; i < len; i += 1) {
-            if (arr[i]) {
-                partialViewModelList.push(arr[i]);
+        for (; index < len; index += 1) {
+            viewModel = viewModelList[index];
+
+            if (viewModel && this.coordRowModel.getHeightAt(index)) {
+                partialViewModelList.push(viewModel);
             }
         }
 

@@ -276,7 +276,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
-        this.trigger('remove', rowKey, currentIndex);
+        this.trigger('remove', rowKey, currentIndex, descendantRowKeys);
     },
 
     /**
