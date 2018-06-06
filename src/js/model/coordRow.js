@@ -88,6 +88,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
      */
     syncWithDom: function() {
         var domRowHeights, dataRowHeights, rowHeights;
+        var domHeightIdx = 0;
         var i, len;
 
         if (this.dimensionModel.get('fixedRowHeight')) {
@@ -99,7 +100,12 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         rowHeights = [];
 
         for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
-            rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
+            if (dataRowHeights[i]) {
+                rowHeights[i] = Math.max(domRowHeights[domHeightIdx], dataRowHeights[i]);
+                domHeightIdx += 1;
+            } else {
+                rowHeights[i] = 0;
+            }
         }
 
         this._reset(rowHeights);
