@@ -628,28 +628,6 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
     },
 
     /**
-     * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
-     * @param {number} offset   이동할 offset
-     * @returns {Number} 이동한 위치의 row index
-     */
-    nextRowIndex: function(offset) {
-        var rowKey = this.nextRowKey(offset);
-
-        return this.dataModel.indexOfRowKey(rowKey);
-    },
-
-    /**
-     * offset 만큼 앞으로 이동한 row의 index를 반환한다.
-     * @param {number} offset 이동할 offset
-     * @returns {Number} 이동한 위치의 row index
-     */
-    prevRowIndex: function(offset) {
-        var rowKey = this.prevRowKey(offset);
-
-        return this.dataModel.indexOfRowKey(rowKey);
-    },
-
-    /**
      * 다음 컬럼의 인덱스를 반환한다.
      * @returns {Number} 다음 컬럼의 index
      */
@@ -679,6 +657,8 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         var focused = this.which();
         var rowKey = focused.rowKey;
         var count, rowSpanData;
+
+        console.log(offset);
 
         offset = (typeof offset === 'number') ? offset : 1;
         if (offset > 1) {
