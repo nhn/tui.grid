@@ -319,6 +319,22 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     },
 
     /**
+     * Update data of tree-cell
+     * @param {number} rowKey - row key
+     * @private
+     */
+    _updateTreeCellData: function(rowKey) {
+        var columnName = this.columnModel.getTreeColumnName();
+        var rowModel = this._getRowModel(rowKey, columnName);
+
+        if (rowModel) {
+            rowModel.setCell(columnName, {
+                hasChildren: this.dataModel.get(rowKey).hasTreeChildren()
+            });
+        }
+    },
+
+    /**
      * Initializes own properties.
      * (called by module:addon/net)
      */
@@ -413,6 +429,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             }, this);
         }, this);
 
+        this._updateTreeCellData(options.parentRowKey);
         this._setRenderingRange(true);
 
         this.refresh({
@@ -429,16 +446,18 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * Event handler for removing data list
      * @param {number|string} rowKey - rowKey of the removed row
      * @param {number} removedIndex - Index of the removed row
-     * @param {Array.<number>} [descendantRowKeys] - All descendants key when using tree
+     * @param {Array.<number>} [descendantRowKeys] - All descendants key of the removed when using tree
+     * @param {number} [parentRowKey] - Parent key of the removed row when using tree
      * @private
      */
-    _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys) {
+    _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys, parentRowKey) {
         var removedRowsCnt = descendantRowKeys ? descendantRowKeys.length : 1;
 
         _.each(['lside', 'rside'], function(attrName) {
             this.get(attrName).splice(removedIndex, removedRowsCnt);
         }, this);
 
+        this._updateTreeCellData(parentRowKey);
         this._setRenderingRange(true);
 
         this.refresh({
@@ -669,7 +688,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         for (; index < len; index += 1) {
             viewModel = viewModelList[index];
 
-            if (viewModel && this.coordRowModel.getHeightAt(index)) {
+            if (viewModel && this.dataModel.isVisibleRow(viewModel.get('rowKey'))) {
                 partialViewModelList.push(viewModel);
             }
         }
