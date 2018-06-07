@@ -658,17 +658,18 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         var rowKey = focused.rowKey;
         var count, rowSpanData;
 
-        console.log(offset);
-
         offset = (typeof offset === 'number') ? offset : 1;
+
         if (offset > 1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData.isMainRow && rowSpanData.count > 0) {
                 rowKey = this._findRowKey(rowSpanData.count);
             } else if (rowSpanData && !rowSpanData.isMainRow) {
@@ -676,7 +677,8 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
                 rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
                 rowKey = this._findRowKey(rowSpanData.count + count);
             } else {
-                rowKey = this._findRowKey(1);
+                count = this.coordRowModel.getNextOffset(rowKey);
+                rowKey = this._findRowKey(count);
             }
         }
 
@@ -693,6 +695,7 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         var focused = this.which();
         var rowKey = focused.rowKey;
         var rowSpanData;
+        var count;
 
         offset = typeof offset === 'number' ? offset : 1;
         offset *= -1;
@@ -708,7 +711,8 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count - 1);
             } else {
-                rowKey = this._findRowKey(-1);
+                count = this.coordRowModel.getPreviousOffset(rowKey);
+                rowKey = this._findRowKey(count);
             }
         }
 
