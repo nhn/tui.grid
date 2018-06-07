@@ -172,20 +172,10 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
      * @private
      */
     _filterRowsByIndexRange: function($rows, rowRange) {
-        var renderModel = this.renderModel;
-        var renderStartIndex = renderModel.get('startIndex');
+        var index = rowRange[0];
+        var len = rowRange[1] + 1;
         var rowList = [];
-        var startIndex, endIndex, index, len, rowKey;
-
-        startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
-        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
-
-        if (!startIndex && !endIndex) {
-            return rowList;
-        }
-
-        index = startIndex;
-        len = endIndex;
+        var rowKey;
 
         for (; index < len; index += 1) {
             if (this.coordRowModel.getHeightAt(index)) {
