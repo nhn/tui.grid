@@ -2,12 +2,12 @@
 
 var _ = require('underscore');
 
-var Model = require('base/model');
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var FocusModel = require('model/focus');
 var DomEventBus = require('event/domEventBus');
 var GridEvent = require('event/gridEvent');
+var Model = require('base/model');
 
 describe('model/focus', function() {
     function create(options) {
