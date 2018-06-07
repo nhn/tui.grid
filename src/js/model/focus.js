@@ -677,8 +677,8 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
                 rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
                 rowKey = this._findRowKey(rowSpanData.count + count);
             } else {
-                count = this.coordRowModel.getNextOffset(rowKey);
-                rowKey = this._findRowKey(count);
+                offset = this.coordRowModel.getNextOffset(rowKey);
+                rowKey = this._findRowKey(offset);
             }
         }
 
@@ -695,7 +695,6 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         var focused = this.which();
         var rowKey = focused.rowKey;
         var rowSpanData;
-        var count;
 
         offset = typeof offset === 'number' ? offset : 1;
         offset *= -1;
@@ -703,16 +702,18 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset < -1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count - 1);
             } else {
-                count = this.coordRowModel.getPreviousOffset(rowKey);
-                rowKey = this._findRowKey(count);
+                offset = this.coordRowModel.getPreviousOffset(rowKey);
+                rowKey = this._findRowKey(offset);
             }
         }
 
