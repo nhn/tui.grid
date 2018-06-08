@@ -583,8 +583,12 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var index, row, height;
 
+        if (startIndex < 0 || endIndex < 0) {
+            return;
+        }
+
         for (index = startIndex; index < endIndex + 1; index += 1) {
-            row = this.dataModel.at(index);
+            row = dataModel.at(index);
             height = this.coordRowModel.getHeightAt(index);
 
             if (dataModel.isVisibleRow(row.get('rowKey'))) {
