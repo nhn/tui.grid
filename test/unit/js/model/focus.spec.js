@@ -56,7 +56,8 @@ describe('model/focus', function() {
 
         return new FocusModel(null, _.extend({
             columnModel: columnModel,
-            dataModel: dataModel
+            dataModel: dataModel,
+            coordRowModel: {}
         }, options));
     }
 
@@ -444,48 +445,11 @@ describe('model/focus', function() {
             );
         });
 
-        describe('nextRowIndex()', function() {
-            it('offset 만큼 이동한 row 의 index 를 반환한다.', function() {
-                focusModel.focus(0, 'c2');
-                expect(focusModel.nextRowIndex()).toBe(1);
-                expect(focusModel.nextRowIndex(3)).toBe(3);
-            });
-
-            it('현재 focus된 row가 rowSpan된 경우, rowSpan값을 고려하여 반환한다.', function() {
-                focusModel.focus(1, 'c1');
-                expect(focusModel.nextRowIndex()).toBe(4);
-
-                focusModel.focus(2, 'c1');
-                expect(focusModel.nextRowIndex()).toBe(4);
-
-                focusModel.focus(0, 'c1');
-                expect(focusModel.nextRowIndex(2)).toBe(1);
-                expect(focusModel.nextRowIndex(3)).toBe(1);
-            });
-        });
-
-        describe('prevRowIndex()', function() {
-            it('offset 만큼 이동한 row 의 inde 를 반환한다.', function() {
-                focusModel.focus(4, 'c2');
-                expect(focusModel.prevRowIndex()).toBe(3);
-                expect(focusModel.prevRowIndex(3)).toBe(1);
-            });
-
-            it('현재 focus된 row가  rowSpan된 경우, rowSpan값을 고려하여 반환한다.', function() {
-                focusModel.focus(3, 'c1');
-                expect(focusModel.prevRowIndex()).toBe(0);
-
-                focusModel.focus(2, 'c1');
-                expect(focusModel.prevRowIndex()).toBe(0);
-
-                focusModel.focus(4, 'c1');
-                expect(focusModel.prevRowIndex(2)).toBe(1);
-                expect(focusModel.prevRowIndex(3)).toBe(1);
-            });
-        });
-
         describe('nextRowKey()', function() {
             it('offset만큼 이동한 row의 rowKey를 반환한다.', function() {
+                focusModel.coordRowModel.getNextOffset = function() {
+                    return 1;
+                };
                 focusModel.focus(0, 'c2');
                 expect(focusModel.nextRowKey()).toBe(1);
                 expect(focusModel.nextRowKey(3)).toBe(3);
@@ -506,6 +470,9 @@ describe('model/focus', function() {
 
         describe('prevRowKey()', function() {
             it('offset 만큼 이동한 row 의 rowKey를 반환한다.', function() {
+                focusModel.coordRowModel.getPreviousOffset = function() {
+                    return -1;
+                };
                 focusModel.focus(4, 'c2');
                 expect(focusModel.prevRowKey()).toBe(3);
                 expect(focusModel.prevRowKey(3)).toBe(1);

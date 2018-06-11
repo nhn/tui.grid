@@ -39,7 +39,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     selector: '.' + classNameConst.BTN_TREE,
 
     events: {
-        mousedown: '_onMouseDown'
+        click: '_onClick'
     },
 
     /**
@@ -87,7 +87,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      * @param {Event} ev - dom event object
      * @private
      */
-    _onMouseDown: function(ev) {
+    _onClick: function(ev) {
         var $target = $(ev.target);
         var $td = $target.parents('td');
         var rowKey = this._getCellAddress($target).rowKey;

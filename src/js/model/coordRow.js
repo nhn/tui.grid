@@ -52,13 +52,11 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
      * @private
      */
     _onExpanded: function(rowKeys) {
-        var defHeight = this.dimensionModel.get('rowHeight');
-
         _.each(rowKeys, function(rowKey) {
             var index = this.dataModel.indexOfRowKey(rowKey);
             var row = this.dataModel.at(index);
 
-            this.rowHeights[index] = row.getHeight() || defHeight;
+            this.rowHeights[index] = this._getRowHeight(row);
         }, this);
 
         this.rowOffsets = this._resetOffsets(this.rowHeights);
@@ -84,31 +82,16 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     },
 
     /**
-     * Refresh coordinate data with real DOM height of cells
+     * Get row height by value of data model or dimension model
+     * @param {module:model/data/row} row - data model
+     * @returns {nubmer} row height
+     * @private
      */
-    syncWithDom: function() {
-        var domRowHeights, dataRowHeights, rowHeights;
-        var domHeightIdx = 0;
-        var i, len;
+    _getRowHeight: function(row) {
+        var defHeight = this.dimensionModel.get('rowHeight');
+        var height = row.getHeight();
 
-        if (this.dimensionModel.get('fixedRowHeight')) {
-            return;
-        }
-
-        domRowHeights = this.domState.getRowHeights();
-        dataRowHeights = this._getHeightFromData();
-        rowHeights = [];
-
-        for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
-            if (dataRowHeights[i]) {
-                rowHeights[i] = Math.max(domRowHeights[domHeightIdx], dataRowHeights[i]);
-                domHeightIdx += 1;
-            } else {
-                rowHeights[i] = 0;
-            }
-        }
-
-        this._reset(rowHeights);
+        return _.isNumber(height) ? height : defHeight;
     },
 
     /**
@@ -117,12 +100,11 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
      * @private
      */
     _getHeightFromData: function() {
-        var defHeight = this.dimensionModel.get('rowHeight');
         var rowHeights = [];
         var height;
 
         this.dataModel.each(function(row, index) {
-            height = row.getHeight() || defHeight;
+            height = this._getRowHeight(row);
 
             if (!this.dataModel.isVisibleRow(row.get('rowKey'))) {
                 height = 0;
@@ -132,13 +114,6 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         }, this);
 
         return rowHeights;
-    },
-
-    /**
-     * Refresh coordinate data with extraData.height
-     */
-    syncWithDataModel: function() {
-        this._reset(this._getHeightFromData());
     },
 
     /**
@@ -195,6 +170,41 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         this._setTotalRowHeight();
 
         this.trigger('reset');
+    },
+
+    /**
+     * Refresh coordinate data with real DOM height of cells
+     */
+    syncWithDom: function() {
+        var domRowHeights, dataRowHeights, rowHeights;
+        var domHeightIdx = 0;
+        var i, len;
+
+        if (this.dimensionModel.get('fixedRowHeight')) {
+            return;
+        }
+
+        domRowHeights = this.domState.getRowHeights();
+        dataRowHeights = this._getHeightFromData();
+        rowHeights = [];
+
+        for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
+            if (dataRowHeights[i]) {
+                rowHeights[i] = Math.max(domRowHeights[domHeightIdx], dataRowHeights[i]);
+                domHeightIdx += 1;
+            } else {
+                rowHeights[i] = 0;
+            }
+        }
+
+        this._reset(rowHeights);
+    },
+
+    /**
+     * Refresh coordinate data with extraData.height
+     */
+    syncWithDataModel: function() {
+        this._reset(this._getHeightFromData());
     },
 
     /**
@@ -279,6 +289,50 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         movedIdx = this.indexOf(curOffset + distance);
 
         return util.clamp(movedIdx, 0, this.dataModel.length - 1);
+    },
+
+    /**
+     * Get previous moved index by row heights
+     * @param {sring|number} rowKey - focused row key
+     * @returns {number} offset number of previous focusing row
+     */
+    getPreviousOffset: function(rowKey) {
+        var heights = this.rowHeights;
+        var startIdx = this.dataModel.indexOfRowKey(rowKey);
+        var index = startIdx - 1;
+        var len = 0;
+        var offset = -1;
+
+        for (; index >= len; index -= 1) {
+            if (heights[index]) {
+                break;
+            }
+            offset -= 1;
+        }
+
+        return offset;
+    },
+
+    /**
+     * Get next moved index by row heights
+     * @param {sring|number} rowKey - focused row key
+     * @returns {number} offset number of next focusing row
+     */
+    getNextOffset: function(rowKey) {
+        var heights = this.rowHeights;
+        var startIdx = this.dataModel.indexOfRowKey(rowKey);
+        var index = startIdx + 1;
+        var len = heights.length;
+        var offset = 1;
+
+        for (; index < len; index += 1) {
+            if (heights[index]) {
+                break;
+            }
+            offset += 1;
+        }
+
+        return offset;
     }
 });
 
