@@ -117,6 +117,48 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     },
 
     /**
+     * Get offset of previous visible row by index
+     * @param {number} index - index of base row
+     * @returns {number} offset value
+     * @private
+     */
+    _getPreviousVisbleRowOffsetByIndex: function(index) {
+        var heights = this.rowHeights;
+        var len = 0;
+        var offset = -1;
+
+        for (; index >= len; index -= 1) {
+            if (heights[index]) {
+                break;
+            }
+            offset -= 1;
+        }
+
+        return offset;
+    },
+
+    /**
+     * Get offset of next visible row by index
+     * @param {number} index - index of base row
+     * @returns {number} offset value
+     * @private
+     */
+    _getNextVisibleRowOffsetByIndex: function(index) {
+        var heights = this.rowHeights;
+        var len = heights.length;
+        var offset = 1;
+
+        for (; index < len; index += 1) {
+            if (heights[index]) {
+                break;
+            }
+            offset += 1;
+        }
+
+        return offset;
+    },
+
+    /**
      * Reset the list of offset via the list of each row's height
      * @param {Array.<number>} rowHeights - array of row height
      * @returns {Array.<number>} array of row offest
@@ -150,9 +192,14 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         var totalRowHeight = 0;
         var rowHeights = this.rowHeights;
         var rowOffsets = this.rowOffsets;
+        var rowHeightsLen = rowHeights.length;
+        var offset, visibleLastItemIdx;
 
-        if (rowHeights.length) {
-            totalRowHeight = _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH;
+        if (rowHeightsLen) {
+            offset = this._getPreviousVisbleRowOffsetByIndex(rowHeightsLen - 1);
+            visibleLastItemIdx = rowHeightsLen + offset;
+
+            totalRowHeight = rowOffsets[visibleLastItemIdx] + rowHeights[visibleLastItemIdx] + CELL_BORDER_WIDTH;
         }
 
         this.dimensionModel.set('totalRowHeight', totalRowHeight);
@@ -294,45 +341,25 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     /**
      * Get previous moved index by row heights
      * @param {sring|number} rowKey - focused row key
-     * @returns {number} offset number of previous focusing row
+     * @returns {number} offset value of previous focusing row
      */
     getPreviousOffset: function(rowKey) {
-        var heights = this.rowHeights;
         var startIdx = this.dataModel.indexOfRowKey(rowKey);
         var index = startIdx - 1;
-        var len = 0;
-        var offset = -1;
 
-        for (; index >= len; index -= 1) {
-            if (heights[index]) {
-                break;
-            }
-            offset -= 1;
-        }
-
-        return offset;
+        return this._getPreviousVisbleRowOffsetByIndex(index);
     },
 
     /**
      * Get next moved index by row heights
      * @param {sring|number} rowKey - focused row key
-     * @returns {number} offset number of next focusing row
+     * @returns {number} offset value of next focusing row
      */
     getNextOffset: function(rowKey) {
-        var heights = this.rowHeights;
         var startIdx = this.dataModel.indexOfRowKey(rowKey);
         var index = startIdx + 1;
-        var len = heights.length;
-        var offset = 1;
 
-        for (; index < len; index += 1) {
-            if (heights[index]) {
-                break;
-            }
-            offset += 1;
-        }
-
-        return offset;
+        return this._getNextVisibleRowOffsetByIndex(index);
     }
 });
 
