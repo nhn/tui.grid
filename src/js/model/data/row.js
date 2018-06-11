@@ -41,6 +41,7 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
 
         this.columnModel = this.collection.columnModel;
         this.validateMap = {};
+        this.filter = false;
         this.on('change', this._onChange, this);
     },
 

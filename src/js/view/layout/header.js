@@ -67,6 +67,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             coordRowModel: options.coordRowModel,
+            filterModel: options.filterModel,
 
             viewFactory: options.viewFactory,
             domEventBus: options.domEventBus,
@@ -85,7 +86,8 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
-            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState)
+            .listenTo(this.filterModel, 'change:filterCondition', this._onFilterChange);
 
         if (this.whichSide === frameConst.L && this.columnModel.get('selectType') === 'checkbox') {
             this.listenTo(this.dataModel,
@@ -126,7 +128,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
                 'rowspan=<%=rowspan%> ' +
             '<%}%>' +
         '>' +
-        '<%=title%><%=btnSort%>' +
+        '<%=title%><%=btnSort%><%=btnFilter%>' +
         '</th>'
     ),
 
@@ -143,6 +145,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
      * HTML string for a button
      */
     markupBtnSort: '<a class="' + classNameConst.BTN_SORT + '"></a>',
+    markupBtnFilter: '<a class="' + classNameConst.BTN_FILTER + ' ' + classNameConst.BTN_FILTER_OFF + '"></a>',
 
     /**
      * col group 마크업을 생성한다.
@@ -255,7 +258,8 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             return;
         }
 
-        if ($target.hasClass(classNameConst.BTN_SORT)) {
+        if ($target.hasClass(classNameConst.BTN_SORT) ||
+            $target.hasClass(classNameConst.BTN_FILTER)) {
             return;
         }
 
@@ -379,6 +383,13 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
                 columnName: columnName
             });
             this.domEventBus.trigger('click:headerSort', eventData);
+        } else if ($target.is('a.' + classNameConst.BTN_FILTER)) {
+            eventData.setData({
+                $target: $target,
+                columnName: columnName
+            });
+            this.domEventBus.trigger('click:headerFilter', eventData);
+            ev.stopPropagation();
         }
     },
 
@@ -402,6 +413,21 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
         className = sortOptions.ascending ? classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN;
 
         this._$currentSortBtn.addClass(className);
+    },
+
+    /**
+     * 필터링 상태가 변경된 것을 감지하여 필터 아이콘을 변경한다.
+     * @private
+     * @param {object} ev 변경된 필터모델
+     */
+    _onFilterChange: function(ev) {
+        var checked = ev.isFiltering();
+        var $filterBtn = this.$el.find(
+            'th[' + ATTR_COLUMN_NAME + '="' + ev.name + '"] a.' + classNameConst.BTN_FILTER
+        );
+        var className = checked ? classNameConst.BTN_FILTER_ON : classNameConst.BTN_FILTER_OFF;
+        $filterBtn.removeClass(classNameConst.BTN_FILTER_ON + ' ' + classNameConst.BTN_FILTER_OFF);
+        $filterBtn.addClass(className);
     },
 
     /**
@@ -501,7 +527,8 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
                     colspan: colSpanList[j],
                     rowspan: rowSpan,
                     title: columnModel.title,
-                    btnSort: columnModel.sortable ? this.markupBtnSort : ''
+                    btnSort: columnModel.sortable ? this.markupBtnSort : '',
+                    btnFilter: columnModel.filterOptions && columnModel.filterOptions.type ? this.markupBtnFilter : ''
                 }));
             }, this);
         }, this);

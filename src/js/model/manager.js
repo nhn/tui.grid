@@ -21,6 +21,7 @@ var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
 var SummaryModel = require('./summary');
 var ClipboardModel = require('./clipboard');
+var FilterListData = require('./filterList');
 var util = require('../common/util');
 
 var defaultOptions = {
@@ -79,6 +80,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
         this.selectionModel = this._createSelectionModel(options, domEventBus);
         this.summaryModel = this._createSummaryModel(options.summary);
         this.clipboardModel = this._createClipboardModel(options, domEventBus);
+        this.filterModel = this._createFilterModel();
     },
 
     /**
@@ -327,6 +329,19 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
             focusModel: this.focusModel,
             copyOptions: options.copyOptions,
             domEventBus: domEventBus
+        });
+    },
+
+    /**
+     * Creates an instance of filter model and returns it
+     * @param {Object} options - options
+     * @returns {module:model/filter}
+     * @private
+     */
+    _createFilterModel: function() {
+        return new FilterListData(null, {
+            columnModel: this.columnModel,
+            dataModel: this.dataModel
         });
     },
 

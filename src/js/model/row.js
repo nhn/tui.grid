@@ -149,7 +149,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         }
 
         row = dataModel.get(rowKey);
-        columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum');
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum', 'filter');
 
         _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable());
