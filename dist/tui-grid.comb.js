@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Apr 05 2018 19:21:48 GMT+0900 (KST)"
- * version: 2.10.0
+ * bundle created at "Mon Jun 11 2018 11:30:05 GMT+0900 (KST)"
+ * version: 2.10.1
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11074,6 +11074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
+	            .listenTo(this.dataModel, 'reset', this.initializeVariables)
 	            .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
 	            .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
