@@ -556,6 +556,12 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @override
      */
     check: function(rowKey) {
+        var selectType = this.columnModel.get('selectType');
+
+        if (selectType === 'radio') {
+            this.uncheckAll();
+        }
+
         this._setCheckedState(rowKey, true);
     },
 
