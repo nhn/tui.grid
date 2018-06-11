@@ -193,10 +193,12 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
         var rowHeights = this.rowHeights;
         var rowOffsets = this.rowOffsets;
         var rowHeightsLen = rowHeights.length;
-        var offset = this._getPreviousVisbleRowOffsetByIndex(rowHeightsLen - 1);
-        var visibleLastItemIdx = rowHeightsLen + offset;
+        var offset, visibleLastItemIdx;
 
         if (rowHeightsLen) {
+            offset = this._getPreviousVisbleRowOffsetByIndex(rowHeightsLen - 1);
+            visibleLastItemIdx = rowHeightsLen + offset;
+
             totalRowHeight = rowOffsets[visibleLastItemIdx] + rowHeights[visibleLastItemIdx] + CELL_BORDER_WIDTH;
         }
 
