@@ -29,19 +29,20 @@ You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Gettin
 var grid = new tui.Grid({
     el: $('#grid'),
     data: gridData,
-    rowHeaders: ['rowNum', 'checkbox'],
+    rowHeaders: ['rowNum', 'radio'],
     treeColumnOptions: {
         name: 'name',
         useIcon: false,
-        useCascadingCheckbox: true
+        useCascadingCheckbox: false
     },
-    virtualScrolling: true,
-    rowHeight: 30,
+    // virtualScrolling: false,
+    // rowHeight: 30,
     // bodyHeight: 200,
     columns: [
         {
             title: 'Name',
-            name: 'name'
+            name: 'name',
+            width: 200
         },
         {
             title: 'Artist',
@@ -65,55 +66,55 @@ var grid = new tui.Grid({
 $('#append').on('click', function() {
     var parentRowKey = grid.getCheckedRowKeys()[0];
 
-    grid.appendRow([
-        {
-            id: 502795,
-            name: '11111111',
-            artist: 'test111111',
-            release: '2015.05.12',
-            type: 'EP',
-            typeCode: '2',
-            genre: 'Hiphop',
-            genreCode: '5',
-            grade: '5',
-            price: 18000,
-            downloadCount: 1000,
-            listenCount: 5000,
-            _extraData: {
-                treeState: 'EXPAND'
-            },
-            _children: [
-                {
-                    id: 502795,
-                    name: '3333',
-                    artist: 'test333333',
-                    release: '2015.05.12',
-                    type: 'EP',
-                    typeCode: '2',
-                    genre: 'Hiphop',
-                    genreCode: '5',
-                    grade: '5',
-                    price: 18000,
-                    downloadCount: 1000,
-                    listenCount: 5000,
-                }
-            ]
+    // console.log(parentRowKey);
+
+    grid.appendRow({
+        id: 502795,
+        name: '11111111',
+        artist: 'test111111',
+        release: '2015.05.12',
+        type: 'EP',
+        typeCode: '2',
+        genre: 'Hiphop',
+        genreCode: '5',
+        grade: '5',
+        price: 18000,
+        downloadCount: 1000,
+        listenCount: 5000,
+        _extraData: {
+            treeState: 'COLLAPSE'
         },
-        {
-            id: 502793,
-            name: '222222',
-            artist: 'test2222222',
-            release: '2015.05.12',
-            type: 'EP',
-            typeCode: '2',
-            genre: 'Hiphop',
-            genreCode: '5',
-            grade: '5',
-            price: 18000,
-            downloadCount: 1000,
-            listenCount: 5000
-        }
-    ], {
+        _children: [
+            {
+                id: 502795,
+                name: '3333',
+                artist: 'test333333',
+                release: '2015.05.12',
+                type: 'EP',
+                typeCode: '2',
+                genre: 'Hiphop',
+                genreCode: '5',
+                grade: '5',
+                price: 18000,
+                downloadCount: 1000,
+                listenCount: 5000,
+            },
+            {
+                id: 502793,
+                name: '222222',
+                artist: 'test2222222',
+                release: '2015.05.12',
+                type: 'EP',
+                typeCode: '2',
+                genre: 'Hiphop',
+                genreCode: '5',
+                grade: '5',
+                price: 18000,
+                downloadCount: 1000,
+                listenCount: 5000
+            }
+        ]
+    }, {
         parentRowKey: parentRowKey
     });
 });

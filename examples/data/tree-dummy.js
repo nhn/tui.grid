@@ -14,7 +14,7 @@ var gridData = [
         downloadCount: 1000,
         listenCount: 5000,
         _extraData: {
-            treeState: 'COLLAPSE'
+            treeState: 'EXPAND'
         },
         _children: [
             {
@@ -29,8 +29,7 @@ var gridData = [
                 grade: '5',
                 price: 12000,
                 downloadCount: 1000,
-                listenCount: 5000,
-                _children: true
+                listenCount: 5000
             },
             {
                 id: 498896,
@@ -159,8 +158,7 @@ var gridData = [
         listenCount: 5000,
         _extraData: {
             treeState: 'EXPAND'
-        },
-        _children: []
+        }
     },
     {
         id: 295651,
@@ -291,7 +289,10 @@ var gridData = [
         grade: '5',
         price: 10000,
         downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
+        _extraData: {
+            treeState: 'EXPAND'
+        }
     },
     {
         id: 502792,
@@ -305,6 +306,9 @@ var gridData = [
         grade: '5',
         price: 18000,
         downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
+        _extraData: {
+            treeState: 'EXPAND'
+        }
     }
 ];
