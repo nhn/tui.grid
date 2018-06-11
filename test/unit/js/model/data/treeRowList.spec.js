@@ -820,7 +820,7 @@ describe('data.treeModel', function() {
             }];
 
             treeRowList.columnModel.set('treeColumnOptions', {
-                cascadingCheckbox: false
+                useCascadingCheckbox: false
             });
             treeRowList.setData(treeData, true);
         });

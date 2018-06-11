@@ -581,11 +581,11 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @private
      */
     _setCheckedState: function(rowKey, state) {
-        var useCascadingCheckbox = this.columnModel.useCascadingCheckbox();
+        var useuseCascadingCheckbox = this.columnModel.useuseCascadingCheckbox();
 
         this.setValue(rowKey, '_button', state);
 
-        if (useCascadingCheckbox) {
+        if (useuseCascadingCheckbox) {
             this._updateDecendantsCheckedState(rowKey, state);
             this._updateAncestorsCheckedState(rowKey);
         }
