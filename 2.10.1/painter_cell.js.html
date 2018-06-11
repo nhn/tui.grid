@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: painter/cell.js | Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-formatter.html">2. Formatter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-formatter_sub"></div></li><li><a href="tutorial-example03-complex-columns.html">3. Complex columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-complex-columns_sub"></div></li><li><a href="tutorial-example04-input-types.html">4. Input types</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-input-types_sub"></div></li><li><a href="tutorial-example05-relation-columns.html">5. Relation between columns</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-relation-columns_sub"></div></li><li><a href="tutorial-example06-using-extradata.html">6. Using _extraData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-using-extradata_sub"></div></li><li><a href="tutorial-example07-applying-themes.html">7. Applying Themes</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-applying-themes_sub"></div></li><li><a href="tutorial-example08-using-datepicker.html">8. Using DatePicker component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-using-datepicker_sub"></div></li><li><a href="tutorial-example09-using-summary.html">9. Using Summary</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-using-summary_sub"></div></li><li><a href="tutorial-example10-using-net.html">10. Binding to remote data using net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example10-using-net_sub"></div></li><li><a href="tutorial-example11-customizing-rowheaders.html">11. Customizing Row headers</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example11-customizing-rowheaders_sub"></div></li><li><a href="tutorial-example12-using-whitespace.html">12. Using whiteSpace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example12-using-whitespace_sub"></div></li><li><a href="tutorial-example13-i18n.html">13. Internationalization (i18n)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example13-i18n_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li><li><a href="module-event_gridEvent.html">event/gridEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:event/gridEvent_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-event_gridEvent.html#stop">stop</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.applyTheme">applyTheme</a></li><li><a href="Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="Grid.html#.setLanguage">setLanguage</a></li><li><a href="Grid.html#activateFocus">activateFocus</a></li><li><a href="Grid.html#addCellClassName">addCellClassName</a></li><li><a href="Grid.html#addRowClassName">addRowClassName</a></li><li><a href="Grid.html#appendRow">appendRow</a></li><li><a href="Grid.html#blur">blur</a></li><li><a href="Grid.html#check">check</a></li><li><a href="Grid.html#checkAll">checkAll</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copyToClipboard">copyToClipboard</a></li><li><a href="Grid.html#destroy">destroy</a></li><li><a href="Grid.html#disable">disable</a></li><li><a href="Grid.html#disableCheck">disableCheck</a></li><li><a href="Grid.html#disableRow">disableRow</a></li><li><a href="Grid.html#enable">enable</a></li><li><a href="Grid.html#enableCheck">enableCheck</a></li><li><a href="Grid.html#enableRow">enableRow</a></li><li><a href="Grid.html#findRows">findRows</a></li><li><a href="Grid.html#focus">focus</a></li><li><a href="Grid.html#focusAt">focusAt</a></li><li><a href="Grid.html#focusIn">focusIn</a></li><li><a href="Grid.html#focusInAt">focusInAt</a></li><li><a href="Grid.html#getAddOn">getAddOn</a></li><li><a href="Grid.html#getCheckedRowKeys">getCheckedRowKeys</a></li><li><a href="Grid.html#getCheckedRows">getCheckedRows</a></li><li><a href="Grid.html#getColumns">getColumns</a></li><li><a href="Grid.html#getColumnValues">getColumnValues</a></li><li><a href="Grid.html#getElement">getElement</a></li><li><a href="Grid.html#getFocusedCell">getFocusedCell</a></li><li><a href="Grid.html#getIndexOfColumn">getIndexOfColumn</a></li><li><a href="Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="Grid.html#getModifiedRows">getModifiedRows</a></li><li><a href="Grid.html#getPagination">getPagination</a></li><li><a href="Grid.html#getRow">getRow</a></li><li><a href="Grid.html#getRowAt">getRowAt</a></li><li><a href="Grid.html#getRowCount">getRowCount</a></li><li><a href="Grid.html#getRows">getRows</a></li><li><a href="Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="Grid.html#getSortState">getSortState</a></li><li><a href="Grid.html#getValue">getValue</a></li><li><a href="Grid.html#hideColumn">hideColumn</a></li><li><a href="Grid.html#isModified">isModified</a></li><li><a href="Grid.html#prependRow">prependRow</a></li><li><a href="Grid.html#refreshLayout">refreshLayout</a></li><li><a href="Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Grid.html#removeRow">removeRow</a></li><li><a href="Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="Grid.html#resetData">resetData</a></li><li><a href="Grid.html#restore">restore</a></li><li><a href="Grid.html#selection">selection</a></li><li><a href="Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="Grid.html#setColumns">setColumns</a></li><li><a href="Grid.html#setColumnValues">setColumnValues</a></li><li><a href="Grid.html#setData">setData</a></li><li><a href="Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="Grid.html#setFrozenColumnCount">setFrozenColumnCount</a></li><li><a href="Grid.html#setHeight">setHeight</a></li><li><a href="Grid.html#setSummaryColumnContent">setSummaryColumnContent</a></li><li><a href="Grid.html#setValue">setValue</a></li><li><a href="Grid.html#setWidth">setWidth</a></li><li><a href="Grid.html#showColumn">showColumn</a></li><li><a href="Grid.html#sort">sort</a></li><li><a href="Grid.html#uncheck">uncheck</a></li><li><a href="Grid.html#uncheckAll">uncheckAll</a></li><li><a href="Grid.html#unSort">unSort</a></li><li><a href="Grid.html#use">use</a></li><li><a href="Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="Grid.html#event:check">check</a></li><li><a href="Grid.html#event:click">click</a></li><li><a href="Grid.html#event:dblclick">dblclick</a></li><li><a href="Grid.html#event:deleteRange">deleteRange</a></li><li><a href="Grid.html#event:errorResponse">errorResponse</a></li><li><a href="Grid.html#event:failResponse">failResponse</a></li><li><a href="Grid.html#event:focusChange">focusChange</a></li><li><a href="Grid.html#event:mousedown">mousedown</a></li><li><a href="Grid.html#event:mouseout">mouseout</a></li><li><a href="Grid.html#event:mouseover">mouseover</a></li><li><a href="Grid.html#event:reponse">reponse</a></li><li><a href="Grid.html#event:selection">selection</a></li><li><a href="Grid.html#event:successReponse">successReponse</a></li><li><a href="Grid.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Painter class for cell(TD) views
+ * @author NHN Ent. FE Development Team
+ */
+
+'use strict';
+
+var _ = require('underscore');
+var snippet = require('tui-code-snippet');
+
+var Painter = require('../base/painter');
+var util = require('../common/util');
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
+
+/**
+ * Painter class for cell(TD) views
+ * @module painter/cell
+ * @extends module:base/painter
+ * @param {Object} options - options
+ * @ignore
+ */
+var Cell = snippet.defineClass(Painter, /** @lends module:painter/cell.prototype */{
+    init: function(options) {
+        Painter.apply(this, arguments);
+
+        this.editType = options.editType;
+        this.fixedRowHeight = options.fixedRowHeight;
+        this.inputPainter = options.inputPainter;
+        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
+    },
+
+    /**
+     * template for TD
+     * @returns {string} template
+     */
+    template: _.template(
+        '&lt;td &lt;%=attributeString%> style="&lt;%=style%>">&lt;%=contentHtml%>&lt;/td>'
+    ),
+
+    /**
+     * template for DIV (inner content of TD)
+     */
+    contentTemplate: _.template(
+        '&lt;div class="&lt;%=className%>" style="&lt;%=style%>">&lt;%=content%>&lt;/div>'
+    ),
+
+    /**
+     * Returns whether the instance is editable type.
+     * @returns {Boolean}
+     */
+    _isEditableType: function() {
+        return !_.contains(['normal', 'mainButton'], this.editType);
+    },
+
+    /**
+     * Returns css style string for given cellData
+     * @param {Object} cellData - cell data
+     * @returns {string}
+     */
+    _getContentStyle: function(cellData) {
+        var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+        var styles = [];
+
+        if (whiteSpace) {
+            styles.push('white-space:' + whiteSpace);
+        }
+        if (this.fixedRowHeight) {
+            styles.push('max-height:' + cellData.height + 'px');
+        }
+
+        return styles.join(';');
+    },
+
+    /**
+     * Returns the HTML string of the contents containg the value of the 'prefix' and 'postfix'.
+     * @param {Object} cellData - cell data
+     * @returns {String}
+     * @private
+     */
+    _getContentHtml: function(cellData) {
+        var customTemplate = cellData.columnModel.template;
+        var content = cellData.formattedValue;
+        var prefix = cellData.prefix;
+        var postfix = cellData.postfix;
+        var fullContent, template;
+
+        if (this.inputPainter) {
+            content = this.inputPainter.generateHtml(cellData);
+
+            if (this._shouldContentBeWrapped() &amp;&amp; !this._isUsingViewMode(cellData)) {
+                prefix = this._getSpanWrapContent(prefix, classNameConst.CELL_CONTENT_BEFORE);
+                postfix = this._getSpanWrapContent(postfix, classNameConst.CELL_CONTENT_AFTER);
+                content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
+                // notice the order of concatenation
+                fullContent = prefix + postfix + content;
+            }
+        }
+
+        if (!fullContent) {
+            fullContent = prefix + content + postfix;
+        }
+
+        if (cellData.columnName === '_number' &amp;&amp; _.isFunction(customTemplate)) {
+            template = customTemplate({
+                content: fullContent
+            });
+        } else {
+            template = this.contentTemplate({
+                content: fullContent,
+                className: classNameConst.CELL_CONTENT,
+                style: this._getContentStyle(cellData)
+            });
+        }
+
+        return template;
+    },
+
+    /**
+     * Returns whether the cell has view mode.
+     * @param {Object} cellData - cell data
+     * @returns {Boolean}
+     * @private
+     */
+    _isUsingViewMode: function(cellData) {
+        return snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
+    },
+
+    /**
+     * Returns whether the contents should be wrapped with span tags to display them correctly.
+     * @returns {Boolean}
+     * @private
+     */
+    _shouldContentBeWrapped: function() {
+        return _.contains(['text', 'password', 'select'], this.editType);
+    },
+
+    /**
+     * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
+     * @param {string} content - 감싸질 문자열
+     * @param {string} className - span 태그의 클래스명
+     * @returns {string} span 태그로 감싼 HTML 코드
+     * @private
+     */
+    _getSpanWrapContent: function(content, className) {
+        if (snippet.isFalsy(content)) {
+            content = '';
+        }
+
+        return '&lt;span class="' + className + '">' + content + '&lt;/span>';
+    },
+
+    /**
+     * Returns the object contains attributes of a TD element.
+     * @param {Object} cellData - cell data
+     * @returns {Object}
+     * @private
+     */
+    _getAttributes: function(cellData) {
+        var classNames = [
+            cellData.className,
+            classNameConst.CELL
+        ];
+        var attrs = {
+            'align': cellData.columnModel.align || 'left'
+        };
+        attrs['class'] = classNames.join(' ');
+
+        attrs[attrNameConst.EDIT_TYPE] = this.editType;
+        attrs[attrNameConst.ROW_KEY] = cellData.rowKey;
+        attrs[attrNameConst.COLUMN_NAME] = cellData.columnName;
+        if (cellData.rowSpan) {
+            attrs.rowspan = cellData.rowSpan;
+        }
+
+        return attrs;
+    },
+
+    /**
+     * Attaches all event handlers to the $target element.
+     * @param {jquery} $target - target element
+     * @param {String} parentSelector - selector of a parent element
+     * @override
+     */
+    attachEventHandlers: function($target, parentSelector) {
+        Painter.prototype.attachEventHandlers.call(this, $target, parentSelector);
+
+        if (this.inputPainter) {
+            this.inputPainter.attachEventHandlers($target, parentSelector + ' ' + this.selector);
+        }
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @returns {string} HTML string of the cell (TD)
+     * @implements {module:base/painter}
+     */
+    generateHtml: function(cellData) {
+        var attributeString = util.getAttributesString(this._getAttributes(cellData));
+        var contentHtml = this._getContentHtml(cellData);
+        var valign = cellData.columnModel.valign;
+        var styles = [];
+
+        if (valign) {
+            styles.push('vertical-align:' + valign);
+        }
+
+        return this.template({
+            attributeString: attributeString,
+            style: styles.join(';'),
+            contentHtml: contentHtml
+        });
+    },
+
+    /**
+     * Refreshes the cell(td) element.
+     * @param {object} cellData - cell data
+     * @param {jQuery} $td - cell element
+     */
+    refresh: function(cellData, $td) {
+        var contentProps = ['value', 'editing', 'disabled', 'listItems'];
+        var editingChangedToTrue = _.contains(cellData.changed, 'editing') &amp;&amp; cellData.editing;
+        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
+        var attrs = this._getAttributes(cellData);
+        var mainButton = this.editType === 'mainButton';
+
+        $td.attr(attrs);
+
+        if (editingChangedToTrue &amp;&amp; !this._isUsingViewMode(cellData)) {
+            this.inputPainter.focus($td);
+        } else if (mainButton) {
+            $td.find(this.inputPainter.selector).prop({
+                checked: cellData.value,
+                disabled: cellData.disabled
+            });
+        } else if (shouldUpdateContent) {
+            $td.html(this._getContentHtml(cellData));
+            $td.scrollLeft(0);
+        }
+    }
+});
+
+module.exports = Cell;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
