@@ -39,7 +39,7 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        '<%=rowKeyAttr%>" ' +
+        '<%=rowKeyAttr%> ' +
         'class="<%=className%>" ' +
         'style="height:<%=height%>px;">' +
         '<%=contents%>' +
