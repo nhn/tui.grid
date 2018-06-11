@@ -83,7 +83,7 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
             name: null,
             useIcon: false,
             showLine: false,
-            cascadingCheckbox: true
+            useCascadingCheckbox: true
         }
     },
 
@@ -235,10 +235,10 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * Get cascade usage in the tree-grid's checkbox
      * @returns {boolean} Whether using the cascading checkbox or not
      */
-    useCascadingCheckbox: function() {
-        var cascadingCheckbox = this.get('treeColumnOptions').cascadingCheckbox;
+    useuseCascadingCheckbox: function() {
+        var useCascadingCheckbox = this.get('treeColumnOptions').useCascadingCheckbox;
 
-        return _.isUndefined(cascadingCheckbox) ? true : cascadingCheckbox;
+        return _.isUndefined(useCascadingCheckbox) ? true : useCascadingCheckbox;
     },
 
     /**
