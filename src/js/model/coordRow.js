@@ -119,7 +119,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     /**
      * Get offset of previous visible row by index
      * @param {number} index - index of base row
-     * @returns {number} offset number
+     * @returns {number} offset value
      * @private
      */
     _getPreviousVisbleRowOffsetByIndex: function(index) {
@@ -140,7 +140,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     /**
      * Get offset of next visible row by index
      * @param {number} index - index of base row
-     * @returns {number} offset number
+     * @returns {number} offset value
      * @private
      */
     _getNextVisibleRowOffsetByIndex: function(index) {
@@ -341,7 +341,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     /**
      * Get previous moved index by row heights
      * @param {sring|number} rowKey - focused row key
-     * @returns {number} offset number of previous focusing row
+     * @returns {number} offset value of previous focusing row
      */
     getPreviousOffset: function(rowKey) {
         var startIdx = this.dataModel.indexOfRowKey(rowKey);
@@ -353,7 +353,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     /**
      * Get next moved index by row heights
      * @param {sring|number} rowKey - focused row key
-     * @returns {number} offset number of next focusing row
+     * @returns {number} offset value of next focusing row
      */
     getNextOffset: function(rowKey) {
         var startIdx = this.dataModel.indexOfRowKey(rowKey);
