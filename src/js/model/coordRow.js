@@ -48,10 +48,12 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'expanded' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of descendants row key
+     * @param {object} ev - Event object
      * @private
      */
-    _onExpanded: function(rowKeys) {
+    _onExpanded: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
+
         _.each(rowKeys, function(rowKey) {
             var index = this.dataModel.indexOfRowKey(rowKey);
             var row = this.dataModel.at(index);
@@ -66,10 +68,12 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Event handler for 'collapsed' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - array of descendants row key
+     * @param {object} ev - Event object
      * @private
      */
-    _onCollapsed: function(rowKeys) {
+    _onCollapsed: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
+
         _.each(rowKeys, function(rowKey) {
             var index = this.dataModel.indexOfRowKey(rowKey);
 

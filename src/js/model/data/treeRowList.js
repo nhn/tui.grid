@@ -385,7 +385,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         }
 
         if (!silent) {
-            this.trigger('expanded', descendantRowKeys.slice(0));
+            this.trigger('expanded', {
+                rowKey: rowKey,
+                descendantRowKeys: descendantRowKeys.slice(0)
+            });
         }
 
         return descendantRowKeys;
@@ -432,7 +435,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         row.setTreeExpanded(false);
 
         if (!silent) {
-            this.trigger('collapsed', descendantRowKeys.slice(0));
+            this.trigger('collapsed', {
+                rowKey: rowKey,
+                descendantRowKeys: descendantRowKeys.slice(0)
+            });
         }
 
         return descendantRowKeys;
@@ -581,11 +587,11 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * @private
      */
     _setCheckedState: function(rowKey, state) {
-        var useuseCascadingCheckbox = this.columnModel.useuseCascadingCheckbox();
+        var useCascadingCheckbox = this.columnModel.useCascadingCheckbox();
 
         this.setValue(rowKey, '_button', state);
 
-        if (useuseCascadingCheckbox) {
+        if (useCascadingCheckbox) {
             this._updateDecendantsCheckedState(rowKey, state);
             this._updateAncestorsCheckedState(rowKey);
         }

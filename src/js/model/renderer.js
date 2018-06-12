@@ -107,14 +107,14 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'expanded' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - List of row key
+     * @param {object} ev - Event object
      * @private
      */
-    _onExpanded: function(rowKeys) {
+    _onExpanded: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
         var dataModel = this.dataModel;
         var columnNamesMap = this._getColumnNamesOfEachSide();
-        var height, viewData, rowNum;
-        var viewModel, index, row;
+        var height, viewData, rowNum, viewModel, index, row;
 
         _.each(rowKeys, function(rowKey) {
             index = dataModel.indexOfRowKey(rowKey);
@@ -142,10 +142,12 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'collapsed' event on dataModel using tree
-     * @param {Array.<number|string>} rowKeys - List of row key
+     * @param {object} ev - Event object
      * @private
      */
-    _onCollapsed: function(rowKeys) {
+    _onCollapsed: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
+
         _.each(rowKeys, function(rowKey) {
             var index = this.dataModel.indexOfRowKey(rowKey);
 
