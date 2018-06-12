@@ -269,7 +269,42 @@ module.exports = {
      * @returns {String}
      */
     cellInvalid: function(options) {
-        return bgTextRuleString(classNameConst.CELL_INVALID, options);
+        return builder.create('.' + classNameConst.CELL_INVALID)
+            .add('background', options.background + ' url(/dist/images/warning.png) no-repeat')
+            .build();
+    },
+
+    /**
+     * Generates a css string for invalid number cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellInvalidNumber: function(options) {
+        return builder.create('.' + classNameConst.CELL_INVALID_NUMBER)
+            .add('background', options.background + ' url(/dist/images/warning.png) no-repeat')
+            .build();
+    },
+
+    /**
+     * Generates a css string for invalid email cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellInvalidEmail: function(options) {
+        return builder.create('.' + classNameConst.CELL_INVALID_EMAIL)
+            .add('background', options.background + ' url(/dist/images/warning.png) no-repeat')
+            .build();
+    },
+
+    /**
+     * Generates a css string for invalid phone number cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellInvalidPhone: function(options) {
+        return builder.create('.' + classNameConst.CELL_INVALID_PHONE)
+            .add('background', options.background + ' url(/dist/images/warning.png) no-repeat')
+            .build();
     },
 
     /**

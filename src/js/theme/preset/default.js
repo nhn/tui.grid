@@ -63,7 +63,16 @@ module.exports = {
             background: '#fff'
         },
         invalid: {
-            background: '#ff8080'
+            background: '#ff8080',
+            number: {
+                background: 'red'
+            },
+            email: {
+                background: 'green'
+            },
+            phone: {
+                background: 'blue'
+            }
         },
         evenRow: {},
         oddRow: {},

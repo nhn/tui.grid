@@ -215,10 +215,9 @@ describe('theme/styleGenerator: ', function() {
 
     it('cellInvalid() generates a css string for invalid cells', function() {
         var options = {
-            background: 'white',
-            text: 'red'
+            background: 'white'
         };
-        var expected = '.' + classNameConst.CELL_INVALID + '{background-color:white;color:red}';
+        var expected = '.' + classNameConst.CELL_INVALID + '{background:white url(/dist/images/warning.png) no-repeat}';
 
         expect(styleGen.cellInvalid(options)).toBe(expected);
     });
