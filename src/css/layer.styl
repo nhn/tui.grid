@@ -1,12 +1,17 @@
 .layer-state
     position absolute
-    border-style solid
-    border-color #ccc
-    border-width 1px
     background #fff
-    font-weight bold
     text-align center
-    z-index 13
+    z-index 18
+
+    p
+        position absolute
+        top 50%
+        left 0
+        right 0
+        margin-top -7px
+        font-size 14px
+        color #ccc
 
 .layer-state-content
     padding-top 50px
@@ -24,11 +29,12 @@
     display none
     background #fff
     z-index 15
-    padding 0 10px
+    padding 0 5px
     border-style solid
     border-width 1px
     white-space nowrap
     box-sizing border-box
+    z-index 20
 
     textarea
         position absolute
@@ -45,7 +51,7 @@
 .layer-focus-border
     position absolute
     overflow hidden
-    z-index 14
+    z-index 20
 
 .layer-selection
     position absolute
@@ -55,7 +61,7 @@
     height 0
     border-style solid
     border-width 1px
-    opacity 0.2
+    opacity 0.1
 
 .layer-datepicker
     position absolute

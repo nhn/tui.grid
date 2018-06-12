@@ -75,14 +75,14 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     ),
 
     /**
-     * Template for <th>
+     * Template for <td>
      */
-    templateHeader: _.template(
-        '<th <%=attrColumnName%>="<%=columnName%>" ' +
+    templateBody: _.template(
+        '<td <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
         '>' +
         '<%=value%>' +
-        '</th>'
+        '</td>'
     ),
 
     /**
@@ -131,19 +131,19 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     },
 
     /**
-     * Sets the HTML string of <th> of given column
+     * Sets the HTML string of <td> of given column
      * @param {string} columnName - column name
      * @param {string} contents - HTML string
      * @private
      */
     _setColumnContent: function(columnName, contents) {
-        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+        var $th = this.$el.find('td[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
         $th.html(contents);
     },
 
     /**
-     * Refresh <th> tag whenever summary value is changed.
+     * Refresh <td> tag whenever summary value is changed.
      * @param {string} columnName - column name
      * @param {object} valueMap - value map
      * @private
@@ -210,10 +210,10 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
                 valueMap = summaryModel.getValue(column.name);
             }
 
-            return memo + this.templateHeader({
+            return memo + this.templateBody({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnName,
-                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
+                className: [classNameConst.CELL, classNameConst.CELL_SUMMARY].join(' '),
                 value: this._generateValueHTML(columnName, valueMap)
             });
         }, '', this);
@@ -225,10 +225,6 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
      */
     render: function() {
         var summaryHeight = this.dimensionModel.get('summaryHeight');
-        var summaryPosition = this.dimensionModel.get('summaryPosition');
-        var className = summaryPosition === 'top' ? classNameConst.SUMMARY_AREA_TOP : classNameConst.SUMMARY_AREA_BOTTOM;
-
-        this.$el.addClass(className);
 
         if (summaryHeight) {
             this.$el.html(this.template({

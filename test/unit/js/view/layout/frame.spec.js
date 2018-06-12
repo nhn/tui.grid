@@ -158,7 +158,7 @@ describe('Frame', function() {
         });
 
         describe('afterRender()', function() {
-            describe('dimensionModel.scrollY가 true이면', function() {
+            describe('when the dimensionModel has a scrollY option and set true, ', function() {
                 beforeEach(function() {
                     modelManager.dimensionModel.set({
                         headerHeight: 30,
@@ -168,19 +168,19 @@ describe('Frame', function() {
                     frame = createFrame(FrameRside);
                 });
 
-                it('div.header_space를 생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
+                it('create the space element of scrollbar on right-top position and set height.', function() {
                     var $space;
                     frame.afterRender();
-                    $space = frame.$el.find('.' + classNameConst.SCROLLBAR_HEAD);
+                    $space = frame.$el.find('.' + classNameConst.SCROLLBAR_RIGHT_TOP);
                     expect($space.length).toBe(1);
                     expect($space.height()).toBe(28);
                 });
 
-                it('div.scrollbar_border생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
+                it('create the outer border element of scrollbar and set height.', function() {
                     var scrollHeight = modelManager.dimensionModel.get('bodyHeight') -
                         modelManager.dimensionModel.getScrollXHeight();
                     frame.afterRender();
-                    frame.$scrollBorder.is('.' + classNameConst.SCROLLBAR_BORDER);
+                    frame.$scrollBorder.is('.' + classNameConst.SCROLLBAR_Y_OUTER_BORDER);
                     expect(frame.$scrollBorder.length).toBe(1);
                     expect(frame.$scrollBorder.height()).toBe(scrollHeight);
                 });

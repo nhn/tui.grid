@@ -24,18 +24,18 @@ var ComponentHolder = snippet.defineClass(/** @lends module:componentHolder.prot
     },
 
     /**
-     * Returns an instance of tui.component.Pagination
+     * Returns an instance of tui.Pagination
      * @param {String} key - component key
-     * @returns {tui.component.Pagination}
+     * @returns {tui.Pagination}
      */
     getInstance: function(key) {
         return this.instanceMap[key];
     },
 
     /**
-     * Sets an instance of tui.component.Pagination
+     * Sets an instance of tui.Pagination
      * @param {String} key - component key
-     * @param {tui.component.Pagination} instance - pagination instance
+     * @param {tui.Pagination} instance - pagination instance
      */
     setInstance: function(key, instance) {
         this.instanceMap[key] = instance;

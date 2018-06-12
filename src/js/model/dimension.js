@@ -75,7 +75,7 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
         minRowHeight: 0,
         minBodyHeight: 0,
 
-        frozenBorderWidth: null
+        frozenBorderWidth: 0
     },
 
     /**
@@ -155,13 +155,8 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
         var totalWidth = this.get('width');
         var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
         var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
-        if (this.hasFrozenBorder()) {
-            availableTotalWidth -= this.get('frozenBorderWidth');
-        }
-
-        return availableTotalWidth;
+        return (totalWidth - this.getScrollYWidth() - totalBorderWidth - this.get('frozenBorderWidth'));
     },
 
     /**
@@ -373,14 +368,6 @@ var Dimension = Model.extend(/** @lends module:model/dimension.prototype */{
             x: pageX - bodyOffsetX,
             y: pageY - bodyOffsetY
         };
-    },
-
-    /**
-     * Whether the frozen border width is set or not
-     * @returns {boolean} State of the frozen border width
-     */
-    hasFrozenBorder: function() {
-        return _.isNumber(this.get('frozenBorderWidth'));
     }
 });
 

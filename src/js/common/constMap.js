@@ -44,7 +44,8 @@ module.exports = {
     dimension: {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1,
-        RESIZE_HANDLE_WIDTH: 7
+        RESIZE_HANDLE_WIDTH: 7,
+        SCROLLBAR_WIDTH: 17
     },
     frame: {
         L: 'L',

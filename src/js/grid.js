@@ -32,7 +32,7 @@ var instanceMap = {};
  * @param {object} options
  *      @param {Array} [options.data] - Grid data for making rows.
  *      @param {Object} [options.header] - Options object for header.
- *      @param {number} [options.header.height=35] - The height of the header area.
+ *      @param {number} [options.header.height=40] - The height of the header area.
  *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
@@ -68,9 +68,9 @@ var instanceMap = {};
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
- *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
+ *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
  *          If set to null or false, pagination will not be used.
- *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
+ *      @param {string} [options.selectionUnit='cell'] - The unit of selection on Grid. ('cell', 'row')
  *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
  *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
@@ -169,6 +169,7 @@ var instanceMap = {};
  *                  creating the component
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
+ *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
  *          @param {Object.<string, Object>} [options.summary.columnContent]
  *              The object for configuring each column in the summary.
  *              Sub options below are keyed by each column name.
@@ -176,17 +177,6 @@ var instanceMap = {};
  *                  If set to true, the summary value of each column is served as a paramater to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
- *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
- *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- *      @param {Object} [options.footer] - Deprecated: The object for configuring summary area. This option is replaced by "summary" option.
- *          @param {number} [options.footer.height] - Deprecated: The height of the summary area.
- *          @param {Object.<string, Object>} [options.footer.columnContent]
- *              Deprecated: The object for configuring each column in the summary.
- *                          Sub options below are keyed by each column name.
- *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
- *                  Deprecated: If set to true, the summary value of each column is served as a paramater to the template
- *                              function whenever data is changed.
- *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  */
@@ -843,8 +833,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Returns an instance of tui.component.Pagination.
-     * @returns {tui.component.Pagination}
+     * Returns an instance of tui.Pagination.
+     * @returns {tui.Pagination}
      */
     getPagination: function() {
         return this.componentHolder.getInstance('pagination');

@@ -5,43 +5,73 @@ var builder = require('theme/cssRuleBuilder');
 var classNameConst = require('common/classNameConst');
 
 describe('theme/styleGenerator: ', function() {
-    it('grid() generates a css string for the grid', function() {
-        var options = {
-            background: 'white',
-            border: 'green',
-            text: 'blue'
-        };
-        var expected = [
-            '.' + classNameConst.CONTAINER + '{background-color:white;color:blue}',
-            '.' + classNameConst.CONTENT_AREA + '{border-color:green}',
-            '.' + classNameConst.TABLE + '{border-color:green}',
-            '.' + classNameConst.HEAD_AREA + '{border-color:green}',
-            '.' + classNameConst.SUMMARY_AREA + '{border-color:green}',
-            '.' + classNameConst.BORDER_LINE + '{background-color:green}',
-            '.' + classNameConst.SCROLLBAR_HEAD + '{border-color:green}',
-            '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}',
-            '.' + classNameConst.SUMMARY_AREA_RIGHT + '{border-color:green}'
-        ].join('');
+    describe('outline()', function() {
+        var borderTop, borderBottom;
+        var expectedRules;
 
-        expect(styleGen.grid(options)).toBe(expected);
+        beforeEach(function() {
+            borderTop = '.' + classNameConst.BORDER_TOP;
+            borderBottom = '.' + classNameConst.NO_SCROLL_X + ' .' + classNameConst.BORDER_BOTTOM;
+
+            expectedRules = [
+                borderTop + '{background-color:green}',
+                borderBottom + '{background-color:green}'
+            ];
+        });
+
+        it('generates a css string for the top-bottom outline by default.', function() {
+            var options = {
+                border: 'green'
+            };
+            var expected = expectedRules.join('');
+
+            expect(styleGen.outline(options)).toBe(expected);
+        });
+
+        it('generates a css string for the outline having vertical lines.', function() {
+            var borderLeft = '.' + classNameConst.BORDER_LEFT;
+            var borderRight = '.' + classNameConst.NO_SCROLL_Y + ' .' + classNameConst.BORDER_RIGHT;
+            var options = {
+                border: 'green',
+                showVerticalBorder: true
+            };
+            var expected = expectedRules.concat([
+                borderLeft + '{background-color:green}',
+                borderRight + '{background-color:green}'
+            ]).join('');
+
+            expect(styleGen.outline(options)).toBe(expected);
+        });
     });
 
     it('scrollbar() generates a css string for scrollbars', function() {
         var options = {
+            border: 'yellow',
             background: 'white',
+            emptySpace: 'red',
             thumb: 'blue',
             active: 'green'
         };
+        var xInnerBorder = '.' + classNameConst.BORDER_BOTTOM;
+        var xOuterBorder = '.' + classNameConst.CONTENT_AREA;
+        var yInnerBorder = '.' + classNameConst.SCROLLBAR_Y_INNER_BORDER;
+        var yOuterBorder = '.' + classNameConst.SCROLLBAR_Y_OUTER_BORDER;
+        var spaceRightTop = '.' + classNameConst.SCROLLBAR_RIGHT_TOP;
+        var spaceRightBottom = '.' + classNameConst.SCROLLBAR_RIGHT_BOTTOM;
+        var spaceLeftBottom = '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM;
+        var frozenBorder = '.' + classNameConst.SCROLLBAR_FROZEN_BORDER;
 
         var expected = [
             builder.buildAll(builder.createWebkitScrollbarRules('.' + classNameConst.CONTAINER, options)),
             builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options).build(),
-            '.' + classNameConst.SCROLLBAR_RIGHT_BOTTOM + '{background-color:white}',
-            '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM + '{background-color:white}',
-            '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}',
-            '.' + classNameConst.SUMMARY_AREA_RIGHT + '{background-color:white}',
-            '.' + classNameConst.BODY_AREA + '{background-color:white}',
-            '.' + classNameConst.FROZEN_BORDER_BOTTOM + '{background-color:white}'
+            xInnerBorder + '{background-color:yellow}',
+            xOuterBorder + '{border-color:yellow}',
+            yInnerBorder + '{background-color:yellow}',
+            yOuterBorder + '{background-color:yellow}',
+            spaceRightTop + '{background-color:red;border-color:yellow}',
+            spaceRightBottom + '{background-color:red;border-color:yellow}',
+            spaceLeftBottom + '{background-color:red;border-color:yellow}',
+            frozenBorder + '{background-color:red;border-color:yellow}'
         ].join('');
 
         expect(styleGen.scrollbar(options)).toBe(expected);
@@ -66,8 +96,7 @@ describe('theme/styleGenerator: ', function() {
                 text: 'blue'
             };
             var expected =
-                '.' + classNameConst.CELL + '{background-color:white;border-color:green;color:blue}' +
-                '.' + classNameConst.BODY_AREA + '{border-color:green}';
+                '.' + classNameConst.CELL + '{background-color:white;border-color:green;color:blue}';
 
             expect(styleGen.cell(options)).toBe(expected);
         });
@@ -90,34 +119,117 @@ describe('theme/styleGenerator: ', function() {
     });
 
     describe('cellHead()', function() {
-        it('generates a css string for head cells', function() {
+        it('generates a css string for cells of head area.', function() {
             var options = {
                 background: 'white',
                 border: 'green',
                 text: 'blue'
             };
             var expected =
-              '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}' +
-              '.' + classNameConst.HEAD_AREA + '{background-color:white;border-color:green}' +
-              '.' + classNameConst.SUMMARY_AREA + '{background-color:white}';
+              '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}';
 
             expect(styleGen.cellHead(options)).toBe(expected);
         });
 
-        it('if showVerticalBorder option exists, add border vertical width values', function() {
-            var expectedForTrue = '.' + classNameConst.CELL_HEAD + '{border-left-width:1px;border-right-width:1px}';
-            var expectedForFalse = '.' + classNameConst.CELL_HEAD + '{border-left-width:0;border-right-width:0}';
+        it('if showVerticalBorder option exists, add border vertical width values' +
+            'and tables in lside show right vertical border.', function() {
+            var tableSelector = '.' + classNameConst.SHOW_LSIDE_AREA +
+                ' .' + classNameConst.LSIDE_AREA +
+                ' .' + classNameConst.HEAD_AREA +
+                ' .' + classNameConst.TABLE;
+            var expectedForTrue = [
+                tableSelector + '{border-right-style:solid}',
+                '.' + classNameConst.CELL_HEAD + '{border-left-width:1px;border-right-width:1px}'
+            ].join('');
+            var expectedForFalse = [
+                tableSelector + '{border-right-style:hidden}',
+                '.' + classNameConst.CELL_HEAD + '{border-left-width:0;border-right-width:0}'
+            ].join('');
 
             expect(styleGen.cellHead({showVerticalBorder: true})).toBe(expectedForTrue);
             expect(styleGen.cellHead({showVerticalBorder: false})).toBe(expectedForFalse);
         });
 
-        it('if showHorizontalBorder option exists, add border-top, border-bottom width values', function() {
+        it('if showHorizontalBorder option exists, add border-top, border-bottom width values.', function() {
             var expectedForTrue = '.' + classNameConst.CELL_HEAD + '{border-top-width:1px;border-bottom-width:1px}';
             var expectedForFalse = '.' + classNameConst.CELL_HEAD + '{border-top-width:0;border-bottom-width:0}';
 
             expect(styleGen.cellHead({showHorizontalBorder: true})).toBe(expectedForTrue);
             expect(styleGen.cellHead({showHorizontalBorder: false})).toBe(expectedForFalse);
+        });
+    });
+
+    describe('cellRowHead()', function() {
+        it('generates a css string for cells of row head cell of body area.', function() {
+            var options = {
+                background: 'white',
+                border: 'green',
+                text: 'blue'
+            };
+            var expected =
+              '.' + classNameConst.CELL_ROW_HEAD + '{background-color:white;border-color:green;color:blue}';
+
+            expect(styleGen.cellRowHead(options)).toBe(expected);
+        });
+
+        it('if showVerticalBorder option exists, add border vertical width values ' +
+            'and tables in lside show right vertical border.', function() {
+            var tableSelector = '.' + classNameConst.SHOW_LSIDE_AREA +
+                ' .' + classNameConst.LSIDE_AREA +
+                ' .' + classNameConst.BODY_AREA +
+                ' .' + classNameConst.TABLE;
+            var expectedForTrue = [
+                tableSelector + '{border-right-style:solid}',
+                '.' + classNameConst.CELL_ROW_HEAD + '{border-left-width:1px;border-right-width:1px}'
+            ].join('');
+            var expectedForFalse = [
+                tableSelector + '{border-right-style:hidden}',
+                '.' + classNameConst.CELL_ROW_HEAD + '{border-left-width:0;border-right-width:0}'
+            ].join('');
+
+            expect(styleGen.cellRowHead({showVerticalBorder: true})).toBe(expectedForTrue);
+            expect(styleGen.cellRowHead({showVerticalBorder: false})).toBe(expectedForFalse);
+        });
+
+        it('if showHorizontalBorder option exists, add border-top, border-bottom width values', function() {
+            var expectedForTrue = '.' + classNameConst.CELL_ROW_HEAD + '{border-top-width:1px;border-bottom-width:1px}';
+            var expectedForFalse = '.' + classNameConst.CELL_ROW_HEAD + '{border-top-width:0;border-bottom-width:0}';
+
+            expect(styleGen.cellRowHead({showHorizontalBorder: true})).toBe(expectedForTrue);
+            expect(styleGen.cellRowHead({showHorizontalBorder: false})).toBe(expectedForFalse);
+        });
+    });
+
+    describe('cellSummary()', function() {
+        it('generates a css string for cells in summary area.', function() {
+            var options = {
+                background: 'white',
+                border: 'green',
+                text: 'blue'
+            };
+            var expected =
+                '.' + classNameConst.CELL_SUMMARY + '{background-color:white;border-color:green;color:blue}';
+
+            expect(styleGen.cellSummary(options)).toBe(expected);
+        });
+
+        it('if showVerticalBorder option exists, add border vertical width values ' +
+          'and tables in lside show right vertical border.', function() {
+            var tableSelector = '.' + classNameConst.SHOW_LSIDE_AREA +
+                ' .' + classNameConst.LSIDE_AREA +
+                ' .' + classNameConst.SUMMARY_AREA +
+                ' .' + classNameConst.TABLE;
+            var expectedForTrue = [
+                tableSelector + '{border-right-style:solid}',
+                '.' + classNameConst.CELL_SUMMARY + '{border-left-width:1px;border-right-width:1px}'
+            ].join('');
+            var expectedForFalse = [
+                tableSelector + '{border-right-style:hidden}',
+                '.' + classNameConst.CELL_SUMMARY + '{border-left-width:0;border-right-width:0}'
+            ].join('');
+
+            expect(styleGen.cellSummary({showVerticalBorder: true})).toBe(expectedForTrue);
+            expect(styleGen.cellSummary({showVerticalBorder: false})).toBe(expectedForFalse);
         });
     });
 
@@ -139,15 +251,26 @@ describe('theme/styleGenerator: ', function() {
         expect(styleGen.cellEvenRow(options)).toBe(expected);
     });
 
-    it('cellSelectedHead() generates a css string for selected head cells', function() {
+    it('cellSelectedHead() generates a css string for selected head cells.', function() {
         var options = {
             background: 'white',
             text: 'blue'
         };
         var expected = '.' + classNameConst.CELL_HEAD + '.' + classNameConst.CELL_SELECTED +
-            '{background-color:white;color:blue}';
+              '{background-color:white;color:blue}';
 
         expect(styleGen.cellSelectedHead(options)).toBe(expected);
+    });
+
+    it('cellSelectedRowHead() generates a css string for selected rowHead cells.', function() {
+        var options = {
+            background: 'white',
+            text: 'blue'
+        };
+        var expected = '.' + classNameConst.CELL_ROW_HEAD + '.' + classNameConst.CELL_SELECTED +
+              '{background-color:white;color:blue}';
+
+        expect(styleGen.cellSelectedRowHead(options)).toBe(expected);
     });
 
     it('cellFocused() generates a css string for focused cells', function() {
