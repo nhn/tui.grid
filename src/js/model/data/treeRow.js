@@ -77,8 +77,13 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
      */
     hasTreeChildren: function() {
         var childrenRowKeys = this._getTreeData().childrenRowKeys;
+        var hasChildren = _.isArray(childrenRowKeys) && !!childrenRowKeys.length;
 
-        return _.isArray(childrenRowKeys) ? !!(childrenRowKeys.length) : !!childrenRowKeys;
+        if (this.get('_children')) {
+            hasChildren = true;
+        }
+
+        return hasChildren;
     },
 
     /**
