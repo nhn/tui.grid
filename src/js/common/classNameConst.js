@@ -140,9 +140,7 @@ var classNames = {
     TREE_WARPPER_RELATIVE: 'tree-wrapper-relative',
     TREE_WARPPER_VALIGN_CENTER: 'tree-wrapper-valign-center',
     TREE_EXTRA_CONTENT: 'tree-extra-content',
-    TREE_LINE: 'tree-line',
-    TREE_LINE_HALF: 'tree-line-half',
-    TREE_LINE_BRANCH: 'tree-line-branch',
+    TREE_DEPTH: 'tree-depth',
     TREE_BUTTON_EXPAND: 'tree-button-expand',
     TREE_BUTTON_COLLAPSE: 'tree-button-collapse',
     TREE_ICON: 'tree-icon'

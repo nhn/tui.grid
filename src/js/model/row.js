@@ -246,8 +246,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
                 depth: row.getTreeDepth(),
                 isExpanded: row.getTreeExpanded(),
                 hasChildren: row.hasTreeChildren(),
-                useIcon: columnModel.useTreeIcon(),
-                hasNextSibling: row.hasTreeNextSibling()
+                useIcon: columnModel.useTreeIcon()
             };
         }
 
