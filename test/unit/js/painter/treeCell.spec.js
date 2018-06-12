@@ -110,41 +110,9 @@ describe('painter.treeCell', function() {
                 depth: depth
             });
             content = treeCell._getExtraContentHtml(cellData);
-            $elements = $(content).find('.' + classNameConst.TREE_LINE);
+            $elements = $(content).find('.' + classNameConst.TREE_DEPTH);
 
             expect($elements.length).toBe(depth);
-        });
-
-        it('when the current cell is a leaf row, only half of the last line element is created.', function() {
-            var $elements;
-            var halfLineClassName = classNameConst.TREE_LINE_HALF;
-
-            cellData = $.extend(cellData, {
-                depth: 3,
-                hasNextSibling: [true, true, false]
-            });
-            content = treeCell._getExtraContentHtml(cellData);
-            $elements = $(content).find('.' + classNameConst.TREE_LINE);
-
-            expect($elements.eq(0).hasClass(halfLineClassName)).toBe(false);
-            expect($elements.eq(1).hasClass(halfLineClassName)).toBe(false);
-            expect($elements.eq(2).hasClass(halfLineClassName)).toBe(true);
-        });
-
-        it('when the parent of current cell is a leaf row, ' +
-            'the line elements are hidden except the last element.', function() {
-            var $elements;
-
-            cellData = $.extend(cellData, {
-                depth: 3,
-                hasNextSibling: [false, false, false]
-            });
-            content = treeCell._getExtraContentHtml(cellData);
-            $elements = $(content).find('.' + classNameConst.TREE_LINE);
-
-            expect($elements.eq(0).css('display')).toBe('none');
-            expect($elements.eq(1).css('display')).toBe('none');
-            expect($elements.eq(2).css('display')).not.toBe('none');
         });
 
         it('when the current cell has children, the last line element has exapand/collapse button.', function() {
@@ -155,7 +123,7 @@ describe('painter.treeCell', function() {
                 hasChildren: true
             });
             content = treeCell._getExtraContentHtml(cellData);
-            $element = $(content).find('.' + classNameConst.TREE_LINE).last();
+            $element = $(content).find('.' + classNameConst.TREE_DEPTH).last();
 
             expect($element.find('.' + classNameConst.BTN_TREE).length).toBe(1);
         });

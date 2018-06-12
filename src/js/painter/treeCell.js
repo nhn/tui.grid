@@ -72,10 +72,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
      * @returns {string} html string
      */
     lineTemplate: _.template(
-        '<span class="<%=className%>" style="<%=style%>">' +
-            '<% if (lastDepth) { %>' +
-                '<span class="' + classNameConst.TREE_LINE_BRANCH + '"></span>' +
-            '<% } %>' +
+        '<span class="' + classNameConst.TREE_DEPTH + '" style="<%=style%>">' +
             '<% if (hasButton) { %>' +
                 '<button class="' + classNameConst.BTN_TREE + '"><i></i></button>' +
             '<% } %>' +
@@ -97,46 +94,19 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     },
 
     /**
-     * Get className of each line element
-     * @param {boolean} lastDepth - whether the current row is last depth or not
-     * @param {boolean} lastChildRow - whether the current row is last child row or not
-     * @returns {string} connected class names
-     * @private
-     */
-    _getClassNameOfLine: function(lastDepth, lastChildRow) {
-        var className = [
-            classNameConst.TREE_LINE
-        ];
-
-        if (lastDepth && lastChildRow) {
-            className.push(classNameConst.TREE_LINE_HALF);
-        }
-
-        return className.join(' ');
-    },
-
-    /**
      * Get html of line element in extra content
      * @param {number} depth - depth of current row
      * @param {boolean} lastDepth - whether the current row is last depth or not
-     * @param {boolean} lastChildRow - whether the current row is last child row or not
      * @param {boolean} hasChildren - whether the current row has children or not
      * @returns {string} html string
      * @private
      */
-    _getLineHtml: function(depth, lastDepth, lastChildRow, hasChildren) {
-        var className = this._getClassNameOfLine(lastDepth, lastChildRow);
+    _getLineHtml: function(depth, lastDepth, hasChildren) {
         var hasButton = lastDepth && hasChildren;
         var style = ['left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;'];
 
-        if (!lastDepth && lastChildRow) {
-            style.push('display:none;');
-        }
-
         return this.lineTemplate({
-            className: className,
             style: style.join(''),
-            lastDepth: lastDepth,
             hasButton: hasButton
         });
     },
@@ -162,17 +132,15 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
     _getExtraContentHtml: function(cellData) {
         var depth = cellData.depth;
         var hasChildren = cellData.hasChildren;
-        var hasNextSibling = cellData.hasNextSibling || [];
         var useIcon = cellData.useIcon;
         var index = 0;
         var htmls = [];
-        var lastDepth, lastChildRow;
+        var lastDepth;
 
         for (; index < depth; index += 1) {
             lastDepth = index === depth - 1;
-            lastChildRow = !hasNextSibling[index];
 
-            htmls.push(this._getLineHtml(index, lastDepth, lastChildRow, hasChildren));
+            htmls.push(this._getLineHtml(index, lastDepth, hasChildren));
         }
 
         if (useIcon) {
