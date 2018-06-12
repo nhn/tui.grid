@@ -296,7 +296,7 @@ var gridData = [
     },
     {
         id: 502792,
-        name: 'Bush',
+        name: 'Test dynamic loading!!',
         artist: 'Snoop Dogg',
         release: '2015.05.12',
         type: 'EP',
@@ -307,8 +307,6 @@ var gridData = [
         price: 18000,
         downloadCount: 1000,
         listenCount: 5000,
-        _extraData: {
-            treeState: 'EXPAND'
-        }
+        _children: true
     }
 ];

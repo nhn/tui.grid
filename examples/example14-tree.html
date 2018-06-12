@@ -36,7 +36,7 @@ var grid = new tui.Grid({
         useCascadingCheckbox: false
     },
     // virtualScrolling: false,
-    // rowHeight: 30,
+    // rowHeight: 100,
     // bodyHeight: 200,
     columns: [
         {
@@ -63,8 +63,37 @@ var grid = new tui.Grid({
     ]
 });
 
-$('#append').on('click', function() {
-    var parentRowKey = grid.getCheckedRowKeys()[0];
+function appendRows(parentRowKey, isDynamicLoaing) {
+    var childrenRowData = [
+        {
+            id: 502796,
+            name: '3333',
+            artist: 'test333333',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000,
+        },
+        {
+            id: 502790,
+            name: '000000',
+            artist: '0000000',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000,
+        }
+    ];
 
     grid.appendRow([{
         id: 502795,
@@ -82,36 +111,7 @@ $('#append').on('click', function() {
         _extraData: {
             treeState: 'COLLAPSE'
         },
-        _children: [
-            {
-                id: 502796,
-                name: '3333',
-                artist: 'test333333',
-                release: '2015.05.12',
-                type: 'EP',
-                typeCode: '2',
-                genre: 'Hiphop',
-                genreCode: '5',
-                grade: '5',
-                price: 18000,
-                downloadCount: 1000,
-                listenCount: 5000,
-            },
-            {
-                id: 502790,
-                name: '000000',
-                artist: '0000000',
-                release: '2015.05.12',
-                type: 'EP',
-                typeCode: '2',
-                genre: 'Hiphop',
-                genreCode: '5',
-                grade: '5',
-                price: 18000,
-                downloadCount: 1000,
-                listenCount: 5000,
-            }
-        ],
+        _children: isDynamicLoaing ? true : childrenRowData
     },
     {
         id: 502793,
@@ -143,12 +143,34 @@ $('#append').on('click', function() {
     }], {
         parentRowKey: parentRowKey
     });
+}
+
+function removeRows(rowKeys) {
+    _.each(rowKeys, function(rowKey) {
+        grid.removeRow(rowKey);
+    });
+}
+
+$('#append').on('click', function() {
+    var parentRowKey = grid.getCheckedRowKeys()[0];
+
+    appendRows(parentRowKey);
 });
 
 $('#remove').on('click', function() {
-    var parentRowKey = grid.getCheckedRowKeys()[0];
+    var rowKeys = grid.getCheckedRowKeys();
 
-    grid.removeRow(parentRowKey);
+    removeRows(rowKeys);
+});
+
+grid.on('expanded', function(ev) {
+    var parentRowKey = ev.rowKey;
+    var descendantRowKeys = ev.descendantRowKeys;
+
+    if (!descendantRowKeys.length) {
+        removeRows(descendantRowKeys);
+        appendRows(parentRowKey, true);
+    }
 });
 
 </script>
