@@ -234,7 +234,7 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * Get cascade usage in the tree-grid's checkbox
      * @returns {boolean} Whether using the cascading checkbox or not
      */
-    useuseCascadingCheckbox: function() {
+    useCascadingCheckbox: function() {
         var useCascadingCheckbox = this.get('treeColumnOptions').useCascadingCheckbox;
 
         return _.isUndefined(useCascadingCheckbox) ? true : useCascadingCheckbox;
