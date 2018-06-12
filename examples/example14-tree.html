@@ -32,7 +32,7 @@ var grid = new tui.Grid({
     rowHeaders: ['rowNum', 'radio'],
     treeColumnOptions: {
         name: 'name',
-        useIcon: false,
+        useIcon: true,
         useCascadingCheckbox: false
     },
     // virtualScrolling: false,
@@ -66,9 +66,7 @@ var grid = new tui.Grid({
 $('#append').on('click', function() {
     var parentRowKey = grid.getCheckedRowKeys()[0];
 
-    // console.log(parentRowKey);
-
-    grid.appendRow({
+    grid.appendRow([{
         id: 502795,
         name: '11111111',
         artist: 'test111111',
@@ -86,7 +84,7 @@ $('#append').on('click', function() {
         },
         _children: [
             {
-                id: 502795,
+                id: 502796,
                 name: '3333',
                 artist: 'test333333',
                 release: '2015.05.12',
@@ -100,9 +98,9 @@ $('#append').on('click', function() {
                 listenCount: 5000,
             },
             {
-                id: 502793,
-                name: '222222',
-                artist: 'test2222222',
+                id: 502790,
+                name: '000000',
+                artist: '0000000',
                 release: '2015.05.12',
                 type: 'EP',
                 typeCode: '2',
@@ -111,10 +109,38 @@ $('#append').on('click', function() {
                 grade: '5',
                 price: 18000,
                 downloadCount: 1000,
-                listenCount: 5000
+                listenCount: 5000,
             }
-        ]
-    }, {
+        ],
+    },
+    {
+        id: 502793,
+        name: '222222',
+        artist: 'test2222222',
+        release: '2015.05.12',
+        type: 'EP',
+        typeCode: '2',
+        genre: 'Hiphop',
+        genreCode: '5',
+        grade: '5',
+        price: 18000,
+        downloadCount: 1000,
+        listenCount: 5000
+    },
+    {
+        id: 502797,
+        name: '777',
+        artist: 'yyyyyyyy',
+        release: '2015.05.12',
+        type: 'EP',
+        typeCode: '2',
+        genre: 'Hiphop',
+        genreCode: '5',
+        grade: '5',
+        price: 18000,
+        downloadCount: 1000,
+        listenCount: 5000
+    }], {
         parentRowKey: parentRowKey
     });
 });
