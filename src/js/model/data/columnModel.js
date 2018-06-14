@@ -81,7 +81,7 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
         },
         treeColumnOptions: {
             name: null,
-            useIcon: false,
+            useIcon: true,
             useCascadingCheckbox: true
         }
     },
