@@ -139,13 +139,14 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         var address = this._getRecentAddress();
         var lastRowIndex = this.dataModel.length - 1;
         var lastColummnIndex = this.columnModel.getVisibleColumns().length - 1;
+        var rowKey = this.dataModel.at(address.row).get('rowKey');
 
         switch (ev.command) {
             case 'up':
-                address.row -= 1;
+                address.row += this.coordRowModel.getPreviousOffset(rowKey);
                 break;
             case 'down':
-                address.row += 1;
+                address.row += this.coordRowModel.getNextOffset(rowKey);
                 break;
             case 'left':
                 address.column -= 1;

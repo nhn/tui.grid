@@ -99,6 +99,14 @@ describe('model/selection key events', function() {
                 row: 2,
                 column: 2
             });
+            selection.coordRowModel = {
+                getPreviousOffset: function() {
+                    return -1;
+                },
+                getNextOffset: function() {
+                    return 1;
+                }
+            };
             spyOn(selection, 'update');
             spyOn(selection, '_scrollTo');
         });
