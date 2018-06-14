@@ -61,8 +61,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
             this.rowHeights[index] = this._getRowHeight(row);
         }, this);
 
-        this.rowOffsets = this._resetOffsets(this.rowHeights);
-
+        this._resetOffsets();
         this._setTotalRowHeight();
     },
 
@@ -80,8 +79,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
             this.rowHeights[index] = 0;
         }, this);
 
-        this.rowOffsets = this._resetOffsets(this.rowHeights);
-
+        this._resetOffsets();
         this._setTotalRowHeight();
     },
 
@@ -164,11 +162,10 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
 
     /**
      * Reset the list of offset via the list of each row's height
-     * @param {Array.<number>} rowHeights - array of row height
-     * @returns {Array.<number>} array of row offest
      * @private
      */
-    _resetOffsets: function(rowHeights) {
+    _resetOffsets: function() {
+        var rowHeights = this.rowHeights;
         var rowOffsets = [];
         var prevIdx = 0;
         var prevHeight, rowOffset;
@@ -185,7 +182,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
             rowOffsets[index] = rowOffset;
         });
 
-        return rowOffsets;
+        this.rowOffsets = rowOffsets;
     },
 
     /**
@@ -216,8 +213,7 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
      */
     _reset: function(rowHeights) {
         this.rowHeights = rowHeights;
-        this.rowOffsets = this._resetOffsets(rowHeights);
-
+        this._resetOffsets();
         this._setTotalRowHeight();
 
         this.trigger('reset');
@@ -306,21 +302,21 @@ var CoordRow = Model.extend(/** @lends module:model/coordRow.prototype */{
     indexOf: function(position) {
         var rowOffsets = this.rowOffsets;
         var idx = 0;
-        var visibleRowsCnt = 0;
+        var hiddenRowsCnt = 0;
 
         position += CELL_BORDER_WIDTH * 2;
 
         while (rowOffsets[idx] - CELL_BORDER_WIDTH <= position) {
             if (rowOffsets[idx] > -1) {
-                visibleRowsCnt = 0;
+                hiddenRowsCnt = 0;
             } else {
-                visibleRowsCnt += 1;
+                hiddenRowsCnt += 1;
             }
 
             idx += 1;
         }
 
-        return idx - visibleRowsCnt - 1;
+        return idx - hiddenRowsCnt - 1;
     },
 
     /**

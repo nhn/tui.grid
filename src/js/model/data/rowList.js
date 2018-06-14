@@ -537,9 +537,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
     },
 
     _appendRow: function(rowData, options) {
-        var modelList;
-
-        modelList = this._createModelList(rowData, options);
+        var modelList = this._createModelList(rowData, options);
 
         this.add(modelList, {
             at: options.at,
