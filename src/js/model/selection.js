@@ -43,8 +43,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             enabled: true,
-            selectionType: typeConst.CELL,
-            selectionUnit: attr.selectionUnit
+            selectionType: typeConst.CELL
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -71,7 +70,13 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
          * ex) {row: [0, 1], column: [1, 2]}
          * @type {{row: array, column: array}}
          */
-        range: null
+        range: null,
+
+        /**
+         * Selection unit
+         * @type {string} 'cell' or 'row'
+         */
+        selectionUnit: 'cell'
     },
 
     /**
@@ -183,7 +188,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         }
 
         if (address) {
-            this.update(address.row, address.column, this.getSelectionUnit());
+            this.update(address.row, address.column);
             this._scrollTo(address.row, address.column);
         }
     },
@@ -327,7 +332,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
     _onDragMoveBody: function(gridEvent) {
         var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
 
-        this.update(address.row, address.column, this.getSelectionUnit());
+        this.update(address.row, address.column);
         this._setScrolling(gridEvent.pageX, gridEvent.pageY);
     },
 
@@ -448,7 +453,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
 
-            if (type === typeConst.ROW) {
+            if (this.getSelectionUnit() === typeConst.ROW) {
                 this.start(focusedIndex.row, 0, typeConst.ROW);
             } else {
                 this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
