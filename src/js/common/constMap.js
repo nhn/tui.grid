@@ -45,7 +45,7 @@ module.exports = {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1,
         RESIZE_HANDLE_WIDTH: 7,
-        INDENT_WIDTH: 18
+        INDENT_WIDTH: 22
     },
     frame: {
         L: 'L',
