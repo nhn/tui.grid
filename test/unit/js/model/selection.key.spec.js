@@ -113,49 +113,49 @@ describe('model/selection key events', function() {
 
         it('up', function() {
             triggerSelectEvent('up');
-            expect(selection.update).toHaveBeenCalledWith(1, 2, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(1, 2);
             expect(selection._scrollTo).toHaveBeenCalledWith(1, 2);
         });
 
         it('down', function() {
             triggerSelectEvent('down');
-            expect(selection.update).toHaveBeenCalledWith(3, 2, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(3, 2);
             expect(selection._scrollTo).toHaveBeenCalledWith(3, 2);
         });
 
         it('left', function() {
             triggerSelectEvent('left');
-            expect(selection.update).toHaveBeenCalledWith(2, 1, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(2, 1);
             expect(selection._scrollTo).toHaveBeenCalledWith(2, 1);
         });
 
         it('right', function() {
             triggerSelectEvent('right');
-            expect(selection.update).toHaveBeenCalledWith(2, 3, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(2, 3);
             expect(selection._scrollTo).toHaveBeenCalledWith(2, 3);
         });
 
         it('firstColumn', function() {
             triggerSelectEvent('firstColumn');
-            expect(selection.update).toHaveBeenCalledWith(2, 0, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(2, 0);
             expect(selection._scrollTo).toHaveBeenCalledWith(2, 0);
         });
 
         it('lastColumn', function() {
             triggerSelectEvent('lastColumn');
-            expect(selection.update).toHaveBeenCalledWith(2, 4, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(2, 4);
             expect(selection._scrollTo).toHaveBeenCalledWith(2, 4);
         });
 
         it('firstCell', function() {
             triggerSelectEvent('firstCell');
-            expect(selection.update).toHaveBeenCalledWith(0, 0, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(0, 0);
             expect(selection._scrollTo).toHaveBeenCalledWith(0, 0);
         });
 
         it('lastCell', function() {
             triggerSelectEvent('lastCell');
-            expect(selection.update).toHaveBeenCalledWith(4, 4, 'CELL');
+            expect(selection.update).toHaveBeenCalledWith(4, 4);
             expect(selection._scrollTo).toHaveBeenCalledWith(4, 4);
         });
 
@@ -177,13 +177,13 @@ describe('model/selection key events', function() {
 
             it('pageUp', function() {
                 triggerSelectEvent('pageUp');
-                expect(selection.update).toHaveBeenCalledWith(0, 2, 'CELL');
+                expect(selection.update).toHaveBeenCalledWith(0, 2);
                 expect(selection._scrollTo).toHaveBeenCalledWith(0, 2);
             });
 
             it('pageDown', function() {
                 triggerSelectEvent('pageDown');
-                expect(selection.update).toHaveBeenCalledWith(4, 2, 'CELL');
+                expect(selection.update).toHaveBeenCalledWith(4, 2);
                 expect(selection._scrollTo).toHaveBeenCalledWith(4, 2);
             });
         });
