@@ -25,13 +25,21 @@ presetOptions[themeNameConst.CLEAN] = require('./preset/clean');
  */
 function buildCssString(options) {
     var styles = [
-        styleGen.grid(options.grid),
+        styleGen.outline(options.outline),
+        styleGen.frozenBorder(options.frozenBorder),
         styleGen.scrollbar(options.scrollbar),
         styleGen.heightResizeHandle(options.heightResizeHandle),
         styleGen.pagination(options.pagination),
         styleGen.selection(options.selection)
     ];
+    var area = options.area;
     var cell = options.cell;
+
+    styles = styles.concat([
+        styleGen.headArea(area.header),
+        styleGen.bodyArea(area.body),
+        styleGen.summaryArea(area.summary)
+    ]);
 
     if (cell) {
         styles = styles.concat([
@@ -39,6 +47,8 @@ function buildCssString(options) {
             styleGen.cellDummy(cell.dummy),
             styleGen.cellEditable(cell.editable),
             styleGen.cellHead(cell.head),
+            styleGen.cellRowHead(cell.rowHead),
+            styleGen.cellSummary(cell.summary),
             styleGen.cellOddRow(cell.oddRow),
             styleGen.cellEvenRow(cell.evenRow),
             styleGen.cellRequired(cell.required),
@@ -46,6 +56,7 @@ function buildCssString(options) {
             styleGen.cellInvalid(cell.invalid),
             styleGen.cellCurrentRow(cell.currentRow),
             styleGen.cellSelectedHead(cell.selectedHead),
+            styleGen.cellSelectedRowHead(cell.selectedRowHead),
             styleGen.cellFocused(cell.focused),
             styleGen.cellFocusedInactive(cell.focusedInactive)
         ]);

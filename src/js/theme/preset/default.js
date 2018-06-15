@@ -6,17 +6,12 @@
 'use strict';
 
 module.exports = {
-    grid: {
-        background: '#fff',
-        border: '#ccc',
-        text: '#444'
-    },
     selection: {
-        background: '#4daaf9',
-        border: '#004082'
+        background: '#00A9ff',
+        border: '#00a9ff'
     },
     heightResizeHandle: {
-        border: '#ccc',
+        border: '#fff',
         background: '#fff'
     },
     pagination: {
@@ -24,28 +19,68 @@ module.exports = {
         background: 'transparent'
     },
     scrollbar: {
-        background: '#f5f5f5',
-        thumb: '#d9d9d9',
-        active: '#c1c1c1'
+        border: '#eee',
+        background: '#fff',
+        emptySpace: '#f9f9f9',
+        thumb: '#ddd',
+        active: '#ddd'
+    },
+    outline: {
+        border: '#aaa',
+        showVerticalBorder: false
+    },
+    frozenBorder: {
+        border: '#aaa'
+    },
+    area: {
+        header: {
+            border: '#ccc',
+            background: '#fff'
+        },
+        body: {
+            background: '#fff'
+        },
+        summary: {
+            border: '#eee',
+            background: '#fff'
+        }
     },
     cell: {
         normal: {
-            background: '#fbfbfb',
-            border: '#e0e0e0',
-            showVerticalBorder: true,
+            background: '#f4f4f4',
+            border: '#eee',
+            text: '#333',
+            showVerticalBorder: false,
             showHorizontalBorder: true
         },
         head: {
-            background: '#eee',
-            border: '#ccc',
+            background: '#fff',
+            border: '#eee',
+            text: '#222',
             showVerticalBorder: true,
             showHorizontalBorder: true
         },
+        rowHead: {
+            background: '#fff',
+            border: '#eee',
+            text: '#333',
+            showVerticalBorder: false,
+            showHorizontalBorder: true
+        },
+        summary: {
+            background: '#fff',
+            border: '#eee',
+            text: '#333',
+            showVerticalBorder: false
+        },
         selectedHead: {
-            background: '#d8d8d8'
+            background: '#e5f6ff'
+        },
+        selectedRowHead: {
+            background: '#e5f6ff'
         },
         focused: {
-            border: '#418ed4'
+            border: '#00a9ff'
         },
         focusedInactive: {
             border: '#aaa'
@@ -57,13 +92,14 @@ module.exports = {
             background: '#fff'
         },
         disabled: {
-            text: '#b0b0b0'
+            background: '#f9f9f9',
+            text: '#c1c1c1'
         },
         dummy: {
             background: '#fff'
         },
         invalid: {
-            background: '#ff8080'
+            background: '#ffe5e5'
         },
         evenRow: {},
         oddRow: {},

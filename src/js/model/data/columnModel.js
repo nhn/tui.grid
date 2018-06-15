@@ -19,7 +19,7 @@ var defaultRowHeaders = {
         name: '_number',
         align: 'center',
         fixedWidth: true,
-        width: 60,
+        width: 50,
         hidden: false
     },
     checkbox: {
@@ -28,7 +28,7 @@ var defaultRowHeaders = {
         name: '_button',
         align: 'center',
         fixedWidth: true,
-        width: 40,
+        width: 50,
         hidden: false,
         editOptions: {
             type: 'mainButton'
@@ -40,7 +40,7 @@ var defaultRowHeaders = {
         name: '_button',
         align: 'center',
         fixedWidth: true,
-        width: 40,
+        width: 50,
         hidden: false,
         editOptions: {
             type: 'mainButton'

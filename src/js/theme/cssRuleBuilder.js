@@ -75,6 +75,26 @@ var CSSRuleBuilder = snippet.defineClass({
     },
 
     /**
+     * Add a vertical border style to the rule.
+     * @param {Object} options - visible options
+     * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
+     * @param {String} position - Position of the vertical border ('right' or 'left')
+     * @returns {CSSRuleBuilder}
+     */
+    verticalBorderStyle: function(options, position) {
+        var vertical = options.showVerticalBorder;
+        var value;
+
+        if (_.isBoolean(vertical) && position) {
+            value = vertical ? 'solid' : 'hidden';
+
+            this.add('border-' + position + '-style', value);
+        }
+
+        return this;
+    },
+
+    /**
      * Shortcut for add('background-color', value)
      * @param {String} value - css value
      * @returns {CSSRuleBuilder}
@@ -124,6 +144,16 @@ module.exports = {
      */
     createClassRule: function(className) {
         return this.create('.' + className);
+    },
+
+    /**
+     * Creates a new Builder instance with a composed class name.
+     * @param {String} selector - selector to compose class names
+     * @param {Array} classNames - class name list
+     * @returns {Builder}
+     */
+    createClassComposeRule: function(selector, classNames) {
+        return this.create('.' + classNames.join(selector));
     },
 
     /**

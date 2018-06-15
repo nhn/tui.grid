@@ -99,7 +99,7 @@ var StateLayer = View.extend(/** @lends module:view/stateLayer.prototype */{
         var scrollYWidth = dimensionModel.getScrollYWidth();
 
         this.$el.css({
-            top: headerHeight - TABLE_BORDER_WIDTH,
+            top: headerHeight,
             height: bodyHeight - scrollXHeight - TABLE_BORDER_WIDTH,
             left: 0,
             right: scrollYWidth

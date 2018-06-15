@@ -8,7 +8,8 @@
 var $ = require('jquery');
 var View = require('../../base/view');
 var classNameConst = require('../../common/classNameConst');
-var frameConst = require('../../common/constMap').frame;
+var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
 var ContentArea;
 
 /**
@@ -73,6 +74,13 @@ ContentArea = View.extend(/** @lends module:view/layout/content-area.prototype *
         }
         if (!dimensionModel.get('scrollY')) {
             this.$el.addClass(classNameConst.NO_SCROLL_Y);
+        }
+        if (dimensionModel.get('summaryHeight') &&
+            dimensionModel.get('summaryPosition') === constMap.summaryPosition.TOP) {
+            this.$el.addClass(classNameConst.HAS_SUMMARY_TOP);
+        }
+        if (dimensionModel.get('rsideWidth')) {
+            this.$el.addClass(classNameConst.SHOW_LSIDE_AREA);
         }
 
         this.$el.append(childElements);

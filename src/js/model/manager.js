@@ -31,7 +31,7 @@ var defaultOptions = {
     selectType: '',
     autoNumbering: true,
     header: {
-        height: 35,
+        height: 40,
         complexColumns: []
     },
     columnOptions: {
@@ -140,8 +140,15 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
         var minBodyHeight = options.minBodyHeight;
         var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
         var bodyHeight = fixedHeight ? Math.max(minBodyHeight, options.bodyHeight) : minBodyHeight;
-        var frozenBorderWidth = _.isUndefined(columnOptions.frozenBorderWidth) ? 1 : columnOptions.frozenBorderWidth;
-        var attrs = {
+        var frozenBorderWidth, attrs;
+
+        if (columnOptions.frozenCount) {
+            frozenBorderWidth = Number(columnOptions.frozenBorderWidth) || 1;
+        } else {
+            frozenBorderWidth = 0;
+        }
+
+        attrs = {
             headerHeight: options.header.height,
             bodyHeight: bodyHeight,
             summaryHeight: options.summary ? options.summary.height : 0,
@@ -155,7 +162,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
             minRowHeight: minRowHeight,
             minBodyHeight: minBodyHeight || rowHeight,
             minimumColumnWidth: columnOptions.minWidth,
-            frozenBorderWidth: columnOptions.frozenCount ? frozenBorderWidth : null
+            frozenBorderWidth: frozenBorderWidth
         };
 
         if (fixedRowHeight === false && options.virtualScrolling) {

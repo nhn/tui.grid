@@ -17,6 +17,12 @@ var classNameConst = require('../common/classNameConst');
 var classRule = _.bind(builder.createClassRule, builder);
 
 /**
+ * Shortcut for the builder.createClassComposeRule() method.
+ * @ignore
+ */
+var classComposeRule = _.bind(builder.createClassComposeRule, builder);
+
+/**
  * Creates a rule string for background and text colors.
  * @param {String} className - class name
  * @param {Objecr} options - options
@@ -46,34 +52,44 @@ function bgBorderRuleString(className, options) {
 
 module.exports = {
     /**
-     * Generates a css string for the grid.
+     * Generates a css string for grid outline.
      * @param {Object} options - options
      * @returns {String}
      */
-    grid: function(options) {
-        var containerRule = classRule(classNameConst.CONTAINER)
-            .bg(options.background)
-            .text(options.text);
-        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
-        var tableRule = classRule(classNameConst.TABLE).border(options.border);
-        var headerRule = classRule(classNameConst.HEAD_AREA).border(options.border);
-        var summaryRule = classRule(classNameConst.SUMMARY_AREA).border(options.border);
-        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
-        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
-        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
-        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).border(options.border);
+    outline: function(options) {
+        var borderTopRule = classRule(classNameConst.BORDER_TOP).bg(options.border);
+        var borderBottomRule = classComposeRule(' .', [
+            classNameConst.NO_SCROLL_X,
+            classNameConst.BORDER_BOTTOM
+        ]).bg(options.border);
+        var rules = [
+            borderTopRule,
+            borderBottomRule
+        ];
+        var borderLeftRule, borderRightRule;
 
-        return builder.buildAll([
-            containerRule,
-            contentAreaRule,
-            tableRule,
-            headerRule,
-            summaryRule,
-            borderLineRule,
-            scrollHeadRule,
-            scrollBorderRule,
-            summaryRightRule
-        ]);
+        if (options.showVerticalBorder) {
+            borderLeftRule = classRule(classNameConst.BORDER_LEFT).bg(options.border);
+            borderRightRule = classComposeRule(' .', [
+                classNameConst.NO_SCROLL_Y,
+                classNameConst.BORDER_RIGHT
+            ]).bg(options.border);
+
+            rules = rules.concat([borderLeftRule, borderRightRule]);
+        }
+
+        return builder.buildAll(rules);
+    },
+
+    /**
+     * Generates a css string for border of frozen columns.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    frozenBorder: function(options) {
+        return classRule(classNameConst.FROZEN_BORDER)
+            .bg(options.border)
+            .build();
     },
 
     /**
@@ -84,20 +100,32 @@ module.exports = {
     scrollbar: function(options) {
         var webkitScrollbarRules = builder.createWebkitScrollbarRules('.' + classNameConst.CONTAINER, options);
         var ieScrollbarRule = builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options);
-        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
-        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
-        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
-        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).bg(options.background);
-        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
-        var frozenBorderRule = classRule(classNameConst.FROZEN_BORDER_BOTTOM).bg(options.background);
+        var xInnerBorderRule = classRule(classNameConst.BORDER_BOTTOM).bg(options.border);
+        var xOuterBorderRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
+        var yInnerBorderRule = classRule(classNameConst.SCROLLBAR_Y_INNER_BORDER).bg(options.border);
+        var yOuterBorderRule = classRule(classNameConst.SCROLLBAR_Y_OUTER_BORDER).bg(options.border);
+        var spaceRightTopRule = classRule(classNameConst.SCROLLBAR_RIGHT_TOP)
+            .bg(options.emptySpace)
+            .border(options.border);
+        var spaceRightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
+            .bg(options.emptySpace)
+            .border(options.border);
+        var spaceLeftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM)
+            .bg(options.emptySpace)
+            .border(options.border);
+        var frozenBorderRule = classRule(classNameConst.SCROLLBAR_FROZEN_BORDER)
+            .bg(options.emptySpace)
+            .border(options.border);
 
         return builder.buildAll(webkitScrollbarRules.concat([
             ieScrollbarRule,
-            rightBottomRule,
-            leftBottomRule,
-            scrollHeadRule,
-            summaryRightRule,
-            bodyAreaRule,
+            xInnerBorderRule,
+            xOuterBorderRule,
+            yInnerBorderRule,
+            yOuterBorderRule,
+            spaceRightTopRule,
+            spaceRightBottomRule,
+            spaceLeftBottomRule,
             frozenBorderRule
         ]));
     },
@@ -130,22 +158,60 @@ module.exports = {
     },
 
     /**
+     * Generates a css string for head area.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    headArea: function(options) {
+        return classRule(classNameConst.HEAD_AREA)
+            .bg(options.background)
+            .border(options.border)
+            .build();
+    },
+
+    /**
+     * Generates a css string for body area.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    bodyArea: function(options) {
+        return classRule(classNameConst.BODY_AREA)
+            .bg(options.background)
+            .build();
+    },
+
+    /**
+     * Generates a css string for summary area.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    summaryArea: function(options) {
+        var contentAreaRule = classRule(classNameConst.SUMMARY_AREA)
+            .bg(options.background)
+            .border(options.border);
+        var bodyAreaRule = classComposeRule(' .', [
+            classNameConst.HAS_SUMMARY_TOP,
+            classNameConst.BODY_AREA
+        ]).border(options.border);
+
+        return builder.buildAll([
+            contentAreaRule,
+            bodyAreaRule
+        ]);
+    },
+
+    /**
      * Generates a css string for table cells.
      * @param {Object} options - options
      * @returns {String}
      */
     cell: function(options) {
-        var cellRule = classRule(classNameConst.CELL)
+        return classRule(classNameConst.CELL)
             .bg(options.background)
             .border(options.border)
             .borderWidth(options)
-            .text(options.text);
-        var bodyAreaRule = classRule(classNameConst.BODY_AREA).border(options.border);
-
-        return builder.buildAll([
-            cellRule,
-            bodyAreaRule
-        ]);
+            .text(options.text)
+            .build();
     },
 
     /*
@@ -154,20 +220,70 @@ module.exports = {
      * @returns {String}
      */
     cellHead: function(options) {
-        var headRule = classRule(classNameConst.CELL_HEAD)
+        var tableRule = classComposeRule(' .', [
+            classNameConst.SHOW_LSIDE_AREA,
+            classNameConst.LSIDE_AREA,
+            classNameConst.HEAD_AREA,
+            classNameConst.TABLE
+        ]).verticalBorderStyle(options, 'right');
+        var cellRule = classRule(classNameConst.CELL_HEAD)
             .bg(options.background)
             .border(options.border)
             .borderWidth(options)
             .text(options.text);
 
-        var headAreaRule = classRule(classNameConst.HEAD_AREA)
+        return builder.buildAll([
+            tableRule,
+            cellRule
+        ]);
+    },
+
+    /*
+     * Generates a css string for row's head cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellRowHead: function(options) {
+        var tableRule = classComposeRule(' .', [
+            classNameConst.SHOW_LSIDE_AREA,
+            classNameConst.LSIDE_AREA,
+            classNameConst.BODY_AREA,
+            classNameConst.TABLE
+        ]).verticalBorderStyle(options, 'right');
+        var cellRule = classRule(classNameConst.CELL_ROW_HEAD)
             .bg(options.background)
-            .border(options.border);
+            .border(options.border)
+            .borderWidth(options)
+            .text(options.text);
 
-        var summaryAreaRule = classRule(classNameConst.SUMMARY_AREA)
-            .bg(options.background);
+        return builder.buildAll([
+            tableRule,
+            cellRule
+        ]);
+    },
 
-        return builder.buildAll([headRule, headAreaRule, summaryAreaRule]);
+    /*
+     * Generates a css string for summary cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellSummary: function(options) {
+        var tableRule = classComposeRule(' .', [
+            classNameConst.SHOW_LSIDE_AREA,
+            classNameConst.LSIDE_AREA,
+            classNameConst.SUMMARY_AREA,
+            classNameConst.TABLE
+        ]).verticalBorderStyle(options, 'right');
+        var cellRule = classRule(classNameConst.CELL_SUMMARY)
+            .bg(options.background)
+            .border(options.border)
+            .borderWidth(options)
+            .text(options.text);
+
+        return builder.buildAll([
+            tableRule,
+            cellRule
+        ]);
     },
 
     /**
@@ -176,8 +292,10 @@ module.exports = {
      * @returns {String}
      */
     cellEvenRow: function(options) {
-        return classRule(classNameConst.ROW_EVEN + '>td')
-            .bg(options.background)
+        return classComposeRule('>', [
+            classNameConst.ROW_EVEN,
+            'td'
+        ]).bg(options.background)
             .build();
     },
 
@@ -187,9 +305,10 @@ module.exports = {
      * @returns {String}
      */
     cellOddRow: function(options) {
-        return classRule(classNameConst.ROW_ODD + '>td')
-            .bg(options.background)
-            .build();
+        return classComposeRule('>', [
+            classNameConst.ROW_ODD,
+            'td'
+        ]).bg(options.background).build();
     },
 
     /**
@@ -198,8 +317,24 @@ module.exports = {
      * @returns {String}
      */
     cellSelectedHead: function(options) {
-        return builder.create('.' + classNameConst.CELL_HEAD + '.' + classNameConst.CELL_SELECTED)
-            .bg(options.background)
+        return classComposeRule('.', [
+            classNameConst.CELL_HEAD,
+            classNameConst.CELL_SELECTED
+        ]).bg(options.background)
+            .text(options.text)
+            .build();
+    },
+
+    /**
+     * Generates a css string for selected row head cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellSelectedRowHead: function(options) {
+        return classComposeRule('.', [
+            classNameConst.CELL_ROW_HEAD,
+            classNameConst.CELL_SELECTED
+        ]).bg(options.background)
             .text(options.text)
             .build();
     },
@@ -222,9 +357,10 @@ module.exports = {
      * @returns {String}
      */
     cellFocusedInactive: function(options) {
-        return builder.create('.' + classNameConst.LAYER_FOCUS_DEACTIVE + ' .' + classNameConst.LAYER_FOCUS_BORDER)
-            .bg(options.border)
-            .build();
+        return classComposeRule(' .', [
+            classNameConst.LAYER_FOCUS_DEACTIVE,
+            classNameConst.LAYER_FOCUS_BORDER
+        ]).bg(options.border).build();
     },
 
     /**

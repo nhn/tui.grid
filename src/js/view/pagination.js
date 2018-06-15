@@ -10,13 +10,14 @@ var _ = require('underscore');
 var TuiPaginaton = require('tui-pagination');
 
 var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
 var defaultOptions = {
     totalItems: 1,
     itemsPerPage: 10,
     visiblePages: 5,
     centerAlign: true
 };
-var TUI_PAGINATION_CLASSNAME = 'tui-pagination';
+var PAGINATION_CLASSNAME = 'tui-pagination ' + classNameConst.PAGINATION;
 
 /**
  * Class for the pagination
@@ -35,7 +36,7 @@ var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
         this.on('appended', this._onAppended);
     },
 
-    className: TUI_PAGINATION_CLASSNAME,
+    className: PAGINATION_CLASSNAME,
 
     /**
      * Render
@@ -67,7 +68,7 @@ var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
     },
 
     /**
-     * Create an option object for creating a tui.component.Pagination component.
+     * Create an option object for creating a tui.Pagination component.
      * @returns {Object}
      */
     _createOptionObject: function() {
@@ -81,15 +82,15 @@ var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
     },
 
     /**
-     * Create new tui.component.Pagination instance
-     * @returns {tui.component.Pagination}
+     * Create new tui.Pagination instance
+     * @returns {tui.Pagination}
      * @private
      */
     _createComponent: function() {
         var ComponentClass = TuiPaginaton;
 
         if (!ComponentClass) {
-            throw new Error('Cannot find component \'tui.component.Pagination\'');
+            throw new Error('Cannot find component \'tui.Pagination\'');
         }
 
         return new ComponentClass(this.$el, this._createOptionObject());

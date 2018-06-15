@@ -12,9 +12,29 @@ var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
 var constMap = require('../../common/constMap');
 var frameConst = constMap.frame;
+var dimensionConst = constMap.dimension;
 var summaryPositionConst = constMap.summaryPosition;
 
-var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+var RsideFrame;
+
+/**
+ * Create div element to use on right-side area
+ * @param {string} className - class name to add on element
+ * @param {object} styles - style object to set css
+ * @returns {jQuery} created div element
+ * @ignore
+ */
+function createDiv(className, styles) {
+    var $element = $('<div />').addClass(className);
+
+    if (styles) {
+        $element.css(styles);
+    }
+
+    return $element;
+}
 
 /**
  * right side frame class
@@ -22,7 +42,7 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * @extends module:view/layout/frame
  * @ignore
  */
-var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
+RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
 
@@ -54,6 +74,7 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
         var dimensionModel = this.dimensionModel;
         var width = dimensionModel.get('rsideWidth');
         var marginLeft = dimensionModel.get('lsideWidth');
+        var frozenBorderWidth = dimensionModel.get('frozenBorderWidth');
 
         // If the left side exists and the division border should not be doubled,
         // left side should cover the right side by border-width to hide the left border of the right side.
@@ -64,7 +85,7 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
 
         this.$el.css({
             width: width,
-            marginLeft: marginLeft
+            marginLeft: marginLeft + frozenBorderWidth
         });
     },
 
@@ -99,119 +120,111 @@ var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototyp
         var dimensionModel = this.dimensionModel;
         var scrollX = dimensionModel.get('scrollX');
         var scrollY = dimensionModel.get('scrollY');
-        var headerHeight = dimensionModel.get('headerHeight');
-        var summaryHeight = dimensionModel.get('summaryHeight');
-        var summaryPosition = dimensionModel.get('summaryPosition');
+        var spaceHeights = this._getSpaceHeights(scrollX, scrollY);
 
-        if (dimensionModel.hasFrozenBorder()) {
-            this._setFrozenBorder(headerHeight, scrollX);
-        }
+        this._setScrollbar(scrollX, scrollY, spaceHeights);
 
-        if (!scrollY) {
-            return;
-        }
-
-        this._setScrollbar(headerHeight, summaryHeight, summaryPosition, scrollX);
-
-        if (summaryHeight) {
-            this._applyStyleToSummary(headerHeight, summaryHeight, summaryPosition, scrollX);
+        if (dimensionModel.get('frozenBorderWidth')) {
+            this._setFrozenBorder(scrollX);
         }
 
         this._resetScrollBorderHeight();
     },
 
     /**
-     * Create scrollbar area and set styles
-     * @param {number} headerHeight - Height of the header area
-     * @param {number} summaryHeight - Height of summary area by setting "summary" option
-     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+     * Get height values of top, bottom space on scroll area
      * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @param {boolean} scrollY - Whether the grid has y-scroll or not
+     * @returns {object} Heighs value
      * @private
      */
-    _setScrollbar: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
-        var $space, $scrollBorder;
+    _getSpaceHeights: function(scrollX, scrollY) {
+        var dimensionModel = this.dimensionModel;
+        var summaryHeight = dimensionModel.get('summaryHeight');
+        var summaryPosition = dimensionModel.get('summaryPosition');
+        var topHeight = dimensionModel.get('headerHeight');
+        var bottomHeight = scrollX ? dimensionConst.SCROLLBAR_WIDTH : 0;
 
-        // Empty DIV for hiding scrollbar in the header area
-        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
-
-        // Empty DIV for showing a left-border of vertical scrollbar in the body area
-        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
-
-        if (summaryPosition === summaryPositionConst.TOP) {
-            headerHeight += summaryHeight;
+        if (scrollY && summaryHeight) {
+            if (summaryPosition === summaryPositionConst.TOP) {
+                topHeight += summaryHeight;
+            } else {
+                bottomHeight += summaryHeight;
+            }
         }
 
-        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
-        $scrollBorder.css('top', headerHeight + 'px');
+        return {
+            top: topHeight,
+            bottom: bottomHeight
+        };
+    },
 
-        this.$el.append($space, $scrollBorder);
+    /**
+     * Create scrollbar area and set styles
+     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+     * @param {boolean} scrollY - Whether the grid has y-scroll or not
+     * @param {object} spaceHeights - Height values of top, bottom space on scroll area
+     * @private
+     */
+    _setScrollbar: function(scrollX, scrollY, spaceHeights) {
+        var $yInnerBorder, $yOuterBorder, $spaceRightTop, $spaceRightBottom, $frozenBorder;
 
-        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
-        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
-        //  casues to be stuck in the same position in Chrome)
         if (scrollX) {
-            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+            $frozenBorder = createDiv(classNameConst.SCROLLBAR_FROZEN_BORDER, {
+                height: dimensionConst.SCROLLBAR_WIDTH
+            });
         }
 
-        this.$scrollBorder = $scrollBorder;
+        if (scrollY) {
+            // subtract 2px for border-width (top and bottom)
+            $spaceRightTop = createDiv(classNameConst.SCROLLBAR_RIGHT_TOP, {
+                height: spaceHeights.top - 2
+            });
+            $yInnerBorder = createDiv(classNameConst.SCROLLBAR_Y_INNER_BORDER, {
+                top: spaceHeights.top
+            });
+            $yOuterBorder = createDiv(classNameConst.SCROLLBAR_Y_OUTER_BORDER);
+        }
+
+        if (scrollX || scrollY) {
+            $spaceRightBottom = createDiv(classNameConst.SCROLLBAR_RIGHT_BOTTOM, {
+                height: spaceHeights.bottom
+            });
+        }
+
+        this.$el.append(
+            $yInnerBorder,
+            $yOuterBorder,
+            $spaceRightTop,
+            $spaceRightBottom,
+            $frozenBorder
+        );
+
+        this.$scrollBorder = $yInnerBorder;
     },
 
     /**
      * Create frozen border and set styles
-     * @param {number} headerHeight - Height of the header area
      * @param {boolean} scrollX - Whether the grid has x-scroll or not
      * @private
      */
-    _setFrozenBorder: function(headerHeight, scrollX) {
-        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
+    _setFrozenBorder: function() {
+        var dimensionModel = this.dimensionModel;
+        var headerHeight = dimensionModel.get('headerHeight');
+        var frozenBorderWidth = dimensionModel.get('frozenBorderWidth');
         var resizeHandleView = this.viewFactory.createHeaderResizeHandle(frameConst.L, [headerHeight], true);
-        var $el = this.$el;
+        var $resizeHanlder = resizeHandleView.render().$el;
+        var $frozenBorder = createDiv(classNameConst.FROZEN_BORDER, {
+            marginLeft: -frozenBorderWidth,
+            width: frozenBorderWidth
+        });
 
-        $el.append(resizeHandleView.render().$el);
-
-        $el.find('.' + classNameConst.HEAD_AREA).css('border-left-width', frozenBorderWidth);
-        $el.find('.' + classNameConst.BODY_AREA).css('border-left-width', frozenBorderWidth);
-        $el.find('.' + classNameConst.SUMMARY_AREA).css('border-left-width', frozenBorderWidth);
-
-        // If you don't initialize the table left-border to 0,
-        // the left-border moves when the right side area is scrolled.
-        $el.find('.' + classNameConst.TABLE).css('border-left-width', 0);
-
-        if (scrollX) {
-            $el.append($('<div>')
-                .addClass(classNameConst.FROZEN_BORDER_BOTTOM)
-                .css('width', frozenBorderWidth)
-            );
-        }
-    },
-
-    /**
-     * Apply style to summary area on right-side frame
-     * @param {number} headerHeight - Height of header area
-     * @param {number} summaryHeight - Height of summary area by setting "summary" option
-     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
-     * @param {boolean} scrollX - Whether the grid has x-scroll or not
-     * @private
-     */
-    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
-        var styles = {};
-        var subClassName;
-
-        if (summaryPosition === summaryPositionConst.TOP) {
-            styles.top = headerHeight;
-            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
-        } else {
-            styles.bottom = scrollX ? this.dimensionModel.getScrollXHeight() : 0;
-            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
-        }
-
-        styles.height = summaryHeight;
-
-        this.$el.append($('<div>')
-            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
-            .addClass(subClassName)
-            .css(styles)
-        );
+        this.$el.append($resizeHanlder, $frozenBorder)
+            .find('.' + classNameConst.SCROLLBAR_FROZEN_BORDER)
+            .css({
+                marginLeft: -(frozenBorderWidth + CELL_BORDER_WIDTH),
+                width: frozenBorderWidth
+            });
     }
 });
 

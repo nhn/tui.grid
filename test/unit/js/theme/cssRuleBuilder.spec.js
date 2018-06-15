@@ -117,13 +117,53 @@ describe('theme.cssRuleBuilder', function() {
                 expect(rule.add).toHaveBeenCalledWith('border-bottom-width', '0');
             });
         });
+
+        describe('verticalBorderStyle():', function() {
+            it('if showHorizontalBorder is undefined, rules are not added.', function() {
+                rule.verticalBorderStyle({});
+                expect(rule.add).not.toHaveBeenCalled();
+            });
+
+            it('if position value is undefined, rules are not added.', function() {
+                rule.verticalBorderStyle({
+                    showVerticalBorder: true
+                });
+                expect(rule.add).not.toHaveBeenCalled();
+            });
+
+            it('if showHorizontalBorder is true and position value is right, ' +
+              'solid border style is added on right side.', function() {
+                rule.verticalBorderStyle({
+                    showVerticalBorder: true
+                }, 'right');
+                expect(rule.add).toHaveBeenCalledWith('border-right-style', 'solid');
+            });
+
+            it('if showHorizontalBorder is false and position value is left, ' +
+              'solid border style is added on left side.', function() {
+                rule.verticalBorderStyle({
+                    showVerticalBorder: false
+                }, 'left');
+                expect(rule.add).toHaveBeenCalledWith('border-left-style', 'hidden');
+            });
+        });
     });
 
-    it('createClassRule() is shortcut for the create() with class name selector', function() {
+    it('createClassRule() is shortcut for the create() with class name selector.', function() {
         spyOn(builder, 'create');
         builder.createClassRule('myClassName');
 
         expect(builder.create).toHaveBeenCalledWith('.myClassName');
+    });
+
+    it('createClassComposeRule() is shortcut for the create() with a composed class name.', function() {
+        spyOn(builder, 'create');
+        builder.createClassComposeRule(' .', [
+            'myClassName',
+            'yourClassName'
+        ]);
+
+        expect(builder.create).toHaveBeenCalledWith('.myClassName .yourClassName');
     });
 
     it('cteateWebkitScrollbarRules() returns an array of builders for webkit-scrollbar', function() {
