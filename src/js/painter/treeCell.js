@@ -164,7 +164,7 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var classNames = [
             cellData.className,
             classNameConst.CELL,
-            classNameConst.CELL_TREE
+            classNameConst.CELL_HAS_TREE
         ];
         var attrs = {};
 

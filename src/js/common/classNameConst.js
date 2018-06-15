@@ -92,7 +92,7 @@ var classNames = {
     CELL_CURRENT_ROW: 'cell-current-row',
     CELL_MAIN_BUTTON: 'cell-main-button',
     CELL_HAS_INPUT: 'cell-has-input',
-    CELL_TREE: 'cell-tree',
+    CELL_HAS_TREE: 'cell-has-tree',
 
     // cell content
     CELL_CONTENT: 'cell-content',
