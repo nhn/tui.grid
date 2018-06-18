@@ -2,14 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>1. Basic</title>
+    <title>14. Tree</title>
     <link rel="stylesheet" type="text/css" href="./css/explain.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
 </head>
 <body>
-<div class="explain">
-You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Getting-Started" target="_blank">here</a>
-</div>
 <div class="code-html">
 
 <button id="append">append</button>
@@ -21,7 +18,7 @@ You can see the tutorial <a href="https://github.com/nhnent/tui.grid/wiki/Gettin
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
-<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.3.0/tui-code-snippet.js"></script>
+<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.4.0/tui-code-snippet.js"></script>
 <script type="text/javascript" src="../dist/tui-grid.js"></script>
 <script type="text/javascript" src="./data/tree-dummy.js"></script>
 <script type="text/javascript" class="code-js">
@@ -30,6 +27,9 @@ var grid = new tui.Grid({
     el: $('#grid'),
     data: gridData,
     rowHeaders: ['rowNum', 'radio'],
+    bodyHeight: 300,
+    rowHeight: 40,
+    virtualScrolling: true,
     treeColumnOptions: {
         name: 'name',
         useIcon: true,
@@ -39,7 +39,11 @@ var grid = new tui.Grid({
         {
             title: 'Name',
             name: 'name',
-            width: 300
+            width: 300,
+            editOptions: {
+                type: 'text',
+                useViewMode: true
+            }
         },
         {
             title: 'Artist',
@@ -74,7 +78,7 @@ function appendRows(parentRowKey, isDynamicLoaing) {
             grade: '5',
             price: 18000,
             downloadCount: 1000,
-            listenCount: 5000,
+            listenCount: 5000
         },
         {
             id: 502790,
@@ -88,7 +92,7 @@ function appendRows(parentRowKey, isDynamicLoaing) {
             grade: '5',
             price: 18000,
             downloadCount: 1000,
-            listenCount: 5000,
+            listenCount: 5000
         }
     ];
 
