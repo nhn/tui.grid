@@ -51,7 +51,7 @@ var defaultOptions = {
     editingEvent: 'dblclick',
     rowHeight: 'auto',
     bodyHeight: 'auto',
-    minRowHeight: 27,
+    minRowHeight: 40,
     minBodyHeight: 130,
     selectionUnit: 'cell'
 };

@@ -65,7 +65,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * get tree depth of this row
-     * @returns {Number} - depth of this row
+     * @returns {number} - depth of this row
      */
     getTreeDepth: function() {
         return this.hasTreeNextSibling().length;
@@ -73,7 +73,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * check whether this row has one or more children
-     * @returns {Boolean} - true if it has children
+     * @returns {boolean} - true if it has children
      */
     hasTreeChildren: function() {
         var childrenRowKeys = this._getTreeData().childrenRowKeys;
@@ -88,7 +88,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * gets children row keys
-     * @returns {(Number|String)[]} - array of children row keys
+     * @returns {Array.<number|string>} - array of children row keys
      */
     getTreeChildrenRowKeys: function() {
         return this._getTreeData().childrenRowKeys || [];
@@ -96,7 +96,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * sets children row keys
-     * @param {(Number|String)[]} rowKeys - array of children row keys
+     * @param {Array.<number|string>} rowKeys - array of children row keys
      */
     setTreeChildrenRowKeys: function(rowKeys) {
         this._getTreeData().childrenRowKeys = rowKeys;
@@ -104,7 +104,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * remove a child key from children row keys
-     * @param {Number|String} rowKey - the key of the row to be removed
+     * @param {Array.<number|string>} rowKey - the key of the row to be removed
      */
     removeTreeChildrenRowKey: function(rowKey) {
         var treeData = this._getTreeData();
@@ -116,7 +116,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * check whether this row has one or more next sibling
-     * @returns {Boolean} - true if this row has siblings
+     * @returns {boolean} - true if this row has siblings
      */
     hasTreeNextSibling: function() {
         return this._getTreeData().hasNextSibling;
@@ -124,7 +124,7 @@ var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
 
     /**
      * gets parent row key
-     * @returns {(Number|String)} - parent row key
+     * @returns {number|string} - parent row key
      */
     getTreeParentRowKey: function() {
         return this._getTreeData().parentRowKey;
