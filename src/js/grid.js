@@ -56,6 +56,12 @@ var instanceMap = {};
  *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
  *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
  *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
+ *      @param {Object} [options.treeColumnOptions] - Option object for the tree column.
+ *      @param {string} [options.treeColumnOptions.name] - The name of column that makes tree column.
+ *      @param {boolean} [options.treeColumnOptions.useIcon=true] - If set to true, the folder or file icon is created on
+ *          the left side of the tree cell data.
+ *      @param {boolean} [options.treeColumnOptions.useCascadingCheckbox] - If set to true, a cascading relationship is
+ *          created in the checkbox between parent and child rows.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
