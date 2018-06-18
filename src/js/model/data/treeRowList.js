@@ -11,20 +11,35 @@ var util = require('tui-code-snippet');
 var RowList = require('./rowList');
 var TreeRow = require('./treeRow');
 
+var TreeRowList;
+
+/**
+ * Create empty tree-row data
+ * @returns {object} tree data
+ * @ignore
+ */
+function createEmptyTreeRowData() {
+    return {
+        _treeData: {
+            hasNextSibling: []
+        }
+    };
+}
+
 /**
  * TreeRowList class implementation
  * @module model/data/treeModel
  * @extends module:base/collection
  * @ignore
  */
-var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype */{
+TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype */{
     initialize: function() {
         RowList.prototype.initialize.apply(this, arguments);
 
         /**
          * root row which actually does not exist.
          * it keeps depth 1 rows as it's children
-         * @type {Object}
+         * @type {object}
          */
         this._rootRow = createEmptyTreeRowData();
     },
@@ -36,9 +51,9 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
      * process _extraData then set rowSpanData value
      * this function overrides RowList._formatData to deal with rowKey here
      *
-     * @param {(Array|Object)} data - rowList
-     * @param {Object} options - append options
-     * @returns {Array} rowList with row
+     * @param {array|object} data - rowList
+     * @param {object} options - append options
+     * @returns {array} rowList with row
      * @override
      * @private
      */
@@ -88,9 +103,9 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * Flatten nested tree data to 1-depth grid data.
-     * @param {Array} treeRows - nested rows having children
-     * @param {Array} flattenedRows - flattend rows. you should give an empty array at the initial call of this function
-     * @param {Array} ancestors - ancester rows
+     * @param {array} treeRows - nested rows having children
+     * @param {array} flattenedRows - flattend rows. you should give an empty array at the initial call of this function
+     * @param {array} ancestors - ancester rows
      */
     _flattenRow: function(treeRows, flattenedRows, ancestors) {
         var parent;
@@ -120,9 +135,9 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * calculate index of given parent row key and offset
-     * @param {(Number|String)} parentRowKey - parent row key
-     * @param {Number} offset - offset
-     * @returns {Number} - calculated index
+     * @param {number|string} parentRowKey - parent row key
+     * @param {number} offset - offset
+     * @returns {number} - calculated index
      * @private
      */
     _indexOfParentRowKeyAndOffset: function(parentRowKey, offset) {
@@ -159,7 +174,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * update hasNextSibling value of previous sibling and of itself
-     * @param {(Number|String)} rowKey - row key
+     * @param {number|string} rowKey - row key
      * @private
      */
     _syncHasTreeNextSiblingData: function(rowKey) {
@@ -183,11 +198,11 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * Insert the new row with specified data to the end of table.
-     * @param {(Array|Object)} [rowData] - The data for the new row
-     * @param {Object} [options] - Options
-     * @param {(Number|String)} [options.parentRowKey] - row key of the parent which appends given rows
-     * @param {Number} [options.offset] - offset from first sibling
-     * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @param {array|object} [rowData] - The data for the new row
+     * @param {object} [options] - Options
+     * @param {number|string} [options.parentRowKey] - row key of the parent which appends given rows
+     * @param {number} [options.offset] - offset from first sibling
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/treeTow>} Row model list
      * @override
      */
@@ -212,9 +227,9 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * Insert the given data into the very first row of root
-     * @param {(Array|Object)} [rowData] - The data for the new row
-     * @param {Object} [options] - Options
-     * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @param {array|object} [rowData] - The data for the new row
+     * @param {object} [options] - Options
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/treeTow>} Row model list
      */
     prependRow: function(rowData, options) {
@@ -246,7 +261,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * remove row of given row key. it will also remove it's descendant
-     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {number|string} rowKey - 행 데이터의 고유 키
      * @param {object} options - 삭제 옵션
      * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
      * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
@@ -282,8 +297,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get row keys of sibling and of itself
-     * @param {(Number|String)} rowKey - row key
-     * @returns {Array.<(Number|String)>} - sibling row keys
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<number|string>} - sibling row keys
      */
     getTreeSiblingRowKeys: function(rowKey) {
         var parentRow = this.get(this.get(rowKey).getTreeParentRowKey());
@@ -299,8 +314,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
     },
     /**
      * get row key of previous sibling
-     * @param {(Number|String)} rowKey - row key
-     * @returns {(Number|String)} - previous sibling row key
+     * @param {number|string} rowKey - row key
+     * @returns {number|string} - previous sibling row key
      */
     getTreePrevSiblingRowKey: function(rowKey) {
         var siblingRowKeys = this.getTreeSiblingRowKeys(rowKey);
@@ -311,8 +326,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get row key of next sibling
-     * @param {(Number|String)} rowKey - row key
-     * @returns {(Number|String)} - next sibling row key
+     * @param {number|string} rowKey - row key
+     * @returns {number|string} - next sibling row key
      */
     getTreeNextSiblingRowKey: function(rowKey) {
         var siblingRowKeys = this.getTreeSiblingRowKeys(rowKey);
@@ -324,7 +339,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get top most row keys
-     * @returns {(Number|String)[]} - row keys
+     * @returns {Array.<number|string>} - row keys
      */
     getTopMostRowKeys: function() {
         return this._rootRow._treeData.childrenRowKeys;
@@ -332,8 +347,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get tree children of row of given rowKey
-     * @param {(Number|String)} rowKey - row key
-     * @returns {(Number|String)[]} - children of found row
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<number|string>} - children of found row
      */
     getTreeChildrenRowKeys: function(rowKey) {
         var row = this.get(rowKey);
@@ -343,8 +358,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get tree descendant of row of given rowKey
-     * @param {(Number|String)} rowKey - row key
-     * @returns {(Number|String)[]} - descendant of found row
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<number|string>} - descendant of found row
      */
     getTreeDescendantRowKeys: function(rowKey) {
         var index = 0;
@@ -361,10 +376,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * expand tree row
-     * @param {(Number|String)} rowKey - row key
-     * @param {Boolean} recursive - true for recursively expand all descendant
-     * @param {Boolean} silent - true to mute event
-     * @returns {(Number|String)[]} - children or descendant of given row
+     * @param {number|string} rowKey - row key
+     * @param {boolean} recursive - true for recursively expand all descendant
+     * @param {boolean} silent - true to mute event
+     * @returns {Array.<number|string>} - children or descendant of given row
      */
     treeExpand: function(rowKey, recursive, silent) {
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
@@ -409,10 +424,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * collapse tree row
-     * @param {(Number|String)} rowKey - row key
-     * @param {Boolean} recursive - true for recursively expand all descendant
-     * @param {Boolean} silent - true to mute event
-     * @returns {(Number|String)[]} - children or descendant of given row
+     * @param {number|string} rowKey - row key
+     * @param {boolean} recursive - true for recursively expand all descendant
+     * @param {boolean} silent - true to mute event
+     * @returns {Array.<number|string>} - children or descendant of given row
      */
     treeCollapse: function(rowKey, recursive, silent) {
         var row = this.get(rowKey);
@@ -459,7 +474,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the parent of the row which has the given row key
-     * @param {Number|String} rowKey - row key
+     * @param {number|string} rowKey - row key
      * @returns {TreeRow} - the parent row
      */
     getTreeParent: function(rowKey) {
@@ -474,7 +489,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the ancestors of the row which has the given row key
-     * @param {Number|String} rowKey - row key
+     * @param {number|string} rowKey - row key
      * @returns {Array.<TreeRow>} - the ancestor rows
      */
     getTreeAncestors: function(rowKey) {
@@ -491,7 +506,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the children of the row which has the given row key
-     * @param {Number|String} rowKey - row key
+     * @param {number|string} rowKey - row key
      * @returns {Array.<TreeRow>} - the children rows
      */
     getTreeChildren: function(rowKey) {
@@ -504,7 +519,7 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the descendants of the row which has the given row key
-     * @param {Number|String} rowKey - row key
+     * @param {number|string} rowKey - row key
      * @returns {Array.<TreeRow>} - the descendant rows
      */
     getTreeDescendants: function(rowKey) {
@@ -517,8 +532,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * get the depth of the row which has the given row key
-     * @param {Number|String} rowKey - row key
-     * @returns {Number} - the depth
+     * @param {number|string} rowKey - row key
+     * @returns {number} - the depth
      */
     getTreeDepth: function(rowKey) {
         var row = this.get(rowKey);
@@ -533,8 +548,8 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
 
     /**
      * test if the row of given key should be visible
-     * @param {String|Number} rowKey - row key to test
-     * @returns {Boolean} - true if visible
+     * @param {string|number} rowKey - row key to test
+     * @returns {boolean} - true if visible
      */
     isTreeVisible: function(rowKey) {
         var visible = true;
@@ -647,13 +662,5 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         this.setValue(rowKey, '_button', checkedState);
     }
 });
-
-function createEmptyTreeRowData() {
-    return {
-        _treeData: {
-            hasNextSibling: []
-        }
-    };
-}
 
 module.exports = TreeRowList;

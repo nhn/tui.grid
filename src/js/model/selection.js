@@ -69,13 +69,10 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
          * Selection range
          * ex) {row: [0, 1], column: [1, 2]}
          * @type {{row: array, column: array}}
+         * @ignore
          */
         range: null,
 
-        /**
-         * Selection unit
-         * @type {string} 'cell' or 'row'
-         */
         selectionUnit: 'cell'
     },
 
