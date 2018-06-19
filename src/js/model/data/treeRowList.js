@@ -385,6 +385,14 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         }
 
         if (!silent) {
+            /**
+             * Occurs when the row having child rows is expanded
+             * @event Grid#expanded
+             * @type {module:event/gridEvent}
+             * @property {number|string} rowKey - rowKey of the expanded row
+             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+             * @property {Grid} instance - Current grid instance
+             */
             this.trigger('expanded', {
                 rowKey: rowKey,
                 descendantRowKeys: descendantRowKeys.slice(0)
@@ -404,6 +412,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeExpand(topMostRowKey, true, true);
         }, this);
 
+        /**
+         * Occurs when all rows having child rows are expanded
+         * @event Grid#expandedAll
+         */
         this.trigger('expandedAll');
     },
 
@@ -435,6 +447,14 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
         row.setTreeExpanded(false);
 
         if (!silent) {
+            /**
+             * Occurs when the row having child rows is collapsed
+             * @event Grid#collapsed
+             * @type {module:event/gridEvent}
+             * @property {number|string} rowKey - rowKey of the collapsed row
+             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+             * @property {Grid} instance - Current grid instance
+             */
             this.trigger('collapsed', {
                 rowKey: rowKey,
                 descendantRowKeys: descendantRowKeys.slice(0)
@@ -454,6 +474,10 @@ var TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.protot
             this.treeCollapse(topMostRowKey, true, true);
         }, this);
 
+        /**
+         * Occurs when all rows having child rows are collapsed
+         * @event Grid#collapsedAll
+         */
         this.trigger('collapsedAll');
     },
 
