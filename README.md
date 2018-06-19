@@ -43,16 +43,16 @@
 The TOAST UI Grid is a widget that can **display**, **edit**, **add**, and **delete** multiple data.
 You can append units to the data shown and use `html` to represent images and links instead of textual data.
 
-![style](https://user-images.githubusercontent.com/18183560/41571496-71bb900e-73ae-11e8-86a6-0273d68c2cee.png)
+![style](https://user-images.githubusercontent.com/18183560/41572390-7cbb9478-73b2-11e8-817d-eca61ee939ae.png)
 
 The summary function allows you to caculate on multiple rows of data and display the results.
 
-![summary](https://user-images.githubusercontent.com/18183560/41571497-71e4ec38-73ae-11e8-82ca-73622fb23e99.png)
+![summary](https://user-images.githubusercontent.com/18183560/41572394-7e821e76-73b2-11e8-90bc-630b55be4367.png)
 
 Starting with version 3 or later, you can use tree data to represent them in a hierarchy.
 Now let's process the data we want.
 
-![tree](https://user-images.githubusercontent.com/18183560/41571501-72a07c8c-73ae-11e8-9bd1-28db21f01b69.png)
+![tree](https://user-images.githubusercontent.com/18183560/41572383-780a9c08-73b2-11e8-9ffb-7bc5e58860e6.png)
 
 
 ### Provides a variety of editing elements
@@ -62,7 +62,7 @@ It supports various `input` elements such as **text**, **select box**, **checkbo
 You can set the data editing method just by setting options.
 You can also show editing elements only while you're editing **using view mode**.
 
-![input](https://user-images.githubusercontent.com/18183560/41571495-719086c0-73ae-11e8-93bb-e9f62016c4ea.png)
+![input](https://user-images.githubusercontent.com/18183560/41572386-7adca7d2-73b2-11e8-927d-f082841ee3e5.png)
 
 ### Simple, easy to use themes
 
