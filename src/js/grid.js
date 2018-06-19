@@ -1099,63 +1099,98 @@ Grid.getInstanceById = function(id) {
  * @static
  * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
  * @param {Object} [extOptions] - if exist, extend preset options with this object.
- *   @param {Object} [extOptions.grid] - Styles for the grid (container)
- *     @param {String} [extOptions.grid.background] - Background color of the grid.
- *     @param {number} [extOptions.grid.border] - Border color of the grid
- *     @param {number} [extOptions.grid.text] - Text color of the grid.
- *   @param {Object} [extOptions.selection] - Styles for a selection layer.
- *     @param {String} [extOptions.selection.background] - Background color of a selection layer.
- *     @param {String} [extOptions.selection.border] - Border color of a selection layer.
- *   @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
- *     @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
- *     @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
- *     @param {String} [extOptions.scrollbar.active] - Color of arrows(for IE) or
- *          thumb:hover(for other browsers) in scrollbars.
- *   @param {Object} [extOptions.cell] - Styles for the table cells.
- *     @param {Object} [extOptions.cell.normal] - Styles for normal cells.
- *       @param {String} [extOptions.cell.normal.background] - Background color of normal cells.
- *       @param {String} [extOptions.cell.normal.border] - Border color of normal cells.
- *       @param {String} [extOptions.cell.normal.text] - Text color of normal cells.
- *       @param {Boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
- *           normal cells are visible.
- *       @param {Boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
- *           normal cells are visible.
- *     @param {Object} [extOptions.cell.head] - Styles for the head cells.
- *       @param {String} [extOptions.cell.head.background] - Background color of head cells.
- *       @param {String} [extOptions.cell.head.border] - border color of head cells.
- *       @param {String} [extOptions.cell.head.text] - text color of head cells.
- *       @param {Boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
- *           head cells are visible.
- *       @param {Boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
- *           head cells are visible.
- *     @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
- *       @param {String} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
- *       @param {String} [extOptions.cell.selectedHead.text] - text color of selected head cells.
- *     @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
- *       @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
- *       @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
- *     @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
- *       @param {String} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
- *     @param {Object} [extOptions.cell.required] - Styles for required cells.
- *       @param {String} [extOptions.cell.required.background] - background color of required cells.
- *       @param {String} [extOptions.cell.required.text] - text color of required cells.
- *     @param {Object} [extOptions.cell.editable] - Styles for editable cells.
- *       @param {String} [extOptions.cell.editable.background] - background color of the editable cells.
- *       @param {String} [extOptions.cell.editable.text] - text color of the selected editable cells.
- *     @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
- *       @param {String} [extOptions.cell.disabled.background] - background color of disabled cells.
- *       @param {String} [extOptions.cell.disabled.text] - text color of disabled cells.
- *     @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
- *       @param {String} [extOptions.cell.invalid.background] - background color of invalid cells.
- *       @param {String} [extOptions.cell.invalid.text] - text color of invalid cells.
- *     @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
- *       @param {String} [extOptions.cell.currentRow.background] - background color of cells in a current row.
- *       @param {String} [extOptions.cell.currentRow.text] - text color of cells in a current row.
- *     @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
- *       @param {String} [extOptions.cell.evenRow.background] - background color of cells in even rows.
- *       @param {String} [extOptions.cell.evenRow.text] - text color of cells in even rows.
- *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
- *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
+ *     @param {Object} [extOptions.outline] - Styles for the table outline.
+ *         @param {String} [extOptions.outline.border] - Color of the table outline.
+ *         @param {Boolean} [extOptions.outline.showVerticalBorder] - Whether vertical outlines of
+ *             the table are visible.
+ *     @param {Object} [extOptions.selection] - Styles for a selection layer.
+ *         @param {String} [extOptions.selection.background] - Background color of a selection layer.
+ *         @param {String} [extOptions.selection.border] - Border color of a selection layer.
+ *     @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
+ *         @param {String} [extOptions.scrollbar.border] - Border color of scrollbars.
+ *         @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
+ *         @param {String} [extOptions.scrollbar.emptySpace] - Color of extra spaces except scrollbar.
+ *         @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
+ *         @param {String} [extOptions.scrollbar.active] - Color of arrows(for IE) or
+ *              thumb:hover(for other browsers) in scrollbars.
+ *     @param {Object} [extOptions.frozenBorder] - Styles for a frozen border.
+ *         @param {String} [extOptions.frozenBorder.area] - Border color of a frozen border.
+ *     @param {Object} [extOptions.area] - Styles for the table areas.
+ *         @param {Object} [extOptions.area.header] - Styles for the header area in the table.
+ *             @param {String} [extOptions.area.header.background] - Background color of the header area
+ *                 in the table.
+ *             @param {String} [extOptions.area.header.border] - Border color of the header area
+ *                 in the table.
+ *         @param {Object} [extOptions.area.body] - Styles for the body area in the table.
+ *             @param {String} [extOptions.area.body.background] - Background color of the body area
+ *                 in the table.
+ *         @param {Object} [extOptions.area.summary] - Styles for the summary area in the table.
+ *             @param {String} [extOptions.area.summary.background] - Background color of the summary area
+ *                 in the table.
+ *             @param {String} [extOptions.area.summary.border] - Border color of the summary area
+ *                 in the table.
+ *     @param {Object} [extOptions.cell] - Styles for the table cells.
+ *         @param {Object} [extOptions.cell.normal] - Styles for normal cells.
+ *             @param {String} [extOptions.cell.normal.background] - Background color of normal cells.
+ *             @param {String} [extOptions.cell.normal.border] - Border color of normal cells.
+ *             @param {String} [extOptions.cell.normal.text] - Text color of normal cells.
+ *             @param {Boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
+ *                 normal cells are visible.
+ *             @param {Boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
+ *                 normal cells are visible.
+ *         @param {Object} [extOptions.cell.head] - Styles for head cells.
+ *             @param {String} [extOptions.cell.head.background] - Background color of head cells.
+ *             @param {String} [extOptions.cell.head.border] - border color of head cells.
+ *             @param {String} [extOptions.cell.head.text] - text color of head cells.
+ *             @param {Boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
+ *                 head cells are visible.
+ *             @param {Boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
+ *                 head cells are visible.
+ *         @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
+ *             @param {String} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
+ *         @param {Object} [extOptions.cell.rowHead] - Styles for row's head cells.
+ *             @param {String} [extOptions.cell.rowHead.background] - Background color of row's head cells.
+ *             @param {String} [extOptions.cell.rowHead.border] - border color of row's head cells.
+ *             @param {String} [extOptions.cell.rowHead.text] - text color of row's head cells.
+ *             @param {Boolean} [extOptions.cell.rowHead.showVerticalBorder] - Whether vertical borders of
+ *                 row's head cells are visible.
+ *             @param {Boolean} [extOptions.cell.rowHead.showHorizontalBorder] - Whether horizontal borders of
+ *                 row's head cells are visible.
+ *         @param {Object} [extOptions.cell.selectedRowHead] - Styles for selected row's head cells.
+ *             @param {String} [extOptions.cell.selectedRowHead.background] - background color of selected row's haed cells.
+ *         @param {Object} [extOptions.cell.summary] - Styles for cells in the summary area.
+ *             @param {String} [extOptions.cell.summary.background] - Background color of cells in the summary area.
+ *             @param {String} [extOptions.cell.summary.border] - border color of cells in the summary area.
+ *             @param {String} [extOptions.cell.summary.text] - text color of cells in the summary area.
+ *             @param {Boolean} [extOptions.cell.summary.showVerticalBorder] - Whether vertical borders of
+ *                 cells in the summary area are visible.
+ *             @param {Boolean} [extOptions.cell.summary.showHorizontalBorder] - Whether horizontal borders of
+ *                 cells in the summary area are visible.
+ *         @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
+ *             @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
+ *             @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
+ *         @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
+ *             @param {String} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
+ *         @param {Object} [extOptions.cell.required] - Styles for required cells.
+ *             @param {String} [extOptions.cell.required.background] - background color of required cells.
+ *             @param {String} [extOptions.cell.required.text] - text color of required cells.
+ *         @param {Object} [extOptions.cell.editable] - Styles for editable cells.
+ *             @param {String} [extOptions.cell.editable.background] - background color of the editable cells.
+ *             @param {String} [extOptions.cell.editable.text] - text color of the selected editable cells.
+ *         @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
+ *             @param {String} [extOptions.cell.disabled.background] - background color of disabled cells.
+ *             @param {String} [extOptions.cell.disabled.text] - text color of disabled cells.
+ *         @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
+ *             @param {String} [extOptions.cell.invalid.background] - background color of invalid cells.
+ *             @param {String} [extOptions.cell.invalid.text] - text color of invalid cells.
+ *         @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
+ *             @param {String} [extOptions.cell.currentRow.background] - background color of cells in a current row.
+ *             @param {String} [extOptions.cell.currentRow.text] - text color of cells in a current row.
+ *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
+ *             @param {String} [extOptions.cell.evenRow.background] - background color of cells in even rows.
+ *             @param {String} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+ *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
+ *             @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
  * var Grid = tui.Grid; // or require('tui-grid')
  *
