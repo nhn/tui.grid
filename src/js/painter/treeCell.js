@@ -297,13 +297,18 @@ var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.p
         var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
         var shouldUpdateContent = cellData.changed.length > 0;
         var attrs = this._getAttributes(cellData);
+        var contentHtml;
 
         $td.attr(attrs);
 
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
             this._inputPainter.focus($td);
         } else if (shouldUpdateContent) {
-            $td.find(classNameConst.CELL).html(this._getContentHtml(cellData));
+            contentHtml = this._getContentHtml(cellData);
+
+            $td.find('.' + classNameConst.CELL_CONTENT).remove();
+            $td.find('.' + classNameConst.TREE_EXTRA_CONTENT).after(contentHtml);
+
             $td.scrollLeft(0);
         }
     }
