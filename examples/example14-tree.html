@@ -7,11 +7,15 @@
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
 </head>
 <body>
+<div class="explain">
+See the "tree-dummy.js" file for tree data.<br />
+The last row can test the dynamic loading function.
+</div>
+<div style="margin-bottom:10px;">
+    <button id="append">append</button>
+    <button id="remove">remove</button>
+</div>
 <div class="code-html">
-
-<button id="append">append</button>
-<button id="remove">remove</button>
-
 <div id="grid"></div>
 </div>
 </body>
@@ -68,8 +72,8 @@ function appendRows(parentRowKey, isDynamicLoaing) {
     var childrenRowData = [
         {
             id: 502796,
-            name: '3333',
-            artist: 'test333333',
+            name: 'test4',
+            artist: 'test4',
             release: '2015.05.12',
             type: 'EP',
             typeCode: '2',
@@ -82,8 +86,8 @@ function appendRows(parentRowKey, isDynamicLoaing) {
         },
         {
             id: 502790,
-            name: '000000',
-            artist: '0000000',
+            name: 'test5',
+            artist: 'test5',
             release: '2015.05.12',
             type: 'EP',
             typeCode: '2',
@@ -98,8 +102,8 @@ function appendRows(parentRowKey, isDynamicLoaing) {
 
     grid.appendRow([{
         id: 502795,
-        name: '11111111',
-        artist: 'test111111',
+        name: 'test1',
+        artist: 'test1',
         release: '2015.05.12',
         type: 'EP',
         typeCode: '2',
@@ -116,8 +120,8 @@ function appendRows(parentRowKey, isDynamicLoaing) {
     },
     {
         id: 502793,
-        name: '222222',
-        artist: 'test2222222',
+        name: 'test2',
+        artist: 'test2',
         release: '2015.05.12',
         type: 'EP',
         typeCode: '2',
@@ -130,8 +134,8 @@ function appendRows(parentRowKey, isDynamicLoaing) {
     },
     {
         id: 502797,
-        name: '777',
-        artist: 'yyyyyyyy',
+        name: 'test3',
+        artist: 'test3',
         release: '2015.05.12',
         type: 'EP',
         typeCode: '2',
