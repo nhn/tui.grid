@@ -7,6 +7,10 @@ var data = (function() {
         _.times(30, function(idx) {
             row['c' + idx] = parseInt(Math.random() * 10000000000, 10);
         });
+
+        row._extraData = {
+            treeState: 'EXPAND'
+        };
     }
 
     function addRowData() {
