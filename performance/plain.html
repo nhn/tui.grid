@@ -7,6 +7,7 @@
 </head>
 <body>
 <div class="code-html">
+    <button id="add">add</button>
     <div id="test"></div>
 </div>
 </body>
@@ -19,21 +20,23 @@
 <script src="../dist/tui-grid.js"></script>
 <script type="text/javascript" class="code-js">
 
-console.time('create grid');
-
 var grid = new tui.Grid({
     el: $('#test'),
-    rowHeight: 20,
+    rowHeight: 40,
     bodyHeight: 860,
     columnOptions: {
-      minWidth: 90
+        minWidth: 90
     },
-    data: data,
+    data: [],
     columns: columns,
     virtualScrolling: true
 });
 
-console.timeEnd('create grid');
+$('#add').on('click', function() {
+    console.time('set data');
+    grid.setData(data);
+    console.timeEnd('set data');
+});
 
 </script>
 </html>

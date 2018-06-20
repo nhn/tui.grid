@@ -3,7 +3,7 @@
 var columns = (function() {
     var columnModels = [];
 
-    _.times(30, function(idx) {
+    _.times(10, function(idx) {
         var options = {
             title: idx,
             name: 'c' + idx
