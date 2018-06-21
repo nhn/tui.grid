@@ -147,7 +147,7 @@ RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */
 
         if (scrollY && summaryHeight) {
             if (summaryPosition === summaryPositionConst.TOP) {
-                topHeight += summaryHeight;
+                topHeight += summaryHeight + dimensionConst.TABLE_BORDER_WIDTH;
             } else {
                 bottomHeight += summaryHeight;
             }
