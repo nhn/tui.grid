@@ -77,17 +77,20 @@
 
 .no-scroll-x
     .summary-area
-        margin-top -1px
+        margin-top 0
+        margin-bottom 1px
         overflow-x hidden
     .summary-area-right
         bottom 0
     &.has-summary-top
         margin-top 0
 
+
 .has-summary-top
     .summary-area
         margin-top 0
         border-top-style hidden
+        margin-bottom 0
 
 .lside-area
     display none
@@ -165,13 +168,19 @@
     border-width 1px 1px 0 1px
     z-index 19
 
-.no-scroll-x .scrollbar-right-bottom
-    height 0
+.no-scroll-x
+    .scrollbar-right-bottom
+        height 0
 
-.no-scroll-y .scrollbar-right-bottom
-    width 0
-    height 16px
-    border-left 0
+    &.has-summary-bottom
+        .scrollbar-right-bottom
+            border-bottom-width 1px
+
+.no-scroll-y
+    .scrollbar-right-bottom
+        width 0
+        height 16px
+        border-left 0
 
 .scrollbar-y-inner-border
     display block

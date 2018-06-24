@@ -68,21 +68,29 @@ ContentArea = View.extend(/** @lends module:view/layout/content-area.prototype *
             borderDIV(classNameConst.BORDER_RIGHT),
             borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
         ]);
+        var classNames = [];
 
         if (!dimensionModel.get('scrollX')) {
-            this.$el.addClass(classNameConst.NO_SCROLL_X);
-        }
-        if (!dimensionModel.get('scrollY')) {
-            this.$el.addClass(classNameConst.NO_SCROLL_Y);
-        }
-        if (dimensionModel.get('summaryHeight') &&
-            dimensionModel.get('summaryPosition') === constMap.summaryPosition.TOP) {
-            this.$el.addClass(classNameConst.HAS_SUMMARY_TOP);
-        }
-        if (dimensionModel.get('rsideWidth')) {
-            this.$el.addClass(classNameConst.SHOW_LSIDE_AREA);
+            classNames.push(classNameConst.NO_SCROLL_X);
         }
 
+        if (!dimensionModel.get('scrollY')) {
+            classNames.push(classNameConst.NO_SCROLL_Y);
+        }
+
+        if (dimensionModel.get('summaryHeight')) {
+            if (dimensionModel.get('summaryPosition') === constMap.summaryPosition.TOP) {
+                classNames.push(classNameConst.HAS_SUMMARY_TOP);
+            } else {
+                classNames.push(classNameConst.HAS_SUMMARY_BOTTOM);
+            }
+        }
+
+        if (dimensionModel.get('rsideWidth')) {
+            classNames.push(classNameConst.SHOW_LSIDE_AREA);
+        }
+
+        this.$el.addClass(classNames.join(' '));
         this.$el.append(childElements);
 
         return this;
