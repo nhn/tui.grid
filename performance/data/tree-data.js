@@ -4,15 +4,19 @@ var data = (function() {
     var rowList = [];
 
     function addColumnData(row) {
-        _.times(30, function(idx) {
+        _.times(10, function(idx) {
             row['c' + idx] = parseInt(Math.random() * 10000000000, 10);
         });
+
+        row._extraData = {
+            treeState: 'EXPAND'
+        };
     }
 
     function addRowData() {
         var parent;
 
-        _.times(100000, function(idx) {
+        _.times(200000, function(idx) {
             var row = { // depth 1
                 _children: [ // depth 2
                     {
