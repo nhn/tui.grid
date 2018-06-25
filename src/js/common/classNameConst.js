@@ -17,6 +17,7 @@ var classNames = {
     NO_SCROLL_X: 'no-scroll-x',
     NO_SCROLL_Y: 'no-scroll-y',
     HAS_SUMMARY_TOP: 'has-summary-top',
+    HAS_SUMMARY_BOTTOM: 'has-summary-bottom',
     SHOW_LSIDE_AREA: 'show-lside-area',
 
     // layer
