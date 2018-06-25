@@ -55,7 +55,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'reset', this.initializeVariables)
+            .listenTo(this.dataModel, 'reset', this._initializeScrollValues)
             .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
             .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
@@ -347,6 +347,17 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             scrollTop: 0,
             scrollLeft: 0,
             startNumber: 1
+        });
+    },
+
+    /**
+     * Initializes values of the scroll
+     * @private
+     */
+    _initializeScrollValues: function() {
+        this.set({
+            scrollTop: 0,
+            scrollLeft: 0
         });
     },
 
