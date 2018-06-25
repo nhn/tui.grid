@@ -1,8 +1,13 @@
 # ![TOAST UI Grid](https://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
-> The powerful widget to display and edit data. It's free!
+> The Powerful Widget to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest)[![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid)[![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest)[![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE)[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls)[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest)
+[![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid)
+[![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls)
+[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
 ![grid](https://user-images.githubusercontent.com/18183560/41690916-bd60db42-7532-11e8-9b0d-4ff2996aa9f0.png)
 
