@@ -98,7 +98,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
             this.update(0, columnRange[1], typeConst.COLUMN);
             this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
         } else {
-            this.minimumColumnWidth = columnRange;
+            this.minimumColumnRange = columnRange;
             this.selectColumn(columnRange[0]);
             this.update(0, columnRange[1]);
         }
