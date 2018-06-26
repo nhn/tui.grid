@@ -1,6 +1,6 @@
 # ![TOAST UI Grid](https://uicdn.toast.com/toastui/img/tui-grid-bi.png)
 
-> The Powerful Widget to Display and Edit Data. Experience the Ultimate Data Transformer!
+> The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
 [![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest)
 [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid)
@@ -48,11 +48,11 @@
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
-### Data Can Be Processed in Any Format
+### Data Can Be Display in Any Format
 
 #### Styling
 
-The TOAST UI Grid is a widget that can **display**, **edit**, **add**, and **delete** multiple data.
+The TOAST UI Grid is a component that can **display**, **edit**, **add**, and **delete** multiple data.
 You can append units to the data shown and use `html` to represent images and links instead of textual data.
 
 ![style](https://user-images.githubusercontent.com/18183560/41572390-7cbb9478-73b2-11e8-817d-eca61ee939ae.png)
