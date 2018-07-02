@@ -198,7 +198,7 @@ describe('Data.RowList - simple', function() {
         });
 
         it('데이터가 append 추가되었을때 변경사항을 감지한다.', function() {
-            rowList.append({
+            rowList.appendRow({
                 c1: '2-1',
                 c2: '2-2'
             });
@@ -218,7 +218,7 @@ describe('Data.RowList - simple', function() {
 
     describe('restore()', function() {
         beforeEach(function() {
-            rowList.append({
+            rowList.appendRow({
                 c1: '2-1',
                 c2: '2-2'
             });

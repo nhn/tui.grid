@@ -246,11 +246,12 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
+            dataModel.appendRow(rowList);
             columnModel.set('frozenCount', 3);
-            dataModel.set(rowList, {parse: true});
-            renderModel.refresh();
+
             lside = renderModel.get('partialLside');
             rside = renderModel.get('partialRside');
+
             expect(renderModel._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
             expect(renderModel._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
@@ -262,59 +263,58 @@ describe('model.renderer', function() {
         });
     });
 
-    describe('getCellData()', function() {
-        it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
-            rowList = [
-                {
-                    'columnName1': '1 normal',
-                    'columnName2': '1 text',
-                    'columnName3': 1,
-                    'columnName4': 1,
-                    'columnName5': 1,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                },
-                {
-                    'columnName1': '2 normal',
-                    'columnName2': '2 text',
-                    'columnName3': 2,
-                    'columnName4': 2,
-                    'columnName5': 2,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                },
-                {
-                    'columnName1': '3 normal',
-                    'columnName2': '3 text',
-                    'columnName3': 3,
-                    'columnName4': 3,
-                    'columnName5': 3,
-                    'columnName6': true,
-                    'columnName7': 'hidden'
-                }
-            ];
-            columnModel.set({
-                frozenCount: 3,
-                rowHeaders: ['rowNum', 'checkbox']
-            });
-            dataModel.set(rowList, {parse: true});
-            renderModel.refresh();
-
-            expect(renderModel.getCellData(0, '_number').value).toEqual(1);
-            expect(renderModel.getCellData(0, '_button').value).toEqual(false);
-            expect(renderModel.getCellData(0, 'columnName1').value).toEqual('1 normal');
-            expect(renderModel.getCellData(0, 'columnName2').value).toEqual('1 text');
-            expect(renderModel.getCellData(0, 'columnName3').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName4').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName5').value).toEqual(1);
-            expect(renderModel.getCellData(0, 'columnName6').value).toEqual(true);
+    it('getCellData() columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
+        rowList = [
+            {
+                'columnName1': '1 normal',
+                'columnName2': '1 text',
+                'columnName3': 1,
+                'columnName4': 1,
+                'columnName5': 1,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            },
+            {
+                'columnName1': '2 normal',
+                'columnName2': '2 text',
+                'columnName3': 2,
+                'columnName4': 2,
+                'columnName5': 2,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            },
+            {
+                'columnName1': '3 normal',
+                'columnName2': '3 text',
+                'columnName3': 3,
+                'columnName4': 3,
+                'columnName5': 3,
+                'columnName6': true,
+                'columnName7': 'hidden'
+            }
+        ];
+        spyOn(renderModel.coordRowModel, 'getHeightAt').and.returnValue(1);
+        dataModel.appendRow(rowList);
+        columnModel.set({
+            frozenCount: 3,
+            rowHeaders: ['rowNum', 'checkbox']
         });
+
+        expect(renderModel.getCellData(0, '_number').value).toEqual(1);
+        expect(renderModel.getCellData(0, '_button').value).toEqual(false);
+        expect(renderModel.getCellData(0, 'columnName1').value).toEqual('1 normal');
+        expect(renderModel.getCellData(0, 'columnName2').value).toEqual('1 text');
+        expect(renderModel.getCellData(0, 'columnName3').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName4').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName5').value).toEqual(1);
+        expect(renderModel.getCellData(0, 'columnName6').value).toEqual(true);
     });
 
     describe('refresh()', function() {
         beforeEach(function() {
+            spyOn(renderModel.coordRowModel, 'getHeightAt').and.returnValue(1);
+            dataModel.appendRow(rowList);
             columnModel.set('frozenCount', 3);
-            dataModel.set(rowList, {parse: true});
         });
 
         describe('lside 와 rside 에 해당하는 데이터가 할당되었는지 확인한다.', function() {
@@ -369,7 +369,7 @@ describe('model.renderer', function() {
                 listenModel = new Model();
             });
 
-            it('데이터가 변경되었을 경우 dataModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
+            it('데이터가 변경되었을 경우 rowListChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
                 renderModel = new Renderer(null, {
@@ -381,14 +381,14 @@ describe('model.renderer', function() {
                     coordColumnModel: coordColumnModel
                 });
                 listenModel.listenTo(renderModel, 'rowListChanged', callback);
-                dataModel.set([], {parse: true});
+                dataModel.appendRow([]);
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();
                     done();
                 }, 100);
             });
 
-            it('컬럼 모델이 변경되었을 경우 isColumnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
+            it('컬럼 모델이 변경되었을 경우 columnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
                 renderModel = new Renderer(null, {

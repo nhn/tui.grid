@@ -19,7 +19,7 @@ var defaultRowHeaders = {
         name: '_number',
         align: 'center',
         fixedWidth: true,
-        width: 60,
+        width: 50,
         hidden: false
     },
     checkbox: {
@@ -28,7 +28,7 @@ var defaultRowHeaders = {
         name: '_button',
         align: 'center',
         fixedWidth: true,
-        width: 40,
+        width: 50,
         hidden: false,
         editOptions: {
             type: 'mainButton'
@@ -40,7 +40,7 @@ var defaultRowHeaders = {
         name: '_button',
         align: 'center',
         fixedWidth: true,
-        width: 40,
+        width: 50,
         hidden: false,
         editOptions: {
             type: 'mainButton'
@@ -78,6 +78,11 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
         complexHeaderColumns: [],
         copyOptions: {
             useFormattedValue: false
+        },
+        treeColumnOptions: {
+            name: null,
+            useIcon: true,
+            useCascadingCheckbox: true
         }
     },
 
@@ -198,6 +203,43 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     isTextType: function(columnName) {
         return !!this.textType[this.getEditType(columnName)];
+    },
+
+    /**
+     * test the column with given name is a tree column
+     * @param {String} columnName column name to test
+     * @returns {boolean} true if the column is tree column
+     */
+    isTreeType: function(columnName) {
+        return this.get('treeColumnOptions').name === columnName;
+    },
+
+    /**
+     * test if any one of columns has a tree column
+     * @returns {boolean} true if it has a tree column
+     */
+    hasTreeColumn: function() {
+        return snippet.isString(this.get('treeColumnOptions').name);
+    },
+
+    /**
+     * gets treeColumnOptions.useIcon
+     * @returns {boolean} whether use tree icon
+     */
+    useTreeIcon: function() {
+        var useIcon = this.get('treeColumnOptions').useIcon;
+
+        return _.isUndefined(useIcon) ? true : useIcon;
+    },
+
+    /**
+     * Get cascade usage in the tree-grid's checkbox
+     * @returns {boolean} Whether using the cascading checkbox or not
+     */
+    useCascadingCheckbox: function() {
+        var useCascadingCheckbox = this.get('treeColumnOptions').useCascadingCheckbox;
+
+        return _.isUndefined(useCascadingCheckbox) ? true : useCascadingCheckbox;
     },
 
     /**
@@ -472,6 +514,14 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      */
     setSummaryContent: function(columnName, contents) {
         this.trigger('setSummaryContent', columnName, contents);
+    },
+
+    /**
+     * Get name of tree column
+     * @returns {string} column name
+     */
+    getTreeColumnName: function() {
+        return this.get('treeColumnOptions').name;
     }
 });
 

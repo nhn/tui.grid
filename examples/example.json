@@ -37,5 +37,8 @@
     },
     "example13-i18n": {
         "title": "13. Internationalization (i18n)"
+    },
+    "example14-tree": {
+        "title": "14. Using tree column"
     }
 }

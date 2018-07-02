@@ -628,28 +628,6 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
     },
 
     /**
-     * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
-     * @param {number} offset   이동할 offset
-     * @returns {Number} 이동한 위치의 row index
-     */
-    nextRowIndex: function(offset) {
-        var rowKey = this.nextRowKey(offset);
-
-        return this.dataModel.indexOfRowKey(rowKey);
-    },
-
-    /**
-     * offset 만큼 앞으로 이동한 row의 index를 반환한다.
-     * @param {number} offset 이동할 offset
-     * @returns {Number} 이동한 위치의 row index
-     */
-    prevRowIndex: function(offset) {
-        var rowKey = this.prevRowKey(offset);
-
-        return this.dataModel.indexOfRowKey(rowKey);
-    },
-
-    /**
      * 다음 컬럼의 인덱스를 반환한다.
      * @returns {Number} 다음 컬럼의 index
      */
@@ -681,14 +659,17 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         var count, rowSpanData;
 
         offset = (typeof offset === 'number') ? offset : 1;
+
         if (offset > 1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData.isMainRow && rowSpanData.count > 0) {
                 rowKey = this._findRowKey(rowSpanData.count);
             } else if (rowSpanData && !rowSpanData.isMainRow) {
@@ -696,7 +677,8 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
                 rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
                 rowKey = this._findRowKey(rowSpanData.count + count);
             } else {
-                rowKey = this._findRowKey(1);
+                offset = this.coordRowModel.getNextOffset(rowKey);
+                rowKey = this._findRowKey(offset);
             }
         }
 
@@ -720,15 +702,18 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
         if (offset < -1) {
             rowKey = this._findRowKey(offset);
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count + offset);
             }
         } else {
             rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
             if (rowSpanData && !rowSpanData.isMainRow) {
                 rowKey = this._findRowKey(rowSpanData.count - 1);
             } else {
-                rowKey = this._findRowKey(-1);
+                offset = this.coordRowModel.getPreviousOffset(rowKey);
+                rowKey = this._findRowKey(offset);
             }
         }
 

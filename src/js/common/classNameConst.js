@@ -16,11 +16,9 @@ var classNames = {
     // common
     NO_SCROLL_X: 'no-scroll-x',
     NO_SCROLL_Y: 'no-scroll-y',
-
-    // icon
-    ICO_ARROW: 'icon-arrow',
-    ICO_ARROW_LEFT: 'icon-arrow-left',
-    ICO_ARROW_RIGHT: 'icon-arrow-right',
+    HAS_SUMMARY_TOP: 'has-summary-top',
+    HAS_SUMMARY_BOTTOM: 'has-summary-bottom',
+    SHOW_LSIDE_AREA: 'show-lside-area',
 
     // layer
     LAYER_STATE: 'layer-state',
@@ -47,12 +45,7 @@ var classNames = {
     HEAD_AREA: 'head-area',
     BODY_AREA: 'body-area',
     SUMMARY_AREA: 'summary-area',
-    SUMMARY_AREA_TOP: 'summary-area-top',
-    SUMMARY_AREA_BOTTOM: 'summary-area-bottom',
-    SUMMARY_AREA_RIGHT: 'summary-area-right',
-    SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
-    SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
-
+    FROZEN_BORDER: 'frozen-border',
     FROZEN_BORDER_TOP: 'frozen-border-top',
     FROZEN_BORDER_BOTTOM: 'frozen-border-bottom',
 
@@ -66,21 +59,15 @@ var classNames = {
     BODY_TABLE_CONTAINER: 'table-container',
 
     // scrollbar
-    SCROLLBAR_HEAD: 'scrollbar-head',
-    SCROLLBAR_BORDER: 'scrollbar-border',
+    SCROLLBAR_RIGHT_TOP: 'scrollbar-right-top',
+    SCROLLBAR_Y_INNER_BORDER: 'scrollbar-y-inner-border',
+    SCROLLBAR_Y_OUTER_BORDER: 'scrollbar-y-outer-border',
+    SCROLLBAR_FROZEN_BORDER: 'scrollbar-frozen-border',
     SCROLLBAR_RIGHT_BOTTOM: 'scrollbar-right-bottom',
     SCROLLBAR_LEFT_BOTTOM: 'scrollbar-left-bottom',
 
     // pagination
     PAGINATION: 'pagination',
-    PAGINATION_PRE: 'pre',
-    PAGINATION_PRE_OFF: 'pre-off',
-    PAGINATION_PRE_END: 'pre-end',
-    PAGINATION_PRE_END_OFF: 'pre-end-off',
-    PAGINATION_NEXT: 'next',
-    PAGINATION_NEXT_OFF: 'next-off',
-    PAGINATION_NEXT_END: 'next-end',
-    PAGINATION_NEXT_END_OFF: 'next-end-off',
 
     // table
     TABLE: 'table',
@@ -92,6 +79,8 @@ var classNames = {
     // cell style
     CELL: 'cell',
     CELL_HEAD: 'cell-head',
+    CELL_ROW_HEAD: 'cell-row-head',
+    CELL_SUMMARY: 'cell-summary',
     CELL_ROW_ODD: 'cell-row-odd',
     CELL_ROW_EVEN: 'cell-row-even',
     CELL_EDITABLE: 'cell-editable',
@@ -103,6 +92,8 @@ var classNames = {
     CELL_ELLIPSIS: 'cell-ellipsis',
     CELL_CURRENT_ROW: 'cell-current-row',
     CELL_MAIN_BUTTON: 'cell-main-button',
+    CELL_HAS_INPUT: 'cell-has-input',
+    CELL_HAS_TREE: 'cell-has-tree',
 
     // cell content
     CELL_CONTENT: 'cell-content',
@@ -120,19 +111,20 @@ var classNames = {
     BTN_EXCEL_ICON: 'btn-excel-icon',
     BTN_EXCEL_PAGE: 'btn-excel-page',
     BTN_EXCEL_ALL: 'btn-excel-all',
+    BTN_TREE: 'btn-tree',
 
     // height resize handle
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
     HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
 
-    // etc
-    CALENDAR: 'calendar',
-    CALENDAR_BTN_PREV_YEAR: 'calendar-btn-prev-year',
-    CALENDAR_BTN_NEXT_YEAR: 'calendar-btn-next-year',
-    CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
-    CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
-    CALENDAR_SELECTABLE: 'calendar-selectable',
-    CALENDAR_SELECTED: 'calendar-selected'
+    // tree column
+    TREE_WARPPER_RELATIVE: 'tree-wrapper-relative',
+    TREE_WARPPER_VALIGN_CENTER: 'tree-wrapper-valign-center',
+    TREE_EXTRA_CONTENT: 'tree-extra-content',
+    TREE_DEPTH: 'tree-depth',
+    TREE_BUTTON_EXPAND: 'tree-button-expand',
+    TREE_BUTTON_COLLAPSE: 'tree-button-collapse',
+    TREE_ICON: 'tree-icon'
 };
 
 var exports = _.mapObject(classNames, function(className) {

@@ -39,9 +39,9 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        '<%=rowKeyAttr%>" ' +
+        '<%=rowKeyAttr%> ' +
         'class="<%=className%>" ' +
-        'style="height: <%=height%>px;">' +
+        'style="height:<%=height%>px;">' +
         '<%=contents%>' +
         '</tr>'
     ),
@@ -58,6 +58,24 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
         var editType = snippet.pick(cellData.columnModel, 'editOptions', 'type');
 
         return editType || 'normal';
+    },
+
+    /**
+     * Get cell painter by value
+     * @param {boolean} treeCell - Whether the current cell is tree-cell or not
+     * @param {string} editType - When the current cell is normal, the cell type is selected
+     * @returns {object} cell painter
+     */
+    _getCellPainter: function(treeCell, editType) {
+        var cellPainter;
+
+        if (treeCell) {
+            cellPainter = this.painterManager.getTreeCellPainter();
+        } else {
+            cellPainter = this.painterManager.getCellPainter(editType);
+        }
+
+        return cellPainter;
     },
 
     /**
@@ -90,11 +108,14 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
 
         _.each(columnNames, function(columnName) {
             var cellData = model.get(columnName);
-            var editType, cellPainter;
+            var treeCell, editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
+                treeCell = !!cellData.tree;
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+
+                cellPainter = this._getCellPainter(treeCell, editType);
+
                 html += cellPainter.generateHtml(cellData);
             }
         }, this);
@@ -104,8 +125,8 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
 
     /**
      * Returns the HTML string of all cells in the given model (row).
-     * @param  {module:model/row} model - View model instance
-     * @param  {Array.<String>} columnNames - An array of column names
+     * @param {module:model/row} model - View model instance
+     * @param {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      */
     generateHtml: function(model, columnNames) {
@@ -137,12 +158,14 @@ var RowPainter = snippet.defineClass(Painter, /** @lends module:painter/row.prot
      */
     refresh: function(changed, $tr) {
         _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter, $td;
+            var treeCell, editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
                 $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
                 editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
+                treeCell = !!cellData.tree;
+
+                cellPainter = this._getCellPainter(treeCell, editType);
                 cellPainter.refresh(cellData, $td);
             }
         }, this);

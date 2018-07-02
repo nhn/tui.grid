@@ -5,7 +5,6 @@
 
 'use strict';
 
-var $ = require('jquery');
 var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 
@@ -31,6 +30,7 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
         var renderModel = options.renderModel;
         var selectionModel = options.selectionModel;
         var coordRowModel = options.coordRowModel;
+        var dataModel = options.dataModel;
         var whichSide = options.whichSide || 'R';
 
         _.assign(this, {
@@ -40,7 +40,7 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
             renderModel: renderModel,
             selectionModel: selectionModel,
             coordRowModel: coordRowModel,
-            dataModel: options.dataModel,
+            dataModel: dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
             painterManager: options.painterManager,
@@ -125,9 +125,10 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter();
         var columnNames = _.pluck(this._getColumns(), 'name');
+        var hasTreeColumn = this.columnModel.hasTreeColumn();
 
         return _.map(rows, function(row) {
-            return rowPainter.generateHtml(row, columnNames);
+            return rowPainter.generateHtml(row, columnNames, hasTreeColumn);
         }).join('');
     },
 
@@ -147,57 +148,62 @@ var RowList = View.extend(/** @lends module:view/rowList.prototype */{
      */
     _refreshSelectedMetaColumns: function() {
         var $rows = this.$el.find('tr');
-        var metaSelector = '.' + classNameConst.CELL_HEAD;
-        var $filteredRows;
+        var metaSelector = '.' + classNameConst.CELL_ROW_HEAD;
+        var filteredRowList;
 
         if (this.selectionModel.hasSelection()) {
-            $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
+            filteredRowList = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
         } else {
-            $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
+            filteredRowList = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
         $rows.find(metaSelector).removeClass(classNameConst.CELL_SELECTED);
-        $filteredRows.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+
+        _.each(filteredRowList, function($row) {
+            $row.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+        });
     },
 
     /**
      * Filters the rows by given range(index) and returns them.
      * @param {jQuery} $rows - rows (tr elements)
      * @param {Array.<Number>} rowRange - [startIndex, endIndex]
-     * @returns {jQuery}
+     * @returns {Array.<jQuery>}
      * @private
      */
     _filterRowsByIndexRange: function($rows, rowRange) {
-        var renderModel = this.renderModel;
-        var renderStartIndex = renderModel.get('startIndex');
-        var startIndex, endIndex;
+        var index = rowRange[0];
+        var len = rowRange[1] + 1;
+        var rowList = [];
+        var rowKey;
 
-        startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
-        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
-
-        if (!startIndex && !endIndex) {
-            return $();
+        for (; index < len; index += 1) {
+            if (this.coordRowModel.getHeightAt(index)) {
+                rowKey = this.dataModel.at(index).get('rowKey');
+                rowList.push(this._getRowElement(rowKey));
+            }
         }
 
-        return $rows.slice(startIndex, endIndex);
+        return rowList;
     },
 
     /**
      * Filters the row by given rowKey
      * @param {jQuery} $rows - rows (tr elements)
      * @param {Number} rowKey - rowKey
-     * @returns {jQuery}
+     * @returns {Array.<jQuery>}
      * @private
      */
     _filterRowByKey: function($rows, rowKey) {
         var rowIndex = this.dataModel.indexOfRowKey(rowKey);
         var renderStartIndex = this.renderModel.get('startIndex');
+        var rowList = [];
 
         if (renderStartIndex > rowIndex) {
-            return $();
+            return rowList;
         }
 
-        return $rows.eq(rowIndex - renderStartIndex);
+        return rowList.push($rows.eq(rowIndex - renderStartIndex));
     },
 
     /**

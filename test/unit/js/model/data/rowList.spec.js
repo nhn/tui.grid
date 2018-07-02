@@ -1537,10 +1537,10 @@ describe('data.rowList', function() {
 
             it('at 옵션을 주지 않았을 경우 맨 뒤에 추가된다.', function() {
                 setDefaultRowList();
-                dataModelInstance.append({text: '6'});
+                dataModelInstance.appendRow({text: '6'});
                 expect(dataModelInstance.length).toBe(length + 1);
 
-                dataModelInstance.append({text: '7'});
+                dataModelInstance.appendRow({text: '7'});
                 expect(dataModelInstance.length).toBe(length + 2);
                 expect(dataModelInstance.at(4).get('text')).toEqual('5');
                 expect(dataModelInstance.at(5).get('text')).toEqual('6');
@@ -1549,10 +1549,10 @@ describe('data.rowList', function() {
 
             it('at 옵션이 있을 경우 해당 위치에 추가된다.', function() {
                 setDefaultRowList();
-                dataModelInstance.append({text: '6'}, {at: 1});
+                dataModelInstance.appendRow({text: '6'}, {at: 1});
                 expect(dataModelInstance.at(1).get('text')).toEqual('6');
 
-                dataModelInstance.append({text: '7'}, {at: 1});
+                dataModelInstance.appendRow({text: '7'}, {at: 1});
                 expect(dataModelInstance.at(0).get('text')).toEqual('1');
                 expect(dataModelInstance.at(1).get('text')).toEqual('7');
                 expect(dataModelInstance.at(2).get('text')).toEqual('6');
@@ -1564,10 +1564,10 @@ describe('data.rowList', function() {
 
             it('keyColumn 이 없을 경우 rowKey 는 자동으로 생성된다.', function() {
                 setDefaultRowList();
-                dataModelInstance.append({text: '6'}, {at: 1});
+                dataModelInstance.appendRow({text: '6'}, {at: 1});
                 expect(dataModelInstance.at(1).get('text')).toEqual('6');
 
-                dataModelInstance.append({text: '7'}, {at: 1});
+                dataModelInstance.appendRow({text: '7'}, {at: 1});
                 expect(dataModelInstance.at(1).get('rowKey')).toEqual(6);
                 expect(dataModelInstance.at(2).get('rowKey')).toEqual(5);
             });
@@ -1575,16 +1575,16 @@ describe('data.rowList', function() {
             it('keyColumn 이 설정되어 있을 경우, keyColumn 으로 설정된다.', function() {
                 columnModelInstance.set('keyColumnName', 'text');
                 setDefaultRowList();
-                dataModelInstance.append({text: '6'}, {at: 1});
+                dataModelInstance.appendRow({text: '6'}, {at: 1});
                 expect(dataModelInstance.at(1).get('text')).toEqual('6');
 
-                dataModelInstance.append({text: '7'}, {at: 1});
+                dataModelInstance.appendRow({text: '7'}, {at: 1});
                 expect(dataModelInstance.at(1).get('rowKey')).toEqual('7');
                 expect(dataModelInstance.at(2).get('rowKey')).toEqual('6');
             });
         });
 
-        describe('prepend() 는 append 를 이용하므로 간단하게 테스트한다.', function() {
+        describe('prependRow() 는 append 를 이용하므로 간단하게 테스트한다.', function() {
             it('상단에 추가되는지 확인한다.', function() {
                 var length;
 
@@ -1602,12 +1602,12 @@ describe('data.rowList', function() {
 
                 length = dataModelInstance.length;
 
-                dataModelInstance.prepend({
+                dataModelInstance.prependRow({
                     text: '0'
                 });
                 expect(dataModelInstance.length).toBe(length + 1);
 
-                dataModelInstance.prepend({
+                dataModelInstance.prependRow({
                     text: '-1'
                 });
                 expect(dataModelInstance.length).toBe(length + 2);
@@ -1621,15 +1621,15 @@ describe('data.rowList', function() {
         describe('getModifiedRows()', function() {
             var sampleRowList;
 
-            function append() {
-                dataModelInstance.append({
+            function appendRow() {
+                dataModelInstance.appendRow({
                     'none': 'none_appended',
                     'text': 'text_appended',
                     'hidden': 'hidden_appended'
                 });
             }
-            function prepend() {
-                dataModelInstance.prepend({
+            function prependRow() {
+                dataModelInstance.prependRow({
                     'none': 'none_prepended',
                     'text': 'text_prepended',
                     'hidden': 'hidden_prepended'
@@ -1662,8 +1662,8 @@ describe('data.rowList', function() {
                 });
             }
             function messUp() {
-                append();
-                prepend();
+                appendRow();
+                prependRow();
                 spoil(0);
                 spoil(1);
                 remove(2);
@@ -1824,8 +1824,8 @@ describe('data.rowList', function() {
 
                 it('추가 사항이 있을 경우 createdRows 에 추가하여 반환한다.', function() {
                     var modifiedList;
-                    append();
-                    prepend();
+                    appendRow();
+                    prependRow();
 
                     modifiedList = getModifiedList();
 

@@ -79,7 +79,7 @@ describe('RowData', function() {
             rowList = new RowListData(null, {
                 columnModel: columnModel
             });
-            row = rowList.append({})[0];
+            row = rowList.appendRow({})[0];
         });
 
         describe('Returns array of className', function() {
@@ -142,7 +142,7 @@ describe('RowData', function() {
 
         describe('if data is empty', function() {
             beforeEach(function() {
-                row = rowList.append({c1: ''})[0];
+                row = rowList.appendRow({c1: ''})[0];
             });
 
             it('add \'invalid\' className to the cell', function() {
@@ -157,7 +157,7 @@ describe('RowData', function() {
 
         describe('if data is not empty', function() {
             beforeEach(function() {
-                row = rowList.append({c1: 'hello'})[0];
+                row = rowList.appendRow({c1: 'hello'})[0];
             });
 
             it('remove \'invalid\' className from the cell', function() {

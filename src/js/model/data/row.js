@@ -144,7 +144,7 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
      * @private
      */
     _onChange: function() {
-        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+        var publicChanged = _.omit(this.changed, this.getPrivateProperties());
 
         if (_.has(this.changed, '_button')) {
             this._triggerCheckboxChangeEvent(this.changed._button);
@@ -313,12 +313,16 @@ var Row = Model.extend(/** @lends module:model/data/row.prototype */{
             classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {
-            classNameList.push(classNameConst.CELL_HEAD);
+            classNameList.push(classNameConst.CELL_ROW_HEAD);
         } else if (cellState.editable) {
             classNameList.push(classNameConst.CELL_EDITABLE);
         }
         if (cellState.disabled) {
             classNameList.push(classNameConst.CELL_DISABLED);
+        }
+
+        if (snippet.pick(columnModel, 'editOptions', 'useViewMode') === false) {
+            classNameList.push(classNameConst.CELL_HAS_INPUT);
         }
 
         return this._makeUniqueStringArray(classNameList);

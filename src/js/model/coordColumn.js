@@ -132,6 +132,7 @@ var CoordColumn = Model.extend(/** @lends module:model/coordColumn.prototype */{
      */
     _setColumnWidthVariables: function(widths, saveWidths) {
         var totalWidth = this.dimensionModel.get('width');
+        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
         var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
         var frozenCount = this.columnModel.getVisibleFrozenCount(true);
         var rsideWidth, lsideWidth, lsideWidths, rsideWidths;
@@ -152,7 +153,7 @@ var CoordColumn = Model.extend(/** @lends module:model/coordColumn.prototype */{
         });
         this.dimensionModel.set({
             rsideWidth: rsideWidth,
-            lsideWidth: lsideWidth
+            lsideWidth: lsideWidth - frozenBorderWidth
         });
 
         if (saveWidths) {

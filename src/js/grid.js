@@ -29,15 +29,18 @@ var instanceMap = {};
 /**
  * Grid public API
  * @class Grid
- * @param {object} options
+ * @param {Object} options
  *      @param {Array} [options.data] - Grid data for making rows.
  *      @param {Object} [options.header] - Options object for header.
- *      @param {number} [options.header.height=35] - The height of the header area.
- *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
+ *      @param {number} [options.header.height=40] - The height of the header area.
+ *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
+ *      @param {boolean} [options.virtualScrolling=false] - If set to true, use virtual-scrolling so that large
+ *          amount of data can be processed performantly. When using this option that sets true, the rowHeight option
+ *          must set value.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
- *      @param {number} [options.minRowHeight=27] - The minimum height of each rows. When this value is larger than
+ *      @param {number} [options.minRowHeight=40] - The minimum height of each rows. When this value is larger than
  *          the row's height, it set to the row's height.
  *      @param {string|number} [options.bodyHeight] - The height of body area. The default value is 'auto',
  *          the height of body area expands to total height of rows. If set to 'fitToParent', the height of the grid
@@ -53,13 +56,17 @@ var instanceMap = {};
  *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
  *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
  *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
+ *      @param {Object} [options.treeColumnOptions] - Option object for the tree column.
+ *      @param {string} [options.treeColumnOptions.name] - The name of column that makes tree column.
+ *      @param {boolean} [options.treeColumnOptions.useIcon=true] - If set to true, the folder or file icon is created on
+ *          the left side of the tree cell data.
+ *      @param {boolean} [options.treeColumnOptions.useCascadingCheckbox] - If set to true, a cascading relationship is
+ *          created in the checkbox between parent and child rows.
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
- *      @param {boolean} [options.virtualScrolling=true] - If set to true, use virtual-scrolling so that large
- *          amount of data can be processed performantly.
  *      @param {boolean} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
  *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
@@ -68,17 +75,17 @@ var instanceMap = {};
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
- *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
+ *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
  *          If set to null or false, pagination will not be used.
- *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
- *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
+ *      @param {string} [options.selectionUnit='cell'] - The unit of selection on Grid. ('cell', 'row')
+ *      @param {Array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
  *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
  *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
  *          @param {number} [options.rowHeaders.width] - The width of the row header.
  *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
  *              the row header. This function takes a parameter an K-V object as a parameter to match template values.
- *      @param {array} options.columns - The configuration of the grid columns.
+ *      @param {Array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
  *              for overflowing content.
@@ -149,7 +156,7 @@ var instanceMap = {};
  *              @param {function} [options.columns.copyOptions.customValue] - Whether to use
  *                  customized value from "customValue" callback or original values as a string to be copied to the clipboard
  *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
- *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
+ *              @param {Array} [options.columns.relations.targetNames] - Array of the names of target columns.
  *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
  *                  will be disabled.
  *              @param {function} [options.columns.relations.editable] - If returns true, target columns
@@ -169,6 +176,7 @@ var instanceMap = {};
  *                  creating the component
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
+ *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
  *          @param {Object.<string, Object>} [options.summary.columnContent]
  *              The object for configuring each column in the summary.
  *              Sub options below are keyed by each column name.
@@ -176,17 +184,6 @@ var instanceMap = {};
  *                  If set to true, the summary value of each column is served as a paramater to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
- *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
- *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- *      @param {Object} [options.footer] - Deprecated: The object for configuring summary area. This option is replaced by "summary" option.
- *          @param {number} [options.footer.height] - Deprecated: The height of the summary area.
- *          @param {Object.<string, Object>} [options.footer.columnContent]
- *              Deprecated: The object for configuring each column in the summary.
- *                          Sub options below are keyed by each column name.
- *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
- *                  Deprecated: If set to true, the summary value of each column is served as a paramater to the template
- *                              function whenever data is changed.
- *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
@@ -337,7 +334,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Disables the row identified by the rowkey.
-     * @param {(number|string)} rowKey - The unique key of the target row
+     * @param {number|string} rowKey - The unique key of the target row
      */
     disableRow: function(rowKey) {
         this.modelManager.dataModel.disableRow(rowKey);
@@ -345,7 +342,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Enables the row identified by the rowKey.
-     * @param {(number|string)} rowKey - The unique key of the target row
+     * @param {number|string} rowKey - The unique key of the target row
      */
     enableRow: function(rowKey) {
         this.modelManager.dataModel.enableRow(rowKey);
@@ -353,10 +350,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns the value of the cell identified by the rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the target row.
+     * @param {number|string} rowKey - The unique key of the target row.
      * @param {string} columnName - The name of the column
      * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-     * @returns {(number|string)} - The value of the cell
+     * @returns {number|string} - The value of the cell
      */
     getValue: function(rowKey, columnName, isOriginal) {
         return this.modelManager.dataModel.getValue(rowKey, columnName, isOriginal);
@@ -374,9 +371,9 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns the object that contains all values in the specified row.
-     * @param {(number|string)} rowKey - The unique key of the target row
+     * @param {number|string} rowKey - The unique key of the target row
      * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
+     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRow: function(rowKey, isJsonString) {
         return this.modelManager.dataModel.getRowData(rowKey, isJsonString);
@@ -385,7 +382,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     /**
      * Returns the object that contains all values in the row at specified index.
      * @param {number} index - The index of the row
-     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
@@ -419,7 +416,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns the jquery object of the cell identified by the rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @returns {jQuery} - The jquery object of the cell element
      */
@@ -429,9 +426,9 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
-     * @param {(number|string)} columnValue - The value to be set
+     * @param {number|string} columnValue - The value to be set
      */
     setValue: function(rowKey, columnName, columnValue) {
         this.modelManager.dataModel.setValue(rowKey, columnName, columnValue);
@@ -440,15 +437,15 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     /**
      * Sets the all values in the specified column.
      * @param {string} columnName - The name of the column
-     * @param {(number|string)} columnValue - The value to be set
-     * @param {Boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
+     * @param {number|string} columnValue - The value to be set
+     * @param {boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
      */
     setColumnValues: function(columnName, columnValue, isCheckCellState) {
         this.modelManager.dataModel.setColumnValues(columnName, columnValue, isCheckCellState);
     },
 
     /**
-     * Replace all rows with the specified list. This will not change the original data.
+     * Replaces all rows with the specified list. This will not change the original data.
      * @param {Array} data - A list of new rows
      */
     resetData: function(data) {
@@ -456,7 +453,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Replace all rows with the specified list. This will change the original data.
+     * Replaces all rows with the specified list. This will change the original data.
      * @param {Array} data - A list of new rows
      * @param {function} callback - The function that will be called when done.
      */
@@ -474,7 +471,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
@@ -485,7 +482,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column.
-     * @param {(number|string)} rowIndex - The index of the row
+     * @param {number|string} rowIndex - The index of the row
      * @param {string} columnIndex - The index of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
@@ -495,7 +492,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
@@ -505,7 +502,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
-     * @param {(number|string)} rowIndex - The index of the row
+     * @param {number|string} rowIndex - The index of the row
      * @param {string} columnIndex - The index of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
@@ -536,7 +533,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Checks the row identified by the specified rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      */
     check: function(rowKey) {
         this.modelManager.dataModel.check(rowKey);
@@ -551,7 +548,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Unchecks the row identified by the specified rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      */
     uncheck: function(rowKey) {
         this.modelManager.dataModel.uncheck(rowKey);
@@ -566,8 +563,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Removes the row identified by the specified rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
-     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {boolean|object} [options] - Options. If the type is boolean, this value is equivalent to
      *     options.removeOriginalData.
      * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
      * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
@@ -606,7 +603,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Enables the row identified by the rowKey to be able to check.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      */
     enableCheck: function(rowKey) {
         this.modelManager.dataModel.enableCheck(rowKey);
@@ -614,7 +611,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Disables the row identified by the spcified rowKey to not be abled to check.
-     * @param {(number|string)} rowKey - The unique keyof the row.
+     * @param {number|string} rowKey - The unique keyof the row.
      */
     disableCheck: function(rowKey) {
         this.modelManager.dataModel.disableCheck(rowKey);
@@ -622,7 +619,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns a list of the rowKey of checked rows.
-     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeys: function(isJsonString) {
@@ -634,7 +631,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns a list of the checked rows.
-     * @param {Boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
+     * @param {boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRows: function(useJson) {
@@ -668,26 +665,28 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Insert the new row with specified data to the end of table.
-     * @param {object} [row] - The data for the new row
-     * @param {object} [options] - Options
+     * Inserts the new row with specified data to the end of table.
+     * @param {Object} [row] - The data for the new row
+     * @param {Object} [options] - Options
      * @param {number} [options.at] - The index at which new row will be inserted
      * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
      *        has a rowspan data, the new row will extend the existing rowspan data.
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
+     * @param {number} [options.offset] - Tree offset from first sibling
      */
     appendRow: function(row, options) {
-        this.modelManager.dataModel.append(row, options);
+        this.modelManager.dataModel.appendRow(row, options);
     },
 
     /**
-     * Insert the new row with specified data to the beginning of table.
-     * @param {object} [row] - The data for the new row
-     * @param {object} [options] - Options
+     * Inserts the new row with specified data to the beginning of table.
+     * @param {Object} [row] - The data for the new row
+     * @param {Object} [options] - Options
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
     prependRow: function(row, options) {
-        this.modelManager.dataModel.prepend(row, options);
+        this.modelManager.dataModel.prependRow(row, options);
     },
 
     /**
@@ -732,9 +731,9 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Create an specified AddOn and use it on this instance.
+     * Creates an specified AddOn and use it on this instance.
      * @param {string} name - The name of the AddOn to use.
-     * @param {object} options - The option objects for configuring the AddON.
+     * @param {Object} options - The option objects for configuring the AddON.
      * @returns {tui.Grid} - This instance.
      */
     use: function(name, options) {
@@ -779,7 +778,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Get state of the sorted column in rows
+     * Gets state of the sorted column in rows
      * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
      */
     getSortState: function() {
@@ -788,7 +787,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Adds the specified css class to cell element identified by the rowKey and className
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {string} className - The css class name to add
      */
@@ -798,7 +797,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Adds the specified css class to all cell elements in the row identified by the rowKey
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} className - The css class name to add
      */
     addRowClassName: function(rowKey, className) {
@@ -807,7 +806,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Removes the specified css class from the cell element indentified by the rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {string} className - The css class name to be removed
      */
@@ -817,7 +816,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} className - The css class name to be removed
      */
     removeRowClassName: function(rowKey, className) {
@@ -826,7 +825,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Returns the rowspan data of the cell identified by the rowKey and columnName.
-     * @param {(number|string)} rowKey - The unique key of the row
+     * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @returns {Object} - Row span data
      */
@@ -853,15 +852,15 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Returns an instance of tui.component.Pagination.
-     * @returns {tui.component.Pagination}
+     * Returns an instance of tui.Pagination.
+     * @returns {tui.Pagination}
      */
     getPagination: function() {
         return this.componentHolder.getInstance('pagination');
     },
 
     /**
-     * Set the width of the dimension.
+     * Sets the width of the dimension.
      * @param {number} width - The width of the dimension
      */
     setWidth: function(width) {
@@ -869,7 +868,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Set the height of the dimension.
+     * Sets the height of the dimension.
      * @param {number} height - The height of the dimension
      */
     setHeight: function(height) {
@@ -877,21 +876,21 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Refresh the layout view. Use this method when the view was rendered while hidden.
+     * Refreshs the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
         this.modelManager.dimensionModel.refreshLayout();
     },
 
     /**
-     * Reset the width of each column by using initial setting of column models.
+     * Resets the width of each column by using initial setting of column models.
      */
     resetColumnWidths: function() {
         this.modelManager.coordColumnModel.resetColumnWidths();
     },
 
     /**
-     * Show columns
+     * Shows columns
      * @param {...string} arguments - Column names to show
      */
     showColumn: function() {
@@ -900,7 +899,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Hide columns
+     * Hides columns
      * @param {...string} arguments - Column names to hide
      */
     hideColumn: function() {
@@ -963,9 +962,9 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Find rows by conditions
-     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
-     * @returns {array} Row list
+     * Finds rows by conditions
+     * @param {Object} conditions - K-V object to find rows (K: column name, V: column value)
+     * @returns {Array} Row list
      */
     findRows: function(conditions) {
         var rowList = this.modelManager.dataModel.getRows();
@@ -985,10 +984,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
-     * Select cells or rows by range
-     * @param {object} range - Selection range
-     *     @param {array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
-     *     @param {array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+     * Selects cells or rows by range
+     * @param {Object} range - Selection range
+     *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+     *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
      */
     selection: function(range) {
         var selectionModel = this.modelManager.selectionModel;
@@ -998,6 +997,85 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
         selectionModel.start(start[0], start[1], unit);
         selectionModel.update(end[0], end[1], unit);
+    },
+
+    /**
+     * Expands tree row
+     * @param {number|string} rowKey - row key
+     * @param {boolean} recursive - true for recursively expand all descendant
+     * @returns {Array.<number|string>} - children or descendant of given row
+     */
+    expand: function(rowKey, recursive) {
+        return this.modelManager.dataModel.treeExpand(rowKey, recursive);
+    },
+
+    /**
+     * Expands all tree row
+     */
+    expandAll: function() {
+        this.modelManager.dataModel.treeExpandAll();
+    },
+
+    /**
+     * Expands tree row
+     * @param {number|string} rowKey - row key
+     * @param {boolean} recursive - true for recursively expand all descendant
+     * @returns {Array.<number|string>} - children or descendant of given row
+     */
+    collapse: function(rowKey, recursive) {
+        return this.modelManager.dataModel.treeCollapse(rowKey, recursive);
+    },
+
+    /**
+     * Collapses all tree row
+     */
+    collapseAll: function() {
+        this.modelManager.dataModel.treeCollapseAll();
+    },
+
+    /**
+     * Gets the ancestors of the row which has the given row key
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<TreeRow>} - the ancestor rows
+     */
+    getAncestors: function(rowKey) {
+        return this.modelManager.dataModel.getTreeAncestors(rowKey);
+    },
+
+    /**
+     * Gets the descendants of the row which has the given row key
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<TreeRow>} - the descendant rows
+     */
+    getDescendants: function(rowKey) {
+        return this.modelManager.dataModel.getTreeDescendants(rowKey);
+    },
+
+    /**
+     * Gets the parent of the row which has the given row key
+     * @param {number|string} rowKey - row key
+     * @returns {TreeRow} - the parent row
+     */
+    getParent: function(rowKey) {
+        return this.modelManager.dataModel.getTreeParent(rowKey);
+    },
+
+    /**
+     * Gets the children of the row which has the given row key
+     * @param {number|string} rowKey - row key
+     * @returns {Array.<TreeRow>} - the children rows
+     */
+    getChildren: function(rowKey) {
+        return this.modelManager.dataModel.getTreeChildren(rowKey);
+    },
+
+    /**
+     * Gets the depth of the row which has the given row key
+     * @param {number|string} rowKey - row key to test
+     * @returns {number} - the depth
+     */
+    getDepth: function(rowKey) {
+        return this.modelManager.dataModel.getTreeDepth(rowKey);
     },
 
     /**
@@ -1026,65 +1104,100 @@ Grid.getInstanceById = function(id) {
 /**
  * Apply theme to all grid instances with the preset options of a given name.
  * @static
- * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
+ * @param {string} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
  * @param {Object} [extOptions] - if exist, extend preset options with this object.
- *   @param {Object} [extOptions.grid] - Styles for the grid (container)
- *     @param {String} [extOptions.grid.background] - Background color of the grid.
- *     @param {number} [extOptions.grid.border] - Border color of the grid
- *     @param {number} [extOptions.grid.text] - Text color of the grid.
- *   @param {Object} [extOptions.selection] - Styles for a selection layer.
- *     @param {String} [extOptions.selection.background] - Background color of a selection layer.
- *     @param {String} [extOptions.selection.border] - Border color of a selection layer.
- *   @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
- *     @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
- *     @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
- *     @param {String} [extOptions.scrollbar.active] - Color of arrows(for IE) or
- *          thumb:hover(for other browsers) in scrollbars.
- *   @param {Object} [extOptions.cell] - Styles for the table cells.
- *     @param {Object} [extOptions.cell.normal] - Styles for normal cells.
- *       @param {String} [extOptions.cell.normal.background] - Background color of normal cells.
- *       @param {String} [extOptions.cell.normal.border] - Border color of normal cells.
- *       @param {String} [extOptions.cell.normal.text] - Text color of normal cells.
- *       @param {Boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
- *           normal cells are visible.
- *       @param {Boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
- *           normal cells are visible.
- *     @param {Object} [extOptions.cell.head] - Styles for the head cells.
- *       @param {String} [extOptions.cell.head.background] - Background color of head cells.
- *       @param {String} [extOptions.cell.head.border] - border color of head cells.
- *       @param {String} [extOptions.cell.head.text] - text color of head cells.
- *       @param {Boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
- *           head cells are visible.
- *       @param {Boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
- *           head cells are visible.
- *     @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
- *       @param {String} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
- *       @param {String} [extOptions.cell.selectedHead.text] - text color of selected head cells.
- *     @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
- *       @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
- *       @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
- *     @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
- *       @param {String} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
- *     @param {Object} [extOptions.cell.required] - Styles for required cells.
- *       @param {String} [extOptions.cell.required.background] - background color of required cells.
- *       @param {String} [extOptions.cell.required.text] - text color of required cells.
- *     @param {Object} [extOptions.cell.editable] - Styles for editable cells.
- *       @param {String} [extOptions.cell.editable.background] - background color of the editable cells.
- *       @param {String} [extOptions.cell.editable.text] - text color of the selected editable cells.
- *     @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
- *       @param {String} [extOptions.cell.disabled.background] - background color of disabled cells.
- *       @param {String} [extOptions.cell.disabled.text] - text color of disabled cells.
- *     @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
- *       @param {String} [extOptions.cell.invalid.background] - background color of invalid cells.
- *       @param {String} [extOptions.cell.invalid.text] - text color of invalid cells.
- *     @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
- *       @param {String} [extOptions.cell.currentRow.background] - background color of cells in a current row.
- *       @param {String} [extOptions.cell.currentRow.text] - text color of cells in a current row.
- *     @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
- *       @param {String} [extOptions.cell.evenRow.background] - background color of cells in even rows.
- *       @param {String} [extOptions.cell.evenRow.text] - text color of cells in even rows.
- *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
- *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
+ *     @param {Object} [extOptions.outline] - Styles for the table outline.
+ *         @param {string} [extOptions.outline.border] - Color of the table outline.
+ *         @param {boolean} [extOptions.outline.showVerticalBorder] - Whether vertical outlines of
+ *             the table are visible.
+ *     @param {Object} [extOptions.selection] - Styles for a selection layer.
+ *         @param {string} [extOptions.selection.background] - Background color of a selection layer.
+ *         @param {string} [extOptions.selection.border] - Border color of a selection layer.
+ *     @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
+ *         @param {string} [extOptions.scrollbar.border] - Border color of scrollbars.
+ *         @param {string} [extOptions.scrollbar.background] - Background color of scrollbars.
+ *         @param {string} [extOptions.scrollbar.emptySpace] - Color of extra spaces except scrollbar.
+ *         @param {string} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
+ *         @param {string} [extOptions.scrollbar.active] - Color of arrows(for IE) or
+ *              thumb:hover(for other browsers) in scrollbars.
+ *     @param {Object} [extOptions.frozenBorder] - Styles for a frozen border.
+ *         @param {string} [extOptions.frozenBorder.area] - Border color of a frozen border.
+ *     @param {Object} [extOptions.area] - Styles for the table areas.
+ *         @param {Object} [extOptions.area.header] - Styles for the header area in the table.
+ *             @param {string} [extOptions.area.header.background] - Background color of the header area
+ *                 in the table.
+ *             @param {string} [extOptions.area.header.border] - Border color of the header area
+ *                 in the table.
+ *         @param {Object} [extOptions.area.body] - Styles for the body area in the table.
+ *             @param {string} [extOptions.area.body.background] - Background color of the body area
+ *                 in the table.
+ *         @param {Object} [extOptions.area.summary] - Styles for the summary area in the table.
+ *             @param {string} [extOptions.area.summary.background] - Background color of the summary area
+ *                 in the table.
+ *             @param {string} [extOptions.area.summary.border] - Border color of the summary area
+ *                 in the table.
+ *     @param {Object} [extOptions.cell] - Styles for the table cells.
+ *         @param {Object} [extOptions.cell.normal] - Styles for normal cells.
+ *             @param {string} [extOptions.cell.normal.background] - Background color of normal cells.
+ *             @param {string} [extOptions.cell.normal.border] - Border color of normal cells.
+ *             @param {string} [extOptions.cell.normal.text] - Text color of normal cells.
+ *             @param {boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
+ *                 normal cells are visible.
+ *             @param {boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
+ *                 normal cells are visible.
+ *         @param {Object} [extOptions.cell.head] - Styles for head cells.
+ *             @param {string} [extOptions.cell.head.background] - Background color of head cells.
+ *             @param {string} [extOptions.cell.head.border] - border color of head cells.
+ *             @param {string} [extOptions.cell.head.text] - text color of head cells.
+ *             @param {boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
+ *                 head cells are visible.
+ *             @param {boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
+ *                 head cells are visible.
+ *         @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
+ *             @param {string} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
+ *         @param {Object} [extOptions.cell.rowHead] - Styles for row's head cells.
+ *             @param {string} [extOptions.cell.rowHead.background] - Background color of row's head cells.
+ *             @param {string} [extOptions.cell.rowHead.border] - border color of row's head cells.
+ *             @param {string} [extOptions.cell.rowHead.text] - text color of row's head cells.
+ *             @param {boolean} [extOptions.cell.rowHead.showVerticalBorder] - Whether vertical borders of
+ *                 row's head cells are visible.
+ *             @param {boolean} [extOptions.cell.rowHead.showHorizontalBorder] - Whether horizontal borders of
+ *                 row's head cells are visible.
+ *         @param {Object} [extOptions.cell.selectedRowHead] - Styles for selected row's head cells.
+ *             @param {string} [extOptions.cell.selectedRowHead.background] - background color of selected row's haed cells.
+ *         @param {Object} [extOptions.cell.summary] - Styles for cells in the summary area.
+ *             @param {string} [extOptions.cell.summary.background] - Background color of cells in the summary area.
+ *             @param {string} [extOptions.cell.summary.border] - border color of cells in the summary area.
+ *             @param {string} [extOptions.cell.summary.text] - text color of cells in the summary area.
+ *             @param {boolean} [extOptions.cell.summary.showVerticalBorder] - Whether vertical borders of
+ *                 cells in the summary area are visible.
+ *             @param {boolean} [extOptions.cell.summary.showHorizontalBorder] - Whether horizontal borders of
+ *                 cells in the summary area are visible.
+ *         @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
+ *             @param {string} [extOptions.cell.focused.background] - background color of a focused cell.
+ *             @param {string} [extOptions.cell.focused.border] - border color of a focused cell.
+ *         @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
+ *             @param {string} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
+ *         @param {Object} [extOptions.cell.required] - Styles for required cells.
+ *             @param {string} [extOptions.cell.required.background] - background color of required cells.
+ *             @param {string} [extOptions.cell.required.text] - text color of required cells.
+ *         @param {Object} [extOptions.cell.editable] - Styles for editable cells.
+ *             @param {string} [extOptions.cell.editable.background] - background color of the editable cells.
+ *             @param {string} [extOptions.cell.editable.text] - text color of the selected editable cells.
+ *         @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
+ *             @param {string} [extOptions.cell.disabled.background] - background color of disabled cells.
+ *             @param {string} [extOptions.cell.disabled.text] - text color of disabled cells.
+ *         @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
+ *             @param {string} [extOptions.cell.invalid.background] - background color of invalid cells.
+ *             @param {string} [extOptions.cell.invalid.text] - text color of invalid cells.
+ *         @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
+ *             @param {string} [extOptions.cell.currentRow.background] - background color of cells in a current row.
+ *             @param {string} [extOptions.cell.currentRow.text] - text color of cells in a current row.
+ *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
+ *             @param {string} [extOptions.cell.evenRow.background] - background color of cells in even rows.
+ *             @param {string} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+ *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
+ *             @param {string} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
  * var Grid = tui.Grid; // or require('tui-grid')
  *
@@ -1109,7 +1222,7 @@ Grid.applyTheme = function(presetName, extOptions) {
  * @static
  * @param {string} localeCode - Code to set locale messages and
  *     this is the language or language-region combination (ex: en-US)
- * @param {object} [data] - Messages using in Grid
+ * @param {Object} [data] - Messages using in Grid
  * @example
  * var Grid = tui.Grid; // or require('tui-grid')
  *

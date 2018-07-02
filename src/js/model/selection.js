@@ -43,8 +43,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             enabled: true,
-            selectionType: typeConst.CELL,
-            selectionUnit: attr.selectionUnit
+            selectionType: typeConst.CELL
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -70,8 +69,11 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
          * Selection range
          * ex) {row: [0, 1], column: [1, 2]}
          * @type {{row: array, column: array}}
+         * @ignore
          */
-        range: null
+        range: null,
+
+        selectionUnit: 'cell'
     },
 
     /**
@@ -96,7 +98,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
             this.update(0, columnRange[1], typeConst.COLUMN);
             this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
         } else {
-            this.minimumColumnWidth = columnRange;
+            this.minimumColumnRange = columnRange;
             this.selectColumn(columnRange[0]);
             this.update(0, columnRange[1]);
         }
@@ -139,13 +141,14 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         var address = this._getRecentAddress();
         var lastRowIndex = this.dataModel.length - 1;
         var lastColummnIndex = this.columnModel.getVisibleColumns().length - 1;
+        var rowKey = this.dataModel.at(address.row).get('rowKey');
 
         switch (ev.command) {
             case 'up':
-                address.row -= 1;
+                address.row += this.coordRowModel.getPreviousOffset(rowKey);
                 break;
             case 'down':
-                address.row += 1;
+                address.row += this.coordRowModel.getNextOffset(rowKey);
                 break;
             case 'left':
                 address.column -= 1;
@@ -182,7 +185,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         }
 
         if (address) {
-            this.update(address.row, address.column, this.getSelectionUnit());
+            this.update(address.row, address.column);
             this._scrollTo(address.row, address.column);
         }
     },
@@ -326,7 +329,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
     _onDragMoveBody: function(gridEvent) {
         var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
 
-        this.update(address.row, address.column, this.getSelectionUnit());
+        this.update(address.row, address.column);
         this._setScrolling(gridEvent.pageX, gridEvent.pageY);
     },
 
@@ -446,7 +449,8 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
-            if (type === typeConst.ROW) {
+
+            if (this.getSelectionUnit() === typeConst.ROW) {
                 this.start(focusedIndex.row, 0, typeConst.ROW);
             } else {
                 this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
@@ -710,8 +714,17 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
      */
     _getRangeRowList: function() {
         var rowRange = this.get('range').row;
+        var index = rowRange[0];
+        var len = rowRange[1] + 1;
+        var rowList = [];
 
-        return this.dataModel.slice(rowRange[0], rowRange[1] + 1);
+        for (; index < len; index += 1) {
+            if (this.coordRowModel.getHeightAt(index)) {
+                rowList.push(this.dataModel.at(index));
+            }
+        }
+
+        return rowList;
     },
 
     /**

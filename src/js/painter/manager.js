@@ -10,6 +10,7 @@ var snippet = require('tui-code-snippet');
 
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
+var TreeCellPainter = require('./treeCell');
 var DummyCellPainter = require('./dummyCell');
 var TextPainter = require('./input/text');
 var SelectPainter = require('./input/select');
@@ -99,6 +100,11 @@ var PainterManager = snippet.defineClass(/** @lends module:painter/manager.proto
             });
         }, this);
 
+        cellPainters.tree = new TreeCellPainter({
+            controller: controller,
+            inputPainter: this.inputPainters.text
+        });
+
         return cellPainters;
     },
 
@@ -120,6 +126,14 @@ var PainterManager = snippet.defineClass(/** @lends module:painter/manager.proto
      */
     getCellPainter: function(editType) {
         return this.cellPainters[editType];
+    },
+
+    /**
+     * Returns an instance of tree-cell painter
+     * @returns {object} cell painter instance
+     */
+    getTreeCellPainter: function() {
+        return this.cellPainters.tree;
     },
 
     /**

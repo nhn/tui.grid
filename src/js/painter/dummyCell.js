@@ -56,7 +56,7 @@ var DummyCell = snippet.defineClass(Painter, /** @lends module:painter/dummyCell
         ];
 
         if (util.isMetaColumn(columnName)) {
-            classNames.push(classNameConst.CELL_HEAD);
+            classNames.push(classNameConst.CELL_ROW_HEAD);
         }
 
         return this.template({
