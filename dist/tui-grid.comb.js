@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Jun 11 2018 11:30:05 GMT+0900 (KST)"
- * version: 2.10.1
+ * bundle created at "Mon Jul 02 2018 12:45:56 GMT+0900 (KST)"
+ * version: 3.0.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11,7 +11,7 @@
 		exports["Grid"] = factory(require("tui-code-snippet"), require("jquery"), require("tui-date-picker"), require("tui-pagination"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Grid"] = factory((root["tui"] && root["tui"]["util"]), root["$"], (root["tui"] && root["tui"]["DatePicker"]), (root["tui"] && root["tui"]["Pagination"]));
-})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_36__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_34__, __WEBPACK_EXTERNAL_MODULE_38__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Grid = __webpack_require__(1);
 
-	__webpack_require__(80);
+	__webpack_require__(83);
 
 	Grid.setLanguage('en');
 
@@ -90,18 +90,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var View = __webpack_require__(4);
 	var ModelManager = __webpack_require__(7);
-	var ViewFactory = __webpack_require__(31);
-	var DomEventBus = __webpack_require__(56);
-	var DomState = __webpack_require__(57);
-	var PublicEventEmitter = __webpack_require__(58);
-	var PainterManager = __webpack_require__(59);
-	var PainterController = __webpack_require__(69);
-	var NetAddOn = __webpack_require__(70);
-	var ComponentHolder = __webpack_require__(73);
+	var ViewFactory = __webpack_require__(33);
+	var DomEventBus = __webpack_require__(58);
+	var DomState = __webpack_require__(59);
+	var PublicEventEmitter = __webpack_require__(60);
+	var PainterManager = __webpack_require__(61);
+	var PainterController = __webpack_require__(72);
+	var NetAddOn = __webpack_require__(73);
+	var ComponentHolder = __webpack_require__(76);
 
-	var util = __webpack_require__(16);
-	var i18n = __webpack_require__(40);
-	var themeManager = __webpack_require__(74);
+	var util = __webpack_require__(17);
+	var i18n = __webpack_require__(42);
+	var themeManager = __webpack_require__(77);
 	var themeNameConst = __webpack_require__(10).themeName;
 
 	var instanceMap = {};
@@ -109,15 +109,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Grid public API
 	 * @class Grid
-	 * @param {object} options
+	 * @param {Object} options
 	 *      @param {Array} [options.data] - Grid data for making rows.
 	 *      @param {Object} [options.header] - Options object for header.
-	 *      @param {number} [options.header.height=35] - The height of the header area.
-	 *      @param {array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
+	 *      @param {number} [options.header.height=40] - The height of the header area.
+	 *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
 	 *          which includes the headers of spcified columns, and sets up the hierarchy.
+	 *      @param {boolean} [options.virtualScrolling=false] - If set to true, use virtual-scrolling so that large
+	 *          amount of data can be processed performantly. When using this option that sets true, the rowHeight option
+	 *          must set value.
 	 *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
 	 *          the height of each rows expands to dom's height. If set to number, the height is fixed.
-	 *      @param {number} [options.minRowHeight=27] - The minimum height of each rows. When this value is larger than
+	 *      @param {number} [options.minRowHeight=40] - The minimum height of each rows. When this value is larger than
 	 *          the row's height, it set to the row's height.
 	 *      @param {string|number} [options.bodyHeight] - The height of body area. The default value is 'auto',
 	 *          the height of body area expands to total height of rows. If set to 'fitToParent', the height of the grid
@@ -133,13 +136,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
 	 *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
 	 *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
+	 *      @param {Object} [options.treeColumnOptions] - Option object for the tree column.
+	 *      @param {string} [options.treeColumnOptions.name] - The name of column that makes tree column.
+	 *      @param {boolean} [options.treeColumnOptions.useIcon=true] - If set to true, the folder or file icon is created on
+	 *          the left side of the tree cell data.
+	 *      @param {boolean} [options.treeColumnOptions.useCascadingCheckbox] - If set to true, a cascading relationship is
+	 *          created in the checkbox between parent and child rows.
 	 *      @param {Object} [options.copyOptions] - Option object for clipboard copying
 	 *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
 	 *          as a string to be copied to the clipboard
 	 *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
 	 *          without server.
-	 *      @param {boolean} [options.virtualScrolling=true] - If set to true, use virtual-scrolling so that large
-	 *          amount of data can be processed performantly.
 	 *      @param {boolean} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
 	 *          changed to edit-mode by a single click.
 	 *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
@@ -148,17 +155,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
 	 *          If not specified, unique value for each rows will be created internally.
 	 *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
-	 *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
+	 *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
 	 *          If set to null or false, pagination will not be used.
-	 *      @param {string} [options.selectionUnit=cell] - The unit of selection on Grid. ('cell', 'row')
-	 *      @param {array} [options.rowHeaders] - Options for making the row header. The row header content is number of
+	 *      @param {string} [options.selectionUnit='cell'] - The unit of selection on Grid. ('cell', 'row')
+	 *      @param {Array} [options.rowHeaders] - Options for making the row header. The row header content is number of
 	 *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
 	 *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
 	 *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
 	 *          @param {number} [options.rowHeaders.width] - The width of the row header.
 	 *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
 	 *              the row header. This function takes a parameter an K-V object as a parameter to match template values.
-	 *      @param {array} options.columns - The configuration of the grid columns.
+	 *      @param {Array} options.columns - The configuration of the grid columns.
 	 *          @param {string} options.columns.name - The name of the column.
 	 *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
 	 *              for overflowing content.
@@ -229,7 +236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {function} [options.columns.copyOptions.customValue] - Whether to use
 	 *                  customized value from "customValue" callback or original values as a string to be copied to the clipboard
 	 *          @param {Array} [options.columns.relations] - Specifies relation between this and other column.
-	 *              @param {array} [options.columns.relations.targetNames] - Array of the names of target columns.
+	 *              @param {Array} [options.columns.relations.targetNames] - Array of the names of target columns.
 	 *              @param {function} [options.columns.relations.disabled] - If returns true, target columns
 	 *                  will be disabled.
 	 *              @param {function} [options.columns.relations.editable] - If returns true, target columns
@@ -249,6 +256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  creating the component
 	 *      @param {Object} [options.summary] - The object for configuring summary area.
 	 *          @param {number} [options.summary.height] - The height of the summary area.
+	 *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
 	 *          @param {Object.<string, Object>} [options.summary.columnContent]
 	 *              The object for configuring each column in the summary.
 	 *              Sub options below are keyed by each column name.
@@ -256,17 +264,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *                  If set to true, the summary value of each column is served as a paramater to the template
 	 *                  function whenever data is changed.
 	 *              @param {function} [options.summary.columnContent.template] - Template function which returns the
-	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
-	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
-	 *      @param {Object} [options.footer] - Deprecated: The object for configuring summary area. This option is replaced by "summary" option.
-	 *          @param {number} [options.footer.height] - Deprecated: The height of the summary area.
-	 *          @param {Object.<string, Object>} [options.footer.columnContent]
-	 *              Deprecated: The object for configuring each column in the summary.
-	 *                          Sub options below are keyed by each column name.
-	 *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
-	 *                  Deprecated: If set to true, the summary value of each column is served as a paramater to the template
-	 *                              function whenever data is changed.
-	 *              @param {function} [options.footer.columnContent.template] - Deprecated: Template function which returns the
 	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
 	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
 	 *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
@@ -417,7 +414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Disables the row identified by the rowkey.
-	     * @param {(number|string)} rowKey - The unique key of the target row
+	     * @param {number|string} rowKey - The unique key of the target row
 	     */
 	    disableRow: function(rowKey) {
 	        this.modelManager.dataModel.disableRow(rowKey);
@@ -425,7 +422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Enables the row identified by the rowKey.
-	     * @param {(number|string)} rowKey - The unique key of the target row
+	     * @param {number|string} rowKey - The unique key of the target row
 	     */
 	    enableRow: function(rowKey) {
 	        this.modelManager.dataModel.enableRow(rowKey);
@@ -433,10 +430,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the value of the cell identified by the rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the target row.
+	     * @param {number|string} rowKey - The unique key of the target row.
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-	     * @returns {(number|string)} - The value of the cell
+	     * @returns {number|string} - The value of the cell
 	     */
 	    getValue: function(rowKey, columnName, isOriginal) {
 	        return this.modelManager.dataModel.getValue(rowKey, columnName, isOriginal);
@@ -454,9 +451,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the object that contains all values in the specified row.
-	     * @param {(number|string)} rowKey - The unique key of the target row
+	     * @param {number|string} rowKey - The unique key of the target row
 	     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-	     * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
+	     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
 	     */
 	    getRow: function(rowKey, isJsonString) {
 	        return this.modelManager.dataModel.getRowData(rowKey, isJsonString);
@@ -465,7 +462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Returns the object that contains all values in the row at specified index.
 	     * @param {number} index - The index of the row
-	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+	     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
 	     */
 	    getRowAt: function(index, isJsonString) {
@@ -499,7 +496,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the jquery object of the cell identified by the rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @returns {jQuery} - The jquery object of the cell element
 	     */
@@ -509,9 +506,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets the value of the cell identified by the specified rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
-	     * @param {(number|string)} columnValue - The value to be set
+	     * @param {number|string} columnValue - The value to be set
 	     */
 	    setValue: function(rowKey, columnName, columnValue) {
 	        this.modelManager.dataModel.setValue(rowKey, columnName, columnValue);
@@ -520,15 +517,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Sets the all values in the specified column.
 	     * @param {string} columnName - The name of the column
-	     * @param {(number|string)} columnValue - The value to be set
-	     * @param {Boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
+	     * @param {number|string} columnValue - The value to be set
+	     * @param {boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
 	     */
 	    setColumnValues: function(columnName, columnValue, isCheckCellState) {
 	        this.modelManager.dataModel.setColumnValues(columnName, columnValue, isCheckCellState);
 	    },
 
 	    /**
-	     * Replace all rows with the specified list. This will not change the original data.
+	     * Replaces all rows with the specified list. This will not change the original data.
 	     * @param {Array} data - A list of new rows
 	     */
 	    resetData: function(data) {
@@ -536,7 +533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Replace all rows with the specified list. This will change the original data.
+	     * Replaces all rows with the specified list. This will change the original data.
 	     * @param {Array} data - A list of new rows
 	     * @param {function} callback - The function that will be called when done.
 	     */
@@ -554,7 +551,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets focus on the cell identified by the specified rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
 	     */
@@ -565,7 +562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column.
-	     * @param {(number|string)} rowIndex - The index of the row
+	     * @param {number|string} rowIndex - The index of the row
 	     * @param {string} columnIndex - The index of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
 	     */
@@ -575,7 +572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column and starts to edit.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
 	     */
@@ -585,7 +582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column and starts to edit.
-	     * @param {(number|string)} rowIndex - The index of the row
+	     * @param {number|string} rowIndex - The index of the row
 	     * @param {string} columnIndex - The index of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
 	     */
@@ -616,7 +613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Checks the row identified by the specified rowKey.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     */
 	    check: function(rowKey) {
 	        this.modelManager.dataModel.check(rowKey);
@@ -631,7 +628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Unchecks the row identified by the specified rowKey.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     */
 	    uncheck: function(rowKey) {
 	        this.modelManager.dataModel.uncheck(rowKey);
@@ -646,8 +643,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Removes the row identified by the specified rowKey.
-	     * @param {(number|string)} rowKey - The unique key of the row
-	     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
+	     * @param {number|string} rowKey - The unique key of the row
+	     * @param {boolean|object} [options] - Options. If the type is boolean, this value is equivalent to
 	     *     options.removeOriginalData.
 	     * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
 	     * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
@@ -686,7 +683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Enables the row identified by the rowKey to be able to check.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     */
 	    enableCheck: function(rowKey) {
 	        this.modelManager.dataModel.enableCheck(rowKey);
@@ -694,7 +691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Disables the row identified by the spcified rowKey to not be abled to check.
-	     * @param {(number|string)} rowKey - The unique keyof the row.
+	     * @param {number|string} rowKey - The unique keyof the row.
 	     */
 	    disableCheck: function(rowKey) {
 	        this.modelManager.dataModel.disableCheck(rowKey);
@@ -702,7 +699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns a list of the rowKey of checked rows.
-	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
+	     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
 	     */
 	    getCheckedRowKeys: function(isJsonString) {
@@ -714,7 +711,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns a list of the checked rows.
-	     * @param {Boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
+	     * @param {boolean} [useJson=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
 	     */
 	    getCheckedRows: function(useJson) {
@@ -748,26 +745,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Insert the new row with specified data to the end of table.
-	     * @param {object} [row] - The data for the new row
-	     * @param {object} [options] - Options
+	     * Inserts the new row with specified data to the end of table.
+	     * @param {Object} [row] - The data for the new row
+	     * @param {Object} [options] - Options
 	     * @param {number} [options.at] - The index at which new row will be inserted
 	     * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
 	     *        has a rowspan data, the new row will extend the existing rowspan data.
 	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+	     * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
+	     * @param {number} [options.offset] - Tree offset from first sibling
 	     */
 	    appendRow: function(row, options) {
-	        this.modelManager.dataModel.append(row, options);
+	        this.modelManager.dataModel.appendRow(row, options);
 	    },
 
 	    /**
-	     * Insert the new row with specified data to the beginning of table.
-	     * @param {object} [row] - The data for the new row
-	     * @param {object} [options] - Options
+	     * Inserts the new row with specified data to the beginning of table.
+	     * @param {Object} [row] - The data for the new row
+	     * @param {Object} [options] - Options
 	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
 	     */
 	    prependRow: function(row, options) {
-	        this.modelManager.dataModel.prepend(row, options);
+	        this.modelManager.dataModel.prependRow(row, options);
 	    },
 
 	    /**
@@ -812,9 +811,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Create an specified AddOn and use it on this instance.
+	     * Creates an specified AddOn and use it on this instance.
 	     * @param {string} name - The name of the AddOn to use.
-	     * @param {object} options - The option objects for configuring the AddON.
+	     * @param {Object} options - The option objects for configuring the AddON.
 	     * @returns {tui.Grid} - This instance.
 	     */
 	    use: function(name, options) {
@@ -859,7 +858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Get state of the sorted column in rows
+	     * Gets state of the sorted column in rows
 	     * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
 	     */
 	    getSortState: function() {
@@ -868,7 +867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Adds the specified css class to cell element identified by the rowKey and className
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {string} className - The css class name to add
 	     */
@@ -878,7 +877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Adds the specified css class to all cell elements in the row identified by the rowKey
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} className - The css class name to add
 	     */
 	    addRowClassName: function(rowKey, className) {
@@ -887,7 +886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Removes the specified css class from the cell element indentified by the rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {string} className - The css class name to be removed
 	     */
@@ -897,7 +896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Removes the specified css class from all cell elements in the row identified by the rowKey.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} className - The css class name to be removed
 	     */
 	    removeRowClassName: function(rowKey, className) {
@@ -906,7 +905,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the rowspan data of the cell identified by the rowKey and columnName.
-	     * @param {(number|string)} rowKey - The unique key of the row
+	     * @param {number|string} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @returns {Object} - Row span data
 	     */
@@ -933,15 +932,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Returns an instance of tui.component.Pagination.
-	     * @returns {tui.component.Pagination}
+	     * Returns an instance of tui.Pagination.
+	     * @returns {tui.Pagination}
 	     */
 	    getPagination: function() {
 	        return this.componentHolder.getInstance('pagination');
 	    },
 
 	    /**
-	     * Set the width of the dimension.
+	     * Sets the width of the dimension.
 	     * @param {number} width - The width of the dimension
 	     */
 	    setWidth: function(width) {
@@ -949,7 +948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Set the height of the dimension.
+	     * Sets the height of the dimension.
 	     * @param {number} height - The height of the dimension
 	     */
 	    setHeight: function(height) {
@@ -957,21 +956,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Refresh the layout view. Use this method when the view was rendered while hidden.
+	     * Refreshs the layout view. Use this method when the view was rendered while hidden.
 	     */
 	    refreshLayout: function() {
 	        this.modelManager.dimensionModel.refreshLayout();
 	    },
 
 	    /**
-	     * Reset the width of each column by using initial setting of column models.
+	     * Resets the width of each column by using initial setting of column models.
 	     */
 	    resetColumnWidths: function() {
 	        this.modelManager.coordColumnModel.resetColumnWidths();
 	    },
 
 	    /**
-	     * Show columns
+	     * Shows columns
 	     * @param {...string} arguments - Column names to show
 	     */
 	    showColumn: function() {
@@ -980,7 +979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Hide columns
+	     * Hides columns
 	     * @param {...string} arguments - Column names to hide
 	     */
 	    hideColumn: function() {
@@ -1043,9 +1042,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Find rows by conditions
-	     * @param {object} conditions - K-V object to find rows (K: column name, V: column value)
-	     * @returns {array} Row list
+	     * Finds rows by conditions
+	     * @param {Object} conditions - K-V object to find rows (K: column name, V: column value)
+	     * @returns {Array} Row list
 	     */
 	    findRows: function(conditions) {
 	        var rowList = this.modelManager.dataModel.getRows();
@@ -1065,10 +1064,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Select cells or rows by range
-	     * @param {object} range - Selection range
-	     *     @param {array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
-	     *     @param {array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+	     * Selects cells or rows by range
+	     * @param {Object} range - Selection range
+	     *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+	     *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
 	     */
 	    selection: function(range) {
 	        var selectionModel = this.modelManager.selectionModel;
@@ -1078,6 +1077,85 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        selectionModel.start(start[0], start[1], unit);
 	        selectionModel.update(end[0], end[1], unit);
+	    },
+
+	    /**
+	     * Expands tree row
+	     * @param {number|string} rowKey - row key
+	     * @param {boolean} recursive - true for recursively expand all descendant
+	     * @returns {Array.<number|string>} - children or descendant of given row
+	     */
+	    expand: function(rowKey, recursive) {
+	        return this.modelManager.dataModel.treeExpand(rowKey, recursive);
+	    },
+
+	    /**
+	     * Expands all tree row
+	     */
+	    expandAll: function() {
+	        this.modelManager.dataModel.treeExpandAll();
+	    },
+
+	    /**
+	     * Expands tree row
+	     * @param {number|string} rowKey - row key
+	     * @param {boolean} recursive - true for recursively expand all descendant
+	     * @returns {Array.<number|string>} - children or descendant of given row
+	     */
+	    collapse: function(rowKey, recursive) {
+	        return this.modelManager.dataModel.treeCollapse(rowKey, recursive);
+	    },
+
+	    /**
+	     * Collapses all tree row
+	     */
+	    collapseAll: function() {
+	        this.modelManager.dataModel.treeCollapseAll();
+	    },
+
+	    /**
+	     * Gets the ancestors of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the ancestor rows
+	     */
+	    getAncestors: function(rowKey) {
+	        return this.modelManager.dataModel.getTreeAncestors(rowKey);
+	    },
+
+	    /**
+	     * Gets the descendants of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the descendant rows
+	     */
+	    getDescendants: function(rowKey) {
+	        return this.modelManager.dataModel.getTreeDescendants(rowKey);
+	    },
+
+	    /**
+	     * Gets the parent of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {TreeRow} - the parent row
+	     */
+	    getParent: function(rowKey) {
+	        return this.modelManager.dataModel.getTreeParent(rowKey);
+	    },
+
+	    /**
+	     * Gets the children of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the children rows
+	     */
+	    getChildren: function(rowKey) {
+	        return this.modelManager.dataModel.getTreeChildren(rowKey);
+	    },
+
+	    /**
+	     * Gets the depth of the row which has the given row key
+	     * @param {number|string} rowKey - row key to test
+	     * @returns {number} - the depth
+	     */
+	    getDepth: function(rowKey) {
+	        return this.modelManager.dataModel.getTreeDepth(rowKey);
 	    },
 
 	    /**
@@ -1106,65 +1184,100 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Apply theme to all grid instances with the preset options of a given name.
 	 * @static
-	 * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
+	 * @param {string} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
 	 * @param {Object} [extOptions] - if exist, extend preset options with this object.
-	 *   @param {Object} [extOptions.grid] - Styles for the grid (container)
-	 *     @param {String} [extOptions.grid.background] - Background color of the grid.
-	 *     @param {number} [extOptions.grid.border] - Border color of the grid
-	 *     @param {number} [extOptions.grid.text] - Text color of the grid.
-	 *   @param {Object} [extOptions.selection] - Styles for a selection layer.
-	 *     @param {String} [extOptions.selection.background] - Background color of a selection layer.
-	 *     @param {String} [extOptions.selection.border] - Border color of a selection layer.
-	 *   @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
-	 *     @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
-	 *     @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
-	 *     @param {String} [extOptions.scrollbar.active] - Color of arrows(for IE) or
-	 *          thumb:hover(for other browsers) in scrollbars.
-	 *   @param {Object} [extOptions.cell] - Styles for the table cells.
-	 *     @param {Object} [extOptions.cell.normal] - Styles for normal cells.
-	 *       @param {String} [extOptions.cell.normal.background] - Background color of normal cells.
-	 *       @param {String} [extOptions.cell.normal.border] - Border color of normal cells.
-	 *       @param {String} [extOptions.cell.normal.text] - Text color of normal cells.
-	 *       @param {Boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
-	 *           normal cells are visible.
-	 *       @param {Boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
-	 *           normal cells are visible.
-	 *     @param {Object} [extOptions.cell.head] - Styles for the head cells.
-	 *       @param {String} [extOptions.cell.head.background] - Background color of head cells.
-	 *       @param {String} [extOptions.cell.head.border] - border color of head cells.
-	 *       @param {String} [extOptions.cell.head.text] - text color of head cells.
-	 *       @param {Boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
-	 *           head cells are visible.
-	 *       @param {Boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
-	 *           head cells are visible.
-	 *     @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
-	 *       @param {String} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
-	 *       @param {String} [extOptions.cell.selectedHead.text] - text color of selected head cells.
-	 *     @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
-	 *       @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
-	 *       @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
-	 *     @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
-	 *       @param {String} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
-	 *     @param {Object} [extOptions.cell.required] - Styles for required cells.
-	 *       @param {String} [extOptions.cell.required.background] - background color of required cells.
-	 *       @param {String} [extOptions.cell.required.text] - text color of required cells.
-	 *     @param {Object} [extOptions.cell.editable] - Styles for editable cells.
-	 *       @param {String} [extOptions.cell.editable.background] - background color of the editable cells.
-	 *       @param {String} [extOptions.cell.editable.text] - text color of the selected editable cells.
-	 *     @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
-	 *       @param {String} [extOptions.cell.disabled.background] - background color of disabled cells.
-	 *       @param {String} [extOptions.cell.disabled.text] - text color of disabled cells.
-	 *     @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
-	 *       @param {String} [extOptions.cell.invalid.background] - background color of invalid cells.
-	 *       @param {String} [extOptions.cell.invalid.text] - text color of invalid cells.
-	 *     @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
-	 *       @param {String} [extOptions.cell.currentRow.background] - background color of cells in a current row.
-	 *       @param {String} [extOptions.cell.currentRow.text] - text color of cells in a current row.
-	 *     @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
-	 *       @param {String} [extOptions.cell.evenRow.background] - background color of cells in even rows.
-	 *       @param {String} [extOptions.cell.evenRow.text] - text color of cells in even rows.
-	 *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
-	 *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
+	 *     @param {Object} [extOptions.outline] - Styles for the table outline.
+	 *         @param {string} [extOptions.outline.border] - Color of the table outline.
+	 *         @param {boolean} [extOptions.outline.showVerticalBorder] - Whether vertical outlines of
+	 *             the table are visible.
+	 *     @param {Object} [extOptions.selection] - Styles for a selection layer.
+	 *         @param {string} [extOptions.selection.background] - Background color of a selection layer.
+	 *         @param {string} [extOptions.selection.border] - Border color of a selection layer.
+	 *     @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
+	 *         @param {string} [extOptions.scrollbar.border] - Border color of scrollbars.
+	 *         @param {string} [extOptions.scrollbar.background] - Background color of scrollbars.
+	 *         @param {string} [extOptions.scrollbar.emptySpace] - Color of extra spaces except scrollbar.
+	 *         @param {string} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
+	 *         @param {string} [extOptions.scrollbar.active] - Color of arrows(for IE) or
+	 *              thumb:hover(for other browsers) in scrollbars.
+	 *     @param {Object} [extOptions.frozenBorder] - Styles for a frozen border.
+	 *         @param {string} [extOptions.frozenBorder.area] - Border color of a frozen border.
+	 *     @param {Object} [extOptions.area] - Styles for the table areas.
+	 *         @param {Object} [extOptions.area.header] - Styles for the header area in the table.
+	 *             @param {string} [extOptions.area.header.background] - Background color of the header area
+	 *                 in the table.
+	 *             @param {string} [extOptions.area.header.border] - Border color of the header area
+	 *                 in the table.
+	 *         @param {Object} [extOptions.area.body] - Styles for the body area in the table.
+	 *             @param {string} [extOptions.area.body.background] - Background color of the body area
+	 *                 in the table.
+	 *         @param {Object} [extOptions.area.summary] - Styles for the summary area in the table.
+	 *             @param {string} [extOptions.area.summary.background] - Background color of the summary area
+	 *                 in the table.
+	 *             @param {string} [extOptions.area.summary.border] - Border color of the summary area
+	 *                 in the table.
+	 *     @param {Object} [extOptions.cell] - Styles for the table cells.
+	 *         @param {Object} [extOptions.cell.normal] - Styles for normal cells.
+	 *             @param {string} [extOptions.cell.normal.background] - Background color of normal cells.
+	 *             @param {string} [extOptions.cell.normal.border] - Border color of normal cells.
+	 *             @param {string} [extOptions.cell.normal.text] - Text color of normal cells.
+	 *             @param {boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
+	 *                 normal cells are visible.
+	 *             @param {boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
+	 *                 normal cells are visible.
+	 *         @param {Object} [extOptions.cell.head] - Styles for head cells.
+	 *             @param {string} [extOptions.cell.head.background] - Background color of head cells.
+	 *             @param {string} [extOptions.cell.head.border] - border color of head cells.
+	 *             @param {string} [extOptions.cell.head.text] - text color of head cells.
+	 *             @param {boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
+	 *                 head cells are visible.
+	 *             @param {boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
+	 *                 head cells are visible.
+	 *         @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
+	 *             @param {string} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
+	 *         @param {Object} [extOptions.cell.rowHead] - Styles for row's head cells.
+	 *             @param {string} [extOptions.cell.rowHead.background] - Background color of row's head cells.
+	 *             @param {string} [extOptions.cell.rowHead.border] - border color of row's head cells.
+	 *             @param {string} [extOptions.cell.rowHead.text] - text color of row's head cells.
+	 *             @param {boolean} [extOptions.cell.rowHead.showVerticalBorder] - Whether vertical borders of
+	 *                 row's head cells are visible.
+	 *             @param {boolean} [extOptions.cell.rowHead.showHorizontalBorder] - Whether horizontal borders of
+	 *                 row's head cells are visible.
+	 *         @param {Object} [extOptions.cell.selectedRowHead] - Styles for selected row's head cells.
+	 *             @param {string} [extOptions.cell.selectedRowHead.background] - background color of selected row's haed cells.
+	 *         @param {Object} [extOptions.cell.summary] - Styles for cells in the summary area.
+	 *             @param {string} [extOptions.cell.summary.background] - Background color of cells in the summary area.
+	 *             @param {string} [extOptions.cell.summary.border] - border color of cells in the summary area.
+	 *             @param {string} [extOptions.cell.summary.text] - text color of cells in the summary area.
+	 *             @param {boolean} [extOptions.cell.summary.showVerticalBorder] - Whether vertical borders of
+	 *                 cells in the summary area are visible.
+	 *             @param {boolean} [extOptions.cell.summary.showHorizontalBorder] - Whether horizontal borders of
+	 *                 cells in the summary area are visible.
+	 *         @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
+	 *             @param {string} [extOptions.cell.focused.background] - background color of a focused cell.
+	 *             @param {string} [extOptions.cell.focused.border] - border color of a focused cell.
+	 *         @param {Object} [extOptions.cell.focusedInactive] - Styles for a inactive focus cell.
+	 *             @param {string} [extOptions.cell.focusedInactive.border] - border color of a inactive focus cell.
+	 *         @param {Object} [extOptions.cell.required] - Styles for required cells.
+	 *             @param {string} [extOptions.cell.required.background] - background color of required cells.
+	 *             @param {string} [extOptions.cell.required.text] - text color of required cells.
+	 *         @param {Object} [extOptions.cell.editable] - Styles for editable cells.
+	 *             @param {string} [extOptions.cell.editable.background] - background color of the editable cells.
+	 *             @param {string} [extOptions.cell.editable.text] - text color of the selected editable cells.
+	 *         @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
+	 *             @param {string} [extOptions.cell.disabled.background] - background color of disabled cells.
+	 *             @param {string} [extOptions.cell.disabled.text] - text color of disabled cells.
+	 *         @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
+	 *             @param {string} [extOptions.cell.invalid.background] - background color of invalid cells.
+	 *             @param {string} [extOptions.cell.invalid.text] - text color of invalid cells.
+	 *         @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
+	 *             @param {string} [extOptions.cell.currentRow.background] - background color of cells in a current row.
+	 *             @param {string} [extOptions.cell.currentRow.text] - text color of cells in a current row.
+	 *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
+	 *             @param {string} [extOptions.cell.evenRow.background] - background color of cells in even rows.
+	 *             @param {string} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+	 *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
+	 *             @param {string} [extOptions.cell.dummy.background] - background color of dummy cells.
 	 * @example
 	 * var Grid = tui.Grid; // or require('tui-grid')
 	 *
@@ -1189,7 +1302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @static
 	 * @param {string} localeCode - Code to set locale messages and
 	 *     this is the language or language-region combination (ex: en-US)
-	 * @param {object} [data] - Messages using in Grid
+	 * @param {Object} [data] - Messages using in Grid
 	 * @example
 	 * var Grid = tui.Grid; // or require('tui-grid')
 	 *
@@ -4813,18 +4926,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var ColumnModelData = __webpack_require__(8);
-	var RowListData = __webpack_require__(11);
-	var DimensionModel = __webpack_require__(19);
-	var CoordRowModel = __webpack_require__(20);
-	var CoordColumnModel = __webpack_require__(21);
-	var CoordConverterModel = __webpack_require__(22);
-	var FocusModel = __webpack_require__(23);
-	var RenderModel = __webpack_require__(24);
-	var SmartRenderModel = __webpack_require__(27);
-	var SelectionModel = __webpack_require__(28);
-	var SummaryModel = __webpack_require__(29);
-	var ClipboardModel = __webpack_require__(30);
-	var util = __webpack_require__(16);
+	var TreeRowListData = __webpack_require__(11);
+	var RowListData = __webpack_require__(12);
+	var DimensionModel = __webpack_require__(21);
+	var CoordRowModel = __webpack_require__(22);
+	var CoordColumnModel = __webpack_require__(23);
+	var CoordConverterModel = __webpack_require__(24);
+	var FocusModel = __webpack_require__(25);
+	var RenderModel = __webpack_require__(26);
+	var SmartRenderModel = __webpack_require__(29);
+	var SelectionModel = __webpack_require__(30);
+	var SummaryModel = __webpack_require__(31);
+	var ClipboardModel = __webpack_require__(32);
+	var util = __webpack_require__(17);
 
 	var defaultOptions = {
 	    data: [],
@@ -4833,7 +4947,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    selectType: '',
 	    autoNumbering: true,
 	    header: {
-	        height: 35,
+	        height: 40,
 	        complexColumns: []
 	    },
 	    columnOptions: {
@@ -4853,7 +4967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    editingEvent: 'dblclick',
 	    rowHeight: 'auto',
 	    bodyHeight: 'auto',
-	    minRowHeight: 27,
+	    minRowHeight: 40,
 	    minBodyHeight: 130,
 	    selectionUnit: 'cell'
 	};
@@ -4897,7 +5011,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            complexHeaderColumns: options.header.complexColumns,
 	            copyOptions: options.copyOptions,
 	            columns: options.columns,
-	            rowHeaders: options.rowHeaders
+	            rowHeaders: options.rowHeaders,
+	            treeColumnOptions: options.treeColumnOptions
 	        });
 	    },
 
@@ -4910,7 +5025,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _createDataModel: function(options, domState, domEventBus) {
-	        return new RowListData([], {
+	        var isTreeGrid = this.columnModel.hasTreeColumn();
+	        var ListDataModel = isTreeGrid ? TreeRowListData : RowListData;
+
+	        return new ListDataModel([], {
 	            gridId: this.gridId,
 	            domState: domState,
 	            domEventBus: domEventBus,
@@ -4938,8 +5056,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var minBodyHeight = options.minBodyHeight;
 	        var rowHeight = fixedRowHeight ? Math.max(minRowHeight, options.rowHeight) : minRowHeight;
 	        var bodyHeight = fixedHeight ? Math.max(minBodyHeight, options.bodyHeight) : minBodyHeight;
-	        var frozenBorderWidth = _.isUndefined(columnOptions.frozenBorderWidth) ? 1 : columnOptions.frozenBorderWidth;
-	        var attrs = {
+	        var frozenBorderWidth, attrs;
+
+	        if (columnOptions.frozenCount) {
+	            frozenBorderWidth = Number(columnOptions.frozenBorderWidth) || 1;
+	        } else {
+	            frozenBorderWidth = 0;
+	        }
+
+	        attrs = {
 	            headerHeight: options.header.height,
 	            bodyHeight: bodyHeight,
 	            summaryHeight: options.summary ? options.summary.height : 0,
@@ -4953,7 +5078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            minRowHeight: minRowHeight,
 	            minBodyHeight: minBodyHeight || rowHeight,
 	            minimumColumnWidth: columnOptions.minWidth,
-	            frozenBorderWidth: columnOptions.frozenCount ? frozenBorderWidth : null
+	            frozenBorderWidth: frozenBorderWidth
 	        };
 
 	        if (fixedRowHeight === false && options.virtualScrolling) {
@@ -5177,7 +5302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        name: '_number',
 	        align: 'center',
 	        fixedWidth: true,
-	        width: 60,
+	        width: 50,
 	        hidden: false
 	    },
 	    checkbox: {
@@ -5186,7 +5311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        name: '_button',
 	        align: 'center',
 	        fixedWidth: true,
-	        width: 40,
+	        width: 50,
 	        hidden: false,
 	        editOptions: {
 	            type: 'mainButton'
@@ -5198,7 +5323,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        name: '_button',
 	        align: 'center',
 	        fixedWidth: true,
-	        width: 40,
+	        width: 50,
 	        hidden: false,
 	        editOptions: {
 	            type: 'mainButton'
@@ -5236,6 +5361,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        complexHeaderColumns: [],
 	        copyOptions: {
 	            useFormattedValue: false
+	        },
+	        treeColumnOptions: {
+	            name: null,
+	            useIcon: true,
+	            useCascadingCheckbox: true
 	        }
 	    },
 
@@ -5356,6 +5486,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    isTextType: function(columnName) {
 	        return !!this.textType[this.getEditType(columnName)];
+	    },
+
+	    /**
+	     * test the column with given name is a tree column
+	     * @param {String} columnName column name to test
+	     * @returns {boolean} true if the column is tree column
+	     */
+	    isTreeType: function(columnName) {
+	        return this.get('treeColumnOptions').name === columnName;
+	    },
+
+	    /**
+	     * test if any one of columns has a tree column
+	     * @returns {boolean} true if it has a tree column
+	     */
+	    hasTreeColumn: function() {
+	        return snippet.isString(this.get('treeColumnOptions').name);
+	    },
+
+	    /**
+	     * gets treeColumnOptions.useIcon
+	     * @returns {boolean} whether use tree icon
+	     */
+	    useTreeIcon: function() {
+	        var useIcon = this.get('treeColumnOptions').useIcon;
+
+	        return _.isUndefined(useIcon) ? true : useIcon;
+	    },
+
+	    /**
+	     * Get cascade usage in the tree-grid's checkbox
+	     * @returns {boolean} Whether using the cascading checkbox or not
+	     */
+	    useCascadingCheckbox: function() {
+	        var useCascadingCheckbox = this.get('treeColumnOptions').useCascadingCheckbox;
+
+	        return _.isUndefined(useCascadingCheckbox) ? true : useCascadingCheckbox;
 	    },
 
 	    /**
@@ -5630,6 +5797,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    setSummaryContent: function(columnName, contents) {
 	        this.trigger('setSummaryContent', columnName, contents);
+	    },
+
+	    /**
+	     * Get name of tree column
+	     * @returns {string} column name
+	     */
+	    getTreeColumnName: function() {
+	        return this.get('treeColumnOptions').name;
 	    }
 	});
 
@@ -5711,7 +5886,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    dimension: {
 	        CELL_BORDER_WIDTH: 1,
 	        TABLE_BORDER_WIDTH: 1,
-	        RESIZE_HANDLE_WIDTH: 7
+	        RESIZE_HANDLE_WIDTH: 7,
+	        SCROLLBAR_WIDTH: 17,
+	        INDENT_WIDTH: 22
 	    },
 	    frame: {
 	        L: 'L',
@@ -5744,12 +5921,712 @@ return /******/ (function(modules) { // webpackBootstrap
 	    summaryPosition: {
 	        TOP: 'top',
 	        BOTTOM: 'bottom'
+	    },
+	    treeState: {
+	        EXPAND: 'EXPAND',
+	        COLLAPSE: 'COLLAPSE'
 	    }
 	};
 
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview TreeRowList grid data model implementation
+	 * @author NHN Ent. FE Development Team
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(2);
+	var util = __webpack_require__(3);
+
+	var RowList = __webpack_require__(12);
+	var TreeRow = __webpack_require__(20);
+
+	var TreeRowList;
+
+	/**
+	 * Create empty tree-row data
+	 * @returns {object} tree data
+	 * @ignore
+	 */
+	function createEmptyTreeRowData() {
+	    return {
+	        _treeData: {
+	            hasNextSibling: []
+	        }
+	    };
+	}
+
+	/**
+	 * TreeRowList class implementation
+	 * @module model/data/treeModel
+	 * @extends module:base/collection
+	 * @ignore
+	 */
+	TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype */{
+	    initialize: function() {
+	        RowList.prototype.initialize.apply(this, arguments);
+
+	        /**
+	         * root row which actually does not exist.
+	         * it keeps depth 1 rows as it's children
+	         * @type {object}
+	         */
+	        this._rootRow = createEmptyTreeRowData();
+	    },
+
+	    model: TreeRow,
+
+	    /**
+	     * flattened tree row to grid row
+	     * process _extraData then set rowSpanData value
+	     * this function overrides RowList._formatData to deal with rowKey here
+	     *
+	     * @param {array|object} data - rowList
+	     * @param {object} options - append options
+	     * @returns {array} rowList with row
+	     * @override
+	     * @private
+	     */
+	    _formatData: function(data, options) {
+	        var rootRow = createEmptyTreeRowData();
+	        var flattenedRow = [];
+	        var rowList, parentRow, parentRowKey;
+
+	        rowList = _.filter(data, _.isObject);
+	        rowList = util.isArray(rowList) ? rowList : [rowList];
+
+	        if (options) {
+	            // probably an append operation
+	            // which requires specific parent row
+	            parentRowKey = options.parentRowKey;
+	            if (_.isNumber(parentRowKey) || _.isString(parentRowKey)) {
+	                parentRow = this.get(options.parentRowKey);
+	                rootRow._treeData.childrenRowKeys
+	                    = parentRow.getTreeChildrenRowKeys();
+	                rootRow._treeData.hasNextSibling
+	                    = parentRow.hasTreeNextSibling().slice(0);
+	                rootRow.rowKey = options.parentRowKey;
+	            } else {
+	                // no parent row key means root row
+	                rootRow = this._rootRow;
+	            }
+	        } else {
+	            // from setOriginal or setData
+	            // which requires to reset root row
+	            this._rootRow = rootRow;
+	        }
+
+	        this._flattenRow(rowList, flattenedRow, [rootRow]);
+
+	        if (parentRow) {
+	            parentRow.setTreeChildrenRowKeys(rootRow._treeData.childrenRowKeys);
+	        }
+
+	        _.each(flattenedRow, function(row, i) {
+	            if (this.isRowSpanEnable()) {
+	                this._setExtraRowSpanData(flattenedRow, i);
+	            }
+	        }, this);
+
+	        return flattenedRow;
+	    },
+
+	    /**
+	     * Flatten nested tree data to 1-depth grid data.
+	     * @param {array} treeRows - nested rows having children
+	     * @param {array} flattenedRows - flattend rows. you should give an empty array at the initial call of this function
+	     * @param {array} ancestors - ancester rows
+	     */
+	    _flattenRow: function(treeRows, flattenedRows, ancestors) {
+	        var parent;
+	        var lastSibling = treeRows[treeRows.length - 1];
+
+	        parent = ancestors[ancestors.length - 1];
+	        parent._treeData.childrenRowKeys = parent._treeData.childrenRowKeys || [];
+
+	        _.each(treeRows, function(row) {
+	            // sets rowKey property
+	            row = this._baseFormat(row);
+	            row._treeData = {
+	                parentRowKey: parent.rowKey,
+	                hasNextSibling: parent._treeData.hasNextSibling.concat([lastSibling !== row]),
+	                childrenRowKeys: row._children ? [] : null
+	            };
+	            parent._treeData.childrenRowKeys.push(row.rowKey);
+
+	            flattenedRows.push(row);
+
+	            if (util.isArray(row._children)) {
+	                this._flattenRow(row._children, flattenedRows, ancestors.concat([row]));
+	                delete row._children;
+	            }
+	        }, this);
+	    },
+
+	    /**
+	     * calculate index of given parent row key and offset
+	     * @param {number|string} parentRowKey - parent row key
+	     * @param {number} offset - offset
+	     * @returns {number} - calculated index
+	     * @private
+	     */
+	    _indexOfParentRowKeyAndOffset: function(parentRowKey, offset) {
+	        var at, parentRow, childrenRowKeys;
+
+	        parentRow = this.get(parentRowKey);
+	        if (parentRow) {
+	            childrenRowKeys = parentRow.getTreeChildrenRowKeys();
+	            at = this.indexOf(parentRow);
+	        } else {
+	            childrenRowKeys = this._rootRow._treeData.childrenRowKeys;
+	            at = -1; // root row actually doesn't exist
+	        }
+
+	        offset = Math.max(0, offset);
+	        offset = Math.min(offset, childrenRowKeys.length);
+	        if (childrenRowKeys.length === 0 || offset === 0) {
+	            // first sibling
+	            // then the `at` is right after the parent row
+	            at = at + 1;
+	        } else if (childrenRowKeys.length > offset) {
+	            // not the last sibling
+	            // right before the next sibling
+	            at = this.indexOf(this.get(childrenRowKeys[offset]));
+	        } else {
+	            // last sibling
+	            at = this.indexOf(this.get(childrenRowKeys[childrenRowKeys.length - 1]));
+	            // and after all it's descendant rows and itself
+	            at += this.getTreeDescendantRowKeys(at).length + 1;
+	        }
+
+	        return at;
+	    },
+
+	    /**
+	     * update hasNextSibling value of previous sibling and of itself
+	     * @param {number|string} rowKey - row key
+	     * @private
+	     */
+	    _syncHasTreeNextSiblingData: function(rowKey) {
+	        var currentRow = this.get(rowKey);
+	        var currentDepth, prevSiblingRow, nextSiblingRow;
+
+	        if (!currentRow) {
+	            return;
+	        }
+
+	        currentDepth = currentRow.getTreeDepth();
+	        prevSiblingRow = this.get(this.getTreePrevSiblingRowKey(rowKey));
+	        nextSiblingRow = this.get(this.getTreeNextSiblingRowKey(rowKey));
+
+	        currentRow.hasTreeNextSibling()[currentDepth - 1] = !!nextSiblingRow;
+
+	        if (prevSiblingRow) {
+	            prevSiblingRow.hasTreeNextSibling()[currentDepth - 1] = true;
+	        }
+	    },
+
+	    /**
+	     * Insert the new row with specified data to the end of table.
+	     * @param {array|object} [rowData] - The data for the new row
+	     * @param {object} [options] - Options
+	     * @param {number|string} [options.parentRowKey] - row key of the parent which appends given rows
+	     * @param {number} [options.offset] - offset from first sibling
+	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+	     * @returns {Array.<module:model/data/treeTow>} Row model list
+	     * @override
+	     */
+	    appendRow: function(rowData, options) {
+	        var modelList;
+
+	        options = _.extend({
+	            at: this._indexOfParentRowKeyAndOffset(options.parentRowKey, options.offset)
+	        }, options);
+
+	        modelList = this._appendRow(rowData, options);
+
+	        this._syncHasTreeNextSiblingData(modelList[0].get('rowKey'));
+	        if (modelList.length > 1) {
+	            this._syncHasTreeNextSiblingData(modelList[modelList.length - 1].get('rowKey'));
+	        }
+
+	        this.trigger('add', modelList, options);
+
+	        return modelList;
+	    },
+
+	    /**
+	     * Insert the given data into the very first row of root
+	     * @param {array|object} [rowData] - The data for the new row
+	     * @param {object} [options] - Options
+	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+	     * @returns {Array.<module:model/data/treeTow>} Row model list
+	     */
+	    prependRow: function(rowData, options) {
+	        options = options || {};
+	        options.parentRowKey = null;
+	        options.offset = 0;
+
+	        return this.appendRow(rowData, options);
+	    },
+
+	    _removeChildFromParent: function(childRowKey) {
+	        var parentRowKey = this.get(childRowKey).getTreeParentRowKey();
+	        var parentRow = this.get(parentRowKey);
+	        var rootTreeData = this._rootRow._treeData;
+
+	        if (parentRow) {
+	            parentRow.removeTreeChildrenRowKey(childRowKey);
+	        } else {
+	            rootTreeData.childrenRowKeys = _.filter(rootTreeData.childrenRowKeys, function(rootChildRowKey) {
+	                return rootChildRowKey !== childRowKey;
+	            }, this);
+	        }
+	    },
+
+	    _removeRow: function(rowKey, options) {
+	        this._removeChildFromParent(rowKey);
+	        RowList.prototype._removeRow.call(this, rowKey, options);
+	    },
+
+	    /**
+	     * remove row of given row key. it will also remove it's descendant
+	     * @param {number|string} rowKey - 행 데이터의 고유 키
+	     * @param {object} options - 삭제 옵션
+	     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+	     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
+	     * @override
+	     */
+	    removeRow: function(rowKey, options) {
+	        var row = this.get(rowKey);
+	        var parentRowKey = row.getTreeParentRowKey();
+	        var currentIndex = this.indexOf(row);
+	        var prevSiblingRowKey = this.getTreePrevSiblingRowKey(rowKey);
+	        var descendantRowKeys;
+
+	        if (!row) {
+	            return;
+	        }
+
+	        // remove descendant rows including itself
+	        descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+	        descendantRowKeys.reverse().push(rowKey);
+	        _.each(descendantRowKeys, function(descendantRowKey) {
+	            this._removeRow(descendantRowKey, options);
+	        }, this);
+
+	        if (_.isNumber(prevSiblingRowKey) || _.isString(prevSiblingRowKey)) {
+	            this._syncHasTreeNextSiblingData(prevSiblingRowKey);
+	        }
+
+	        if (options && options.removeOriginalData) {
+	            this.setOriginalRowList();
+	        }
+	        this.trigger('remove', rowKey, currentIndex, descendantRowKeys, parentRowKey);
+	    },
+
+	    /**
+	     * get row keys of sibling and of itself
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<number|string>} - sibling row keys
+	     */
+	    getTreeSiblingRowKeys: function(rowKey) {
+	        var parentRow = this.get(this.get(rowKey).getTreeParentRowKey());
+	        var childrenRowKeys;
+
+	        if (parentRow) {
+	            childrenRowKeys = parentRow.getTreeChildrenRowKeys();
+	        } else {
+	            childrenRowKeys = this._rootRow._treeData.childrenRowKeys.slice(0);
+	        }
+
+	        return childrenRowKeys;
+	    },
+	    /**
+	     * get row key of previous sibling
+	     * @param {number|string} rowKey - row key
+	     * @returns {number|string} - previous sibling row key
+	     */
+	    getTreePrevSiblingRowKey: function(rowKey) {
+	        var siblingRowKeys = this.getTreeSiblingRowKeys(rowKey);
+	        var currentIndex = siblingRowKeys.indexOf(rowKey);
+
+	        return currentIndex > 0 ? siblingRowKeys[currentIndex - 1] : null;
+	    },
+
+	    /**
+	     * get row key of next sibling
+	     * @param {number|string} rowKey - row key
+	     * @returns {number|string} - next sibling row key
+	     */
+	    getTreeNextSiblingRowKey: function(rowKey) {
+	        var siblingRowKeys = this.getTreeSiblingRowKeys(rowKey);
+	        var currentIndex = siblingRowKeys.indexOf(rowKey);
+
+	        return (currentIndex + 1 >= siblingRowKeys.length)
+	            ? null : siblingRowKeys[currentIndex + 1];
+	    },
+
+	    /**
+	     * get top most row keys
+	     * @returns {Array.<number|string>} - row keys
+	     */
+	    getTopMostRowKeys: function() {
+	        return this._rootRow._treeData.childrenRowKeys;
+	    },
+
+	    /**
+	     * get tree children of row of given rowKey
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<number|string>} - children of found row
+	     */
+	    getTreeChildrenRowKeys: function(rowKey) {
+	        var row = this.get(rowKey);
+
+	        return row.getTreeChildrenRowKeys();
+	    },
+
+	    /**
+	     * get tree descendant of row of given rowKey
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<number|string>} - descendant of found row
+	     */
+	    getTreeDescendantRowKeys: function(rowKey) {
+	        var index = 0;
+	        var rowKeys = [rowKey];
+
+	        while (index < rowKeys.length) {
+	            rowKeys = rowKeys.concat(this.getTreeChildrenRowKeys(rowKeys[index]));
+	            index += 1;
+	        }
+	        rowKeys.shift();
+
+	        return rowKeys;
+	    },
+
+	    /**
+	     * expand tree row
+	     * @param {number|string} rowKey - row key
+	     * @param {boolean} recursive - true for recursively expand all descendant
+	     * @param {boolean} silent - true to mute event
+	     * @returns {Array.<number|string>} - children or descendant of given row
+	     */
+	    treeExpand: function(rowKey, recursive, silent) {
+	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+	        var row = this.get(rowKey);
+	        row.setTreeExpanded(true);
+
+	        if (recursive) {
+	            _.each(descendantRowKeys, function(descendantRowKey) {
+	                var descendantRow = this.get(descendantRowKey);
+	                if (descendantRow.hasTreeChildren()) {
+	                    descendantRow.setTreeExpanded(true);
+	                }
+	            }, this);
+	        } else {
+	            descendantRowKeys = _.filter(descendantRowKeys, function(descendantRowKey) {
+	                return this.isTreeVisible(descendantRowKey);
+	            }, this);
+	        }
+
+	        if (!silent) {
+	            /**
+	             * Occurs when the row having child rows is expanded
+	             * @event Grid#expanded
+	             * @type {module:event/gridEvent}
+	             * @property {number|string} rowKey - rowKey of the expanded row
+	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	             * @property {Grid} instance - Current grid instance
+	             */
+	            this.trigger('expanded', {
+	                rowKey: rowKey,
+	                descendantRowKeys: descendantRowKeys.slice(0)
+	            });
+	        }
+
+	        return descendantRowKeys;
+	    },
+
+	    /**
+	     * expand all rows
+	     */
+	    treeExpandAll: function() {
+	        var topMostRowKeys = this.getTopMostRowKeys();
+
+	        _.each(topMostRowKeys, function(topMostRowKey) {
+	            this.treeExpand(topMostRowKey, true, true);
+	        }, this);
+
+	        /**
+	         * Occurs when all rows having child rows are expanded
+	         * @event Grid#expandedAll
+	         */
+	        this.trigger('expandedAll');
+	    },
+
+	    /**
+	     * collapse tree row
+	     * @param {number|string} rowKey - row key
+	     * @param {boolean} recursive - true for recursively expand all descendant
+	     * @param {boolean} silent - true to mute event
+	     * @returns {Array.<number|string>} - children or descendant of given row
+	     */
+	    treeCollapse: function(rowKey, recursive, silent) {
+	        var row = this.get(rowKey);
+
+	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+
+	        if (recursive) {
+	            _.each(descendantRowKeys, function(descendantRowKey) {
+	                var descendantRow = this.get(descendantRowKey);
+	                if (descendantRow.hasTreeChildren()) {
+	                    descendantRow.setTreeExpanded(false);
+	                }
+	            }, this);
+	        } else {
+	            descendantRowKeys = _.filter(descendantRowKeys, function(descendantRowKey) {
+	                return this.isTreeVisible(descendantRowKey);
+	            }, this);
+	        }
+
+	        row.setTreeExpanded(false);
+
+	        if (!silent) {
+	            /**
+	             * Occurs when the row having child rows is collapsed
+	             * @event Grid#collapsed
+	             * @type {module:event/gridEvent}
+	             * @property {number|string} rowKey - rowKey of the collapsed row
+	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	             * @property {Grid} instance - Current grid instance
+	             */
+	            this.trigger('collapsed', {
+	                rowKey: rowKey,
+	                descendantRowKeys: descendantRowKeys.slice(0)
+	            });
+	        }
+
+	        return descendantRowKeys;
+	    },
+
+	    /**
+	     * collapse all rows
+	     */
+	    treeCollapseAll: function() {
+	        var topMostRowKeys = this.getTopMostRowKeys();
+
+	        _.each(topMostRowKeys, function(topMostRowKey) {
+	            this.treeCollapse(topMostRowKey, true, true);
+	        }, this);
+
+	        /**
+	         * Occurs when all rows having child rows are collapsed
+	         * @event Grid#collapsedAll
+	         */
+	        this.trigger('collapsedAll');
+	    },
+
+	    /**
+	     * get the parent of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {TreeRow} - the parent row
+	     */
+	    getTreeParent: function(rowKey) {
+	        var row = this.get(rowKey);
+
+	        if (!row) {
+	            return null;
+	        }
+
+	        return this.get(row.getTreeParentRowKey());
+	    },
+
+	    /**
+	     * get the ancestors of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the ancestor rows
+	     */
+	    getTreeAncestors: function(rowKey) {
+	        var ancestors = [];
+	        var row = this.getTreeParent(rowKey);
+
+	        while (row) {
+	            ancestors.push(row);
+	            row = this.getTreeParent(row.get('rowKey'));
+	        }
+
+	        return ancestors.reverse();
+	    },
+
+	    /**
+	     * get the children of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the children rows
+	     */
+	    getTreeChildren: function(rowKey) {
+	        var childrenRowKeys = this.getTreeChildrenRowKeys(rowKey);
+
+	        return _.map(childrenRowKeys, function(childRowKey) {
+	            return this.get(childRowKey);
+	        }, this);
+	    },
+
+	    /**
+	     * get the descendants of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {Array.<TreeRow>} - the descendant rows
+	     */
+	    getTreeDescendants: function(rowKey) {
+	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+
+	        return _.map(descendantRowKeys, function(descendantRowKey) {
+	            return this.get(descendantRowKey);
+	        }, this);
+	    },
+
+	    /**
+	     * get the depth of the row which has the given row key
+	     * @param {number|string} rowKey - row key
+	     * @returns {number} - the depth
+	     */
+	    getTreeDepth: function(rowKey) {
+	        var row = this.get(rowKey);
+	        var depth;
+
+	        if (row) {
+	            return row.getTreeDepth();
+	        }
+
+	        return depth;
+	    },
+
+	    /**
+	     * test if the row of given key should be visible
+	     * @param {string|number} rowKey - row key to test
+	     * @returns {boolean} - true if visible
+	     */
+	    isTreeVisible: function(rowKey) {
+	        var visible = true;
+
+	        _.each(this.getTreeAncestors(rowKey), function(ancestor) {
+	            visible = visible && ancestor.getTreeExpanded();
+	        }, this);
+
+	        return visible;
+	    },
+
+	    /**
+	     * Check whether the row is visible or not
+	     * @returns {boolean} state
+	     * @override
+	     * @todo Change the method name from isTreeVisible to isVisibleRow
+	     */
+	    isVisibleRow: function(rowKey) {
+	        return this.isTreeVisible(rowKey);
+	    },
+
+	    /**
+	     * Check the checkbox input in the row header
+	     * @param {number} rowKey - Current row key
+	     * @override
+	     */
+	    check: function(rowKey) {
+	        var selectType = this.columnModel.get('selectType');
+
+	        if (selectType === 'radio') {
+	            this.uncheckAll();
+	        }
+
+	        this._setCheckedState(rowKey, true);
+	    },
+
+	    /**
+	     * Uncheck the checkbox input in the row header
+	     * @param {number} rowKey - Current row key
+	     * @override
+	     */
+	    uncheck: function(rowKey) {
+	        this._setCheckedState(rowKey, false);
+	    },
+
+	    /**
+	     * Set checked state by using a cascading option
+	     * @param {number} rowKey - Current row key
+	     * @param {boolean} state - Whether checking the input button or not
+	     * @private
+	     */
+	    _setCheckedState: function(rowKey, state) {
+	        var useCascadingCheckbox = this.columnModel.useCascadingCheckbox();
+
+	        this.setValue(rowKey, '_button', state);
+
+	        if (useCascadingCheckbox) {
+	            this._updateDecendantsCheckedState(rowKey, state);
+	            this._updateAncestorsCheckedState(rowKey);
+	        }
+	    },
+
+	    /**
+	     * Update checked state of all descendant rows
+	     * @param {number} rowKey - Current row key
+	     * @param {boolean} state - Whether checking the input button or not
+	     * @private
+	     */
+	    _updateDecendantsCheckedState: function(rowKey, state) {
+	        var descendants = this.getTreeDescendants(rowKey);
+
+	        _.each(descendants, function(descendantRowKey) {
+	            this.setValue(descendantRowKey, '_button', state);
+	        }, this);
+	    },
+
+	    /**
+	     * Update checked state of all ancestor rows
+	     * @param {number} rowKey - Current row key
+	     * @param {boolean} state - Whether checking the input button or not
+	     * @private
+	     */
+	    _updateAncestorsCheckedState: function(rowKey) {
+	        var parentRowKey = this.get(rowKey).getTreeParentRowKey();
+
+	        while (parentRowKey > -1) {
+	            this._setCheckedStateToParent(parentRowKey);
+	            parentRowKey = this.get(parentRowKey).getTreeParentRowKey();
+	        }
+	    },
+
+	    /**
+	     * Set checked state of the parent row according to the checked children rows
+	     * @param {number} rowKey - Current row key
+	     * @private
+	     */
+	    _setCheckedStateToParent: function(rowKey) {
+	        var childernRowKeys = this.get(rowKey).getTreeChildrenRowKeys();
+	        var checkedChildrenCnt = 0;
+	        var checkedState;
+
+	        _.each(childernRowKeys, function(childRowKey) {
+	            if (this.get(childRowKey).get('_button')) {
+	                checkedChildrenCnt += 1;
+	            }
+	        }, this);
+
+	        checkedState = checkedChildrenCnt === childernRowKeys.length;
+
+	        this.setValue(rowKey, '_button', checkedState);
+	    }
+	});
+
+	module.exports = TreeRowList;
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -5762,9 +6639,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var $ = __webpack_require__(6);
 	var _ = __webpack_require__(2);
 
-	var Collection = __webpack_require__(12);
-	var Row = __webpack_require__(13);
-	var GridEvent = __webpack_require__(15);
+	var Collection = __webpack_require__(13);
+	var Row = __webpack_require__(14);
+	var GridEvent = __webpack_require__(16);
 
 	/**
 	 * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -6188,19 +7065,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 
-	    /**
-	     * rowKey 에 해당하는 그리드 데이터를 삭제한다.
-	     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
-	     * @param {object} options - 삭제 옵션
-	     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
-	     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
-	     */
-	    removeRow: function(rowKey, options) {
+	    _removeRow: function(rowKey, options) {
 	        var row = this.get(rowKey);
 	        var rowSpanData, nextRow, removedData, currentIndex;
 
 	        if (!row) {
-	            return;
+	            return -1;
 	        }
 
 	        if (options && options.keepRowSpanData) {
@@ -6215,6 +7085,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            silent: true
 	        });
 	        this._syncRowSpanDataForRemove(rowSpanData, nextRow, removedData);
+
+	        return currentIndex;
+	    },
+
+	    /**
+	     * rowKey 에 해당하는 그리드 데이터를 삭제한다.
+	     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+	     * @param {object} options - 삭제 옵션
+	     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+	     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
+	     */
+	    removeRow: function(rowKey, options) {
+	        var currentIndex = this._removeRow(rowKey, options);
 
 	        if (options && options.removeOriginalData) {
 	            this.setOriginalRowList();
@@ -6284,6 +7167,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return data;
 	    },
 
+	    _appendRow: function(rowData, options) {
+	        var modelList = this._createModelList(rowData, options);
+
+	        this.add(modelList, {
+	            at: options.at,
+	            add: true,
+	            silent: true
+	        });
+
+	        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
+
+	        return modelList;
+	    },
+
 	    /**
 	     * Insert the new row with specified data to the end of table.
 	     * @param {(Array|Object)} [rowData] - The data for the new row
@@ -6294,20 +7191,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
 	     * @returns {Array.<module:model/data/row>} Row model list
 	     */
-	    append: function(rowData, options) {
-	        var modelList = this._createModelList(rowData),
-	            addOptions;
+	    appendRow: function(rowData, options) {
+	        var modelList;
 
 	        options = _.extend({at: this.length}, options);
-	        addOptions = {
-	            at: options.at,
-	            add: true,
-	            silent: true
-	        };
 
-	        this.add(modelList, addOptions);
+	        modelList = this._appendRow(rowData, options);
 
-	        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
 	        this.trigger('add', modelList, options);
 
 	        return modelList;
@@ -6320,11 +7210,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
 	     * @returns {Array.<module:model/data/row>} Row model list
 	     */
-	    prepend: function(rowData, options) {
+	    prependRow: function(rowData, options) {
 	        options = options || {};
 	        options.at = 0;
 
-	        return this.append(rowData, options);
+	        return this.appendRow(rowData, options);
 	    },
 
 	    /**
@@ -6547,9 +7437,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * 주어진 데이터로 모델 목록을 생성하여 반환한다.
 	     * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
+	     * @param {object} options - append의 경우 필요한 options
 	     * @returns {Row[]} 생성된 모델 목록
 	     */
-	    _createModelList: function(rowData) {
+	    _createModelList: function(rowData, options) {
 	        var modelList = [],
 	            rowList;
 
@@ -6557,10 +7448,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!_.isArray(rowData)) {
 	            rowData = [rowData];
 	        }
-	        rowList = this._formatData(rowData);
+	        rowList = this._formatData(rowData, options);
 
 	        _.each(rowList, function(row) {
-	            var model = new Row(row, {
+	            var ModelClass = this.model;
+	            var model = new ModelClass(row, {
 	                collection: this,
 	                parse: true
 	            });
@@ -6925,7 +7817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnIdx, columnName, cellState, rowSpanData;
 
 	        if (!row) {
-	            row = this.append({})[0];
+	            row = this.appendRow({})[0];
 	        }
 	        for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
 	            columnName = columnModel.at(columnIdx, true).name;
@@ -6975,6 +7867,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            available: available,
 	            checked: checked
 	        };
+	    },
+
+	    /**
+	     * Check whether the row is visible or not
+	     * @returns {boolean} state
+	     * @abstract
+	     */
+	    isVisibleRow: function() {
+	        return true;
 	    }
 	});
 
@@ -6982,7 +7883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7019,7 +7920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7034,12 +7935,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var Model = __webpack_require__(9);
-	var ExtraDataManager = __webpack_require__(14);
-	var GridEvent = __webpack_require__(15);
+	var ExtraDataManager = __webpack_require__(15);
+	var GridEvent = __webpack_require__(16);
 
-	var util = __webpack_require__(16);
-	var clipboardUtil = __webpack_require__(17);
-	var classNameConst = __webpack_require__(18);
+	var util = __webpack_require__(17);
+	var clipboardUtil = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	// Propertie names that indicate meta data
 	var PRIVATE_PROPERTIES = [
@@ -7168,7 +8069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onChange: function() {
-	        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+	        var publicChanged = _.omit(this.changed, this.getPrivateProperties());
 
 	        if (_.has(this.changed, '_button')) {
 	            this._triggerCheckboxChangeEvent(this.changed._button);
@@ -7337,12 +8238,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            classNameList.push(classNameConst.CELL_REQUIRED);
 	        }
 	        if (isMetaColumn) {
-	            classNameList.push(classNameConst.CELL_HEAD);
+	            classNameList.push(classNameConst.CELL_ROW_HEAD);
 	        } else if (cellState.editable) {
 	            classNameList.push(classNameConst.CELL_EDITABLE);
 	        }
 	        if (cellState.disabled) {
 	            classNameList.push(classNameConst.CELL_DISABLED);
+	        }
+
+	        if (snippet.pick(columnModel, 'editOptions', 'useViewMode') === false) {
+	            classNameList.push(classNameConst.CELL_HAS_INPUT);
 	        }
 
 	        return this._makeUniqueStringArray(classNameList);
@@ -7677,7 +8582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7899,6 +8804,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getHeight: function() {
 	        return this.data.height;
+	    },
+
+	    /**
+	     * set tree state EXPAND/COLLAPSE
+	     * @param {String} state - tree state EXPAND/COLLAPSE
+	     */
+	    setTreeState: function(state) {
+	        this.data.treeState = state;
+	    },
+
+	    /**
+	     * get tree state EXPAND/COLLAPSE
+	     * @returns {String} - tree state EXPAND/COLLAPSE
+	     */
+	    getTreeState: function() {
+	        return this.data.treeState;
 	    }
 	});
 
@@ -7906,7 +8827,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -7919,7 +8840,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var attrNameConst = __webpack_require__(10).attrName;
 	var targetTypeConst = {
 	    ROW_HEAD: 'rowHead',
@@ -8017,7 +8938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8488,7 +9409,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8644,7 +9565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8665,11 +9586,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // common
 	    NO_SCROLL_X: 'no-scroll-x',
 	    NO_SCROLL_Y: 'no-scroll-y',
-
-	    // icon
-	    ICO_ARROW: 'icon-arrow',
-	    ICO_ARROW_LEFT: 'icon-arrow-left',
-	    ICO_ARROW_RIGHT: 'icon-arrow-right',
+	    HAS_SUMMARY_TOP: 'has-summary-top',
+	    HAS_SUMMARY_BOTTOM: 'has-summary-bottom',
+	    SHOW_LSIDE_AREA: 'show-lside-area',
 
 	    // layer
 	    LAYER_STATE: 'layer-state',
@@ -8696,12 +9615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    HEAD_AREA: 'head-area',
 	    BODY_AREA: 'body-area',
 	    SUMMARY_AREA: 'summary-area',
-	    SUMMARY_AREA_TOP: 'summary-area-top',
-	    SUMMARY_AREA_BOTTOM: 'summary-area-bottom',
-	    SUMMARY_AREA_RIGHT: 'summary-area-right',
-	    SUMMARY_AREA_RIGHT_TOP: 'summary-area-right-top',
-	    SUMMARY_AREA_RIGHT_BOTTOM: 'summary-area-right-bottom',
-
+	    FROZEN_BORDER: 'frozen-border',
 	    FROZEN_BORDER_TOP: 'frozen-border-top',
 	    FROZEN_BORDER_BOTTOM: 'frozen-border-bottom',
 
@@ -8715,21 +9629,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    BODY_TABLE_CONTAINER: 'table-container',
 
 	    // scrollbar
-	    SCROLLBAR_HEAD: 'scrollbar-head',
-	    SCROLLBAR_BORDER: 'scrollbar-border',
+	    SCROLLBAR_RIGHT_TOP: 'scrollbar-right-top',
+	    SCROLLBAR_Y_INNER_BORDER: 'scrollbar-y-inner-border',
+	    SCROLLBAR_Y_OUTER_BORDER: 'scrollbar-y-outer-border',
+	    SCROLLBAR_FROZEN_BORDER: 'scrollbar-frozen-border',
 	    SCROLLBAR_RIGHT_BOTTOM: 'scrollbar-right-bottom',
 	    SCROLLBAR_LEFT_BOTTOM: 'scrollbar-left-bottom',
 
 	    // pagination
 	    PAGINATION: 'pagination',
-	    PAGINATION_PRE: 'pre',
-	    PAGINATION_PRE_OFF: 'pre-off',
-	    PAGINATION_PRE_END: 'pre-end',
-	    PAGINATION_PRE_END_OFF: 'pre-end-off',
-	    PAGINATION_NEXT: 'next',
-	    PAGINATION_NEXT_OFF: 'next-off',
-	    PAGINATION_NEXT_END: 'next-end',
-	    PAGINATION_NEXT_END_OFF: 'next-end-off',
 
 	    // table
 	    TABLE: 'table',
@@ -8741,6 +9649,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // cell style
 	    CELL: 'cell',
 	    CELL_HEAD: 'cell-head',
+	    CELL_ROW_HEAD: 'cell-row-head',
+	    CELL_SUMMARY: 'cell-summary',
 	    CELL_ROW_ODD: 'cell-row-odd',
 	    CELL_ROW_EVEN: 'cell-row-even',
 	    CELL_EDITABLE: 'cell-editable',
@@ -8752,6 +9662,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CELL_ELLIPSIS: 'cell-ellipsis',
 	    CELL_CURRENT_ROW: 'cell-current-row',
 	    CELL_MAIN_BUTTON: 'cell-main-button',
+	    CELL_HAS_INPUT: 'cell-has-input',
+	    CELL_HAS_TREE: 'cell-has-tree',
 
 	    // cell content
 	    CELL_CONTENT: 'cell-content',
@@ -8769,19 +9681,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    BTN_EXCEL_ICON: 'btn-excel-icon',
 	    BTN_EXCEL_PAGE: 'btn-excel-page',
 	    BTN_EXCEL_ALL: 'btn-excel-all',
+	    BTN_TREE: 'btn-tree',
 
 	    // height resize handle
 	    HEIGHT_RESIZE_BAR: 'height-resize-bar',
 	    HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
 
-	    // etc
-	    CALENDAR: 'calendar',
-	    CALENDAR_BTN_PREV_YEAR: 'calendar-btn-prev-year',
-	    CALENDAR_BTN_NEXT_YEAR: 'calendar-btn-next-year',
-	    CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
-	    CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
-	    CALENDAR_SELECTABLE: 'calendar-selectable',
-	    CALENDAR_SELECTED: 'calendar-selected'
+	    // tree column
+	    TREE_WARPPER_RELATIVE: 'tree-wrapper-relative',
+	    TREE_WARPPER_VALIGN_CENTER: 'tree-wrapper-valign-center',
+	    TREE_EXTRA_CONTENT: 'tree-extra-content',
+	    TREE_DEPTH: 'tree-depth',
+	    TREE_BUTTON_EXPAND: 'tree-button-expand',
+	    TREE_BUTTON_COLLAPSE: 'tree-button-collapse',
+	    TREE_ICON: 'tree-icon'
 	};
 
 	var exports = _.mapObject(classNames, function(className) {
@@ -8793,7 +9706,150 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 19 */
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview TreeRow data model implementation
+	 * @author NHN Ent. FE Development Team
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(2);
+	var Row = __webpack_require__(14);
+	var treeState = __webpack_require__(10).treeState;
+
+	var PRIVATE_PROPERTIES = [
+	    '_button',
+	    '_number',
+	    '_extraData',
+	    '_treeData',
+	    '_children'
+	];
+
+	/**
+	 * TreeRow class implementation
+	 * @module model/data/columnModel
+	 * @extends module:base/model
+	 * @ignore
+	 */
+	var TreeRow = Row.extend(/** @lends module:model/data/treeRow.prototype */{
+	    /**
+	     * Returns the Array of private property names
+	     * @returns {array} An array of private property names
+	     */
+	    getPrivateProperties: function() {
+	        return PRIVATE_PROPERTIES;
+	    },
+
+	    /**
+	     * set tree state
+	     * @param {boolean} state - true if expanded
+	     */
+	    setTreeExpanded: function(state) {
+	        var prevState = this.getTreeExpanded();
+
+	        this.extraDataManager.setTreeState(state ? treeState.EXPAND : treeState.COLLAPSE);
+
+	        if (state !== prevState) {
+	            this._triggerExtraDataChangeEvent();
+	        }
+	    },
+
+	    /**
+	     * get tree state
+	     * @returns {boolean} - true if expanded
+	     */
+	    getTreeExpanded: function() {
+	        return this.extraDataManager.getTreeState() === treeState.EXPAND;
+	    },
+
+	    /**
+	     * get tree data
+	     * @returns {Object} - tree data
+	     * @private
+	     */
+	    _getTreeData: function() {
+	        return this.get('_treeData');
+	    },
+
+	    /**
+	     * get tree depth of this row
+	     * @returns {number} - depth of this row
+	     */
+	    getTreeDepth: function() {
+	        return this.hasTreeNextSibling().length;
+	    },
+
+	    /**
+	     * check whether this row has one or more children
+	     * @returns {boolean} - true if it has children
+	     */
+	    hasTreeChildren: function() {
+	        var childrenRowKeys = this._getTreeData().childrenRowKeys;
+	        var hasChildren = _.isArray(childrenRowKeys) && !!childrenRowKeys.length;
+
+	        if (this.get('_children')) {
+	            hasChildren = true;
+	        }
+
+	        return hasChildren;
+	    },
+
+	    /**
+	     * gets children row keys
+	     * @returns {Array.<number|string>} - array of children row keys
+	     */
+	    getTreeChildrenRowKeys: function() {
+	        return this._getTreeData().childrenRowKeys || [];
+	    },
+
+	    /**
+	     * sets children row keys
+	     * @param {Array.<number|string>} rowKeys - array of children row keys
+	     */
+	    setTreeChildrenRowKeys: function(rowKeys) {
+	        this._getTreeData().childrenRowKeys = rowKeys;
+	    },
+
+	    /**
+	     * remove a child key from children row keys
+	     * @param {Array.<number|string>} rowKey - the key of the row to be removed
+	     */
+	    removeTreeChildrenRowKey: function(rowKey) {
+	        var treeData = this._getTreeData();
+
+	        treeData.childrenRowKeys = _.filter(treeData.childrenRowKeys, function(childRowKey) {
+	            return childRowKey !== rowKey;
+	        }, this);
+	    },
+
+	    /**
+	     * check whether this row has one or more next sibling
+	     * @returns {boolean} - true if this row has siblings
+	     */
+	    hasTreeNextSibling: function() {
+	        return this._getTreeData().hasNextSibling;
+	    },
+
+	    /**
+	     * gets parent row key
+	     * @returns {number|string} - parent row key
+	     */
+	    getTreeParentRowKey: function() {
+	        return this._getTreeData().parentRowKey;
+	    }
+	}, {
+	    privateProperties: PRIVATE_PROPERTIES,
+	    treeState: treeState
+	});
+
+	module.exports = TreeRow;
+
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -8873,7 +9929,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        minRowHeight: 0,
 	        minBodyHeight: 0,
 
-	        frozenBorderWidth: null
+	        frozenBorderWidth: 0
 	    },
 
 	    /**
@@ -8953,13 +10009,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var totalWidth = this.get('width');
 	        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
 	        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-	        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
-	        if (this.hasFrozenBorder()) {
-	            availableTotalWidth -= this.get('frozenBorderWidth');
-	        }
-
-	        return availableTotalWidth;
+	        return (totalWidth - this.getScrollYWidth() - totalBorderWidth - this.get('frozenBorderWidth'));
 	    },
 
 	    /**
@@ -9171,14 +10222,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: pageX - bodyOffsetX,
 	            y: pageY - bodyOffsetY
 	        };
-	    },
-
-	    /**
-	     * Whether the frozen border width is set or not
-	     * @returns {boolean} State of the frozen border width
-	     */
-	    hasFrozenBorder: function() {
-	        return _.isNumber(this.get('frozenBorderWidth'));
 	    }
 	});
 
@@ -9186,7 +10229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9198,7 +10241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var Model = __webpack_require__(9);
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 
@@ -9231,8 +10274,183 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // If the fixedRowHeight is false, as the height of each row should be synced with DOM,
 	        // syncWithDom() method is called instead at the end of rendering process.
 	        if (this.dimensionModel.get('fixedRowHeight')) {
-	            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel);
+	            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel)
+	                .listenTo(this.dataModel, 'expanded', this._onExpanded)
+	                .listenTo(this.dataModel, 'collapsed', this._onCollapsed);
 	        }
+	    },
+
+	    /**
+	     * Event handler for 'expanded' event on dataModel using tree
+	     * @param {object} ev - Event object
+	     * @private
+	     */
+	    _onExpanded: function(ev) {
+	        var rowKeys = ev.descendantRowKeys;
+
+	        _.each(rowKeys, function(rowKey) {
+	            var index = this.dataModel.indexOfRowKey(rowKey);
+	            var row = this.dataModel.at(index);
+
+	            this.rowHeights[index] = this._getRowHeight(row);
+	        }, this);
+
+	        this._resetOffsets();
+	        this._setTotalRowHeight();
+	    },
+
+	    /**
+	     * Event handler for 'collapsed' event on dataModel using tree
+	     * @param {object} ev - Event object
+	     * @private
+	     */
+	    _onCollapsed: function(ev) {
+	        var rowKeys = ev.descendantRowKeys;
+
+	        _.each(rowKeys, function(rowKey) {
+	            var index = this.dataModel.indexOfRowKey(rowKey);
+
+	            this.rowHeights[index] = 0;
+	        }, this);
+
+	        this._resetOffsets();
+	        this._setTotalRowHeight();
+	    },
+
+	    /**
+	     * Get row height by value of data model or dimension model
+	     * @param {module:model/data/row} row - data model
+	     * @returns {nubmer} row height
+	     * @private
+	     */
+	    _getRowHeight: function(row) {
+	        var defHeight = this.dimensionModel.get('rowHeight');
+	        var height = row.getHeight();
+
+	        return _.isNumber(height) ? height : defHeight;
+	    },
+
+	    /**
+	     * Returns the height of rows from dataModel as an array
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _getHeightFromData: function() {
+	        var rowHeights = [];
+	        var height;
+
+	        this.dataModel.each(function(row, index) {
+	            height = this._getRowHeight(row);
+
+	            if (!this.dataModel.isVisibleRow(row.get('rowKey'))) {
+	                height = 0;
+	            }
+
+	            rowHeights[index] = height;
+	        }, this);
+
+	        return rowHeights;
+	    },
+
+	    /**
+	     * Get offset of previous visible row by index
+	     * @param {number} index - index of base row
+	     * @returns {number} offset value
+	     * @private
+	     */
+	    _getPreviousVisbleRowOffsetByIndex: function(index) {
+	        var heights = this.rowHeights;
+	        var len = 0;
+	        var offset = -1;
+
+	        for (; index >= len; index -= 1) {
+	            if (heights[index]) {
+	                break;
+	            }
+	            offset -= 1;
+	        }
+
+	        return offset;
+	    },
+
+	    /**
+	     * Get offset of next visible row by index
+	     * @param {number} index - index of base row
+	     * @returns {number} offset value
+	     * @private
+	     */
+	    _getNextVisibleRowOffsetByIndex: function(index) {
+	        var heights = this.rowHeights;
+	        var len = heights.length;
+	        var offset = 1;
+
+	        for (; index < len; index += 1) {
+	            if (heights[index]) {
+	                break;
+	            }
+	            offset += 1;
+	        }
+
+	        return offset;
+	    },
+
+	    /**
+	     * Reset the list of offset via the list of each row's height
+	     * @private
+	     */
+	    _resetOffsets: function() {
+	        var rowHeights = this.rowHeights;
+	        var rowOffsets = [];
+	        var prevIdx = 0;
+	        var prevHeight, rowOffset;
+
+	        _.each(rowHeights, function(height, index) {
+	            if (height) {
+	                prevHeight = index ? rowHeights[prevIdx] : rowHeights[0];
+	                rowOffset = index ? (prevHeight + rowOffsets[prevIdx] + CELL_BORDER_WIDTH) : 0;
+	                prevIdx = index;
+	            } else {
+	                rowOffset = -1;
+	            }
+
+	            rowOffsets[index] = rowOffset;
+	        });
+
+	        this.rowOffsets = rowOffsets;
+	    },
+
+	    /**
+	     * Set the height value of total row height via heights and offsets
+	     * @private
+	     */
+	    _setTotalRowHeight: function() {
+	        var totalRowHeight = 0;
+	        var rowHeights = this.rowHeights;
+	        var rowOffsets = this.rowOffsets;
+	        var rowHeightsLen = rowHeights.length;
+	        var offset, visibleLastItemIdx;
+
+	        if (rowHeightsLen) {
+	            offset = this._getPreviousVisbleRowOffsetByIndex(rowHeightsLen - 1);
+	            visibleLastItemIdx = rowHeightsLen + offset;
+
+	            totalRowHeight = rowOffsets[visibleLastItemIdx] + rowHeights[visibleLastItemIdx] + CELL_BORDER_WIDTH;
+	        }
+
+	        this.dimensionModel.set('totalRowHeight', totalRowHeight);
+	    },
+
+	    /**
+	     * Initialize the values of rowHeights and rowOffsets
+	     * @param {Array.<number>} rowHeights - array of row height
+	     * @private
+	     */
+	    _reset: function(rowHeights) {
+	        this.rowHeights = rowHeights;
+	        this._resetOffsets();
+	        this._setTotalRowHeight();
+
+	        this.trigger('reset');
 	    },
 
 	    /**
@@ -9240,6 +10458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    syncWithDom: function() {
 	        var domRowHeights, dataRowHeights, rowHeights;
+	        var domHeightIdx = 0;
 	        var i, len;
 
 	        if (this.dimensionModel.get('fixedRowHeight')) {
@@ -9251,26 +10470,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        rowHeights = [];
 
 	        for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
-	            rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
+	            if (dataRowHeights[i]) {
+	                rowHeights[i] = Math.max(domRowHeights[domHeightIdx], dataRowHeights[i]);
+	                domHeightIdx += 1;
+	            } else {
+	                rowHeights[i] = 0;
+	            }
 	        }
 
 	        this._reset(rowHeights);
-	    },
-
-	    /**
-	     * Returns the height of rows from dataModel as an array
-	     * @returns {Array.<number>}
-	     * @private
-	     */
-	    _getHeightFromData: function() {
-	        var defHeight = this.dimensionModel.get('rowHeight');
-	        var rowHeights = [];
-
-	        this.dataModel.each(function(row, index) {
-	            rowHeights[index] = (row.getHeight() || defHeight);
-	        });
-
-	        return rowHeights;
 	    },
 
 	    /**
@@ -9278,32 +10486,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    syncWithDataModel: function() {
 	        this._reset(this._getHeightFromData());
-	    },
-
-	    /**
-	     * Initialize the values of rowHeights and rowOffsets
-	     * @param {Array.<number>} rowHeights - array of row height
-	     * @private
-	     */
-	    _reset: function(rowHeights) {
-	        var rowOffsets = [];
-	        var totalRowHeight = 0;
-
-	        _.each(rowHeights, function(height, index) {
-	            var prevOffset = index ? (rowOffsets[index - 1] + CELL_BORDER_WIDTH) : 0;
-	            var prevHeight = index ? rowHeights[index - 1] : 0;
-
-	            rowOffsets[index] = prevOffset + prevHeight;
-	        });
-
-	        this.rowHeights = rowHeights;
-	        this.rowOffsets = rowOffsets;
-
-	        if (rowHeights.length) {
-	            totalRowHeight = _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH;
-	        }
-	        this.dimensionModel.set('totalRowHeight', totalRowHeight);
-	        this.trigger('reset');
 	    },
 
 	    /**
@@ -9354,14 +10536,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    indexOf: function(position) {
 	        var rowOffsets = this.rowOffsets;
 	        var idx = 0;
+	        var hiddenRowsCnt = 0;
 
 	        position += CELL_BORDER_WIDTH * 2;
 
 	        while (rowOffsets[idx] - CELL_BORDER_WIDTH <= position) {
+	            if (rowOffsets[idx] > -1) {
+	                hiddenRowsCnt = 0;
+	            } else {
+	                hiddenRowsCnt += 1;
+	            }
+
 	            idx += 1;
 	        }
 
-	        return idx - 1;
+	        return idx - hiddenRowsCnt - 1;
 	    },
 
 	    /**
@@ -9381,6 +10570,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        movedIdx = this.indexOf(curOffset + distance);
 
 	        return util.clamp(movedIdx, 0, this.dataModel.length - 1);
+	    },
+
+	    /**
+	     * Get previous moved index by row heights
+	     * @param {sring|number} rowKey - focused row key
+	     * @returns {number} offset value of previous focusing row
+	     */
+	    getPreviousOffset: function(rowKey) {
+	        var startIdx = this.dataModel.indexOfRowKey(rowKey);
+	        var index = startIdx - 1;
+
+	        return this._getPreviousVisbleRowOffsetByIndex(index);
+	    },
+
+	    /**
+	     * Get next moved index by row heights
+	     * @param {sring|number} rowKey - focused row key
+	     * @returns {number} offset value of next focusing row
+	     */
+	    getNextOffset: function(rowKey) {
+	        var startIdx = this.dataModel.indexOfRowKey(rowKey);
+	        var index = startIdx + 1;
+
+	        return this._getNextVisibleRowOffsetByIndex(index);
 	    }
 	});
 
@@ -9388,7 +10601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -9402,7 +10615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var Model = __webpack_require__(9);
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var constMap = __webpack_require__(10);
 	var dimensionConst = constMap.dimension;
 	var frameConst = constMap.frame;
@@ -9525,6 +10738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _setColumnWidthVariables: function(widths, saveWidths) {
 	        var totalWidth = this.dimensionModel.get('width');
+	        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
 	        var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
 	        var frozenCount = this.columnModel.getVisibleFrozenCount(true);
 	        var rsideWidth, lsideWidth, lsideWidths, rsideWidths;
@@ -9545,7 +10759,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	        this.dimensionModel.set({
 	            rsideWidth: rsideWidth,
-	            lsideWidth: lsideWidth
+	            lsideWidth: lsideWidth - frozenBorderWidth
 	        });
 
 	        if (saveWidths) {
@@ -9896,7 +11110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10160,7 +11374,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -10173,8 +11387,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var Model = __webpack_require__(9);
-	var util = __webpack_require__(16);
-	var GridEvent = __webpack_require__(15);
+	var util = __webpack_require__(17);
+	var GridEvent = __webpack_require__(16);
 
 	/**
 	 * Focus model
@@ -10793,28 +12007,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
-	     * @param {number} offset   이동할 offset
-	     * @returns {Number} 이동한 위치의 row index
-	     */
-	    nextRowIndex: function(offset) {
-	        var rowKey = this.nextRowKey(offset);
-
-	        return this.dataModel.indexOfRowKey(rowKey);
-	    },
-
-	    /**
-	     * offset 만큼 앞으로 이동한 row의 index를 반환한다.
-	     * @param {number} offset 이동할 offset
-	     * @returns {Number} 이동한 위치의 row index
-	     */
-	    prevRowIndex: function(offset) {
-	        var rowKey = this.prevRowKey(offset);
-
-	        return this.dataModel.indexOfRowKey(rowKey);
-	    },
-
-	    /**
 	     * 다음 컬럼의 인덱스를 반환한다.
 	     * @returns {Number} 다음 컬럼의 index
 	     */
@@ -10846,14 +12038,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var count, rowSpanData;
 
 	        offset = (typeof offset === 'number') ? offset : 1;
+
 	        if (offset > 1) {
 	            rowKey = this._findRowKey(offset);
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
 	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count + offset);
 	            }
 	        } else {
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
 	            if (rowSpanData.isMainRow && rowSpanData.count > 0) {
 	                rowKey = this._findRowKey(rowSpanData.count);
 	            } else if (rowSpanData && !rowSpanData.isMainRow) {
@@ -10861,7 +12056,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
 	                rowKey = this._findRowKey(rowSpanData.count + count);
 	            } else {
-	                rowKey = this._findRowKey(1);
+	                offset = this.coordRowModel.getNextOffset(rowKey);
+	                rowKey = this._findRowKey(offset);
 	            }
 	        }
 
@@ -10885,15 +12081,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (offset < -1) {
 	            rowKey = this._findRowKey(offset);
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
 	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count + offset);
 	            }
 	        } else {
 	            rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+
 	            if (rowSpanData && !rowSpanData.isMainRow) {
 	                rowKey = this._findRowKey(rowSpanData.count - 1);
 	            } else {
-	                rowKey = this._findRowKey(-1);
+	                offset = this.coordRowModel.getPreviousOffset(rowKey);
+	                rowKey = this._findRowKey(offset);
 	            }
 	        }
 
@@ -11014,7 +12213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11028,8 +12227,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var Model = __webpack_require__(9);
-	var Row = __webpack_require__(25);
-	var RowList = __webpack_require__(26);
+	var Row = __webpack_require__(27);
+	var RowList = __webpack_require__(28);
 	var renderStateMap = __webpack_require__(10).renderState;
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 
@@ -11074,12 +12273,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-	            .listenTo(this.dataModel, 'reset', this.initializeVariables)
+	            .listenTo(this.dataModel, 'reset', this._initializeScrollValues)
 	            .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
 	            .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
 	            .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+	            .listenTo(this.dataModel, 'expanded ', this._onExpanded)
+	            .listenTo(this.dataModel, 'collapsed ', this._onCollapsed)
 	            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
 	            .listenTo(partialLside, 'valueChange', this._executeRelation)
 	            .listenTo(partialRside, 'valueChange', this._executeRelation)
@@ -11123,6 +12324,65 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Event handler for 'expanded' event on dataModel using tree
+	     * @param {object} ev - Event object
+	     * @private
+	     */
+	    _onExpanded: function(ev) {
+	        var rowKeys = ev.descendantRowKeys;
+	        var dataModel = this.dataModel;
+	        var columnNamesMap = this._getColumnNamesOfEachSide();
+	        var height, viewData, rowNum, viewModel, index, row;
+
+	        _.each(rowKeys, function(rowKey) {
+	            index = dataModel.indexOfRowKey(rowKey);
+	            row = dataModel.at(index);
+	            height = this.coordRowModel.getHeightAt(index);
+
+	            _.each(['lside', 'rside'], function(attrName) {
+	                rowNum = index + 1;
+	                viewData = this._createViewDataFromDataModel(
+	                    row, columnNamesMap[attrName], height, rowNum);
+
+	                viewModel = this._createRowModel(viewData, true);
+
+	                this.get(attrName)[index] = viewModel;
+	            }, this);
+	        }, this);
+
+	        this._setRenderingRange();
+
+	        this.refresh({
+	            type: 'add',
+	            dataListChanged: true
+	        });
+	    },
+
+	    /**
+	     * Event handler for 'collapsed' event on dataModel using tree
+	     * @param {object} ev - Event object
+	     * @private
+	     */
+	    _onCollapsed: function(ev) {
+	        var rowKeys = ev.descendantRowKeys;
+
+	        _.each(rowKeys, function(rowKey) {
+	            var index = this.dataModel.indexOfRowKey(rowKey);
+
+	            _.each(['lside', 'rside'], function(attrName) {
+	                delete this.get(attrName)[index];
+	            }, this);
+	        }, this);
+
+	        this._setRenderingRange();
+
+	        this.refresh({
+	            type: 'deleteRange',
+	            dataListChanged: true
+	        });
+	    },
+
+	    /**
 	     * Event handler for change:scrollTop and change:scrollLeft.
 	     * @private
 	     */
@@ -11151,15 +12411,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onChangeRowHeights: function() {
-	        var coordRowModel = this.coordRowModel;
 	        var lside = this.get('partialLside');
 	        var rside = this.get('partialRside');
 	        var i = 0;
 	        var len = lside.length;
-	        var height;
+	        var rowKey, height;
 
 	        for (; i < len; i += 1) {
-	            height = coordRowModel.getHeightAt(i);
+	            rowKey = lside.at(i).get('rowKey');
+	            height = this.coordRowModel.getHeight(rowKey);
 
 	            lside.at(i).set('height', height);
 	            rside.at(i).set('height', height);
@@ -11280,6 +12540,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Update data of tree-cell
+	     * @param {number} rowKey - row key
+	     * @private
+	     */
+	    _updateTreeCellData: function(rowKey) {
+	        var columnName = this.columnModel.getTreeColumnName();
+	        var rowModel = this._getRowModel(rowKey, columnName);
+
+	        if (rowModel) {
+	            rowModel.setCell(columnName, {
+	                hasChildren: this.dataModel.get(rowKey).hasTreeChildren()
+	            });
+	        }
+	    },
+
+	    /**
 	     * Initializes own properties.
 	     * (called by module:addon/net)
 	     */
@@ -11289,6 +12565,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            scrollTop: 0,
 	            scrollLeft: 0,
 	            startNumber: 1
+	        });
+	    },
+
+	    /**
+	     * Initializes values of the scroll
+	     * @private
+	     */
+	    _initializeScrollValues: function() {
+	        this.set({
+	            scrollTop: 0,
+	            scrollLeft: 0
 	        });
 	    },
 
@@ -11350,34 +12637,32 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Event handler for adding data list
-	     * @param {array} modelList - List of added item
+	     * @param {array} rowList - List of added item
 	     * @param {object} options - Info of added item
 	     * @private
 	     */
-	    _onAddDataModelChange: function(modelList, options) {
+	    _onAddDataModelChange: function(rowList, options) {
 	        var columnNamesMap = this._getColumnNamesOfEachSide();
 	        var at = options.at;
 	        var height, viewData, rowNum;
 	        var viewModel;
 
-	        this._setRenderingRange(true);
-
-	        // the type of modelList is array or collection
-	        modelList = _.isArray(modelList) ? modelList : modelList.models;
-
-	        _.each(modelList, function(model, index) {
+	        _.each(rowList, function(row, index) {
 	            height = this.coordRowModel.getHeightAt(index);
 
 	            _.each(['lside', 'rside'], function(attrName) {
 	                rowNum = at + index + 1;
 	                viewData = this._createViewDataFromDataModel(
-	                    model, columnNamesMap[attrName], height, rowNum);
+	                    row, columnNamesMap[attrName], height, rowNum);
 
 	                viewModel = this._createRowModel(viewData, true);
 
 	                this.get(attrName).splice(at + index, 0, viewModel);
 	            }, this);
 	        }, this);
+
+	        this._updateTreeCellData(options.parentRowKey);
+	        this._setRenderingRange(true);
 
 	        this.refresh({
 	            type: 'add',
@@ -11393,13 +12678,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Event handler for removing data list
 	     * @param {number|string} rowKey - rowKey of the removed row
 	     * @param {number} removedIndex - Index of the removed row
+	     * @param {Array.<number>} [descendantRowKeys] - All descendants key of the removed when using tree
+	     * @param {number} [parentRowKey] - Parent key of the removed row when using tree
 	     * @private
 	     */
-	    _onRemoveDataModelChange: function(rowKey, removedIndex) {
+	    _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys, parentRowKey) {
+	        var removedRowsCnt = descendantRowKeys ? descendantRowKeys.length : 1;
+
 	        _.each(['lside', 'rside'], function(attrName) {
-	            this.get(attrName).splice(removedIndex, 1);
+	            this.get(attrName).splice(removedIndex, removedRowsCnt);
 	        }, this);
 
+	        this._updateTreeCellData(parentRowKey);
 	        this._setRenderingRange(true);
 
 	        this.refresh({
@@ -11521,15 +12811,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _addViewModelListWithRange: function(startIndex, endIndex) {
+	        var dataModel = this.dataModel;
 	        var columnNamesMap = this._getColumnNamesOfEachSide();
-	        var rowDataModel, height, index;
+	        var index, row, height;
 
-	        if (startIndex >= 0 && endIndex >= 0) {
-	            for (index = startIndex; index <= endIndex; index += 1) {
-	                rowDataModel = this.dataModel.at(index);
-	                height = this.coordRowModel.getHeightAt(index);
+	        if (startIndex < 0 || endIndex < 0) {
+	            return;
+	        }
 
-	                this._addViewModelList(rowDataModel, columnNamesMap, height, index);
+	        for (index = startIndex; index < endIndex + 1; index += 1) {
+	            row = dataModel.at(index);
+	            height = this.coordRowModel.getHeightAt(index);
+
+	            if (dataModel.isVisibleRow(row.get('rowKey'))) {
+	                this._addViewModelList(row, columnNamesMap, height, index);
 	            }
 	        }
 	    },
@@ -11601,13 +12896,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var viewModelList, partialViewModelList;
 
 	        _.each(['L', 'R'], function(whichSide) {
+	            partialViewModelList = [];
 	            originalWhichSide = whichSide.toLowerCase() + 'side';
 	            partialWhichSide = this._getPartialWhichSideType(whichSide);
 	            viewModelList = this.get(originalWhichSide);
-	            partialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+
+	            partialViewModelList = this._getPartialViewModelList(viewModelList, startIndex, endIndex);
 
 	            this.get(partialWhichSide).reset(partialViewModelList);
 	        }, this);
+	    },
+
+	    /**
+	     * Get partial view model list
+	     * @param {Array.<obejct>} viewModelList - List of view model
+	     * @param {number} startIndex - Index of start row
+	     * @param {number} endIndex - Index of end row
+	     * @returns {Array.<module:model/data/row>}>} List of partial view model
+	     * @private
+	     */
+	    _getPartialViewModelList: function(viewModelList, startIndex, endIndex) {
+	        var index = startIndex;
+	        var len = endIndex + 1;
+	        var partialViewModelList = [];
+	        var viewModel;
+
+	        for (; index < len; index += 1) {
+	            viewModel = viewModelList[index];
+
+	            if (viewModel && this.dataModel.isVisibleRow(viewModel.get('rowKey'))) {
+	                partialViewModelList.push(viewModel);
+	            }
+	        }
+
+	        return partialViewModelList;
 	    },
 
 	    /**
@@ -11721,6 +13043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.coordRowModel.syncWithDom();
 	            }
 	        }
+
 	        this._refreshState();
 	    },
 	    /* eslint-enable complexity */
@@ -11851,7 +13174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -11865,7 +13188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var Model = __webpack_require__(9);
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 
 	/**
 	 * Row Model
@@ -11959,18 +13282,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _setRowExtraData: function() {
 	        _.each(this._getColumnNameList(), function(columnName) {
 	            var cellData = this.get(columnName);
-	            var cellState;
 
 	            if (!snippet.isUndefined(cellData) && cellData.isMainRow) {
-	                cellState = this.rowData.getCellState(columnName);
-
-	                this.setCell(columnName, {
-	                    disabled: cellState.disabled,
-	                    editable: cellState.editable,
-	                    className: this._getClassNameString(columnName)
-	                });
+	                if (cellData.tree) {
+	                    this._setTreeCell(columnName);
+	                } else {
+	                    this._setCell(columnName);
+	                }
 	            }
 	        }, this);
+	    },
+
+	    /**
+	     * Set normal cell's properties
+	     * @param {string} columnName - Column name
+	     * @private
+	     */
+	    _setCell: function(columnName) {
+	        var cellState = this.rowData.getCellState(columnName);
+
+	        this.setCell(columnName, {
+	            disabled: cellState.disabled,
+	            editable: cellState.editable,
+	            className: this._getClassNameString(columnName)
+	        });
+	    },
+
+	    /**
+	     * Set tree-cell's property
+	     * @param {string} columnName - Column name
+	     * @private
+	     */
+	    _setTreeCell: function(columnName) {
+	        this.setCell(columnName, {
+	            isExpanded: this.rowData.getTreeExpanded()
+	        });
 	    },
 
 	    /**
@@ -12031,6 +13377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                changed: [] // changed property names
 	            };
 	            _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
+	            _.assign(data[columnName], this._getTreeAttrs(value, row, column, columnModel));
 	        }, this);
 
 	        return data;
@@ -12058,6 +13405,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        classNames = row.getClassNameList(columnName);
 
 	        return classNames.join(' ');
+	    },
+
+	    /**
+	     * Returns the tree values of the attributes related to the cell value.
+	     * @param {String|Number} value - Value
+	     * @param {module:model/data/row} row - Row data model
+	     * @param {Object} column - Column model object
+	     * @param {module:model/data/columnModel} columnModel - column model
+	     * @returns {Object}
+	     * @private
+	     */
+	    _getTreeAttrs: function(value, row, column, columnModel) {
+	        var attrs = {};
+
+	        if (columnModel.isTreeType(column.name)) {
+	            attrs = {
+	                tree: columnModel.hasTreeColumn(),
+	                depth: row.getTreeDepth(),
+	                isExpanded: row.getTreeExpanded(),
+	                hasChildren: row.hasTreeChildren(),
+	                useIcon: columnModel.useTreeIcon()
+	            };
+	        }
+
+	        return attrs;
 	    },
 
 	    /**
@@ -12236,9 +13608,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (changed.length) {
 	            data.changed = changed;
+
 	            this.set(columnName, data, {
 	                silent: this._shouldSetSilently(data, isValueChanged)
 	            });
+
 	            if (isValueChanged) {
 	                rowIndex = this.dataModel.indexOfRowKey(rowKey);
 	                this.trigger('valueChange', rowIndex);
@@ -12272,7 +13646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12284,8 +13658,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var Collection = __webpack_require__(12);
-	var Row = __webpack_require__(25);
+	var Collection = __webpack_require__(13);
+	var Row = __webpack_require__(27);
 
 	/**
 	  * View Model rowList collection
@@ -12311,7 +13685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12323,7 +13697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var Renderer = __webpack_require__(24);
+	var Renderer = __webpack_require__(26);
 	var dimensionConst = __webpack_require__(10).dimension;
 
 	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
@@ -12474,7 +13848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -12488,9 +13862,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var Model = __webpack_require__(9);
-	var GridEvent = __webpack_require__(15);
+	var GridEvent = __webpack_require__(16);
 
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var typeConst = __webpack_require__(10).selectionType;
 
 	/**
@@ -12522,8 +13896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            intervalIdForAutoScroll: null,
 	            scrollPixelScale: 40,
 	            enabled: true,
-	            selectionType: typeConst.CELL,
-	            selectionUnit: attr.selectionUnit
+	            selectionType: typeConst.CELL
 	        });
 
 	        this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -12549,8 +13922,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Selection range
 	         * ex) {row: [0, 1], column: [1, 2]}
 	         * @type {{row: array, column: array}}
+	         * @ignore
 	         */
-	        range: null
+	        range: null,
+
+	        selectionUnit: 'cell'
 	    },
 
 	    /**
@@ -12575,7 +13951,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.update(0, columnRange[1], typeConst.COLUMN);
 	            this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
 	        } else {
-	            this.minimumColumnWidth = columnRange;
+	            this.minimumColumnRange = columnRange;
 	            this.selectColumn(columnRange[0]);
 	            this.update(0, columnRange[1]);
 	        }
@@ -12618,13 +13994,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var address = this._getRecentAddress();
 	        var lastRowIndex = this.dataModel.length - 1;
 	        var lastColummnIndex = this.columnModel.getVisibleColumns().length - 1;
+	        var rowKey = this.dataModel.at(address.row).get('rowKey');
 
 	        switch (ev.command) {
 	            case 'up':
-	                address.row -= 1;
+	                address.row += this.coordRowModel.getPreviousOffset(rowKey);
 	                break;
 	            case 'down':
-	                address.row += 1;
+	                address.row += this.coordRowModel.getNextOffset(rowKey);
 	                break;
 	            case 'left':
 	                address.column -= 1;
@@ -12661,7 +14038,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (address) {
-	            this.update(address.row, address.column, this.getSelectionUnit());
+	            this.update(address.row, address.column);
 	            this._scrollTo(address.row, address.column);
 	        }
 	    },
@@ -12805,7 +14182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _onDragMoveBody: function(gridEvent) {
 	        var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
 
-	        this.update(address.row, address.column, this.getSelectionUnit());
+	        this.update(address.row, address.column);
 	        this._setScrolling(gridEvent.pageX, gridEvent.pageY);
 	    },
 
@@ -12925,7 +14302,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (!this.hasSelection()) {
 	            focusedIndex = this.focusModel.indexOf();
-	            if (type === typeConst.ROW) {
+
+	            if (this.getSelectionUnit() === typeConst.ROW) {
 	                this.start(focusedIndex.row, 0, typeConst.ROW);
 	            } else {
 	                this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
@@ -13189,8 +14567,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _getRangeRowList: function() {
 	        var rowRange = this.get('range').row;
+	        var index = rowRange[0];
+	        var len = rowRange[1] + 1;
+	        var rowList = [];
 
-	        return this.dataModel.slice(rowRange[0], rowRange[1] + 1);
+	        for (; index < len; index += 1) {
+	            if (this.coordRowModel.getHeightAt(index)) {
+	                rowList.push(this.dataModel.at(index));
+	            }
+	        }
+
+	        return rowList;
 	    },
 
 	    /**
@@ -13481,7 +14868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13650,7 +15037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13799,7 +15186,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -13811,27 +15198,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
-	var DatePicker = __webpack_require__(32);
+	var DatePicker = __webpack_require__(34);
 
-	var ContainerView = __webpack_require__(33);
-	var ContentAreaView = __webpack_require__(34);
-	var PaginationView = __webpack_require__(35);
-	var HeightResizeHandleView = __webpack_require__(37);
-	var StateLayerView = __webpack_require__(39);
-	var ClipboardView = __webpack_require__(41);
-	var LsideFrameView = __webpack_require__(43);
-	var RsideFrameView = __webpack_require__(45);
-	var HeaderView = __webpack_require__(46);
-	var HeaderResizeHandleView = __webpack_require__(47);
-	var BodyView = __webpack_require__(48);
-	var BodyTableView = __webpack_require__(49);
-	var SummaryView = __webpack_require__(50);
-	var RowListView = __webpack_require__(51);
-	var SelectionLayerView = __webpack_require__(52);
-	var EditingLayerView = __webpack_require__(53);
-	var DatePickeLayerView = __webpack_require__(54);
-	var FocusLayerView = __webpack_require__(55);
-	var isOptionEnabled = __webpack_require__(16).isOptionEnabled;
+	var ContainerView = __webpack_require__(35);
+	var ContentAreaView = __webpack_require__(36);
+	var PaginationView = __webpack_require__(37);
+	var HeightResizeHandleView = __webpack_require__(39);
+	var StateLayerView = __webpack_require__(41);
+	var ClipboardView = __webpack_require__(43);
+	var LsideFrameView = __webpack_require__(45);
+	var RsideFrameView = __webpack_require__(47);
+	var HeaderView = __webpack_require__(48);
+	var HeaderResizeHandleView = __webpack_require__(49);
+	var BodyView = __webpack_require__(50);
+	var BodyTableView = __webpack_require__(51);
+	var SummaryView = __webpack_require__(52);
+	var RowListView = __webpack_require__(53);
+	var SelectionLayerView = __webpack_require__(54);
+	var EditingLayerView = __webpack_require__(55);
+	var DatePickeLayerView = __webpack_require__(56);
+	var FocusLayerView = __webpack_require__(57);
+	var isOptionEnabled = __webpack_require__(17).isOptionEnabled;
 	var frameConst = __webpack_require__(10).frame;
 
 	/**
@@ -14142,13 +15529,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_34__;
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14161,10 +15548,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var $ = __webpack_require__(6);
 
 	var View = __webpack_require__(4);
-	var GridEvent = __webpack_require__(15);
+	var GridEvent = __webpack_require__(16);
 	var targetTypeConst = GridEvent.targetTypeConst;
 	var attrNameConst = __webpack_require__(10).attrName;
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Container View
@@ -14414,7 +15801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14426,8 +15813,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var $ = __webpack_require__(6);
 	var View = __webpack_require__(4);
-	var classNameConst = __webpack_require__(18);
-	var frameConst = __webpack_require__(10).frame;
+	var classNameConst = __webpack_require__(19);
+	var constMap = __webpack_require__(10);
+	var frameConst = constMap.frame;
 	var ContentArea;
 
 	/**
@@ -14486,14 +15874,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	            borderDIV(classNameConst.BORDER_RIGHT),
 	            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
 	        ]);
+	        var classNames = [];
 
 	        if (!dimensionModel.get('scrollX')) {
-	            this.$el.addClass(classNameConst.NO_SCROLL_X);
-	        }
-	        if (!dimensionModel.get('scrollY')) {
-	            this.$el.addClass(classNameConst.NO_SCROLL_Y);
+	            classNames.push(classNameConst.NO_SCROLL_X);
 	        }
 
+	        if (!dimensionModel.get('scrollY')) {
+	            classNames.push(classNameConst.NO_SCROLL_Y);
+	        }
+
+	        if (dimensionModel.get('summaryHeight')) {
+	            if (dimensionModel.get('summaryPosition') === constMap.summaryPosition.TOP) {
+	                classNames.push(classNameConst.HAS_SUMMARY_TOP);
+	            } else {
+	                classNames.push(classNameConst.HAS_SUMMARY_BOTTOM);
+	            }
+	        }
+
+	        if (dimensionModel.get('rsideWidth')) {
+	            classNames.push(classNameConst.SHOW_LSIDE_AREA);
+	        }
+
+	        this.$el.addClass(classNames.join(' '));
 	        this.$el.append(childElements);
 
 	        return this;
@@ -14504,7 +15907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14516,16 +15919,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var TuiPaginaton = __webpack_require__(36);
+	var TuiPaginaton = __webpack_require__(38);
 
 	var View = __webpack_require__(4);
+	var classNameConst = __webpack_require__(19);
 	var defaultOptions = {
 	    totalItems: 1,
 	    itemsPerPage: 10,
 	    visiblePages: 5,
 	    centerAlign: true
 	};
-	var TUI_PAGINATION_CLASSNAME = 'tui-pagination';
+	var PAGINATION_CLASSNAME = 'tui-pagination ' + classNameConst.PAGINATION;
 
 	/**
 	 * Class for the pagination
@@ -14544,7 +15948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.on('appended', this._onAppended);
 	    },
 
-	    className: TUI_PAGINATION_CLASSNAME,
+	    className: PAGINATION_CLASSNAME,
 
 	    /**
 	     * Render
@@ -14576,7 +15980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Create an option object for creating a tui.component.Pagination component.
+	     * Create an option object for creating a tui.Pagination component.
 	     * @returns {Object}
 	     */
 	    _createOptionObject: function() {
@@ -14590,15 +15994,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Create new tui.component.Pagination instance
-	     * @returns {tui.component.Pagination}
+	     * Create new tui.Pagination instance
+	     * @returns {tui.Pagination}
 	     * @private
 	     */
 	    _createComponent: function() {
 	        var ComponentClass = TuiPaginaton;
 
 	        if (!ComponentClass) {
-	            throw new Error('Cannot find component \'tui.component.Pagination\'');
+	            throw new Error('Cannot find component \'tui.Pagination\'');
 	        }
 
 	        return new ComponentClass(this.$el, this._createOptionObject());
@@ -14609,13 +16013,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_36__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_38__;
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14626,8 +16030,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var View = __webpack_require__(4);
-	var classNameConst = __webpack_require__(18);
-	var DragEventEmitter = __webpack_require__(38);
+	var classNameConst = __webpack_require__(19);
+	var DragEventEmitter = __webpack_require__(40);
 
 	/**
 	 * Class for the height resize handle
@@ -14692,7 +16096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14706,7 +16110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var GridEvent = __webpack_require__(15);
+	var GridEvent = __webpack_require__(16);
 
 	/* Drag event emitter
 	 * @module event/dragEventEmitter
@@ -14851,7 +16255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14865,8 +16269,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var View = __webpack_require__(4);
 	var stateConst = __webpack_require__(10).renderState;
-	var classNameConst = __webpack_require__(18);
-	var i18n = __webpack_require__(40);
+	var classNameConst = __webpack_require__(19);
+	var i18n = __webpack_require__(42);
 	var TABLE_BORDER_WIDTH = __webpack_require__(10).dimension.TABLE_BORDER_WIDTH;
 
 	/**
@@ -14955,7 +16359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var scrollYWidth = dimensionModel.getScrollYWidth();
 
 	        this.$el.css({
-	            top: headerHeight - TABLE_BORDER_WIDTH,
+	            top: headerHeight,
 	            height: bodyHeight - scrollXHeight - TABLE_BORDER_WIDTH,
 	            left: 0,
 	            right: scrollYWidth
@@ -14967,7 +16371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -14978,7 +16382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _ = __webpack_require__(2);
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 
 	var messages = {
 	    en: {
@@ -15087,7 +16491,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15102,9 +16506,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var View = __webpack_require__(4);
-	var clipboardUtil = __webpack_require__(17);
-	var keyEvent = __webpack_require__(42);
-	var classNameConst = __webpack_require__(18);
+	var clipboardUtil = __webpack_require__(18);
+	var keyEvent = __webpack_require__(44);
+	var classNameConst = __webpack_require__(19);
 	var KEYDOWN_LOCK_TIME = 10;
 	var Clipboard;
 
@@ -15382,7 +16786,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15393,7 +16797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _ = __webpack_require__(2);
-	var GridEvent = __webpack_require__(15);
+	var GridEvent = __webpack_require__(16);
 
 	var keyCodeMap = {
 	    backspace: 8,
@@ -15499,7 +16903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15512,8 +16916,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var $ = __webpack_require__(6);
 	var _ = __webpack_require__(2);
 
-	var Frame = __webpack_require__(44);
-	var classNameConst = __webpack_require__(18);
+	var Frame = __webpack_require__(46);
+	var classNameConst = __webpack_require__(19);
 	var frameConst = __webpack_require__(10).frame;
 
 	/**
@@ -15560,11 +16964,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @override
 	     */
 	    afterRender: function() {
-	        if (!this.dimensionModel.get('scrollX')) {
-	            return;
+	        if (this.dimensionModel.get('scrollX')) {
+	            this.$el.append($('<div />').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM));
 	        }
-
-	        this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM));
 	    }
 	});
 
@@ -15572,7 +16974,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15669,7 +17071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15682,13 +17084,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	var $ = __webpack_require__(6);
 	var _ = __webpack_require__(2);
 
-	var Frame = __webpack_require__(44);
-	var classNameConst = __webpack_require__(18);
+	var Frame = __webpack_require__(46);
+	var classNameConst = __webpack_require__(19);
 	var constMap = __webpack_require__(10);
 	var frameConst = constMap.frame;
+	var dimensionConst = constMap.dimension;
 	var summaryPositionConst = constMap.summaryPosition;
 
-	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+	var RsideFrame;
+
+	/**
+	 * Create div element to use on right-side area
+	 * @param {string} className - class name to add on element
+	 * @param {object} styles - style object to set css
+	 * @returns {jQuery} created div element
+	 * @ignore
+	 */
+	function createDiv(className, styles) {
+	    var $element = $('<div />').addClass(className);
+
+	    if (styles) {
+	        $element.css(styles);
+	    }
+
+	    return $element;
+	}
 
 	/**
 	 * right side frame class
@@ -15696,7 +17118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @extends module:view/layout/frame
 	 * @ignore
 	 */
-	var RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
+	RsideFrame = Frame.extend(/** @lends module:view/layout/frame-rside.prototype */{
 	    initialize: function() {
 	        Frame.prototype.initialize.apply(this, arguments);
 
@@ -15728,6 +17150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dimensionModel = this.dimensionModel;
 	        var width = dimensionModel.get('rsideWidth');
 	        var marginLeft = dimensionModel.get('lsideWidth');
+	        var frozenBorderWidth = dimensionModel.get('frozenBorderWidth');
 
 	        // If the left side exists and the division border should not be doubled,
 	        // left side should cover the right side by border-width to hide the left border of the right side.
@@ -15738,7 +17161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.$el.css({
 	            width: width,
-	            marginLeft: marginLeft
+	            marginLeft: marginLeft + frozenBorderWidth
 	        });
 	    },
 
@@ -15773,119 +17196,111 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dimensionModel = this.dimensionModel;
 	        var scrollX = dimensionModel.get('scrollX');
 	        var scrollY = dimensionModel.get('scrollY');
-	        var headerHeight = dimensionModel.get('headerHeight');
-	        var summaryHeight = dimensionModel.get('summaryHeight');
-	        var summaryPosition = dimensionModel.get('summaryPosition');
+	        var spaceHeights = this._getSpaceHeights(scrollX, scrollY);
 
-	        if (dimensionModel.hasFrozenBorder()) {
-	            this._setFrozenBorder(headerHeight, scrollX);
-	        }
+	        this._setScrollbar(scrollX, scrollY, spaceHeights);
 
-	        if (!scrollY) {
-	            return;
-	        }
-
-	        this._setScrollbar(headerHeight, summaryHeight, summaryPosition, scrollX);
-
-	        if (summaryHeight) {
-	            this._applyStyleToSummary(headerHeight, summaryHeight, summaryPosition, scrollX);
+	        if (dimensionModel.get('frozenBorderWidth')) {
+	            this._setFrozenBorder(scrollX);
 	        }
 
 	        this._resetScrollBorderHeight();
 	    },
 
 	    /**
-	     * Create scrollbar area and set styles
-	     * @param {number} headerHeight - Height of the header area
-	     * @param {number} summaryHeight - Height of summary area by setting "summary" option
-	     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
+	     * Get height values of top, bottom space on scroll area
 	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+	     * @param {boolean} scrollY - Whether the grid has y-scroll or not
+	     * @returns {object} Heighs value
 	     * @private
 	     */
-	    _setScrollbar: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
-	        var $space, $scrollBorder;
+	    _getSpaceHeights: function(scrollX, scrollY) {
+	        var dimensionModel = this.dimensionModel;
+	        var summaryHeight = dimensionModel.get('summaryHeight');
+	        var summaryPosition = dimensionModel.get('summaryPosition');
+	        var topHeight = dimensionModel.get('headerHeight');
+	        var bottomHeight = scrollX ? dimensionConst.SCROLLBAR_WIDTH : 0;
 
-	        // Empty DIV for hiding scrollbar in the header area
-	        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
-
-	        // Empty DIV for showing a left-border of vertical scrollbar in the body area
-	        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
-
-	        if (summaryPosition === summaryPositionConst.TOP) {
-	            headerHeight += summaryHeight;
+	        if (scrollY && summaryHeight) {
+	            if (summaryPosition === summaryPositionConst.TOP) {
+	                topHeight += summaryHeight + dimensionConst.TABLE_BORDER_WIDTH;
+	            } else {
+	                bottomHeight += summaryHeight;
+	            }
 	        }
 
-	        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
-	        $scrollBorder.css('top', headerHeight + 'px');
+	        return {
+	            top: topHeight,
+	            bottom: bottomHeight
+	        };
+	    },
 
-	        this.$el.append($space, $scrollBorder);
+	    /**
+	     * Create scrollbar area and set styles
+	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
+	     * @param {boolean} scrollY - Whether the grid has y-scroll or not
+	     * @param {object} spaceHeights - Height values of top, bottom space on scroll area
+	     * @private
+	     */
+	    _setScrollbar: function(scrollX, scrollY, spaceHeights) {
+	        var $yInnerBorder, $yOuterBorder, $spaceRightTop, $spaceRightBottom, $frozenBorder;
 
-	        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
-	        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
-	        //  casues to be stuck in the same position in Chrome)
 	        if (scrollX) {
-	            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+	            $frozenBorder = createDiv(classNameConst.SCROLLBAR_FROZEN_BORDER, {
+	                height: dimensionConst.SCROLLBAR_WIDTH
+	            });
 	        }
 
-	        this.$scrollBorder = $scrollBorder;
+	        if (scrollY) {
+	            // subtract 2px for border-width (top and bottom)
+	            $spaceRightTop = createDiv(classNameConst.SCROLLBAR_RIGHT_TOP, {
+	                height: spaceHeights.top - 2
+	            });
+	            $yInnerBorder = createDiv(classNameConst.SCROLLBAR_Y_INNER_BORDER, {
+	                top: spaceHeights.top
+	            });
+	            $yOuterBorder = createDiv(classNameConst.SCROLLBAR_Y_OUTER_BORDER);
+	        }
+
+	        if (scrollX || scrollY) {
+	            $spaceRightBottom = createDiv(classNameConst.SCROLLBAR_RIGHT_BOTTOM, {
+	                height: spaceHeights.bottom
+	            });
+	        }
+
+	        this.$el.append(
+	            $yInnerBorder,
+	            $yOuterBorder,
+	            $spaceRightTop,
+	            $spaceRightBottom,
+	            $frozenBorder
+	        );
+
+	        this.$scrollBorder = $yInnerBorder;
 	    },
 
 	    /**
 	     * Create frozen border and set styles
-	     * @param {number} headerHeight - Height of the header area
 	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
 	     * @private
 	     */
-	    _setFrozenBorder: function(headerHeight, scrollX) {
-	        var frozenBorderWidth = this.dimensionModel.get('frozenBorderWidth');
+	    _setFrozenBorder: function() {
+	        var dimensionModel = this.dimensionModel;
+	        var headerHeight = dimensionModel.get('headerHeight');
+	        var frozenBorderWidth = dimensionModel.get('frozenBorderWidth');
 	        var resizeHandleView = this.viewFactory.createHeaderResizeHandle(frameConst.L, [headerHeight], true);
-	        var $el = this.$el;
+	        var $resizeHanlder = resizeHandleView.render().$el;
+	        var $frozenBorder = createDiv(classNameConst.FROZEN_BORDER, {
+	            marginLeft: -frozenBorderWidth,
+	            width: frozenBorderWidth
+	        });
 
-	        $el.append(resizeHandleView.render().$el);
-
-	        $el.find('.' + classNameConst.HEAD_AREA).css('border-left-width', frozenBorderWidth);
-	        $el.find('.' + classNameConst.BODY_AREA).css('border-left-width', frozenBorderWidth);
-	        $el.find('.' + classNameConst.SUMMARY_AREA).css('border-left-width', frozenBorderWidth);
-
-	        // If you don't initialize the table left-border to 0,
-	        // the left-border moves when the right side area is scrolled.
-	        $el.find('.' + classNameConst.TABLE).css('border-left-width', 0);
-
-	        if (scrollX) {
-	            $el.append($('<div>')
-	                .addClass(classNameConst.FROZEN_BORDER_BOTTOM)
-	                .css('width', frozenBorderWidth)
-	            );
-	        }
-	    },
-
-	    /**
-	     * Apply style to summary area on right-side frame
-	     * @param {number} headerHeight - Height of header area
-	     * @param {number} summaryHeight - Height of summary area by setting "summary" option
-	     * @param {string} summaryPosition - Position of summary area ('top' or 'bottom')
-	     * @param {boolean} scrollX - Whether the grid has x-scroll or not
-	     * @private
-	     */
-	    _applyStyleToSummary: function(headerHeight, summaryHeight, summaryPosition, scrollX) {
-	        var styles = {};
-	        var subClassName;
-
-	        if (summaryPosition === summaryPositionConst.TOP) {
-	            styles.top = headerHeight;
-	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_TOP;
-	        } else {
-	            styles.bottom = scrollX ? this.dimensionModel.getScrollXHeight() : 0;
-	            subClassName = classNameConst.SUMMARY_AREA_RIGHT_BOTTOM;
-	        }
-
-	        styles.height = summaryHeight;
-
-	        this.$el.append($('<div>')
-	            .addClass(classNameConst.SUMMARY_AREA_RIGHT)
-	            .addClass(subClassName)
-	            .css(styles)
-	        );
+	        this.$el.append($resizeHanlder, $frozenBorder)
+	            .find('.' + classNameConst.SCROLLBAR_FROZEN_BORDER)
+	            .css({
+	                marginLeft: -(frozenBorderWidth + CELL_BORDER_WIDTH),
+	                width: frozenBorderWidth
+	            });
 	    }
 	});
 
@@ -15893,7 +17308,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -15907,11 +17322,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var View = __webpack_require__(4);
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
-	var GridEvent = __webpack_require__(15);
-	var DragEventEmitter = __webpack_require__(38);
+	var classNameConst = __webpack_require__(19);
+	var GridEvent = __webpack_require__(16);
+	var DragEventEmitter = __webpack_require__(40);
 	var frameConst = constMap.frame;
 
 	var DELAY_SYNC_CHECK = 10;
@@ -16500,7 +17915,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16516,9 +17931,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var View = __webpack_require__(4);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
-	var DragEventEmitter = __webpack_require__(38);
-	var i18n = __webpack_require__(40);
+	var classNameConst = __webpack_require__(19);
+	var DragEventEmitter = __webpack_require__(40);
+	var i18n = __webpack_require__(42);
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
 
@@ -16731,7 +18146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -16745,11 +18160,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var View = __webpack_require__(4);
-	var DragEventEmitter = __webpack_require__(38);
-	var GridEvent = __webpack_require__(15);
-	var util = __webpack_require__(16);
+	var DragEventEmitter = __webpack_require__(40);
+	var GridEvent = __webpack_require__(16);
+	var util = __webpack_require__(17);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 	var frameConst = constMap.frame;
 
 	// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
@@ -17002,7 +18417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17016,7 +18431,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var View = __webpack_require__(4);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -17201,7 +18616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17213,7 +18628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 	var View = __webpack_require__(4);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 	var constMap = __webpack_require__(10);
 	var frameConst = constMap.frame;
 
@@ -17281,14 +18696,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ),
 
 	    /**
-	     * Template for <th>
+	     * Template for <td>
 	     */
-	    templateHeader: _.template(
-	        '<th <%=attrColumnName%>="<%=columnName%>" ' +
+	    templateBody: _.template(
+	        '<td <%=attrColumnName%>="<%=columnName%>" ' +
 	            'class="<%=className%>" ' +
 	        '>' +
 	        '<%=value%>' +
-	        '</th>'
+	        '</td>'
 	    ),
 
 	    /**
@@ -17337,19 +18752,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Sets the HTML string of <th> of given column
+	     * Sets the HTML string of <td> of given column
 	     * @param {string} columnName - column name
 	     * @param {string} contents - HTML string
 	     * @private
 	     */
 	    _setColumnContent: function(columnName, contents) {
-	        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+	        var $th = this.$el.find('td[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
 	        $th.html(contents);
 	    },
 
 	    /**
-	     * Refresh <th> tag whenever summary value is changed.
+	     * Refresh <td> tag whenever summary value is changed.
 	     * @param {string} columnName - column name
 	     * @param {object} valueMap - value map
 	     * @private
@@ -17416,10 +18831,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                valueMap = summaryModel.getValue(column.name);
 	            }
 
-	            return memo + this.templateHeader({
+	            return memo + this.templateBody({
 	                attrColumnName: ATTR_COLUMN_NAME,
 	                columnName: columnName,
-	                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
+	                className: [classNameConst.CELL, classNameConst.CELL_SUMMARY].join(' '),
 	                value: this._generateValueHTML(columnName, valueMap)
 	            });
 	        }, '', this);
@@ -17431,10 +18846,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    render: function() {
 	        var summaryHeight = this.dimensionModel.get('summaryHeight');
-	        var summaryPosition = this.dimensionModel.get('summaryPosition');
-	        var className = summaryPosition === 'top' ? classNameConst.SUMMARY_AREA_TOP : classNameConst.SUMMARY_AREA_BOTTOM;
-
-	        this.$el.addClass(className);
 
 	        if (summaryHeight) {
 	            this.$el.html(this.template({
@@ -17453,7 +18864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17463,13 +18874,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var $ = __webpack_require__(6);
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
 	var View = __webpack_require__(4);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	var attrNameConst = constMap.attrName;
 	var frameConst = constMap.frame;
@@ -17489,6 +18899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var renderModel = options.renderModel;
 	        var selectionModel = options.selectionModel;
 	        var coordRowModel = options.coordRowModel;
+	        var dataModel = options.dataModel;
 	        var whichSide = options.whichSide || 'R';
 
 	        _.assign(this, {
@@ -17498,7 +18909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderModel: renderModel,
 	            selectionModel: selectionModel,
 	            coordRowModel: coordRowModel,
-	            dataModel: options.dataModel,
+	            dataModel: dataModel,
 	            columnModel: options.columnModel,
 	            collection: renderModel.getCollection(whichSide),
 	            painterManager: options.painterManager,
@@ -17583,9 +18994,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getRowsHtml: function(rows) {
 	        var rowPainter = this.painterManager.getRowPainter();
 	        var columnNames = _.pluck(this._getColumns(), 'name');
+	        var hasTreeColumn = this.columnModel.hasTreeColumn();
 
 	        return _.map(rows, function(row) {
-	            return rowPainter.generateHtml(row, columnNames);
+	            return rowPainter.generateHtml(row, columnNames, hasTreeColumn);
 	        }).join('');
 	    },
 
@@ -17605,57 +19017,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _refreshSelectedMetaColumns: function() {
 	        var $rows = this.$el.find('tr');
-	        var metaSelector = '.' + classNameConst.CELL_HEAD;
-	        var $filteredRows;
+	        var metaSelector = '.' + classNameConst.CELL_ROW_HEAD;
+	        var filteredRowList;
 
 	        if (this.selectionModel.hasSelection()) {
-	            $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
+	            filteredRowList = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
 	        } else {
-	            $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
+	            filteredRowList = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
 	        }
 
 	        $rows.find(metaSelector).removeClass(classNameConst.CELL_SELECTED);
-	        $filteredRows.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+
+	        _.each(filteredRowList, function($row) {
+	            $row.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
+	        });
 	    },
 
 	    /**
 	     * Filters the rows by given range(index) and returns them.
 	     * @param {jQuery} $rows - rows (tr elements)
 	     * @param {Array.<Number>} rowRange - [startIndex, endIndex]
-	     * @returns {jQuery}
+	     * @returns {Array.<jQuery>}
 	     * @private
 	     */
 	    _filterRowsByIndexRange: function($rows, rowRange) {
-	        var renderModel = this.renderModel;
-	        var renderStartIndex = renderModel.get('startIndex');
-	        var startIndex, endIndex;
+	        var index = rowRange[0];
+	        var len = rowRange[1] + 1;
+	        var rowList = [];
+	        var rowKey;
 
-	        startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
-	        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
-
-	        if (!startIndex && !endIndex) {
-	            return $();
+	        for (; index < len; index += 1) {
+	            if (this.coordRowModel.getHeightAt(index)) {
+	                rowKey = this.dataModel.at(index).get('rowKey');
+	                rowList.push(this._getRowElement(rowKey));
+	            }
 	        }
 
-	        return $rows.slice(startIndex, endIndex);
+	        return rowList;
 	    },
 
 	    /**
 	     * Filters the row by given rowKey
 	     * @param {jQuery} $rows - rows (tr elements)
 	     * @param {Number} rowKey - rowKey
-	     * @returns {jQuery}
+	     * @returns {Array.<jQuery>}
 	     * @private
 	     */
 	    _filterRowByKey: function($rows, rowKey) {
 	        var rowIndex = this.dataModel.indexOfRowKey(rowKey);
 	        var renderStartIndex = this.renderModel.get('startIndex');
+	        var rowList = [];
 
 	        if (renderStartIndex > rowIndex) {
-	            return $();
+	            return rowList;
 	        }
 
-	        return $rows.eq(rowIndex - renderStartIndex);
+	        return rowList.push($rows.eq(rowIndex - renderStartIndex));
 	    },
 
 	    /**
@@ -17765,7 +19182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17778,7 +19195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var View = __webpack_require__(4);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 	var frameConst = __webpack_require__(10).frame;
 
@@ -17933,7 +19350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -17949,7 +19366,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var View = __webpack_require__(4);
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 	var attrNameConst = __webpack_require__(10).attrName;
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Layer class that represents the state of rendering phase.
@@ -18098,7 +19515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18110,10 +19527,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var DatePicker = __webpack_require__(32);
+	var DatePicker = __webpack_require__(34);
 
 	var View = __webpack_require__(4);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 	var DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 	var FULL_RANGES = [[new Date(1900, 0, 1), new Date(2999, 11, 31)]];
 	var DatePickerLayer;
@@ -18311,7 +19728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18326,7 +19743,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var View = __webpack_require__(4);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -18473,7 +19890,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	
@@ -18495,7 +19912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18509,7 +19926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var snippet = __webpack_require__(3);
 
 	var attrNameConst = __webpack_require__(10).attrName;
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Class for offering methods that can be used to get the current state of DOM element.
@@ -18615,7 +20032,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18710,7 +20127,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._listenForThrough(dataModel, [
 	            'check',
 	            'uncheck',
-	            'deleteRange'
+	            'deleteRange',
+	            'expanded',
+	            'expandedAll',
+	            'collapsed',
+	            'collapsedAll'
 	        ]);
 	    },
 
@@ -18725,7 +20146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18738,13 +20159,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var RowPainter = __webpack_require__(60);
-	var CellPainter = __webpack_require__(62);
-	var DummyCellPainter = __webpack_require__(63);
-	var TextPainter = __webpack_require__(64);
-	var SelectPainter = __webpack_require__(66);
-	var ButtonPainter = __webpack_require__(67);
-	var MainButtonPainter = __webpack_require__(68);
+	var RowPainter = __webpack_require__(62);
+	var CellPainter = __webpack_require__(64);
+	var TreeCellPainter = __webpack_require__(65);
+	var DummyCellPainter = __webpack_require__(66);
+	var TextPainter = __webpack_require__(67);
+	var SelectPainter = __webpack_require__(69);
+	var ButtonPainter = __webpack_require__(70);
+	var MainButtonPainter = __webpack_require__(71);
 
 	/**
 	 * Painter manager
@@ -18829,6 +20251,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }, this);
 
+	        cellPainters.tree = new TreeCellPainter({
+	            controller: controller,
+	            inputPainter: this.inputPainters.text
+	        });
+
 	        return cellPainters;
 	    },
 
@@ -18850,6 +20277,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getCellPainter: function(editType) {
 	        return this.cellPainters[editType];
+	    },
+
+	    /**
+	     * Returns an instance of tree-cell painter
+	     * @returns {object} cell painter instance
+	     */
+	    getTreeCellPainter: function() {
+	        return this.cellPainters.tree;
 	    },
 
 	    /**
@@ -18887,7 +20322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -18900,9 +20335,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(61);
+	var Painter = __webpack_require__(63);
 	var constMap = __webpack_require__(10);
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
@@ -18931,9 +20366,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    template: _.template(
 	        '<tr ' +
-	        '<%=rowKeyAttr%>" ' +
+	        '<%=rowKeyAttr%> ' +
 	        'class="<%=className%>" ' +
-	        'style="height: <%=height%>px;">' +
+	        'style="height:<%=height%>px;">' +
 	        '<%=contents%>' +
 	        '</tr>'
 	    ),
@@ -18950,6 +20385,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var editType = snippet.pick(cellData.columnModel, 'editOptions', 'type');
 
 	        return editType || 'normal';
+	    },
+
+	    /**
+	     * Get cell painter by value
+	     * @param {boolean} treeCell - Whether the current cell is tree-cell or not
+	     * @param {string} editType - When the current cell is normal, the cell type is selected
+	     * @returns {object} cell painter
+	     */
+	    _getCellPainter: function(treeCell, editType) {
+	        var cellPainter;
+
+	        if (treeCell) {
+	            cellPainter = this.painterManager.getTreeCellPainter();
+	        } else {
+	            cellPainter = this.painterManager.getCellPainter(editType);
+	        }
+
+	        return cellPainter;
 	    },
 
 	    /**
@@ -18982,11 +20435,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        _.each(columnNames, function(columnName) {
 	            var cellData = model.get(columnName);
-	            var editType, cellPainter;
+	            var treeCell, editType, cellPainter;
 
 	            if (cellData && cellData.isMainRow) {
+	                treeCell = !!cellData.tree;
 	                editType = this._getEditType(columnName, cellData);
-	                cellPainter = this.painterManager.getCellPainter(editType);
+
+	                cellPainter = this._getCellPainter(treeCell, editType);
+
 	                html += cellPainter.generateHtml(cellData);
 	            }
 	        }, this);
@@ -18996,8 +20452,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Returns the HTML string of all cells in the given model (row).
-	     * @param  {module:model/row} model - View model instance
-	     * @param  {Array.<String>} columnNames - An array of column names
+	     * @param {module:model/row} model - View model instance
+	     * @param {Array.<String>} columnNames - An array of column names
 	     * @returns {String} HTLM string
 	     */
 	    generateHtml: function(model, columnNames) {
@@ -19029,12 +20485,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    refresh: function(changed, $tr) {
 	        _.each(changed, function(cellData, columnName) {
-	            var editType, cellPainter, $td;
+	            var treeCell, editType, cellPainter, $td;
 
 	            if (columnName !== '_extraData') {
 	                $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
 	                editType = this._getEditType(columnName, cellData);
-	                cellPainter = this.painterManager.getCellPainter(editType);
+	                treeCell = !!cellData.tree;
+
+	                cellPainter = this._getCellPainter(treeCell, editType);
 	                cellPainter.refresh(cellData, $td);
 	            }
 	        }, this);
@@ -19045,7 +20503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19128,7 +20586,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19141,10 +20599,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(61);
-	var util = __webpack_require__(16);
+	var Painter = __webpack_require__(63);
+	var util = __webpack_require__(17);
 	var attrNameConst = __webpack_require__(10).attrName;
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Painter class for cell(TD) views
@@ -19358,9 +20816,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var attrs = this._getAttributes(cellData);
 	        var mainButton = this.editType === 'mainButton';
 
-	        $td.attr(attrs);
-
 	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
+	            $td.attr(attrs);
 	            this.inputPainter.focus($td);
 	        } else if (mainButton) {
 	            $td.find(this.inputPainter.selector).prop({
@@ -19368,6 +20825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                disabled: cellData.disabled
 	            });
 	        } else if (shouldUpdateContent) {
+	            $td.attr(attrs);
 	            $td.html(this._getContentHtml(cellData));
 	            $td.scrollLeft(0);
 	        }
@@ -19378,7 +20836,330 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 63 */
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Tree cell painter
+	 * @author NHN Ent. FE Development Team
+	 */
+
+	'use strict';
+
+	var _ = __webpack_require__(2);
+	var snippet = __webpack_require__(3);
+
+	var Painter = __webpack_require__(63);
+	var util = __webpack_require__(17);
+	var attrNameConst = __webpack_require__(10).attrName;
+	var dimensionConst = __webpack_require__(10).dimension;
+	var classNameConst = __webpack_require__(19);
+
+	/**
+	 * Painter class for tree-cell(TD) views
+	 * @module painter/treeCell
+	 * @extends module:base/painter
+	 * @param {object} options - options
+	 * @ignore
+	 */
+	var TreeCell = snippet.defineClass(Painter, /** @lends module:painter/treeCell.prototype */{
+	    init: function(options) {
+	        Painter.apply(this, arguments);
+
+	        /**
+	         * Input painter for editing cell data
+	         * @type {module:painter/input/text}
+	         */
+	        this._inputPainter = options.inputPainter;
+	    },
+
+	    /**
+	     * Selector of tree-button to bind events
+	     * @type {string}
+	     */
+	    selector: '.' + classNameConst.BTN_TREE,
+
+	    events: {
+	        click: '_onClick'
+	    },
+
+	    /**
+	     * Template for TD element
+	     * @returns {string} html string
+	     */
+	    template: _.template(
+	        '<td <%=attributeString%>">' +
+	            '<div class="' + classNameConst.TREE_WARPPER_RELATIVE + '">' +
+	                '<div class="' + classNameConst.TREE_WARPPER_VALIGN_CENTER + '">' +
+	                    '<%=extraContentHtml%>' +
+	                    '<%=contentHtml%>' +
+	                '</div>' +
+	            '</div>' +
+	        '</td>'
+	    ),
+
+	    /**
+	     * Template for each DIV element (inner content of TD)
+	     * @returns {string} html string
+	     */
+	    contentTemplate: _.template(
+	        '<div class="<%=className%>" style="<%=style%>">' +
+	            '<%=content%>' +
+	        '</div>'
+	    ),
+
+	    /**
+	     * Template for each line element in extra content
+	     * @returns {string} html string
+	     */
+	    lineTemplate: _.template(
+	        '<span class="' + classNameConst.TREE_DEPTH + '" style="<%=style%>">' +
+	            '<% if (hasButton) { %>' +
+	                '<button class="' + classNameConst.BTN_TREE + '"><i></i></button>' +
+	            '<% } %>' +
+	        '</span>'
+	    ),
+
+	    /**
+	     * Event handler for tree-cell's expand/collapse button
+	     * @param {Event} ev - dom event object
+	     * @private
+	     */
+	    _onClick: function(ev) {
+	        var $target = $(ev.target);
+	        var $td = $target.parents('td');
+	        var rowKey = this._getCellAddress($target).rowKey;
+	        var isExpanded = $td.hasClass(classNameConst.TREE_BUTTON_EXPAND);
+
+	        this.controller.changeTreeExpanded(rowKey, isExpanded);
+	    },
+
+	    /**
+	     * Get html of line element in extra content
+	     * @param {number} depth - depth of current row
+	     * @param {boolean} lastDepth - whether the current row is last depth or not
+	     * @param {boolean} hasChildren - whether the current row has children or not
+	     * @returns {string} html string
+	     * @private
+	     */
+	    _getLineHtml: function(depth, lastDepth, hasChildren) {
+	        var hasButton = lastDepth && hasChildren;
+	        var style = ['left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;'];
+
+	        return this.lineTemplate({
+	            style: style.join(''),
+	            hasButton: hasButton
+	        });
+	    },
+
+	    /**
+	     * Get html of icon element in extra content
+	     * @param {number} depth - depth of current row
+	     * @returns {string} html string
+	     * @private
+	     */
+	    _getIconHtml: function(depth) {
+	        var style = 'left:' + (depth * dimensionConst.INDENT_WIDTH) + 'px;';
+
+	        return '<span class="' + classNameConst.TREE_ICON + '" style="' + style + '"><i></i></span>';
+	    },
+
+	    /**
+	     * Get html of extra content that contains line and expand/collapse button elements
+	     * @param {object} cellData - tree cell data
+	     * @returns {string} html string
+	     * @private
+	     */
+	    _getExtraContentHtml: function(cellData) {
+	        var depth = cellData.depth;
+	        var hasChildren = cellData.hasChildren;
+	        var useIcon = cellData.useIcon;
+	        var index = 0;
+	        var htmls = [];
+	        var lastDepth;
+
+	        for (; index < depth; index += 1) {
+	            lastDepth = index === depth - 1;
+
+	            htmls.push(this._getLineHtml(index, lastDepth, hasChildren));
+	        }
+
+	        if (useIcon) {
+	            htmls.push(this._getIconHtml(depth));
+	        }
+
+	        return this.contentTemplate({
+	            className: classNameConst.TREE_EXTRA_CONTENT,
+	            style: '',
+	            content: htmls.join('')
+	        });
+	    },
+
+	    /**
+	     * Get attributes string of TD
+	     * @param {object} cellData - cell data
+	     * @returns {string} connected attribute string
+	     * @private
+	     */
+	    _getAttributes: function(cellData) {
+	        var classNames = [
+	            cellData.className,
+	            classNameConst.CELL,
+	            classNameConst.CELL_HAS_TREE
+	        ];
+	        var attrs = {};
+
+	        if (cellData.hasChildren) {
+	            if (cellData.isExpanded) {
+	                classNames.push(classNameConst.TREE_BUTTON_EXPAND);
+	            } else {
+	                classNames.push(classNameConst.TREE_BUTTON_COLLAPSE);
+	            }
+	        }
+
+	        attrs['class'] = classNames.join(' ');
+
+	        attrs[attrNameConst.ROW_KEY] = cellData.rowKey;
+	        attrs[attrNameConst.COLUMN_NAME] = cellData.columnName;
+
+	        return attrs;
+	    },
+
+	    /**
+	     * Get html of data content in tree-cell's right area
+	     * @param {object} cellData - cell data
+	     * @returns {string} concat string of styles
+	     * @private
+	     */
+	    _getContentStyle: function(cellData) {
+	        var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+	        var marginLeft = cellData.depth * dimensionConst.INDENT_WIDTH;
+	        var styles = [];
+
+	        if (whiteSpace) {
+	            styles.push('white-space:' + whiteSpace);
+	        }
+	        if (this.fixedRowHeight) {
+	            styles.push('max-height:' + cellData.height + 'px');
+	        }
+
+	        if (cellData.useIcon) {
+	            marginLeft += dimensionConst.INDENT_WIDTH;
+	        }
+
+	        styles.push('margin-left:' + marginLeft + 'px');
+
+	        return styles.join(';');
+	    },
+
+	    /**
+	     * Whether the current cell is using 'view-mode' or not
+	     * @param {object} cellData - cell data
+	     * @returns {boolean} using state
+	     * @private
+	     */
+	    _isUsingViewMode: function(cellData) {
+	        return snippet.pick(cellData, 'columnModel', 'editOptions', 'useViewMode') !== false;
+	    },
+
+	    /**
+	     * Get html of wrapping content by span tag
+	     * @param {string} content - content to wrap
+	     * @param {string} className - class names of span tag
+	     * @returns {string} html string
+	     * @private
+	     */
+	    _getSpanWrapContent: function(content, className) {
+	        if (snippet.isFalsy(content)) {
+	            content = '';
+	        }
+
+	        return '<span class="' + className + '">' + content + '</span>';
+	    },
+
+	    /**
+	     * Get html of data content
+	     * @param {object} cellData - cell data
+	     * @returns {string} html string
+	     * @private
+	     */
+	    _getContentHtml: function(cellData) {
+	        var content = cellData.formattedValue;
+	        var prefix = cellData.prefix;
+	        var postfix = cellData.postfix;
+	        var fullContent;
+
+	        if (this._inputPainter) {
+	            content = this._inputPainter.generateHtml(cellData);
+
+	            if (!this._isUsingViewMode(cellData)) {
+	                prefix = this._getSpanWrapContent(prefix, classNameConst.CELL_CONTENT_BEFORE);
+	                postfix = this._getSpanWrapContent(postfix, classNameConst.CELL_CONTENT_AFTER);
+	                content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
+	                // notice the order of concatenation
+	                fullContent = prefix + postfix + content;
+	            }
+	        }
+
+	        if (!fullContent) {
+	            fullContent = prefix + content + postfix;
+	        }
+
+	        return this.contentTemplate({
+	            className: classNameConst.CELL_CONTENT,
+	            style: this._getContentStyle(cellData),
+	            content: fullContent
+	        });
+	    },
+
+	    /**
+	     * Generate content html of TD
+	     * @param {object} cellData - cell data
+	     * @returns {string} html string
+	     */
+	    generateHtml: function(cellData) {
+	        var attributeString = util.getAttributesString(this._getAttributes(cellData));
+	        var extraContentHtml = this._getExtraContentHtml(cellData);
+	        var contentHtml = this._getContentHtml(cellData);
+
+	        return this.template({
+	            attributeString: attributeString,
+	            extraContentHtml: extraContentHtml,
+	            contentHtml: contentHtml
+	        });
+	    },
+
+	    /**
+	     * Rerender content html of TD
+	     * @param {object} cellData - cell data
+	     * @param {jQuery} $td - cell element
+	     */
+	    refresh: function(cellData, $td) {
+	        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
+	        var shouldUpdateContent = cellData.changed.length > 0;
+	        var attrs = this._getAttributes(cellData);
+	        var contentHtml;
+
+	        $td.attr(attrs);
+
+	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
+	            this._inputPainter.focus($td);
+	        } else if (shouldUpdateContent) {
+	            contentHtml = this._getContentHtml(cellData);
+
+	            $td.find('.' + classNameConst.CELL_CONTENT).remove();
+	            $td.find('.' + classNameConst.TREE_EXTRA_CONTENT).after(contentHtml);
+
+	            $td.scrollLeft(0);
+	        }
+	    }
+	});
+
+	module.exports = TreeCell;
+
+
+/***/ }),
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19391,10 +21172,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(61);
-	var util = __webpack_require__(16);
+	var Painter = __webpack_require__(63);
+	var util = __webpack_require__(17);
 	var attrNameConst = __webpack_require__(10).attrName;
-	var classNameConst = __webpack_require__(18);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Dummy Cell Painter
@@ -19439,7 +21220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ];
 
 	        if (util.isMetaColumn(columnName)) {
-	            classNames.push(classNameConst.CELL_HEAD);
+	            classNames.push(classNameConst.CELL_ROW_HEAD);
 	        }
 
 	        return this.template({
@@ -19453,7 +21234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19466,9 +21247,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(65);
-	var util = __webpack_require__(16);
-	var classNameConst = __webpack_require__(18);
+	var InputPainter = __webpack_require__(68);
+	var util = __webpack_require__(17);
+	var classNameConst = __webpack_require__(19);
 
 	var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
 	var SELECTOR_PASSWORD = 'input[type=password]';
@@ -19606,7 +21387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19621,7 +21402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Backbone = __webpack_require__(5);
 	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(61);
+	var Painter = __webpack_require__(63);
 	var keyNameMap = __webpack_require__(10).keyName;
 
 	/**
@@ -19848,7 +21629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 66 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19862,8 +21643,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(65);
-	var util = __webpack_require__(16);
+	var InputPainter = __webpack_require__(68);
+	var util = __webpack_require__(17);
 
 	/**
 	 * Painter class for 'select' input.
@@ -19952,7 +21733,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 67 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -19966,8 +21747,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var InputPainter = __webpack_require__(65);
-	var util = __webpack_require__(16);
+	var InputPainter = __webpack_require__(68);
+	var util = __webpack_require__(17);
 
 	/**
 	 * Painter class for 'checkbox' and 'radio button'.
@@ -20229,7 +22010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 68 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20243,8 +22024,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var Painter = __webpack_require__(61);
-	var classNameConst = __webpack_require__(18);
+	var Painter = __webpack_require__(63);
+	var classNameConst = __webpack_require__(19);
 	var keyCodeMap = __webpack_require__(10).keyCode;
 
 	var className = classNameConst.CELL_MAIN_BUTTON;
@@ -20345,7 +22126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 69 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20359,7 +22140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(3);
 
-	var util = __webpack_require__(16);
+	var util = __webpack_require__(17);
 
 	/**
 	 * Controller class to handle actions from the painters
@@ -20531,6 +22312,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!snippet.pick(columnModel, 'editOptions', 'useViewMode')) {
 	            this.setValue(address, value);
 	        }
+	    },
+
+	    /**
+	     * Change tree expanded state
+	     * @param {string} rowKey - Row key
+	     * @param {boolean} state - State of expanded
+	     */
+	    changeTreeExpanded: function(rowKey, state) {
+	        if (state) {
+	            this.dataModel.treeCollapse(rowKey);
+	        } else {
+	            this.dataModel.treeExpand(rowKey);
+	        }
 	    }
 	});
 
@@ -20574,7 +22368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 70 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -20589,11 +22383,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var View = __webpack_require__(4);
-	var Router = __webpack_require__(71);
-	var util = __webpack_require__(16);
-	var formUtil = __webpack_require__(72);
-	var i18n = __webpack_require__(40);
-	var GridEvent = __webpack_require__(15);
+	var Router = __webpack_require__(74);
+	var util = __webpack_require__(17);
+	var formUtil = __webpack_require__(75);
+	var i18n = __webpack_require__(42);
+	var GridEvent = __webpack_require__(16);
 
 	var renderStateMap = __webpack_require__(10).renderState;
 	var DELAY_FOR_LOADING_STATE = 200;
@@ -21417,7 +23211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 71 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21449,7 +23243,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 72 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21681,7 +23475,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 73 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21710,18 +23504,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * Returns an instance of tui.component.Pagination
+	     * Returns an instance of tui.Pagination
 	     * @param {String} key - component key
-	     * @returns {tui.component.Pagination}
+	     * @returns {tui.Pagination}
 	     */
 	    getInstance: function(key) {
 	        return this.instanceMap[key];
 	    },
 
 	    /**
-	     * Sets an instance of tui.component.Pagination
+	     * Sets an instance of tui.Pagination
 	     * @param {String} key - component key
-	     * @param {tui.component.Pagination} instance - pagination instance
+	     * @param {tui.Pagination} instance - pagination instance
 	     */
 	    setInstance: function(key, instance) {
 	        this.instanceMap[key] = instance;
@@ -21741,7 +23535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 74 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21752,16 +23546,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var $ = __webpack_require__(6);
-	var util = __webpack_require__(16);
-	var styleGen = __webpack_require__(75);
+	var util = __webpack_require__(17);
+	var styleGen = __webpack_require__(78);
 	var themeNameConst = __webpack_require__(10).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(77);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(78);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(79);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(80);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(81);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(82);
 
 	/**
 	 * build css string with given options.
@@ -21771,13 +23565,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function buildCssString(options) {
 	    var styles = [
-	        styleGen.grid(options.grid),
+	        styleGen.outline(options.outline),
+	        styleGen.frozenBorder(options.frozenBorder),
 	        styleGen.scrollbar(options.scrollbar),
 	        styleGen.heightResizeHandle(options.heightResizeHandle),
 	        styleGen.pagination(options.pagination),
 	        styleGen.selection(options.selection)
 	    ];
+	    var area = options.area;
 	    var cell = options.cell;
+
+	    styles = styles.concat([
+	        styleGen.headArea(area.header),
+	        styleGen.bodyArea(area.body),
+	        styleGen.summaryArea(area.summary)
+	    ]);
 
 	    if (cell) {
 	        styles = styles.concat([
@@ -21785,6 +23587,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            styleGen.cellDummy(cell.dummy),
 	            styleGen.cellEditable(cell.editable),
 	            styleGen.cellHead(cell.head),
+	            styleGen.cellRowHead(cell.rowHead),
+	            styleGen.cellSummary(cell.summary),
 	            styleGen.cellOddRow(cell.oddRow),
 	            styleGen.cellEvenRow(cell.evenRow),
 	            styleGen.cellRequired(cell.required),
@@ -21792,6 +23596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            styleGen.cellInvalid(cell.invalid),
 	            styleGen.cellCurrentRow(cell.currentRow),
 	            styleGen.cellSelectedHead(cell.selectedHead),
+	            styleGen.cellSelectedRowHead(cell.selectedRowHead),
 	            styleGen.cellFocused(cell.focused),
 	            styleGen.cellFocusedInactive(cell.focusedInactive)
 	        ]);
@@ -21840,7 +23645,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 75 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -21852,14 +23657,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = __webpack_require__(2);
 
-	var builder = __webpack_require__(76);
-	var classNameConst = __webpack_require__(18);
+	var builder = __webpack_require__(79);
+	var classNameConst = __webpack_require__(19);
 
 	/**
 	 * Shortcut for the builder.createClassRule() method.
 	 * @ignore
 	 */
 	var classRule = _.bind(builder.createClassRule, builder);
+
+	/**
+	 * Shortcut for the builder.createClassComposeRule() method.
+	 * @ignore
+	 */
+	var classComposeRule = _.bind(builder.createClassComposeRule, builder);
 
 	/**
 	 * Creates a rule string for background and text colors.
@@ -21891,34 +23702,44 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = {
 	    /**
-	     * Generates a css string for the grid.
+	     * Generates a css string for grid outline.
 	     * @param {Object} options - options
 	     * @returns {String}
 	     */
-	    grid: function(options) {
-	        var containerRule = classRule(classNameConst.CONTAINER)
-	            .bg(options.background)
-	            .text(options.text);
-	        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
-	        var tableRule = classRule(classNameConst.TABLE).border(options.border);
-	        var headerRule = classRule(classNameConst.HEAD_AREA).border(options.border);
-	        var summaryRule = classRule(classNameConst.SUMMARY_AREA).border(options.border);
-	        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
-	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
-	        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
-	        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).border(options.border);
+	    outline: function(options) {
+	        var borderTopRule = classRule(classNameConst.BORDER_TOP).bg(options.border);
+	        var borderBottomRule = classComposeRule(' .', [
+	            classNameConst.NO_SCROLL_X,
+	            classNameConst.BORDER_BOTTOM
+	        ]).bg(options.border);
+	        var rules = [
+	            borderTopRule,
+	            borderBottomRule
+	        ];
+	        var borderLeftRule, borderRightRule;
 
-	        return builder.buildAll([
-	            containerRule,
-	            contentAreaRule,
-	            tableRule,
-	            headerRule,
-	            summaryRule,
-	            borderLineRule,
-	            scrollHeadRule,
-	            scrollBorderRule,
-	            summaryRightRule
-	        ]);
+	        if (options.showVerticalBorder) {
+	            borderLeftRule = classRule(classNameConst.BORDER_LEFT).bg(options.border);
+	            borderRightRule = classComposeRule(' .', [
+	                classNameConst.NO_SCROLL_Y,
+	                classNameConst.BORDER_RIGHT
+	            ]).bg(options.border);
+
+	            rules = rules.concat([borderLeftRule, borderRightRule]);
+	        }
+
+	        return builder.buildAll(rules);
+	    },
+
+	    /**
+	     * Generates a css string for border of frozen columns.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    frozenBorder: function(options) {
+	        return classRule(classNameConst.FROZEN_BORDER)
+	            .bg(options.border)
+	            .build();
 	    },
 
 	    /**
@@ -21929,20 +23750,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    scrollbar: function(options) {
 	        var webkitScrollbarRules = builder.createWebkitScrollbarRules('.' + classNameConst.CONTAINER, options);
 	        var ieScrollbarRule = builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options);
-	        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
-	        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
-	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
-	        var summaryRightRule = classRule(classNameConst.SUMMARY_AREA_RIGHT).bg(options.background);
-	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
-	        var frozenBorderRule = classRule(classNameConst.FROZEN_BORDER_BOTTOM).bg(options.background);
+	        var xInnerBorderRule = classRule(classNameConst.BORDER_BOTTOM).bg(options.border);
+	        var xOuterBorderRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
+	        var yInnerBorderRule = classRule(classNameConst.SCROLLBAR_Y_INNER_BORDER).bg(options.border);
+	        var yOuterBorderRule = classRule(classNameConst.SCROLLBAR_Y_OUTER_BORDER).bg(options.border);
+	        var spaceRightTopRule = classRule(classNameConst.SCROLLBAR_RIGHT_TOP)
+	            .bg(options.emptySpace)
+	            .border(options.border);
+	        var spaceRightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
+	            .bg(options.emptySpace)
+	            .border(options.border);
+	        var spaceLeftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM)
+	            .bg(options.emptySpace)
+	            .border(options.border);
+	        var frozenBorderRule = classRule(classNameConst.SCROLLBAR_FROZEN_BORDER)
+	            .bg(options.emptySpace)
+	            .border(options.border);
 
 	        return builder.buildAll(webkitScrollbarRules.concat([
 	            ieScrollbarRule,
-	            rightBottomRule,
-	            leftBottomRule,
-	            scrollHeadRule,
-	            summaryRightRule,
-	            bodyAreaRule,
+	            xInnerBorderRule,
+	            xOuterBorderRule,
+	            yInnerBorderRule,
+	            yOuterBorderRule,
+	            spaceRightTopRule,
+	            spaceRightBottomRule,
+	            spaceLeftBottomRule,
 	            frozenBorderRule
 	        ]));
 	    },
@@ -21975,22 +23808,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Generates a css string for head area.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    headArea: function(options) {
+	        return classRule(classNameConst.HEAD_AREA)
+	            .bg(options.background)
+	            .border(options.border)
+	            .build();
+	    },
+
+	    /**
+	     * Generates a css string for body area.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    bodyArea: function(options) {
+	        return classRule(classNameConst.BODY_AREA)
+	            .bg(options.background)
+	            .build();
+	    },
+
+	    /**
+	     * Generates a css string for summary area.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    summaryArea: function(options) {
+	        var contentAreaRule = classRule(classNameConst.SUMMARY_AREA)
+	            .bg(options.background)
+	            .border(options.border);
+	        var bodyAreaRule = classComposeRule(' .', [
+	            classNameConst.HAS_SUMMARY_TOP,
+	            classNameConst.BODY_AREA
+	        ]).border(options.border);
+
+	        return builder.buildAll([
+	            contentAreaRule,
+	            bodyAreaRule
+	        ]);
+	    },
+
+	    /**
 	     * Generates a css string for table cells.
 	     * @param {Object} options - options
 	     * @returns {String}
 	     */
 	    cell: function(options) {
-	        var cellRule = classRule(classNameConst.CELL)
+	        return classRule(classNameConst.CELL)
 	            .bg(options.background)
 	            .border(options.border)
 	            .borderWidth(options)
-	            .text(options.text);
-	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).border(options.border);
-
-	        return builder.buildAll([
-	            cellRule,
-	            bodyAreaRule
-	        ]);
+	            .text(options.text)
+	            .build();
 	    },
 
 	    /*
@@ -21999,20 +23870,70 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellHead: function(options) {
-	        var headRule = classRule(classNameConst.CELL_HEAD)
+	        var tableRule = classComposeRule(' .', [
+	            classNameConst.SHOW_LSIDE_AREA,
+	            classNameConst.LSIDE_AREA,
+	            classNameConst.HEAD_AREA,
+	            classNameConst.TABLE
+	        ]).verticalBorderStyle(options, 'right');
+	        var cellRule = classRule(classNameConst.CELL_HEAD)
 	            .bg(options.background)
 	            .border(options.border)
 	            .borderWidth(options)
 	            .text(options.text);
 
-	        var headAreaRule = classRule(classNameConst.HEAD_AREA)
+	        return builder.buildAll([
+	            tableRule,
+	            cellRule
+	        ]);
+	    },
+
+	    /*
+	     * Generates a css string for row's head cells.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    cellRowHead: function(options) {
+	        var tableRule = classComposeRule(' .', [
+	            classNameConst.SHOW_LSIDE_AREA,
+	            classNameConst.LSIDE_AREA,
+	            classNameConst.BODY_AREA,
+	            classNameConst.TABLE
+	        ]).verticalBorderStyle(options, 'right');
+	        var cellRule = classRule(classNameConst.CELL_ROW_HEAD)
 	            .bg(options.background)
-	            .border(options.border);
+	            .border(options.border)
+	            .borderWidth(options)
+	            .text(options.text);
 
-	        var summaryAreaRule = classRule(classNameConst.SUMMARY_AREA)
-	            .bg(options.background);
+	        return builder.buildAll([
+	            tableRule,
+	            cellRule
+	        ]);
+	    },
 
-	        return builder.buildAll([headRule, headAreaRule, summaryAreaRule]);
+	    /*
+	     * Generates a css string for summary cells.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    cellSummary: function(options) {
+	        var tableRule = classComposeRule(' .', [
+	            classNameConst.SHOW_LSIDE_AREA,
+	            classNameConst.LSIDE_AREA,
+	            classNameConst.SUMMARY_AREA,
+	            classNameConst.TABLE
+	        ]).verticalBorderStyle(options, 'right');
+	        var cellRule = classRule(classNameConst.CELL_SUMMARY)
+	            .bg(options.background)
+	            .border(options.border)
+	            .borderWidth(options)
+	            .text(options.text);
+
+	        return builder.buildAll([
+	            tableRule,
+	            cellRule
+	        ]);
 	    },
 
 	    /**
@@ -22021,8 +23942,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellEvenRow: function(options) {
-	        return classRule(classNameConst.ROW_EVEN + '>td')
-	            .bg(options.background)
+	        return classComposeRule('>', [
+	            classNameConst.ROW_EVEN,
+	            'td'
+	        ]).bg(options.background)
 	            .build();
 	    },
 
@@ -22032,9 +23955,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellOddRow: function(options) {
-	        return classRule(classNameConst.ROW_ODD + '>td')
-	            .bg(options.background)
-	            .build();
+	        return classComposeRule('>', [
+	            classNameConst.ROW_ODD,
+	            'td'
+	        ]).bg(options.background).build();
 	    },
 
 	    /**
@@ -22043,8 +23967,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellSelectedHead: function(options) {
-	        return builder.create('.' + classNameConst.CELL_HEAD + '.' + classNameConst.CELL_SELECTED)
-	            .bg(options.background)
+	        return classComposeRule('.', [
+	            classNameConst.CELL_HEAD,
+	            classNameConst.CELL_SELECTED
+	        ]).bg(options.background)
+	            .text(options.text)
+	            .build();
+	    },
+
+	    /**
+	     * Generates a css string for selected row head cells.
+	     * @param {Object} options - options
+	     * @returns {String}
+	     */
+	    cellSelectedRowHead: function(options) {
+	        return classComposeRule('.', [
+	            classNameConst.CELL_ROW_HEAD,
+	            classNameConst.CELL_SELECTED
+	        ]).bg(options.background)
 	            .text(options.text)
 	            .build();
 	    },
@@ -22067,9 +24007,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {String}
 	     */
 	    cellFocusedInactive: function(options) {
-	        return builder.create('.' + classNameConst.LAYER_FOCUS_DEACTIVE + ' .' + classNameConst.LAYER_FOCUS_BORDER)
-	            .bg(options.border)
-	            .build();
+	        return classComposeRule(' .', [
+	            classNameConst.LAYER_FOCUS_DEACTIVE,
+	            classNameConst.LAYER_FOCUS_BORDER
+	        ]).bg(options.border).build();
 	    },
 
 	    /**
@@ -22129,7 +24070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 76 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22209,6 +24150,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Add a vertical border style to the rule.
+	     * @param {Object} options - visible options
+	     * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
+	     * @param {String} position - Position of the vertical border ('right' or 'left')
+	     * @returns {CSSRuleBuilder}
+	     */
+	    verticalBorderStyle: function(options, position) {
+	        var vertical = options.showVerticalBorder;
+	        var value;
+
+	        if (_.isBoolean(vertical) && position) {
+	            value = vertical ? 'solid' : 'hidden';
+
+	            this.add('border-' + position + '-style', value);
+	        }
+
+	        return this;
+	    },
+
+	    /**
 	     * Shortcut for add('background-color', value)
 	     * @param {String} value - css value
 	     * @returns {CSSRuleBuilder}
@@ -22258,6 +24219,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    createClassRule: function(className) {
 	        return this.create('.' + className);
+	    },
+
+	    /**
+	     * Creates a new Builder instance with a composed class name.
+	     * @param {String} selector - selector to compose class names
+	     * @param {Array} classNames - class name list
+	     * @returns {Builder}
+	     */
+	    createClassComposeRule: function(selector, classNames) {
+	        return this.create('.' + classNames.join(selector));
 	    },
 
 	    /**
@@ -22318,7 +24289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 77 */
+/* 80 */
 /***/ (function(module, exports) {
 
 	/**
@@ -22329,17 +24300,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	module.exports = {
-	    grid: {
-	        background: '#fff',
-	        border: '#ccc',
-	        text: '#444'
-	    },
 	    selection: {
-	        background: '#4daaf9',
-	        border: '#004082'
+	        background: '#00A9ff',
+	        border: '#00a9ff'
 	    },
 	    heightResizeHandle: {
-	        border: '#ccc',
+	        border: '#fff',
 	        background: '#fff'
 	    },
 	    pagination: {
@@ -22347,28 +24313,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	        background: 'transparent'
 	    },
 	    scrollbar: {
-	        background: '#f5f5f5',
-	        thumb: '#d9d9d9',
-	        active: '#c1c1c1'
+	        border: '#eee',
+	        background: '#fff',
+	        emptySpace: '#f9f9f9',
+	        thumb: '#ddd',
+	        active: '#ddd'
+	    },
+	    outline: {
+	        border: '#aaa',
+	        showVerticalBorder: false
+	    },
+	    frozenBorder: {
+	        border: '#aaa'
+	    },
+	    area: {
+	        header: {
+	            border: '#ccc',
+	            background: '#fff'
+	        },
+	        body: {
+	            background: '#fff'
+	        },
+	        summary: {
+	            border: '#eee',
+	            background: '#fff'
+	        }
 	    },
 	    cell: {
 	        normal: {
-	            background: '#fbfbfb',
-	            border: '#e0e0e0',
-	            showVerticalBorder: true,
+	            background: '#f4f4f4',
+	            border: '#eee',
+	            text: '#333',
+	            showVerticalBorder: false,
 	            showHorizontalBorder: true
 	        },
 	        head: {
-	            background: '#eee',
-	            border: '#ccc',
+	            background: '#fff',
+	            border: '#eee',
+	            text: '#222',
 	            showVerticalBorder: true,
 	            showHorizontalBorder: true
 	        },
+	        rowHead: {
+	            background: '#fff',
+	            border: '#eee',
+	            text: '#333',
+	            showVerticalBorder: false,
+	            showHorizontalBorder: true
+	        },
+	        summary: {
+	            background: '#fff',
+	            border: '#eee',
+	            text: '#333',
+	            showVerticalBorder: false
+	        },
 	        selectedHead: {
-	            background: '#d8d8d8'
+	            background: '#e5f6ff'
+	        },
+	        selectedRowHead: {
+	            background: '#e5f6ff'
 	        },
 	        focused: {
-	            border: '#418ed4'
+	            border: '#00a9ff'
 	        },
 	        focusedInactive: {
 	            border: '#aaa'
@@ -22380,13 +24386,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            background: '#fff'
 	        },
 	        disabled: {
-	            text: '#b0b0b0'
+	            background: '#f9f9f9',
+	            text: '#c1c1c1'
 	        },
 	        dummy: {
 	            background: '#fff'
 	        },
 	        invalid: {
-	            background: '#ff8080'
+	            background: '#ffe5e5'
 	        },
 	        evenRow: {},
 	        oddRow: {},
@@ -22396,7 +24403,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 78 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
@@ -22408,72 +24415,117 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var $ = __webpack_require__(6);
 
-	var presetDefault = __webpack_require__(77);
+	var presetDefault = __webpack_require__(80);
 
 	module.exports = $.extend(true, {}, presetDefault, {
-	    cell: {
-	        normal: {
-	            background: '#fff',
-	            border: '#e8e8e8',
-	            showVerticalBorder: false,
-	            showHorizontalBorder: false
+	    outline: {
+	        border: '#eee',
+	        showVerticalBorder: false
+	    },
+	    frozenBorder: {
+	        border: '#ccc'
+	    },
+	    area: {
+	        header: {
+	            border: '#fff',
+	            background: '#eee'
 	        },
-	        oddRow: {
-	            background: '#f3f3f3'
-	        },
-	        evenRow: {
+	        body: {
 	            background: '#fff'
 	        },
-	        head: {
-	            background: '#fff',
-	            showVerticalBorder: false,
-	            showHorizontalBorder: false
+	        summary: {
+	            border: '#fff',
+	            background: '#fff'
 	        }
-	    }
-	});
-
-
-/***/ }),
-/* 79 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/**
-	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
-	*/
-
-	'use strict';
-
-	var $ = __webpack_require__(6);
-
-	var presetDefault = __webpack_require__(77);
-
-	module.exports = $.extend(true, {}, presetDefault, {
-	    grid: {
-	        border: '#c0c0c0'
 	    },
 	    cell: {
 	        normal: {
 	            background: '#fff',
-	            border: '#e0e0e0',
+	            border: '#fff',
 	            showVerticalBorder: false,
-	            showHorizontalBorder: true
+	            showHorizontalBorder: false
 	        },
 	        head: {
-	            background: '#fff',
-	            border: '#e0e0e0',
-	            showVerticalBorder: false,
+	            background: '#eee',
+	            border: '#fff',
+	            showVerticalBorder: true,
 	            showHorizontalBorder: true
 	        },
-	        selectedHead: {
-	            background: '#e0e0e0'
+	        rowHead: {
+	            border: '#fff',
+	            showVerticalBorder: false,
+	            showHorizontalBorder: false
+	        },
+	        oddRow: {
+	            background: '#fff'
+	        },
+	        evenRow: {
+	            background: '#f4f4f4'
 	        }
 	    }
 	});
 
 
 /***/ }),
-/* 80 */
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	* @fileoverview default theme preset
+	* @author NHN Ent. FE Development Team
+	*/
+
+	'use strict';
+
+	var $ = __webpack_require__(6);
+
+	var presetDefault = __webpack_require__(80);
+
+	module.exports = $.extend(true, {}, presetDefault, {
+	    outline: {
+	        border: '#eee',
+	        showVerticalBorder: false
+	    },
+	    frozenBorder: {
+	        border: '#ddd'
+	    },
+	    area: {
+	        header: {
+	            border: '#eee',
+	            background: '#f9f9f9'
+	        },
+	        body: {
+	            background: '#fff'
+	        },
+	        summary: {
+	            border: '#fff',
+	            background: '#fff'
+	        }
+	    },
+	    cell: {
+	        normal: {
+	            background: '#fff',
+	            border: '#eee',
+	            showVerticalBorder: false,
+	            showHorizontalBorder: false
+	        },
+	        head: {
+	            background: '#f9f9f9',
+	            border: '#eee',
+	            showVerticalBorder: true,
+	            showHorizontalBorder: true
+	        },
+	        rowHead: {
+	            border: '#eee',
+	            showVerticalBorder: false,
+	            showHorizontalBorder: false
+	        }
+	    }
+	});
+
+
+/***/ }),
+/* 83 */
 /***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
