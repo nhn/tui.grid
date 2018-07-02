@@ -9,7 +9,7 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls)
 [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
-![grid](https://user-images.githubusercontent.com/18183560/41690916-bd60db42-7532-11e8-9b0d-4ff2996aa9f0.png)
+![tui-grid](https://user-images.githubusercontent.com/18183560/42141902-355bdd92-7de7-11e8-8581-f806d62b4e5b.png)
 
 
 ## 🚩 Table of Contents
