@@ -91,7 +91,7 @@ describe('model/summary', function() {
         });
 
         it('Add', function() {
-            summary.dataModel.append({
+            summary.dataModel.appendRow({
                 c1: 3,
                 c2: 3
             });
@@ -179,7 +179,7 @@ describe('model/summary', function() {
         });
 
         it('for each column', function() {
-            summary.dataModel.append({
+            summary.dataModel.appendRow({
                 c1: 3,
                 c2: 3
             });

@@ -103,18 +103,41 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
     _setRowExtraData: function() {
         _.each(this._getColumnNameList(), function(columnName) {
             var cellData = this.get(columnName);
-            var cellState;
 
             if (!snippet.isUndefined(cellData) && cellData.isMainRow) {
-                cellState = this.rowData.getCellState(columnName);
-
-                this.setCell(columnName, {
-                    disabled: cellState.disabled,
-                    editable: cellState.editable,
-                    className: this._getClassNameString(columnName)
-                });
+                if (cellData.tree) {
+                    this._setTreeCell(columnName);
+                } else {
+                    this._setCell(columnName);
+                }
             }
         }, this);
+    },
+
+    /**
+     * Set normal cell's properties
+     * @param {string} columnName - Column name
+     * @private
+     */
+    _setCell: function(columnName) {
+        var cellState = this.rowData.getCellState(columnName);
+
+        this.setCell(columnName, {
+            disabled: cellState.disabled,
+            editable: cellState.editable,
+            className: this._getClassNameString(columnName)
+        });
+    },
+
+    /**
+     * Set tree-cell's property
+     * @param {string} columnName - Column name
+     * @private
+     */
+    _setTreeCell: function(columnName) {
+        this.setCell(columnName, {
+            isExpanded: this.rowData.getTreeExpanded()
+        });
     },
 
     /**
@@ -175,6 +198,7 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
                 changed: [] // changed property names
             };
             _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
+            _.assign(data[columnName], this._getTreeAttrs(value, row, column, columnModel));
         }, this);
 
         return data;
@@ -202,6 +226,31 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
         classNames = row.getClassNameList(columnName);
 
         return classNames.join(' ');
+    },
+
+    /**
+     * Returns the tree values of the attributes related to the cell value.
+     * @param {String|Number} value - Value
+     * @param {module:model/data/row} row - Row data model
+     * @param {Object} column - Column model object
+     * @param {module:model/data/columnModel} columnModel - column model
+     * @returns {Object}
+     * @private
+     */
+    _getTreeAttrs: function(value, row, column, columnModel) {
+        var attrs = {};
+
+        if (columnModel.isTreeType(column.name)) {
+            attrs = {
+                tree: columnModel.hasTreeColumn(),
+                depth: row.getTreeDepth(),
+                isExpanded: row.getTreeExpanded(),
+                hasChildren: row.hasTreeChildren(),
+                useIcon: columnModel.useTreeIcon()
+            };
+        }
+
+        return attrs;
     },
 
     /**
@@ -380,9 +429,11 @@ var Row = Model.extend(/** @lends module:model/row.prototype */{
 
         if (changed.length) {
             data.changed = changed;
+
             this.set(columnName, data, {
                 silent: this._shouldSetSilently(data, isValueChanged)
             });
+
             if (isValueChanged) {
                 rowIndex = this.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);

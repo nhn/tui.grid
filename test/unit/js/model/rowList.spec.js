@@ -386,7 +386,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toBe(false);
                 expect(cell0.editable).toBe(true);
                 expect(cell0.disabled).toBe(false);
-                expect(cell0.className).toBe(classNameConst.CELL_HEAD);
+                expect(cell0.className).toBe(classNameConst.CELL_ROW_HEAD);
 
                 expect(cell1.value).toBe('c1');
                 expect(cell1.editable).toBe(false);
@@ -417,7 +417,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.editable).toEqual(true);
                 expect(cell0.disabled).toEqual(true);
-                expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
+                expect(cell0.className).toEqual(classNameConst.CELL_ROW_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.editable).toEqual(false);
@@ -449,7 +449,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.editable).toEqual(true);
                 expect(cell0.disabled).toEqual(true);
-                expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
+                expect(cell0.className).toEqual(classNameConst.CELL_ROW_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.editable).toEqual(false);
@@ -490,7 +490,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.editable).toEqual(true);
                 expect(cell0.disabled).toEqual(false);
-                expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_HEAD);
+                expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_ROW_HEAD);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.editable).toEqual(false);

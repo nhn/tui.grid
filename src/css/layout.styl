@@ -1,6 +1,6 @@
 .border-line
     position absolute
-    z-index 13
+    z-index 16
 
 .border-line-top
     top 0
@@ -10,7 +10,7 @@
 
 .border-line-left
     top 0
-    bottom 0
+    bottom 17px
     left 0
     width 1px
 
@@ -26,9 +26,14 @@
     right 17px
     height 1px
 
-.no-scroll-x .border-line-bottom,
-.no-scroll-y .border-line-bottom
-    right 0
+.no-scroll-x
+    .border-line-left
+        bottom 0
+        right 0
+
+.no-scroll-y
+    .border-line-bottom
+        right 0
 
 .content-area
     position relative
@@ -44,9 +49,8 @@
     position relative
     overflow hidden
 
-    .cell-head
-        border-top-width 1px
-        border-bottom-width 1px
+    .table
+        border-top-style solid
 
 .body-area
     border-style solid
@@ -54,19 +58,39 @@
     position relative
     overflow scroll
 
+.has-summary-top
+    .body-area
+        margin-top -17px
+        border-top-width 1px
+
+.no-scroll-x
+    &.has-summary-top
+        .body-area
+            margin-top 0
+
 .summary-area
     position relative
-    border-style solid
+    margin-top -18px
+    border-top 1px solid
     overflow-y hidden
     overflow-x scroll
 
-.summary-area-top
-    border-width 0 0 1px;
-    margin-top 0
+.no-scroll-x
+    .summary-area
+        margin-top -1px
+        margin-bottom 1px
+        overflow-x hidden
+    .summary-area-right
+        bottom 0
+    &.has-summary-top
+        margin-top 0
 
-.summary-area-bottom
-    border-width 1px 0 0
-    margin-top -18px
+
+.has-summary-top
+    .summary-area
+        margin-top 0
+        border-top-style hidden
+        margin-bottom 0
 
 .lside-area
     display none
@@ -86,10 +110,6 @@
     display none
     overflow hidden
 
-    tr
-        th:first-child, td:first-child
-            border-left-width 0
-
     .head-area, .summary-area
         margin-right 17px
 
@@ -99,6 +119,7 @@
 
         .column-resize-handle
             top 0
+
     .frozen-border-bottom
         position absolute
         bottom 0
@@ -109,33 +130,16 @@
         .head-area, .summary-area
             margin-right 0
 
-.no-scroll-x
-    .summary-area
-        margin-top 0
-        overflow-x hidden
-    .summary-area-right
-        bottom 0
-
-.summary-area-right
-    position absolute
-    right 0
-    width 17px
-    border-style solid
-
-.summary-area-right-top
-    border-width 0 0 1px 1px
-
-.summary-area-right-bottom
-    border-width 1px 0 0 1px
-
 .body-container
     position relative
     margin-top -1px
 
 .table-container
     position absolute
+    left 0
+    right 0
 
-.scrollbar-head
+.scrollbar-right-top
     display block
     position absolute
     top 0
@@ -143,34 +147,80 @@
     width 16px
     border-style solid
     border-width 1px
+    z-index 19
 
 .scrollbar-left-bottom
     position absolute
-    bottom 0
     left 0
     right 0
+    bottom 0
     height 17px
+    border-style solid
+    border-width 0 1px
+    z-index 19
 
 .scrollbar-right-bottom
     position absolute
     bottom 0
     right 0
-    width 17px
-    height 17px
+    width 16px
+    border-style solid
+    border-width 1px 1px 0 1px
+    z-index 19
 
-.scrollbar-border
+.no-scroll-x
+    .scrollbar-right-bottom
+        height 0
+
+    &.has-summary-bottom
+        .scrollbar-right-bottom
+            border-bottom-width 1px
+
+.no-scroll-y
+    .scrollbar-right-bottom
+        width 0
+        height 16px
+        border-left 0
+
+.scrollbar-y-inner-border
     display block
     position absolute
     right 17px
     width 1px
+    z-index 19
+
+.scrollbar-y-outer-border
+    display block
+    position absolute
+    top 0
+    bottom 0
+    right 0
+    width 1px
+    z-index 19
+
+.scrollbar-frozen-border
+    position absolute
+    bottom 0
+    width 0
+    height 17px
+    border-style solid
+    border-width 0 1px 0 0
+    z-index 19
+
+.frozen-border
+    position absolute
+    top 0
+    bottom 0
+    z-index 17
 
 .height-resize-handle
     overflow hidden
-    background-color #f5f5f5
+    background-color #fff
     cursor row-resize
-    height 11px
+    height 17px
     border-style solid
     border-width 0 1px 1px
+    border-color #fff
     font-size 0
     text-align center
 
@@ -182,11 +232,10 @@
         margin 0
         outline 0
         border 0
-        background-color #f5f5f5
+        background transparent
 
         span
-            background url(../../images/icons.gif) no-repeat -70px -60px
+            background url(../../images/icons.png) no-repeat -39px -10px
             display inline-block
-            width 17px
-            height 9px
-            margin-top 3px
+            width 16px
+            height 17px

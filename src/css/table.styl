@@ -1,22 +1,13 @@
 .table
-    border-width 1px
+    margin 0
     width 1px
     box-sizing border-box
-    border-style solid
     table-layout fixed
     border-collapse collapse
-    margin 0
+    border 1px hidden transparent
 
 .lside-area .table
-    border-right-width 0
     width 100%
-    outline 1px solid transparent
-
-.summary-area
-    .table
-        border-width 0 1px
-    .cell
-        border-width 0 1px
 
 .cell
     overflow hidden
@@ -26,7 +17,7 @@
     padding 0
 
     .cell-content
-        padding 3px 10px
+        padding 12px 12px 11px
         overflow hidden
         box-sizing border-box
         word-break break-all
@@ -38,9 +29,29 @@
     padding 0
     text-align center
 
+.cell-summary
+    padding 0 12px
+
+.cell-disabled
+    input
+        &[type=text],
+        &[type=password]
+            opacity 0.3
+
 .cell-ellipsis
     .cell-content
         text-overflow ellipsis
+
+.cell-has-input
+    .cell-content
+        padding 4px 5px
+
+.cell-has-tree
+    height inherit // to set pixel value on td's height
+    box-sizing border-box
+
+    .cell-content
+        padding-left 14px
 
 .cell-content
     .content-before
@@ -64,10 +75,8 @@
         &[type=text],
         &[type=password]
             width 100%
-            padding 2px 0
-            border solid 1px #e2e3ea
-            border-top solid 1px #abadb3
-            border-bottom solid 1px #e3e9ef
+            padding 6px 7px
+            border solid 1px #ddd
 
     label + input
         margin-left 10px

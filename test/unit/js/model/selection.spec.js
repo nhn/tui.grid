@@ -49,7 +49,8 @@ function create(rowList) {
     }, {
         columnModel: columnModel,
         dataModel: dataModel,
-        renderModel: new Model()
+        renderModel: new Model(),
+        coordRowModel: new Model()
     });
 }
 
@@ -103,6 +104,7 @@ describe('model/selection', function() {
         beforeEach(function() {
             selection = create();
             selection.renderModel.getCellData = _.constant({});
+            selection.coordRowModel.getHeightAt = _.constant({});
         });
 
         it('현재 selection 범위에 대해  string 으로 반환한다.', function() {

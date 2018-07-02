@@ -81,7 +81,7 @@ describe('Summary', function() {
                     max: 10
                 }
             };
-            var $ths;
+            var $tds;
 
             summary.summaryModel = {
                 getValue: function(columnName) {
@@ -90,13 +90,13 @@ describe('Summary', function() {
             };
             summary.render();
 
-            $ths = summary.$el.find('th');
-            expect($ths.eq(0).html('10, 0.4'));
-            expect($ths.eq(1).html('10'));
+            $tds = summary.$el.find('td');
+            expect($tds.eq(0).html('10, 0.4'));
+            expect($tds.eq(1).html('10'));
         });
 
         it('If a template function exists, use it for generating HTML of <th>', function() {
-            var $ths;
+            var $tds;
 
             function fmt1() {
                 return 'formatted1';
@@ -110,10 +110,10 @@ describe('Summary', function() {
                 c2: fmt2
             };
             summary.render();
-            $ths = summary.$el.find('th');
+            $tds = summary.$el.find('td');
 
-            expect($ths.eq(0).html()).toBe(fmt1());
-            expect($ths.eq(1).html()).toBe(fmt2());
+            expect($tds.eq(0).html()).toBe(fmt1());
+            expect($tds.eq(1).html()).toBe(fmt2());
         });
 
         it('Template should take a value from the summaryModel as a paramater', function() {
@@ -141,7 +141,7 @@ describe('Summary', function() {
         });
     });
 
-    it('If the setSummaryContent event occurs on columnModel, refresh <th>', function() {
+    it('If the setSummaryContent event occurs on columnModel, refresh <td>', function() {
         var summary = create(frameConst.R, {
             columns: [
                 {name: 'c1'},
@@ -156,10 +156,10 @@ describe('Summary', function() {
         summary.render();
         summary.columnModel.trigger('setSummaryContent', 'c1', 'contents');
 
-        expect(summary.$el.find('th').eq(0).html()).toBe('contents');
+        expect(summary.$el.find('td').eq(0).html()).toBe('contents');
     });
 
-    it('Refresh <th> whenever change event occurs on the summaryModel', function() {
+    it('Refresh <td> whenever change event occurs on the summaryModel', function() {
         var summary = create(frameConst.R, {
             columns: [
                 {name: 'c1'},
@@ -182,6 +182,6 @@ describe('Summary', function() {
             sum: 10
         });
 
-        expect(summary.$el.find('th').eq(0).html()).toBe('10');
+        expect(summary.$el.find('td').eq(0).html()).toBe('10');
     });
 });

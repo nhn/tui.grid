@@ -434,19 +434,12 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         });
     },
 
-    /**
-     * rowKey 에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
-     * @param {object} options - 삭제 옵션
-     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
-     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
-     */
-    removeRow: function(rowKey, options) {
+    _removeRow: function(rowKey, options) {
         var row = this.get(rowKey);
         var rowSpanData, nextRow, removedData, currentIndex;
 
         if (!row) {
-            return;
+            return -1;
         }
 
         if (options && options.keepRowSpanData) {
@@ -461,6 +454,19 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             silent: true
         });
         this._syncRowSpanDataForRemove(rowSpanData, nextRow, removedData);
+
+        return currentIndex;
+    },
+
+    /**
+     * rowKey 에 해당하는 그리드 데이터를 삭제한다.
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {object} options - 삭제 옵션
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
+     */
+    removeRow: function(rowKey, options) {
+        var currentIndex = this._removeRow(rowKey, options);
 
         if (options && options.removeOriginalData) {
             this.setOriginalRowList();
@@ -530,6 +536,20 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         return data;
     },
 
+    _appendRow: function(rowData, options) {
+        var modelList = this._createModelList(rowData, options);
+
+        this.add(modelList, {
+            at: options.at,
+            add: true,
+            silent: true
+        });
+
+        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
+
+        return modelList;
+    },
+
     /**
      * Insert the new row with specified data to the end of table.
      * @param {(Array|Object)} [rowData] - The data for the new row
@@ -540,20 +560,13 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/row>} Row model list
      */
-    append: function(rowData, options) {
-        var modelList = this._createModelList(rowData),
-            addOptions;
+    appendRow: function(rowData, options) {
+        var modelList;
 
         options = _.extend({at: this.length}, options);
-        addOptions = {
-            at: options.at,
-            add: true,
-            silent: true
-        };
 
-        this.add(modelList, addOptions);
+        modelList = this._appendRow(rowData, options);
 
-        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, options);
 
         return modelList;
@@ -566,11 +579,11 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      * @returns {Array.<module:model/data/row>} Row model list
      */
-    prepend: function(rowData, options) {
+    prependRow: function(rowData, options) {
         options = options || {};
         options.at = 0;
 
-        return this.append(rowData, options);
+        return this.appendRow(rowData, options);
     },
 
     /**
@@ -793,9 +806,10 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
     /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
+     * @param {object} options - append의 경우 필요한 options
      * @returns {Row[]} 생성된 모델 목록
      */
-    _createModelList: function(rowData) {
+    _createModelList: function(rowData, options) {
         var modelList = [],
             rowList;
 
@@ -803,10 +817,11 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
         if (!_.isArray(rowData)) {
             rowData = [rowData];
         }
-        rowList = this._formatData(rowData);
+        rowList = this._formatData(rowData, options);
 
         _.each(rowList, function(row) {
-            var model = new Row(row, {
+            var ModelClass = this.model;
+            var model = new ModelClass(row, {
                 collection: this,
                 parse: true
             });
@@ -1171,7 +1186,7 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             columnIdx, columnName, cellState, rowSpanData;
 
         if (!row) {
-            row = this.append({})[0];
+            row = this.appendRow({})[0];
         }
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
             columnName = columnModel.at(columnIdx, true).name;
@@ -1221,6 +1236,15 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
             available: available,
             checked: checked
         };
+    },
+
+    /**
+     * Check whether the row is visible or not
+     * @returns {boolean} state
+     * @abstract
+     */
+    isVisibleRow: function() {
+        return true;
     }
 });
 

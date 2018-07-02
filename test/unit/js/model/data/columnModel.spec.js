@@ -873,4 +873,66 @@ describe('data.columnModel', function() {
             expect(result).toEqual(true);
         });
     });
+
+    describe('isTreeType', function() {
+        var result;
+
+        it('should return false if no given treeColumnOptions', function() {
+            result = columnModelInstance.isTreeType('text');
+            expect(result).toBe(false);
+        });
+
+        it('should return true if the correct tree name is set as treeColumnOptions', function() {
+            columnModelInstance = new ColumnModelData({
+                treeColumnOptions: {
+                    name: 'text'
+                }
+            });
+            result = columnModelInstance.isTreeType('text');
+            expect(result).toBe(true);
+        });
+
+        it('should return true if the incorrect tree name is set as treeColumnOptions', function() {
+            columnModelInstance = new ColumnModelData({
+                treeColumnOptions: {
+                    name: 'text'
+                }
+            });
+            result = columnModelInstance.isTreeType('notherColumnName');
+            expect(result).toBe(false);
+        });
+    });
+
+    describe('hasTreeColumn', function() {
+        var result;
+
+        it('should return false if no given treeColumnOptions', function() {
+            result = columnModelInstance.hasTreeColumn();
+            expect(result).toBe(false);
+        });
+
+        it('should return true if the correct tree name is set as treeColumnOptions', function() {
+            columnModelInstance = new ColumnModelData({
+                treeColumnOptions: {
+                    name: 'text'
+                }
+            });
+            result = columnModelInstance.hasTreeColumn();
+            expect(result).toBe(true);
+        });
+    });
+
+    it('getTreeColumnName() should return name of tree column ', function() {
+        var result;
+        var columnName = 'c1';
+
+        columnModelInstance = new ColumnModelData({
+            treeColumnOptions: {
+                name: columnName
+            }
+        });
+        result = columnModelInstance.getTreeColumnName();
+
+        expect(result).toBe(columnName);
+    });
 });

@@ -55,12 +55,14 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'reset', this.initializeVariables)
+            .listenTo(this.dataModel, 'reset', this._initializeScrollValues)
             .listenTo(this.dataModel, 'sort reset', this._onDataModelChange)
             .listenTo(this.dataModel, 'deleteRange', this._onRangeDataModelChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModelChange)
             .listenTo(this.dataModel, 'remove', this._onRemoveDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+            .listenTo(this.dataModel, 'expanded ', this._onExpanded)
+            .listenTo(this.dataModel, 'collapsed ', this._onCollapsed)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(partialLside, 'valueChange', this._executeRelation)
             .listenTo(partialRside, 'valueChange', this._executeRelation)
@@ -104,6 +106,65 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     },
 
     /**
+     * Event handler for 'expanded' event on dataModel using tree
+     * @param {object} ev - Event object
+     * @private
+     */
+    _onExpanded: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
+        var dataModel = this.dataModel;
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var height, viewData, rowNum, viewModel, index, row;
+
+        _.each(rowKeys, function(rowKey) {
+            index = dataModel.indexOfRowKey(rowKey);
+            row = dataModel.at(index);
+            height = this.coordRowModel.getHeightAt(index);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                rowNum = index + 1;
+                viewData = this._createViewDataFromDataModel(
+                    row, columnNamesMap[attrName], height, rowNum);
+
+                viewModel = this._createRowModel(viewData, true);
+
+                this.get(attrName)[index] = viewModel;
+            }, this);
+        }, this);
+
+        this._setRenderingRange();
+
+        this.refresh({
+            type: 'add',
+            dataListChanged: true
+        });
+    },
+
+    /**
+     * Event handler for 'collapsed' event on dataModel using tree
+     * @param {object} ev - Event object
+     * @private
+     */
+    _onCollapsed: function(ev) {
+        var rowKeys = ev.descendantRowKeys;
+
+        _.each(rowKeys, function(rowKey) {
+            var index = this.dataModel.indexOfRowKey(rowKey);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                delete this.get(attrName)[index];
+            }, this);
+        }, this);
+
+        this._setRenderingRange();
+
+        this.refresh({
+            type: 'deleteRange',
+            dataListChanged: true
+        });
+    },
+
+    /**
      * Event handler for change:scrollTop and change:scrollLeft.
      * @private
      */
@@ -132,15 +193,15 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _onChangeRowHeights: function() {
-        var coordRowModel = this.coordRowModel;
         var lside = this.get('partialLside');
         var rside = this.get('partialRside');
         var i = 0;
         var len = lside.length;
-        var height;
+        var rowKey, height;
 
         for (; i < len; i += 1) {
-            height = coordRowModel.getHeightAt(i);
+            rowKey = lside.at(i).get('rowKey');
+            height = this.coordRowModel.getHeight(rowKey);
 
             lside.at(i).set('height', height);
             rside.at(i).set('height', height);
@@ -261,6 +322,22 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
     },
 
     /**
+     * Update data of tree-cell
+     * @param {number} rowKey - row key
+     * @private
+     */
+    _updateTreeCellData: function(rowKey) {
+        var columnName = this.columnModel.getTreeColumnName();
+        var rowModel = this._getRowModel(rowKey, columnName);
+
+        if (rowModel) {
+            rowModel.setCell(columnName, {
+                hasChildren: this.dataModel.get(rowKey).hasTreeChildren()
+            });
+        }
+    },
+
+    /**
      * Initializes own properties.
      * (called by module:addon/net)
      */
@@ -270,6 +347,17 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             scrollTop: 0,
             scrollLeft: 0,
             startNumber: 1
+        });
+    },
+
+    /**
+     * Initializes values of the scroll
+     * @private
+     */
+    _initializeScrollValues: function() {
+        this.set({
+            scrollTop: 0,
+            scrollLeft: 0
         });
     },
 
@@ -331,34 +419,32 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
 
     /**
      * Event handler for adding data list
-     * @param {array} modelList - List of added item
+     * @param {array} rowList - List of added item
      * @param {object} options - Info of added item
      * @private
      */
-    _onAddDataModelChange: function(modelList, options) {
+    _onAddDataModelChange: function(rowList, options) {
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var at = options.at;
         var height, viewData, rowNum;
         var viewModel;
 
-        this._setRenderingRange(true);
-
-        // the type of modelList is array or collection
-        modelList = _.isArray(modelList) ? modelList : modelList.models;
-
-        _.each(modelList, function(model, index) {
+        _.each(rowList, function(row, index) {
             height = this.coordRowModel.getHeightAt(index);
 
             _.each(['lside', 'rside'], function(attrName) {
                 rowNum = at + index + 1;
                 viewData = this._createViewDataFromDataModel(
-                    model, columnNamesMap[attrName], height, rowNum);
+                    row, columnNamesMap[attrName], height, rowNum);
 
                 viewModel = this._createRowModel(viewData, true);
 
                 this.get(attrName).splice(at + index, 0, viewModel);
             }, this);
         }, this);
+
+        this._updateTreeCellData(options.parentRowKey);
+        this._setRenderingRange(true);
 
         this.refresh({
             type: 'add',
@@ -374,13 +460,18 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * Event handler for removing data list
      * @param {number|string} rowKey - rowKey of the removed row
      * @param {number} removedIndex - Index of the removed row
+     * @param {Array.<number>} [descendantRowKeys] - All descendants key of the removed when using tree
+     * @param {number} [parentRowKey] - Parent key of the removed row when using tree
      * @private
      */
-    _onRemoveDataModelChange: function(rowKey, removedIndex) {
+    _onRemoveDataModelChange: function(rowKey, removedIndex, descendantRowKeys, parentRowKey) {
+        var removedRowsCnt = descendantRowKeys ? descendantRowKeys.length : 1;
+
         _.each(['lside', 'rside'], function(attrName) {
-            this.get(attrName).splice(removedIndex, 1);
+            this.get(attrName).splice(removedIndex, removedRowsCnt);
         }, this);
 
+        this._updateTreeCellData(parentRowKey);
         this._setRenderingRange(true);
 
         this.refresh({
@@ -502,15 +593,20 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _addViewModelListWithRange: function(startIndex, endIndex) {
+        var dataModel = this.dataModel;
         var columnNamesMap = this._getColumnNamesOfEachSide();
-        var rowDataModel, height, index;
+        var index, row, height;
 
-        if (startIndex >= 0 && endIndex >= 0) {
-            for (index = startIndex; index <= endIndex; index += 1) {
-                rowDataModel = this.dataModel.at(index);
-                height = this.coordRowModel.getHeightAt(index);
+        if (startIndex < 0 || endIndex < 0) {
+            return;
+        }
 
-                this._addViewModelList(rowDataModel, columnNamesMap, height, index);
+        for (index = startIndex; index < endIndex + 1; index += 1) {
+            row = dataModel.at(index);
+            height = this.coordRowModel.getHeightAt(index);
+
+            if (dataModel.isVisibleRow(row.get('rowKey'))) {
+                this._addViewModelList(row, columnNamesMap, height, index);
             }
         }
     },
@@ -582,13 +678,40 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         var viewModelList, partialViewModelList;
 
         _.each(['L', 'R'], function(whichSide) {
+            partialViewModelList = [];
             originalWhichSide = whichSide.toLowerCase() + 'side';
             partialWhichSide = this._getPartialWhichSideType(whichSide);
             viewModelList = this.get(originalWhichSide);
-            partialViewModelList = viewModelList.slice(startIndex, endIndex + 1);
+
+            partialViewModelList = this._getPartialViewModelList(viewModelList, startIndex, endIndex);
 
             this.get(partialWhichSide).reset(partialViewModelList);
         }, this);
+    },
+
+    /**
+     * Get partial view model list
+     * @param {Array.<obejct>} viewModelList - List of view model
+     * @param {number} startIndex - Index of start row
+     * @param {number} endIndex - Index of end row
+     * @returns {Array.<module:model/data/row>}>} List of partial view model
+     * @private
+     */
+    _getPartialViewModelList: function(viewModelList, startIndex, endIndex) {
+        var index = startIndex;
+        var len = endIndex + 1;
+        var partialViewModelList = [];
+        var viewModel;
+
+        for (; index < len; index += 1) {
+            viewModel = viewModelList[index];
+
+            if (viewModel && this.dataModel.isVisibleRow(viewModel.get('rowKey'))) {
+                partialViewModelList.push(viewModel);
+            }
+        }
+
+        return partialViewModelList;
     },
 
     /**
@@ -702,6 +825,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
                 this.coordRowModel.syncWithDom();
             }
         }
+
         this._refreshState();
     },
     /* eslint-enable complexity */

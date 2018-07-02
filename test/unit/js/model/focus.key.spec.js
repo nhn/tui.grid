@@ -76,6 +76,9 @@ describe('model/focus', function() {
         });
 
         it('up', function() {
+            focus.coordRowModel.getPreviousOffset = function() {
+                return -1;
+            };
             triggerMoveEvent('up');
             expect(focus.which()).toEqual({
                 rowKey: 1,
@@ -84,6 +87,9 @@ describe('model/focus', function() {
         });
 
         it('down', function() {
+            focus.coordRowModel.getNextOffset = function() {
+                return 1;
+            };
             triggerMoveEvent('down');
             expect(focus.which()).toEqual({
                 rowKey: 3,

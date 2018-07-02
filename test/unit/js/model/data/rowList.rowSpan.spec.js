@@ -188,9 +188,9 @@ describe('Data.RowList - rowSpan', function() {
         });
     });
 
-    describe('append()', function() {
+    describe('appendRow()', function() {
         it('rowSpan에 포함된 row의 위치에 추가되면 기존 rowSpan에 합쳐진다.', function() {
-            rowList.append({}, {
+            rowList.appendRow({}, {
                 at: 1
             });
             expect(rowList.at(0).getRowSpanData().c1.count).toBe(4);
@@ -200,7 +200,7 @@ describe('Data.RowList - rowSpan', function() {
         });
 
         it('두개 이상의 컬럼에 rowSpan이 적용되어 있을때도 모두 적용된다.', function() {
-            rowList.append({}, {
+            rowList.appendRow({}, {
                 at: 2
             });
             expect(rowList.at(0).getRowSpanData().c1.count).toBe(4);
@@ -214,7 +214,7 @@ describe('Data.RowList - rowSpan', function() {
         });
 
         it('rowSpanPrev값이 true인 경우 이전 행에 rowSpan 정보가 있으면 확장해서 합친다.', function() {
-            rowList.append({}, {
+            rowList.appendRow({}, {
                 at: 3,
                 rowSpanPrev: true
             });

@@ -16,4 +16,5 @@
 - [Contributing Guide](../CONTRIBUTING.md)
 - [Commit Message Convention](COMMIT_MESSAGE_CONVENTION.md)
 - [API & Examples](https://nhnent.github.io/tui.grid/api)
-- [v2.0.0 Migration Guide (Korean)](v2.0.0-migration-guide-kor.md)
+- [v3.0.0 Migration Guide](v3.0.0-migration-guide.md)
+- [v3.0.0 Migration Guide (Korean)](v3.0.0-migration-guide-kor.md)

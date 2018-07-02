@@ -48,7 +48,7 @@ describe('CoordRow', function() {
         });
 
         it('when a row is added to dataModel', function() {
-            coordRow.dataModel.append({});
+            coordRow.dataModel.appendRow({});
 
             expect(syncSpy).toHaveBeenCalled();
         });
@@ -132,6 +132,76 @@ describe('CoordRow', function() {
 
             expect(coordRow.getHeightAt(0)).toBeUndefined();
             expect(coordRow.getHeightAt(1)).toBeUndefined();
+        });
+    });
+
+    describe('offset value to move by row height', function() {
+        var coordRow, result;
+
+        beforeEach(function() {
+            coordRow = create();
+
+            coordRow.dataModel.setData([
+                {
+                    _extraData: {
+                        height: 10 // rowKey: 0
+                    }
+                },
+                {
+                    _extraData: {
+                        height: 0 // rowKey: 1
+                    }
+                },
+                {
+                    _extraData: {
+                        height: 0 // rowKey: 2
+                    }
+                },
+                {
+                    _extraData: {
+                        height: 10 // rowKey: 3
+                    }
+                },
+                {
+                    _extraData: {
+                        height: 10 // rowKey: 4
+                    }
+                },
+                {
+                    _extraData: {
+                        height: 0 // rowKey: 5
+                    }
+                }
+            ]);
+            coordRow.syncWithDataModel();
+        });
+
+        describe('getPreviousOffset()', function() {
+            it('if the next row has a height based on the current row, ' +
+                'the previous offset value is decremented by one.', function() {
+                result = coordRow.getPreviousOffset(4);
+                expect(result).toBe(-1);
+            });
+
+            it('gets the offset value of the nearest row from the current row, ' +
+                'where the row height is not 0.', function() {
+                result = coordRow.getPreviousOffset(3);
+                expect(result).toBe(-3);
+            });
+        });
+
+        describe('getNextOffset()', function() {
+            it('if the next row has a height based on the current row, ' +
+                'the next offset value is incremented by one.', function() {
+                result = coordRow.getNextOffset(3);
+                expect(result).toBe(1);
+            });
+
+            it('gets the offset value of the nearest row from the current row, ' +
+                'where the row height is not 0.', function() {
+                result = coordRow.getNextOffset(0);
+                expect(result).toBe(3);
+            });
         });
     });
 });
