@@ -11,7 +11,7 @@
 
 * [Browser Support](#-browser-support)
 * [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
-    * [Data Can Be Processed in Any Format](#-data-can-be-processed-in-any-format)
+    * [Data Can Be Displayed in Any Format](#-data-can-be-displayed-in-any-format)
     * [Provides a Variety of Editing Elements](#-provides-a-variety-of-editing-elements)
     * [Simple, Easy to Use Themes](#-simple,-easy-to-use-themes)
 * [Features](#-features)
@@ -43,7 +43,7 @@
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
-### Data Can Be Display in Any Format
+### Data Can Be Displayed in Any Format
 
 #### Styling
 
