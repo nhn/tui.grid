@@ -227,7 +227,9 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * @returns {boolean} whether use tree icon
      */
     useTreeIcon: function() {
-        return this.get('treeColumnOptions').useIcon;
+        var useIcon = this.get('treeColumnOptions').useIcon;
+
+        return _.isUndefined(useIcon) ? true : useIcon;
     },
 
     /**
