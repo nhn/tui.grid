@@ -963,13 +963,21 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Finds rows by conditions
-     * @param {Object} conditions - K-V object to find rows (K: column name, V: column value)
+     * @param {Object|Function} conditions - object (key: column name, value: column value) or
+     *     function that check the value and returns true/false result to find rows
      * @returns {Array} Row list
+     * @example <caption>Conditions type is object.</caption>
+     * grid.findRows({
+     *     artist: 'Birdy',
+     *     price: 10000
+     * });
+     * @example <caption>Conditions type is function.</caption>
+     * grid.findRows(function(row) {
+     *     return (/b/ig.test(row.artist) && row.price > 10000);
+     * });
      */
     findRows: function(conditions) {
-        var rowList = this.modelManager.dataModel.getRows();
-
-        return _.where(rowList, conditions);
+        return this.modelManager.dataModel.findRows(conditions);
     },
 
     /**

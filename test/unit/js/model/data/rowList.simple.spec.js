@@ -452,4 +452,83 @@ describe('Data.RowList - simple', function() {
             expect(mock).toHaveBeenCalledWith({rowKey: rowKey});
         });
     });
+
+    describe('findRows', function() {
+        var conditions, result;
+
+        beforeEach(function() {
+            rowList.setData([
+                {
+                    c1: 'foo',
+                    c2: 10000
+                },
+                {
+                    c1: 'bar',
+                    c2: 20000
+                },
+                {
+                    c1: 'baz',
+                    c2: 1000
+                }
+            ]);
+        });
+
+        it('when the conditions type is object and find rows.', function() {
+            conditions = {
+                c2: 1000
+            };
+
+            result = rowList.findRows(conditions);
+
+            expect(result.length).toBe(1);
+            expect(result[0].c1).toBe('baz');
+        });
+
+        it('when the conditions type is object and not find rows.', function() {
+            conditions = {
+              c1: 'baz',
+              c2: 10000
+            };
+
+            result = rowList.findRows(conditions);
+
+            expect(result.length).toBe(0);
+        });
+
+        it('when the conditions type is function and find rows.', function() {
+            conditions = function(row) {
+                return /b/g.test(row.c1);
+            };
+
+            result = rowList.findRows(conditions);
+
+            expect(result.length).toBe(2);
+            expect(result[0].c1).toBe('bar');
+            expect(result[1].c1).toBe('baz');
+        });
+
+        it('check AND(&&) condition.', function() {
+            conditions = function(row) {
+                return /b/g.test(row.c1) && row.c2 > 5000;
+            };
+
+            result = rowList.findRows(conditions);
+
+            expect(result.length).toBe(1);
+            expect(result[0].c1).toBe('bar');
+        });
+
+        it('check OR(||) condition.', function() {
+            conditions = function(row) {
+                return /b/g.test(row.c1) || row.c2 > 5000;
+            };
+
+            result = rowList.findRows(conditions);
+
+            expect(result.length).toBe(3);
+            expect(result[0].c1).toBe('foo');
+            expect(result[1].c1).toBe('bar');
+            expect(result[2].c1).toBe('baz');
+        });
+    });
 });

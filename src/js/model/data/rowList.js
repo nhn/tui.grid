@@ -363,6 +363,25 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
     },
 
     /**
+     * Finds rows by conditions
+     * @param {Object|Function} conditions - object (key: column name, value: column value) or
+     *     function that check the value and returns true/false result to find rows
+     * @returns {Array} Row list
+     */
+    findRows: function(conditions) {
+        var rowList = this.toJSON();
+        var foundList;
+
+        if (_.isFunction(conditions)) {
+            foundList = _.filter(rowList, conditions);
+        } else {
+            foundList = _.where(rowList, conditions);
+        }
+
+        return foundList;
+    },
+
+    /**
      * row Data 값에 변경이 발생했을 경우, sorting 되지 않은 경우에만
      * rowSpan 된 데이터들도 함께 update 한다.
      *
