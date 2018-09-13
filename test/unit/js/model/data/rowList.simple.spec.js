@@ -486,8 +486,8 @@ describe('Data.RowList - simple', function() {
 
         it('when the conditions type is object and not find rows.', function() {
             conditions = {
-              c1: 'baz',
-              c2: 10000
+                c1: 'baz',
+                c2: 10000
             };
 
             result = rowList.findRows(conditions);

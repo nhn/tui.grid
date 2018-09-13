@@ -369,16 +369,19 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @returns {Array} Row list
      */
     findRows: function(conditions) {
-        var rowList = this.toJSON();
-        var foundList;
+        var foundRows;
 
         if (_.isFunction(conditions)) {
-            foundList = _.filter(rowList, conditions);
+            foundRows = this.filter(function(row) {
+                return conditions(row.toJSON());
+            });
         } else {
-            foundList = _.where(rowList, conditions);
+            foundRows = this.where(conditions);
         }
 
-        return foundList;
+        return _.map(foundRows, function(row) {
+            return row.toJSON();
+        });
     },
 
     /**
