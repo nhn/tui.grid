@@ -1,5 +1,5 @@
 /**
- * @fileoverview The tui.Grid class for the external API.
+ * @fileoverview The Grid class for the external API.
  * @author NHN Ent. FE Development Team
  */
 
@@ -734,7 +734,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * Creates an specified AddOn and use it on this instance.
      * @param {string} name - The name of the AddOn to use.
      * @param {Object} options - The option objects for configuring the AddON.
-     * @returns {tui.Grid} - This instance.
+     * @returns {Grid} - This instance.
      */
     use: function(name, options) {
         if (name === 'Net') {
@@ -931,31 +931,31 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * Return value is an array which contains only rows which have invalid cell data.
      * @returns {Array.<Object>} An array of error object
      * @example
-     // return value example
-    [
-        {
-            rowKey: 1,
-            errors: [
-                {
-                    columnName: 'c1',
-                    errorCode: 'REQUIRED'
-                },
-                {
-                    columnName: 'c2',
-                    errorCode: 'REQUIRED'
-                }
-            ]
-        },
-        {
-            rowKey: 3,
-            errors: [
-                {
-                    columnName: 'c2',
-                    errorCode: 'REQUIRED'
-                }
-            ]
-        }
-    ]
+     * // return value example
+     * [
+     *     {
+     *         rowKey: 1,
+     *         errors: [
+     *             {
+     *                 columnName: 'c1',
+     *                 errorCode: 'REQUIRED'
+     *             },
+     *             {
+     *                 columnName: 'c2',
+     *                 errorCode: 'REQUIRED'
+     *             }
+     *         ]
+     *     },
+     *     {
+     *         rowKey: 3,
+     *         errors: [
+     *             {
+     *                 columnName: 'c2',
+     *                 errorCode: 'REQUIRED'
+     *             }
+     *         ]
+     *     }
+     * ]
      */
     validate: function() {
         return this.modelManager.dataModel.validate();
@@ -1100,7 +1100,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
  * Returns an instance of the grid associated to the id.
  * @static
  * @param  {number} id - ID of the target grid
- * @returns {tui.Grid} - Grid instance
+ * @returns {Grid} - Grid instance
  * var Grid = tui.Grid; // or require('tui-grid')
  *
  * Grid.getInstanceById(id);
