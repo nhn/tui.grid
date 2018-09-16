@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Jul 02 2018 12:45:56 GMT+0900 (KST)"
- * version: 3.0.0
+ * bundle created at "Sun Sep 16 2018 15:06:27 GMT+0900 (KST)"
+ * version: 3.1.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview The tui.Grid class for the external API.
+	 * @fileoverview The Grid class for the external API.
 	 * @author NHN Ent. FE Development Team
 	 */
 
@@ -814,7 +814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Creates an specified AddOn and use it on this instance.
 	     * @param {string} name - The name of the AddOn to use.
 	     * @param {Object} options - The option objects for configuring the AddON.
-	     * @returns {tui.Grid} - This instance.
+	     * @returns {Grid} - This instance.
 	     */
 	    use: function(name, options) {
 	        if (name === 'Net') {
@@ -1011,31 +1011,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Return value is an array which contains only rows which have invalid cell data.
 	     * @returns {Array.<Object>} An array of error object
 	     * @example
-	     // return value example
-	    [
-	        {
-	            rowKey: 1,
-	            errors: [
-	                {
-	                    columnName: 'c1',
-	                    errorCode: 'REQUIRED'
-	                },
-	                {
-	                    columnName: 'c2',
-	                    errorCode: 'REQUIRED'
-	                }
-	            ]
-	        },
-	        {
-	            rowKey: 3,
-	            errors: [
-	                {
-	                    columnName: 'c2',
-	                    errorCode: 'REQUIRED'
-	                }
-	            ]
-	        }
-	    ]
+	     * // return value example
+	     * [
+	     *     {
+	     *         rowKey: 1,
+	     *         errors: [
+	     *             {
+	     *                 columnName: 'c1',
+	     *                 errorCode: 'REQUIRED'
+	     *             },
+	     *             {
+	     *                 columnName: 'c2',
+	     *                 errorCode: 'REQUIRED'
+	     *             }
+	     *         ]
+	     *     },
+	     *     {
+	     *         rowKey: 3,
+	     *         errors: [
+	     *             {
+	     *                 columnName: 'c2',
+	     *                 errorCode: 'REQUIRED'
+	     *             }
+	     *         ]
+	     *     }
+	     * ]
 	     */
 	    validate: function() {
 	        return this.modelManager.dataModel.validate();
@@ -1043,13 +1043,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Finds rows by conditions
-	     * @param {Object} conditions - K-V object to find rows (K: column name, V: column value)
+	     * @param {Object|Function} conditions - object (key: column name, value: column value) or
+	     *     function that check the value and returns true/false result to find rows
 	     * @returns {Array} Row list
+	     * @example <caption>Conditions type is object.</caption>
+	     * grid.findRows({
+	     *     artist: 'Birdy',
+	     *     price: 10000
+	     * });
+	     * @example <caption>Conditions type is function.</caption>
+	     * grid.findRows(function(row) {
+	     *     return (/b/ig.test(row.artist) && row.price > 10000);
+	     * });
 	     */
 	    findRows: function(conditions) {
-	        var rowList = this.modelManager.dataModel.getRows();
-
-	        return _.where(rowList, conditions);
+	        return this.modelManager.dataModel.findRows(conditions);
 	    },
 
 	    /**
@@ -1172,7 +1180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Returns an instance of the grid associated to the id.
 	 * @static
 	 * @param  {number} id - ID of the target grid
-	 * @returns {tui.Grid} - Grid instance
+	 * @returns {Grid} - Grid instance
 	 * var Grid = tui.Grid; // or require('tui-grid')
 	 *
 	 * Grid.getInstanceById(id);
@@ -3522,6 +3530,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return withRawData ? rows : this._removePrivateProp(rows);
+	    },
+
+	    /**
+	     * Finds rows by conditions
+	     * @param {Object|Function} conditions - object (key: column name, value: column value) or
+	     *     function that check the value and returns true/false result to find rows
+	     * @returns {Array} Row list
+	     */
+	    findRows: function(conditions) {
+	        var foundRows;
+
+	        if (_.isFunction(conditions)) {
+	            foundRows = this.filter(function(row) {
+	                return conditions(row.toJSON());
+	            });
+	        } else {
+	            foundRows = this.where(conditions);
+	        }
+
+	        return _.map(foundRows, function(row) {
+	            return row.toJSON();
+	        });
 	    },
 
 	    /**
