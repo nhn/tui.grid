@@ -117,16 +117,16 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🐾 Examples
 
-* [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html)
-* [Input types](https://nhnent.github.io/tui.grid/latest/tutorial-example04-input-types.html)
-* [Relation between columns](https://nhnent.github.io/tui.grid/latest/tutorial-example05-relation-columns.html)
-* [Applying Themes](https://nhnent.github.io/tui.grid/latest/tutorial-example07-applying-themes.html)
-* [Using DatePicker component](https://nhnent.github.io/tui.grid/latest/tutorial-example08-using-datepicker.html)
-* [Using Summary](https://nhnent.github.io/tui.grid/latest/tutorial-example09-using-summary.html)
-* [Binding to remote data](https://nhnent.github.io/tui.grid/latest/tutorial-example10-using-net.html)
-* [Using tree data](https://nhnent.github.io/tui.grid/latest/tutorial-example14-tree.html)
+* [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic)
+* [Input types](https://nhnent.github.io/tui.grid/latest/tutorial-example04-input-types)
+* [Relation between columns](https://nhnent.github.io/tui.grid/latest/tutorial-example05-relation-columns)
+* [Applying Themes](https://nhnent.github.io/tui.grid/latest/tutorial-example07-applying-themes)
+* [Using DatePicker component](https://nhnent.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
+* [Using Summary](https://nhnent.github.io/tui.grid/latest/tutorial-example09-using-summary)
+* [Binding to remote data](https://nhnent.github.io/tui.grid/latest/tutorial-example10-using-net)
+* [Using tree data](https://nhnent.github.io/tui.grid/latest/tutorial-example14-tree)
 
-Here are more [examples](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic.html) and play with TOAST UI Grid!
+Here are more [examples](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
 
 
 ## 💾 Install
