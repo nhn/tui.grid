@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
@@ -13,10 +13,7 @@
     "sshot:cleanRef": "del screenshots/reference",
     "bundle": "npm run bundle:normal & npm run bundle:combine",
     "bundle:normal": "webpack --production & webpack --production --minify",
-    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
-    "docs": "npm run docs:jsdoc && npm run docs:copy",
-    "docs:jsdoc": "jsdoc -c ./jsdoc.conf.json",
-    "docs:copy": "cpy dist/tui-grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
+    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify"
   },
   "repository": {
     "type": "git",
@@ -48,7 +45,6 @@
     "jasmine-ajax": "^2.99.0",
     "jasmine-core": "2.5.2",
     "jasmine-jquery": "^2.0.5",
-    "jsdoc": "^3.5.4",
     "karma": "1.3.0",
     "karma-browserstack-launcher": "^0.1.10",
     "karma-chrome-launcher": "^2.0.0",
@@ -67,7 +63,6 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
-    "tui-jsdoc-template": "^1.0.4",
     "vinyl-source-stream": "^1.1.0",
     "wdio-jasmine-framework": "^0.2.19",
     "wdio-selenium-standalone-service": "0.0.7",
