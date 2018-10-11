@@ -4,7 +4,7 @@
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 [![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhnent/toast-ui.vue-grid/releases/latest)
-[![npm version](https://img.shields.io/npm/v/toast-ui.vue-grid.svg)](https://www.npmjs.com/package/vue-tui-grid)
+[![npm version](https://img.shields.io/npm/v/toast-ui.vue-grid.svg)](https://www.npmjs.com/package/@toast-ui/vue-grid)
 [![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhnent/toast-ui.vue-grid/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
