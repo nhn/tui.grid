@@ -1,6 +1,6 @@
 # Vue wrapper for TOAST UI Grid
 
-> This is Vue component wrapping [TOAST UI Grid](https://github.nhnent.com/fe/tui.grid).
+> This is Vue component wrapping [TOAST UI Grid](https://github.com/nhnent/tui.grid).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 [![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhnent/toast-ui.vue-grid/releases/latest)
@@ -135,7 +135,7 @@ export default {
 
 ### Props
 
-You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Example of each props is in the [Getting Started](./docs/getting-started.md#props).
+You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Example of each props is in the [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md#props).
 
 * `rowData`, `columnData`
 
@@ -195,7 +195,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
 * selection : Occurs when selecting cells.
 * deleteRange : Occurs when cells are deleted by 'del' key.
 
-For more information such as the parameters of each event, see [event of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html). Example of event is in the [Getting Started](./docs/getting-started.md#event).
+For more information such as the parameters of each event, see [event of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html). Example of event is in the [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md#event).
 
 ### Method
 
@@ -253,12 +253,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](./docs/getting-started.md)
+* [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](./CODE_OF_CONDUCT.md)
-* [Contributing guideline](./CONTRIBUTING.md)
-* [Commit convention](./docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhnent/toast-ui.vue-grid/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhnent/toast-ui.vue-grid/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
 This software is licensed under the [MIT](./LICENSE) © [NHN Ent.](https://github.com/nhnent)
