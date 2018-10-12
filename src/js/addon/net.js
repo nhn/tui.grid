@@ -739,7 +739,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
 
         /**
          * Occurs when the response is received from the server
-         * @event Grid#reponse
+         * @event Grid#response
          * @type {module:event/gridEvent}
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type
@@ -754,7 +754,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
         if (responseData && responseData.result) {
             /**
              * Occurs after the response event, if the result is true
-             * @event Grid#successReponse
+             * @event Grid#successResponse
              * @type {module:event/gridEvent}
              * @property {number} httpStatus - HTTP status
              * @property {string} requestType - Request type
