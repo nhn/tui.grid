@@ -9,6 +9,7 @@
 
 ## 🚩 Table of Contents
 
+* [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 * [Browser Support](#-browser-support)
 * [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
     * [Data Can Be Displayed in Any Format](#data-can-be-displayed-in-any-format)
@@ -32,6 +33,31 @@
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [License](#-license)
+
+
+## Collect statistics on the use of open source
+
+TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world.
+It also serves as important index to determine the future course of projects.
+`location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
+
+To disable GA, use the following `usageStatistics` option when creating the instance.
+
+```js
+var options = {
+    ...
+    usageStatistics: false
+}
+
+var instance = new Grid(options);
+```
+
+Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+
+```js
+tui.usageStatistics = false;
+```
+
 
 
 ## 🌏 Browser Support
