@@ -31,6 +31,10 @@ var fileLoader = {
     test: /\.(png|gif)$/,
     loader: 'file-loader?name=images/[name].[ext]'
 };
+var urlLoader = {
+    test: /\.(png|gif)$/,
+    loader: 'url-loader'
+};
 var stylusLoader = {
     test: /\.styl$/,
     loader: ExtractTextPlugin.extract('css-loader?sourceMap!stylus-loader?paths=src/css/')
@@ -136,7 +140,7 @@ function production() {
             filename: FILENAME + (isCombined ? '.comb' : '') + (isMinified ? '.min' : '') + '.js'
         },
         module: {
-            loaders: [fileLoader, stylusLoader]
+            loaders: [urlLoader, stylusLoader]
         },
         externals: externals,
         plugins: pluginConfig
