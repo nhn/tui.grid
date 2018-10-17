@@ -190,13 +190,13 @@ describe('grid', function() {
 
     describe('Using "usageStatistics" option', function() {
         beforeEach(function() {
-            spyOn(snippet, 'imagePing');
+            spyOn(snippet, 'sendHostname');
         });
 
         it('when the value set to true by default, the hostname is send to server.', function() {
             createGrid(['c1']);
 
-            expect(snippet.imagePing).toHaveBeenCalled();
+            expect(snippet.sendHostname).toHaveBeenCalled();
         });
 
         it('when the value set to false, the hostname is not send to server.', function() {
@@ -204,7 +204,7 @@ describe('grid', function() {
                 usageStatistics: false
             });
 
-            expect(snippet.imagePing).not.toHaveBeenCalled();
+            expect(snippet.sendHostname).not.toHaveBeenCalled();
         });
     });
 
