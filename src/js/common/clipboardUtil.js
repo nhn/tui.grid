@@ -66,6 +66,8 @@ clipboardUtil = {
             columnIndex = 0;
 
             _.each(tr.cells, function(td) {
+                var text = td.textContent || td.innerText;
+
                 while (data[rowIndex][columnIndex]) {
                     columnIndex += 1;
                 }
@@ -74,7 +76,7 @@ clipboardUtil = {
                 rowspanRange = [rowIndex, rowIndex + (td.rowSpan || 1)];
 
                 // Step 3: Set the value of td element to the data matrix as colspan and rowspan ranges
-                setDataInSpanRange(td.innerText, data, colspanRange, rowspanRange);
+                setDataInSpanRange(text, data, colspanRange, rowspanRange);
 
                 columnIndex = colspanRange[1];
             });
