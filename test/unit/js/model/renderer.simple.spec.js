@@ -110,7 +110,7 @@ describe('model.renderer', function() {
             var dummyRowCount = 3;
             renderModel.set('dummyRowCount', dummyRowCount);
 
-            _.each(['lside', 'rside'], function(attrName) {
+            _.each(['partialLside', 'partialRside'], function(attrName) {
                 var rowList = renderModel.get(attrName);
                 var dummyRows = rowList.slice(2);
 
