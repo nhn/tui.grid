@@ -771,7 +771,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
             rowHeight = this.dimensionModel.get('rowHeight');
 
             _.times(dummyRowCount, function() {
-                _.each(['lside', 'rside'], function(listName) {
+                _.each(['partialLside', 'partialRside'], function(listName) {
                     this.get(listName).push(this._createRowModel({
                         height: rowHeight,
                         rowNum: rowNum
