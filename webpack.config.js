@@ -27,10 +27,6 @@ var eslintLoader = {
     configFile: './.eslintrc',
     loader: 'eslint'
 };
-var fileLoader = {
-    test: /\.(png|gif)$/,
-    loader: 'file-loader?name=images/[name].[ext]'
-};
 var urlLoader = {
     test: /\.(png|gif)$/,
     loader: 'url-loader'
@@ -94,7 +90,7 @@ function develop() {
         ],
         module: {
             preLoaders: [eslintLoader],
-            loaders: [fileLoader, stylusLoader]
+            loaders: [urlLoader, stylusLoader]
         },
         eslint: {
             quiet: true
