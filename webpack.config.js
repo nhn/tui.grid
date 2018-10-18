@@ -27,9 +27,9 @@ var eslintLoader = {
     configFile: './.eslintrc',
     loader: 'eslint'
 };
-var fileLoader = {
+var urlLoader = {
     test: /\.(png|gif)$/,
-    loader: 'file-loader?name=images/[name].[ext]'
+    loader: 'url-loader'
 };
 var stylusLoader = {
     test: /\.styl$/,
@@ -90,7 +90,7 @@ function develop() {
         ],
         module: {
             preLoaders: [eslintLoader],
-            loaders: [fileLoader, stylusLoader]
+            loaders: [urlLoader, stylusLoader]
         },
         eslint: {
             quiet: true
@@ -136,7 +136,7 @@ function production() {
             filename: FILENAME + (isCombined ? '.comb' : '') + (isMinified ? '.min' : '') + '.js'
         },
         module: {
-            loaders: [fileLoader, stylusLoader]
+            loaders: [urlLoader, stylusLoader]
         },
         externals: externals,
         plugins: pluginConfig
