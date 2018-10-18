@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Sun Sep 16 2018 15:06:27 GMT+0900 (KST)"
- * version: 3.1.0
+ * bundle created at "Thu Oct 18 2018 11:31:07 GMT+0900 (KST)"
+ * version: 3.2.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -306,7 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (options.usageStatistics) {
-	            util.sendHostNameToGA();
+	            snippet.sendHostname('grid');
 	        }
 	    },
 
@@ -9577,22 +9577,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return rightClick;
-	    },
-
-	    /**
-	     * Send information to google analytics
-	     */
-	    sendHostNameToGA: function() {
-	        var hostname = location.hostname;
-
-	        snippet.imagePing('https://www.google-analytics.com/collect', {
-	            v: 1,
-	            t: 'event',
-	            tid: 'UA-115377265-9',
-	            cid: hostname,
-	            dp: hostname,
-	            dh: 'grid'
-	        });
 	    }
 	};
 
@@ -9671,6 +9655,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnIndex = 0;
 
 	            _.each(tr.cells, function(td) {
+	                var text = td.textContent || td.innerText;
+
 	                while (data[rowIndex][columnIndex]) {
 	                    columnIndex += 1;
 	                }
@@ -9679,7 +9665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                rowspanRange = [rowIndex, rowIndex + (td.rowSpan || 1)];
 
 	                // Step 3: Set the value of td element to the data matrix as colspan and rowspan ranges
-	                setDataInSpanRange(td.innerText, data, colspanRange, rowspanRange);
+	                setDataInSpanRange(text, data, colspanRange, rowspanRange);
 
 	                columnIndex = colspanRange[1];
 	            });
@@ -13180,7 +13166,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rowHeight = this.dimensionModel.get('rowHeight');
 
 	            _.times(dummyRowCount, function() {
-	                _.each(['lside', 'rside'], function(listName) {
+	                _.each(['partialLside', 'partialRside'], function(listName) {
 	                    this.get(listName).push(this._createRowModel({
 	                        height: rowHeight,
 	                        rowNum: rowNum
@@ -23303,7 +23289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Occurs when the response is received from the server
-	         * @event Grid#reponse
+	         * @event Grid#response
 	         * @type {module:event/gridEvent}
 	         * @property {number} httpStatus - HTTP status
 	         * @property {string} requestType - Request type
@@ -23318,7 +23304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (responseData && responseData.result) {
 	            /**
 	             * Occurs after the response event, if the result is true
-	             * @event Grid#successReponse
+	             * @event Grid#successResponse
 	             * @type {module:event/gridEvent}
 	             * @property {number} httpStatus - HTTP status
 	             * @property {string} requestType - Request type
