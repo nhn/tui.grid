@@ -21,9 +21,6 @@
     * [Event](#event)
     * [Method](#method)
 * [Pull Request Steps](#-pull-request-steps)
-    * [Setup](#setup)
-    * [Develop](#develop)
-    * [Pull Request Steps](#pull-request)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [License](#-license)
@@ -54,14 +51,16 @@ npm install --save @toast-ui/vue-grid
 
 ### Via Contents Delivery Network (CDN)
 
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com). When you load `toastui-vue-grid.js` using CDN, you should insert dependency modules `vue`, `tui-grid.js` and `tui-grid.css` in the html. Also you should insert `jquery`, `underscore`, `backbone`, `tui-code-snippet`, `tui-pagination`, `tui-date-picker` that dependency modules of `tui-grid`. For more information about dependency of `tui-grid`, see [Download Files of Toast UI Grid](https://github.com/nhnent/tui.grid/blob/master/docs/getting-started.md#downloading-files)
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com). When you load `toastui-vue-grid.js` using CDN, you should insert dependency modules `vue`, `tui-grid.js` and `tui-grid.css` in the html.
+
+Also you should insert `jquery`, `underscore`, `backbone`, `tui-code-snippet`, `tui-pagination`, `tui-date-picker` that dependency modules of `tui-grid.js`. For more information about dependency of `tui-grid.js`, see [Download Files of Toast UI Grid](https://github.com/nhnent/tui.grid/blob/master/docs/getting-started.md#downloading-files)
 
 ```html
-<script src="path/to/jquery">
-<script src="path/to/underscore">
-<script src="path/to/tui-code-snippet">
-<script src="path/to/tui-pagination">
-<script src="path/to/ui-date-picker">
+<script src="path/to/jquery"></script>
+<script src="path/to/underscore"></script>
+<script src="path/to/tui-code-snippet"></script>
+<script src="path/to/tui-pagination"></script>
+<script src="path/to/ui-date-picker"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="https://uicdn.toast.com/tui-grid/latest/tui-grid.js"></script>
 <script src="https://uicdn.toast.com/toast-ui.vue-grid/latest/toastui-vue-grid.js"></script>
