@@ -1,11 +1,10 @@
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.js',
     output: {
-        filename: 'vue-grid.js',
+        filename: 'toastui-vue-grid.js',
         path: path.resolve(__dirname, 'dist'),
         library: 'toastui',
         libraryTarget: 'umd'
@@ -13,6 +12,14 @@ module.exports = {
     resolve: {
         alias: {
             vue: 'vue/dist/vue.js'
+        }
+    },
+    externals: {
+        'tui-grid': {
+            'commonjs': 'tui-grid',
+            'commonjs2': 'tui-grid',
+            'amd': 'tui-grid',
+            'root': ['tui', 'Grid']
         }
     },
     module: {
@@ -36,23 +43,10 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
-            },
-            {
-                test: /\.(png|gif)$/,
-                loader: 'file-loader?name=images/[name].[ext]'
-            },
-            {
-                test: /\.css$/,
-                loader: ['vue-style-loader', 'css-loader']
             }
         ]
     },
     plugins: [
-        new VueLoaderPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('production')
-            }
-        })
+        new VueLoaderPlugin()
     ]
 };

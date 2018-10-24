@@ -2,7 +2,6 @@
     <div ref="tuiGrid"></div>
 </template>
 <script>
-import 'tui-grid/dist/tui-grid.css';
 import Grid from 'tui-grid';
 
 const gridEvents = [
@@ -51,7 +50,7 @@ export default {
         },
         options: {
             type: Object,
-            default: function() {
+            default() {
                 return {};
             }
         },
@@ -88,10 +87,10 @@ export default {
         };
     },
     watch: {
-        rowData: function(newData) {
+        rowData(newData) {
             this.invoke('setData', newData);
         },
-        columnData: function(newColumns) {
+        columnData(newColumns) {
             this.invoke('setColumns', newColumns);
         }
     },
