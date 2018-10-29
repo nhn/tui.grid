@@ -66,7 +66,7 @@ You can use Toast UI Grid for Vue as moudule format or namespace. Also you can u
     ```js
     require('tui-grid/dist/tui-grid.css');
     var toastui = require('@toast-ui/vue-grid');
-    var Grid = toastui.Calendar;
+    var Grid = toastui.Grid;
     ```
 
 * Using Single File Component
