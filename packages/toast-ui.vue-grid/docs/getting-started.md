@@ -467,10 +467,10 @@ export default {
         }
     },
     methods: {
-        onClick(nativeEvent, targetType, rowKey, columnName, instance) {
+        onClick(evt) {
             // implement your code
         },
-        onCheck(rowKey, instance) {
+        onCheck(evt) {
             // implement your code
         }
     }
