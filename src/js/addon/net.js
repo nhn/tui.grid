@@ -49,6 +49,7 @@ var errorMessageMap = {
  *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
  *      @param {number} [options.perPage=500] - The number of items to be shown in a page
  *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
+ *      @param {boolean} [options.withCredentials=false] - Whether to set true for cross-domain requests if needed
  * @example
  *   <form id="data_form">
  *   <input type="text" name="query"/>
@@ -66,6 +67,7 @@ var errorMessageMap = {
  *         readDataMethod: 'GET',
  *         perPage: 500,
  *         enableAjaxHistory: true,
+ *         withCredentials: true,
  *         api: {
  *             'readData': './api/read',
  *             'createData': './api/create',
@@ -110,7 +112,8 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
         var defaultOptions = {
             initialRequest: true,
             perPage: 500,
-            enableAjaxHistory: true
+            enableAjaxHistory: true,
+            withCredentials: false
         };
         var defaultApi = {
             readData: '',
@@ -140,6 +143,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
             enableAjaxHistory: options.enableAjaxHistory,
             readDataMethod: options.readDataMethod || 'POST',
             perPage: options.perPage,
+            withCredentials: options.withCredentials,
 
             // state data
             curPage: 1,
@@ -413,7 +417,8 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
                 type: this.readDataMethod,
                 success: $.proxy(this._onReadSuccess, this),
                 error: $.proxy(this._onReadError, this),
-                reset: true
+                reset: true,
+                withCredentials: this.withCredentials
             });
             this.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
         }
@@ -489,6 +494,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
      *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
      *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
+     *      @param {boolean} [options.withCredentials=false] - Whether to set true for cross-domain requests if needed
      * @returns {boolean} Whether requests or not
      */
     request: function(requestType, options) {
@@ -619,7 +625,8 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
             type: null,
             hasDataParam: true,
             modifiedOnly: true,
-            checkedOnly: true
+            checkedOnly: true,
+            withCredentials: this.withCredentials
         };
         var newOptions = $.extend(defaultOptions, options);
         var dataParam = this._getDataParam(requestType, newOptions);
@@ -630,7 +637,8 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
                 requestType: requestType,
                 url: newOptions.url,
                 data: dataParam.data,
-                type: newOptions.type
+                type: newOptions.type,
+                withCredentials: newOptions.withCredentials
             };
         }
 
@@ -673,8 +681,14 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
     },
 
     /**
-     * ajax 통신을 한다.
-     * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+     * Request server using $.ajax
+     * @param {object} options - request parameters for $.ajax
+     *     @param {string} options.url - url
+     *     @param {object} [options.data] - data
+     *     @param {string} [options.type] - 'GET|POST'
+     *     @param {string} [options.dataType] - 'text|html|xml|json|jsonp'
+     *     @param {string} [options.requestType] - 'createData|updateData|deleteData|modifyData'
+     *     @param {boolean} [options.withCredentials=false] - whether to set true for cross-domain requests if needed
      * @private
      */
     _ajax: function(options) {
@@ -700,7 +714,10 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
             dataType: options.dataType || 'json',
             complete: $.proxy(this._onComplete, this, options.complete, options),
             success: $.proxy(this._onSuccess, this, options.success, options),
-            error: $.proxy(this._onError, this, options.error, options)
+            error: $.proxy(this._onError, this, options.error, options),
+            xhrFields: {
+                withCredentials: options.withCredentials
+            }
         };
         if (options.url) {
             $.ajax(params);
