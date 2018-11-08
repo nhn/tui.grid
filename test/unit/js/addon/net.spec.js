@@ -696,4 +696,36 @@ describe('addon.net', function() {
             });
         });
     });
+
+    describe('withCredentials option', function() {
+        beforeEach(function() {
+            createNet({
+                api: {
+                    createData: '/api/create'
+                }
+            });
+        });
+
+        it('when withCredentials parameter is not setting, ' +
+          'request value set default value of withCredentials.', function() {
+            var request;
+
+            net.request('createData');
+
+            request = jasmine.Ajax.requests.mostRecent();
+            expect(request.withCredentials).toBe(false);
+        });
+
+        it('when withCredentials parameter is setting, ' +
+          'request value set withCredentials value of parameter.', function() {
+            var request;
+
+            net.request('createData', {
+                withCredentials: true
+            });
+
+            request = jasmine.Ajax.requests.mostRecent();
+            expect(request.withCredentials).toBe(true);
+        });
+    });
 });
