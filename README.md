@@ -4,6 +4,10 @@
 
 [![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
+## Wrappers
+
+* [@toast-ui/vue-grid](https://github.com/nhnent/toast-ui.vue-grid) : **Vue** wrapper component is being implemented by TOAST UI
+
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
 
@@ -32,6 +36,7 @@
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
+* [Used By](#-used-by)
 * [License](#-license)
 
 
@@ -365,6 +370,10 @@ You can also see the older versions of API page on the [releases page](https://g
 * [TOAST UI Chart](https://github.com/nhnent/tui.chart)
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
 * [TOAST UI Components](https://github.com/nhnent)
+
+
+## 🚀 Used By
+* [NCP - Commerce Platform](https://www.e-ncp.com/)
 
 
 ## 📜 License
