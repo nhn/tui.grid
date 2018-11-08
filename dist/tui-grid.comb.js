@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Oct 18 2018 11:31:07 GMT+0900 (KST)"
- * version: 3.2.0
+ * bundle created at "Thu Nov 08 2018 19:07:36 GMT+0900 (KST)"
+ * version: 3.3.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -22599,6 +22599,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
 	 *      @param {number} [options.perPage=500] - The number of items to be shown in a page
 	 *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
+	 *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
+	allow cross-domain requests if true
 	 * @example
 	 *   <form id="data_form">
 	 *   <input type="text" name="query"/>
@@ -22616,6 +22618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *         readDataMethod: 'GET',
 	 *         perPage: 500,
 	 *         enableAjaxHistory: true,
+	 *         withCredentials: false,
 	 *         api: {
 	 *             'readData': './api/read',
 	 *             'createData': './api/create',
@@ -22660,7 +22663,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var defaultOptions = {
 	            initialRequest: true,
 	            perPage: 500,
-	            enableAjaxHistory: true
+	            enableAjaxHistory: true,
+	            withCredentials: false
 	        };
 	        var defaultApi = {
 	            readData: '',
@@ -22690,6 +22694,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            enableAjaxHistory: options.enableAjaxHistory,
 	            readDataMethod: options.readDataMethod || 'POST',
 	            perPage: options.perPage,
+	            withCredentials: options.withCredentials,
 
 	            // state data
 	            curPage: 1,
@@ -22963,7 +22968,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                type: this.readDataMethod,
 	                success: $.proxy(this._onReadSuccess, this),
 	                error: $.proxy(this._onReadError, this),
-	                reset: true
+	                reset: true,
+	                withCredentials: this.withCredentials
 	            });
 	            this.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
 	        }
@@ -23034,11 +23040,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
 	     * @param {object} options - Options
 	     *      @param {String} [options.url] - URL to send the request
-	     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
-	     *      @param {String} [options.checkedOnly=true] - Whether the request param only contains checked rows
-	     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
-	     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
-	     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
+	     *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+	     *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+	     *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+	     *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+	     *      @param {boolean} [options.updateOriginal=false] - Whether to update original data with current data
+	     *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
 	     * @returns {boolean} Whether requests or not
 	     */
 	    request: function(requestType, options) {
@@ -23169,7 +23176,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            type: null,
 	            hasDataParam: true,
 	            modifiedOnly: true,
-	            checkedOnly: true
+	            checkedOnly: true,
+	            withCredentials: this.withCredentials
 	        };
 	        var newOptions = $.extend(defaultOptions, options);
 	        var dataParam = this._getDataParam(requestType, newOptions);
@@ -23180,7 +23188,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                requestType: requestType,
 	                url: newOptions.url,
 	                data: dataParam.data,
-	                type: newOptions.type
+	                type: newOptions.type,
+	                withCredentials: newOptions.withCredentials
 	            };
 	        }
 
@@ -23223,8 +23232,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * ajax 통신을 한다.
-	     * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+	     * Request server using $.ajax
+	     * @param {object} options - request parameters for $.ajax
+	     *     @param {string} options.url - url
+	     *     @param {object} [options.data] - data
+	     *     @param {string} [options.type] - 'GET|POST'
+	     *     @param {string} [options.dataType] - 'text|html|xml|json|jsonp'
+	     *     @param {string} [options.requestType] - 'createData|updateData|deleteData|modifyData'
+	     *     @param {boolean} [options.withCredentials=false] - use withCredentials flag of XMLHttpRequest for ajax requests if true
 	     * @private
 	     */
 	    _ajax: function(options) {
@@ -23250,7 +23265,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dataType: options.dataType || 'json',
 	            complete: $.proxy(this._onComplete, this, options.complete, options),
 	            success: $.proxy(this._onSuccess, this, options.success, options),
-	            error: $.proxy(this._onError, this, options.error, options)
+	            error: $.proxy(this._onError, this, options.error, options),
+	            xhrFields: {
+	                withCredentials: options.withCredentials
+	            }
 	        };
 	        if (options.url) {
 	            $.ajax(params);
