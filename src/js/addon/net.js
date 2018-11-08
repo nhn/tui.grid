@@ -49,7 +49,8 @@ var errorMessageMap = {
  *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
  *      @param {number} [options.perPage=500] - The number of items to be shown in a page
  *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
- *      @param {boolean} [options.withCredentials=false] - Whether to set true for cross-domain requests if needed
+ *      @param {boolean} [options.withCredentials=false] - Use withCredentials for ajax requests if true
+allow cross-domain requests if true
  * @example
  *   <form id="data_form">
  *   <input type="text" name="query"/>
@@ -67,7 +68,7 @@ var errorMessageMap = {
  *         readDataMethod: 'GET',
  *         perPage: 500,
  *         enableAjaxHistory: true,
- *         withCredentials: true,
+ *         withCredentials: false,
  *         api: {
  *             'readData': './api/read',
  *             'createData': './api/create',
@@ -489,12 +490,12 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
      * @param {object} options - Options
      *      @param {String} [options.url] - URL to send the request
-     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
-     *      @param {String} [options.checkedOnly=true] - Whether the request param only contains checked rows
-     *      @param {String} [options.modifiedOnly=true] - Whether the request param only contains modified rows
-     *      @param {String} [options.showConfirm=true] - Whether to show confirm dialog before sending request
-     *      @param {String} [options.updateOriginal=false] - Whether to update original data with current data
-     *      @param {boolean} [options.withCredentials=false] - Whether to set true for cross-domain requests if needed
+     *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+     *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+     *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+     *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+     *      @param {boolean} [options.updateOriginal=false] - Whether to update original data with current data
+     *      @param {boolean} [options.withCredentials=false] - Use withCredentials for ajax requests if true
      * @returns {boolean} Whether requests or not
      */
     request: function(requestType, options) {
@@ -688,7 +689,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      *     @param {string} [options.type] - 'GET|POST'
      *     @param {string} [options.dataType] - 'text|html|xml|json|jsonp'
      *     @param {string} [options.requestType] - 'createData|updateData|deleteData|modifyData'
-     *     @param {boolean} [options.withCredentials=false] - whether to set true for cross-domain requests if needed
+     *     @param {boolean} [options.withCredentials=false] - use withCredentials for ajax requests if true
      * @private
      */
     _ajax: function(options) {
