@@ -49,7 +49,7 @@ var errorMessageMap = {
  *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
  *      @param {number} [options.perPage=500] - The number of items to be shown in a page
  *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
- *      @param {boolean} [options.withCredentials=false] - Use withCredentials for ajax requests if true
+ *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
 allow cross-domain requests if true
  * @example
  *   <form id="data_form">
@@ -495,7 +495,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
      *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
      *      @param {boolean} [options.updateOriginal=false] - Whether to update original data with current data
-     *      @param {boolean} [options.withCredentials=false] - Use withCredentials for ajax requests if true
+     *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
      * @returns {boolean} Whether requests or not
      */
     request: function(requestType, options) {
@@ -689,7 +689,7 @@ var Net = View.extend(/** @lends module:addon/net.prototype */{
      *     @param {string} [options.type] - 'GET|POST'
      *     @param {string} [options.dataType] - 'text|html|xml|json|jsonp'
      *     @param {string} [options.requestType] - 'createData|updateData|deleteData|modifyData'
-     *     @param {boolean} [options.withCredentials=false] - use withCredentials for ajax requests if true
+     *     @param {boolean} [options.withCredentials=false] - use withCredentials flag of XMLHttpRequest for ajax requests if true
      * @private
      */
     _ajax: function(options) {
