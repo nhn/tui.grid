@@ -1129,7 +1129,7 @@ Grid.getInstanceById = function(id) {
  *         @param {string} [extOptions.scrollbar.active] - Color of arrows(for IE) or
  *              thumb:hover(for other browsers) in scrollbars.
  *     @param {Object} [extOptions.frozenBorder] - Styles for a frozen border.
- *         @param {string} [extOptions.frozenBorder.area] - Border color of a frozen border.
+ *         @param {string} [extOptions.frozenBorder.border] - Border color of a frozen border.
  *     @param {Object} [extOptions.area] - Styles for the table areas.
  *         @param {Object} [extOptions.area.header] - Styles for the header area in the table.
  *             @param {string} [extOptions.area.header.background] - Background color of the header area
@@ -1204,6 +1204,9 @@ Grid.getInstanceById = function(id) {
  *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
  *             @param {string} [extOptions.cell.evenRow.background] - background color of cells in even rows.
  *             @param {string} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+ *         @param {Object} [extOptions.cell.oddRow] - Styles for cells in even rows.
+ *             @param {string} [extOptions.cell.oddRow.background] - background color of cells in odd rows.
+ *             @param {string} [extOptions.cell.oddRow.text] - text color of cells in odd rows.
  *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
  *             @param {string} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
