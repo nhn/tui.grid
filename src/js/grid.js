@@ -54,7 +54,7 @@ var instanceMap = {};
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
  *          {@link Grid#setFrozenColumnCount} can be used for setting this value dynamically.
- *      @param {boolean} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
+ *      @param {number} [options.columnOptions.frozenBorderWidth=1] - The value of frozen border width.
  *          When the frozen columns are created by "frozenCount" option, the frozen border width set.
  *      @param {Object} [options.treeColumnOptions] - Option object for the tree column.
  *      @param {string} [options.treeColumnOptions.name] - The name of column that makes tree column.
@@ -67,12 +67,12 @@ var instanceMap = {};
  *          as a string to be copied to the clipboard
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
- *      @param {boolean} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
+ *      @param {string} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
  *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
- *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
+ *      @param {?string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
@@ -106,7 +106,7 @@ var instanceMap = {};
  *              Validation is executed whenever data is changed or the {@link Grid#validate} is called.
  *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
  *              will be checked to be not empty.
- *          @param {boolean} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
+ *          @param {string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
  *              Avilable types are 'string' and 'number'.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
@@ -164,7 +164,7 @@ var instanceMap = {};
  *              @param {function} [options.columns.relations.listItems] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
- *          @param {Array} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
+ *          @param {string} [options.columns.whiteSpace='nowrap'] - If set to 'normal', the text line is broken
  *              by fitting to the column's width. If set to 'pre', spaces are preserved and the text is braken by
  *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
  *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
@@ -226,7 +226,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
         }
 
         if (options.usageStatistics) {
-            snippet.sendHostname('grid');
+            snippet.sendHostname('grid', 'UA-129951906-1');
         }
     },
 
@@ -1129,7 +1129,7 @@ Grid.getInstanceById = function(id) {
  *         @param {string} [extOptions.scrollbar.active] - Color of arrows(for IE) or
  *              thumb:hover(for other browsers) in scrollbars.
  *     @param {Object} [extOptions.frozenBorder] - Styles for a frozen border.
- *         @param {string} [extOptions.frozenBorder.area] - Border color of a frozen border.
+ *         @param {string} [extOptions.frozenBorder.border] - Border color of a frozen border.
  *     @param {Object} [extOptions.area] - Styles for the table areas.
  *         @param {Object} [extOptions.area.header] - Styles for the header area in the table.
  *             @param {string} [extOptions.area.header.background] - Background color of the header area
@@ -1204,6 +1204,9 @@ Grid.getInstanceById = function(id) {
  *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
  *             @param {string} [extOptions.cell.evenRow.background] - background color of cells in even rows.
  *             @param {string} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+ *         @param {Object} [extOptions.cell.oddRow] - Styles for cells in even rows.
+ *             @param {string} [extOptions.cell.oddRow.background] - background color of cells in odd rows.
+ *             @param {string} [extOptions.cell.oddRow.text] - text color of cells in odd rows.
  *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
  *             @param {string} [extOptions.cell.dummy.background] - background color of dummy cells.
  * @example
