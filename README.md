@@ -227,9 +227,9 @@ tui-grid/
 * [backbone](http://backbonejs.org/) >=1.3.3
 * [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.5.0
 * component (optional)
-    * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.2.1
-    * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.1.1
-
+    * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.2.1
+    * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.3.0
+    
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 
