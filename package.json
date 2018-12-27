@@ -12,7 +12,7 @@
     "test:types": "tsc --project test/types",
     "sshot:clean": "del screenshots/diff screenshots/screen",
     "sshot:cleanRef": "del screenshots/reference",
-    "bundle": "npm run bundle:normal & npm run bundle:combine && node tsBannerGenerator.js",
+    "bundle": "npm run bundle:normal & npm run bundle:combine",
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify"
   },

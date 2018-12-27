@@ -1,5 +1,7 @@
-// Type definitions for TOAST UI Grid v3.3.0
-// TypeScript Version: 3.2.2
+/**
+ * Type definitions for tui.grid v3.3.0
+ * TypeScript Version: 3.2
+ */
 
 type HeaderOptions = any;
 type anyFunc = (...args : any[]) => any;
