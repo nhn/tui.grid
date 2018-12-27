@@ -226,7 +226,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
         }
 
         if (options.usageStatistics) {
-            snippet.sendHostname('grid');
+            snippet.sendHostname('grid', 'UA-129951906-1');
         }
     },
 

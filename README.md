@@ -6,7 +6,7 @@
 
 ## Wrappers
 
-* [@toast-ui/vue-grid](https://github.com/nhnent/toast-ui.vue-grid) : **Vue** wrapper component is being implemented by TOAST UI
+* [toast-ui.vue-grid](https://github.com/nhnent/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN Entertainment. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -225,10 +225,10 @@ tui-grid/
 * [jquery](https://jquery.com/) >=1.11.0 (Available with `bower` from 1.8.3)
 * [underscore](http://underscorejs.org/) >=1.8.3
 * [backbone](http://backbonejs.org/) >=1.3.3
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.4.0
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.5.0
 * component (optional)
-    * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.2.0
-    * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.1.0
+    * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.2.1
+    * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.3.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
