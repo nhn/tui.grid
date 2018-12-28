@@ -14,7 +14,8 @@
     "sshot:cleanRef": "del screenshots/reference",
     "bundle": "npm run bundle:normal & npm run bundle:combine && node tsBannerGenerator.js",
     "bundle:normal": "webpack --production & webpack --production --minify",
-    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify"
+    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
+    "tslint": "tslint index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
   "author": "NHN Ent. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
+    "@types/jquery": "^3.3.29",
     "body-parser": "^1.12.4",
     "copy-webpack-plugin": "^3.0.1",
     "cpy-cli": "^1.0.1",
@@ -64,6 +66,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
+    "tslint": "^5.12.0",
     "typescript": "^3.2.2",
     "url-loader": "^0.5.7",
     "vinyl-source-stream": "^1.1.0",

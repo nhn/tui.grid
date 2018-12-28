@@ -43,13 +43,50 @@ grid2.disable();
 const grid = new Grid({
     el: byIdEl,
     columns: [],
-    data: [1, 'string', true, null, undefined],
+    data: [
+        {
+            id: 549731,
+            name: 'Beautiful Lies',
+            artist: 'Birdy',
+            release: '2016.03.26',
+            type: 'Deluxe',
+            typeCode: '1',
+            genre: 'Pop',
+            genreCode: '1',
+            grade: '4',
+            price: 10000,
+            downloadCount: 1000,
+            listenCount: 5000
+        }
+    ],
     header: {
         height: 50,
         complexColumns: [
-            'col1',
-            'col2',
-            'col3'
+            {
+                title: 'Basic',
+                name: 'mergeColumn1',
+                childNames: ['name', 'artist']
+            },
+            {
+                title: 'Extra',
+                name: 'mergeColumn2',
+                childNames: ['type', 'release', 'genre']
+            },
+            {
+                title: 'Detail',
+                name: 'mergeColumn3',
+                childNames: ['mergeColumn1', 'mergeColumn2']
+            },
+            {
+                title: 'Count',
+                name: 'mergeColumn4',
+                childNames: ['downloadCount', 'listenCount']
+            },
+            {
+                title: 'Album Info',
+                name: 'mergeColumn5',
+                childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+            }
         ]
     },
     virtualScrolling: true,
@@ -186,8 +223,7 @@ grid.getElement(1, 'date');
 grid.setValue(1, 'date',  '2018-12-12');
 grid.setColumnValues('date', 'columnAnyValue', true);
 grid.resetData(rowData);
-grid.setData(rowData, data => {
-    console.log(data);
+grid.setData(rowData, () => {
 });
 grid.setBodyHeight(200);
 grid.focus(1, 'date', true);
@@ -243,8 +279,8 @@ grid.setWidth(1000);
 grid.setHeight(200);
 grid.refreshLayout();
 grid.resetColumnWidths();
-grid.showColumn('test', 1, true);
-grid.hideColumn(false, 'string', 30);
+grid.showColumn('col1', 'col2', 'col3');
+grid.hideColumn('str1', 'str2');
 grid.setSummaryColumnContent('date', '2018-12-12');
 grid.setFooterColumnContent('price', '$ 5000');
 grid.validate();
