@@ -116,7 +116,18 @@ const grid = new Grid({
     keyColumnName: null,
     heightResizable: true,
     pagination: null,
-    selectionUnit: 'row'
+    selectionUnit: 'row',
+    summary: {
+        height: 40,
+        position: 'bottom',
+        columnContent: {
+            amount: {
+                template(valueMap) {
+                    return `합계 : ${valueMap.sum}원`;
+                }
+            }
+        }
+    }
 });
 
 const columnData = [
@@ -257,12 +268,22 @@ grid.restore();
 grid.setFrozenColumnCount(10);
 grid.setColumns(columnData);
 grid.use('Net', {
+    el: $('#data_form'),
+    initialRequest: true,
+    readDataMethod: 'GET',
+    perPage: 500,
+    enableAjaxHistory: true,
+    withCredentials: false,
     api: {
-        readData: 'http://localhost:3000/api/readData',
-        updateData: 'http://localhost:3000/api/updateData'
-    },
-    readDataMethod: 'POST'
-});
+        'readData': './api/read',
+        'createData': './api/create',
+        'updateData': './api/update',
+        'deleteData': './api/delete',
+        'modifyData': './api/modify',
+        'downloadExcel': './api/download/excel',
+        'downloadExcelAll': './api/download/excelAll'
+    }
+ });
 grid.getRows();
 grid.sort('date', true);
 grid.unSort();
