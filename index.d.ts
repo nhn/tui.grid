@@ -16,7 +16,7 @@ declare namespace tuiGrid {
         'beforeRequest' | 'response' | 'successResponse' | 'failResponse' |
         'errorResponse' | 'selection' | 'deleteRange';
     type RowConditionType = {key: string, value: RowKeyType} | ((row: IRow) => boolean);
-    type PostPreFixConverterFunc = (cellValue: string, rowAttrs: IRow) => string;
+    type PostPrefixConverterFunc = (cellValue: string, rowAttrs: IRow) => string;
     type RowType = IRow | ITreeRow;
     type Pagination = any;
 
@@ -95,9 +95,9 @@ declare namespace tuiGrid {
         onFocus?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
         onBlur?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
         onKeyDown?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
-        prefix?: string | PostPreFixConverterFunc;
-        postfix?: string | PostPreFixConverterFunc;
-        converter?: PostPreFixConverterFunc;
+        prefix?: string | PostPrefixConverterFunc;
+        postfix?: string | PostPrefixConverterFunc;
+        converter?: PostPrefixConverterFunc;
     }
 
     interface IClipboardCopyOptions {
