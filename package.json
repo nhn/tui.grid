@@ -11,9 +11,10 @@
     "test:e2e": "npm run sshot:clean && wdio wdio.conf.js",
     "sshot:clean": "del screenshots/diff screenshots/screen",
     "sshot:cleanRef": "del screenshots/reference",
-    "bundle": "npm run bundle:normal & npm run bundle:combine",
+    "bundle": "npm run bundle:normal & npm run bundle:combine & npm run bundle:full",
     "bundle:normal": "webpack --production & webpack --production --minify",
-    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify"
+    "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
+    "bundle:full": "webpack --production --full & webpack --production --full --minify"
   },
   "repository": {
     "type": "git",
