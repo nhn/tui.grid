@@ -16,6 +16,7 @@ var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 var isCombined = process.argv.indexOf('--combine') >= 0;
+var isFull = process.argv.indexOf('--full') >= 0;
 
 var FILENAME = pkg.name;
 var VERSION = pkg.version;
@@ -110,22 +111,37 @@ function production() {
     var readableTimestamp = (new Date()).toString();
     var bannerText = 'bundle created at "' + readableTimestamp + '"\nversion: ' + VERSION;
     var pluginConfig = [];
+    var extraFilename = '';
 
     if (isCombined) {
         delete externals.backbone;
         delete externals.underscore;
     }
+
+    if (isFull) {
+        delete externals.backbone;
+        delete externals.underscore;
+        delete externals.jquery;
+    }
+
     if (isMinified) {
         pluginConfig.push(new webpack.optimize.UglifyJsPlugin({
             compress: {warnings: false},
             output: {comments: false}
         }));
     }
+
     pluginConfig.push(
         new SafeUmdPlugin(),
         new webpack.BannerPlugin(bannerText, {entryOnly: true}),
         new ExtractTextPlugin(FILENAME + (isMinified ? '.min' : '') + '.css')
     );
+
+    if (isCombined) {
+        extraFilename = '.comb';
+    } else if (isFull) {
+        extraFilename = '.full';
+    }
 
     return {
         entry: ENTRY_PATH,
@@ -133,7 +149,7 @@ function production() {
             library: ['tui', 'Grid'],
             libraryTarget: 'umd',
             path: path.join(__dirname, 'dist'),
-            filename: FILENAME + (isCombined ? '.comb' : '') + (isMinified ? '.min' : '') + '.js'
+            filename: FILENAME + extraFilename + (isMinified ? '.min' : '') + '.js'
         },
         module: {
             loaders: [urlLoader, stylusLoader]
