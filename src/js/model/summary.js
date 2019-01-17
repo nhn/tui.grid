@@ -94,23 +94,24 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
         var resultMap = {};
         var i, value;
 
-        if (!count) {
-            max = min = 0;
-        } else {
-            for (i = 0; i < count; i += 1) {
-                value = Number(values[i]);
-                if (isNaN(value)) {
-                    value = 0;
-                }
-
-                sum += value;
-                if (min > value) {
-                    min = value;
-                }
-                if (max < value) {
-                    max = value;
-                }
+        for (i = 0; i < count; i += 1) {
+            value = Number(values[i]);
+            if (isNaN(value)) {
+                value = 0;
             }
+
+            sum += value;
+            if (min > value) {
+                min = value;
+            }
+            if (max < value) {
+                max = value;
+            }
+        }
+
+        if (!count) {
+            max = min = avg = 0;
+        } else {
             avg = sum / count;
         }
 
