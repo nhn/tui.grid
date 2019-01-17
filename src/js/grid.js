@@ -913,7 +913,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {string} contents - HTML string
      */
     setSummaryColumnContent: function(columnName, contents) {
-        this.modelManager.columnModel.setSummaryContent(columnName, contents);
+        this.modelManager.summaryModel.setColumnContent(columnName, contents, true);
     },
 
     /**

@@ -24,19 +24,6 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
     initialize: function(options) {
         /**
-         * Store template functions of each column
-         * K: column name
-         * V: template function
-         * @example
-         * {
-         *     c1: function() {},
-         *     c2: function() {}
-         * }
-         * @type {Object}
-         */
-        this.columnTemplateMap = options.columnTemplateMap || {};
-
-        /**
          * L: Left, R: Right
          * @type {string}
          */
@@ -52,7 +39,6 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-        this.listenTo(this.columnModel, 'setSummaryContent', this._setColumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
@@ -162,11 +148,13 @@ var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
      * @private
      */
     _generateValueHTML: function(columnName, valueMap) {
-        var template = this.columnTemplateMap[columnName];
+        var template = this.summaryModel.getTemplate(columnName);
         var html = '';
 
         if (_.isFunction(template)) {
             html = template(valueMap);
+        } else if (_.isString(template)) {
+            html = template;
         }
 
         return html;

@@ -305,21 +305,13 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
      * @private
      */
     _createSummaryModel: function(summaryOptions) {
-        var autoColumnNames = [];
-
-        if (!summaryOptions || !summaryOptions.columnContent) {
+        if (!summaryOptions) {
             return null;
         }
 
-        _.each(summaryOptions.columnContent, function(options, columnName) {
-            if (_.isFunction(options.template) && options.useAutoSummary !== false) {
-                autoColumnNames.push(columnName);
-            }
-        });
-
         return new SummaryModel(null, {
             dataModel: this.dataModel,
-            autoColumnNames: autoColumnNames
+            columnContent: summaryOptions.columnContent
         });
     },
 

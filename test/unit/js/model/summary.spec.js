@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Summary = require('model/summary');
@@ -25,12 +26,22 @@ function create(data, autoColumnNames) {
     var dataModel = new RowListData([], {
         columnModel: columnModel
     });
+    var summaryColumnContent = {};
+
     dataModel.setData(data);
+
+    _.each(autoColumnNames, function(columnName) {
+        summaryColumnContent[columnName] = {
+            template: function() {
+                return '';
+            }
+        };
+    });
 
     return new Summary(null, {
         dataModel: dataModel,
         columnModel: columnModel,
-        autoColumnNames: autoColumnNames
+        columnContent: summaryColumnContent
     });
 }
 
@@ -193,6 +204,46 @@ describe('model/summary', function() {
 
             expect(changeSpy.calls.count()).toBe(1);
             expect(changeSpy.calls.argsFor(0)[0]).toBe('c1');
+        });
+    });
+
+    describe('when setColumnContent is called', function() {
+        it('getValue() should return value of changed column', function() {
+            var summary = create([{c1: 1}, {c1: 2}]);
+
+            summary.setColumnContent('c1', {
+                template: function() {
+                    return '';
+                }
+            }, true);
+
+            expect(summary.getValue('c1')).toEqual({
+                sum: 3,
+                min: 1,
+                max: 2,
+                avg: 1.5,
+                cnt: 2
+            });
+        });
+
+        it('change event should be triggered', function() {
+            var summary = create([{c1: 1}, {c1: 2}]);
+            var changeSpy = jasmine.createSpy('change');
+
+            summary.on('change', changeSpy);
+            summary.setColumnContent('c1', {
+                template: function() {
+                    return '';
+                }
+            }, true);
+
+            expect(changeSpy).toHaveBeenCalledWith('c1', {
+                sum: 3,
+                min: 1,
+                max: 2,
+                avg: 1.5,
+                cnt: 2
+            });
         });
     });
 });

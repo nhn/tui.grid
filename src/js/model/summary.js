@@ -27,7 +27,20 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
          * An array of columnNames using auto calculation
          * @type {Array.<string>}
          */
-        this.autoColumnNames = options.autoColumnNames;
+        this.autoColumnNames = [];
+
+        /**
+         * Store template functions of each column
+         * K: column name
+         * V: template function
+         * @example
+         * {
+         *     c1: function() {},
+         *     c2: function() {}
+         * }
+         * @type {Object}
+         */
+        this.templateMap = {};
 
         /**
          * Summary value map (KV)
@@ -51,7 +64,18 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
         this.listenTo(this.dataModel, 'change', this._onChangeData);
         this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
 
+        this._resetColumnContent(options.columnContent);
         this._resetSummaryMap();
+    },
+
+    /**
+    * Reset autoColumnNames and templateMap based on columnContent options.
+    * @param {Object} columnContent - summary.columnContent options
+    */
+    _resetColumnContent: function(columnContent) {
+        _.each(columnContent, function(options, columnName) {
+            this.setColumnContent(columnName, options);
+        }, this);
     },
 
     /**
@@ -64,30 +88,36 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     _calculate: function(values) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
-        var sum = 0;
         var count = values.length;
+        var sum = 0;
+        var avg = 0;
         var resultMap = {};
         var i, value;
 
-        for (i = 0; i < count; i += 1) {
-            value = Number(values[i]);
-            if (isNaN(value)) {
-                value = 0;
-            }
+        if (!count) {
+            max = min = 0;
+        } else {
+            for (i = 0; i < count; i += 1) {
+                value = Number(values[i]);
+                if (isNaN(value)) {
+                    value = 0;
+                }
 
-            sum += value;
-            if (min > value) {
-                min = value;
+                sum += value;
+                if (min > value) {
+                    min = value;
+                }
+                if (max < value) {
+                    max = value;
+                }
             }
-            if (max < value) {
-                max = value;
-            }
+            avg = sum / count;
         }
 
         resultMap[typeConst.SUM] = sum;
         resultMap[typeConst.MIN] = min;
         resultMap[typeConst.MAX] = max;
-        resultMap[typeConst.AVG] = count ? (sum / count) : 0;
+        resultMap[typeConst.AVG] = avg;
         resultMap[typeConst.CNT] = count;
 
         return resultMap;
@@ -98,7 +128,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _resetSummaryMap: function() {
-        this._resetSummarySummaryValue();
+        this._resetColumnSummaryValue();
     },
 
     /**
@@ -106,19 +136,21 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @param {Array.<string>} columnNames - An array of column names
      * @private
      */
-    _resetSummarySummaryValue: function(columnNames) {
+    _resetColumnSummaryValue: function(columnNames) {
         var targetColumnNames = this.autoColumnNames;
 
         if (columnNames) {
             targetColumnNames = _.intersection(columnNames, this.autoColumnNames);
         }
-        _.each(targetColumnNames, function(columnName) {
-            var values = this.dataModel.getColumnValues(columnName);
-            var valueMap = this._calculate(values);
+        _.each(targetColumnNames, this._changeColumnSummaryValue.bind(this));
+    },
 
-            this.columnSummaryMap[columnName] = valueMap;
-            this.trigger('change', columnName, valueMap);
-        }, this);
+    _changeColumnSummaryValue: function(columnName) {
+        var values = this.dataModel.getColumnValues(columnName);
+        var valueMap = this._calculate(values);
+
+        this.columnSummaryMap[columnName] = valueMap;
+        this.trigger('change', columnName, valueMap);
     },
 
     /**
@@ -127,7 +159,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _onChangeData: function(model) {
-        this._resetSummarySummaryValue(_.keys(model.changed));
+        this._resetColumnSummaryValue(_.keys(model.changed));
     },
 
     /**
@@ -136,7 +168,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
      * @private
      */
     _onDeleteRangeData: function(ev) {
-        this._resetSummarySummaryValue(ev.columnNames);
+        this._resetColumnSummaryValue(ev.columnNames);
     },
 
     /**
@@ -157,6 +189,38 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
         value = snippet.pick(valueMap, summaryType);
 
         return _.isUndefined(value) ? null : value;
+    },
+
+    /**
+    * Return template function of given column name
+    * @param {string} columnName - column name
+    * @returns {function}
+    */
+    getTemplate: function(columnName) {
+        return this.templateMap[columnName];
+    },
+
+    /**
+     * Set summary contents.
+     * (Just trigger 'setSummaryContent')
+     * @param {string} columnName - columnName
+     * @param {string|object} content - HTML string or Options Object
+     * @param {boolean} shouldChangeValue - If set to true, summary value is re-calculated
+     */
+    setColumnContent: function(columnName, content, shouldChangeValue) { // eslint-disable-line complexity
+        if (_.isObject(content) && _.isFunction(content.template)) {
+            this.templateMap[columnName] = content.template;
+            if (content.useAutoSummary !== false && this.autoColumnNames.indexOf(columnName) === -1) {
+                this.autoColumnNames.push(columnName);
+            }
+        } else if (_.isString(content)) {
+            this.autoColumnNames = _.without(this.autoColumnNames, columnName);
+            this.templateMap[columnName] = content;
+        }
+
+        if (shouldChangeValue) {
+            this._changeColumnSummaryValue(columnName);
+        }
     }
 });
 
