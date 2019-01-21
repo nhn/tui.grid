@@ -177,9 +177,22 @@ var instanceMap = {};
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
  *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
- *          @param {Object.<string, Object>} [options.summary.columnContent]
- *              The object for configuring each column in the summary.
+ *          @param {(string | Object.<string, (boolean|function)>)} [options.summary.defaultContent]
+ *              The configuring of summary cell for every column.
+ *              This options can be overriden for each column by columnContent options.
+ *              If type is string, the value is used as HTML of summary cell for every columns
+ *              without auto-calculation.
+ *              @param {boolean} [options.summary.defaultContent.useAutoSummary=true]
+ *                  If set to true, the summary value of every column is served as a paramater to the template
+ *                  function whenever data is changed.
+ *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
+ *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
+ *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+ *          @param {Object.<string, (Object|string)>} [options.summary.columnContent]
+ *              The configuring of summary cell for each column.
  *              Sub options below are keyed by each column name.
+ *              If type of value of this object is string, the value is used as HTML of summary cell for
+ *              the column without auto-calculation.
  *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
  *                  If set to true, the summary value of each column is served as a paramater to the template
  *                  function whenever data is changed.
