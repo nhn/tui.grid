@@ -311,7 +311,9 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
 
         return new SummaryModel(null, {
             dataModel: this.dataModel,
-            columnContent: summaryOptions.columnContent
+            columnModel: this.columnModel,
+            columnContent: summaryOptions.columnContent,
+            defaultContent: summaryOptions.defaultContent
         });
     },
 
