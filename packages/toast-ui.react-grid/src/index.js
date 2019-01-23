@@ -35,7 +35,7 @@ export default class Grid extends React.Component {
 
   bindEventHandlers() {
     Object.keys(this.props)
-      .filter((key) => /on[A-Z][a-z0-9]+/.test(key))
+      .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
       .forEach((key) => {
         const eventName = key[2].toLowerCase() + key.slice(3);
         this.gridInst.on(eventName, this.props[key]);
