@@ -1,15 +1,18 @@
 {
   "name": "toast-ui.react-grid",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Toat UI Grid for React",
+  "main": "dist/toastui-react-grid.js",
   "scripts": {
     "dev": "webpack-dev-server --open --mode development",
-    "build": "webpack -p --progress"
+    "build": "webpack -p --progress",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "browserslist": "last 2 versions, ie 9",
   "peerDependencies": {
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "author": "",
   "license": "MIT",
@@ -19,18 +22,24 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
+    "@storybook/addon-actions": "^4.1.7",
+    "@storybook/addon-knobs": "^4.1.7",
+    "@storybook/addon-links": "^4.1.7",
+    "@storybook/addons": "^4.1.7",
+    "@storybook/react": "^4.1.7",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.0",
-    "html-webpack-plugin": "^3.2.0",
+    "jquery-mockjax": "^2.5.0",
     "prettier": "^1.16.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "storybook": "^1.0.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
     "tui-grid": "^3.4.0"
   }
 }
