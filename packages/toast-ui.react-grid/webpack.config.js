@@ -5,18 +5,16 @@ const config = {
   entry: './src/index.js',
   output: {
     filename: 'toastui-react-grid.js',
-    path: path.resolve(__dirname, 'dist'),
-    library: 'toastui',
-    libraryTarget: 'umd'
+    path: path.resolve(__dirname, 'dist')
   },
-  // externals: {
-  //   'tui-grid': {
-  //     commonjs: 'tui-grid',
-  //     commonjs2: 'tui-grid',
-  //     amd: 'tui-grid',
-  //     root: ['tui', 'Grid']
-  //   }
-  // },
+  externals: {
+    'tui-grid': {
+      commonjs: 'tui-grid',
+      commonjs2: 'tui-grid',
+      amd: 'tui-grid',
+      root: ['tui', 'Grid']
+    }
+  },
   module: {
     rules: [
       {
@@ -28,23 +26,11 @@ const config = {
             presets: ['@babel/preset-env']
           }
         }
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
       }
     ]
   }
 };
 
-module.exports = (env, options = {}) => {
-  if (options.mode === 'development') {
-    config.plugins = [
-      new HtmlWebpackPlugin({
-        template: 'public/index.html'
-      })
-    ];
-  }
-
+module.exports = () => {
   return config;
 };
