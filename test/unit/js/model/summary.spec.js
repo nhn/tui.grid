@@ -1,11 +1,12 @@
 'use strict';
 
+var _ = require('underscore');
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Summary = require('model/summary');
 var typeConst = require('common/constMap').summaryType;
 
-function create(data, autoColumnNames) {
+function create(data, columnContent, defaultContent) {
     var columnModel = new ColumnModelData({
         columns: [
             {
@@ -30,7 +31,8 @@ function create(data, autoColumnNames) {
     return new Summary(null, {
         dataModel: dataModel,
         columnModel: columnModel,
-        autoColumnNames: autoColumnNames
+        columnContent: columnContent,
+        defaultContent: defaultContent
     });
 }
 
@@ -44,7 +46,9 @@ describe('model/summary', function() {
         ];
 
         it('sum/avg/count/min/max', function() {
-            var summary = create(data, ['c1']);
+            var summary = create(data, {
+                c1: {template: function() {}}
+            });
 
             expect(summary.getValue('c1', typeConst.SUM)).toBe(10);
             expect(summary.getValue('c1', typeConst.AVG)).toBe(2.5);
@@ -65,9 +69,10 @@ describe('model/summary', function() {
                     c1: null,
                     c2: false
                 }
-            ], [
-                'c1', 'c2'
-            ]);
+            ], {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
+            });
 
             expect(summary.getValue('c1', typeConst.SUM)).toBe(1);
             expect(summary.getValue('c2', typeConst.SUM)).toBe(1);
@@ -87,7 +92,10 @@ describe('model/summary', function() {
                     c1: 2,
                     c2: 2
                 }
-            ], ['c1', 'c2']);
+            ], {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
+            });
         });
 
         it('Add', function() {
@@ -139,23 +147,138 @@ describe('model/summary', function() {
         });
     });
 
-    describe('If a column name is not in the autoColumnNames', function() {
+    describe('If template is null or useAutoSummary is false', function() {
         var summary;
 
         beforeEach(function() {
             summary = create([
                 {c1: 1},
                 {c2: 1}
-            ], ['c1']);
+            ], {
+                c1: {},
+                c2: {
+                    useAutoSummary: false,
+                    template: function() {}
+                }
+            });
         });
 
         it('initial value should not be calculated', function() {
+            expect(summary.getValue('c1', typeConst.SUM)).toBe(null);
             expect(summary.getValue('c2', typeConst.SUM)).toBe(null);
         });
 
         it('change events on dataModel should be ignored', function() {
+            summary.dataModel.setValue(1, 'c1', 3);
             summary.dataModel.setValue(1, 'c2', 3);
+
+            expect(summary.getValue('c1', typeConst.SUM)).toBe(null);
             expect(summary.getValue('c2', typeConst.SUM)).toBe(null);
+        });
+    });
+
+    describe('If defaultContent is not null', function() {
+        var summary;
+        var data = [
+            {
+                c1: 1,
+                c2: 1
+            },
+            {
+                c1: 2,
+                c2: 2
+            }
+        ];
+
+        describe('and useAutoSummary is not false', function() {
+            var defTemplate = function() {};
+
+            beforeEach(function() {
+                summary = create(data, null, {template: defTemplate});
+            });
+
+            it('initial value should be calculated', function() {
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(3);
+                expect(summary.getValue('c2', typeConst.SUM)).toBe(3);
+            });
+
+            it('change events on dataModel should be calculated', function() {
+                summary.dataModel.setValue(1, 'c1', 3);
+                summary.dataModel.setValue(1, 'c2', 3);
+
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(4);
+                expect(summary.getValue('c2', typeConst.SUM)).toBe(4);
+            });
+
+            it('template should be assigned to all columns', function() {
+                expect(summary.getTemplate('c1')).toBe(defTemplate);
+                expect(summary.getTemplate('c2')).toBe(defTemplate);
+            });
+        });
+
+        describe('and useAutoSummary is false', function() {
+            beforeEach(function() {
+                summary = create(data, null, {
+                    useAutoSummary: false,
+                    template: function() {}
+                });
+            });
+
+            it('initial value should not be calculated', function() {
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(null);
+            });
+
+            it('change events on dataModel should be ignored', function() {
+                summary.dataModel.setValue(1, 'c2', 3);
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(null);
+            });
+        });
+
+        describe('and columnContent exist', function() {
+            var c1Template = function() {};
+            var c2Template = function() {};
+            var defTemplate = function() {};
+
+            beforeEach(function() {
+                summary = create(data, {
+                    c1: {
+                        useAutoSummary: false,
+                        template: c1Template
+                    },
+                    c2: {
+                        template: c2Template
+                    }
+                }, {
+                    template: defTemplate
+                });
+            });
+
+            it('useAutoSummary should be overridden', function() {
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(null);
+                expect(summary.getValue('c2', typeConst.SUM)).toBe(3);
+            });
+
+            it('template shuoud be overridden', function() {
+                expect(summary.getTemplate('c1')).toBe(c1Template);
+                expect(summary.getTemplate('c2')).toBe(c2Template);
+            });
+        });
+
+        describe('and useAutoSummary is false but columnContent.useAutoSummary is not false', function() {
+            beforeEach(function() {
+                summary = create(data, {
+                    c1: {
+                        template: function() {}
+                    }
+                }, {
+                    useAutoSummary: false,
+                    template: function() {}
+                });
+            });
+
+            it('useAutoSummary should be overridden', function() {
+                expect(summary.getValue('c1', typeConst.SUM)).toBe(3);
+            });
         });
     });
 
@@ -173,7 +296,10 @@ describe('model/summary', function() {
                     c1: 2,
                     c2: 2
                 }
-            ], ['c1', 'c2']);
+            ], {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
+            });
 
             summary.on('change', changeSpy);
         });
@@ -193,6 +319,46 @@ describe('model/summary', function() {
 
             expect(changeSpy.calls.count()).toBe(1);
             expect(changeSpy.calls.argsFor(0)[0]).toBe('c1');
+        });
+    });
+
+    describe('when setColumnContent is called', function() {
+        it('getValue() should return value of changed column', function() {
+            var summary = create([{c1: 1}, {c1: 2}]);
+
+            summary.setColumnContent('c1', {
+                template: function() {
+                    return '';
+                }
+            }, true);
+
+            expect(summary.getValue('c1')).toEqual({
+                sum: 3,
+                min: 1,
+                max: 2,
+                avg: 1.5,
+                cnt: 2
+            });
+        });
+
+        it('change event should be triggered', function() {
+            var summary = create([{c1: 1}, {c1: 2}]);
+            var changeSpy = jasmine.createSpy('change');
+
+            summary.on('change', changeSpy);
+            summary.setColumnContent('c1', {
+                template: function() {
+                    return '';
+                }
+            }, true);
+
+            expect(changeSpy).toHaveBeenCalledWith('c1', {
+                sum: 3,
+                min: 1,
+                max: 2,
+                avg: 1.5,
+                cnt: 2
+            });
         });
     });
 });

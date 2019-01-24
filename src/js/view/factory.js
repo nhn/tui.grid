@@ -5,7 +5,6 @@
 
 'use strict';
 
-var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 var DatePicker = require('tui-date-picker');
 
@@ -172,17 +171,9 @@ var ViewFactory = snippet.defineClass({
      * @returns {object}
      */
     createSummary: function(whichSide) {
-        var templateMap = {};
-
         if (!this.summaryOptions) {
             return null;
         }
-
-        _.each(this.summaryOptions.columnContent, function(options, columnName) {
-            if (_.isFunction(options.template)) {
-                templateMap[columnName] = options.template;
-            }
-        });
 
         return new SummaryView({
             whichSide: whichSide,
@@ -190,8 +181,7 @@ var ViewFactory = snippet.defineClass({
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
             coordColumnModel: this.modelManager.coordColumnModel,
-            summaryModel: this.modelManager.summaryModel,
-            columnTemplateMap: templateMap
+            summaryModel: this.modelManager.summaryModel
         });
     },
 

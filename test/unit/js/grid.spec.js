@@ -100,18 +100,18 @@ describe('grid', function() {
     });
 
     describe('setSummaryColumnContent', function() {
-        it('should call columnModel.setSummaryContent', function() {
+        it('should call summaryModel.setColumnContent', function() {
             var grid = createGrid(null, {
                 summary: {
                     columnContent: {}
                 }
             });
-            var columnModel = grid.modelManager.columnModel;
-            spyOn(columnModel, 'setSummaryContent');
+            var summaryModel = grid.modelManager.summaryModel;
+            spyOn(summaryModel, 'setColumnContent');
 
             grid.setSummaryColumnContent('c1', 'contents');
 
-            expect(columnModel.setSummaryContent).toHaveBeenCalledWith('c1', 'contents');
+            expect(summaryModel.setColumnContent).toHaveBeenCalledWith('c1', 'contents', true);
         });
     });
 

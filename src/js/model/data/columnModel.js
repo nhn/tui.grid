@@ -507,16 +507,6 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
     },
 
     /**
-     * Set summary contents.
-     * (Just trigger 'setSummaryContent')
-     * @param {string} columnName - columnName
-     * @param {string} contents - HTML string
-     */
-    setSummaryContent: function(columnName, contents) {
-        this.trigger('setSummaryContent', columnName, contents);
-    },
-
-    /**
      * Get name of tree column
      * @returns {string} column name
      */

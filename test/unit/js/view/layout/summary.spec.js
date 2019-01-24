@@ -20,37 +20,58 @@ function create(whichSide, options) {
 }
 
 describe('Summary', function() {
-    describe('render()', function() {
-        var summary;
-
-        beforeEach(function() {
-            summary = create(frameConst.R, {
-                columns: [{
-                    name: 'c1',
-                    width: 50
-                }, {
-                    name: 'c2',
-                    width: 60
-                }],
-                summary: {}
-            });
-            summary.dimensionModel.set('summaryHeight', 30);
+    function createForRender(summaryOptions) {
+        var summary = create(frameConst.R, {
+            columns: [{
+                name: 'c1',
+                width: 50
+            }, {
+                name: 'c2',
+                width: 60
+            }],
+            summary: summaryOptions
         });
 
+        return summary;
+    }
+
+    describe('render()', function() {
         it('render nothing if dimension.summaryHeight is 0', function() {
-            summary.dimensionModel.set('summaryHeight', 0);
+            var summary = createForRender({});
+
             summary.render();
 
             expect(summary.$el).toBeEmpty();
         });
 
         it('height of table should be same as dimension.summaryHeight', function() {
+            var summary = createForRender({
+                height: 30,
+                columnContent: {
+                    c1: {
+                        template: function() {
+                            return '';
+                        }
+                    }
+                }
+            });
+
             summary.render();
 
             expect(summary.$el.find('table').height()).toBe(30);
         });
 
         it('width of each column should be the same as the result of coordColumnModel.getWidths()', function() {
+            var summary = createForRender({
+                height: 30,
+                columnContent: {
+                    c1: {
+                        template: function() {
+                            return '';
+                        }
+                    }
+                }
+            });
             var widths, $cols;
 
             summary.render();
@@ -61,102 +82,31 @@ describe('Summary', function() {
             expect($cols.eq(1).width()).toBe(widths[1] + CELL_BORDER_WIDTH);
         });
 
-        it('If the summaryModel does not exist, values should be empty', function() {
-            var $cols;
-
-            summary.render();
-
-            $cols = summary.$el.find('col');
-            expect($cols.eq(0).html()).toBe('');
-            expect($cols.eq(1).html()).toBe('');
-        });
-
-        it('If the summaryModel exists, use summary values for HTML of <th>', function() {
-            var summaryMap = {
-                c1: {
-                    sum: 10,
-                    avg: 0.4
-                },
-                c2: {
-                    max: 10
-                }
-            };
-            var $tds;
-
-            summary.summaryModel = {
-                getValue: function(columnName) {
-                    return summaryMap[columnName];
-                }
-            };
-            summary.render();
-
-            $tds = summary.$el.find('td');
-            expect($tds.eq(0).html('10, 0.4'));
-            expect($tds.eq(1).html('10'));
-        });
-
         it('If a template function exists, use it for generating HTML of <th>', function() {
+            var summary = createForRender({
+                height: 30,
+                columnContent: {
+                    c1: {
+                        template: function() {
+                            return 'C1';
+                        }
+                    },
+                    c2: {
+                        template: function() {
+                            return 'C2';
+                        }
+                    }
+
+                }
+            });
             var $tds;
 
-            function fmt1() {
-                return 'formatted1';
-            }
-            function fmt2() {
-                return 'formatted2';
-            }
-
-            summary.columnTemplateMap = {
-                c1: fmt1,
-                c2: fmt2
-            };
             summary.render();
             $tds = summary.$el.find('td');
 
-            expect($tds.eq(0).html()).toBe(fmt1());
-            expect($tds.eq(1).html()).toBe(fmt2());
+            expect($tds.eq(0).html()).toBe('C1');
+            expect($tds.eq(1).html()).toBe('C2');
         });
-
-        it('Template should take a value from the summaryModel as a paramater', function() {
-            var fmt1 = jasmine.createSpy();
-            var fmt2 = jasmine.createSpy();
-            var summaryMap = {
-                c1: {sum: 10},
-                c2: {max: 5}
-            };
-
-            summary.summaryModel = {
-                getValue: function(columnName) {
-                    return summaryMap[columnName];
-                }
-            };
-            summary.columnTemplateMap = {
-                c1: fmt1,
-                c2: fmt2
-            };
-
-            summary.render();
-
-            expect(fmt1).toHaveBeenCalledWith(summaryMap.c1);
-            expect(fmt2).toHaveBeenCalledWith(summaryMap.c2);
-        });
-    });
-
-    it('If the setSummaryContent event occurs on columnModel, refresh <td>', function() {
-        var summary = create(frameConst.R, {
-            columns: [
-                {name: 'c1'},
-                {name: 'c2'}
-            ],
-            summary: {
-                height: 30,
-                columnContent: {}
-            }
-        });
-
-        summary.render();
-        summary.columnModel.trigger('setSummaryContent', 'c1', 'contents');
-
-        expect(summary.$el.find('td').eq(0).html()).toBe('contents');
     });
 
     it('Refresh <td> whenever change event occurs on the summaryModel', function() {
