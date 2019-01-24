@@ -13,16 +13,6 @@ export default class Grid extends React.Component {
 
   gridInst = null;
 
-  componentDidMount() {
-    this.gridInst = new TuiGrid({
-      el: this.rootEl.current,
-      ...this.props
-    });
-
-    this.useAddons();
-    this.bindEventHandlers();
-  }
-
   useAddons() {
     const {addon} = this.props;
 
@@ -50,8 +40,21 @@ export default class Grid extends React.Component {
     return this.rootEl.current;
   }
 
+  componentDidMount() {
+    this.gridInst = new TuiGrid({
+      el: this.rootEl.current,
+      ...this.props
+    });
+
+    this.useAddons();
+    this.bindEventHandlers();
+  }
+
   shouldComponentUpdate(nextProps) {
-    const reactiveProps = this.props.reactiveProps || Object.keys(reactivePropSetterMap);
+    const {oneTimeBindingProps = []} = this.props;
+    const reactiveProps = Object.keys(reactivePropSetterMap).filter(
+      (propName) => oneTimeBindingProps.indexOf(propName) === -1
+    );
 
     reactiveProps.forEach((propName) => {
       const currentValue = this.props[propName];
