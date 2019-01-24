@@ -129,12 +129,7 @@ stories.add('Reactive Props', () => {
     min: 0,
     max: 4
   });
-  const reactivePropsValue = array('reactiveProps', [
-    'columns',
-    'data',
-    'bodyHeight',
-    'frozenColumnCount'
-  ]);
+  const reactivePropsValue = array('reactiveProps', []);
 
   return (
     <Grid
@@ -143,7 +138,7 @@ stories.add('Reactive Props', () => {
       pagination={false}
       bodyHeight={bodyHeightValue}
       frozenColumnCount={frozenColumnCountValue}
-      reactiveProps={reactivePropsValue}
+      oneTimeBindingProps={reactivePropsValue}
     />
   );
 });
