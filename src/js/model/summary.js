@@ -82,9 +82,10 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     },
 
     /**
-    * Reset autoColumnNames and columnTemplateMap based on columnContent options.
-    * @param {Object} columnContent - summary.columnContent options
-    */
+     * Reset autoColumnNames and columnTemplateMap based on columnContent options.
+     * @param {Object} columnContent - summary.columnContent options
+     * @private
+     */
     _resetColumnContent: function() {
         var columnContentMap = {};
         var defaultContent = this.defaultContent;
@@ -106,7 +107,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     /**
      * Reset autoColumnNameSet, columnTemplateMap, columnSummaryMap
      * @private
-    */
+     */
     _resetAll: function() {
         this._resetColumnContent();
         this._resetColumnSummaryMap();
@@ -177,7 +178,8 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
 
     /**
      * Change Summary Value
-     * @param {string} columnName - Parameter description.
+     * @param {string} columnName - column name
+     * @private
      */
     _changeColumnSummaryValue: function(columnName) {
         var values = this.dataModel.getColumnValues(columnName);
@@ -240,7 +242,7 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
     * @private
     */
     _isVisibleColumn: function(columnName) {
-        return this.columnModel.getVisibleColumns().indexOf(columnName) >= 0;
+        return this.columnModel.getVisibleColumns().indexOf(columnName) !== -1;
     },
 
     /**

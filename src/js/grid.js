@@ -177,7 +177,7 @@ var instanceMap = {};
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
  *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
- *          @param {(string | Object.<string, (boolean|function)>)} [options.summary.defaultContent]
+ *          @param {(string|Object)} [options.summary.defaultContent]
  *              The configuring of summary cell for every column.
  *              This options can be overriden for each column by columnContent options.
  *              If type is string, the value is used as HTML of summary cell for every columns
@@ -188,7 +188,7 @@ var instanceMap = {};
  *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- *          @param {Object.<string, (Object|string)>} [options.summary.columnContent]
+ *          @param {Object} [options.summary.columnContent]
  *              The configuring of summary cell for each column.
  *              Sub options below are keyed by each column name.
  *              If type of value of this object is string, the value is used as HTML of summary cell for
@@ -922,11 +922,12 @@ var Grid = View.extend(/** @lends Grid.prototype */{
 
     /**
      * Sets the HTML string of given column summary.
-     * @param {string} columnName - column name
-     * @param {string} contents - HTML string
+     * The type of content is the same as the options.summary.columnContent of the constructor.
+     * @param {string} columnName - columnName
+     * @param {string|object} content - HTML string or options object. 
      */
-    setSummaryColumnContent: function(columnName, contents) {
-        this.modelManager.summaryModel.setColumnContent(columnName, contents, true);
+    setSummaryColumnContent: function(columnName, content) {
+        this.modelManager.summaryModel.setColumnContent(columnName, content, true);
     },
 
     /**
