@@ -81,7 +81,9 @@ describe('painter/controller', function() {
                 controller = create();
                 controller.columnModel.set('columns', [{
                     name: 'c1',
-                    dataType: 'number'
+                    validation: {
+                        dataType: 'number'
+                    }
                 }]);
             });
 
