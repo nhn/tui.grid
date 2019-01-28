@@ -32,7 +32,7 @@ export default class Grid extends React.Component {
       });
   }
 
-  getGridInstance() {
+  getInstance() {
     return this.gridInst;
   }
 

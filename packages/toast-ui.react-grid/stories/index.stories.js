@@ -22,7 +22,7 @@ const stories = storiesOf('Toast UI Grid', module).addDecorator(withKnobs);
 
 stories.add('Normal', () => <Grid columns={columns} data={data} header={{height: 60}} />);
 
-stories.add('Set Language', (...args) => {
+stories.add('Set Language', () => {
   const options = {
     ko: 'ko',
     en: 'en'
@@ -30,6 +30,7 @@ stories.add('Set Language', (...args) => {
   const lang = radios('Language', options, 'ko');
   const Story = () => {
     TuiGrid.setLanguage(lang);
+
     return <Grid columns={columns} data={[]} />;
   };
 
@@ -45,6 +46,7 @@ stories.add('Apply Theme', () => {
   const theme = radios('Theme', options, 'normal');
   const Story = () => {
     TuiGrid.applyTheme(theme);
+
     return <Grid columns={columns} data={data} />;
   };
 
@@ -79,7 +81,7 @@ stories.add('Using Method', () => {
     grid = null;
 
     componentDidMount() {
-      this.grid = this.ref.current.getGridInstance();
+      this.grid = this.ref.current.getInstance();
     }
 
     handleClickAppend = () => {
@@ -116,7 +118,6 @@ stories.add('Events', () => {
 });
 
 stories.add('Reactive Props', () => {
-  const rows = data.slice(0, 10);
   const dataValue = object('data', data.slice(0, 5));
   const columnsValue = object('columns', columns);
   const bodyHeightValue = number('bodyHeight', 300, {
@@ -129,7 +130,7 @@ stories.add('Reactive Props', () => {
     min: 0,
     max: 4
   });
-  const reactivePropsValue = array('reactiveProps', []);
+  const oneTimeBindingProps = array('oneTimeBindingProps', []);
 
   return (
     <Grid
@@ -138,7 +139,7 @@ stories.add('Reactive Props', () => {
       pagination={false}
       bodyHeight={bodyHeightValue}
       frozenColumnCount={frozenColumnCountValue}
-      oneTimeBindingProps={reactivePropsValue}
+      oneTimeBindingProps={oneTimeBindingProps}
     />
   );
 });
@@ -149,7 +150,7 @@ stories.add('Addon Net', () => {
   mock({
     url: 'api/readData',
     responseTime: 0,
-    response: function(settings) {
+    response(settings) {
       const {page, perPage} = settings.data;
       const start = (page - 1) * perPage;
       const end = start + perPage;
