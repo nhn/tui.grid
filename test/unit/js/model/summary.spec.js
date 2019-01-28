@@ -363,21 +363,31 @@ describe('model/summary', function() {
     });
 
     describe('getValues(): ', function() {
-        var data = [
-            {c1: 1, c2: 2},
-            {c1: 2, c2: 4},
-            {c1: 3, c2: 6}
-        ];
+        var summary;
 
-        it('If columnName is specified, returns summary value of the column', () => {
-            var summary = create(data, {
-                c1: {template: () => {}},
-                c2: {template: () => {}}
+        beforeEach(function() {
+            summary = create([
+                {
+                    c1: 1,
+                    c2: 2
+                },
+                {
+                    c1: 2,
+                    c2: 4
+                },
+                {
+                    c1: 3,
+                    c2: 6
+                }
+            ], {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
             });
 
-            var values = summary.getValues('c1');
+        });
 
-            expect(values).toEqual({
+        it('If columnName is specified, returns summary value of the column', function() {
+            expect(summary.getValues('c1')).toEqual({
                 sum: 6,
                 min: 1,
                 max: 3,
@@ -386,15 +396,8 @@ describe('model/summary', function() {
             });
         });
 
-        it('If columnName is not specified, returns all summary values', () => {
-            var summary = create(data, {
-                c1: {template: () => {}},
-                c2: {template: () => {}}
-            });
-
-            var values = summary.getValues();
-
-            expect(values).toEqual({
+        it('If columnName is not specified, returns all summary values', function() {
+            expect(summary.getValues()).toEqual({
                 c1: {
                     sum: 6,
                     min: 1,
