@@ -211,7 +211,7 @@ class MyComponent extends React.Component {
 ```
 
 ### Addons
-TOAST UI Grid uses the **AddOn** to extend functionality, which can be setup with the `addOn` prop. The `addon` prop recieves an object which conatins the name of the addon as a key, and the option object as a value. For example, if you want to use the [Net addon](https://github.com/nhnent/tui.grid/blob/production/docs/binding-to-remote-data.md#net-add-on) you can set up like the example below.
+TOAST UI Grid uses the **AddOn** to extend functionality, which can be setup with the `addOn` prop. The `addOn` prop recieves an object which conatins the name of the addon as a key, and the option object as a value. For example, if you want to use the [Net addon](https://github.com/nhnent/tui.grid/blob/production/docs/binding-to-remote-data.md#net-add-on) you can set it up like the example below.
 
 ```js
 const columns = [/* ... */];
@@ -239,7 +239,7 @@ Run npm scripts and develop yourself with the following process.
 
 Fork `master` branch into your personal repository.
 Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
+Before starting development, you should check to have any errors.
 
 ``` sh
 $ git clone https://github.com/{your-personal-repo}/[[repo name]].git
