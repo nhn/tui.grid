@@ -5,6 +5,7 @@
 
 'use strict';
 
+var $ = require('jquery');
 var _ = require('underscore');
 var snippet = require('tui-code-snippet');
 
@@ -233,6 +234,20 @@ var Summary = Model.extend(/** @lends module:model/summary.prototype */{
         value = snippet.pick(valueMap, summaryType);
 
         return _.isUndefined(value) ? null : value;
+    },
+
+    /**
+     * Returns the summary value of given column.
+     * If the column name is not specified, all values of available columns are returned.
+     * @param {string} [columnName] - column name
+     * @returns {Object}
+     */
+    getValues: function(columnName) {
+        if (columnName) {
+            return $.extend({}, this.columnSummaryMap[columnName]);
+        }
+
+        return $.extend(true, {}, this.columnSummaryMap);
     },
 
     /**
