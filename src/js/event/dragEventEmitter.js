@@ -86,7 +86,17 @@ var DragEventEmitter = snippet.defineClass(/** @lends module:event/dragEventEmit
      * @private
      */
     _onMouseMove: function(ev) {
-        var gridEvent = new GridEvent(ev, {
+        var gridEvent;
+
+        // Prevent 'dragmove' from occuring when mouse button is not pressed.
+        // This can happen when the alert dialog pops up from the the 'blur/mousedown' event handler.
+        if (!ev.buttons) {
+            this._endDrag();
+
+            return;
+        }
+
+        gridEvent = new GridEvent(ev, {
             startData: this.startData,
             pageX: ev.pageX,
             pageY: ev.pageY
