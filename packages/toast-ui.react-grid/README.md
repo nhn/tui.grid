@@ -126,14 +126,14 @@ const MyComponent = () => (
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid#activateFocus), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Grid directly. Instead, you can call `getGridInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid#activateFocus), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Grid directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 class MyComponent extends React.Component {
   gridRef = React.createRef();
   
   handleAppendRow = () => {
-    this.gridRef.current.getGridInstance().appendRow({});
+    this.gridRef.current.getInstance().appendRow({});
   }
 
   render() {
@@ -211,7 +211,7 @@ class MyComponent extends React.Component {
 ```
 
 ### Addons
-TOAST UI Grid uses the **AddOn** to extend functionality, which can be setup with the `addOn` prop. The `addOn` prop recieves an object which conatins the name of the addon as a key, and the option object as a value. For example, if you want to use the [Net addon](https://github.com/nhnent/tui.grid/blob/production/docs/binding-to-remote-data.md#net-add-on) you can set it up like the example below.
+TOAST UI Grid uses the **Addon** to extend functionality, which can be setup with the `addon` prop. The `addon` prop recieves an object which conatins the name of the addon as a key, and the option object as a value. For example, if you want to use the [Net addon](https://github.com/nhnent/tui.grid/blob/production/docs/binding-to-remote-data.md#net-add-on) you can set it up like the example below.
 
 ```js
 const columns = [/* ... */];
@@ -225,7 +225,7 @@ const netOptions = {
 const MyComponent = () => (
   <Grid 
     columns={columns}
-    addOn={{Net: netOptions}}
+    addon={{Net: netOptions}}
   />
 );
 ```
