@@ -361,4 +361,58 @@ describe('model/summary', function() {
             });
         });
     });
+
+    describe('getValues(): ', function() {
+        var summary;
+
+        beforeEach(function() {
+            summary = create([
+                {
+                    c1: 1,
+                    c2: 2
+                },
+                {
+                    c1: 2,
+                    c2: 4
+                },
+                {
+                    c1: 3,
+                    c2: 6
+                }
+            ], {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
+            });
+
+        });
+
+        it('If columnName is specified, returns summary value of the column', function() {
+            expect(summary.getValues('c1')).toEqual({
+                sum: 6,
+                min: 1,
+                max: 3,
+                avg: 2,
+                cnt: 3
+            });
+        });
+
+        it('If columnName is not specified, returns all summary values', function() {
+            expect(summary.getValues()).toEqual({
+                c1: {
+                    sum: 6,
+                    min: 1,
+                    max: 3,
+                    avg: 2,
+                    cnt: 3
+                },
+                c2: {
+                    sum: 12,
+                    min: 2,
+                    max: 6,
+                    avg: 4,
+                    cnt: 3
+                }
+            });
+        });
+    });
 });
