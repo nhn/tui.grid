@@ -1,5 +1,5 @@
 {
-  "name": "toast-ui.react-grid",
+  "name": "@toast-ui/react-grid",
   "version": "1.0.0",
   "description": "Toat UI Grid for React",
   "main": "dist/toastui-react-grid.js",
