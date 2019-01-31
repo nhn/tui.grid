@@ -949,7 +949,8 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      */
     getModifiedRows: function(options) {
         var withRawData = options && options.withRawData;
-        var checkedOnly = options && options.checkedOnly;
+        var isCheckAvailable = !!this.columnModel.getColumnModel('_button');
+        var checkedOnly = isCheckAvailable && options && options.checkedOnly;
         var rowKeyOnly = options && options.rowKeyOnly;
         var original = withRawData ? this.originalRows : this._removePrivateProp(this.originalRows);
         var current = withRawData ? this.toJSON() : this._removePrivateProp(this.toJSON());
