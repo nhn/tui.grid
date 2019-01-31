@@ -4,7 +4,6 @@ Grid.getInstanceById(123);
 Grid.applyTheme('test');
 Grid.setLanguage('ko');
 
-
 const createEl = document.createElement('div');
 const qsEl = document.querySelector('#el');
 const byIdEl = document.getElementById('el');
@@ -120,6 +119,10 @@ const grid = new Grid({
     summary: {
         height: 40,
         position: 'bottom',
+        defaultContent: {
+            useAutoSummary: false,
+            template: 'default summary'
+        },
         columnContent: {
             amount: {
                 template(valueMap) {
@@ -302,7 +305,6 @@ grid.refreshLayout();
 grid.resetColumnWidths();
 grid.showColumn('col1', 'col2', 'col3');
 grid.hideColumn('str1', 'str2');
-grid.setSummaryColumnContent('date', '2018-12-12');
 grid.setFooterColumnContent('price', '$ 5000');
 grid.validate();
 grid.findRows({
@@ -329,3 +331,22 @@ grid.on('response', ev => {
     console.log('result : ', result);
     console.log('modifyType : ', data);
 });
+
+grid.setSummaryColumnContent('date', '2018-12-12');
+grid.setSummaryColumnContent('col1', {
+    useAutoSummary: false,
+    template: 'summary col1'
+});
+grid.setSummaryColumnContent('col1', {
+    template: 'summary col1'
+});
+grid.setSummaryColumnContent('col1', {
+    template: () => 'summary col1'
+});
+
+var summaryCol1 = grid.getSummaryValues('col1');
+console.log(summaryCol1.max + summaryCol1.min + summaryCol1.avg + summaryCol1.cnt + summaryCol1.sum);
+
+var summaryAll = grid.getSummaryValues();
+console.log(summaryAll.col1.sum + summaryAll.col2.sum);
+
