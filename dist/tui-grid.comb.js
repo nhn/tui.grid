@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Tue Jan 15 2019 20:12:12 GMT+0900 (KST)"
- * version: 3.4.0
+ * bundle created at "Thu Jan 31 2019 16:42:30 GMT+0900 (Korean Standard Time)"
+ * version: 3.5.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -257,9 +257,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *      @param {Object} [options.summary] - The object for configuring summary area.
 	 *          @param {number} [options.summary.height] - The height of the summary area.
 	 *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
-	 *          @param {Object.<string, Object>} [options.summary.columnContent]
-	 *              The object for configuring each column in the summary.
+	 *          @param {(string|Object)} [options.summary.defaultContent]
+	 *              The configuring of summary cell for every column.
+	 *              This options can be overriden for each column by columnContent options.
+	 *              If type is string, the value is used as HTML of summary cell for every columns
+	 *              without auto-calculation.
+	 *              @param {boolean} [options.summary.defaultContent.useAutoSummary=true]
+	 *                  If set to true, the summary value of every column is served as a paramater to the template
+	 *                  function whenever data is changed.
+	 *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
+	 *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
+	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
+	 *          @param {Object} [options.summary.columnContent]
+	 *              The configuring of summary cell for each column.
 	 *              Sub options below are keyed by each column name.
+	 *              If type of value of this object is string, the value is used as HTML of summary cell for
+	 *              the column without auto-calculation.
 	 *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
 	 *                  If set to true, the summary value of each column is served as a paramater to the template
 	 *                  function whenever data is changed.
@@ -989,11 +1002,44 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Sets the HTML string of given column summary.
+	     * The type of content is the same as the options.summary.columnContent of the constructor.
 	     * @param {string} columnName - column name
-	     * @param {string} contents - HTML string
+	     * @param {string|object} content - HTML string or options object.
 	     */
-	    setSummaryColumnContent: function(columnName, contents) {
-	        this.modelManager.columnModel.setSummaryContent(columnName, contents);
+	    setSummaryColumnContent: function(columnName, content) {
+	        this.modelManager.summaryModel.setColumnContent(columnName, content, true);
+	    },
+
+	    /**
+	     * Returns the values of given column summary.
+	     * If the column name is not specified, all values of available columns are returned.
+	     * The shape of returning object looks like the example below.
+	     * @param {string} [columnName] - column name
+	     * @returns {Object}
+	     * @example
+	     * {
+	     *    column1: {
+	     *        sum: 1000,
+	     *        avg: 200,
+	     *        max: 300,
+	     *        min: 50,
+	     *        cnt: 5
+	     *    },
+	     *    column2: {
+	     *        sum: 2000,
+	     *        avg: 300,
+	     *        max: 600,
+	     *        min: 80,
+	     *        cnt: 5
+	     *    }
+	     * }
+	     */
+	    getSummaryValues: function(columnName) {
+	        if (this.modelManager.summaryModel) {
+	            return this.modelManager.summaryModel.getValues(columnName);
+	        }
+
+	        return null;
 	    },
 
 	    /**
@@ -5393,21 +5439,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _createSummaryModel: function(summaryOptions) {
-	        var autoColumnNames = [];
-
-	        if (!summaryOptions || !summaryOptions.columnContent) {
+	        if (!summaryOptions) {
 	            return null;
 	        }
 
-	        _.each(summaryOptions.columnContent, function(options, columnName) {
-	            if (_.isFunction(options.template) && options.useAutoSummary !== false) {
-	                autoColumnNames.push(columnName);
-	            }
-	        });
-
 	        return new SummaryModel(null, {
 	            dataModel: this.dataModel,
-	            autoColumnNames: autoColumnNames
+	            columnModel: this.columnModel,
+	            columnContent: summaryOptions.columnContent,
+	            defaultContent: summaryOptions.defaultContent
 	        });
 	    },
 
@@ -5959,16 +5999,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var columnModel = this.getColumnModel(columnName);
 
 	        return _.extend({}, this.get('copyOptions'), columnModel.copyOptions);
-	    },
-
-	    /**
-	     * Set summary contents.
-	     * (Just trigger 'setSummaryContent')
-	     * @param {string} columnName - columnName
-	     * @param {string} contents - HTML string
-	     */
-	    setSummaryContent: function(columnName, contents) {
-	        this.trigger('setSummaryContent', columnName, contents);
 	    },
 
 	    /**
@@ -7752,7 +7782,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getModifiedRows: function(options) {
 	        var withRawData = options && options.withRawData;
-	        var checkedOnly = options && options.checkedOnly;
+	        var isCheckAvailable = !!this.columnModel.getColumnModel('_button');
+	        var checkedOnly = isCheckAvailable && options && options.checkedOnly;
 	        var rowKeyOnly = options && options.rowKeyOnly;
 	        var original = withRawData ? this.originalRows : this._removePrivateProp(this.originalRows);
 	        var current = withRawData ? this.toJSON() : this._removePrivateProp(this.toJSON());
@@ -15058,6 +15089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var $ = __webpack_require__(7);
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(4);
 
@@ -15075,12 +15107,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Summary = Model.extend(/** @lends module:model/summary.prototype */{
 	    initialize: function(attr, options) {
 	        this.dataModel = options.dataModel;
+	        this.columnModel = options.columnModel;
 
 	        /**
-	         * An array of columnNames using auto calculation
-	         * @type {Array.<string>}
+	         * Set for storing names of auto-calculate column
+	         * The value is always 'true'
+	         * @type {Object}
+	         * @example
+	         * {
+	         *     c1: true
+	         *     c2: true
+	         * }
 	         */
-	        this.autoColumnNames = options.autoColumnNames;
+	        this.autoColumnNameSet = {};
+
+	        /**
+	         * Store template functions of each column
+	         * K: column name
+	         * V: template function
+	         * @example
+	         * {
+	         *     c1: function() {},
+	         *     c2: function() {}
+	         * }
+	         * @type {Object}
+	         */
+	        this.columnTemplateMap = {};
 
 	        /**
 	         * Summary value map (KV)
@@ -15100,11 +15152,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.columnSummaryMap = {};
 
-	        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
-	        this.listenTo(this.dataModel, 'change', this._onChangeData);
-	        this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
+	        // store defaultContent option for future reset
+	        this.defaultContent = options.defaultContent;
 
-	        this._resetSummaryMap();
+	        // store columnContent option for future reset
+	        this.columnContent = options.columnContent;
+
+	        this.listenTo(this.dataModel, 'add remove reset', this._onChangeDataRows);
+	        this.listenTo(this.dataModel, 'change', this._onChangeDataCells);
+	        this.listenTo(this.dataModel, 'deleteRange', this._onDeleteRangeData);
+	        this.listenTo(this.columnModel, 'columnModelChange', this._resetAll);
+
+	        this._resetAll();
+	    },
+
+	    /**
+	     * Reset autoColumnNames and columnTemplateMap based on columnContent options.
+	     * @param {Object} columnContent - summary.columnContent options
+	     * @private
+	     */
+	    _resetColumnContent: function() {
+	        var columnContentMap = {};
+	        var defaultContent = this.defaultContent;
+	        var columnContent = this.columnContent || {};
+
+	        if (defaultContent) {
+	            _.forEach(this.columnModel.getVisibleColumns(), function(column) {
+	                columnContentMap[column.name] = columnContent[column.name] || defaultContent;
+	            });
+	        } else {
+	            columnContentMap = columnContent;
+	        }
+
+	        _.each(columnContentMap, function(options, columnName) {
+	            this.setColumnContent(columnName, options);
+	        }, this);
+	    },
+
+	    /**
+	     * Reset autoColumnNameSet, columnTemplateMap, columnSummaryMap
+	     * @private
+	     */
+	    _resetAll: function() {
+	        this._resetColumnContent();
+	        this._resetColumnSummaryMap();
 	    },
 
 	    /**
@@ -15117,8 +15208,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _calculate: function(values) {
 	        var min = Number.MAX_VALUE;
 	        var max = Number.MIN_VALUE;
-	        var sum = 0;
 	        var count = values.length;
+	        var sum = 0;
+	        var avg = 0;
 	        var resultMap = {};
 	        var i, value;
 
@@ -15137,21 +15229,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 
+	        if (!count) {
+	            max = min = avg = 0;
+	        } else {
+	            avg = sum / count;
+	        }
+
 	        resultMap[typeConst.SUM] = sum;
 	        resultMap[typeConst.MIN] = min;
 	        resultMap[typeConst.MAX] = max;
-	        resultMap[typeConst.AVG] = count ? (sum / count) : 0;
+	        resultMap[typeConst.AVG] = avg;
 	        resultMap[typeConst.CNT] = count;
 
 	        return resultMap;
-	    },
-
-	    /**
-	     * Initialize summary map of columns specified in 'columnSummries' property.
-	     * @private
-	     */
-	    _resetSummaryMap: function() {
-	        this._resetSummarySummaryValue();
 	    },
 
 	    /**
@@ -15159,19 +15249,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Array.<string>} columnNames - An array of column names
 	     * @private
 	     */
-	    _resetSummarySummaryValue: function(columnNames) {
-	        var targetColumnNames = this.autoColumnNames;
+	    _resetColumnSummaryMap: function(columnNames) {
+	        var targetColumnNames = _.keys(this.autoColumnNameSet);
 
 	        if (columnNames) {
-	            targetColumnNames = _.intersection(columnNames, this.autoColumnNames);
+	            targetColumnNames = _.intersection(columnNames, targetColumnNames);
 	        }
-	        _.each(targetColumnNames, function(columnName) {
-	            var values = this.dataModel.getColumnValues(columnName);
-	            var valueMap = this._calculate(values);
 
-	            this.columnSummaryMap[columnName] = valueMap;
-	            this.trigger('change', columnName, valueMap);
+	        _.each(targetColumnNames, function(columnName) {
+	            this._changeColumnSummaryValue(columnName);
 	        }, this);
+	    },
+
+	    /**
+	     * Change Summary Value
+	     * @param {string} columnName - column name
+	     * @private
+	     */
+	    _changeColumnSummaryValue: function(columnName) {
+	        var values = this.dataModel.getColumnValues(columnName);
+	        var valueMap = this._calculate(values);
+
+	        this.columnSummaryMap[columnName] = valueMap;
+	        this.trigger('change', columnName, valueMap);
+	    },
+
+	    /**
+	     * Event handler for 'add', 'append', 'remove' event on dataModel
+	     * @private
+	     */
+	    _onChangeDataRows: function() {
+	        this._resetColumnSummaryMap();
 	    },
 
 	    /**
@@ -15179,8 +15287,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {object} model - row model
 	     * @private
 	     */
-	    _onChangeData: function(model) {
-	        this._resetSummarySummaryValue(_.keys(model.changed));
+	    _onChangeDataCells: function(model) {
+	        this._resetColumnSummaryMap(_.keys(model.changed));
 	    },
 
 	    /**
@@ -15189,7 +15297,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onDeleteRangeData: function(ev) {
-	        this._resetSummarySummaryValue(ev.columnNames);
+	        this._resetColumnSummaryMap(ev.columnNames);
 	    },
 
 	    /**
@@ -15210,6 +15318,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value = snippet.pick(valueMap, summaryType);
 
 	        return _.isUndefined(value) ? null : value;
+	    },
+
+	    /**
+	     * Returns the summary value of given column.
+	     * If the column name is not specified, all values of available columns are returned.
+	     * @param {string} [columnName] - column name
+	     * @returns {Object}
+	     */
+	    getValues: function(columnName) {
+	        if (columnName) {
+	            return $.extend({}, this.columnSummaryMap[columnName]);
+	        }
+
+	        return $.extend(true, {}, this.columnSummaryMap);
+	    },
+
+	    /**
+	    * Returns whether given column is visible.
+	    * @param {string} columnName - Parameter description.
+	    * @returns {boolean}
+	    * @private
+	    */
+	    _isVisibleColumn: function(columnName) {
+	        return this.columnModel.getVisibleColumns().indexOf(columnName) !== -1;
+	    },
+
+	    /**
+	    * Return template function of given column name
+	    * @param {string} columnName - column name
+	    * @returns {function}
+	    */
+	    getTemplate: function(columnName) {
+	        var template = this.columnTemplateMap[columnName];
+
+	        if (!template && this.defaultContent && this._isVisibleColumn(columnName)) {
+	            template = this.defaultContent.template;
+	        }
+
+	        return template;
+	    },
+
+	    /**
+	     * Set summary contents.
+	     * (Just trigger 'setSummaryContent')
+	     * @param {string} columnName - columnName
+	     * @param {string|object} content - HTML string or Options Object
+	     * @param {boolean} shouldChangeValue - If set to true, summary value is re-calculated
+	     */
+	    setColumnContent: function(columnName, content, shouldChangeValue) { // eslint-disable-line complexity
+	        if (_.isObject(content) && _.isFunction(content.template)) {
+	            this.columnTemplateMap[columnName] = content.template;
+	            if (content.useAutoSummary !== false) {
+	                this.autoColumnNameSet[columnName] = true;
+	            }
+	        } else if (_.isString(content)) {
+	            delete this.autoColumnNameSet[columnName];
+	            this.columnTemplateMap[columnName] = content;
+	        }
+
+	        if (shouldChangeValue) {
+	            this._changeColumnSummaryValue(columnName);
+	        }
 	    }
 	});
 
@@ -15376,7 +15546,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(4);
 	var DatePicker = __webpack_require__(35);
 
@@ -15543,17 +15712,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {object}
 	     */
 	    createSummary: function(whichSide) {
-	        var templateMap = {};
-
 	        if (!this.summaryOptions) {
 	            return null;
 	        }
-
-	        _.each(this.summaryOptions.columnContent, function(options, columnName) {
-	            if (_.isFunction(options.template)) {
-	                templateMap[columnName] = options.template;
-	            }
-	        });
 
 	        return new SummaryView({
 	            whichSide: whichSide,
@@ -15561,8 +15722,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderModel: this.modelManager.renderModel,
 	            dimensionModel: this.modelManager.dimensionModel,
 	            coordColumnModel: this.modelManager.coordColumnModel,
-	            summaryModel: this.modelManager.summaryModel,
-	            columnTemplateMap: templateMap
+	            summaryModel: this.modelManager.summaryModel
 	        });
 	    },
 
@@ -16367,7 +16527,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onMouseMove: function(ev) {
-	        var gridEvent = new GridEvent(ev, {
+	        var gridEvent;
+
+	        // Prevent 'dragmove' from occuring when mouse button is not pressed.
+	        // This can happen when the alert dialog pops up from the the 'blur/mousedown' event handler.
+	        if (!ev.buttons) {
+	            this._endDrag();
+
+	            return;
+	        }
+
+	        gridEvent = new GridEvent(ev, {
 	            startData: this.startData,
 	            pageX: ev.pageX,
 	            pageY: ev.pageY
@@ -18825,19 +18995,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Summary = View.extend(/** @lends module:view/layout/summary.prototype */{
 	    initialize: function(options) {
 	        /**
-	         * Store template functions of each column
-	         * K: column name
-	         * V: template function
-	         * @example
-	         * {
-	         *     c1: function() {},
-	         *     c2: function() {}
-	         * }
-	         * @type {Object}
-	         */
-	        this.columnTemplateMap = options.columnTemplateMap || {};
-
-	        /**
 	         * L: Left, R: Right
 	         * @type {string}
 	         */
@@ -18853,7 +19010,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // events
 	        this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
 	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
-	        this.listenTo(this.columnModel, 'setSummaryContent', this._setColumnContent);
 	        if (this.summaryModel) {
 	            this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
 	        }
@@ -18963,11 +19119,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _generateValueHTML: function(columnName, valueMap) {
-	        var template = this.columnTemplateMap[columnName];
+	        var template = this.summaryModel.getTemplate(columnName);
 	        var html = '';
 
 	        if (_.isFunction(template)) {
 	            html = template(valueMap);
+	        } else if (_.isString(template)) {
+	            html = template;
 	        }
 
 	        return html;
@@ -20993,11 +21151,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var contentProps = ['value', 'editing', 'disabled', 'listItems'];
 	        var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
 	        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
-	        var attrs = this._getAttributes(cellData);
 	        var mainButton = this.editType === 'mainButton';
 
+	        $td.attr(this._getAttributes(cellData));
+
 	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
-	            $td.attr(attrs);
 	            this.inputPainter.focus($td);
 	        } else if (mainButton) {
 	            $td.find(this.inputPainter.selector).prop({
@@ -21005,7 +21163,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                disabled: cellData.disabled
 	            });
 	        } else if (shouldUpdateContent) {
-	            $td.attr(attrs);
 	            $td.html(this._getContentHtml(cellData));
 	            $td.scrollLeft(0);
 	        }
@@ -22467,7 +22624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (_.isString(value)) {
 	            value = $.trim(value);
 	        }
-	        if (columnModel.dataType === 'number') {
+	        if (columnModel.validation && columnModel.validation.dataType === 'number') {
 	            value = convertToNumber(value);
 	        }
 	        if (columnModel.name === '_button') {
