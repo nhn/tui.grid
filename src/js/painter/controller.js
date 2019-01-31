@@ -156,7 +156,7 @@ var PainterController = snippet.defineClass(/** @lends module:painter/controller
         if (_.isString(value)) {
             value = $.trim(value);
         }
-        if (columnModel.dataType === 'number') {
+        if (columnModel.validation && columnModel.validation.dataType === 'number') {
             value = convertToNumber(value);
         }
         if (columnModel.name === '_button') {

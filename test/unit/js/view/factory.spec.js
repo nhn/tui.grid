@@ -54,24 +54,5 @@ describe('[view/factory] ', function() {
             expect(summary.dimensionModel).toBe(modelManager.dimensionModel);
             expect(summary.summaryModel).toBe(modelManager.summaryModel);
         });
-
-        it('set formatters from summary options', function() {
-            var columnContent = {
-                c1: {template: function() {}},
-                c2: {template: function() {}}
-            };
-            var factory = new Factory({
-                modelManager: modelManager,
-                summary: {
-                    columnContent: columnContent
-                }
-            });
-            var summary = factory.createSummary(frameConst.R);
-
-            expect(summary.columnTemplateMap).toEqual({
-                c1: columnContent.c1.template,
-                c2: columnContent.c2.template
-            });
-        });
     });
 });

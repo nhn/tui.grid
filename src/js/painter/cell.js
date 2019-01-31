@@ -222,11 +222,11 @@ var Cell = snippet.defineClass(Painter, /** @lends module:painter/cell.prototype
         var contentProps = ['value', 'editing', 'disabled', 'listItems'];
         var editingChangedToTrue = _.contains(cellData.changed, 'editing') && cellData.editing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
-        var attrs = this._getAttributes(cellData);
         var mainButton = this.editType === 'mainButton';
 
+        $td.attr(this._getAttributes(cellData));
+
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
-            $td.attr(attrs);
             this.inputPainter.focus($td);
         } else if (mainButton) {
             $td.find(this.inputPainter.selector).prop({
@@ -234,7 +234,6 @@ var Cell = snippet.defineClass(Painter, /** @lends module:painter/cell.prototype
                 disabled: cellData.disabled
             });
         } else if (shouldUpdateContent) {
-            $td.attr(attrs);
             $td.html(this._getContentHtml(cellData));
             $td.scrollLeft(0);
         }

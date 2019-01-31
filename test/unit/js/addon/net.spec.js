@@ -35,6 +35,7 @@ describe('addon.net', function() {
         $grid = $('#grid');
         grid = new Grid({
             el: $grid,
+            rowHeaders: ['checkbox'],
             columns: columns,
             selectType: 'checkbox'
         });
