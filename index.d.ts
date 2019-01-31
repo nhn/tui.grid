@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v3.3.1
+// Type definitions for TOAST UI Grid v3.5.0
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />
@@ -152,15 +152,28 @@ declare namespace tuiGrid {
 
     interface ISummaryColumnContentOptions {
         useAutoSummary?: boolean;
-        template?: (valueMap: IValueMap) => string;
+        template?: string | ((valueMap: IValueMap) => string);
     }
 
     interface ISummaryObject {
         height?: number;
         position?: string;
+        defaultContent: string | ISummaryColumnContentOptions;
         columnContent?: {
-            [propName: string]: ISummaryColumnContentOptions;
+            [propName: string]: string | ISummaryColumnContentOptions;
         };
+    }
+
+    interface ISummaryColumnValues {
+        sum: number;
+        avg: number;
+        max: number;
+        min: number;
+        cnt: number;
+    }
+
+    interface ISummaryAllValues {
+        [propName: string]: ISummaryColumnValues
     }
 
     interface IColumnOptions {
@@ -415,7 +428,7 @@ declare namespace tuiGrid {
         public uncheckAll(): void;
         public uncheck(rowKey: RowKeyType): void;
         public clear(): void;
-        public removeRow(rowKey: RowKeyType, options: boolean | IRemoveRowOptions);
+        public removeRow(rowKey: RowKeyType, options: boolean | IRemoveRowOptions): void;
         public removeCheckedRows(showConfirm: boolean): boolean;
         public enableCheck(rowKey: RowKeyType): boolean;
         public disableCheck(rowKey: RowKeyType): boolean;
@@ -449,7 +462,9 @@ declare namespace tuiGrid {
         public resetColumnWidths(): void;
         public showColumn(...args: string[]): void;
         public hideColumn(...args: string[]): void;
-        public setSummaryColumnContent(columnName: ColumnNameType, contents: string): void;
+        public setSummaryColumnContent(columnName: ColumnNameType, contents: string | ISummaryColumnContentOptions): void;
+        public getSummaryValues(): ISummaryAllValues;
+        public getSummaryValues(columnName: ColumnNameType): ISummaryColumnValues;
         public setFooterColumnContent(columnName: ColumnNameType, contents: string): void;
         public validate(): IValidation[];
         public findRows(conditions: RowConditionType): IRow[];
