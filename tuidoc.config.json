@@ -1,0 +1,47 @@
+{
+  "header" : {
+    "logo" : {
+      "src" : "https://uicdn.toast.com/toastui/img/tui-grid-bi-white.png"
+    },
+    "title" : {
+      "text" : "github",
+      "linkUrl" : "https://github.com/nhnent/tui.grid"
+    }
+  },
+  "footer" : [
+    {
+      "title" : "NHN Entertainment",
+      "linkUrl" : "https://github.com/nhnent"
+    },
+    {
+      "title" : "FE Development Lab",
+      "linkUrl" : "https://github.com/nhnent/fe.javascript"
+    }
+  ],
+  "main" : {
+    "filePath" : "README.md"
+  },
+  "api" : {
+    "filePath" : "src/js/**"
+  },
+  "examples" : {
+    "filePath" : "examples",
+    "titles" : {
+      "example01-basic" : "1. Basic",
+      "example02-formatter" : "2. Formatter",
+      "example03-complex-columns" : "3. Complex columns",
+      "example04-input-types" : "4. Input types",
+      "example05-relation-columns" : "5. Relation between columns",
+      "example06-using-extradata" : "6. Using _extraData",
+      "example07-applying-themes" : "7. Applying Themes",
+      "example08-using-datepicker" : "8. Using DatePicker component",
+      "example09-using-summary" : "9. Using Summary",
+      "example10-using-net" : "10. Binding to remote data using net",
+      "example11-customizing-rowheaders" : "11. Customizing Row headers",
+      "example12-using-whitespace" : "12. Using whiteSpace",
+      "example13-i18n" : "13. Internationalization (i18n)",
+      "example14-tree" : "14. Using tree column"
+    }
+  },
+  "pathPrefix" : "tui.grid"
+}

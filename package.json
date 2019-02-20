@@ -16,7 +16,9 @@
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
     "bundle:full": "webpack --production --full & webpack --production --full --minify",
-    "tslint": "tslint index.d.ts"
+    "tslint": "tslint index.d.ts",
+    "doc:dev" : "tuidoc --dev",
+    "doc" : "tuidoc"
   },
   "repository": {
     "type": "git",
