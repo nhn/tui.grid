@@ -99,6 +99,28 @@ describe('grid', function() {
         });
     });
 
+    describe('setBodyHeight', function() {
+        it('if bodyHeight is auto, fixedHeight should be false', function() {
+            var grid = createGrid();
+            var dimensionModel = grid.modelManager.dimensionModel;
+
+            grid.setBodyHeight('auto');
+
+            expect(dimensionModel.get('fixedHeight')).toBe(false);
+            expect(dimensionModel.get('bodyHeight')).toBe('auto');
+        });
+
+        it('if bodyHeight is number, fixedHeight should be true', function() {
+            var grid = createGrid();
+            var dimensionModel = grid.modelManager.dimensionModel;
+
+            grid.setBodyHeight(100);
+
+            expect(dimensionModel.get('fixedHeight')).toBe(true);
+            expect(dimensionModel.get('bodyHeight')).toBe(100);
+        });
+    });
+
     describe('setSummaryColumnContent', function() {
         it('should call summaryModel.setColumnContent', function() {
             var grid = createGrid(null, {

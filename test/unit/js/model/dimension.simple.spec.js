@@ -197,28 +197,4 @@ describe('model.dimension', function() {
             expect(dimension.getOverflowFromMousePosition(limitX + 1, limitY + 1)).toEqual(expected);
         });
     });
-
-    describe('fixedHeight value', function() {
-        var dimension;
-
-        beforeEach(function() {
-            dimension = create({
-                bodyHeight: 100,
-                fixedHeight: false
-            });
-        });
-
-        it('when changed from "auto" to a fixed value.', function() {
-            dimension.set('bodyHeight', '300');
-            expect(dimension.get('fixedHeight')).toEqual(true);
-        });
-
-        it('when not changed from "auto" to a fixed value.', function() {
-            dimension.set({
-                totalRowHeight: true,
-                bodyHeight: '300'
-            });
-            expect(dimension.get('fixedHeight')).toEqual(false);
-        });
-    });
 });
