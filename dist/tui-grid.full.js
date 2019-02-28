@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Jan 31 2019 16:42:30 GMT+0900 (Korean Standard Time)"
- * version: 3.5.0
+ * bundle created at "Thu Feb 28 2019 09:37:25 GMT+0900 (Korean Standard Time)"
+ * version: 3.6.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -559,7 +559,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} value - The number of pixel
 	     */
 	    setBodyHeight: function(value) {
-	        this.modelManager.dimensionModel.set('bodyHeight', value);
+	        this.modelManager.dimensionModel.set({
+	            bodyHeight: value,
+	            fixedHeight: value !== 'auto'
+	        });
 	    },
 
 	    /**
@@ -21105,7 +21108,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.domState = options.domState;
 
 	        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-	        this.on('change:bodyHeight', this._onChangeBodyHeight);
 
 	        if (options.domEventBus) {
 	            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
@@ -21168,21 +21170,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
 
 	        this.setHeight(height);
-	    },
-
-	    /**
-	     * Event handler for changing 'bodyHeight' value
-	     * @param {object} model - dimension model
-	     * @private
-	     */
-	    _onChangeBodyHeight: function(model) {
-	        var changed = model.changed;
-	        var changedTotalRowHeight = changed.totalRowHeight;
-	        var changedBodyHeight = changed.bodyHeight;
-
-	        if (!changedTotalRowHeight && changedBodyHeight) {
-	            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-	        }
 	    },
 
 	    /**
