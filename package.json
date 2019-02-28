@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
@@ -16,7 +16,9 @@
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
     "bundle:full": "webpack --production --full & webpack --production --full --minify",
-    "tslint": "tslint index.d.ts"
+    "tslint": "tslint index.d.ts",
+    "doc:dev" : "tuidoc --dev",
+    "doc" : "tuidoc"
   },
   "repository": {
     "type": "git",

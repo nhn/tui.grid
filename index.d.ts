@@ -484,5 +484,5 @@ declare namespace tuiGrid {
 }
 
 declare module 'tui-grid' {
-    export = tuiGrid.Grid;
+    export default tuiGrid.Grid;
 }

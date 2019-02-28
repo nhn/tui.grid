@@ -479,7 +479,10 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {number} value - The number of pixel
      */
     setBodyHeight: function(value) {
-        this.modelManager.dimensionModel.set('bodyHeight', value);
+        this.modelManager.dimensionModel.set({
+            bodyHeight: value,
+            fixedHeight: value !== 'auto'
+        });
     },
 
     /**
