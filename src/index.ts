@@ -11,4 +11,9 @@ const data = [
   }
 ];
 
-alert('Name: ' + data[0].name);
+const div = document.createElement('div');
+div.textContent = 'Hello!!';
+document.body.appendChild(div);
+
+export default data;
+

@@ -7,7 +7,8 @@
     "start": "webpack-dev-server",
     "build": "webpack --mode=production",
     "storybook": "storybook",
-    "cypress": "cypress"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "repository": {
     "type": "git",
@@ -23,10 +24,13 @@
   "author": "NHN Ent. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^4.0.3",
     "@types/cypress": "^1.1.3",
     "@types/webpack-env": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "cypress": "^3.1.5",
     "eslint": "^5.15.0",
+    "eslint-config-prettier": "^4.1.0",
     "eslint-config-tui": "^2.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "prettier": "^1.16.4",
