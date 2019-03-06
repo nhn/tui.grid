@@ -10,8 +10,9 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env"
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
     ],
     "lib": [
       "esnext",
@@ -23,6 +24,7 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "types"
   ]
 }
