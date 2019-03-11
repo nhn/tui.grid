@@ -44,8 +44,6 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
             this.listenTo(domEventBus, 'key:move', this._onKeyMove);
             this.listenTo(domEventBus, 'key:edit', this._onKeyEdit);
         }
-
-        this.set({'isMobile': util.isMobile()});
     },
 
     defaults: {
