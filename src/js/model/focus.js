@@ -44,9 +44,17 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
             this.listenTo(domEventBus, 'key:move', this._onKeyMove);
             this.listenTo(domEventBus, 'key:edit', this._onKeyEdit);
         }
+
+        this.set({'isMobile': util.isMobile()});
     },
 
     defaults: {
+        /**
+         * Whether using mobile browser
+         * @type {boolean}
+         */
+        isMobile: false,
+
         /**
          * row key of the current cell
          * @type {String|Number}
@@ -386,7 +394,7 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        if (!util.isMobile()) {
+        if (!this.get('isMobile')) {
             this.trigger('focusClipboard');
         }
     },

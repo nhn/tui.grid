@@ -446,7 +446,7 @@ util = {
     },
     /**
      * Detect mobile browser
-     * @returns {boolean} detecting Mobile browser
+     * @returns {boolean} Whether using Mobile browser
      */
     isMobile: function() {
         return navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i);
