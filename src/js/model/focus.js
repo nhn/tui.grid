@@ -386,7 +386,9 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        this.trigger('focusClipboard');
+        if (!util.isMobile()) {
+            this.trigger('focusClipboard');
+        }
     },
 
     /**
