@@ -4,6 +4,8 @@ export interface IGridOptions {
   el: HTMLElement;
   data?: IRow[];
   columns: IColumn[];
+  width?: number;
+  height?: number;
 }
 
 export interface IRow {
@@ -14,3 +16,5 @@ export interface IColumn {
   name: string;
   title?: string;
 }
+
+export type Side = 'L' | 'R';

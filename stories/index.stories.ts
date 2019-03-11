@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
+import '../src/css/grid.css';
 
 const stories = storiesOf('TOAST UI Grid', module);
 
@@ -50,8 +51,15 @@ stories.add('Basic Usage', () => {
       name: "genre"
     }
   ];
+  const width = 800;
+  const height = 500;
 
-  const grid = new Grid({ el, data, columns });
+  const grid = new Grid({ el, data, columns, width, height });
 
   return el;
+});
+
+stories.add('Reactive Test', () => {
+
+  return '<div></div>'
 });

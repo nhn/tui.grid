@@ -1,15 +1,13 @@
 import { IGridOptions } from './types';
 import { createStore, IStore } from './store/index';
-import RootView from './view/root';
+import { Root } from './view/root';
+import { h, Component, render } from 'preact';
 
 export default class Grid {
-  private el: HTMLElement;
-
   constructor(options: IGridOptions) {
-    this.el = options.el;
+    const { el } = options;
     const store = createStore(options);
-    const rootView = new RootView(store);
 
-    rootView.render();
+    render(<Root />, el);
   }
 }
