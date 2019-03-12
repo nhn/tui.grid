@@ -449,7 +449,7 @@ util = {
      * @returns {boolean} Whether using Mobile browser
      */
     isMobile: function() {
-        return !!navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i);
+        return /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
     }
 };
 

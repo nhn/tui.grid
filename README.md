@@ -144,9 +144,6 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Summarize all values of each column
 * Customizing styles _(Three basic themes)_
 * Representing tree data
-* Mobile browser
-    * Focusing
-    * Selection is not supported 
 
 ## 🐾 Examples
 

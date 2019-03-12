@@ -240,9 +240,7 @@ var ModelManager = snippet.defineClass(/** @lends module:modelManager.prototype 
      * @private
      */
     _createFocusModel: function(options, domState, domEventBus) {
-        return new FocusModel({
-            isMobile: util.isMobile()
-        }, {
+        return new FocusModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             coordRowModel: this.coordRowModel,
