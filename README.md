@@ -145,7 +145,6 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Customizing styles _(Three basic themes)_
 * Representing tree data
 
-
 ## 🐾 Examples
 
 * [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic)

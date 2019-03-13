@@ -429,7 +429,7 @@ util = {
     /**
      * Detect right button by mouse event
      * @param {object} ev - Mouse event
-     * @returns {boolea} State
+     * @returns {boolean} State
      */
     isRightClickEvent: function(ev) {
         var rightClick;
@@ -443,6 +443,13 @@ util = {
         }
 
         return rightClick;
+    },
+    /**
+     * Detect mobile browser
+     * @returns {boolean} Whether using Mobile browser
+     */
+    isMobile: function() {
+        return /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
     }
 };
 

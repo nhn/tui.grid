@@ -12,6 +12,13 @@ var util = require('../common/util');
 var GridEvent = require('../event/gridEvent');
 
 /**
+ * whether using mobile browser
+ * @type {boolean}
+ * @private
+ */
+var _isMobile = util.isMobile();
+
+/**
  * Focus model
  * @param {Object} attrs - Attributes
  * @param {Object} options - Options
@@ -386,7 +393,9 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        this.trigger('focusClipboard');
+        if (!_isMobile) {
+            this.trigger('focusClipboard');
+        }
     },
 
     /**
