@@ -1,10 +1,11 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
+import '../src/css/theme.css';
 
-const stories = storiesOf('TOAST UI Grid', module);
+const stories = storiesOf('Basic Usage', module);
 
-stories.add('Basic Usage', () => {
+stories.add('Simple', () => {
   const el = document.createElement('div');
   const data = [
     {
@@ -12,54 +13,59 @@ stories.add('Basic Usage', () => {
       name: 'Beautiful Lies',
       artist: 'Birdy',
       release: '2016.03.26',
-      type: 'Deluxe'
+      type: 'Deluxe',
+      genre: 'Pop'
     },
     {
       id: 2,
       name: 'X',
       artist: 'Ed Sheeran',
       release: '2014.06.24',
-      type: 'Deluxe'
+      type: 'Deluxe',
+      genre: 'Pop'
     },
     {
       id: 3,
       name: '21',
       artist: 'Adele',
       release: '2011.01.21',
-      type: 'Deluxe'
+      type: 'Deluxe',
+      genre: 'Pop'
     }
   ];
+
   const columns = [
     {
       title: "Name",
       name: "name",
+      width: 100
     },
     {
       title: "Artist",
       name: "artist",
+      width: 100
     },
     {
       title: "Type",
       name: "type",
+      width: 100
     },
     {
       title: "Release",
-      name: "release"
+      name: "release",
+      width: 100
     },
     {
       title: "Genre",
-      name: "genre"
+      name: "genre",
+      width: 100
     }
   ];
   const width = 800;
-  const height = 500;
+  const bodyHeight = 500;
 
-  const grid = new Grid({ el, data, columns, width, height });
+  const grid = new Grid({ el, data, columns, width, bodyHeight });
 
   return el;
 });
 
-stories.add('Reactive Test', () => {
-
-  return '<div></div>'
-});

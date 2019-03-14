@@ -22,6 +22,7 @@ type ClassName =
   'lside-area' |
   'rside-area' |
   'layer-selection' |
+  'layer-focus' |
   'layer-focus-border' |
   'layer-state' |
   'layer-editing' |
@@ -42,4 +43,32 @@ export function cls(...names: ClassName[]) {
   }
 
   return result.join(' ');
+}
+
+export function shallowEqual(o1: Object, o2: Object) {
+  for (let key in o1) {
+    if (o1[key] !== o2[key]) {
+      return false;
+    }
+  }
+  for (let key in o2) {
+    if (!(key in o1)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function arrayEqual(a1: any, a2: any) {
+  if (a1.length !== a2.length) {
+    return false;
+  }
+
+  for (let i = 0, len = a1.length; i < len; i += 1) {
+    if (a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }

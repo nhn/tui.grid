@@ -1,33 +1,59 @@
 import { h, Component } from 'preact';
-import { BodyRow } from './bodyRow';
-import { Side } from '../types';
+import { BodyRows } from './bodyRows';
+import { ColGroup } from './colGroup';
+import { Side, Row, Column, Viewport } from '../store/types';
 import { cls } from '../helper/common';
+import { Dispatch } from '../dispatch/types';
+import { connect } from './hoc';
 
-interface Props {
-  side: Side
+interface OwnProps {
+  side: Side;
 }
 
-export class BodyArea extends Component<Props> {
-  render() {
+interface InjectedProps {
+  data: Row[];
+  columns: Column[];
+  bodyHeight: number;
+  totalRowHeight: number;
+  offsetY: number;
+  dispatch: Dispatch;
+}
+
+type Props = OwnProps & InjectedProps;
+
+export const BodyArea = connect((store, { side }: OwnProps) => {
+  const { data, columns, dimension, viewport } = store;
+  const { bodyHeight, totalRowHeight } = dimension;
+  const { offsetY } = viewport;
+
+  return {
+    data,
+    columns: side === 'L' ? [] : columns,
+    bodyHeight,
+    totalRowHeight,
+    offsetY,
+  }
+})(
+  (props: Props) => {
+    const { side, bodyHeight, totalRowHeight, offsetY, dispatch } = props;
+
+    const areaStyle = { overflow: 'scroll', height: `${bodyHeight}px` };
+    const containerStyle = { height: `${totalRowHeight}px` };
+    const tableStyle = { overflow: 'visible', top: `${offsetY}px` };
+
+    const onScroll = ({ srcElement }: Event) => dispatch({
+      type: 'setScroll',
+      scrollX: srcElement.scrollLeft,
+      scrollY: srcElement.scrollTop
+    });
+
     return (
-      <div class={cls('body-area')} style="overflow-x: hidden; height: 560px;">
-        <div class={cls('body-container')} style="height: 560px;">
-          <div class={cls('table-container')} style="overflow: visible; top: 0px;">
+      <div class={cls('body-area')} style={areaStyle} onScroll={onScroll} >
+        <div class={cls('body-container')} style={containerStyle} >
+          <div class={cls('table-container')} style={tableStyle}>
             <table class={cls('table')}>
-              <colgroup>
-                <col data-column-name="name" style="width: 100px;" />
-                <col data-column-name="artist" style="width: 100px;" />
-                <col data-column-name="type" style="width: 100px;" />
-                <col data-column-name="release" style="width: 100px;" />
-                <col data-column-name="genre" style="width: 100px;" />
-              </colgroup>
-              <tbody>
-                <BodyRow />
-                <BodyRow />
-                <BodyRow />
-                <BodyRow />
-                <BodyRow />
-              </tbody>
+              <ColGroup side={side} />
+              <BodyRows side={side} />
             </table>
             <div class={cls('layer-selection')} style="display: none;"></div>
           </div>
@@ -35,6 +61,4 @@ export class BodyArea extends Component<Props> {
       </div>
     );
   }
-}
-
-
+);

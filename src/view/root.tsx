@@ -4,8 +4,22 @@ import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { cls } from '../helper/common';
+import { Store } from '../store/types';
+import { Dispatch } from '../dispatch/types';
 
-export class Root extends Component {
+interface Props {
+  store: Store,
+  dispatch: Dispatch
+}
+
+export class Root extends Component<Props> {
+  getChildContext() {
+    return {
+      store: this.props.store,
+      dispatch: this.props.dispatch
+    };
+  }
+
   render() {
     const style = {
       width: 800,
@@ -14,7 +28,7 @@ export class Root extends Component {
 
     return (
       <div class={cls('container')} data-grid-id="1" style={style}>
-        <div class={cls('content-area', 'no-scroll-x', 'no-scroll-y')}>
+        <div class={cls('content-area')}>
           <LeftSide />
           <RightSide />
           <div class={cls('border-line', 'border-line-top')}></div>

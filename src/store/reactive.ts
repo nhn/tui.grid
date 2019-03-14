@@ -1,40 +1,13 @@
-interface reactiveObj {
-  ___id___?: string;
-  [propName: string]: any;
-}
-
-interface handler {
-  (val: any): void;
-}
-
-interface watcher {
-  (): void
-}
-
-// interface HandlerMap {
-//   [propName: string]: {
-//     [propName: string]: handler[];
-//   }
-// }
-
 let currFn = null;
-// let lastId = 1;
-// const handlerMap: HandlerMap = {}
 
-export function watch(fn: watcher) {
+export function watch(fn: Function) {
   currFn = fn;
   fn();
   currFn = null;
 }
 
-export function reactive(obj: object): reactiveObj {
-  // const id = lastId++;
-  // const robj = <reactiveObj>obj;
-  // const handlerMapInner = handlerMap[id] = {};
-  // robj.___id___ = String(id);
-
+export function reactive<T>(obj: T): T {
   for (let key in obj) {
-    // const handlers = handlerMapInner[key] = [];
     const handlers = [];
     let value = obj[key];
 
@@ -46,8 +19,8 @@ export function reactive(obj: object): reactiveObj {
         return value;
       },
       set(val) {
-        handlers.forEach((fn: handler) => {
-          value = val
+        value = val;
+        handlers.forEach((fn: Function) => {
           fn(val);
         })
       }

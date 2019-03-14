@@ -5,8 +5,13 @@ import { cls } from '../helper/common';
 
 export class RightSide extends Component {
   render() {
+    const style = {
+      display: 'block',
+      width: '800px'
+    };
+
     return (
-      <div class={cls('rside-area')} style="display:block; width: 500px;">
+      <div class={cls('rside-area')} style={style}>
         <HeadArea side="R" />
         <BodyArea side="R" />
       </div>

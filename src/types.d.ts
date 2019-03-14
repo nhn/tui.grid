@@ -1,20 +1,20 @@
-export type CellValueType = number | string | object | boolean | null;
+import { CellValue } from './store/types';
 
-export interface IGridOptions {
+export interface OptGrid {
   el: HTMLElement;
-  data?: IRow[];
-  columns: IColumn[];
+  data?: OptRow[];
+  columns: OptColumn[];
   width?: number;
-  height?: number;
+  bodyHeight?: number;
+  rowHeight?: number;
 }
 
-export interface IRow {
-  [propName: string]: CellValueType;
+export interface OptRow {
+  [propName: string]: CellValue;
 }
 
-export interface IColumn {
+export interface OptColumn {
   name: string;
   title?: string;
+  width?: number;
 }
-
-export type Side = 'L' | 'R';

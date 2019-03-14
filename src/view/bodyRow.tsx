@@ -1,15 +1,21 @@
 import { h, Component } from 'preact';
 import { BodyCell } from './bodyCell';
+import { Row } from '../store/types';
 
-export class BodyRow extends Component {
+interface Props {
+  row: Row,
+  columnNames: string[]
+}
+
+export class BodyRow extends Component<Props> {
   render() {
+    const { row, columnNames } = this.props;
+
     return (
-      <tr>
-        <BodyCell />
-        <BodyCell />
-        <BodyCell />
-        <BodyCell />
-        <BodyCell />
+      <tr style={{ height: '40px' }}>
+        {columnNames.map(name =>
+          <BodyCell value={row[name]} />
+        )}
       </tr>
     )
   }
