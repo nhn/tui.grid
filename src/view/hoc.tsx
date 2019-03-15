@@ -1,5 +1,5 @@
 import { h, AnyComponent, Component } from 'preact';
-import { watch } from '../store/reactive';
+import { watch } from '../helper/reactive';
 import { Store } from '../store/types';
 
 interface Selector<OwnProps> {

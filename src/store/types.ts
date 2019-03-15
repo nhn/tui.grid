@@ -29,13 +29,13 @@ export interface Dimension {
 }
 
 export interface Viewport {
-  rowRange: Range;
-  colRange: Range;
   scrollX: number;
   scrollY: number;
-  offsetY: number;
-  colsL: Column[],
-  colsR: Column[],
-  rowsL: Row[],
-  rowsR: Row[]
+  readonly offsetY: number;
+  readonly rowRange: Range;
+  readonly colRange: Range;
+  readonly colsL: Column[],
+  readonly colsR: Column[],
+  readonly rowsL: Row[],
+  readonly rowsR: Row[]
 }

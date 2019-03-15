@@ -8,7 +8,7 @@ const stories = storiesOf('Virtual Scrolling', module);
 const data = [];
 const columns = [];
 const ROW_COUNT = 10000;
-const COL_COUNT = 30;
+const COL_COUNT = 20;
 
 stories.add('Sample', () => {
   const data = [];
@@ -28,8 +28,8 @@ stories.add('Sample', () => {
   }
 
   const el = document.createElement('div');
-  const width = 800;
-  const bodyHeight = 500;
+  const width = 1000;
+  const bodyHeight = 800;
 
   console.time('grid');
   const grid = new Grid({ el, data, columns, width, bodyHeight });
