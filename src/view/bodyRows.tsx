@@ -26,26 +26,28 @@ export const BodyRows = connect(({ viewport }, { side }: OwnProps) => {
     rows: viewport.rowsR,
     columns: viewport.colsR
   }
-})(class extends Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
-    if (shallowEqual(nextProps, this.props)) {
-      return false;
+})(
+  class extends Component<Props> {
+    shouldComponentUpdate(nextProps: Props) {
+      if (shallowEqual(nextProps, this.props)) {
+        return false;
+      }
+    }
+
+    render({ rows, columns }: Props) {
+      const columnNames = columns.map(({ name }) => name);
+
+      return (
+        <tbody>
+          {rows.map(row =>
+            <BodyRow
+              key={row.id as string}
+              row={row}
+              columnNames={columnNames}
+            />
+          )}
+        </tbody>
+      );
     }
   }
-
-  render({ rows, columns }: Props) {
-    const columnNames = columns.map(({ name }) => name);
-
-    return (
-      <tbody>
-        {rows.map(row =>
-          <BodyRow
-            key={row.id as string}
-            row={row}
-            columnNames={columnNames}
-          />
-        )}
-      </tbody>
-    );
-  }
-});
+);

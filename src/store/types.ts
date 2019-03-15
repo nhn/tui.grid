@@ -9,23 +9,24 @@ export interface Row {
 }
 
 export interface Column {
-  name: string;
-  title: string;
+  readonly name: string;
+  readonly title: string;
   width: number;
 }
 export interface Store {
-  data: Row[];
-  columns: Column[];
-  dimension: Dimension;
-  viewport: Viewport;
+  readonly data: Row[];
+  readonly columns: Column[];
+  readonly dimension: Dimension;
+  readonly viewport: Viewport;
 }
 
 export interface Dimension {
   width: number;
   bodyHeight: number;
-  totalRowHeight: number;
-  rowOffsets: number[];
-  colOffsets: number[];
+  rowHeight: number;
+  readonly totalRowHeight: number;
+  readonly rowOffsets: number[];
+  readonly colOffsets: number[];
 }
 
 export interface Viewport {

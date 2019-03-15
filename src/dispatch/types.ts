@@ -4,8 +4,14 @@ export interface SetScrollAction {
   scrollY: number;
 }
 
+export interface SetRowHeight {
+  type: 'setRowHeight',
+  height: number
+}
+
 export type Action =
-  SetScrollAction;
+  SetScrollAction |
+  SetRowHeight;
 
 export interface Dispatch {
   (action: Action): void;

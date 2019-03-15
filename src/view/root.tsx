@@ -21,13 +21,8 @@ export class Root extends Component<Props> {
   }
 
   render() {
-    const style = {
-      width: 800,
-      height: 500
-    };
-
     return (
-      <div class={cls('container')} data-grid-id="1" style={style}>
+      <div class={cls('container')} data-grid-id="1">
         <div class={cls('content-area')}>
           <LeftSide />
           <RightSide />

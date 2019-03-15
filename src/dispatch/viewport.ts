@@ -1,10 +1,11 @@
 import { Store } from '../store/types';
-import { SetScrollAction } from './types';
+import { SetScrollAction, SetRowHeight } from './types';
 
-export function setScroll(store: Store, action: SetScrollAction) {
-  const { scrollX, scrollY } = action;
-  const { viewport } = store;
-
+export function setScroll({ viewport }: Store, { scrollX, scrollY }: SetScrollAction) {
   viewport.scrollX = scrollX;
   viewport.scrollY = scrollY;
 };
+
+export function setRowHeight({ dimension }: Store, { height }: SetRowHeight) {
+  dimension.rowHeight = height;
+}
