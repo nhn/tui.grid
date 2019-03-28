@@ -2,13 +2,15 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "esnext",
-    "strict": true,
+    "strict": false,
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "jsx": "react",
+    "jsxFactory": "h",
     "baseUrl": ".",
     "typeRoots": [
       "./types",
@@ -21,7 +23,9 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/grid.tsx",
+    "src/view/root.tsx"
   ],
   "exclude": [
     "node_modules",
