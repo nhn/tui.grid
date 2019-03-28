@@ -9,49 +9,49 @@ interface OwnProps {
   side: Side
 }
 
-interface InjectedProps {
+interface StateProps {
   columns: Column[];
   scrollX: number;
 }
 
-type Props = OwnProps & InjectedProps;
+type Props = OwnProps & StateProps;
 
-export const HeadArea = connect((store, { side }: OwnProps) => {
+class HeadAreaComp extends Component<Props> {
+  el?: HTMLElement;
+
+  componentDidUpdate() {
+    const { scrollX } = this.props;
+
+    (this.el as HTMLElement).scrollLeft = scrollX;
+  }
+
+  render({ columns, side }: Props) {
+    const style = { height: '34px' };
+
+    return (
+      <div class={cls('head-area')} style={style} ref={el => this.el = el}>
+        <table class={cls('table')}>
+          <ColGroup side={side} />
+          <tbody>
+            <tr>
+              {columns.map(({ name, title }) =>
+                <th
+                  data-column-name={name}
+                  class={cls('cell', 'cell-head')}
+                  style={{ height: `33px` }}>{title}</th>
+              )}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
+
+export const HeadArea = connect<OwnProps, StateProps>((store, { side }) => {
   return {
     columns: side === 'L' ? [] : store.columns,
     scrollX: side === 'L' ? 0 : store.viewport.scrollX
   }
-})(
-  class extends Component<Props> {
-    el: HTMLElement = null;
-
-    componentDidUpdate() {
-      const { side, scrollX } = this.props;
-
-      this.el.scrollLeft = scrollX;
-    }
-
-    render({ columns, side }: Props) {
-      const style = { height: '34px' };
-
-      return (
-        <div class={cls('head-area')} style={style} ref={el => this.el = el}>
-          <table class={cls('table')}>
-            <ColGroup side={side} />
-            <tbody>
-              <tr>
-                {columns.map(({ name, title }) =>
-                  <th
-                    data-column-name={name}
-                    class={cls('cell', 'cell-head')}
-                    style={{ height: `33px` }}>{title}</th>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-  }
-)
+})(HeadAreaComp)
 

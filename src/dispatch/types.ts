@@ -16,3 +16,7 @@ export type Action =
 export interface Dispatch {
   (action: Action): void;
 }
+
+export interface DispatchProps {
+  dispatch: Dispatch
+}

@@ -1,12 +1,17 @@
-import { Row, Column, Range, Store, Viewport, Dimension } from './types';
-import { reactive, watch } from '../helper/reactive';
+import { Row, Column, Range, Viewport, Dimension } from './types';
+import { reactive } from '../helper/reactive';
 import { arrayEqual } from '../helper/common';
 
 function indexOfRow(rowOffsets: number[], posY: number) {
   return rowOffsets.findIndex(offset => offset > posY) - 1;
 }
+interface ViewPortOption {
+  data: Row[];
+  columns: Column[];
+  dimension: Dimension
+}
 
-export function create(rows: Row[], columns: Column[], dimension: Dimension): Viewport {
+export function create({ data, columns, dimension }: ViewPortOption): Viewport {
   return reactive({
     colsL: [],
     colsR: [...columns],
@@ -14,7 +19,7 @@ export function create(rows: Row[], columns: Column[], dimension: Dimension): Vi
     scrollX: 0,
     scrollY: 0,
     colRange: <Range>[0, columns.length],
-    get rowRange() {
+    get rowRange(this: (Viewport & { __storage__: Viewport })) {
       const { rowOffsets, bodyHeight } = dimension;
       const { scrollY } = this;
 
@@ -28,10 +33,10 @@ export function create(rows: Row[], columns: Column[], dimension: Dimension): Vi
       }
       return value;
     },
-    get rowsR() {
-      return rows.slice(...this.rowRange);
+    get rowsR(this: Viewport) {
+      return data.slice(...this.rowRange);
     },
-    get offsetY() {
+    get offsetY(this: Viewport) {
       return dimension.rowOffsets[this.rowRange[0]]
     }
   });

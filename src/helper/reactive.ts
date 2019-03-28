@@ -12,7 +12,7 @@ interface ComputedProp {
   handlers: Function[];
 }
 
-let currWatcher = null;
+let currWatcher: (Function | null) = null;
 
 export function watch(fn: Function) {
   currWatcher = fn;
@@ -25,8 +25,8 @@ export function reactive<T>(obj: T): T & Storage {
   const computedProps: ComputedProp[] = [];
 
   for (let key in obj) {
-    const handlers = [];
-    const getter = Object.getOwnPropertyDescriptor(obj, key).get;
+    const handlers: Function[] = [];
+    const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
     if (typeof getter === 'function') {
       computedProps.push({ key, handlers, getter })

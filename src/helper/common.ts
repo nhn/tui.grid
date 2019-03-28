@@ -45,7 +45,11 @@ export function cls(...names: ClassName[]) {
   return result.join(' ');
 }
 
-export function shallowEqual(o1: Object, o2: Object) {
+interface Obj {
+  [propName: string]: any
+}
+
+export function shallowEqual(o1: Obj, o2: Obj) {
   for (let key in o1) {
     if (o1[key] !== o2[key]) {
       return false;

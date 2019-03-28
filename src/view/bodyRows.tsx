@@ -8,14 +8,35 @@ interface OwnProps {
   side: Side;
 }
 
-interface InjectedProps {
+interface StateProps {
   rows: Row[];
-  columns: Column[]
+  columns: Column[];
 }
 
-type Props = OwnProps & InjectedProps;
+type Props = OwnProps & StateProps;
 
-export const BodyRows = connect(({ viewport }, { side }: OwnProps) => {
+class BodyRowsComp extends Component<Props> {
+  shouldComponentUpdate(nextProps: Props) {
+    if (shallowEqual(nextProps, this.props)) {
+      return false;
+    }
+    return true;
+  }
+
+  render({ rows, columns }: Props) {
+    const columnNames = columns.map(({ name }) => name);
+
+    return (
+      <tbody>
+        {rows.map((row) => (
+          <BodyRow key={row.id as string} row={row} columnNames={columnNames} />
+        ))}
+      </tbody>
+    );
+  }
+}
+
+export const BodyRows = connect<OwnProps, StateProps>(({ viewport }, { side }) => {
   if (side === 'L') {
     return {
       rows: viewport.rowsL,
@@ -26,28 +47,4 @@ export const BodyRows = connect(({ viewport }, { side }: OwnProps) => {
     rows: viewport.rowsR,
     columns: viewport.colsR
   }
-})(
-  class extends Component<Props> {
-    shouldComponentUpdate(nextProps: Props) {
-      if (shallowEqual(nextProps, this.props)) {
-        return false;
-      }
-    }
-
-    render({ rows, columns }: Props) {
-      const columnNames = columns.map(({ name }) => name);
-
-      return (
-        <tbody>
-          {rows.map(row =>
-            <BodyRow
-              key={row.id as string}
-              row={row}
-              columnNames={columnNames}
-            />
-          )}
-        </tbody>
-      );
-    }
-  }
-);
+})(BodyRowsComp);

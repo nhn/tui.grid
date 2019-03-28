@@ -1,11 +1,18 @@
-import { Row } from './types';
+import { Row, Dimension } from './types';
 import { reactive } from '../helper/reactive';
 
-export function create(data: Row[], width: number, rowHeight: number, bodyHeight: number) {
-  return reactive({
+interface DimensionOption {
+  data: Row[];
+  width?: number;
+  rowHeight?: number;
+  bodyHeight?: number
+}
+
+export function create({ data, width = 1000, rowHeight = 40, bodyHeight = 1000 }: DimensionOption): Dimension {
+  return reactive<Dimension>({
     width,
     bodyHeight,
-    rowHeight: rowHeight || 40,
+    rowHeight,
     colOffsets: [],
     get totalRowHeight() {
       return data.length * (this.rowHeight + 1)

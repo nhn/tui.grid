@@ -9,8 +9,8 @@ export function createStore(options: OptGrid): Store {
 
   const data = options.data || [];
   const columns = <Column[]>options.columns;
-  const dimension = createDimension(data, width, rowHeight, bodyHeight);
-  const viewport = createViewport(data, columns, dimension);
+  const dimension = createDimension({ data, width, rowHeight, bodyHeight });
+  const viewport = createViewport({ data, columns, dimension });
 
   return reactive({
     data,
@@ -18,5 +18,5 @@ export function createStore(options: OptGrid): Store {
     dimension,
     viewport
   })
-}
+};
 
