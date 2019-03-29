@@ -3,19 +3,29 @@ import { reactive } from '../helper/reactive';
 
 interface DimensionOption {
   data: Row[];
-  width?: number;
+  width?: number | 'auto';
   rowHeight?: number;
-  bodyHeight?: number
+  bodyHeight?: number;
 }
 
-export function create({ data, width = 1000, rowHeight = 40, bodyHeight = 1000 }: DimensionOption): Dimension {
+export function create({
+  data,
+  width = 'auto',
+  rowHeight = 40,
+  bodyHeight = 1000
+}: DimensionOption): Dimension {
   return reactive<Dimension>({
-    width,
+    width: width === 'auto' ? 0 : width,
+    autoWidth: width === 'aut',
     bodyHeight,
     rowHeight,
     colOffsets: [],
+    lsideWidth: 0,
+    get rsideWidth() {
+      return this.width;
+    },
     get totalRowHeight() {
-      return data.length * (this.rowHeight + 1)
+      return data.length * (this.rowHeight + 1);
     },
     get rowOffsets() {
       const offsets = [0];
@@ -24,6 +34,6 @@ export function create({ data, width = 1000, rowHeight = 40, bodyHeight = 1000 }
         offsets.push(offsets[i - 1] + rowHeight + 1);
       }
       return offsets;
-    },
+    }
   });
 }

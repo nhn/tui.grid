@@ -22,11 +22,15 @@ export interface Store {
 
 export interface Dimension {
   width: number;
+  autoWidth: boolean;
   bodyHeight: number;
   rowHeight: number;
+  rsideWidth: number;
+  lsideWidth: number;
   readonly totalRowHeight: number;
   readonly rowOffsets: number[];
   readonly colOffsets: number[];
+
 }
 
 export interface Viewport {

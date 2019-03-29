@@ -27,28 +27,29 @@ function BodyAreaComp(props: Props) {
   const containerStyle = { height: `${totalRowHeight}px` };
   const tableStyle = { overflow: 'visible', top: `${offsetY}px` };
 
-  const onScroll = ({ srcElement }: UIEvent) => dispatch({
-    type: 'setScroll',
-    scrollX: (srcElement as HTMLElement).scrollLeft,
-    scrollY: (srcElement as HTMLElement).scrollTop
-  });
+  const onScroll = ({ srcElement }: UIEvent) =>
+    dispatch({
+      type: 'setScroll',
+      scrollX: (srcElement as HTMLElement).scrollLeft,
+      scrollY: (srcElement as HTMLElement).scrollTop
+    });
 
   return (
-    <div class={cls('body-area')} style={areaStyle} onScroll={onScroll} >
-      <div class={cls('body-container')} style={containerStyle} >
+    <div class={cls('body-area')} style={areaStyle} onScroll={onScroll}>
+      <div class={cls('body-container')} style={containerStyle}>
         <div class={cls('table-container')} style={tableStyle}>
           <table class={cls('table')}>
             <ColGroup side={side} />
             <BodyRows side={side} />
           </table>
-          <div class={cls('layer-selection')} style="display: none;"></div>
+          <div class={cls('layer-selection')} style="display: none;" />
         </div>
       </div>
     </div>
   );
 }
 
-export const BodyArea = connect<OwnProps, StateProps, DispatchProps>((store, { side }) => {
+export const BodyArea = connect<StateProps, OwnProps, DispatchProps>((store, { side }) => {
   const { data, columns, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
   const { offsetY } = viewport;
@@ -58,6 +59,6 @@ export const BodyArea = connect<OwnProps, StateProps, DispatchProps>((store, { s
     columns: side === 'L' ? [] : columns,
     bodyHeight,
     totalRowHeight,
-    offsetY,
-  }
+    offsetY
+  };
 })(BodyAreaComp);

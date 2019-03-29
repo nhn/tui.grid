@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { BodyRow } from './bodyRow';
-import { cls, shallowEqual } from '../helper/common';
+import { shallowEqual } from '../helper/common';
 import { Side, Row, Column } from '../store/types';
 import { connect } from './hoc';
 
@@ -36,15 +36,15 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<OwnProps, StateProps>(({ viewport }, { side }) => {
+export const BodyRows = connect<StateProps, OwnProps>(({ viewport }, { side }) => {
   if (side === 'L') {
     return {
       rows: viewport.rowsL,
       columns: viewport.colsL
-    }
+    };
   }
   return {
     rows: viewport.rowsR,
     columns: viewport.colsR
-  }
+  };
 })(BodyRowsComp);

@@ -9,9 +9,15 @@ export interface SetRowHeight {
   height: number
 }
 
+export interface SetWidth {
+  type: 'setWidth',
+  width: number
+}
+
 export type Action =
   SetScrollAction |
-  SetRowHeight;
+  SetRowHeight |
+  SetWidth;
 
 export interface Dispatch {
   (action: Action): void;

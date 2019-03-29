@@ -1,4 +1,3 @@
-
 import { h, Component } from 'preact';
 import { Column, Side } from '../store/types';
 import { ColGroup } from './colGroup';
@@ -6,7 +5,7 @@ import { cls } from '../helper/common';
 import { connect } from './hoc';
 
 interface OwnProps {
-  side: Side
+  side: Side;
 }
 
 interface StateProps {
@@ -29,17 +28,20 @@ class HeadAreaComp extends Component<Props> {
     const style = { height: '34px' };
 
     return (
-      <div class={cls('head-area')} style={style} ref={el => this.el = el}>
+      <div class={cls('head-area')} style={style} ref={(el) => (this.el = el)}>
         <table class={cls('table')}>
           <ColGroup side={side} />
           <tbody>
             <tr>
-              {columns.map(({ name, title }) =>
+              {columns.map(({ name, title }) => (
                 <th
                   data-column-name={name}
                   class={cls('cell', 'cell-head')}
-                  style={{ height: `33px` }}>{title}</th>
-              )}
+                  style={{ height: `33px` }}
+                >
+                  {title}
+                </th>
+              ))}
             </tr>
           </tbody>
         </table>
@@ -48,10 +50,9 @@ class HeadAreaComp extends Component<Props> {
   }
 }
 
-export const HeadArea = connect<OwnProps, StateProps>((store, { side }) => {
+export const HeadArea = connect<StateProps, OwnProps>((store, { side }) => {
   return {
     columns: side === 'L' ? [] : store.columns,
     scrollX: side === 'L' ? 0 : store.viewport.scrollX
-  }
-})(HeadAreaComp)
-
+  };
+})(HeadAreaComp);

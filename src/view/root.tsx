@@ -8,11 +8,13 @@ import { Store } from '../store/types';
 import { Dispatch } from '../dispatch/types';
 
 interface Props {
-  store: Store,
-  dispatch: Dispatch
+  store: Store;
+  dispatch: Dispatch;
 }
 
 export class Root extends Component<Props> {
+  el?: HTMLElement;
+
   getChildContext() {
     return {
       store: this.props.store,
@@ -20,16 +22,30 @@ export class Root extends Component<Props> {
     };
   }
 
+  componentDidMount() {
+    // issue with ref (element is not in document)
+    requestAnimationFrame(() => {
+      const { clientWidth } = this.el!;
+
+      if (clientWidth !== this.props.store.dimension.width) {
+        this.props.dispatch({
+          type: 'setWidth',
+          width: clientWidth
+        });
+      }
+    });
+  }
+
   render() {
     return (
-      <div class={cls('container')} data-grid-id="1">
+      <div class={cls('container')} ref={(el) => (this.el = el)} data-grid-id="1">
         <div class={cls('content-area')}>
           <LeftSide />
           <RightSide />
-          <div class={cls('border-line', 'border-line-top')}></div>
-          <div class={cls('border-line', 'border-line-left')}></div>
-          <div class={cls('border-line', 'border-line-right')}></div>
-          <div class={cls('border-line', 'border-line-bottom')}></div>
+          <div class={cls('border-line', 'border-line-top')} />
+          <div class={cls('border-line', 'border-line-left')} />
+          <div class={cls('border-line', 'border-line-right')} />
+          <div class={cls('border-line', 'border-line-bottom')} />
         </div>
         <StateLayer />
         <EditingLayer />
@@ -37,4 +53,3 @@ export class Root extends Component<Props> {
     );
   }
 }
-

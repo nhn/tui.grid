@@ -2,5 +2,6 @@
   "printWidth" : 100,
   "singleQuote" : true,
   "bracketSpacing" : true,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "parser": "typescript"
 }

@@ -24,6 +24,6 @@ const BodyRowComp = ({ row, columnNames, rowHeight }: Props) => {
   );
 };
 
-export const BodyRow = connect<OwnProps, StateProps>(({ dimension }) => ({
+export const BodyRow = connect<StateProps, OwnProps>(({ dimension }) => ({
   rowHeight: dimension.rowHeight
 }))(BodyRowComp);

@@ -1,7 +1,6 @@
 import { h, Component } from 'preact';
 import { Side, Column, Store } from '../store/types';
 import { connect } from './hoc';
-import { DispatchProps } from 'src/dispatch/types';
 
 interface OwnProps {
   side: Side;
@@ -25,7 +24,7 @@ class ColGroupComp extends Component<Props> {
   }
 }
 
-export const ColGroup = connect<OwnProps, StateProps>(
+export const ColGroup = connect<StateProps, OwnProps>(
   ({ viewport }: Store, { side }: OwnProps) => ({
     columns: side === 'L' ? viewport.colsL : viewport.colsR
   })

@@ -1,5 +1,5 @@
 import { Store } from '../store/types';
-import { SetScrollAction, SetRowHeight } from './types';
+import { SetScrollAction, SetRowHeight, SetWidth } from './types';
 
 export function setScroll({ viewport }: Store, { scrollX, scrollY }: SetScrollAction) {
   viewport.scrollX = scrollX;
@@ -9,3 +9,8 @@ export function setScroll({ viewport }: Store, { scrollX, scrollY }: SetScrollAc
 export function setRowHeight({ dimension }: Store, { height }: SetRowHeight) {
   dimension.rowHeight = height;
 }
+
+export function setWidth({dimension} : Store, { width } : SetWidth) {
+  dimension.width = width;
+}
+

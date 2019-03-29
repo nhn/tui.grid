@@ -1,13 +1,21 @@
-import { h, Component } from 'preact';
-import { HeadArea } from './headArea';
-import { BodyArea } from './bodyArea';
+import { Component, h } from 'preact';
 import { cls } from '../helper/common';
+import { BodyArea } from './bodyArea';
+import { HeadArea } from './headArea';
+import { connect } from '../view/hoc';
+import { DispatchProps } from '../dispatch/types';
 
-export class RightSide extends Component {
+interface StateProps {
+  width: number;
+}
+
+class RightSideComp extends Component<StateProps & DispatchProps> {
   render() {
+    const { width } = this.props;
+
     const style = {
       display: 'block',
-      width: '800px'
+      width: `${width}px`
     };
 
     return (
@@ -15,6 +23,10 @@ export class RightSide extends Component {
         <HeadArea side="R" />
         <BodyArea side="R" />
       </div>
-    )
+    );
   }
 }
+
+export const RightSide = connect<StateProps, {}, DispatchProps>((store) => ({
+  width: store.dimension.rsideWidth
+}))(RightSideComp);
