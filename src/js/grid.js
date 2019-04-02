@@ -747,6 +747,14 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
+     * Set columns title
+     * @param {string} columnsMap - columns map to be change
+     */
+    setColumnsTitle: function(columnsMap) {
+        this.modelManager.columnModel.setColumnsTitle(columnsMap);
+    },
+
+    /**
      * Creates an specified AddOn and use it on this instance.
      * @param {string} name - The name of the AddOn to use.
      * @param {Object} options - The option objects for configuring the AddON.

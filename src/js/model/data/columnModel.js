@@ -328,6 +328,62 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
     },
 
     /**
+     * Set column title by columns map
+     * @param {object} targetColumns - columns to change
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    _changeColumnsTitleByName: function(targetColumns, columnsMap) {
+        var idx;
+
+        _.each(columnsMap, function(value, key) {
+            idx = _.findIndex(targetColumns, function(data) {
+                return data.name === key;
+            });
+
+            if (idx !== -1) {
+                targetColumns[idx].title = value;
+            }
+        });
+    },
+
+    /**
+     * Set column title by columns map
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    setColumnsTitle: function(columnsMap) {
+        var relationsMap, visibleColumns;
+        var frozenCount = this.get('frozenCount');
+        var dataColumns = this.get('dataColumns');
+        var rowHeaders = this.get('rowHeaders');
+        var complexHeaderColumns = this.get('complexHeaderColumns');
+
+        rowHeaders = this._getRowHeadersData(rowHeaders);
+
+        this._changeColumnsTitleByName(dataColumns, columnsMap);
+        this._changeColumnsTitleByName(complexHeaderColumns, columnsMap);
+
+        relationsMap = this._getRelationListMap(dataColumns);
+        visibleColumns = this._makeVisibleColumns(rowHeaders, dataColumns);
+
+        this.set({
+            selectType: this._getSelectType(rowHeaders),
+            rowHeaders: rowHeaders,
+            dataColumns: dataColumns,
+            columnModelMap: _.indexBy(rowHeaders.concat(dataColumns), 'name'),
+            relationsMap: relationsMap,
+            frozenCount: Math.max(0, frozenCount),
+            visibleColumns: visibleColumns,
+            complexHeaderColumns: complexHeaderColumns
+        }, {
+            silent: true
+        });
+
+        this.trigger('columnModelChange');
+    },
+
+    /**
      * Set column model by data
      * @param {array} rowHeaders - Data of row headers
      * @param {array} columns - Data of columns
