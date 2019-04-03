@@ -353,30 +353,13 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * @private
      */
     setColumnTitles: function(columnsMap) {
-        var relationsMap, visibleColumns;
         var dataColumns = this.get('dataColumns');
-        var rowHeaders = this.get('rowHeaders');
         var complexHeaderColumns = this.get('complexHeaderColumns');
-
-        rowHeaders = this._getRowHeadersData(rowHeaders);
 
         this._changeColumnTitlesByName(dataColumns, columnsMap);
         if (complexHeaderColumns.length) {
             this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
         }
-
-        relationsMap = this._getRelationListMap(dataColumns);
-        visibleColumns = this._makeVisibleColumns(rowHeaders, dataColumns);
-
-        this.set({
-            dataColumns: dataColumns,
-            columnModelMap: _.indexBy(rowHeaders.concat(dataColumns), 'name'),
-            relationsMap: relationsMap,
-            visibleColumns: visibleColumns,
-            complexHeaderColumns: complexHeaderColumns
-        }, {
-            silent: true
-        });
 
         this.trigger('columnModelChange');
     },
