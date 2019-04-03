@@ -1,5 +1,6 @@
 import { Column } from './types';
 import { OptColumn, OptColumnOptions } from '../types';
+import { reactive } from '../helper/reactive';
 
 const DEF_MIN_WIDTH = 50;
 
@@ -12,13 +13,13 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   // @TODO meta tag 체크 여부
   const minWidth = column.minWidth || columnOptions.minWidth || DEF_MIN_WIDTH;
 
-  return {
+  return reactive({
     title,
     name,
     fixedWidth,
     baseWidth,
     minWidth
-  };
+  });
 }
 
 export function create(columns: OptColumn[], columnOptions: OptColumnOptions): Column[] {

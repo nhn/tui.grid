@@ -3,17 +3,18 @@ import { Column, Side } from '../store/types';
 import { ColGroup } from './colGroup';
 import { cls } from '../helper/common';
 import { connect } from './hoc';
+import { ColumnResizer } from './columnResizer';
 
 interface OwnProps {
   side: Side;
 }
 
-interface StateProps {
+interface StoreProps {
   columns: Column[];
   scrollX: number;
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StoreProps;
 
 class HeadAreaComp extends Component<Props> {
   el?: HTMLElement;
@@ -46,12 +47,13 @@ class HeadAreaComp extends Component<Props> {
             </tr>
           </tbody>
         </table>
+        <ColumnResizer side={side} />
       </div>
     );
   }
 }
 
-export const HeadArea = connect<StateProps, OwnProps>((store, { side }) => {
+export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
   return {
     columns: side === 'L' ? [] : store.columns,
     scrollX: side === 'L' ? 0 : store.viewport.scrollX

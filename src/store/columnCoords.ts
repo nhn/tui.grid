@@ -99,10 +99,22 @@ function calculateWidths(columns: Column[], containerWidth: number) {
   );
 }
 
+function calculateOffests(widths: number[]) {
+  const offsets = [0];
+  for (let i = 1, len = widths.length; i < len; i += 1) {
+    offsets.push(offsets[i - 1] + widths[i]);
+  }
+
+  return offsets;
+}
+
 export function create(columns: Column[], dimension: Dimension): ColumnCoords {
-  return reactive<any>({
+  return reactive<ColumnCoords>({
     get widths(this: ColumnCoords) {
       return calculateWidths(columns, dimension.width);
+    },
+    get offsets(this: ColumnCoords) {
+      return calculateOffests(this.widths);
     }
   });
 }

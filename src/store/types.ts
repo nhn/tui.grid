@@ -48,5 +48,6 @@ export interface Viewport {
 }
 
 export interface ColumnCoords {
-  widths: number[];
+  readonly widths: number[];
+  readonly offsets: number[];
 }
