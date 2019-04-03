@@ -741,6 +741,12 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     /**
      * Sets the list of column model.
      * @param {Array} columns - A new list of column model
+     * @example
+     * {
+     *      columnName1: 'title1',
+     *      columnName2: 'title2',
+     *      columnName3: 'title3'
+     * }
      */
     setColumns: function(columns) {
         this.modelManager.columnModel.set('columns', columns);
@@ -750,8 +756,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * Set columns title
      * @param {string} columnsMap - columns map to be change
      */
-    setColumnsTitle: function(columnsMap) {
-        this.modelManager.columnModel.setColumnsTitle(columnsMap);
+    setColumnTitles: function(columnsMap) {
+        this.modelManager.columnModel.setColumnTitles(columnsMap);
     },
 
     /**

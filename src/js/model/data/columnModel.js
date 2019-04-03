@@ -329,11 +329,11 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
 
     /**
      * Set column title by columns map
-     * @param {object} targetColumns - columns to change
+     * @param {Array} targetColumns - columns to change
      * @param {object} columnsMap - name and title to change
      * @private
      */
-    _changeColumnsTitleByName: function(targetColumns, columnsMap) {
+    _changeColumnTitlesByName: function(targetColumns, columnsMap) {
         var idx;
 
         _.each(columnsMap, function(value, key) {
@@ -352,28 +352,26 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * @param {object} columnsMap - name and title to change
      * @private
      */
-    setColumnsTitle: function(columnsMap) {
+    setColumnTitles: function(columnsMap) {
         var relationsMap, visibleColumns;
-        var frozenCount = this.get('frozenCount');
         var dataColumns = this.get('dataColumns');
         var rowHeaders = this.get('rowHeaders');
         var complexHeaderColumns = this.get('complexHeaderColumns');
 
         rowHeaders = this._getRowHeadersData(rowHeaders);
 
-        this._changeColumnsTitleByName(dataColumns, columnsMap);
-        this._changeColumnsTitleByName(complexHeaderColumns, columnsMap);
+        this._changeColumnTitlesByName(dataColumns, columnsMap);
+        if (complexHeaderColumns.length) {
+            this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
+        }
 
         relationsMap = this._getRelationListMap(dataColumns);
         visibleColumns = this._makeVisibleColumns(rowHeaders, dataColumns);
 
         this.set({
-            selectType: this._getSelectType(rowHeaders),
-            rowHeaders: rowHeaders,
             dataColumns: dataColumns,
             columnModelMap: _.indexBy(rowHeaders.concat(dataColumns), 'name'),
             relationsMap: relationsMap,
-            frozenCount: Math.max(0, frozenCount),
             visibleColumns: visibleColumns,
             complexHeaderColumns: complexHeaderColumns
         }, {
