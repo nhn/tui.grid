@@ -1,7 +1,9 @@
+/* eslint-disable */
 const path = require('path');
 const package = require('./package');
 const merge = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonConfig = {
   entry: './src/index.ts',
@@ -11,19 +13,24 @@ const commonConfig = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
       }
-
     ]
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
   },
   output: {
+    library: ['tui', 'Grid'],
+    libraryTarget: 'umd',
     filename: package.name + '.js',
     publicPath: '/',
     path: path.resolve(__dirname, 'dist')
   }
-}
+};
 
 module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
@@ -47,6 +54,11 @@ module.exports = (env, { mode = 'development' }) => {
   return merge(commonConfig, {
     mode,
     devtool: 'inline-source-map',
+    plugins: [
+      new HtmlWebpackPlugin({
+        filename: 'dist/index.html'
+      })
+    ],
     devServer: {
       inline: true,
       host: '0.0.0.0',

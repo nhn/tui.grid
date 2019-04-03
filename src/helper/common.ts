@@ -1,33 +1,33 @@
 const CLS_PREFIX = 'tui-grid-';
 
 type ClassName =
-  'body-area' |
-  'body-container' |
-  'border-line' |
-  'border-line-top' |
-  'border-line-left' |
-  'border-line-right' |
-  'border-line-bottom' |
-  'cell-content' |
-  'cell' |
-  'cell-head' |
-  'column-resize-container' |
-  'column-resize-handle' |
-  'column-resize-handle-last' |
-  'container' |
-  'content-area' |
-  'head-area' |
-  'no-scroll-x' |
-  'no-scroll-y' |
-  'lside-area' |
-  'rside-area' |
-  'layer-selection' |
-  'layer-focus' |
-  'layer-focus-border' |
-  'layer-state' |
-  'layer-editing' |
-  'table-container' |
-  'table';
+  | 'body-area'
+  | 'body-container'
+  | 'border-line'
+  | 'border-line-top'
+  | 'border-line-left'
+  | 'border-line-right'
+  | 'border-line-bottom'
+  | 'cell-content'
+  | 'cell'
+  | 'cell-head'
+  | 'column-resize-container'
+  | 'column-resize-handle'
+  | 'column-resize-handle-last'
+  | 'container'
+  | 'content-area'
+  | 'head-area'
+  | 'no-scroll-x'
+  | 'no-scroll-y'
+  | 'lside-area'
+  | 'rside-area'
+  | 'layer-selection'
+  | 'layer-focus'
+  | 'layer-focus-border'
+  | 'layer-state'
+  | 'layer-editing'
+  | 'table-container'
+  | 'table';
 
 export function cls(...names: ClassName[]) {
   const result = [];
@@ -46,7 +46,7 @@ export function cls(...names: ClassName[]) {
 }
 
 interface Obj {
-  [propName: string]: any
+  [propName: string]: any;
 }
 
 export function shallowEqual(o1: Obj, o2: Obj) {
@@ -75,4 +75,20 @@ export function arrayEqual(a1: any, a2: any) {
   }
 
   return true;
+}
+
+export function sum(nums: number[]): number {
+  return nums.reduce((acc, num) => acc + num, 0);
+}
+
+export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
+  return arr.reduce((acc, v, idx) => (predicate(v) ? [...acc, idx] : acc), <number[]>[]);
+}
+
+export function pipe(initVal: any, ...args: Function[]) {
+  return args.reduce((acc, fn) => fn(acc), initVal);
+}
+
+export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
+  return arr.map((item) => item[propName]);
 }

@@ -11,13 +11,16 @@ export interface Row {
 export interface Column {
   readonly name: string;
   readonly title: string;
-  width: number;
+  baseWidth: number;
+  fixedWidth: boolean;
+  minWidth: number;
 }
 export interface Store {
   readonly data: Row[];
   readonly columns: Column[];
   readonly dimension: Dimension;
   readonly viewport: Viewport;
+  readonly columnCoords: ColumnCoords;
 }
 
 export interface Dimension {
@@ -30,7 +33,6 @@ export interface Dimension {
   readonly totalRowHeight: number;
   readonly rowOffsets: number[];
   readonly colOffsets: number[];
-
 }
 
 export interface Viewport {
@@ -39,8 +41,12 @@ export interface Viewport {
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
-  readonly colsL: Column[],
-  readonly colsR: Column[],
-  readonly rowsL: Row[],
-  readonly rowsR: Row[]
+  readonly colsL: Column[];
+  readonly colsR: Column[];
+  readonly rowsL: Row[];
+  readonly rowsR: Row[];
+}
+
+export interface ColumnCoords {
+  widths: number[];
 }

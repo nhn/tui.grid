@@ -1,7 +1,7 @@
 import { h, AnyComponent, Component } from 'preact';
 import { watch } from '../helper/reactive';
 import { Store } from '../store/types';
-import { Dispatch } from '../dispatch/types';
+import { Dispatch } from '../dispatch/create';
 
 interface Selector<OwnProps, SelectedProps> {
   (store: Store, props: OwnProps): SelectedProps;
@@ -21,7 +21,7 @@ export function connect<SelectedProps, OwnProps, DispatchProps = {}>(
       render() {
         const { props, state } = this;
 
-        const dispatch = this.context.dispatch as Dispatch;
+        const dispatch: Dispatch = this.context.dispatch;
         return <WrappedComponent {...props} {...state} dispatch={dispatch} />;
       }
     };

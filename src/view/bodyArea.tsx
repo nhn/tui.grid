@@ -1,9 +1,9 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, Row, Column, Viewport } from '../store/types';
+import { Side, Row, Column } from '../store/types';
 import { cls } from '../helper/common';
-import { DispatchProps } from '../dispatch/types';
+import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
 interface OwnProps {
@@ -27,12 +27,10 @@ function BodyAreaComp(props: Props) {
   const containerStyle = { height: `${totalRowHeight}px` };
   const tableStyle = { overflow: 'visible', top: `${offsetY}px` };
 
-  const onScroll = ({ srcElement }: UIEvent) =>
-    dispatch({
-      type: 'setScroll',
-      scrollX: (srcElement as HTMLElement).scrollLeft,
-      scrollY: (srcElement as HTMLElement).scrollTop
-    });
+  const onScroll = (ev: UIEvent) => {
+    const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
+    dispatch('setScroll', scrollLeft, scrollTop);
+  };
 
   return (
     <div class={cls('body-area')} style={areaStyle} onScroll={onScroll}>

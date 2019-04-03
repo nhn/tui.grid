@@ -3,7 +3,7 @@ interface ValueMap {
 }
 
 interface Storage {
-  __storage__: ValueMap
+  __storage__: ValueMap;
 }
 
 interface ComputedProp {
@@ -12,7 +12,7 @@ interface ComputedProp {
   handlers: Function[];
 }
 
-let currWatcher: (Function | null) = null;
+let currWatcher: Function | null = null;
 
 export function watch(fn: Function) {
   currWatcher = fn;
@@ -29,14 +29,14 @@ export function reactive<T>(obj: T): T & Storage {
     const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
     if (typeof getter === 'function') {
-      computedProps.push({ key, handlers, getter })
+      computedProps.push({ key, handlers, getter });
     } else {
       storage[key] = obj[key];
       Object.defineProperty(obj, key, {
         set(value) {
           if (storage[key] !== value) {
             storage[key] = value;
-            handlers.forEach(fn => fn());
+            handlers.forEach((fn) => fn());
           }
         }
       });
@@ -49,7 +49,7 @@ export function reactive<T>(obj: T): T & Storage {
         }
         return storage[key];
       }
-    })
+    });
   }
 
   const rObj = <T & Storage>obj;
@@ -60,7 +60,7 @@ export function reactive<T>(obj: T): T & Storage {
       const value = getter.call(obj);
       if (storage[key] !== value) {
         storage[key] = value;
-        handlers.forEach(fn => fn());
+        handlers.forEach((fn) => fn());
       }
     });
   });

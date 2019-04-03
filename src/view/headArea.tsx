@@ -24,8 +24,9 @@ class HeadAreaComp extends Component<Props> {
     (this.el as HTMLElement).scrollLeft = scrollX;
   }
 
-  render({ columns, side }: Props) {
+  render() {
     const style = { height: '34px' };
+    const { columns, side } = this.props;
 
     return (
       <div class={cls('head-area')} style={style} ref={(el) => (this.el = el)}>

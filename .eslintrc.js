@@ -6,7 +6,12 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   plugins: ['prettier', '@typescript-eslint'],
-  extends: ['tui/es6', 'plugin:@typescript-eslint/recommended', 'prettier', 'prettier/@typescript-eslint'],
+  extends: [
+    'tui/es6',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'prettier/@typescript-eslint'
+  ],
   parserOptions: {
     parser: 'typescript-eslint-parser'
   }

@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { cls } from '../helper/common';
 import { Store } from '../store/types';
-import { Dispatch } from '../dispatch/types';
+import { Dispatch } from '../dispatch/create';
 
 interface Props {
   store: Store;
@@ -28,10 +28,7 @@ export class Root extends Component<Props> {
       const { clientWidth } = this.el!;
 
       if (clientWidth !== this.props.store.dimension.width) {
-        this.props.dispatch({
-          type: 'setWidth',
-          width: clientWidth
-        });
+        this.props.dispatch('setWidth', clientWidth);
       }
     });
   }

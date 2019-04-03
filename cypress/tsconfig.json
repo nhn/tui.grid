@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
+    "strict": false,
+    "sourceMap": true,
     "types": [
       "cypress"
     ],

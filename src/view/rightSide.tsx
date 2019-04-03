@@ -3,7 +3,7 @@ import { cls } from '../helper/common';
 import { BodyArea } from './bodyArea';
 import { HeadArea } from './headArea';
 import { connect } from '../view/hoc';
-import { DispatchProps } from '../dispatch/types';
+import { DispatchProps } from '../dispatch/create';
 
 interface StateProps {
   width: number;

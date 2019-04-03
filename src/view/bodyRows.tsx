@@ -25,6 +25,7 @@ class BodyRowsComp extends Component<Props> {
 
   render({ rows, columns }: Props) {
     const columnNames = columns.map(({ name }) => name);
+    console.log('rows', rows);
 
     return (
       <tbody>

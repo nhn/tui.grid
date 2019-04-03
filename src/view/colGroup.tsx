@@ -1,31 +1,31 @@
 import { h, Component } from 'preact';
-import { Side, Column, Store } from '../store/types';
+import { Side, Column } from '../store/types';
 import { connect } from './hoc';
 
 interface OwnProps {
   side: Side;
 }
 
-interface StateProps {
+interface StoreProps {
   columns: Column[];
+  widths: number[];
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StoreProps;
 
 class ColGroupComp extends Component<Props> {
-  render({ columns }: Props) {
+  render({ columns, widths }: Props) {
     return (
       <colgroup>
-        {columns.map(({ name, width }) => (
-          <col data-column-name={name} style={{ width: `${100}px` }} />
+        {columns.map(({ name }, idx) => (
+          <col data-column-name={name} style={{ width: `${widths[idx]}px` }} />
         ))}
       </colgroup>
     );
   }
 }
 
-export const ColGroup = connect<StateProps, OwnProps>(
-  ({ viewport }: Store, { side }: OwnProps) => ({
-    columns: side === 'L' ? viewport.colsL : viewport.colsR
-  })
-)(ColGroupComp);
+export const ColGroup = connect<StoreProps, OwnProps>(({ viewport, columnCoords }, { side }) => ({
+  widths: side === 'L' ? [] : columnCoords.widths,
+  columns: side === 'L' ? viewport.colsL : viewport.colsR
+}))(ColGroupComp);

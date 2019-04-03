@@ -16,7 +16,7 @@ export function create({
 }: DimensionOption): Dimension {
   return reactive<Dimension>({
     width: width === 'auto' ? 0 : width,
-    autoWidth: width === 'aut',
+    autoWidth: width === 'auto',
     bodyHeight,
     rowHeight,
     colOffsets: [],

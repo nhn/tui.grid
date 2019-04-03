@@ -36,28 +36,28 @@ stories.add('Simple', () => {
 
   const columns = [
     {
-      title: "Name",
-      name: "name",
+      title: 'Name',
+      name: 'name',
       width: 100
     },
     {
-      title: "Artist",
-      name: "artist",
+      title: 'Artist',
+      name: 'artist',
       width: 100
     },
     {
-      title: "Type",
-      name: "type",
+      title: 'Type',
+      name: 'type',
       width: 100
     },
     {
-      title: "Release",
-      name: "release",
+      title: 'Release',
+      name: 'release',
       width: 100
     },
     {
-      title: "Genre",
-      name: "genre",
+      title: 'Genre',
+      name: 'genre',
       width: 100
     }
   ];
@@ -68,4 +68,3 @@ stories.add('Simple', () => {
 
   return el;
 });
-
