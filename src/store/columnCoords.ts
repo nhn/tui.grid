@@ -19,8 +19,8 @@ function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], 
   return result;
 }
 
-function fillEmptyWidth(containerWidth: number, widths: number[]) {
-  const remainTotalWidth = containerWidth - sum(widths);
+function fillEmptyWidth(contentWidth: number, widths: number[]) {
+  const remainTotalWidth = contentWidth - sum(widths);
   const emptyIndexes = findIndexes((width) => !width, widths);
 
   return distributeExtraWidthEqually(remainTotalWidth, emptyIndexes, widths);
@@ -85,24 +85,23 @@ function adjustWidths(
   return result;
 }
 
-function calculateWidths(columns: Column[], containerWidth: number) {
+function calculateWidths(columns: Column[], contentWidth: number) {
   const baseWidths = mapProp('baseWidth', columns);
   const minWidths = mapProp('minWidth', columns);
   const fixedFlags = mapProp('fixedWidth', columns);
-  const availableWidth = containerWidth;
 
   return pipe(
     baseWidths,
-    fillEmptyWidth.bind(null, availableWidth),
+    fillEmptyWidth.bind(null, contentWidth),
     applyMinimumWidth.bind(null, minWidths),
-    adjustWidths.bind(null, minWidths, fixedFlags, availableWidth, true)
+    adjustWidths.bind(null, minWidths, fixedFlags, contentWidth, true)
   );
 }
 
 function calculateOffests(widths: number[]) {
   const offsets = [0];
   for (let i = 1, len = widths.length; i < len; i += 1) {
-    offsets.push(offsets[i - 1] + widths[i]);
+    offsets[i] = offsets[i - 1] + widths[i - 1];
   }
 
   return offsets;
@@ -111,7 +110,7 @@ function calculateOffests(widths: number[]) {
 export function create(columns: Column[], dimension: Dimension): ColumnCoords {
   return reactive<ColumnCoords>({
     get widths(this: ColumnCoords) {
-      return calculateWidths(columns, dimension.width);
+      return calculateWidths(columns, dimension.width - dimension.scrollbarWidth);
     },
     get offsets(this: ColumnCoords) {
       return calculateOffests(this.widths);

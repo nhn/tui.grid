@@ -8,11 +8,11 @@ interface OwnProps {
   columnNames: string[];
 }
 
-interface StateProps {
+interface StoreProps {
   rowHeight: number;
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StoreProps;
 
 const BodyRowComp = ({ row, columnNames, rowHeight }: Props) => {
   return (
@@ -24,6 +24,6 @@ const BodyRowComp = ({ row, columnNames, rowHeight }: Props) => {
   );
 };
 
-export const BodyRow = connect<StateProps, OwnProps>(({ dimension }) => ({
+export const BodyRow = connect<StoreProps, OwnProps>(({ dimension }) => ({
   rowHeight: dimension.rowHeight
 }))(BodyRowComp);

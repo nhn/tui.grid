@@ -4,7 +4,7 @@ export interface OptGrid {
   el: HTMLElement;
   data?: OptRow[];
   columns: OptColumn[];
-  columnOptions: OptColumnOptions;
+  columnOptions?: OptColumnOptions;
   width?: number;
   bodyHeight?: number;
   rowHeight?: number;
@@ -18,6 +18,7 @@ export interface OptColumn {
   name: string;
   title?: string;
   width?: number | 'auto';
+  resizable?: boolean;
   minWidth?: number;
 }
 

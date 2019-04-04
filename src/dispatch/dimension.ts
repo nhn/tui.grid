@@ -1,6 +1,7 @@
 import { Store } from '../store/types';
 
-export function setWidth({ dimension }: Store, width: number) {
+export function setWidth({ dimension }: Store, width: number, autoWidth: boolean) {
+  dimension.autoWidth = autoWidth;
   dimension.width = width;
 }
 

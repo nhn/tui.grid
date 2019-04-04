@@ -5,11 +5,11 @@ import { HeadArea } from './headArea';
 import { connect } from '../view/hoc';
 import { DispatchProps } from '../dispatch/create';
 
-interface StateProps {
+interface StoreProps {
   width: number;
 }
 
-class RightSideComp extends Component<StateProps & DispatchProps> {
+class RightSideComp extends Component<StoreProps & DispatchProps> {
   render() {
     const { width } = this.props;
 
@@ -27,6 +27,6 @@ class RightSideComp extends Component<StateProps & DispatchProps> {
   }
 }
 
-export const RightSide = connect<StateProps, {}, DispatchProps>((store) => ({
+export const RightSide = connect<StoreProps, {}, DispatchProps>((store) => ({
   width: store.dimension.rsideWidth
 }))(RightSideComp);

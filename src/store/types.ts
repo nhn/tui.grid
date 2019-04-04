@@ -11,10 +11,12 @@ export interface Row {
 export interface Column {
   readonly name: string;
   readonly title: string;
+  readonly minWidth: number;
   baseWidth: number;
+  resizable: boolean;
   fixedWidth: boolean;
-  minWidth: number;
 }
+
 export interface Store {
   readonly data: Row[];
   readonly columns: Column[];
@@ -26,10 +28,11 @@ export interface Store {
 export interface Dimension {
   width: number;
   autoWidth: boolean;
-  bodyHeight: number;
-  rowHeight: number;
   rsideWidth: number;
   lsideWidth: number;
+  bodyHeight: number;
+  rowHeight: number;
+  scrollbarWidth: number;
   readonly totalRowHeight: number;
   readonly rowOffsets: number[];
   readonly colOffsets: number[];

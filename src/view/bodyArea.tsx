@@ -10,7 +10,7 @@ interface OwnProps {
   side: Side;
 }
 
-interface StateProps {
+interface StoreProps {
   data: Row[];
   columns: Column[];
   bodyHeight: number;
@@ -18,7 +18,7 @@ interface StateProps {
   offsetY: number;
 }
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StoreProps & DispatchProps;
 
 function BodyAreaComp(props: Props) {
   const { side, bodyHeight, totalRowHeight, offsetY, dispatch } = props;
@@ -47,7 +47,7 @@ function BodyAreaComp(props: Props) {
   );
 }
 
-export const BodyArea = connect<StateProps, OwnProps, DispatchProps>((store, { side }) => {
+export const BodyArea = connect<StoreProps, OwnProps, DispatchProps>((store, { side }) => {
   const { data, columns, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
   const { offsetY } = viewport;

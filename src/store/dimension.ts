@@ -20,6 +20,7 @@ export function create({
     bodyHeight,
     rowHeight,
     colOffsets: [],
+    scrollbarWidth: 17,
     lsideWidth: 0,
     get rsideWidth() {
       return this.width;

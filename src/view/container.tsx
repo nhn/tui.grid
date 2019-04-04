@@ -4,12 +4,12 @@ import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { cls } from '../helper/common';
-import { Store } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
 interface StoreProps {
   width: number;
+  autoWidth: boolean;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -18,19 +18,36 @@ export class ContainerComp extends Component<Props> {
   el?: HTMLElement;
 
   componentDidMount() {
-    // issue with ref (element is not in document)
-    requestAnimationFrame(() => {
-      const { clientWidth } = this.el!;
+    if (this.props.autoWidth) {
+      window.addEventListener('resize', this.syncWithDOMWidth);
+      requestAnimationFrame(this.syncWithDOMWidth);
+    }
+  }
 
-      if (clientWidth !== this.props.width) {
-        this.props.dispatch('setWidth', clientWidth);
-      }
-    });
+  componentWillUnmount() {
+    if (this.props.autoWidth) {
+      window.removeEventListener('resize', this.syncWithDOMWidth);
+    }
+  }
+
+  syncWithDOMWidth = () => {
+    const { clientWidth } = this.el!;
+
+    if (clientWidth !== this.props.width) {
+      this.props.dispatch('setWidth', clientWidth, true);
+    }
+  };
+
+  shouldComponentUpdate(nextProps: Props) {
+    if (this.props.autoWidth && nextProps.autoWidth) {
+      return false;
+    }
+    return true;
   }
 
   render() {
-    const { width } = this.props;
-    const style = { width: width ? width : '100%' };
+    const { width, autoWidth } = this.props;
+    const style = { width: autoWidth ? '100%' : width };
 
     return (
       <div style={style} class={cls('container')} ref={(el) => (this.el = el)} data-grid-id="1">
@@ -50,5 +67,6 @@ export class ContainerComp extends Component<Props> {
 }
 
 export const Container = connect<StoreProps, {}, DispatchProps>(({ dimension }) => ({
-  width: dimension.width
+  width: dimension.width,
+  autoWidth: dimension.autoWidth
 }))(ContainerComp);

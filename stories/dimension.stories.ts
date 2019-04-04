@@ -38,36 +38,35 @@ stories.add('Simple', () => {
 
   const columns = [
     {
-      title: "Name",
-      name: "name",
+      title: 'Name',
+      name: 'name',
+      width: 100,
+      resizable: true
+    },
+    {
+      title: 'Artist',
+      name: 'artist',
+      width: 100,
+      resizable: true
+    },
+    {
+      title: 'Type',
+      name: 'type',
       width: 100
     },
     {
-      title: "Artist",
-      name: "artist",
+      title: 'Release',
+      name: 'release',
       width: 100
     },
     {
-      title: "Type",
-      name: "type",
-      width: 100
-    },
-    {
-      title: "Release",
-      name: "release",
-      width: 100
-    },
-    {
-      title: "Genre",
-      name: "genre",
+      title: 'Genre',
+      name: 'genre',
       width: 100
     }
   ];
 
-  const grid = new Grid({ el, data, columns });
-  // @ts-ignore
-  window.grid = grid;
-
+  new Grid({ el, data, columns });
 
   return el;
 });

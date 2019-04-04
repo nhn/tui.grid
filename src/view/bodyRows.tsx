@@ -8,12 +8,12 @@ interface OwnProps {
   side: Side;
 }
 
-interface StateProps {
+interface StoreProps {
   rows: Row[];
   columns: Column[];
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StoreProps;
 
 class BodyRowsComp extends Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -36,7 +36,7 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StateProps, OwnProps>(({ viewport }, { side }) => {
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport }, { side }) => {
   if (side === 'L') {
     return {
       rows: viewport.rowsL,

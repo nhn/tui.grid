@@ -4,8 +4,8 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, Column } from '../store/types';
 
-const HANDLE_WIDTH = 7;
-const HANDLE_WIDTH_HALF = 3;
+export const HANDLE_WIDTH = 7;
+export const HANDLE_WIDTH_HALF = 3;
 
 interface OwnProps {
   side: Side;
@@ -31,7 +31,7 @@ class ColumnResizerComp extends Component<Props> {
 
     document.body.style.cursor = 'col-resize';
     document.addEventListener('mousemove', this.handleMouseMove);
-    document.addEventListener('mouseup', this.handleMouseUp);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
     document.addEventListener('selectstart', this.handleSelectStart);
   };
 
@@ -45,34 +45,50 @@ class ColumnResizerComp extends Component<Props> {
     this.props.dispatch('setColumnWidth', this.draggingIndex, width);
   };
 
-  handleMouseUp = () => {
+  clearDocumentEvents = () => {
     document.body.style.cursor = '';
     document.removeEventListener('mousemove', this.handleMouseMove);
-    document.removeEventListener('mouseup', this.handleMouseUp);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
-  render({ columns, offsets, widths }: Props) {
+  componentWillUnmount() {
+    this.clearDocumentEvents();
+  }
+
+  renderHandle(index: number) {
+    const { columns, offsets, widths } = this.props;
+    const { name, resizable } = columns[index];
+    const offset = offsets[index];
+    const width = widths[index];
+
+    if (!resizable) {
+      return null;
+    }
+
+    return (
+      <div
+        data-column-index={index}
+        data-column-name={name}
+        class={cls('column-resize-handle')}
+        title={''}
+        style={{
+          height: 33,
+          width: HANDLE_WIDTH,
+          left: offset + width - HANDLE_WIDTH_HALF
+        }}
+        onMouseDown={(ev) => this.handleMouseDown(ev, index)}
+      />
+    );
+  }
+
+  render({ columns }: Props) {
     return (
       <div
         class={cls('column-resize-container')}
         style="display: block; margin-top: -35px; height: 35px;"
       >
-        {columns.map((column, index) => (
-          <div
-            data-column-index={index}
-            data-column-name={column.name}
-            class={cls('column-resize-handle')}
-            title={column.name}
-            style={{
-              width: `${HANDLE_WIDTH}px`,
-              height: '33px',
-              display: 'block',
-              left: `${offsets[index] + widths[index] - HANDLE_WIDTH_HALF}px`
-            }}
-            onMouseDown={(ev) => this.handleMouseDown(ev, index)}
-          />
-        ))}
+        {columns.map((_, index) => this.renderHandle(index))}
       </div>
     );
   }

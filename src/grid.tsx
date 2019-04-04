@@ -21,10 +21,12 @@ export default class Grid {
     this.store = store;
     this.dispatch = dispatch;
 
+    (window as any).store = store;
+
     render(<Root store={store} dispatch={dispatch} />, el);
   }
 
   setWidth(width: number) {
-    this.dispatch('setWidth', width);
+    this.dispatch('setWidth', width, false);
   }
 }

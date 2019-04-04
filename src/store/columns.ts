@@ -9,6 +9,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   const name = column.name;
   const fixedWidth = typeof column.width === 'number';
   const baseWidth = (column.width === 'auto' ? 0 : column.width) || 0;
+  const resizable = !!column.resizable;
 
   // @TODO meta tag 체크 여부
   const minWidth = column.minWidth || columnOptions.minWidth || DEF_MIN_WIDTH;
@@ -18,12 +19,13 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     name,
     fixedWidth,
     baseWidth,
-    minWidth
+    minWidth,
+    resizable
   });
 }
 
-export function create(columns: OptColumn[], columnOptions: OptColumnOptions): Column[] {
+export function create(columns: OptColumn[], columnOptions: OptColumnOptions = {}): Column[] {
   return columns.map((column) => {
-    return createColumn(column, columnOptions || {});
+    return createColumn(column, columnOptions);
   });
 }

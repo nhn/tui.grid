@@ -35,36 +35,16 @@ stories.add('Simple', () => {
   ];
 
   const columns = [
-    {
-      title: 'Name',
-      name: 'name',
-      width: 100
-    },
-    {
-      title: 'Artist',
-      name: 'artist',
-      width: 100
-    },
-    {
-      title: 'Type',
-      name: 'type',
-      width: 100
-    },
-    {
-      title: 'Release',
-      name: 'release',
-      width: 100
-    },
-    {
-      title: 'Genre',
-      name: 'genre',
-      width: 100
-    }
+    { name: 'name' },
+    { name: 'artist' },
+    { name: 'type' },
+    { name: 'release' },
+    { name: 'genre' }
   ];
-  const width = 800;
   const bodyHeight = 500;
+  el.style.width = '80%';
 
-  const grid = new Grid({ el, data, columns, width, bodyHeight });
+  new Grid({ el, data, columns, bodyHeight });
 
   return el;
 });
