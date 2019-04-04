@@ -334,10 +334,8 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
      * @private
      */
     _changeColumnTitlesByName: function(targetColumns, columnsMap) {
-        var idx;
-
         _.each(columnsMap, function(value, key) {
-            idx = _.findIndex(targetColumns, function(data) {
+            var idx = _.findIndex(targetColumns, function(data) {
                 return data.name === key;
             });
 
