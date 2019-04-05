@@ -1,26 +1,44 @@
 import { Row, Dimension } from './types';
 import { reactive } from '../helper/reactive';
+import { OptGrid } from '../types';
 
-interface DimensionOption {
+type OptDimension = {
   data: Row[];
-  width?: number | 'auto';
-  rowHeight?: number;
-  bodyHeight?: number;
-}
+} & Pick<
+  OptGrid,
+  'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
+>;
 
 export function create({
   data,
   width = 'auto',
   rowHeight = 40,
-  bodyHeight = 1000
-}: DimensionOption): Dimension {
+  bodyHeight = 'auto',
+  minRowHeight = 40,
+  minBodyHeight = 130,
+  scrollX = true,
+  scrollY = true
+}: OptDimension): Dimension {
   return reactive<Dimension>({
     width: width === 'auto' ? 0 : width,
     autoWidth: width === 'auto',
-    bodyHeight,
-    rowHeight,
+    bodyHeight: typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0,
+    autoHeight: bodyHeight === 'auto',
+    fitToParentHeight: bodyHeight === 'fitToParent',
+    minBodyHeight,
+    rowHeight: typeof rowHeight === 'number' ? Math.max(rowHeight, minRowHeight) : 0,
+    minRowHeight,
+    autoRowHeight: rowHeight === 'auto',
+    scrollX,
+    scrollY,
+    summaryHeight: 0,
+    summaryPosition: 'bottom',
+    headerHeight: 30,
+    frozenBorderWidth: 0,
     colOffsets: [],
     scrollbarWidth: 17,
+    tableBorderWidth: 1,
+    cellBorderWidth: 1,
     lsideWidth: 0,
     get rsideWidth() {
       return this.width;

@@ -4,6 +4,7 @@ import { Dispatch } from '../dispatch/create';
 import { Container } from './container';
 
 interface Props {
+  rootElement: HTMLElement;
   store: Store;
   dispatch: Dispatch;
 }
@@ -17,6 +18,6 @@ export class Root extends Component<Props> {
   }
 
   render() {
-    return <Container />;
+    return <Container rootElement={this.props.rootElement} />;
   }
 }

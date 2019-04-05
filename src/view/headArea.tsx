@@ -10,6 +10,8 @@ interface OwnProps {
 }
 
 interface StoreProps {
+  headerHeight: number;
+  cellBorderWidth: number;
   columns: Column[];
   scrollX: number;
 }
@@ -26,21 +28,18 @@ class HeadAreaComp extends Component<Props> {
   }
 
   render() {
-    const style = { height: '34px' };
-    const { columns, side } = this.props;
+    const { headerHeight, cellBorderWidth, columns, side } = this.props;
+    const areaStyle = { height: headerHeight + cellBorderWidth };
+    const theadStyle = { height: headerHeight };
 
     return (
-      <div class={cls('head-area')} style={style} ref={(el) => (this.el = el)}>
+      <div class={cls('head-area')} style={areaStyle} ref={(el) => (this.el = el)}>
         <table class={cls('table')}>
           <ColGroup side={side} />
           <tbody>
-            <tr>
+            <tr style={theadStyle}>
               {columns.map(({ name, title }) => (
-                <th
-                  data-column-name={name}
-                  class={cls('cell', 'cell-head')}
-                  style={{ height: `33px` }}
-                >
+                <th data-column-name={name} class={cls('cell', 'cell-head')}>
                   {title}
                 </th>
               ))}
@@ -54,7 +53,11 @@ class HeadAreaComp extends Component<Props> {
 }
 
 export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
+  const { headerHeight, cellBorderWidth } = store.dimension;
+
   return {
+    headerHeight,
+    cellBorderWidth,
     columns: side === 'L' ? [] : store.columns,
     scrollX: side === 'L' ? 0 : store.viewport.scrollX
   };

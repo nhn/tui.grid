@@ -1,72 +1,47 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
+import { data } from '../samples/basic';
 import '../src/css/grid.css';
 import '../src/css/theme.css';
 
 const stories = storiesOf('Dimension', module);
 
-stories.add('Simple', () => {
+const columns = [
+  { name: 'name' },
+  { name: 'artist' },
+  { name: 'type' },
+  { name: 'release' },
+  { name: 'genre' }
+];
+
+function createGrid(options: any) {
   const el = document.createElement('div');
-  el.style.width = '600px';
+  el.style.width = '800px';
 
-  const data = [
-    {
-      id: 1,
-      name: 'Beautiful Lies',
-      artist: 'Birdy',
-      release: '2016.03.26',
-      type: 'Deluxe',
-      genre: 'Pop'
-    },
-    {
-      id: 2,
-      name: 'X',
-      artist: 'Ed Sheeran',
-      release: '2014.06.24',
-      type: 'Deluxe',
-      genre: 'Pop'
-    },
-    {
-      id: 3,
-      name: '21',
-      artist: 'Adele',
-      release: '2011.01.21',
-      type: 'Deluxe',
-      genre: 'Pop'
-    }
-  ];
+  const grid = new Grid({ el, ...options });
+  return { el, grid };
+}
 
-  const columns = [
-    {
-      title: 'Name',
-      name: 'name',
-      width: 100,
-      resizable: true
-    },
-    {
-      title: 'Artist',
-      name: 'artist',
-      width: 100,
-      resizable: true
-    },
-    {
-      title: 'Type',
-      name: 'type',
-      width: 100
-    },
-    {
-      title: 'Release',
-      name: 'release',
-      width: 100
-    },
-    {
-      title: 'Genre',
-      name: 'genre',
-      width: 100
-    }
-  ];
+stories.add('bodyHeight: fitToParent', () => {
+  const { el } = createGrid({ data, columns, bodyHeight: 'fitToParent' });
+  const rootEl = document.createElement('div');
+  rootEl.style.height = '400px';
+  rootEl.appendChild(el);
 
-  new Grid({ el, data, columns });
-
-  return el;
+  return rootEl;
 });
+
+stories.add('bodyHeight: auto', () => {
+  return createGrid({ data, columns }).el;
+});
+
+stories.add('bodyHeight: 500', () => {
+  return createGrid({ data, columns, bodyHeight: 500 }).el;
+});
+
+stories.add('rowHeight: 70', () => {
+  return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
+});
+// stories.add('bodyHeight: fitToParent', () => {
+//   return createGrid({ data, columns, bodyHeight: 500 }).el;
+// });

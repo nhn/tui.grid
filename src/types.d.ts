@@ -5,9 +5,13 @@ export interface OptGrid {
   data?: OptRow[];
   columns: OptColumn[];
   columnOptions?: OptColumnOptions;
-  width?: number;
-  bodyHeight?: number;
-  rowHeight?: number;
+  width?: number | 'auto';
+  bodyHeight?: number | 'fitToParent' | 'auto';
+  minBodyHeight?: number;
+  rowHeight?: number | 'auto';
+  minRowHeight?: number;
+  scrollX?: boolean;
+  scrollY?: boolean;
 }
 
 export interface OptRow {

@@ -26,6 +26,11 @@ type ClassName =
   | 'layer-focus-border'
   | 'layer-state'
   | 'layer-editing'
+  | 'scrollbar-frozen-border'
+  | 'scrollbar-y-inner-border'
+  | 'scrollbar-y-outer-border'
+  | 'scrollbar-right-top'
+  | 'scrollbar-right-bottom'
   | 'table-container'
   | 'table';
 

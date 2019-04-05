@@ -7,12 +7,18 @@ import { cls } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
+interface OwnProps {
+  rootElement: HTMLElement;
+}
+
 interface StoreProps {
   width: number;
   autoWidth: boolean;
+  scrollXHeight: number;
+  fitToParentHeight: boolean;
 }
 
-type Props = StoreProps & DispatchProps;
+type Props = OwnProps & StoreProps & DispatchProps;
 
 export class ContainerComp extends Component<Props> {
   el?: HTMLElement;
@@ -31,10 +37,18 @@ export class ContainerComp extends Component<Props> {
   }
 
   syncWithDOMWidth = () => {
-    const { clientWidth } = this.el!;
+    const { clientWidth, clientHeight } = this.el!;
+    const { width, fitToParentHeight, rootElement } = this.props;
 
-    if (clientWidth !== this.props.width) {
+    if (clientWidth !== width) {
       this.props.dispatch('setWidth', clientWidth, true);
+    }
+
+    if (fitToParentHeight) {
+      const { parentElement } = rootElement;
+      if (parentElement && parentElement.clientHeight !== clientHeight) {
+        this.props.dispatch('setHeight', parentElement.clientHeight);
+      }
     }
   };
 
@@ -46,7 +60,7 @@ export class ContainerComp extends Component<Props> {
   }
 
   render() {
-    const { width, autoWidth } = this.props;
+    const { width, autoWidth, scrollXHeight } = this.props;
     const style = { width: autoWidth ? '100%' : width };
 
     return (
@@ -57,7 +71,7 @@ export class ContainerComp extends Component<Props> {
           <div class={cls('border-line', 'border-line-top')} />
           <div class={cls('border-line', 'border-line-left')} />
           <div class={cls('border-line', 'border-line-right')} />
-          <div class={cls('border-line', 'border-line-bottom')} />
+          <div class={cls('border-line', 'border-line-bottom')} style={{ bottom: scrollXHeight }} />
         </div>
         <StateLayer />
         <EditingLayer />
@@ -66,7 +80,9 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, {}, DispatchProps>(({ dimension }) => ({
+export const Container = connect<StoreProps, OwnProps, DispatchProps>(({ dimension }) => ({
   width: dimension.width,
-  autoWidth: dimension.autoWidth
+  autoWidth: dimension.autoWidth,
+  scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
+  fitToParentHeight: dimension.fitToParentHeight
 }))(ContainerComp);
