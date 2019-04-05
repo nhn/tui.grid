@@ -145,44 +145,16 @@ describe('data.columnModel', function() {
             var columnModel = columnModelInstance.getColumnModel('checkbox');
 
             expect(columnModel.title).toBe('checkbox');
-            expect(columnModel.editOptions).toEqual({
-                type: 'checkbox',
-                list: [{
-                    text: 'text1',
-                    value: 1
-                }, {
-                    text: 'text2',
-                    value: 2
-                }, {
-                    text: 'text3',
-                    value: 3
-                }, {
-                    text: 'text4',
-                    value: 4
-                }]
-            });
+            expect(columnModel.editOptions.type).toBe('checkbox');
+            expect(columnModel.editOptions.list.length).toBe(4);
 
             columnModelInstance.setColumnTitles({
                 checkbox: 'checkbox!'
             });
 
             expect(columnModel.title).toBe('checkbox!');
-            expect(columnModel.editOptions).toEqual({
-                type: 'checkbox',
-                list: [{
-                    text: 'text1',
-                    value: 1
-                }, {
-                    text: 'text2',
-                    value: 2
-                }, {
-                    text: 'text3',
-                    value: 3
-                }, {
-                    text: 'text4',
-                    value: 4
-                }]
-            });
+            expect(columnModel.editOptions.type).toBe('checkbox');
+            expect(columnModel.editOptions.list.length).toBe(4);
         });
     });
 
