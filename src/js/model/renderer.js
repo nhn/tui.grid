@@ -387,6 +387,11 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
      * @private
      */
     _onColumnModelChange: function() {
+        var maxScrollLeftAfterChange, diffMaxScrollLeft;
+        var scrollLeftBeforeChange = this.get('scrollLeft');
+        var scrollTopBeforeChange = this.get('scrollTop');
+        var maxScrollLeftBeforeChange = this.get('maxScrollLeft');
+
         this.set({
             scrollLeft: 0,
             scrollTop: 0
@@ -396,11 +401,18 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         this._setRenderingRange(true);
 
         this.refresh({
-            change: false,
             columnModelChanged: true
         });
 
         this._updateMaxScrollLeft();
+
+        maxScrollLeftAfterChange = this.get('maxScrollLeft');
+        diffMaxScrollLeft = maxScrollLeftBeforeChange - maxScrollLeftAfterChange;
+
+        this.set({
+            scrollLeft: scrollLeftBeforeChange - diffMaxScrollLeft,
+            scrollTop: scrollTopBeforeChange
+        });
     },
 
     /**
