@@ -328,6 +328,41 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
     },
 
     /**
+     * Set column title by columns map
+     * @param {Array} targetColumns - columns to change
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    _changeColumnTitlesByName: function(targetColumns, columnsMap) {
+        _.each(columnsMap, function(value, key) {
+            var idx = _.findIndex(targetColumns, function(data) {
+                return data.name === key;
+            });
+
+            if (idx !== -1) {
+                targetColumns[idx].title = value;
+            }
+        });
+    },
+
+    /**
+     * Set column title by columns map
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    setColumnTitles: function(columnsMap) {
+        var dataColumns = this.get('dataColumns');
+        var complexHeaderColumns = this.get('complexHeaderColumns');
+
+        this._changeColumnTitlesByName(dataColumns, columnsMap);
+        if (complexHeaderColumns.length) {
+            this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
+        }
+
+        this.trigger('columnModelChange');
+    },
+
+    /**
      * Set column model by data
      * @param {array} rowHeaders - Data of row headers
      * @param {array} columns - Data of columns
