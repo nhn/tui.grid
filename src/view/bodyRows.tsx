@@ -3,6 +3,7 @@ import { BodyRow } from './bodyRow';
 import { shallowEqual } from '../helper/common';
 import { Side, Row, Column } from '../store/types';
 import { connect } from './hoc';
+import { DispatchProps } from '../dispatch/create';
 
 interface OwnProps {
   side: Side;
@@ -13,7 +14,7 @@ interface StoreProps {
   columns: Column[];
 }
 
-type Props = OwnProps & StoreProps;
+type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
   shouldComponentUpdate(nextProps: Props) {

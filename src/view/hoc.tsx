@@ -1,27 +1,25 @@
 import { h, AnyComponent, Component } from 'preact';
 import { watch } from '../helper/reactive';
 import { Store } from '../store/types';
-import { Dispatch } from '../dispatch/create';
+import { Dispatch, DispatchProps } from '../dispatch/create';
 
-interface Selector<OwnProps, SelectedProps> {
-  (store: Store, props: OwnProps): SelectedProps;
-}
-
-export function connect<SelectedProps, OwnProps, DispatchProps = {}>(
-  selector: Selector<OwnProps, SelectedProps>
+export function connect<SelectedProps = {}, OwnProps = {}>(
+  selector?: (store: Store, props: OwnProps) => SelectedProps
 ) {
   return function(WrappedComponent: AnyComponent<OwnProps & SelectedProps & DispatchProps>) {
-    return class extends Component<OwnProps, SelectedProps & DispatchProps> {
+    return class extends Component<OwnProps, SelectedProps> {
       componentWillMount() {
-        watch(() => {
-          this.setState(selector(this.context.store, this.props));
-        });
+        if (selector) {
+          watch(() => {
+            this.setState(selector(this.context.store, this.props));
+          });
+        }
       }
 
       render() {
         const { props, state } = this;
-
         const dispatch: Dispatch = this.context.dispatch;
+
         return <WrappedComponent {...props} {...state} dispatch={dispatch} />;
       }
     };

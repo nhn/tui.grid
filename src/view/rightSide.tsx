@@ -61,7 +61,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 }
 
-export const RightSide = connect<StoreProps, {}, DispatchProps>(({ dimension }) => {
+export const RightSide = connect<StoreProps>(({ dimension }) => {
   const {
     width,
     scrollbarWidth,

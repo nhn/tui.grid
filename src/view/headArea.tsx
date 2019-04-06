@@ -4,6 +4,7 @@ import { ColGroup } from './colGroup';
 import { cls } from '../helper/common';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
+import { DispatchProps } from '../dispatch/create';
 
 interface OwnProps {
   side: Side;
@@ -16,7 +17,7 @@ interface StoreProps {
   scrollX: number;
 }
 
-type Props = OwnProps & StoreProps;
+type Props = OwnProps & StoreProps & DispatchProps;
 
 class HeadAreaComp extends Component<Props> {
   el?: HTMLElement;

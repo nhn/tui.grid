@@ -42,6 +42,3 @@ stories.add('bodyHeight: 500', () => {
 stories.add('rowHeight: 70', () => {
   return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
 });
-// stories.add('bodyHeight: fitToParent', () => {
-//   return createGrid({ data, columns, bodyHeight: 500 }).el;
-// });

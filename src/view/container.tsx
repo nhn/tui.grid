@@ -3,6 +3,7 @@ import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
+import { HeightResizeHandle } from './heightResizeHandle';
 import { cls } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -73,6 +74,7 @@ export class ContainerComp extends Component<Props> {
           <div class={cls('border-line', 'border-line-right')} />
           <div class={cls('border-line', 'border-line-bottom')} style={{ bottom: scrollXHeight }} />
         </div>
+        <HeightResizeHandle />
         <StateLayer />
         <EditingLayer />
       </div>
@@ -80,7 +82,7 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, OwnProps, DispatchProps>(({ dimension }) => ({
+export const Container = connect<StoreProps, OwnProps>(({ dimension }) => ({
   width: dimension.width,
   autoWidth: dimension.autoWidth,
   scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,

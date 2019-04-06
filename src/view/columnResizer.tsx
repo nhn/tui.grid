@@ -94,7 +94,7 @@ class ColumnResizerComp extends Component<Props> {
   }
 }
 
-export const ColumnResizer = connect<StoreProps, OwnProps, DispatchProps>(
+export const ColumnResizer = connect<StoreProps, OwnProps>(
   ({ viewport, columnCoords }, { side }) => ({
     widths: side === 'L' ? [] : columnCoords.widths,
     offsets: side === 'L' ? [] : columnCoords.offsets,

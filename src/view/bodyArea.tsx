@@ -47,7 +47,7 @@ function BodyAreaComp(props: Props) {
   );
 }
 
-export const BodyArea = connect<StoreProps, OwnProps, DispatchProps>((store, { side }) => {
+export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { data, columns, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
   const { offsetY } = viewport;

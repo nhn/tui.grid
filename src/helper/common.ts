@@ -26,6 +26,7 @@ type ClassName =
   | 'layer-focus-border'
   | 'layer-state'
   | 'layer-editing'
+  | 'height-resize-handle'
   | 'scrollbar-frozen-border'
   | 'scrollbar-y-inner-border'
   | 'scrollbar-y-outer-border'
