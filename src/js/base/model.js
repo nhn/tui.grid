@@ -1,6 +1,6 @@
 /**
  * @fileoverview Base class for Models
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

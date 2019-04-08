@@ -1,6 +1,6 @@
 /**
  * @fileoverview Painter class for 'checkbox' and 'radio button'.
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

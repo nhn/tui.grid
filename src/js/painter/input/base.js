@@ -1,6 +1,6 @@
 /**
  * @fileoverview Base class for the Input Painter
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

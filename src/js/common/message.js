@@ -1,6 +1,6 @@
 /**
  * @fileoverview Locale messages
- * @author NHN Ent. Fe Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

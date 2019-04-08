@@ -1,6 +1,6 @@
 /**
  * @fileoverview This class offers methods that can be used to get the current state of DOM element.
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
