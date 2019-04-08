@@ -301,6 +301,44 @@ instance.setData(newData); // Call API of instance's public method
 Grid.applyTheme('striped'); // Call API of static method
 ```
 
+### TypeScript
+If you using TypeScript, You must `import module = require('module')` on importing.
+[`export =` and `import = require()`](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require)
+
+```typescript
+import Grid = require('tui-grid');
+
+var instance = new Grid({
+    el: $('#grid'), // Container element
+    columns: [
+        {
+            title: 'Name',
+            name: 'name'
+        },
+        {
+            title: 'Artist',
+            name: 'artist'
+        },
+        {
+            title: 'Release',
+            name: 'release'
+        },
+        {
+            title: 'Genre',
+            name: 'genre'
+        }
+    ],
+    data: [
+        {
+            name: 'Beautiful Lies',
+            artist: 'Birdy',
+            release: '2016.03.26',
+            genre: 'Pop'
+        }
+    ]
+});
+```
+
 ## 🔧 Pull Request Steps
 
 TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
