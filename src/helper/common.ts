@@ -35,16 +35,19 @@ type ClassName =
   | 'table-container'
   | 'table';
 
-export function cls(...names: ClassName[]) {
+export function cls(...names: (ClassName | [boolean, ClassName])[]) {
   const result = [];
 
   for (let name of names) {
+    let className: string | null;
     if (Array.isArray(name)) {
-      name = name[0] ? name[1] : null;
+      className = name[0] ? name[1] : null;
+    } else {
+      className = name;
     }
 
-    if (name) {
-      result.push(`${CLS_PREFIX}${name}`);
+    if (className) {
+      result.push(`${CLS_PREFIX}${className}`);
     }
   }
 

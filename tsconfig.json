@@ -24,8 +24,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/grid.tsx",
-    "src/view/root.tsx"
+    "src/**/*.tsx",
   ],
   "exclude": [
     "node_modules",

@@ -1,19 +1,20 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "strict": false,
-    "sourceMap": true,
-    "types": [
-      "cypress"
-    ],
     "baseUrl": "..",
     "paths": {
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "types": [
+      "cypress",
+      "node"
+    ]
   },
   "include": [
+    "../src/**/*.ts",
+    "../src/**/*.tsx",
     "**/*.ts"
   ]
 }

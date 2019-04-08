@@ -1,4 +1,4 @@
-export type CellValue = number | string | boolean | null;
+export type CellValue = number | string | boolean | null | undefined;
 
 export type Range = [number, number];
 

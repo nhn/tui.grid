@@ -5,7 +5,7 @@ import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store } from './store/types';
 
-if (module.hot) {
+if ((module as any).hot) {
   require('preact/devtools');
 }
 

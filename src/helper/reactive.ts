@@ -1,13 +1,5 @@
-interface ValueMap {
-  [propName: string]: any;
-}
-
-interface Storage {
-  __storage__: ValueMap;
-}
-
-interface ComputedProp {
-  key: string;
+interface ComputedProp<T> {
+  key: keyof T;
   getter: Function;
   handlers: Function[];
 }
@@ -20,9 +12,13 @@ export function watch(fn: Function) {
   currWatcher = null;
 }
 
-export function reactive<T>(obj: T): T & Storage {
-  const storage: ValueMap = {};
-  const computedProps: ComputedProp[] = [];
+export type Reactive<T> = T & {
+  __storage__: Readonly<T>;
+};
+
+export function reactive<T>(obj: T): Reactive<T> {
+  const storage: T = <T>{};
+  const computedProps: ComputedProp<T>[] = [];
 
   for (let key in obj) {
     const handlers: Function[] = [];
@@ -52,7 +48,7 @@ export function reactive<T>(obj: T): T & Storage {
     });
   }
 
-  const rObj = <T & Storage>obj;
+  const rObj = <Reactive<T>>obj;
   rObj.__storage__ = storage;
 
   computedProps.forEach(({ key, handlers, getter }) => {

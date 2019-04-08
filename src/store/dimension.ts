@@ -19,13 +19,15 @@ export function create({
   scrollX = true,
   scrollY = true
 }: OptDimension): Dimension {
+  const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
+
   return reactive<Dimension>({
     width: width === 'auto' ? 0 : width,
     autoWidth: width === 'auto',
-    bodyHeight: typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0,
+    minBodyHeight,
+    bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
     autoHeight: bodyHeight === 'auto',
     fitToParentHeight: bodyHeight === 'fitToParent',
-    minBodyHeight,
     rowHeight: typeof rowHeight === 'number' ? Math.max(rowHeight, minRowHeight) : 0,
     minRowHeight,
     autoRowHeight: rowHeight === 'auto',

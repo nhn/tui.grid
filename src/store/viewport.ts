@@ -1,18 +1,19 @@
 import { Row, Column, Range, Viewport, Dimension } from './types';
-import { reactive } from '../helper/reactive';
+import { reactive, Reactive } from '../helper/reactive';
 import { arrayEqual } from '../helper/common';
 
 function indexOfRow(rowOffsets: number[], posY: number) {
   const offset = rowOffsets.findIndex((offset) => offset > posY);
   return offset === -1 ? rowOffsets.length - 1 : offset - 1;
 }
+
 interface ViewPortOption {
   data: Row[];
   columns: Column[];
   dimension: Dimension;
 }
 
-export function create({ data, columns, dimension }: ViewPortOption): Viewport {
+export function create({ data, columns, dimension }: ViewPortOption): Reactive<Viewport> {
   return reactive({
     colsL: [],
     colsR: [...columns],
@@ -20,7 +21,7 @@ export function create({ data, columns, dimension }: ViewPortOption): Viewport {
     scrollX: 0,
     scrollY: 0,
     colRange: <Range>[0, columns.length],
-    get rowRange(this: Viewport & { __storage__: Viewport }) {
+    get rowRange(this: Reactive<Viewport>) {
       const { rowOffsets, bodyHeight } = dimension;
       const { scrollY } = this;
 

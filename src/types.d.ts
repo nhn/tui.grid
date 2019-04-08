@@ -14,9 +14,17 @@ export interface OptGrid {
   scrollY?: boolean;
 }
 
-export interface OptRow {
-  [propName: string]: CellValue;
+export interface ExtraData {
+  height?: number;
 }
+
+export type CellValue = number | string | boolean | null | undefined;
+
+export type OptRow = {
+  [propName: string]: CellValue;
+} & {
+  _extraData?: ExtraData;
+};
 
 export interface OptColumn {
   name: string;
