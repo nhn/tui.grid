@@ -1,6 +1,6 @@
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

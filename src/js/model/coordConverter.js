@@ -1,6 +1,6 @@
 /**
  * @fileoverview Converts coordinates to index of rows and columns
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

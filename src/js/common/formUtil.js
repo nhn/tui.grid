@@ -1,6 +1,6 @@
 /**
  * @fileoverview Utilities for form data, form element
- * @author NHN Ent. Fe Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

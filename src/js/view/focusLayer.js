@@ -1,6 +1,6 @@
 /**
  * @fileoverview Class for the layer view that represents the currently focused cell
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
