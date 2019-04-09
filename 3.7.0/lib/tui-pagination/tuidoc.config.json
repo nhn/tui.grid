@@ -1,0 +1,36 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-component-bi-white.png"
+    },
+    "title": {
+      "text": "Pagination",
+      "linkUrl": "https://github.com/nhnent/tui.pagination"
+    }
+  },
+  "footer": [
+    {
+      "title": "NHN Entertainment",
+      "linkUrl": "https://github.com/nhnent"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhnent/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": "src/js/**"
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {
+      "example01-basic": "1. Basic",
+      "example02-custom-event": "2. Using custom events",
+      "example03-using-template": "3. Using template"
+    }
+  },
+  "pathPrefix": "tui.pagination"
+}

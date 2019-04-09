@@ -1,0 +1,38 @@
+{
+  "name": "tui-pagination",
+  "authors": [
+    "NHN Ent. FE Dev team.<dl_javascript@nhnent.com>"
+  ],
+  "main": [
+    "dist/tui-pagination.js",
+    "dist/tui-pagination.css"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "examples",
+    "src",
+    "test",
+    "jsdoc.conf.json",
+    "karma.conf.js",
+    "webpack.config.js",
+    "package.json",
+    "package-lock.json"
+  ],
+  "dependencies": {
+    "tui-code-snippet": "^1.5.0"
+  },
+  "homepage": "https://github.com/nhnent/tui.pagination",
+  "version": "3.3.1",
+  "_release": "3.3.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.3.1",
+    "commit": "ba741ee7a68250300ecd4fa45a7cb9b513160e1b"
+  },
+  "_source": "https://github.com/nhnent/tui.pagination.git",
+  "_target": "^3.3.0",
+  "_originalSource": "tui-pagination"
+}
