@@ -1,4 +1,4 @@
-import Grid from 'tui-grid';
+import Grid = require('tui-grid');
 
 Grid.getInstanceById(123);
 Grid.applyTheme('test');
