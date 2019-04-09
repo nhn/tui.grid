@@ -1,6 +1,6 @@
 /**
  * @fileoverview Class for the body layout
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

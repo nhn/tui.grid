@@ -1,6 +1,6 @@
 /**
  * @fileoverview Selection Model class
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

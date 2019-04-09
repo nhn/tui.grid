@@ -1,6 +1,6 @@
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

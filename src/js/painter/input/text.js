@@ -1,6 +1,6 @@
 /**
  * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
