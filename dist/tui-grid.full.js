@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Feb 28 2019 09:37:25 GMT+0900 (Korean Standard Time)"
- * version: 3.6.0
+ * bundle created at "Tue Apr 09 2019 09:35:49 GMT+0900 (Korean Standard Time)"
+ * version: 3.7.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The entry file of Grid
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -80,7 +80,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The Grid class for the external API.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -821,9 +821,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Sets the list of column model.
 	     * @param {Array} columns - A new list of column model
+	     * @example
+	     * {
+	     *      columnName1: 'title1',
+	     *      columnName2: 'title2',
+	     *      columnName3: 'title3'
+	     * }
 	     */
 	    setColumns: function(columns) {
 	        this.modelManager.columnModel.set('columns', columns);
+	    },
+
+	    /**
+	     * Set columns title
+	     * @param {string} columnsMap - columns map to be change
+	     */
+	    setColumnTitles: function(columnsMap) {
+	        this.modelManager.columnModel.setColumnTitles(columnsMap);
 	    },
 
 	    /**
@@ -3122,7 +3136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3202,9 +3216,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.4.0
 
-	//     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	//     (c) 2010-2019 Jeremy Ashkenas and DocumentCloud
 	//     Backbone may be freely distributed under the MIT license.
 	//     For all details and documentation:
 	//     http://backbonejs.org
@@ -3213,8 +3227,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
 	  // We use `self` instead of `window` for `WebWorker` support.
-	  var root = (typeof self == 'object' && self.self === self && self) ||
-	            (typeof global == 'object' && global.global === global && global);
+	  var root = typeof self == 'object' && self.self === self && self ||
+	            typeof global == 'object' && global.global === global && global;
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
@@ -3232,7 +3246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Finally, as a browser global.
 	  } else {
-	    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
+	    root.Backbone = factory(root, {}, root._, root.jQuery || root.Zepto || root.ender || root.$);
 	  }
 
 	})(function(root, Backbone, _, $) {
@@ -3248,7 +3262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var slice = Array.prototype.slice;
 
 	  // Current version of the library. Keep in sync with `package.json`.
-	  Backbone.VERSION = '1.3.3';
+	  Backbone.VERSION = '1.4.0';
 
 	  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
 	  // the `$` variable.
@@ -3272,54 +3286,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // form param named `model`.
 	  Backbone.emulateJSON = false;
 
-	  // Proxy Backbone class methods to Underscore functions, wrapping the model's
-	  // `attributes` object or collection's `models` array behind the scenes.
-	  //
-	  // collection.filter(function(model) { return model.get('age') > 10 });
-	  // collection.each(this.addView);
-	  //
-	  // `Function#apply` can be slow so we use the method's arg count, if we know it.
-	  var addMethod = function(length, method, attribute) {
-	    switch (length) {
-	      case 1: return function() {
-	        return _[method](this[attribute]);
-	      };
-	      case 2: return function(value) {
-	        return _[method](this[attribute], value);
-	      };
-	      case 3: return function(iteratee, context) {
-	        return _[method](this[attribute], cb(iteratee, this), context);
-	      };
-	      case 4: return function(iteratee, defaultVal, context) {
-	        return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
-	      };
-	      default: return function() {
-	        var args = slice.call(arguments);
-	        args.unshift(this[attribute]);
-	        return _[method].apply(_, args);
-	      };
-	    }
-	  };
-	  var addUnderscoreMethods = function(Class, methods, attribute) {
-	    _.each(methods, function(length, method) {
-	      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
-	    });
-	  };
-
-	  // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
-	  var cb = function(iteratee, instance) {
-	    if (_.isFunction(iteratee)) return iteratee;
-	    if (_.isObject(iteratee) && !instance._isModel(iteratee)) return modelMatcher(iteratee);
-	    if (_.isString(iteratee)) return function(model) { return model.get(iteratee); };
-	    return iteratee;
-	  };
-	  var modelMatcher = function(attrs) {
-	    var matcher = _.matches(attrs);
-	    return function(model) {
-	      return matcher(model.attributes);
-	    };
-	  };
-
 	  // Backbone.Events
 	  // ---------------
 
@@ -3337,6 +3303,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Regular expression used to split event strings.
 	  var eventSplitter = /\s+/;
+
+	  // A private global variable to share between listeners and listenees.
+	  var _listening;
 
 	  // Iterates over the standard `event, callback` (as well as the fancy multiple
 	  // space-separated events `"change blur", callback` and jQuery-style event
@@ -3364,23 +3333,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Bind an event to a `callback` function. Passing `"all"` will bind
 	  // the callback to all events fired.
 	  Events.on = function(name, callback, context) {
-	    return internalOn(this, name, callback, context);
-	  };
-
-	  // Guard the `listening` argument from the public API.
-	  var internalOn = function(obj, name, callback, context, listening) {
-	    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+	    this._events = eventsApi(onApi, this._events || {}, name, callback, {
 	      context: context,
-	      ctx: obj,
-	      listening: listening
+	      ctx: this,
+	      listening: _listening
 	    });
 
-	    if (listening) {
-	      var listeners = obj._listeners || (obj._listeners = {});
-	      listeners[listening.id] = listening;
+	    if (_listening) {
+	      var listeners = this._listeners || (this._listeners = {});
+	      listeners[_listening.id] = _listening;
+	      // Allow the listening to use a counter, instead of tracking
+	      // callbacks for library interop
+	      _listening.interop = false;
 	    }
 
-	    return obj;
+	    return this;
 	  };
 
 	  // Inversion-of-control versions of `on`. Tell *this* object to listen to
@@ -3390,17 +3357,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!obj) return this;
 	    var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
 	    var listeningTo = this._listeningTo || (this._listeningTo = {});
-	    var listening = listeningTo[id];
+	    var listening = _listening = listeningTo[id];
 
 	    // This object is not listening to any other events on `obj` yet.
 	    // Setup the necessary references to track the listening callbacks.
 	    if (!listening) {
-	      var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
-	      listening = listeningTo[id] = {obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0};
+	      this._listenId || (this._listenId = _.uniqueId('l'));
+	      listening = _listening = listeningTo[id] = new Listening(this, obj);
 	    }
 
-	    // Bind callbacks on obj, and keep track of them on listening.
-	    internalOn(obj, name, callback, this, listening);
+	    // Bind callbacks on obj.
+	    var error = tryCatchOn(obj, name, callback, this);
+	    _listening = void 0;
+
+	    if (error) throw error;
+	    // If the target obj is not Backbone.Events, track events manually.
+	    if (listening.interop) listening.on(name, callback);
+
 	    return this;
 	  };
 
@@ -3416,6 +3389,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return events;
 	  };
 
+	  // An try-catch guarded #on function, to prevent poisoning the global
+	  // `_listening` variable.
+	  var tryCatchOn = function(obj, name, callback, context) {
+	    try {
+	      obj.on(name, callback, context);
+	    } catch (e) {
+	      return e;
+	    }
+	  };
+
 	  // Remove one or many callbacks. If `context` is null, removes all
 	  // callbacks with that function. If `callback` is null, removes all
 	  // callbacks for the event. If `name` is null, removes all bound
@@ -3426,6 +3409,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      context: context,
 	      listeners: this._listeners
 	    });
+
 	    return this;
 	  };
 
@@ -3436,7 +3420,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!listeningTo) return this;
 
 	    var ids = obj ? [obj._listenId] : _.keys(listeningTo);
-
 	    for (var i = 0; i < ids.length; i++) {
 	      var listening = listeningTo[ids[i]];
 
@@ -3445,7 +3428,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!listening) break;
 
 	      listening.obj.off(name, callback, this);
+	      if (listening.interop) listening.off(name, callback);
 	    }
+	    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
 
 	    return this;
 	  };
@@ -3454,21 +3439,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var offApi = function(events, name, callback, options) {
 	    if (!events) return;
 
-	    var i = 0, listening;
 	    var context = options.context, listeners = options.listeners;
+	    var i = 0, names;
 
-	    // Delete all events listeners and "drop" events.
-	    if (!name && !callback && !context) {
-	      var ids = _.keys(listeners);
-	      for (; i < ids.length; i++) {
-	        listening = listeners[ids[i]];
-	        delete listeners[listening.id];
-	        delete listening.listeningTo[listening.objId];
+	    // Delete all event listeners and "drop" events.
+	    if (!name && !context && !callback) {
+	      for (names = _.keys(listeners); i < names.length; i++) {
+	        listeners[names[i]].cleanup();
 	      }
 	      return;
 	    }
 
-	    var names = name ? [name] : _.keys(events);
+	    names = name ? [name] : _.keys(events);
 	    for (; i < names.length; i++) {
 	      name = names[i];
 	      var handlers = events[name];
@@ -3476,7 +3458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Bail out if there are no events stored.
 	      if (!handlers) break;
 
-	      // Replace events if there are any remaining.  Otherwise, clean up.
+	      // Find any remaining events.
 	      var remaining = [];
 	      for (var j = 0; j < handlers.length; j++) {
 	        var handler = handlers[j];
@@ -3487,21 +3469,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ) {
 	          remaining.push(handler);
 	        } else {
-	          listening = handler.listening;
-	          if (listening && --listening.count === 0) {
-	            delete listeners[listening.id];
-	            delete listening.listeningTo[listening.objId];
-	          }
+	          var listening = handler.listening;
+	          if (listening) listening.off(name, callback);
 	        }
 	      }
 
-	      // Update tail event if the list has any events.  Otherwise, clean up.
+	      // Replace events if there are any remaining.  Otherwise, clean up.
 	      if (remaining.length) {
 	        events[name] = remaining;
 	      } else {
 	        delete events[name];
 	      }
 	    }
+
 	    return events;
 	  };
 
@@ -3511,7 +3491,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // once for each event, not once for a combination of all events.
 	  Events.once = function(name, callback, context) {
 	    // Map the event into a `{event: once}` object.
-	    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+	    var events = eventsApi(onceMap, {}, name, callback, this.off.bind(this));
 	    if (typeof name === 'string' && context == null) callback = void 0;
 	    return this.on(events, callback, context);
 	  };
@@ -3519,7 +3499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Inversion-of-control versions of `once`.
 	  Events.listenToOnce = function(obj, name, callback) {
 	    // Map the event into a `{event: once}` object.
-	    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
+	    var events = eventsApi(onceMap, {}, name, callback, this.stopListening.bind(this, obj));
 	    return this.listenTo(obj, events);
 	  };
 
@@ -3577,6 +3557,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  };
 
+	  // A listening class that tracks and cleans up memory bindings
+	  // when all callbacks have been offed.
+	  var Listening = function(listener, obj) {
+	    this.id = listener._listenId;
+	    this.listener = listener;
+	    this.obj = obj;
+	    this.interop = true;
+	    this.count = 0;
+	    this._events = void 0;
+	  };
+
+	  Listening.prototype.on = Events.on;
+
+	  // Offs a callback (or several).
+	  // Uses an optimized counter if the listenee uses Backbone.Events.
+	  // Otherwise, falls back to manual tracking to support events
+	  // library interop.
+	  Listening.prototype.off = function(name, callback) {
+	    var cleanup;
+	    if (this.interop) {
+	      this._events = eventsApi(offApi, this._events, name, callback, {
+	        context: void 0,
+	        listeners: void 0
+	      });
+	      cleanup = !this._events;
+	    } else {
+	      this.count--;
+	      cleanup = this.count === 0;
+	    }
+	    if (cleanup) this.cleanup();
+	  };
+
+	  // Cleans up memory bindings between the listener and the listenee.
+	  Listening.prototype.cleanup = function() {
+	    delete this.listener._listeningTo[this.obj._listenId];
+	    if (!this.interop) delete this.obj._listeners[this.id];
+	  };
+
 	  // Aliases for backwards compatibility.
 	  Events.bind   = Events.on;
 	  Events.unbind = Events.off;
@@ -3598,6 +3616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var Model = Backbone.Model = function(attributes, options) {
 	    var attrs = attributes || {};
 	    options || (options = {});
+	    this.preinitialize.apply(this, arguments);
 	    this.cid = _.uniqueId(this.cidPrefix);
 	    this.attributes = {};
 	    if (options.collection) this.collection = options.collection;
@@ -3625,6 +3644,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // The prefix is used to create the client id which is used to identify models locally.
 	    // You may want to override this if you're experiencing name clashes with model ids.
 	    cidPrefix: 'c',
+
+	    // preinitialize is an empty function by default. You can override it with a function
+	    // or object.  preinitialize will run before any instantiation logic is run in the Model.
+	    preinitialize: function(){},
 
 	    // Initialize is an empty function by default. Override it with your own
 	    // initialization logic.
@@ -3766,12 +3789,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
 	      var old = this._changing ? this._previousAttributes : this.attributes;
 	      var changed = {};
+	      var hasChanged;
 	      for (var attr in diff) {
 	        var val = diff[attr];
 	        if (_.isEqual(old[attr], val)) continue;
 	        changed[attr] = val;
+	        hasChanged = true;
 	      }
-	      return _.size(changed) ? changed : false;
+	      return hasChanged ? changed : false;
 	    },
 
 	    // Get the previous value of an attribute, recorded at the time the last
@@ -3847,7 +3872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Set temporary attributes if `{wait: true}` to properly find new ids.
 	      if (attrs && wait) this.attributes = _.extend({}, attributes, attrs);
 
-	      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+	      var method = this.isNew() ? 'create' : options.patch ? 'patch' : 'update';
 	      if (method === 'patch' && !options.attrs) options.attrs = attrs;
 	      var xhr = this.sync(method, this, options);
 
@@ -3935,14 +3960,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  });
 
-	  // Underscore methods that we want to implement on the Model, mapped to the
-	  // number of arguments they take.
-	  var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
-	      omit: 0, chain: 1, isEmpty: 1};
-
-	  // Mix in each Underscore method as a proxy to `Model#attributes`.
-	  addUnderscoreMethods(Model, modelMethods, 'attributes');
-
 	  // Backbone.Collection
 	  // -------------------
 
@@ -3958,6 +3975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // its models in sort order, as they're added and removed.
 	  var Collection = Backbone.Collection = function(models, options) {
 	    options || (options = {});
+	    this.preinitialize.apply(this, arguments);
 	    if (options.model) this.model = options.model;
 	    if (options.comparator !== void 0) this.comparator = options.comparator;
 	    this._reset();
@@ -3986,6 +4004,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // The default model for a collection is just a **Backbone.Model**.
 	    // This should be overridden in most cases.
 	    model: Model,
+
+
+	    // preinitialize is an empty function by default. You can override it with a function
+	    // or object.  preinitialize will run before any instantiation logic is run in the Collection.
+	    preinitialize: function(){},
 
 	    // Initialize is an empty function by default. Override it with your own
 	    // initialization logic.
@@ -4189,7 +4212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    get: function(obj) {
 	      if (obj == null) return void 0;
 	      return this._byId[obj] ||
-	        this._byId[this.modelId(obj.attributes || obj)] ||
+	        this._byId[this.modelId(this._isModel(obj) ? obj.attributes : obj)] ||
 	        obj.cid && this._byId[obj.cid];
 	    },
 
@@ -4225,7 +4248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      options || (options = {});
 
 	      var length = comparator.length;
-	      if (_.isFunction(comparator)) comparator = _.bind(comparator, this);
+	      if (_.isFunction(comparator)) comparator = comparator.bind(this);
 
 	      // Run sort based on type of `comparator`.
 	      if (length === 1 || _.isString(comparator)) {
@@ -4295,6 +4318,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Define how to uniquely identify models in the collection.
 	    modelId: function(attrs) {
 	      return attrs[this.model.prototype.idAttribute || 'id'];
+	    },
+
+	    // Get an iterator of all models in this collection.
+	    values: function() {
+	      return new CollectionIterator(this, ITERATOR_VALUES);
+	    },
+
+	    // Get an iterator of all model IDs in this collection.
+	    keys: function() {
+	      return new CollectionIterator(this, ITERATOR_KEYS);
+	    },
+
+	    // Get an iterator of all [ID, model] tuples in this collection.
+	    entries: function() {
+	      return new CollectionIterator(this, ITERATOR_KEYSVALUES);
 	    },
 
 	    // Private method to reset all internal state. Called when the collection
@@ -4393,20 +4431,71 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  });
 
-	  // Underscore methods that we want to implement on the Collection.
-	  // 90% of the core usefulness of Backbone Collections is actually implemented
-	  // right here:
-	  var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
-	      foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
-	      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
-	      contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
-	      head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
-	      without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
-	      isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
-	      sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
+	  // Defining an @@iterator method implements JavaScript's Iterable protocol.
+	  // In modern ES2015 browsers, this value is found at Symbol.iterator.
+	  /* global Symbol */
+	  var $$iterator = typeof Symbol === 'function' && Symbol.iterator;
+	  if ($$iterator) {
+	    Collection.prototype[$$iterator] = Collection.prototype.values;
+	  }
 
-	  // Mix in each Underscore method as a proxy to `Collection#models`.
-	  addUnderscoreMethods(Collection, collectionMethods, 'models');
+	  // CollectionIterator
+	  // ------------------
+
+	  // A CollectionIterator implements JavaScript's Iterator protocol, allowing the
+	  // use of `for of` loops in modern browsers and interoperation between
+	  // Backbone.Collection and other JavaScript functions and third-party libraries
+	  // which can operate on Iterables.
+	  var CollectionIterator = function(collection, kind) {
+	    this._collection = collection;
+	    this._kind = kind;
+	    this._index = 0;
+	  };
+
+	  // This "enum" defines the three possible kinds of values which can be emitted
+	  // by a CollectionIterator that correspond to the values(), keys() and entries()
+	  // methods on Collection, respectively.
+	  var ITERATOR_VALUES = 1;
+	  var ITERATOR_KEYS = 2;
+	  var ITERATOR_KEYSVALUES = 3;
+
+	  // All Iterators should themselves be Iterable.
+	  if ($$iterator) {
+	    CollectionIterator.prototype[$$iterator] = function() {
+	      return this;
+	    };
+	  }
+
+	  CollectionIterator.prototype.next = function() {
+	    if (this._collection) {
+
+	      // Only continue iterating if the iterated collection is long enough.
+	      if (this._index < this._collection.length) {
+	        var model = this._collection.at(this._index);
+	        this._index++;
+
+	        // Construct a value depending on what kind of values should be iterated.
+	        var value;
+	        if (this._kind === ITERATOR_VALUES) {
+	          value = model;
+	        } else {
+	          var id = this._collection.modelId(model.attributes);
+	          if (this._kind === ITERATOR_KEYS) {
+	            value = id;
+	          } else { // ITERATOR_KEYSVALUES
+	            value = [id, model];
+	          }
+	        }
+	        return {value: value, done: false};
+	      }
+
+	      // Once exhausted, remove the reference to the collection so future
+	      // calls to the next method always return done.
+	      this._collection = void 0;
+	    }
+
+	    return {value: void 0, done: true};
+	  };
 
 	  // Backbone.View
 	  // -------------
@@ -4423,6 +4512,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // if an existing element is not provided...
 	  var View = Backbone.View = function(options) {
 	    this.cid = _.uniqueId('view');
+	    this.preinitialize.apply(this, arguments);
 	    _.extend(this, _.pick(options, viewOptions));
 	    this._ensureElement();
 	    this.initialize.apply(this, arguments);
@@ -4445,6 +4535,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    $: function(selector) {
 	      return this.$el.find(selector);
 	    },
+
+	    // preinitialize is an empty function by default. You can override it with a function
+	    // or object.  preinitialize will run before any instantiation logic is run in the View
+	    preinitialize: function(){},
 
 	    // Initialize is an empty function by default. Override it with your own
 	    // initialization logic.
@@ -4513,7 +4607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!_.isFunction(method)) method = this[method];
 	        if (!method) continue;
 	        var match = key.match(delegateEventSplitter);
-	        this.delegate(match[1], match[2], _.bind(method, this));
+	        this.delegate(match[1], match[2], method.bind(this));
 	      }
 	      return this;
 	    },
@@ -4569,6 +4663,94 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.$el.attr(attributes);
 	    }
 
+	  });
+
+	  // Proxy Backbone class methods to Underscore functions, wrapping the model's
+	  // `attributes` object or collection's `models` array behind the scenes.
+	  //
+	  // collection.filter(function(model) { return model.get('age') > 10 });
+	  // collection.each(this.addView);
+	  //
+	  // `Function#apply` can be slow so we use the method's arg count, if we know it.
+	  var addMethod = function(base, length, method, attribute) {
+	    switch (length) {
+	      case 1: return function() {
+	        return base[method](this[attribute]);
+	      };
+	      case 2: return function(value) {
+	        return base[method](this[attribute], value);
+	      };
+	      case 3: return function(iteratee, context) {
+	        return base[method](this[attribute], cb(iteratee, this), context);
+	      };
+	      case 4: return function(iteratee, defaultVal, context) {
+	        return base[method](this[attribute], cb(iteratee, this), defaultVal, context);
+	      };
+	      default: return function() {
+	        var args = slice.call(arguments);
+	        args.unshift(this[attribute]);
+	        return base[method].apply(base, args);
+	      };
+	    }
+	  };
+
+	  var addUnderscoreMethods = function(Class, base, methods, attribute) {
+	    _.each(methods, function(length, method) {
+	      if (base[method]) Class.prototype[method] = addMethod(base, length, method, attribute);
+	    });
+	  };
+
+	  // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
+	  var cb = function(iteratee, instance) {
+	    if (_.isFunction(iteratee)) return iteratee;
+	    if (_.isObject(iteratee) && !instance._isModel(iteratee)) return modelMatcher(iteratee);
+	    if (_.isString(iteratee)) return function(model) { return model.get(iteratee); };
+	    return iteratee;
+	  };
+	  var modelMatcher = function(attrs) {
+	    var matcher = _.matches(attrs);
+	    return function(model) {
+	      return matcher(model.attributes);
+	    };
+	  };
+
+	  // Underscore methods that we want to implement on the Collection.
+	  // 90% of the core usefulness of Backbone Collections is actually implemented
+	  // right here:
+	  var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
+	    foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
+	    select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+	    contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+	    head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+	    without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+	    isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+	    sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
+
+
+	  // Underscore methods that we want to implement on the Model, mapped to the
+	  // number of arguments they take.
+	  var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
+	    omit: 0, chain: 1, isEmpty: 1};
+
+	  // Mix in each Underscore method as a proxy to `Collection#models`.
+
+	  _.each([
+	    [Collection, collectionMethods, 'models'],
+	    [Model, modelMethods, 'attributes']
+	  ], function(config) {
+	    var Base = config[0],
+	        methods = config[1],
+	        attribute = config[2];
+
+	    Base.mixin = function(obj) {
+	      var mappings = _.reduce(_.functions(obj), function(memo, name) {
+	        memo[name] = 0;
+	        return memo;
+	      }, {});
+	      addUnderscoreMethods(Base, obj, mappings, attribute);
+	    };
+
+	    addUnderscoreMethods(Base, _, methods, attribute);
 	  });
 
 	  // Backbone.sync
@@ -4651,11 +4833,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 	  var methodMap = {
-	    'create': 'POST',
-	    'update': 'PUT',
-	    'patch': 'PATCH',
-	    'delete': 'DELETE',
-	    'read': 'GET'
+	    create: 'POST',
+	    update: 'PUT',
+	    patch: 'PATCH',
+	    delete: 'DELETE',
+	    read: 'GET'
 	  };
 
 	  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
@@ -4671,6 +4853,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // matched. Creating a new one sets its `routes` hash, if not set statically.
 	  var Router = Backbone.Router = function(options) {
 	    options || (options = {});
+	    this.preinitialize.apply(this, arguments);
 	    if (options.routes) this.routes = options.routes;
 	    this._bindRoutes();
 	    this.initialize.apply(this, arguments);
@@ -4685,6 +4868,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Set up all inheritable **Backbone.Router** properties and methods.
 	  _.extend(Router.prototype, Events, {
+
+	    // preinitialize is an empty function by default. You can override it with a function
+	    // or object.  preinitialize will run before any instantiation logic is run in the Router.
+	    preinitialize: function(){},
 
 	    // Initialize is an empty function by default. Override it with your own
 	    // initialization logic.
@@ -4743,11 +4930,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // against the current location hash.
 	    _routeToRegExp: function(route) {
 	      route = route.replace(escapeRegExp, '\\$&')
-	                   .replace(optionalParam, '(?:$1)?')
-	                   .replace(namedParam, function(match, optional) {
-	                     return optional ? match : '([^/?]+)';
-	                   })
-	                   .replace(splatParam, '([^?]*?)');
+	        .replace(optionalParam, '(?:$1)?')
+	        .replace(namedParam, function(match, optional) {
+	          return optional ? match : '([^/?]+)';
+	        })
+	        .replace(splatParam, '([^?]*?)');
 	      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
 	    },
 
@@ -4775,7 +4962,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // falls back to polling.
 	  var History = Backbone.History = function() {
 	    this.handlers = [];
-	    this.checkUrl = _.bind(this.checkUrl, this);
+	    this.checkUrl = this.checkUrl.bind(this);
 
 	    // Ensure that `History` can be used outside of the browser.
 	    if (typeof window !== 'undefined') {
@@ -5016,11 +5203,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      var url = rootPath + fragment;
 
-	      // Strip the hash and decode for matching.
-	      fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
+	      // Strip the fragment of the query and hash for matching.
+	      fragment = fragment.replace(pathStripper, '');
 
-	      if (this.fragment === fragment) return;
-	      this.fragment = fragment;
+	      // Decode for matching.
+	      var decodedFragment = this.decodeFragment(fragment);
+
+	      if (this.fragment === decodedFragment) return;
+	      this.fragment = decodedFragment;
 
 	      // If pushState is available, we use it to set the fragment as a real URL.
 	      if (this._usePushState) {
@@ -16145,7 +16335,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Model Manager
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16506,7 +16696,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview 컬럼 모델
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16834,6 +17024,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Set column title by columns map
+	     * @param {Array} targetColumns - columns to change
+	     * @param {object} columnsMap - name and title to change
+	     * @private
+	     */
+	    _changeColumnTitlesByName: function(targetColumns, columnsMap) {
+	        _.each(columnsMap, function(value, key) {
+	            var idx = _.findIndex(targetColumns, function(data) {
+	                return data.name === key;
+	            });
+
+	            if (idx !== -1) {
+	                targetColumns[idx].title = value;
+	            }
+	        });
+	    },
+
+	    /**
+	     * Set column title by columns map
+	     * @param {object} columnsMap - name and title to change
+	     * @private
+	     */
+	    setColumnTitles: function(columnsMap) {
+	        var dataColumns = this.get('dataColumns');
+	        var complexHeaderColumns = this.get('complexHeaderColumns');
+
+	        this._changeColumnTitlesByName(dataColumns, columnsMap);
+	        if (complexHeaderColumns.length) {
+	            this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
+	        }
+
+	        this.trigger('columnModelChange');
+	    },
+
+	    /**
 	     * Set column model by data
 	     * @param {array} rowHeaders - Data of row headers
 	     * @param {array} columns - Data of columns
@@ -17032,7 +17257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Models
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17055,7 +17280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview Object that conatins constant values
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -17148,7 +17373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview TreeRowList grid data model implementation
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17844,7 +18069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19124,7 +19349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Collections
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19161,7 +19386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19823,7 +20048,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -20068,7 +20293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Event class for public event of Grid
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -20179,7 +20404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview 유틸리티 메서드 모음
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -20608,7 +20833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Detect right button by mouse event
 	     * @param {object} ev - Mouse event
-	     * @returns {boolea} State
+	     * @returns {boolean} State
 	     */
 	    isRightClickEvent: function(ev) {
 	        var rightClick;
@@ -20622,6 +20847,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return rightClick;
+	    },
+	    /**
+	     * Detect mobile browser
+	     * @returns {boolean} Whether using Mobile browser
+	     */
+	    isMobile: function() {
+	        return /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
 	    }
 	};
 
@@ -20634,7 +20866,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utilities for clipboard data
-	 * @author NHN Ent. Fe Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -20792,7 +21024,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview class name constants.
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -20933,7 +21165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview TreeRow data model implementation
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -21076,7 +21308,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview module:model/dimension
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -21440,7 +21672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Manage coordinates of rows
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -21812,7 +22044,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Manage coordinates of rows
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -22321,7 +22553,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Converts coordinates to index of rows and columns
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -22585,7 +22817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Focus Model
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -22595,6 +22827,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Model = __webpack_require__(10);
 	var util = __webpack_require__(18);
 	var GridEvent = __webpack_require__(17);
+
+	/**
+	 * whether using mobile browser
+	 * @type {boolean}
+	 * @private
+	 */
+	var _isMobile = util.isMobile();
 
 	/**
 	 * Focus model
@@ -22971,7 +23210,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * clipboard 에 focus 한다.
 	     */
 	    focusClipboard: function() {
-	        this.trigger('focusClipboard');
+	        if (!_isMobile) {
+	            this.trigger('focusClipboard');
+	        }
 	    },
 
 	    /**
@@ -23424,7 +23665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Rendering 모델
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -23811,6 +24052,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onColumnModelChange: function() {
+	        var scrollLeftBeforeChange = this.get('scrollLeft');
+	        var scrollTopBeforeChange = this.get('scrollTop');
+
 	        this.set({
 	            scrollLeft: 0,
 	            scrollTop: 0
@@ -23820,11 +24064,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setRenderingRange(true);
 
 	        this.refresh({
-	            change: false,
 	            columnModelChanged: true
 	        });
 
 	        this._updateMaxScrollLeft();
+
+	        this.set({
+	            scrollLeft: scrollLeftBeforeChange,
+	            scrollTop: scrollTopBeforeChange
+	        });
 	    },
 
 	    /**
@@ -24385,7 +24633,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Row Model for Rendering (View Model)
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -24857,7 +25105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview RowList 클래스파일
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -24896,7 +25144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Render model to be used for smart-rendering
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -25059,7 +25307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Selection Model class
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -26079,7 +26327,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -26387,7 +26635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Clipboard Model
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -26536,7 +26784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview View factory
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -26875,7 +27123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview View class that conaints a top element of the DOM structure of the grid.
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27141,7 +27389,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the content area
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27247,7 +27495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the pagination
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27359,7 +27607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the height resize handle
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27436,7 +27684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Drag event emitter
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27605,7 +27853,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27721,7 +27969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview i18n module file
-	 * @author NHN Ent. Fe Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -27841,7 +28089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Hidden Textarea View for handling key navigation events and emulating clipboard actions
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -28136,7 +28384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Key event generator
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -28253,7 +28501,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Left Side Frame
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -28324,7 +28572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Frame Base
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -28421,7 +28669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Right Side Frame
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -28658,7 +28906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Header View
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -29265,7 +29513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview ResizeHandle for the Header
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -29496,7 +29744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the body layout
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -29767,7 +30015,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the table layout in the body(data) area
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -29966,7 +30214,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Summary
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -30202,7 +30450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview RowList View
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -30520,7 +30768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the selection layer
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -30688,7 +30936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -30853,7 +31101,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer View class which contains the 'tui-date-picker'
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31066,7 +31314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the layer view that represents the currently focused cell
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31229,7 +31477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileoverview Creator of domEventBus
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31250,7 +31498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This class offers methods that can be used to get the current state of DOM element.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31370,7 +31618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Public Event Emitter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31484,7 +31732,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter Manager
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31660,7 +31908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for the row(TR) views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31841,7 +32089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Painters
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -31924,7 +32172,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for cell(TD) views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -32173,7 +32421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Tree cell painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -32496,7 +32744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Dummy cell painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -32571,7 +32819,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -32724,7 +32972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for the Input Painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -32966,7 +33214,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for 'select' input.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -33070,7 +33318,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for 'checkbox' and 'radio button'.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -33347,7 +33595,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Main Button Painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -33463,7 +33711,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Controller class to handle actions from the painters
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -33705,7 +33953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Add-on for binding to remote data
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -34566,7 +34814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Router for Addon.Net
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -34598,7 +34846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utilities for form data, form element
-	 * @author NHN Ent. Fe Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -34830,7 +35078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Component holder
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -34890,7 +35138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview theme manager
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -35000,7 +35248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview css style generator
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -35425,7 +35673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview CSS Rule string builder
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -35644,7 +35892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -35758,7 +36006,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -35822,7 +36070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';

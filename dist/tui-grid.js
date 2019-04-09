@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Jan 31 2019 16:42:30 GMT+0900 (Korean Standard Time)"
- * version: 3.5.0
+ * bundle created at "Tue Apr 09 2019 09:35:49 GMT+0900 (Korean Standard Time)"
+ * version: 3.7.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The entry file of Grid
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -80,7 +80,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The Grid class for the external API.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -559,7 +559,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} value - The number of pixel
 	     */
 	    setBodyHeight: function(value) {
-	        this.modelManager.dimensionModel.set('bodyHeight', value);
+	        this.modelManager.dimensionModel.set({
+	            bodyHeight: value,
+	            fixedHeight: value !== 'auto'
+	        });
 	    },
 
 	    /**
@@ -818,9 +821,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Sets the list of column model.
 	     * @param {Array} columns - A new list of column model
+	     * @example
+	     * {
+	     *      columnName1: 'title1',
+	     *      columnName2: 'title2',
+	     *      columnName3: 'title3'
+	     * }
 	     */
 	    setColumns: function(columns) {
 	        this.modelManager.columnModel.set('columns', columns);
+	    },
+
+	    /**
+	     * Set columns title
+	     * @param {string} columnsMap - columns map to be change
+	     */
+	    setColumnTitles: function(columnsMap) {
+	        this.modelManager.columnModel.setColumnTitles(columnsMap);
 	    },
 
 	    /**
@@ -1410,7 +1427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1498,7 +1515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Model Manager
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1865,7 +1882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview 컬럼 모델
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2193,6 +2210,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
+	     * Set column title by columns map
+	     * @param {Array} targetColumns - columns to change
+	     * @param {object} columnsMap - name and title to change
+	     * @private
+	     */
+	    _changeColumnTitlesByName: function(targetColumns, columnsMap) {
+	        _.each(columnsMap, function(value, key) {
+	            var idx = _.findIndex(targetColumns, function(data) {
+	                return data.name === key;
+	            });
+
+	            if (idx !== -1) {
+	                targetColumns[idx].title = value;
+	            }
+	        });
+	    },
+
+	    /**
+	     * Set column title by columns map
+	     * @param {object} columnsMap - name and title to change
+	     * @private
+	     */
+	    setColumnTitles: function(columnsMap) {
+	        var dataColumns = this.get('dataColumns');
+	        var complexHeaderColumns = this.get('complexHeaderColumns');
+
+	        this._changeColumnTitlesByName(dataColumns, columnsMap);
+	        if (complexHeaderColumns.length) {
+	            this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
+	        }
+
+	        this.trigger('columnModelChange');
+	    },
+
+	    /**
 	     * Set column model by data
 	     * @param {array} rowHeaders - Data of row headers
 	     * @param {array} columns - Data of columns
@@ -2391,7 +2443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Models
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2414,7 +2466,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview Object that conatins constant values
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -2507,7 +2559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview TreeRowList grid data model implementation
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -3203,7 +3255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -4483,7 +4535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Collections
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -4520,7 +4572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -5182,7 +5234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -5427,7 +5479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Event class for public event of Grid
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -5538,7 +5590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview 유틸리티 메서드 모음
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -5967,7 +6019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Detect right button by mouse event
 	     * @param {object} ev - Mouse event
-	     * @returns {boolea} State
+	     * @returns {boolean} State
 	     */
 	    isRightClickEvent: function(ev) {
 	        var rightClick;
@@ -5981,6 +6033,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return rightClick;
+	    },
+	    /**
+	     * Detect mobile browser
+	     * @returns {boolean} Whether using Mobile browser
+	     */
+	    isMobile: function() {
+	        return /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
 	    }
 	};
 
@@ -5993,7 +6052,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utilities for clipboard data
-	 * @author NHN Ent. Fe Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -6151,7 +6210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview class name constants.
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -6292,7 +6351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview TreeRow data model implementation
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -6435,7 +6494,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview module:model/dimension
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -6467,7 +6526,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.domState = options.domState;
 
 	        this.on('change:fixedHeight', this._resetSyncHeightHandler);
-	        this.on('change:bodyHeight', this._onChangeBodyHeight);
 
 	        if (options.domEventBus) {
 	            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
@@ -6530,21 +6588,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
 
 	        this.setHeight(height);
-	    },
-
-	    /**
-	     * Event handler for changing 'bodyHeight' value
-	     * @param {object} model - dimension model
-	     * @private
-	     */
-	    _onChangeBodyHeight: function(model) {
-	        var changed = model.changed;
-	        var changedTotalRowHeight = changed.totalRowHeight;
-	        var changedBodyHeight = changed.bodyHeight;
-
-	        if (!changedTotalRowHeight && changedBodyHeight) {
-	            this.set('fixedHeight', (changedBodyHeight !== 'auto'));
-	        }
 	    },
 
 	    /**
@@ -6815,7 +6858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Manage coordinates of rows
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -7187,7 +7230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Manage coordinates of rows
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -7696,7 +7739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Converts coordinates to index of rows and columns
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -7960,7 +8003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Focus Model
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -7970,6 +8013,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Model = __webpack_require__(9);
 	var util = __webpack_require__(17);
 	var GridEvent = __webpack_require__(16);
+
+	/**
+	 * whether using mobile browser
+	 * @type {boolean}
+	 * @private
+	 */
+	var _isMobile = util.isMobile();
 
 	/**
 	 * Focus model
@@ -8346,7 +8396,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * clipboard 에 focus 한다.
 	     */
 	    focusClipboard: function() {
-	        this.trigger('focusClipboard');
+	        if (!_isMobile) {
+	            this.trigger('focusClipboard');
+	        }
 	    },
 
 	    /**
@@ -8799,7 +8851,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Rendering 모델
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -9186,6 +9238,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onColumnModelChange: function() {
+	        var scrollLeftBeforeChange = this.get('scrollLeft');
+	        var scrollTopBeforeChange = this.get('scrollTop');
+
 	        this.set({
 	            scrollLeft: 0,
 	            scrollTop: 0
@@ -9195,11 +9250,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setRenderingRange(true);
 
 	        this.refresh({
-	            change: false,
 	            columnModelChanged: true
 	        });
 
 	        this._updateMaxScrollLeft();
+
+	        this.set({
+	            scrollLeft: scrollLeftBeforeChange,
+	            scrollTop: scrollTopBeforeChange
+	        });
 	    },
 
 	    /**
@@ -9760,7 +9819,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Row Model for Rendering (View Model)
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -10232,7 +10291,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview RowList 클래스파일
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -10271,7 +10330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Render model to be used for smart-rendering
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -10434,7 +10493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Selection Model class
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -11454,7 +11513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -11762,7 +11821,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Clipboard Model
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -11911,7 +11970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview View factory
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12250,7 +12309,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview View class that conaints a top element of the DOM structure of the grid.
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12516,7 +12575,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the content area
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12622,7 +12681,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the pagination
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12734,7 +12793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the height resize handle
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12811,7 +12870,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Drag event emitter
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -12980,7 +13039,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13096,7 +13155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview i18n module file
-	 * @author NHN Ent. Fe Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13216,7 +13275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Hidden Textarea View for handling key navigation events and emulating clipboard actions
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13511,7 +13570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Key event generator
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13628,7 +13687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Left Side Frame
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13699,7 +13758,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Frame Base
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -13796,7 +13855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Right Side Frame
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -14033,7 +14092,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Header View
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -14640,7 +14699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview ResizeHandle for the Header
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -14871,7 +14930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the body layout
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -15142,7 +15201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the table layout in the body(data) area
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -15341,7 +15400,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Summary
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -15577,7 +15636,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview RowList View
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -15895,7 +15954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the selection layer
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16063,7 +16122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer class that represents the state of rendering phase
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16228,7 +16287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Layer View class which contains the 'tui-date-picker'
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16441,7 +16500,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Class for the layer view that represents the currently focused cell
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16604,7 +16663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileoverview Creator of domEventBus
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16625,7 +16684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This class offers methods that can be used to get the current state of DOM element.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16745,7 +16804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Public Event Emitter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -16859,7 +16918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter Manager
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17035,7 +17094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for the row(TR) views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17216,7 +17275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for Painters
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17299,7 +17358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for cell(TD) views
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17548,7 +17607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Tree cell painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17871,7 +17930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Dummy cell painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -17946,7 +18005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -18099,7 +18158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Base class for the Input Painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -18341,7 +18400,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for 'select' input.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -18445,7 +18504,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Painter class for 'checkbox' and 'radio button'.
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -18722,7 +18781,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Main Button Painter
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -18838,7 +18897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Controller class to handle actions from the painters
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19080,7 +19139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Add-on for binding to remote data
-	 * @author NHN Ent. FE Development Lab
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19941,7 +20000,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Router for Addon.Net
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -19973,7 +20032,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Utilities for form data, form element
-	 * @author NHN Ent. Fe Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -20205,7 +20264,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Component holder
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -20265,7 +20324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview theme manager
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -20375,7 +20434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview css style generator
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -20800,7 +20859,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview CSS Rule string builder
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -21019,7 +21078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -21133,7 +21192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
@@ -21197,7 +21256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	* @fileoverview default theme preset
-	* @author NHN Ent. FE Development Team
+	* @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	*/
 
 	'use strict';
