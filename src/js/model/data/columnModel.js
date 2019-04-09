@@ -1,6 +1,6 @@
 /**
  * @fileoverview 컬럼 모델
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
@@ -325,6 +325,41 @@ var ColumnModel = Model.extend(/** @lends module:model/data/columnModel.prototyp
         });
 
         return ignoredColumnNames;
+    },
+
+    /**
+     * Set column title by columns map
+     * @param {Array} targetColumns - columns to change
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    _changeColumnTitlesByName: function(targetColumns, columnsMap) {
+        _.each(columnsMap, function(value, key) {
+            var idx = _.findIndex(targetColumns, function(data) {
+                return data.name === key;
+            });
+
+            if (idx !== -1) {
+                targetColumns[idx].title = value;
+            }
+        });
+    },
+
+    /**
+     * Set column title by columns map
+     * @param {object} columnsMap - name and title to change
+     * @private
+     */
+    setColumnTitles: function(columnsMap) {
+        var dataColumns = this.get('dataColumns');
+        var complexHeaderColumns = this.get('complexHeaderColumns');
+
+        this._changeColumnTitlesByName(dataColumns, columnsMap);
+        if (complexHeaderColumns.length) {
+            this._changeColumnTitlesByName(complexHeaderColumns, columnsMap);
+        }
+
+        this.trigger('columnModelChange');
     },
 
     /**

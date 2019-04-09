@@ -1,6 +1,6 @@
 /**
  * @fileoverview Focus Model
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
@@ -10,6 +10,13 @@ var _ = require('underscore');
 var Model = require('../base/model');
 var util = require('../common/util');
 var GridEvent = require('../event/gridEvent');
+
+/**
+ * whether using mobile browser
+ * @type {boolean}
+ * @private
+ */
+var _isMobile = util.isMobile();
 
 /**
  * Focus model
@@ -386,7 +393,9 @@ var Focus = Model.extend(/** @lends module:model/focus.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        this.trigger('focusClipboard');
+        if (!_isMobile) {
+            this.trigger('focusClipboard');
+        }
     },
 
     /**

@@ -108,6 +108,56 @@ describe('data.columnModel', function() {
         ];
     });
 
+    describe('setColumnTitles()', function() {
+        beforeEach(function() {
+            var complexHeaderColumns = [
+                {
+                    title: 'Child',
+                    name: 'child',
+                    childNames: ['none', 'text']
+                },
+                {
+                    title: 'Parent',
+                    name: 'parent',
+                    childNames: ['text-convertible', 'mergeColumn1']
+                }
+            ];
+
+            columnModelInstance.set({
+                columns: columnsData,
+                complexHeaderColumns: complexHeaderColumns
+            });
+        });
+
+        it('columnsMap에 따라 dataColumns와 complexHeaderColumns가 변경된다.', function() {
+            columnModelInstance.setColumnTitles({
+                radio: 'radio!',
+                checkbox: 'checkbox!',
+                parent: 'Parent!'
+            });
+
+            expect(columnModelInstance.get('complexHeaderColumns')[1].title).toBe('Parent!');
+            expect(columnModelInstance.getColumnModel('checkbox').title).toBe('checkbox!');
+            expect(columnModelInstance.getColumnModel('radio').title).toBe('radio!');
+        });
+
+        it('title이 변경하여도 기존 옵션값은 영향을 받지 않는다.', function() {
+            var columnModel = columnModelInstance.getColumnModel('checkbox');
+
+            expect(columnModel.title).toBe('checkbox');
+            expect(columnModel.editOptions.type).toBe('checkbox');
+            expect(columnModel.editOptions.list.length).toBe(4);
+
+            columnModelInstance.setColumnTitles({
+                checkbox: 'checkbox!'
+            });
+
+            expect(columnModel.title).toBe('checkbox!');
+            expect(columnModel.editOptions.type).toBe('checkbox');
+            expect(columnModel.editOptions.list.length).toBe(4);
+        });
+    });
+
     describe('getEditType()', function() {
         it('컬럼모델에 정의된 editType 속성값을 반환한다. 없다면 normal을 반환한다.', function() {
             columnModelInstance.set({
@@ -626,7 +676,7 @@ describe('data.columnModel', function() {
         });
     });
 
-    describe('columFixCount', function() {
+    describe('columnFixCount', function() {
         beforeEach(function() {
             columnsData = [
                 {

@@ -2,11 +2,11 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
 
 ## Wrappers
 
-* [toast-ui.vue-grid](https://github.com/nhnent/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN Entertainment. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
+* [toast-ui.vue-grid](https://github.com/nhnent/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -144,7 +144,6 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Summarize all values of each column
 * Customizing styles _(Three basic themes)_
 * Representing tree data
-
 
 ## 🐾 Examples
 
@@ -302,6 +301,18 @@ instance.setData(newData); // Call API of instance's public method
 Grid.applyTheme('striped'); // Call API of static method
 ```
 
+### TypeScript
+
+If you are using TypeScript, you must use `import module = require('module')` to import the Grid module. See ["export = " and "import = require()"](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require).
+
+```typescript
+import Grid = require('tui-grid');
+
+var instance = new Grid({
+    // ...options
+});
+```
+
 ## 🔧 Pull Request Steps
 
 TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
@@ -378,4 +389,4 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhnent/tui.grid/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhnent/tui.grid/blob/production/LICENSE) © [NHN](https://github.com/nhnent).

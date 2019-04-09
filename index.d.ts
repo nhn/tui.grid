@@ -173,7 +173,7 @@ declare namespace tuiGrid {
     }
 
     interface ISummaryAllValues {
-        [propName: string]: ISummaryColumnValues
+        [propName: string]: ISummaryColumnValues;
     }
 
     interface IColumnOptions {
@@ -462,7 +462,8 @@ declare namespace tuiGrid {
         public resetColumnWidths(): void;
         public showColumn(...args: string[]): void;
         public hideColumn(...args: string[]): void;
-        public setSummaryColumnContent(columnName: ColumnNameType, contents: string | ISummaryColumnContentOptions): void;
+        public setSummaryColumnContent(columnName: ColumnNameType,
+                                       contents: string | ISummaryColumnContentOptions): void;
         public getSummaryValues(): ISummaryAllValues;
         public getSummaryValues(columnName: ColumnNameType): ISummaryColumnValues;
         public setFooterColumnContent(columnName: ColumnNameType, contents: string): void;
@@ -484,5 +485,5 @@ declare namespace tuiGrid {
 }
 
 declare module 'tui-grid' {
-    export default tuiGrid.Grid;
+    export = tuiGrid.Grid;
 }

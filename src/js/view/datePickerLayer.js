@@ -1,6 +1,6 @@
 /**
  * @fileoverview Layer View class which contains the 'tui-date-picker'
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

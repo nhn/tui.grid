@@ -1,6 +1,6 @@
 /**
  * @fileoverview Add-on for binding to remote data
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

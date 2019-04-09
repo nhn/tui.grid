@@ -1,6 +1,6 @@
 /**
  * @fileoverview Event class for public event of Grid
- * @author NHN Ent. FE Development Lab
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';

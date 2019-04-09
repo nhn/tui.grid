@@ -1,6 +1,6 @@
 /**
  * @fileoverview RowList 클래스파일
- * @author NHN Ent. FE Development Team
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
