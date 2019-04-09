@@ -1,6 +1,6 @@
 import { reactive, watch } from '@/helper/reactive';
 
-context('reactive() and watch()', () => {
+it('reactive() and watch()', () => {
   const person = reactive({
     name: 'Kim',
     age: 20

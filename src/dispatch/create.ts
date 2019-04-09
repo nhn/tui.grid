@@ -1,12 +1,24 @@
 import * as viewport from './viewport';
-import { Action } from './types';
+import * as dimension from './dimension';
 import { Store } from '../store/types';
 
-const dispatchMap = { ...viewport };
+const dispatchMap = { ...viewport, ...dimension };
 
-export function createDispatcher(store: Store) {
-  return function (action: Action) {
+type DispatchMap = typeof dispatchMap;
+type DispatchFnKeys = keyof DispatchMap;
+type RestParameters<T> = T extends (first: any, ...args: infer P) => any ? P : never;
+
+export interface Dispatch {
+  <T extends DispatchFnKeys>(fname: T, ...args: RestParameters<DispatchMap[T]>): void;
+}
+
+export interface DispatchProps {
+  dispatch: Dispatch;
+}
+
+export function createDispatcher(store: Store): Dispatch {
+  return function dispatch(fname, ...args) {
     // @ts-ignore
-    dispatchMap[action.type](store, action);
-  }
+    dispatchMap[fname](store, ...args);
+  };
 }

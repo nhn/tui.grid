@@ -23,16 +23,17 @@ module.exports = (on) => {
           '@': path.resolve('./src')
         }
       },
+      devtool: 'source-map',
       module: {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader',
-            options: {transpileOnly: true}
+            loader: 'ts-loader'
           }
         ]
       }
     }
   };
+
   on('file:preprocessor', wp(options));
 };

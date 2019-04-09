@@ -1,14 +1,52 @@
-import { Row } from './types';
+import { Row, Dimension } from './types';
 import { reactive } from '../helper/reactive';
+import { OptGrid } from '../types';
 
-export function create(data: Row[], width: number, rowHeight: number, bodyHeight: number) {
-  return reactive({
-    width,
-    bodyHeight,
-    rowHeight: rowHeight || 40,
+type OptDimension = {
+  data: Row[];
+} & Pick<
+  OptGrid,
+  'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
+>;
+
+export function create({
+  data,
+  width = 'auto',
+  rowHeight = 40,
+  bodyHeight = 'auto',
+  minRowHeight = 40,
+  minBodyHeight = 130,
+  scrollX = true,
+  scrollY = true
+}: OptDimension): Dimension {
+  const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
+
+  return reactive<Dimension>({
+    width: width === 'auto' ? 0 : width,
+    autoWidth: width === 'auto',
+    minBodyHeight,
+    bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
+    autoHeight: bodyHeight === 'auto',
+    fitToParentHeight: bodyHeight === 'fitToParent',
+    rowHeight: typeof rowHeight === 'number' ? Math.max(rowHeight, minRowHeight) : 0,
+    minRowHeight,
+    autoRowHeight: rowHeight === 'auto',
+    scrollX,
+    scrollY,
+    summaryHeight: 0,
+    summaryPosition: 'bottom',
+    headerHeight: 30,
+    frozenBorderWidth: 0,
     colOffsets: [],
+    scrollbarWidth: 17,
+    tableBorderWidth: 1,
+    cellBorderWidth: 1,
+    lsideWidth: 0,
+    get rsideWidth() {
+      return this.width;
+    },
     get totalRowHeight() {
-      return data.length * (this.rowHeight + 1)
+      return data.length * (this.rowHeight + 1);
     },
     get rowOffsets() {
       const offsets = [0];
@@ -17,6 +55,6 @@ export function create(data: Row[], width: number, rowHeight: number, bodyHeight
         offsets.push(offsets[i - 1] + rowHeight + 1);
       }
       return offsets;
-    },
+    }
   });
 }

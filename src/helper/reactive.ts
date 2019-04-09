@@ -1,18 +1,10 @@
-interface ValueMap {
-  [propName: string]: any;
-}
-
-interface Storage {
-  __storage__: ValueMap
-}
-
-interface ComputedProp {
-  key: string;
+interface ComputedProp<T> {
+  key: keyof T;
   getter: Function;
   handlers: Function[];
 }
 
-let currWatcher = null;
+let currWatcher: Function | null = null;
 
 export function watch(fn: Function) {
   currWatcher = fn;
@@ -20,23 +12,27 @@ export function watch(fn: Function) {
   currWatcher = null;
 }
 
-export function reactive<T>(obj: T): T & Storage {
-  const storage: ValueMap = {};
-  const computedProps: ComputedProp[] = [];
+export type Reactive<T> = T & {
+  __storage__: Readonly<T>;
+};
+
+export function reactive<T>(obj: T): Reactive<T> {
+  const storage: T = <T>{};
+  const computedProps: ComputedProp<T>[] = [];
 
   for (let key in obj) {
-    const handlers = [];
-    const getter = Object.getOwnPropertyDescriptor(obj, key).get;
+    const handlers: Function[] = [];
+    const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
     if (typeof getter === 'function') {
-      computedProps.push({ key, handlers, getter })
+      computedProps.push({ key, handlers, getter });
     } else {
       storage[key] = obj[key];
       Object.defineProperty(obj, key, {
         set(value) {
           if (storage[key] !== value) {
             storage[key] = value;
-            handlers.forEach(fn => fn());
+            handlers.forEach((fn) => fn());
           }
         }
       });
@@ -49,10 +45,10 @@ export function reactive<T>(obj: T): T & Storage {
         }
         return storage[key];
       }
-    })
+    });
   }
 
-  const rObj = <T & Storage>obj;
+  const rObj = <Reactive<T>>obj;
   rObj.__storage__ = storage;
 
   computedProps.forEach(({ key, handlers, getter }) => {
@@ -60,7 +56,7 @@ export function reactive<T>(obj: T): T & Storage {
       const value = getter.call(obj);
       if (storage[key] !== value) {
         storage[key] = value;
-        handlers.forEach(fn => fn());
+        handlers.forEach((fn) => fn());
       }
     });
   });

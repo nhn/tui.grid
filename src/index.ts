@@ -1,2 +1,5 @@
 import Grid from './grid';
-export default Grid;
+import './css/grid.css';
+import './css/theme.css';
+
+export = Grid;

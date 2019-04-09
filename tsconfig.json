@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "module": "esnext",
-    "strict": false,
+    "module": "commonJS",
+    "strict": true,
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
@@ -24,8 +24,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/grid.tsx",
-    "src/view/root.tsx"
+    "src/**/*.tsx",
   ],
   "exclude": [
     "node_modules",
