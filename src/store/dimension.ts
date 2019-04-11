@@ -35,7 +35,7 @@ export function create({
     scrollY,
     summaryHeight: 0,
     summaryPosition: 'bottom',
-    headerHeight: 30,
+    headerHeight: 40,
     frozenBorderWidth: 0,
     colOffsets: [],
     scrollbarWidth: 17,

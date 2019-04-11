@@ -7,6 +7,7 @@ import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {
   width: number;
+  marginLeft: number;
   cornerTopHeight: number;
   cornerBottomHeight: number;
   bodyHeight: number;
@@ -44,7 +45,8 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   render() {
     const style = {
       display: 'block',
-      width: `${this.props.width}px`
+      marginLeft: this.props.marginLeft,
+      width: this.props.width
     };
 
     return (
@@ -61,15 +63,14 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 }
 
-export const RightSide = connect<StoreProps>(({ dimension }) => {
+export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
   const {
-    width,
     scrollbarWidth,
     scrollX,
     scrollY,
     summaryHeight,
     headerHeight,
-    cellBorderWidth,
+    /* cellBorderWidth, */
     tableBorderWidth,
     bodyHeight,
     summaryPosition
@@ -87,6 +88,8 @@ export const RightSide = connect<StoreProps>(({ dimension }) => {
   }
 
   const scrollXHeight = scrollX ? scrollbarWidth : 0;
+  const width = columnCoords.areaWidth.R;
+  const marginLeft = columnCoords.areaWidth.L;
 
-  return { width, cornerTopHeight, cornerBottomHeight, scrollXHeight, bodyHeight };
+  return { width, marginLeft, cornerTopHeight, cornerBottomHeight, scrollXHeight, bodyHeight };
 })(RightSideComp);

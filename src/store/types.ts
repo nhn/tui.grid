@@ -8,7 +8,7 @@ export interface Row {
   [propName: string]: CellValue;
 }
 
-export interface Column {
+export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
@@ -17,12 +17,12 @@ export interface Column {
   fixedWidth: boolean;
 }
 
-export interface Store {
-  readonly data: Row[];
-  readonly columns: Column[];
-  readonly dimension: Dimension;
-  readonly viewport: Viewport;
-  readonly columnCoords: ColumnCoords;
+export interface Column {
+  frozenCount: number;
+  visibleFrozenCount: number;
+  rowHeaders: ColumnInfo[];
+  dataColumns: ColumnInfo[];
+  visibleColumns: { [key in Side]: ColumnInfo[] };
 }
 
 export interface Dimension {
@@ -57,13 +57,21 @@ export interface Viewport {
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
-  readonly colsL: Column[];
-  readonly colsR: Column[];
-  readonly rowsL: Row[];
-  readonly rowsR: Row[];
+  readonly rows: Row[];
 }
 
 export interface ColumnCoords {
-  readonly widths: number[];
-  readonly offsets: number[];
+  readonly contentsWidth: number;
+  readonly frozenBorderWidth: number;
+  readonly widths: { [key in Side]: number[] };
+  readonly areaWidth: { [key in Side]: number };
+  readonly offsets: { [key in Side]: number[] };
+}
+
+export interface Store {
+  readonly data: Row[];
+  readonly column: Column;
+  readonly dimension: Dimension;
+  readonly viewport: Viewport;
+  readonly columnCoords: ColumnCoords;
 }

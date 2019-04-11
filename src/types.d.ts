@@ -36,4 +36,5 @@ export interface OptColumn {
 
 export interface OptColumnOptions {
   minWidth?: number;
+  frozenCount?: number;
 }

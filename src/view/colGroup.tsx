@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Side, Column } from '../store/types';
+import { Side, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 
@@ -8,7 +8,7 @@ interface OwnProps {
 }
 
 interface StoreProps {
-  columns: Column[];
+  columns: ColumnInfo[];
   widths: number[];
 }
 
@@ -26,7 +26,7 @@ class ColGroupComp extends Component<Props> {
   }
 }
 
-export const ColGroup = connect<StoreProps, OwnProps>(({ viewport, columnCoords }, { side }) => ({
-  widths: side === 'L' ? [] : columnCoords.widths,
-  columns: side === 'L' ? viewport.colsL : viewport.colsR
+export const ColGroup = connect<StoreProps, OwnProps>(({ columnCoords, column }, { side }) => ({
+  widths: columnCoords.widths[side],
+  columns: column.visibleColumns[side]
 }))(ColGroupComp);

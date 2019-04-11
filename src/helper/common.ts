@@ -31,6 +31,7 @@ type ClassName =
   | 'scrollbar-y-inner-border'
   | 'scrollbar-y-outer-border'
   | 'scrollbar-right-top'
+  | 'scrollbar-left-bottom'
   | 'scrollbar-right-bottom'
   | 'table-container'
   | 'table';
