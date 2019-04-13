@@ -12,6 +12,8 @@ interface StoreProps {
   cornerBottomHeight: number;
   bodyHeight: number;
   scrollXHeight: number;
+  frozenBorderWidth: number;
+  cellBorderWidth: number;
 }
 
 class RightSideComp extends Component<StoreProps & DispatchProps> {
@@ -35,11 +37,30 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
 
   renderScrollbarRightBottom() {
     const style = { height: this.props.cornerBottomHeight };
+
     return <div class={cls('scrollbar-right-bottom')} style={style} />;
   }
 
   renderScrollbarFrozenBorder() {
-    return <div class={cls('scrollbar-frozen-border')} />;
+    const { scrollXHeight, frozenBorderWidth, cellBorderWidth } = this.props;
+
+    const style = {
+      height: scrollXHeight,
+      width: frozenBorderWidth,
+      marginLeft: -(frozenBorderWidth + cellBorderWidth)
+    };
+
+    return <div class={cls('scrollbar-frozen-border')} style={style} />;
+  }
+
+  renderFrozenBorder() {
+    const { frozenBorderWidth } = this.props;
+    const style = {
+      marginLeft: -frozenBorderWidth,
+      width: frozenBorderWidth
+    };
+
+    return <div class={cls('frozen-border')} style={style} />;
   }
 
   render() {
@@ -58,22 +79,24 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
         {this.renderScrollbarRightTop()}
         {this.renderScrollbarRightBottom()}
         {this.renderScrollbarFrozenBorder()}
+        {this.renderFrozenBorder()}
       </div>
     );
   }
 }
 
-export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
+export const RightSide = connect<StoreProps>(({ dimension, column, columnCoords }) => {
   const {
     scrollbarWidth,
     scrollX,
     scrollY,
     summaryHeight,
     headerHeight,
-    /* cellBorderWidth, */
+    cellBorderWidth,
     tableBorderWidth,
     bodyHeight,
-    summaryPosition
+    summaryPosition,
+    frozenBorderWidth
   } = dimension;
 
   let cornerTopHeight = headerHeight;
@@ -89,7 +112,16 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
 
   const scrollXHeight = scrollX ? scrollbarWidth : 0;
   const width = columnCoords.areaWidth.R;
-  const marginLeft = columnCoords.areaWidth.L;
+  const marginLeft = columnCoords.areaWidth.L + tableBorderWidth;
 
-  return { width, marginLeft, cornerTopHeight, cornerBottomHeight, scrollXHeight, bodyHeight };
+  return {
+    width,
+    marginLeft,
+    cornerTopHeight,
+    cornerBottomHeight,
+    scrollXHeight,
+    bodyHeight,
+    cellBorderWidth,
+    frozenBorderWidth
+  };
 })(RightSideComp);

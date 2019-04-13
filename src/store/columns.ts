@@ -7,6 +7,7 @@ const DEF_MIN_WIDTH = 50;
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const title = column.title || column.name;
   const name = column.name;
+  const hidden = !!column.hidden;
   const fixedWidth = typeof column.width === 'number';
   const baseWidth = (column.width === 'auto' ? 0 : column.width) || 0;
   const resizable = !!column.resizable;
@@ -17,6 +18,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   return reactive({
     title,
     name,
+    hidden,
     fixedWidth,
     baseWidth,
     minWidth,
@@ -32,15 +34,15 @@ export function create(columns: OptColumn[], columnOptions: OptColumnOptions = {
   return reactive({
     frozenCount: columnOptions.frozenCount || 0,
     rowHeaders: [],
-    dataColumns: columnInfos,
-    get visibleFrozenCount(this: Column) {
-      return this.frozenCount;
-    },
+    allColumns: columnInfos,
     get visibleColumns() {
       return {
-        L: columnInfos.slice(0, this.frozenCount),
-        R: columnInfos.slice(this.frozenCount)
+        L: columnInfos.slice(0, this.frozenCount).filter(({ hidden }) => !hidden),
+        R: columnInfos.slice(this.frozenCount).filter(({ hidden }) => !hidden)
       };
+    },
+    get visibleFrozenCount(this: Column) {
+      return this.visibleColumns.L.length;
     }
   });
 }

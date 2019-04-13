@@ -108,28 +108,18 @@ function calculateOffests(widths: number[], borderWidth: number) {
 }
 
 export function create(column: Column, dimension: Dimension): ColumnCoords {
-  const { visibleColumns } = column;
-  const columns = [...visibleColumns.L, ...visibleColumns.R];
-
   return reactive<ColumnCoords>({
-    get frozenBorderWidth(this: ColumnCoords) {
-      const { frozenCount, visibleFrozenCount } = column;
-      const { tableBorderWidth } = dimension;
-      const borderCount = visibleFrozenCount > 0 ? 2 : frozenCount > 0 ? 1 : 0;
-
-      return borderCount * tableBorderWidth;
-    },
     get contentsWidth(this: ColumnCoords) {
       const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;
       const totalBorderWidth = (columnLen + 1) * dimension.cellBorderWidth;
       const scrollYWidth = dimension.scrollY ? dimension.scrollbarWidth : 0;
-      const frozenBorderWidth = column.frozenCount > 0 ? dimension.tableBorderWidth : 0;
 
-      return dimension.width - scrollYWidth - totalBorderWidth - frozenBorderWidth;
+      return dimension.width - scrollYWidth - totalBorderWidth - dimension.frozenBorderWidth;
     },
     get widths(this: ColumnCoords) {
+      const { visibleColumns, visibleFrozenCount } = column;
+      const columns = [...visibleColumns.L, ...visibleColumns.R];
       const widths = calculateWidths(columns, this.contentsWidth);
-      const { visibleFrozenCount } = column;
 
       return {
         L: widths.slice(0, visibleFrozenCount),
@@ -144,11 +134,12 @@ export function create(column: Column, dimension: Dimension): ColumnCoords {
     },
     get areaWidth(this: ColumnCoords) {
       const { visibleFrozenCount } = column;
-      const widthL = sum(this.widths.L) + visibleFrozenCount * dimension.cellBorderWidth;
+      const leftBorderWidth = visibleFrozenCount * dimension.cellBorderWidth;
+      const leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
 
       return {
-        L: widthL,
-        R: dimension.width - widthL
+        L: leftAreaWidth,
+        R: dimension.width - leftAreaWidth - dimension.cellBorderWidth
       };
     }
   });

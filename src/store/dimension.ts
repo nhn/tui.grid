@@ -1,9 +1,11 @@
-import { Row, Dimension } from './types';
+import { Row, Dimension, Column } from './types';
 import { reactive } from '../helper/reactive';
 import { OptGrid } from '../types';
 
 type OptDimension = {
   data: Row[];
+  column: Column;
+  frozenBorderWidth?: number;
 } & Pick<
   OptGrid,
   'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
@@ -11,11 +13,13 @@ type OptDimension = {
 
 export function create({
   data,
+  column,
   width = 'auto',
   rowHeight = 40,
   bodyHeight = 'auto',
   minRowHeight = 40,
   minBodyHeight = 130,
+  frozenBorderWidth = 1,
   scrollX = true,
   scrollY = true
 }: OptDimension): Dimension {
@@ -36,12 +40,16 @@ export function create({
     summaryHeight: 0,
     summaryPosition: 'bottom',
     headerHeight: 40,
-    frozenBorderWidth: 0,
     colOffsets: [],
     scrollbarWidth: 17,
     tableBorderWidth: 1,
     cellBorderWidth: 1,
     lsideWidth: 0,
+    get frozenBorderWidth(this: Dimension) {
+      const { visibleFrozenCount } = column;
+
+      return visibleFrozenCount > 0 ? frozenBorderWidth : 0;
+    },
     get rsideWidth() {
       return this.width;
     },

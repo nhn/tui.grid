@@ -1,9 +1,9 @@
 import { Store } from '../store/types';
 
-export function setScrollX({ viewport }: Store, scrollX: number) {
-  viewport.scrollX = scrollX;
+export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
+  viewport.scrollLeft = scrollLeft;
 }
 
-export function setScrollY({ viewport }: Store, scrollY: number) {
-  viewport.scrollY = scrollY;
+export function setScrollTop({ viewport }: Store, scrollTop: number) {
+  viewport.scrollTop = scrollTop;
 }

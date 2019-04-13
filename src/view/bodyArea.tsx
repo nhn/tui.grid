@@ -15,17 +15,32 @@ interface StoreProps {
   columns: ColumnInfo[];
   bodyHeight: number;
   totalRowHeight: number;
-  scrollY: number;
+  scrollTop: number;
   offsetY: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
+// only updates when these props are changed
+// for preventing unnecessary rendering when scroll changes
+const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
+  'data',
+  'columns',
+  'bodyHeight',
+  'totalRowHeight',
+  'offsetY'
+];
+
 class BodyAreaComp extends Component<Props> {
   el?: HTMLElement;
 
-  componentDidUpdate() {
-    this.el!.scrollTop = this.props.scrollY;
+  shouldComponentUpdate(nextProps: Props) {
+    const currProps = this.props;
+    return PROPS_FOR_UPDATE.some((propName) => nextProps[propName] !== currProps[propName]);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    this.el!.scrollTop = nextProps.scrollTop;
   }
 
   render({ side, bodyHeight, totalRowHeight, offsetY, dispatch }: Props) {
@@ -37,9 +52,9 @@ class BodyAreaComp extends Component<Props> {
       const { scrollLeft, scrollTop } = ev.srcElement!;
 
       if (this.props.side === 'R') {
-        dispatch('setScrollX', scrollLeft);
+        dispatch('setScrollLeft', scrollLeft);
       }
-      dispatch('setScrollY', scrollTop);
+      dispatch('setScrollTop', scrollTop);
     };
 
     return (
@@ -66,14 +81,14 @@ class BodyAreaComp extends Component<Props> {
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { data, column, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
-  const { offsetY, scrollY } = viewport;
+  const { offsetY, scrollTop } = viewport;
 
   return {
     data,
     columns: column.visibleColumns[side],
     bodyHeight,
     totalRowHeight,
-    scrollY,
+    scrollTop,
     offsetY
   };
 })(BodyAreaComp);

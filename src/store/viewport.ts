@@ -17,8 +17,8 @@ export function create({ data, column, dimension }: ViewPortOption): Reactive<Vi
   const { visibleColumns } = column;
 
   return reactive({
-    scrollX: 0,
-    scrollY: 0,
+    scrollLeft: 0,
+    scrollTop: 0,
     get colRange(this: Viewport) {
       return <Range>[0, visibleColumns.L.length + visibleColumns.R.length];
     },
@@ -26,7 +26,7 @@ export function create({ data, column, dimension }: ViewPortOption): Reactive<Vi
       const { rowOffsets, bodyHeight } = dimension;
 
       // safari uses negative scrollTop for bouncing effect
-      const scrollY = Math.max(this.scrollY, 0);
+      const scrollY = Math.max(this.scrollTop, 0);
 
       const start = indexOfRow(rowOffsets, scrollY);
       const end = indexOfRow(rowOffsets, scrollY + bodyHeight) + 1;

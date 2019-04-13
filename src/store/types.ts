@@ -12,6 +12,7 @@ export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
+  hidden: boolean;
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;
@@ -21,7 +22,7 @@ export interface Column {
   frozenCount: number;
   visibleFrozenCount: number;
   rowHeaders: ColumnInfo[];
-  dataColumns: ColumnInfo[];
+  allColumns: ColumnInfo[];
   visibleColumns: { [key in Side]: ColumnInfo[] };
 }
 
@@ -40,20 +41,20 @@ export interface Dimension {
   headerHeight: number;
   summaryPosition: 'top' | 'bottom';
   summaryHeight: number;
-  frozenBorderWidth: number;
   scrollbarWidth: number;
   tableBorderWidth: number;
   cellBorderWidth: number;
   scrollX: boolean;
   scrollY: boolean;
+  readonly frozenBorderWidth: number;
   readonly totalRowHeight: number;
   readonly rowOffsets: number[];
   readonly colOffsets: number[];
 }
 
 export interface Viewport {
-  scrollX: number;
-  scrollY: number;
+  scrollLeft: number;
+  scrollTop: number;
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
@@ -62,7 +63,6 @@ export interface Viewport {
 
 export interface ColumnCoords {
   readonly contentsWidth: number;
-  readonly frozenBorderWidth: number;
   readonly widths: { [key in Side]: number[] };
   readonly areaWidth: { [key in Side]: number };
   readonly offsets: { [key in Side]: number[] };

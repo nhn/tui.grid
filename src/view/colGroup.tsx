@@ -10,23 +10,27 @@ interface OwnProps {
 interface StoreProps {
   columns: ColumnInfo[];
   widths: number[];
+  borderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class ColGroupComp extends Component<Props> {
-  render({ columns, widths }: Props) {
+  render({ columns, widths, borderWidth }: Props) {
     return (
       <colgroup>
         {columns.map(({ name }, idx) => (
-          <col data-column-name={name} style={{ width: `${widths[idx]}px` }} />
+          <col data-column-name={name} style={{ width: widths[idx] + borderWidth }} />
         ))}
       </colgroup>
     );
   }
 }
 
-export const ColGroup = connect<StoreProps, OwnProps>(({ columnCoords, column }, { side }) => ({
-  widths: columnCoords.widths[side],
-  columns: column.visibleColumns[side]
-}))(ColGroupComp);
+export const ColGroup = connect<StoreProps, OwnProps>(
+  ({ columnCoords, dimension, column }, { side }) => ({
+    widths: columnCoords.widths[side],
+    columns: column.visibleColumns[side],
+    borderWidth: dimension.cellBorderWidth
+  })
+)(ColGroupComp);
