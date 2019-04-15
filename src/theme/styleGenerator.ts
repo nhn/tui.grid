@@ -34,9 +34,11 @@ import {
  * @ignore
  */
 function bgTextRuleString(className: string, options: OptBasicCellStyle): string {
+  const { background, text } = options;
+
   return createClassRule(className)
-    .bg(options.background)
-    .text(options.text)
+    .bg(background)
+    .text(text)
     .build();
 }
 
@@ -48,9 +50,11 @@ function bgTextRuleString(className: string, options: OptBasicCellStyle): string
  * @ignore
  */
 function bgBorderRuleString(className: string, options: OptPaginationStyle): string {
+  const { background, border } = options;
+
   return createClassRule(className)
-    .bg(options.background)
-    .border(options.border)
+    .bg(background)
+    .border(border)
     .build();
 }
 
@@ -64,21 +68,23 @@ export = {
     if (!options) {
       return '';
     }
-    const borderTopRule = createClassRule(cls('border-line-top')).bg(options.border);
+    const { border, showVerticalBorder } = options;
+    const borderTopRule = createClassRule(cls('border-line-top')).bg(border);
     const borderBottomRule = createClassComposeRule(' .', [
       cls('no-scroll-x'),
       cls('border-line-bottom')
-    ]).bg(options.border);
+    ]).bg(border);
     let rules = [borderTopRule, borderBottomRule];
     let borderLeftRule, borderRightRule;
-    if (options.showVerticalBorder) {
-      borderLeftRule = createClassRule(cls('border-line-left')).bg(options.border);
+    if (showVerticalBorder) {
+      borderLeftRule = createClassRule(cls('border-line-left')).bg(border);
       borderRightRule = createClassComposeRule(' .', [
         cls('no-scroll-y'),
         cls('border-line-right')
-      ]).bg(options.border);
+      ]).bg(border);
       rules = rules.concat([borderLeftRule, borderRightRule]);
     }
+
     return buildAll(rules);
   },
   /**
@@ -102,24 +108,26 @@ export = {
     if (!options) {
       return '';
     }
-    const webkitScrollbarRules = createWebkitScrollbarRules('.' + cls('container'), options);
-    const ieScrollbarRule = createIEScrollbarRule('.' + cls('container'), options);
-    const xInnerBorderRule = createClassRule(cls('border-line-bottom')).bg(options.border);
-    const xOuterBorderRule = createClassRule(cls('content-area')).border(options.border);
-    const yInnerBorderRule = createClassRule(cls('scrollbar-y-inner-border')).bg(options.border);
-    const yOuterBorderRule = createClassRule(cls('scrollbar-y-outer-border')).bg(options.border);
+    const { border, emptySpace } = options;
+    const webkitScrollbarRules = createWebkitScrollbarRules(`.${cls('container')}`, options);
+    const ieScrollbarRule = createIEScrollbarRule(`.${cls('container')}`, options);
+    const xInnerBorderRule = createClassRule(cls('border-line-bottom')).bg(border);
+    const xOuterBorderRule = createClassRule(cls('content-area')).border(border);
+    const yInnerBorderRule = createClassRule(cls('scrollbar-y-inner-border')).bg(border);
+    const yOuterBorderRule = createClassRule(cls('scrollbar-y-outer-border')).bg(border);
     const spaceRightTopRule = createClassRule(cls('scrollbar-right-top'))
-      .bg(options.emptySpace)
-      .border(options.border);
+      .bg(emptySpace)
+      .border(border);
     const spaceRightBottomRule = createClassRule(cls('scrollbar-right-bottom'))
-      .bg(options.emptySpace)
-      .border(options.border);
+      .bg(emptySpace)
+      .border(border);
     const spaceLeftBottomRule = createClassRule(cls('scrollbar-left-bottom'))
-      .bg(options.emptySpace)
-      .border(options.border);
+      .bg(emptySpace)
+      .border(border);
     const frozenBorderRule = createClassRule(cls('scrollbar-frozen-border'))
-      .bg(options.emptySpace)
-      .border(options.border);
+      .bg(emptySpace)
+      .border(border);
+
     return buildAll(
       webkitScrollbarRules.concat([
         ieScrollbarRule,
@@ -192,13 +200,14 @@ export = {
     if (!options) {
       return '';
     }
+    const { border, background } = options;
     const contentAreaRule = createClassRule(cls('summary-area'))
-      .bg(options.background)
-      .border(options.border);
+      .bg(background)
+      .border(border);
     const bodyAreaRule = createClassComposeRule(' .', [
       cls('has-summary-top'),
       cls('body-area')
-    ]).border(options.border);
+    ]).border(border);
 
     return buildAll([contentAreaRule, bodyAreaRule]);
   },
@@ -226,6 +235,7 @@ export = {
     if (!options) {
       return '';
     }
+    const { background, border, text } = options;
     const tableRule = createClassComposeRule(' .', [
       cls('show-lside-area'),
       cls('lside-area'),
@@ -233,10 +243,10 @@ export = {
       cls('table')
     ]).verticalBorderStyle(options, 'right');
     const cellRule = createClassRule(cls('cell-head'))
-      .bg(options.background)
-      .border(options.border)
+      .bg(background)
+      .border(border)
       .borderWidth(options)
-      .text(options.text);
+      .text(text);
 
     return buildAll([tableRule, cellRule]);
   },
@@ -249,6 +259,7 @@ export = {
     if (!options) {
       return '';
     }
+    const { background, border, text } = options;
     const tableRule = createClassComposeRule(' .', [
       cls('show-lside-area'),
       cls('lside-area'),
@@ -256,10 +267,10 @@ export = {
       cls('table')
     ]).verticalBorderStyle(options, 'right');
     const cellRule = createClassRule(cls('cell-row-head'))
-      .bg(options.background)
-      .border(options.border)
+      .bg(background)
+      .border(border)
       .borderWidth(options)
-      .text(options.text);
+      .text(text);
 
     return buildAll([tableRule, cellRule]);
   },
@@ -272,6 +283,7 @@ export = {
     if (!options) {
       return '';
     }
+    const { background, border, text } = options;
     const tableRule = createClassComposeRule(' .', [
       cls('show-lside-area'),
       cls('lside-area'),
@@ -279,10 +291,10 @@ export = {
       cls('table')
     ]).verticalBorderStyle(options, 'right');
     const cellRule = createClassRule(cls('cell-summary'))
-      .bg(options.background)
-      .border(options.border)
+      .bg(background)
+      .border(border)
       .borderWidth(options)
-      .text(options.text);
+      .text(text);
 
     return buildAll([tableRule, cellRule]);
   },
@@ -345,8 +357,9 @@ export = {
     if (!options) {
       return '';
     }
-    const focusLayerRule = createClassRule(cls('layer-focus-border')).bg(options.border);
-    const editingLayerRule = createClassRule(cls('layer-editing')).border(options.border);
+    const { border } = options;
+    const focusLayerRule = createClassRule(cls('layer-focus-border')).bg(border);
+    const editingLayerRule = createClassRule(cls('layer-editing')).border(border);
 
     return buildAll([focusLayerRule, editingLayerRule]);
   },

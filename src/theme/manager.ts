@@ -18,7 +18,6 @@ interface ThemeOptionsMap {
   [key: string]: OptPreset;
 }
 
-// @FIXME: 상수명 그대로 가져갈 건지?
 const presetOptions: ThemeOptionsMap = {
   default: presetDefault,
   striped,
@@ -49,11 +48,11 @@ function buildCssString(options: OptPreset): string {
     styleGen.scrollbar(scrollbar),
     styleGen.heightResizeHandle(heightResizeHandle),
     styleGen.pagination(pagination),
-    styleGen.selection(selection),
+    styleGen.selection(selection)
   ];
 
   if (area) {
-    const {header, body, summary} = area;
+    const { header, body, summary } = area;
 
     styles = styles.concat([
       styleGen.headArea(header),
@@ -101,6 +100,7 @@ function buildCssString(options: OptPreset): string {
       styleGen.cellFocusedInactive(focusedInactive)
     ]);
   }
+
   return styles.join('');
 }
 
