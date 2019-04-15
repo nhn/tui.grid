@@ -188,14 +188,14 @@ export function createIEScrollbarRule(
   selector: string,
   options: OptScrollbarStyle
 ): CSSRuleBuilder {
-  var bgProps = [
+  const bgProps = [
     'scrollbar-3dlight-color',
     'scrollbar-darkshadow-color',
     'scrollbar-track-color',
     'scrollbar-shadow-color'
   ];
-  var thumbProps = ['scrollbar-face-color', 'scrollbar-highlight-color'];
-  var ieScrollbarRule = create(selector);
+  const thumbProps = ['scrollbar-face-color', 'scrollbar-highlight-color'];
+  const ieScrollbarRule = create(selector);
 
   bgProps.forEach(function(prop) {
     ieScrollbarRule.add(prop, options.background);
