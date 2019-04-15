@@ -38,4 +38,16 @@ export default class Grid {
   setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
   }
+
+  setFrozenColumnCount(count: number) {
+    this.dispatch('setFrozenColumnCount', count);
+  }
+
+  hideColumn(columnName: string) {
+    this.dispatch('hideColumn', columnName);
+  }
+
+  showColumn(columnName: string) {
+    this.dispatch('showColumn', columnName);
+  }
 }

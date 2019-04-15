@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Column, Side } from '../store/types';
+import { ColumnInfo, Side } from '../store/types';
 import { ColGroup } from './colGroup';
 import { cls } from '../helper/common';
 import { connect } from './hoc';
@@ -13,7 +13,7 @@ interface OwnProps {
 interface StoreProps {
   headerHeight: number;
   cellBorderWidth: number;
-  columns: Column[];
+  columns: ColumnInfo[];
   scrollX: number;
 }
 
@@ -23,9 +23,7 @@ class HeadAreaComp extends Component<Props> {
   el?: HTMLElement;
 
   componentDidUpdate() {
-    const { scrollX } = this.props;
-
-    (this.el as HTMLElement).scrollLeft = scrollX;
+    this.el!.scrollLeft = this.props.scrollX;
   }
 
   render() {
@@ -59,7 +57,7 @@ export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
   return {
     headerHeight,
     cellBorderWidth,
-    columns: side === 'L' ? [] : store.columns,
-    scrollX: side === 'L' ? 0 : store.viewport.scrollX
+    columns: store.column.visibleColumns[side],
+    scrollX: side === 'L' ? 0 : store.viewport.scrollLeft
   };
 })(HeadAreaComp);

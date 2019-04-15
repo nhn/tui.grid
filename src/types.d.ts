@@ -29,6 +29,7 @@ export type OptRow = {
 export interface OptColumn {
   name: string;
   title?: string;
+  hidden?: boolean;
   width?: number | 'auto';
   resizable?: boolean;
   minWidth?: number;
@@ -36,4 +37,6 @@ export interface OptColumn {
 
 export interface OptColumnOptions {
   minWidth?: number;
+  frozenCount?: number;
+  frozenBorderWidth?: number;
 }

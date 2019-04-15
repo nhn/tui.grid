@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Side, Column } from '../store/types';
+import { Side, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 
@@ -8,25 +8,29 @@ interface OwnProps {
 }
 
 interface StoreProps {
-  columns: Column[];
+  columns: ColumnInfo[];
   widths: number[];
+  borderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class ColGroupComp extends Component<Props> {
-  render({ columns, widths }: Props) {
+  render({ columns, widths, borderWidth }: Props) {
     return (
       <colgroup>
         {columns.map(({ name }, idx) => (
-          <col data-column-name={name} style={{ width: `${widths[idx]}px` }} />
+          <col data-column-name={name} style={{ width: widths[idx] + borderWidth }} />
         ))}
       </colgroup>
     );
   }
 }
 
-export const ColGroup = connect<StoreProps, OwnProps>(({ viewport, columnCoords }, { side }) => ({
-  widths: side === 'L' ? [] : columnCoords.widths,
-  columns: side === 'L' ? viewport.colsL : viewport.colsR
-}))(ColGroupComp);
+export const ColGroup = connect<StoreProps, OwnProps>(
+  ({ columnCoords, dimension, column }, { side }) => ({
+    widths: columnCoords.widths[side],
+    columns: column.visibleColumns[side],
+    borderWidth: dimension.cellBorderWidth
+  })
+)(ColGroupComp);

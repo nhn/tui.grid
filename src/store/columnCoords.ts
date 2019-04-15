@@ -1,4 +1,4 @@
-import { ColumnCoords, Column, Dimension } from './types';
+import { ColumnCoords, Column, Dimension, ColumnInfo } from './types';
 import { reactive } from '../helper/reactive';
 import { sum, findIndexes, pipe, mapProp } from '../helper/common';
 
@@ -85,7 +85,7 @@ function adjustWidths(
   return result;
 }
 
-function calculateWidths(columns: Column[], contentWidth: number) {
+function calculateWidths(columns: ColumnInfo[], contentWidth: number) {
   const baseWidths = mapProp('baseWidth', columns);
   const minWidths = mapProp('minWidth', columns);
   const fixedFlags = mapProp('fixedWidth', columns);
@@ -98,7 +98,7 @@ function calculateWidths(columns: Column[], contentWidth: number) {
   );
 }
 
-function calculateOffests(widths: number[]) {
+function calculateOffests(widths: number[], borderWidth: number) {
   const offsets = [0];
   for (let i = 1, len = widths.length; i < len; i += 1) {
     offsets[i] = offsets[i - 1] + widths[i - 1];
@@ -107,13 +107,40 @@ function calculateOffests(widths: number[]) {
   return offsets;
 }
 
-export function create(columns: Column[], dimension: Dimension): ColumnCoords {
+export function create(column: Column, dimension: Dimension): ColumnCoords {
   return reactive<ColumnCoords>({
+    get contentsWidth(this: ColumnCoords) {
+      const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;
+      const totalBorderWidth = (columnLen + 1) * dimension.cellBorderWidth;
+      const scrollYWidth = dimension.scrollY ? dimension.scrollbarWidth : 0;
+
+      return dimension.width - scrollYWidth - totalBorderWidth - dimension.frozenBorderWidth;
+    },
     get widths(this: ColumnCoords) {
-      return calculateWidths(columns, dimension.width - dimension.scrollbarWidth);
+      const { visibleColumns, visibleFrozenCount } = column;
+      const columns = [...visibleColumns.L, ...visibleColumns.R];
+      const widths = calculateWidths(columns, this.contentsWidth);
+
+      return {
+        L: widths.slice(0, visibleFrozenCount),
+        R: widths.slice(visibleFrozenCount)
+      };
     },
     get offsets(this: ColumnCoords) {
-      return calculateOffests(this.widths);
+      return {
+        L: calculateOffests(this.widths.L, dimension.cellBorderWidth),
+        R: calculateOffests(this.widths.R, dimension.cellBorderWidth)
+      };
+    },
+    get areaWidth(this: ColumnCoords) {
+      const { visibleFrozenCount } = column;
+      const leftBorderWidth = visibleFrozenCount * dimension.cellBorderWidth;
+      const leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
+
+      return {
+        L: leftAreaWidth,
+        R: dimension.width - leftAreaWidth - dimension.cellBorderWidth
+      };
     }
   });
 }

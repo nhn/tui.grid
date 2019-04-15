@@ -48,8 +48,7 @@ export function reactive<T>(obj: T): Reactive<T> {
     });
   }
 
-  const rObj = <Reactive<T>>obj;
-  rObj.__storage__ = storage;
+  (<Reactive<T>>obj).__storage__ = storage;
 
   computedProps.forEach(({ key, handlers, getter }) => {
     watch(() => {
@@ -61,5 +60,5 @@ export function reactive<T>(obj: T): Reactive<T> {
     });
   });
 
-  return rObj;
+  return <Reactive<T>>obj;
 }

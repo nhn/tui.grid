@@ -3,21 +3,22 @@ import { OptGrid } from '../types';
 import { reactive } from '../helper/reactive';
 import { create as createViewport } from './viewport';
 import { create as createDimension } from './dimension';
-import { create as createColumns } from './columns';
+import { create as createColumn } from './columns';
 import { create as createColumnCoords } from './columnCoords';
 
 export function createStore(options: OptGrid): Store {
-  const { width, rowHeight, bodyHeight, minBodyHeight } = options;
+  const { width, rowHeight, bodyHeight, minBodyHeight, columnOptions = {} } = options;
+  const { frozenBorderWidth } = columnOptions;
 
   const data = options.data || [];
-  const columns = createColumns(options.columns, options.columnOptions);
-  const dimension = createDimension({ data, width, rowHeight, bodyHeight, minBodyHeight });
-  const viewport = createViewport({ data, columns, dimension });
-  const columnCoords = createColumnCoords(columns, dimension);
+  const column = createColumn(options.columns, columnOptions);
+  const dimension = createDimension({ data, column, width, rowHeight, bodyHeight, minBodyHeight, frozenBorderWidth });
+  const viewport = createViewport({ data, column, dimension });
+  const columnCoords = createColumnCoords(column, dimension);
 
   return reactive({
     data,
-    columns,
+    column,
     dimension,
     columnCoords,
     viewport

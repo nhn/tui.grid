@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { cls } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, Column } from '../store/types';
+import { Side, ColumnInfo } from '../store/types';
 
 export const HANDLE_WIDTH = 7;
 export const HANDLE_WIDTH_HALF = 3;
@@ -14,7 +14,7 @@ interface OwnProps {
 interface StoreProps {
   offsets: number[];
   widths: number[];
-  columns: Column[];
+  columns: ColumnInfo[];
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -95,9 +95,9 @@ class ColumnResizerComp extends Component<Props> {
 }
 
 export const ColumnResizer = connect<StoreProps, OwnProps>(
-  ({ viewport, columnCoords }, { side }) => ({
-    widths: side === 'L' ? [] : columnCoords.widths,
-    offsets: side === 'L' ? [] : columnCoords.offsets,
-    columns: side === 'L' ? viewport.colsL : viewport.colsR
+  ({ column, columnCoords }, { side }) => ({
+    widths: columnCoords.widths[side],
+    offsets: columnCoords.offsets[side],
+    columns: column.visibleColumns[side]
   })
 )(ColumnResizerComp);

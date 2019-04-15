@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRow } from './bodyRow';
 import { shallowEqual } from '../helper/common';
-import { Side, Row, Column } from '../store/types';
+import { Side, Row, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 
@@ -11,7 +11,7 @@ interface OwnProps {
 
 interface StoreProps {
   rows: Row[];
-  columns: Column[];
+  columns: ColumnInfo[];
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -37,15 +37,7 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StoreProps, OwnProps>(({ viewport }, { side }) => {
-  if (side === 'L') {
-    return {
-      rows: viewport.rowsL,
-      columns: viewport.colsL
-    };
-  }
-  return {
-    rows: viewport.rowsR,
-    columns: viewport.colsR
-  };
-})(BodyRowsComp);
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
+  rows: viewport.rows,
+  columns: column.visibleColumns[side]
+}))(BodyRowsComp);

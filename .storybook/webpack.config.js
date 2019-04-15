@@ -5,7 +5,12 @@ module.exports = ({ config, mode }) => {
     test: /\.(ts|tsx)$/,
     use: [
       {
-        loader: require.resolve('ts-loader')
+        loader: require.resolve('ts-loader'),
+        options: {
+          compilerOptions: {
+            strict: false
+          }
+        }
       }
     ]
   });

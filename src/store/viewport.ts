@@ -9,21 +9,24 @@ function indexOfRow(rowOffsets: number[], posY: number) {
 
 interface ViewPortOption {
   data: Row[];
-  columns: Column[];
+  column: Column;
   dimension: Dimension;
 }
 
-export function create({ data, columns, dimension }: ViewPortOption): Reactive<Viewport> {
+export function create({ data, column, dimension }: ViewPortOption): Reactive<Viewport> {
+  const { visibleColumns } = column;
+
   return reactive({
-    colsL: [],
-    colsR: [...columns],
-    rowsL: [],
-    scrollX: 0,
-    scrollY: 0,
-    colRange: <Range>[0, columns.length],
+    scrollLeft: 0,
+    scrollTop: 0,
+    get colRange(this: Viewport) {
+      return <Range>[0, visibleColumns.L.length + visibleColumns.R.length];
+    },
     get rowRange(this: Reactive<Viewport>) {
       const { rowOffsets, bodyHeight } = dimension;
-      const { scrollY } = this;
+
+      // safari uses negative scrollTop for bouncing effect
+      const scrollY = Math.max(this.scrollTop, 0);
 
       const start = indexOfRow(rowOffsets, scrollY);
       const end = indexOfRow(rowOffsets, scrollY + bodyHeight) + 1;
@@ -35,7 +38,7 @@ export function create({ data, columns, dimension }: ViewPortOption): Reactive<V
       }
       return value;
     },
-    get rowsR(this: Viewport) {
+    get rows(this: Viewport) {
       return data.slice(...this.rowRange);
     },
     get offsetY(this: Viewport) {
