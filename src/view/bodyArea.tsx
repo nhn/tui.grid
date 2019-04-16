@@ -5,6 +5,7 @@ import { Side, ColumnInfo } from '../store/types';
 import { cls } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
+import { FocusLayer } from './focusLayer';
 
 interface OwnProps {
   side: Side;
@@ -68,8 +69,9 @@ class BodyAreaComp extends Component<Props> {
               <ColGroup side={side} />
               <BodyRows side={side} />
             </table>
-            <div class={cls('layer-selection')} style="display: none;" />
           </div>
+          <div class={cls('layer-selection')} style="display: none;" />
+          <FocusLayer side={side} />
         </div>
       </div>
     );

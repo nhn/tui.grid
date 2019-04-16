@@ -27,7 +27,7 @@ export function createStore(options: OptGrid): Store {
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
   const viewport = createViewport({ data, column, dimension, rowCoords });
-  const focus = createFocus({ column, columnCoords, rowCoords });
+  const focus = createFocus({ data, column, columnCoords, rowCoords });
 
   return reactive({
     data,

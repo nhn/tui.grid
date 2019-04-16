@@ -8,7 +8,15 @@ interface RowCoordsOption {
 
 export function create({ data, dimension }: RowCoordsOption): RowCoords {
   return reactive({
-    heights: [],
+    get heights() {
+      const heights = [];
+      const { rowHeight } = dimension;
+      for (let i = 0, len = data.viewData.length; i < len; i += 1) {
+        heights[i] = rowHeight;
+      }
+
+      return heights;
+    },
 
     get offsets() {
       const offsets = [0];

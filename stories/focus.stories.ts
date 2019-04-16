@@ -23,7 +23,14 @@ function createGrid(options: any) {
 }
 
 stories.add('Focus Activation', () => {
-  const { el } = createGrid({ data, columns, bodyHeight: 'fitToParent' });
+  const { el } = createGrid({
+    data,
+    columns,
+    bodyHeight: 'fitToParent',
+    columnOptions: {
+      frozenCount: 2
+    }
+  });
   const rootEl = document.createElement('div');
   rootEl.style.height = '400px';
   rootEl.appendChild(el);

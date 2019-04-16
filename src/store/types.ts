@@ -75,10 +75,21 @@ export interface RowCoords {
   readonly offsets: number[];
 }
 
+export interface Rect {
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
+
 export interface Focus {
+  active: boolean;
   rowKey: number | null;
   columnName: string | null;
-  active: boolean;
+  readonly side: Side | null;
+  readonly columnIndex: number | null;
+  readonly rowIndex: number | null;
+  readonly cellPosRect: Rect | null;
 }
 
 export interface Store {
@@ -87,4 +98,5 @@ export interface Store {
   readonly dimension: Dimension;
   readonly viewport: Viewport;
   readonly columnCoords: ColumnCoords;
+  readonly focus: Focus;
 }

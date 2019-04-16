@@ -1,17 +1,72 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/common';
+import { connect } from './hoc';
+import { Rect, Side } from '../store/types';
+import { DispatchProps } from '../dispatch/create';
 
-export class FocusLayer extends Component {
+interface StoreProps {
+  cellPosRect: Rect | null;
+  cellBorderWidth: number;
+}
+
+interface OwnProps {
+  side: Side;
+}
+
+type Props = StoreProps & OwnProps & DispatchProps;
+
+class FocusLayerComp extends Component<Props> {
   render() {
-    const display = 'none';
+    const { cellPosRect, cellBorderWidth } = this.props;
+
+    if (cellPosRect === null) {
+      return null;
+    }
+
+    const { top, left, right, bottom } = cellPosRect;
+    const height = bottom - top;
+    const width = right - left;
+
+    const leftStyle = {
+      top,
+      left,
+      width: cellBorderWidth,
+      height
+    };
+
+    const topStyle = {
+      top: top === 0 ? cellBorderWidth : top,
+      left,
+      width: width + cellBorderWidth,
+      height: cellBorderWidth
+    };
+
+    const rightStyle = {
+      top,
+      left: left + width,
+      width: cellBorderWidth,
+      height: height + cellBorderWidth
+    };
+
+    const bottomStyle = {
+      top: top + height,
+      left,
+      width: width + cellBorderWidth,
+      height: cellBorderWidth
+    };
 
     return (
-      <div class={cls('layer-focus')} style={{ display }}>
-        <div class={cls('layer-focus-border')} />
-        <div class={cls('layer-focus-border')} />
-        <div class={cls('layer-focus-border')} />
-        <div class={cls('layer-focus-border')} />
+      <div class={cls('layer-focus')}>
+        <div class={cls('layer-focus-border')} style={leftStyle} />
+        <div class={cls('layer-focus-border')} style={topStyle} />
+        <div class={cls('layer-focus-border')} style={rightStyle} />
+        <div class={cls('layer-focus-border')} style={bottomStyle} />
       </div>
     );
   }
 }
+
+export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, { side }) => ({
+  cellPosRect: side === focus.side ? focus.cellPosRect : null,
+  cellBorderWidth: dimension.cellBorderWidth
+}))(FocusLayerComp);
