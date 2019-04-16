@@ -101,13 +101,18 @@ function calculateWidths(columns: ColumnInfo[], contentWidth: number) {
 function calculateOffests(widths: number[], borderWidth: number) {
   const offsets = [0];
   for (let i = 1, len = widths.length; i < len; i += 1) {
-    offsets[i] = offsets[i - 1] + widths[i - 1];
+    offsets[i] = offsets[i - 1] + widths[i - 1] + borderWidth;
   }
 
   return offsets;
 }
 
-export function create(column: Column, dimension: Dimension): ColumnCoords {
+interface ColumnCoordsOptions {
+  column: Column;
+  dimension: Dimension;
+}
+
+export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords {
   return reactive<ColumnCoords>({
     get contentsWidth(this: ColumnCoords) {
       const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;

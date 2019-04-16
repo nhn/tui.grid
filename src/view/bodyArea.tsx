@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, Row, ColumnInfo } from '../store/types';
+import { Side, ColumnInfo } from '../store/types';
 import { cls } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -11,7 +11,6 @@ interface OwnProps {
 }
 
 interface StoreProps {
-  data: Row[];
   columns: ColumnInfo[];
   bodyHeight: number;
   totalRowHeight: number;
@@ -24,7 +23,6 @@ type Props = OwnProps & StoreProps & DispatchProps;
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
 const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
-  'data',
   'columns',
   'bodyHeight',
   'totalRowHeight',
@@ -79,12 +77,11 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { data, column, dimension, viewport } = store;
+  const { column, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
   const { offsetY, scrollTop } = viewport;
 
   return {
-    data,
     columns: column.visibleColumns[side],
     bodyHeight,
     totalRowHeight,

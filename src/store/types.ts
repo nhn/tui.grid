@@ -5,7 +5,13 @@ export type Range = [number, number];
 export type Side = 'L' | 'R';
 
 export interface Row {
+  rowKey: number;
   [propName: string]: CellValue;
+}
+
+export interface Data {
+  rawData: Row[];
+  viewData: Row[];
 }
 
 export interface ColumnInfo {
@@ -29,8 +35,6 @@ export interface Column {
 export interface Dimension {
   width: number;
   autoWidth: boolean;
-  rsideWidth: number;
-  lsideWidth: number;
   bodyHeight: number;
   autoHeight: boolean;
   minBodyHeight: number;
@@ -48,8 +52,6 @@ export interface Dimension {
   scrollY: boolean;
   readonly frozenBorderWidth: number;
   readonly totalRowHeight: number;
-  readonly rowOffsets: number[];
-  readonly colOffsets: number[];
 }
 
 export interface Viewport {
@@ -68,8 +70,19 @@ export interface ColumnCoords {
   readonly offsets: { [key in Side]: number[] };
 }
 
+export interface RowCoords {
+  readonly heights: number[];
+  readonly offsets: number[];
+}
+
+export interface Focus {
+  rowKey: number | null;
+  columnName: string | null;
+  active: boolean;
+}
+
 export interface Store {
-  readonly data: Row[];
+  readonly data: Data;
   readonly column: Column;
   readonly dimension: Dimension;
   readonly viewport: Viewport;
