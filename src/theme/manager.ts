@@ -111,10 +111,10 @@ function buildCssString(options: OptPreset): string {
  * @ignore
  */
 function setDocumentStyle(options: OptPreset) {
-  const cssString: string = buildCssString(options);
-  const elem: HTMLElement | null = document.getElementById(STYLE_ELEMENT_ID);
+  const cssString = buildCssString(options);
+  const elem = document.getElementById(STYLE_ELEMENT_ID);
   if (elem) {
-    (elem.parentNode as HTMLElement).removeChild(elem);
+    elem.parentNode!.removeChild(elem);
   }
   appendStyleElement(STYLE_ELEMENT_ID, cssString);
 }
