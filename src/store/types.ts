@@ -98,5 +98,6 @@ export interface Store {
   readonly dimension: Dimension;
   readonly viewport: Viewport;
   readonly columnCoords: ColumnCoords;
+  readonly rowCoords: RowCoords;
   readonly focus: Focus;
 }

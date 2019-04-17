@@ -23,7 +23,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
       const { rowHeight } = dimension;
 
       for (let i = 1, len = data.viewData.length; i < len; i += 1) {
-        offsets.push(offsets[i - 1] + rowHeight + 1);
+        offsets.push(offsets[i - 1] + rowHeight);
       }
       return offsets;
     }

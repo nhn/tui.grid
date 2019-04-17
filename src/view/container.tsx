@@ -4,7 +4,8 @@ import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
-import { cls } from '../helper/common';
+import { Clipboard } from './clipboard';
+import { cls, getCellAddress } from '../helper/common';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
@@ -23,6 +24,19 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 export class ContainerComp extends Component<Props> {
   el?: HTMLElement;
+
+  handleMouseDown = (ev: MouseEvent) => {
+    const target = ev.target as HTMLElement;
+    const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
+    const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
+    /* const cellAddress = getCellAddress(target); */
+    const isMainButton = false;
+
+    if (!focusBlocked && !isMainButton) {
+      ev.preventDefault();
+      this.props.dispatch('setFocusActive', true);
+    }
+  };
 
   componentDidMount() {
     if (this.props.autoWidth) {
@@ -65,7 +79,13 @@ export class ContainerComp extends Component<Props> {
     const style = { width: autoWidth ? '100%' : width };
 
     return (
-      <div style={style} class={cls('container')} ref={(el) => (this.el = el)} data-grid-id="1">
+      <div
+        style={style}
+        class={cls('container')}
+        onMouseDown={this.handleMouseDown}
+        ref={(el) => (this.el = el)}
+        data-grid-id="1"
+      >
         <div class={cls('content-area')}>
           <LeftSide />
           <RightSide />
@@ -77,6 +97,7 @@ export class ContainerComp extends Component<Props> {
         <HeightResizeHandle />
         <StateLayer />
         <EditingLayer />
+        <Clipboard />
       </div>
     );
   }

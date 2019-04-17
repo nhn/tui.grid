@@ -66,7 +66,11 @@ class FocusLayerComp extends Component<Props> {
   }
 }
 
-export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, { side }) => ({
-  cellPosRect: side === focus.side ? focus.cellPosRect : null,
-  cellBorderWidth: dimension.cellBorderWidth
-}))(FocusLayerComp);
+export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, { side }) => {
+  const { cellPosRect } = focus;
+
+  return {
+    cellPosRect: side === focus.side ? cellPosRect : null,
+    cellBorderWidth: dimension.cellBorderWidth
+  };
+})(FocusLayerComp);

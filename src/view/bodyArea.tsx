@@ -33,6 +33,27 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 class BodyAreaComp extends Component<Props> {
   el?: HTMLElement;
 
+  handleScroll = (ev: UIEvent) => {
+    const { scrollLeft, scrollTop } = ev.srcElement!;
+    const { dispatch } = this.props;
+
+    if (this.props.side === 'R') {
+      dispatch('setScrollLeft', scrollLeft);
+    }
+    dispatch('setScrollTop', scrollTop);
+  };
+
+  handleMouseDown = (ev: MouseEvent) => {
+    const el = this.el!;
+    const { pageX, pageY, shiftKey } = ev;
+    const { side, dispatch } = this.props;
+    const { top, left } = el.getBoundingClientRect();
+    const offsetX = pageX - left + el.scrollLeft;
+    const offsetY = pageY - top + el.scrollTop;
+
+    dispatch('mouseDownBody', { offsetX, offsetY, side, shiftKey });
+  };
+
   shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
     return PROPS_FOR_UPDATE.some((propName) => nextProps[propName] !== currProps[propName]);
@@ -42,25 +63,17 @@ class BodyAreaComp extends Component<Props> {
     this.el!.scrollTop = nextProps.scrollTop;
   }
 
-  render({ side, bodyHeight, totalRowHeight, offsetY, dispatch }: Props) {
-    const areaStyle = { overflow: 'scroll', height: `${bodyHeight}px` };
-    const containerStyle = { height: `${totalRowHeight}px` };
-    const tableStyle = { overflow: 'visible', top: `${offsetY}px` };
-
-    const onScroll = (ev: UIEvent) => {
-      const { scrollLeft, scrollTop } = ev.srcElement!;
-
-      if (this.props.side === 'R') {
-        dispatch('setScrollLeft', scrollLeft);
-      }
-      dispatch('setScrollTop', scrollTop);
-    };
+  render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
+    const areaStyle = { overflow: 'scroll', height: bodyHeight };
+    const tableStyle = { overflow: 'visible', top: offsetY };
+    const containerStyle = { height: totalRowHeight };
 
     return (
       <div
         class={cls('body-area')}
         style={areaStyle}
-        onScroll={onScroll}
+        onScroll={this.handleScroll}
+        onMouseDown={this.handleMouseDown}
         ref={(el) => (this.el = el)}
       >
         <div class={cls('body-container')} style={containerStyle}>

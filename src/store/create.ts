@@ -34,6 +34,7 @@ export function createStore(options: OptGrid): Store {
     column,
     dimension,
     columnCoords,
+    rowCoords,
     viewport,
     focus
   });

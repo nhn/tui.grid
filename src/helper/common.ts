@@ -25,6 +25,7 @@ export type ClassNameType =
   | 'cell'
   | 'cell-content'
   | 'cell-head'
+  | 'clipboard'
   | 'column-resize-container'
   | 'column-resize-handle'
   | 'column-resize-handle-last'
@@ -91,6 +92,15 @@ export type ClassNameType =
   | 'tree-button-collapse'
   | 'tree-icon';
 
+export type AttributeKey =
+  | 'data-row-key'
+  | 'data-column-name'
+  | 'data-column-index'
+  | 'data-edit-type'
+  | 'data-grid-id';
+
+export type Attributes = { [key in AttributeKey]?: string };
+
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
@@ -140,6 +150,31 @@ export function arrayEqual(a1: any, a2: any) {
   }
 
   return true;
+}
+
+export function hasClass(el: HTMLElement, className: ClassName) {
+  return el.className.includes(cls(className));
+}
+
+export function findParent(el: HTMLElement, className: ClassName) {
+  let currentEl: HTMLElement | null = el;
+  do {
+    currentEl = currentEl.parentElement;
+  } while (currentEl && !hasClass(currentEl, className));
+
+  return currentEl;
+}
+
+export function getCellAddress(el: HTMLElement) {
+  const cellElement = findParent(el, 'cell');
+
+  if (!cellElement) {
+    return null;
+  }
+  const rowKey = Number(cellElement.getAttribute('data-row-key'));
+  const columnName = cellElement.getAttribute('data-column-name') as string;
+
+  return { rowKey, columnName };
 }
 
 export function sum(nums: number[]): number {
