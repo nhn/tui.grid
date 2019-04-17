@@ -6,24 +6,53 @@
 import { presetDefault, clean, striped } from './preset';
 import { deepAssign } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';
-import { OptPreset } from './../types.d';
-import styleGen from './styleGenerator';
+import { OptPreset, OptTableAreaStyle, OptTableCellStyle } from './../types.d';
+import * as styleGen from './styleGenerator';
+
+export type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
+type ThemeOptionsMapType = { [prop in ThemeOptionPresetNames]: OptPreset };
 
 const STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
-type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
-
-type ThemeOptionsMapType = { [prop in ThemeOptionPresetNames]: OptPreset };
-
-const presetOptions: { [prop: string]: OptPreset } & ThemeOptionsMapType = {
+const presetOptions: ThemeOptionsMapType = {
   default: presetDefault,
   striped,
   clean
 };
 
-// function getStyleGenMethodByName(name: string, value: v) {
+const styleGenMethodMap = {
+  outline: styleGen.outline,
+  frozenBorder: styleGen.frozenBorder,
+  scrollbar: styleGen.scrollbar,
+  heightResizeHandle: styleGen.heightResizeHandle,
+  pagination: styleGen.pagination,
+  selection: styleGen.selection
+};
 
-// }
+const styleGenAreaMethodMap = {
+  header: styleGen.headArea,
+  body: styleGen.bodyArea,
+  summary: styleGen.summaryArea
+};
+
+const styleGenCellMethodMap = {
+  normal: styleGen.cell,
+  dummy: styleGen.cellDummy,
+  editable: styleGen.cellEditable,
+  head: styleGen.cellHead,
+  rowHead: styleGen.cellRowHead,
+  summary: styleGen.cellSummary,
+  oddRow: styleGen.cellOddRow,
+  evenRow: styleGen.cellEvenRow,
+  required: styleGen.cellRequired,
+  disabled: styleGen.cellDisabled,
+  invalid: styleGen.cellInvalid,
+  currentRow: styleGen.cellCurrentRow,
+  selectedHead: styleGen.cellSelectedHead,
+  selectedRowHead: styleGen.cellSelectedRowHead,
+  focused: styleGen.cellFocused,
+  focusedInactive: styleGen.cellFocusedInactive
+};
 
 /**
  * build css string with given options.
@@ -32,74 +61,45 @@ const presetOptions: { [prop: string]: OptPreset } & ThemeOptionsMapType = {
  * @ignore
  */
 function buildCssString(options: OptPreset): string {
-  const {
-    outline,
-    frozenBorder,
-    scrollbar,
-    heightResizeHandle,
-    pagination,
-    selection,
-    area,
-    cell
-  } = options;
+  type KeyType = keyof (typeof styleGenMethodMap);
+  type AreaKeyType = keyof (typeof styleGenAreaMethodMap);
+  type CellKeyType = keyof (typeof styleGenCellMethodMap);
 
-  let styles: string[] = [
-    styleGen.outline(outline),
-    styleGen.frozenBorder(frozenBorder),
-    styleGen.scrollbar(scrollbar),
-    styleGen.heightResizeHandle(heightResizeHandle),
-    styleGen.pagination(pagination),
-    styleGen.selection(selection)
-  ];
+  const { area, cell } = options;
+  let styles: string[] = [];
+
+  Object.keys(styleGenMethodMap).map((key) => {
+    const keyWithType = key as KeyType;
+    const value = options[keyWithType];
+
+    if (value) {
+      const fn = styleGen[keyWithType] as Function;
+      styles.push(fn(value));
+    }
+  });
 
   if (area) {
-    const { header, body, summary } = area;
+    Object.keys(styleGenAreaMethodMap).map((key) => {
+      const keyWithType = key as AreaKeyType;
+      const value = area[keyWithType];
 
-    styles = styles.concat([
-      styleGen.headArea(header),
-      styleGen.bodyArea(body),
-      styleGen.summaryArea(summary)
-    ]);
+      if (value) {
+        const fn = styleGenAreaMethodMap[keyWithType] as Function;
+        styles.push(fn(value));
+      }
+    });
   }
 
   if (cell) {
-    const {
-      normal,
-      dummy,
-      editable,
-      head,
-      rowHead,
-      summary,
-      oddRow,
-      evenRow,
-      required,
-      disabled,
-      invalid,
-      currentRow,
-      selectedHead,
-      selectedRowHead,
-      focused,
-      focusedInactive
-    } = cell;
+    Object.keys(styleGenCellMethodMap).map((key) => {
+      const keyWithType = key as CellKeyType;
+      const value = cell[keyWithType];
 
-    styles = styles.concat([
-      styleGen.cell(normal),
-      styleGen.cellDummy(dummy),
-      styleGen.cellEditable(editable),
-      styleGen.cellHead(head),
-      styleGen.cellRowHead(rowHead),
-      styleGen.cellSummary(summary),
-      styleGen.cellOddRow(oddRow),
-      styleGen.cellEvenRow(evenRow),
-      styleGen.cellRequired(required),
-      styleGen.cellDisabled(disabled),
-      styleGen.cellInvalid(invalid),
-      styleGen.cellCurrentRow(currentRow),
-      styleGen.cellSelectedHead(selectedHead),
-      styleGen.cellSelectedRowHead(selectedRowHead),
-      styleGen.cellFocused(focused),
-      styleGen.cellFocusedInactive(focusedInactive)
-    ]);
+      if (value) {
+        const fn = styleGenCellMethodMap[keyWithType] as Function;
+        styles.push(fn(value));
+      }
+    });
   }
 
   return styles.join('');
@@ -126,7 +126,7 @@ export default {
    * @param {String} themeName - preset theme name
    * @param {Object} extOptions - if exist, extend preset theme options with it.
    */
-  apply: function(themeName: string, extOptions?: OptPreset) {
+  apply: function(themeName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     let options = presetOptions[themeName];
     if (!options) {
       options = presetOptions.default;

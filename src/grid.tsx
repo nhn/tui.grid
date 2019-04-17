@@ -4,7 +4,7 @@ import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store } from './store/types';
-import themeManager from './theme/manager';
+import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 
 if ((module as any).hot) {
   require('preact/devtools');
@@ -143,7 +143,7 @@ export default class Grid {
    *     }
    * });
    */
-  static applyTheme(presetName: string, extOptions?: OptPreset) {
+  static applyTheme(presetName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     themeManager.apply(presetName, extOptions);
   }
 

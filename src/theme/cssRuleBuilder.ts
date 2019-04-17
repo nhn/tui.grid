@@ -149,13 +149,13 @@ export function createClassRule(className: ClassNameType): CSSRuleBuilder {
 }
 
 /**
- * Creates a new Builder instance with a composed class name.
+ * Creates a new Builder instance with a nested class name.
  * @param {String} selector - selector to compose class names
- * @param {Array} attributes - attributes list(ex> class name, element name, id..)
+ * @param {Array} classNames - classNames
  * @returns {CSSRuleBuilder}
  */
-export function createClassComposeRule(selector: string, attributes: string[]): CSSRuleBuilder {
-  return create(`.${attributes.join(selector)}`);
+export function createNestedClassRule(selector: string, classNames: ClassNameType[]): CSSRuleBuilder {
+  return create(`.${classNames.map((className) => cls(className)).join(selector)}`);
 }
 
 /**
