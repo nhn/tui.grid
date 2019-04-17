@@ -171,11 +171,3 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
 
   return resultObj;
 }
-
-export function isString(obj: any) {
-  return toString.call(obj) === `[object String]`;
-}
-
-export function isBoolean(obj: any) {
-  return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
-}

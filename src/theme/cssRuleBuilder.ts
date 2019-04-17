@@ -2,8 +2,6 @@
  * @fileoverview CSS Rule string builder
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
-
-import { isString, isBoolean } from '../helper/common';
 import { OptScrollbarStyle, OptCellStyle } from './../types.d';
 import { cls, ClassNameType } from '../helper/common';
 
@@ -24,7 +22,7 @@ class CSSRuleBuilder {
   private propValues: string[] = [];
 
   init(selector: string) {
-    if (!isString(selector) || !selector) {
+    if (!(typeof selector === 'string') || !selector) {
       throw new Error('The Selector must be a string and not be empty.');
     }
     this.selector = selector;
@@ -66,12 +64,12 @@ class CSSRuleBuilder {
     const horizontal = options.showHorizontalBorder;
     let value: '1px' | '0';
 
-    if (isBoolean(vertical)) {
+    if (typeof vertical === 'boolean') {
       value = vertical ? '1px' : '0';
       this.add('border-left-width', value).add('border-right-width', value);
     }
 
-    if (isBoolean(horizontal)) {
+    if (typeof horizontal === 'boolean') {
       value = horizontal ? '1px' : '0';
       this.add('border-top-width', value).add('border-bottom-width', value);
     }
@@ -90,7 +88,7 @@ class CSSRuleBuilder {
     const vertical = options.showVerticalBorder;
     let value: 'solid' | 'hidden';
 
-    if (isBoolean(vertical) && position) {
+    if (typeof vertical === 'boolean' && position) {
       value = vertical ? 'solid' : 'hidden';
 
       this.add(`border-${position}-style`, value);
