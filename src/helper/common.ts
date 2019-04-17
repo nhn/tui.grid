@@ -1,6 +1,6 @@
 const CLS_PREFIX = 'tui-grid-';
 
-type ClassName =
+export type ClassNameType =
   | 'body-area'
   | 'body-container'
   | 'border-line'
@@ -8,6 +8,20 @@ type ClassName =
   | 'border-line-left'
   | 'border-line-right'
   | 'border-line-bottom'
+  | 'btn-text'
+  | 'btn-sorting'
+  | 'btn-sorting-up'
+  | 'btn-sorting-down'
+  | 'btn-excel-download'
+  | 'btn-excel-icon'
+  | 'btn-excel-page'
+  | 'btn-excel-all'
+  | 'btn-tree'
+  | 'content-before'
+  | 'content-after'
+  | 'content-input'
+  | 'content-text'
+  | 'cell-content'
   | 'cell'
   | 'cell-content'
   | 'cell-head'
@@ -16,28 +30,68 @@ type ClassName =
   | 'column-resize-handle-last'
   | 'container'
   | 'content-area'
+  | 'clipboard'
+  | 'cell-row-head'
+  | 'cell-summary'
+  | 'cell-row-odd'
+  | 'cell-row-even'
+  | 'cell-editable'
+  | 'cell-dummy'
+  | 'cell-required'
+  | 'cell-disabled'
+  | 'cell-selected'
+  | 'cell-invalid'
+  | 'cell-ellipsis'
+  | 'cell-current-row'
+  | 'cell-main-button'
+  | 'cell-has-input'
+  | 'cell-has-tree'
   | 'frozen-border'
+  | 'frozen-border-top'
+  | 'frozen-border-bottom'
   | 'head-area'
   | 'height-resize-handle'
   | 'layer-focus'
   | 'layer-focus-border'
-  | 'layer-editing'
-  | 'layer-selection'
   | 'layer-state'
+  | 'layer-state-content'
+  | 'layer-state-loading'
+  | 'layer-focus-deactive'
+  | 'layer-editing'
+  | 'layer-datepicker'
   | 'lside-area'
+  | 'layer-selection'
+  | 'rside-area'
+  | 'row-odd'
+  | 'row-even'
   | 'no-scroll-x'
   | 'no-scroll-y'
-  | 'rside-area'
+  | 'pagination'
+  | 'height-resize-handle'
+  | 'height-resize-bar'
+  | 'has-summary-top'
+  | 'has-summary-bottom'
+  | 'show-lside-area'
   | 'scrollbar-frozen-border'
   | 'scrollbar-left-bottom'
   | 'scrollbar-y-inner-border'
   | 'scrollbar-y-outer-border'
   | 'scrollbar-right-top'
   | 'scrollbar-right-bottom'
+  | 'scrollbar-left-bottom'
+  | 'scrollbar-left-top'
+  | 'summary-area'
+  | 'table-container'
   | 'table'
-  | 'table-container';
+  | 'tree-wrapper-relative'
+  | 'tree-wrapper-valign-center'
+  | 'tree-extra-content'
+  | 'tree-depth'
+  | 'tree-button-expand'
+  | 'tree-button-collapse'
+  | 'tree-icon';
 
-export function cls(...names: (ClassName | [boolean, ClassName])[]) {
+export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
   for (let name of names) {
@@ -102,4 +156,18 @@ export function pipe(initVal: any, ...args: Function[]) {
 
 export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map((item) => item[propName]);
+}
+
+export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
+  const resultObj: T1 & T2 = <T1 & T2>Object.assign({}, targetObj);
+
+  for (const prop of Object.keys(obj)) {
+    if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
+      resultObj[prop] = deepAssign(resultObj[prop], obj[prop]);
+    } else {
+      resultObj[prop] = obj[prop];
+    }
+  }
+
+  return resultObj;
 }

@@ -29,8 +29,8 @@ class BodyRowsComp extends Component<Props> {
 
     return (
       <tbody>
-        {rows.map((row) => (
-          <BodyRow key={row.id as string} row={row} columnNames={columnNames} />
+        {rows.map((row, idx) => (
+          <BodyRow key={row.id as string} row={row} columnNames={columnNames} idx={idx} />
         ))}
       </tbody>
     );
