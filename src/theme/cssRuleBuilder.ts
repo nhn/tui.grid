@@ -5,8 +5,7 @@
 
 import { isString, isBoolean } from '../helper/common';
 import { OptScrollbarStyle, OptCellStyle } from './../types.d';
-
-type StringOrUndefinedType = string | undefined;
+import { cls, ClassNameType } from '../helper/common';
 
 /**
  * create css rule string and returns it
@@ -21,15 +20,15 @@ class CSSRuleBuilder {
     this.init(selector);
   }
 
-  _selector: string = '';
-  _propValues: string[] = [];
+  private selector: string = '';
+  private propValues: string[] = [];
 
   init(selector: string) {
     if (!isString(selector) || !selector) {
       throw new Error('The Selector must be a string and not be empty.');
     }
-    this._selector = selector;
-    this._propValues = [];
+    this.selector = selector;
+    this.propValues = [];
   }
 
   /**
@@ -40,7 +39,7 @@ class CSSRuleBuilder {
    */
   add(property: string, value?: string): CSSRuleBuilder {
     if (value) {
-      this._propValues.push(`${property}:${value}`);
+      this.propValues.push(`${property}:${value}`);
     }
 
     return this;
@@ -87,7 +86,7 @@ class CSSRuleBuilder {
    * @param {String} position - Position of the vertical border ('right' or 'left')
    * @returns {CSSRuleBuilder}
    */
-  verticalBorderStyle(options: OptCellStyle, position: StringOrUndefinedType): CSSRuleBuilder {
+  verticalBorderStyle(options: OptCellStyle, position?: string): CSSRuleBuilder {
     const vertical = options.showVerticalBorder;
     let value: 'solid' | 'hidden';
 
@@ -125,8 +124,8 @@ class CSSRuleBuilder {
   build() {
     let result = '';
 
-    if (this._propValues.length) {
-      result = `${this._selector}{${this._propValues.join(';')}}`;
+    if (this.propValues.length) {
+      result = `${this.selector}{${this.propValues.join(';')}}`;
     }
 
     return result;
@@ -147,18 +146,18 @@ export function create(selector: string) {
  * @param {String} className - class name
  * @returns {CSSRuleBuilder}
  */
-export function createClassRule(className: string): CSSRuleBuilder {
-  return create(`.${className}`);
+export function createClassRule(className: ClassNameType): CSSRuleBuilder {
+  return create(`.${cls(className)}`);
 }
 
 /**
  * Creates a new Builder instance with a composed class name.
  * @param {String} selector - selector to compose class names
- * @param {Array} classNames - class name list
+ * @param {Array} attributes - attributes list(ex> class name, element name, id..)
  * @returns {CSSRuleBuilder}
  */
-export function createClassComposeRule(selector: string, classNames: string[]): CSSRuleBuilder {
-  return create(`.${classNames.join(selector)}`);
+export function createClassComposeRule(selector: string, attributes: string[]): CSSRuleBuilder {
+  return create(`.${attributes.join(selector)}`);
 }
 
 /**

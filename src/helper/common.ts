@@ -1,6 +1,6 @@
 const CLS_PREFIX = 'tui-grid-';
 
-type ClassName =
+export type ClassNameType =
   | 'body-area'
   | 'body-container'
   | 'border-line'
@@ -91,7 +91,7 @@ type ClassName =
   | 'tree-button-collapse'
   | 'tree-icon';
 
-export function cls(...names: (ClassName | [boolean, ClassName])[]) {
+export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
   for (let name of names) {
@@ -158,8 +158,8 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map((item) => item[propName]);
 }
 
-export function deepAssign(targetObj: Obj, obj: Obj): Obj {
-  const resultObj: Obj = Object.assign({}, targetObj);
+export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
+  const resultObj: T1 & T2 = <T1 & T2>Object.assign({}, targetObj);
 
   for (const prop of Object.keys(obj)) {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {

@@ -7,22 +7,23 @@ import { presetDefault, clean, striped } from './preset';
 import { deepAssign } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';
 import { OptPreset } from './../types.d';
-import { HeightResizeHandle } from './../view/heightResizeHandle';
 import styleGen from './styleGenerator';
 
 const STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
-type QueryResultType = HTMLElement | null;
+type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
 
-interface ThemeOptionsMap {
-  [key: string]: OptPreset;
-}
+type ThemeOptionsMapType = { [prop in ThemeOptionPresetNames]: OptPreset };
 
-const presetOptions: ThemeOptionsMap = {
+const presetOptions: { [prop: string]: OptPreset } & ThemeOptionsMapType = {
   default: presetDefault,
   striped,
   clean
 };
+
+// function getStyleGenMethodByName(name: string, value: v) {
+
+// }
 
 /**
  * build css string with given options.
@@ -42,7 +43,7 @@ function buildCssString(options: OptPreset): string {
     cell
   } = options;
 
-  let styles: string[] | string = [
+  let styles: string[] = [
     styleGen.outline(outline),
     styleGen.frozenBorder(frozenBorder),
     styleGen.scrollbar(scrollbar),
@@ -109,9 +110,9 @@ function buildCssString(options: OptPreset): string {
  * @param {Object} options - options
  * @ignore
  */
-function setDocumentStyle(options: object) {
+function setDocumentStyle(options: OptPreset) {
   const cssString: string = buildCssString(options);
-  const elem: QueryResultType = document.getElementById(STYLE_ELEMENT_ID);
+  const elem: HTMLElement | null = document.getElementById(STYLE_ELEMENT_ID);
   if (elem) {
     (elem.parentNode as HTMLElement).removeChild(elem);
   }

@@ -2,7 +2,7 @@
  * @fileoverview css style generator
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
-import { cls } from '../helper/common';
+import { cls, ClassNameType } from '../helper/common';
 import {
   createClassRule,
   createClassComposeRule,
@@ -33,7 +33,7 @@ import {
  * @returns {String}
  * @ignore
  */
-function bgTextRuleString(className: string, options: OptBasicCellStyle): string {
+function bgTextRuleString(className: ClassNameType, options: OptBasicCellStyle): string {
   const { background, text } = options;
 
   return createClassRule(className)
@@ -49,7 +49,7 @@ function bgTextRuleString(className: string, options: OptBasicCellStyle): string
  * @returns {String}
  * @ignore
  */
-function bgBorderRuleString(className: string, options: OptPaginationStyle): string {
+function bgBorderRuleString(className: ClassNameType, options: OptPaginationStyle): string {
   const { background, border } = options;
 
   return createClassRule(className)
@@ -69,7 +69,7 @@ export = {
       return '';
     }
     const { border, showVerticalBorder } = options;
-    const borderTopRule = createClassRule(cls('border-line-top')).bg(border);
+    const borderTopRule = createClassRule('border-line-top').bg(border);
     const borderBottomRule = createClassComposeRule(' .', [
       cls('no-scroll-x'),
       cls('border-line-bottom')
@@ -77,7 +77,7 @@ export = {
     let rules = [borderTopRule, borderBottomRule];
     let borderLeftRule, borderRightRule;
     if (showVerticalBorder) {
-      borderLeftRule = createClassRule(cls('border-line-left')).bg(border);
+      borderLeftRule = createClassRule('border-line-left').bg(border);
       borderRightRule = createClassComposeRule(' .', [
         cls('no-scroll-y'),
         cls('border-line-right')
@@ -94,7 +94,7 @@ export = {
    */
   frozenBorder: function(options?: OptFrozenBorderStyle): string {
     return options
-      ? createClassRule(cls('frozen-border'))
+      ? createClassRule('frozen-border')
           .bg(options.border)
           .build()
       : '';
@@ -111,36 +111,35 @@ export = {
     const { border, emptySpace } = options;
     const webkitScrollbarRules = createWebkitScrollbarRules(`.${cls('container')}`, options);
     const ieScrollbarRule = createIEScrollbarRule(`.${cls('container')}`, options);
-    const xInnerBorderRule = createClassRule(cls('border-line-bottom')).bg(border);
-    const xOuterBorderRule = createClassRule(cls('content-area')).border(border);
-    const yInnerBorderRule = createClassRule(cls('scrollbar-y-inner-border')).bg(border);
-    const yOuterBorderRule = createClassRule(cls('scrollbar-y-outer-border')).bg(border);
-    const spaceRightTopRule = createClassRule(cls('scrollbar-right-top'))
+    const xInnerBorderRule = createClassRule('border-line-bottom').bg(border);
+    const xOuterBorderRule = createClassRule('content-area').border(border);
+    const yInnerBorderRule = createClassRule('scrollbar-y-inner-border').bg(border);
+    const yOuterBorderRule = createClassRule('scrollbar-y-outer-border').bg(border);
+    const spaceRightTopRule = createClassRule('scrollbar-right-top')
       .bg(emptySpace)
       .border(border);
-    const spaceRightBottomRule = createClassRule(cls('scrollbar-right-bottom'))
+    const spaceRightBottomRule = createClassRule('scrollbar-right-bottom')
       .bg(emptySpace)
       .border(border);
-    const spaceLeftBottomRule = createClassRule(cls('scrollbar-left-bottom'))
+    const spaceLeftBottomRule = createClassRule('scrollbar-left-bottom')
       .bg(emptySpace)
       .border(border);
-    const frozenBorderRule = createClassRule(cls('scrollbar-frozen-border'))
+    const frozenBorderRule = createClassRule('scrollbar-frozen-border')
       .bg(emptySpace)
       .border(border);
 
-    return buildAll(
-      webkitScrollbarRules.concat([
-        ieScrollbarRule,
-        xInnerBorderRule,
-        xOuterBorderRule,
-        yInnerBorderRule,
-        yOuterBorderRule,
-        spaceRightTopRule,
-        spaceRightBottomRule,
-        spaceLeftBottomRule,
-        frozenBorderRule
-      ])
-    );
+    return buildAll([
+      ...webkitScrollbarRules,
+      ieScrollbarRule,
+      xInnerBorderRule,
+      xOuterBorderRule,
+      yInnerBorderRule,
+      yOuterBorderRule,
+      spaceRightTopRule,
+      spaceRightBottomRule,
+      spaceLeftBottomRule,
+      frozenBorderRule
+    ]);
   },
   /**
    * Generates a css string for a resize-handle.
@@ -148,7 +147,7 @@ export = {
    * @returns {String}
    */
   heightResizeHandle: function(options?: OptHeightResizeHandleStyle): string {
-    return options ? bgBorderRuleString(cls('height-resize-handle'), options) : '';
+    return options ? bgBorderRuleString('height-resize-handle', options) : '';
   },
   /**
    * Generates a css string for a pagination.
@@ -156,7 +155,7 @@ export = {
    * @returns {String}
    */
   pagination: function(options?: OptPaginationStyle): string {
-    return options ? bgBorderRuleString(cls('pagination'), options) : '';
+    return options ? bgBorderRuleString('pagination', options) : '';
   },
   /**
    * Generates a css string for selection layers.
@@ -164,7 +163,7 @@ export = {
    * @returns {String}
    */
   selection: function(options?: OptSelectionLayerStyle): string {
-    return options ? bgBorderRuleString(cls('layer-selection'), options) : '';
+    return options ? bgBorderRuleString('layer-selection', options) : '';
   },
   /**
    * Generates a css string for head area.
@@ -173,7 +172,7 @@ export = {
    */
   headArea: function(options?: OptTableHeaderStyle): string {
     return options
-      ? createClassRule(cls('head-area'))
+      ? createClassRule('head-area')
           .bg(options.background)
           .border(options.border)
           .build()
@@ -186,7 +185,7 @@ export = {
    */
   bodyArea: function(options?: OptTableBodyStyle): string {
     return options
-      ? createClassRule(cls('body-area'))
+      ? createClassRule('body-area')
           .bg(options.background)
           .build()
       : '';
@@ -201,7 +200,7 @@ export = {
       return '';
     }
     const { border, background } = options;
-    const contentAreaRule = createClassRule(cls('summary-area'))
+    const contentAreaRule = createClassRule('summary-area')
       .bg(background)
       .border(border);
     const bodyAreaRule = createClassComposeRule(' .', [
@@ -218,7 +217,7 @@ export = {
    */
   cell: function(options?: OptCellStyle): string {
     return options
-      ? createClassRule(cls('cell'))
+      ? createClassRule('cell')
           .bg(options.background)
           .border(options.border)
           .borderWidth(options)
@@ -242,7 +241,7 @@ export = {
       cls('head-area'),
       cls('table')
     ]).verticalBorderStyle(options, 'right');
-    const cellRule = createClassRule(cls('cell-head'))
+    const cellRule = createClassRule('cell-head')
       .bg(background)
       .border(border)
       .borderWidth(options)
@@ -266,7 +265,7 @@ export = {
       cls('body-area'),
       cls('table')
     ]).verticalBorderStyle(options, 'right');
-    const cellRule = createClassRule(cls('cell-row-head'))
+    const cellRule = createClassRule('cell-row-head')
       .bg(background)
       .border(border)
       .borderWidth(options)
@@ -290,7 +289,7 @@ export = {
       cls('summary-area'),
       cls('table')
     ]).verticalBorderStyle(options, 'right');
-    const cellRule = createClassRule(cls('cell-summary'))
+    const cellRule = createClassRule('cell-summary')
       .bg(background)
       .border(border)
       .borderWidth(options)
@@ -358,8 +357,8 @@ export = {
       return '';
     }
     const { border } = options;
-    const focusLayerRule = createClassRule(cls('layer-focus-border')).bg(border);
-    const editingLayerRule = createClassRule(cls('layer-editing')).border(border);
+    const focusLayerRule = createClassRule('layer-focus-border').bg(border);
+    const editingLayerRule = createClassRule('layer-editing').border(border);
 
     return buildAll([focusLayerRule, editingLayerRule]);
   },
@@ -381,7 +380,7 @@ export = {
    * @returns {String}
    */
   cellEditable: function(options?: OptBasicCellStyle): string {
-    return options ? bgTextRuleString(cls('cell-editable'), options) : '';
+    return options ? bgTextRuleString('cell-editable', options) : '';
   },
   /**
    * Generates a css string for required cells.
@@ -389,7 +388,7 @@ export = {
    * @returns {String}
    */
   cellRequired: function(options?: OptBasicCellStyle): string {
-    return options ? bgTextRuleString(cls('cell-required'), options) : '';
+    return options ? bgTextRuleString('cell-required', options) : '';
   },
   /**
    * Generates a css string for disabled cells.
@@ -397,7 +396,7 @@ export = {
    * @returns {String}
    */
   cellDisabled: function(options?: OptBasicCellStyle): string {
-    return options ? bgTextRuleString(cls('cell-disabled'), options) : '';
+    return options ? bgTextRuleString('cell-disabled', options) : '';
   },
   /**
    * Generates a css string for dummy cells.
@@ -405,7 +404,7 @@ export = {
    * @returns {String}
    */
   cellDummy: function(options?: OptCellDummyStyle): string {
-    return options ? bgTextRuleString(cls('cell-dummy'), options) : '';
+    return options ? bgTextRuleString('cell-dummy', options) : '';
   },
   /**
    * Generates a css string for invalid cells.
@@ -413,7 +412,7 @@ export = {
    * @returns {String}
    */
   cellInvalid: function(options?: OptBasicCellStyle): string {
-    return options ? bgTextRuleString(cls('cell-invalid'), options) : '';
+    return options ? bgTextRuleString('cell-invalid', options) : '';
   },
   /**
    * Generates a css string for cells in a current row.
@@ -421,6 +420,6 @@ export = {
    * @returns {String}
    */
   cellCurrentRow: function(options?: OptBasicCellStyle): string {
-    return options ? bgTextRuleString(cls('cell-current-row'), options) : '';
+    return options ? bgTextRuleString('cell-current-row', options) : '';
   }
 };
