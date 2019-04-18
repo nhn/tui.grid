@@ -25,6 +25,10 @@ export default class Grid {
     // @TODO: Only for Development env
     (window as any).store = store;
 
+    if (!themeManager.isApplied()) {
+      themeManager.apply('default');
+    }
+
     render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
   }
 

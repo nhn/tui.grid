@@ -2,7 +2,6 @@ import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
-import '../src/css/theme.css';
 
 const stories = storiesOf('Dimension', module);
 
