@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { ColumnInfo, Side } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';

@@ -1,5 +1,5 @@
 import { Component, h } from 'preact';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 import { BodyArea } from './bodyArea';
 import { HeadArea } from './headArea';
 import { connect } from '../view/hoc';
@@ -85,7 +85,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 }
 
-export const RightSide = connect<StoreProps>(({ dimension, column, columnCoords }) => {
+export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
   const {
     scrollbarWidth,
     scrollX,

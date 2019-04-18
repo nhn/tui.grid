@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';

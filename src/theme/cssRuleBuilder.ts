@@ -3,7 +3,7 @@
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 import { OptScrollbarStyle, OptCellStyle } from './../types.d';
-import { cls, ClassNameType } from '../helper/common';
+import { cls, ClassNameType } from '../helper/dom';
 
 /**
  * create css rule string and returns it
@@ -154,7 +154,10 @@ export function createClassRule(className: ClassNameType): CSSRuleBuilder {
  * @param {Array} classNames - classNames
  * @returns {CSSRuleBuilder}
  */
-export function createNestedClassRule(selector: string, classNames: ClassNameType[]): CSSRuleBuilder {
+export function createNestedClassRule(
+  selector: string,
+  classNames: ClassNameType[]
+): CSSRuleBuilder {
   return create(`.${classNames.map((className) => cls(className)).join(selector)}`);
 }
 

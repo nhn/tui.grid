@@ -1,9 +1,9 @@
-import { Row, Dimension, Column } from './types';
+import { Dimension, Column, Data } from './types';
 import { reactive } from '../helper/reactive';
 import { OptGrid } from '../types';
 
 type OptDimension = {
-  data: Row[];
+  data: Data;
   column: Column;
   frozenBorderWidth?: number;
 } & Pick<
@@ -40,29 +40,24 @@ export function create({
     summaryHeight: 0,
     summaryPosition: 'bottom',
     headerHeight: 40,
-    colOffsets: [],
     scrollbarWidth: 17,
     tableBorderWidth: 1,
     cellBorderWidth: 1,
-    lsideWidth: 0,
-    get frozenBorderWidth(this: Dimension) {
-      const { visibleFrozenCount } = column;
 
-      return visibleFrozenCount > 0 ? frozenBorderWidth : 0;
+    get contentsWidth(this: Dimension) {
+      const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;
+      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+      const scrollYWidth = this.scrollY ? this.scrollbarWidth : 0;
+
+      return this.width - scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
     },
-    get rsideWidth() {
-      return this.width;
+
+    get frozenBorderWidth(this: Dimension) {
+      return column.visibleFrozenCount > 0 ? frozenBorderWidth : 0;
     },
+
     get totalRowHeight() {
-      return data.length * (this.rowHeight + 1);
-    },
-    get rowOffsets() {
-      const offsets = [0];
-      const { rowHeight } = this;
-      for (let i = 1, len = data.length; i < len; i += 1) {
-        offsets.push(offsets[i - 1] + rowHeight + 1);
-      }
-      return offsets;
+      return data.viewData.length * (this.rowHeight + 1);
     }
   });
 }

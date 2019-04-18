@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import '../src/css/theme.css';
 
 const stories = storiesOf('Virtual Scrolling', module);
 
@@ -28,7 +27,7 @@ stories.add('Sample', () => {
 
   for (let i = 0; i < COL_COUNT; i += 1) {
     const name = 'c' + i;
-    columns.push({ name, title: name })
+    columns.push({ name, title: name });
   }
 
   const el = document.createElement('div');

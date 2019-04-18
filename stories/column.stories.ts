@@ -4,6 +4,7 @@ import { Omit } from 'utility-types';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import { withKnobs, button, number, boolean } from '@storybook/addon-knobs';
+import '../src/css/grid.css';
 
 addParameters({ html: { preventForceRender: false } });
 const stories = storiesOf('Columns', module);

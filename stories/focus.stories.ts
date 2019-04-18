@@ -3,7 +3,7 @@ import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('Dimension', module);
+const stories = storiesOf('Focus', module);
 
 const columns = [
   { name: 'name' },
@@ -21,23 +21,18 @@ function createGrid(options: any) {
   return { el, grid };
 }
 
-stories.add('bodyHeight: fitToParent', () => {
-  const { el } = createGrid({ data, columns, bodyHeight: 'fitToParent' });
+stories.add('Focus Activation', () => {
+  const { el } = createGrid({
+    data,
+    columns,
+    bodyHeight: 'fitToParent',
+    columnOptions: {
+      frozenCount: 2
+    }
+  });
   const rootEl = document.createElement('div');
   rootEl.style.height = '400px';
   rootEl.appendChild(el);
 
   return rootEl;
-});
-
-stories.add('bodyHeight: auto', () => {
-  return createGrid({ data, columns }).el;
-});
-
-stories.add('bodyHeight: 500', () => {
-  return createGrid({ data, columns, bodyHeight: 500 }).el;
-});
-
-stories.add('rowHeight: 70', () => {
-  return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
 });

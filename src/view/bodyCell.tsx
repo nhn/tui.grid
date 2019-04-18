@@ -1,17 +1,27 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/common';
+import { cls, Attributes } from '../helper/dom';
 import { CellValue } from '../store/types';
+import { connect } from './hoc';
+import { DispatchProps } from '../dispatch/create';
 
-interface Props {
+interface OwnProps {
+  rowKey: number;
+  columnName: string;
   value: CellValue;
 }
 
-export class BodyCell extends Component<Props> {
+type Props = OwnProps & DispatchProps;
+
+export class BodyCellComp extends Component<Props> {
   render() {
-    const { value } = this.props;
+    const { rowKey, columnName, value } = this.props;
+    const attrs: Attributes = {
+      'data-row-key': String(rowKey),
+      'data-column-name': columnName
+    };
 
     return (
-      <td class={cls('cell')}>
+      <td class={cls('cell')} {...attrs}>
         <div class={cls('cell-content')} style="white-space:nowrap">
           {value}
         </div>
@@ -19,3 +29,5 @@ export class BodyCell extends Component<Props> {
     );
   }
 }
+
+export const BodyCell = connect<{}, OwnProps>()(BodyCellComp);

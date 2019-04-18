@@ -1,4 +1,4 @@
-import { Row, Column, Range, Viewport, Dimension } from './types';
+import { Column, Range, Viewport, Dimension, Data, RowCoords } from './types';
 import { reactive, Reactive } from '../helper/reactive';
 import { arrayEqual } from '../helper/common';
 
@@ -8,12 +8,13 @@ function indexOfRow(rowOffsets: number[], posY: number) {
 }
 
 interface ViewPortOption {
-  data: Row[];
+  data: Data;
   column: Column;
   dimension: Dimension;
+  rowCoords: RowCoords;
 }
 
-export function create({ data, column, dimension }: ViewPortOption): Reactive<Viewport> {
+export function create({ data, column, dimension, rowCoords }: ViewPortOption): Reactive<Viewport> {
   const { visibleColumns } = column;
 
   return reactive({
@@ -23,13 +24,14 @@ export function create({ data, column, dimension }: ViewPortOption): Reactive<Vi
       return <Range>[0, visibleColumns.L.length + visibleColumns.R.length];
     },
     get rowRange(this: Reactive<Viewport>) {
-      const { rowOffsets, bodyHeight } = dimension;
+      const { bodyHeight } = dimension;
+      const { offsets } = rowCoords;
 
       // safari uses negative scrollTop for bouncing effect
       const scrollY = Math.max(this.scrollTop, 0);
 
-      const start = indexOfRow(rowOffsets, scrollY);
-      const end = indexOfRow(rowOffsets, scrollY + bodyHeight) + 1;
+      const start = indexOfRow(offsets, scrollY);
+      const end = indexOfRow(offsets, scrollY + bodyHeight) + 1;
       const value = <Range>[start, end];
 
       const prevValue = this.__storage__.rowRange;
@@ -39,10 +41,10 @@ export function create({ data, column, dimension }: ViewPortOption): Reactive<Vi
       return value;
     },
     get rows(this: Viewport) {
-      return data.slice(...this.rowRange);
+      return data.viewData.slice(...this.rowRange);
     },
     get offsetY(this: Viewport) {
-      return dimension.rowOffsets[this.rowRange[0]];
+      return rowCoords.offsets[this.rowRange[0]];
     }
   });
 }

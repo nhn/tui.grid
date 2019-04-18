@@ -1,17 +1,17 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, Row, ColumnInfo } from '../store/types';
-import { cls } from '../helper/common';
+import { Side, ColumnInfo } from '../store/types';
+import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
+import { FocusLayer } from './focusLayer';
 
 interface OwnProps {
   side: Side;
 }
 
 interface StoreProps {
-  data: Row[];
   columns: ColumnInfo[];
   bodyHeight: number;
   totalRowHeight: number;
@@ -24,7 +24,6 @@ type Props = OwnProps & StoreProps & DispatchProps;
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
 const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
-  'data',
   'columns',
   'bodyHeight',
   'totalRowHeight',
@@ -33,6 +32,27 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 
 class BodyAreaComp extends Component<Props> {
   el?: HTMLElement;
+
+  handleScroll = (ev: UIEvent) => {
+    const { scrollLeft, scrollTop } = ev.srcElement!;
+    const { dispatch } = this.props;
+
+    if (this.props.side === 'R') {
+      dispatch('setScrollLeft', scrollLeft);
+    }
+    dispatch('setScrollTop', scrollTop);
+  };
+
+  handleMouseDown = (ev: MouseEvent) => {
+    const el = this.el!;
+    const { pageX, pageY, shiftKey } = ev;
+    const { side, dispatch } = this.props;
+    const { top, left } = el.getBoundingClientRect();
+    const offsetX = pageX - left + el.scrollLeft;
+    const offsetY = pageY - top + el.scrollTop;
+
+    dispatch('mouseDownBody', { offsetX, offsetY, side, shiftKey });
+  };
 
   shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
@@ -43,25 +63,17 @@ class BodyAreaComp extends Component<Props> {
     this.el!.scrollTop = nextProps.scrollTop;
   }
 
-  render({ side, bodyHeight, totalRowHeight, offsetY, dispatch }: Props) {
-    const areaStyle = { overflow: 'scroll', height: `${bodyHeight}px` };
-    const containerStyle = { height: `${totalRowHeight}px` };
-    const tableStyle = { overflow: 'visible', top: `${offsetY}px` };
-
-    const onScroll = (ev: UIEvent) => {
-      const { scrollLeft, scrollTop } = ev.srcElement!;
-
-      if (this.props.side === 'R') {
-        dispatch('setScrollLeft', scrollLeft);
-      }
-      dispatch('setScrollTop', scrollTop);
-    };
+  render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
+    const areaStyle = { overflow: 'scroll', height: bodyHeight };
+    const tableStyle = { overflow: 'visible', top: offsetY };
+    const containerStyle = { height: totalRowHeight };
 
     return (
       <div
         class={cls('body-area')}
         style={areaStyle}
-        onScroll={onScroll}
+        onScroll={this.handleScroll}
+        onMouseDown={this.handleMouseDown}
         ref={(el) => (this.el = el)}
       >
         <div class={cls('body-container')} style={containerStyle}>
@@ -70,8 +82,9 @@ class BodyAreaComp extends Component<Props> {
               <ColGroup side={side} />
               <BodyRows side={side} />
             </table>
-            <div class={cls('layer-selection')} style="display: none;" />
           </div>
+          <div class={cls('layer-selection')} style="display: none;" />
+          <FocusLayer side={side} />
         </div>
       </div>
     );
@@ -79,12 +92,11 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { data, column, dimension, viewport } = store;
+  const { column, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
   const { offsetY, scrollTop } = viewport;
 
   return {
-    data,
     columns: column.visibleColumns[side],
     bodyHeight,
     totalRowHeight,

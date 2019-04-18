@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { BodyCell } from './bodyCell';
 import { Row } from '../store/types';
 import { connect } from './hoc';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 
 interface OwnProps {
   idx: number;
@@ -22,7 +22,7 @@ const BodyRowComp = ({ row, columnNames, rowHeight, idx }: Props) => {
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
       {columnNames.map((name) => (
-        <BodyCell value={row[name]} />
+        <BodyCell value={row[name]} rowKey={row.rowKey} columnName={name} />
       ))}
     </tr>
   );

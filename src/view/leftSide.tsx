@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { HeadArea } from './headArea';
 import { BodyArea } from './bodyArea';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 

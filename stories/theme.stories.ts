@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import '../src/css/theme.css';
 
 const stories = storiesOf('Basic Usage', module);
 
