@@ -92,15 +92,6 @@ export type ClassNameType =
   | 'tree-button-collapse'
   | 'tree-icon';
 
-export type AttributeKey =
-  | 'data-row-key'
-  | 'data-column-name'
-  | 'data-column-index'
-  | 'data-edit-type'
-  | 'data-grid-id';
-
-export type Attributes = { [key in AttributeKey]?: string };
-
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
