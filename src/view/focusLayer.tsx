@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { Rect, Side } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {
+  active: boolean;
   cellPosRect: Rect | null;
   cellBorderWidth: number;
 }
@@ -17,7 +18,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
 
 class FocusLayerComp extends Component<Props> {
   render() {
-    const { cellPosRect, cellBorderWidth } = this.props;
+    const { active, cellPosRect, cellBorderWidth } = this.props;
 
     if (cellPosRect === null) {
       return null;
@@ -56,7 +57,7 @@ class FocusLayerComp extends Component<Props> {
     };
 
     return (
-      <div class={cls('layer-focus')}>
+      <div class={cls('layer-focus', [!active, 'layer-focus-deactive'])}>
         <div class={cls('layer-focus-border')} style={leftStyle} />
         <div class={cls('layer-focus-border')} style={topStyle} />
         <div class={cls('layer-focus-border')} style={rightStyle} />
@@ -67,9 +68,10 @@ class FocusLayerComp extends Component<Props> {
 }
 
 export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, { side }) => {
-  const { cellPosRect } = focus;
+  const { cellPosRect, active } = focus;
 
   return {
+    active,
     cellPosRect: side === focus.side ? cellPosRect : null,
     cellBorderWidth: dimension.cellBorderWidth
   };

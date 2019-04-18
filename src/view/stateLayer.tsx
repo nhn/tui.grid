@@ -1,10 +1,8 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 
 export class StateLayer extends Component {
   render() {
-    return (
-      <div class={cls('layer-state')} style="display: none;"></div>
-    )
+    return <div class={cls('layer-state')} style="display: none;" />;
   }
 }

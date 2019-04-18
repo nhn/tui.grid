@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 
 interface StoreProps {
   active: boolean;

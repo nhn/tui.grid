@@ -50,6 +50,7 @@ export interface Dimension {
   cellBorderWidth: number;
   scrollX: boolean;
   scrollY: boolean;
+  readonly contentsWidth: number;
   readonly frozenBorderWidth: number;
   readonly totalRowHeight: number;
 }
@@ -64,7 +65,6 @@ export interface Viewport {
 }
 
 export interface ColumnCoords {
-  readonly contentsWidth: number;
   readonly widths: { [key in Side]: number[] };
   readonly areaWidth: { [key in Side]: number };
   readonly offsets: { [key in Side]: number[] };

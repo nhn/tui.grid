@@ -2,7 +2,7 @@
  * @fileoverview css style generator
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
-import { cls, ClassNameType } from '../helper/common';
+import { cls, ClassNameType } from '../helper/dom';
 import {
   create,
   createClassRule,

@@ -43,9 +43,19 @@ export function create({
     scrollbarWidth: 17,
     tableBorderWidth: 1,
     cellBorderWidth: 1,
+
+    get contentsWidth(this: Dimension) {
+      const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;
+      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+      const scrollYWidth = this.scrollY ? this.scrollbarWidth : 0;
+
+      return this.width - scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+    },
+
     get frozenBorderWidth(this: Dimension) {
       return column.visibleFrozenCount > 0 ? frozenBorderWidth : 0;
     },
+
     get totalRowHeight() {
       return data.viewData.length * (this.rowHeight + 1);
     }

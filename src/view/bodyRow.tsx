@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { BodyCell } from './bodyCell';
 import { Row } from '../store/types';
 import { connect } from './hoc';
-import { cls } from '../helper/common';
+import { cls } from '../helper/dom';
 
 interface OwnProps {
   idx: number;

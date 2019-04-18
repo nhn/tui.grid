@@ -1,4 +1,4 @@
-import { cls } from '../../src/helper/common';
+import { cls } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import { HANDLE_WIDTH_HALF } from '../../src/view/columnResizer';
 import Grid from '../../src/grid';

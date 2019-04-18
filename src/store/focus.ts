@@ -10,8 +10,8 @@ interface FocusOption {
 
 export function create({ column, data, rowCoords, columnCoords }: FocusOption): Reactive<Focus> {
   return reactive({
-    rowKey: 0,
-    columnName: 'name',
+    rowKey: null,
+    columnName: null,
     active: false,
     get side(this: Focus) {
       if (this.columnName === null) {

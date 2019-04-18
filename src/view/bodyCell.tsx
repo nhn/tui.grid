@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls, Attributes } from '../helper/common';
+import { cls, Attributes } from '../helper/dom';
 import { CellValue } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
