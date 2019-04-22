@@ -10,10 +10,11 @@ interface StoreProps {
 type Props = StoreProps & DispatchProps;
 
 class HeightResizeHandleComp extends Component<Props> {
-  dragStartY = -1;
-  dragStartBodyHeight = -1;
+  private dragStartY = -1;
 
-  handleMouseDown = (ev: MouseEvent) => {
+  private dragStartBodyHeight = -1;
+
+  private handleMouseDown = (ev: MouseEvent) => {
     this.dragStartY = ev.pageY;
     this.dragStartBodyHeight = this.props.bodyHeight;
 
@@ -23,24 +24,24 @@ class HeightResizeHandleComp extends Component<Props> {
     document.addEventListener('selectstart', this.handleSelectStart);
   };
 
-  handleSelectStart = (ev: Event) => {
+  private handleSelectStart = (ev: Event) => {
     ev.preventDefault();
   };
 
-  handleMouseMove = (ev: MouseEvent) => {
+  private handleMouseMove = (ev: MouseEvent) => {
     const distance = ev.pageY - this.dragStartY;
 
     this.props.dispatch('setBodyHeight', this.dragStartBodyHeight + distance);
   };
 
-  clearDocumentEvents = () => {
+  private clearDocumentEvents = () => {
     document.body.style.cursor = '';
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
-  render() {
+  public render() {
     return (
       <div class={cls('height-resize-handle')} onMouseDown={this.handleMouseDown}>
         <button>

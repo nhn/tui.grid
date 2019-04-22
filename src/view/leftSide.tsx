@@ -13,7 +13,7 @@ interface StoreProps {
 type Props = StoreProps & DispatchProps;
 
 class LeftSideComp extends Component<Props> {
-  render({ width, scrollX }: Props) {
+  public render({ width, scrollX }: Props) {
     const style = { width, display: 'block' };
 
     return (

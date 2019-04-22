@@ -12,15 +12,15 @@ type Props = StoreProps & DispatchProps;
 class ClipboardComp extends Component<Props> {
   private el?: HTMLFormElement;
 
-  onBlur = () => {
+  private onBlur = () => {
     this.props.dispatch('setFocusActive', false);
   };
 
-  hasFocus() {
+  private hasFocus() {
     return document.hasFocus() && document.activeElement === this.el;
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     if (!this.el) {
       return;
     }
@@ -30,13 +30,15 @@ class ClipboardComp extends Component<Props> {
     }
   }
 
-  render() {
+  public render() {
     return (
       <div
         class={cls('clipboard')}
         onBlur={this.onBlur}
         contentEditable={true}
-        ref={(el) => (this.el = el)}
+        ref={(el) => {
+          this.el = el;
+        }}
       />
     );
   }

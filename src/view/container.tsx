@@ -23,9 +23,9 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 export class ContainerComp extends Component<Props> {
-  el?: HTMLElement;
+  private el?: HTMLElement;
 
-  handleMouseDown = (ev: MouseEvent) => {
+  private handleMouseDown = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
     const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
@@ -38,20 +38,20 @@ export class ContainerComp extends Component<Props> {
     }
   };
 
-  componentDidMount() {
+  public componentDidMount() {
     if (this.props.autoWidth) {
       window.addEventListener('resize', this.syncWithDOMWidth);
       requestAnimationFrame(this.syncWithDOMWidth);
     }
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     if (this.props.autoWidth) {
       window.removeEventListener('resize', this.syncWithDOMWidth);
     }
   }
 
-  syncWithDOMWidth = () => {
+  private syncWithDOMWidth = () => {
     const { clientWidth, clientHeight } = this.el!;
     const { width, fitToParentHeight, rootElement } = this.props;
 
@@ -67,14 +67,15 @@ export class ContainerComp extends Component<Props> {
     }
   };
 
-  shouldComponentUpdate(nextProps: Props) {
+  public shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
     }
+
     return true;
   }
 
-  render() {
+  public render() {
     const { width, autoWidth, scrollXHeight } = this.props;
     const style = { width: autoWidth ? '100%' : width };
 
@@ -83,7 +84,9 @@ export class ContainerComp extends Component<Props> {
         style={style}
         class={cls('container')}
         onMouseDown={this.handleMouseDown}
-        ref={(el) => (this.el = el)}
+        ref={(el) => {
+          this.el = el;
+        }}
         data-grid-id="1"
       >
         <div class={cls('content-area')}>

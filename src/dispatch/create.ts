@@ -8,6 +8,7 @@ const dispatchMap = { ...viewport, ...dimension, ...column, ...mouse };
 
 type DispatchMap = typeof dispatchMap;
 type DispatchFnKeys = keyof DispatchMap;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RestParameters<T> = T extends (first: any, ...args: infer P) => any ? P : never;
 
 export interface Dispatch {

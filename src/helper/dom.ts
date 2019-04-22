@@ -150,7 +150,7 @@ export function getCellAddress(el: HTMLElement) {
  * @param {String} id - element id
  * @param {String} cssString - css string
  */
-export function appendStyleElement(id: string, cssString: string): void {
+export function appendStyleElement(id: string, cssString: string) {
   const style = document.createElement('style') as HTMLStyleElement;
 
   style.type = 'text/css';

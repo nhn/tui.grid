@@ -20,6 +20,7 @@ export function reactive<T>(obj: T): Reactive<T> {
   const storage: T = ({} as unknown) as T;
   const computedProps: ComputedProp<T>[] = [];
 
+  // eslint-disable-next-line guard-for-in
   for (const key in obj) {
     const handlers: Function[] = [];
     const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
@@ -39,6 +40,7 @@ export function reactive<T>(obj: T): Reactive<T> {
     }
 
     Object.defineProperty(obj, key, {
+      // eslint-disable-next-line no-loop-func
       get() {
         if (currWatcher) {
           handlers.push(currWatcher);

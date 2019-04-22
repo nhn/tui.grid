@@ -6,7 +6,7 @@
 import { presetDefault, clean, striped } from './preset';
 import { deepAssign } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';
-import { OptPreset, OptTableAreaStyle, OptTableCellStyle } from './../types.d';
+import { OptPreset } from './../types.d';
 import * as styleGen from './styleGenerator';
 
 export type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';

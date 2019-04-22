@@ -7,14 +7,15 @@ import { Store } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 
 if ((module as any).hot) {
-  require('preact/devtools');
+  require('preact/devtools'); // eslint-disable-line global-require
 }
 
 export default class Grid {
   private store: Store;
+
   private dispatch: Dispatch;
 
-  constructor(options: OptGrid) {
+  public constructor(options: OptGrid) {
     const { el } = options;
     const store = createStore(options);
     const dispatch = createDispatcher(store);
@@ -147,31 +148,31 @@ export default class Grid {
    *     }
    * });
    */
-  static applyTheme(presetName: ThemeOptionPresetNames, extOptions?: OptPreset) {
+  public static applyTheme(presetName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     themeManager.apply(presetName, extOptions);
   }
 
-  setWidth(width: number) {
+  public setWidth(width: number) {
     this.dispatch('setWidth', width, false);
   }
 
-  setHeight(height: number) {
+  public setHeight(height: number) {
     this.dispatch('setHeight', height);
   }
 
-  setBodyHeight(bodyHeight: number) {
+  public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
   }
 
-  setFrozenColumnCount(count: number) {
+  public setFrozenColumnCount(count: number) {
     this.dispatch('setFrozenColumnCount', count);
   }
 
-  hideColumn(columnName: string) {
+  public hideColumn(columnName: string) {
     this.dispatch('hideColumn', columnName);
   }
 
-  showColumn(columnName: string) {
+  public showColumn(columnName: string) {
     this.dispatch('showColumn', columnName);
   }
 }

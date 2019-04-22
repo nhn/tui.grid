@@ -20,11 +20,13 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class ColumnResizerComp extends Component<Props> {
-  dragStartX = -1;
-  draggingWidth = -1;
-  draggingIndex = -1;
+  private dragStartX = -1;
 
-  handleMouseDown = (ev: MouseEvent, index: number) => {
+  private draggingWidth = -1;
+
+  private draggingIndex = -1;
+
+  private handleMouseDown = (ev: MouseEvent, index: number) => {
     this.draggingIndex = index;
     this.draggingWidth = this.props.widths[index];
     this.dragStartX = ev.pageX;
@@ -35,28 +37,28 @@ class ColumnResizerComp extends Component<Props> {
     document.addEventListener('selectstart', this.handleSelectStart);
   };
 
-  handleSelectStart = (ev: Event) => {
+  private handleSelectStart = (ev: Event) => {
     ev.preventDefault();
   };
 
-  handleMouseMove = (ev: MouseEvent) => {
+  private handleMouseMove = (ev: MouseEvent) => {
     const width = this.draggingWidth + ev.pageX - this.dragStartX;
 
     this.props.dispatch('setColumnWidth', this.draggingIndex, width);
   };
 
-  clearDocumentEvents = () => {
+  private clearDocumentEvents = () => {
     document.body.style.cursor = '';
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.clearDocumentEvents();
   }
 
-  renderHandle(index: number) {
+  private renderHandle(index: number) {
     const { columns, offsets, widths } = this.props;
     const { name, resizable } = columns[index];
     const offset = offsets[index];
@@ -82,7 +84,7 @@ class ColumnResizerComp extends Component<Props> {
     );
   }
 
-  render({ columns }: Props) {
+  public render({ columns }: Props) {
     return (
       <div
         class={cls('column-resize-container')}
