@@ -104,7 +104,7 @@ export type Attributes = { [key in AttributeKey]?: string };
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
-  for (let name of names) {
+  for (const name of names) {
     let className: string | null;
     if (Array.isArray(name)) {
       className = name[0] ? name[1] : null;

@@ -17,10 +17,10 @@ export type Reactive<T> = T & {
 };
 
 export function reactive<T>(obj: T): Reactive<T> {
-  const storage: T = <T>{};
+  const storage: T = ({} as unknown) as T;
   const computedProps: ComputedProp<T>[] = [];
 
-  for (let key in obj) {
+  for (const key in obj) {
     const handlers: Function[] = [];
     const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
@@ -43,12 +43,13 @@ export function reactive<T>(obj: T): Reactive<T> {
         if (currWatcher) {
           handlers.push(currWatcher);
         }
+
         return storage[key];
       }
     });
   }
 
-  (<Reactive<T>>obj).__storage__ = storage;
+  (obj as Reactive<T>).__storage__ = storage;
 
   computedProps.forEach(({ key, handlers, getter }) => {
     watch(() => {
@@ -60,5 +61,5 @@ export function reactive<T>(obj: T): Reactive<T> {
     });
   });
 
-  return <Reactive<T>>obj;
+  return obj as Reactive<T>;
 }

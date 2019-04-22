@@ -14,5 +14,8 @@ module.exports = {
   ],
   parserOptions: {
     parser: 'typescript-eslint-parser'
+  },
+  rules: {
+    'accessor-pairs': 1
   }
 };

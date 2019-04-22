@@ -37,7 +37,6 @@ function reduceExcessColumnWidthSub(
 ): number[] {
   const avgValue = Math.round(totalRemainWidth / availableList.length);
   const newAvailableList: [number, number][] = [];
-  let columnIndexes;
 
   availableList.forEach(([index, width]) => {
     // note that totalRemainWidth and avgValue are negative number.
@@ -52,7 +51,7 @@ function reduceExcessColumnWidthSub(
   if (availableList.length > newAvailableList.length) {
     return reduceExcessColumnWidthSub(totalRemainWidth, newAvailableList, widths);
   }
-  columnIndexes = availableList.map(([index]) => index);
+  const columnIndexes = availableList.map(([index]) => index);
 
   return distributeExtraWidthEqually(totalRemainWidth, columnIndexes, widths);
 }
@@ -75,7 +74,7 @@ function adjustWidths(
     result = distributeExtraWidthEqually(totalExtraWidth, fixedIndexes, widths);
   } else if (fitToReducedTotal && totalExtraWidth < 0) {
     const availableWidthInfos = fixedIndexes.map(
-      (index) => <[number, number]>[index, widths[index] - minWidths[index]]
+      (index) => [index, widths[index] - minWidths[index]] as [number, number]
     );
     result = reduceExcessColumnWidthSub(totalExtraWidth, availableWidthInfos, widths);
   } else {

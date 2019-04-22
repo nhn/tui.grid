@@ -34,7 +34,7 @@ class BodyAreaComp extends Component<Props> {
   el?: HTMLElement;
 
   handleScroll = (ev: UIEvent) => {
-    const { scrollLeft, scrollTop } = ev.srcElement!;
+    const { scrollLeft, scrollTop } = (ev.srcElement! as HTMLElement);
     const { dispatch } = this.props;
 
     if (this.props.side === 'R') {

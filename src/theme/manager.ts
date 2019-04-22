@@ -66,9 +66,9 @@ function buildCssString(options: OptPreset): string {
   type CellKeyType = keyof (typeof styleGenCellMethodMap);
 
   const { area, cell } = options;
-  let styles: string[] = [];
+  const styles: string[] = [];
 
-  Object.keys(styleGenMethodMap).map((key) => {
+  Object.keys(styleGenMethodMap).forEach((key) => {
     const keyWithType = key as KeyType;
     const value = options[keyWithType];
 
@@ -79,7 +79,7 @@ function buildCssString(options: OptPreset): string {
   });
 
   if (area) {
-    Object.keys(styleGenAreaMethodMap).map((key) => {
+    Object.keys(styleGenAreaMethodMap).forEach((key) => {
       const keyWithType = key as AreaKeyType;
       const value = area[keyWithType];
 
@@ -91,7 +91,7 @@ function buildCssString(options: OptPreset): string {
   }
 
   if (cell) {
-    Object.keys(styleGenCellMethodMap).map((key) => {
+    Object.keys(styleGenCellMethodMap).forEach((key) => {
       const keyWithType = key as CellKeyType;
       const value = cell[keyWithType];
 
@@ -113,8 +113,8 @@ function buildCssString(options: OptPreset): string {
 function setDocumentStyle(options: OptPreset) {
   const cssString = buildCssString(options);
   const elem = document.getElementById(STYLE_ELEMENT_ID);
-  if (elem) {
-    elem.parentNode!.removeChild(elem);
+  if (elem && elem.parentNode) {
+    elem.parentNode.removeChild(elem);
   }
   appendStyleElement(STYLE_ELEMENT_ID, cssString);
 }
@@ -126,10 +126,10 @@ export default {
    * @param {String} themeName - preset theme name
    * @param {Object} extOptions - if exist, extend preset theme options with it.
    */
-  apply: function(themeName: ThemeOptionPresetNames, extOptions?: OptPreset) {
+  apply(themeName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     let options = presetOptions[themeName];
     if (!options) {
-      options = presetOptions.default;
+      options = presetOptions['default'];
     }
     if (extOptions) {
       options = deepAssign(options, extOptions);
@@ -142,7 +142,7 @@ export default {
    * Returns whether the style of a theme is applied.
    * @returns {Boolean}
    */
-  isApplied: function(): boolean {
+  isApplied() {
     return !!document.getElementById(STYLE_ELEMENT_ID);
   }
 };
