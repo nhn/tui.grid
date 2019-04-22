@@ -41,3 +41,8 @@ stories.add('bodyHeight: 500', () => {
 stories.add('rowHeight: 70', () => {
   return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
 });
+
+stories.add('column resizeable', () => {
+  const myColumns = columns.map((column) => ({ ...column, resizable: true }));
+  return createGrid({ data, columns: myColumns, bodyHeight: 500 }).el;
+});
