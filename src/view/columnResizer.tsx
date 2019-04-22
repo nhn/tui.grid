@@ -43,8 +43,9 @@ class ColumnResizerComp extends Component<Props> {
 
   private handleMouseMove = (ev: MouseEvent) => {
     const width = this.draggingWidth + ev.pageX - this.dragStartX;
+    const { side } = this.props;
 
-    this.props.dispatch('setColumnWidth', this.draggingIndex, width);
+    this.props.dispatch('setColumnWidth', side, this.draggingIndex, width);
   };
 
   private clearDocumentEvents = () => {

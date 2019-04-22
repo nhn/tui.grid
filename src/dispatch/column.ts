@@ -1,7 +1,14 @@
-import { Store } from '../store/types';
+import { Store, Side } from '../store/types';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
+}
+
+export function setColumnWidth({ column }: Store, side: Side, index: number, width: number) {
+  const columnItem = column.visibleColumns[side][index];
+
+  columnItem.baseWidth = width;
+  columnItem.fixedWidth = true;
 }
 
 export function hideColumn({ column }: Store, columnName: string) {

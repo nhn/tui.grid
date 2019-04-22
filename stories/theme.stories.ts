@@ -4,7 +4,7 @@ import '../src/css/grid.css';
 
 const stories = storiesOf('Basic Usage', module);
 
-function createGridWithTheme(options: any) {
+function createGridWithTheme(options) {
   const { preset, extOptions } = options;
   const data = [
     {

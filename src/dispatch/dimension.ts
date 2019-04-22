@@ -5,12 +5,6 @@ export function setWidth({ dimension }: Store, width: number, autoWidth: boolean
   dimension.width = width;
 }
 
-export function setColumnWidth({ column }: Store, index: number, width: number) {
-  // const columnItem = column.visibleColumns[index];
-  // columnItem.baseWidth = width;
-  // columnItem.fixedWidth = true;
-}
-
 export function setHeight({ dimension }: Store, height: number) {
   const { headerHeight, summaryHeight, tableBorderWidth } = dimension;
 

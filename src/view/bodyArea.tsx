@@ -60,6 +60,7 @@ class BodyAreaComp extends Component<Props> {
 
   public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
+
     return PROPS_FOR_UPDATE.some((propName) => nextProps[propName] !== currProps[propName]);
   }
 

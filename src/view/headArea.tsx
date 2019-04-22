@@ -44,7 +44,7 @@ class HeadAreaComp extends Component<Props> {
           <tbody>
             <tr style={theadStyle}>
               {columns.map(({ name, title }) => (
-                <th data-column-name={name} class={cls('cell', 'cell-head')}>
+                <th key={name} data-column-name={name} class={cls('cell', 'cell-head')}>
                   {title}
                 </th>
               ))}

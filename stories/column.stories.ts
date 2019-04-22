@@ -3,7 +3,7 @@ import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
-import { withKnobs, button, number, boolean } from '@storybook/addon-knobs';
+import { withKnobs, button, number } from '@storybook/addon-knobs';
 import '../src/css/grid.css';
 
 addParameters({ html: { preventForceRender: false } });
@@ -23,6 +23,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   el.style.width = '800px';
 
   const grid = new Grid({ el, ...options });
+
   return { el, grid };
 }
 
