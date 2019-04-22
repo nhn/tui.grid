@@ -104,7 +104,7 @@ export type Attributes = { [key in AttributeKey]?: string };
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
 
-  for (let name of names) {
+  for (const name of names) {
     let className: string | null;
     if (Array.isArray(name)) {
       className = name[0] ? name[1] : null;
@@ -150,7 +150,7 @@ export function getCellAddress(el: HTMLElement) {
  * @param {String} id - element id
  * @param {String} cssString - css string
  */
-export function appendStyleElement(id: string, cssString: string): void {
+export function appendStyleElement(id: string, cssString: string) {
   const style = document.createElement('style') as HTMLStyleElement;
 
   style.type = 'text/css';

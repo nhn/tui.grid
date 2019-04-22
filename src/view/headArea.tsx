@@ -20,19 +20,25 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class HeadAreaComp extends Component<Props> {
-  el?: HTMLElement;
+  private el?: HTMLElement;
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     this.el!.scrollLeft = this.props.scrollX;
   }
 
-  render() {
+  public render() {
     const { headerHeight, cellBorderWidth, columns, side } = this.props;
     const areaStyle = { height: headerHeight + cellBorderWidth };
     const theadStyle = { height: headerHeight };
 
     return (
-      <div class={cls('head-area')} style={areaStyle} ref={(el) => (this.el = el)}>
+      <div
+        class={cls('head-area')}
+        style={areaStyle}
+        ref={(el) => {
+          this.el = el;
+        }}
+      >
         <table class={cls('table')}>
           <ColGroup side={side} />
           <tbody>

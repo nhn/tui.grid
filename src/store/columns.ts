@@ -6,10 +6,10 @@ const DEF_MIN_WIDTH = 50;
 
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const title = column.title || column.name;
-  const name = column.name;
+  const { name, width } = column;
+  const fixedWidth = typeof width === 'number';
+  const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const hidden = !!column.hidden;
-  const fixedWidth = typeof column.width === 'number';
-  const baseWidth = (column.width === 'auto' ? 0 : column.width) || 0;
   const resizable = !!column.resizable;
 
   // @TODO meta tag 체크 여부

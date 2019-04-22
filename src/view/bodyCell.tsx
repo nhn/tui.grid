@@ -13,7 +13,7 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps;
 
 export class BodyCellComp extends Component<Props> {
-  render() {
+  public render() {
     const { rowKey, columnName, value } = this.props;
     const attrs: Attributes = {
       'data-row-key': String(rowKey),

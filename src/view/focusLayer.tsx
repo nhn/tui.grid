@@ -17,7 +17,7 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 class FocusLayerComp extends Component<Props> {
-  render() {
+  public render() {
     const { active, cellPosRect, cellBorderWidth } = this.props;
 
     if (cellPosRect === null) {

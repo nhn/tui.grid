@@ -10,14 +10,14 @@ interface Props {
 }
 
 export class Root extends Component<Props> {
-  getChildContext() {
+  public getChildContext() {
     return {
       store: this.props.store,
       dispatch: this.props.dispatch
     };
   }
 
-  render() {
+  public render() {
     return <Container rootElement={this.props.rootElement} />;
   }
 }

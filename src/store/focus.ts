@@ -27,6 +27,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
       if (columnName === null || side === null) {
         return null;
       }
+
       return column.visibleColumns[side].findIndex(({ name }) => name === columnName);
     },
 
@@ -36,6 +37,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
       if (rowKey === null) {
         return null;
       }
+
       return data.rawData.findIndex((row) => row.rowKey === rowKey);
     },
 

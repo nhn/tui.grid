@@ -2,28 +2,31 @@ import { h, AnyComponent, Component } from 'preact';
 import { watch } from '../helper/reactive';
 import { Store } from '../store/types';
 import { DeepReadonly } from 'utility-types';
-import { Dispatch, DispatchProps } from '../dispatch/create';
+import { DispatchProps } from '../dispatch/create';
 
 export function connect<SelectedProps = {}, OwnProps = {}>(
-  selector?: (store: DeepReadonly<Store>, props: DeepReadonly<OwnProps>) => DeepReadonly<SelectedProps>
+  selector?: (
+    store: DeepReadonly<Store>,
+    props: DeepReadonly<OwnProps>
+  ) => DeepReadonly<SelectedProps>
 ) {
   type Props = OwnProps & SelectedProps & DispatchProps;
 
-  return function (WrappedComponent: AnyComponent<Props>) {
+  return function(WrappedComponent: AnyComponent<Props>) {
     return class extends Component<OwnProps, SelectedProps> {
-      static displayName = `Connect:${WrappedComponent.name}`;
+      public static displayName = `Connect:${WrappedComponent.name}`;
 
-      componentWillMount() {
+      public componentWillMount() {
         if (selector) {
           watch(() => {
-            this.setState(selector(this.context.store, (this.props as DeepReadonly<OwnProps>)));
+            this.setState(selector(this.context.store, this.props as DeepReadonly<OwnProps>));
           });
         }
       }
 
-      render() {
+      public render() {
         const { props, state } = this;
-        const dispatch: Dispatch = this.context.dispatch;
+        const { dispatch } = this.context;
 
         return <WrappedComponent {...props} {...state} dispatch={dispatch} />;
       }

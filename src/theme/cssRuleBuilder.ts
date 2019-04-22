@@ -14,14 +14,15 @@ import { cls, ClassNameType } from '../helper/dom';
  * @ignore
  */
 class CSSRuleBuilder {
-  constructor(selector: string) {
+  public constructor(selector: string) {
     this.init(selector);
   }
 
   private selector: string = '';
+
   private propValues: string[] = [];
 
-  init(selector: string) {
+  public init(selector: string) {
     if (!(typeof selector === 'string') || !selector) {
       throw new Error('The Selector must be a string and not be empty.');
     }
@@ -35,7 +36,7 @@ class CSSRuleBuilder {
    * @param {String} value - css value
    * @returns {CSSRuleBuilder}
    */
-  add(property: string, value?: string): CSSRuleBuilder {
+  public add(property: string, value?: string) {
     if (value) {
       this.propValues.push(`${property}:${value}`);
     }
@@ -48,7 +49,7 @@ class CSSRuleBuilder {
    * @param {String} value - css value
    * @returns {CSSRuleBuilder}
    */
-  border(value?: string): CSSRuleBuilder {
+  public border(value?: string) {
     return this.add('border-color', value);
   }
 
@@ -59,7 +60,7 @@ class CSSRuleBuilder {
    * @param {Boolean} [options.showHorizontalBorder] - whether the horizontal border is visible
    * @returns {CSSRuleBuilder}
    */
-  borderWidth(options: OptCellStyle): CSSRuleBuilder {
+  public borderWidth(options: OptCellStyle) {
     const vertical = options.showVerticalBorder;
     const horizontal = options.showHorizontalBorder;
     let value: '1px' | '0';
@@ -84,7 +85,7 @@ class CSSRuleBuilder {
    * @param {String} position - Position of the vertical border ('right' or 'left')
    * @returns {CSSRuleBuilder}
    */
-  verticalBorderStyle(options: OptCellStyle, position?: string): CSSRuleBuilder {
+  public verticalBorderStyle(options: OptCellStyle, position?: string) {
     const vertical = options.showVerticalBorder;
     let value: 'solid' | 'hidden';
 
@@ -102,7 +103,7 @@ class CSSRuleBuilder {
    * @param {String} value - css value
    * @returns {CSSRuleBuilder}
    */
-  bg(value?: string): CSSRuleBuilder {
+  public bg(value?: string) {
     return this.add('background-color', value);
   }
 
@@ -111,7 +112,7 @@ class CSSRuleBuilder {
    * @param {String} value - css value
    * @returns {CSSRuleBuilder}
    */
-  text(value?: string): CSSRuleBuilder {
+  public text(value?: string) {
     return this.add('color', value);
   }
 
@@ -119,7 +120,7 @@ class CSSRuleBuilder {
    * Create a CSS rule string with a selector and prop-values.
    * @returns {String}
    */
-  build() {
+  public build() {
     let result = '';
 
     if (this.propValues.length) {
@@ -144,7 +145,7 @@ export function create(selector: string) {
  * @param {String} className - class name
  * @returns {CSSRuleBuilder}
  */
-export function createClassRule(className: ClassNameType): CSSRuleBuilder {
+export function createClassRule(className: ClassNameType) {
   return create(`.${cls(className)}`);
 }
 
@@ -167,10 +168,7 @@ export function createNestedClassRule(
  * @param {Object} options - options
  * @returns {Array.<CSSRuleBuilder>}
  */
-export function createWebkitScrollbarRules(
-  selector: string,
-  options: OptScrollbarStyle
-): Array<CSSRuleBuilder> {
+export function createWebkitScrollbarRules(selector: string, options: OptScrollbarStyle) {
   return [
     create(`${selector} ::-webkit-scrollbar`).bg(options.background),
     create(`${selector} ::-webkit-scrollbar-thumb`).bg(options.thumb),
@@ -184,10 +182,7 @@ export function createWebkitScrollbarRules(
  * @param {Object} options - options
  * @returns {CSSRuleBuilder}
  */
-export function createIEScrollbarRule(
-  selector: string,
-  options: OptScrollbarStyle
-): CSSRuleBuilder {
+export function createIEScrollbarRule(selector: string, options: OptScrollbarStyle) {
   const bgProps = [
     'scrollbar-3dlight-color',
     'scrollbar-darkshadow-color',
@@ -212,7 +207,7 @@ export function createIEScrollbarRule(
  * @param {Array.<Rule>} rules - rule builders
  * @returns {String}
  */
-export function buildAll(rules: CSSRuleBuilder[]): string {
+export function buildAll(rules: CSSRuleBuilder[]) {
   return rules
     .map(function(rule) {
       return rule.build();

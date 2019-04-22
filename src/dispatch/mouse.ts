@@ -13,6 +13,7 @@ interface MouseEventInfo {
 
 function findPrevIndex<T>(arr: T[], pred: (_: T) => boolean): number {
   const index = arr.findIndex(pred);
+
   return index >= 0 ? index - 1 : arr.length - 1;
 }
 

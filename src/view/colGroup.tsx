@@ -16,7 +16,7 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class ColGroupComp extends Component<Props> {
-  render({ columns, widths, borderWidth }: Props) {
+  public render({ columns, widths, borderWidth }: Props) {
     return (
       <colgroup>
         {columns.map(({ name }, idx) => (

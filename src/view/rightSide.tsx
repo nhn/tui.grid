@@ -17,31 +17,33 @@ interface StoreProps {
 }
 
 class RightSideComp extends Component<StoreProps & DispatchProps> {
-  renderScrollbarYInnerBorder() {
+  private renderScrollbarYInnerBorder() {
     const { cornerTopHeight, bodyHeight, scrollXHeight } = this.props;
     const style = {
       top: cornerTopHeight,
       height: bodyHeight - scrollXHeight
     };
+
     return <div class={cls('scrollbar-y-inner-border')} style={style} />;
   }
 
-  renderScrollbarRightTop() {
+  private renderScrollbarRightTop() {
     const style = { height: this.props.cornerTopHeight };
+
     return <div class={cls('scrollbar-right-top')} style={style} />;
   }
 
-  renderScrollbarYOuterBorder() {
+  private renderScrollbarYOuterBorder() {
     return <div class={cls('scrollbar-y-outer-border')} />;
   }
 
-  renderScrollbarRightBottom() {
+  private renderScrollbarRightBottom() {
     const style = { height: this.props.cornerBottomHeight };
 
     return <div class={cls('scrollbar-right-bottom')} style={style} />;
   }
 
-  renderScrollbarFrozenBorder() {
+  private renderScrollbarFrozenBorder() {
     const { scrollXHeight, frozenBorderWidth, cellBorderWidth } = this.props;
 
     const style = {
@@ -53,7 +55,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     return <div class={cls('scrollbar-frozen-border')} style={style} />;
   }
 
-  renderFrozenBorder() {
+  private renderFrozenBorder() {
     const { frozenBorderWidth } = this.props;
     const style = {
       marginLeft: -frozenBorderWidth,
@@ -63,7 +65,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
     return <div class={cls('frozen-border')} style={style} />;
   }
 
-  render() {
+  public render() {
     const style = {
       display: 'block',
       marginLeft: this.props.marginLeft,

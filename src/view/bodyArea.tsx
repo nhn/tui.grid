@@ -31,10 +31,10 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 ];
 
 class BodyAreaComp extends Component<Props> {
-  el?: HTMLElement;
+  private el?: HTMLElement;
 
-  handleScroll = (ev: UIEvent) => {
-    const { scrollLeft, scrollTop } = ev.srcElement!;
+  private handleScroll = (ev: UIEvent) => {
+    const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
 
     if (this.props.side === 'R') {
@@ -43,8 +43,12 @@ class BodyAreaComp extends Component<Props> {
     dispatch('setScrollTop', scrollTop);
   };
 
-  handleMouseDown = (ev: MouseEvent) => {
-    const el = this.el!;
+  private handleMouseDown = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
     const { pageX, pageY, shiftKey } = ev;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
@@ -54,16 +58,16 @@ class BodyAreaComp extends Component<Props> {
     dispatch('mouseDownBody', { offsetX, offsetY, side, shiftKey });
   };
 
-  shouldComponentUpdate(nextProps: Props) {
+  public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
     return PROPS_FOR_UPDATE.some((propName) => nextProps[propName] !== currProps[propName]);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  public componentWillReceiveProps(nextProps: Props) {
     this.el!.scrollTop = nextProps.scrollTop;
   }
 
-  render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
+  public render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
     const areaStyle = { overflow: 'scroll', height: bodyHeight };
     const tableStyle = { overflow: 'visible', top: offsetY };
     const containerStyle = { height: totalRowHeight };
@@ -74,7 +78,9 @@ class BodyAreaComp extends Component<Props> {
         style={areaStyle}
         onScroll={this.handleScroll}
         onMouseDown={this.handleMouseDown}
-        ref={(el) => (this.el = el)}
+        ref={(el) => {
+          this.el = el;
+        }}
       >
         <div class={cls('body-container')} style={containerStyle}>
           <div class={cls('table-container')} style={tableStyle}>

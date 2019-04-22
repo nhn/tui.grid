@@ -17,14 +17,15 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
+  public shouldComponentUpdate(nextProps: Props) {
     if (shallowEqual(nextProps, this.props)) {
       return false;
     }
+
     return true;
   }
 
-  render({ rows, columns }: Props) {
+  public render({ rows, columns }: Props) {
     const columnNames = columns.map(({ name }) => name);
 
     return (

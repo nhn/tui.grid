@@ -14,5 +14,10 @@ module.exports = {
   ],
   parserOptions: {
     parser: 'typescript-eslint-parser'
+  },
+  rules: {
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/explicit-function-return-type": 0,
+    'accessor-pairs': 0
   }
 };
