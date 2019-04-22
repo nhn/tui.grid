@@ -20,7 +20,7 @@ class ColGroupComp extends Component<Props> {
     return (
       <colgroup>
         {columns.map(({ name }, idx) => (
-          <col data-column-name={name} style={{ width: widths[idx] + borderWidth }} />
+          <col key={name} data-column-name={name} style={{ width: widths[idx] + borderWidth }} />
         ))}
       </colgroup>
     );

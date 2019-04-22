@@ -1,5 +1,5 @@
 interface Obj {
-  [propName: string]: any;
+  [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function shallowEqual(o1: Obj, o2: Obj) {
@@ -17,7 +17,7 @@ export function shallowEqual(o1: Obj, o2: Obj) {
   return true;
 }
 
-export function arrayEqual(a1: any, a2: any) {
+export function arrayEqual(a1: unknown[], a2: unknown[]) {
   if (a1.length !== a2.length) {
     return false;
   }
@@ -39,6 +39,7 @@ export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
   return arr.reduce((acc, v, idx) => (predicate(v) ? [...acc, idx] : acc), [] as number[]);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function pipe(initVal: any, ...args: Function[]) {
   return args.reduce((acc, fn) => fn(acc), initVal);
 }

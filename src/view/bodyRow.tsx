@@ -22,7 +22,7 @@ const BodyRowComp = ({ row, columnNames, rowHeight, idx }: Props) => {
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
       {columnNames.map((name) => (
-        <BodyCell value={row[name]} rowKey={row.rowKey} columnName={name} />
+        <BodyCell key={name} value={row[name]} rowKey={row.rowKey} columnName={name} />
       ))}
     </tr>
   );

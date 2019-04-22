@@ -6,9 +6,11 @@ import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 
+/* eslint-disable */
 if ((module as any).hot) {
-  require('preact/devtools'); // eslint-disable-line global-require
+  require('preact/devtools');
 }
+/* eslint-enable */
 
 export default class Grid {
   private store: Store;
@@ -24,6 +26,7 @@ export default class Grid {
     this.dispatch = dispatch;
 
     // @TODO: Only for Development env
+    // eslint-disable-next-line
     (window as any).store = store;
 
     if (!themeManager.isApplied()) {

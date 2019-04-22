@@ -4,13 +4,11 @@ import '../src/css/grid.css';
 
 const stories = storiesOf('Virtual Scrolling', module);
 
-const data = [];
-const columns = [];
 const ROW_COUNT = 10000;
 const COL_COUNT = 10;
 
 interface AnyIndex {
-  [propName: string]: any;
+  [propName: string]: unknown;
 }
 
 stories.add('Sample', () => {
@@ -20,13 +18,13 @@ stories.add('Sample', () => {
   for (let i = 0; i < ROW_COUNT; i += 1) {
     const row: AnyIndex = { id: i };
     for (let j = 0; j < COL_COUNT; j += 1) {
-      row['c' + j] = (Math.random() * 100000000000).toFixed();
+      row[`c${j}`] = (Math.random() * 100000000000).toFixed();
     }
     data.push(row);
   }
 
   for (let i = 0; i < COL_COUNT; i += 1) {
-    const name = 'c' + i;
+    const name = `c${i}`;
     columns.push({ name, title: name });
   }
 
@@ -34,9 +32,7 @@ stories.add('Sample', () => {
   const width = 1000;
   const bodyHeight = 800;
 
-  console.time('grid');
-  const grid = new Grid({ el, data, columns, width, bodyHeight });
-  console.timeEnd('grid');
+  new Grid({ el, data, columns, width, bodyHeight });
 
   return el;
 });

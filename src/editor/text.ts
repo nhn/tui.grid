@@ -3,14 +3,14 @@ interface RenderProps {
   trigger(action: 'start' | 'finish'): void;
 }
 
-interface ICellEditor {
+interface CellEditor {
   render(props: RenderProps): void;
   onChange(): void;
   onStart(): void;
   onFinish(): void;
 }
 
-function createEditor(options: ICellEditor) {}
+function createEditor(options: CellEditor) {}
 
 // class CellEditorText implements CellEditor {}
 
@@ -25,6 +25,7 @@ export function create() {
       el.addEventListener('blur', () => {
         trigger('finish');
       });
+
       return el;
     },
     onChange() {},

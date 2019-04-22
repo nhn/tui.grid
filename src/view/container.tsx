@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
-import { cls, getCellAddress } from '../helper/dom';
+import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
