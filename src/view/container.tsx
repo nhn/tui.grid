@@ -29,12 +29,11 @@ export class ContainerComp extends Component<Props> {
     const target = ev.target as HTMLElement;
     const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
     const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
-    /* const cellAddress = getCellAddress(target); */
     const isMainButton = false;
 
     if (!focusBlocked && !isMainButton) {
       ev.preventDefault();
-      this.props.dispatch('setFocusActive', true);
+      this.props.dispatch('blurFromMouseDown');
     }
   };
 

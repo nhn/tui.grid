@@ -5,7 +5,6 @@ import { connect } from './hoc';
 import { cls } from '../helper/dom';
 
 interface OwnProps {
-  idx: number;
   row: Row;
   columnNames: string[];
 }
@@ -16,14 +15,16 @@ interface StoreProps {
 
 type Props = OwnProps & StoreProps;
 
-const BodyRowComp = ({ row, columnNames, rowHeight, idx }: Props) => {
-  const isOddRow = !!(idx % 2);
+const BodyRowComp = ({ row, columnNames, rowHeight }: Props) => {
+  const isOddRow = !!(row.rowKey % 2);
 
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
-      {columnNames.map((name) => (
-        <BodyCell key={name} value={row[name]} rowKey={row.rowKey} columnName={name} />
-      ))}
+      {columnNames.map((name) => {
+        // Pass row object directly instead of passing only value of it,
+        // so that BodyCell component can watch the change of value using selector function.
+        return <BodyCell key={name} row={row} columnName={name} />;
+      })}
     </tr>
   );
 };

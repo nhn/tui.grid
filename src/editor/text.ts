@@ -1,35 +1,52 @@
-interface RenderProps {
-  // container: HTMLElement;
-  trigger(action: 'start' | 'finish'): void;
-}
+import { CellEditor } from './base';
+import { CellValue } from '../store/types';
+import { cls } from '../helper/dom';
 
-interface CellEditor {
-  render(props: RenderProps): void;
-  onChange(): void;
-  onStart(): void;
-  onFinish(): void;
-}
+export class CellTextEditor implements CellEditor {
+  private el?: HTMLInputElement;
 
-function createEditor(options: CellEditor) {}
+  public constructor(value: CellValue, dispatch: Function) {
+    const el = document.createElement('input');
+    el.className = cls('content-text');
+    el.type = 'text';
+    el.value = String(value);
 
-// class CellEditorText implements CellEditor {}
+    el.addEventListener('focusin', () => {
+      dispatch('start');
+    });
 
-export function create() {
-  return createEditor({
-    render({ trigger }) {
-      const el = document.createElement('input');
+    el.addEventListener('focusout', () => {
+      dispatch('finish');
+    });
 
-      el.addEventListener('focus', () => {
-        trigger('start');
-      });
-      el.addEventListener('blur', () => {
-        trigger('finish');
-      });
+    this.el = el;
+  }
 
-      return el;
-    },
-    onChange() {},
-    onStart() {},
-    onFinish() {}
-  });
+  public getElement() {
+    return this.el;
+  }
+
+  public onChange(value: CellValue) {
+    (this.el as HTMLInputElement).value = String(value);
+  }
+
+  public getValue() {
+    if (this.el) {
+      return this.el.value;
+    }
+
+    return '';
+  }
+
+  public onStart() {
+    if (this.el) {
+      this.el.focus();
+    }
+  }
+
+  public onFinish() {
+    if (this.el) {
+      this.el.blur();
+    }
+  }
 }

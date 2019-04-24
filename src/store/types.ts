@@ -6,10 +6,12 @@ export type Side = 'L' | 'R';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
-export interface Row {
+export type Row = {
   rowKey: number | string;
+  _extraData?: any;
+} & {
   [propName: string]: CellValue;
-}
+};
 
 export interface Data {
   rawData: Row[];
@@ -86,7 +88,8 @@ export interface Rect {
 }
 
 export interface Focus {
-  active: boolean;
+  editing: boolean;
+  navigating: boolean;
   rowKey: number | string | null;
   columnName: string | null;
   readonly side: Side | null;

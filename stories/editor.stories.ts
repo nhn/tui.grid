@@ -19,7 +19,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
 
 stories.add('Text', () => {
-  const { el } = createGrid({
+  const { grid, el } = createGrid({
     data,
     columns: columns.map((col) => ({
       ...col,
@@ -27,6 +27,8 @@ stories.add('Text', () => {
     })),
     bodyHeight: 400
   });
+
+  (window as Window & { grid: Grid }).grid = grid;
 
   return el;
 });
