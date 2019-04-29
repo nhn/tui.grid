@@ -1,6 +1,5 @@
-import { Store, Column, Side, ColumnInfo } from '../store/types';
+import { Store, Column, Side } from '../store/types';
 import { clamp } from '../helper/common';
-import { cell } from '../theme/styleGenerator';
 
 const keyNameMap = {
   8: 'backspace',
@@ -120,11 +119,16 @@ function getKeyStrokeString(ev: KeyboardEvent) {
 export function keyEventGenerate(ev: KeyboardEvent) {
   const keyStroke = getKeyStrokeString(ev) as KeyStrokeCommandType;
   const commandInfo = keyStrokeCommandMap[keyStroke];
+  let keyEvent;
 
-  return {
-    type: commandInfo[0],
-    command: commandInfo[1]
-  };
+  if (commandInfo) {
+    keyEvent = {
+      type: commandInfo[0],
+      command: commandInfo[1]
+    };
+  }
+
+  return keyEvent;
 }
 
 function indexOfColumnName(columnName: string, side: Side, { visibleColumns }: Column) {

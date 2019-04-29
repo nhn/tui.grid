@@ -95,10 +95,13 @@ class ClipboardComp extends Component<Props> {
       return;
     }
 
-    const { type, command } = keyEventGenerate(ev);
-    if (!type) {
+    const keyEvent = keyEventGenerate(ev);
+
+    if (!keyEvent) {
       return;
     }
+
+    const { type, command } = keyEvent;
 
     this.lock();
 
