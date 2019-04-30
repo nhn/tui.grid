@@ -71,7 +71,7 @@ export const FocusLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, {
   const { cellPosRect, editing, navigating } = focus;
 
   return {
-    active: editing || navigating,
+    active: !!editing || navigating,
     cellPosRect: side === focus.side ? cellPosRect : null,
     cellBorderWidth: dimension.cellBorderWidth
   };

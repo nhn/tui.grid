@@ -121,14 +121,14 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
 }
 
 export function hasClass(el: HTMLElement, className: ClassNameType) {
-  return el.className.includes(cls(className));
+  return el.className.split(' ').includes(cls(className));
 }
 
 export function findParent(el: HTMLElement, className: ClassNameType) {
   let currentEl: HTMLElement | null = el;
-  do {
+  while (currentEl && !hasClass(currentEl, className)) {
     currentEl = currentEl.parentElement;
-  } while (currentEl && !hasClass(currentEl, className));
+  }
 
   return currentEl;
 }

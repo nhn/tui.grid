@@ -31,6 +31,8 @@ export interface OptColumn {
   title?: string;
   hidden?: boolean;
   width?: number | 'auto';
+  editor?: string;
+  viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
 }

@@ -16,15 +16,20 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
+const columns = [
+  { name: 'name', width: 300 },
+  { name: 'genre', width: 300 },
+  { name: 'artist', width: 300, editor: 'text', viewer: false },
+  { name: 'type', width: 300, editor: 'text' }
+];
 
 stories.add('Text', () => {
   const { grid, el } = createGrid({
     data,
-    columns: columns.map((col) => ({
-      ...col,
-      editor: 'text'
-    })),
+    columns,
+    columnOptions: {
+      frozenCount: 1
+    },
     bodyHeight: 400
   });
 

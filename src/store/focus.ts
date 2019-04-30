@@ -12,8 +12,8 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
   return reactive({
     rowKey: null,
     columnName: null,
+    editing: null,
     navigating: false,
-    editing: false,
     get side(this: Focus) {
       if (this.columnName === null) {
         return null;

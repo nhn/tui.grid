@@ -89,11 +89,12 @@ class ClipboardComp extends Component<Props> {
   };
 
   public componentDidUpdate() {
-    const { navigating, editing } = this.props;
-
-    if (this.el && navigating && !editing && !this.isClipboardFocused()) {
-      this.el.focus();
-    }
+    setTimeout(() => {
+      const { navigating, editing } = this.props;
+      if (this.el && navigating && !editing && !this.isClipboardFocused()) {
+        this.el.focus();
+      }
+    });
   }
 
   public render() {
@@ -113,5 +114,5 @@ class ClipboardComp extends Component<Props> {
 
 export const Clipboard = connect<StoreProps>(({ focus }) => ({
   navigating: focus.navigating,
-  editing: focus.editing
+  editing: !!focus.editing
 }))(ClipboardComp);

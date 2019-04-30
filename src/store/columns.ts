@@ -4,6 +4,7 @@ import { reactive } from '../helper/reactive';
 
 const DEF_MIN_WIDTH = 50;
 
+// eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const title = column.title || column.name;
   const { name, width } = column;
@@ -11,6 +12,8 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const hidden = !!column.hidden;
   const resizable = !!column.resizable;
+  const editor = column.editor || '';
+  const viewer = column.viewer === false ? '' : 'default';
 
   // @TODO meta tag 체크 여부
   const minWidth = column.minWidth || columnOptions.minWidth || DEF_MIN_WIDTH;
@@ -19,6 +22,8 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     title,
     name,
     hidden,
+    editor,
+    viewer,
     fixedWidth,
     baseWidth,
     minWidth,

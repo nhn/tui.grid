@@ -4,6 +4,7 @@ import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue } from './store/types';
+import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import i18n from './i18n';
 
@@ -34,7 +35,7 @@ export default class Grid {
       themeManager.apply('default');
     }
 
-    render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
+    render(<Root store={store} dispatch={dispatch} editorMap={editorMap} rootElement={el} />, el);
   }
 
   /**

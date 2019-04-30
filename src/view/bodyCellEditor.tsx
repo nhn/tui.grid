@@ -3,12 +3,12 @@ import { cls } from '../helper/dom';
 import { CellValue } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { CellTextEditor } from '../editor/text';
-import { CellEditor } from '../editor/base';
+import { CellEditor } from '../editor/types';
 
 interface OwnProps {
   rowKey: number;
   columnName: string;
+  editorName: string;
   value: CellValue;
 }
 
@@ -24,13 +24,15 @@ export class BodyCellEditorComp extends Component<Props> {
   private contentEl?: HTMLElement;
 
   public componentDidMount() {
-    const { rowKey, columnName, value, dispatch } = this.props;
-    const editor = new CellTextEditor(value, (type: string) => {
+    const { rowKey, columnName, value, editorName, dispatch } = this.props;
+    const Editor = this.context.editorMap[editorName];
+    const editor: CellEditor = new Editor(value, (type: string) => {
       switch (type) {
         case 'start':
           dispatch('startEditing', rowKey, columnName);
           break;
         case 'finish':
+          dispatch('setValue', rowKey, columnName, editor.getValue());
           dispatch('finishEditing', rowKey, columnName);
           break;
         default:
@@ -55,13 +57,12 @@ export class BodyCellEditorComp extends Component<Props> {
   }
 
   private finishEditing() {
-    if (!this.editor) {
-      return;
-    }
+    if (this.editor) {
+      const { dispatch, rowKey, columnName } = this.props;
 
-    const { dispatch, rowKey, columnName } = this.props;
-    dispatch('setValue', rowKey, columnName, this.editor.getValue());
-    this.editor.onFinish();
+      dispatch('setValue', rowKey, columnName, this.editor.getValue());
+      this.editor.onFinish();
+    }
   }
 
   private handleKeyDown = (ev: KeyboardEvent) => {
@@ -87,7 +88,9 @@ export class BodyCellEditorComp extends Component<Props> {
 }
 
 export const BodyCellEditor = connect<StoreProps, OwnProps>(({ focus }, { rowKey, columnName }) => {
-  const editing = focus.editing && focus.rowKey === rowKey && focus.columnName === columnName;
+  const { editing } = focus;
 
-  return { editing };
+  return {
+    editing: !!editing && editing.rowKey === rowKey && editing.columnName === columnName
+  };
 })(BodyCellEditorComp);

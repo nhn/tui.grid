@@ -1,4 +1,4 @@
-import { CellEditor } from './base';
+import { CellEditor } from './types';
 import { CellValue } from '../store/types';
 import { cls } from '../helper/dom';
 
@@ -12,6 +12,7 @@ export class CellTextEditor implements CellEditor {
     el.value = String(value);
 
     el.addEventListener('focusin', () => {
+      el.select();
       dispatch('start');
     });
 
@@ -40,7 +41,7 @@ export class CellTextEditor implements CellEditor {
 
   public onStart() {
     if (this.el) {
-      this.el.focus();
+      this.el.select();
     }
   }
 

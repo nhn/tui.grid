@@ -22,6 +22,8 @@ export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
+  editor: string;
+  viewer: string;
   hidden: boolean;
   baseWidth: number;
   resizable: boolean;
@@ -88,7 +90,10 @@ export interface Rect {
 }
 
 export interface Focus {
-  editing: boolean;
+  editing: {
+    rowKey: number;
+    columnName: string;
+  } | null;
   navigating: boolean;
   rowKey: number | string | null;
   columnName: string | null;
