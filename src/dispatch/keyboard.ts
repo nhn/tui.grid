@@ -95,8 +95,6 @@ type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
 export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
 
-// @TODO: 현재는 전부 FOCUS가 존재한다는 가정하에 이동되고 있음. FOCUS가 없을 떄 Grid에서 이벤트가 발생할 경우 대비 필요
-
 interface ColumnInfo {
   columnName: string | null;
   side: Side | null;
