@@ -4,6 +4,8 @@ export type Range = [number, number];
 
 export type Side = 'L' | 'R';
 
+export type VisibleColumns = { [key in Side]: ColumnInfo[] };
+
 export interface Row {
   rowKey: number;
   [propName: string]: CellValue;
@@ -29,7 +31,7 @@ export interface Column {
   visibleFrozenCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
-  visibleColumns: { [key in Side]: ColumnInfo[] };
+  visibleColumns: VisibleColumns;
 }
 
 export interface Dimension {

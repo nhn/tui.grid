@@ -1,4 +1,4 @@
-import { Store, Column, Side } from '../store/types';
+import { Store, Row, Side, VisibleColumns } from '../store/types';
 import { clamp } from '../helper/common';
 
 const keyNameMap = {
@@ -95,6 +95,23 @@ type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
 export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
 
+// @TODO: 현재는 전부 FOCUS가 존재한다는 가정하에 이동되고 있음. FOCUS가 없을 떄 Grid에서 이벤트가 발생할 경우 대비 필요
+
+interface ColumnInfo {
+  columnName: string | null;
+  side: Side | null;
+  visibleColumns: VisibleColumns;
+}
+
+interface PageInfo {
+  rowKey: number | null;
+  rowIndex: number | null;
+  offsets: number[];
+  viewData: Row[];
+  cellBorderWidth: number;
+  bodyHeight: number;
+}
+
 /**
  * Returns the keyStroke string
  * @param {Event} ev - Keyboard event
@@ -131,8 +148,8 @@ export function keyEventGenerate(ev: KeyboardEvent) {
   return keyEvent;
 }
 
-function indexOfColumnName(columnName: string, side: Side, { visibleColumns }: Column) {
-  let index = visibleColumns[side].findIndex((col) => col.title === columnName);
+function indexOfColumnName(columnName: string, side: Side, visibleColumns: VisibleColumns) {
+  let index = visibleColumns[side].findIndex((col) => col.name === columnName);
 
   if (side === 'R') {
     index += visibleColumns.L.length;
@@ -141,7 +158,7 @@ function indexOfColumnName(columnName: string, side: Side, { visibleColumns }: C
   return index;
 }
 
-function getVisibleColumnNames({ visibleColumns }: Column) {
+export function getVisibleColumnNames(visibleColumns: VisibleColumns) {
   return [...visibleColumns.L, ...visibleColumns.R];
 }
 
@@ -149,160 +166,167 @@ function isValidRowKeyRange(rowKey: number, viewDataLength: number) {
   return rowKey < 0 || rowKey > viewDataLength - 1;
 }
 
-function findRowKey({ focus, data }: Store, offset: number) {
-  const curRowKey = focus.rowKey!;
-  let rowKey = curRowKey + offset;
+function findRowKey(rowKey: number, viewDataLen: number, offset: number) {
+  let newKey = rowKey! + offset;
 
-  if (isValidRowKeyRange(rowKey, data.viewData.length)) {
-    rowKey = curRowKey!;
+  if (isValidRowKeyRange(newKey, viewDataLen)) {
+    newKey = rowKey;
   }
 
-  return rowKey;
+  return newKey;
 }
 
-function findOffsetIndex(store: Store, position: number) {
-  const {
-    rowCoords: { offsets },
-    dimension: { cellBorderWidth }
-  } = store;
-
+function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
   position += cellBorderWidth * 2;
 
-  return offsets.findIndex((offset) => offset - cellBorderWidth > position) - 1;
+  const idx = offsets.findIndex((offset) => offset - cellBorderWidth > position);
+
+  return idx >= 0 ? idx - 1 : offsets.length - 1;
 }
 
-function getPageMovedIndex(store: Store, isPrevDir: boolean) {
-  const {
-    focus: { rowIndex },
-    data: { viewData },
-    rowCoords: { offsets }
-  } = store;
-  let {
-    dimension: { bodyHeight }
-  } = store;
+function getPageMovedIndex(pageInfo: PageInfo, isPrevDir: boolean) {
+  const { rowIndex, offsets, viewData, cellBorderWidth } = pageInfo;
+  let { bodyHeight } = pageInfo;
 
   if (isPrevDir) {
     bodyHeight = -bodyHeight;
   }
 
-  const movedIndex = findOffsetIndex(store, offsets[rowIndex!] + bodyHeight);
+  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, offsets[rowIndex!] + bodyHeight);
 
   return clamp(movedIndex, 0, viewData.length - 1);
 }
 
-function getPageMovedRowKey(store: Store, isPrevDir: boolean) {
-  const {
-    focus: { rowIndex }
-  } = store;
-
-  const prevPageRowIndex = getPageMovedIndex(store, isPrevDir);
+function getPageMovedRowKey(pageInfo: PageInfo, isPrevDir: boolean) {
+  const { rowKey, rowIndex, viewData } = pageInfo;
+  const prevPageRowIndex = getPageMovedIndex(pageInfo, isPrevDir);
   const offset = prevPageRowIndex - rowIndex!;
 
-  return findRowKey(store, offset);
+  return findRowKey(rowKey!, viewData.length, offset);
 }
 
-function prevRowKey(store: Store) {
-  return findRowKey(store, -1);
+function prevRowKey(rowKey: number, viewDataLen: number) {
+  return findRowKey(rowKey, viewDataLen, -1);
 }
 
-function nextRowKey(store: Store) {
-  return findRowKey(store, 1);
+function nextRowKey(rowKey: number, viewDataLen: number) {
+  return findRowKey(rowKey, viewDataLen, 1);
 }
 
 function firstRowKey() {
   return 0;
 }
 
-function lastRowKey({ data: { viewData } }: Store) {
-  return viewData.length - 1;
+function lastRowKey(viewDataLen: number) {
+  return viewDataLen - 1;
 }
 
-function prevPageMovedRowKey(store: Store) {
-  return getPageMovedRowKey(store, true);
+function prevPageMovedRowKey(pageInfo: PageInfo) {
+  return getPageMovedRowKey(pageInfo, true);
 }
 
-function nextPageMovedRowKey(store: Store) {
-  return getPageMovedRowKey(store, false);
+function nextPageMovedRowKey(pageInfo: PageInfo) {
+  return getPageMovedRowKey(pageInfo, false);
 }
 
 function isValidColumnRange(columnIndex: number, columnLength: number) {
   return columnIndex < 0 || columnIndex > columnLength - 1;
 }
 
-function findColumnName({ focus, column }: Store, offset: number) {
-  const { columnName, side } = focus;
-  const curColumnIndex = indexOfColumnName(columnName!, side!, column);
-  const visibleColumnNames = getVisibleColumnNames(column);
+function findColumnName({ columnName, side, visibleColumns }: ColumnInfo, offset: number) {
+  const curColumnIndex = indexOfColumnName(columnName!, side!, visibleColumns);
+  const visibleColumnNames = getVisibleColumnNames(visibleColumns);
   let columnIndex = curColumnIndex + offset;
 
   if (isValidColumnRange(columnIndex, visibleColumnNames.length)) {
     columnIndex = curColumnIndex;
   }
 
-  return visibleColumnNames[columnIndex].title;
+  return visibleColumnNames[columnIndex].name;
 }
 
-function prevColumnName(store: Store) {
-  return findColumnName(store, -1);
+function prevColumnName(columnInfo: ColumnInfo) {
+  return findColumnName(columnInfo, -1);
 }
 
-function nextColumnName(store: Store) {
-  return findColumnName(store, 1);
+function nextColumnName(columnInfo: ColumnInfo) {
+  return findColumnName(columnInfo, 1);
 }
 
-function firstColumnName({ column }: Store) {
-  return getVisibleColumnNames(column)[0].title;
+function firstColumnName(visibleColumns: VisibleColumns) {
+  return getVisibleColumnNames(visibleColumns)[0].name;
 }
 
-function lastColumnName({ column }: Store) {
-  const visibleColumnNames = getVisibleColumnNames(column);
+function lastColumnName(visibleColumns: VisibleColumns) {
+  const visibleColumnNames = getVisibleColumnNames(visibleColumns);
 
-  return visibleColumnNames[visibleColumnNames.length - 1].title;
+  return visibleColumnNames[visibleColumnNames.length - 1].name;
 }
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
-  const { focus } = store;
+  const {
+    focus,
+    data: { viewData },
+    column: { visibleColumns },
+    dimension: { bodyHeight, cellBorderWidth },
+    rowCoords: { offsets }
+  } = store;
+  const { side, rowIndex } = focus;
+  let { rowKey, columnName } = focus;
 
-  let rowKey = focus.rowKey!;
-  let columnName = focus.columnName!;
+  const pageInfo = {
+    rowKey,
+    rowIndex,
+    offsets,
+    viewData,
+    cellBorderWidth,
+    bodyHeight
+  };
+
+  const columnInfo = {
+    columnName,
+    side,
+    visibleColumns
+  };
 
   switch (command) {
     case 'up':
-      rowKey = prevRowKey(store);
+      rowKey = prevRowKey(rowKey!, viewData.length);
       break;
     case 'down':
-      rowKey = nextRowKey(store);
+      rowKey = nextRowKey(rowKey!, viewData.length);
       break;
     case 'left':
-      columnName = prevColumnName(store);
+      columnName = prevColumnName(columnInfo);
       break;
     case 'right':
-      columnName = nextColumnName(store);
+      columnName = nextColumnName(columnInfo);
       break;
     case 'firstCell':
-      columnName = firstColumnName(store);
+      columnName = firstColumnName(visibleColumns);
       rowKey = firstRowKey();
       break;
     case 'lastCell':
-      columnName = lastColumnName(store);
-      rowKey = lastRowKey(store);
+      columnName = lastColumnName(visibleColumns);
+      rowKey = lastRowKey(viewData.length);
       break;
     case 'pageUp':
-      rowKey = prevPageMovedRowKey(store);
+      rowKey = prevPageMovedRowKey(pageInfo);
       break;
     case 'pageDown':
-      rowKey = nextPageMovedRowKey(store);
+      rowKey = nextPageMovedRowKey(pageInfo);
       break;
     case 'firstColumn':
-      columnName = firstColumnName(store);
+      columnName = firstColumnName(visibleColumns);
       break;
     case 'lastColumn':
-      columnName = lastColumnName(store);
+      columnName = lastColumnName(visibleColumns);
       break;
     default:
       break;
   }
 
+  focus.active = true;
   focus.rowKey = rowKey;
   focus.columnName = columnName;
 }
