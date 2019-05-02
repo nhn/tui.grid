@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls, findParent } from '../helper/dom';
+import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { CellValue } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
@@ -99,23 +99,24 @@ export class EditingLayerInnerComp extends Component<Props> {
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { cellPosRect, side } = store.focus;
-  const { cellBorderWidth, tableBorderWidth, headerHeight } = store.dimension;
+  const { cellBorderWidth, tableBorderWidth, headerHeight, width } = store.dimension;
   const { scrollLeft, scrollTop } = store.viewport;
   const { areaWidth } = store.columnCoords;
   const { viewData } = store.data;
 
-  const offsetTop = headerHeight - scrollTop + tableBorderWidth;
-  const offsetLeft = side === 'L' ? 0 : areaWidth.L - scrollLeft + tableBorderWidth;
   const { top, left, right, bottom } = cellPosRect!;
+  const cellWidth = right - left + cellBorderWidth;
+  const cellHeight = bottom - top + cellBorderWidth;
+  const offsetTop = headerHeight - scrollTop + tableBorderWidth;
+  const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
   const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
-  const height = bottom - top + cellBorderWidth;
 
   return {
-    left: left + offsetLeft,
+    left: left + (side === 'L' ? 0 : offsetLeft),
     top: top + offsetTop,
-    width: right - left + cellBorderWidth,
-    height,
-    contentHeight: height - 2 * cellBorderWidth,
+    width: cellWidth,
+    height: cellHeight,
+    contentHeight: cellHeight - 2 * cellBorderWidth,
     value: targetRow[columnName]
   };
 })(EditingLayerInnerComp);
