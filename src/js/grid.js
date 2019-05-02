@@ -737,16 +737,14 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      * @param {Array} [options.complexColumns] - The complex columns info
      */
     setHeader: function(options) {
+        if (options.height) {
+            this.modelManager.dimensionModel.set('headerHeight', options.height);
+        }
+
         if (options.complexColumns) {
             this.modelManager.columnModel.set({
                 complexHeaderColumns: options.complexColumns
-            }, {
-                silent: !!options.height
             });
-        }
-
-        if (options.height) {
-            this.modelManager.dimensionModel.set('headerHeight', options.height);
         }
     },
 

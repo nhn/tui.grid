@@ -31,8 +31,7 @@ var Frame = View.extend(/** @lends module:view/layout/frame.prototype */{
             whichSide: options.whichSide || frameConst.R
         });
 
-        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
-            .listenTo(this.dimensionModel, 'change:headerHeight', this.render);
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render);
     },
 
     /**

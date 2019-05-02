@@ -30,6 +30,7 @@ function create(whichSide, columns) {
         focusModel: new Model(),
         selectionModel: new Model(),
         coordColumnModel: coordColumnModel,
+        dimensionModel: new Model(),
         domEventBus: DomEventBus.create(),
         viewFactory: {
             createHeaderResizeHandle: function() {
@@ -65,7 +66,7 @@ describe('Header', function() {
         });
 
         it('height of $el should be headerHeight', function() {
-            header.headerHeight = 20;
+            header.dimensionModel.set('headerHeight', 20);
             header.render();
 
             expect(header.$el.height()).toEqual(19);

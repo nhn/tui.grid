@@ -67,11 +67,11 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             coordRowModel: options.coordRowModel,
+            dimensionModel: options.dimensionModel,
 
             viewFactory: options.viewFactory,
             domEventBus: options.domEventBus,
 
-            headerHeight: options.headerHeight,
             whichSide: options.whichSide || frameConst.R
         });
 
@@ -85,7 +85,8 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
-            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState)
+            .listenTo(this.dimensionModel, 'change:headerHeight', this.render);
 
         if (this.whichSide === frameConst.L && this.columnModel.get('selectType') === 'checkbox') {
             this.listenTo(this.dataModel,
@@ -414,7 +415,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         this.$el.css({
-            height: this.headerHeight - TABLE_BORDER_WIDTH
+            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()
@@ -453,7 +454,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
     _getTableBodyMarkup: function() {
         var hierarchyList = this._getColumnHierarchyList();
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        var headerHeight = this.headerHeight;
+        var headerHeight = this.dimensionModel.get('headerHeight');
         var rowMarkupList = new Array(maxRowCount);
         var columnNames = new Array(maxRowCount);
         var colSpanList = [];
