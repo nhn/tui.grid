@@ -37,7 +37,7 @@ export default class Grid {
     render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
   }
 
-  private setFocusInfo(rowKey: number | null, columnName: string | null, active: boolean) {
+  private setFocusInfo(rowKey: number | string | null, columnName: string | null, active: boolean) {
     this.store.focus.active = active;
     this.store.focus.rowKey = rowKey;
     this.store.focus.columnName = columnName;
@@ -193,13 +193,18 @@ export default class Grid {
    * @param {boolean} [isOriginal] - It set to true, the original value will be return.
    * @returns {number|string} - The value of the cell
    */
-  public getValue(rowKey: number | null, columnName: string | null, isOriginal?: boolean) {
+  public getValue(rowKey: number | string | null, columnName: string | null, isOriginal?: boolean) {
     const {
       data: { viewData }
     } = this.store;
+    let rowIndex = -1;
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
-    return rowKey && columnName && viewData[rowKey] && viewData[rowKey][columnName];
+    if (rowKey) {
+      rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
+    }
+
+    return rowIndex !== -1 && columnName && viewData[rowIndex][columnName];
   }
 
   /**
@@ -235,7 +240,7 @@ export default class Grid {
    * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
    * @returns {Boolean} true if focused cell is changed
    */
-  public focus(rowKey: number, columnName: string, isScrollable?: boolean) {
+  public focus(rowKey: number | string, columnName: string, isScrollable?: boolean) {
     this.blur();
     // @TODO: focus change event 발생
 
@@ -247,7 +252,7 @@ export default class Grid {
 
   /**
    * Focus to the cell identified by given rowIndex and columnIndex.
-   * @param {(Number|String)} rowIndex - rowIndex
+   * @param {(Number)} rowIndex - rowIndex
    * @param {Number} columnIndex - columnIndex
    * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
    * @returns {Boolean} true if success

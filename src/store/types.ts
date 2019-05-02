@@ -7,7 +7,7 @@ export type Side = 'L' | 'R';
 export type VisibleColumns = { [key in Side]: ColumnInfo[] };
 
 export interface Row {
-  rowKey: number;
+  rowKey: number | string;
   [propName: string]: CellValue;
 }
 
@@ -86,7 +86,7 @@ export interface Rect {
 
 export interface Focus {
   active: boolean;
-  rowKey: number | null;
+  rowKey: number | string | null;
   columnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;

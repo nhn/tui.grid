@@ -102,7 +102,7 @@ interface ColumnInfo {
 }
 
 interface PageInfo {
-  rowKey: number | null;
+  rowKey: number | string | null;
   rowIndex: number | null;
   offsets: number[];
   viewData: Row[];
@@ -146,6 +146,10 @@ export function keyEventGenerate(ev: KeyboardEvent) {
   return keyEvent;
 }
 
+export function getVisibleColumnNames(visibleColumns: VisibleColumns) {
+  return [...visibleColumns.L, ...visibleColumns.R];
+}
+
 function indexOfColumnName(columnName: string, side: Side, visibleColumns: VisibleColumns) {
   let index = visibleColumns[side].findIndex((col) => col.name === columnName);
 
@@ -156,22 +160,17 @@ function indexOfColumnName(columnName: string, side: Side, visibleColumns: Visib
   return index;
 }
 
-export function getVisibleColumnNames(visibleColumns: VisibleColumns) {
-  return [...visibleColumns.L, ...visibleColumns.R];
+function isValidRowIndexRange(rowIndex: number, viewDataLength: number) {
+  return rowIndex >= 0 && rowIndex < viewDataLength;
 }
 
-function isValidRowKeyRange(rowKey: number, viewDataLength: number) {
-  return rowKey < 0 || rowKey > viewDataLength - 1;
-}
-
-function findRowKey(rowKey: number, viewDataLen: number, offset: number) {
-  let newKey = rowKey! + offset;
-
-  if (isValidRowKeyRange(newKey, viewDataLen)) {
-    newKey = rowKey;
+function findRowKey(rowKey: number | string, viewData: Row[], offset: number) {
+  let rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
+  if (isValidRowIndexRange(rowIndex + offset, viewData.length)) {
+    rowIndex += offset;
   }
 
-  return newKey;
+  return viewData[rowIndex].rowKey;
 }
 
 function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
@@ -200,23 +199,25 @@ function getPageMovedRowKey(pageInfo: PageInfo, isPrevDir: boolean) {
   const prevPageRowIndex = getPageMovedIndex(pageInfo, isPrevDir);
   const offset = prevPageRowIndex - rowIndex!;
 
-  return findRowKey(rowKey!, viewData.length, offset);
+  return findRowKey(rowKey!, viewData, offset);
 }
 
-function prevRowKey(rowKey: number, viewDataLen: number) {
-  return findRowKey(rowKey, viewDataLen, -1);
+function prevRowKey(rowKey: number | string, viewData: Row[]) {
+  return findRowKey(rowKey, viewData, -1);
 }
 
-function nextRowKey(rowKey: number, viewDataLen: number) {
-  return findRowKey(rowKey, viewDataLen, 1);
+function nextRowKey(rowKey: number | string, viewData: Row[]) {
+  return findRowKey(rowKey, viewData, 1);
 }
 
-function firstRowKey() {
-  return 0;
+function firstRowKey(viewData: Row[]) {
+  return viewData[0].rowKey;
 }
 
-function lastRowKey(viewDataLen: number) {
-  return viewDataLen - 1;
+function lastRowKey(viewData: Row[]) {
+  const viewDataLen = viewData.length;
+
+  return viewData[viewDataLen - 1].rowKey;
 }
 
 function prevPageMovedRowKey(pageInfo: PageInfo) {
@@ -228,16 +229,15 @@ function nextPageMovedRowKey(pageInfo: PageInfo) {
 }
 
 function isValidColumnRange(columnIndex: number, columnLength: number) {
-  return columnIndex < 0 || columnIndex > columnLength - 1;
+  return columnIndex >= 0 && columnIndex < columnLength;
 }
 
 function findColumnName({ columnName, side, visibleColumns }: ColumnInfo, offset: number) {
-  const curColumnIndex = indexOfColumnName(columnName!, side!, visibleColumns);
+  let columnIndex = indexOfColumnName(columnName!, side!, visibleColumns);
   const visibleColumnNames = getVisibleColumnNames(visibleColumns);
-  let columnIndex = curColumnIndex + offset;
 
-  if (isValidColumnRange(columnIndex, visibleColumnNames.length)) {
-    columnIndex = curColumnIndex;
+  if (isValidColumnRange(columnIndex + offset, visibleColumnNames.length)) {
+    columnIndex += offset;
   }
 
   return visibleColumnNames[columnIndex].name;
@@ -289,10 +289,10 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
 
   switch (command) {
     case 'up':
-      rowKey = prevRowKey(rowKey!, viewData.length);
+      rowKey = prevRowKey(rowKey!, viewData);
       break;
     case 'down':
-      rowKey = nextRowKey(rowKey!, viewData.length);
+      rowKey = nextRowKey(rowKey!, viewData);
       break;
     case 'left':
       columnName = prevColumnName(columnInfo);
@@ -302,11 +302,11 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       break;
     case 'firstCell':
       columnName = firstColumnName(visibleColumns);
-      rowKey = firstRowKey();
+      rowKey = firstRowKey(viewData);
       break;
     case 'lastCell':
       columnName = lastColumnName(visibleColumns);
-      rowKey = lastRowKey(viewData.length);
+      rowKey = lastRowKey(viewData);
       break;
     case 'pageUp':
       rowKey = prevPageMovedRowKey(pageInfo);
