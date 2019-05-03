@@ -12,7 +12,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const hidden = !!column.hidden;
   const resizable = !!column.resizable;
-  const editor = column.editor || '';
+  const editor = typeof column.editor === 'string' ? { type: column.editor } : column.editor;
   const viewer = column.viewer === false ? '' : 'default';
 
   // @TODO meta tag 체크 여부

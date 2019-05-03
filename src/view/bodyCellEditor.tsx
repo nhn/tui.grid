@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
-import { CellValue } from '../store/types';
+import { CellEditorOptions, CellValue } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor } from '../editor/types';
@@ -8,7 +8,7 @@ import { CellEditor } from '../editor/types';
 interface OwnProps {
   rowKey: number;
   columnName: string;
-  editorName: string;
+  editorInfo: CellEditorOptions;
   value: CellValue;
 }
 
@@ -24,8 +24,8 @@ export class BodyCellEditorComp extends Component<Props> {
   private contentEl?: HTMLElement;
 
   public componentDidMount() {
-    const { rowKey, columnName, value, editorName, dispatch } = this.props;
-    const Editor = this.context.editorMap[editorName];
+    const { rowKey, columnName, value, editorInfo, dispatch } = this.props;
+    const Editor = this.context.editorMap[editorInfo.type];
     const editor: CellEditor = new Editor(value, (type: string) => {
       switch (type) {
         case 'start':

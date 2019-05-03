@@ -1,9 +1,9 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue } from '../store/types';
+import { CellValue, CellEditorOptions } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
-import { CellEditor } from '../editor/types';
+import { CellEditor, CellEditorClass } from '../editor/types';
 
 interface StoreProps {
   left: number;
@@ -17,7 +17,7 @@ interface StoreProps {
 interface OwnProps {
   rowKey: number;
   columnName: string;
-  editorName: string;
+  editorOptions: CellEditorOptions;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -53,10 +53,10 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentDidMount() {
-    const { editorName, value } = this.props;
+    const { editorOptions, value } = this.props;
 
-    const Editor = this.context.editorMap[editorName];
-    const cellEditor: CellEditor = new Editor(value, () => {});
+    const Editor: CellEditorClass = this.context.editorMap[editorOptions.type];
+    const cellEditor: CellEditor = new Editor(editorOptions, value, () => {});
     const editorEl = cellEditor.getElement();
 
     if (editorEl && this.contentEl) {

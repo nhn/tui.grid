@@ -19,8 +19,20 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 const columns = [
   { name: 'name', width: 300 },
   { name: 'genre', width: 300 },
-  { name: 'artist', width: 300, editor: 'text', viewer: false },
-  { name: 'type', width: 300, editor: 'text' }
+  {
+    name: 'artist',
+    width: 300,
+    editor: {
+      type: 'checkbox',
+      listItems: [
+        { name: 'Pop', value: '1' },
+        { name: 'Rock', value: '2' },
+        { name: 'RNB', value: '3' }
+      ]
+    },
+    viewer: false
+  },
+  { name: 'type', width: 300, editor: 'checkbox' }
 ];
 
 stories.add('Text', () => {

@@ -5,7 +5,7 @@ import { cls } from '../helper/dom';
 export class CellTextEditor implements CellEditor {
   private el?: HTMLInputElement;
 
-  public constructor(value: CellValue, dispatch: Function) {
+  public constructor(options: object, value: CellValue, dispatch: Function) {
     const el = document.createElement('input');
     el.className = cls('content-text');
     el.type = 'text';

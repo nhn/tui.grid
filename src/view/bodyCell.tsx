@@ -5,6 +5,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { BodyCellEditor } from './bodyCellEditor';
 import { BodyCellViewer } from './bodyCellViewer';
+import { CellEditor } from '../types';
 
 interface OwnProps {
   row: Row;
@@ -13,7 +14,7 @@ interface OwnProps {
 
 interface StoreProps {
   value: CellValue;
-  editor: string;
+  editor?: CellEditor;
   viewer: string;
 }
 
@@ -33,7 +34,7 @@ export class BodyCellComp extends Component<Props> {
           <BodyCellEditor
             rowKey={row.rowKey}
             columnName={columnName}
-            editorName={editor}
+            editorInfo={editor}
             value={value}
           />
         ) : (

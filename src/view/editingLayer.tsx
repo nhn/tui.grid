@@ -2,23 +2,26 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { EditingLayerInner } from './editingLayerInner';
+import { CellEditorOptions } from '../store/types';
 
 interface StoreProps {
   showing: boolean;
   rowKey: number | null;
   columnName: string | null;
-  editorName: string | null;
+  editorOptions: CellEditorOptions | null;
 }
 
 type Props = StoreProps & DispatchProps;
 
 export class EditingLayerComp extends Component<Props> {
-  public render({ rowKey, columnName, showing, editorName }: Props) {
-    if (!showing || !editorName || !rowKey || !columnName) {
+  public render({ rowKey, columnName, showing, editorOptions }: Props) {
+    if (!showing || !editorOptions || !rowKey || !columnName) {
       return null;
     }
 
-    return <EditingLayerInner rowKey={rowKey} columnName={columnName} editorName={editorName} />;
+    return (
+      <EditingLayerInner rowKey={rowKey} columnName={columnName} editorOptions={editorOptions} />
+    );
   }
 }
 
@@ -31,11 +34,11 @@ export const EditingLayer = connect<StoreProps>((store) => {
       return {
         rowKey,
         columnName,
-        editorName: editor,
+        editorOptions: editor,
         showing: true
       };
     }
   }
 
-  return { showing: false, editorName: null, rowKey: null, columnName: null };
+  return { showing: false, editorOptions: null, rowKey: null, columnName: null };
 })(EditingLayerComp);

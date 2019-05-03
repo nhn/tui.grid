@@ -18,11 +18,16 @@ export interface Data {
   viewData: Row[];
 }
 
+export interface CellEditorOptions {
+  type: string;
+  [propName: string]: any;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
-  editor: string;
+  editor?: CellEditorOptions;
   viewer: string;
   hidden: boolean;
   baseWidth: number;

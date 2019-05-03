@@ -1,15 +1,12 @@
-import { CellEditor } from './types';
+import { CellEditorClass } from './types';
 import { CellTextEditor } from './text';
-import { CellValue } from '../store/types';
-
-interface EditorConstructor {
-  new (value: CellValue, dispatch: Function): CellEditor;
-}
+import { CellCheckboxEditor } from './checkbox';
 
 export interface EditorMap {
-  [editorName: string]: EditorConstructor;
+  [editorName: string]: CellEditorClass;
 }
 
 export const editorMap: EditorMap = {
-  text: CellTextEditor
+  text: CellTextEditor,
+  checkbox: CellCheckboxEditor
 };
