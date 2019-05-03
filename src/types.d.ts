@@ -248,3 +248,26 @@ export interface OptPreset {
   heightResizeHandle?: OptHeightResizeHandleStyle;
   pagination?: OptPaginationStyle;
 }
+
+interface OptI18nLanguage {
+  [propName: string]: OptI18nData;
+}
+
+interface OptI18nData {
+  display?: {
+    noData?: string;
+    loadingData?: string;
+    resizeHandleGuide?: string;
+  };
+  net?: {
+    confirmCreate?: string;
+    confirmUpdate?: string;
+    confirmDelete?: string;
+    confirmModify?: string;
+    noDataToCreate?: string;
+    noDataToUpdate?: string;
+    noDataToDelete?: string;
+    noDataToModify?: string;
+    failResponse?: string;
+  };
+}
