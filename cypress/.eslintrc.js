@@ -15,5 +15,9 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: ['prettier'],
-  extends: ['tui/es6', 'plugin:prettier/recommended']
+  extends: ['tui/es6', 'plugin:prettier/recommended'],
+  rules: {
+    'newline-before-return': 0,
+    'padding-line-between-statements': 0
+  }
 };

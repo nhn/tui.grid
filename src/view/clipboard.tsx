@@ -2,11 +2,7 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import {
-  KeyboardEventCommandType,
-  KeyboardEventType,
-  keyEventGenerate
-} from '../dispatch/keyboard';
+import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 
 interface StoreProps {
   active: boolean;
@@ -23,37 +19,16 @@ class ClipboardComp extends Component<Props> {
 
   private lock = () => {
     this.isLocked = true;
-    setTimeout(this._unlock.bind(this), KEYDOWN_LOCK_TIME);
+    setTimeout(this.unlock.bind(this), KEYDOWN_LOCK_TIME);
   };
 
   /**
    * Unlock
    * @private
    */
-  private _unlock = () => {
+  private unlock = () => {
     this.isLocked = false;
   };
-
-  /**
-   * Returns whether the ev.preventDefault should be called
-   * @param {string} type - Grid event type
-   * @returns {boolean}
-   * @ignore
-   */
-  private shouldPreventDefault(type: KeyboardEventType) {
-    return type !== 'clipboard';
-  }
-
-  /**
-   * Returns whether given GrivEvent instance is paste event
-   * @param {string} type - GridEvent type
-   * @param {string} command - GridEvent command
-   * @returns {boolean}
-   * @ignore
-   */
-  private isPasteEvent(type: KeyboardEventType, command?: KeyboardEventCommandType) {
-    return type === 'clipboard' && command === 'paste';
-  }
 
   private onBlur = () => {
     this.props.dispatch('setFocusActive', false);
@@ -91,7 +66,6 @@ class ClipboardComp extends Component<Props> {
   private onKeyDown = (ev: KeyboardEvent) => {
     if (this.isLocked) {
       ev.preventDefault();
-
       return;
     }
 
@@ -102,14 +76,13 @@ class ClipboardComp extends Component<Props> {
     }
 
     const { type, command } = keyEvent;
-
     this.lock();
 
-    if (this.shouldPreventDefault(type)) {
+    if (type !== 'clipboard') {
       ev.preventDefault();
     }
 
-    if (!this.isPasteEvent(type, command)) {
+    if (!(type === 'clipboard' && command === 'paste')) {
       this.dispatchKeyboardEvent(type, command);
     }
   };

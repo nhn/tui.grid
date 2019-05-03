@@ -1,150 +1,6 @@
 import { Store, Row, Side, VisibleColumns } from '../store/types';
 import { clamp } from '../helper/common';
-
-const keyNameMap = {
-  8: 'backspace',
-  9: 'tab',
-  13: 'enter',
-  17: 'ctrl',
-  27: 'esc',
-  37: 'left',
-  38: 'up',
-  39: 'right',
-  40: 'down',
-  65: 'a',
-  67: 'c',
-  86: 'v',
-  32: 'space',
-  33: 'pageUp',
-  34: 'pageDown',
-  36: 'home',
-  35: 'end',
-  46: 'del'
-};
-
-const keyboardEventTypeMap = {
-  move: 'move',
-  edit: 'edit',
-  remove: 'remove',
-  select: 'select',
-  clipboard: 'clipboard'
-};
-
-const keyboardEventCommandMap = {
-  up: 'up',
-  down: 'down',
-  left: 'left',
-  right: 'right',
-  pageUp: 'pageUp',
-  pageDown: 'pageDown',
-  firstColumn: 'firstColumn',
-  lastColumn: 'lastColumn',
-  currentCell: 'currentCell',
-  nextCell: 'nextCell',
-  prevCell: 'prevCell',
-  firstCell: 'firstCell',
-  lastCell: 'lastCell',
-  all: 'all',
-  copy: 'copy',
-  paste: 'paste'
-};
-
-/**
- * K-V object for matching keystroke and event command
- * K: keystroke (order : ctrl -> shift -> keyName)
- * V: [key event type, command]
- * @type {Object}
- * @ignore
- */
-const keyStrokeCommandMap: {
-  [key: string]: [KeyboardEventType] | [KeyboardEventType, KeyboardEventCommandType];
-} = {
-  up: ['move', 'up'],
-  down: ['move', 'down'],
-  left: ['move', 'left'],
-  right: ['move', 'right'],
-  pageUp: ['move', 'pageUp'],
-  pageDown: ['move', 'pageDown'],
-  home: ['move', 'firstColumn'],
-  end: ['move', 'lastColumn'],
-  enter: ['edit', 'currentCell'],
-  space: ['edit', 'currentCell'],
-  tab: ['edit', 'nextCell'],
-  backspace: ['remove'],
-  del: ['remove'],
-  'shift-tab': ['edit', 'prevCell'],
-  'shift-up': ['select', 'up'],
-  'shift-down': ['select', 'down'],
-  'shift-left': ['select', 'left'],
-  'shift-right': ['select', 'right'],
-  'shift-pageUp': ['select', 'pageUp'],
-  'shift-pageDown': ['select', 'pageDown'],
-  'shift-home': ['select', 'firstColumn'],
-  'shift-end': ['select', 'lastColumn'],
-  'ctrl-a': ['select', 'all'],
-  'ctrl-c': ['clipboard', 'copy'],
-  'ctrl-v': ['clipboard', 'paste'],
-  'ctrl-home': ['move', 'firstCell'],
-  'ctrl-end': ['move', 'lastCell'],
-  'ctrl-shift-home': ['select', 'firstCell'],
-  'ctrl-shift-end': ['select', 'lastCell']
-};
-
-type KeyCodeType = keyof typeof keyNameMap;
-type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
-export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
-export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
-
-interface ColumnInfo {
-  columnName: string | null;
-  side: Side | null;
-  visibleColumns: VisibleColumns;
-}
-
-interface PageInfo {
-  rowKey: number | string | null;
-  rowIndex: number | null;
-  offsets: number[];
-  viewData: Row[];
-  cellBorderWidth: number;
-  bodyHeight: number;
-}
-
-/**
- * Returns the keyStroke string
- * @param {Event} ev - Keyboard event
- * @returns {String}
- * @ignore
- */
-function getKeyStrokeString(ev: KeyboardEvent) {
-  const keys = [];
-  const keyCode = ev.keyCode as KeyCodeType;
-
-  if (ev.ctrlKey || ev.metaKey) {
-    keys.push('ctrl');
-  }
-  if (ev.shiftKey) {
-    keys.push('shift');
-  }
-  keys.push(keyNameMap[keyCode]);
-
-  return keys.join('-');
-}
-
-export function keyEventGenerate(ev: KeyboardEvent) {
-  const keyStroke = getKeyStrokeString(ev) as KeyStrokeCommandType;
-  const commandInfo = keyStrokeCommandMap[keyStroke];
-  let keyEvent;
-
-  if (commandInfo) {
-    keyEvent = {
-      type: commandInfo[0],
-      command: commandInfo[1]
-    };
-  }
-
-  return keyEvent;
-}
+import { PageInfo, ColumnInfo, KeyboardEventCommandType } from '../helper/keyboard';
 
 export function getVisibleColumnNames(visibleColumns: VisibleColumns) {
   return [...visibleColumns.L, ...visibleColumns.R];
@@ -182,32 +38,24 @@ function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: n
 }
 
 function getPageMovedIndex(pageInfo: PageInfo, isPrevDir: boolean) {
-  const { rowIndex, offsets, viewData, cellBorderWidth } = pageInfo;
-  let { bodyHeight } = pageInfo;
+  const { rowIndex, offsets, viewData, cellBorderWidth, bodyHeight } = pageInfo;
+  let distance = bodyHeight;
 
   if (isPrevDir) {
-    bodyHeight = -bodyHeight;
+    distance *= -1;
   }
 
-  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, offsets[rowIndex!] + bodyHeight);
+  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, offsets[rowIndex] + distance);
 
   return clamp(movedIndex, 0, viewData.length - 1);
 }
 
 function getPageMovedRowKey(pageInfo: PageInfo, isPrevDir: boolean) {
   const { rowKey, rowIndex, viewData } = pageInfo;
-  const prevPageRowIndex = getPageMovedIndex(pageInfo, isPrevDir);
-  const offset = prevPageRowIndex - rowIndex!;
+  const movedRowIndex = getPageMovedIndex(pageInfo, isPrevDir);
+  const offset = movedRowIndex - rowIndex;
 
-  return findRowKey(rowKey!, viewData, offset);
-}
-
-function prevRowKey(rowKey: number | string, viewData: Row[]) {
-  return findRowKey(rowKey, viewData, -1);
-}
-
-function nextRowKey(rowKey: number | string, viewData: Row[]) {
-  return findRowKey(rowKey, viewData, 1);
+  return findRowKey(rowKey, viewData, offset);
 }
 
 function firstRowKey(viewData: Row[]) {
@@ -215,17 +63,7 @@ function firstRowKey(viewData: Row[]) {
 }
 
 function lastRowKey(viewData: Row[]) {
-  const viewDataLen = viewData.length;
-
-  return viewData[viewDataLen - 1].rowKey;
-}
-
-function prevPageMovedRowKey(pageInfo: PageInfo) {
-  return getPageMovedRowKey(pageInfo, true);
-}
-
-function nextPageMovedRowKey(pageInfo: PageInfo) {
-  return getPageMovedRowKey(pageInfo, false);
+  return viewData[viewData.length - 1].rowKey;
 }
 
 function isValidColumnRange(columnIndex: number, columnLength: number) {
@@ -233,7 +71,7 @@ function isValidColumnRange(columnIndex: number, columnLength: number) {
 }
 
 function findColumnName({ columnName, side, visibleColumns }: ColumnInfo, offset: number) {
-  let columnIndex = indexOfColumnName(columnName!, side!, visibleColumns);
+  let columnIndex = indexOfColumnName(columnName, side, visibleColumns);
   const visibleColumnNames = getVisibleColumnNames(visibleColumns);
 
   if (isValidColumnRange(columnIndex + offset, visibleColumnNames.length)) {
@@ -241,14 +79,6 @@ function findColumnName({ columnName, side, visibleColumns }: ColumnInfo, offset
   }
 
   return visibleColumnNames[columnIndex].name;
-}
-
-function prevColumnName(columnInfo: ColumnInfo) {
-  return findColumnName(columnInfo, -1);
-}
-
-function nextColumnName(columnInfo: ColumnInfo) {
-  return findColumnName(columnInfo, 1);
 }
 
 function firstColumnName(visibleColumns: VisibleColumns) {
@@ -269,8 +99,13 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
+
   const { side, rowIndex } = focus;
   let { rowKey, columnName } = focus;
+
+  if (!rowKey || !rowIndex || !columnName || !side) {
+    return;
+  }
 
   const pageInfo = {
     rowKey,
@@ -289,16 +124,16 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
 
   switch (command) {
     case 'up':
-      rowKey = prevRowKey(rowKey!, viewData);
+      rowKey = findRowKey(rowKey, viewData, -1);
       break;
     case 'down':
-      rowKey = nextRowKey(rowKey!, viewData);
+      rowKey = findRowKey(rowKey, viewData, 1);
       break;
     case 'left':
-      columnName = prevColumnName(columnInfo);
+      columnName = findColumnName(columnInfo, -1);
       break;
     case 'right':
-      columnName = nextColumnName(columnInfo);
+      columnName = findColumnName(columnInfo, 1);
       break;
     case 'firstCell':
       columnName = firstColumnName(visibleColumns);
@@ -309,10 +144,10 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       rowKey = lastRowKey(viewData);
       break;
     case 'pageUp':
-      rowKey = prevPageMovedRowKey(pageInfo);
+      rowKey = getPageMovedRowKey(pageInfo, true);
       break;
     case 'pageDown':
-      rowKey = nextPageMovedRowKey(pageInfo);
+      rowKey = getPageMovedRowKey(pageInfo, false);
       break;
     case 'firstColumn':
       columnName = firstColumnName(visibleColumns);
@@ -330,13 +165,16 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
 }
 
 export function editFocus(store: Store, command: KeyboardEventCommandType) {
+  // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store, command);
 }
 
 export function selectFocus(store: Store, command: KeyboardEventCommandType) {
+  // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store, command);
 }
 
 export function removeFocus(store: Store) {
+  // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store);
 }

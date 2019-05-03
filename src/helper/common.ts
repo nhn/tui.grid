@@ -78,7 +78,7 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
  * @param {Number} min - The lower boundary of the output range
  * @param {Number} max - The upper boundary of the output range
  * @returns {number} A number in the range [min, max]
- * @Example
+ * @example
  *      // limit the output of this computation to between 0 and 255
  *      value = clamp(value, 0, 255);
  */

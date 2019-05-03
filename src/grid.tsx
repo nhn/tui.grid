@@ -252,7 +252,7 @@ export default class Grid {
 
   /**
    * Focus to the cell identified by given rowIndex and columnIndex.
-   * @param {(Number)} rowIndex - rowIndex
+   * @param {Number} rowIndex - rowIndex
    * @param {Number} columnIndex - columnIndex
    * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
    * @returns {Boolean} true if success
