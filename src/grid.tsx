@@ -1,10 +1,11 @@
-import { OptGrid, OptPreset } from './types';
+import { OptGrid, OptPreset, OptI18nData } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
+import i18n from './i18n';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -153,6 +154,10 @@ export default class Grid {
    */
   public static applyTheme(presetName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     themeManager.apply(presetName, extOptions);
+  }
+
+  public static setLanguage(localeCode: string, data?: OptI18nData) {
+    i18n.setLanguage(localeCode, data);
   }
 
   public setWidth(width: number) {
