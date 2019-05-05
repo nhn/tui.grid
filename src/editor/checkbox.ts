@@ -1,34 +1,39 @@
 import { CellEditor } from './types';
 import { CellValue } from '../store/types';
-import { cls } from '../helper/dom';
 
 let maxId = 0;
 
 function getNextId() {
   maxId += 1;
 
-  return `tui-grid-checkbox-${maxId}`;
+  return `tui-grid-input-${maxId}`;
+}
+
+export interface CheckboxOptions {
+  type: 'checkbox' | 'radio';
+  listItems: {
+    text: string;
+    value: CellValue;
+  }[];
 }
 
 export class CellCheckboxEditor implements CellEditor {
-  private el?: HTMLElement;
+  private el!: HTMLElement;
 
-  public constructor(options: object, value: CellValue, dispatch: Function) {
+  public constructor(options: CheckboxOptions, value: CellValue) {
     const el = document.createElement('fieldset');
 
-    let id = getNextId();
-    el.appendChild(this.createCheckbox('1', id));
-    el.appendChild(this.createLabel('Pop', id));
+    const { listItems } = options;
+    const name = getNextId();
 
-    id = getNextId();
-    el.appendChild(this.createCheckbox('2', id));
-    el.appendChild(this.createLabel('Rock', id));
-
-    id = getNextId();
-    el.appendChild(this.createCheckbox('3', id));
-    el.appendChild(this.createLabel('R&B', id));
-
+    listItems.forEach((item) => {
+      const id = `${name}-${item.value}`;
+      el.appendChild(this.createCheckbox(item.value, name, id, options.type));
+      el.appendChild(this.createLabel(item.text, id));
+    });
     this.el = el;
+
+    this.setValue(value);
   }
 
   private createLabel(text: string, id: string) {
@@ -39,41 +44,59 @@ export class CellCheckboxEditor implements CellEditor {
     return label;
   }
 
-  private createCheckbox(value: CellValue, id: string) {
+  private createCheckbox(
+    value: CellValue,
+    name: string,
+    id: string,
+    inputType: 'checkbox' | 'radio'
+  ) {
     const input = document.createElement('input');
-    input.setAttribute('type', 'checkbox');
+    input.setAttribute('type', inputType);
     input.setAttribute('data-value-type', 'string');
     input.setAttribute('id', id);
+    input.setAttribute('name', name);
     input.setAttribute('value', String(value));
 
     return input;
+  }
+
+  private getFirstInput() {
+    return this.el.querySelector('input');
   }
 
   public getElement() {
     return this.el;
   }
 
-  public onChange(value: CellValue) {
-    (this.el as HTMLInputElement).value = String(value);
+  private setValue(value: CellValue) {
+    String(value)
+      .split(',')
+      .forEach((inputValue) => {
+        const input = this.el.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
+        if (input) {
+          input.checked = true;
+        }
+      });
   }
 
   public getValue() {
-    return '';
-    // if (this.el) {
-    //   return this.el.value;
-    // }
-    // return '';
+    const checkedInputs = this.el.querySelectorAll('input:checked');
+    const checkedValues = [];
+    for (let i = 0, len = checkedInputs.length; i < len; i += 1) {
+      checkedValues.push((checkedInputs[i] as HTMLInputElement).value);
+    }
+
+    return checkedValues.join(',');
   }
 
-  public onStart() {
-    // if (this.el) {
-    //   this.el.select();
-    // }
+  public start() {
+    const firstInput = this.getFirstInput();
+    if (firstInput) {
+      firstInput.focus();
+    }
   }
 
-  public onFinish() {
-    // if (this.el) {
-    //   this.el.blur();
-    // }
+  public finish() {
+    // do nothing
   }
 }

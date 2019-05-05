@@ -8,7 +8,7 @@ import { CellEditor } from '../editor/types';
 interface OwnProps {
   rowKey: number;
   columnName: string;
-  editorInfo: CellEditorOptions;
+  editorOptions: CellEditorOptions;
   value: CellValue;
 }
 
@@ -23,10 +23,20 @@ export class BodyCellEditorComp extends Component<Props> {
 
   private contentEl?: HTMLElement;
 
+  private isMouseDown: boolean = false;
+
+  private handleMouseClick = (ev: MouseEvent) => {
+    const { editing, rowKey, columnName, dispatch } = this.props;
+
+    if (!editing) {
+      dispatch('startEditing', rowKey, columnName);
+    }
+  };
+
   public componentDidMount() {
-    const { rowKey, columnName, value, editorInfo, dispatch } = this.props;
-    const Editor = this.context.editorMap[editorInfo.type];
-    const editor: CellEditor = new Editor(value, (type: string) => {
+    const { rowKey, columnName, value, editorOptions, dispatch } = this.props;
+    const Editor = this.context.editorMap[editorOptions.type];
+    const editor: CellEditor = new Editor(editorOptions, value, (type: string) => {
       switch (type) {
         case 'start':
           dispatch('startEditing', rowKey, columnName);
@@ -51,8 +61,16 @@ export class BodyCellEditorComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (!nextProps.editing && this.editor) {
-      this.editor.onFinish();
+    if (!this.editor || this.props.editing === nextProps.editing) {
+      return;
+    }
+
+    if (nextProps.editing) {
+      if (!this.isMouseDown) {
+        this.editor.start();
+      }
+    } else {
+      this.editor.finish();
     }
   }
 
@@ -61,7 +79,7 @@ export class BodyCellEditorComp extends Component<Props> {
       const { dispatch, rowKey, columnName } = this.props;
 
       dispatch('setValue', rowKey, columnName, this.editor.getValue());
-      this.editor.onFinish();
+      this.editor.finish();
     }
   }
 
@@ -76,8 +94,9 @@ export class BodyCellEditorComp extends Component<Props> {
 
     return (
       <div
+        onClick={this.handleMouseClick}
         onKeyDown={this.handleKeyDown}
-        class={cls('cell-content')}
+        class={cls('cell-content', 'cell-content-editor')}
         style={styles}
         ref={(el) => {
           this.contentEl = el;
@@ -89,7 +108,6 @@ export class BodyCellEditorComp extends Component<Props> {
 
 export const BodyCellEditor = connect<StoreProps, OwnProps>(({ focus }, { rowKey, columnName }) => {
   const { editing } = focus;
-
   return {
     editing: !!editing && editing.rowKey === rowKey && editing.columnName === columnName
   };

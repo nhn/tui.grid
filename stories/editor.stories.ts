@@ -17,25 +17,45 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 }
 
 const columns = [
-  { name: 'name', width: 300 },
-  { name: 'genre', width: 300 },
+  {
+    name: 'name',
+    width: 150,
+    editor: {
+      type: 'text'
+    }
+  },
   {
     name: 'artist',
     width: 300,
     editor: {
+      type: 'password'
+    }
+  },
+  {
+    title: 'Genre',
+    name: 'genreCode',
+    width: 300,
+    editor: {
       type: 'checkbox',
       listItems: [
-        { name: 'Pop', value: '1' },
-        { name: 'Rock', value: '2' },
-        { name: 'RNB', value: '3' }
+        { text: 'Pop', value: '1' },
+        { text: 'Rock', value: '2' },
+        { text: 'R&B', value: '3' }
       ]
-    },
-    viewer: false
+    }
   },
-  { name: 'type', width: 300, editor: 'checkbox' }
+  {
+    title: 'Type',
+    name: 'typeCode',
+    width: 300,
+    editor: {
+      type: 'radio',
+      listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+    }
+  }
 ];
 
-stories.add('Text', () => {
+stories.add('Text / Checkbox', () => {
   const { grid, el } = createGrid({
     data,
     columns,

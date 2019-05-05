@@ -98,9 +98,12 @@ class ClipboardComp extends Component<Props> {
   }
 
   public render() {
+    const style = { top: 500, left: 10, border: '1px solid #ccc' };
+
     return (
       <div
         class={cls('clipboard')}
+        style={style}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         contentEditable={true}

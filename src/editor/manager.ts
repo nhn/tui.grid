@@ -8,5 +8,7 @@ export interface EditorMap {
 
 export const editorMap: EditorMap = {
   text: CellTextEditor,
-  checkbox: CellCheckboxEditor
+  password: CellTextEditor,
+  checkbox: CellCheckboxEditor,
+  radio: CellCheckboxEditor
 };

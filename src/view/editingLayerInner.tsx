@@ -47,7 +47,7 @@ export class EditingLayerInnerComp extends Component<Props> {
       const { dispatch, rowKey, columnName } = this.props;
 
       dispatch('setValue', rowKey, columnName, this.editor.getValue());
-      this.editor.onFinish();
+      this.editor.finish();
       dispatch('finishEditing', rowKey, columnName);
     }
   }
@@ -61,7 +61,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 
     if (editorEl && this.contentEl) {
       this.contentEl.appendChild(editorEl);
-      cellEditor.onStart();
+      cellEditor.start();
       this.editor = cellEditor;
 
       document.addEventListener('mousedown', this.handleMouseDownDocument);
@@ -70,7 +70,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   public componentWillUnmount() {
     if (this.editor) {
-      this.editor.onFinish();
+      this.editor.finish();
       document.removeEventListener('mousedown', this.handleMouseDownDocument);
     }
   }
@@ -87,7 +87,7 @@ export class EditingLayerInnerComp extends Component<Props> {
     return (
       <div
         style={styles}
-        class={cls('layer-editing', 'cell-content')}
+        class={cls('layer-editing', 'cell-content', 'cell-content-editor')}
         onKeyDown={this.handleKeyDown}
         ref={(el) => {
           this.contentEl = el;

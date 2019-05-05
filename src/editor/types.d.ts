@@ -1,13 +1,12 @@
 import { CellValue } from '../store/types';
 
 export interface CellEditor {
-  onChange(value: CellValue): void;
   getElement(): HTMLElement | undefined;
   getValue(): string;
-  onStart(): void;
-  onFinish(): void;
+  start(): void;
+  finish(): void;
 }
 
 export interface CellEditorClass {
-  new (options: object, value: CellValue, dispatch: Function): CellEditor;
+  new (options: any, value: CellValue, dispatch: Function): CellEditor;
 }

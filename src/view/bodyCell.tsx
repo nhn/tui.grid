@@ -34,7 +34,7 @@ export class BodyCellComp extends Component<Props> {
           <BodyCellEditor
             rowKey={row.rowKey}
             columnName={columnName}
-            editorInfo={editor}
+            editorOptions={editor}
             value={value}
           />
         ) : (
