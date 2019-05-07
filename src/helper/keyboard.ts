@@ -94,21 +94,6 @@ export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
 export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
 
-export interface ColumnInfo {
-  columnName: string;
-  side: Side;
-  visibleColumns: VisibleColumns;
-}
-
-export interface PageInfo {
-  rowKey: number | string;
-  rowIndex: number;
-  offsets: number[];
-  viewData: Row[];
-  cellBorderWidth: number;
-  bodyHeight: number;
-}
-
 /**
  * Returns the keyStroke string
  * @param {Event} ev - Keyboard event
@@ -133,14 +118,11 @@ export function getKeyStrokeString(ev: KeyboardEvent): KeyStrokeCommandType {
 export function keyEventGenerate(ev: KeyboardEvent) {
   const keyStroke = getKeyStrokeString(ev);
   const commandInfo = keyStrokeCommandMap[keyStroke];
-  let keyEvent;
 
-  if (commandInfo) {
-    keyEvent = {
-      type: commandInfo[0],
-      command: commandInfo[1]
-    };
-  }
-
-  return keyEvent;
+  return commandInfo
+    ? {
+        type: commandInfo[0],
+        command: commandInfo[1]
+      }
+    : {};
 }
