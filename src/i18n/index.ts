@@ -5,9 +5,7 @@
 import { OptI18nLanguage, OptI18nData } from './../types.d';
 import { deepAssign } from '../helper/common';
 
-interface MessageMapType {
-  [propName: string]: string;
-}
+type MessageMapType = { [propName: string]: string };
 
 const messages: OptI18nLanguage = {
   en: {
