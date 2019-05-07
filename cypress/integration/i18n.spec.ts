@@ -10,10 +10,11 @@ describe('i18n', () => {
   });
 
   it('when setting the locale code that the grid does not have, the error is thrown.', () => {
+    /* eslint-disable-next-line require-jsdoc */
     function setLocaleCodeWithNoMessage() {
       i18n.setLanguage('fr');
     }
-    /* eslint-disable */
+    /* eslint-disable-next-line dot-notation */
     expect(setLocaleCodeWithNoMessage).to.throw();
   });
 

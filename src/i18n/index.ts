@@ -3,9 +3,13 @@
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 import { OptI18nLanguage, OptI18nData } from './../types.d';
-import { deepAssign } from '../helper/common';
 
-type MessageMapType = { [propName: string]: string };
+interface MapType<T> {
+  [propName: string]: T;
+}
+
+type MessageMapType = MapType<string>;
+type ReplacementObjType = MapType<string>;
 
 const messages: OptI18nLanguage = {
   en: {
@@ -13,8 +17,7 @@ const messages: OptI18nLanguage = {
       noData: 'No data.',
       loadingData: 'Loading data.',
       resizeHandleGuide:
-        'You can change the width of the column by mouse drag, ' +
-        'and initialize the width by double-clicking.'
+        'You can change the width of the column by mouse drag, and initialize the width by double-clicking.'
     },
     net: {
       confirmCreate: 'Are you sure you want to create {{count}} data?',
@@ -33,8 +36,7 @@ const messages: OptI18nLanguage = {
       noData: '데이터가 존재하지 않습니다.',
       loadingData: '데이터를 불러오는 중입니다.',
       resizeHandleGuide:
-        '마우스 드래그하여 컬럼 너비를 조정할 수 있고, ' +
-        '더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
+        '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
     },
     net: {
       confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',
@@ -64,12 +66,12 @@ function flattenMessageMap(data: OptI18nData = {}): MessageMapType {
   const obj: MessageMapType = {};
   let newKey: string;
 
-  Object.keys(data).forEach((key: string) => {
+  Object.keys(data).forEach((key) => {
     const keyWithType = key as KeyType;
     const groupMessages = data[keyWithType] as MessageMapType;
 
-    Object.keys(groupMessages).forEach((subKey: string) => {
-      newKey = [key, subKey].join('.');
+    Object.keys(groupMessages).forEach((subKey) => {
+      newKey = `${key}.${subKey}`;
       obj[newKey] = groupMessages[subKey];
     });
   });
@@ -83,7 +85,7 @@ function flattenMessageMap(data: OptI18nData = {}): MessageMapType {
  * @param {Object} values - Replaced values
  * @returns {string} Replaced text
  */
-function replaceText(text: string, values: MessageMapType): string {
+function replaceText(text: string, values: ReplacementObjType): string {
   return text.replace(/\{\{(\w*)\}\}/g, (value, prop) =>
     values.hasOwnProperty(prop) ? values[prop] : ''
   );
@@ -98,7 +100,6 @@ export default {
    */
   setLanguage(localeCode: string, data?: OptI18nData) {
     const localeMessages = messages[localeCode];
-    let originData;
 
     if (!localeMessages && !data) {
       throw new Error('You should set messages to map the locale code.');
@@ -107,8 +108,8 @@ export default {
     const newData = flattenMessageMap(data);
 
     if (localeMessages) {
-      originData = flattenMessageMap(localeMessages);
-      messageMap = deepAssign(originData, newData);
+      const originData = flattenMessageMap(localeMessages);
+      messageMap = Object.assign(originData, newData);
     } else {
       messageMap = newData;
     }
@@ -120,11 +121,9 @@ export default {
    * @param {object} [replacements] - Values to replace string
    * @returns {string} Message
    */
-  get(key: string, replacements: MessageMapType = {}) {
-    let message = messageMap[key];
+  get(key: string, replacements: ReplacementObjType = {}) {
+    const message = messageMap[key];
 
-    message = replaceText(message, replacements);
-
-    return message;
+    return replaceText(message, replacements);
   }
 };
