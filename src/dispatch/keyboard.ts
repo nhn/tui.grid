@@ -154,3 +154,14 @@ export function removeFocus(store: Store) {
   // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store);
 }
+
+export function setFocusInfo(
+  store: Store,
+  rowKey: number | string | null,
+  columnName: string | null,
+  active: boolean
+) {
+  store.focus.active = active;
+  store.focus.rowKey = rowKey;
+  store.focus.columnName = columnName;
+}

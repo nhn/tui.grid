@@ -108,7 +108,10 @@ export function getKeyStrokeString(ev: KeyboardEvent): KeyStrokeCommandType {
   if (shiftKey) {
     keys.push('shift');
   }
-  keys.push(keyNameMap[keyCode as KeyCodeType]);
+
+  if (keyCode in keyNameMap) {
+    keys.push(keyNameMap[keyCode as KeyCodeType]);
+  }
 
   return keys.join('-');
 }

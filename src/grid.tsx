@@ -36,12 +36,6 @@ export default class Grid {
     render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
   }
 
-  private setFocusInfo(rowKey: number | string | null, columnName: string | null, active: boolean) {
-    this.store.focus.active = active;
-    this.store.focus.rowKey = rowKey;
-    this.store.focus.columnName = columnName;
-  }
-
   /**
    * Apply theme to all grid instances with the preset options of a given name.
    * @static
@@ -229,7 +223,7 @@ export default class Grid {
    */
   public blur() {
     // @TODO: save previous 이후 추가 필요.
-    this.setFocusInfo(null, null, false);
+    this.dispatch('setFocusInfo', null, null, false);
   }
 
   /**
@@ -243,7 +237,7 @@ export default class Grid {
     this.blur();
     // @TODO: focus change event 발생
 
-    this.setFocusInfo(rowKey, columnName, true);
+    this.dispatch('setFocusInfo', rowKey, columnName, true);
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
