@@ -36,13 +36,16 @@ export function create(columns: OptColumn[], columnOptions: OptColumnOptions = {
     rowHeaders: [],
     allColumns: columnInfos,
     get visibleColumns() {
+      return columnInfos.filter(({ hidden }) => !hidden);
+    },
+    get visibleColumnsBySide() {
       return {
-        L: columnInfos.slice(0, this.frozenCount).filter(({ hidden }) => !hidden),
-        R: columnInfos.slice(this.frozenCount).filter(({ hidden }) => !hidden)
+        L: this.visibleColumns.slice(0, this.frozenCount),
+        R: this.visibleColumns.slice(this.frozenCount)
       };
     },
     get visibleFrozenCount(this: Column) {
-      return this.visibleColumns.L.length;
+      return this.visibleColumnsBySide.L.length;
     }
   });
 }

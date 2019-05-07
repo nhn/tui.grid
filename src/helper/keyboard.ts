@@ -1,5 +1,3 @@
-import { Row, Side, VisibleColumns } from '../store/types';
-
 export const keyNameMap = {
   8: 'backspace',
   9: 'tab',

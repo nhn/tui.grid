@@ -20,5 +20,5 @@ export function mouseDownBody(store: Store, eventInfo: MouseEventInfo) {
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetX);
 
   focus.rowKey = data.viewData[rowIndex].rowKey;
-  focus.columnName = column.visibleColumns[side][columnIndex].name;
+  focus.columnName = column.visibleColumnsBySide[side][columnIndex].name;
 }

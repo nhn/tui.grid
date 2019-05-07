@@ -5,7 +5,6 @@ import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
-import { getIntegratedVisibleColumns } from './dispatch/keyboard';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -261,7 +260,7 @@ export default class Grid {
     let result = false;
 
     const { rowKey } = this.store.data.viewData[rowIndex];
-    const { name } = getIntegratedVisibleColumns(this.store.column.visibleColumns)[columnIndex];
+    const { name } = this.store.column.visibleColumns[columnIndex];
 
     if (typeof rowKey !== 'undefined' && name) {
       result = this.focus(rowKey, name, isScrollable);

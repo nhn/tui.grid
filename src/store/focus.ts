@@ -18,7 +18,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
         return null;
       }
 
-      return column.visibleColumns.R.some(({ name }) => name === this.columnName) ? 'R' : 'L';
+      return column.visibleColumnsBySide.R.some(({ name }) => name === this.columnName) ? 'R' : 'L';
     },
 
     get columnIndex(this: Focus) {
@@ -28,7 +28,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
         return null;
       }
 
-      return column.visibleColumns[side].findIndex(({ name }) => name === columnName);
+      return column.visibleColumnsBySide[side].findIndex(({ name }) => name === columnName);
     },
 
     get rowIndex(this: Focus) {

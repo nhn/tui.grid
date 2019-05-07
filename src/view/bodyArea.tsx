@@ -104,7 +104,7 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { offsetY, scrollTop } = viewport;
 
   return {
-    columns: column.visibleColumns[side],
+    columns: column.visibleColumnsBySide[side],
     bodyHeight,
     totalRowHeight,
     scrollTop,

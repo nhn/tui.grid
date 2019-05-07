@@ -22,7 +22,7 @@ export function create({ data, column, dimension, rowCoords }: ViewPortOption): 
     scrollLeft: 0,
     scrollTop: 0,
     get colRange(this: Viewport) {
-      return [0, visibleColumns.L.length + visibleColumns.R.length] as Range;
+      return [0, visibleColumns.length] as Range;
     },
     get rowRange(this: Reactive<Viewport>) {
       const { bodyHeight } = dimension;

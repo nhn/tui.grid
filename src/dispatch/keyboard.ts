@@ -1,19 +1,9 @@
-import { Store, Row, Side, VisibleColumns } from '../store/types';
+import { Store, Row, ColumnInfo } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 
-export function getIntegratedVisibleColumns(visibleColumns: VisibleColumns) {
-  return [...visibleColumns.L, ...visibleColumns.R];
-}
-
-function indexOfColumnName(columnName: string, side: Side, visibleColumns: VisibleColumns) {
-  let index = visibleColumns[side].findIndex((col) => col.name === columnName);
-
-  if (side === 'R') {
-    index += visibleColumns.L.length;
-  }
-
-  return index;
+function indexOfColumnName(columnName: string, visibleColumns: ColumnInfo[]) {
+  return visibleColumns.findIndex((col) => col.name === columnName);
 }
 
 function isValidRowIndexRange(rowIndex: number, viewDataLength: number) {
@@ -66,30 +56,22 @@ function isValidColumnRange(columnIndex: number, columnLength: number) {
   return columnIndex >= 0 && columnIndex < columnLength;
 }
 
-function findColumnName(
-  columnName: string,
-  side: Side,
-  visibleColumns: VisibleColumns,
-  offset: number
-) {
-  let columnIndex = indexOfColumnName(columnName, side, visibleColumns);
-  const columns = getIntegratedVisibleColumns(visibleColumns);
+function findColumnName(columnName: string, visibleColumns: ColumnInfo[], offset: number) {
+  let columnIndex = indexOfColumnName(columnName, visibleColumns);
 
-  if (isValidColumnRange(columnIndex + offset, columns.length)) {
+  if (isValidColumnRange(columnIndex + offset, visibleColumns.length)) {
     columnIndex += offset;
   }
 
-  return columns[columnIndex].name;
+  return visibleColumns[columnIndex].name;
 }
 
-function firstColumnName(visibleColumns: VisibleColumns) {
-  return getIntegratedVisibleColumns(visibleColumns)[0].name;
+function firstColumnName(visibleColumns: ColumnInfo[]) {
+  return visibleColumns[0].name;
 }
 
-function lastColumnName(visibleColumns: VisibleColumns) {
-  const visibleColumnNames = getIntegratedVisibleColumns(visibleColumns);
-
-  return visibleColumnNames[visibleColumnNames.length - 1].name;
+function lastColumnName(visibleColumns: ColumnInfo[]) {
+  return visibleColumns[visibleColumns.length - 1].name;
 }
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
@@ -101,10 +83,10 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     rowCoords: { offsets }
   } = store;
 
-  const { side, rowIndex } = focus;
+  const { rowIndex } = focus;
   let { rowKey, columnName } = focus;
 
-  if (rowKey === null || rowIndex === null || columnName === null || side === null) {
+  if (rowKey === null || rowIndex === null || columnName === null) {
     return;
   }
 
@@ -116,10 +98,10 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       rowKey = findRowKey(rowKey, viewData, 1);
       break;
     case 'left':
-      columnName = findColumnName(columnName, side, visibleColumns, -1);
+      columnName = findColumnName(columnName, visibleColumns, -1);
       break;
     case 'right':
-      columnName = findColumnName(columnName, side, visibleColumns, 1);
+      columnName = findColumnName(columnName, visibleColumns, 1);
       break;
     case 'firstCell':
       columnName = firstColumnName(visibleColumns);

@@ -30,7 +30,7 @@ class ColGroupComp extends Component<Props> {
 export const ColGroup = connect<StoreProps, OwnProps>(
   ({ columnCoords, dimension, column }, { side }) => ({
     widths: columnCoords.widths[side],
-    columns: column.visibleColumns[side],
+    columns: column.visibleColumnsBySide[side],
     borderWidth: dimension.cellBorderWidth
   })
 )(ColGroupComp);

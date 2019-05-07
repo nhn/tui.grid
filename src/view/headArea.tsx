@@ -63,7 +63,7 @@ export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
   return {
     headerHeight,
     cellBorderWidth,
-    columns: store.column.visibleColumns[side],
+    columns: store.column.visibleColumnsBySide[side],
     scrollX: side === 'L' ? 0 : store.viewport.scrollLeft
   };
 })(HeadAreaComp);

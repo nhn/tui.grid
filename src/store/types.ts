@@ -4,7 +4,7 @@ export type Range = [number, number];
 
 export type Side = 'L' | 'R';
 
-export type VisibleColumns = { [key in Side]: ColumnInfo[] };
+export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
 export interface Row {
   rowKey: number | string;
@@ -31,7 +31,8 @@ export interface Column {
   visibleFrozenCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
-  visibleColumns: VisibleColumns;
+  visibleColumns: ColumnInfo[];
+  visibleColumnsBySide: VisibleColumnsBySide;
 }
 
 export interface Dimension {
