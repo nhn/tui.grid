@@ -1,0 +1,78 @@
+import { h, Component } from 'preact';
+import { cls } from '../helper/dom';
+import { connect } from './hoc';
+import { Rect, Side } from '../store/types';
+import { DispatchProps } from '../dispatch/create';
+
+interface StoreProps {
+  active: boolean;
+  cellPosRect: Rect | null;
+  cellBorderWidth: number;
+}
+
+interface OwnProps {
+  side: Side;
+}
+
+type Props = StoreProps & OwnProps & DispatchProps;
+
+class SelectionLayerComp extends Component<Props> {
+  public render() {
+    const { active, cellPosRect, cellBorderWidth } = this.props;
+
+    if (cellPosRect === null) {
+      return null;
+    }
+
+    const { top, left, right, bottom } = cellPosRect;
+    const height = bottom - top;
+    const width = right - left;
+
+    const leftStyle = {
+      top,
+      left,
+      width: cellBorderWidth,
+      height
+    };
+
+    const topStyle = {
+      top: top === 0 ? cellBorderWidth : top,
+      left,
+      width: width + cellBorderWidth,
+      height: cellBorderWidth
+    };
+
+    const rightStyle = {
+      top,
+      left: left + width,
+      width: cellBorderWidth,
+      height: height + cellBorderWidth
+    };
+
+    const bottomStyle = {
+      top: top + height,
+      left,
+      width: width + cellBorderWidth,
+      height: cellBorderWidth
+    };
+
+    return (
+      <div class={cls('layer-focus', [!active, 'layer-selection'])}>
+        <div class={cls('layer-focus-border')} style={leftStyle} />
+        <div class={cls('layer-focus-border')} style={topStyle} />
+        <div class={cls('layer-focus-border')} style={rightStyle} />
+        <div class={cls('layer-focus-border')} style={bottomStyle} />
+      </div>
+    );
+  }
+}
+
+export const SelectionLayer = connect<StoreProps, OwnProps>(({ focus, dimension }, { side }) => {
+  const { cellPosRect, active } = focus;
+
+  return {
+    active,
+    cellPosRect: side === focus.side ? cellPosRect : null,
+    cellBorderWidth: dimension.cellBorderWidth
+  };
+})(SelectionLayerComp);

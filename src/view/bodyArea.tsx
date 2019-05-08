@@ -6,6 +6,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
+import { SelectionLayer } from './selectionLayer';
 
 interface OwnProps {
   side: Side;
@@ -92,6 +93,7 @@ class BodyAreaComp extends Component<Props> {
           </div>
           <div class={cls('layer-selection')} style="display: none;" />
           <FocusLayer side={side} />
+          <SelectionLayer side={side} />
         </div>
       </div>
     );
