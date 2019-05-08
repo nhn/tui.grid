@@ -17,6 +17,7 @@ interface StoreProps {
   totalRowHeight: number;
   scrollTop: number;
   offsetY: number;
+  scrollX: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -66,6 +67,7 @@ class BodyAreaComp extends Component<Props> {
 
   public componentWillReceiveProps(nextProps: Props) {
     this.el!.scrollTop = nextProps.scrollTop;
+    this.el!.scrollLeft = nextProps.scrollX;
   }
 
   public render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
@@ -101,13 +103,14 @@ class BodyAreaComp extends Component<Props> {
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { column, dimension, viewport } = store;
   const { bodyHeight, totalRowHeight } = dimension;
-  const { offsetY, scrollTop } = viewport;
+  const { offsetY, scrollTop, scrollLeft } = viewport;
 
   return {
     columns: column.visibleColumnsBySide[side],
     bodyHeight,
     totalRowHeight,
     scrollTop,
-    offsetY
+    offsetY,
+    scrollX: side === 'L' ? 0 : scrollLeft
   };
 })(BodyAreaComp);

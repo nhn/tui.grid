@@ -14,7 +14,12 @@ const columns = [
   { name: 'artist' },
   { name: 'type' },
   { name: 'release' },
-  { name: 'genre' }
+  { name: 'genre' },
+  { name: 'genreCode' },
+  { name: 'grade' },
+  { name: 'price' },
+  { name: 'downloadCount' },
+  { name: 'listenCount' }
 ];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -32,7 +37,8 @@ stories.add('Focus Activation', () => {
     columns,
     bodyHeight: 'fitToParent',
     columnOptions: {
-      frozenCount: 2
+      frozenCount: 2,
+      minWidth: 150
     }
   });
   const rootEl = document.createElement('div');
