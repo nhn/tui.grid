@@ -115,8 +115,7 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
   return reactive<ColumnCoords>({
     get widths(this: ColumnCoords) {
       const { visibleColumns, visibleFrozenCount } = column;
-      const columns = [...visibleColumns.L, ...visibleColumns.R];
-      const widths = calculateWidths(columns, dimension.contentsWidth);
+      const widths = calculateWidths(visibleColumns, dimension.contentsWidth);
 
       return {
         L: widths.slice(0, visibleFrozenCount),

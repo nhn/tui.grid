@@ -11,12 +11,14 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
     'plugin:react/recommended',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ],
   parserOptions: {
     parser: 'typescript-eslint-parser'
   },
   rules: {
+    'newline-before-return': 0,
+    'padding-line-between-statements': 0,
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     'react/no-unknown-property': 0,
@@ -28,6 +30,6 @@ module.exports = {
     react: {
       pragma: 'h',
       version: '16.3'
-    },
+    }
   }
 };

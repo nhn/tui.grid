@@ -45,7 +45,7 @@ export function create({
     cellBorderWidth: 1,
 
     get contentsWidth(this: Dimension) {
-      const columnLen = column.visibleColumns.R.length + column.visibleColumns.L.length;
+      const columnLen = column.visibleColumns.length;
       const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
       const scrollYWidth = this.scrollY ? this.scrollbarWidth : 0;
 

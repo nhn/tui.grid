@@ -5,7 +5,7 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
 }
 
 export function setColumnWidth({ column }: Store, side: Side, index: number, width: number) {
-  const columnItem = column.visibleColumns[side][index];
+  const columnItem = column.visibleColumnsBySide[side][index];
 
   columnItem.baseWidth = width;
   columnItem.fixedWidth = true;

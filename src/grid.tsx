@@ -178,4 +178,88 @@ export default class Grid {
   public showColumn(columnName: string) {
     this.dispatch('showColumn', columnName);
   }
+
+  /**
+   * Returns the value of the cell identified by the rowKey and columnName.
+   * @param {number} rowKey - The unique key of the target row.
+   * @param {string} columnName - The name of the column
+   * @param {boolean} [isOriginal] - It set to true, the original value will be return.
+   * @returns {number|string} - The value of the cell
+   */
+  public getValue(rowKey: number | string | null, columnName: string | null, isOriginal?: boolean) {
+    const {
+      data: { viewData }
+    } = this.store;
+    let rowIndex = -1;
+
+    // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
+    if (rowKey) {
+      rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
+    }
+
+    return rowIndex !== -1 && columnName && viewData[rowIndex][columnName];
+  }
+
+  /**
+   * Returns data of currently focused cell
+   * @returns {number} rowKey - The unique key of the row
+   * @returns {string} columnName - The name of the column
+   * @returns {string} value - The value of the cell
+   */
+  public getFocusedCell() {
+    const {
+      focus: { columnName, rowKey }
+    } = this.store;
+
+    return {
+      rowKey,
+      columnName,
+      value: this.getValue(rowKey, columnName)
+    };
+  }
+
+  /**
+   * Removes focus from the focused cell.
+   */
+  public blur() {
+    // @TODO: save previous 이후 추가 필요.
+    this.dispatch('setFocusInfo', null, null, false);
+  }
+
+  /**
+   * Focus to the cell identified by given rowKey and columnName.
+   * @param {Number|String} rowKey - rowKey
+   * @param {String} columnName - columnName
+   * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
+   * @returns {Boolean} true if focused cell is changed
+   */
+  public focus(rowKey: number | string, columnName: string, isScrollable?: boolean) {
+    this.blur();
+    // @TODO: focus change event 발생
+
+    this.dispatch('setFocusInfo', rowKey, columnName, true);
+
+    // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
+    return true;
+  }
+
+  /**
+   * Focus to the cell identified by given rowIndex and columnIndex.
+   * @param {Number} rowIndex - rowIndex
+   * @param {Number} columnIndex - columnIndex
+   * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+   * @returns {Boolean} true if success
+   */
+  public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean) {
+    let result = false;
+
+    const { rowKey } = this.store.data.viewData[rowIndex];
+    const { name } = this.store.column.visibleColumns[columnIndex];
+
+    if (typeof rowKey !== 'undefined' && name) {
+      result = this.focus(rowKey, name, isScrollable);
+    }
+
+    return result;
+  }
 }

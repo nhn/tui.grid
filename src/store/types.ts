@@ -4,8 +4,10 @@ export type Range = [number, number];
 
 export type Side = 'L' | 'R';
 
+export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
+
 export interface Row {
-  rowKey: number;
+  rowKey: number | string;
   [propName: string]: CellValue;
 }
 
@@ -29,7 +31,8 @@ export interface Column {
   visibleFrozenCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
-  visibleColumns: { [key in Side]: ColumnInfo[] };
+  visibleColumns: ColumnInfo[];
+  visibleColumnsBySide: VisibleColumnsBySide;
 }
 
 export interface Dimension {
@@ -84,7 +87,7 @@ export interface Rect {
 
 export interface Focus {
   active: boolean;
-  rowKey: number | null;
+  rowKey: number | string | null;
   columnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;

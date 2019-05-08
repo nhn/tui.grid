@@ -5,7 +5,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 
 interface OwnProps {
-  rowKey: number;
+  rowKey: number | string;
   columnName: string;
   value: CellValue;
 }
