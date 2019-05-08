@@ -731,6 +731,24 @@ var Grid = View.extend(/** @lends Grid.prototype */{
     },
 
     /**
+     * Sets options for header.
+     * @param {Object} options - Options for header
+     * @param {number} [options.height] -  The height value
+     * @param {Array} [options.complexColumns] - The complex columns info
+     */
+    setHeader: function(options) {
+        if (options.height) {
+            this.modelManager.dimensionModel.set('headerHeight', options.height);
+        }
+
+        if (options.complexColumns) {
+            this.modelManager.columnModel.set({
+                complexHeaderColumns: options.complexColumns
+            });
+        }
+    },
+
+    /**
      * Sets the count of frozen columns.
      * @param {number} count - The count of columns to be frozen
      */
