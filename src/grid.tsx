@@ -196,7 +196,7 @@ export default class Grid {
     let value = null;
 
     if (rowKey !== null && columnName !== null) {
-      this.getValue(rowKey, columnName);
+      value = this.getValue(rowKey, columnName);
     }
 
     return { rowKey, columnName, value };

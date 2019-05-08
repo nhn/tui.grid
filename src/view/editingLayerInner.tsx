@@ -4,6 +4,7 @@ import { connect } from './hoc';
 import { CellValue, CellEditorOptions } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass } from '../editor/types';
+import { keyNameMap } from '../helper/keyboard';
 
 interface StoreProps {
   left: number;
@@ -15,12 +16,16 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  rowKey: number;
+  rowKey: number | string;
   columnName: string;
   editorOptions: CellEditorOptions;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
+
+type KeyNameMap = typeof keyNameMap & {
+  [keyCode: number]: string | undefined;
+};
 
 export class EditingLayerInnerComp extends Component<Props> {
   private editor?: CellEditor;
@@ -28,8 +33,17 @@ export class EditingLayerInnerComp extends Component<Props> {
   private contentEl?: HTMLElement;
 
   private handleKeyDown = (ev: KeyboardEvent) => {
-    if (ev.keyCode === 13) {
-      this.finishEditing();
+    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+
+    switch (keyName) {
+      case 'enter':
+        this.finishEditing(true);
+        break;
+      case 'esc':
+        this.finishEditing(false);
+        break;
+      default:
+      // do nothing;
     }
   };
 
@@ -38,16 +52,20 @@ export class EditingLayerInnerComp extends Component<Props> {
     const { contentEl } = this;
 
     if (contentEl && contentEl !== target && !contentEl.contains(target)) {
-      this.finishEditing();
+      this.finishEditing(true);
     }
   };
 
-  private finishEditing() {
+  private finishEditing(save: boolean) {
     if (this.editor) {
       const { dispatch, rowKey, columnName } = this.props;
 
-      dispatch('setValue', rowKey, columnName, this.editor.getValue());
-      this.editor.finish();
+      if (save) {
+        dispatch('setValue', rowKey, columnName, this.editor.getValue());
+      }
+      if (typeof this.editor.finish === 'function') {
+        this.editor.finish();
+      }
       dispatch('finishEditing', rowKey, columnName);
     }
   }
@@ -61,18 +79,18 @@ export class EditingLayerInnerComp extends Component<Props> {
 
     if (editorEl && this.contentEl) {
       this.contentEl.appendChild(editorEl);
-      cellEditor.start();
       this.editor = cellEditor;
 
+      if (typeof cellEditor.start === 'function') {
+        cellEditor.start();
+      }
       document.addEventListener('mousedown', this.handleMouseDownDocument);
     }
   }
 
   public componentWillUnmount() {
-    if (this.editor) {
-      this.editor.finish();
-      document.removeEventListener('mousedown', this.handleMouseDownDocument);
-    }
+    this.finishEditing(false);
+    document.removeEventListener('mousedown', this.handleMouseDownDocument);
   }
 
   public componentShouldUpdate() {

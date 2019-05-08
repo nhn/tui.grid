@@ -12,26 +12,32 @@ interface OwnProps {
 
 interface StoreProps {
   value: CellValue;
+  editable: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
 export class BodyCellComp extends Component<Props> {
   public render() {
-    const { row, columnName, value } = this.props;
+    const { row, columnName, value, editable } = this.props;
     const attrs: Attributes = {
       'data-row-key': String(row.rowKey),
       'data-column-name': columnName
     };
 
     return (
-      <td class={cls('cell', 'cell-has-input')} {...attrs}>
+      <td class={cls('cell', 'cell-has-input', [editable, 'cell-editable'])} {...attrs}>
         <BodyCellViewer value={value} />
       </td>
     );
   }
 }
 
-export const BodyCell = connect<StoreProps, OwnProps>((store, { row, columnName }) => {
-  return { value: row[columnName] };
+export const BodyCell = connect<StoreProps, OwnProps>(({ column }, { row, columnName }) => {
+  const columnInfo = column.allColumns.find(({ name }) => name === columnName)!;
+
+  return {
+    value: row[columnName],
+    editable: !!columnInfo.editor
+  };
 })(BodyCellComp);

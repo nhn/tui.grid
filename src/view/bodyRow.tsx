@@ -16,12 +16,12 @@ interface StoreProps {
 type Props = OwnProps & StoreProps;
 
 const BodyRowComp = ({ row, columnNames, rowHeight }: Props) => {
-  const isOddRow = !!(row.rowKey % 2);
+  const isOddRow = !!(Number(row.rowKey) % 2);
 
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
       {columnNames.map((name) => {
-        // Pass row object directly instead of passing only value of it,
+        // Pass row object directly instead of passing value of it only,
         // so that BodyCell component can watch the change of value using selector function.
         return <BodyCell key={name} row={row} columnName={name} />;
       })}

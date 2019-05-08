@@ -26,7 +26,7 @@ const columns = [
   },
   {
     name: 'artist',
-    width: 300,
+    width: 200,
     editor: {
       type: 'password'
     }
@@ -34,7 +34,7 @@ const columns = [
   {
     title: 'Genre',
     name: 'genreCode',
-    width: 300,
+    width: 200,
     editor: {
       type: 'checkbox',
       listItems: [
@@ -47,10 +47,25 @@ const columns = [
   {
     title: 'Type',
     name: 'typeCode',
-    width: 300,
+    width: 200,
     editor: {
       type: 'radio',
       listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+    }
+  },
+  {
+    title: 'Grade',
+    name: 'grade',
+    width: 200,
+    editor: {
+      type: 'select',
+      listItems: [
+        { text: '*', value: '1' },
+        { text: '**', value: '2' },
+        { text: '***', value: '3' },
+        { text: '****', value: '4' },
+        { text: '*****', value: '5' }
+      ]
     }
   }
 ];

@@ -1,6 +1,10 @@
 import { Store } from '../store/types';
 
-export function startEditing({ focus, column }: Store, rowKey: number, columnName: string) {
+export function startEditing(
+  { focus, column }: Store,
+  rowKey: number | string,
+  columnName: string
+) {
   const columnInfo = column.allColumns.find(({ name }) => name === columnName);
 
   if (columnInfo && columnInfo.editor) {
@@ -9,9 +13,10 @@ export function startEditing({ focus, column }: Store, rowKey: number, columnNam
   }
 }
 
-export function finishEditing({ focus }: Store, rowKey: number, columnName: string) {
+export function finishEditing({ focus }: Store, rowKey: number | string, columnName: string) {
   const { editing } = focus;
   if (editing && editing.rowKey === rowKey && editing.columnName === columnName) {
     focus.editing = null;
+    focus.navigating = true;
   }
 }

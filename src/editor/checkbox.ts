@@ -1,12 +1,12 @@
 import { CellEditor } from './types';
 import { CellValue } from '../store/types';
 
-let maxId = 0;
+let currentId = 0;
 
 function getNextId() {
-  maxId += 1;
+  currentId += 1;
 
-  return `tui-grid-input-${maxId}`;
+  return `tui-grid-input-${currentId}`;
 }
 
 export interface CheckboxOptions {
@@ -17,7 +17,7 @@ export interface CheckboxOptions {
   }[];
 }
 
-export class CellCheckboxEditor implements CellEditor {
+export class CheckboxEditor implements CellEditor {
   private el!: HTMLElement;
 
   public constructor(options: CheckboxOptions, value: CellValue) {
@@ -51,11 +51,12 @@ export class CellCheckboxEditor implements CellEditor {
     inputType: 'checkbox' | 'radio'
   ) {
     const input = document.createElement('input');
-    input.setAttribute('type', inputType);
+
+    input.type = inputType;
+    input.id = id;
+    input.name = name;
+    input.value = String(value);
     input.setAttribute('data-value-type', 'string');
-    input.setAttribute('id', id);
-    input.setAttribute('name', name);
-    input.setAttribute('value', String(value));
 
     return input;
   }
@@ -94,9 +95,5 @@ export class CellCheckboxEditor implements CellEditor {
     if (firstInput) {
       firstInput.focus();
     }
-  }
-
-  public finish() {
-    // do nothing
   }
 }

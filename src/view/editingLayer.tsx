@@ -6,21 +6,21 @@ import { CellEditorOptions } from '../store/types';
 
 interface StoreProps {
   showing: boolean;
-  rowKey: number | null;
-  columnName: string | null;
-  editorOptions: CellEditorOptions | null;
+  rowKey?: number | string;
+  columnName?: string;
+  editorOptions?: CellEditorOptions;
 }
 
 type Props = StoreProps & DispatchProps;
 
 export class EditingLayerComp extends Component<Props> {
   public render({ rowKey, columnName, showing, editorOptions }: Props) {
-    if (!showing || !editorOptions || !rowKey || !columnName) {
+    if (!showing) {
       return null;
     }
 
     return (
-      <EditingLayerInner rowKey={rowKey} columnName={columnName} editorOptions={editorOptions} />
+      <EditingLayerInner rowKey={rowKey!} columnName={columnName!} editorOptions={editorOptions!} />
     );
   }
 }
@@ -29,8 +29,9 @@ export const EditingLayer = connect<StoreProps>((store) => {
   const { editing } = store.focus;
   if (editing) {
     const { rowKey, columnName } = editing;
-    const { editor, viewer } = store.column.allColumns.find(({ name }) => columnName === name)!;
-    if (editor && viewer) {
+    const { editor } = store.column.allColumns.find(({ name }) => columnName === name)!;
+
+    if (editor) {
       return {
         rowKey,
         columnName,
@@ -40,5 +41,5 @@ export const EditingLayer = connect<StoreProps>((store) => {
     }
   }
 
-  return { showing: false, editorOptions: null, rowKey: null, columnName: null };
+  return { showing: false };
 })(EditingLayerComp);

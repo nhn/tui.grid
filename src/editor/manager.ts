@@ -1,14 +1,16 @@
 import { CellEditorClass } from './types';
-import { CellTextEditor } from './text';
-import { CellCheckboxEditor } from './checkbox';
+import { TextEditor } from './text';
+import { CheckboxEditor } from './checkbox';
+import { SelectEditor } from './select';
 
 export interface EditorMap {
   [editorName: string]: CellEditorClass;
 }
 
 export const editorMap: EditorMap = {
-  text: CellTextEditor,
-  password: CellTextEditor,
-  checkbox: CellCheckboxEditor,
-  radio: CellCheckboxEditor
+  text: TextEditor,
+  password: TextEditor,
+  checkbox: CheckboxEditor,
+  radio: CheckboxEditor,
+  select: SelectEditor
 };

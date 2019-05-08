@@ -6,7 +6,7 @@ interface Options {
   type: 'text' | 'password';
 }
 
-export class CellTextEditor implements CellEditor {
+export class TextEditor implements CellEditor {
   private el!: HTMLInputElement;
 
   public constructor(options: Options, value: CellValue) {
@@ -28,9 +28,5 @@ export class CellTextEditor implements CellEditor {
 
   public start() {
     this.el.select();
-  }
-
-  public finish() {
-    // do nothing
   }
 }

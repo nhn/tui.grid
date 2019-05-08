@@ -96,7 +96,7 @@ export interface Rect {
 
 export interface Focus {
   editing: {
-    rowKey: number;
+    rowKey: number | string;
     columnName: string;
   } | null;
   navigating: boolean;
