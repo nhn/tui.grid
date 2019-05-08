@@ -95,6 +95,16 @@ export interface Focus {
   readonly cellPosRect: Rect | null;
 }
 
+export interface Selection {
+  active: boolean;
+  selectionUnit: number | string | null;
+  range: string | null;
+  // readonly side: Side | null;
+  // readonly columnIndex: number | null;
+  // readonly rowIndex: number | null;
+  // readonly cellPosRect: Rect | null;
+}
+
 export interface Store {
   readonly data: Data;
   readonly column: Column;
