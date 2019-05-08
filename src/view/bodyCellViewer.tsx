@@ -1,7 +1,6 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { CellValue } from '../store/types';
-/* import { connect } from './hoc'; */
 
 interface OwnProps {
   value: CellValue;
@@ -20,5 +19,3 @@ export class BodyCellViewerComp extends Component<OwnProps> {
 }
 
 export const BodyCellViewer = BodyCellViewerComp;
-
-/* export const BodyCellViewer = connect<StoreProps, OwnProps>(() => {})(BodyCellViewerComp); */
