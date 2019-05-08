@@ -163,6 +163,12 @@ export interface Summary {
   summaryValues: SummaryValues;
 }
 
+export interface Selection {
+  active: boolean;
+  selectionUnit: number | string | null;
+  range: string | null;
+}
+
 export interface Store {
   readonly id: number;
   readonly data: Data;
