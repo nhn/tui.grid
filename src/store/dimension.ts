@@ -57,7 +57,7 @@ export function create({
     },
 
     get totalRowHeight() {
-      return data.viewData.length * (this.rowHeight + 1);
+      return data.viewData.length * this.rowHeight + this.tableBorderWidth;
     }
   });
 }

@@ -14,7 +14,7 @@ interface StoreProps {
   headerHeight: number;
   cellBorderWidth: number;
   columns: ColumnInfo[];
-  scrollX: number;
+  scrollLeft: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -23,7 +23,7 @@ class HeadAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
   public componentDidUpdate() {
-    this.el!.scrollLeft = this.props.scrollX;
+    this.el!.scrollLeft = this.props.scrollLeft;
   }
 
   public render() {
@@ -64,6 +64,6 @@ export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
     headerHeight,
     cellBorderWidth,
     columns: store.column.visibleColumnsBySide[side],
-    scrollX: side === 'L' ? 0 : store.viewport.scrollLeft
+    scrollLeft: side === 'L' ? 0 : store.viewport.scrollLeft
   };
 })(HeadAreaComp);

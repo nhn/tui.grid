@@ -243,6 +243,7 @@ export default class Grid {
     // @TODO: focus change event 발생
 
     this.dispatch('setFocusInfo', rowKey, columnName, true);
+    this.dispatch('setScrollPosition');
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
