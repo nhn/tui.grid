@@ -1,4 +1,4 @@
-import { Rect, Side, Store } from '../store/types';
+import { Rect, Store } from '../store/types';
 
 export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
   viewport.scrollLeft = scrollLeft;
@@ -9,28 +9,22 @@ export function setScrollTop({ viewport }: Store, scrollTop: number) {
 }
 
 function getHorizontalScrollPosition(
-  side: Side,
   rSideWidth: number,
   cellPosRect: Rect,
   scrollLeft: number,
   tableBorderWidth: number
 ) {
-  let changedScrollLeft;
-  let isLeft = false;
-  let isRight = false;
   const { left, right } = cellPosRect;
-  if (side === 'R') {
-    isLeft = left < scrollLeft;
-    isRight = !isLeft && right > scrollLeft + rSideWidth - tableBorderWidth;
+
+  if (left < scrollLeft) {
+    return left;
   }
 
-  if (isLeft) {
-    changedScrollLeft = left;
-  } else if (isRight) {
-    changedScrollLeft = right - rSideWidth + tableBorderWidth;
+  if (right > scrollLeft + rSideWidth - tableBorderWidth) {
+    return right - rSideWidth + tableBorderWidth;
   }
 
-  return changedScrollLeft;
+  return null;
 }
 
 function getVerticalScrollPosition(
@@ -40,17 +34,16 @@ function getVerticalScrollPosition(
   tableBorderWidth: number
 ) {
   const { top, bottom } = cellPosRect;
-  const isUp = top < scrollTop;
-  const isDown = !isUp && bottom > scrollTop + height;
-  let changedScrollTop;
 
-  if (isUp) {
-    changedScrollTop = top + tableBorderWidth;
-  } else if (isDown) {
-    changedScrollTop = bottom - height + tableBorderWidth;
+  if (top < scrollTop) {
+    return top + tableBorderWidth;
   }
 
-  return changedScrollTop;
+  if (bottom > scrollTop + height) {
+    return bottom - height + tableBorderWidth;
+  }
+
+  return null;
 }
 
 export function setScrollPosition(store: Store) {
@@ -67,13 +60,15 @@ export function setScrollPosition(store: Store) {
     return;
   }
 
-  const changedScrollLeft = getHorizontalScrollPosition(
-    side,
-    rSideWidth - scrollbarWidth,
-    cellPosRect,
-    scrollLeft,
-    tableBorderWidth
-  );
+  const changedScrollLeft =
+    side === 'R'
+      ? getHorizontalScrollPosition(
+          rSideWidth - scrollbarWidth,
+          cellPosRect,
+          scrollLeft,
+          tableBorderWidth
+        )
+      : null;
   const changedScrollTop = getVerticalScrollPosition(
     bodyHeight - scrollbarWidth,
     cellPosRect,
@@ -81,10 +76,10 @@ export function setScrollPosition(store: Store) {
     tableBorderWidth
   );
 
-  if (typeof changedScrollLeft !== 'undefined') {
+  if (changedScrollLeft !== null) {
     store.viewport.scrollLeft = changedScrollLeft;
   }
-  if (typeof changedScrollTop !== 'undefined') {
+  if (changedScrollTop !== null) {
     store.viewport.scrollTop = changedScrollTop;
   }
 }
