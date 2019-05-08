@@ -12,7 +12,8 @@ function getHorizontalScrollPosition(
   side: Side,
   rSideWidth: number,
   cellPosRect: Rect,
-  scrollLeft: number
+  scrollLeft: number,
+  tableBorderWidth: number
 ) {
   let changedScrollLeft;
   let isLeft = false;
@@ -20,28 +21,33 @@ function getHorizontalScrollPosition(
   const { left, right } = cellPosRect;
   if (side === 'R') {
     isLeft = left < scrollLeft;
-    isRight = !isLeft && right > scrollLeft + rSideWidth - 1;
+    isRight = !isLeft && right > scrollLeft + rSideWidth - tableBorderWidth;
   }
 
   if (isLeft) {
     changedScrollLeft = left;
   } else if (isRight) {
-    changedScrollLeft = right - rSideWidth + 1;
+    changedScrollLeft = right - rSideWidth + tableBorderWidth;
   }
 
   return changedScrollLeft;
 }
 
-function getVerticalScrollPosition(height: number, cellPosRect: Rect, scrollTop: number) {
+function getVerticalScrollPosition(
+  height: number,
+  cellPosRect: Rect,
+  scrollTop: number,
+  tableBorderWidth: number
+) {
   const { top, bottom } = cellPosRect;
   const isUp = top < scrollTop;
   const isDown = !isUp && bottom > scrollTop + height;
   let changedScrollTop;
 
   if (isUp) {
-    changedScrollTop = top + 1;
+    changedScrollTop = top + tableBorderWidth;
   } else if (isDown) {
-    changedScrollTop = bottom - height + 1;
+    changedScrollTop = bottom - height + tableBorderWidth;
   }
 
   return changedScrollTop;
@@ -49,7 +55,7 @@ function getVerticalScrollPosition(height: number, cellPosRect: Rect, scrollTop:
 
 export function setScrollPosition(store: Store) {
   const {
-    dimension: { bodyHeight, scrollbarWidth },
+    dimension: { bodyHeight, scrollbarWidth, tableBorderWidth },
     columnCoords: {
       areaWidth: { R: rSideWidth }
     },
@@ -65,12 +71,14 @@ export function setScrollPosition(store: Store) {
     side,
     rSideWidth - scrollbarWidth,
     cellPosRect,
-    scrollLeft
+    scrollLeft,
+    tableBorderWidth
   );
   const changedScrollTop = getVerticalScrollPosition(
     bodyHeight - scrollbarWidth,
     cellPosRect,
-    scrollTop
+    scrollTop,
+    tableBorderWidth
   );
 
   if (typeof changedScrollLeft !== 'undefined') {
