@@ -93,14 +93,6 @@ export class EditingLayerInnerComp extends Component<Props> {
     document.removeEventListener('mousedown', this.handleMouseDownDocument);
   }
 
-  public componentWillReceiveProps() {
-    this.finishEditing(false);
-  }
-
-  public shouldComponentUpdate() {
-    return false;
-  }
-
   public render() {
     const { top, left, width, height, contentHeight } = this.props;
     const lineHeight = `${contentHeight}px`;
