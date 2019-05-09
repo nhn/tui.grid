@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, CellEditorOptions } from '../store/types';
+import { CellValue, CellEditorOptions, RowKey } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
@@ -16,7 +16,7 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  rowKey: number | string;
+  rowKey: RowKey;
   columnName: string;
   editorOptions: CellEditorOptions;
 }

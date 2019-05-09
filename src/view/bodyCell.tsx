@@ -34,7 +34,7 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(({ column }, { row, columnName }) => {
-  const columnInfo = column.allColumns.find(({ name }) => name === columnName)!;
+  const columnInfo = column.allColumnMap[columnName];
 
   return {
     value: row[columnName],

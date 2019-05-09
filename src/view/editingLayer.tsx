@@ -2,11 +2,11 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { EditingLayerInner } from './editingLayerInner';
-import { CellEditorOptions } from '../store/types';
+import { CellEditorOptions, RowKey } from '../store/types';
 
 interface StoreProps {
   showing: boolean;
-  rowKey?: number | string;
+  rowKey?: RowKey;
   columnName?: string;
   editorOptions?: CellEditorOptions;
 }
@@ -29,7 +29,7 @@ export const EditingLayer = connect<StoreProps>((store) => {
   const { editing } = store.focus;
   if (editing) {
     const { rowKey, columnName } = editing;
-    const { editor } = store.column.allColumns.find(({ name }) => columnName === name)!;
+    const { editor } = store.column.allColumnMap[columnName];
 
     if (editor) {
       return {

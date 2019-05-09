@@ -1,4 +1,4 @@
-import { Store, Row, ColumnInfo } from '../store/types';
+import { Store, Row, ColumnInfo, RowKey } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 
@@ -10,7 +10,7 @@ function isValidRowIndexRange(rowIndex: number, viewDataLength: number) {
   return rowIndex >= 0 && rowIndex < viewDataLength;
 }
 
-function findRowKey(rowKey: number | string, viewData: Row[], offset: number) {
+function findRowKey(rowKey: RowKey, viewData: Row[], offset: number) {
   let rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
   if (isValidRowIndexRange(rowIndex + offset, viewData.length)) {
     rowIndex += offset;
@@ -148,7 +148,7 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   }
 
   if (command === 'currentCell') {
-    const columnInfo = column.allColumns.find(({ name }) => name === columnName);
+    const columnInfo = column.allColumnMap[columnName];
 
     if (columnInfo && columnInfo.editor) {
       focus.navigating = false;
@@ -169,7 +169,7 @@ export function removeFocus(store: Store) {
 
 export function setFocusInfo(
   store: Store,
-  rowKey: number | string | null,
+  rowKey: RowKey | null,
   columnName: string | null,
   navigating: boolean
 ) {

@@ -1,11 +1,7 @@
-import { Store } from '../store/types';
+import { Store, RowKey } from '../store/types';
 
-export function startEditing(
-  { focus, column }: Store,
-  rowKey: number | string,
-  columnName: string
-) {
-  const columnInfo = column.allColumns.find(({ name }) => name === columnName);
+export function startEditing({ focus, column }: Store, rowKey: RowKey, columnName: string) {
+  const columnInfo = column.allColumnMap[columnName];
 
   if (columnInfo && columnInfo.editor) {
     focus.navigating = false;
@@ -13,8 +9,9 @@ export function startEditing(
   }
 }
 
-export function finishEditing({ focus }: Store, rowKey: number | string, columnName: string) {
+export function finishEditing({ focus }: Store, rowKey: RowKey, columnName: string) {
   const { editing } = focus;
+
   if (editing && editing.rowKey === rowKey && editing.columnName === columnName) {
     focus.editing = null;
     focus.navigating = true;

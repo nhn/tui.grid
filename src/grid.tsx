@@ -3,7 +3,7 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue } from './store/types';
+import { Store, CellValue, RowKey } from './store/types';
 import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import i18n from './i18n';
@@ -217,7 +217,7 @@ export default class Grid {
    * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
    * @returns {Boolean} true if focused cell is changed
    */
-  public focus(rowKey: number | string, columnName: string, isScrollable?: boolean) {
+  public focus(rowKey: RowKey, columnName: string, isScrollable?: boolean) {
     this.blur();
     // @TODO: focus change event 발생
 
@@ -248,7 +248,7 @@ export default class Grid {
     return result;
   }
 
-  public setValue(rowKey: number, columnName: string, value: CellValue) {
+  public setValue(rowKey: RowKey, columnName: string, value: CellValue) {
     this.dispatch('setValue', rowKey, columnName, value);
   }
 
@@ -259,7 +259,7 @@ export default class Grid {
    * @param {boolean} [isOriginal] - It set to true, the original value will be return.
    * @returns {number|string} - The value of the cell
    */
-  public getValue(rowKey: number | string, columnName: string): CellValue | null {
+  public getValue(rowKey: RowKey, columnName: string): CellValue | null {
     const targetRow = this.store.data.rawData.find((row) => row.rowKey === rowKey);
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
