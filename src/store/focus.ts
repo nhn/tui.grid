@@ -12,7 +12,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
   return reactive({
     rowKey: null,
     columnName: null,
-    editing: null,
+    editingAddress: null,
     navigating: false,
     get side(this: Focus) {
       if (this.columnName === null) {

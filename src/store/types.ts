@@ -102,7 +102,7 @@ export interface Rect {
 }
 
 export interface Focus {
-  editing: {
+  editingAddress: {
     rowKey: RowKey;
     columnName: string;
   } | null;

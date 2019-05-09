@@ -5,15 +5,19 @@ export function startEditing({ focus, column }: Store, rowKey: RowKey, columnNam
 
   if (columnInfo && columnInfo.editor) {
     focus.navigating = false;
-    focus.editing = { rowKey, columnName };
+    focus.editingAddress = { rowKey, columnName };
   }
 }
 
 export function finishEditing({ focus }: Store, rowKey: RowKey, columnName: string) {
-  const { editing } = focus;
+  const { editingAddress } = focus;
 
-  if (editing && editing.rowKey === rowKey && editing.columnName === columnName) {
-    focus.editing = null;
+  if (
+    editingAddress &&
+    editingAddress.rowKey === rowKey &&
+    editingAddress.columnName === columnName
+  ) {
+    focus.editingAddress = null;
     focus.navigating = true;
   }
 }

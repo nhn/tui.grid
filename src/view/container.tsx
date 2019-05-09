@@ -122,7 +122,7 @@ export class ContainerComp extends Component<Props> {
 export const Container = connect<StoreProps, OwnProps>(({ dimension, focus }) => ({
   width: dimension.width,
   autoWidth: dimension.autoWidth,
-  editing: !!focus.editing,
+  editing: !!focus.editingAddress,
   scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
   fitToParentHeight: dimension.fitToParentHeight
 }))(ContainerComp);

@@ -152,7 +152,7 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
 
     if (columnInfo && columnInfo.editor) {
       focus.navigating = false;
-      focus.editing = { rowKey, columnName };
+      focus.editingAddress = { rowKey, columnName };
     }
   }
 }

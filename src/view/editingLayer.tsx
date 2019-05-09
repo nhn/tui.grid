@@ -5,41 +5,35 @@ import { EditingLayerInner } from './editingLayerInner';
 import { CellEditorOptions, RowKey } from '../store/types';
 
 interface StoreProps {
-  showing: boolean;
-  rowKey?: RowKey;
-  columnName?: string;
+  editingAddress: {
+    rowKey: RowKey;
+    columnName: string;
+  } | null;
   editorOptions?: CellEditorOptions;
 }
 
 type Props = StoreProps & DispatchProps;
 
 export class EditingLayerComp extends Component<Props> {
-  public render({ rowKey, columnName, showing, editorOptions }: Props) {
-    if (!showing) {
+  public render({ editingAddress, editorOptions }: Props) {
+    if (!editingAddress || !editorOptions) {
       return null;
     }
 
+    const { rowKey, columnName } = editingAddress;
     return (
-      <EditingLayerInner rowKey={rowKey!} columnName={columnName!} editorOptions={editorOptions!} />
+      <EditingLayerInner rowKey={rowKey} columnName={columnName} editorOptions={editorOptions} />
     );
   }
 }
 
-export const EditingLayer = connect<StoreProps>((store) => {
-  const { editing } = store.focus;
-  if (editing) {
-    const { rowKey, columnName } = editing;
-    const { editor } = store.column.allColumnMap[columnName];
+export const EditingLayer = connect<StoreProps>(({ focus, column }) => {
+  let editorOptions;
+  const { editingAddress } = focus;
 
-    if (editor) {
-      return {
-        rowKey,
-        columnName,
-        editorOptions: editor,
-        showing: true
-      };
-    }
+  if (editingAddress) {
+    editorOptions = column.allColumnMap[editingAddress.columnName].editor;
   }
 
-  return { showing: false };
+  return { editingAddress, editorOptions };
 })(EditingLayerComp);

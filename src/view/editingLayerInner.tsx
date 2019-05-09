@@ -93,7 +93,11 @@ export class EditingLayerInnerComp extends Component<Props> {
     document.removeEventListener('mousedown', this.handleMouseDownDocument);
   }
 
-  public componentShouldUpdate() {
+  public componentWillReceiveProps() {
+    this.finishEditing(false);
+  }
+
+  public shouldComponentUpdate() {
     return false;
   }
 

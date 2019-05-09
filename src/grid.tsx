@@ -187,7 +187,7 @@ export default class Grid {
 
   /**
    * Returns data of currently focused cell
-   * @returns {number} rowKey - The unique key of the row
+   * @returns {number|string} rowKey - The unique key of the row
    * @returns {string} columnName - The name of the column
    * @returns {string} value - The value of the cell
    */
@@ -248,13 +248,19 @@ export default class Grid {
     return result;
   }
 
+  /**
+   * Sets the value of the cell identified by the specified rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {number|string} columnValue - The value to be set
+   */
   public setValue(rowKey: RowKey, columnName: string, value: CellValue) {
     this.dispatch('setValue', rowKey, columnName, value);
   }
 
   /**
    * Returns the value of the cell identified by the rowKey and columnName.
-   * @param {number} rowKey - The unique key of the target row.
+   * @param {number|string} rowKey - The unique key of the target row.
    * @param {string} columnName - The name of the column
    * @param {boolean} [isOriginal] - It set to true, the original value will be return.
    * @returns {number|string} - The value of the cell
