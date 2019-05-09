@@ -5,10 +5,10 @@ import Grid from '../../src/grid';
 import { OptGrid, OptRow } from '../../src/types';
 import { Omit } from 'utility-types';
 
-type GridGlobal = {
+interface GridGlobal {
   tui: { Grid: typeof Grid };
   grid: Grid;
-};
+}
 
 const CONTENT_WIDTH = 600;
 // @TODO: Retrieve scrollbar-width from real browser
@@ -27,33 +27,33 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 }
 
 function getGridInst(): Cypress.Chainable<Grid> {
-  return (<Cypress.Chainable<Window & GridGlobal>>cy.window()).its('grid');
+  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
 }
 
 function assertContainerWidth(width: number) {
-  cy.get('.' + cls('container'))
+  cy.get(`.${cls('container')}`)
     .invoke('width')
     .should('be.eql', width);
 
-  cy.get('.' + cls('rside-area')).within(() => {
+  cy.get(`.${cls('rside-area')}`).within(() => {
     cy.root()
       .invoke('width')
       .should('be.eql', width);
 
-    cy.get('.' + cls('head-area'))
+    cy.get(`.${cls('head-area')}`)
       .invoke('width')
       .should('be.eql', width - 17);
 
-    cy.get('.' + cls('body-area'))
+    cy.get(`.${cls('body-area')}`)
       .invoke('width')
       .should('be.eql', width);
   });
 }
 
 function assertColumnWidth(widths: number[]) {
-  cy.get('.' + cls('rside-area')).within(() => {
-    cy.get('.' + cls('head-area') + ' th').as('headCols');
-    cy.get('.' + cls('body-area') + ' tr:first-child td').as('bodyCols');
+  cy.get(`.${cls('rside-area')}`).within(() => {
+    cy.get(`.${cls('head-area')} th`).as('headCols');
+    cy.get(`.${cls('body-area')} tr:first-child td`).as('bodyCols');
 
     widths.forEach((width, index) => {
       cy.get('@headCols')
@@ -69,11 +69,11 @@ function assertColumnWidth(widths: number[]) {
   });
 }
 
-type WidthInfo = {
+interface WidthInfo {
   width?: number | 'auto';
   minWidth?: number;
   resizable?: boolean;
-};
+}
 
 function createGridWithWidths(widths: WidthInfo[], commonMinWidth?: number) {
   const columns = widths.map(({ width, minWidth, resizable }, index) => ({
@@ -94,7 +94,7 @@ function createGridWithWidths(widths: WidthInfo[], commonMinWidth?: number) {
 }
 
 function assertHandleOffset(index: number, offsetLeft: number) {
-  cy.get('.' + cls('column-resize-handle'))
+  cy.get(`.${cls('column-resize-handle')}`)
     .as('handles')
     .eq(index)
     .invoke('position')
@@ -104,7 +104,7 @@ function assertHandleOffset(index: number, offsetLeft: number) {
 }
 
 function assertHandleLength(length: number) {
-  cy.get('.' + cls('column-resize-handle'))
+  cy.get(`.${cls('column-resize-handle')}`)
     .its('length')
     .should('be.eql', length);
 }
@@ -214,7 +214,7 @@ describe('auto calculate column widths (container: 600)', () => {
       createGridWithWidths([{}, {}, {}]);
       const nextWidth = 720 + SCROLLBAR_WIDTH;
 
-      cy.get('.' + cls('container'))
+      cy.get(`.${cls('container')}`)
         .parent()
         .invoke('width', nextWidth);
       cy.window().trigger('resize');
@@ -226,7 +226,7 @@ describe('auto calculate column widths (container: 600)', () => {
 
   context('Resize handle', () => {
     function dragColumnResizeHandle(index: number, distance: number) {
-      cy.get('.' + cls('column-resize-handle'))
+      cy.get(`.${cls('column-resize-handle')}`)
         .eq(index)
         .trigger('mousedown')
         .then(($el) => {
@@ -266,7 +266,7 @@ describe('body height', () => {
   const data = [{ c1: 'test' }];
 
   function assertBodyHeight(height: number) {
-    cy.get('.' + cls('body-area')).each(($body) => {
+    cy.get(`.${cls('body-area')}`).each(($body) => {
       expect($body.height()).to.eql(height);
     });
   }
@@ -275,7 +275,7 @@ describe('body height', () => {
     const PARENT_HEIGHT = 400;
 
     cy.window().then((win: Window & Partial<GridGlobal>) => {
-      const { document, tui } = <any>win;
+      const { document, tui } = win;
       const parentEl = document.createElement('div');
       const el = document.createElement('div');
 
@@ -283,7 +283,7 @@ describe('body height', () => {
       document.body.appendChild(parentEl);
       parentEl.appendChild(el);
 
-      new tui.Grid({ el, columns, data, bodyHeight: 'fitToParent' });
+      new tui!.Grid({ el, columns, data, bodyHeight: 'fitToParent' });
       cy.wait(10);
     });
 
@@ -307,7 +307,7 @@ describe('body height', () => {
 
   context('height resize handle', () => {
     function dragHeightReiszeHandle(distance: number) {
-      cy.get('.' + cls('height-resize-handle')).within(($el) => {
+      cy.get(`.${cls('height-resize-handle')}`).within(($el) => {
         const { top } = $el.offset()!;
 
         cy.root()
