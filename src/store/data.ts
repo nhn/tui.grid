@@ -3,9 +3,10 @@ import { reactive, Reactive } from '../helper/reactive';
 import { OptRow } from '../types';
 
 export function create(data: OptRow[]): Reactive<Data> {
-  const rawData: Row[] = data as Row[];
-  rawData.forEach((row, idx) => {
-    row.rowKey = idx;
+  const rawData = data.map((row, index) => {
+    const rowKeyAdded = { rowKey: index, ...row };
+
+    return reactive(rowKeyAdded as Row);
   });
 
   return reactive({

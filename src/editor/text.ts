@@ -1,35 +1,32 @@
-interface RenderProps {
-  // container: HTMLElement;
-  trigger(action: 'start' | 'finish'): void;
+import { CellEditor } from './types';
+import { CellValue } from '../store/types';
+import { cls } from '../helper/dom';
+
+interface Options {
+  type: 'text' | 'password';
 }
 
-interface CellEditor {
-  render(props: RenderProps): void;
-  onChange(): void;
-  onStart(): void;
-  onFinish(): void;
-}
+export class TextEditor implements CellEditor {
+  private el!: HTMLInputElement;
 
-function createEditor(options: CellEditor) {}
+  public constructor(options: Options, value: CellValue) {
+    const el = document.createElement('input');
+    el.className = cls('content-text');
+    el.type = options.type;
+    el.value = String(value);
 
-// class CellEditorText implements CellEditor {}
+    this.el = el;
+  }
 
-export function create() {
-  return createEditor({
-    render({ trigger }) {
-      const el = document.createElement('input');
+  public getElement() {
+    return this.el;
+  }
 
-      el.addEventListener('focus', () => {
-        trigger('start');
-      });
-      el.addEventListener('blur', () => {
-        trigger('finish');
-      });
+  public getValue() {
+    return this.el.value;
+  }
 
-      return el;
-    },
-    onChange() {},
-    onStart() {},
-    onFinish() {}
-  });
+  public start() {
+    this.el.select();
+  }
 }

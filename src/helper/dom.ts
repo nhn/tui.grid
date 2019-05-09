@@ -17,21 +17,9 @@ export type ClassNameType =
   | 'btn-excel-page'
   | 'btn-excel-all'
   | 'btn-tree'
-  | 'content-before'
-  | 'content-after'
-  | 'content-input'
-  | 'content-text'
-  | 'cell-content'
   | 'cell'
   | 'cell-content'
   | 'cell-head'
-  | 'clipboard'
-  | 'column-resize-container'
-  | 'column-resize-handle'
-  | 'column-resize-handle-last'
-  | 'container'
-  | 'content-area'
-  | 'clipboard'
   | 'cell-row-head'
   | 'cell-summary'
   | 'cell-row-odd'
@@ -44,9 +32,20 @@ export type ClassNameType =
   | 'cell-invalid'
   | 'cell-ellipsis'
   | 'cell-current-row'
+  | 'cell-content-editor'
   | 'cell-main-button'
   | 'cell-has-input'
   | 'cell-has-tree'
+  | 'clipboard'
+  | 'column-resize-container'
+  | 'column-resize-handle'
+  | 'column-resize-handle-last'
+  | 'container'
+  | 'content-before'
+  | 'content-after'
+  | 'content-input'
+  | 'content-text'
+  | 'content-area'
   | 'frozen-border'
   | 'frozen-border-top'
   | 'frozen-border-bottom'
@@ -121,14 +120,14 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
 }
 
 export function hasClass(el: HTMLElement, className: ClassNameType) {
-  return el.className.includes(cls(className));
+  return el.className.split(' ').includes(cls(className));
 }
 
 export function findParent(el: HTMLElement, className: ClassNameType) {
   let currentEl: HTMLElement | null = el;
-  do {
+  while (currentEl && !hasClass(currentEl, className)) {
     currentEl = currentEl.parentElement;
-  } while (currentEl && !hasClass(currentEl, className));
+  }
 
   return currentEl;
 }

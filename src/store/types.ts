@@ -6,20 +6,29 @@ export type Side = 'L' | 'R';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
-export interface Row {
+export type Row = {
   rowKey: number | string;
+  _extraData?: any;
+} & {
   [propName: string]: CellValue;
-}
+};
 
 export interface Data {
   rawData: Row[];
   viewData: Row[];
 }
 
+export interface CellEditorOptions {
+  type: string;
+  [propName: string]: any;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
+  editor?: CellEditorOptions;
+  viewer: string;
   hidden: boolean;
   baseWidth: number;
   resizable: boolean;
@@ -86,7 +95,11 @@ export interface Rect {
 }
 
 export interface Focus {
-  active: boolean;
+  editing: {
+    rowKey: number | string;
+    columnName: string;
+  } | null;
+  navigating: boolean;
   rowKey: number | string | null;
   columnName: string | null;
   readonly side: Side | null;

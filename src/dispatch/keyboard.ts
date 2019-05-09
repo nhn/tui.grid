@@ -135,14 +135,26 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       break;
   }
 
-  focus.active = true;
+  focus.navigating = true;
   focus.rowKey = rowKey;
   focus.columnName = columnName;
 }
 
-export function editFocus(store: Store, command: KeyboardEventCommandType) {
-  // @TODO: 이후 관련 키보드 이벤트 작업 필요
-  console.log(store, command);
+export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
+  const { rowKey, columnName } = focus;
+
+  if (rowKey === null || columnName === null) {
+    return;
+  }
+
+  if (command === 'currentCell') {
+    const columnInfo = column.allColumns.find(({ name }) => name === columnName);
+
+    if (columnInfo && columnInfo.editor) {
+      focus.navigating = false;
+      focus.editing = { rowKey, columnName };
+    }
+  }
 }
 
 export function selectFocus(store: Store, command: KeyboardEventCommandType) {
@@ -159,9 +171,9 @@ export function setFocusInfo(
   store: Store,
   rowKey: number | string | null,
   columnName: string | null,
-  active: boolean
+  navigating: boolean
 ) {
-  store.focus.active = active;
+  store.focus.navigating = navigating;
   store.focus.rowKey = rowKey;
   store.focus.columnName = columnName;
 }

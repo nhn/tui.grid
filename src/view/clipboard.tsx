@@ -5,7 +5,8 @@ import { cls } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 
 interface StoreProps {
-  active: boolean;
+  navigating: boolean;
+  editing: boolean;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -31,10 +32,10 @@ class ClipboardComp extends Component<Props> {
   };
 
   private onBlur = () => {
-    this.props.dispatch('setFocusActive', false);
+    this.props.dispatch('setNavigating', false);
   };
 
-  private hasFocus() {
+  private isClipboardFocused() {
     return document.hasFocus() && document.activeElement === this.el;
   }
 
@@ -88,13 +89,12 @@ class ClipboardComp extends Component<Props> {
   };
 
   public componentDidUpdate() {
-    if (!this.el) {
-      return;
-    }
-
-    if (this.props.active && !this.hasFocus()) {
-      this.el.focus();
-    }
+    setTimeout(() => {
+      const { navigating, editing } = this.props;
+      if (this.el && navigating && !editing && !this.isClipboardFocused()) {
+        this.el.focus();
+      }
+    });
   }
 
   public render() {
@@ -113,5 +113,6 @@ class ClipboardComp extends Component<Props> {
 }
 
 export const Clipboard = connect<StoreProps>(({ focus }) => ({
-  active: focus.active
+  navigating: focus.navigating,
+  editing: !!focus.editing
 }))(ClipboardComp);

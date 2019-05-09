@@ -3,7 +3,8 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store } from './store/types';
+import { Store, CellValue } from './store/types';
+import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import i18n from './i18n';
 
@@ -34,7 +35,7 @@ export default class Grid {
       themeManager.apply('default');
     }
 
-    render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
+    render(<Root store={store} dispatch={dispatch} editorMap={editorMap} rootElement={el} />, el);
   }
 
   /**
@@ -185,42 +186,20 @@ export default class Grid {
   }
 
   /**
-   * Returns the value of the cell identified by the rowKey and columnName.
-   * @param {number} rowKey - The unique key of the target row.
-   * @param {string} columnName - The name of the column
-   * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-   * @returns {number|string} - The value of the cell
-   */
-  public getValue(rowKey: number | string | null, columnName: string | null, isOriginal?: boolean) {
-    const {
-      data: { viewData }
-    } = this.store;
-    let rowIndex = -1;
-
-    // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
-    if (rowKey) {
-      rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
-    }
-
-    return rowIndex !== -1 && columnName && viewData[rowIndex][columnName];
-  }
-
-  /**
    * Returns data of currently focused cell
    * @returns {number} rowKey - The unique key of the row
    * @returns {string} columnName - The name of the column
    * @returns {string} value - The value of the cell
    */
   public getFocusedCell() {
-    const {
-      focus: { columnName, rowKey }
-    } = this.store;
+    const { columnName, rowKey } = this.store.focus;
+    let value = null;
 
-    return {
-      rowKey,
-      columnName,
-      value: this.getValue(rowKey, columnName)
-    };
+    if (rowKey !== null && columnName !== null) {
+      value = this.getValue(rowKey, columnName);
+    }
+
+    return { rowKey, columnName, value };
   }
 
   /**
@@ -267,5 +246,27 @@ export default class Grid {
     }
 
     return result;
+  }
+
+  public setValue(rowKey: number, columnName: string, value: CellValue) {
+    this.dispatch('setValue', rowKey, columnName, value);
+  }
+
+  /**
+   * Returns the value of the cell identified by the rowKey and columnName.
+   * @param {number} rowKey - The unique key of the target row.
+   * @param {string} columnName - The name of the column
+   * @param {boolean} [isOriginal] - It set to true, the original value will be return.
+   * @returns {number|string} - The value of the cell
+   */
+  public getValue(rowKey: number | string, columnName: string): CellValue | null {
+    const targetRow = this.store.data.rawData.find((row) => row.rowKey === rowKey);
+
+    // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
+    if (targetRow) {
+      return targetRow[columnName];
+    }
+
+    return null;
   }
 }

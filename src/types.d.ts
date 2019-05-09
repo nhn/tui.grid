@@ -26,11 +26,18 @@ export type OptRow = {
   _extraData?: ExtraData;
 };
 
+interface CellEditor {
+  type: string;
+  [propName: string]: any;
+}
+
 export interface OptColumn {
   name: string;
   title?: string;
   hidden?: boolean;
   width?: number | 'auto';
+  editor?: string | CellEditor;
+  viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
 }

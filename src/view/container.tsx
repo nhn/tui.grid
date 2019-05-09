@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
-import { cls } from '../helper/dom';
+import { cls, getCellAddress } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 
@@ -16,6 +16,7 @@ interface OwnProps {
 interface StoreProps {
   width: number;
   autoWidth: boolean;
+  editing: boolean;
   scrollXHeight: number;
   fitToParentHeight: boolean;
 }
@@ -29,12 +30,23 @@ export class ContainerComp extends Component<Props> {
     const target = ev.target as HTMLElement;
     const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
     const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
-    /* const cellAddress = getCellAddress(target); */
     const isMainButton = false;
+    const { dispatch, editing } = this.props;
 
     if (!focusBlocked && !isMainButton) {
-      ev.preventDefault();
-      this.props.dispatch('setFocusActive', true);
+      dispatch('setNavigating', true);
+      if (!editing) {
+        ev.preventDefault();
+      }
+    }
+  };
+
+  private handleDblClick = (ev: MouseEvent) => {
+    const target = ev.target as HTMLElement;
+    const address = getCellAddress(target);
+
+    if (address) {
+      this.props.dispatch('startEditing', address.rowKey, address.columnName);
     }
   };
 
@@ -84,6 +96,7 @@ export class ContainerComp extends Component<Props> {
         style={style}
         class={cls('container')}
         onMouseDown={this.handleMouseDown}
+        onDblClick={this.handleDblClick}
         ref={(el) => {
           this.el = el;
         }}
@@ -106,9 +119,10 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, OwnProps>(({ dimension }) => ({
+export const Container = connect<StoreProps, OwnProps>(({ dimension, focus }) => ({
   width: dimension.width,
   autoWidth: dimension.autoWidth,
+  editing: !!focus.editing,
   scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
   fitToParentHeight: dimension.fitToParentHeight
 }))(ContainerComp);

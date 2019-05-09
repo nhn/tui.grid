@@ -20,7 +20,6 @@ class LeftSideComp extends Component<Props> {
       <div class={cls('lside-area')} style={style}>
         <HeadArea side="L" />
         <BodyArea side="L" />
-
         {scrollX && <div class={cls('scrollbar-left-bottom')} />}
       </div>
     );

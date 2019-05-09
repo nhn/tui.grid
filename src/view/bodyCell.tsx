@@ -1,33 +1,43 @@
 import { h, Component } from 'preact';
 import { cls, Attributes } from '../helper/dom';
-import { CellValue } from '../store/types';
+import { CellValue, Row } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
+import { BodyCellViewer } from './bodyCellViewer';
 
 interface OwnProps {
-  rowKey: number | string;
+  row: Row;
   columnName: string;
-  value: CellValue;
 }
 
-type Props = OwnProps & DispatchProps;
+interface StoreProps {
+  value: CellValue;
+  editable: boolean;
+}
+
+type Props = OwnProps & StoreProps & DispatchProps;
 
 export class BodyCellComp extends Component<Props> {
   public render() {
-    const { rowKey, columnName, value } = this.props;
+    const { row, columnName, value, editable } = this.props;
     const attrs: Attributes = {
-      'data-row-key': String(rowKey),
+      'data-row-key': String(row.rowKey),
       'data-column-name': columnName
     };
 
     return (
-      <td class={cls('cell')} {...attrs}>
-        <div class={cls('cell-content')} style="white-space:nowrap">
-          {value}
-        </div>
+      <td class={cls('cell', 'cell-has-input', [editable, 'cell-editable'])} {...attrs}>
+        <BodyCellViewer value={value} />
       </td>
     );
   }
 }
 
-export const BodyCell = connect<{}, OwnProps>()(BodyCellComp);
+export const BodyCell = connect<StoreProps, OwnProps>(({ column }, { row, columnName }) => {
+  const columnInfo = column.allColumns.find(({ name }) => name === columnName)!;
+
+  return {
+    value: row[columnName],
+    editable: !!columnInfo.editor
+  };
+})(BodyCellComp);
