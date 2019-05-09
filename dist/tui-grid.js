@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Tue Apr 09 2019 09:35:49 GMT+0900 (Korean Standard Time)"
- * version: 3.7.0
+ * bundle created at "Thu May 09 2019 15:25:27 GMT+0900 (KST)"
+ * version: 3.8.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -808,6 +808,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    restore: function() {
 	        this.modelManager.dataModel.restore();
+	    },
+
+	    /**
+	     * Sets options for header.
+	     * @param {Object} options - Options for header
+	     * @param {number} [options.height] -  The height value
+	     * @param {Array} [options.complexColumns] - The complex columns info
+	     */
+	    setHeader: function(options) {
+	        if (options.height) {
+	            this.modelManager.dimensionModel.set('headerHeight', options.height);
+	        }
+
+	        if (options.complexColumns) {
+	            this.modelManager.columnModel.set({
+	                complexHeaderColumns: options.complexColumns
+	            });
+	        }
 	    },
 
 	    /**
@@ -12122,7 +12140,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    createHeader: function(whichSide) {
 	        return new HeaderView({
 	            whichSide: whichSide,
-	            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
 	            renderModel: this.modelManager.renderModel,
 	            focusModel: this.modelManager.focusModel,
 	            selectionModel: this.modelManager.selectionModel,
@@ -12130,6 +12147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnModel: this.modelManager.columnModel,
 	            coordRowModel: this.modelManager.coordRowModel,
 	            coordColumnModel: this.modelManager.coordColumnModel,
+	            dimensionModel: this.modelManager.dimensionModel,
 	            domEventBus: this.domEventBus,
 	            viewFactory: this
 	        });
@@ -14159,11 +14177,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnModel: options.columnModel,
 	            dataModel: options.dataModel,
 	            coordRowModel: options.coordRowModel,
+	            dimensionModel: options.dimensionModel,
 
 	            viewFactory: options.viewFactory,
 	            domEventBus: options.domEventBus,
 
-	            headerHeight: options.headerHeight,
 	            whichSide: options.whichSide || frameConst.R
 	        });
 
@@ -14177,7 +14195,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
 	            .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
 	            .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
-	            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
+	            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState)
+	            .listenTo(this.dimensionModel, 'change:headerHeight', this.render);
 
 	        if (this.whichSide === frameConst.L && this.columnModel.get('selectType') === 'checkbox') {
 	            this.listenTo(this.dataModel,
@@ -14506,7 +14525,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._destroyChildren();
 
 	        this.$el.css({
-	            height: this.headerHeight - TABLE_BORDER_WIDTH
+	            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
 	        }).html(this.template({
 	            colGroup: this._getColGroupMarkup(),
 	            tBody: this._getTableBodyMarkup()
@@ -14545,7 +14564,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getTableBodyMarkup: function() {
 	        var hierarchyList = this._getColumnHierarchyList();
 	        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-	        var headerHeight = this.headerHeight;
+	        var headerHeight = this.dimensionModel.get('headerHeight');
 	        var rowMarkupList = new Array(maxRowCount);
 	        var columnNames = new Array(maxRowCount);
 	        var colSpanList = [];
