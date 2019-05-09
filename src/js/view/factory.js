@@ -152,7 +152,6 @@ var ViewFactory = snippet.defineClass({
     createHeader: function(whichSide) {
         return new HeaderView({
             whichSide: whichSide,
-            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             renderModel: this.modelManager.renderModel,
             focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
@@ -160,6 +159,7 @@ var ViewFactory = snippet.defineClass({
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
             coordColumnModel: this.modelManager.coordColumnModel,
+            dimensionModel: this.modelManager.dimensionModel,
             domEventBus: this.domEventBus,
             viewFactory: this
         });

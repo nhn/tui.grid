@@ -2,11 +2,11 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhnent/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.grid.svg)](https://github.com/nhnent/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## Wrappers
 
-* [toast-ui.vue-grid](https://github.com/nhnent/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
+* [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -57,7 +57,7 @@ var options = {
 var instance = new Grid(options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -147,16 +147,16 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🐾 Examples
 
-* [Basic](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic)
-* [Input types](https://nhnent.github.io/tui.grid/latest/tutorial-example04-input-types)
-* [Relation between columns](https://nhnent.github.io/tui.grid/latest/tutorial-example05-relation-columns)
-* [Applying Themes](https://nhnent.github.io/tui.grid/latest/tutorial-example07-applying-themes)
-* [Using DatePicker component](https://nhnent.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
-* [Using Summary](https://nhnent.github.io/tui.grid/latest/tutorial-example09-using-summary)
-* [Binding to remote data](https://nhnent.github.io/tui.grid/latest/tutorial-example10-using-net)
-* [Using tree data](https://nhnent.github.io/tui.grid/latest/tutorial-example14-tree)
+* [Basic](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic)
+* [Input types](https://nhn.github.io/tui.grid/latest/tutorial-example04-input-types)
+* [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns)
+* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes)
+* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
+* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-summary)
+* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example10-using-net)
+* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
 
-Here are more [examples](https://nhnent.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
+Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
 
 
 ## 💾 Install
@@ -215,8 +215,8 @@ tui-grid/
 
 ### Download Source Files
 
-* [Download bundle files](https://github.com/nhnent/tui.grid/tree/production/dist)
-* [Download all sources for each version](https://github.com/nhnent/tui.grid/releases)
+* [Download bundle files](https://github.com/nhn/tui.grid/tree/production/dist)
+* [Download all sources for each version](https://github.com/nhn/tui.grid/releases)
 
 
 ## 🔩 Dependency
@@ -224,10 +224,10 @@ tui-grid/
 * [jquery](https://jquery.com/) >=1.11.0 (Available with `bower` from 1.8.3)
 * [underscore](http://underscorejs.org/) >=1.8.3
 * [backbone](http://backbonejs.org/) >=1.3.3
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippett) >=1.5.0
+* [tui-code-snippet](https://github.com/nhn/tui.code-snippett) >=1.5.0
 * component (optional)
-    * [tui-date-picker](https://github.com/nhnent/tui.date-picker) >=3.2.1
-    * [tui-pagination](https://github.com/nhnent/tui.pagination) >=3.3.0
+    * [tui-date-picker](https://github.com/nhn/tui.date-picker) >=3.2.1
+    * [tui-pagination](https://github.com/nhn/tui.pagination) >=3.3.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
@@ -360,27 +360,27 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
 
-* [Getting Started](https://github.com/nhnent/tui.grid/blob/production/docs/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.grid/tree/production/docs)
-* [APIs](https://nhnent.github.io/tui.grid/latest)
+* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/getting-started.md)
+* [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
+* [APIs](https://nhn.github.io/tui.grid/latest)
 
-You can also see the older versions of API page on the [releases page](https://github.com/nhnent/tui.grid/releases).
+You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
 
 ## 💬 Contributing
 
-* [Code of Conduct](https://github.com/nhnent/tui.grid/blob/production/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/tui.grid/blob/production/CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhnent/tui.grid/blob/production/docs/ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhnent/tui.grid/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/tui.grid/blob/production/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/tui.grid/blob/production/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhn/tui.grid/blob/production/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhn/tui.grid/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 
 ## 🍞 TOAST UI Family
 
-* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
-* [TOAST UI Chart](https://github.com/nhnent/tui.chart)
-* [TOAST UI Editor](https://github.com/nhnent/tui.editor)
-* [TOAST UI Components](https://github.com/nhnent)
+* [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+* [TOAST UI Chart](https://github.com/nhn/tui.chart)
+* [TOAST UI Editor](https://github.com/nhn/tui.editor)
+* [TOAST UI Components](https://github.com/nhn)
 
 
 ## 🚀 Used By
@@ -389,4 +389,4 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhnent/tui.grid/blob/production/LICENSE) © [NHN](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhn/tui.grid/blob/production/LICENSE) © [NHN](https://github.com/nhn).

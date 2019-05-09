@@ -210,7 +210,7 @@ declare namespace tuiGrid {
         heightResizable?: boolean;
         pagination?: boolean | Pagination;
         selectionUnit?: string;
-        rowHeaders?: IRowHeadersOptions;
+        rowHeaders?: string[] | IRowHeadersOptions[];
         columns: IColumnInfoOptions[];
         summary?: ISummaryObject;
         usageStatistics?: boolean;

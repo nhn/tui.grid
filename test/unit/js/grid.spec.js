@@ -325,4 +325,49 @@ describe('grid', function() {
             expect(grid.getDepth(6)).toBe(3);
         });
     });
+
+    describe('setHeader', function() {
+        var grid, dimensionModel, columnModel;
+
+        beforeEach(function() {
+            grid = createGrid(['c1', 'c2', 'c3'], {
+                header: {
+                    height: 10,
+                    complexColumns: []
+                }
+            });
+            dimensionModel = grid.modelManager.dimensionModel;
+            columnModel = grid.modelManager.columnModel;
+        });
+
+        it('set height value.', function() {
+            grid.setHeader({
+                height: 100
+            });
+
+            expect(dimensionModel.get('headerHeight')).toBe(100);
+            expect(columnModel.get('complexHeaderColumns').length).toBe(0);
+        })
+
+        it('set complex columns info.', function() {
+            var complexColumns = [
+                {
+                    title: 'merged column 1',
+                    name: 'mc1',
+                    childNames: ['c1', 'mc2']
+                },
+                {
+                    title: 'merged column 2',
+                    name: 'mc2',
+                    childNames: ['c2', 'c3']
+                }
+            ];
+            grid.setHeader({
+                complexColumns: complexColumns
+            });
+
+            expect(dimensionModel.get('headerHeight')).toBe(10);
+            expect(columnModel.get('complexHeaderColumns')).toEqual(complexColumns);
+        })
+    })
 });
