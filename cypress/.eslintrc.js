@@ -9,6 +9,7 @@ module.exports = {
   },
   rules: {
     'newline-before-return': 0,
-    'padding-line-between-statements': 0
+    'padding-line-between-statements': 0,
+    'no-unused-expressions': 0
   }
 };
