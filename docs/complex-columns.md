@@ -48,4 +48,4 @@ The result of the sample code looks like this:
 
 ## Example Page
 
-You can see the example that is using more complex column headers [here](https://nhnent.github.io/tui.grid/api/tutorial-example03-complex-columns.html).
+You can see the example that is using more complex column headers [here](https://nhn.github.io/tui.grid/latest/tutorial-example03-complex-columns).

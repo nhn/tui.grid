@@ -76,9 +76,9 @@ tui.Grid.applyTheme('default',
 });
 ```
 
-You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhnent.github.io/tui.grid/api).
+You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
 
 
 ### Example page
 
-You can apply preset themes and customize them with a sample grid [here](http://nhnent.github.io/tui.grid/api/tutorial-example07-applying-themes.html).
+You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes).
