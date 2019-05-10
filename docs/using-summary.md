@@ -102,4 +102,4 @@ This method is useful when you don't want to use the auto-summary and want to se
 
 ## Example
 
-You can see a Grid using a summary with the auto-summary at the [example page](http://nhnent.github.io/tui.grid/api/tutorial-example09-using-summary.html).
+You can see a Grid using a summary with the auto-summary at the [example page](http://nhn.github.io/tui.grid/latest/tutorial-example09-using-summary).
