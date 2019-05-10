@@ -17,7 +17,7 @@ The `use` method receives an option object as a parameter, which has properties 
 - **api**
     - **readData** `{string}` : URL to which the request for fetching data is sent
 
-There are also another properties available in this option, which you can find at the `module:addon/net` section of [the API page](http://nhnent.github.io/tui.grid/latest/).
+There are also another properties available in this option, which you can find at the `module:addon/net` section of [the API page](http://nhn.github.io/tui.grid/latest/).
 
 This is all thing you need to fetch data from the remote server. Then the `grid` instance sends the request to the URL, parses the response data, and displays them on the screen. The `readData` is a required property for using `Net` add-on, that is used when an instance is initialized or when data needs to be refreshed whenever pages change.
 
@@ -96,7 +96,7 @@ grid.use('Net', {
 ```
 
 Then you can use the `request()` method to send each request like the example below.
-(This is just a simplified example. See [the API page](http://nhnent.github.io/tui.grid/api) for more information.)
+(This is just a simplified example. See [the API page](http://nhn.github.io/tui.grid/latest) for more information.)
 
 ```javascript
 var net = grid.getAddOn('Net');
@@ -168,4 +168,4 @@ If you click a button, and if the server already implemented the feature, then t
 
 ## Example Page
 
-You can see the example that binding to remote data [here](https://nhnent.github.io/tui.grid/api/tutorial-example10-using-net.html).
+You can see the example that binding to remote data [here](https://nhn.github.io/tui.grid/latest/tutorial-example10-using-net).

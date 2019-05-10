@@ -87,4 +87,4 @@ In the example above, the value of the 'col1' column determines the option list 
 
 ## Example Page
 
-You can see the sample Grid, which uses `relations` [here](https://nhnent.github.io/tui.grid/api/tutorial-example05-relation-columns.html).
+You can see the sample Grid, which uses `relations` [here](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns).

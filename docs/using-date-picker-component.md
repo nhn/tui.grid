@@ -1,4 +1,4 @@
-The [TOAST UI DatePicker](https://github.com/nhnent/tui.date-picker) component can be easily integrated into the TOAST UI Grid. Just by adding some options to the `columns`, you can use a DatePicker in the Grid without extra coding.
+The [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) component can be easily integrated into the TOAST UI Grid. Just by adding some options to the `columns`, you can use a DatePicker in the Grid without extra coding.
 
 *(This feature has been added from version 2.1.0)*
 
@@ -11,7 +11,7 @@ Before using the DatePicker, you need to include JS file into your page. If you 
 ```
 
 You can also download this file manually. For more information, see
-Github repository of the [DatePicker](https://github.com/nhnent/tui.date-picker).
+Github repository of the [DatePicker](https://github.com/nhn/tui.date-picker).
 
 ## Adding options to the `columns `
 
@@ -62,10 +62,10 @@ The `name` property indicates a name of the target component. You should set thi
 
 ### `component.options`
 
-Using the `options` property, you can set up options to be used to create a DatePicker instance. The available options are `date`, `format` and `selectableRanges`. For more information, see the [DatePicker API page](http://nhnent.github.io/tui.date-picker/latest).
+Using the `options` property, you can set up options to be used to create a DatePicker instance. The available options are `date`, `format` and `selectableRanges`. For more information, see the [DatePicker API page](http://nhn.github.io/tui.date-picker/latest).
 
 *(Although there are much more options available for the DatePicker component, other options are restricted as they might cause some integration issues.)*
 
 ## Example Page
 
-You can see the sample Grid using DatePicker component [here](https://nhnent.github.io/tui.grid/api/tutorial-example08-using-datepicker.html).
+You can see the sample Grid using DatePicker component [here](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker).

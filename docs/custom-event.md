@@ -72,4 +72,4 @@ There are other events which is used only when the `Net` addon is enabled.
 - `failResponse` : After the `response` event, if the `response.result` is `false`
 - `errorResponse` : After the `response` event, if the response is Error
 
-You can see the detail information of these events at the [API page](http://nhnent.github.io/tui.grid/api).
+You can see the detail information of these events at the [API page](http://nhn.github.io/tui.grid/latest).
