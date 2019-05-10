@@ -10,11 +10,18 @@ import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 
 export function createStore(options: OptGrid): Store {
-  const { width, rowHeight, bodyHeight, minBodyHeight, columnOptions = {} } = options;
+  const {
+    width,
+    rowHeight,
+    bodyHeight,
+    minBodyHeight,
+    columnOptions = {},
+    rowHeaders = []
+  } = options;
   const { frozenBorderWidth } = columnOptions;
 
   const data = createData(options.data || []);
-  const column = createColumn(options.columns, columnOptions);
+  const column = createColumn(options.columns, columnOptions, rowHeaders);
   const dimension = createDimension({
     data,
     column,
