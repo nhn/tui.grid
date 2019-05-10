@@ -12,7 +12,7 @@ export function setColumnWidth({ column }: Store, side: Side, index: number, wid
 }
 
 export function hideColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumns.find(({ name }) => name === columnName);
+  const columnItem = column.allColumnMap[columnName];
 
   if (columnItem) {
     columnItem.hidden = true;
@@ -20,7 +20,7 @@ export function hideColumn({ column }: Store, columnName: string) {
 }
 
 export function showColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumns.find(({ name }) => name === columnName);
+  const columnItem = column.allColumnMap[columnName];
 
   if (columnItem) {
     columnItem.hidden = false;

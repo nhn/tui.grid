@@ -1,14 +1,6 @@
 import { CellEditor } from './types';
 import { CellValue } from '../store/types';
 
-let currentId = 0;
-
-function getNextId() {
-  currentId += 1;
-
-  return `tui-grid-input-${currentId}`;
-}
-
 export interface CheckboxOptions {
   type: 'checkbox' | 'radio';
   listItems: {
@@ -18,13 +10,13 @@ export interface CheckboxOptions {
 }
 
 export class CheckboxEditor implements CellEditor {
-  private el!: HTMLElement;
+  private el: HTMLElement;
 
   public constructor(options: CheckboxOptions, value: CellValue) {
     const el = document.createElement('fieldset');
 
     const { listItems } = options;
-    const name = getNextId();
+    const name = 'tui-grid-check-input';
 
     listItems.forEach((item) => {
       const id = `${name}-${item.value}`;

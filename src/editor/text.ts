@@ -7,7 +7,7 @@ interface Options {
 }
 
 export class TextEditor implements CellEditor {
-  private el!: HTMLInputElement;
+  private el: HTMLInputElement;
 
   public constructor(options: Options, value: CellValue) {
     const el = document.createElement('input');

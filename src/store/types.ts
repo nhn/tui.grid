@@ -6,12 +6,18 @@ export type Side = 'L' | 'R';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
+export type RowKey = number | string;
+
 export type Row = {
-  rowKey: number | string;
+  rowKey: RowKey;
   _extraData?: any;
 } & {
   [propName: string]: CellValue;
 };
+
+export interface Dictionary<T> {
+  [index: string]: T;
+}
 
 export interface Data {
   rawData: Row[];
@@ -40,6 +46,7 @@ export interface Column {
   visibleFrozenCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
+  allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];
   visibleColumnsBySide: VisibleColumnsBySide;
 }
@@ -95,12 +102,12 @@ export interface Rect {
 }
 
 export interface Focus {
-  editing: {
-    rowKey: number | string;
+  editingAddress: {
+    rowKey: RowKey;
     columnName: string;
   } | null;
   navigating: boolean;
-  rowKey: number | string | null;
+  rowKey: RowKey | string | null;
   columnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;

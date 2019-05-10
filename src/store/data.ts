@@ -4,6 +4,7 @@ import { OptRow } from '../types';
 
 export function create(data: OptRow[]): Reactive<Data> {
   const rawData = data.map((row, index) => {
+    // @TODO: Consider keyColumnName
     const rowKeyAdded = { rowKey: index, ...row };
 
     return reactive(rowKeyAdded as Row);

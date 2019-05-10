@@ -1,6 +1,7 @@
-import { Column, ColumnInfo } from './types';
+import { Column, ColumnInfo, Dictionary } from './types';
 import { OptColumn, OptColumnOptions } from '../types';
 import { reactive } from '../helper/reactive';
+import { createMapFromArray } from '../helper/common';
 
 const DEF_MIN_WIDTH = 50;
 
@@ -40,6 +41,9 @@ export function create(columns: OptColumn[], columnOptions: OptColumnOptions = {
     frozenCount: columnOptions.frozenCount || 0,
     rowHeaders: [],
     allColumns: columnInfos,
+    get allColumnMap() {
+      return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
+    },
     get visibleColumns() {
       return columnInfos.filter(({ hidden }) => !hidden);
     },

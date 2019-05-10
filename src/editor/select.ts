@@ -9,7 +9,7 @@ export interface Options {
   }[];
 }
 export class SelectEditor implements CellEditor {
-  private el!: HTMLSelectElement;
+  private el: HTMLSelectElement;
 
   public constructor(options: Options, value: CellValue) {
     const el = document.createElement('select');

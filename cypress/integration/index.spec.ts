@@ -32,10 +32,10 @@ it('computed (getter) property and watch', () => {
   const person = reactive({
     p1: '1',
     get p2() {
-      return this.p1 + '2';
+      return `${this.p1}2`;
     },
     get p3() {
-      return this.p2 + '3';
+      return `${this.p2}3`;
     }
   });
 

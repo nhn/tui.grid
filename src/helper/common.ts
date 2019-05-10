@@ -72,6 +72,16 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
   return resultObj;
 }
 
+export function createMapFromArray<T>(arr: T[], propName: keyof T) {
+  const resultMap: { [key: string]: T } = {};
+  arr.forEach((item) => {
+    const key = String(item[propName]);
+    resultMap[key] = item;
+  });
+
+  return resultMap;
+}
+
 /**
  * Returns a number whose value is limited to the given range.
  * @param {Number} value - A number to force within given min-max range
