@@ -1,4 +1,4 @@
-import { Dimension, Column, Data } from './types';
+import { Dimension, Column, Data, SummaryPosition } from './types';
 import { reactive } from '../helper/reactive';
 import { OptGrid } from '../types';
 
@@ -6,6 +6,8 @@ type OptDimension = {
   data: Data;
   column: Column;
   frozenBorderWidth?: number;
+  summaryHeight?: number;
+  summaryPosition?: SummaryPosition;
 } & Pick<
   OptGrid,
   'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
@@ -21,7 +23,9 @@ export function create({
   minBodyHeight = 130,
   frozenBorderWidth = 1,
   scrollX = true,
-  scrollY = true
+  scrollY = true,
+  summaryHeight = 0,
+  summaryPosition = 'bottom'
 }: OptDimension): Dimension {
   const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
 
@@ -37,8 +41,8 @@ export function create({
     autoRowHeight: rowHeight === 'auto',
     scrollX,
     scrollY,
-    summaryHeight: 0,
-    summaryPosition: 'bottom',
+    summaryHeight,
+    summaryPosition,
     headerHeight: 40,
     scrollbarWidth: 17,
     tableBorderWidth: 1,
