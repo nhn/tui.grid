@@ -1,0 +1,258 @@
+import { cls } from '../../src/helper/dom';
+import { data as sampleData } from '../../samples/basic';
+import Grid from '../../src/grid';
+import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
+import { Omit } from 'utility-types';
+
+interface GridGlobal {
+  tui: { Grid: typeof Grid };
+  grid: Grid;
+}
+
+const CONTENT_WIDTH = 700;
+// @TODO: Retrieve scrollbar-width from real browser
+const SCROLLBAR_WIDTH = 17;
+
+function createDefaultSummaryOption() {
+  const summary = {
+    height: 40,
+    columnContent: {
+      price: {
+        template(valueMap: OptSummaryValueMap) {
+          return `MAX: ${valueMap.max}<br>MIN: ${valueMap.min}`;
+        }
+      },
+      downloadCount: {
+        template(valueMap: OptSummaryValueMap) {
+          return `TOTAL: ${valueMap.sum}<br>AVG: ${valueMap.avg.toFixed(2)}`;
+        }
+      }
+    }
+  };
+  return summary as OptSummaryData;
+}
+
+function createDefaultOptions(): Omit<OptGrid, 'el'> {
+  const data = sampleData.slice();
+  const columns = [
+    { name: 'name', minWidth: 150 },
+    { name: 'price', minWidth: 150 },
+    { name: 'downloadCount', minWidth: 150 }
+  ];
+  const summary = createDefaultSummaryOption();
+
+  return { data, columns, summary };
+}
+
+function createGrid(customOptions: Record<string, unknown> = {}) {
+  cy.window().then((win: Window & Partial<GridGlobal>) => {
+    const { document, tui } = win;
+    const defaultOptions = createDefaultOptions();
+    const options = { ...defaultOptions, ...customOptions };
+    const el = document.createElement('div');
+    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
+    document.body.appendChild(el);
+
+    win.grid = new tui!.Grid({ el, ...options });
+    cy.wait(10);
+  });
+}
+
+function getGridInst(): Cypress.Chainable<Grid> {
+  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
+}
+
+function assertSummaryDisplay(display: string) {
+  cy.get(`.${cls('summary-area')}`).within(() => {
+    cy.get(`.${cls('table')}`).as('summaryTable');
+
+    cy.get('@summaryTable').should('have.css', 'display', display);
+  });
+}
+
+function assertSummaryContent(columnName: string, ...contents: string[]) {
+  cy.get(`.${cls('cell-summary')}[data-column-name=${columnName}]`).as('summaryCell');
+  contents.forEach((content) => {
+    cy.get('@summaryCell').contains(content);
+  });
+}
+
+function assertSummaryPosition(index: number, prevElClassName: string) {
+  cy.get(`.${cls('summary-area')}`)
+    .eq(index)
+    .prev()
+    .should('have.class', prevElClassName);
+}
+
+function assertScrollLeft(alias: string, scrollLeft: number) {
+  cy.get(alias)
+    .invoke('scrollLeft')
+    .should('be.eql', scrollLeft);
+}
+
+function assertSyncScrollLeft(index: number) {
+  cy.get(`.${cls('body-area')}`)
+    .eq(index)
+    .as('bodyArea');
+
+  cy.get(`.${cls('summary-area')}`)
+    .eq(index)
+    .as('summaryArea');
+
+  cy.get('@summaryArea').scrollTo(50, 0);
+  assertScrollLeft('@bodyArea', 50);
+
+  cy.get('@bodyArea').scrollTo(150, 0);
+  assertScrollLeft('@summaryArea', 150);
+}
+
+before(() => {
+  cy.visit('/dist');
+});
+
+beforeEach(() => {
+  cy.document().then((doc) => {
+    doc.body.innerHTML = '';
+  });
+});
+
+describe('summary', () => {
+  beforeEach(() => {
+    cy.document().then((doc) => {
+      doc.body.innerHTML = '';
+    });
+  });
+
+  it('no display when height is 0', () => {
+    const summary = createDefaultSummaryOption();
+    summary.height = 0;
+    createGrid({ summary });
+    assertSummaryDisplay('none');
+  });
+
+  context('calculation', () => {
+    it('auto calculate summary when position is bottom (default)', () => {
+      createGrid();
+      assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryPosition(0, cls('body-area'));
+      assertSummaryPosition(1, cls('body-area'));
+    });
+
+    it('auto calculate summary when position is top', () => {
+      const summary = createDefaultSummaryOption();
+      summary.position = 'top';
+      createGrid({ summary });
+      assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryPosition(0, cls('head-area'));
+      assertSummaryPosition(1, cls('head-area'));
+    });
+
+    it('auto calculate summary when default content with template function', () => {
+      const summary = createDefaultSummaryOption();
+      summary.defaultContent = {
+        template(valueMap: OptSummaryValueMap) {
+          return `auto calculate: ${valueMap.sum}`;
+        }
+      };
+      createGrid({ summary });
+      assertSummaryContent('name', 'auto calculate: 25');
+    });
+
+    it('auto calculate summary when column is editable', () => {
+      const options = createDefaultOptions();
+      const columns = options.columns.map((column) => ({
+        ...column,
+        editor: { type: 'text' }
+      }));
+      createGrid({ columns });
+
+      cy.get(`.${cls('container')}`)
+        .trigger('mousedown')
+        .trigger('dblclick')
+        .within(() => {
+          cy.get(`.${cls('layer-editing')} input`).type('500000{enter}');
+          assertSummaryContent('price', 'MAX: 500000', 'MIN: 6000');
+        });
+    });
+  });
+
+  context('static content', () => {
+    it('should display static columnContent properly', () => {
+      const summary = createDefaultSummaryOption();
+      summary.columnContent!.price = 'this is static';
+      createGrid({ summary });
+      assertSummaryContent('price', 'this is static');
+      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+    });
+
+    it('should display static defaultContent properly', () => {
+      const summary = createDefaultSummaryOption();
+      summary.defaultContent = 'this is default';
+      createGrid({ summary });
+      assertSummaryContent('name', 'this is default');
+      assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+    });
+
+    it('should display static columnContent properly when useAutoSummary: false', () => {
+      const summary = createDefaultSummaryOption();
+      summary.columnContent!.price = {
+        template(valueMap: OptSummaryValueMap) {
+          return `no auto calculate: ${valueMap.sum}`;
+        },
+        useAutoSummary: false
+      };
+      createGrid({ summary });
+      assertSummaryContent('price', 'no auto calculate: 0');
+      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+    });
+  });
+
+  context('active scroll-x', () => {
+    it('sync scrollLeft with body area', () => {
+      const options = createDefaultOptions();
+      const columns = options.columns.map((column) => ({ ...column, minWidth: 300 }));
+      createGrid({ columns });
+
+      assertSyncScrollLeft(1);
+    });
+
+    it('sync scrollLeft with body area if column resizable: true', () => {
+      const options = createDefaultOptions();
+      const columns = options.columns.map((column) => ({ ...column, resizable: true }));
+      createGrid({ columns });
+
+      cy.get(`.${cls('column-resize-handle')}`)
+        .eq(0)
+        .trigger('mousedown')
+        .trigger('mousemove', { pageX: CONTENT_WIDTH })
+        .trigger('mouseup');
+
+      assertSyncScrollLeft(1);
+    });
+  });
+
+  it("change summary's value properly after call setSummaryColumnContent()", () => {
+    createGrid();
+    getGridInst().invoke('setSummaryColumnContent', 'price', 'static content');
+    assertSummaryContent('price', 'static content');
+
+    getGridInst().invoke('setSummaryColumnContent', 'price', {
+      template(valueMap: OptSummaryValueMap) {
+        return `auto calculate: ${valueMap.max}`;
+      }
+    });
+    assertSummaryContent('price', 'auto calculate: 30000');
+
+    getGridInst().invoke('setSummaryColumnContent', 'price', {
+      template(valueMap: OptSummaryValueMap) {
+        return `no auto calculate: ${valueMap.max}`;
+      },
+      useAutoSummary: false
+    });
+    assertSummaryContent('price', 'no auto calculate: 0');
+    assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+  });
+});
