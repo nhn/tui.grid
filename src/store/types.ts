@@ -28,15 +28,24 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
+export interface CellRenderData {
+  formattedValue: string;
+  prefix: string;
+  postfix: string;
+  value: CellValue;
+}
+
 export interface Data {
   rawData: Row[];
-  viewData: Row[];
+  viewData: Dictionary<CellRenderData>[];
 }
 
 export interface CellEditorOptions {
   type: string;
   [propName: string]: any;
 }
+
+export type Formatter = (value: CellValue) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
@@ -46,6 +55,9 @@ export interface ColumnInfo {
   editor?: CellEditorOptions;
   viewer: string;
   hidden: boolean;
+  formatter?: Formatter;
+  prefix?: Formatter;
+  postfix?: Formatter;
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;

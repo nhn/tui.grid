@@ -23,7 +23,7 @@ export function createStore(options: OptGrid): Store {
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
 
-  const data = createData(options.data || []);
+  const data = createData(options.data || [], column);
   const column = createColumn(options.columns, columnOptions, rowHeaders);
   const dimension = createDimension({
     data,

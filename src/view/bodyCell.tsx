@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { cls, Attributes } from '../helper/dom';
-import { CellValue, Row } from '../store/types';
+import { CellValue, Row, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { BodyCellViewer } from './bodyCellViewer';
@@ -14,27 +14,23 @@ interface StoreProps {
   value: CellValue;
   editable: boolean;
   align: string | 'left' | 'center' | 'right';
+  column: ColumnInfo;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
 export class BodyCellComp extends Component<Props> {
   public render() {
-    const { row, columnName, value, editable, align } = this.props;
+    const { row, column, value, align } = this.props;
     const attrs: Attributes = {
       'data-row-key': String(row.rowKey),
-      'data-column-name': columnName
+      'data-column-name': column.name
     };
-    const isRowHeader = columnName === '_number';
-    const style = { textAlign: align };
+    const editable = !!column.editor;
 
     return (
-      <td
-        class={cls('cell', [editable, 'cell-editable'], [isRowHeader, 'cell-row-head'])}
-        style={style}
-        {...attrs}
-      >
-        <BodyCellViewer value={value} />
+      <td class={cls('cell', 'cell-has-input', [editable, 'cell-editable'])} {...attrs}>
+        <BodyCellViewer column={column} value={value} />
       </td>
     );
   }
@@ -45,7 +41,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(({ column }, { row, column
 
   return {
     value: row[columnName],
-    editable: !!columnInfo.editor,
-    align: columnInfo.align
+    align: columnInfo.align,
+    column: columnInfo
   };
 })(BodyCellComp);
