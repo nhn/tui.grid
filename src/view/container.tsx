@@ -26,6 +26,12 @@ export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleMouseDown = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const { dispatch } = this.props;
     const target = ev.target as HTMLElement;
     const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
     const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
@@ -34,8 +40,13 @@ export class ContainerComp extends Component<Props> {
 
     if (!focusBlocked && !isMainButton) {
       ev.preventDefault();
-      this.props.dispatch('setFocusActive', true);
+      dispatch('setFocusActive', true);
     }
+
+    const { top, left } = el.getBoundingClientRect();
+
+    dispatch('setOffsetTop', top + el.scrollTop);
+    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   public componentDidMount() {

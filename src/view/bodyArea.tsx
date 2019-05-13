@@ -1,12 +1,15 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, ColumnInfo } from '../store/types';
+import { Side, ColumnInfo, DragData } from '../store/types';
 import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
+
+// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+const MIN_DISATNCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
@@ -34,6 +37,11 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private dragStartData = {
+    pageX: -1,
+    pageY: -1
+  };
+
   private handleScroll = (ev: UIEvent) => {
     const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
@@ -57,6 +65,45 @@ class BodyAreaComp extends Component<Props> {
     const offsetY = pageY - top + el.scrollTop;
 
     dispatch('mouseDownBody', { offsetX, offsetY, side, shiftKey });
+
+    this.dragStartData = { pageX, pageY };
+    document.body.style.cursor = 'default';
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private moveEnoughToTriggerDragEvent = (start: DragData, current: DragData) => {
+    const dx = Math.abs(start.pageX - current.pageX);
+    const dy = Math.abs(start.pageY - current.pageY);
+    const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
+
+    return distance >= MIN_DISATNCE_FOR_DRAG;
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
+  private handleMouseMove = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { pageX, pageY, shiftKey } = ev;
+
+    if (this.moveEnoughToTriggerDragEvent(this.dragStartData, { pageX, pageY })) {
+      this.props.dispatch('dragMoveBody', ev);
+    }
+  };
+
+  private clearDocumentEvents = () => {
+    this.dragStartData = { pageX: -1, pageY: -1 };
+
+    document.body.style.cursor = '';
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
   public shouldComponentUpdate(nextProps: Props) {

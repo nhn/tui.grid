@@ -4,7 +4,21 @@ export type Range = [number, number];
 
 export type Side = 'L' | 'R';
 
+export type SelectionType = 'cell' | 'row' | 'column';
+
+export type SelectionUnit = 'cell' | 'row';
+
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
+
+export interface DragData {
+  pageX: number;
+  pageY: number;
+}
+
+export interface SelectionRange {
+  row: Range;
+  column: Range;
+}
 
 export interface Row {
   rowKey: number | string;
@@ -36,6 +50,8 @@ export interface Column {
 }
 
 export interface Dimension {
+  offsetLeft: number;
+  offsetTop: number;
   width: number;
   autoWidth: boolean;
   bodyHeight: number;
@@ -97,12 +113,10 @@ export interface Focus {
 
 export interface Selection {
   active: boolean;
-  selectionUnit: number | string | null;
-  range: string | null;
-  // readonly side: Side | null;
-  // readonly columnIndex: number | null;
-  // readonly rowIndex: number | null;
-  // readonly cellPosRect: Rect | null;
+  inputRange: SelectionRange | null;
+  range: SelectionRange | null;
+  unit: SelectionUnit;
+  type: SelectionType;
 }
 
 export interface Store {
@@ -113,4 +127,5 @@ export interface Store {
   readonly columnCoords: ColumnCoords;
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
+  readonly selection: Selection;
 }

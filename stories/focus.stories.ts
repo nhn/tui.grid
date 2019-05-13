@@ -32,7 +32,8 @@ stories.add('Focus Activation', () => {
     columns,
     bodyHeight: 'fitToParent',
     columnOptions: {
-      frozenCount: 2
+      frozenCount: 2,
+      minWidth: 190
     }
   });
   const rootEl = document.createElement('div');

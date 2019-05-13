@@ -26,6 +26,8 @@ export function create({
   const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
 
   return reactive<Dimension>({
+    offsetLeft: 0,
+    offsetTop: 0,
     width: width === 'auto' ? 0 : width,
     autoWidth: width === 'auto',
     minBodyHeight,
