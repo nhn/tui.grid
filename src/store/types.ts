@@ -10,6 +10,7 @@ export type RowKey = number | string;
 
 export type Row = {
   rowKey: RowKey;
+  _number: number;
   _extraData?: any;
 } & {
   [propName: string]: CellValue;
@@ -37,6 +38,7 @@ export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
+  readonly align: string;
   editor?: CellEditorOptions;
   viewer: string;
   hidden: boolean;
@@ -149,4 +151,7 @@ export interface Store {
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
   readonly summary: Summary;
+}
+export interface DefaultRowHeaders {
+  [propName: string]: any;
 }

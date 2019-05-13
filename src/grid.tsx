@@ -252,7 +252,7 @@ export default class Grid {
    * Sets the value of the cell identified by the specified rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
-   * @param {number|string} columnValue - The value to be set
+   * @param {number|string} value - The value to be set
    */
   public setValue(rowKey: RowKey, columnName: string, value: CellValue) {
     this.dispatch('setValue', rowKey, columnName, value);

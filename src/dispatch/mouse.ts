@@ -19,6 +19,10 @@ export function mouseDownBody(store: Store, eventInfo: MouseEventInfo) {
   const rowIndex = findOffsetIndex(rowCoords.offsets, offsetY);
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetX);
 
-  focus.rowKey = data.viewData[rowIndex].rowKey;
-  focus.columnName = column.visibleColumnsBySide[side][columnIndex].name;
+  const columnName = column.visibleColumnsBySide[side][columnIndex].name;
+
+  if (columnName !== '_number') {
+    focus.rowKey = data.viewData[rowIndex].rowKey;
+    focus.columnName = columnName;
+  }
 }

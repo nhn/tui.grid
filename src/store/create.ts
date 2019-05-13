@@ -17,12 +17,13 @@ export function createStore(options: OptGrid): Store {
     bodyHeight,
     minBodyHeight,
     columnOptions = {},
+    rowHeaders = [],
     summary: summaryOptions = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
 
   const data = createData(options.data || []);
-  const column = createColumn(options.columns, columnOptions);
+  const column = createColumn(options.columns, columnOptions, rowHeaders);
   const dimension = createDimension({
     data,
     column,

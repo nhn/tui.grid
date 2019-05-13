@@ -74,6 +74,7 @@ function lastColumnName(visibleColumns: ColumnInfo[]) {
   return visibleColumns[visibleColumns.length - 1].name;
 }
 
+// eslint-disable-next-line complexity
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
@@ -135,9 +136,11 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       break;
   }
 
-  focus.navigating = true;
-  focus.rowKey = rowKey;
-  focus.columnName = columnName;
+  if (columnName !== '_number') {
+    focus.navigating = true;
+    focus.rowKey = rowKey;
+    focus.columnName = columnName;
+  }
 }
 
 export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
