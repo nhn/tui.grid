@@ -21,7 +21,6 @@ class BodyRowsComp extends Component<Props> {
     if (shallowEqual(nextProps, this.props)) {
       return false;
     }
-
     return true;
   }
 

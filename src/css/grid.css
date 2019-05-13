@@ -189,7 +189,6 @@
   width: 100%;
 }
 .tui-grid-cell {
-  overflow: hidden;
   border-width: 1px;
   border-style: solid;
   white-space: nowrap;

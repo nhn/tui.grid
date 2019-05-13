@@ -1,3 +1,5 @@
+import { CellRendererClass } from '../renderer/types';
+
 export type CellValue = number | string | boolean | null | undefined;
 
 export type Range = [number, number];
@@ -56,7 +58,7 @@ export interface ColumnInfo {
   readonly minWidth: number;
   readonly align: string;
   editor?: CellEditorOptions;
-  viewer: string;
+  renderer: CellRendererClass;
   hidden: boolean;
   formatter?: Formatter;
   prefix?: Formatter;
@@ -159,6 +161,7 @@ export interface Summary {
 }
 
 export interface Store {
+  readonly id: number;
   readonly data: Data;
   readonly column: Column;
   readonly dimension: Dimension;

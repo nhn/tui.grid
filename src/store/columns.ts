@@ -2,6 +2,7 @@ import { Column, ColumnInfo, Dictionary, DefaultRowHeaders } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
+import { DefaultRenderer } from '../renderer/default';
 
 const DEF_MIN_WIDTH = 50;
 
@@ -12,7 +13,7 @@ const defaultRowHeaders: DefaultRowHeaders = {
     name: '_number',
     hidden: false,
     editor: false,
-    viewer: false,
+    renderer: DefaultRenderer,
     fixedWidth: true,
     baseWidth: 40,
     minWidth: 40,
@@ -30,7 +31,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   const hidden = !!column.hidden;
   const resizable = !!column.resizable;
   const editor = typeof column.editor === 'string' ? { type: column.editor } : column.editor;
-  const viewer = column.viewer === false ? '' : 'default';
+  const renderer = column.renderer || DefaultRenderer;
   const align = column.align || 'left';
 
   // @TODO meta tag 체크 여부
@@ -41,7 +42,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     name,
     hidden,
     editor,
-    viewer,
+    renderer,
     fixedWidth,
     baseWidth,
     minWidth,

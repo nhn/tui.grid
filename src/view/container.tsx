@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
-import { cls, getCellAddress, findParent } from '../helper/dom';
+import { cls, getCellAddress } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition } from '../store/types';
@@ -30,17 +30,11 @@ export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleMouseDown = (ev: MouseEvent) => {
-    const target = ev.target as HTMLElement;
-    const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
-    const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
-    const isMainButton = !!findParent(target, 'cell-row-head');
     const { dispatch, editing } = this.props;
 
-    if (!focusBlocked && !isMainButton) {
-      dispatch('setNavigating', true);
-      if (!editing) {
-        ev.preventDefault();
-      }
+    dispatch('setNavigating', true);
+    if (!editing) {
+      ev.preventDefault();
     }
   };
 

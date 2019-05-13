@@ -10,7 +10,7 @@ import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 
-export function createStore(options: OptGrid): Store {
+export function createStore(id: number, options: OptGrid): Store {
   const {
     width,
     rowHeight,
@@ -23,8 +23,8 @@ export function createStore(options: OptGrid): Store {
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
 
-  const data = createData(options.data || [], column);
   const column = createColumn(options.columns, columnOptions, rowHeaders);
+  const data = createData(options.data || [], column);
   const dimension = createDimension({
     data,
     column,
@@ -43,6 +43,7 @@ export function createStore(options: OptGrid): Store {
   const summary = createSummary({ column, data, summary: summaryOptions });
 
   return reactive({
+    id,
     data,
     column,
     dimension,
