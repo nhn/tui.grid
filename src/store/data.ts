@@ -22,9 +22,12 @@ function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) 
 }
 
 function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
-  const { formatter, prefix, postfix } = column;
+  const { formatter, prefix, postfix, editor } = column;
 
   return {
+    // @TODO: change editable/disabled using relations
+    editable: !!editor,
+    disabled: false,
     formattedValue: getFormattedValue(value, formatter, String(value)),
     prefix: getFormattedValue(value, prefix),
     postfix: getFormattedValue(value, postfix),
@@ -34,18 +37,13 @@ function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
 
 function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const { rowKey } = row;
-  const initValueMap: Dictionary<CellRenderData> = {};
+  const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach((name) => {
-    initValueMap[name] = {
-      formattedValue: '',
-      prefix: '',
-      postfix: '',
-      value: ''
-    };
+    initValueMap[name] = null;
   });
 
-  const valueMap = reactive(initValueMap);
+  const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
     watch(() => {

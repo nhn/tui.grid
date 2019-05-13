@@ -29,6 +29,8 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 export type SummaryValues = Dictionary<SummaryValue>;
 
 export interface CellRenderData {
+  editable: boolean;
+  disabled: boolean;
   formattedValue: string;
   prefix: string;
   postfix: string;

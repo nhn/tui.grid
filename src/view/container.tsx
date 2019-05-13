@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
-import { cls, getCellAddress } from '../helper/dom';
+import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition } from '../store/types';
@@ -15,6 +15,7 @@ interface OwnProps {
 }
 
 interface StoreProps {
+  gridId: number;
   width: number;
   autoWidth: boolean;
   editing: boolean;
@@ -93,12 +94,14 @@ export class ContainerComp extends Component<Props> {
   }
 
   public render() {
-    const { width, autoWidth, scrollXHeight } = this.props;
+    const { gridId, width, autoWidth, scrollXHeight } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const contentClassName = this.getContentClassName();
+    const attrs: Attributes = { 'data-grid-id': gridId };
 
     return (
       <div
+        {...attrs}
         style={style}
         class={cls('container')}
         onMouseDown={this.handleMouseDown}
@@ -106,7 +109,6 @@ export class ContainerComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
-        data-grid-id="1"
       >
         <div class={contentClassName}>
           <LeftSide />
@@ -125,7 +127,8 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, OwnProps>(({ dimension, focus }) => ({
+export const Container = connect<StoreProps, OwnProps>(({ id, dimension, focus }) => ({
+  gridId: id,
   width: dimension.width,
   autoWidth: dimension.autoWidth,
   editing: !!focus.editingAddress,

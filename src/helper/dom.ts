@@ -98,7 +98,7 @@ export type AttributeKey =
   | 'data-edit-type'
   | 'data-grid-id';
 
-export type Attributes = { [key in AttributeKey]?: string };
+export type Attributes = { [key in AttributeKey]?: number | string };
 
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
