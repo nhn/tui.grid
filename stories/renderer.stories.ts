@@ -61,7 +61,7 @@ class ToolTipRenderer implements CellRenderer {
     return this.el;
   }
 
-  public mounted(parent: HTMLElement) {
+  public mounted() {
     this.el.appendChild(this.tooltip);
   }
 
@@ -77,12 +77,19 @@ class SliderRenderer implements CellRenderer {
 
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
+    const { grid, rowKey, columnInfo } = props;
+    const { min, max } = props.columnInfo.rendererOptions;
+
     el.type = 'range';
-    el.min = '0';
-    el.max = '10';
+    el.min = String(min);
+    el.max = String(max);
 
     el.addEventListener('mousedown', (ev) => {
       ev.stopPropagation();
+    });
+
+    el.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(el.value));
     });
 
     this.el = el;
@@ -125,7 +132,7 @@ class SingleCheckRenderer implements CellRenderer {
 
 const columns = [
   { name: 'name', renderer: ToolTipRenderer },
-  { name: 'score', renderer: SliderRenderer },
+  { name: 'score', renderer: SliderRenderer, rendererOptions: { min: 10, max: 30 } },
   { name: 'vip', renderer: SingleCheckRenderer }
 ];
 

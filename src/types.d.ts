@@ -1,4 +1,4 @@
-import { CellValue } from './store/types';
+import { CellValue, Dictionary } from './store/types';
 import { CellRendererClass } from './renderer/types';
 
 export interface OptGrid {
@@ -44,6 +44,7 @@ export interface OptColumn {
   hidden?: boolean;
   width?: number | 'auto';
   renderer?: CellRendererClass;
+  rendererOptions?: Dictionary<any>;
   editor?: string | CellEditor;
   viewer?: string | boolean;
   resizable?: boolean;

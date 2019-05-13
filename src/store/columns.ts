@@ -25,7 +25,7 @@ const defaultRowHeaders: DefaultRowHeaders = {
 // eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const title = column.title || column.name;
-  const { name, width } = column;
+  const { name, width, rendererOptions } = column;
   const fixedWidth = typeof width === 'number';
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const hidden = !!column.hidden;
@@ -43,6 +43,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     hidden,
     editor,
     renderer,
+    rendererOptions,
     fixedWidth,
     baseWidth,
     minWidth,

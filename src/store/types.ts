@@ -59,6 +59,7 @@ export interface ColumnInfo {
   readonly align: string;
   editor?: CellEditorOptions;
   renderer: CellRendererClass;
+  rendererOptions?: Dictionary<any>;
   hidden: boolean;
   formatter?: Formatter;
   prefix?: Formatter;
