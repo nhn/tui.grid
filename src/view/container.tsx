@@ -31,7 +31,17 @@ export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleMouseDown = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
     const { dispatch, editing } = this.props;
+    const { el } = this;
+    const target = ev.target as HTMLElement;
+    const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
+    const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
+    /* const cellAddress = getCellAddress(target); */
+    const isMainButton = false;
 
     dispatch('setNavigating', true);
     if (!editing) {
@@ -40,12 +50,23 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleDblClick = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const { dispatch } = this.props;
     const target = ev.target as HTMLElement;
     const address = getCellAddress(target);
 
     if (address) {
-      this.props.dispatch('startEditing', address.rowKey, address.columnName);
+      dispatch('startEditing', address.rowKey, address.columnName);
     }
+
+    const { top, left } = el.getBoundingClientRect();
+
+    dispatch('setOffsetTop', top + el.scrollTop);
+    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   public componentDidMount() {

@@ -14,3 +14,11 @@ export function setHeight({ dimension }: Store, height: number) {
 export function setBodyHeight({ dimension }: Store, bodyHeight: number) {
   dimension.bodyHeight = Math.max(bodyHeight, dimension.minBodyHeight);
 }
+
+export function setOffsetTop({ dimension }: Store, offsetTop: number) {
+  dimension.offsetTop = offsetTop;
+}
+
+export function setOffsetLeft({ dimension }: Store, offsetLeft: number) {
+  dimension.offsetLeft = offsetLeft;
+}

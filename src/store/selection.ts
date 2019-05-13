@@ -1,22 +1,14 @@
-import { Selection, ColumnCoords, RowCoords, Column, Data } from './types';
+import { Selection, SelectionType, SelectionUnit } from './types';
 import { Reactive, reactive } from '../helper/reactive';
 
-interface SelectionOption {
-  data: Data;
-  column: Column;
-  rowCoords: RowCoords;
-  columnCoords: ColumnCoords;
-}
-
-export function create({
-  column,
-  data,
-  rowCoords,
-  columnCoords
-}: SelectionOption): Reactive<Selection> {
+export function create(): Reactive<Selection> {
   return reactive({
+    startData: null,
+    active: false,
+    inputRange: null,
     range: null,
-    selectionUnit: 'cell',
-    active: false
+    // minimumColumnRange?: Range,
+    type: 'cell' as SelectionType,
+    unit: 'cell' as SelectionUnit
   });
 }

@@ -9,6 +9,7 @@ import { create as createColumnCoords } from './columnCoords';
 import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
+import { create as createSelection } from './selection';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -41,6 +42,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const viewport = createViewport({ data, column, dimension, rowCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
+  const selection = createSelection();
 
   return reactive({
     id,
@@ -51,6 +53,7 @@ export function createStore(id: number, options: OptGrid): Store {
     rowCoords,
     viewport,
     focus,
-    summary
+    summary,
+    selection
   });
 }
