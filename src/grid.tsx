@@ -1,4 +1,4 @@
-import { OptGrid, OptPreset, OptI18nData } from './types';
+import { OptGrid, OptPreset, OptI18nData, OptSummaryColumnContentMap } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
@@ -274,5 +274,18 @@ export default class Grid {
     }
 
     return null;
+  }
+
+  /**
+   * Sets the HTML string of given column summary.
+   * The type of content is the same as the options.summary.columnContent of the constructor.
+   * @param {string} columnName - column name
+   * @param {string|object} content - HTML string or options object.
+   */
+  public setSummaryColumnContent(
+    columnName: string,
+    columnContent: string | OptSummaryColumnContentMap
+  ) {
+    this.dispatch('setSummaryColumnContent', columnName, columnContent);
   }
 }
