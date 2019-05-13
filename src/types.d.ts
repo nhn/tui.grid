@@ -12,6 +12,7 @@ export interface OptGrid {
   minRowHeight?: number;
   scrollX?: boolean;
   scrollY?: boolean;
+  rowHeaders?: OptRowHeader[];
 }
 
 export interface ExtraData {
@@ -25,6 +26,8 @@ export type OptRow = {
 } & {
   _extraData?: ExtraData;
 };
+
+export type OptRowHeader = string | OptMetaColumn;
 
 interface CellEditor {
   type: string;
@@ -40,6 +43,7 @@ export interface OptColumn {
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
+  align?: string | 'left' | 'center' | 'right';
 }
 
 export interface OptColumnOptions {
@@ -277,4 +281,8 @@ interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
+}
+
+export interface OptMetaColumn extends Partial<OptColumn> {
+  type: string | 'rowNum' | 'checkbox' | 'radio';
 }
