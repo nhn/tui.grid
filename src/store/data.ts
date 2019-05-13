@@ -11,24 +11,21 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { OptRow } from '../types';
 
-function getFormattedValue(value: CellValue, fn?: Formatter) {
+function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) {
   if (typeof fn === 'function') {
     return fn(value);
   }
-  if (typeof value === 'number') {
-    return String(value);
+  if (typeof fn === 'string') {
+    return fn;
   }
-  if (typeof value === 'string') {
-    return value;
-  }
-  return '';
+  return defValue || '';
 }
 
 function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
   const { formatter, prefix, postfix } = column;
 
   return {
-    formattedValue: getFormattedValue(value, formatter),
+    formattedValue: getFormattedValue(value, formatter, String(value)),
     prefix: getFormattedValue(value, prefix),
     postfix: getFormattedValue(value, postfix),
     value
@@ -36,17 +33,27 @@ function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
 }
 
 function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
-  const viewRow: Dictionary<CellRenderData> = {};
+  const { rowKey } = row;
+  const initValueMap: Dictionary<CellRenderData> = {};
 
-  for (const key in row) {
-    if (row.hasOwnProperty(key)) {
-      watch(() => {
-        viewRow[key] = createViewCell(row[key], columnMap[key]);
-      });
-    }
-  }
+  Object.keys(columnMap).forEach((name) => {
+    initValueMap[name] = {
+      formattedValue: '',
+      prefix: '',
+      postfix: '',
+      value: ''
+    };
+  });
 
-  return reactive(viewRow);
+  const valueMap = reactive(initValueMap);
+
+  Object.keys(columnMap).forEach((name) => {
+    watch(() => {
+      valueMap[name] = createViewCell(row[name], columnMap[name]);
+    });
+  });
+
+  return { rowKey, valueMap };
 }
 
 export function create(data: OptRow[], column: Column): Reactive<Data> {

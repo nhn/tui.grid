@@ -1,34 +1,32 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
-import { CellValue, ColumnInfo } from '../store/types';
-import { Dispatch } from '../dispatch/create';
+import { ColumnInfo, CellRenderData, Dictionary } from '../store/types';
+import { connect } from './hoc';
+import { DispatchProps } from '../dispatch/create';
 
 interface OwnProps {
-  value: CellValue;
+  valueMap: Dictionary<CellRenderData>;
   column: ColumnInfo;
 }
 
-export class BodyCellViewer extends Component<OwnProps> {
-  private getListItem() {
-    const { editor } = this.props.column;
-    if (editor) {
-      const { type } = editor;
-      if (['checkbox', 'radio', 'select'].includes(type)) {
-        return editor.listItem;
-      }
-    }
+interface StoreProps {
+  renderData: CellRenderData;
+}
 
-    return null;
-  }
+type Props = OwnProps & StoreProps & DispatchProps;
 
+class BodyCellViewerComp extends Component<Props> {
   public render() {
     const styles = { 'white-space': 'nowrap' };
-    const listItem = this.getListItem();
 
     return (
       <div class={cls('cell-content')} style={styles}>
-        {this.props.value}
+        {this.props.renderData.formattedValue}
       </div>
     );
   }
 }
+
+export const BodyCellViewer = connect<StoreProps, OwnProps>((_, { valueMap, column }) => ({
+  renderData: valueMap[column.name]
+}))(BodyCellViewerComp);

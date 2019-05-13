@@ -8,12 +8,14 @@ export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
 export type RowKey = number | string;
 
-export type Row = {
+export interface Dictionary<T> {
+  [index: string]: T;
+}
+
+export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   _number: number;
   _extraData?: any;
-} & {
-  [propName: string]: CellValue;
 };
 
 export type SummaryPosition = 'top' | 'bottom';
@@ -24,10 +26,6 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
-export interface Dictionary<T> {
-  [index: string]: T;
-}
-
 export interface CellRenderData {
   formattedValue: string;
   prefix: string;
@@ -35,9 +33,14 @@ export interface CellRenderData {
   value: CellValue;
 }
 
+export interface ViewRow {
+  rowKey: RowKey;
+  valueMap: Dictionary<CellRenderData>;
+}
+
 export interface Data {
   rawData: Row[];
-  viewData: Dictionary<CellRenderData>[];
+  viewData: ViewRow[];
 }
 
 export interface CellEditorOptions {
@@ -102,7 +105,7 @@ export interface Viewport {
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
-  readonly rows: Row[];
+  readonly rows: ViewRow[];
 }
 
 export interface ColumnCoords {
@@ -165,6 +168,7 @@ export interface Store {
   readonly focus: Focus;
   readonly summary: Summary;
 }
+
 export interface DefaultRowHeaders {
   [propName: string]: any;
 }
