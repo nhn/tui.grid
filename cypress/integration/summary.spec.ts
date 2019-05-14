@@ -1,8 +1,9 @@
+import { Omit } from 'utility-types';
 import { cls } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
-import { Omit } from 'utility-types';
+import { deepAssign } from '../../src/helper/common';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -13,7 +14,10 @@ const CONTENT_WIDTH = 700;
 // @TODO: Retrieve scrollbar-width from real browser
 const SCROLLBAR_WIDTH = 17;
 
-function createDefaultSummaryOption() {
+function createSummaryOption(
+  customOptions: Record<string, unknown> = {},
+  needDeepAssign: boolean = false
+) {
   const summary = {
     height: 40,
     columnContent: {
@@ -29,7 +33,11 @@ function createDefaultSummaryOption() {
       }
     }
   };
-  return summary as OptSummaryData;
+  const summaryOptions = needDeepAssign
+    ? deepAssign(summary, customOptions)
+    : Object.assign(summary, customOptions);
+
+  return summaryOptions as OptSummaryData;
 }
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
@@ -39,7 +47,7 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
     { name: 'price', minWidth: 150 },
     { name: 'downloadCount', minWidth: 150 }
   ];
-  const summary = createDefaultSummaryOption();
+  const summary = createSummaryOption();
 
   return { data, columns, summary };
 }
@@ -116,8 +124,7 @@ describe('summary', () => {
   });
 
   it('no render when height is 0', () => {
-    const summary = createDefaultSummaryOption();
-    summary.height = 0;
+    const summary = createSummaryOption({ height: 0 });
     createGrid({ summary });
 
     cy.get(`.${cls('container')}`).should(($container) => {
@@ -135,8 +142,7 @@ describe('summary', () => {
     });
 
     it('auto calculate summary when position is top', () => {
-      const summary = createDefaultSummaryOption();
-      summary.position = 'top';
+      const summary = createSummaryOption({ position: 'top' });
       createGrid({ summary });
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
@@ -145,12 +151,13 @@ describe('summary', () => {
     });
 
     it('auto calculate summary when default content with template function', () => {
-      const summary = createDefaultSummaryOption();
-      summary.defaultContent = {
-        template(valueMap: OptSummaryValueMap) {
-          return `auto calculate: ${valueMap.sum}`;
+      const summary = createSummaryOption({
+        defaultContent: {
+          template(valueMap: OptSummaryValueMap) {
+            return `auto calculate: ${valueMap.sum}`;
+          }
         }
-      };
+      });
       createGrid({ summary });
       assertSummaryContent('name', 'auto calculate: 25');
     });
@@ -175,16 +182,19 @@ describe('summary', () => {
 
   context('static content', () => {
     it('should display static columnContent properly', () => {
-      const summary = createDefaultSummaryOption();
-      summary.columnContent!.price = 'this is static';
+      const summary = createSummaryOption({
+        columnContent: {
+          price: 'this is static'
+        }
+      });
       createGrid({ summary });
       assertSummaryContent('price', 'this is static');
-      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
     });
 
     it('should display static defaultContent properly', () => {
-      const summary = createDefaultSummaryOption();
-      summary.defaultContent = 'this is default';
+      const summary = createSummaryOption({
+        defaultContent: 'this is default'
+      });
       createGrid({ summary });
       assertSummaryContent('name', 'this is default');
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
@@ -192,13 +202,19 @@ describe('summary', () => {
     });
 
     it('should display static columnContent properly when useAutoSummary: false', () => {
-      const summary = createDefaultSummaryOption();
-      summary.columnContent!.price = {
-        template(valueMap: OptSummaryValueMap) {
-          return `no auto calculate: ${valueMap.sum}`;
+      const summary = createSummaryOption(
+        {
+          columnContent: {
+            price: {
+              template(valueMap: OptSummaryValueMap) {
+                return `no auto calculate: ${valueMap.sum}`;
+              },
+              useAutoSummary: false
+            }
+          }
         },
-        useAutoSummary: false
-      };
+        true
+      );
       createGrid({ summary });
       assertSummaryContent('price', 'no auto calculate: 0');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
