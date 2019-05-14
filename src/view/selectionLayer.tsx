@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/dom';
+import { cls, hideElement, showElement } from '../helper/dom';
 import { connect } from './hoc';
 import { Range, Side, SelectionRange } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
@@ -22,8 +22,10 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 class SelectionLayerComp extends Component<Props> {
-  private getOwnSideColumnRange(columnRange: Range, side: Side, visibleFrozenCount: number): Range {
-    let ownColumnRange = [-1, -1] as Range;
+  private el?: HTMLElement;
+
+  private getOwnSideColumnRange(columnRange: Range, side: Side, visibleFrozenCount: number) {
+    let ownColumnRange: Range | null = null;
 
     if (side === 'L') {
       if (columnRange[0] < visibleFrozenCount) {
@@ -47,22 +49,22 @@ class SelectionLayerComp extends Component<Props> {
   }
 
   private getHorizontalStyles(
-    columnRange: Range,
+    columnRange: Range | null,
     columnWidths: ColumnWidths,
     side: Side,
     cellBorderWidth: number
   ) {
+    let left = 0;
+    let width = 0;
+    if (!columnRange) {
+      return { left, width };
+    }
+
     // @TODO: L side 일 경우 meta 갯수 index에 더하기
     const widths = columnWidths[side];
     const [startIndex] = columnRange;
     let [, endIndex] = columnRange;
-    let left = 0;
-    let width = 0;
     let i = 0;
-
-    if (startIndex === -1 || endIndex === -1) {
-      return { left, width };
-    }
 
     endIndex = Math.min(endIndex, widths.length - 1);
 
@@ -80,20 +82,37 @@ class SelectionLayerComp extends Component<Props> {
 
   public render() {
     let styles;
-    const { range, side, columnWidths, rowOffsets, rowHeights, cellBorderWidth } = this.props;
+    const {
+      range,
+      side,
+      columnWidths,
+      rowOffsets,
+      rowHeights,
+      cellBorderWidth,
+      visibleFrozenCount
+    } = this.props;
 
     if (range) {
-      const ownColumnRange = this.getOwnSideColumnRange(range.column, side, cellBorderWidth);
+      const ownColumnRange = this.getOwnSideColumnRange(range.column, side, visibleFrozenCount);
       styles = Object.assign(
         {},
         this.getVerticalStyles(range.row, rowOffsets, rowHeights),
         this.getHorizontalStyles(ownColumnRange, columnWidths, side, cellBorderWidth)
       );
-
-      console.log(styles);
+      showElement(this.el!);
+    } else if (this.el && !range) {
+      hideElement(this.el);
     }
 
-    return <div class={cls('layer-focus', 'layer-selection')} />;
+    return (
+      <div
+        ref={(el) => {
+          this.el = el;
+        }}
+        class={cls('layer-selection')}
+        style={styles}
+      />
+    );
   }
 }
 
