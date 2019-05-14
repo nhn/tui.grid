@@ -93,6 +93,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 }
 
+// eslint-disable-next-line complexity
 export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
   const {
     scrollbarWidth,
@@ -120,7 +121,12 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
 
   const scrollXHeight = scrollX ? scrollbarWidth : 0;
   const width = columnCoords.areaWidth.R;
-  const marginLeft = columnCoords.areaWidth.L + tableBorderWidth;
+
+  let marginLeft = columnCoords.areaWidth.L + tableBorderWidth;
+
+  if (!frozenBorderWidth) {
+    marginLeft -= cellBorderWidth;
+  }
 
   return {
     width,

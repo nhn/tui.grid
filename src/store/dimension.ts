@@ -57,7 +57,10 @@ export function create({
     },
 
     get frozenBorderWidth(this: Dimension) {
-      return column.visibleFrozenCount > 0 ? frozenBorderWidth : 0;
+      const { visibleFrozenCount, visibleMetaColumnCount } = column;
+      const visibleLeftColumnCount = visibleFrozenCount - visibleMetaColumnCount;
+
+      return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
     get totalRowHeight() {
