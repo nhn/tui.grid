@@ -13,6 +13,7 @@ export interface OptGrid {
   scrollX?: boolean;
   scrollY?: boolean;
   rowHeaders?: OptRowHeader[];
+  summary?: OptSummaryData;
 }
 
 export interface ExtraData {
@@ -20,6 +21,8 @@ export interface ExtraData {
 }
 
 export type CellValue = number | string | boolean | null | undefined;
+
+export type SummaryPosition = 'top' | 'bottom';
 
 export type OptRow = {
   [propName: string]: CellValue;
@@ -260,11 +263,11 @@ export interface OptPreset {
   pagination?: OptPaginationStyle;
 }
 
-interface OptI18nLanguage {
+export interface OptI18nLanguage {
   [propName: string]: OptI18nData;
 }
 
-interface OptI18nData {
+export interface OptI18nData {
   display?: {
     noData?: string;
     loadingData?: string;
@@ -285,4 +288,26 @@ interface OptI18nData {
 
 export interface OptMetaColumn extends Partial<OptColumn> {
   type: string | 'rowNum' | 'checkbox' | 'radio';
+}
+
+export interface OptSummaryData {
+  height?: number;
+  position?: SummaryPosition;
+  defaultContent?: string | OptSummaryColumnContentMap;
+  columnContent?: {
+    [propName: string]: string | OptSummaryColumnContentMap;
+  };
+}
+
+export interface OptSummaryColumnContentMap {
+  useAutoSummary?: boolean;
+  template?: (valueMap: OptSummaryValueMap) => string;
+}
+
+export interface OptSummaryValueMap {
+  sum: number;
+  avg: number;
+  min: number;
+  max: number;
+  cnt: number;
 }

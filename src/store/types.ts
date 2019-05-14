@@ -16,6 +16,14 @@ export type Row = {
   [propName: string]: CellValue;
 };
 
+export type SummaryPosition = 'top' | 'bottom';
+
+export type SummaryColumnContent = SummaryColumnContentMap | null;
+
+export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
+
+export type SummaryValues = Dictionary<SummaryValue>;
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -64,7 +72,7 @@ export interface Dimension {
   minRowHeight: number;
   autoRowHeight: boolean;
   headerHeight: number;
-  summaryPosition: 'top' | 'bottom';
+  summaryPosition: SummaryPosition;
   summaryHeight: number;
   scrollbarWidth: number;
   tableBorderWidth: number;
@@ -117,6 +125,24 @@ export interface Focus {
   readonly cellPosRect: Rect | null;
 }
 
+export interface SummaryColumnContentMap {
+  useAutoSummary?: boolean;
+  template?: string | ((valueMap: SummaryValue) => string);
+}
+
+export interface SummaryValue {
+  sum: number;
+  avg: number;
+  min: number;
+  max: number;
+  cnt: number;
+}
+
+export interface Summary {
+  summaryColumnContents: SummaryColumnContents;
+  summaryValues: SummaryValues;
+}
+
 export interface Store {
   readonly data: Data;
   readonly column: Column;
@@ -125,6 +151,7 @@ export interface Store {
   readonly columnCoords: ColumnCoords;
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
+  readonly summary: Summary;
 }
 export interface DefaultRowHeaders {
   [propName: string]: any;

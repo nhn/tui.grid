@@ -5,6 +5,7 @@ import * as column from './column';
 import * as keyboard from './keyboard';
 import * as mouse from './mouse';
 import * as focus from './focus';
+import * as summary from './summary';
 import { Store } from '../store/types';
 
 const dispatchMap = {
@@ -14,7 +15,8 @@ const dispatchMap = {
   ...column,
   ...mouse,
   ...focus,
-  ...keyboard
+  ...keyboard,
+  ...summary
 };
 
 type DispatchMap = typeof dispatchMap;

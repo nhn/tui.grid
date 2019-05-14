@@ -2,8 +2,10 @@ import { Component, h } from 'preact';
 import { cls } from '../helper/dom';
 import { BodyArea } from './bodyArea';
 import { HeadArea } from './headArea';
+import { SummaryArea } from './summaryArea';
 import { connect } from '../view/hoc';
 import { DispatchProps } from '../dispatch/create';
+import { SummaryPosition } from '../store/types';
 
 interface StoreProps {
   width: number;
@@ -14,6 +16,7 @@ interface StoreProps {
   scrollXHeight: number;
   frozenBorderWidth: number;
   cellBorderWidth: number;
+  summaryPosition: SummaryPosition;
 }
 
 class RightSideComp extends Component<StoreProps & DispatchProps> {
@@ -66,16 +69,19 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 
   public render() {
+    const { marginLeft, width, summaryPosition } = this.props;
     const style = {
       display: 'block',
-      marginLeft: this.props.marginLeft,
-      width: this.props.width
+      marginLeft,
+      width
     };
 
     return (
       <div class={cls('rside-area')} style={style}>
         <HeadArea side="R" />
+        {summaryPosition === 'top' && <SummaryArea side="R" />}
         <BodyArea side="R" />
+        {summaryPosition === 'bottom' && <SummaryArea side="R" />}
         {this.renderScrollbarYInnerBorder()}
         {this.renderScrollbarYOuterBorder()}
         {this.renderScrollbarRightTop()}
@@ -106,7 +112,7 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
 
   if (scrollY && summaryHeight) {
     if (summaryPosition === 'top') {
-      cornerTopHeight += summaryHeight - tableBorderWidth;
+      cornerTopHeight += summaryHeight + tableBorderWidth;
     } else {
       cornerBottomHeight += summaryHeight;
     }
@@ -124,6 +130,7 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
     scrollXHeight,
     bodyHeight,
     cellBorderWidth,
-    frozenBorderWidth
+    frozenBorderWidth,
+    summaryPosition
   };
 })(RightSideComp);

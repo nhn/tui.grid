@@ -8,6 +8,7 @@ import { Clipboard } from './clipboard';
 import { cls, getCellAddress, findParent } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
+import { SummaryPosition } from '../store/types';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -19,6 +20,8 @@ interface StoreProps {
   editing: boolean;
   scrollXHeight: number;
   fitToParentHeight: boolean;
+  summaryHeight: number;
+  summaryPosition: SummaryPosition;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -79,6 +82,14 @@ export class ContainerComp extends Component<Props> {
     }
   };
 
+  private getContentClassName = () => {
+    const { summaryHeight, summaryPosition } = this.props;
+    return cls('content-area', [
+      !!summaryHeight,
+      summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'
+    ]);
+  };
+
   public shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
@@ -90,6 +101,7 @@ export class ContainerComp extends Component<Props> {
   public render() {
     const { width, autoWidth, scrollXHeight } = this.props;
     const style = { width: autoWidth ? '100%' : width };
+    const contentClassName = this.getContentClassName();
 
     return (
       <div
@@ -102,7 +114,7 @@ export class ContainerComp extends Component<Props> {
         }}
         data-grid-id="1"
       >
-        <div class={cls('content-area')}>
+        <div class={contentClassName}>
           <LeftSide />
           <RightSide />
           <div class={cls('border-line', 'border-line-top')} />
@@ -124,5 +136,7 @@ export const Container = connect<StoreProps, OwnProps>(({ dimension, focus }) =>
   autoWidth: dimension.autoWidth,
   editing: !!focus.editingAddress,
   scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
-  fitToParentHeight: dimension.fitToParentHeight
+  fitToParentHeight: dimension.fitToParentHeight,
+  summaryHeight: dimension.summaryHeight,
+  summaryPosition: dimension.summaryPosition
 }))(ContainerComp);

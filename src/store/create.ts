@@ -8,6 +8,7 @@ import { create as createViewport } from './viewport';
 import { create as createColumnCoords } from './columnCoords';
 import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
+import { create as createSummary } from './summary';
 
 export function createStore(options: OptGrid): Store {
   const {
@@ -16,9 +17,11 @@ export function createStore(options: OptGrid): Store {
     bodyHeight,
     minBodyHeight,
     columnOptions = {},
-    rowHeaders = []
+    rowHeaders = [],
+    summary: summaryOptions = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
+  const { height: summaryHeight, position: summaryPosition } = summaryOptions;
 
   const data = createData(options.data || []);
   const column = createColumn(options.columns, columnOptions, rowHeaders);
@@ -29,12 +32,15 @@ export function createStore(options: OptGrid): Store {
     rowHeight,
     bodyHeight,
     minBodyHeight,
-    frozenBorderWidth
+    frozenBorderWidth,
+    summaryHeight,
+    summaryPosition
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
   const viewport = createViewport({ data, column, dimension, rowCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
+  const summary = createSummary({ column, data, summary: summaryOptions });
 
   return reactive({
     data,
@@ -43,6 +49,7 @@ export function createStore(options: OptGrid): Store {
     columnCoords,
     rowCoords,
     viewport,
-    focus
+    focus,
+    summary
   });
 }
