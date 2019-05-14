@@ -1,17 +1,24 @@
 import {
+  CellValue,
+  Column,
+  Data,
   Summary,
   SummaryColumnContent,
   SummaryColumnContents,
   SummaryColumnContentMap,
-  Column
+  SummaryValue,
+  SummaryValues,
+  Dictionary
 } from './types';
-import { reactive, Reactive } from '../helper/reactive';
+import { reactive, watch } from '../helper/reactive';
 import { OptSummaryData } from '../types';
+import { calculate } from '../helper/summary';
 
-type ColumnContentType = string | SummaryColumnContentMap | null | undefined;
+type ColumnContentType = string | SummaryColumnContentMap;
 
 interface SummaryOption {
   column: Column;
+  data: Data;
   summary: OptSummaryData;
 }
 
@@ -29,40 +36,56 @@ export function extractSummaryColumnContent(
   return summaryColumnContent;
 }
 
-export function castToSummaryColumnContent(content: ColumnContentType): SummaryColumnContent {
-  let casted = null;
-  if (!content) return casted;
+export function castToSummaryColumnContent(content?: ColumnContentType): SummaryColumnContent {
+  if (!content) {
+    return null;
+  }
 
-  switch (typeof content) {
-    case 'string':
-      casted = { template: content, useAutoSummary: false };
-      break;
-    case 'object':
-      casted = {
+  return typeof content === 'string'
+    ? { template: content, useAutoSummary: false }
+    : {
         template: content.template,
         useAutoSummary:
           typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary
       };
-      break;
-    default:
-      break;
-  }
-
-  return casted;
 }
 
-export function create({ column, summary }: SummaryOption): Reactive<Summary> {
-  const { columnContent: orgColumnContent, defaultContent: orgDefaultContent } = summary;
-  const castedDefaultContent = castToSummaryColumnContent(orgDefaultContent || '');
+export function createSummaryValue(
+  content: SummaryColumnContentMap | null,
+  columnValues: CellValue[]
+): SummaryValue {
+  const initSummaryMap = { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
 
-  const columnContent = orgColumnContent || {};
-  let summaryCulumnContents = column.allColumns.reduce((memo: SummaryColumnContents, { name }) => {
-    const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
-    memo[name] = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
-    return memo;
-  }, {}) as SummaryColumnContents;
+  return content && content.useAutoSummary ? calculate(columnValues) : initSummaryMap;
+}
 
-  summaryCulumnContents = reactive(summaryCulumnContents);
+export const columnValuesMap: Dictionary<CellValue[]> = {};
 
-  return reactive<Summary>({ summaryCulumnContents });
+export function create({ column, data, summary }: SummaryOption): Summary {
+  let summaryColumnContents: SummaryColumnContents = {};
+  let summaryValues: SummaryValues = {};
+
+  if (Object.keys(summary).length) {
+    const { rawData } = data;
+    const { columnContent: orgColumnContent, defaultContent: orgDefaultContent } = summary;
+    const castedDefaultContent = castToSummaryColumnContent(orgDefaultContent || '');
+    const columnContent = orgColumnContent || {};
+
+    column.allColumns.forEach(({ name }) => {
+      watch(() => {
+        const columnValues = rawData.map((row) => row[name]);
+        columnValuesMap[name] = columnValues;
+        const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
+        const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
+
+        summaryColumnContents[name] = content;
+        summaryValues[name] = createSummaryValue(content, columnValues);
+      });
+    });
+  }
+
+  summaryColumnContents = reactive(summaryColumnContents);
+  summaryValues = reactive(summaryValues);
+
+  return { summaryColumnContents, summaryValues };
 }

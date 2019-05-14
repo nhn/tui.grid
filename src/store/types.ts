@@ -20,6 +20,10 @@ export type SummaryPosition = 'top' | 'bottom';
 
 export type SummaryColumnContent = SummaryColumnContentMap | null;
 
+export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
+
+export type SummaryValues = Dictionary<SummaryValue>;
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -121,16 +125,12 @@ export interface Focus {
   readonly cellPosRect: Rect | null;
 }
 
-export interface SummaryColumnContents {
-  [propName: string]: SummaryColumnContent;
-}
-
 export interface SummaryColumnContentMap {
   useAutoSummary?: boolean;
-  template?: string | ((valueMap: SummaryValueMap) => string);
+  template?: string | ((valueMap: SummaryValue) => string);
 }
 
-export interface SummaryValueMap {
+export interface SummaryValue {
   sum: number;
   avg: number;
   min: number;
@@ -139,7 +139,8 @@ export interface SummaryValueMap {
 }
 
 export interface Summary {
-  summaryCulumnContents: SummaryColumnContents;
+  summaryColumnContents: SummaryColumnContents;
+  summaryValues: SummaryValues;
 }
 
 export interface Store {

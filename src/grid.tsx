@@ -280,12 +280,40 @@ export default class Grid {
    * Sets the HTML string of given column summary.
    * The type of content is the same as the options.summary.columnContent of the constructor.
    * @param {string} columnName - column name
-   * @param {string|object} content - HTML string or options object.
+   * @param {string|object} columnContent - HTML string or options object.
    */
   public setSummaryColumnContent(
     columnName: string,
     columnContent: string | OptSummaryColumnContentMap
   ) {
     this.dispatch('setSummaryColumnContent', columnName, columnContent);
+  }
+
+  /**
+   * Returns the values of given column summary.
+   * If the column name is not specified, all values of available columns are returned.
+   * The shape of returning object looks like the example below.
+   * @param {string} [columnName] - column name
+   * @returns {Object}
+   * @example
+   * {
+   *    column1: {
+   *        sum: 1000,
+   *        avg: 200,
+   *        max: 300,
+   *        min: 50,
+   *        cnt: 5
+   *    },
+   *    column2: {
+   *        sum: 2000,
+   *        avg: 300,
+   *        max: 600,
+   *        min: 80,
+   *        cnt: 5
+   *    }
+   * }
+   */
+  public getSummaryValues(columnName: string) {
+    return this.dispatch('getSummaryValues', columnName);
   }
 }

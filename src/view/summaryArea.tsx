@@ -11,7 +11,6 @@ interface OwnProps {
 }
 
 interface StoreProps {
-  showing: boolean;
   height: number;
   columns: ColumnInfo[];
   scrollLeft: number;
@@ -23,14 +22,11 @@ class SummaryAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
   public componentWillReceiveProps(nextProps: Props) {
-    this.el!.scrollLeft = nextProps.scrollLeft;
+    if (this.el) {
+      this.el!.scrollLeft = nextProps.scrollLeft;
+    }
   }
 
-  /**
-   * Event handler for 'scroll' event
-   * @param {UIEvent} ev - scroll event
-   * @private
-   */
   private handleScroll = (ev: UIEvent) => {
     const { scrollLeft } = ev.srcElement as HTMLElement;
     const { dispatch, side } = this.props;
@@ -39,23 +35,24 @@ class SummaryAreaComp extends Component<Props> {
     }
   };
 
-  public render({ showing, height, columns, side }: Props) {
-    const display = showing ? 'table' : 'none';
-    const tableStyle = { display, height };
+  public render({ height, columns, side }: Props) {
+    const tableStyle = { height };
 
     return (
-      <div
-        class={cls('summary-area')}
-        onScroll={this.handleScroll}
-        ref={(el) => {
-          this.el = el;
-        }}
-      >
-        <table class={cls('table')} style={tableStyle}>
-          <ColGroup side={side} />
-          <SummaryBodyRow columns={columns} />
-        </table>
-      </div>
+      height > 0 && (
+        <div
+          class={cls('summary-area')}
+          onScroll={this.handleScroll}
+          ref={(el) => {
+            this.el = el;
+          }}
+        >
+          <table class={cls('table')} style={tableStyle}>
+            <ColGroup side={side} />
+            <SummaryBodyRow columns={columns} />
+          </table>
+        </div>
+      )
     );
   }
 }
@@ -65,7 +62,6 @@ export const SummaryArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { scrollLeft } = viewport;
 
   return {
-    showing: !!summaryHeight,
     height: summaryHeight,
     columns: column.visibleColumnsBySide[side],
     scrollLeft

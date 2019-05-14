@@ -1,18 +1,17 @@
 import { h, Component } from 'preact';
 import { cls, Attributes } from '../helper/dom';
 import { shallowEqual } from '../helper/common';
-import { calculate } from '../helper/summary';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { CellValue, SummaryColumnContent } from '../store/types';
+import { SummaryColumnContentMap, SummaryValue } from '../store/types';
 
 interface OwnProps {
   columnName: string;
 }
 
 interface StoreProps {
-  content: SummaryColumnContent;
-  columnValues: CellValue[];
+  content: SummaryColumnContentMap | null;
+  summaryValue: SummaryValue;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -25,22 +24,14 @@ export class SummaryBodyCellComp extends Component<Props> {
     return true;
   }
 
-  private createSumaryMap = () => {
-    const { content, columnValues } = this.props;
-    const initSummaryMap = { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
-    const summaryMap = content && content.useAutoSummary ? calculate(columnValues) : initSummaryMap;
-
-    return summaryMap;
-  };
-
   private getTemplate = () => {
-    const { content } = this.props;
+    const { content, summaryValue } = this.props;
 
-    if (content === null) return '';
+    if (!content) return '';
 
     const { template } = content;
 
-    return typeof template === 'string' ? template : template!(this.createSumaryMap());
+    return typeof template === 'string' ? template : template!(summaryValue);
   };
 
   public render() {
@@ -60,14 +51,10 @@ export class SummaryBodyCellComp extends Component<Props> {
   }
 }
 
-export const SummaryBodyCell = connect<StoreProps, OwnProps>(
-  ({ data, summary }, { columnName }) => {
-    const { rawData } = data;
-    const {
-      summaryCulumnContents: { [columnName]: content }
-    } = summary;
-    const columnValues = rawData.map((row) => row[columnName]);
+export const SummaryBodyCell = connect<StoreProps, OwnProps>(({ summary }, { columnName }) => {
+  const { summaryColumnContents, summaryValues } = summary;
+  const content = summaryColumnContents[columnName];
+  const summaryValue = summaryValues[columnName];
 
-    return { content, columnValues };
-  }
-)(SummaryBodyCellComp);
+  return { content, summaryValue };
+})(SummaryBodyCellComp);

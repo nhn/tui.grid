@@ -62,14 +62,6 @@ function getGridInst(): Cypress.Chainable<Grid> {
   return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
 }
 
-function assertSummaryDisplay(display: string) {
-  cy.get(`.${cls('summary-area')}`).within(() => {
-    cy.get(`.${cls('table')}`).as('summaryTable');
-
-    cy.get('@summaryTable').should('have.css', 'display', display);
-  });
-}
-
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[data-column-name=${columnName}]`).as('summaryCell');
   contents.forEach((content) => {
@@ -123,11 +115,14 @@ describe('summary', () => {
     });
   });
 
-  it('no display when height is 0', () => {
+  it('no render when height is 0', () => {
     const summary = createDefaultSummaryOption();
     summary.height = 0;
     createGrid({ summary });
-    assertSummaryDisplay('none');
+
+    cy.get(`.${cls('container')}`).should(($container) => {
+      expect($container.find(`.${cls('summary-area')}`)).not.to.exist;
+    });
   });
 
   context('calculation', () => {
@@ -253,6 +248,21 @@ describe('summary', () => {
       useAutoSummary: false
     });
     assertSummaryContent('price', 'no auto calculate: 0');
+
+    getGridInst().invoke('setSummaryColumnContent', 'name', {
+      template(valueMap: OptSummaryValueMap) {
+        return `auto calculate: ${valueMap.sum}`;
+      }
+    });
+    assertSummaryContent('name', 'auto calculate: 25');
     assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+  });
+
+  it('return prpper values when calls getSummaryValues() method', () => {
+    createGrid();
+    getGridInst()
+      .invoke('getSummaryValues', 'price')
+      .contains('30000')
+      .contains('6000');
   });
 });

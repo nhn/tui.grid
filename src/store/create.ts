@@ -21,6 +21,7 @@ export function createStore(options: OptGrid): Store {
     summary: summaryOptions = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
+  const { height: summaryHeight, position: summaryPosition } = summaryOptions;
 
   const data = createData(options.data || []);
   const column = createColumn(options.columns, columnOptions, rowHeaders);
@@ -32,14 +33,14 @@ export function createStore(options: OptGrid): Store {
     bodyHeight,
     minBodyHeight,
     frozenBorderWidth,
-    summaryHeight: summaryOptions.height,
-    summaryPosition: summaryOptions.position
+    summaryHeight,
+    summaryPosition
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
   const viewport = createViewport({ data, column, dimension, rowCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
-  const summary = createSummary({ column, summary: summaryOptions });
+  const summary = createSummary({ column, data, summary: summaryOptions });
 
   return reactive({
     data,

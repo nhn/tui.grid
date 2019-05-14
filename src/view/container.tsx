@@ -84,14 +84,10 @@ export class ContainerComp extends Component<Props> {
 
   private getContentClassName = () => {
     const { summaryHeight, summaryPosition } = this.props;
-    const classList = [cls('content-area')];
-    if (summaryHeight) {
-      classList.push(
-        summaryPosition === 'top' ? cls('has-summary-top') : cls('has-summary-bottom')
-      );
-    }
-
-    return classList.join(' ');
+    return cls('content-area', [
+      !!summaryHeight,
+      summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'
+    ]);
   };
 
   public shouldComponentUpdate(nextProps: Props) {

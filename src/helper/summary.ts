@@ -1,6 +1,6 @@
-import { CellValue, SummaryValueMap } from '../store/types';
+import { CellValue, SummaryValue } from '../store/types';
 
-export function calculate(values: CellValue[]): SummaryValueMap {
+export function calculate(values: CellValue[]): SummaryValue {
   const cnt = values.length;
   let min = Number.MAX_VALUE;
   let max = Number.MIN_VALUE;
