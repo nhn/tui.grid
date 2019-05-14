@@ -82,10 +82,9 @@ export function create({ column, data, summary }: SummaryOption): Summary {
         summaryValues[name] = createSummaryValue(content, columnValues);
       });
     });
+    summaryColumnContents = reactive(summaryColumnContents);
+    summaryValues = reactive(summaryValues);
   }
-
-  summaryColumnContents = reactive(summaryColumnContents);
-  summaryValues = reactive(summaryValues);
 
   return { summaryColumnContents, summaryValues };
 }
