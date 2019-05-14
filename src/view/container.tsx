@@ -47,6 +47,11 @@ export class ContainerComp extends Component<Props> {
     if (!editing) {
       ev.preventDefault();
     }
+
+    const { top, left } = el.getBoundingClientRect();
+
+    dispatch('setOffsetTop', top + el.scrollTop);
+    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   private handleDblClick = (ev: MouseEvent) => {
