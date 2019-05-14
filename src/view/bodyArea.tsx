@@ -98,6 +98,7 @@ class BodyAreaComp extends Component<Props> {
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: -1, pageY: -1 };
+    this.props.dispatch('dragEndBody');
 
     document.body.style.cursor = '';
     document.removeEventListener('mousemove', this.handleMouseMove);
