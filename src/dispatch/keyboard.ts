@@ -1,23 +1,6 @@
-import { Store, Row, ColumnInfo, RowKey } from '../store/types';
+import { Store, RowKey } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
-
-function indexOfColumnName(columnName: string, visibleColumns: ColumnInfo[]) {
-  return visibleColumns.findIndex((col) => col.name === columnName);
-}
-
-function isValidRowIndexRange(rowIndex: number, viewDataLength: number) {
-  return rowIndex >= 0 && rowIndex < viewDataLength;
-}
-
-function findRowKey(rowKey: RowKey, viewData: Row[], offset: number) {
-  let rowIndex = viewData.findIndex((data) => data.rowKey === rowKey);
-  if (isValidRowIndexRange(rowIndex + offset, viewData.length)) {
-    rowIndex += offset;
-  }
-
-  return viewData[rowIndex].rowKey;
-}
 
 function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
   position += cellBorderWidth * 2;
@@ -44,103 +27,72 @@ function getPageMovedIndex(offsets: number[], cellBorderWidth: number, movedPosi
   return clamp(movedIndex, 0, offsets.length - 1);
 }
 
-function firstRowKey(viewData: Row[]) {
-  return viewData[0].rowKey;
-}
-
-function lastRowKey(viewData: Row[]) {
-  return viewData[viewData.length - 1].rowKey;
-}
-
-function isValidColumnRange(columnIndex: number, columnLength: number) {
-  return columnIndex >= 0 && columnIndex < columnLength;
-}
-
-function findColumnName(columnName: string, visibleColumns: ColumnInfo[], offset: number) {
-  let columnIndex = indexOfColumnName(columnName, visibleColumns);
-
-  if (isValidColumnRange(columnIndex + offset, visibleColumns.length)) {
-    columnIndex += offset;
-  }
-
-  return visibleColumns[columnIndex].name;
-}
-
-function firstColumnName(visibleColumns: ColumnInfo[]) {
-  return visibleColumns[0].name;
-}
-
-function lastColumnName(visibleColumns: ColumnInfo[]) {
-  return visibleColumns[visibleColumns.length - 1].name;
-}
-
-// eslint-disable-next-line complexity
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
     data: { viewData },
-    column: { visibleColumns },
+    column: { visibleColumns, visibleColumnsBySide },
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
 
-  const { rowIndex } = focus;
-  let { rowKey, columnName } = focus;
+  let { rowIndex, columnIndex } = focus;
 
-  if (rowKey === null || rowIndex === null || columnName === null) {
+  if (rowIndex === null || columnIndex === null) {
     return;
+  }
+
+  if (focus.side === 'R') {
+    columnIndex += visibleColumnsBySide.L.length;
   }
 
   switch (command) {
     case 'up':
-      rowKey = findRowKey(rowKey, viewData, -1);
+      rowIndex -= 1;
       break;
     case 'down':
-      rowKey = findRowKey(rowKey, viewData, 1);
+      rowIndex += 1;
       break;
     case 'left':
-      columnName = findColumnName(columnName, visibleColumns, -1);
+      columnIndex -= 1;
       break;
     case 'right':
-      columnName = findColumnName(columnName, visibleColumns, 1);
+      columnIndex += 1;
       break;
     case 'firstCell':
-      columnName = firstColumnName(visibleColumns);
-      rowKey = firstRowKey(viewData);
+      columnIndex = 0;
+      rowIndex = 0;
       break;
     case 'lastCell':
-      columnName = lastColumnName(visibleColumns);
-      rowKey = lastRowKey(viewData);
+      columnIndex = visibleColumns.length - 1;
+      rowIndex = viewData.length - 1;
       break;
     case 'pageUp': {
       const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
-      const movedRowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      // eslint-disable-next-line prefer-destructuring
-      rowKey = viewData[movedRowIndex].rowKey;
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
       break;
     }
     case 'pageDown': {
       const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
-      const movedRowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      // eslint-disable-next-line prefer-destructuring
-      rowKey = viewData[movedRowIndex].rowKey;
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
       break;
     }
     case 'firstColumn':
-      columnName = firstColumnName(visibleColumns);
+      columnIndex = 0;
       break;
     case 'lastColumn':
-      columnName = lastColumnName(visibleColumns);
+      columnIndex = visibleColumns.length - 1;
       break;
     default:
       break;
   }
 
-  if (columnName !== '_number') {
-    focus.navigating = true;
-    focus.rowKey = rowKey;
-    focus.columnName = columnName;
-  }
+  rowIndex = clamp(rowIndex, 0, viewData.length);
+  columnIndex = clamp(columnIndex, 0, visibleColumns.length);
+
+  focus.navigating = true;
+  focus.rowKey = viewData[rowIndex].rowKey;
+  focus.columnName = visibleColumns[columnIndex].name;
 }
 
 export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {

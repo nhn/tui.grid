@@ -1,51 +1,90 @@
 import { h, Component } from 'preact';
 import { cls, Attributes } from '../helper/dom';
-import { CellValue, Row } from '../store/types';
+import { ColumnInfo, ViewRow, CellRenderData, RowKey } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { BodyCellViewer } from './bodyCellViewer';
+import { CellRenderer } from '../renderer/types';
+import { get as getInstance } from '../instance';
+import Grid from '../grid';
 
 interface OwnProps {
-  row: Row;
+  viewRow: ViewRow;
   columnName: string;
 }
 
 interface StoreProps {
-  value: CellValue;
-  editable: boolean;
-  align: string | 'left' | 'center' | 'right';
+  grid: Grid;
+  rowKey: RowKey;
+  columnInfo: ColumnInfo;
+  renderData: CellRenderData;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
 export class BodyCellComp extends Component<Props> {
+  private renderer!: CellRenderer;
+
+  private el!: HTMLElement;
+
+  public componentDidMount() {
+    const { grid, rowKey, renderData, columnInfo } = this.props;
+
+    // eslint-disable-next-line new-cap
+    this.renderer = new columnInfo.renderer({ grid, rowKey, columnInfo, ...renderData });
+    this.el.appendChild(this.renderer.getElement());
+
+    if (this.renderer.mounted) {
+      this.renderer.mounted(this.el);
+    }
+  }
+
+  public componentWillReceiveProps(nextProps: Props) {
+    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
+      const { grid, rowKey, renderData, columnInfo } = nextProps;
+      this.renderer.changed({ grid, rowKey, columnInfo, ...renderData });
+    }
+  }
+
   public render() {
-    const { row, columnName, value, editable, align } = this.props;
-    const attrs: Attributes = {
-      'data-row-key': String(row.rowKey),
-      'data-column-name': columnName
-    };
-    const isRowHeader = columnName === '_number';
+    const {
+      rowKey,
+      renderData: { editable },
+      columnInfo: { align, name }
+    } = this.props;
+
     const style = { textAlign: align };
+    const attrs: Attributes = {
+      'data-row-key': String(rowKey),
+      'data-column-name': name
+    };
 
     return (
       <td
-        class={cls('cell', [editable, 'cell-editable'], [isRowHeader, 'cell-row-head'])}
-        style={style}
         {...attrs}
-      >
-        <BodyCellViewer value={value} />
-      </td>
+        style={style}
+        class={cls(
+          'cell',
+          'cell-has-input',
+          [editable, 'cell-editable'],
+          [name === '_number', 'cell-row-head']
+        )}
+        ref={(el) => {
+          this.el = el;
+        }}
+      />
     );
   }
 }
 
-export const BodyCell = connect<StoreProps, OwnProps>(({ column }, { row, columnName }) => {
+export const BodyCell = connect<StoreProps, OwnProps>(({ id, column }, { viewRow, columnName }) => {
+  const { rowKey, valueMap } = viewRow;
+  const grid = getInstance(id);
   const columnInfo = column.allColumnMap[columnName];
 
   return {
-    value: row[columnName],
-    editable: !!columnInfo.editor,
-    align: columnInfo.align
+    grid,
+    rowKey,
+    columnInfo,
+    renderData: valueMap[columnName]
   };
 })(BodyCellComp);

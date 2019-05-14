@@ -131,6 +131,6 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     width: cellWidth,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
-    value: targetRow[columnName]
+    value: targetRow.valueMap[columnName].value
   };
 })(EditingLayerInnerComp);

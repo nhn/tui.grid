@@ -6,6 +6,7 @@ import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue, RowKey } from './store/types';
 import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
+import { register } from './instance';
 import i18n from './i18n';
 
 /* eslint-disable */
@@ -21,7 +22,9 @@ export default class Grid {
 
   public constructor(options: OptGrid) {
     const { el } = options;
-    const store = createStore(options);
+    const id = register(this);
+
+    const store = createStore(id, options);
     const dispatch = createDispatcher(store);
 
     this.store = store;

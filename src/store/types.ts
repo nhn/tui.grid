@@ -1,3 +1,5 @@
+import { CellRendererClass } from '../renderer/types';
+
 export type CellValue = number | string | boolean | null | undefined;
 
 export type Range = [number, number];
@@ -8,12 +10,14 @@ export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
 export type RowKey = number | string;
 
-export type Row = {
+export interface Dictionary<T> {
+  [index: string]: T;
+}
+
+export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   _number: number;
   _extraData?: any;
-} & {
-  [propName: string]: CellValue;
 };
 
 export type SummaryPosition = 'top' | 'bottom';
@@ -24,13 +28,23 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
-export interface Dictionary<T> {
-  [index: string]: T;
+export interface CellRenderData {
+  editable: boolean;
+  disabled: boolean;
+  formattedValue: string;
+  prefix: string;
+  postfix: string;
+  value: CellValue;
+}
+
+export interface ViewRow {
+  rowKey: RowKey;
+  valueMap: Dictionary<CellRenderData>;
 }
 
 export interface Data {
   rawData: Row[];
-  viewData: Row[];
+  viewData: ViewRow[];
 }
 
 export interface CellEditorOptions {
@@ -38,14 +52,20 @@ export interface CellEditorOptions {
   [propName: string]: any;
 }
 
+export type Formatter = (value: CellValue) => string | string;
+
 export interface ColumnInfo {
   readonly name: string;
   readonly title: string;
   readonly minWidth: number;
   readonly align: string;
   editor?: CellEditorOptions;
-  viewer: string;
+  renderer: CellRendererClass;
+  rendererOptions?: Dictionary<any>;
   hidden: boolean;
+  formatter?: Formatter;
+  prefix?: Formatter;
+  postfix?: Formatter;
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;
@@ -90,7 +110,7 @@ export interface Viewport {
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
-  readonly rows: Row[];
+  readonly rows: ViewRow[];
 }
 
 export interface ColumnCoords {
@@ -144,6 +164,7 @@ export interface Summary {
 }
 
 export interface Store {
+  readonly id: number;
   readonly data: Data;
   readonly column: Column;
   readonly dimension: Dimension;
@@ -153,6 +174,7 @@ export interface Store {
   readonly focus: Focus;
   readonly summary: Summary;
 }
+
 export interface DefaultRowHeaders {
   [propName: string]: any;
 }

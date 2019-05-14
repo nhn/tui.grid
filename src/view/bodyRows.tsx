@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRow } from './bodyRow';
 import { shallowEqual } from '../helper/common';
-import { Side, Row, ColumnInfo } from '../store/types';
+import { Side, ColumnInfo, ViewRow } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 
@@ -10,7 +10,7 @@ interface OwnProps {
 }
 
 interface StoreProps {
-  rows: Row[];
+  rows: ViewRow[];
   columns: ColumnInfo[];
 }
 
@@ -21,7 +21,6 @@ class BodyRowsComp extends Component<Props> {
     if (shallowEqual(nextProps, this.props)) {
       return false;
     }
-
     return true;
   }
 
@@ -31,7 +30,7 @@ class BodyRowsComp extends Component<Props> {
     return (
       <tbody>
         {rows.map((row) => (
-          <BodyRow key={String(row.rowKey)} row={row} columnNames={columnNames} />
+          <BodyRow key={String(row.rowKey)} viewRow={row} columnNames={columnNames} />
         ))}
       </tbody>
     );

@@ -5,7 +5,7 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
-import { cls, getCellAddress, findParent } from '../helper/dom';
+import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition } from '../store/types';
@@ -15,6 +15,7 @@ interface OwnProps {
 }
 
 interface StoreProps {
+  gridId: number;
   width: number;
   autoWidth: boolean;
   editing: boolean;
@@ -30,17 +31,11 @@ export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleMouseDown = (ev: MouseEvent) => {
-    const target = ev.target as HTMLElement;
-    const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
-    const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
-    const isMainButton = !!findParent(target, 'cell-row-head');
     const { dispatch, editing } = this.props;
 
-    if (!focusBlocked && !isMainButton) {
-      dispatch('setNavigating', true);
-      if (!editing) {
-        ev.preventDefault();
-      }
+    dispatch('setNavigating', true);
+    if (!editing) {
+      ev.preventDefault();
     }
   };
 
@@ -99,12 +94,14 @@ export class ContainerComp extends Component<Props> {
   }
 
   public render() {
-    const { width, autoWidth, scrollXHeight } = this.props;
+    const { gridId, width, autoWidth, scrollXHeight } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const contentClassName = this.getContentClassName();
+    const attrs: Attributes = { 'data-grid-id': gridId };
 
     return (
       <div
+        {...attrs}
         style={style}
         class={cls('container')}
         onMouseDown={this.handleMouseDown}
@@ -112,7 +109,6 @@ export class ContainerComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
-        data-grid-id="1"
       >
         <div class={contentClassName}>
           <LeftSide />
@@ -131,7 +127,8 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, OwnProps>(({ dimension, focus }) => ({
+export const Container = connect<StoreProps, OwnProps>(({ id, dimension, focus }) => ({
+  gridId: id,
   width: dimension.width,
   autoWidth: dimension.autoWidth,
   editing: !!focus.editingAddress,

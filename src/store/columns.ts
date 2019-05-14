@@ -2,6 +2,7 @@ import { Column, ColumnInfo, Dictionary, DefaultRowHeaders } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
+import { DefaultRenderer } from '../renderer/default';
 
 const DEF_MIN_WIDTH = 50;
 
@@ -12,7 +13,7 @@ const defaultRowHeaders: DefaultRowHeaders = {
     name: '_number',
     hidden: false,
     editor: false,
-    viewer: false,
+    renderer: DefaultRenderer,
     fixedWidth: true,
     baseWidth: 40,
     minWidth: 40,
@@ -23,30 +24,34 @@ const defaultRowHeaders: DefaultRowHeaders = {
 
 // eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
-  const title = column.title || column.name;
-  const { name, width } = column;
-  const fixedWidth = typeof width === 'number';
-  const baseWidth = (width === 'auto' ? 0 : width) || 0;
-  const hidden = !!column.hidden;
-  const resizable = !!column.resizable;
-  const editor = typeof column.editor === 'string' ? { type: column.editor } : column.editor;
-  const viewer = column.viewer === false ? '' : 'default';
-  const align = column.align || 'left';
-
-  // @TODO meta tag 체크 여부
-  const minWidth = column.minWidth || columnOptions.minWidth || DEF_MIN_WIDTH;
-
-  return reactive({
+  const {
     title,
     name,
-    hidden,
+    width,
+    minWidth,
     editor,
-    viewer,
+    align,
+    hidden,
+    resizable,
+    renderer,
+    rendererOptions
+  } = column;
+  const fixedWidth = typeof width === 'number';
+  const baseWidth = (width === 'auto' ? 0 : width) || 0;
+
+  return reactive({
+    name,
+    title: title || name,
+    hidden: Boolean(hidden),
+    resizable: Boolean(resizable),
+    align: align || 'left',
+    editor: typeof editor === 'string' ? { type: editor } : editor,
+    renderer: renderer || DefaultRenderer,
+    rendererOptions,
     fixedWidth,
     baseWidth,
-    minWidth,
-    resizable,
-    align
+    // @TODO meta tag 체크 여부
+    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH
   });
 }
 
