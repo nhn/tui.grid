@@ -85,9 +85,7 @@ export function create(
   columnOptions: OptColumnOptions = {},
   rowHeadersOption: OptRowHeader[]
 ): Column {
-  const columnInfos = columns.map((column) => {
-    return createColumn(column, columnOptions);
-  });
+  const columnInfos = columns.map((column) => createColumn(column, columnOptions));
   const metaColumnInfos = getMetaColumnInfos(rowHeadersOption);
   const allColumns = metaColumnInfos.concat(columnInfos);
 
@@ -95,23 +93,28 @@ export function create(
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
     rowHeaders: metaColumnInfos,
+
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
     },
+
     get visibleColumns() {
       return allColumns.filter(({ hidden }) => !hidden);
     },
+
     get visibleColumnsBySide() {
-      const index = this.frozenCount + this.visibleMetaColumnCount;
+      const frozenLastIndex = this.frozenCount + this.visibleMetaColumnCount;
 
       return {
-        L: this.visibleColumns.slice(0, index),
-        R: this.visibleColumns.slice(index)
+        L: this.visibleColumns.slice(0, frozenLastIndex),
+        R: this.visibleColumns.slice(frozenLastIndex)
       };
     },
+
     get visibleFrozenCount(this: Column) {
       return this.visibleColumnsBySide.L.length;
     },
+
     get visibleMetaColumnCount() {
       return metaColumnInfos.length;
     }
