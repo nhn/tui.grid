@@ -158,3 +158,11 @@ export function appendStyleElement(id: string, cssString: string) {
 
   document.getElementsByTagName('head')[0].appendChild(style);
 }
+
+export function showElement(el: HTMLElement) {
+  el.style.display = 'block';
+}
+
+export function hideElement(el: HTMLElement) {
+  el.style.display = 'none';
+}

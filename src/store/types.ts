@@ -181,10 +181,10 @@ export interface Summary {
 
 export interface Selection {
   active: boolean;
-  inputRange: SelectionRange | null;
   range: SelectionRange | null;
   unit: SelectionUnit;
   type: SelectionType;
+  intervalIdForAutoScroll: number | null;
 }
 
 export interface Store {
