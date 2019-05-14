@@ -8,7 +8,6 @@ export function create(): Reactive<Selection> {
     range: null,
     type: 'cell' as SelectionType,
     unit: 'cell' as SelectionUnit,
-    scrollPixelScale: 40,
     intervalIdForAutoScroll: null
     // minimumColumnRange?: Range,
   });

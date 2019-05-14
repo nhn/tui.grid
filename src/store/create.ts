@@ -39,7 +39,7 @@ export function createStore(id: number, options: OptGrid): Store {
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
-  const viewport = createViewport({ data, column, dimension, rowCoords });
+  const viewport = createViewport({ data, column, dimension, rowCoords, columnCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection();

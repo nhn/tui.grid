@@ -1,18 +1,16 @@
-import { Store, Side, Range, Dimension, Selection, SelectionRange } from '../store/types';
+import { Store, Side, Range, Dimension, Selection, SelectionRange, Viewport } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
 }
 
-interface MouseEventInfo {
-  offsetX: number;
-  offsetY: number;
-  side: Side;
-  shiftKey: boolean;
-}
+type OverflowType = -1 | 0 | 1;
 
-type Widths = { [key in Side]: number[] };
+interface OverflowInfo {
+  x: OverflowType;
+  y: OverflowType;
+}
 
 interface ElementInfo {
   side: Side;
@@ -44,6 +42,23 @@ interface ContainerPosition {
   y: number;
 }
 
+function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimension) {
+  const {
+    offsetLeft,
+    offsetTop,
+    tableBorderWidth,
+    cellBorderWidth,
+    headerHeight,
+    summaryHeight,
+    summaryPosition
+  } = dimension;
+  const smHeight = summaryPosition === 'top' ? summaryHeight : 0;
+  const x = pageX - offsetLeft;
+  const y = pageY - (offsetTop + headerHeight + smHeight + cellBorderWidth + tableBorderWidth);
+
+  return { x, y };
+}
+
 function getSortedRange(range: Range): Range {
   return range[0] > range[1] ? [range[1], range[0]] : range;
 }
@@ -63,19 +78,7 @@ function getScrolledPosition(
   dimension: Dimension,
   lsideWidth: number
 ) {
-  const {
-    offsetLeft,
-    offsetTop,
-    tableBorderWidth,
-    cellBorderWidth,
-    headerHeight,
-    summaryHeight,
-    summaryPosition
-  } = dimension;
-  const smHeight = summaryPosition === 'top' ? summaryHeight : 0;
-  const bodyPositionX = pageX - offsetLeft;
-  const bodyPositionY =
-    pageY - (offsetTop + headerHeight + smHeight + cellBorderWidth + tableBorderWidth);
+  const { x: bodyPositionX, y: bodyPositionY } = getPositionFromBodyArea(pageX, pageY, dimension);
   const isRSide = bodyPositionX > lsideWidth;
   const scrollX = isRSide ? scrollLeft : 0;
   const scrolledPositionX = bodyPositionX + scrollX;
@@ -121,11 +124,9 @@ function getRange(
 function judgeOverflow(
   { x: containerX, y: containerY }: ContainerPosition,
   { bodyHeight, bodyWidth }: BodySize
-) {
-  // const containerX = containerPosition.x;
-  // const containerY = containerPosition.y;
-  let overflowY = 0;
-  let overflowX = 0;
+): OverflowInfo {
+  let overflowY: OverflowType = 0;
+  let overflowX: OverflowType = 0;
 
   if (containerY < 0) {
     overflowY = -1;
@@ -148,19 +149,14 @@ function judgeOverflow(
 function getOverflowFromMousePosition(
   pageX: number,
   pageY: number,
-  bodyHeight: number,
-  widths: Widths
+  bodyWidth: number,
+  dimension: Dimension
 ) {
   const bodySize = {
-    bodyWidth: 0,
-    bodyHeight
+    bodyWidth,
+    bodyHeight: dimension.bodyHeight
   };
-  [...widths.L, ...widths.R].forEach((width) => {
-    bodySize.bodyWidth += width;
-  });
-
-  const x = 0;
-  const y = 0;
+  const { x, y } = getPositionFromBodyArea(pageX, pageY, dimension);
 
   return judgeOverflow({ x, y }, bodySize);
 }
@@ -174,26 +170,52 @@ function stopAutoScroll(selection: Selection) {
   }
 }
 
-function isAutoScrollable(overflowX: number, overflowY: number) {
+function isAutoScrollable(overflowX: OverflowType, overflowY: OverflowType) {
   return !(overflowX === 0 && overflowY === 0);
 }
 
+function adjustScrollLeft(overflowX: OverflowType, viewport: Viewport) {
+  const { scrollPixelScale, scrollLeft, maxScrollLeft } = viewport;
+
+  if (overflowX < 0) {
+    viewport.scrollLeft = Math.max(0, scrollLeft - scrollPixelScale);
+  } else if (overflowX > 0) {
+    viewport.scrollLeft = Math.max(maxScrollLeft, scrollLeft - scrollPixelScale);
+  }
+}
+
+function adjustScrollTop(overflowY: OverflowType, viewport: Viewport) {
+  const { scrollTop, maxScrollTop, scrollPixelScale } = viewport;
+
+  if (overflowY < 0) {
+    viewport.scrollTop = Math.max(0, scrollTop - scrollPixelScale);
+  } else if (overflowY > 0) {
+    viewport.scrollTop = Math.min(maxScrollTop, scrollTop + scrollPixelScale);
+  }
+}
+
+function adjustScroll(viewport: Viewport, { x: overflowX, y: overflowY }: OverflowInfo) {
+  if (overflowX) {
+    adjustScrollLeft(overflowX, viewport);
+  }
+
+  if (overflowY) {
+    adjustScrollTop(overflowY, viewport);
+  }
+}
+
 function setScrolling(
-  pageX: number,
-  pageY: number,
-  bodyHeight: number,
-  widths: Widths,
-  selection: Selection
+  { pageX, pageY }: MouseEvent,
+  bodyWidth: number,
+  selection: Selection,
+  dimension: Dimension,
+  viewport: Viewport
 ) {
-  // @TODO
-  // 1. overflow x y 위치 받아옴
-  const overflow = getOverflowFromMousePosition(pageX, pageY, bodyHeight, widths);
+  const overflow = getOverflowFromMousePosition(pageX, pageY, bodyWidth, dimension);
   stopAutoScroll(selection);
   if (isAutoScrollable(overflow.x, overflow.y)) {
-    // selection.intervalIdForAutoScroll = setInterval();
+    selection.intervalIdForAutoScroll = setInterval(adjustScroll.bind(null, viewport, overflow));
   }
-  // 2. stopAutoScroll
-  // 3. isAutoScrollable 이면 adjustScroll Interval을 건다.
 }
 
 // ⬆️ dispatch 하는데 필요한 함수
@@ -243,14 +265,18 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
 
 export function dragMoveBody(store: Store, eventInfo: MouseEvent) {
   const {
-    dimension: { bodyHeight },
-    columnCoords: { widths },
-    selection
+    dimension,
+    columnCoords: { areaWidth },
+    selection,
+    viewport
   } = store;
-  const { pageX, pageY } = eventInfo;
 
   selectionUpdate(store, eventInfo);
-  setScrolling(pageX, pageY, bodyHeight, widths, selection);
+  setScrolling(eventInfo, areaWidth.L + areaWidth.R, selection, dimension, viewport);
+}
+
+export function dragEndBody({ selection }: Store) {
+  stopAutoScroll(selection);
 }
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: MouseEvent) {
@@ -266,7 +292,6 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const columnName = column.visibleColumnsBySide[side][columnIndex].name;
 
   if (shiftKey) {
-    // @TODO: dispatch 가 아니라 분리된 함수를 호출하도록 수정 필요
     selectionUpdate(store, eventInfo);
   } else if (selection.type === 'row') {
     // @TODO: select row

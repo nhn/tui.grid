@@ -123,6 +123,9 @@ export interface Dimension {
 export interface Viewport {
   scrollLeft: number;
   scrollTop: number;
+  readonly scrollPixelScale: number;
+  readonly maxScrollLeft: number;
+  readonly maxScrollTop: number;
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
