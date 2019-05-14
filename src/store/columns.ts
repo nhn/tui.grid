@@ -55,41 +55,40 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
 }
 
 function getMetaColumnInfos(rowHeadersOption: OptRowHeader[]) {
-  return rowHeadersOption
-    .map((data) => (typeof data === 'string' ? { name: data } : data))
-    .map(
-      // eslint-disable-next-line complexity
-      (metaColumn: OptColumn): ColumnInfo => {
-        const { name, title, align, renderer, rendererOptions, width, minWidth } = metaColumn;
-        const isRowNum = name === '_number';
-        const baseWidth =
-          (width === 'auto' ? DEF_META_COLUMN_MIN_WIDTH : width) || DEF_META_COLUMN_MIN_WIDTH;
+  return rowHeadersOption.map(
+    // eslint-disable-next-line complexity
+    (data: OptRowHeader): ColumnInfo => {
+      const metaColumn = typeof data === 'string' ? { name: data } : data;
+      const { name, title, align, renderer, rendererOptions, width, minWidth } = metaColumn;
+      const isRowNum = name === '_number';
+      const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH;
+      const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
 
-        return reactive({
-          name,
-          title: title || (isRowNum ? 'No.' : ''),
-          hidden: false,
-          resizable: false,
-          align: align || 'center',
-          renderer: renderer || (isRowNum ? DefaultRenderer : MetaColumnInputRenderer),
-          rendererOptions: rendererOptions || { inputType: 'checkbox' },
-          fixedWidth: true,
-          baseWidth,
-          minWidth: typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH
-        });
-      }
-    );
+      return reactive({
+        name,
+        title: title || (isRowNum ? 'No.' : ''),
+        hidden: false,
+        resizable: false,
+        align: align || 'center',
+        renderer: renderer || (isRowNum ? DefaultRenderer : MetaColumnInputRenderer),
+        rendererOptions: rendererOptions || { inputType: 'checkbox' },
+        fixedWidth: true,
+        baseWidth,
+        minWidth: baseMinWith
+      });
+    }
+  );
 }
 
 export function create(
   columns: OptColumn[],
   columnOptions: OptColumnOptions = {},
-  rowHeaders: OptRowHeader[]
+  rowHeadersOption: OptRowHeader[]
 ): Column {
   const columnInfos = columns.map((column) => {
     return createColumn(column, columnOptions);
   });
-  const metaColumnInfos = getMetaColumnInfos(rowHeaders);
+  const metaColumnInfos = getMetaColumnInfos(rowHeadersOption);
   const allColumns = metaColumnInfos.concat(columnInfos);
 
   return reactive({

@@ -11,11 +11,11 @@ const stories = storiesOf('Row Headers', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name', minWidth: 300 },
-  { name: 'artist', minWidth: 300 },
-  { name: 'type', minWidth: 300 },
-  { name: 'release', minWidth: 300 },
-  { name: 'genre', minWidth: 300 }
+  { name: 'name', minWidth: 150 },
+  { name: 'artist', minWidth: 150 },
+  { name: 'type', minWidth: 150 },
+  { name: 'release', minWidth: 150 },
+  { name: 'genre', minWidth: 150 }
 ];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -35,12 +35,34 @@ function createButtons(grid) {
   button('uncheckAll()', () => grid.uncheckAll());
 
   button('getCheckedRowKeys()', () => {
+    // eslint-disable-next-line no-console
     console.log(grid.getCheckedRowKeys());
   });
 
   button('getCheckedRows()', () => {
+    // eslint-disable-next-line no-console
     console.log(grid.getCheckedRows());
   });
+}
+
+export class RowNumberRenderer implements CellRenderer {
+  private el: HTMLElement;
+
+  public constructor(props: CellRendererProps) {
+    const el = document.createElement('span');
+
+    el.innerHTML = `No.${props.value}`;
+
+    this.el = el;
+  }
+
+  public getElement() {
+    return this.el;
+  }
+
+  public changed(props: CellRendererProps) {
+    this.el.innerHTML = props.formattedValue;
+  }
 }
 
 class SingleCheckRenderer implements CellRenderer {
@@ -98,7 +120,7 @@ class SingleCheckRenderer implements CellRenderer {
   }
 }
 
-stories.add('row number', () => {
+stories.add('single use - row number', () => {
   const { el } = createGrid({
     data,
     columns,
@@ -110,7 +132,7 @@ stories.add('row number', () => {
   return rootEl;
 });
 
-stories.add('checkbox', () => {
+stories.add('single use -checkbox', () => {
   const { el, grid } = createGrid({
     data,
     columns,
@@ -124,7 +146,7 @@ stories.add('checkbox', () => {
   return rootEl;
 });
 
-stories.add('radio', () => {
+stories.add('single use - radio', () => {
   const { el, grid } = createGrid({
     data,
     columns,
@@ -187,6 +209,12 @@ stories.add('set object type option', () => {
         name: '_number',
         width: 100,
         align: 'left'
+      },
+      {
+        title: 'checkbox',
+        name: '_checked',
+        width: 100,
+        align: 'left'
       }
     ]
   });
@@ -198,7 +226,26 @@ stories.add('set object type option', () => {
   return rootEl;
 });
 
-stories.add('use custom renderer', () => {
+stories.add('use custom renderer - row number', () => {
+  const { el, grid } = createGrid({
+    data,
+    columns,
+    rowHeaders: [
+      {
+        name: '_number',
+        renderer: RowNumberRenderer
+      }
+    ]
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  createButtons(grid);
+
+  return rootEl;
+});
+
+stories.add('use custom renderer - checkbox', () => {
   const { el, grid } = createGrid({
     data,
     columns,
@@ -217,7 +264,7 @@ stories.add('use custom renderer', () => {
   return rootEl;
 });
 
-stories.add('use frozenColumns', () => {
+stories.add('use frozen columns', () => {
   const { el, grid } = createGrid({
     data,
     columns,
