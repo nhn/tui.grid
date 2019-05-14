@@ -185,7 +185,8 @@ stories.add('set object type option', () => {
       {
         title: 'row number',
         name: '_number',
-        width: 100
+        width: 100,
+        align: 'left'
       }
     ]
   });
