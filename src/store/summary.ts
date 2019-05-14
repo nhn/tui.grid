@@ -59,8 +59,6 @@ export function createSummaryValue(
   return content && content.useAutoSummary ? calculate(columnValues) : initSummaryMap;
 }
 
-export const columnValuesMap: Dictionary<CellValue[]> = {};
-
 export function create({ column, data, summary }: SummaryOption): Summary {
   let summaryColumnContents: SummaryColumnContents = {};
   let summaryValues: SummaryValues = {};
@@ -74,7 +72,6 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     column.allColumns.forEach(({ name }) => {
       watch(() => {
         const columnValues = rawData.map((row) => row[name]);
-        columnValuesMap[name] = columnValues;
         const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
         const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 
