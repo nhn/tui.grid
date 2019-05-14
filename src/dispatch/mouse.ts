@@ -59,7 +59,7 @@ function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimens
   return { x, y };
 }
 
-function getSortedRange(range: Range): Range {
+export function getSortedRange(range: Range): Range {
   return range[0] > range[1] ? [range[1], range[0]] : range;
 }
 
@@ -90,20 +90,20 @@ function getScrolledPosition(
   };
 }
 
-function getRange(
+export function getRange(
   selection: Selection,
   { rowIndex, columnIndex }: IndexInfo,
   { rowIndex: focusRowIndex, columnIndex: focusColumnIndex }: IndexInfo,
   columnLength: number,
   rowLength: number
 ) {
-  const { unit, type, range: prevRange } = selection;
+  const { unit, type, range: currentRange } = selection;
   const rowStartIndex = focusRowIndex;
   let rowEndIndex = rowIndex;
   let columnStartIndex = focusColumnIndex;
   let columnEndIndex = columnIndex;
 
-  if (!prevRange && unit === 'row') {
+  if (!currentRange && unit === 'row') {
     columnStartIndex = 0;
   }
 
@@ -218,8 +218,7 @@ function setScrolling(
   }
 }
 
-// ⬆️ dispatch 하는데 필요한 함수
-// ⬇️ dispatch 할 떄 호출되는 함수
+// @TODO: 제거🤘
 
 export function selectionEnd({ selection }: Store) {
   selection.range = null;

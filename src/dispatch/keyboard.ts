@@ -1,6 +1,7 @@
-import { Store, RowKey } from '../store/types';
+import { Store, RowKey, SelectionRange } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
+import { getRange } from './mouse';
 
 function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
   position += cellBorderWidth * 2;
@@ -87,8 +88,8 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
       break;
   }
 
-  rowIndex = clamp(rowIndex, 0, viewData.length);
-  columnIndex = clamp(columnIndex, 0, visibleColumns.length);
+  rowIndex = clamp(rowIndex, 0, viewData.length - 1);
+  columnIndex = clamp(columnIndex, 0, visibleColumns.length - 1);
 
   focus.navigating = true;
   focus.rowKey = viewData[rowIndex].rowKey;
@@ -112,9 +113,110 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   }
 }
 
-export function selectFocus(store: Store, command: KeyboardEventCommandType) {
-  // @TODO: 이후 관련 키보드 이벤트 작업 필요
-  console.log(store, command);
+function getAddress(
+  { row, column }: SelectionRange,
+  focusRowIndex: number,
+  focusColumnIndex: number
+) {
+  const rowIndex = row[0] === focusRowIndex ? row[1] : row[0];
+  const columnIndex = column[0] === focusColumnIndex ? column[1] : column[0];
+
+  return { rowIndex, columnIndex };
+}
+
+export function changeSelection(store: Store, command: KeyboardEventCommandType) {
+  const {
+    selection,
+    focus,
+    data: { viewData },
+    column: { visibleColumns, visibleColumnsBySide },
+    rowCoords: { offsets },
+    dimension: { bodyHeight, cellBorderWidth }
+  } = store;
+
+  let { range: currentRange } = selection;
+  const { side, columnIndex: focusColumnIndex } = focus;
+  let { rowIndex: focusRowIndex } = focus;
+
+  if (focusRowIndex === null || focusColumnIndex === null) {
+    return;
+  }
+
+  let totalFocusColumnIndex =
+    side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
+
+  if (!currentRange) {
+    // @TODO: unit 체크해서 채워주기?
+    selection.range = {
+      row: [focusRowIndex, focusRowIndex],
+      column: [totalFocusColumnIndex, totalFocusColumnIndex]
+    };
+
+    currentRange = selection.range;
+  }
+
+  const rowLength = viewData.length;
+  const columnLength = visibleColumns.length;
+
+  let { rowIndex, columnIndex } = getAddress(currentRange, focusRowIndex, totalFocusColumnIndex);
+
+  switch (command) {
+    case 'up':
+      rowIndex -= 1;
+      break;
+    case 'down':
+      rowIndex += 1;
+      break;
+    case 'left':
+      columnIndex -= 1;
+      break;
+    case 'right':
+      columnIndex += 1;
+      break;
+    case 'pageUp': {
+      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+      break;
+    }
+    case 'pageDown': {
+      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+      break;
+    }
+    case 'firstColumn':
+      columnIndex = 0;
+      break;
+    case 'lastColumn':
+      columnIndex = columnLength - 1;
+      break;
+    case 'firstCell':
+      rowIndex = 0;
+      columnIndex = 0;
+      break;
+    case 'lastCell':
+      rowIndex = rowLength - 1;
+      columnIndex = columnLength - 1;
+      break;
+    case 'all':
+      totalFocusColumnIndex = 0;
+      focusRowIndex = 0;
+      rowIndex = rowLength - 1;
+      columnIndex = columnLength - 1;
+      break;
+    default:
+  }
+
+  rowIndex = clamp(rowIndex, 0, rowLength - 1);
+  columnIndex = clamp(columnIndex, 0, columnLength - 1);
+
+  selection.range = getRange(
+    selection,
+    { rowIndex, columnIndex },
+    { rowIndex: focusRowIndex, columnIndex: totalFocusColumnIndex },
+    columnLength,
+    rowLength
+  );
+  // @TODO: scroll 따라가기
 }
 
 export function removeFocus(store: Store) {

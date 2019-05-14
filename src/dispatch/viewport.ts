@@ -1,4 +1,5 @@
 import { Rect, Store } from '../store/types';
+import { cell } from '../theme/styleGenerator';
 
 export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
   viewport.scrollLeft = scrollLeft;
@@ -46,15 +47,19 @@ function getVerticalScrollPosition(
   return null;
 }
 
-export function setScrollPosition(store: Store) {
+export function setScrollPosition(store: Store, focusShift: boolean) {
   const {
     dimension: { bodyHeight, scrollbarWidth, tableBorderWidth },
     columnCoords: {
       areaWidth: { R: rSideWidth }
     },
-    focus: { cellPosRect, side },
+    focus,
     viewport: { scrollLeft, scrollTop }
   } = store;
+
+  // @TODO: focusShift 가 아닐 떄 selection rowIndex, columnIndex 기준으로 scroll 이동해야
+  const cellPosRect = focusShift ? focus.cellPosRect : null;
+  const side = focusShift ? focus.side : null;
 
   if (cellPosRect === null || side === null) {
     return;
