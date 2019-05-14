@@ -18,6 +18,7 @@ export interface Dictionary<T> {
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   _number: number;
+  _checked: boolean;
   _extraData?: any;
 };
 
@@ -175,8 +176,4 @@ export interface Store {
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
   readonly summary: Summary;
-}
-
-export interface DefaultRowHeaders {
-  [propName: string]: any;
 }

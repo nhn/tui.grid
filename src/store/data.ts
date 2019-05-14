@@ -56,7 +56,7 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 
 export function create(data: OptRow[], column: Column): Reactive<Data> {
   const rawData = data.map((row, index) => {
-    const rowKeyAdded = { rowKey: index, _number: index + 1, ...row };
+    const rowKeyAdded = { rowKey: index, _number: index + 1, _checked: false, ...row };
 
     return reactive(rowKeyAdded as Row);
   });

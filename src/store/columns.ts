@@ -1,28 +1,14 @@
-import { Column, ColumnInfo, Dictionary, DefaultRowHeaders } from './types';
+import { Column, ColumnInfo, Dictionary } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
-import { CellEditorClass } from 'src/editor/types';
+import { CellEditorClass } from '../editor/types';
+import { MetaColumnInputRenderer } from '../renderer/metaColumnInput';
 
 const DEF_MIN_WIDTH = 50;
-
-const defaultRowHeaders: DefaultRowHeaders = {
-  rowNum: {
-    type: 'rowNum',
-    title: 'No.',
-    name: '_number',
-    hidden: false,
-    editor: false,
-    renderer: DefaultRenderer,
-    fixedWidth: true,
-    baseWidth: 40,
-    minWidth: 40,
-    resizable: false,
-    align: 'center'
-  }
-};
+const DEF_META_COLUMN_MIN_WIDTH = 40;
 
 function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
   if (typeof editor === 'string') {
@@ -69,20 +55,34 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
 }
 
 function getMetaColumnInfos(rowHeadersOption: OptRowHeader[]) {
-  // @TODO select 'checkbox' or 'raido'
-  return rowHeadersOption.map((data) => {
-    let allData;
+  return rowHeadersOption
+    .map((data) => (typeof data === 'string' ? { name: data } : data))
+    .map(
+      (metaColumn: OptColumn): ColumnInfo => {
+        const { name, width, minWidth } = metaColumn;
+        const isRowNum = name === '_number';
+        const baseMinWidth = typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH;
+        const baseWidth = (width === 'auto' ? baseMinWidth : width) || baseMinWidth;
 
-    if (typeof data === 'object') {
-      allData = Object.assign({}, defaultRowHeaders[data.type], data);
-    } else {
-      allData = defaultRowHeaders[data];
-    }
-
-    // @TODO template...
-
-    return allData;
-  });
+        return reactive(
+          Object.assign(
+            {
+              title: isRowNum ? 'No.' : '',
+              name,
+              renderer: isRowNum ? DefaultRenderer : MetaColumnInputRenderer,
+              rendererOptions: { inputType: 'checkbox' },
+              baseWidth,
+              minWidth: baseMinWidth,
+              hidden: false,
+              fixedWidth: true,
+              resizable: false,
+              align: 'center'
+            },
+            metaColumn
+          )
+        );
+      }
+    );
 }
 
 export function create(

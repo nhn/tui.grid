@@ -1,5 +1,6 @@
 import { Store, Side } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
+import { checkMetaColumn } from '../helper/column';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -21,7 +22,7 @@ export function mouseDownBody(store: Store, eventInfo: MouseEventInfo) {
 
   const columnName = column.visibleColumnsBySide[side][columnIndex].name;
 
-  if (columnName !== '_number') {
+  if (!checkMetaColumn(columnName)) {
     focus.rowKey = data.viewData[rowIndex].rowKey;
     focus.columnName = columnName;
   }

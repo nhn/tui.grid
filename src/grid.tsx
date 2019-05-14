@@ -3,7 +3,7 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey } from './store/types';
+import { Store, CellValue, RowKey, Row } from './store/types';
 import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
@@ -318,5 +318,62 @@ export default class Grid {
    */
   public getSummaryValues(columnName: string) {
     return this.dispatch('getSummaryValues', columnName);
+  }
+
+  /**
+   * Checks the row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public check(rowKey: RowKey) {
+    const { rendererOptions = {} } = this.store.column.allColumnMap._checked;
+
+    if (rendererOptions.inputType === 'radio') {
+      this.dispatch('setColumnValues', '_checked', false);
+    }
+
+    this.dispatch('setValue', rowKey, '_checked', true);
+  }
+
+  /**
+   * Unchecks the row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public uncheck(rowKey: RowKey) {
+    this.dispatch('setValue', rowKey, '_checked', false);
+  }
+
+  /**
+   * Checks all rows.
+   */
+  public checkAll() {
+    const { rendererOptions = {} } = this.store.column.allColumnMap._checked;
+
+    if (rendererOptions.inputType !== 'radio') {
+      this.dispatch('setColumnValues', '_checked', true);
+    }
+  }
+
+  /**
+   * Unchecks all rows.
+   */
+  public uncheckAll() {
+    this.dispatch('setColumnValues', '_checked', false);
+  }
+
+  /**
+   * Returns a list of the rowKey of checked rows.
+   * @returns {Array.<string|number>} - A list of the rowKey.
+   */
+  public getCheckedRowKeys(): RowKey[] {
+    return this.store.data.rawData.filter(({ _checked }) => _checked).map(({ rowKey }) => rowKey);
+  }
+
+  /**
+   * Returns a list of the checked rows.
+   * @returns {Array.<object>} - A list of the checked rows.
+   */
+  public getCheckedRows(): Row[] {
+    // @TODO 반환되는 값 - 순수 객체 처리 변환
+    return this.store.data.rawData.filter(({ _checked }) => _checked);
   }
 }
