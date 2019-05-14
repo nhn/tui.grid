@@ -39,23 +39,23 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData) {
-      if (this.renderer && this.renderer.changed) {
-        const { grid, rowKey, renderData, columnInfo } = nextProps;
-        this.renderer.changed({ grid, rowKey, columnInfo, ...renderData });
-      }
+    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
+      const { grid, rowKey, renderData, columnInfo } = nextProps;
+      this.renderer.changed({ grid, rowKey, columnInfo, ...renderData });
     }
   }
 
   public render() {
-    const { rowKey, columnInfo } = this.props;
-    const editable = !!columnInfo.editor;
-    const style = { textAlign: columnInfo.align };
-    const isRowHeader = columnInfo.name === '_number';
+    const {
+      rowKey,
+      renderData: { editable },
+      columnInfo: { align, name }
+    } = this.props;
 
+    const style = { textAlign: align };
     const attrs: Attributes = {
       'data-row-key': String(rowKey),
-      'data-column-name': columnInfo.name
+      'data-column-name': name
     };
 
     return (
@@ -66,7 +66,7 @@ export class BodyCellComp extends Component<Props> {
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
-          [isRowHeader, 'cell-row-head']
+          [name === '_number', 'cell-row-head']
         )}
         ref={(el) => {
           this.el = el;

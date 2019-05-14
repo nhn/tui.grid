@@ -131,9 +131,14 @@ class SingleCheckRenderer implements CellRenderer {
 }
 
 const columns = [
-  { name: 'name', renderer: ToolTipRenderer },
-  { name: 'score', renderer: SliderRenderer, rendererOptions: { min: 10, max: 30 } },
-  { name: 'vip', renderer: SingleCheckRenderer }
+  { name: 'name', renderer: ToolTipRenderer, align: 'center' },
+  {
+    name: 'score',
+    renderer: SliderRenderer,
+    rendererOptions: { min: 10, max: 30 },
+    align: 'center'
+  },
+  { name: 'vip', renderer: SingleCheckRenderer, align: 'center' }
 ];
 
 const data = [
