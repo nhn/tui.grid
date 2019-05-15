@@ -1,4 +1,4 @@
-import { CellValue, Dictionary } from './store/types';
+import { CellValue, Dictionary, SelectionUnit } from './store/types';
 import { CellRendererClass } from './renderer/types';
 
 export interface OptGrid {
@@ -15,6 +15,7 @@ export interface OptGrid {
   scrollY?: boolean;
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
+  selectionUnit?: SelectionUnit;
 }
 
 export interface ExtraData {

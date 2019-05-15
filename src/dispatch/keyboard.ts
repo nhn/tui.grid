@@ -216,7 +216,6 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     columnLength,
     rowLength
   );
-  // @TODO: scroll 따라가기
 }
 
 export function removeFocus(store: Store) {

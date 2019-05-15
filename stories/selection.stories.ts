@@ -1,4 +1,4 @@
-import { addParameters, storiesOf } from '@storybook/html';
+import { storiesOf } from '@storybook/html';
 import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
@@ -6,7 +6,7 @@ import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('Focus', module);
+const stories = storiesOf('Selection', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
@@ -32,7 +32,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 }
 
 stories.add(
-  'Focus Activation',
+  'Selection Activation',
   () => {
     const { el, grid } = createGrid({
       data,
@@ -47,14 +47,39 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('getFocusedCell()', () => {
-      console.log(grid.getFocusedCell());
+    button('selection({ start: 1, 2, end: 3, 4 })', () =>
+      grid.selection({ start: [1, 2], end: [3, 4] })
+    );
+
+    button('selection({ start: 3, 5, end: 1, 2 })', () =>
+      grid.selection({ start: [3, 5], end: [1, 2] })
+    );
+
+    button('selection({ start: -1, -1, end: 20, 20 })', () =>
+      grid.selection({ start: [-1, -1], end: [20, 20] })
+    );
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'Row Selection',
+  () => {
+    const { el } = createGrid({
+      data,
+      columns,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      selectionUnit: 'row'
     });
-    button('blur()', () => grid.blur());
-    button(`focus(1, 'type')`, () => grid.focus(1, 'type'));
-    button(`focus(2, 'release')`, () => grid.focus(2, 'release'));
-    button(`focusAt(0, 0)`, () => grid.focusAt(0, 0));
-    button(`focusAt(1, 1)`, () => grid.focusAt(1, 1));
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
 
     return rootEl;
   },

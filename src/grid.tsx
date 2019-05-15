@@ -3,7 +3,7 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey } from './store/types';
+import { Store, CellValue, RowKey, Range } from './store/types';
 import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
@@ -186,6 +186,16 @@ export default class Grid {
 
   public showColumn(columnName: string) {
     this.dispatch('showColumn', columnName);
+  }
+
+  /**
+   * Selects cells or rows by range
+   * @param {Object} range - Selection range
+   *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+   *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+   */
+  public selection(range: { start: Range; end: Range }) {
+    this.dispatch('setSelection', range);
   }
 
   /**

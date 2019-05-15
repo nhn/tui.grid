@@ -97,19 +97,17 @@ export function getRange(
   columnLength: number,
   rowLength: number
 ) {
-  const { unit, type, range: currentRange } = selection;
+  const { type, unit } = selection;
   const rowStartIndex = focusRowIndex;
   let rowEndIndex = rowIndex;
   let columnStartIndex = focusColumnIndex;
   let columnEndIndex = columnIndex;
 
-  if (!currentRange && unit === 'row') {
+  if (unit === 'row') {
     columnStartIndex = 0;
-  }
-
-  if (type === 'row') {
     columnEndIndex = columnLength - 1;
   } else if (type === 'column') {
+    // @TODO: header selection 추가시 type 개념 추가 필요
     rowEndIndex = rowLength - 1;
   }
 
@@ -152,13 +150,10 @@ function getOverflowFromMousePosition(
   bodyWidth: number,
   dimension: Dimension
 ) {
-  const bodySize = {
-    bodyWidth,
-    bodyHeight: dimension.bodyHeight
-  };
+  const { bodyHeight } = dimension;
   const { x, y } = getPositionFromBodyArea(pageX, pageY, dimension);
 
-  return judgeOverflow({ x, y }, bodySize);
+  return judgeOverflow({ x, y }, { bodyWidth, bodyHeight });
 }
 
 function stopAutoScroll(selection: Selection) {
@@ -218,10 +213,9 @@ function setScrolling(
   }
 }
 
-// @TODO: 제거🤘
-
 export function selectionEnd({ selection }: Store) {
   selection.range = null;
+  // @TODO: minimumColumnRange 고려 필요
   // selection.minimumColumnRange = null;
 }
 

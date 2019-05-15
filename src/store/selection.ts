@@ -1,14 +1,15 @@
 import { Selection, SelectionType, SelectionUnit } from './types';
 import { Reactive, reactive } from '../helper/reactive';
 
-export function create(): Reactive<Selection> {
+interface SelectionOptions {
+  selectionUnit: SelectionUnit;
+}
+
+export function create({ selectionUnit }: SelectionOptions): Reactive<Selection> {
   return reactive({
-    startData: null,
-    active: false,
     range: null,
+    unit: selectionUnit,
     type: 'cell' as SelectionType,
-    unit: 'cell' as SelectionUnit,
     intervalIdForAutoScroll: null
-    // minimumColumnRange?: Range,
   });
 }
