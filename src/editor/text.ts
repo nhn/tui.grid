@@ -1,5 +1,4 @@
-import { CellEditor } from './types';
-import { CellValue } from '../store/types';
+import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 
 interface Options {
@@ -9,11 +8,13 @@ interface Options {
 export class TextEditor implements CellEditor {
   private el: HTMLInputElement;
 
-  public constructor(options: Options, value: CellValue) {
+  public constructor(props: CellEditorProps) {
     const el = document.createElement('input');
+    const options = props.columnInfo.editorOptions as Options;
+
     el.className = cls('content-text');
     el.type = options.type;
-    el.value = String(value);
+    el.value = String(props.value);
 
     this.el = el;
   }

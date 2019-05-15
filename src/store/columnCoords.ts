@@ -132,12 +132,18 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
 
     get areaWidth(this: ColumnCoords) {
       const { visibleFrozenCount } = column;
+      const { width, frozenBorderWidth, cellBorderWidth } = dimension;
       const leftBorderWidth = visibleFrozenCount * dimension.cellBorderWidth;
-      const leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
+
+      let leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
+
+      if (!frozenBorderWidth) {
+        leftAreaWidth += cellBorderWidth;
+      }
 
       return {
         L: leftAreaWidth,
-        R: dimension.width - leftAreaWidth - dimension.cellBorderWidth
+        R: width - leftAreaWidth - cellBorderWidth
       };
     }
   });

@@ -1,4 +1,4 @@
-import { CellEditor } from './types';
+import { CellEditor, CellEditorProps } from './types';
 import { CellValue } from '../store/types';
 
 export interface CheckboxOptions {
@@ -12,20 +12,19 @@ export interface CheckboxOptions {
 export class CheckboxEditor implements CellEditor {
   private el: HTMLElement;
 
-  public constructor(options: CheckboxOptions, value: CellValue) {
-    const el = document.createElement('fieldset');
-
-    const { listItems } = options;
+  public constructor(props: CellEditorProps) {
     const name = 'tui-grid-check-input';
+    const el = document.createElement('fieldset');
+    const { listItems, type } = props.columnInfo.editorOptions as CheckboxOptions;
 
-    listItems.forEach((item) => {
-      const id = `${name}-${item.value}`;
-      el.appendChild(this.createCheckbox(item.value, name, id, options.type));
-      el.appendChild(this.createLabel(item.text, id));
+    listItems.forEach(({ text, value }) => {
+      const id = `${name}-${value}`;
+      el.appendChild(this.createCheckbox(value, name, id, type));
+      el.appendChild(this.createLabel(text, id));
     });
     this.el = el;
 
-    this.setValue(value);
+    this.setValue(props.value);
   }
 
   private createLabel(text: string, id: string) {

@@ -1,10 +1,12 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, CellEditorOptions, RowKey } from '../store/types';
+import { CellValue, RowKey, ColumnInfo } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
-import { CellEditor, CellEditorClass } from '../editor/types';
+import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
+import { getInstance } from '../instance';
+import Grid from '../grid';
 
 interface StoreProps {
   left: number;
@@ -12,13 +14,14 @@ interface StoreProps {
   width: number;
   height: number;
   contentHeight: number;
+  columnInfo: ColumnInfo;
+  grid: Grid;
   value: CellValue;
 }
 
 interface OwnProps {
   rowKey: RowKey;
   columnName: string;
-  editorOptions: CellEditorOptions;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -71,10 +74,11 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentDidMount() {
-    const { editorOptions, value } = this.props;
+    const { grid, rowKey, columnInfo, value } = this.props;
 
-    const Editor: CellEditorClass = this.context.editorMap[editorOptions.type];
-    const cellEditor: CellEditor = new Editor(editorOptions, value, () => {});
+    const EditorClass: CellEditorClass = columnInfo.editor!;
+    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
+    const cellEditor: CellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
 
     if (editorEl && this.contentEl) {
@@ -117,6 +121,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const { scrollLeft, scrollTop } = store.viewport;
   const { areaWidth } = store.columnCoords;
   const { viewData } = store.data;
+  const { allColumnMap } = store.column;
 
   const { top, left, right, bottom } = cellPosRect!;
   const cellWidth = right - left + cellBorderWidth;
@@ -126,11 +131,13 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
 
   return {
+    grid: getInstance(store.id),
     left: left + (side === 'L' ? 0 : offsetLeft),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
+    columnInfo: allColumnMap[columnName],
     value: targetRow.valueMap[columnName].value
   };
 })(EditingLayerInnerComp);

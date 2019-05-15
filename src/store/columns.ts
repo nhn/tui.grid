@@ -1,26 +1,25 @@
-import { Column, ColumnInfo, Dictionary, DefaultRowHeaders } from './types';
+import { Column, ColumnInfo, Dictionary } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
+import { editorMap } from '../editor/manager';
+import { CellEditorClass } from '../editor/types';
+import { RowHeaderInputRenderer } from '../renderer/RowHeaderInput';
 
 const DEF_MIN_WIDTH = 50;
+const DEF_META_COLUMN_MIN_WIDTH = 40;
 
-const defaultRowHeaders: DefaultRowHeaders = {
-  rowNum: {
-    type: 'rowNum',
-    title: 'No.',
-    name: '_number',
-    hidden: false,
-    editor: false,
-    renderer: DefaultRenderer,
-    fixedWidth: true,
-    baseWidth: 40,
-    minWidth: 40,
-    resizable: false,
-    align: 'center'
+function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
+  if (typeof editor === 'string') {
+    const editInfo = editorMap[editor];
+    return {
+      editor: editInfo[0],
+      editorOptions: { ...editInfo[1], ...editorOptions }
+    };
   }
-};
+  return { editor, editorOptions };
+}
 
 // eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
@@ -29,10 +28,11 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     name,
     width,
     minWidth,
-    editor,
     align,
     hidden,
     resizable,
+    editor,
+    editorOptions,
     renderer,
     rendererOptions
   } = column;
@@ -45,67 +45,78 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
-    editor: typeof editor === 'string' ? { type: editor } : editor,
     renderer: renderer || DefaultRenderer,
     rendererOptions,
     fixedWidth,
     baseWidth,
-    // @TODO meta tag 체크 여부
-    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH
+    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH, // @TODO meta tag 체크 여부
+    ...getEditorInfo(editor, editorOptions)
   });
 }
 
-function getMetaColumnInfos(rowHeadersOption: OptRowHeader[]) {
-  // @TODO select 'checkbox' or 'raido'
-  return rowHeadersOption.map((data) => {
-    let allData;
+function getRowHeaderInfos(rowHeadersOption: OptRowHeader[]) {
+  return rowHeadersOption.map(
+    // eslint-disable-next-line complexity
+    (data: OptRowHeader): ColumnInfo => {
+      const rowHeader = typeof data === 'string' ? { name: data } : data;
+      const { name, title, align, renderer, rendererOptions, width, minWidth } = rowHeader;
+      const isRowNum = name === '_number';
+      const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH;
+      const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
 
-    if (typeof data === 'object') {
-      allData = Object.assign({}, defaultRowHeaders[data.type], data);
-    } else {
-      allData = defaultRowHeaders[data];
+      return reactive({
+        name,
+        title: title || (isRowNum ? 'No.' : ''),
+        hidden: false,
+        resizable: false,
+        align: align || 'center',
+        renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
+        rendererOptions: rendererOptions || { inputType: 'checkbox' },
+        fixedWidth: true,
+        baseWidth,
+        minWidth: baseMinWith
+      });
     }
-
-    // @TODO template...
-
-    return allData;
-  });
+  );
 }
 
 export function create(
   columns: OptColumn[],
   columnOptions: OptColumnOptions = {},
-  rowHeaders: OptRowHeader[]
+  rowHeadersOption: OptRowHeader[]
 ): Column {
-  const columnInfos = columns.map((column) => {
-    return createColumn(column, columnOptions);
-  });
-  const metaColumnInfos = getMetaColumnInfos(rowHeaders);
-  const allColumns = metaColumnInfos.concat(columnInfos);
+  const columnInfos = columns.map((column) => createColumn(column, columnOptions));
+  const rowHeaderInfos = getRowHeaderInfos(rowHeadersOption);
+  const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
-    rowHeaders: metaColumnInfos,
+    rowHeaders: rowHeaderInfos,
+
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
     },
+
     get visibleColumns() {
       return allColumns.filter(({ hidden }) => !hidden);
     },
+
     get visibleColumnsBySide() {
-      const index = this.frozenCount + this.visibleMetaColumnCount;
+      const frozenLastIndex = this.frozenCount + this.rowHeaderCount;
 
       return {
-        L: this.visibleColumns.slice(0, index),
-        R: this.visibleColumns.slice(index)
+        L: this.visibleColumns.slice(0, frozenLastIndex),
+        R: this.visibleColumns.slice(frozenLastIndex)
       };
     },
+
     get visibleFrozenCount(this: Column) {
       return this.visibleColumnsBySide.L.length;
     },
-    get visibleMetaColumnCount() {
-      return metaColumnInfos.length;
+
+    get rowHeaderCount() {
+      return rowHeaderInfos.length;
     }
   });
 }

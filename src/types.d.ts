@@ -1,5 +1,6 @@
 import { CellValue, Dictionary, SelectionUnit } from './store/types';
 import { CellRendererClass } from './renderer/types';
+import { CellEditorClass } from './editor/types';
 
 export interface OptGrid {
   el: HTMLElement;
@@ -32,7 +33,7 @@ export type OptRow = {
   _extraData?: ExtraData;
 };
 
-export type OptRowHeader = string | OptMetaColumn;
+export type OptRowHeader = string | OptColumn;
 
 interface CellEditor {
   type: string;
@@ -46,7 +47,8 @@ export interface OptColumn {
   width?: number | 'auto';
   renderer?: CellRendererClass;
   rendererOptions?: Dictionary<any>;
-  editor?: string | CellEditor;
+  editor?: string | CellEditorClass;
+  editorOptions?: Dictionary<any>;
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
@@ -288,10 +290,6 @@ export interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
-}
-
-export interface OptMetaColumn extends Partial<OptColumn> {
-  type: string | 'rowNum' | 'checkbox' | 'radio';
 }
 
 export interface OptSummaryData {

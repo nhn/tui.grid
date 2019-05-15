@@ -6,3 +6,9 @@ export function setValue({ data }: Store, rowKey: RowKey, columnName: string, va
     targetRow[columnName] = value;
   }
 }
+
+export function setColumnValues(store: Store, columnName: string, value: CellValue) {
+  store.data.rawData.forEach((targetRow) => {
+    targetRow[columnName] = value;
+  });
+}

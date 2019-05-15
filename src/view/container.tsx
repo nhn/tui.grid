@@ -23,6 +23,7 @@ interface StoreProps {
   fitToParentHeight: boolean;
   summaryHeight: number;
   summaryPosition: SummaryPosition;
+  showLeftSide: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -120,7 +121,7 @@ export class ContainerComp extends Component<Props> {
   }
 
   public render() {
-    const { gridId, width, autoWidth, scrollXHeight } = this.props;
+    const { gridId, width, autoWidth, scrollXHeight, showLeftSide } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const contentClassName = this.getContentClassName();
     const attrs: Attributes = { 'data-grid-id': gridId };
@@ -129,7 +130,7 @@ export class ContainerComp extends Component<Props> {
       <div
         {...attrs}
         style={style}
-        class={cls('container')}
+        class={cls('container', [showLeftSide, 'show-lside-area'])}
         onMouseDown={this.handleMouseDown}
         onDblClick={this.handleDblClick}
         ref={(el) => {
@@ -153,13 +154,16 @@ export class ContainerComp extends Component<Props> {
   }
 }
 
-export const Container = connect<StoreProps, OwnProps>(({ id, dimension, focus }) => ({
-  gridId: id,
-  width: dimension.width,
-  autoWidth: dimension.autoWidth,
-  editing: !!focus.editingAddress,
-  scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
-  fitToParentHeight: dimension.fitToParentHeight,
-  summaryHeight: dimension.summaryHeight,
-  summaryPosition: dimension.summaryPosition
-}))(ContainerComp);
+export const Container = connect<StoreProps, OwnProps>(
+  ({ id, dimension, focus, columnCoords }) => ({
+    gridId: id,
+    width: dimension.width,
+    autoWidth: dimension.autoWidth,
+    editing: !!focus.editingAddress,
+    scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
+    fitToParentHeight: dimension.fitToParentHeight,
+    summaryHeight: dimension.summaryHeight,
+    summaryPosition: dimension.summaryPosition,
+    showLeftSide: !!columnCoords.areaWidth.L
+  })
+)(ContainerComp);

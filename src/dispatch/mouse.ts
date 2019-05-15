@@ -1,5 +1,6 @@
 import { Store, Side, Range, Dimension, Selection, SelectionRange, Viewport } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
+import { isRowHeader } from '../helper/column';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -280,6 +281,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   if (shiftKey) {
     selectionUpdate(store, eventInfo);
   } else if (columnName !== '_number') {
+  if (!isRowHeader(columnName)) {
     focus.rowKey = data.viewData[rowIndex].rowKey;
     focus.columnName = columnName;
     selectionEnd(store);

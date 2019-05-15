@@ -1,4 +1,5 @@
 import { CellRendererClass } from '../renderer/types';
+import { CellEditorClass } from '../editor/types';
 
 export type CellValue = number | string | boolean | null | undefined;
 
@@ -21,6 +22,7 @@ export interface Dictionary<T> {
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   _number: number;
+  _checked: boolean;
   _extraData?: any;
 };
 
@@ -73,7 +75,8 @@ export interface ColumnInfo {
   readonly title: string;
   readonly minWidth: number;
   readonly align: string;
-  editor?: CellEditorOptions;
+  editor?: CellEditorClass;
+  editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
   rendererOptions?: Dictionary<any>;
   hidden: boolean;
@@ -88,6 +91,7 @@ export interface ColumnInfo {
 export interface Column {
   frozenCount: number;
   visibleFrozenCount: number;
+  rowHeaderCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
   allColumnMap: Dictionary<ColumnInfo>;
@@ -200,8 +204,4 @@ export interface Store {
   readonly focus: Focus;
   readonly selection: Selection;
   readonly summary: Summary;
-}
-
-export interface DefaultRowHeaders {
-  [propName: string]: any;
 }

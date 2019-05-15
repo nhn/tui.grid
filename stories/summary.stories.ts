@@ -73,7 +73,7 @@ stories
     const options = createDefaultOptions();
     options.columns = options.columns.map((column) => ({
       ...column,
-      editor: { type: 'text' }
+      editor: 'text'
     }));
     const { el } = createGrid(options);
 

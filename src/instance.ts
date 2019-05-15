@@ -16,6 +16,6 @@ export function register(instance: Grid) {
   return id;
 }
 
-export function get(id: number): Grid {
+export function getInstance(id: number): Grid {
   return instanceMap[id];
 }
