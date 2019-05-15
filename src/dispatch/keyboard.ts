@@ -36,7 +36,6 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
-
   let { rowIndex, columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -113,7 +112,7 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   }
 }
 
-export function getAddress(
+export function getSelectionIndexes(
   { row, column }: SelectionRange,
   focusRowIndex: number,
   focusColumnIndex: number
@@ -146,18 +145,19 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
 
   if (!currentRange) {
-    selection.range = {
+    currentRange = selection.range = {
       row: [focusRowIndex, focusRowIndex],
       column: [totalFocusColumnIndex, totalFocusColumnIndex]
     };
-
-    currentRange = selection.range;
   }
 
   const rowLength = viewData.length;
   const columnLength = visibleColumns.length;
-
-  let { rowIndex, columnIndex } = getAddress(currentRange, focusRowIndex, totalFocusColumnIndex);
+  let { rowIndex, columnIndex } = getSelectionIndexes(
+    currentRange,
+    focusRowIndex,
+    totalFocusColumnIndex
+  );
 
   switch (command) {
     case 'up':
@@ -199,8 +199,8 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     case 'all':
       totalFocusColumnIndex = 0;
       focusRowIndex = 0;
-      rowIndex = rowLength - 1;
-      columnIndex = columnLength - 1;
+      rowIndex -= 1;
+      columnIndex -= 1;
       break;
     default:
   }

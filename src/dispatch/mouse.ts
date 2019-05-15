@@ -67,7 +67,7 @@ function getTotalColumnOffsets(widths: { [key in Side]: number[] }, cellBorderWi
   const totalWidths = [...widths.L, ...widths.R];
   const offsets = [0];
   for (let i = 1, len = totalWidths.length; i < len; i += 1) {
-    offsets[i] = offsets[i - 1] + totalWidths[i - 1] + cellBorderWidth;
+    offsets.push(offsets[i - 1] + totalWidths[i - 1] + cellBorderWidth);
   }
 
   return offsets;
@@ -76,11 +76,10 @@ function getTotalColumnOffsets(widths: { [key in Side]: number[] }, cellBorderWi
 function getScrolledPosition(
   { pageX, pageY, scrollLeft, scrollTop }: ViewInfo,
   dimension: Dimension,
-  lsideWidth: number
+  leftSideWidth: number
 ) {
   const { x: bodyPositionX, y: bodyPositionY } = getPositionFromBodyArea(pageX, pageY, dimension);
-  const isRSide = bodyPositionX > lsideWidth;
-  const scrollX = isRSide ? scrollLeft : 0;
+  const scrollX = bodyPositionX > leftSideWidth ? scrollLeft : 0;
   const scrolledPositionX = bodyPositionX + scrollX;
   const scrolledPositionY = bodyPositionY + scrollTop;
 
@@ -91,18 +90,12 @@ function getScrolledPosition(
 }
 
 export function getRange(
-  selection: Selection,
-  { rowIndex, columnIndex }: IndexInfo,
-  { rowIndex: focusRowIndex, columnIndex: focusColumnIndex }: IndexInfo,
+  { type, unit }: Selection,
+  { rowIndex: rowEndIndex, columnIndex: columnEndIndex }: IndexInfo,
+  { rowIndex: rowStartIndex, columnIndex: columnStartIndex }: IndexInfo,
   columnLength: number,
   rowLength: number
 ) {
-  const { type, unit } = selection;
-  const rowStartIndex = focusRowIndex;
-  let rowEndIndex = rowIndex;
-  let columnStartIndex = focusColumnIndex;
-  let columnEndIndex = columnIndex;
-
   if (unit === 'row') {
     columnStartIndex = 0;
     columnEndIndex = columnLength - 1;
@@ -189,13 +182,13 @@ function adjustScrollTop(overflowY: OverflowType, viewport: Viewport) {
   }
 }
 
-function adjustScroll(viewport: Viewport, { x: overflowX, y: overflowY }: OverflowInfo) {
-  if (overflowX) {
-    adjustScrollLeft(overflowX, viewport);
+function adjustScroll(viewport: Viewport, overflow: OverflowInfo) {
+  if (overflow.x) {
+    adjustScrollLeft(overflow.x, viewport);
   }
 
-  if (overflowY) {
-    adjustScrollTop(overflowY, viewport);
+  if (overflow.y) {
+    adjustScrollTop(overflow.y, viewport);
   }
 }
 
@@ -273,7 +266,7 @@ export function dragEndBody({ selection }: Store) {
 }
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: MouseEvent) {
-  const { data, column, columnCoords, rowCoords, focus, selection } = store;
+  const { data, column, columnCoords, rowCoords, focus } = store;
   const { pageX, pageY, shiftKey } = eventInfo;
 
   const { side, scrollLeft, scrollTop, left, top } = elementInfo;

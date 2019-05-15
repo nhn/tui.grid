@@ -1,5 +1,5 @@
 import { Rect, Side, Store, Viewport } from '../store/types';
-import { getAddress } from './keyboard';
+import { getSelectionIndexes } from './keyboard';
 
 export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
   viewport.scrollLeft = scrollLeft;
@@ -10,7 +10,7 @@ export function setScrollTop({ viewport }: Store, scrollTop: number) {
 }
 
 function getHorizontalScrollPosition(
-  rSideWidth: number,
+  rightSideWidth: number,
   cellPosRect: Rect,
   scrollLeft: number,
   tableBorderWidth: number
@@ -21,8 +21,8 @@ function getHorizontalScrollPosition(
     return left;
   }
 
-  if (right > scrollLeft + rSideWidth - tableBorderWidth) {
-    return right - rSideWidth + tableBorderWidth;
+  if (right > scrollLeft + rightSideWidth - tableBorderWidth) {
+    return right - rightSideWidth + tableBorderWidth;
   }
 
   return null;
@@ -103,7 +103,6 @@ export function setScrollToSelection(store: Store) {
     viewport,
     column: { visibleColumnsBySide }
   } = store;
-
   const { scrollLeft, scrollTop } = viewport;
 
   if (!range || focusRowIndex === null || focusColumnIndex === null) {
@@ -112,16 +111,20 @@ export function setScrollToSelection(store: Store) {
 
   const totalFocusColumnIndex =
     side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
-  const { rowIndex, columnIndex } = getAddress(range, focusRowIndex, totalFocusColumnIndex);
-  const cellSide: Side = columnIndex > widths.L.length - 1 ? 'R' : 'L';
-  const rsideColumnIndex = columnIndex - widths.L.length;
+  const { rowIndex, columnIndex } = getSelectionIndexes(
+    range,
+    focusRowIndex,
+    totalFocusColumnIndex
+  );
+  const cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
+  const rightSideColumnIndex = columnIndex - widths.L.length;
 
-  const left = columnOffsets[cellSide][rsideColumnIndex];
-  const right = left + widths[cellSide][rsideColumnIndex];
+  const left = columnOffsets[cellSide][rightSideColumnIndex];
+  const right = left + widths[cellSide][rightSideColumnIndex];
   const top = rowOffsets[rowIndex];
   const bottom = top + heights[rowIndex];
 
-  const cellPosRect: Rect = { left, right, top, bottom };
+  const cellPosRect = { left, right, top, bottom };
 
   const changedScrollLeft =
     cellSide === 'R'
