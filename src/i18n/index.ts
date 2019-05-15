@@ -105,7 +105,7 @@ export default {
 
     if (localeMessages) {
       const originData = flattenMessageMap(localeMessages);
-      messageMap = Object.assign(originData, newData);
+      messageMap = { ...originData, ...newData };
     } else {
       messageMap = newData;
     }

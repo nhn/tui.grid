@@ -1,9 +1,9 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { reactive, Reactive } from '../helper/reactive';
-import { arrayEqual } from '../helper/common';
+import { arrayEqual, findIndex } from '../helper/common';
 
 function indexOfRow(rowOffsets: number[], posY: number) {
-  const rowOffset = rowOffsets.findIndex((offset) => offset > posY);
+  const rowOffset = findIndex((offset) => offset > posY, rowOffsets);
 
   return rowOffset === -1 ? rowOffsets.length - 1 : rowOffset - 1;
 }

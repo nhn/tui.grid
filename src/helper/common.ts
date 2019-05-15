@@ -49,9 +49,42 @@ export function findOffsetIndex(offsets: number[], targetOffset: number) {
   return findPrevIndex(offsets, (offset) => offset > targetOffset);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function pipe(initVal: any, ...args: Function[]) {
+export function pipe<T>(initVal: T, ...args: Function[]) {
   return args.reduce((acc, fn) => fn(acc), initVal);
+}
+
+// eslint-disable-next-line consistent-return
+export function find<T>(pred: (item: T) => boolean, arr: T[]) {
+  for (const item of arr) {
+    if (pred(item)) {
+      return item;
+    }
+  }
+}
+
+export function findProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
+  return find((item) => item[propName] === value, arr);
+}
+
+export function some<T>(pred: (item: T) => boolean, arr: T[]) {
+  return !!find(pred, arr);
+}
+
+export function someProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
+  return !!findProp(propName, value, arr);
+}
+
+export function findIndex<T>(pred: (item: T) => boolean, arr: T[]) {
+  for (let i = 0, len = arr.length; i <= len; i += 1) {
+    if (pred(arr[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+export function findPropIndex<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
+  return findIndex((item) => item[propName] === value, arr);
 }
 
 export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
@@ -59,7 +92,7 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
 }
 
 export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
-  const resultObj: T1 & T2 = Object.assign({}, targetObj) as T1 & T2;
+  const resultObj = { ...(targetObj as T1 & T2) };
 
   for (const prop of Object.keys(obj)) {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {

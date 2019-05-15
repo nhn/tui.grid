@@ -7,6 +7,7 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
+import { some } from '../helper/common';
 
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
 const MIN_DISATNCE_FOR_DRAG = 10;
@@ -105,7 +106,7 @@ class BodyAreaComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
-    return PROPS_FOR_UPDATE.some((propName) => nextProps[propName] !== currProps[propName]);
+    return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
   public componentWillReceiveProps(nextProps: Props) {

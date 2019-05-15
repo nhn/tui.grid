@@ -120,7 +120,7 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
 }
 
 export function hasClass(el: HTMLElement, className: ClassNameType) {
-  return el.className.split(' ').includes(cls(className));
+  return el.className.split(' ').indexOf(cls(className)) >= 0;
 }
 
 export function findParent(el: HTMLElement, className: ClassNameType) {
