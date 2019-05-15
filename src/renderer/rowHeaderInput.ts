@@ -1,6 +1,6 @@
 import { CellRenderer, CellRendererProps } from './types';
 
-export class MetaColumnInputRenderer implements CellRenderer {
+export class RowHeaderInputRenderer implements CellRenderer {
   private el: HTMLInputElement;
 
   public constructor(props: CellRendererProps) {
@@ -8,10 +8,10 @@ export class MetaColumnInputRenderer implements CellRenderer {
     const {
       grid,
       rowKey,
-      columnInfo: { rendererOptions = {} }
+      columnInfo: { rendererOptions }
     } = props;
 
-    el.type = rendererOptions.inputType;
+    el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
     el.name = String(rowKey);
 
     el.addEventListener('change', () => {

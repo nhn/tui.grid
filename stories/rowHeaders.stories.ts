@@ -18,6 +18,10 @@ const columns = [
   { name: 'genre', minWidth: 150 }
 ];
 
+function alertObjectToJson(obj: object, useSpace?: boolean) {
+  alert(JSON.stringify(obj, null, useSpace ? '\t' : null));
+}
+
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
@@ -35,13 +39,11 @@ function createButtons(grid) {
   button('uncheckAll()', () => grid.uncheckAll());
 
   button('getCheckedRowKeys()', () => {
-    // eslint-disable-next-line no-console
-    console.log(grid.getCheckedRowKeys());
+    alertObjectToJson(grid.getCheckedRowKeys());
   });
 
   button('getCheckedRows()', () => {
-    // eslint-disable-next-line no-console
-    console.log(grid.getCheckedRows());
+    alertObjectToJson(grid.getCheckedRows(), true);
   });
 }
 

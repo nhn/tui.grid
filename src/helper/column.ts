@@ -1,3 +1,3 @@
-export function checkMetaColumn(columnName: string) {
+export function isRowHeader(columnName: string) {
   return ['_number', '_checked'].indexOf(columnName) > -1;
 }

@@ -93,7 +93,6 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 }
 
-// eslint-disable-next-line complexity
 export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
   const {
     scrollbarWidth,

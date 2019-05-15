@@ -5,7 +5,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
-import { checkMetaColumn } from '../helper/column';
+import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -59,8 +59,6 @@ export class BodyCellComp extends Component<Props> {
       'data-column-name': name
     };
 
-    const isRowHeader = checkMetaColumn(name);
-
     return (
       <td
         {...attrs}
@@ -69,7 +67,7 @@ export class BodyCellComp extends Component<Props> {
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
-          [isRowHeader, 'cell-row-head']
+          [isRowHeader(name), 'cell-row-head']
         )}
         ref={(el) => {
           this.el = el;

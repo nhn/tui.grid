@@ -5,7 +5,7 @@ import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
-import { MetaColumnInputRenderer } from '../renderer/metaColumnInput';
+import { RowHeaderInputRenderer } from '../renderer/RowHeaderInput';
 
 const DEF_MIN_WIDTH = 50;
 const DEF_META_COLUMN_MIN_WIDTH = 40;
@@ -54,12 +54,12 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   });
 }
 
-function getMetaColumnInfos(rowHeadersOption: OptRowHeader[]) {
+function getRowHeaderInfos(rowHeadersOption: OptRowHeader[]) {
   return rowHeadersOption.map(
     // eslint-disable-next-line complexity
     (data: OptRowHeader): ColumnInfo => {
-      const metaColumn = typeof data === 'string' ? { name: data } : data;
-      const { name, title, align, renderer, rendererOptions, width, minWidth } = metaColumn;
+      const rowHeader = typeof data === 'string' ? { name: data } : data;
+      const { name, title, align, renderer, rendererOptions, width, minWidth } = rowHeader;
       const isRowNum = name === '_number';
       const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH;
       const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
@@ -70,7 +70,7 @@ function getMetaColumnInfos(rowHeadersOption: OptRowHeader[]) {
         hidden: false,
         resizable: false,
         align: align || 'center',
-        renderer: renderer || (isRowNum ? DefaultRenderer : MetaColumnInputRenderer),
+        renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
         rendererOptions: rendererOptions || { inputType: 'checkbox' },
         fixedWidth: true,
         baseWidth,
@@ -86,13 +86,13 @@ export function create(
   rowHeadersOption: OptRowHeader[]
 ): Column {
   const columnInfos = columns.map((column) => createColumn(column, columnOptions));
-  const metaColumnInfos = getMetaColumnInfos(rowHeadersOption);
-  const allColumns = metaColumnInfos.concat(columnInfos);
+  const rowHeaderInfos = getRowHeaderInfos(rowHeadersOption);
+  const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
-    rowHeaders: metaColumnInfos,
+    rowHeaders: rowHeaderInfos,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
@@ -103,7 +103,7 @@ export function create(
     },
 
     get visibleColumnsBySide() {
-      const frozenLastIndex = this.frozenCount + this.visibleMetaColumnCount;
+      const frozenLastIndex = this.frozenCount + this.rowHeaderCount;
 
       return {
         L: this.visibleColumns.slice(0, frozenLastIndex),
@@ -115,8 +115,8 @@ export function create(
       return this.visibleColumnsBySide.L.length;
     },
 
-    get visibleMetaColumnCount() {
-      return metaColumnInfos.length;
+    get rowHeaderCount() {
+      return rowHeaderInfos.length;
     }
   });
 }

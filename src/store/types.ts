@@ -77,7 +77,7 @@ export interface ColumnInfo {
 export interface Column {
   frozenCount: number;
   visibleFrozenCount: number;
-  visibleMetaColumnCount: number;
+  rowHeaderCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
   allColumnMap: Dictionary<ColumnInfo>;
