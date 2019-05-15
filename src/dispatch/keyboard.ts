@@ -113,7 +113,7 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   }
 }
 
-function getAddress(
+export function getAddress(
   { row, column }: SelectionRange,
   focusRowIndex: number,
   focusColumnIndex: number

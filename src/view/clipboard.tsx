@@ -45,14 +45,14 @@ class ClipboardComp extends Component<Props> {
       case 'move':
         dispatch('selectionEnd');
         dispatch('moveFocus', command!);
-        dispatch('setScrollPosition', true);
+        dispatch('setScrollToFocus');
         break;
       case 'edit':
         dispatch('editFocus', command!);
         break;
       case 'select':
         dispatch('changeSelection', command!);
-        dispatch('setScrollPosition', false);
+        dispatch('setScrollToSelection');
         break;
       case 'remove':
         dispatch('removeFocus');
