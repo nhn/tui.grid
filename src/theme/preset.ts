@@ -1,8 +1,3 @@
-/**
- * @fileoverview theme preset
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
-
 import { deepAssign } from '../helper/common';
 
 export const presetDefault = {
