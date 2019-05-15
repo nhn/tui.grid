@@ -199,8 +199,8 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     case 'all':
       totalFocusColumnIndex = 0;
       focusRowIndex = 0;
-      rowIndex -= 1;
-      columnIndex -= 1;
+      rowIndex = rowLength - 1;
+      columnIndex = columnLength - 1;
       break;
     default:
   }
