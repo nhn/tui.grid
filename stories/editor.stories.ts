@@ -19,13 +19,12 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 const columns = [
   {
     name: 'name',
-    width: 150,
-    editor: 'text'
+    width: 150
   },
   {
     name: 'artist',
     width: 200,
-    editor: 'password'
+    editor: 'text'
   },
   {
     title: 'Genre',
@@ -70,9 +69,7 @@ stories.add('Text / Checkbox', () => {
   const { grid, el } = createGrid({
     data,
     columns,
-    columnOptions: {
-      frozenCount: 1
-    },
+    columnOptions: { frozenCount: 1 },
     bodyHeight: 400
   });
 

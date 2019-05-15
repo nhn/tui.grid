@@ -1,4 +1,4 @@
-import { storiesOf, addParameters } from '@storybook/html';
+import { storiesOf } from '@storybook/html';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import Grid from '../src/grid';
@@ -6,7 +6,6 @@ import { data } from '../samples/basic';
 import { withKnobs, button, number } from '@storybook/addon-knobs';
 import '../src/css/grid.css';
 
-addParameters({ html: { preventForceRender: false } });
 const stories = storiesOf('Columns', module);
 stories.addDecorator(withKnobs);
 
@@ -45,7 +44,7 @@ stories.add(
 
     return el;
   },
-  { html: { preventForceRender: true } }
+  { html: { preventForcedRender: true } }
 );
 
 stories.add('frozenBorderWidth', () => {
@@ -82,5 +81,5 @@ stories.add(
 
     return el;
   },
-  { html: { preventForceRender: true } }
+  { html: { preventForcedRender: true } }
 );

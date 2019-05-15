@@ -13,7 +13,7 @@ export class TextEditor implements CellEditor {
     const options = props.columnInfo.editorOptions as Options;
 
     el.className = cls('content-text');
-    el.type = (options && options.type) || 'text';
+    el.type = options.type;
     el.value = String(props.value);
 
     this.el = el;

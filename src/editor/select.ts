@@ -12,10 +12,10 @@ export class SelectEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('select');
-    const options = props.columnInfo.editorOptions as Options;
+    const { listItems } = props.columnInfo.editorOptions as Options;
 
-    options.listItems.forEach((item) => {
-      el.appendChild(this.createOptions(item.text, item.value));
+    listItems.forEach(({ text, value }) => {
+      el.appendChild(this.createOptions(text, value));
     });
     el.value = String(props.value);
 

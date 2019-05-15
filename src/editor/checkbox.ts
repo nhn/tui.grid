@@ -13,14 +13,14 @@ export class CheckboxEditor implements CellEditor {
   private el: HTMLElement;
 
   public constructor(props: CellEditorProps) {
-    const el = document.createElement('fieldset');
-    const options = props.columnInfo.editorOptions as CheckboxOptions;
     const name = 'tui-grid-check-input';
+    const el = document.createElement('fieldset');
+    const { listItems, type } = props.columnInfo.editorOptions as CheckboxOptions;
 
-    options.listItems.forEach((item) => {
-      const id = `${name}-${item.value}`;
-      el.appendChild(this.createCheckbox(item.value, name, id, options.type));
-      el.appendChild(this.createLabel(item.text, id));
+    listItems.forEach(({ text, value }) => {
+      const id = `${name}-${value}`;
+      el.appendChild(this.createCheckbox(value, name, id, type));
+      el.appendChild(this.createLabel(text, id));
     });
     this.el = el;
 
