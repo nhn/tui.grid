@@ -60,7 +60,6 @@ class SelectionLayerComp extends Component<Props> {
       return { left, width };
     }
 
-    // @TODO: L side 일 경우 meta 갯수 index에 더하기
     const widths = columnWidths[side];
     const [startIndex] = columnRange;
     let [, endIndex] = columnRange;

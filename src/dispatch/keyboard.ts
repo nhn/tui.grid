@@ -146,7 +146,6 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
 
   if (!currentRange) {
-    // @TODO: unit 체크해서 채워주기?
     selection.range = {
       row: [focusRowIndex, focusRowIndex],
       column: [totalFocusColumnIndex, totalFocusColumnIndex]

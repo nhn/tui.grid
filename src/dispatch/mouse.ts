@@ -286,8 +286,6 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
   if (shiftKey) {
     selectionUpdate(store, eventInfo);
-  } else if (selection.type === 'row') {
-    // @TODO: select row
   } else if (columnName !== '_number') {
     focus.rowKey = data.viewData[rowIndex].rowKey;
     focus.columnName = columnName;

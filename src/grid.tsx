@@ -196,6 +196,7 @@ export default class Grid {
    */
   public selection(range: { start: Range; end: Range }) {
     this.dispatch('setSelection', range);
+    // @TODO: selection event 발생
   }
 
   /**
