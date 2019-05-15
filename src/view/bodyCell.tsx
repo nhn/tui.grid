@@ -5,6 +5,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
+import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -66,7 +67,7 @@ export class BodyCellComp extends Component<Props> {
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
-          [name === '_number', 'cell-row-head']
+          [isRowHeader(name), 'cell-row-head']
         )}
         ref={(el) => {
           this.el = el;

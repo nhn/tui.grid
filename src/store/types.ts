@@ -18,6 +18,7 @@ export interface Dictionary<T> {
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   _number: number;
+  _checked: boolean;
   _extraData?: any;
 };
 
@@ -76,6 +77,7 @@ export interface ColumnInfo {
 export interface Column {
   frozenCount: number;
   visibleFrozenCount: number;
+  rowHeaderCount: number;
   rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
   allColumnMap: Dictionary<ColumnInfo>;
@@ -175,8 +177,4 @@ export interface Store {
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
   readonly summary: Summary;
-}
-
-export interface DefaultRowHeaders {
-  [propName: string]: any;
 }

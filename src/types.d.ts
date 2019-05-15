@@ -32,7 +32,7 @@ export type OptRow = {
   _extraData?: ExtraData;
 };
 
-export type OptRowHeader = string | OptMetaColumn;
+export type OptRowHeader = string | OptColumn;
 
 interface CellEditor {
   type: string;
@@ -289,10 +289,6 @@ export interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
-}
-
-export interface OptMetaColumn extends Partial<OptColumn> {
-  type: string | 'rowNum' | 'checkbox' | 'radio';
 }
 
 export interface OptSummaryData {
