@@ -281,9 +281,10 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   if (shiftKey) {
     selectionUpdate(store, eventInfo);
   } else if (columnName !== '_number') {
-  if (!isRowHeader(columnName)) {
-    focus.rowKey = data.viewData[rowIndex].rowKey;
-    focus.columnName = columnName;
-    selectionEnd(store);
+    if (!isRowHeader(columnName)) {
+      focus.rowKey = data.viewData[rowIndex].rowKey;
+      focus.columnName = columnName;
+      selectionEnd(store);
+    }
   }
 }
