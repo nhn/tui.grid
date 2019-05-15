@@ -1,5 +1,6 @@
 import { CellValue, Dictionary } from './store/types';
 import { CellRendererClass } from './renderer/types';
+import { CellEditorClass } from './editor/types';
 
 export interface OptGrid {
   el: HTMLElement;
@@ -45,7 +46,8 @@ export interface OptColumn {
   width?: number | 'auto';
   renderer?: CellRendererClass;
   rendererOptions?: Dictionary<any>;
-  editor?: string | CellEditor;
+  editor?: string | CellEditorClass;
+  editorOptions?: Dictionary<any>;
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;

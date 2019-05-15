@@ -3,6 +3,8 @@ import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
+import { editorMap } from '../editor/manager';
+import { CellEditorClass } from 'src/editor/types';
 
 const DEF_MIN_WIDTH = 50;
 
@@ -22,6 +24,17 @@ const defaultRowHeaders: DefaultRowHeaders = {
   }
 };
 
+function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
+  if (typeof editor === 'string') {
+    const editInfo = editorMap[editor];
+    return {
+      editor: editInfo[0],
+      editorOptions: { ...editInfo[1], ...editorOptions }
+    };
+  }
+  return { editor, editorOptions };
+}
+
 // eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const {
@@ -29,10 +42,11 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     name,
     width,
     minWidth,
-    editor,
     align,
     hidden,
     resizable,
+    editor,
+    editorOptions,
     renderer,
     rendererOptions
   } = column;
@@ -45,13 +59,12 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
-    editor: typeof editor === 'string' ? { type: editor } : editor,
     renderer: renderer || DefaultRenderer,
     rendererOptions,
     fixedWidth,
     baseWidth,
-    // @TODO meta tag 체크 여부
-    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH
+    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH, // @TODO meta tag 체크 여부
+    ...getEditorInfo(editor, editorOptions)
   });
 }
 

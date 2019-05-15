@@ -1,8 +1,7 @@
-import { CellEditor } from './types';
+import { CellEditor, CellEditorProps } from './types';
 import { CellValue } from '../store/types';
 
 export interface Options {
-  type: 'select';
   listItems: {
     text: string;
     value: CellValue;
@@ -11,14 +10,14 @@ export interface Options {
 export class SelectEditor implements CellEditor {
   private el: HTMLSelectElement;
 
-  public constructor(options: Options, value: CellValue) {
+  public constructor(props: CellEditorProps) {
     const el = document.createElement('select');
-    const { listItems } = options;
+    const options = props.columnInfo.editorOptions as Options;
 
-    listItems.forEach((item) => {
+    options.listItems.forEach((item) => {
       el.appendChild(this.createOptions(item.text, item.value));
     });
-    el.value = String(value);
+    el.value = String(props.value);
 
     this.el = el;
   }

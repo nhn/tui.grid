@@ -20,23 +20,19 @@ const columns = [
   {
     name: 'name',
     width: 150,
-    editor: {
-      type: 'text'
-    }
+    editor: 'text'
   },
   {
     name: 'artist',
     width: 200,
-    editor: {
-      type: 'password'
-    }
+    editor: 'password'
   },
   {
     title: 'Genre',
     name: 'genreCode',
     width: 200,
-    editor: {
-      type: 'checkbox',
+    editor: 'checkbox',
+    editorOptions: {
       listItems: [
         { text: 'Pop', value: '1' },
         { text: 'Rock', value: '2' },
@@ -48,8 +44,8 @@ const columns = [
     title: 'Type',
     name: 'typeCode',
     width: 200,
-    editor: {
-      type: 'radio',
+    editor: 'radio',
+    editorOptions: {
       listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
     }
   },
@@ -57,8 +53,8 @@ const columns = [
     title: 'Grade',
     name: 'grade',
     width: 200,
-    editor: {
-      type: 'select',
+    editor: 'select',
+    editorOptions: {
       listItems: [
         { text: '*', value: '1' },
         { text: '**', value: '2' },
