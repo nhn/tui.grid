@@ -7,8 +7,7 @@ import {
   SummaryColumnContents,
   SummaryColumnContentMap,
   SummaryValue,
-  SummaryValues,
-  Dictionary
+  SummaryValues
 } from './types';
 import { reactive, watch } from '../helper/reactive';
 import { OptSummaryData } from '../types';

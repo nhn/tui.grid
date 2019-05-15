@@ -38,7 +38,7 @@ export default class Grid {
       themeManager.apply('default');
     }
 
-    render(<Root store={store} dispatch={dispatch} editorMap={editorMap} rootElement={el} />, el);
+    render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
   }
 
   /**

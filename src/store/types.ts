@@ -1,4 +1,5 @@
 import { CellRendererClass } from '../renderer/types';
+import { CellEditorClass } from '../editor/types';
 
 export type CellValue = number | string | boolean | null | undefined;
 
@@ -59,7 +60,8 @@ export interface ColumnInfo {
   readonly title: string;
   readonly minWidth: number;
   readonly align: string;
-  editor?: CellEditorOptions;
+  editor?: CellEditorClass;
+  editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
   rendererOptions?: Dictionary<any>;
   hidden: boolean;

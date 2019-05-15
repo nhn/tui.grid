@@ -1,4 +1,5 @@
-import { CellValue } from '../store/types';
+import { CellValue, RowKey, ColumnInfo } from '../store/types';
+import Grid from '../grid';
 
 export interface CellEditor {
   getElement(): HTMLElement | undefined;
@@ -7,6 +8,13 @@ export interface CellEditor {
   finish?(): void;
 }
 
+export interface CellEditorProps {
+  grid: Grid;
+  rowKey: RowKey;
+  columnInfo: ColumnInfo;
+  value: CellValue;
+}
+
 export interface CellEditorClass {
-  new (options: any, value: CellValue, dispatch: Function): CellEditor;
+  new (props: CellEditorProps): CellEditor;
 }

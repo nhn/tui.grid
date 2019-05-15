@@ -4,7 +4,7 @@ import { ColumnInfo, ViewRow, CellRenderData, RowKey } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
-import { get as getInstance } from '../instance';
+import { getInstance } from '../instance';
 import Grid from '../grid';
 
 interface OwnProps {
