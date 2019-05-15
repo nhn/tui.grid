@@ -132,151 +132,183 @@ stories.add('single use - row number', () => {
   return rootEl;
 });
 
-stories.add('single use -checkbox', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: ['_checked']
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
+stories.add(
+  'single use -checkbox',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: ['_checked']
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
 
-  createButtons(grid);
+    createButtons(grid);
 
-  return rootEl;
-});
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
 
-stories.add('single use - radio', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
-      {
-        name: '_checked',
-        rendererOptions: { inputType: 'radio' }
+stories.add(
+  'single use - radio',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: [
+        {
+          name: '_checked',
+          rendererOptions: { inputType: 'radio' }
+        }
+      ]
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'multi use - checkbox, row number',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: ['_checked', '_number']
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'multi use - radio, row number',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: [
+        {
+          name: '_checked',
+          rendererOptions: { inputType: 'radio' }
+        },
+        '_number'
+      ]
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'set object type option',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: [
+        {
+          title: 'row number',
+          name: '_number',
+          width: 100,
+          align: 'left'
+        },
+        {
+          title: 'checkbox',
+          name: '_checked',
+          width: 100,
+          align: 'left'
+        }
+      ]
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'use custom renderer - row number',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: [
+        {
+          name: '_number',
+          renderer: RowNumberRenderer
+        }
+      ]
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'use custom renderer - checkbox',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: [
+        {
+          name: '_checked',
+          renderer: SingleCheckRenderer
+        }
+      ]
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+
+    createButtons(grid);
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'use frozen columns',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      rowHeaders: ['_number', '_checked'],
+      columnOptions: {
+        frozenCount: 2
       }
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
 
-  createButtons(grid);
+    createButtons(grid);
 
-  return rootEl;
-});
-
-stories.add('multi use - checkbox, row number', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: ['_checked', '_number']
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
-
-stories.add('multi use - radio, row number', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
-      {
-        name: '_checked',
-        rendererOptions: { inputType: 'radio' }
-      },
-      '_number'
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
-
-stories.add('set object type option', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
-      {
-        title: 'row number',
-        name: '_number',
-        width: 100,
-        align: 'left'
-      },
-      {
-        title: 'checkbox',
-        name: '_checked',
-        width: 100,
-        align: 'left'
-      }
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
-
-stories.add('use custom renderer - row number', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
-      {
-        name: '_number',
-        renderer: RowNumberRenderer
-      }
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
-
-stories.add('use custom renderer - checkbox', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
-      {
-        name: '_checked',
-        renderer: SingleCheckRenderer
-      }
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
-
-stories.add('use frozen columns', () => {
-  const { el, grid } = createGrid({
-    data,
-    columns,
-    rowHeaders: ['_number', '_checked'],
-    columnOptions: {
-      frozenCount: 2
-    }
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  createButtons(grid);
-
-  return rootEl;
-});
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
