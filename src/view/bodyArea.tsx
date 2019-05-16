@@ -1,11 +1,15 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, ColumnInfo } from '../store/types';
-import { cls } from '../helper/dom';
+import { Side, ColumnInfo, DragData } from '../store/types';
+import { cls, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
+import { SelectionLayer } from './selectionLayer';
+
+// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+const MIN_DISATNCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
@@ -34,6 +38,11 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private dragStartData: DragData = {
+    pageX: null,
+    pageY: null
+  };
+
   private handleScroll = (ev: UIEvent) => {
     const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
@@ -50,13 +59,47 @@ class BodyAreaComp extends Component<Props> {
     }
 
     const { el } = this;
-    const { pageX, pageY, shiftKey } = ev;
+    const { pageX, pageY } = ev;
+    const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
-    const offsetX = pageX - left + el.scrollLeft;
-    const offsetY = pageY - top + el.scrollTop;
 
-    dispatch('mouseDownBody', { offsetX, offsetY, side, shiftKey });
+    dispatch('mouseDownBody', { top, left, scrollTop, scrollLeft, side }, ev);
+
+    this.dragStartData = { pageX, pageY };
+    setCursorStyle('default');
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private moveEnoughToTriggerDragEvent = (current: DragData) => {
+    const dx = Math.abs(this.dragStartData.pageX! - current.pageX!);
+    const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
+    const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
+
+    return distance >= MIN_DISATNCE_FOR_DRAG;
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
+  private handleMouseMove = (ev: MouseEvent) => {
+    const { pageX, pageY } = ev;
+    if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
+      this.props.dispatch('dragMoveBody', ev);
+    }
+  };
+
+  private clearDocumentEvents = () => {
+    this.dragStartData = { pageX: null, pageY: null };
+    this.props.dispatch('dragEndBody');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
   };
 
   public shouldComponentUpdate(nextProps: Props) {
@@ -94,6 +137,7 @@ class BodyAreaComp extends Component<Props> {
           </div>
           <div class={cls('layer-selection')} style="display: none;" />
           <FocusLayer side={side} />
+          <SelectionLayer side={side} />
         </div>
       </div>
     );

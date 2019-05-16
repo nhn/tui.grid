@@ -3,7 +3,7 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Row } from './store/types';
+import { Store, CellValue, RowKey, Range, Row } from './store/types';
 import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
@@ -189,6 +189,17 @@ export default class Grid {
   }
 
   /**
+   * Selects cells or rows by range
+   * @param {Object} range - Selection range
+   *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+   *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+   */
+  public selection(range: { start: Range; end: Range }) {
+    this.dispatch('setSelection', range);
+    // @TODO: selection event 발생
+  }
+
+  /**
    * Returns data of currently focused cell
    * @returns {number|string} rowKey - The unique key of the row
    * @returns {string} columnName - The name of the column
@@ -225,7 +236,7 @@ export default class Grid {
     // @TODO: focus change event 발생
 
     this.dispatch('setFocusInfo', rowKey, columnName, true);
-    this.dispatch('setScrollPosition');
+    this.dispatch('setScrollToFocus');
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;

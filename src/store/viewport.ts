@@ -1,4 +1,4 @@
-import { Column, Range, Viewport, Dimension, Data, RowCoords } from './types';
+import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { reactive, Reactive } from '../helper/reactive';
 import { arrayEqual } from '../helper/common';
 
@@ -13,14 +13,37 @@ interface ViewPortOption {
   column: Column;
   dimension: Dimension;
   rowCoords: RowCoords;
+  columnCoords: ColumnCoords;
 }
 
-export function create({ data, column, dimension, rowCoords }: ViewPortOption): Reactive<Viewport> {
+export function create({
+  data,
+  column,
+  dimension,
+  rowCoords,
+  columnCoords
+}: ViewPortOption): Reactive<Viewport> {
   const { visibleColumns } = column;
 
   return reactive({
     scrollLeft: 0,
     scrollTop: 0,
+    scrollPixelScale: 40,
+    get maxScrollLeft() {
+      const { scrollbarWidth, cellBorderWidth } = dimension;
+      const { areaWidth, widths } = columnCoords;
+      let totalRWidth = 0;
+      widths.R.forEach((width) => {
+        totalRWidth += width + cellBorderWidth;
+      });
+
+      return totalRWidth - areaWidth.R + scrollbarWidth;
+    },
+    get maxScrollTop() {
+      const { bodyHeight, scrollbarWidth, totalRowHeight } = dimension;
+
+      return totalRowHeight - bodyHeight + scrollbarWidth;
+    },
     get colRange(this: Viewport) {
       return [0, visibleColumns.length] as Range;
     },

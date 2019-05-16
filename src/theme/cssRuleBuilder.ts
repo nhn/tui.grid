@@ -1,7 +1,3 @@
-/**
- * @fileoverview CSS Rule string builder
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
 import { OptScrollbarStyle, OptCellStyle } from './../types.d';
 import { cls, ClassNameType } from '../helper/dom';
 

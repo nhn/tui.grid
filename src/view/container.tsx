@@ -32,21 +32,42 @@ export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleMouseDown = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
     const { dispatch, editing } = this.props;
+    const { el } = this;
 
     dispatch('setNavigating', true);
     if (!editing) {
       ev.preventDefault();
     }
+
+    const { top, left } = el.getBoundingClientRect();
+
+    dispatch('setOffsetTop', top + el.scrollTop);
+    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   private handleDblClick = (ev: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const { dispatch } = this.props;
     const target = ev.target as HTMLElement;
     const address = getCellAddress(target);
 
     if (address) {
-      this.props.dispatch('startEditing', address.rowKey, address.columnName);
+      dispatch('startEditing', address.rowKey, address.columnName);
     }
+
+    const { top, left } = el.getBoundingClientRect();
+
+    dispatch('setOffsetTop', top + el.scrollTop);
+    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   public componentDidMount() {

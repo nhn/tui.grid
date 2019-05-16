@@ -1,7 +1,3 @@
-/**
- * @fileoverview i18n module file
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
 import { OptI18nLanguage, OptI18nData } from './../types.d';
 
 interface MapType<T> {

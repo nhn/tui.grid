@@ -1,8 +1,3 @@
-/**
- * @fileoverview theme manager
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
-
 import { presetDefault, clean, striped } from './preset';
 import { deepAssign } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';

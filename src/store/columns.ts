@@ -5,7 +5,7 @@ import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
-import { RowHeaderInputRenderer } from '../renderer/RowHeaderInput';
+import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
 const DEF_MIN_WIDTH = 50;
 const DEF_META_COLUMN_MIN_WIDTH = 40;

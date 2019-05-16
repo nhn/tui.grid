@@ -7,9 +7,15 @@ export type Range = [number, number];
 
 export type Side = 'L' | 'R';
 
+export type SelectionType = 'cell' | 'row' | 'column';
+
+export type SelectionUnit = 'cell' | 'row';
+
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
 export type RowKey = number | string;
+
+export type CellIndex = [number, number];
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -44,14 +50,19 @@ export interface ViewRow {
   valueMap: Dictionary<CellRenderData>;
 }
 
+export interface DragData {
+  pageX: number | null;
+  pageY: number | null;
+}
+
+export interface SelectionRange {
+  row: Range;
+  column: Range;
+}
+
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
-}
-
-export interface CellEditorOptions {
-  type: string;
-  [propName: string]: any;
 }
 
 export type Formatter = (value: CellValue) => string | string;
@@ -86,6 +97,8 @@ export interface Column {
 }
 
 export interface Dimension {
+  offsetLeft: number;
+  offsetTop: number;
   width: number;
   autoWidth: boolean;
   bodyHeight: number;
@@ -111,6 +124,9 @@ export interface Dimension {
 export interface Viewport {
   scrollLeft: number;
   scrollTop: number;
+  readonly scrollPixelScale: number;
+  readonly maxScrollLeft: number;
+  readonly maxScrollTop: number;
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
@@ -145,6 +161,7 @@ export interface Focus {
   columnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;
+  readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
   readonly cellPosRect: Rect | null;
 }
@@ -167,6 +184,31 @@ export interface Summary {
   summaryValues: SummaryValues;
 }
 
+export interface AreaInfo {
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+}
+
+export type RangeAreaInfo = { [key in Side]: AreaInfo | null };
+export type RangeBySide = {
+  [key in Side]: {
+    row: Range;
+    column: Range | null;
+  }
+};
+
+export interface Selection {
+  type: SelectionType;
+  unit: SelectionUnit;
+  intervalIdForAutoScroll: number | null;
+  inputRange: SelectionRange | null;
+  readonly range: SelectionRange | null;
+  readonly rangeBySide: RangeBySide | null;
+  readonly rangeAreaInfo: RangeAreaInfo | null;
+}
+
 export interface Store {
   readonly id: number;
   readonly data: Data;
@@ -176,5 +218,6 @@ export interface Store {
   readonly columnCoords: ColumnCoords;
   readonly rowCoords: RowCoords;
   readonly focus: Focus;
+  readonly selection: Selection;
   readonly summary: Summary;
 }

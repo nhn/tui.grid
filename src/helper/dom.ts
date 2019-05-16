@@ -158,3 +158,7 @@ export function appendStyleElement(id: string, cssString: string) {
 
   document.getElementsByTagName('head')[0].appendChild(style);
 }
+
+export function setCursorStyle(type: string) {
+  document.body.style.cursor = type;
+}

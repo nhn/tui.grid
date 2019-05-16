@@ -1,3 +1,6 @@
+import { CellIndex, Store } from '../store/types';
+import { clamp } from './common';
+
 export const keyNameMap = {
   8: 'backspace',
   9: 'tab',
@@ -126,4 +129,89 @@ export function keyEventGenerate(ev: KeyboardEvent) {
         command: commandInfo[1]
       }
     : {};
+}
+
+function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
+  position += cellBorderWidth * 2;
+
+  const idx = offsets.findIndex((offset) => offset - cellBorderWidth > position);
+
+  return idx >= 0 ? idx - 1 : offsets.length - 1;
+}
+
+function getPageMovedPosition(
+  rowIndex: number,
+  offsets: number[],
+  bodyHeight: number,
+  isPrevDir: boolean
+) {
+  const distance = isPrevDir ? -bodyHeight : bodyHeight;
+
+  return offsets[rowIndex] + distance;
+}
+
+function getPageMovedIndex(offsets: number[], cellBorderWidth: number, movedPosition: number) {
+  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, movedPosition);
+
+  return clamp(movedIndex, 0, offsets.length - 1);
+}
+
+// @TODO: 👇 store를 사용하는 함수들 helper에서 다른곳으로 코드 이동 필요
+export function getNextCellIndex(
+  store: Store,
+  command: KeyboardEventCommandType,
+  [rowIndex, columnIndex]: CellIndex
+): CellIndex {
+  const {
+    data: { viewData },
+    column: { visibleColumns },
+    dimension: { bodyHeight, cellBorderWidth },
+    rowCoords: { offsets }
+  } = store;
+
+  switch (command) {
+    case 'up':
+      rowIndex -= 1;
+      break;
+    case 'down':
+      rowIndex += 1;
+      break;
+    case 'left':
+      columnIndex -= 1;
+      break;
+    case 'right':
+      columnIndex += 1;
+      break;
+    case 'firstCell':
+      columnIndex = 0;
+      rowIndex = 0;
+      break;
+    case 'lastCell':
+      columnIndex = visibleColumns.length - 1;
+      rowIndex = viewData.length - 1;
+      break;
+    case 'pageUp': {
+      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+      break;
+    }
+    case 'pageDown': {
+      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
+      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+      break;
+    }
+    case 'firstColumn':
+      columnIndex = 0;
+      break;
+    case 'lastColumn':
+      columnIndex = visibleColumns.length - 1;
+      break;
+    default:
+      break;
+  }
+
+  rowIndex = clamp(rowIndex, 0, viewData.length - 1);
+  columnIndex = clamp(columnIndex, 0, visibleColumns.length - 1);
+
+  return [rowIndex, columnIndex];
 }

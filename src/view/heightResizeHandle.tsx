@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
-import { cls } from '../helper/dom';
+import { cls, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {
@@ -18,7 +18,7 @@ class HeightResizeHandleComp extends Component<Props> {
     this.dragStartY = ev.pageY;
     this.dragStartBodyHeight = this.props.bodyHeight;
 
-    document.body.style.cursor = 'row-resize';
+    setCursorStyle('row-resize');
     document.addEventListener('mousemove', this.handleMouseMove);
     document.addEventListener('mouseup', this.clearDocumentEvents);
     document.addEventListener('selectstart', this.handleSelectStart);
@@ -35,7 +35,7 @@ class HeightResizeHandleComp extends Component<Props> {
   };
 
   private clearDocumentEvents = () => {
-    document.body.style.cursor = '';
+    setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);
