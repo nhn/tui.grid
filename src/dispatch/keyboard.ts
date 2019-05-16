@@ -1,4 +1,4 @@
-import { Store, RowKey, SelectionRange } from '../store/types';
+import { Store, RowKey } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 
@@ -31,18 +31,14 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
     data: { viewData },
-    column: { visibleColumns, visibleColumnsBySide },
+    column: { visibleColumns },
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
-  let { rowIndex, columnIndex } = focus;
+  let { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
     return;
-  }
-
-  if (focus.side === 'R') {
-    columnIndex += visibleColumnsBySide.L.length;
   }
 
   switch (command) {
@@ -111,24 +107,6 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   }
 }
 
-export function getSelectionIndexes(
-  { row, column }: SelectionRange,
-  focusRowIndex: number,
-  focusColumnIndex: number
-) {
-  if (!row || !column) {
-    return {
-      rowIndex: null,
-      columnIndex: null
-    };
-  }
-
-  const rowIndex = row[0] === focusRowIndex ? row[1] : row[0];
-  const columnIndex = column[0] === focusColumnIndex ? column[1] : column[0];
-
-  return { rowIndex, columnIndex };
-}
-
 export function changeSelection(store: Store, command: KeyboardEventCommandType) {
   const {
     selection,
@@ -154,11 +132,8 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 
   const rowLength = viewData.length;
   const columnLength = visibleColumns.length;
-
-  let rowStartIndex = currentInputRange.row![0];
-  let columnStartIndex = currentInputRange.column![0];
-  let rowIndex = currentInputRange.row![1];
-  let columnIndex = currentInputRange.column![1];
+  let [rowStartIndex, rowIndex] = currentInputRange.row;
+  let [columnStartIndex, columnIndex] = currentInputRange.column;
 
   switch (command) {
     case 'up':

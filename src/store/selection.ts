@@ -93,7 +93,7 @@ export function create({
     type: 'cell' as SelectionType,
     intervalIdForAutoScroll: null,
     get range(this: Selection) {
-      if (!this.inputRange || !this.inputRange.row || !this.inputRange.column) {
+      if (!this.inputRange) {
         return null;
       }
 
@@ -110,8 +110,8 @@ export function create({
       const { column, row } = this.range;
 
       return {
-        L: { row, column: getOwnSideColumnRange(column!, 'L', visibleFrozenCount) },
-        R: { row, column: getOwnSideColumnRange(column!, 'R', visibleFrozenCount) }
+        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
+        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
       };
     },
     get rangeAreaInfo(this: Selection) {
@@ -123,14 +123,14 @@ export function create({
       let leftSideStyles = null;
       let rightSideStyles = null;
 
-      if (leftRange.row) {
+      if (leftRange.column) {
         leftSideStyles = {
           ...getVerticalStyles(leftRange.row, rowOffsets, rowHeights),
           ...getHorizontalStyles(leftRange.column, columnWidths, 'L', cellBorderWidth)
         };
       }
 
-      if (rightRange.row) {
+      if (rightRange.column) {
         rightSideStyles = {
           ...getVerticalStyles(rightRange.row, rowOffsets, rowHeights),
           ...getHorizontalStyles(rightRange.column, columnWidths, 'R', cellBorderWidth)

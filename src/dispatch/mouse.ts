@@ -190,19 +190,10 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
     viewport: { scrollTop, scrollLeft },
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
-    selection,
-    focus: {
-      rowIndex: focusRowIndex,
-      columnIndex: focusColumnIndex,
-      totalColumnIndex: totalFocusColumnIndex
-    }
+    selection
   } = store;
   const { pageX, pageY } = eventInfo;
   const { inputRange } = selection;
-
-  if (focusColumnIndex === null || focusRowIndex === null || totalFocusColumnIndex === null) {
-    return;
-  }
 
   let startRowIndex, startColumnIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
@@ -215,8 +206,8 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
     startRowIndex = rowIndex;
     startColumnIndex = columnIndex;
   } else {
-    startRowIndex = inputRange.row![0];
-    startColumnIndex = inputRange.column![0];
+    startRowIndex = inputRange.row[0];
+    startColumnIndex = inputRange.column[0];
   }
 
   selection.inputRange = {

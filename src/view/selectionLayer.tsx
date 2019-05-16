@@ -5,7 +5,6 @@ import { Side, AreaInfo } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {
-  active: boolean;
   styles: AreaInfo | null;
 }
 
@@ -19,11 +18,11 @@ class SelectionLayerComp extends Component<Props> {
   private el?: HTMLElement;
 
   public render() {
-    const { styles, active } = this.props;
+    const { styles } = this.props;
 
     return (
       <div>
-        {active && (
+        {!!styles && (
           <div
             ref={(el) => {
               this.el = el;
@@ -39,12 +38,8 @@ class SelectionLayerComp extends Component<Props> {
 
 export const SelectionLayer = connect<StoreProps, OwnProps>(
   ({ selection: { rangeAreaInfo } }, { side }) => {
-    let active = false;
     const styles = rangeAreaInfo && rangeAreaInfo[side];
-    if (styles !== null && styles.width !== 0) {
-      active = true;
-    }
 
-    return { active, styles };
+    return { styles };
   }
 )(SelectionLayerComp);

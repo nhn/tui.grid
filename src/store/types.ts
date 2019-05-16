@@ -54,8 +54,8 @@ export interface DragData {
 }
 
 export interface SelectionRange {
-  row: Range | null;
-  column: Range | null;
+  row: Range;
+  column: Range;
 }
 
 export interface Data {
@@ -190,6 +190,12 @@ export interface AreaInfo {
 }
 
 export type RangeAreaInfo = { [key in Side]: AreaInfo | null };
+export type RangeBySide = {
+  [key in Side]: {
+    row: Range;
+    column: Range | null;
+  }
+};
 
 export interface Selection {
   type: SelectionType;
@@ -197,7 +203,7 @@ export interface Selection {
   intervalIdForAutoScroll: number | null;
   inputRange: SelectionRange | null;
   readonly range: SelectionRange | null;
-  readonly rangeBySide: { [key in Side]: SelectionRange } | null;
+  readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
 }
 

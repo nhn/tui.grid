@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls } from '../helper/dom';
+import { cls, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';
@@ -31,7 +31,7 @@ class ColumnResizerComp extends Component<Props> {
     this.draggingWidth = this.props.widths[index];
     this.dragStartX = ev.pageX;
 
-    document.body.style.cursor = 'col-resize';
+    setCursorStyle('col-resize');
     document.addEventListener('mousemove', this.handleMouseMove);
     document.addEventListener('mouseup', this.clearDocumentEvents);
     document.addEventListener('selectstart', this.handleSelectStart);
@@ -49,7 +49,7 @@ class ColumnResizerComp extends Component<Props> {
   };
 
   private clearDocumentEvents = () => {
-    document.body.style.cursor = '';
+    setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);

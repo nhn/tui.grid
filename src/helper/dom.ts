@@ -159,11 +159,6 @@ export function appendStyleElement(id: string, cssString: string) {
   document.getElementsByTagName('head')[0].appendChild(style);
 }
 
-// @TODO: 제거 필요. conditional rendering
-export function showElement(el: HTMLElement) {
-  el.style.display = 'block';
-}
-
-export function hideElement(el: HTMLElement) {
-  el.style.display = 'none';
+export function setCursorStyle(type: string) {
+  document.body.style.cursor = type;
 }

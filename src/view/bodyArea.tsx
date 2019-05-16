@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import { Side, ColumnInfo, DragData } from '../store/types';
-import { cls } from '../helper/dom';
+import { cls, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
@@ -67,7 +67,7 @@ class BodyAreaComp extends Component<Props> {
     dispatch('mouseDownBody', { top, left, scrollTop, scrollLeft, side }, ev);
 
     this.dragStartData = { pageX, pageY };
-    document.body.style.cursor = 'default';
+    setCursorStyle('default');
     document.addEventListener('mousemove', this.handleMouseMove);
     document.addEventListener('mouseup', this.clearDocumentEvents);
     document.addEventListener('selectstart', this.handleSelectStart);
@@ -96,7 +96,7 @@ class BodyAreaComp extends Component<Props> {
     this.dragStartData = { pageX: null, pageY: null };
     this.props.dispatch('dragEndBody');
 
-    document.body.style.cursor = '';
+    setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
     document.removeEventListener('selectstart', this.handleSelectStart);
