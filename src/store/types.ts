@@ -15,6 +15,8 @@ export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
 
 export type RowKey = number | string;
 
+export type CellIndex = [number, number];
+
 export interface Dictionary<T> {
   [index: string]: T;
 }

@@ -1,93 +1,23 @@
 import { Store, RowKey } from '../store/types';
-import { clamp } from '../helper/common';
-import { KeyboardEventCommandType } from '../helper/keyboard';
-
-function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
-  position += cellBorderWidth * 2;
-
-  const idx = offsets.findIndex((offset) => offset - cellBorderWidth > position);
-
-  return idx >= 0 ? idx - 1 : offsets.length - 1;
-}
-
-function getPageMovedPosition(
-  rowIndex: number,
-  offsets: number[],
-  bodyHeight: number,
-  isPrevDir: boolean
-) {
-  const distance = isPrevDir ? -bodyHeight : bodyHeight;
-
-  return offsets[rowIndex] + distance;
-}
-
-function getPageMovedIndex(offsets: number[], cellBorderWidth: number, movedPosition: number) {
-  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, movedPosition);
-
-  return clamp(movedIndex, 0, offsets.length - 1);
-}
+import { getNextCellIndex, KeyboardEventCommandType } from '../helper/keyboard';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
     data: { viewData },
-    column: { visibleColumns },
-    dimension: { bodyHeight, cellBorderWidth },
-    rowCoords: { offsets }
+    column: { visibleColumns }
   } = store;
-  let { rowIndex, totalColumnIndex: columnIndex } = focus;
+  const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
     return;
   }
 
-  switch (command) {
-    case 'up':
-      rowIndex -= 1;
-      break;
-    case 'down':
-      rowIndex += 1;
-      break;
-    case 'left':
-      columnIndex -= 1;
-      break;
-    case 'right':
-      columnIndex += 1;
-      break;
-    case 'firstCell':
-      columnIndex = 0;
-      rowIndex = 0;
-      break;
-    case 'lastCell':
-      columnIndex = visibleColumns.length - 1;
-      rowIndex = viewData.length - 1;
-      break;
-    case 'pageUp': {
-      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
-      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      break;
-    }
-    case 'pageDown': {
-      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
-      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      break;
-    }
-    case 'firstColumn':
-      columnIndex = 0;
-      break;
-    case 'lastColumn':
-      columnIndex = visibleColumns.length - 1;
-      break;
-    default:
-      break;
-  }
-
-  rowIndex = clamp(rowIndex, 0, viewData.length - 1);
-  columnIndex = clamp(columnIndex, 0, visibleColumns.length - 1);
+  const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
 
   focus.navigating = true;
-  focus.rowKey = viewData[rowIndex].rowKey;
-  focus.columnName = visibleColumns[columnIndex].name;
+  focus.rowKey = viewData[nextRowIndex].rowKey;
+  focus.columnName = visibleColumns[nextColumnIndex].name;
 }
 
 export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
@@ -112,9 +42,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data: { viewData },
-    column: { visibleColumns },
-    rowCoords: { offsets },
-    dimension: { bodyHeight, cellBorderWidth }
+    column: { visibleColumns }
   } = store;
   let { inputRange: currentInputRange } = selection;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
@@ -132,61 +60,25 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 
   const rowLength = viewData.length;
   const columnLength = visibleColumns.length;
-  let [rowStartIndex, rowIndex] = currentInputRange.row;
-  let [columnStartIndex, columnIndex] = currentInputRange.column;
+  let rowStartIndex = currentInputRange.row[0];
+  const rowIndex = currentInputRange.row[1];
+  let columnStartIndex = currentInputRange.column[0];
+  const columnIndex = currentInputRange.column[1];
+  let nextCellIndexes;
 
-  switch (command) {
-    case 'up':
-      rowIndex -= 1;
-      break;
-    case 'down':
-      rowIndex += 1;
-      break;
-    case 'left':
-      columnIndex -= 1;
-      break;
-    case 'right':
-      columnIndex += 1;
-      break;
-    case 'pageUp': {
-      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
-      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      break;
-    }
-    case 'pageDown': {
-      const movedPosition = getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
-      rowIndex = getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
-      break;
-    }
-    case 'firstColumn':
-      columnIndex = 0;
-      break;
-    case 'lastColumn':
-      columnIndex = columnLength - 1;
-      break;
-    case 'firstCell':
-      rowIndex = 0;
-      columnIndex = 0;
-      break;
-    case 'lastCell':
-      rowIndex = rowLength - 1;
-      columnIndex = columnLength - 1;
-      break;
-    case 'all':
-      rowStartIndex = 0;
-      columnStartIndex = 0;
-      rowIndex = rowLength - 1;
-      columnIndex = columnLength - 1;
-      break;
-    default:
+  if (command === 'all') {
+    rowStartIndex = 0;
+    columnStartIndex = 0;
+    nextCellIndexes = [rowLength - 1, columnLength - 1];
+  } else {
+    nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
   }
 
-  rowIndex = clamp(rowIndex, 0, rowLength - 1);
-  columnIndex = clamp(columnIndex, 0, columnLength - 1);
+  const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
 
   selection.inputRange = {
-    row: [rowStartIndex, rowIndex],
-    column: [columnStartIndex, columnIndex]
+    row: [rowStartIndex, nextRowIndex],
+    column: [columnStartIndex, nextColumnIndex]
   };
 }
 

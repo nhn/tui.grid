@@ -25,21 +25,23 @@ function getSortedRange(range: Range): Range {
   return range[0] > range[1] ? [range[1], range[0]] : range;
 }
 
-function getOwnSideColumnRange(columnRange: Range, side: Side, visibleFrozenCount: number) {
-  let ownColumnRange: Range | null = null;
-
+function getOwnSideColumnRange(
+  columnRange: Range,
+  side: Side,
+  visibleFrozenCount: number
+): Range | null {
   if (side === 'L') {
     if (columnRange[0] < visibleFrozenCount) {
-      ownColumnRange = [columnRange[0], Math.min(columnRange[1], visibleFrozenCount - 1)];
+      return [columnRange[0], Math.min(columnRange[1], visibleFrozenCount - 1)];
     }
   } else if (columnRange[1] >= visibleFrozenCount) {
-    ownColumnRange = [
+    return [
       Math.max(columnRange[0], visibleFrozenCount) - visibleFrozenCount,
       columnRange[1] - visibleFrozenCount
     ];
   }
 
-  return ownColumnRange;
+  return null;
 }
 
 function getVerticalStyles(rowRange: Range, rowOffsets: number[], rowHeights: number[]) {
@@ -63,12 +65,9 @@ function getHorizontalStyles(
 
   const widths = columnWidths[side];
   const startIndex = columnRange[0];
-  let endIndex = columnRange[1];
-  let i = 0;
+  const endIndex = Math.min(columnRange[1], widths.length - 1);
 
-  endIndex = Math.min(endIndex, widths.length - 1);
-
-  for (; i <= endIndex; i += 1) {
+  for (let i = 0; i <= endIndex; i += 1) {
     if (i < startIndex) {
       left += widths[i] + cellBorderWidth;
     } else {

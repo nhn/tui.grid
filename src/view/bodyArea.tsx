@@ -73,9 +73,9 @@ class BodyAreaComp extends Component<Props> {
     document.addEventListener('selectstart', this.handleSelectStart);
   };
 
-  private moveEnoughToTriggerDragEvent = (start: DragData, current: DragData) => {
-    const dx = Math.abs(start.pageX! - current.pageX!);
-    const dy = Math.abs(start.pageY! - current.pageY!);
+  private moveEnoughToTriggerDragEvent = (current: DragData) => {
+    const dx = Math.abs(this.dragStartData.pageX! - current.pageX!);
+    const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
     return distance >= MIN_DISATNCE_FOR_DRAG;
@@ -87,7 +87,7 @@ class BodyAreaComp extends Component<Props> {
 
   private handleMouseMove = (ev: MouseEvent) => {
     const { pageX, pageY } = ev;
-    if (this.moveEnoughToTriggerDragEvent(this.dragStartData, { pageX, pageY })) {
+    if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       this.props.dispatch('dragMoveBody', ev);
     }
   };
