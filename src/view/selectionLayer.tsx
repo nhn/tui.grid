@@ -15,24 +15,10 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 class SelectionLayerComp extends Component<Props> {
-  private el?: HTMLElement;
-
   public render() {
     const { styles } = this.props;
 
-    return (
-      <div>
-        {!!styles && (
-          <div
-            ref={(el) => {
-              this.el = el;
-            }}
-            class={cls('layer-selection')}
-            style={styles}
-          />
-        )}
-      </div>
-    );
+    return <div>{!!styles && <div class={cls('layer-selection')} style={styles} />}</div>;
   }
 }
 

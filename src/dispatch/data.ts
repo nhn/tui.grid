@@ -1,7 +1,8 @@
 import { Store, CellValue, RowKey } from '../store/types';
+import { findProp } from '../helper/common';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
-  const targetRow = data.rawData.find((row) => row.rowKey === rowKey);
+  const targetRow = findProp('rowKey', rowKey, data.rawData);
   if (targetRow) {
     targetRow[columnName] = value;
   }

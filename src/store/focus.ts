@@ -1,5 +1,6 @@
 import { Focus, ColumnCoords, RowCoords, Column, Data } from './types';
 import { Reactive, reactive } from '../helper/reactive';
+import { someProp, findPropIndex } from '../helper/common';
 
 interface FocusOption {
   data: Data;
@@ -19,7 +20,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
         return null;
       }
 
-      return column.visibleColumnsBySide.R.some(({ name }) => name === this.columnName) ? 'R' : 'L';
+      return someProp('name', this.columnName, column.visibleColumnsBySide.R) ? 'R' : 'L';
     },
 
     get columnIndex(this: Focus) {
@@ -29,7 +30,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
         return null;
       }
 
-      return column.visibleColumnsBySide[side].findIndex(({ name }) => name === columnName);
+      return findPropIndex('name', columnName, column.visibleColumnsBySide[side]);
     },
 
     get totalColumnIndex(this: Focus) {
@@ -50,7 +51,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
         return null;
       }
 
-      return data.rawData.findIndex((row) => row.rowKey === rowKey);
+      return findPropIndex('rowKey', rowKey, data.rawData);
     },
 
     get cellPosRect(this: Focus) {

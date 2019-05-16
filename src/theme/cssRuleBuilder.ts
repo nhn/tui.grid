@@ -4,9 +4,9 @@ import { cls, ClassNameType } from '../helper/dom';
 /**
  * create css rule string and returns it
  * @module {theme/cssBuilder}
- * @param {String} selector - css selector
- * @param {String} property - css property
- * @param {String} value - css value
+ * @param selector - css selector
+ * @param property - css property
+ * @param  value - css value
  * @ignore
  */
 class CSSRuleBuilder {
@@ -28,9 +28,8 @@ class CSSRuleBuilder {
 
   /**
    * Add a set of css property and value.
-   * @param {String} property - css property
-   * @param {String} value - css value
-   * @returns {CSSRuleBuilder}
+   * @param property - css property
+   * @param  value - css value
    */
   public add(property: string, value?: string) {
     if (value) {
@@ -42,8 +41,6 @@ class CSSRuleBuilder {
 
   /**
    * Shortcut for add('border-color', value)
-   * @param {String} value - css value
-   * @returns {CSSRuleBuilder}
    */
   public border(value?: string) {
     return this.add('border-color', value);
@@ -51,10 +48,9 @@ class CSSRuleBuilder {
 
   /**
    * Add a border-width style to the rule.
-   * @param {Object} options - visible options
-   * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
-   * @param {Boolean} [options.showHorizontalBorder] - whether the horizontal border is visible
-   * @returns {CSSRuleBuilder}
+   * @param options - visible options
+   * @param [options.showVerticalBorder] - whether the vertical border is visible
+   * @param [options.showHorizontalBorder] - whether the horizontal border is visible
    */
   public borderWidth(options: OptCellStyle) {
     const vertical = options.showVerticalBorder;
@@ -76,10 +72,9 @@ class CSSRuleBuilder {
 
   /**
    * Add a vertical border style to the rule.
-   * @param {Object} options - visible options
-   * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
-   * @param {String} position - Position of the vertical border ('right' or 'left')
-   * @returns {CSSRuleBuilder}
+   * @param options - visible options
+   * @param [options.showVerticalBorder] - whether the vertical border is visible
+   * @param position - Position of the vertical border ('right' or 'left')
    */
   public verticalBorderStyle(options: OptCellStyle, position?: string) {
     const vertical = options.showVerticalBorder;
@@ -96,8 +91,6 @@ class CSSRuleBuilder {
 
   /**
    * Shortcut for add('background-color', value)
-   * @param {String} value - css value
-   * @returns {CSSRuleBuilder}
    */
   public bg(value?: string) {
     return this.add('background-color', value);
@@ -105,8 +98,6 @@ class CSSRuleBuilder {
 
   /**
    * Shortcut for add('color', value)
-   * @param {String} value - css value
-   * @returns {CSSRuleBuilder}
    */
   public text(value?: string) {
     return this.add('color', value);
@@ -114,7 +105,6 @@ class CSSRuleBuilder {
 
   /**
    * Create a CSS rule string with a selector and prop-values.
-   * @returns {String}
    */
   public build() {
     let result = '';
@@ -129,8 +119,6 @@ class CSSRuleBuilder {
 
 /**
  * Creates new Builder instance.
- * @param {String} selector - selector
- * @returns {CSSRuleBuilder}
  */
 export function create(selector: string) {
   return new CSSRuleBuilder(selector);
@@ -138,8 +126,6 @@ export function create(selector: string) {
 
 /**
  * Creates a new Builder instance with a class name selector.
- * @param {String} className - class name
- * @returns {CSSRuleBuilder}
  */
 export function createClassRule(className: ClassNameType) {
   return create(`.${cls(className)}`);
@@ -147,9 +133,8 @@ export function createClassRule(className: ClassNameType) {
 
 /**
  * Creates a new Builder instance with a nested class name.
- * @param {String} selector - selector to compose class names
- * @param {Array} classNames - classNames
- * @returns {CSSRuleBuilder}
+ * @param selector - selector to compose class names
+ * @param classNames - classNames
  */
 export function createNestedClassRule(
   selector: string,
@@ -160,9 +145,6 @@ export function createNestedClassRule(
 
 /**
  * Creates an array of new Builder instances for the -webkit-scrollbar styles.
- * @param {String} selector - selector
- * @param {Object} options - options
- * @returns {Array.<CSSRuleBuilder>}
  */
 export function createWebkitScrollbarRules(selector: string, options: OptScrollbarStyle) {
   return [
@@ -174,9 +156,6 @@ export function createWebkitScrollbarRules(selector: string, options: OptScrollb
 
 /**
  * Creates a builder instance for the IE scrollbar styles.
- * @param {String} selector - selector
- * @param {Object} options - options
- * @returns {CSSRuleBuilder}
  */
 export function createIEScrollbarRule(selector: string, options: OptScrollbarStyle) {
   const bgProps = [
@@ -200,8 +179,6 @@ export function createIEScrollbarRule(selector: string, options: OptScrollbarSty
 }
 /**
  * Build all rules and returns the concatenated string.
- * @param {Array.<Rule>} rules - rule builders
- * @returns {String}
  */
 export function buildAll(rules: CSSRuleBuilder[]) {
   return rules
