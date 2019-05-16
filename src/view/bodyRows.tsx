@@ -46,8 +46,8 @@ class BodyRowsComp extends Component<Props> {
     return true;
   }
 
-  public render({ rows, dummyRowCount }: Props) {
-    const columnNames = this.props.columns.map(({ name }) => name);
+  public render({ rows, columns, dummyRowCount }: Props) {
+    const columnNames = columns.map(({ name }) => name);
 
     return (
       <tbody>
