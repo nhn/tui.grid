@@ -1,4 +1,4 @@
-import { CellValue, Dictionary, SelectionUnit } from './store/types';
+import { CellValue, Dictionary, SelectionUnit, ClipboardCopyOptions } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 
@@ -17,6 +17,7 @@ export interface OptGrid {
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
   selectionUnit?: SelectionUnit;
+  copyOptions?: ClipboardCopyOptions;
 }
 
 export interface ExtraData {
@@ -34,11 +35,6 @@ export type OptRow = {
 };
 
 export type OptRowHeader = string | OptColumn;
-
-interface CellEditor {
-  type: string;
-  [propName: string]: any;
-}
 
 export interface OptColumn {
   name: string;

@@ -377,4 +377,16 @@ export default class Grid {
     // @TODO 반환되는 값 - 순수 객체 처리 변환
     return this.store.data.rawData.filter(({ _checked }) => _checked);
   }
+
+  /**
+   * Copy to clipboard
+   */
+  public copyToClipboard() {
+    // @TODO: setClipboardText() 수행 or 하단 함수 실행
+    console.log('clipboard event!');
+    // if (!window.clipboardData) {
+    //   // Accessing the clipboard is a security concern on chrome
+    //   document.execCommand('copy');
+    // }
+  }
 }
