@@ -25,7 +25,6 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
   return { editor, editorOptions };
 }
 
-// eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const {
     header,
@@ -58,7 +57,6 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
   });
 }
 
-// eslint-disable-next-line complexity
 function createRowHeader(data: OptRowHeader): ColumnInfo {
   const rowHeader = typeof data === 'string' ? { name: data } : data;
   const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
