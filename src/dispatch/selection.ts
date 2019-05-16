@@ -1,5 +1,4 @@
 import { Store, Range } from '../store/types';
-import { getSortedRange } from './mouse';
 import { clamp } from '../helper/common';
 
 export function setSelection(store: Store, range: { start: Range; end: Range }) {
@@ -16,8 +15,8 @@ export function setSelection(store: Store, range: { start: Range; end: Range }) 
   const startColumnIndex = clamp(range.start[1], 0, columnLength - 1);
   const endColumnIndex = clamp(range.end[1], 0, columnLength - 1);
 
-  selection.range = {
-    row: getSortedRange([startRowIndex, endRowIndex]),
-    column: getSortedRange([startColumnIndex, endColumnIndex])
+  selection.inputRange = {
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
   };
 }

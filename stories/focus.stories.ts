@@ -1,4 +1,4 @@
-import { addParameters, storiesOf } from '@storybook/html';
+import { storiesOf } from '@storybook/html';
 import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';

@@ -17,6 +17,13 @@ module.exports = {
     parser: 'typescript-eslint-parser'
   },
   rules: {
+    'prefer-destructuring': [
+      'error',
+      {
+        object: true,
+        array: false
+      }
+    ],
     'newline-before-return': 0,
     'padding-line-between-statements': 0,
     '@typescript-eslint/no-non-null-assertion': 0,

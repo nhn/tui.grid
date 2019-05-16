@@ -1,4 +1,4 @@
-import { Store, Side, Range, Dimension, Selection, SelectionRange, Viewport } from '../store/types';
+import { Store, Side, Dimension, Selection, Viewport } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 
@@ -28,11 +28,6 @@ interface ViewInfo {
   pageY: number;
 }
 
-interface IndexInfo {
-  rowIndex: number;
-  columnIndex: number;
-}
-
 interface BodySize {
   bodyWidth: number;
   bodyHeight: number;
@@ -53,15 +48,14 @@ function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimens
     summaryHeight,
     summaryPosition
   } = dimension;
-  const smHeight = summaryPosition === 'top' ? summaryHeight : 0;
-  const x = pageX - offsetLeft;
-  const y = pageY - (offsetTop + headerHeight + smHeight + cellBorderWidth + tableBorderWidth);
+  const adjustedSummaryHeight = summaryPosition === 'top' ? summaryHeight : 0;
 
-  return { x, y };
-}
-
-export function getSortedRange(range: Range): Range {
-  return range[0] > range[1] ? [range[1], range[0]] : range;
+  return {
+    x: pageX - offsetLeft,
+    y:
+      pageY -
+      (offsetTop + headerHeight + adjustedSummaryHeight + cellBorderWidth + tableBorderWidth)
+  };
 }
 
 function getTotalColumnOffsets(widths: { [key in Side]: number[] }, cellBorderWidth: number) {
@@ -88,29 +82,6 @@ function getScrolledPosition(
     x: scrolledPositionX,
     y: scrolledPositionY
   };
-}
-
-export function getRange(
-  { type, unit }: Selection,
-  { rowIndex: rowEndIndex, columnIndex: columnEndIndex }: IndexInfo,
-  { rowIndex: rowStartIndex, columnIndex: columnStartIndex }: IndexInfo,
-  columnLength: number,
-  rowLength: number
-) {
-  if (unit === 'row') {
-    columnStartIndex = 0;
-    columnEndIndex = columnLength - 1;
-  } else if (type === 'column') {
-    // @TODO: header selection 추가시 type 개념 추가 필요
-    rowEndIndex = rowLength - 1;
-  }
-
-  const range = {
-    row: getSortedRange([rowStartIndex, rowEndIndex]),
-    column: getSortedRange([columnStartIndex, columnEndIndex])
-  };
-
-  return range as SelectionRange;
 }
 
 function judgeOverflow(
@@ -208,46 +179,50 @@ function setScrolling(
 }
 
 export function selectionEnd({ selection }: Store) {
-  selection.range = null;
+  selection.inputRange = null;
   // @TODO: minimumColumnRange 고려 필요
   // selection.minimumColumnRange = null;
 }
 
 export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
   const {
-    data: { viewData },
-    column: { visibleColumns, visibleColumnsBySide },
     dimension,
     viewport: { scrollTop, scrollLeft },
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
     selection,
-    focus: { rowIndex: focusRowIndex, columnIndex: focusColumnIndex, side }
+    focus: {
+      rowIndex: focusRowIndex,
+      columnIndex: focusColumnIndex,
+      totalColumnIndex: totalFocusColumnIndex
+    }
   } = store;
   const { pageX, pageY } = eventInfo;
+  const { inputRange } = selection;
 
-  if (focusColumnIndex === null || focusRowIndex === null) {
+  if (focusColumnIndex === null || focusRowIndex === null || totalFocusColumnIndex === null) {
     return;
   }
 
+  let startRowIndex, startColumnIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
   const rowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
   const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
-  const totalFocusColumnIndex =
-    side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
 
-  const inputIndex = { rowIndex, columnIndex };
-  const focusIndex = { rowIndex: focusRowIndex, columnIndex: totalFocusColumnIndex };
+  if (inputRange === null) {
+    startRowIndex = rowIndex;
+    startColumnIndex = columnIndex;
+  } else {
+    startRowIndex = inputRange.row![0];
+    startColumnIndex = inputRange.column![0];
+  }
 
-  selection.range = getRange(
-    selection,
-    inputIndex,
-    focusIndex,
-    visibleColumns.length,
-    viewData.length
-  );
+  selection.inputRange = {
+    row: [startRowIndex, rowIndex],
+    column: [startColumnIndex, columnIndex]
+  };
 }
 
 export function dragMoveBody(store: Store, eventInfo: MouseEvent) {
@@ -280,11 +255,9 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
   if (shiftKey) {
     selectionUpdate(store, eventInfo);
-  } else if (columnName !== '_number') {
-    if (!isRowHeader(columnName)) {
-      focus.rowKey = data.viewData[rowIndex].rowKey;
-      focus.columnName = columnName;
-      selectionEnd(store);
-    }
+  } else if (!isRowHeader(columnName)) {
+    focus.rowKey = data.viewData[rowIndex].rowKey;
+    focus.columnName = columnName;
+    selectionEnd(store);
   }
 }

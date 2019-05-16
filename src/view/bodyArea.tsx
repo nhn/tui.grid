@@ -38,9 +38,9 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private dragStartData = {
-    pageX: -1,
-    pageY: -1
+  private dragStartData: DragData = {
+    pageX: null,
+    pageY: null
   };
 
   private handleScroll = (ev: UIEvent) => {
@@ -74,8 +74,8 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private moveEnoughToTriggerDragEvent = (start: DragData, current: DragData) => {
-    const dx = Math.abs(start.pageX - current.pageX);
-    const dy = Math.abs(start.pageY - current.pageY);
+    const dx = Math.abs(start.pageX! - current.pageX!);
+    const dy = Math.abs(start.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
     return distance >= MIN_DISATNCE_FOR_DRAG;
@@ -86,19 +86,14 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    if (!this.el) {
-      return;
-    }
-
     const { pageX, pageY } = ev;
-
     if (this.moveEnoughToTriggerDragEvent(this.dragStartData, { pageX, pageY })) {
       this.props.dispatch('dragMoveBody', ev);
     }
   };
 
   private clearDocumentEvents = () => {
-    this.dragStartData = { pageX: -1, pageY: -1 };
+    this.dragStartData = { pageX: null, pageY: null };
     this.props.dispatch('dragEndBody');
 
     document.body.style.cursor = '';

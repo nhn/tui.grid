@@ -159,6 +159,7 @@ export function appendStyleElement(id: string, cssString: string) {
   document.getElementsByTagName('head')[0].appendChild(style);
 }
 
+// @TODO: 제거 필요. conditional rendering
 export function showElement(el: HTMLElement) {
   el.style.display = 'block';
 }

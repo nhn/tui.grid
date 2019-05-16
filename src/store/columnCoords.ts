@@ -97,7 +97,7 @@ function calculateWidths(columns: ColumnInfo[], contentWidth: number) {
   );
 }
 
-function calculateOffests(widths: number[], borderWidth: number) {
+function calculateOffsets(widths: number[], borderWidth: number) {
   const offsets = [0];
   for (let i = 1, len = widths.length; i < len; i += 1) {
     offsets[i] = offsets[i - 1] + widths[i - 1] + borderWidth;
@@ -125,8 +125,8 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
 
     get offsets(this: ColumnCoords) {
       return {
-        L: calculateOffests(this.widths.L, dimension.cellBorderWidth),
-        R: calculateOffests(this.widths.R, dimension.cellBorderWidth)
+        L: calculateOffsets(this.widths.L, dimension.cellBorderWidth),
+        R: calculateOffsets(this.widths.R, dimension.cellBorderWidth)
       };
     },
 

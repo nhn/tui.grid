@@ -1,7 +1,6 @@
 import { Store, RowKey, SelectionRange } from '../store/types';
 import { clamp } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
-import { getRange } from './mouse';
 
 function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
   position += cellBorderWidth * 2;
@@ -117,6 +116,13 @@ export function getSelectionIndexes(
   focusRowIndex: number,
   focusColumnIndex: number
 ) {
+  if (!row || !column) {
+    return {
+      rowIndex: null,
+      columnIndex: null
+    };
+  }
+
   const rowIndex = row[0] === focusRowIndex ? row[1] : row[0];
   const columnIndex = column[0] === focusColumnIndex ? column[1] : column[0];
 
@@ -128,24 +134,19 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data: { viewData },
-    column: { visibleColumns, visibleColumnsBySide },
+    column: { visibleColumns },
     rowCoords: { offsets },
     dimension: { bodyHeight, cellBorderWidth }
   } = store;
+  let { inputRange: currentInputRange } = selection;
+  const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
 
-  let { range: currentRange } = selection;
-  const { side, columnIndex: focusColumnIndex } = focus;
-  let { rowIndex: focusRowIndex } = focus;
-
-  if (focusRowIndex === null || focusColumnIndex === null) {
+  if (focusRowIndex === null || totalFocusColumnIndex === null) {
     return;
   }
 
-  let totalFocusColumnIndex =
-    side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
-
-  if (!currentRange) {
-    currentRange = selection.range = {
+  if (!currentInputRange) {
+    currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
       column: [totalFocusColumnIndex, totalFocusColumnIndex]
     };
@@ -153,11 +154,11 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 
   const rowLength = viewData.length;
   const columnLength = visibleColumns.length;
-  let { rowIndex, columnIndex } = getSelectionIndexes(
-    currentRange,
-    focusRowIndex,
-    totalFocusColumnIndex
-  );
+
+  let rowStartIndex = currentInputRange.row![0];
+  let columnStartIndex = currentInputRange.column![0];
+  let rowIndex = currentInputRange.row![1];
+  let columnIndex = currentInputRange.column![1];
 
   switch (command) {
     case 'up':
@@ -197,8 +198,8 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
       columnIndex = columnLength - 1;
       break;
     case 'all':
-      totalFocusColumnIndex = 0;
-      focusRowIndex = 0;
+      rowStartIndex = 0;
+      columnStartIndex = 0;
       rowIndex = rowLength - 1;
       columnIndex = columnLength - 1;
       break;
@@ -208,13 +209,10 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   rowIndex = clamp(rowIndex, 0, rowLength - 1);
   columnIndex = clamp(columnIndex, 0, columnLength - 1);
 
-  selection.range = getRange(
-    selection,
-    { rowIndex, columnIndex },
-    { rowIndex: focusRowIndex, columnIndex: totalFocusColumnIndex },
-    columnLength,
-    rowLength
-  );
+  selection.inputRange = {
+    row: [rowStartIndex, rowIndex],
+    column: [columnStartIndex, columnIndex]
+  };
 }
 
 export function removeFocus(store: Store) {

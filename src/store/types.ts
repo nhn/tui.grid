@@ -49,23 +49,18 @@ export interface ViewRow {
 }
 
 export interface DragData {
-  pageX: number;
-  pageY: number;
+  pageX: number | null;
+  pageY: number | null;
 }
 
 export interface SelectionRange {
-  row: Range;
-  column: Range;
+  row: Range | null;
+  column: Range | null;
 }
 
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
-}
-
-export interface CellEditorOptions {
-  type: string;
-  [propName: string]: any;
 }
 
 export type Formatter = (value: CellValue) => string | string;
@@ -186,11 +181,23 @@ export interface Summary {
   summaryValues: SummaryValues;
 }
 
+export interface AreaInfo {
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+}
+
+export type RangeAreaInfo = { [key in Side]: AreaInfo | null };
+
 export interface Selection {
-  range: SelectionRange | null;
   type: SelectionType;
   unit: SelectionUnit;
   intervalIdForAutoScroll: number | null;
+  inputRange: SelectionRange | null;
+  readonly range: SelectionRange | null;
+  readonly rangeBySide: { [key in Side]: SelectionRange } | null;
+  readonly rangeAreaInfo: RangeAreaInfo | null;
 }
 
 export interface Store {

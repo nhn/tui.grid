@@ -1,4 +1,4 @@
-import { Rect, Side, Store, Viewport } from '../store/types';
+import { Rect, Store, Viewport } from '../store/types';
 import { getSelectionIndexes } from './keyboard';
 
 export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
@@ -99,23 +99,34 @@ export function setScrollToSelection(store: Store) {
     columnCoords: { areaWidth, widths, offsets: columnOffsets },
     rowCoords: { heights, offsets: rowOffsets },
     selection: { range },
-    focus: { rowIndex: focusRowIndex, columnIndex: focusColumnIndex, side },
-    viewport,
-    column: { visibleColumnsBySide }
+    focus: {
+      rowIndex: focusRowIndex,
+      columnIndex: focusColumnIndex,
+      totalColumnIndex: totalFocusColumnIndex
+    },
+    viewport
   } = store;
   const { scrollLeft, scrollTop } = viewport;
 
-  if (!range || focusRowIndex === null || focusColumnIndex === null) {
+  if (
+    !range ||
+    focusRowIndex === null ||
+    focusColumnIndex === null ||
+    totalFocusColumnIndex === null
+  ) {
     return;
   }
 
-  const totalFocusColumnIndex =
-    side === 'R' ? focusColumnIndex + visibleColumnsBySide.L.length : focusColumnIndex;
   const { rowIndex, columnIndex } = getSelectionIndexes(
     range,
     focusRowIndex,
     totalFocusColumnIndex
   );
+
+  if (columnIndex === null || rowIndex === null) {
+    return;
+  }
+
   const cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
   const rightSideColumnIndex = columnIndex - widths.L.length;
 

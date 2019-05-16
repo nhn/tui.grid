@@ -38,11 +38,6 @@ export class ContainerComp extends Component<Props> {
 
     const { dispatch, editing } = this.props;
     const { el } = this;
-    const target = ev.target as HTMLElement;
-    const focusBlockTags = ['input', 'a', 'button', 'select', 'textarea'];
-    const focusBlocked = focusBlockTags.includes(target.tagName.toLowerCase());
-    /* const cellAddress = getCellAddress(target); */
-    const isMainButton = false;
 
     dispatch('setNavigating', true);
     if (!editing) {

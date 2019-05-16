@@ -32,6 +32,17 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
       return column.visibleColumnsBySide[side].findIndex(({ name }) => name === columnName);
     },
 
+    get totalColumnIndex(this: Focus) {
+      const { visibleColumnsBySide } = column;
+      if (this.columnIndex === null) {
+        return null;
+      }
+
+      return this.side === 'R'
+        ? this.columnIndex + visibleColumnsBySide.L.length
+        : this.columnIndex;
+    },
+
     get rowIndex(this: Focus) {
       const { rowKey } = this;
 

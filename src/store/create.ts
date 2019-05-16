@@ -42,7 +42,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const viewport = createViewport({ data, column, dimension, rowCoords, columnCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
-  const selection = createSelection({ selectionUnit });
+  const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
 
   return reactive({
     id,

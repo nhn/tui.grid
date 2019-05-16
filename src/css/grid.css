@@ -160,7 +160,6 @@
 }
 .tui-grid-layer-selection {
   position: absolute;
-  display: none;
   top: 0;
   width: 0;
   height: 0;
