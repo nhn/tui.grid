@@ -276,7 +276,7 @@ stories.add(
           header: `
             <label for="all-checkbox" class="checkbox">
               <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
-              <div class="custom-input"></div>
+              <span class="custom-input"></span>
             </label>
           `,
           renderer: SingleCheckRenderer
