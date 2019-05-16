@@ -21,7 +21,7 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
-export type Row = Dictionary<CellValue> & {
+export type Row = Dictionary<CellValue | any> & {
   rowKey: RowKey;
   _number: number;
   _checked: boolean;
@@ -36,6 +36,18 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
+export type CustomValue = (
+  value: CellValue,
+  rowAttrs: Row[],
+  column: ColumnInfo
+) => string | string;
+
+export interface ClipboardCopyOptions {
+  useFormattedValue?: boolean;
+  useListItemText?: boolean;
+  customValue?: CustomValue;
+}
+
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
@@ -43,6 +55,7 @@ export interface CellRenderData {
   prefix: string;
   postfix: string;
   value: CellValue;
+  editorOptions: Dictionary<any>;
 }
 
 export interface ViewRow {
@@ -63,16 +76,23 @@ export interface SelectionRange {
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
+  sortOptions: SortOptions;
   checkedAllRows: boolean;
 }
 
-export type Formatter = (value: CellValue) => string | string;
+export interface FormatterProps {
+  row: Row;
+  column: ColumnInfo;
+  value: CellValue;
+}
+
+export type Formatter = (props: FormatterProps) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
-  readonly header: string;
-  readonly minWidth: number;
-  readonly align: string;
+  copyOptions?: ClipboardCopyOptions;
+  header: string;
+  minWidth: number;
   editor?: CellEditorClass;
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
@@ -84,6 +104,21 @@ export interface ColumnInfo {
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;
+  relationMap?: Dictionary<Relations>;
+  related?: boolean;
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  ellipsis?: boolean;
+  escapeHTML?: boolean;
+  defaultValue?: CellValue;
+  sortable?: boolean;
+}
+
+export interface SortOptions {
+  columnName: string;
+  ascending: boolean;
+  useClient: boolean;
 }
 
 export interface Column {
@@ -94,6 +129,25 @@ export interface Column {
   allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];
   visibleColumnsBySide: VisibleColumnsBySide;
+}
+
+export interface Relations {
+  targetNames?: string[];
+  listItems?: (relationParams: RelationCallbackData) => ListItem[];
+  editable?: (relationParams: RelationCallbackData) => boolean;
+  disabled?: (relationParams: RelationCallbackData) => boolean;
+}
+
+export interface ListItem {
+  text: string;
+  value: CellValue;
+}
+
+export interface RelationCallbackData {
+  value?: CellValue;
+  editable?: boolean;
+  disabled?: boolean;
+  row?: Row;
 }
 
 export interface Dimension {
@@ -119,6 +173,8 @@ export interface Dimension {
   readonly contentsWidth: number;
   readonly frozenBorderWidth: number;
   readonly totalRowHeight: number;
+  readonly scrollXHeight: number;
+  readonly scrollYWidth: number;
 }
 
 export interface Viewport {
@@ -131,6 +187,7 @@ export interface Viewport {
   readonly rowRange: Range;
   readonly colRange: Range;
   readonly rows: ViewRow[];
+  readonly dummyRowCount: number;
 }
 
 export interface ColumnCoords {

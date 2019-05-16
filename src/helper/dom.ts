@@ -1,3 +1,5 @@
+import { WindowWithClipboard } from '../view/clipboard';
+
 const CLS_PREFIX = 'tui-grid-';
 
 export type ClassNameType =

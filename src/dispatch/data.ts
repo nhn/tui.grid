@@ -1,5 +1,7 @@
 import { Store, CellValue, RowKey } from '../store/types';
-import { findProp } from '../helper/common';
+import { applyPasteDataToRawData, duplicateData, getRangeToPaste } from '../query/clipboard';
+import { findProp, arrayEqual } from '../helper/common';
+import { getSortedData } from '../helper/sort';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -41,5 +43,30 @@ export function uncheckAll(store: Store) {
 
   if (rendererOptions.inputType !== 'radio') {
     setColumnValues(store, '_checked', false);
+  }
+}
+
+export function paste(store: Store, pasteData: string[][]) {
+  const { selection } = store;
+
+  if (selection.range) {
+    pasteData = duplicateData(selection.range, pasteData);
+  }
+
+  const rangeToPaste = getRangeToPaste(store, pasteData);
+  applyPasteDataToRawData(store, pasteData, rangeToPaste);
+  store.selection.inputRange = rangeToPaste;
+}
+
+// @TODO neet to modify useClient options with net api
+export function sort({ data }: Store, columnName: string, ascending: boolean) {
+  const { sortOptions } = data;
+  if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
+    data.sortOptions = { ...sortOptions, columnName, ascending };
+  }
+  const { rawData, viewData } = getSortedData(data, columnName, ascending);
+  if (!arrayEqual(rawData, data.rawData)) {
+    data.rawData = rawData;
+    data.viewData = viewData;
   }
 }

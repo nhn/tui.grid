@@ -107,6 +107,7 @@ export function create({
       // @TODO: span 처리 필요
       return { row, column };
     },
+
     get rangeBySide(this: Selection) {
       if (!this.range) {
         return null;
@@ -118,6 +119,7 @@ export function create({
         R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
       };
     },
+
     get rangeAreaInfo(this: Selection) {
       if (!this.rangeBySide) {
         return null;

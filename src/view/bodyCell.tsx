@@ -50,10 +50,13 @@ export class BodyCellComp extends Component<Props> {
     const {
       rowKey,
       renderData: { editable },
-      columnInfo: { align, name }
+      columnInfo: { align, valign, name }
     } = this.props;
 
-    const style = { textAlign: align };
+    const style = {
+      textAlign: align,
+      ...(valign && { verticalAlign: valign })
+    };
     const attrs: Attributes = {
       'data-row-key': String(rowKey),
       'data-column-name': name

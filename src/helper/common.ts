@@ -1,3 +1,5 @@
+import { CellValue } from 'src/store/types';
+
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -51,6 +53,18 @@ export function findOffsetIndex(offsets: number[], targetOffset: number) {
 
 export function pipe<T>(initVal: T, ...args: Function[]) {
   return args.reduce((acc, fn) => fn(acc), initVal);
+}
+
+export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
+  if (typeof searchIndex === 'undefined' || arr[searchIndex] !== searchItem) {
+    return false;
+  }
+  for (const item of arr) {
+    if (item === searchItem) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // eslint-disable-next-line consistent-return
@@ -115,6 +129,29 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   return resultMap;
 }
 
+export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
+  return obj.hasOwnProperty(key);
+}
+
+export function encodeHTMLEntity(html: string) {
+  const entities = {
+    '"': 'quot',
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    "'": '#39'
+  };
+  type EntityKey = keyof typeof entities;
+
+  return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
+}
+
+export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
+  if (typeof obj[key] === 'undefined') {
+    obj[key] = defValue;
+  }
+}
+
 /**
  * Returns a number whose value is limited to the given range.
  * @param value - A number to force within given min-max range
@@ -131,4 +168,22 @@ export function clamp(value: number, min: number, max: number) {
   }
 
   return Math.max(min, Math.min(value, max));
+}
+
+export function range(end: number) {
+  const arr = [];
+
+  for (let i = 0; i < end; i += 1) {
+    arr.push(i);
+  }
+
+  return arr;
+}
+
+export function isBlank(value: any) {
+  if (typeof value === 'string') {
+    return !value.length;
+  }
+
+  return typeof value === 'undefined' || value === null;
 }

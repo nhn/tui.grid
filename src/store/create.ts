@@ -20,11 +20,13 @@ export function createStore(id: number, options: OptGrid): Store {
     columnOptions = {},
     rowHeaders = [],
     summary: summaryOptions = {},
-    selectionUnit = 'cell'
+    selectionUnit = 'cell',
+    copyOptions = {},
+    showDummyRows = false
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
-  const column = createColumn(options.columns, columnOptions, rowHeaders);
+  const column = createColumn(options.columns, columnOptions, rowHeaders, copyOptions);
   const data = createData(options.data || [], column);
   const dimension = createDimension({
     data,
@@ -39,10 +41,23 @@ export function createStore(id: number, options: OptGrid): Store {
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
-  const viewport = createViewport({ data, column, dimension, rowCoords, columnCoords });
+  const viewport = createViewport({
+    data,
+    column,
+    dimension,
+    rowCoords,
+    columnCoords,
+    showDummyRows
+  });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
-  const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+  const selection = createSelection({
+    selectionUnit,
+    columnCoords,
+    column,
+    dimension,
+    rowCoords
+  });
 
   return reactive({
     id,

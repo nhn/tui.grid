@@ -1,6 +1,7 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
+import { OptColumn } from '../src/types';
 
 const stories = storiesOf('Basic Usage', module);
 
@@ -104,12 +105,13 @@ function createGridWithTheme(options) {
       c3: 89123
     }
   ];
-  const columns = [
+  const columns: OptColumn[] = [
     {
       header: 'ID',
       name: 'c1',
       align: 'center',
-      editOption: {
+      editor: 'text',
+      editorOptions: {
         beforeContent: 'FE',
         type: 'text'
       }
@@ -119,7 +121,8 @@ function createGridWithTheme(options) {
       defaultValue: 2,
       name: 'c2',
       align: 'center',
-      editOption: {
+      editor: 'text',
+      editorOptions: {
         type: 'text'
       }
     },
@@ -127,7 +130,8 @@ function createGridWithTheme(options) {
       header: 'Score',
       name: 'c3',
       align: 'center',
-      editOption: {
+      editor: 'text',
+      editorOptions: {
         type: 'text',
         afterContent: ' Point'
       }

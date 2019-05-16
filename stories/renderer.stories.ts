@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { OptGrid } from '../src/types';
+import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
@@ -130,7 +130,7 @@ class SingleCheckRenderer implements CellRenderer {
   }
 }
 
-const columns = [
+const columns: OptColumn[] = [
   { name: 'name', renderer: ToolTipRenderer, align: 'center' },
   {
     name: 'score',

@@ -34,14 +34,11 @@ export const StateLayer = connect(({ data, dimension }) => {
   const {
     headerHeight,
     bodyHeight,
-    scrollX,
-    scrollY,
-    scrollbarWidth,
     cellBorderWidth,
-    tableBorderWidth
+    tableBorderWidth,
+    scrollXHeight,
+    scrollYWidth
   } = dimension;
-  const scrollXHeight = scrollX ? scrollbarWidth : 0;
-  const scrollYWidth = scrollY ? scrollbarWidth : 0;
 
   return {
     hasData: !!data.rawData.length,

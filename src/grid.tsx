@@ -7,6 +7,8 @@ import { Store, CellValue, RowKey, Range, Row } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
+import { getText } from './query/clipboard';
+import { WindowWithClipboard } from './view/clipboard';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -375,5 +377,42 @@ export default class Grid {
   public getCheckedRows(): Row[] {
     // @TODO 반환되는 값 - 순수 객체 처리 변환
     return this.store.data.rawData.filter(({ _checked }) => _checked);
+  }
+
+  /**
+   * Copy to clipboard
+   */
+  public copyToClipboard() {
+    document.querySelector('.tui-grid-clipboard')!.innerHTML = getText(this.store);
+
+    if (!(window as WindowWithClipboard).clipboardData) {
+      // Accessing the clipboard is a security concern on chrome
+      document.execCommand('copy');
+    }
+  }
+
+  /**
+   * Sorts all rows by the specified column.
+   * @param {string} columnName - The name of the column to be used to compare the rows
+   * @param {boolean} [ascending] - Whether the sort order is ascending.
+   *        If not specified, use the negative value of the current order.
+   */
+  public sort(columnName: string, ascending: boolean) {
+    this.dispatch('sort', columnName, ascending);
+  }
+
+  /**
+   * Unsorts all rows. (Sorts by rowKey).
+   */
+  public unSort() {
+    this.dispatch('sort', 'rowKey', true);
+  }
+
+  /**
+   * Gets state of the sorted column in rows
+   * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
+   */
+  public getSortState() {
+    return this.store.data.sortOptions;
   }
 }
