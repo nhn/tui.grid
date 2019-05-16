@@ -36,6 +36,16 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
+export interface ClipboardCopyOptions {
+  useFormattedValue?: boolean;
+  useListItemText?: boolean;
+  customValue?: string;
+}
+
+export interface Clipboard {
+  text: string | null;
+}
+
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
