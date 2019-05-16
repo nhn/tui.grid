@@ -5,7 +5,9 @@ import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import { CellRenderer, CellRendererProps } from '../src/renderer/types';
+
 import '../src/css/grid.css';
+import '../samples/css/rowHeaders.css';
 
 const stories = storiesOf('Row Headers', module);
 stories.addDecorator(withKnobs);
@@ -74,22 +76,15 @@ class SingleCheckRenderer implements CellRenderer {
     const { grid, rowKey } = props;
 
     const label = document.createElement('label');
-
+    label.className = 'checkbox';
     label.setAttribute('for', String(rowKey));
 
     const hiddenInput = document.createElement('input');
-
+    hiddenInput.className = 'hidden-input';
     hiddenInput.id = String(rowKey);
-    hiddenInput.style.display = 'none';
 
     const customInput = document.createElement('span');
-    const customInputStyle = customInput.style;
-
     customInput.className = 'custom-input';
-    customInputStyle.backgroundColor = '#eee';
-    customInputStyle.width = '15px';
-    customInputStyle.height = '15px';
-    customInputStyle.display = 'inline-block';
 
     label.appendChild(hiddenInput);
     label.appendChild(customInput);
@@ -113,12 +108,10 @@ class SingleCheckRenderer implements CellRenderer {
   }
 
   public changed(props: CellRendererProps) {
-    const hiddenInput = this.el.querySelector('input');
-    const customInput: HTMLElement = this.el.querySelector('.custom-input');
+    const hiddenInput = this.el.querySelector('.hidden-input') as HTMLInputElement;
     const checked = Boolean(props.value);
 
     hiddenInput.checked = checked;
-    customInput.style.backgroundColor = checked ? 'gray' : '#eee';
   }
 }
 
@@ -225,13 +218,13 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          title: 'row number',
+          header: 'row number',
           name: '_number',
           width: 100,
           align: 'left'
         },
         {
-          title: 'checkbox',
+          header: 'checkbox',
           name: '_checked',
           width: 100,
           align: 'left'
@@ -280,6 +273,12 @@ stories.add(
       rowHeaders: [
         {
           name: '_checked',
+          header: `
+            <label for="all-checkbox" class="checkbox">
+              <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
+              <span class="custom-input"></span>
+            </label>
+          `,
           renderer: SingleCheckRenderer
         }
       ]

@@ -12,7 +12,7 @@ export class RowHeaderInputRenderer implements CellRenderer {
     } = props;
 
     el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
-    el.name = String(rowKey);
+    el.name = '_checked';
 
     el.addEventListener('change', () => {
       if (el.checked) {

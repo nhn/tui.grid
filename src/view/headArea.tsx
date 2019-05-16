@@ -15,6 +15,8 @@ interface StoreProps {
   cellBorderWidth: number;
   columns: ColumnInfo[];
   scrollLeft: number;
+  hasRowHeaderCheckbox: boolean;
+  checkedAllRows: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -22,8 +24,34 @@ type Props = OwnProps & StoreProps & DispatchProps;
 class HeadAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private handleChange = (ev: Event) => {
+    const target = ev.target as HTMLInputElement;
+    const { dispatch } = this.props;
+
+    if (target.checked) {
+      dispatch('checkAll');
+    } else {
+      dispatch('uncheckAll');
+    }
+  };
+
+  private updateRowHeaderCheckbox() {
+    const { checkedAllRows } = this.props;
+    const input = this.el!.querySelector('input[name=_checked]') as HTMLInputElement;
+
+    if (input) {
+      input.checked = checkedAllRows;
+    }
+  }
+
   public componentDidUpdate() {
-    this.el!.scrollLeft = this.props.scrollLeft;
+    const { scrollLeft, hasRowHeaderCheckbox } = this.props;
+
+    this.el!.scrollLeft = scrollLeft;
+
+    if (hasRowHeaderCheckbox) {
+      this.updateRowHeaderCheckbox();
+    }
   }
 
   public render() {
@@ -43,9 +71,16 @@ class HeadAreaComp extends Component<Props> {
           <ColGroup side={side} />
           <tbody>
             <tr style={theadStyle}>
-              {columns.map(({ name, title }) => (
+              {columns.map(({ name, header }) => (
                 <th key={name} data-column-name={name} class={cls('cell', 'cell-head')}>
-                  {title}
+                  {name === '_checked' ? (
+                    <span
+                      dangerouslySetInnerHTML={{ __html: header }}
+                      onChange={this.handleChange}
+                    />
+                  ) : (
+                    header
+                  )}
                 </th>
               ))}
             </tr>
@@ -58,12 +93,19 @@ class HeadAreaComp extends Component<Props> {
 }
 
 export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { headerHeight, cellBorderWidth } = store.dimension;
+  const {
+    data,
+    column,
+    dimension: { headerHeight, cellBorderWidth },
+    viewport
+  } = store;
 
   return {
     headerHeight,
     cellBorderWidth,
     columns: store.column.visibleColumnsBySide[side],
-    scrollLeft: side === 'L' ? 0 : store.viewport.scrollLeft
+    scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
+    hasRowHeaderCheckbox: !!column.allColumnMap._checked,
+    checkedAllRows: data.checkedAllRows
   };
 })(HeadAreaComp);

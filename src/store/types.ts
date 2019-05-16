@@ -63,13 +63,14 @@ export interface SelectionRange {
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
+  checkedAllRows: boolean;
 }
 
 export type Formatter = (value: CellValue) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
-  readonly title: string;
+  readonly header: string;
   readonly minWidth: number;
   readonly align: string;
   editor?: CellEditorClass;
@@ -89,7 +90,6 @@ export interface Column {
   frozenCount: number;
   visibleFrozenCount: number;
   rowHeaderCount: number;
-  rowHeaders: ColumnInfo[];
   allColumns: ColumnInfo[];
   allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];

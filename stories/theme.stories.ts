@@ -106,7 +106,7 @@ function createGridWithTheme(options) {
   ];
   const columns = [
     {
-      title: 'ID',
+      header: 'ID',
       name: 'c1',
       align: 'center',
       editOption: {
@@ -115,7 +115,7 @@ function createGridWithTheme(options) {
       }
     },
     {
-      title: 'Name',
+      header: 'Name',
       defaultValue: 2,
       name: 'c2',
       align: 'center',
@@ -124,7 +124,7 @@ function createGridWithTheme(options) {
       }
     },
     {
-      title: 'Score',
+      header: 'Score',
       name: 'c3',
       align: 'center',
       editOption: {
