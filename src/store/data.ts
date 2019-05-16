@@ -21,18 +21,79 @@ function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) 
   return defValue || '';
 }
 
+function getSpecificOption(type: string, fn: any, relationParams: Dictionary<any>) {
+  let option = null;
+  if (typeof fn === 'function') {
+    option = fn(relationParams);
+  }
+
+  if (type === 'editable') {
+    return option === null ? true : option;
+  }
+  if (type === 'disabled') {
+    return option === null ? false : option;
+  }
+  return option;
+}
+
 function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
-  const { formatter, prefix, postfix, editor } = column;
+  const { formatter, prefix, postfix, editor, editorOptions } = column;
 
   return {
     // @TODO: change editable/disabled using relations
     editable: !!editor,
+    editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
     formattedValue: getFormattedValue(value, formatter, String(value)),
     prefix: getFormattedValue(value, prefix),
     postfix: getFormattedValue(value, postfix),
     value
   };
+}
+
+function createRelationViewCell(
+  name: string,
+  row: Row,
+  columnMap: Dictionary<ColumnInfo>,
+  valueMap: Dictionary<CellRenderData>
+) {
+  const { editable, disabled, value } = valueMap[name];
+  const { relationMap = {} } = columnMap[name];
+
+  // @TODO remove lint rule
+  /* eslint-disable complexity */
+  Object.keys(relationMap).forEach((targetName) => {
+    const {
+      editable: editablaCallback,
+      disabled: disabledCallback,
+      listItems: listItemsCallback
+    } = relationMap[targetName];
+    const relationCbParams = { value, editable, disabled, row };
+    const targetEditable = getSpecificOption('editable', editablaCallback, relationCbParams);
+    const targetDisabled = getSpecificOption('disabled', disabledCallback, relationCbParams);
+    const targetListItems = getSpecificOption('listItems', listItemsCallback, relationCbParams);
+
+    let cellData = createViewCell(row[targetName], columnMap[targetName]);
+
+    // @TODO apply some method in common helper
+    const hasValue = targetListItems
+      ? targetListItems.some((item: Dictionary<any>) => item.value === cellData.value)
+      : false;
+
+    if (!hasValue) {
+      cellData = createViewCell('', columnMap[targetName]);
+    }
+
+    if (!targetEditable) {
+      cellData.editable = false;
+    }
+    if (targetDisabled) {
+      cellData.disabled = true;
+    }
+    cellData.editorOptions.listItems = targetListItems || [];
+
+    valueMap[targetName] = cellData;
+  });
 }
 
 function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
@@ -46,9 +107,17 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
-    watch(() => {
-      valueMap[name] = createViewCell(row[name], columnMap[name]);
-    });
+    const { isRelated, relationMap } = columnMap[name];
+    if (!isRelated) {
+      watch(() => {
+        valueMap[name] = createViewCell(row[name], columnMap[name]);
+      });
+    }
+    if (Object.keys(relationMap!).length) {
+      watch(() => {
+        createRelationViewCell(name, row, columnMap, valueMap);
+      });
+    }
   });
 
   return { rowKey, valueMap };

@@ -1,4 +1,4 @@
-import { Column, ColumnInfo, Dictionary } from './types';
+import { Column, ColumnInfo, Dictionary, Relations } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
@@ -25,7 +25,40 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
   return { editor, editorOptions };
 }
 
-function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
+function getRelationMap(relations: Relations[]) {
+  const relationMap: Dictionary<Relations> = {};
+  relations.forEach((relation) => {
+    const { editable, disabled, listItems, targetNames = [] } = relation;
+    targetNames.forEach((targetName) => {
+      relationMap[targetName] = {
+        editable,
+        disabled,
+        listItems
+      };
+    });
+  });
+
+  return relationMap;
+}
+
+function getRelationColumns(relations: Relations[]) {
+  const relationColumns: string[] = [];
+  relations.forEach((relation) => {
+    const { targetNames = [] } = relation;
+    targetNames.forEach((targetName) => {
+      relationColumns.push(targetName);
+    });
+  });
+
+  return relationColumns;
+}
+
+// eslint-disable-next-line complexity
+function createColumn(
+  column: OptColumn,
+  columnOptions: OptColumnOptions,
+  relationColumns: string[]
+): ColumnInfo {
   const {
     header,
     name,
@@ -37,10 +70,14 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     editor,
     editorOptions,
     renderer,
-    rendererOptions
+    rendererOptions,
+    relations
   } = column;
   const fixedWidth = typeof width === 'number';
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
+  const relationMap = getRelationMap(relations || []);
+  // @TODO apply some method in common helper
+  const isRelated = relationColumns.some((relationColumnName) => relationColumnName === name);
 
   return reactive({
     name,
@@ -53,6 +90,8 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     fixedWidth,
     baseWidth,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
+    relationMap,
+    isRelated,
     ...getEditorInfo(editor, editorOptions)
   });
 }
@@ -94,8 +133,11 @@ export function create(
   columnOptions: OptColumnOptions = {},
   rowHeaders: OptRowHeader[]
 ): Column {
+  const relationColumns = columns.reduce((relationCol: string[], { relations }) => {
+    return relationCol.concat(getRelationColumns(relations || []));
+  }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
-  const columnInfos = columns.map((column) => createColumn(column, columnOptions));
+  const columnInfos = columns.map((column) => createColumn(column, columnOptions, relationColumns));
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({
