@@ -159,6 +159,7 @@ export interface Focus {
   columnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;
+  readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
   readonly cellPosRect: Rect | null;
 }
