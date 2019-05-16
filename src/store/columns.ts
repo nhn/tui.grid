@@ -1,7 +1,7 @@
 import { Column, ColumnInfo, Dictionary, Relations } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
-import { createMapFromArray } from '../helper/common';
+import { createMapFromArray, some } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
@@ -53,7 +53,6 @@ function getRelationColumns(relations: Relations[]) {
   return relationColumns;
 }
 
-// eslint-disable-next-line complexity
 function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
@@ -76,8 +75,7 @@ function createColumn(
   const fixedWidth = typeof width === 'number';
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const relationMap = getRelationMap(relations || []);
-  // @TODO apply some method in common helper
-  const isRelated = relationColumns.some((relationColumnName) => relationColumnName === name);
+  const isRelated = some((relationColumnName) => relationColumnName === name, relationColumns);
 
   return reactive({
     name,

@@ -9,6 +9,7 @@ import {
   CellRenderData
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
+import { some } from '../helper/common';
 import { OptRow } from '../types';
 
 function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) {
@@ -40,7 +41,6 @@ function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
   const { formatter, prefix, postfix, editor, editorOptions } = column;
 
   return {
-    // @TODO: change editable/disabled using relations
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
@@ -60,8 +60,6 @@ function createRelationViewCell(
   const { editable, disabled, value } = valueMap[name];
   const { relationMap = {} } = columnMap[name];
 
-  // @TODO remove lint rule
-  /* eslint-disable complexity */
   Object.keys(relationMap).forEach((targetName) => {
     const {
       editable: editablaCallback,
@@ -75,9 +73,8 @@ function createRelationViewCell(
 
     let cellData = createViewCell(row[targetName], columnMap[targetName]);
 
-    // @TODO apply some method in common helper
     const hasValue = targetListItems
-      ? targetListItems.some((item: Dictionary<any>) => item.value === cellData.value)
+      ? some((item: Dictionary<any>) => item.value === cellData.value, targetListItems)
       : false;
 
     if (!hasValue) {
