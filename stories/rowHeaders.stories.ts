@@ -7,7 +7,7 @@ import { data } from '../samples/basic';
 import { CellRenderer, CellRendererProps } from '../src/renderer/types';
 
 import '../src/css/grid.css';
-import './css/rowHeaders.css';
+import '../samples/css/rowHeaders.css';
 
 const stories = storiesOf('Row Headers', module);
 stories.addDecorator(withKnobs);
