@@ -1,4 +1,4 @@
-import { CellValue, Dictionary, SelectionUnit } from './store/types';
+import { CellValue, Dictionary, Relations, SelectionUnit } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 
@@ -53,6 +53,7 @@ export interface OptColumn {
   resizable?: boolean;
   minWidth?: number;
   align?: string | 'left' | 'center' | 'right';
+  relations?: Relations[];
 }
 
 export interface OptColumnOptions {
