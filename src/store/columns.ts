@@ -131,8 +131,9 @@ export function create(
   columnOptions: OptColumnOptions = {},
   rowHeaders: OptRowHeader[]
 ): Column {
-  const relationColumns = columns.reduce((relationCol: string[], { relations }) => {
-    return relationCol.concat(getRelationColumns(relations || []));
+  const relationColumns = columns.reduce((memo: string[], { relations }) => {
+    memo = memo.concat(getRelationColumns(relations || []));
+    return memo.filter((columnName, idx) => memo.indexOf(columnName) === idx);
   }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
   const columnInfos = columns.map((column) => createColumn(column, columnOptions, relationColumns));
