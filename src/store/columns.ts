@@ -5,10 +5,14 @@ import { createMapFromArray } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
-import { RowHeaderInputRenderer } from '../renderer/RowHeaderInput';
+import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
-const DEF_MIN_WIDTH = 50;
-const DEF_META_COLUMN_MIN_WIDTH = 40;
+const DEF_MIN_WIDTH = {
+  rowHeader: 40,
+  column: 50
+};
+
+const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
 function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
   if (typeof editor === 'string') {
@@ -24,7 +28,7 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
 // eslint-disable-next-line complexity
 function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
   const {
-    title,
+    header,
     name,
     width,
     minWidth,
@@ -41,7 +45,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
 
   return reactive({
     name,
-    title: title || name,
+    header: header || name,
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
@@ -49,50 +53,56 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     rendererOptions,
     fixedWidth,
     baseWidth,
-    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH, // @TODO meta tag 체크 여부
+    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH.column, // @TODO meta tag 체크 여부
     ...getEditorInfo(editor, editorOptions)
   });
 }
 
-function getRowHeaderInfos(rowHeadersOption: OptRowHeader[]) {
-  return rowHeadersOption.map(
-    // eslint-disable-next-line complexity
-    (data: OptRowHeader): ColumnInfo => {
-      const rowHeader = typeof data === 'string' ? { name: data } : data;
-      const { name, title, align, renderer, rendererOptions, width, minWidth } = rowHeader;
-      const isRowNum = name === '_number';
-      const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_META_COLUMN_MIN_WIDTH;
-      const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
+// eslint-disable-next-line complexity
+function createRowHeader(data: OptRowHeader): ColumnInfo {
+  const rowHeader = typeof data === 'string' ? { name: data } : data;
+  const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
 
-      return reactive({
-        name,
-        title: title || (isRowNum ? 'No.' : ''),
-        hidden: false,
-        resizable: false,
-        align: align || 'center',
-        renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
-        rendererOptions: rendererOptions || { inputType: 'checkbox' },
-        fixedWidth: true,
-        baseWidth,
-        minWidth: baseMinWith
-      });
-    }
-  );
+  const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
+  const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_MIN_WIDTH.rowHeader;
+  const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
+
+  const isRowNum = name === '_number';
+
+  let defaultHeader = '';
+
+  if (isRowNum) {
+    defaultHeader = 'No.';
+  } else if (baseRendererOptions.inputType === 'checkbox') {
+    defaultHeader = DEF_ROW_HEADER_INPUT;
+  }
+
+  return reactive({
+    name,
+    header: header || defaultHeader,
+    hidden: false,
+    resizable: false,
+    align: align || 'center',
+    renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
+    rendererOptions: baseRendererOptions,
+    fixedWidth: true,
+    baseWidth,
+    minWidth: baseMinWith
+  });
 }
 
 export function create(
   columns: OptColumn[],
   columnOptions: OptColumnOptions = {},
-  rowHeadersOption: OptRowHeader[]
+  rowHeaders: OptRowHeader[]
 ): Column {
+  const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
   const columnInfos = columns.map((column) => createColumn(column, columnOptions));
-  const rowHeaderInfos = getRowHeaderInfos(rowHeadersOption);
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
-    rowHeaders: rowHeaderInfos,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;

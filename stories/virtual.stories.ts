@@ -25,7 +25,7 @@ stories.add('Sample', () => {
 
   for (let i = 0; i < COL_COUNT; i += 1) {
     const name = `c${i}`;
-    columns.push({ name, title: name });
+    columns.push({ name, header: name });
   }
 
   const el = document.createElement('div');

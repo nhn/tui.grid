@@ -325,13 +325,7 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the row
    */
   public check(rowKey: RowKey) {
-    const { rendererOptions = {} } = this.store.column.allColumnMap._checked;
-
-    if (rendererOptions.inputType === 'radio') {
-      this.dispatch('setColumnValues', '_checked', false);
-    }
-
-    this.dispatch('setValue', rowKey, '_checked', true);
+    this.dispatch('check', rowKey);
   }
 
   /**
@@ -339,25 +333,21 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the row
    */
   public uncheck(rowKey: RowKey) {
-    this.dispatch('setValue', rowKey, '_checked', false);
+    this.dispatch('uncheck', rowKey);
   }
 
   /**
    * Checks all rows.
    */
   public checkAll() {
-    const { rendererOptions = {} } = this.store.column.allColumnMap._checked;
-
-    if (rendererOptions.inputType !== 'radio') {
-      this.dispatch('setColumnValues', '_checked', true);
-    }
+    this.dispatch('checkAll');
   }
 
   /**
    * Unchecks all rows.
    */
   public uncheckAll() {
-    this.dispatch('setColumnValues', '_checked', false);
+    this.dispatch('uncheckAll');
   }
 
   /**

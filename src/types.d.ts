@@ -41,7 +41,7 @@ interface CellEditor {
 
 export interface OptColumn {
   name: string;
-  title?: string;
+  header?: string;
   hidden?: boolean;
   width?: number | 'auto';
   renderer?: CellRendererClass;

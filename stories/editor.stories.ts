@@ -27,7 +27,7 @@ const columns = [
     editor: 'text'
   },
   {
-    title: 'Genre',
+    header: 'Genre',
     name: 'genreCode',
     width: 200,
     editor: 'checkbox',
@@ -40,7 +40,7 @@ const columns = [
     }
   },
   {
-    title: 'Type',
+    header: 'Type',
     name: 'typeCode',
     width: 200,
     editor: 'radio',
@@ -49,7 +49,7 @@ const columns = [
     }
   },
   {
-    title: 'Grade',
+    header: 'Grade',
     name: 'grade',
     width: 200,
     editor: 'select',

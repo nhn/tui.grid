@@ -65,6 +65,13 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
 
   return reactive({
     rawData,
-    viewData
+    viewData,
+
+    // @TODO meta 프로퍼티 값으로 변경
+    get checkedAllRows() {
+      const checkedRows = rawData.filter(({ _checked }) => _checked);
+
+      return checkedRows.length === rawData.length;
+    }
   });
 }
