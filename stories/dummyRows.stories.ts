@@ -3,6 +3,7 @@ import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
+import { data } from '../samples/basic';
 
 import '../src/css/grid.css';
 
@@ -17,36 +18,7 @@ const columns = [
   { name: 'genre', minWidth: 150 }
 ];
 
-const data = [
-  {
-    id: 549731,
-    name: 'Beautiful Lies',
-    artist: 'Birdy',
-    release: '2016.03.26',
-    type: 'Deluxe',
-    typeCode: '1',
-    genre: 'Pop',
-    genreCode: '1',
-    grade: '4',
-    price: 10000,
-    downloadCount: 1000,
-    listenCount: 5000
-  },
-  {
-    id: 436461,
-    name: 'X',
-    artist: 'Ed Sheeran',
-    release: '2014.06.24',
-    type: 'Deluxe',
-    typeCode: '1',
-    genre: 'Pop',
-    genreCode: '1',
-    grade: '5',
-    price: 20000,
-    downloadCount: 1000,
-    listenCount: 5000
-  }
-];
+const slicedData = data.slice(0, 2);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -57,11 +29,24 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-stories.add('use showDummyRows', () => {
+stories.add('show dummy rows', () => {
   const { el } = createGrid({
-    data,
+    data: slicedData,
     columns,
     showDummyRows: true
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  return rootEl;
+});
+
+stories.add('use row headers', () => {
+  const { el } = createGrid({
+    data: slicedData,
+    columns,
+    showDummyRows: true,
+    rowHeaders: ['_number', '_checked']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);

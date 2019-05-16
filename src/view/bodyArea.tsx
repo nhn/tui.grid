@@ -22,7 +22,9 @@ interface StoreProps {
   totalRowHeight: number;
   scrollTop: number;
   scrollLeft: number;
+  scrollXHeight: number;
   offsetY: number;
+  dummyRowCount: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -114,9 +116,20 @@ class BodyAreaComp extends Component<Props> {
     this.el!.scrollLeft = nextProps.scrollLeft;
   }
 
-  public render({ side, bodyHeight, totalRowHeight, offsetY }: Props) {
+  public render({
+    side,
+    bodyHeight,
+    totalRowHeight,
+    scrollXHeight,
+    offsetY,
+    dummyRowCount
+  }: Props) {
     const areaStyle = { overflow: 'scroll', height: bodyHeight };
-    const tableStyle = { overflow: 'visible', top: offsetY };
+    const tableContainerStyle = {
+      top: offsetY,
+      height: dummyRowCount ? bodyHeight - scrollXHeight : '',
+      overflow: dummyRowCount ? 'hidden' : 'visible'
+    };
     const containerStyle = { height: totalRowHeight };
 
     return (
@@ -130,7 +143,7 @@ class BodyAreaComp extends Component<Props> {
         }}
       >
         <div class={cls('body-container')} style={containerStyle}>
-          <div class={cls('table-container')} style={tableStyle}>
+          <div class={cls('table-container')} style={tableContainerStyle}>
             <table class={cls('table')}>
               <ColGroup side={side} />
               <BodyRows side={side} />
@@ -147,8 +160,8 @@ class BodyAreaComp extends Component<Props> {
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { column, dimension, viewport } = store;
-  const { bodyHeight, totalRowHeight } = dimension;
-  const { offsetY, scrollTop, scrollLeft } = viewport;
+  const { bodyHeight, totalRowHeight, scrollXHeight } = dimension;
+  const { offsetY, scrollTop, scrollLeft, dummyRowCount } = viewport;
 
   return {
     columns: column.visibleColumnsBySide[side],
@@ -156,6 +169,8 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     totalRowHeight,
     scrollTop,
     offsetY,
-    scrollLeft: side === 'L' ? 0 : scrollLeft
+    scrollLeft: side === 'L' ? 0 : scrollLeft,
+    scrollXHeight,
+    dummyRowCount
   };
 })(BodyAreaComp);

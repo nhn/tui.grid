@@ -80,13 +80,13 @@ export function create({
       return rowCoords.offsets[this.rowRange[0]];
     },
 
-    get dummyRowCount(): number {
+    get dummyRowCount() {
       const { rowHeight, bodyHeight, totalRowHeight, scrollXHeight, cellBorderWidth } = dimension;
       const adjustedRowHeight = rowHeight + cellBorderWidth;
       const adjustedBodyHeight = bodyHeight - scrollXHeight;
 
       if (showDummyRows && totalRowHeight < adjustedBodyHeight) {
-        return Math.ceil((adjustedBodyHeight - totalRowHeight) / adjustedRowHeight);
+        return Math.ceil((adjustedBodyHeight - totalRowHeight) / adjustedRowHeight) + 1;
       }
 
       return 0;

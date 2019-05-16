@@ -27,7 +27,9 @@ export class SummaryBodyCellComp extends Component<Props> {
   private getTemplate = () => {
     const { content, summaryValue } = this.props;
 
-    if (!content) return '';
+    if (!content) {
+      return '';
+    }
 
     const { template } = content;
 
