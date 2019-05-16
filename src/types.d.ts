@@ -17,6 +17,7 @@ export interface OptGrid {
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
   selectionUnit?: SelectionUnit;
+  showDummyRows?: boolean;
 }
 
 export interface ExtraData {

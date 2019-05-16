@@ -14,6 +14,7 @@ interface ViewPortOption {
   dimension: Dimension;
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
+  showDummyRows: boolean;
 }
 
 export function create({
@@ -21,7 +22,8 @@ export function create({
   column,
   dimension,
   rowCoords,
-  columnCoords
+  columnCoords,
+  showDummyRows
 }: ViewPortOption): Reactive<Viewport> {
   const { visibleColumns } = column;
 
@@ -29,6 +31,7 @@ export function create({
     scrollLeft: 0,
     scrollTop: 0,
     scrollPixelScale: 40,
+
     get maxScrollLeft() {
       const { scrollbarWidth, cellBorderWidth } = dimension;
       const { areaWidth, widths } = columnCoords;
@@ -39,14 +42,17 @@ export function create({
 
       return totalRWidth - areaWidth.R + scrollbarWidth;
     },
+
     get maxScrollTop() {
       const { bodyHeight, scrollbarWidth, totalRowHeight } = dimension;
 
       return totalRowHeight - bodyHeight + scrollbarWidth;
     },
+
     get colRange(this: Viewport) {
       return [0, visibleColumns.length] as Range;
     },
+
     get rowRange(this: Reactive<Viewport>) {
       const { bodyHeight } = dimension;
       const { offsets } = rowCoords;
@@ -65,11 +71,25 @@ export function create({
 
       return value;
     },
+
     get rows(this: Viewport) {
       return data.viewData.slice(...this.rowRange);
     },
+
     get offsetY(this: Viewport) {
       return rowCoords.offsets[this.rowRange[0]];
+    },
+
+    get dummyRowCount(): number {
+      const { rowHeight, bodyHeight, totalRowHeight, scrollXHeight, cellBorderWidth } = dimension;
+      const adjustedRowHeight = rowHeight + cellBorderWidth;
+      const adjustedBodyHeight = bodyHeight - scrollXHeight;
+
+      if (showDummyRows && totalRowHeight < adjustedBodyHeight) {
+        return Math.ceil((adjustedBodyHeight - totalRowHeight) / adjustedRowHeight);
+      }
+
+      return 0;
     }
   });
 }

@@ -53,9 +53,8 @@ export function create({
     get contentsWidth(this: Dimension) {
       const columnLen = column.visibleColumns.length;
       const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
-      const scrollYWidth = this.scrollY ? this.scrollbarWidth : 0;
 
-      return this.width - scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
     },
 
     get frozenBorderWidth(this: Dimension) {
@@ -67,6 +66,14 @@ export function create({
 
     get totalRowHeight() {
       return data.viewData.length * this.rowHeight + this.tableBorderWidth;
+    },
+
+    get scrollXHeight() {
+      return this.scrollX ? this.scrollbarWidth : 0;
+    },
+
+    get scrollYWidth() {
+      return this.scrollY ? this.scrollbarWidth : 0;
     }
   });
 }

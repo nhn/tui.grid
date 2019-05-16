@@ -12,6 +12,7 @@ interface OwnProps {
 interface StoreProps {
   rows: ViewRow[];
   columns: ColumnInfo[];
+  dummyRowCount: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -24,7 +25,7 @@ class BodyRowsComp extends Component<Props> {
     return true;
   }
 
-  public render({ rows, columns }: Props) {
+  public render({ rows, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
 
     return (
@@ -32,6 +33,7 @@ class BodyRowsComp extends Component<Props> {
         {rows.map((row) => (
           <BodyRow key={String(row.rowKey)} viewRow={row} columnNames={columnNames} />
         ))}
+        {dummyRowCount ? <div /> : null}
       </tbody>
     );
   }
@@ -39,5 +41,6 @@ class BodyRowsComp extends Component<Props> {
 
 export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
   rows: viewport.rows,
-  columns: column.visibleColumnsBySide[side]
+  columns: column.visibleColumnsBySide[side],
+  dummyRowCount: viewport.dummyRowCount
 }))(BodyRowsComp);
