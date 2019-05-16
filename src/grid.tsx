@@ -4,7 +4,6 @@ import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue, RowKey, Range, Row } from './store/types';
-import { editorMap } from './editor/manager';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';

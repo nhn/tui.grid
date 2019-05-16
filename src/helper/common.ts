@@ -39,8 +39,8 @@ export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
   return arr.reduce((acc, v, idx) => (predicate(v) ? [...acc, idx] : acc), [] as number[]);
 }
 
-export function findPrevIndex<T>(arr: T[], pred: (_: T) => boolean): number {
-  const index = arr.findIndex(pred);
+export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number {
+  const index = arr.findIndex(predicate);
 
   return index >= 0 ? index - 1 : arr.length - 1;
 }
@@ -54,9 +54,9 @@ export function pipe<T>(initVal: T, ...args: Function[]) {
 }
 
 // eslint-disable-next-line consistent-return
-export function find<T>(pred: (item: T) => boolean, arr: T[]) {
+export function find<T>(predicate: (item: T) => boolean, arr: T[]) {
   for (const item of arr) {
-    if (pred(item)) {
+    if (predicate(item)) {
       return item;
     }
   }
@@ -66,17 +66,17 @@ export function findProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
   return find((item) => item[propName] === value, arr);
 }
 
-export function some<T>(pred: (item: T) => boolean, arr: T[]) {
-  return !!find(pred, arr);
+export function some<T>(predicate: (item: T) => boolean, arr: T[]) {
+  return !!find(predicate, arr);
 }
 
 export function someProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
   return !!findProp(propName, value, arr);
 }
 
-export function findIndex<T>(pred: (item: T) => boolean, arr: T[]) {
-  for (let i = 0, len = arr.length; i <= len; i += 1) {
-    if (pred(arr[i])) {
+export function findIndex<T>(predicate: (item: T) => boolean, arr: T[]) {
+  for (let i = 0, len = arr.length; i < len; i += 1) {
+    if (predicate(arr[i])) {
       return i;
     }
   }
@@ -117,10 +117,10 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
 
 /**
  * Returns a number whose value is limited to the given range.
- * @param {Number} value - A number to force within given min-max range
- * @param {Number} min - The lower boundary of the output range
- * @param {Number} max - The upper boundary of the output range
- * @returns {number} A number in the range [min, max]
+ * @param value - A number to force within given min-max range
+ * @param min - The lower boundary of the output range
+ * @param max - The upper boundary of the output range
+ * @returns A number in the range [min, max]
  * @example
  *      // limit the output of this computation to between 0 and 255
  *      value = clamp(value, 0, 255);

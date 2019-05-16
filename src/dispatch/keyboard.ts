@@ -1,31 +1,5 @@
 import { Store, RowKey } from '../store/types';
-import { clamp, findIndex } from '../helper/common';
 import { getNextCellIndex, KeyboardEventCommandType } from '../helper/keyboard';
-
-function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
-  position += cellBorderWidth * 2;
-
-  const idx = findIndex((offset) => offset - cellBorderWidth > position, offsets);
-
-  return idx >= 0 ? idx - 1 : offsets.length - 1;
-}
-
-function getPageMovedPosition(
-  rowIndex: number,
-  offsets: number[],
-  bodyHeight: number,
-  isPrevDir: boolean
-) {
-  const distance = isPrevDir ? -bodyHeight : bodyHeight;
-
-  return offsets[rowIndex] + distance;
-}
-
-function getPageMovedIndex(offsets: number[], cellBorderWidth: number, movedPosition: number) {
-  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, movedPosition);
-
-  return clamp(movedIndex, 0, offsets.length - 1);
-}
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {

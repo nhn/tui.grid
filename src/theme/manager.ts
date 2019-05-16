@@ -118,8 +118,8 @@ export default {
   /**
    * Creates a style element using theme options identified by given name,
    * and appends it to the document.
-   * @param {String} themeName - preset theme name
-   * @param {Object} extOptions - if exist, extend preset theme options with it.
+   * @param themeName - preset theme name
+   * @param extOptions - if exist, extend preset theme options with it.
    */
   apply(themeName: ThemeOptionPresetNames, extOptions?: OptPreset) {
     let options = presetOptions[themeName];
@@ -135,7 +135,6 @@ export default {
 
   /**
    * Returns whether the style of a theme is applied.
-   * @returns {Boolean}
    */
   isApplied() {
     return !!document.getElementById(STYLE_ELEMENT_ID);
