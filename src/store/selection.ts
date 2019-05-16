@@ -96,11 +96,16 @@ export function create({
         return null;
       }
 
+      const row = getSortedRange(this.inputRange.row);
+      let column = getSortedRange(this.inputRange.column);
+
+      if (this.unit === 'row') {
+        const lastColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
+        column = [0, lastColumnIndex];
+      }
+
       // @TODO: span 처리 필요
-      return {
-        row: getSortedRange(this.inputRange.row),
-        column: getSortedRange(this.inputRange.column)
-      };
+      return { row, column };
     },
     get rangeBySide(this: Selection) {
       if (!this.range) {
