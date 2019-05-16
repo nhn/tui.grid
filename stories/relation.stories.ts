@@ -114,7 +114,7 @@ const threeDepthData = {
 
 const stories = storiesOf('Relations', module);
 
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
+function createDefaultOptions(editorType: string): Omit<OptGrid, 'el'> {
   const data = [
     // initial data
     {
@@ -138,9 +138,9 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   ];
   const columns = [
     {
-      title: 'Category1',
+      header: 'Category1',
       name: 'category1',
-      editor: 'select',
+      editor: editorType,
       editorOptions: {
         listItems: [
           { text: 'Select', value: '' },
@@ -162,9 +162,9 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
       ]
     },
     {
-      title: 'Category2',
+      header: 'Category2',
       name: 'category2',
-      editor: 'select',
+      editor: editorType,
       editorOptions: {
         listItems: []
       },
@@ -181,15 +181,15 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
       ]
     },
     {
-      title: 'Category3',
+      header: 'Category3',
       name: 'category3',
-      editor: 'select',
+      editor: editorType,
       editorOptions: {
         listItems: []
       }
     },
     {
-      title: 'No relation',
+      header: 'No relation',
       name: 'category4',
       editor: 'select',
       editorOptions: {
@@ -204,9 +204,7 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   return { data, columns };
 }
 
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  const defaultOptions = createDefaultOptions();
-  const options = { ...defaultOptions, ...customOptions };
+function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
@@ -215,8 +213,12 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   return { el, grid };
 }
 
-stories.add('Select', () => {
-  const { el } = createGrid();
-
-  return el;
-});
+stories
+  .add('Select', () => {
+    const { el } = createGrid(createDefaultOptions('select'));
+    return el;
+  })
+  .add('Radio', () => {
+    const { el } = createGrid(createDefaultOptions('radio'));
+    return el;
+  });
