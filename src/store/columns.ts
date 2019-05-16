@@ -7,9 +7,9 @@ import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
-const DEF_MIN_WIDTH = {
-  rowHeader: 40,
-  column: 50
+const defMinWidth = {
+  ROW_HEADER: 40,
+  COLUMN: 50
 };
 
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
@@ -52,7 +52,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     rendererOptions,
     fixedWidth,
     baseWidth,
-    minWidth: minWidth || columnOptions.minWidth || DEF_MIN_WIDTH.column, // @TODO meta tag 체크 여부
+    minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     ...getEditorInfo(editor, editorOptions)
   });
 }
@@ -62,7 +62,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
   const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
 
   const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
-  const baseMinWith = typeof minWidth === 'number' ? minWidth : DEF_MIN_WIDTH.rowHeader;
+  const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
 
   const isRowNum = name === '_number';
