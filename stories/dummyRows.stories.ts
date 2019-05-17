@@ -24,7 +24,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, bodyHeight: 400, ...options });
+  const grid = new Grid({ el, ...options });
 
   return { el, grid };
 }
@@ -33,6 +33,7 @@ stories.add('show dummy rows', () => {
   const { el } = createGrid({
     data: slicedData,
     columns,
+    bodyHeight: 400,
     showDummyRows: true
   });
   const rootEl = document.createElement('div');
@@ -46,10 +47,27 @@ stories.add('use row headers', () => {
     data: slicedData,
     columns,
     showDummyRows: true,
+    bodyHeight: 400,
     rowHeaders: ['_number', '_checked']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
+
+  return rootEl;
+});
+
+stories.add('apply striped theme', () => {
+  const { el } = createGrid({
+    data: slicedData,
+    columns,
+    showDummyRows: true,
+    bodyHeight: 400,
+    rowHeaders: ['_number', '_checked']
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  Grid.applyTheme('striped');
 
   return rootEl;
 });

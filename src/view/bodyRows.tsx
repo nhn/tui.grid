@@ -19,20 +19,12 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
-  private getDummyRows({
-    dummyRowCount,
-    columnNames,
-    startIndex
-  }: {
-    dummyRowCount: number;
-    columnNames: string[];
-    startIndex: number;
-  }) {
+  private getDummyRows(dummyRowCount: number, columnNames: string[], startIndex: number) {
     const dummyRows = [];
 
-    for (let i = 0; i < dummyRowCount; i += 1) {
+    for (let index = 0; index < dummyRowCount; index += 1) {
       dummyRows.push(
-        <BodyDummyRow key={String(i)} index={startIndex + i} columnNames={columnNames} />
+        <BodyDummyRow key={index} index={startIndex + index} columnNames={columnNames} />
       );
     }
 
@@ -52,11 +44,9 @@ class BodyRowsComp extends Component<Props> {
     return (
       <tbody>
         {rows.map((row) => (
-          <BodyRow key={String(row.rowKey)} viewRow={row} columnNames={columnNames} />
+          <BodyRow key={row.rowKey} viewRow={row} columnNames={columnNames} />
         ))}
-        {dummyRowCount
-          ? this.getDummyRows({ dummyRowCount, columnNames, startIndex: rows.length })
-          : null}
+        {!!dummyRowCount && this.getDummyRows(dummyRowCount, columnNames, rows.length)}
       </tbody>
     );
   }
