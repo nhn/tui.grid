@@ -108,6 +108,7 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
+    // add condition expression to prevent to call watch function recursively
     if (!related) {
       watch(() => {
         valueMap[name] = createViewCell(row[name], columnMap[name]);
