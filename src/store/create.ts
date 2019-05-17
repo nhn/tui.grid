@@ -45,7 +45,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
-  const clipboard = createClipboard({ copyOptions });
+  const clipboard = createClipboard({ copyOptions, selection });
 
   return reactive({
     id,

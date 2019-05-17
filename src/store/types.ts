@@ -174,6 +174,7 @@ export interface Focus {
   readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
   readonly cellPosRect: Rect | null;
+  readonly text: string | null;
 }
 
 export interface SummaryColumnContentMap {
@@ -217,6 +218,7 @@ export interface Selection {
   readonly range: SelectionRange | null;
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
+  readonly text: string | null;
 }
 
 export interface Store {
@@ -230,4 +232,5 @@ export interface Store {
   readonly focus: Focus;
   readonly selection: Selection;
   readonly summary: Summary;
+  readonly clipboard: Clipboard;
 }

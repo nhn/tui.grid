@@ -1,6 +1,17 @@
 import { Store, RowKey } from '../store/types';
 import { getNextCellIndex, KeyboardEventCommandType } from '../helper/keyboard';
 
+export function setFocusInfo(
+  store: Store,
+  rowKey: RowKey | null,
+  columnName: string | null,
+  navigating: boolean
+) {
+  store.focus.navigating = navigating;
+  store.focus.rowKey = rowKey;
+  store.focus.columnName = columnName;
+}
+
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
@@ -82,18 +93,19 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   };
 }
 
+export function cellCopy(store: Store, command: KeyboardEventCommandType) {
+  if (command === 'copy') {
+    const { clipboard, focus, selection } = store;
+
+    if (selection.range) {
+      clipboard.text = selection.text;
+    } else {
+      clipboard.text = focus.text;
+    }
+  }
+}
+
 export function removeFocus(store: Store) {
   // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store);
-}
-
-export function setFocusInfo(
-  store: Store,
-  rowKey: RowKey | null,
-  columnName: string | null,
-  navigating: boolean
-) {
-  store.focus.navigating = navigating;
-  store.focus.rowKey = rowKey;
-  store.focus.columnName = columnName;
 }

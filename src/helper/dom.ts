@@ -1,3 +1,5 @@
+import { WindowWithClipboard } from '../view/clipboard';
+
 const CLS_PREFIX = 'tui-grid-';
 
 export type ClassNameType =
@@ -142,6 +144,10 @@ export function getCellAddress(el: HTMLElement) {
   const columnName = cellElement.getAttribute('data-column-name') as string;
 
   return { rowKey, columnName };
+}
+
+export function isSupportWindowClipboardData() {
+  return !!(window as WindowWithClipboard).clipboardData;
 }
 
 /**
