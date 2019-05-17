@@ -7,9 +7,9 @@ export class DefaultRenderer implements CellRenderer {
   public constructor(props: CellRendererProps) {
     const el = document.createElement('div');
     el.className = cls('cell-content');
-    el.innerHTML = props.formattedValue;
 
     this.el = el;
+    this.changed(props);
   }
 
   public getElement() {
@@ -17,6 +17,6 @@ export class DefaultRenderer implements CellRenderer {
   }
 
   public changed(props: CellRendererProps) {
-    this.el.innerHTML = props.formattedValue;
+    this.el.innerHTML = `${props.prefix}${props.formattedValue}${props.postfix}`;
   }
 }

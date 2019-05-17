@@ -2,22 +2,22 @@ import {
   Data,
   Row,
   Dictionary,
-  CellValue,
   Column,
   ColumnInfo,
   Formatter,
-  CellRenderData
+  CellRenderData,
+  FormatterProps
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { someProp } from '../helper/common';
 import { OptRow } from '../types';
 
-function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) {
-  if (typeof fn === 'function') {
-    return fn(value);
+function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: string) {
+  if (typeof formatter === 'function') {
+    return formatter(props);
   }
-  if (typeof fn === 'string') {
-    return fn;
+  if (typeof formatter === 'string') {
+    return formatter;
   }
   return defValue || '';
 }
@@ -40,16 +40,18 @@ function getListItems(fn: any, relationParams: Dictionary<any>) {
   return getRelationCbResult(fn, relationParams);
 }
 
-function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
-  const { formatter, prefix, postfix, editor, editorOptions } = column;
+function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
+  const { name, formatter, prefix, postfix, editor, editorOptions } = column;
+  const value = row[name];
+  const formatterProps = { row, column, value };
 
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
-    formattedValue: getFormattedValue(value, formatter, String(value)),
-    prefix: getFormattedValue(value, prefix),
-    postfix: getFormattedValue(value, postfix),
+    formattedValue: getFormattedValue(formatterProps, formatter, String(value)),
+    prefix: getFormattedValue(formatterProps, prefix),
+    postfix: getFormattedValue(formatterProps, postfix),
     value
   };
 }
@@ -111,7 +113,7 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       watch(() => {
-        valueMap[name] = createViewCell(row[name], columnMap[name]);
+        valueMap[name] = createViewCell(row, columnMap[name]);
       });
     }
     // @TODO need to improve relation

@@ -67,7 +67,13 @@ export interface Data {
   checkedAllRows: boolean;
 }
 
-export type Formatter = (value: CellValue) => string | string;
+export interface FormatterProps {
+  row: Row;
+  column: ColumnInfo;
+  value: CellValue;
+}
+
+export type Formatter = (props: FormatterProps) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
