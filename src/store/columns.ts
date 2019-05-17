@@ -1,7 +1,7 @@
 import { Column, ColumnInfo, Dictionary, Relations } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
-import { createMapFromArray, some } from '../helper/common';
+import { createMapFromArray, includes } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
@@ -75,7 +75,7 @@ function createColumn(
   const fixedWidth = typeof width === 'number';
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
   const relationMap = getRelationMap(relations || []);
-  const isRelated = some((relationColumnName) => relationColumnName === name, relationColumns);
+  const related = includes(relationColumns, name);
 
   return reactive({
     name,
@@ -89,7 +89,7 @@ function createColumn(
     baseWidth,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap,
-    isRelated,
+    related,
     ...getEditorInfo(editor, editorOptions)
   });
 }
@@ -131,9 +131,9 @@ export function create(
   columnOptions: OptColumnOptions = {},
   rowHeaders: OptRowHeader[]
 ): Column {
-  const relationColumns = columns.reduce((memo: string[], { relations }) => {
-    memo = memo.concat(getRelationColumns(relations || []));
-    return memo.filter((columnName, idx) => memo.indexOf(columnName) === idx);
+  const relationColumns = columns.reduce((acc: string[], { relations }) => {
+    acc = acc.concat(getRelationColumns(relations || []));
+    return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
   const columnInfos = columns.map((column) => createColumn(column, columnOptions, relationColumns));

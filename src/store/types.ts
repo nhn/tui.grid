@@ -86,7 +86,7 @@ export interface ColumnInfo {
   resizable: boolean;
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
-  isRelated?: boolean;
+  related?: boolean;
 }
 
 export interface Column {
@@ -101,9 +101,14 @@ export interface Column {
 
 export interface Relations {
   targetNames?: string[];
-  listItems?: (relationParams: RelationCallbackData) => any[];
+  listItems?: (relationParams: RelationCallbackData) => ListItem[];
   editable?: (relationParams: RelationCallbackData) => boolean;
   disabled?: (relationParams: RelationCallbackData) => boolean;
+}
+
+export interface ListItem {
+  text: string;
+  value: CellValue;
 }
 
 export interface RelationCallbackData {

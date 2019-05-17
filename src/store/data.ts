@@ -9,7 +9,7 @@ import {
   CellRenderData
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
-import { some } from '../helper/common';
+import { someProp } from '../helper/common';
 import { OptRow } from '../types';
 
 function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) {
@@ -22,19 +22,22 @@ function getFormattedValue(value: CellValue, fn?: Formatter, defValue?: string) 
   return defValue || '';
 }
 
-function getSpecificOption(type: string, fn: any, relationParams: Dictionary<any>) {
-  let option = null;
-  if (typeof fn === 'function') {
-    option = fn(relationParams);
-  }
+function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {
+  return typeof fn === 'function' ? fn(relationParams) : null;
+}
 
-  if (type === 'editable') {
-    return option === null ? true : option;
-  }
-  if (type === 'disabled') {
-    return option === null ? false : option;
-  }
-  return option;
+function getEditable(fn: any, relationParams: Dictionary<any>) {
+  const result = getRelationCbResult(fn, relationParams);
+  return result === null ? true : result;
+}
+
+function getDisabled(fn: any, relationParams: Dictionary<any>) {
+  const result = getRelationCbResult(fn, relationParams);
+  return result === null ? false : result;
+}
+
+function getListItems(fn: any, relationParams: Dictionary<any>) {
+  return getRelationCbResult(fn, relationParams);
 }
 
 function createViewCell(value: CellValue, column: ColumnInfo): CellRenderData {
@@ -62,20 +65,18 @@ function createRelationViewCell(
 
   Object.keys(relationMap).forEach((targetName) => {
     const {
-      editable: editablaCallback,
+      editable: editableCallback,
       disabled: disabledCallback,
       listItems: listItemsCallback
     } = relationMap[targetName];
     const relationCbParams = { value, editable, disabled, row };
-    const targetEditable = getSpecificOption('editable', editablaCallback, relationCbParams);
-    const targetDisabled = getSpecificOption('disabled', disabledCallback, relationCbParams);
-    const targetListItems = getSpecificOption('listItems', listItemsCallback, relationCbParams);
+    const targetEditable = getEditable(editableCallback, relationCbParams);
+    const targetDisabled = getDisabled(disabledCallback, relationCbParams);
+    const targetListItems = getListItems(listItemsCallback, relationCbParams);
 
     let cellData = createViewCell(row[targetName], columnMap[targetName]);
 
-    const hasValue = targetListItems
-      ? some((item: Dictionary<any>) => item.value === cellData.value, targetListItems)
-      : false;
+    const hasValue = targetListItems ? someProp('value', cellData.value, targetListItems) : false;
 
     if (!hasValue) {
       cellData = createViewCell('', columnMap[targetName]);
@@ -87,7 +88,9 @@ function createRelationViewCell(
     if (targetDisabled) {
       cellData.disabled = true;
     }
-    cellData.editorOptions.listItems = targetListItems || [];
+    if (Array.isArray(cellData.editorOptions.listItems)) {
+      cellData.editorOptions.listItems = targetListItems || [];
+    }
 
     valueMap[targetName] = cellData;
   });
@@ -104,12 +107,13 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
-    const { isRelated, relationMap } = columnMap[name];
-    if (!isRelated) {
+    const { related, relationMap } = columnMap[name];
+    if (!related) {
       watch(() => {
         valueMap[name] = createViewCell(row[name], columnMap[name]);
       });
     }
+    // @TODO need to improve relation
     if (Object.keys(relationMap!).length) {
       watch(() => {
         createRelationViewCell(name, row, columnMap, valueMap);
