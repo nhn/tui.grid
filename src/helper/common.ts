@@ -144,6 +144,12 @@ export function encodeHTMLEntity(html: string) {
   return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
 }
 
+export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
+  if (typeof obj[key] === 'undefined') {
+    obj[key] = defValue;
+  }
+}
+
 /**
  * Returns a number whose value is limited to the given range.
  * @param value - A number to force within given min-max range

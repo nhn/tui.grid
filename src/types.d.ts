@@ -29,7 +29,7 @@ export type CellValue = number | string | boolean | null | undefined;
 export type SummaryPosition = 'top' | 'bottom';
 
 export type OptRow = {
-  [propName: string]: CellValue;
+  [propName: string]: CellValue | ExtraData;
 } & {
   _extraData?: ExtraData;
 };
@@ -51,6 +51,7 @@ export interface OptColumn {
   editor?: string | CellEditorClass;
   editorOptions?: Dictionary<any>;
   formatter?: Formatter;
+  defaultValue?: CellValue;
   prefix?: Formatter;
   postfix?: Formatter;
   viewer?: string | boolean;

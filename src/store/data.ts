@@ -11,7 +11,7 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { someProp } from '../helper/common';
 import { OptRow } from '../types';
-import { encodeHTMLEntity } from '../helper/common';
+import { encodeHTMLEntity, setDefaultProp } from '../helper/common';
 
 function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: string) {
   let value: string;
@@ -137,8 +137,15 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 }
 
 export function create(data: OptRow[], column: Column): Reactive<Data> {
+  const defaultValues = column.allColumns
+    .filter(({ defaultValue }) => Boolean(defaultValue))
+    .map(({ name, defaultValue }) => ({ name, defaultValue }));
+
   const rawData = data.map((row, index) => {
-    const rowKeyAdded = { rowKey: index, _number: index + 1, _checked: false, ...row };
+    const rowKeyAdded: Row = { rowKey: index, _number: index + 1, _checked: false, ...row };
+    defaultValues.forEach(({ name, defaultValue }) => {
+      setDefaultProp(rowKeyAdded, name, defaultValue);
+    });
 
     return reactive(rowKeyAdded as Row);
   });

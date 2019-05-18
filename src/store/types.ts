@@ -21,7 +21,7 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
-export type Row = Dictionary<CellValue> & {
+export type Row = Dictionary<CellValue | any> & {
   rowKey: RowKey;
   _number: number;
   _checked: boolean;
@@ -86,6 +86,7 @@ export interface ColumnInfo {
   rendererOptions?: Dictionary<any>;
   hidden: boolean;
   formatter?: Formatter;
+  defaultValue?: CellValue;
   prefix?: Formatter;
   postfix?: Formatter;
   baseWidth: number;

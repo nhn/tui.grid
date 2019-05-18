@@ -106,23 +106,48 @@ describe('formatter', () => {
   });
 });
 
-it('if escapeHTML is true, HTML Entities should be escaped', () => {
-  const data = [{ name: '<b>Kim</b>', age: 10 }];
-  const columns = [
-    {
-      name: 'name',
-      escapeHTML: true
-    },
-    {
-      name: 'age',
-      prefix: '<b>',
-      postfix: '</b>',
-      formatter: ({ value }: FormatterProps) => `${value}<br/>`,
-      escapeHTML: true
-    }
-  ];
+describe('escapeHTML / defaultValue', () => {
+  it('if escapeHTML is true, HTML Entities should be escaped', () => {
+    const data = [{ name: '<b>Kim</b>', age: 10 }];
+    const columns = [
+      {
+        name: 'name',
+        escapeHTML: true
+      },
+      {
+        name: 'age',
+        prefix: '<b>',
+        postfix: '</b>',
+        formatter: ({ value }: FormatterProps) => `${value}<br/>`,
+        escapeHTML: true
+      }
+    ];
 
-  cy.createGrid({ data, columns });
-  cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
-  cy.getCell(0, 'age').should('to.have.text', '<b>10<br/></b>');
+    cy.createGrid({ data, columns });
+    cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
+    cy.getCell(0, 'age').should('to.have.text', '<b>10<br/></b>');
+  });
+});
+
+describe('defaultValue', () => {
+  it('if the vlaue is empty, defaultValue should be applied', () => {
+    const data = [{ name: 'Lee', age: 20 }, {}];
+    const columns = [
+      {
+        name: 'name',
+        defaultValue: 'Kim'
+      },
+      {
+        name: 'age',
+        defaultValue: '30'
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+
+    cy.getCell(0, 'name').should('to.have.text', 'Lee');
+    cy.getCell(0, 'age').should('to.have.text', '20');
+    cy.getCell(1, 'name').should('to.have.text', 'Kim');
+    cy.getCell(1, 'age').should('to.have.text', '30');
+  });
 });
