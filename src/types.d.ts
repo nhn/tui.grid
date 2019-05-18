@@ -56,6 +56,7 @@ export interface OptColumn {
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
+  escapeHTML?: false;
   align?: string | 'left' | 'center' | 'right';
   relations?: Relations[];
 }

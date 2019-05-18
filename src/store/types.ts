@@ -90,6 +90,7 @@ export interface ColumnInfo {
   postfix?: Formatter;
   baseWidth: number;
   resizable: boolean;
+  escapeHTML: boolean;
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;

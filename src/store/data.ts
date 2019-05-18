@@ -11,15 +11,24 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { someProp } from '../helper/common';
 import { OptRow } from '../types';
+import { encodeHTMLEntity } from '../helper/common';
 
 function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: string) {
+  let value: string;
+
   if (typeof formatter === 'function') {
-    return formatter(props);
+    value = formatter(props);
+  } else if (typeof formatter === 'string') {
+    value = formatter;
+  } else {
+    value = defValue || '';
   }
-  if (typeof formatter === 'string') {
-    return formatter;
+
+  if (value && props.column.escapeHTML) {
+    value = encodeHTMLEntity(value);
   }
-  return defValue || '';
+
+  return value;
 }
 
 function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {

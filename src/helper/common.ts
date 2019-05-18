@@ -127,6 +127,23 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   return resultMap;
 }
 
+export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
+  return obj.hasOwnProperty(key);
+}
+
+export function encodeHTMLEntity(html: string) {
+  const entities = {
+    '"': 'quot',
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    "'": '#39'
+  };
+  type EntityKey = keyof typeof entities;
+
+  return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
+}
+
 /**
  * Returns a number whose value is limited to the given range.
  * @param value - A number to force within given min-max range

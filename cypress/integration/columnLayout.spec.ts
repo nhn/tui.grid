@@ -14,6 +14,23 @@ beforeEach(() => {
 describe('formatter', () => {
   const data = [{ name: 'Kim', age: 30 }, { name: 'Lee', age: 40 }];
 
+  const ageFormatterProps1 = {
+    column: { name: 'age' },
+    row: data[0],
+    value: 30
+  };
+
+  const ageFormatterProps2 = {
+    column: { name: 'age' },
+    row: data[1],
+    value: 40
+  };
+
+  function assertAgeFormatterCallProps(formatterStub: any) {
+    expect(isSubSetOf(ageFormatterProps1, formatterStub.args[0][0])).to.be.true;
+    expect(isSubSetOf(ageFormatterProps2, formatterStub.args[1][0])).to.be.true;
+  }
+
   it('formatter should be applied to the value', () => {
     const formatterStub = cy.stub();
     const columns = [
@@ -35,19 +52,7 @@ describe('formatter', () => {
     cy.getCell(1, 'age').should('to.have.text', 'AGE');
 
     cy.waitForGrid().then(() => {
-      const firstCallProps = {
-        column: { name: 'age' },
-        row: data[0],
-        value: 30
-      };
-      const secondCallProps = {
-        column: { name: 'age' },
-        row: data[1],
-        value: 40
-      };
-
-      expect(isSubSetOf(firstCallProps, formatterStub.args[0][0])).to.be.true;
-      expect(isSubSetOf(secondCallProps, formatterStub.args[1][0])).to.be.true;
+      assertAgeFormatterCallProps(formatterStub);
     });
   });
 
@@ -72,23 +77,11 @@ describe('formatter', () => {
     cy.getCell(1, 'age').should('to.have.text', 'Age: 40');
 
     cy.waitForGrid().then(() => {
-      const firstCallProps = {
-        column: { name: 'age' },
-        row: data[0],
-        value: 30
-      };
-      const secondCallProps = {
-        column: { name: 'age' },
-        row: data[1],
-        value: 40
-      };
-
-      expect(isSubSetOf(firstCallProps, prefixStub.args[0][0])).to.be.true;
-      expect(isSubSetOf(secondCallProps, prefixStub.args[1][0])).to.be.true;
+      assertAgeFormatterCallProps(prefixStub);
     });
   });
 
-  it('postfix should be displayed after the value', async () => {
+  it('postfix should be displayed after the value', () => {
     const postfixStub = cy.stub();
     const columns = [
       {
@@ -101,25 +94,35 @@ describe('formatter', () => {
       }
     ];
 
-    cy.createGrid({ data, columns }).then(() => {
-      cy.getCell(0, 'name').should('to.contain', 'Kim!!');
-      cy.getCell(1, 'name').should('to.contain', 'Lee!!');
-      cy.getCell(0, 'age').should('to.contain', '30 Old');
-      cy.getCell(1, 'age').should('to.contain', '40 Old');
+    cy.createGrid({ data, columns });
+    cy.getCell(0, 'name').should('to.have.text', 'Kim!!');
+    cy.getCell(1, 'name').should('to.have.text', 'Lee!!');
+    cy.getCell(0, 'age').should('to.have.text', '30 Old');
+    cy.getCell(1, 'age').should('to.have.text', '40 Old');
 
-      const firstCallProps = {
-        column: { name: 'age' },
-        row: data[0],
-        value: 30
-      };
-      const secondCallProps = {
-        column: { name: 'age' },
-        row: data[1],
-        value: 40
-      };
-
-      expect(isSubSetOf(firstCallProps, postfixStub.args[0][0])).to.be.true;
-      expect(isSubSetOf(secondCallProps, postfixStub.args[1][0])).to.be.true;
+    cy.waitForGrid().then(() => {
+      assertAgeFormatterCallProps(postfixStub);
     });
   });
+});
+
+it('if escapeHTML is true, HTML Entities should be escaped', () => {
+  const data = [{ name: '<b>Kim</b>', age: 10 }];
+  const columns = [
+    {
+      name: 'name',
+      escapeHTML: true
+    },
+    {
+      name: 'age',
+      prefix: '<b>',
+      postfix: '</b>',
+      formatter: ({ value }: FormatterProps) => `${value}<br/>`,
+      escapeHTML: true
+    }
+  ];
+
+  cy.createGrid({ data, columns });
+  cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
+  cy.getCell(0, 'age').should('to.have.text', '<b>10<br/></b>');
 });
