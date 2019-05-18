@@ -1,3 +1,5 @@
+import { CellValue } from 'src/store/types';
+
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -148,6 +150,13 @@ export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
   if (typeof obj[key] === 'undefined') {
     obj[key] = defValue;
   }
+}
+
+export function getCellDisplayValue(value: CellValue) {
+  if (typeof value === 'undefined' || value === null) {
+    return '';
+  }
+  return String(value);
 }
 
 /**

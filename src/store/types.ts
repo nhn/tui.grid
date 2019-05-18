@@ -79,7 +79,10 @@ export interface ColumnInfo {
   readonly name: string;
   readonly header: string;
   readonly minWidth: number;
-  readonly align: string;
+  readonly align: 'left' | 'center' | 'right';
+  readonly valign?: 'top' | 'middle' | 'bottom';
+  readonly ellipsis?: boolean;
+  readonly whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   editor?: CellEditorClass;
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;

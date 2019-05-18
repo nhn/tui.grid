@@ -58,8 +58,11 @@ export interface OptColumn {
   resizable?: boolean;
   minWidth?: number;
   escapeHTML?: false;
-  align?: string | 'left' | 'center' | 'right';
   relations?: Relations[];
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  ellipsis?: boolean;
 }
 
 export interface OptColumnOptions {

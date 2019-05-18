@@ -5,6 +5,8 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     getCell(rowKey: number | string, column: string): Chainable<any>;
 
+    getCellContent(rowKey: number | string, column: string): Chainable<any>;
+
     createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
 
     waitForGrid(): Chainable<any>;

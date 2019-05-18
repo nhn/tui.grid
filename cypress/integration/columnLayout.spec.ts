@@ -151,3 +151,53 @@ describe('defaultValue', () => {
     cy.getCell(1, 'age').should('to.have.text', '30');
   });
 });
+
+describe('cell align styles', () => {
+  it('align/valign should be applied to the cell element', () => {
+    const data = [
+      {
+        col1: '1',
+        col2: '2'
+      }
+    ];
+    const columns = [
+      {
+        name: 'col1',
+        align: 'right'
+      },
+      {
+        name: 'col2',
+        valign: 'bottom'
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+    cy.getCell(0, 'col1').should('have.css', 'text-align', 'right');
+    cy.getCell(0, 'col2').should('have.css', 'vertical-align', 'bottom');
+  });
+});
+
+describe('cell content ellipsis/whitespace', () => {
+  it('ellipsis and whitespace style should be applied to the cell-content', () => {
+    const data = [
+      {
+        col1: 'something very long text to exceed with of the cell',
+        col2: 'something very long text to\nexceed with of the cell'
+      }
+    ];
+    const columns = [
+      {
+        name: 'col1',
+        ellipsis: true
+      },
+      {
+        name: 'col2',
+        whiteSpace: 'pre'
+      }
+    ];
+
+    cy.createGrid({ data, columns }, { width: '400px' });
+    cy.getCellContent(0, 'col1').should('have.css', 'text-overflow', 'ellipsis');
+    cy.getCellContent(0, 'col2').should('have.css', 'white-space', 'pre');
+  });
+});

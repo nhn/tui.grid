@@ -4,11 +4,15 @@ Cypress.Commands.add('getCell', (rowKey, columnName) => {
   return cy.get(`.${cls('cell')}[data-row-key="${rowKey}"][data-column-name="${columnName}"]`);
 });
 
+Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
+  return cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`);
+});
+
 Cypress.Commands.add('createGrid', (gridOptions, elementStyle = {}) => {
   return cy.window().then((win) => {
     const { document, tui } = win;
     const el = document.createElement('div');
-    const styles = { ...elementStyle, width: '800px' };
+    const styles = { width: '800px', ...elementStyle };
 
     Object.assign(el.style, styles);
     document.body.appendChild(el);

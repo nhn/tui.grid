@@ -6,29 +6,33 @@ import {
   ColumnInfo,
   Formatter,
   CellRenderData,
-  FormatterProps
+  FormatterProps,
+  CellValue
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { someProp } from '../helper/common';
 import { OptRow } from '../types';
-import { encodeHTMLEntity, setDefaultProp } from '../helper/common';
+import { encodeHTMLEntity, setDefaultProp, getCellDisplayValue } from '../helper/common';
 
-function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: string) {
-  let value: string;
+function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: CellValue) {
+  let value: CellValue;
+  let strValue: string;
 
   if (typeof formatter === 'function') {
     value = formatter(props);
   } else if (typeof formatter === 'string') {
     value = formatter;
   } else {
-    value = defValue || '';
+    value = defValue;
   }
 
-  if (value && props.column.escapeHTML) {
-    value = encodeHTMLEntity(value);
+  strValue = getCellDisplayValue(value);
+
+  if (strValue && props.column.escapeHTML) {
+    strValue = encodeHTMLEntity(strValue);
   }
 
-  return value;
+  return strValue;
 }
 
 function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {
@@ -58,7 +62,7 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
-    formattedValue: getFormattedValue(formatterProps, formatter, String(value)),
+    formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
     postfix: getFormattedValue(formatterProps, postfix),
     value

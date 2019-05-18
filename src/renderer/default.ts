@@ -6,7 +6,15 @@ export class DefaultRenderer implements CellRenderer {
 
   public constructor(props: CellRendererProps) {
     const el = document.createElement('div');
+    const { ellipsis, whiteSpace } = props.columnInfo;
+
     el.className = cls('cell-content');
+    if (ellipsis) {
+      el.style.textOverflow = 'ellipsis';
+    }
+    if (whiteSpace) {
+      el.style.whiteSpace = whiteSpace;
+    }
 
     this.el = el;
     this.changed(props);
