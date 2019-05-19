@@ -109,7 +109,7 @@ function createGridWithTheme(options) {
       header: 'ID',
       name: 'c1',
       align: 'center',
-      editOption: {
+      editOptions: {
         beforeContent: 'FE',
         type: 'text'
       }
@@ -119,7 +119,7 @@ function createGridWithTheme(options) {
       defaultValue: 2,
       name: 'c2',
       align: 'center',
-      editOption: {
+      editOptions: {
         type: 'text'
       }
     },
@@ -127,7 +127,7 @@ function createGridWithTheme(options) {
       header: 'Score',
       name: 'c3',
       align: 'center',
-      editOption: {
+      editOptions: {
         type: 'text',
         afterContent: ' Point'
       }

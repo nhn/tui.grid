@@ -42,10 +42,6 @@ export interface ClipboardCopyOptions {
   customValue?: string;
 }
 
-export interface Clipboard {
-  text: string | null;
-}
-
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
@@ -83,6 +79,7 @@ export interface ColumnInfo {
   readonly header: string;
   readonly minWidth: number;
   readonly align: string;
+  copyOptions?: ClipboardCopyOptions;
   editor?: CellEditorClass;
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
@@ -174,7 +171,6 @@ export interface Focus {
   readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
   readonly cellPosRect: Rect | null;
-  readonly text: string | null;
 }
 
 export interface SummaryColumnContentMap {
@@ -218,7 +214,6 @@ export interface Selection {
   readonly range: SelectionRange | null;
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
-  readonly text: string | null;
 }
 
 export interface Store {
@@ -232,5 +227,4 @@ export interface Store {
   readonly focus: Focus;
   readonly selection: Selection;
   readonly summary: Summary;
-  readonly clipboard: Clipboard;
 }

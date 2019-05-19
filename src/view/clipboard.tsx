@@ -4,9 +4,9 @@ import { DispatchProps } from '../dispatch/create';
 import { cls, isSupportWindowClipboardData } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 import { isEdge } from '../helper/browser';
+import { getText } from '../helper/clipboard';
 
 interface StoreProps {
-  text: string | null;
   navigating: boolean;
   editing: boolean;
 }
@@ -47,6 +47,7 @@ class ClipboardComp extends Component<Props> {
 
   private dispatchKeyboardEvent = (type: KeyboardEventType, command?: KeyboardEventCommandType) => {
     const { dispatch } = this.props;
+
     switch (type) {
       case 'move':
         dispatch('selectionEnd');
@@ -64,7 +65,12 @@ class ClipboardComp extends Component<Props> {
         dispatch('removeFocus');
         break;
       case 'clipboard':
-        dispatch('cellCopy', command!);
+        // @TODO: helper(query)에서 데이터를 처리할 것임
+        if (!this.el) {
+          return;
+        }
+        this.el.innerHTML = getText(this.context.store);
+        // this.el.focus();
         break;
       default:
         break;
@@ -117,16 +123,17 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
-  private onCopy(ev: ClipboardEvent) {
-    // text 가져오기
-    const text = '1';
-
-    if (!isSupportWindowClipboardData && ev.clipboardData) {
+  private onCopy = (ev: ClipboardEvent) => {
+    if (!this.el) {
+      return;
+    }
+    const text = this.el.innerHTML;
+    if (!isSupportWindowClipboardData() && ev.clipboardData) {
       ev.clipboardData.setData('text/plain', text);
     }
 
     ev.preventDefault();
-  }
+  };
 
   private onPaste(ev: ClipboardEvent) {
     const clipboardData = ev.clipboardData || (window as WindowWithClipboard).clipboardData;
@@ -155,7 +162,10 @@ class ClipboardComp extends Component<Props> {
   public render() {
     return (
       <div
-        class={cls('clipboard')}
+        // class={cls('clipboard')}
+        style={{
+          border: '1px solid #ccc'
+        }}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         onCopy={this.onCopy}
@@ -169,8 +179,7 @@ class ClipboardComp extends Component<Props> {
   }
 }
 
-export const Clipboard = connect<StoreProps>(({ focus, clipboard }) => ({
-  text: clipboard.text,
+export const Clipboard = connect<StoreProps>(({ focus }) => ({
   navigating: focus.navigating,
   editing: !!focus.editingAddress
 }))(ClipboardComp);

@@ -147,10 +147,6 @@ export function create({
         L: leftSideStyles,
         R: rightSideStyles
       };
-    },
-
-    get text(this: Selection) {
-      return null;
     }
   });
 }

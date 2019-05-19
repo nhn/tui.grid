@@ -93,18 +93,6 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   };
 }
 
-export function cellCopy(store: Store, command: KeyboardEventCommandType) {
-  if (command === 'copy') {
-    const { clipboard, focus, selection } = store;
-
-    if (selection.range) {
-      clipboard.text = selection.text;
-    } else {
-      clipboard.text = focus.text;
-    }
-  }
-}
-
 export function removeFocus(store: Store) {
   // @TODO: 이후 관련 키보드 이벤트 작업 필요
   console.log(store);

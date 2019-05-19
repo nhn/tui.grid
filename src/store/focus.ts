@@ -67,10 +67,6 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
       const bottom = top + rowCoords.heights[rowIndex];
 
       return { left, right, top, bottom };
-    },
-
-    get text(this: Focus) {
-      return null;
     }
   });
 }

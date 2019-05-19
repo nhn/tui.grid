@@ -10,7 +10,6 @@ import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
-import { create as createClipboard } from './clipboard';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -26,7 +25,7 @@ export function createStore(id: number, options: OptGrid): Store {
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
-  const column = createColumn(options.columns, columnOptions, rowHeaders);
+  const column = createColumn(options.columns, columnOptions, rowHeaders, copyOptions);
   const data = createData(options.data || [], column);
   const dimension = createDimension({
     data,
@@ -44,8 +43,13 @@ export function createStore(id: number, options: OptGrid): Store {
   const viewport = createViewport({ data, column, dimension, rowCoords, columnCoords });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
-  const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
-  const clipboard = createClipboard({ copyOptions, selection });
+  const selection = createSelection({
+    selectionUnit,
+    columnCoords,
+    column,
+    dimension,
+    rowCoords
+  });
 
   return reactive({
     id,
@@ -57,7 +61,6 @@ export function createStore(id: number, options: OptGrid): Store {
     viewport,
     focus,
     summary,
-    selection,
-    clipboard
+    selection
   });
 }

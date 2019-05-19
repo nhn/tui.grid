@@ -41,6 +41,7 @@ export interface OptColumn {
   header?: string;
   hidden?: boolean;
   width?: number | 'auto';
+  copyOptions?: ClipboardCopyOptions;
   renderer?: CellRendererClass;
   rendererOptions?: Dictionary<any>;
   editor?: string | CellEditorClass;

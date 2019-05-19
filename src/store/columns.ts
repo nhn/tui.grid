@@ -1,4 +1,4 @@
-import { Column, ColumnInfo, Dictionary } from './types';
+import { ClipboardCopyOptions, Column, ColumnInfo, Dictionary } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray } from '../helper/common';
@@ -25,7 +25,11 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
   return { editor, editorOptions };
 }
 
-function createColumn(column: OptColumn, columnOptions: OptColumnOptions): ColumnInfo {
+function createColumn(
+  column: OptColumn,
+  columnOptions: OptColumnOptions,
+  gridCopyOptions: ClipboardCopyOptions
+): ColumnInfo {
   const {
     header,
     name,
@@ -37,7 +41,8 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     editor,
     editorOptions,
     renderer,
-    rendererOptions
+    rendererOptions,
+    copyOptions
   } = column;
   const fixedWidth = typeof width === 'number';
   const baseWidth = (width === 'auto' ? 0 : width) || 0;
@@ -52,6 +57,7 @@ function createColumn(column: OptColumn, columnOptions: OptColumnOptions): Colum
     rendererOptions,
     fixedWidth,
     baseWidth,
+    copyOptions: { ...gridCopyOptions, ...copyOptions },
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     ...getEditorInfo(editor, editorOptions)
   });
@@ -92,10 +98,11 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
 export function create(
   columns: OptColumn[],
   columnOptions: OptColumnOptions = {},
-  rowHeaders: OptRowHeader[]
+  rowHeaders: OptRowHeader[],
+  copyOptions: ClipboardCopyOptions
 ): Column {
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
-  const columnInfos = columns.map((column) => createColumn(column, columnOptions));
+  const columnInfos = columns.map((column) => createColumn(column, columnOptions, copyOptions));
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({

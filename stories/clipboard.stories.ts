@@ -12,7 +12,64 @@ stories.addDecorator(withKnobs);
 const columns = [
   { name: 'name' },
   { name: 'artist' },
-  { name: 'type' },
+  { name: 'type', editor: 'select' },
+  { name: 'release' },
+  { name: 'genre' },
+  { name: 'genreCode' },
+  { name: 'grade' },
+  { name: 'price' },
+  { name: 'downloadCount' },
+  { name: 'listenCount' }
+];
+
+const columnsUseFormattedValue = [
+  { name: 'name' },
+  {
+    name: 'artist',
+    copyOptions: {
+      useFormattedValue: true
+    }
+  },
+  {
+    name: 'type',
+    editor: 'select',
+    editorOptions: {
+      listItems: [
+        { text: 'Pop', value: '1' },
+        { text: 'Rock', value: '2' },
+        { text: 'R&B', value: '3' }
+      ]
+    },
+    copyOptions: {
+      useListItemText: true
+    }
+  },
+  { name: 'release' },
+  { name: 'genre' },
+  { name: 'genreCode' },
+  { name: 'grade' },
+  { name: 'price' },
+  { name: 'downloadCount' },
+  { name: 'listenCount' }
+];
+
+const columnsUseListItemText = [
+  { name: 'name' },
+  { name: 'artist' },
+  {
+    name: 'type',
+    editor: 'select',
+    editorOptions: {
+      listItems: [
+        { text: 'Pop', value: '1' },
+        { text: 'Rock', value: '2' },
+        { text: 'R&B', value: '3' }
+      ]
+    },
+    copyOptions: {
+      useListItemText: true
+    }
+  },
   { name: 'release' },
   { name: 'genre' },
   { name: 'genreCode' },
@@ -41,6 +98,61 @@ stories.add(
       columnOptions: {
         frozenCount: 2,
         minWidth: 150
+      },
+      copyOptions: {
+        useFormattedValue: false
+      }
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
+
+    button('copyToClipboard', () => grid.copyToClipboard());
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'clipboard with useFormattedValue',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns: columnsUseFormattedValue,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      copyOptions: {
+        useFormattedValue: false
+      }
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
+
+    button('copyToClipboard', () => grid.copyToClipboard());
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'clipboard with useListItemText',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns: columnsUseListItemText,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      copyOptions: {
+        useFormattedValue: false
       }
     });
     const rootEl = document.createElement('div');
