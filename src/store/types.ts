@@ -21,7 +21,7 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
-export type Row = Dictionary<CellValue> & {
+export type Row = Dictionary<CellValue | any> & {
   rowKey: RowKey;
   _number: number;
   _checked: boolean;
@@ -67,13 +67,18 @@ export interface Data {
   checkedAllRows: boolean;
 }
 
-export type Formatter = (value: CellValue) => string | string;
+export interface FormatterProps {
+  row: Row;
+  column: ColumnInfo;
+  value: CellValue;
+}
+
+export type Formatter = (props: FormatterProps) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
-  readonly header: string;
-  readonly minWidth: number;
-  readonly align: string;
+  header: string;
+  minWidth: number;
   editor?: CellEditorClass;
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
@@ -87,6 +92,12 @@ export interface ColumnInfo {
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  ellipsis?: boolean;
+  escapeHTML?: boolean;
+  defaultValue?: CellValue;
 }
 
 export interface Column {

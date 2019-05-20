@@ -1,4 +1,4 @@
-import { CellValue, Dictionary, Relations, SelectionUnit } from './store/types';
+import { CellValue, Dictionary, Relations, SelectionUnit, Formatter } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 
@@ -29,7 +29,7 @@ export type CellValue = number | string | boolean | null | undefined;
 export type SummaryPosition = 'top' | 'bottom';
 
 export type OptRow = {
-  [propName: string]: CellValue;
+  [propName: string]: CellValue | ExtraData;
 } & {
   _extraData?: ExtraData;
 };
@@ -50,11 +50,19 @@ export interface OptColumn {
   rendererOptions?: Dictionary<any>;
   editor?: string | CellEditorClass;
   editorOptions?: Dictionary<any>;
+  formatter?: Formatter;
+  defaultValue?: CellValue;
+  prefix?: Formatter;
+  postfix?: Formatter;
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
-  align?: string | 'left' | 'center' | 'right';
+  escapeHTML?: false;
   relations?: Relations[];
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  ellipsis?: boolean;
 }
 
 export interface OptColumnOptions {

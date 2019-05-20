@@ -60,7 +60,6 @@ function createColumn(
 ): ColumnInfo {
   const {
     header,
-    name,
     width,
     minWidth,
     align,
@@ -69,27 +68,22 @@ function createColumn(
     editor,
     editorOptions,
     renderer,
-    rendererOptions,
     relations
   } = column;
-  const fixedWidth = typeof width === 'number';
-  const baseWidth = (width === 'auto' ? 0 : width) || 0;
-  const relationMap = getRelationMap(relations || []);
-  const related = includes(relationColumns, name);
 
   return reactive({
-    name,
-    header: header || name,
+    ...column,
+    escapeHTML: !!column.escapeHTML,
+    header: header || column.name,
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
     renderer: renderer || DefaultRenderer,
-    rendererOptions,
-    fixedWidth,
-    baseWidth,
+    fixedWidth: typeof width === 'number',
+    baseWidth: (width === 'auto' ? 0 : width) || 0,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
-    relationMap,
-    related,
+    relationMap: getRelationMap(relations || []),
+    related: includes(relationColumns, name),
     ...getEditorInfo(editor, editorOptions)
   });
 }
@@ -122,6 +116,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     rendererOptions: baseRendererOptions,
     fixedWidth: true,
     baseWidth,
+    escapeHTML: false,
     minWidth: baseMinWith
   });
 }

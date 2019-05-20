@@ -6,10 +6,18 @@ export class DefaultRenderer implements CellRenderer {
 
   public constructor(props: CellRendererProps) {
     const el = document.createElement('div');
+    const { ellipsis, whiteSpace } = props.columnInfo;
+
     el.className = cls('cell-content');
-    el.innerHTML = props.formattedValue;
+    if (ellipsis) {
+      el.style.textOverflow = 'ellipsis';
+    }
+    if (whiteSpace) {
+      el.style.whiteSpace = whiteSpace;
+    }
 
     this.el = el;
+    this.changed(props);
   }
 
   public getElement() {
@@ -17,6 +25,6 @@ export class DefaultRenderer implements CellRenderer {
   }
 
   public changed(props: CellRendererProps) {
-    this.el.innerHTML = props.formattedValue;
+    this.el.innerHTML = `${props.prefix}${props.formattedValue}${props.postfix}`;
   }
 }

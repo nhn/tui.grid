@@ -1,3 +1,5 @@
+import { CellValue } from 'src/store/types';
+
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -125,6 +127,29 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   });
 
   return resultMap;
+}
+
+export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
+  return obj.hasOwnProperty(key);
+}
+
+export function encodeHTMLEntity(html: string) {
+  const entities = {
+    '"': 'quot',
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    "'": '#39'
+  };
+  type EntityKey = keyof typeof entities;
+
+  return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
+}
+
+export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
+  if (typeof obj[key] === 'undefined') {
+    obj[key] = defValue;
+  }
 }
 
 /**

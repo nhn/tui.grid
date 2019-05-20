@@ -29,10 +29,12 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-triple-slash-reference': 0,
     'react/no-unknown-property': 0,
     'accessor-pairs': 0,
     'require-jsdoc': 0,
     'no-new': 0,
+    'spaced-comment': 0,
     curly: 2,
     complexity: 0
   },
