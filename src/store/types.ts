@@ -77,27 +77,27 @@ export type Formatter = (props: FormatterProps) => string | string;
 
 export interface ColumnInfo {
   readonly name: string;
-  readonly header: string;
-  readonly minWidth: number;
-  readonly align: 'left' | 'center' | 'right';
-  readonly valign?: 'top' | 'middle' | 'bottom';
-  readonly ellipsis?: boolean;
-  readonly whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  header: string;
+  minWidth: number;
   editor?: CellEditorClass;
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
   rendererOptions?: Dictionary<any>;
   hidden: boolean;
   formatter?: Formatter;
-  defaultValue?: CellValue;
   prefix?: Formatter;
   postfix?: Formatter;
   baseWidth: number;
   resizable: boolean;
-  escapeHTML: boolean;
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
+  align?: string | 'left' | 'center' | 'right';
+  valign?: string | 'top' | 'middle' | 'bottom';
+  whiteSpace?: string | 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  ellipsis?: boolean;
+  escapeHTML?: boolean;
+  defaultValue?: CellValue;
 }
 
 export interface Column {

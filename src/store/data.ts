@@ -10,9 +10,8 @@ import {
   CellValue
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
-import { someProp } from '../helper/common';
 import { OptRow } from '../types';
-import { encodeHTMLEntity, setDefaultProp, getCellDisplayValue } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp, getCellDisplayValue } from '../helper/common';
 
 function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: CellValue) {
   let value: CellValue;
@@ -89,12 +88,12 @@ function createRelationViewCell(
     const targetDisabled = getDisabled(disabledCallback, relationCbParams);
     const targetListItems = getListItems(listItemsCallback, relationCbParams);
 
-    let cellData = createViewCell(row[targetName], columnMap[targetName]);
+    let cellData = createViewCell(row, columnMap[targetName]);
 
     const hasValue = targetListItems ? someProp('value', cellData.value, targetListItems) : false;
 
     if (!hasValue) {
-      cellData = createViewCell('', columnMap[targetName]);
+      cellData = createViewCell(row, columnMap[targetName]);
     }
 
     if (!targetEditable) {

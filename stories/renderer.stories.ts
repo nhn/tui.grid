@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { OptGrid } from '../src/types';
+import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
