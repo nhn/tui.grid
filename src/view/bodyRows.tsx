@@ -28,14 +28,13 @@ class BodyRowsComp extends Component<Props> {
 
   public render({ rows, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
-    const dummyRows = range(dummyRowCount);
 
     return (
       <tbody>
         {rows.map((row) => (
           <BodyRow key={row.rowKey} viewRow={row} columnNames={columnNames} />
         ))}
-        {dummyRows.map((index) => (
+        {range(dummyRowCount).map((index) => (
           <BodyDummyRow
             key={`dummy-${index}`}
             index={rows.length + index}
