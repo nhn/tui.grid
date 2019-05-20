@@ -128,7 +128,7 @@ stories.add('single use - row number', () => {
 });
 
 stories.add(
-  'single use -checkbox',
+  'single use - checkbox',
   () => {
     const { el, grid } = createGrid({
       data,

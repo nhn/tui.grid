@@ -141,6 +141,8 @@ export interface Dimension {
   readonly contentsWidth: number;
   readonly frozenBorderWidth: number;
   readonly totalRowHeight: number;
+  readonly scrollXHeight: number;
+  readonly scrollYWidth: number;
 }
 
 export interface Viewport {
@@ -153,6 +155,7 @@ export interface Viewport {
   readonly rowRange: Range;
   readonly colRange: Range;
   readonly rows: ViewRow[];
+  readonly dummyRowCount: number;
 }
 
 export interface ColumnCoords {
