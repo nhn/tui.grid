@@ -1,4 +1,4 @@
-export function isSubSetOf<T>(obj: T, target: any) {
+export function isSubsetOf<T>(obj: T, target: any) {
   for (const key in obj) {
     if (!obj.hasOwnProperty(key)) {
       continue;
@@ -7,7 +7,7 @@ export function isSubSetOf<T>(obj: T, target: any) {
     const targetProp = target[key];
 
     if (typeof prop === 'object' && typeof targetProp === 'object') {
-      if (!isSubSetOf(prop, targetProp)) {
+      if (!isSubsetOf(prop, targetProp)) {
         return false;
       }
     } else if (prop !== targetProp) {

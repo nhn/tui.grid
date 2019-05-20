@@ -1,5 +1,5 @@
 import { FormatterProps } from '@/store/types';
-import { isSubSetOf } from '../helper/compare';
+import { isSubsetOf } from '../helper/compare';
 
 before(() => {
   cy.visit('/dist');
@@ -27,8 +27,8 @@ describe('formatter', () => {
   };
 
   function assertAgeFormatterCallProps(formatterStub: any) {
-    expect(isSubSetOf(ageFormatterProps1, formatterStub.args[0][0])).to.be.true;
-    expect(isSubSetOf(ageFormatterProps2, formatterStub.args[1][0])).to.be.true;
+    expect(isSubsetOf(ageFormatterProps1, formatterStub.args[0][0])).to.be.true;
+    expect(isSubsetOf(ageFormatterProps2, formatterStub.args[1][0])).to.be.true;
   }
 
   it('formatter should be applied to the value', () => {

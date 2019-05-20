@@ -11,26 +11,31 @@ import {
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp, getCellDisplayValue } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp } from '../helper/common';
 
-function getFormattedValue(props: FormatterProps, formatter?: Formatter, defValue?: CellValue) {
+export function getCellDisplayValue(value: CellValue) {
+  if (typeof value === 'undefined' || value === null) {
+    return '';
+  }
+  return String(value);
+}
+
+function getFormattedValue(props: FormatterProps, formatter?: Formatter, defaultValue?: CellValue) {
   let value: CellValue;
-  let strValue: string;
 
   if (typeof formatter === 'function') {
     value = formatter(props);
   } else if (typeof formatter === 'string') {
     value = formatter;
   } else {
-    value = defValue;
+    value = defaultValue;
   }
 
-  strValue = getCellDisplayValue(value);
+  const strValue = getCellDisplayValue(value);
 
   if (strValue && props.column.escapeHTML) {
-    strValue = encodeHTMLEntity(strValue);
+    return encodeHTMLEntity(strValue);
   }
-
   return strValue;
 }
 

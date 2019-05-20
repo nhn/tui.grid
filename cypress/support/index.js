@@ -18,22 +18,3 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
-
-export function isSubSetOf(obj, target) {
-  for (const key in obj) {
-    if (!obj.hasOwnProperty(key)) {
-      continue;
-    }
-    const prop = obj[key];
-    const targetProp = target[key];
-
-    if (typeof prop === 'object' && typeof targetProp === 'object') {
-      if (!isSubSetOf(prop, targetProp)) {
-        return false;
-      }
-    } else if (prop !== targetProp) {
-      return false;
-    }
-  }
-  return true;
-}

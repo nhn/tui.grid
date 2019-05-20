@@ -152,13 +152,6 @@ export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
   }
 }
 
-export function getCellDisplayValue(value: CellValue) {
-  if (typeof value === 'undefined' || value === null) {
-    return '';
-  }
-  return String(value);
-}
-
 /**
  * Returns a number whose value is limited to the given range.
  * @param value - A number to force within given min-max range
