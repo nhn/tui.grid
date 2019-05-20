@@ -166,7 +166,7 @@ describe('summary', () => {
       const options = createDefaultOptions();
       const columns = options.columns.map((column) => ({
         ...column,
-        editor: { type: 'text' }
+        editor: 'text'
       }));
       createGrid({ columns });
 
@@ -278,7 +278,14 @@ describe('summary', () => {
     createGrid();
     getGridInst()
       .invoke('getSummaryValues', 'price')
-      .contains('30000')
-      .contains('6000');
+      .should((summaryValues) => {
+        expect(summaryValues).to.be.eql({
+          avg: 13750,
+          cnt: 20,
+          max: 30000,
+          min: 6000,
+          sum: 275000
+        });
+      });
   });
 });
