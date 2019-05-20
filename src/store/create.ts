@@ -21,7 +21,8 @@ export function createStore(id: number, options: OptGrid): Store {
     rowHeaders = [],
     summary: summaryOptions = {},
     selectionUnit = 'cell',
-    copyOptions = {}
+    copyOptions = {},
+    showDummyRows = false
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -40,7 +41,14 @@ export function createStore(id: number, options: OptGrid): Store {
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
-  const viewport = createViewport({ data, column, dimension, rowCoords, columnCoords });
+  const viewport = createViewport({
+    data,
+    column,
+    dimension,
+    rowCoords,
+    columnCoords,
+    showDummyRows
+  });
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({

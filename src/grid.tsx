@@ -390,4 +390,29 @@ export default class Grid {
       document.execCommand('copy');
     }
   }
+
+  /**
+   * Sorts all rows by the specified column.
+   * @param {string} columnName - The name of the column to be used to compare the rows
+   * @param {boolean} [ascending] - Whether the sort order is ascending.
+   *        If not specified, use the negative value of the current order.
+   */
+  public sort(columnName: string, ascending: boolean) {
+    this.dispatch('sort', columnName, ascending);
+  }
+
+  /**
+   * Unsorts all rows. (Sorts by rowKey).
+   */
+  public unSort() {
+    this.dispatch('sort', 'rowKey', true);
+  }
+
+  /**
+   * Gets state of the sorted column in rows
+   * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
+   */
+  public getSortState() {
+    return this.store.data.sortOptions;
+  }
 }

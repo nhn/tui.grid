@@ -116,7 +116,7 @@ stories.add(
         minWidth: 150
       },
       copyOptions: {
-        useFormattedValue: false
+        useFormattedValue: true
       }
     });
     const rootEl = document.createElement('div');
