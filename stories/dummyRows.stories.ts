@@ -18,7 +18,7 @@ const columns = [
   { name: 'genre', minWidth: 150 }
 ];
 
-const slicedData = data.slice(0, 2);
+const slicedData = data.slice(0, 5);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');

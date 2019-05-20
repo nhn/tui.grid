@@ -132,3 +132,13 @@ export function clamp(value: number, min: number, max: number) {
 
   return Math.max(min, Math.min(value, max));
 }
+
+export function range(end: number) {
+  const arr = [];
+
+  for (let i = 0; i < end; i += 1) {
+    arr.push(i);
+  }
+
+  return arr;
+}

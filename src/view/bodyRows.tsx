@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRow } from './bodyRow';
 import { BodyDummyRow } from './bodyDummyRow';
-import { shallowEqual } from '../helper/common';
+import { shallowEqual, range } from '../helper/common';
 import { Side, ColumnInfo, ViewRow } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
@@ -19,18 +19,6 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
-  private getDummyRows(dummyRowCount: number, columnNames: string[], startIndex: number) {
-    const dummyRows = [];
-
-    for (let index = 0; index < dummyRowCount; index += 1) {
-      dummyRows.push(
-        <BodyDummyRow key={index} index={startIndex + index} columnNames={columnNames} />
-      );
-    }
-
-    return dummyRows;
-  }
-
   public shouldComponentUpdate(nextProps: Props) {
     if (shallowEqual(nextProps, this.props)) {
       return false;
@@ -40,13 +28,20 @@ class BodyRowsComp extends Component<Props> {
 
   public render({ rows, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
+    const dummyRows = range(dummyRowCount);
 
     return (
       <tbody>
         {rows.map((row) => (
           <BodyRow key={row.rowKey} viewRow={row} columnNames={columnNames} />
         ))}
-        {!!dummyRowCount && this.getDummyRows(dummyRowCount, columnNames, rows.length)}
+        {dummyRows.map((index) => (
+          <BodyDummyRow
+            key={`dummy-${index}`}
+            index={rows.length + index}
+            columnNames={columnNames}
+          />
+        ))}
       </tbody>
     );
   }
