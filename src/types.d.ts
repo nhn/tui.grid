@@ -59,9 +59,9 @@ export interface OptColumn {
   minWidth?: number;
   escapeHTML?: false;
   relations?: Relations[];
-  align?: string | 'left' | 'center' | 'right';
-  valign?: string | 'top' | 'middle' | 'bottom';
-  whiteSpace?: string | 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
 }
 

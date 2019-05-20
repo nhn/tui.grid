@@ -92,9 +92,9 @@ export interface ColumnInfo {
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
-  align?: string | 'left' | 'center' | 'right';
-  valign?: string | 'top' | 'middle' | 'bottom';
-  whiteSpace?: string | 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  align?: 'left' | 'center' | 'right';
+  valign?: 'top' | 'middle' | 'bottom';
+  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
   defaultValue?: CellValue;

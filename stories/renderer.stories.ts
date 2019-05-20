@@ -130,7 +130,7 @@ class SingleCheckRenderer implements CellRenderer {
   }
 }
 
-const columns = [
+const columns: OptColumn[] = [
   { name: 'name', renderer: ToolTipRenderer, align: 'center' },
   {
     name: 'score',
