@@ -36,10 +36,16 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
+export type CustomValue = (
+  value: CellValue,
+  rowAttrs: Row[],
+  column: ColumnInfo
+) => string | string;
+
 export interface ClipboardCopyOptions {
   useFormattedValue?: boolean;
   useListItemText?: boolean;
-  customValue?: string;
+  customValue?: CustomValue;
 }
 
 export interface CellRenderData {

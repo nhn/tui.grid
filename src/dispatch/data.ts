@@ -1,5 +1,6 @@
 import { Store, CellValue, RowKey } from '../store/types';
 import { findProp } from '../helper/common';
+import { applyPasteDataToRawData, duplicateData, getRangeToPaste } from '../query/clipboard';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -42,4 +43,16 @@ export function uncheckAll(store: Store) {
   if (rendererOptions.inputType !== 'radio') {
     setColumnValues(store, '_checked', false);
   }
+}
+
+export function paste(store: Store, pasteData: string[][]) {
+  const { selection } = store;
+
+  if (selection.range) {
+    pasteData = duplicateData(selection.range, pasteData);
+  }
+
+  const rangeToPaste = getRangeToPaste(store, pasteData);
+  applyPasteDataToRawData(store, pasteData, rangeToPaste);
+  store.selection.inputRange = rangeToPaste;
 }

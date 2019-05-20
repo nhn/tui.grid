@@ -1,44 +1,115 @@
 import {
-  Store,
   CellValue,
   CellRenderData,
   ClipboardCopyOptions,
+  Range,
+  Dictionary,
+  Row,
   ViewRow,
-  Dictionary
+  ColumnInfo,
+  CustomValue
 } from '../store/types';
 import { find } from './common';
 import { Options } from '../editor/select';
 
-// @TODO: 변형된 값 넣기. test 스토리북에 넣기(테스트)
-// paste작업 시작. 스펙 어떻게 될 지 보기
-
-export const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
-export const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
+const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
+const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
 const CUSTOM_LF_REGEXP = new RegExp(CUSTOM_LF_SUBCHAR, 'g');
 const CUSTOM_CR_REGEXP = new RegExp(CUSTOM_CR_SUBCHAR, 'g');
 const LF = '\n';
 const CR = '\r';
 
-// @TODO: 이럴 때 빈문자열 복사되는 것이 맞나?
+export function setDataInSpanRange(
+  value: string,
+  data: string[][],
+  colspanRange: Range,
+  rowspanRange: Range
+) {
+  const [startColspan, endColspan] = colspanRange;
+  const [startRowspan, endRowspan] = rowspanRange;
 
-export function addDoubleQuotes(text: string) {
-  if (text.match(/\r?\n/g)) {
-    text = `"${text.replace(/"/g, '""')}"`;
+  for (let rIndex = startRowspan; rIndex < endRowspan; rIndex += 1) {
+    for (let cIndex = startColspan; cIndex < endColspan; cIndex += 1) {
+      data[rIndex][cIndex] = startRowspan === rIndex && startColspan === cIndex ? value : ' ';
+    }
+  }
+}
+
+export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) {
+  const data: string[][] = [];
+  let colspanRange: Range, rowspanRange: Range;
+
+  for (let index = 0; index < rows.length; index += 1) {
+    data[index] = [];
+  }
+
+  const rowsIter = Array.prototype.slice.call(rows);
+  rowsIter.forEach(function(tr: HTMLTableRowElement, rowIndex: number) {
+    let columnIndex = 0;
+
+    Array.prototype.slice.call(tr.cells).forEach(function(td: HTMLTableDataCellElement) {
+      const text = td.textContent || td.innerText;
+
+      while (data[rowIndex][columnIndex]) {
+        columnIndex += 1;
+      }
+
+      colspanRange = [columnIndex, columnIndex + (td.colSpan || 1)];
+      rowspanRange = [rowIndex, rowIndex + (td.rowSpan || 1)];
+
+      setDataInSpanRange(text, data, colspanRange, rowspanRange);
+      columnIndex = colspanRange[1];
+    });
+  });
+
+  return data;
+}
+
+function removeDoubleQuotes(text: string) {
+  if (text.match(CUSTOM_LF_REGEXP)) {
+    text = text.substring(1, text.length - 1).replace(/""/g, '"');
   }
 
   return text;
 }
 
-// @TODO: getcustomValue 어떤 스펙으로 될지 (파라미터가 변하는데?)
-// function getCustomValue(customValue, value, rowAttrs, column) {
-//   if (typeof customValue === 'function') {
-//     return customValue(value, rowAttrs, column);
-//   }
-//   return customValue;
-// }
+function replaceNewlineToSubchar(text: string) {
+  return text.replace(/"([^"]|"")*"/g, function(value: string) {
+    return value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR);
+  });
+}
 
-function getTextWithCopyOptionsApplied(
+export function convertTextToData(text: string) {
+  // Each newline cell data is wrapping double quotes in the text and
+  // newline characters should be replaced with substitution characters temporarily
+  // before spliting the text by newline characters.
+  text = replaceNewlineToSubchar(text);
+
+  return text.split(/\r?\n/).map(function(row: string) {
+    return row.split('\t').map(function(column: string) {
+      column = removeDoubleQuotes(column);
+
+      return column.replace(CUSTOM_LF_REGEXP, LF).replace(CUSTOM_CR_REGEXP, CR);
+    });
+  });
+}
+
+export function getCustomValue(
+  customValue: CustomValue,
+  value: CellValue,
+  rowAttrs: Row[],
+  column: ColumnInfo
+) {
+  if (typeof customValue === 'function') {
+    return customValue(value, rowAttrs, column);
+  }
+  return customValue;
+}
+
+export function getTextWithCopyOptionsApplied(
   valueMap: CellRenderData,
+  rawData: Row[],
+  column: ColumnInfo,
   copyOptions?: ClipboardCopyOptions,
   editorOptions?: Dictionary<Options>
 ) {
@@ -47,9 +118,7 @@ function getTextWithCopyOptionsApplied(
   // priority: customValue > useListItemText > useFormattedValue > original Data
   if (copyOptions) {
     if (copyOptions.customValue) {
-      // @TODO: getCustomValue 파라미터 정해서 제대로 하기
-      // return getCustomValue(value);
-      retValue = valueMap.value;
+      retValue = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
     } else if (copyOptions.useListItemText && editorOptions) {
       const { listItems } = (editorOptions as unknown) as Options;
       const listItem = find((item) => item.value === valueMap.value, listItems);
@@ -62,70 +131,19 @@ function getTextWithCopyOptionsApplied(
   return retValue ? retValue.toString() : '';
 }
 
-function getValueToString(store: Store) {
-  const {
-    column,
-    focus: { rowIndex, columnName, totalColumnIndex },
-    data: { viewData }
-  } = store;
-  if (rowIndex === null || columnName === null || totalColumnIndex === null) {
-    // @TODO: 이럴 때 빈문자열 복사되는 것이 맞나?
-    return '';
-  }
-
-  const { visibleColumns } = column;
-  const valueMap = viewData[rowIndex].valueMap[columnName];
-  const { copyOptions } = visibleColumns[totalColumnIndex];
-
-  return getTextWithCopyOptionsApplied(valueMap, copyOptions);
+export function isColumnEditable(viewData: ViewRow[], rowIndex: number, columnName: string) {
+  const { disabled, editable } = viewData[rowIndex].valueMap[columnName];
+  return editable && !disabled;
 }
 
-function getValuesToString(store: Store) {
-  const {
-    selection: { range },
-    column: { visibleColumns },
-    data: { viewData }
-  } = store;
+export function getEndIndexToPaste(
+  startIndex: Range,
+  pasteData: string[][],
+  totalColumnLength: number,
+  totalRowLength: number
+): Range {
+  const rowIndex = Math.min(pasteData.length + startIndex[0], totalRowLength) - 1;
+  const columnIndex = Math.min(pasteData[0].length + startIndex[1], totalColumnLength) - 1;
 
-  if (!range) {
-    return '';
-  }
-
-  const { row, column } = range;
-  const rowList = viewData.slice(row[0], row[1] + 1);
-  const columnNames = visibleColumns
-    .slice(column[0], column[1] + 1)
-    .map(({ name, copyOptions, editorOptions }) => {
-      return { name, copyOptions, editorOptions };
-    });
-
-  const result: string[] = [];
-
-  rowList.forEach((viewRow) => {
-    const { valueMap } = viewRow;
-    const rowResult: CellValue[] = [];
-    columnNames.forEach(({ name, copyOptions, editorOptions }) => {
-      rowResult.push(getTextWithCopyOptionsApplied(valueMap[name], copyOptions, editorOptions));
-    });
-    result.push(rowResult.join('\t'));
-  });
-
-  return result.join('\n');
-}
-
-export function getText(store: Store) {
-  const {
-    selection,
-    focus: { rowIndex, columnName }
-  } = store;
-
-  if (selection.range) {
-    return getValuesToString(store);
-  }
-
-  if (rowIndex && columnName) {
-    return getValueToString(store);
-  }
-
-  return '';
+  return [rowIndex, columnIndex];
 }

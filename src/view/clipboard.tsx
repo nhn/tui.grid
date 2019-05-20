@@ -4,7 +4,8 @@ import { DispatchProps } from '../dispatch/create';
 import { cls, isSupportWindowClipboardData } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 import { isEdge } from '../helper/browser';
-import { getText } from '../helper/clipboard';
+import { convertTableToData, convertTextToData } from '../helper/clipboard';
+import { getText } from '../query/clipboard';
 
 interface StoreProps {
   navigating: boolean;
@@ -65,12 +66,11 @@ class ClipboardComp extends Component<Props> {
         dispatch('removeFocus');
         break;
       case 'clipboard':
-        // @TODO: helper(query)에서 데이터를 처리할 것임
         if (!this.el) {
           return;
         }
+        // Call directly because of timing issues
         this.el.innerHTML = getText(this.context.store);
-        // this.el.focus();
         break;
       default:
         break;
@@ -78,26 +78,39 @@ class ClipboardComp extends Component<Props> {
   };
 
   private pasteInOtherBrowsers(clipboardData: DataTransfer) {
-    const data = clipboardData.getData('text/html');
-    let table;
-    // if (data && data.find('tbody').length > 0) {
-    //   // jquery find
-    //   // step 1: Append copied data on contenteditable element to parsing correctly table data.
-    //   this.el.html(`<table>${data.find('tbody').html()}</table>`); // jquery html
-    //   // step 2: Make grid data from cell data of appended table element.
-    //   table = this.el.find('table')[0];
-    //   data = clipboardUtil.convertTableToData(table);
-    //
-    //   // step 3: Empty contenteditable element to reset.
-    //   this.$el.html('');
-    // } else {
-    //   data = clipboardData.getData('text/plain');
-    //   data = clipboardUtil.convertTextToData(data);
-    // }
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const html = clipboardData.getData('text/html');
+    let data;
+    if (html && html.indexOf('table') !== -1) {
+      el.innerHTML = html;
+      const { rows } = el.querySelector('tbody')!;
+      data = convertTableToData(rows);
+      el.innerHTML = '';
+    } else {
+      data = convertTextToData(clipboardData.getData('text/plain'));
+    }
+
+    this.props.dispatch('paste', data);
   }
 
   private pasteInMSBrowser(clipboardData: DataTransfer) {
-    const data = clipboardData.getData('Text');
+    let data = convertTextToData(clipboardData.getData('Text'));
+
+    setTimeout(() => {
+      if (!this.el) {
+        return;
+      }
+      // @TODO; 따로 세팅 안해줘도 IE에서 값 들어가는지 보기.
+      const { el } = this;
+      const { rows } = el.querySelector('tbody')!;
+      data = convertTableToData(rows);
+      el.innerHTML = '';
+      this.props.dispatch('paste', data);
+    }, 0);
   }
 
   private onKeyDown = (ev: KeyboardEvent) => {
@@ -135,7 +148,7 @@ class ClipboardComp extends Component<Props> {
     ev.preventDefault();
   };
 
-  private onPaste(ev: ClipboardEvent) {
+  private onPaste = (ev: ClipboardEvent) => {
     const clipboardData = ev.clipboardData || (window as WindowWithClipboard).clipboardData;
 
     if (!clipboardData) {
@@ -148,7 +161,7 @@ class ClipboardComp extends Component<Props> {
     } else {
       this.pasteInMSBrowser(clipboardData);
     }
-  }
+  };
 
   public componentDidUpdate() {
     setTimeout(() => {
@@ -162,10 +175,7 @@ class ClipboardComp extends Component<Props> {
   public render() {
     return (
       <div
-        // class={cls('clipboard')}
-        style={{
-          border: '1px solid #ccc'
-        }}
+        class={cls('clipboard')}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         onCopy={this.onCopy}

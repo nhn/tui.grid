@@ -10,14 +10,14 @@ const stories = storiesOf('Clipboard', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name' },
-  { name: 'artist' },
+  { name: 'name', editor: 'text' },
+  { name: 'artist', editor: 'text' },
   { name: 'type', editor: 'select' },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode' },
-  { name: 'grade' },
-  { name: 'price' },
+  { name: 'release', editor: 'text' },
+  { name: 'genre', editor: 'text' },
+  { name: 'genreCode', editor: 'text' },
+  { name: 'grade', editor: 'text' },
+  { name: 'price', editor: 'text' },
   { name: 'downloadCount' },
   { name: 'listenCount' }
 ];
@@ -26,6 +26,7 @@ const columnsUseFormattedValue = [
   { name: 'name' },
   {
     name: 'artist',
+    editor: 'text',
     copyOptions: {
       useFormattedValue: true
     }
@@ -48,14 +49,14 @@ const columnsUseFormattedValue = [
   { name: 'genre' },
   { name: 'genreCode' },
   { name: 'grade' },
-  { name: 'price' },
-  { name: 'downloadCount' },
+  { name: 'price', editor: 'text' },
+  { name: 'downloadCount', editor: 'text' },
   { name: 'listenCount' }
 ];
 
 const columnsUseListItemText = [
-  { name: 'name' },
-  { name: 'artist' },
+  { name: 'name', editor: 'text' },
+  { name: 'artist', editor: 'text' },
   {
     name: 'type',
     editor: 'select',
@@ -72,7 +73,7 @@ const columnsUseListItemText = [
   },
   { name: 'release' },
   { name: 'genre' },
-  { name: 'genreCode' },
+  { name: 'genreCode', editor: 'text' },
   { name: 'grade' },
   { name: 'price' },
   { name: 'downloadCount' },
