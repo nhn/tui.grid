@@ -64,17 +64,12 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
 }
 
 function assertSortedData(columnName: string, ascending: boolean) {
-  const testData = (sampleData as Dictionary<any>[]).slice().map((data) => data[columnName]);
-  const sortedData: any[] = [];
+  const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
   testData.sort((a, b) => comparator(a, b, ascending));
 
-  cy.get(`td[data-column-name=${columnName}]`)
-    .each(($el) => {
-      sortedData.push($el.text());
-    })
-    .then(() => {
-      expect(sortedData).to.eql(testData.slice(0, 4));
-    });
+  cy.get(`td[data-column-name=${columnName}]`).each(($el, index) => {
+    expect($el.text()).to.eql(testData[index]);
+  });
 }
 
 before(() => {
@@ -142,15 +137,10 @@ describe('sort', () => {
     getGridInst().invoke('sort', 'name', false);
     getGridInst().invoke('unSort');
 
-    const testData = sampleData.map((data) => data.name);
-    const actualData: any[] = [];
-    cy.get(`td[data-column-name=name]`)
-      .each(($el) => {
-        actualData.push($el.text());
-      })
-      .then(() => {
-        expect(actualData).to.eql(testData.slice(0, 4));
-      });
+    const testData = sampleData.map((data) => String(data.name));
+    cy.get(`td[data-column-name=name]`).each(($el, index) => {
+      expect($el.text()).to.eql(testData[index]);
+    });
   });
 
   it('get proper sortState after calling getSortState()', () => {

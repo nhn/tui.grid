@@ -56,7 +56,7 @@ export function pipe<T>(initVal: T, ...args: Function[]) {
 }
 
 export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
-  if (!isNaN(searchIndex!) && arr[searchIndex!] !== searchItem) {
+  if (typeof searchIndex === 'undefined' || arr[searchIndex] !== searchItem) {
     return false;
   }
   for (const item of arr) {
@@ -178,4 +178,12 @@ export function range(end: number) {
   }
 
   return arr;
+}
+
+export function isBlank(value: any) {
+  if (typeof value === 'string') {
+    return !value.length;
+  }
+
+  return typeof value === 'undefined' || value === null;
 }

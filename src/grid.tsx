@@ -379,8 +379,8 @@ export default class Grid {
 
   /**
    * Sorts all rows by the specified column.
-   * @param columnName - The name of the column to be used to compare the rows
-   * @param ascending - Whether the sort order is ascending.
+   * @param {string} columnName - The name of the column to be used to compare the rows
+   * @param {boolean} [ascending] - Whether the sort order is ascending.
    *        If not specified, use the negative value of the current order.
    */
   public sort(columnName: string, ascending: boolean) {

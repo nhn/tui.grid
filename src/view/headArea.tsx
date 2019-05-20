@@ -36,7 +36,7 @@ class HeadAreaComp extends Component<Props> {
     }
   };
 
-  private handleClick = (ev: Event) => {
+  private handleClick = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
 
     if (!hasClass(target, 'btn-sorting')) {
@@ -55,7 +55,7 @@ class HeadAreaComp extends Component<Props> {
     dispatch('sort', targetColumnName, targetAscending);
   };
 
-  private handleDblClick = (ev: Event) => {
+  private handleDblClick = (ev: MouseEvent) => {
     ev.stopPropagation();
   };
 

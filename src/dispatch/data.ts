@@ -49,7 +49,7 @@ export function uncheckAll(store: Store) {
 export function sort({ data }: Store, columnName: string, ascending: boolean) {
   const { sortOptions } = data;
   if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-    data.sortOptions = { ...sortOptions, ...{ columnName, ascending } };
+    data.sortOptions = { ...sortOptions, columnName, ascending };
   }
   const { rawData, viewData } = getSortedData(data, columnName, ascending);
   if (!arrayEqual(rawData, data.rawData)) {

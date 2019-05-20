@@ -1,17 +1,14 @@
 import { CellValue, Data } from '../store/types';
-
-function isEmpty(value: CellValue) {
-  return typeof value !== 'number' && !value;
-}
+import { isBlank } from './common';
 
 export function comparator(valueA: CellValue, valueB: CellValue, ascending: boolean) {
-  const isEmptyA = isEmpty(valueA);
-  const isEmptyB = isEmpty(valueB);
+  const isBlankA = isBlank(valueA);
+  const isBlankB = isBlank(valueB);
   let result = 0;
 
-  if (isEmptyA && !isEmptyB) {
+  if (isBlankA && !isBlankB) {
     result = -1;
-  } else if (!isEmptyA && isEmptyB) {
+  } else if (!isBlankA && isBlankB) {
     result = 1;
   } else if (valueA! < valueB!) {
     result = -1;
@@ -19,7 +16,7 @@ export function comparator(valueA: CellValue, valueB: CellValue, ascending: bool
     result = 1;
   }
 
-  return !ascending ? -result : result;
+  return ascending ? result : -result;
 }
 
 export function getSortedData(data: Data, sortKey: string, ascending: boolean) {
