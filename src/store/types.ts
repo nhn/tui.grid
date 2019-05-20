@@ -43,6 +43,7 @@ export interface CellRenderData {
   prefix: string;
   postfix: string;
   value: CellValue;
+  editorOptions: Dictionary<any>;
 }
 
 export interface ViewRow {
@@ -84,6 +85,8 @@ export interface ColumnInfo {
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;
+  relationMap?: Dictionary<Relations>;
+  related?: boolean;
 }
 
 export interface Column {
@@ -94,6 +97,25 @@ export interface Column {
   allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];
   visibleColumnsBySide: VisibleColumnsBySide;
+}
+
+export interface Relations {
+  targetNames?: string[];
+  listItems?: (relationParams: RelationCallbackData) => ListItem[];
+  editable?: (relationParams: RelationCallbackData) => boolean;
+  disabled?: (relationParams: RelationCallbackData) => boolean;
+}
+
+export interface ListItem {
+  text: string;
+  value: CellValue;
+}
+
+export interface RelationCallbackData {
+  value?: CellValue;
+  editable?: boolean;
+  disabled?: boolean;
+  row?: Row;
 }
 
 export interface Dimension {

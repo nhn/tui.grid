@@ -53,6 +53,18 @@ export function pipe<T>(initVal: T, ...args: Function[]) {
   return args.reduce((acc, fn) => fn(acc), initVal);
 }
 
+export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
+  if (!isNaN(searchIndex!) && arr[searchIndex!] !== searchItem) {
+    return false;
+  }
+  for (const item of arr) {
+    if (item === searchItem) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // eslint-disable-next-line consistent-return
 export function find<T>(predicate: (item: T) => boolean, arr: T[]) {
   for (const item of arr) {

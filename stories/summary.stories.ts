@@ -86,34 +86,38 @@ stories
 
     return el;
   })
-  .add('setSummaryColumnContent()', () => {
-    const options = createDefaultOptions();
-    const { el, grid } = createGrid(options);
+  .add(
+    'setSummaryColumnContent()',
+    () => {
+      const options = createDefaultOptions();
+      const { el, grid } = createGrid(options);
 
-    button('setSummaryColumnContent -> price(static)', () =>
-      grid.setSummaryColumnContent('price', 'this is static')
-    );
-    button('setSummaryColumnContent -> price(auto calculate)', () =>
-      grid.setSummaryColumnContent('price', {
-        template(valueMap: OptSummaryValueMap) {
-          return `auto calculate: ${valueMap.sum}`;
-        }
-      })
-    );
-    button('setSummaryColumnContent -> price(no auto calculate)', () =>
-      grid.setSummaryColumnContent('price', {
-        template(valueMap: OptSummaryValueMap) {
-          return `auto calculate: ${valueMap.sum}`;
-        },
-        useAutoSummary: false
-      })
-    );
-    button('setSummaryColumnContent -> name(static)', () =>
-      grid.setSummaryColumnContent('name', 'this is new static')
-    );
+      button('setSummaryColumnContent -> price(static)', () =>
+        grid.setSummaryColumnContent('price', 'this is static')
+      );
+      button('setSummaryColumnContent -> price(auto calculate)', () =>
+        grid.setSummaryColumnContent('price', {
+          template(valueMap: OptSummaryValueMap) {
+            return `auto calculate: ${valueMap.sum}`;
+          }
+        })
+      );
+      button('setSummaryColumnContent -> price(no auto calculate)', () =>
+        grid.setSummaryColumnContent('price', {
+          template(valueMap: OptSummaryValueMap) {
+            return `auto calculate: ${valueMap.sum}`;
+          },
+          useAutoSummary: false
+        })
+      );
+      button('setSummaryColumnContent -> name(static)', () =>
+        grid.setSummaryColumnContent('name', 'this is new static')
+      );
 
-    return el;
-  });
+      return el;
+    },
+    { html: { preventForcedRender: true } }
+  );
 
 storiesOf('Summary/position', module)
   .add('Top', () => {
