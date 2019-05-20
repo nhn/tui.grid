@@ -1,5 +1,6 @@
 import { Store, RowKey } from '../store/types';
-import { getNextCellIndex, KeyboardEventCommandType } from '../helper/keyboard';
+import { KeyboardEventCommandType } from '../helper/keyboard';
+import { getNextCellIndex } from '../query/keyboard';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {

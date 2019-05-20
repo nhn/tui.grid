@@ -97,7 +97,6 @@ function getValueToString(store: Store) {
   } = store;
 
   if (rowIndex === null || columnName === null || totalColumnIndex === null) {
-    // @TODO: 이럴 때 빈문자열 복사되는 것이 맞나?
     return '';
   }
 
