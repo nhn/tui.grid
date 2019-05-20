@@ -21,12 +21,19 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
-export type Row = Dictionary<CellValue | any> & {
+export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
-  _number: number;
-  _checked: boolean;
-  _extraData?: any;
+  _attributes: RowAttributes;
 };
+
+export interface RowAttributes {
+  rowNum: number;
+  checked: boolean;
+  disabled: boolean;
+  className: string;
+}
+
+export type RowAttributeValue = RowAttributes[keyof RowAttributes];
 
 export type SummaryPosition = 'top' | 'bottom';
 
