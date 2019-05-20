@@ -5,6 +5,7 @@ import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
+import { FormatterProps } from '../src/store/types';
 
 const stories = storiesOf('Clipboard', module);
 stories.addDecorator(withKnobs);
@@ -25,11 +26,13 @@ const columns = [
 const columnsUseFormattedValue = [
   {
     name: 'name',
-    editor: 'text'
+    editor: 'text',
+    prefix: 'prefix__'
   },
   {
     name: 'artist',
-    editor: 'text'
+    editor: 'text',
+    formatter: ({ value }: FormatterProps) => `${value}__artist`
   },
   {
     name: 'type',
@@ -38,7 +41,7 @@ const columnsUseFormattedValue = [
       useFormattedValue: false
     }
   },
-  { name: 'release', editor: 'text' },
+  { name: 'release', editor: 'text', postfix: '__postfix' },
   { name: 'genre', editor: 'text' },
   { name: 'genreCode', editor: 'text' },
   { name: 'grade', editor: 'text' },
@@ -48,11 +51,23 @@ const columnsUseFormattedValue = [
 ];
 
 const columnsUseListItemText = [
-  { name: 'name', editor: 'text' },
-  { name: 'artist', editor: 'text' },
   {
     name: 'type',
     editor: 'select',
+    editorOptions: {
+      listItems: [
+        { text: 'Deluxe', value: '1' },
+        { text: 'Single', value: '2' },
+        { text: 'EP', value: '3' }
+      ]
+    },
+    copyOptions: {
+      useListItemText: true
+    }
+  },
+  {
+    name: 'genre',
+    editor: 'checkbox',
     editorOptions: {
       listItems: [
         { text: 'Pop', value: '1' },
@@ -64,10 +79,7 @@ const columnsUseListItemText = [
       useListItemText: true
     }
   },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode', editor: 'text' },
-  { name: 'grade' },
+  { name: 'genreCode' },
   { name: 'price' },
   { name: 'downloadCount' },
   { name: 'listenCount' }
@@ -78,16 +90,76 @@ const columnsWithCustomValueText = [
     name: 'name',
     editor: 'text',
     copyOptions: {
-      customValue: '123'
+      customValue: 'customValue1'
     }
   },
-  { name: 'artist', editor: 'text' },
+  {
+    name: 'artist',
+    editor: 'text',
+    copyOptions: {
+      customValue: 'customValue2'
+    }
+  },
   {
     name: 'type',
-    editor: 'text'
+    editor: 'text',
+    copyOptions: {
+      customValue: 'customValue3'
+    }
   },
-  { name: 'release' },
-  { name: 'genre' },
+  {
+    name: 'release',
+    copyOptions: {
+      customValue: 'customValue4'
+    }
+  },
+  {
+    name: 'genre',
+    copyOptions: {
+      customValue: 'customValue5'
+    }
+  },
+  { name: 'genreCode', editor: 'text' },
+  { name: 'grade' },
+  { name: 'price' },
+  { name: 'downloadCount' },
+  { name: 'listenCount' }
+];
+
+const columnsWithCustomValueFunc = [
+  {
+    name: 'name',
+    editor: 'text',
+    copyOptions: {
+      customValue: (value, rowAttrs, column) => `value: ${value}, name: ${column.name}`
+    }
+  },
+  {
+    name: 'artist',
+    editor: 'text',
+    copyOptions: {
+      customValue: (value) => `${value}${value}`
+    }
+  },
+  {
+    name: 'type',
+    editor: 'text',
+    copyOptions: {
+      customValue: () => `hi`
+    }
+  },
+  {
+    name: 'release',
+    copyOptions: {
+      customValue: (value, rowAttrs, column) => `Column name is ${column.name}`
+    }
+  },
+  {
+    name: 'genre',
+    copyOptions: {
+      customValue: (value) => `Genre is ${value}.`
+    }
+  },
   { name: 'genreCode', editor: 'text' },
   { name: 'grade' },
   { name: 'price' },
@@ -187,7 +259,7 @@ stories.add(
   () => {
     const { el, grid } = createGrid({
       data,
-      columns: columnsUseListItemText,
+      columns: columnsWithCustomValueText,
       bodyHeight: 'fitToParent',
       columnOptions: {
         frozenCount: 2,
@@ -213,7 +285,7 @@ stories.add(
   () => {
     const { el, grid } = createGrid({
       data,
-      columns: columnsUseListItemText,
+      columns: columnsWithCustomValueFunc,
       bodyHeight: 'fitToParent',
       columnOptions: {
         frozenCount: 2,

@@ -125,8 +125,8 @@ export function getTextWithCopyOptionsApplied(
       const listItem = find((item) => item.value === valueMap.value, listItems);
       retValue = listItem ? listItem.text : valueMap.value;
     } else if (copyOptions.useFormattedValue) {
-      console.log(valueMap.formattedValue);
-      retValue = valueMap.formattedValue;
+      const { prefix, postfix, formattedValue } = valueMap;
+      retValue = `${prefix}${formattedValue}${postfix}`;
     }
   }
 
