@@ -64,6 +64,7 @@ export interface SelectionRange {
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
+  sortOptions: SortOptions;
   checkedAllRows: boolean;
 }
 
@@ -98,6 +99,13 @@ export interface ColumnInfo {
   ellipsis?: boolean;
   escapeHTML?: boolean;
   defaultValue?: CellValue;
+  sortable?: boolean;
+}
+
+export interface SortOptions {
+  columnName: string;
+  ascending: boolean;
+  useClient: boolean;
 }
 
 export interface Column {

@@ -63,6 +63,7 @@ export interface OptColumn {
   valign?: 'top' | 'middle' | 'bottom';
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
+  sortable?: boolean;
 }
 
 export interface OptColumnOptions {

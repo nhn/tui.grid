@@ -68,7 +68,8 @@ function createColumn(
     editor,
     editorOptions,
     renderer,
-    relations
+    relations,
+    sortable
   } = column;
 
   return reactive({
@@ -84,6 +85,7 @@ function createColumn(
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap: getRelationMap(relations || []),
     related: includes(relationColumns, name),
+    sortable,
     ...getEditorInfo(editor, editorOptions)
   });
 }
