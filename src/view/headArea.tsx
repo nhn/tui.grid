@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { ColumnInfo, Side } from '../store/types';
+import { ColumnInfo, Side, SortOptions } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls } from '../helper/dom';
+import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -17,6 +17,7 @@ interface StoreProps {
   scrollLeft: number;
   hasRowHeaderCheckbox: boolean;
   checkedAllRows: boolean;
+  sortOptions: SortOptions;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -33,6 +34,29 @@ class HeadAreaComp extends Component<Props> {
     } else {
       dispatch('uncheckAll');
     }
+  };
+
+  private handleClick = (ev: Event) => {
+    const target = ev.target as HTMLElement;
+
+    if (!hasClass(target, 'btn-sorting')) {
+      return;
+    }
+
+    const { dispatch, sortOptions } = this.props;
+    const th = findParent(target, 'cell');
+    const targetColumnName = th!.getAttribute('data-column-name')!;
+    let targetAscending = true;
+
+    if (sortOptions) {
+      const { columnName, ascending } = sortOptions;
+      targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
+    }
+    dispatch('sort', targetColumnName, targetAscending);
+  };
+
+  private handleDblClick = (ev: Event) => {
+    ev.stopPropagation();
   };
 
   private updateRowHeaderCheckbox() {
@@ -55,7 +79,7 @@ class HeadAreaComp extends Component<Props> {
   }
 
   public render() {
-    const { headerHeight, cellBorderWidth, columns, side } = this.props;
+    const { headerHeight, cellBorderWidth, columns, side, sortOptions } = this.props;
     const areaStyle = { height: headerHeight + cellBorderWidth };
     const theadStyle = { height: headerHeight };
 
@@ -70,8 +94,8 @@ class HeadAreaComp extends Component<Props> {
         <table class={cls('table')}>
           <ColGroup side={side} />
           <tbody>
-            <tr style={theadStyle}>
-              {columns.map(({ name, header }) => (
+            <tr style={theadStyle} onClick={this.handleClick} onDblClick={this.handleDblClick}>
+              {columns.map(({ name, header, sortable }) => (
                 <th key={name} data-column-name={name} class={cls('cell', 'cell-head')}>
                   {name === '_checked' ? (
                     <span
@@ -80,6 +104,14 @@ class HeadAreaComp extends Component<Props> {
                     />
                   ) : (
                     header
+                  )}
+                  {sortable && (
+                    <a
+                      class={cls('btn-sorting', [
+                        sortOptions.columnName === name,
+                        sortOptions.ascending ? 'btn-sorting-up' : 'btn-sorting-down'
+                      ])}
+                    />
                   )}
                 </th>
               ))}
@@ -106,6 +138,7 @@ export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
     columns: store.column.visibleColumnsBySide[side],
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
     hasRowHeaderCheckbox: !!column.allColumnMap._checked,
-    checkedAllRows: data.checkedAllRows
+    checkedAllRows: data.checkedAllRows,
+    sortOptions: data.sortOptions
   };
 })(HeadAreaComp);
