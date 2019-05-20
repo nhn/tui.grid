@@ -146,8 +146,8 @@ describe('summary', () => {
       createGrid({ summary });
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
-      assertSummaryPosition(0, cls('head-area'));
-      assertSummaryPosition(1, cls('head-area'));
+      assertSummaryPosition(0, cls('header-area'));
+      assertSummaryPosition(1, cls('header-area'));
     });
 
     it('auto calculate summary when default content with template function', () => {

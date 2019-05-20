@@ -202,7 +202,7 @@
 .tui-grid-cell img {
   vertical-align: middle;
 }
-.tui-grid-cell-head {
+.tui-grid-cell-header {
   padding: 0;
   text-align: center;
 }
@@ -319,13 +319,13 @@
 .tui-grid-content-area.tui-grid-no-scroll-x {
   border-bottom-width: 0;
 }
-.tui-grid-head-area {
+.tui-grid-header-area {
   border-style: solid;
   border-width: 0 0 1px;
   position: relative;
   overflow: hidden;
 }
-.tui-grid-head-area .tui-grid-table {
+.tui-grid-header-area .tui-grid-table {
   border-top-style: solid;
 }
 .tui-grid-body-area {
@@ -382,7 +382,7 @@
   display: none;
   overflow: hidden;
 }
-.tui-grid-rside-area .tui-grid-head-area,
+.tui-grid-rside-area .tui-grid-header-area,
 .tui-grid-rside-area .tui-grid-summary-area {
   margin-right: 17px;
 }
@@ -398,7 +398,7 @@
   bottom: 0;
   height: 17px;
 }
-.tui-grid-no-scroll-y .tui-grid-rside-area .tui-grid-head-area,
+.tui-grid-no-scroll-y .tui-grid-rside-area .tui-grid-header-area,
 .tui-grid-no-scroll-y .tui-grid-rside-area .tui-grid-summary-area {
   margin-right: 0;
 }

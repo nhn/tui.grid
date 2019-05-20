@@ -40,7 +40,7 @@ function assertContainerWidth(width: number) {
       .invoke('width')
       .should('be.eql', width);
 
-    cy.get(`.${cls('head-area')}`)
+    cy.get(`.${cls('header-area')}`)
       .invoke('width')
       .should('be.eql', width - 17);
 
@@ -52,7 +52,7 @@ function assertContainerWidth(width: number) {
 
 function assertColumnWidth(widths: number[]) {
   cy.get(`.${cls('rside-area')}`).within(() => {
-    cy.get(`.${cls('head-area')} th`).as('headCols');
+    cy.get(`.${cls('header-area')} th`).as('headCols');
     cy.get(`.${cls('body-area')} tr:first-child td`).as('bodyCols');
 
     widths.forEach((width, index) => {
