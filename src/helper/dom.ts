@@ -146,10 +146,6 @@ export function getCellAddress(el: HTMLElement) {
   return { rowKey, columnName };
 }
 
-export function isSupportWindowClipboardData() {
-  return !!(window as WindowWithClipboard).clipboardData;
-}
-
 /**
  * create style element and append it into the head element.
  * @param {String} id - element id

@@ -1,10 +1,14 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { cls, isSupportWindowClipboardData } from '../helper/dom';
+import { cls } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 import { isEdge } from '../helper/browser';
-import { convertTableToData, convertTextToData } from '../helper/clipboard';
+import {
+  convertTableToData,
+  convertTextToData,
+  isSupportWindowClipboardData
+} from '../helper/clipboard';
 import { getText } from '../query/clipboard';
 
 interface StoreProps {
@@ -104,12 +108,14 @@ class ClipboardComp extends Component<Props> {
       if (!this.el) {
         return;
       }
-      // @TODO; 따로 세팅 안해줘도 IE에서 값 들어가는지 보기.
+
       const { el } = this;
-      const { rows } = el.querySelector('tbody')!;
-      data = convertTableToData(rows);
-      el.innerHTML = '';
+      if (el.querySelector('table')) {
+        const { rows } = el.querySelector('tbody')!;
+        data = convertTableToData(rows);
+      }
       this.props.dispatch('paste', data);
+      el.innerHTML = '';
     }, 0);
   }
 
@@ -136,12 +142,15 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
+  // @TODO: IE 에서 onCopy 이벤트 발생하지 않는 이유 찾기
   private onCopy = (ev: ClipboardEvent) => {
     if (!this.el) {
       return;
     }
     const text = this.el.innerHTML;
-    if (!isSupportWindowClipboardData() && ev.clipboardData) {
+    if (isSupportWindowClipboardData()) {
+      (window as WindowWithClipboard).clipboardData!.setData('Text', text);
+    } else if (ev.clipboardData) {
       ev.clipboardData.setData('text/plain', text);
     }
 

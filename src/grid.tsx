@@ -7,7 +7,6 @@ import { Store, CellValue, RowKey, Range, Row } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
-import { isSupportWindowClipboardData } from './helper/dom';
 import { getText } from './query/clipboard';
 import { WindowWithClipboard } from './view/clipboard';
 

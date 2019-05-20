@@ -11,6 +11,7 @@ import {
 } from '../store/types';
 import { find } from './common';
 import { Options } from '../editor/select';
+import { WindowWithClipboard } from '../view/clipboard';
 
 const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
 const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
@@ -124,6 +125,7 @@ export function getTextWithCopyOptionsApplied(
       const listItem = find((item) => item.value === valueMap.value, listItems);
       retValue = listItem ? listItem.text : valueMap.value;
     } else if (copyOptions.useFormattedValue) {
+      console.log(valueMap.formattedValue);
       retValue = valueMap.formattedValue;
     }
   }
@@ -146,4 +148,8 @@ export function getEndIndexToPaste(
   const columnIndex = Math.min(pasteData[0].length + startIndex[1], totalColumnLength) - 1;
 
   return [rowIndex, columnIndex];
+}
+
+export function isSupportWindowClipboardData() {
+  return !!(window as WindowWithClipboard).clipboardData;
 }

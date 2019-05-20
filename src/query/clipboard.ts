@@ -79,8 +79,10 @@ export function duplicateData(range: SelectionRange, pasteData: string[][]) {
   }
 
   result.forEach((row) => {
+    const rowData = row.slice(0);
+
     for (let i = 0; i < colDupCount; i += 1) {
-      row.push(...row.slice(0));
+      row.push(...rowData);
     }
   });
 

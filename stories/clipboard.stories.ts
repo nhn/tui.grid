@@ -12,46 +12,39 @@ stories.addDecorator(withKnobs);
 const columns = [
   { name: 'name', editor: 'text' },
   { name: 'artist', editor: 'text' },
-  { name: 'type', editor: 'select' },
+  { name: 'type', editor: 'text' },
   { name: 'release', editor: 'text' },
   { name: 'genre', editor: 'text' },
   { name: 'genreCode', editor: 'text' },
   { name: 'grade', editor: 'text' },
   { name: 'price', editor: 'text' },
-  { name: 'downloadCount' },
-  { name: 'listenCount' }
+  { name: 'downloadCount', editor: 'text' },
+  { name: 'listenCount', editor: 'text' }
 ];
 
 const columnsUseFormattedValue = [
-  { name: 'name' },
+  {
+    name: 'name',
+    editor: 'text'
+  },
   {
     name: 'artist',
-    editor: 'text',
-    copyOptions: {
-      useFormattedValue: true
-    }
+    editor: 'text'
   },
   {
     name: 'type',
-    editor: 'select',
-    editorOptions: {
-      listItems: [
-        { text: 'Pop', value: '1' },
-        { text: 'Rock', value: '2' },
-        { text: 'R&B', value: '3' }
-      ]
-    },
+    editor: 'text',
     copyOptions: {
-      useListItemText: true
+      useFormattedValue: false
     }
   },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode' },
-  { name: 'grade' },
+  { name: 'release', editor: 'text' },
+  { name: 'genre', editor: 'text' },
+  { name: 'genreCode', editor: 'text' },
+  { name: 'grade', editor: 'text' },
   { name: 'price', editor: 'text' },
   { name: 'downloadCount', editor: 'text' },
-  { name: 'listenCount' }
+  { name: 'listenCount', editor: 'text' }
 ];
 
 const columnsUseListItemText = [
@@ -70,6 +63,28 @@ const columnsUseListItemText = [
     copyOptions: {
       useListItemText: true
     }
+  },
+  { name: 'release' },
+  { name: 'genre' },
+  { name: 'genreCode', editor: 'text' },
+  { name: 'grade' },
+  { name: 'price' },
+  { name: 'downloadCount' },
+  { name: 'listenCount' }
+];
+
+const columnsWithCustomValueText = [
+  {
+    name: 'name',
+    editor: 'text',
+    copyOptions: {
+      customValue: '123'
+    }
+  },
+  { name: 'artist', editor: 'text' },
+  {
+    name: 'type',
+    editor: 'text'
   },
   { name: 'release' },
   { name: 'genre' },
@@ -127,7 +142,7 @@ stories.add(
         minWidth: 150
       },
       copyOptions: {
-        useFormattedValue: false
+        useFormattedValue: true
       }
     });
     const rootEl = document.createElement('div');
@@ -143,6 +158,58 @@ stories.add(
 
 stories.add(
   'clipboard with useListItemText',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns: columnsUseListItemText,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      copyOptions: {
+        useFormattedValue: false
+      }
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
+
+    button('copyToClipboard', () => grid.copyToClipboard());
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'clipboard with customValue(text)',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns: columnsUseListItemText,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      copyOptions: {
+        useFormattedValue: false
+      }
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
+
+    button('copyToClipboard', () => grid.copyToClipboard());
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'clipboard with customValue(function)',
   () => {
     const { el, grid } = createGrid({
       data,
