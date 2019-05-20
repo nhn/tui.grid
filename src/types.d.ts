@@ -44,6 +44,11 @@ interface CellEditor {
   [propName: string]: any;
 }
 
+interface OptValidation {
+  required?: boolean;
+  dataType?: 'string' | 'number';
+}
+
 export interface OptColumn {
   name: string;
   header?: string;
@@ -68,6 +73,7 @@ export interface OptColumn {
   ellipsis?: boolean;
   sortable?: boolean;
   copyOptions?: ClipboardCopyOptions;
+  validation?: OptValidation;
 }
 
 export interface OptColumnOptions {

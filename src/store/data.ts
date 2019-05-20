@@ -7,12 +7,17 @@ import {
   Formatter,
   CellRenderData,
   FormatterProps,
-  CellValue
+  CellValue,
+  Validation,
+  InvalidRow
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp, isBlank } from '../helper/common';
+
+const VALID_ERR_REQUIRED = 'REQUIRED';
+const VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -68,8 +73,20 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
+function getValidationCode(value: CellValue, validation?: Validation) {
+  let errorCode = '';
+
+  if (validation && validation.required && isBlank(value)) {
+    errorCode = VALID_ERR_REQUIRED;
+  } else if (validation && validation.dataType === 'number' && typeof value !== 'number') {
+    errorCode = VALID_ERR_TYPE_NUMBER;
+  }
+
+  return errorCode;
+}
+
 function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
-  const { name, formatter, prefix, postfix, editor, editorOptions } = column;
+  const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
 
@@ -77,6 +94,7 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
+    invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
     postfix: getFormattedValue(formatterProps, postfix),
@@ -190,6 +208,27 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
       const checkedRows = rawData.filter(({ _checked }) => _checked);
 
       return checkedRows.length === rawData.length;
+    },
+
+    get invalidRows() {
+      const invalidRows: InvalidRow[] = [];
+
+      this.viewData.forEach(({ rowKey, valueMap }) => {
+        const validatedColumns = column.validatedColumns.filter(
+          ({ name }) => !!valueMap[name].invalidState
+        );
+
+        if (validatedColumns.length) {
+          const errors = validatedColumns.map(({ name }) => ({
+            columnName: name,
+            errorCode: valueMap[name].invalidState
+          }));
+
+          invalidRows.push({ rowKey, errors });
+        }
+      });
+
+      return invalidRows;
     }
   });
 }

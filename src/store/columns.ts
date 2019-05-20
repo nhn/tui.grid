@@ -71,7 +71,8 @@ function createColumn(
     renderer,
     relations,
     sortable,
-    copyOptions
+    copyOptions,
+    validation
   } = column;
 
   return reactive({
@@ -89,7 +90,8 @@ function createColumn(
     relationMap: getRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,
-    ...getEditorInfo(editor, editorOptions)
+    ...getEditorInfo(editor, editorOptions),
+    validation: validation ? { ...validation } : {}
   });
 }
 
@@ -169,6 +171,10 @@ export function create(
 
     get rowHeaderCount() {
       return rowHeaderInfos.length;
+    },
+
+    get validatedColumns() {
+      return allColumns.filter(({ validation }) => !!validation);
     }
   });
 }
