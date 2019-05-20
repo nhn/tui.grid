@@ -134,7 +134,7 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
       });
     }
     // @TODO need to improve relation
-    if (Object.keys(relationMap!).length) {
+    if (relationMap && Object.keys(relationMap).length) {
       watch(() => {
         createRelationViewCell(name, row, columnMap, valueMap);
       });
@@ -159,10 +159,13 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
   });
 
   const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
+  // @TODO neet to modify useClient options with net api
+  const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
 
   return reactive({
     rawData,
     viewData,
+    sortOptions,
 
     // @TODO meta 프로퍼티 값으로 변경
     get checkedAllRows() {
