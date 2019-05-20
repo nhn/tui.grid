@@ -1,4 +1,11 @@
-import { CellValue, Dictionary, Relations, SelectionUnit, Formatter } from './store/types';
+import {
+  CellValue,
+  Dictionary,
+  Relations,
+  SelectionUnit,
+  Formatter,
+  ClipboardCopyOptions
+} from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 
@@ -18,6 +25,7 @@ export interface OptGrid {
   summary?: OptSummaryData;
   selectionUnit?: SelectionUnit;
   showDummyRows?: boolean;
+  copyOptions?: ClipboardCopyOptions;
 }
 
 export interface ExtraData {
@@ -64,6 +72,7 @@ export interface OptColumn {
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
+  copyOptions?: ClipboardCopyOptions;
 }
 
 export interface OptColumnOptions {

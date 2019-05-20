@@ -3,10 +3,21 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
+import { isEdge } from '../helper/browser';
+import {
+  convertTableToData,
+  convertTextToData,
+  isSupportWindowClipboardData
+} from '../helper/clipboard';
+import { getText } from '../query/clipboard';
 
 interface StoreProps {
   navigating: boolean;
   editing: boolean;
+}
+
+export interface WindowWithClipboard extends Window {
+  clipboardData: DataTransfer | null;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -57,10 +68,55 @@ class ClipboardComp extends Component<Props> {
       case 'remove':
         dispatch('removeFocus');
         break;
+      case 'clipboard':
+        if (!this.el) {
+          return;
+        }
+        // Call directly because of timing issues
+        this.el.innerHTML = getText(this.context.store);
+        break;
       default:
         break;
     }
   };
+
+  private pasteInOtherBrowsers(clipboardData: DataTransfer) {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const html = clipboardData.getData('text/html');
+    let data;
+    if (html && html.indexOf('table') !== -1) {
+      el.innerHTML = html;
+      const { rows } = el.querySelector('tbody')!;
+      data = convertTableToData(rows);
+      el.innerHTML = '';
+    } else {
+      data = convertTextToData(clipboardData.getData('text/plain'));
+    }
+
+    this.props.dispatch('paste', data);
+  }
+
+  private pasteInMSBrowser(clipboardData: DataTransfer) {
+    let data = convertTextToData(clipboardData.getData('Text'));
+
+    setTimeout(() => {
+      if (!this.el) {
+        return;
+      }
+
+      const { el } = this;
+      if (el.querySelector('table')) {
+        const { rows } = el.querySelector('tbody')!;
+        data = convertTableToData(rows);
+      }
+      this.props.dispatch('paste', data);
+      el.innerHTML = '';
+    }, 0);
+  }
 
   /**
    * Event handler for the keydown event
@@ -90,6 +146,36 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
+  // @TODO: IE 에서 onCopy 이벤트 발생하지 않는 이유 찾기
+  private onCopy = (ev: ClipboardEvent) => {
+    if (!this.el) {
+      return;
+    }
+    const text = this.el.innerHTML;
+    if (isSupportWindowClipboardData()) {
+      (window as WindowWithClipboard).clipboardData!.setData('Text', text);
+    } else if (ev.clipboardData) {
+      ev.clipboardData.setData('text/plain', text);
+    }
+
+    ev.preventDefault();
+  };
+
+  private onPaste = (ev: ClipboardEvent) => {
+    const clipboardData = ev.clipboardData || (window as WindowWithClipboard).clipboardData;
+
+    if (!clipboardData) {
+      return;
+    }
+
+    if (!isEdge() && !isSupportWindowClipboardData()) {
+      ev.preventDefault();
+      this.pasteInOtherBrowsers(clipboardData);
+    } else {
+      this.pasteInMSBrowser(clipboardData);
+    }
+  };
+
   public componentDidUpdate() {
     setTimeout(() => {
       const { navigating, editing } = this.props;
@@ -105,6 +191,8 @@ class ClipboardComp extends Component<Props> {
         class={cls('clipboard')}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
+        onCopy={this.onCopy}
+        onPaste={this.onPaste}
         contentEditable={true}
         ref={(el) => {
           this.el = el;

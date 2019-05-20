@@ -1,5 +1,6 @@
 import { Store, CellValue, RowKey } from '../store/types';
 import { findProp, arrayEqual } from '../helper/common';
+import { applyPasteDataToRawData, duplicateData, getRangeToPaste } from '../query/clipboard';
 import { getSortedData } from '../helper/sort';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
@@ -56,4 +57,16 @@ export function sort({ data }: Store, columnName: string, ascending: boolean) {
     data.rawData = rawData;
     data.viewData = viewData;
   }
+}
+
+export function paste(store: Store, pasteData: string[][]) {
+  const { selection } = store;
+
+  if (selection.range) {
+    pasteData = duplicateData(selection.range, pasteData);
+  }
+
+  const rangeToPaste = getRangeToPaste(store, pasteData);
+  applyPasteDataToRawData(store, pasteData, rangeToPaste);
+  store.selection.inputRange = rangeToPaste;
 }
