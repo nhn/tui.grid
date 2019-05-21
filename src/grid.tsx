@@ -3,12 +3,12 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Range, Row } from './store/types';
+import { Store, CellValue, RowKey, Range, Row, InvalidRow } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
-import { WindowWithClipboard } from './view/clipboard';
 import { getText } from './query/clipboard';
+import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
 
 /* eslint-disable */
@@ -415,5 +415,40 @@ export default class Grid {
       // Accessing the clipboard is a security concern on chrome
       document.execCommand('copy');
     }
+  }
+
+  /*
+   * Validates all data and returns the result.
+   * Return value is an array which contains only rows which have invalid cell data.
+   * @returns {Array.<Object>} An array of error object
+   * @example
+   * // return value example
+   * [
+   *     {
+   *         rowKey: 1,
+   *         errors: [
+   *             {
+   *                 columnName: 'c1',
+   *                 errorCode: 'REQUIRED'
+   *             },
+   *             {
+   *                 columnName: 'c2',
+   *                 errorCode: 'REQUIRED'
+   *             }
+   *         ]
+   *     },
+   *     {
+   *         rowKey: 3,
+   *         errors: [
+   *             {
+   *                 columnName: 'c2',
+   *                 errorCode: 'REQUIRED'
+   *             }
+   *         ]
+   *     }
+   * ]
+   */
+  public validate(): InvalidRow[] {
+    return getInvalidRows(this.store);
   }
 }

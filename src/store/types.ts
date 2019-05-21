@@ -52,10 +52,12 @@ export interface ClipboardCopyOptions {
   useListItemText?: boolean;
   customValue?: CustomValue;
 }
+export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
+  invalidState: '' | ValidationType;
   formattedValue: string;
   prefix: string;
   postfix: string;
@@ -76,6 +78,21 @@ export interface DragData {
 export interface SelectionRange {
   row: Range;
   column: Range;
+}
+
+export interface Validation {
+  required?: boolean;
+  dataType?: 'string' | 'number';
+}
+
+export interface InvalidColumn {
+  columnName: string;
+  errorCode: '' | ValidationType;
+}
+
+export interface InvalidRow {
+  rowKey: RowKey;
+  errors: InvalidColumn[];
 }
 
 export interface Data {
@@ -118,6 +135,7 @@ export interface ColumnInfo {
   escapeHTML?: boolean;
   defaultValue?: CellValue;
   sortable?: boolean;
+  validation?: Validation;
 }
 
 export interface SortOptions {
@@ -134,6 +152,7 @@ export interface Column {
   allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];
   visibleColumnsBySide: VisibleColumnsBySide;
+  validationColumns: ColumnInfo[];
 }
 
 export interface Relations {

@@ -7,12 +7,14 @@ import {
   Formatter,
   CellRenderData,
   FormatterProps,
-  CellValue
+  CellValue,
+  ValidationType,
+  Validation
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp, isBlank } from '../helper/common';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -68,8 +70,22 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
+function getValidationCode(value: CellValue, validation?: Validation): ValidationType | '' {
+  if (validation && validation.required && isBlank(value)) {
+    return 'REQUIRED';
+  }
+  if (validation && validation.dataType === 'string' && typeof value !== 'string') {
+    return 'TYPE_STRING';
+  }
+  if (validation && validation.dataType === 'number' && typeof value !== 'number') {
+    return 'TYPE_NUMBER';
+  }
+
+  return '';
+}
+
 function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
-  const { name, formatter, prefix, postfix, editor, editorOptions } = column;
+  const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
 
@@ -77,6 +93,7 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled: false,
+    invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
     postfix: getFormattedValue(formatterProps, postfix),

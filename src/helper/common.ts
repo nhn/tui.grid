@@ -1,5 +1,3 @@
-import { CellValue } from 'src/store/types';
-
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -190,4 +188,16 @@ export function isBlank(value: any) {
 
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
+}
+
+export function convertToNumber(value: any) {
+  if (typeof value === 'string') {
+    value = value.replace(/,/g, '');
+  }
+
+  if (typeof value === 'number' || isNaN(value) || isBlank(value)) {
+    return value;
+  }
+
+  return Number(value);
 }

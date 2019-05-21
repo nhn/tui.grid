@@ -6,13 +6,14 @@ import {
   RowAttributes,
   RowAttributeValue
 } from '../store/types';
-import { findProp, arrayEqual, mapProp } from '../helper/common';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
+import { findProp, arrayEqual, mapProp } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
+
   if (targetRow) {
     targetRow[columnName] = value;
   }

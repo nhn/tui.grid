@@ -49,8 +49,8 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { editable },
-      columnInfo: { align, valign, name }
+      renderData: { editable, invalidState },
+      columnInfo: { align, valign, name, validation = {} }
     } = this.props;
 
     const style = {
@@ -70,7 +70,9 @@ export class BodyCellComp extends Component<Props> {
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
-          [isRowHeader(name), 'cell-row-head']
+          [isRowHeader(name), 'cell-row-head'],
+          [validation.required || false, 'cell-required'],
+          [!!invalidState, 'cell-invalid']
         )}
         ref={(el) => {
           this.el = el;
