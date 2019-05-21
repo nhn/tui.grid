@@ -35,13 +35,13 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
 
     get totalColumnIndex(this: Focus) {
       const { visibleColumnsBySide } = column;
-      if (this.columnIndex === null) {
-        return null;
+      const { columnIndex, side } = this;
+
+      if (columnIndex === null) {
+        return columnIndex;
       }
 
-      return this.side === 'R'
-        ? this.columnIndex + visibleColumnsBySide.L.length
-        : this.columnIndex;
+      return side === 'R' ? columnIndex + visibleColumnsBySide.L.length : columnIndex;
     },
 
     get rowIndex(this: Focus) {

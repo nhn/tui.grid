@@ -7,6 +7,9 @@ import { Store, CellValue, RowKey, Range, Row } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
+import { WindowWithClipboard } from './view/clipboard';
+import { getText } from './query/clipboard';
+import { isSupportWindowClipboardData } from './helper/clipboard';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -400,5 +403,17 @@ export default class Grid {
    */
   public getSortState() {
     return this.store.data.sortOptions;
+  }
+
+  /**
+   * Copy to clipboard
+   */
+  public copyToClipboard() {
+    document.querySelector('.tui-grid-clipboard')!.innerHTML = getText(this.store);
+
+    if (!isSupportWindowClipboardData()) {
+      // Accessing the clipboard is a security concern on chrome
+      document.execCommand('copy');
+    }
   }
 }

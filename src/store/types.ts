@@ -36,6 +36,16 @@ export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
 export type SummaryValues = Dictionary<SummaryValue>;
 
+export type CustomValue =
+  | string
+  | ((value: CellValue, rowAttrs: Row[], column: ColumnInfo) => string);
+
+export interface ClipboardCopyOptions {
+  useFormattedValue?: boolean;
+  useListItemText?: boolean;
+  customValue?: CustomValue;
+}
+
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
@@ -74,7 +84,7 @@ export interface FormatterProps {
   value: CellValue;
 }
 
-export type Formatter = (props: FormatterProps) => string | string;
+export type Formatter = ((props: FormatterProps) => string) | string;
 
 export interface ColumnInfo {
   readonly name: string;
@@ -84,6 +94,7 @@ export interface ColumnInfo {
   editorOptions?: Dictionary<any>;
   renderer: CellRendererClass;
   rendererOptions?: Dictionary<any>;
+  copyOptions?: ClipboardCopyOptions;
   hidden: boolean;
   formatter?: Formatter;
   prefix?: Formatter;

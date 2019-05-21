@@ -48,7 +48,11 @@ stories.add(
     rootEl.style.height = '400px';
 
     button('getFocusedCell()', () => {
-      console.log(grid.getFocusedCell());
+      alert(`
+        ${grid.getFocusedCell().columnName}, 
+        ${grid.getFocusedCell().rowKey},
+        ${grid.getFocusedCell().value}
+        `);
     });
     button('blur()', () => grid.blur());
     button(`focus(1, 'type')`, () => grid.focus(1, 'type'));

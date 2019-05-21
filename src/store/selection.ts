@@ -81,8 +81,8 @@ function getHorizontalStyles(
 
 export function create({
   selectionUnit,
-  rowCoords: { offsets: rowOffsets, heights: rowHeights },
-  columnCoords: { widths: columnWidths },
+  rowCoords,
+  columnCoords,
   column: { visibleFrozenCount },
   dimension: { cellBorderWidth }
 }: SelectionOptions): Reactive<Selection> {
@@ -96,6 +96,7 @@ export function create({
         return null;
       }
 
+      const { widths: columnWidths } = columnCoords;
       const row = getSortedRange(this.inputRange.row);
       let column = getSortedRange(this.inputRange.column);
 
@@ -122,8 +123,10 @@ export function create({
       if (!this.rangeBySide) {
         return null;
       }
-
+      const { offsets: rowOffsets, heights: rowHeights } = rowCoords;
+      const { widths: columnWidths } = columnCoords;
       const { L: leftRange, R: rightRange } = this.rangeBySide;
+
       let leftSideStyles = null;
       let rightSideStyles = null;
 

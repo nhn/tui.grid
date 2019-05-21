@@ -1,6 +1,8 @@
-import { Store, CellValue, RowKey } from '../store/types';
-import { findProp, arrayEqual } from '../helper/common';
+import { Store, CellValue, RowKey, SelectionRange } from '../store/types';
+import { findProp, arrayEqual, mapProp } from '../helper/common';
+import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { getSortedData } from '../helper/sort';
+import { isColumnEditable } from '../helper/clipboard';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -56,4 +58,43 @@ export function sort({ data }: Store, columnName: string, ascending: boolean) {
     data.rawData = rawData;
     data.viewData = viewData;
   }
+}
+
+function applyPasteDataToRawData(
+  store: Store,
+  pasteData: string[][],
+  indexToPaste: SelectionRange
+) {
+  const {
+    data: { rawData, viewData },
+    column: { visibleColumns }
+  } = store;
+  const {
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
+  } = indexToPaste;
+
+  const columnNames = mapProp('name', visibleColumns);
+
+  for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+    const rawRowIndex = rowIdx + startRowIndex;
+    for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
+      const name = columnNames[columnIdx + startColumnIndex];
+      if (isColumnEditable(viewData, rawRowIndex, name)) {
+        rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+      }
+    }
+  }
+}
+
+export function paste(store: Store, pasteData: string[][]) {
+  const { selection } = store;
+
+  if (selection.range) {
+    pasteData = copyDataToRange(selection.range, pasteData);
+  }
+
+  const rangeToPaste = getRangeToPaste(store, pasteData);
+  applyPasteDataToRawData(store, pasteData, rangeToPaste);
+  store.selection.inputRange = rangeToPaste;
 }

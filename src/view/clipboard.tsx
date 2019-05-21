@@ -3,10 +3,21 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
+import { isEdge } from '../helper/browser';
+import {
+  convertTableToData,
+  convertTextToData,
+  isSupportWindowClipboardData
+} from '../helper/clipboard';
+import { getText } from '../query/clipboard';
 
 interface StoreProps {
   navigating: boolean;
   editing: boolean;
+}
+
+export interface WindowWithClipboard extends Window {
+  clipboardData: DataTransfer | null;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -57,10 +68,80 @@ class ClipboardComp extends Component<Props> {
       case 'remove':
         dispatch('removeFocus');
         break;
+      /*
+       * Call directly because of timing issues
+       * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
+       * - Step 2: When 'clipboard' event is fired,
+       *           IE browsers set copied data to window.clipboardData in event handler and
+       *           other browsers append copied data and focus to contenteditable element.
+       * - Step 3: Finally, when 'copy' event is fired on browsers except IE,
+       *           setting copied data to ClipboardEvent.clipboardData.
+       */
+      case 'clipboard': {
+        if (!this.el) {
+          return;
+        }
+        const { store } = this.context;
+        if (isSupportWindowClipboardData()) {
+          (window as WindowWithClipboard).clipboardData!.setData('Text', getText(store));
+        } else {
+          this.el.innerHTML = getText(store);
+        }
+        break;
+      }
       default:
         break;
     }
   };
+
+  /**
+   * Paste copied data in other browsers (chrome, safari, firefox)
+   * [if] condition is copying from ms-excel,
+   * [else] condition is copying from the grid or the copied data is plain text.
+   */
+  private pasteInOtherBrowsers(clipboardData: DataTransfer) {
+    if (!this.el) {
+      return;
+    }
+
+    const { el } = this;
+    const html = clipboardData.getData('text/html');
+    let data;
+    if (html && html.indexOf('table') !== -1) {
+      // step 1: Append copied data on contenteditable element to parsing correctly table data.
+      el.innerHTML = html;
+      // step 2: Make grid data from cell data of appended table element.
+      const { rows } = el.querySelector('tbody')!;
+      data = convertTableToData(rows);
+      // step 3: Empty contenteditable element to reset.
+      el.innerHTML = '';
+    } else {
+      data = convertTextToData(clipboardData.getData('text/plain'));
+    }
+
+    this.props.dispatch('paste', data);
+  }
+
+  /**
+   * Paste copied data in MS-browsers (IE, edge)
+   */
+  private pasteInMSBrowser(clipboardData: DataTransfer) {
+    let data = convertTextToData(clipboardData.getData('Text'));
+
+    setTimeout(() => {
+      if (!this.el) {
+        return;
+      }
+
+      const { el } = this;
+      if (el.querySelector('table')) {
+        const { rows } = el.querySelector('tbody')!;
+        data = convertTableToData(rows);
+      }
+      this.props.dispatch('paste', data);
+      el.innerHTML = '';
+    }, 0);
+  }
 
   /**
    * Event handler for the keydown event
@@ -90,6 +171,35 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
+  private onCopy = (ev: ClipboardEvent) => {
+    if (!this.el) {
+      return;
+    }
+    const text = this.el.innerHTML;
+    if (isSupportWindowClipboardData()) {
+      (window as WindowWithClipboard).clipboardData!.setData('Text', text);
+    } else if (ev.clipboardData) {
+      ev.clipboardData.setData('text/plain', text);
+    }
+
+    ev.preventDefault();
+  };
+
+  private onPaste = (ev: ClipboardEvent) => {
+    const clipboardData = ev.clipboardData || (window as WindowWithClipboard).clipboardData;
+
+    if (!clipboardData) {
+      return;
+    }
+
+    if (!isEdge() && !isSupportWindowClipboardData()) {
+      ev.preventDefault();
+      this.pasteInOtherBrowsers(clipboardData);
+    } else {
+      this.pasteInMSBrowser(clipboardData);
+    }
+  };
+
   public componentDidUpdate() {
     setTimeout(() => {
       const { navigating, editing } = this.props;
@@ -105,6 +215,8 @@ class ClipboardComp extends Component<Props> {
         class={cls('clipboard')}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
+        onCopy={this.onCopy}
+        onPaste={this.onPaste}
         contentEditable={true}
         ref={(el) => {
           this.el = el;

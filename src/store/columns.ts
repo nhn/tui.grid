@@ -1,4 +1,4 @@
-import { Column, ColumnInfo, Dictionary, Relations } from './types';
+import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
 import { reactive } from '../helper/reactive';
 import { createMapFromArray, includes } from '../helper/common';
@@ -56,7 +56,8 @@ function getRelationColumns(relations: Relations[]) {
 function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
-  relationColumns: string[]
+  relationColumns: string[],
+  gridCopyOptions: ClipboardCopyOptions
 ): ColumnInfo {
   const {
     header,
@@ -69,7 +70,8 @@ function createColumn(
     editorOptions,
     renderer,
     relations,
-    sortable
+    sortable,
+    copyOptions
   } = column;
 
   return reactive({
@@ -81,6 +83,7 @@ function createColumn(
     align: align || 'left',
     renderer: renderer || DefaultRenderer,
     fixedWidth: typeof width === 'number',
+    copyOptions: { ...gridCopyOptions, ...copyOptions },
     baseWidth: (width === 'auto' ? 0 : width) || 0,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap: getRelationMap(relations || []),
@@ -126,14 +129,17 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
 export function create(
   columns: OptColumn[],
   columnOptions: OptColumnOptions = {},
-  rowHeaders: OptRowHeader[]
+  rowHeaders: OptRowHeader[],
+  copyOptions: ClipboardCopyOptions
 ): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
-  const columnInfos = columns.map((column) => createColumn(column, columnOptions, relationColumns));
+  const columnInfos = columns.map((column) =>
+    createColumn(column, columnOptions, relationColumns, copyOptions)
+  );
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return reactive({
