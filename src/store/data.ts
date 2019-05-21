@@ -10,6 +10,7 @@ import {
   CellValue
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
+import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
 import { someProp, encodeHTMLEntity, setDefaultProp } from '../helper/common';
 
@@ -69,7 +70,7 @@ function getRowHeaderValue(row: Row, columnName: string) {
 
 function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions } = column;
-  const value = row[name] || getRowHeaderValue(row, name);
+  const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
 
   return {
