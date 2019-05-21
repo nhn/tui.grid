@@ -447,4 +447,50 @@ export default class Grid {
   public validate(): InvalidRow[] {
     return getInvalidRows(this.store);
   }
+
+  /**
+   * Enables all rows.
+   */
+  public enable() {
+    console.log('enable');
+  }
+
+  /**
+   * Disables all rows.
+   */
+  public disable() {
+    console.log('disable');
+  }
+
+  /**
+   * Disables the row identified by the rowkey.
+   * @param {number|string} rowKey - The unique key of the target row
+   */
+  public disableRow(rowKey: RowKey) {
+    console.log('disable row');
+  }
+
+  /**
+   * Enables the row identified by the rowKey.
+   * @param {number|string} rowKey - The unique key of the target row
+   */
+  public enableRow(rowKey: RowKey) {
+    console.log('enable row');
+  }
+
+  /**
+   * Enables the row identified by the rowKey to be able to check.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public enableCheck(rowKey: RowKey) {
+    console.log('enable Check');
+  }
+
+  /**
+   * Disables the row identified by the spcified rowKey to not be able to check.
+   * @param {number|string} rowKey - The unique keyof the row.
+   */
+  public disableCheck(rowKey: RowKey) {
+    console.log('diable Check');
+  }
 }

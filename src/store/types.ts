@@ -100,6 +100,9 @@ export interface Data {
   viewData: ViewRow[];
   sortOptions: SortOptions;
   checkedAllRows: boolean;
+  attributes: {
+    disabled: boolean;
+  };
 }
 
 export interface FormatterProps {
@@ -171,6 +174,7 @@ export interface RelationCallbackData {
   value?: CellValue;
   editable?: boolean;
   disabled?: boolean;
+  checkDisabled?: boolean;
   row?: Row;
 }
 

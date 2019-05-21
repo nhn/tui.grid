@@ -183,6 +183,7 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
       rowNum: index + 1,
       checked: false,
       disabled: false,
+      checkDisabled: false,
       className: ''
     });
 
@@ -201,7 +202,9 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
     rawData,
     viewData,
     sortOptions,
-
+    attributes: {
+      disabled: false
+    },
     // @TODO meta 프로퍼티 값으로 변경
     get checkedAllRows() {
       const checkedRows = rawData.filter(({ _checked }) => _checked);
