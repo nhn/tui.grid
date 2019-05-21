@@ -68,13 +68,19 @@ class ClipboardComp extends Component<Props> {
       case 'remove':
         dispatch('removeFocus');
         break;
-      case 'clipboard':
+      case 'clipboard': {
         if (!this.el) {
           return;
         }
         // Call directly because of timing issues
-        this.el.innerHTML = getText(this.context.store);
+        const { store } = this.context;
+        if (isSupportWindowClipboardData()) {
+          (window as WindowWithClipboard).clipboardData!.setData('Text', getText(store));
+        } else {
+          this.el.innerHTML = getText(store);
+        }
         break;
+      }
       default:
         break;
     }
