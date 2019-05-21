@@ -29,10 +29,6 @@ export interface OptGrid {
   copyOptions?: ClipboardCopyOptions;
 }
 
-export interface ExtraData {
-  height?: number;
-}
-
 export type CellValue = number | string | boolean | null | undefined;
 
 export type SummaryPosition = 'top' | 'bottom';

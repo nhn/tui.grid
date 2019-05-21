@@ -30,7 +30,7 @@ export function setRowAttribute(
   }
 }
 
-export function setRowAttributeAll(
+export function setAllRowAttribute(
   { data }: Store,
   attrName: keyof RowAttributes,
   value: RowAttributeValue
@@ -50,7 +50,7 @@ export function check(store: Store, rowKey: RowKey) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType === 'radio') {
-    setRowAttributeAll(store, 'checked', false);
+    setAllRowAttribute(store, 'checked', false);
   }
   setRowAttribute(store, rowKey, 'checked', true);
 }
@@ -63,7 +63,7 @@ export function checkAll(store: Store) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType !== 'radio') {
-    setRowAttributeAll(store, 'checked', true);
+    setAllRowAttribute(store, 'checked', true);
   }
 }
 
@@ -71,7 +71,7 @@ export function uncheckAll(store: Store) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType !== 'radio') {
-    setRowAttributeAll(store, 'checked', false);
+    setAllRowAttribute(store, 'checked', false);
   }
 }
 
