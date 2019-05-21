@@ -32,6 +32,16 @@ describe('validate changed value', () => {
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
+  it('data type is string', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'name', validation: { dataType: 'string' } }]
+    });
+
+    getGridInst().invoke('setValue', 0, 'name', 123);
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+  });
+
   it('data type is number', () => {
     cy.createGrid({
       data,

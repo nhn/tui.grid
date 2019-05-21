@@ -173,7 +173,7 @@ export function create(
       return rowHeaderInfos.length;
     },
 
-    get validatedColumns() {
+    get validationColumns() {
       return allColumns.filter(({ validation }) => !!validation);
     }
   });

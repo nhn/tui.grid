@@ -8,6 +8,7 @@ import {
   CellRenderData,
   FormatterProps,
   CellValue,
+  ValidationType,
   Validation,
   InvalidRow
 } from './types';
@@ -15,9 +16,6 @@ import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
 import { someProp, encodeHTMLEntity, setDefaultProp, isBlank } from '../helper/common';
-
-const VALID_ERR_REQUIRED = 'REQUIRED';
-const VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -73,16 +71,18 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
-function getValidationCode(value: CellValue, validation?: Validation) {
-  let errorCode = '';
-
+function getValidationCode(value: CellValue, validation?: Validation): ValidationType | '' {
   if (validation && validation.required && isBlank(value)) {
-    errorCode = VALID_ERR_REQUIRED;
-  } else if (validation && validation.dataType === 'number' && typeof value !== 'number') {
-    errorCode = VALID_ERR_TYPE_NUMBER;
+    return 'REQUIRED';
+  }
+  if (validation && validation.dataType === 'string' && typeof value !== 'string') {
+    return 'TYPE_STRING';
+  }
+  if (validation && validation.dataType === 'number' && typeof value !== 'number') {
+    return 'TYPE_NUMBER';
   }
 
-  return errorCode;
+  return '';
 }
 
 function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
@@ -214,12 +214,12 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
       const invalidRows: InvalidRow[] = [];
 
       this.viewData.forEach(({ rowKey, valueMap }) => {
-        const validatedColumns = column.validatedColumns.filter(
+        const invalidColumns = column.validationColumns.filter(
           ({ name }) => !!valueMap[name].invalidState
         );
 
-        if (validatedColumns.length) {
-          const errors = validatedColumns.map(({ name }) => ({
+        if (invalidColumns.length) {
+          const errors = invalidColumns.map(({ name }) => ({
             columnName: name,
             errorCode: valueMap[name].invalidState
           }));
