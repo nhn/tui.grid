@@ -1,9 +1,7 @@
 import {
   CellValue,
   CellRenderData,
-  ClipboardCopyOptions,
   Range,
-  Dictionary,
   Row,
   ViewRow,
   ColumnInfo,

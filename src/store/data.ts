@@ -9,8 +9,7 @@ import {
   FormatterProps,
   CellValue,
   ValidationType,
-  Validation,
-  InvalidRow
+  Validation
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
@@ -208,27 +207,6 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
       const checkedRows = rawData.filter(({ _checked }) => _checked);
 
       return checkedRows.length === rawData.length;
-    },
-
-    get invalidRows() {
-      const invalidRows: InvalidRow[] = [];
-
-      this.viewData.forEach(({ rowKey, valueMap }) => {
-        const invalidColumns = column.validationColumns.filter(
-          ({ name }) => !!valueMap[name].invalidState
-        );
-
-        if (invalidColumns.length) {
-          const errors = invalidColumns.map(({ name }) => ({
-            columnName: name,
-            errorCode: valueMap[name].invalidState
-          }));
-
-          invalidRows.push({ rowKey, errors });
-        }
-      });
-
-      return invalidRows;
     }
   });
 }

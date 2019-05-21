@@ -8,6 +8,7 @@ import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
+import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
 
 /* eslint-disable */
@@ -448,6 +449,6 @@ export default class Grid {
    * ]
    */
   public validate(): InvalidRow[] {
-    return this.store.data.invalidRows;
+    return getInvalidRows(this.store);
   }
 }

@@ -100,7 +100,6 @@ export interface Data {
   viewData: ViewRow[];
   sortOptions: SortOptions;
   checkedAllRows: boolean;
-  invalidRows: InvalidRow[];
 }
 
 export interface FormatterProps {
