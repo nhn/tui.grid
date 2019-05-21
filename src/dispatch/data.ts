@@ -1,7 +1,8 @@
-import { Store, CellValue, RowKey } from '../store/types';
+import { Store, CellValue, RowKey, SelectionRange } from '../store/types';
 import { findProp, arrayEqual } from '../helper/common';
-import { applyPasteDataToRawData, duplicateData, getRangeToPaste } from '../query/clipboard';
+import { duplicateData, getRangeToPaste } from '../query/clipboard';
 import { getSortedData } from '../helper/sort';
+import { isColumnEditable } from '../helper/clipboard';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -56,6 +57,33 @@ export function sort({ data }: Store, columnName: string, ascending: boolean) {
   if (!arrayEqual(rawData, data.rawData)) {
     data.rawData = rawData;
     data.viewData = viewData;
+  }
+}
+
+function applyPasteDataToRawData(
+  store: Store,
+  pasteData: string[][],
+  indexToPaste: SelectionRange
+) {
+  const {
+    data: { rawData, viewData },
+    column: { visibleColumns }
+  } = store;
+  const {
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
+  } = indexToPaste;
+
+  const columnNames = visibleColumns.map(({ name }) => name);
+
+  for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+    const rawRowIndex = rowIdx + startRowIndex;
+    for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
+      const name = columnNames[columnIdx + startColumnIndex];
+      if (isColumnEditable(viewData, rawRowIndex, name)) {
+        rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+      }
+    }
   }
 }
 

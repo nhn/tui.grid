@@ -152,7 +152,6 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
-  // @TODO: IE 에서 onCopy 이벤트 발생하지 않는 이유 찾기
   private onCopy = (ev: ClipboardEvent) => {
     if (!this.el) {
       return;

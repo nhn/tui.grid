@@ -29,9 +29,9 @@ export function setDataInSpanRange(
   const [startColspan, endColspan] = colspanRange;
   const [startRowspan, endRowspan] = rowspanRange;
 
-  for (let rIndex = startRowspan; rIndex < endRowspan; rIndex += 1) {
-    for (let cIndex = startColspan; cIndex < endColspan; cIndex += 1) {
-      data[rIndex][cIndex] = startRowspan === rIndex && startColspan === cIndex ? value : ' ';
+  for (let rowIdx = startRowspan; rowIdx < endRowspan; rowIdx += 1) {
+    for (let columnIdx = startColspan; columnIdx < endColspan; columnIdx += 1) {
+      data[rowIdx][columnIdx] = startRowspan === rowIdx && startColspan === columnIdx ? value : ' ';
     }
   }
 }
@@ -44,11 +44,10 @@ export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) 
     data[index] = [];
   }
 
-  const rowsIter = Array.prototype.slice.call(rows);
-  rowsIter.forEach(function(tr: HTMLTableRowElement, rowIndex: number) {
+  Array.from(rows).forEach(function(tr, rowIndex) {
     let columnIndex = 0;
 
-    Array.prototype.slice.call(tr.cells).forEach(function(td: HTMLTableDataCellElement) {
+    Array.from(tr.cells).forEach(function(td) {
       const text = td.textContent || td.innerText;
 
       while (data[rowIndex][columnIndex]) {
@@ -75,7 +74,7 @@ function removeDoubleQuotes(text: string) {
 }
 
 function replaceNewlineToSubchar(text: string) {
-  return text.replace(/"([^"]|"")*"/g, function(value: string) {
+  return text.replace(/"([^"]|"")*"/g, function(value) {
     return value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR);
   });
 }
@@ -86,11 +85,11 @@ export function convertTextToData(text: string) {
   // before spliting the text by newline characters.
   text = replaceNewlineToSubchar(text);
 
-  return text.split(/\r?\n/).map(function(row: string) {
-    return row.split('\t').map(function(column: string) {
-      column = removeDoubleQuotes(column);
-
-      return column.replace(CUSTOM_LF_REGEXP, LF).replace(CUSTOM_CR_REGEXP, CR);
+  return text.split(/\r?\n/).map(function(row) {
+    return row.split('\t').map(function(column) {
+      return removeDoubleQuotes(column)
+        .replace(CUSTOM_LF_REGEXP, LF)
+        .replace(CUSTOM_CR_REGEXP, CR);
     });
   });
 }

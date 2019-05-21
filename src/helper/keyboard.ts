@@ -1,4 +1,3 @@
-import { CellIndex, Store } from '../store/types';
 import { clamp } from './common';
 
 export const keyNameMap = {

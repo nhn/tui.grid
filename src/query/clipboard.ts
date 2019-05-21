@@ -1,9 +1,5 @@
 import { CellValue, SelectionRange, Store } from '../store/types';
-import {
-  getEndIndexToPaste,
-  getTextWithCopyOptionsApplied,
-  isColumnEditable
-} from '../helper/clipboard';
+import { getEndIndexToPaste, getTextWithCopyOptionsApplied } from '../helper/clipboard';
 
 export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionRange {
   const {
@@ -33,34 +29,6 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     row: [startRowIndex, endRowIndex],
     column: [startColumnIndex, endColumnIndex]
   };
-}
-
-export function applyPasteDataToRawData(
-  store: Store,
-  pasteData: string[][],
-  indexToPaste: SelectionRange
-) {
-  const {
-    data: { rawData, viewData },
-    column: { visibleColumns }
-  } = store;
-  const {
-    row: [startRowIndex, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
-  } = indexToPaste;
-
-  const columnNames = visibleColumns.map(({ name }) => name);
-
-  for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
-    const rawRowIndex = rowIdx + startRowIndex;
-    for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
-      const rawColumnIndex = columnIdx + startColumnIndex;
-      const name = columnNames[rawColumnIndex];
-      if (isColumnEditable(viewData, rawRowIndex, name)) {
-        rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
-      }
-    }
-  }
 }
 
 export function duplicateData(range: SelectionRange, pasteData: string[][]) {
