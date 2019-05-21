@@ -54,7 +54,7 @@ export function pipe<T>(initVal: T, ...args: Function[]) {
 }
 
 export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
-  if (typeof searchIndex === 'undefined' || arr[searchIndex] !== searchItem) {
+  if (typeof searchIndex === 'number' && arr[searchIndex] !== searchItem) {
     return false;
   }
   for (const item of arr) {

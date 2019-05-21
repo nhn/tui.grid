@@ -155,7 +155,7 @@ export function selection(options: OptSelectionLayerStyle): string {
  * @returns {String}
  */
 export function headArea(options: OptTableHeaderStyle): string {
-  return createClassRule('head-area')
+  return createClassRule('header-area')
     .bg(options.background)
     .border(options.border)
     .build();
@@ -207,10 +207,10 @@ export function cellHead(options: OptCellStyle): string {
   const tableRule = createNestedClassRule(' .', [
     'show-lside-area',
     'lside-area',
-    'head-area',
+    'header-area',
     'table'
   ]).verticalBorderStyle(options, 'right');
-  const cellRule = createClassRule('cell-head')
+  const cellRule = createClassRule('cell-header')
     .bg(background)
     .border(border)
     .borderWidth(options)
@@ -231,7 +231,7 @@ export function cellRowHead(options: OptCellStyle): string {
     'body-area',
     'table'
   ]).verticalBorderStyle(options, 'right');
-  const cellRule = createClassRule('cell-row-head')
+  const cellRule = createClassRule('cell-row-header')
     .bg(background)
     .border(border)
     .borderWidth(options)
@@ -286,7 +286,7 @@ export function cellOddRow(options: OptBasicCellStyle): string {
  * @returns {String}
  */
 export function cellSelectedHead(options: OptBasicCellStyle): string {
-  return createNestedClassRule('.', ['cell-head', 'cell-selected'])
+  return createNestedClassRule('.', ['cell-header', 'cell-selected'])
     .bg(options.background)
     .text(options.text)
     .build();
@@ -297,7 +297,7 @@ export function cellSelectedHead(options: OptBasicCellStyle): string {
  * @returns {String}
  */
 export function cellSelectedRowHead(options: OptBasicCellStyle): string {
-  return createNestedClassRule('.', ['cell-row-head', 'cell-selected'])
+  return createNestedClassRule('.', ['cell-row-header', 'cell-selected'])
     .bg(options.background)
     .text(options.text)
     .build();

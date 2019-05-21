@@ -1,7 +1,7 @@
 import { Component, h } from 'preact';
 import { cls } from '../helper/dom';
 import { BodyArea } from './bodyArea';
-import { HeadArea } from './headArea';
+import { HeaderArea } from './headerArea';
 import { SummaryArea } from './summaryArea';
 import { connect } from '../view/hoc';
 import { DispatchProps } from '../dispatch/create';
@@ -78,7 +78,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
 
     return (
       <div class={cls('rside-area')} style={style}>
-        <HeadArea side="R" />
+        <HeaderArea side="R" />
         {summaryPosition === 'top' && <SummaryArea side="R" />}
         <BodyArea side="R" />
         {summaryPosition === 'bottom' && <SummaryArea side="R" />}

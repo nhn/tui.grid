@@ -3,7 +3,7 @@ import {
   castToSummaryColumnContent,
   createSummaryValue,
   extractSummaryColumnContent
-} from '../store/summary';
+} from '../helper/summary';
 
 export function setSummaryColumnContent(
   { summary, data }: Store,
@@ -17,12 +17,4 @@ export function setSummaryColumnContent(
 
   summary.summaryColumnContents[columnName] = content;
   summary.summaryValues[columnName] = createSummaryValue(content, columnValues);
-}
-
-export function getSummaryValues({ summary }: Store, columnName: string) {
-  const content = summary.summaryColumnContents[columnName];
-  if (content && content.useAutoSummary) {
-    return summary.summaryValues[columnName];
-  }
-  return null;
 }

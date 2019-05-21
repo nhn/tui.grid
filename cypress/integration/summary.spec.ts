@@ -146,8 +146,8 @@ describe('summary', () => {
       createGrid({ summary });
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
-      assertSummaryPosition(0, cls('head-area'));
-      assertSummaryPosition(1, cls('head-area'));
+      assertSummaryPosition(0, cls('header-area'));
+      assertSummaryPosition(1, cls('header-area'));
     });
 
     it('auto calculate summary when default content with template function', () => {
@@ -166,7 +166,7 @@ describe('summary', () => {
       const options = createDefaultOptions();
       const columns = options.columns.map((column) => ({
         ...column,
-        editor: { type: 'text' }
+        editor: 'text'
       }));
       createGrid({ columns });
 
@@ -278,7 +278,14 @@ describe('summary', () => {
     createGrid();
     getGridInst()
       .invoke('getSummaryValues', 'price')
-      .contains('30000')
-      .contains('6000');
+      .should((summaryValues) => {
+        expect(summaryValues).to.be.eql({
+          avg: 13750,
+          cnt: 20,
+          max: 30000,
+          min: 6000,
+          sum: 275000
+        });
+      });
   });
 });

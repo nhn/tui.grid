@@ -88,7 +88,7 @@ function createColumn(
     baseWidth: (width === 'auto' ? 0 : width) || 0,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap: getRelationMap(relations || []),
-    related: includes(relationColumns, name),
+    related: includes(relationColumns, column.name),
     sortable,
     ...getEditorInfo(editor, editorOptions),
     validation: validation ? { ...validation } : {}

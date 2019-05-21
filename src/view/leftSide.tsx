@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { HeadArea } from './headArea';
+import { HeaderArea } from './headerArea';
 import { BodyArea } from './bodyArea';
 import { SummaryArea } from './summaryArea';
 import { cls } from '../helper/dom';
@@ -22,7 +22,7 @@ class LeftSideComp extends Component<Props> {
 
     return (
       <div class={cls('lside-area')} style={style}>
-        <HeadArea side="L" />
+        <HeaderArea side="L" />
         {summaryPosition === 'top' && <SummaryArea side="L" />}
         <BodyArea side="L" />
         {summaryPosition === 'bottom' && <SummaryArea side="L" />}

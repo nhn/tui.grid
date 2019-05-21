@@ -70,7 +70,7 @@ export class BodyCellComp extends Component<Props> {
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
-          [isRowHeader(name), 'cell-row-head'],
+          [isRowHeader(name), 'cell-row-header'],
           [validation.required || false, 'cell-required'],
           [!!invalidState, 'cell-invalid']
         )}

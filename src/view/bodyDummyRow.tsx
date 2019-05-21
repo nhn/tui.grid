@@ -28,7 +28,7 @@ const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
           <td
             {...attrs}
             key={index}
-            class={cls('cell', 'cell-dummy', [isRowHeader(name), 'cell-row-head'])}
+            class={cls('cell', 'cell-dummy', [isRowHeader(name), 'cell-row-header'])}
           />
         );
       })}

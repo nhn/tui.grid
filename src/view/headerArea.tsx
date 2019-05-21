@@ -22,7 +22,7 @@ interface StoreProps {
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
-class HeadAreaComp extends Component<Props> {
+class HeaderAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
   private handleChange = (ev: Event) => {
@@ -85,7 +85,7 @@ class HeadAreaComp extends Component<Props> {
 
     return (
       <div
-        class={cls('head-area')}
+        class={cls('header-area')}
         style={areaStyle}
         ref={(el) => {
           this.el = el;
@@ -96,7 +96,7 @@ class HeadAreaComp extends Component<Props> {
           <tbody>
             <tr style={theadStyle} onClick={this.handleClick} onDblClick={this.handleDblClick}>
               {columns.map(({ name, header, sortable }) => (
-                <th key={name} data-column-name={name} class={cls('cell', 'cell-head')}>
+                <th key={name} data-column-name={name} class={cls('cell', 'cell-header')}>
                   {name === '_checked' ? (
                     <span
                       dangerouslySetInnerHTML={{ __html: header }}
@@ -124,7 +124,7 @@ class HeadAreaComp extends Component<Props> {
   }
 }
 
-export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
+export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
     data,
     column,
@@ -141,4 +141,4 @@ export const HeadArea = connect<StoreProps, OwnProps>((store, { side }) => {
     checkedAllRows: data.checkedAllRows,
     sortOptions: data.sortOptions
   };
-})(HeadAreaComp);
+})(HeaderAreaComp);

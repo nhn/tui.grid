@@ -1,4 +1,11 @@
-import { CellValue, SummaryValue } from '../store/types';
+import {
+  CellValue,
+  SummaryColumnContent,
+  SummaryColumnContentMap,
+  SummaryValue
+} from '../store/types';
+
+type ColumnContentType = string | SummaryColumnContentMap;
 
 export function calculate(values: CellValue[]): SummaryValue {
   const cnt = values.length;
@@ -29,4 +36,41 @@ export function calculate(values: CellValue[]): SummaryValue {
   }
 
   return { sum, min, max, avg, cnt };
+}
+
+export function castToSummaryColumnContent(content?: ColumnContentType): SummaryColumnContent {
+  if (!content) {
+    return null;
+  }
+
+  return typeof content === 'string'
+    ? { template: content, useAutoSummary: false }
+    : {
+        template: content.template,
+        useAutoSummary:
+          typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary
+      };
+}
+
+export function createSummaryValue(
+  content: SummaryColumnContentMap | null,
+  columnValues: CellValue[]
+): SummaryValue {
+  const initSummaryMap = { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
+
+  return content && content.useAutoSummary ? calculate(columnValues) : initSummaryMap;
+}
+
+export function extractSummaryColumnContent(
+  content: SummaryColumnContent,
+  defaultContent: SummaryColumnContent
+) {
+  let summaryColumnContent: SummaryColumnContent = null;
+
+  if (content) {
+    summaryColumnContent = content;
+  } else if (!content && defaultContent) {
+    summaryColumnContent = defaultContent;
+  }
+  return summaryColumnContent;
 }

@@ -313,24 +313,20 @@ export default class Grid {
    * @returns {Object}
    * @example
    * {
-   *    column1: {
-   *        sum: 1000,
-   *        avg: 200,
-   *        max: 300,
-   *        min: 50,
-   *        cnt: 5
-   *    },
-   *    column2: {
-   *        sum: 2000,
-   *        avg: 300,
-   *        max: 600,
-   *        min: 80,
-   *        cnt: 5
-   *    }
+   *     sum: 1000,
+   *     avg: 200,
+   *     max: 300,
+   *     min: 50,
+   *     cnt: 5
    * }
    */
   public getSummaryValues(columnName: string) {
-    return this.dispatch('getSummaryValues', columnName);
+    const { summary } = this.store;
+    const content = summary.summaryColumnContents[columnName];
+    if (content && content.useAutoSummary) {
+      return summary.summaryValues[columnName];
+    }
+    return null;
   }
 
   /**
