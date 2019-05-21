@@ -68,11 +68,19 @@ class ClipboardComp extends Component<Props> {
       case 'remove':
         dispatch('removeFocus');
         break;
+      /*
+       * Call directly because of timing issues
+       * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
+       * - Step 2: When 'clipboard' event is fired,
+       *           IE browsers set copied data to window.clipboardData in event handler and
+       *           other browsers append copied data and focus to contenteditable element.
+       * - Step 3: Finally, when 'copy' event is fired on browsers except IE,
+       *           setting copied data to ClipboardEvent.clipboardData.
+       */
       case 'clipboard': {
         if (!this.el) {
           return;
         }
-        // Call directly because of timing issues
         const { store } = this.context;
         if (isSupportWindowClipboardData()) {
           (window as WindowWithClipboard).clipboardData!.setData('Text', getText(store));
@@ -86,6 +94,11 @@ class ClipboardComp extends Component<Props> {
     }
   };
 
+  /**
+   * Paste copied data in other browsers (chrome, safari, firefox)
+   * [if] condition is copying from ms-excel,
+   * [else] condition is copying from the grid or the copied data is plain text.
+   */
   private pasteInOtherBrowsers(clipboardData: DataTransfer) {
     if (!this.el) {
       return;
@@ -95,9 +108,12 @@ class ClipboardComp extends Component<Props> {
     const html = clipboardData.getData('text/html');
     let data;
     if (html && html.indexOf('table') !== -1) {
+      // step 1: Append copied data on contenteditable element to parsing correctly table data.
       el.innerHTML = html;
+      // step 2: Make grid data from cell data of appended table element.
       const { rows } = el.querySelector('tbody')!;
       data = convertTableToData(rows);
+      // step 3: Empty contenteditable element to reset.
       el.innerHTML = '';
     } else {
       data = convertTextToData(clipboardData.getData('text/plain'));
@@ -106,6 +122,9 @@ class ClipboardComp extends Component<Props> {
     this.props.dispatch('paste', data);
   }
 
+  /**
+   * Paste copied data in MS-browsers (IE, edge)
+   */
   private pasteInMSBrowser(clipboardData: DataTransfer) {
     let data = convertTextToData(clipboardData.getData('Text'));
 

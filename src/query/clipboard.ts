@@ -1,5 +1,5 @@
-import { CellValue, SelectionRange, Store } from '../store/types';
-import { getEndIndexToPaste, getTextWithCopyOptionsApplied } from '../helper/clipboard';
+import { SelectionRange, Store } from '../store/types';
+import { getTextWithCopyOptionsApplied } from '../helper/clipboard';
 
 export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionRange {
   const {
@@ -18,12 +18,9 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
     startColumnIndex = totalColumnIndex!;
   }
 
-  const [endRowIndex, endColumnIndex] = getEndIndexToPaste(
-    [startRowIndex, startColumnIndex],
-    pasteData,
-    visibleColumns.length,
-    viewData.length
-  );
+  const endRowIndex = Math.min(pasteData.length + startRowIndex, viewData.length) - 1;
+  const endColumnIndex =
+    Math.min(pasteData[0].length + startColumnIndex, visibleColumns.length) - 1;
 
   return {
     row: [startRowIndex, endRowIndex],
@@ -31,7 +28,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
   };
 }
 
-export function duplicateData(range: SelectionRange, pasteData: string[][]) {
+export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
   const rowLength = range.row[1] - range.row[0] + 1;
   const colLength = range.column[1] - range.column[0] + 1;
   const dataRowLength = pasteData.length;
@@ -41,8 +38,8 @@ export function duplicateData(range: SelectionRange, pasteData: string[][]) {
   const result = [...pasteData];
 
   for (let i = 0; i < rowDupCount; i += 1) {
-    pasteData.forEach((data) => {
-      result.push(data.slice(0));
+    pasteData.forEach((row) => {
+      result.push(row.slice(0));
     });
   }
 
@@ -89,30 +86,27 @@ function getValuesToString(store: Store) {
   const rowList = viewData.slice(row[0], row[1] + 1);
   const columnNames = visibleColumns
     .slice(column[0], column[1] + 1)
-    .map(({ name, copyOptions, editorOptions }) => {
-      return { name, copyOptions, editorOptions };
-    });
+    .map(({ name, copyOptions, editorOptions }) => ({
+      name,
+      copyOptions,
+      editorOptions
+    }));
 
-  const result: string[] = [];
-
-  rowList.forEach((viewRow) => {
-    const { valueMap } = viewRow;
-    const rowResult: CellValue[] = [];
-    columnNames.forEach(({ name, copyOptions, editorOptions }) => {
-      rowResult.push(
-        getTextWithCopyOptionsApplied(
-          valueMap[name],
-          rawData,
-          allColumnMap[name],
-          copyOptions,
-          editorOptions
+  return rowList
+    .map(({ valueMap }) =>
+      columnNames
+        .map(({ name, copyOptions, editorOptions }) =>
+          getTextWithCopyOptionsApplied(
+            valueMap[name],
+            rawData,
+            allColumnMap[name],
+            copyOptions,
+            editorOptions
+          )
         )
-      );
-    });
-    result.push(rowResult.join('\t'));
-  });
-
-  return result.join('\n');
+        .join('\t')
+    )
+    .join('\n');
 }
 
 export function getText(store: Store) {

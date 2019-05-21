@@ -9,7 +9,7 @@ import {
   ColumnInfo,
   CustomValue
 } from '../store/types';
-import { find } from './common';
+import { find, fromArray } from './common';
 import { Options } from '../editor/select';
 import { WindowWithClipboard } from '../view/clipboard';
 
@@ -44,10 +44,10 @@ export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) 
     data[index] = [];
   }
 
-  Array.from(rows).forEach(function(tr, rowIndex) {
+  fromArray(rows).forEach((tr, rowIndex) => {
     let columnIndex = 0;
 
-    Array.from(tr.cells).forEach(function(td) {
+    fromArray(tr.cells).forEach((td) => {
       const text = td.textContent || td.innerText;
 
       while (data[rowIndex][columnIndex]) {
@@ -67,16 +67,16 @@ export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) 
 
 function removeDoubleQuotes(text: string) {
   if (text.match(CUSTOM_LF_REGEXP)) {
-    text = text.substring(1, text.length - 1).replace(/""/g, '"');
+    return text.substring(1, text.length - 1).replace(/""/g, '"');
   }
 
   return text;
 }
 
 function replaceNewlineToSubchar(text: string) {
-  return text.replace(/"([^"]|"")*"/g, function(value) {
-    return value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR);
-  });
+  return text.replace(/"([^"]|"")*"/g, (value) =>
+    value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
+  );
 }
 
 export function convertTextToData(text: string) {
@@ -85,13 +85,13 @@ export function convertTextToData(text: string) {
   // before spliting the text by newline characters.
   text = replaceNewlineToSubchar(text);
 
-  return text.split(/\r?\n/).map(function(row) {
-    return row.split('\t').map(function(column) {
-      return removeDoubleQuotes(column)
+  return text.split(/\r?\n/).map((row) =>
+    row.split('\t').map((column) =>
+      removeDoubleQuotes(column)
         .replace(CUSTOM_LF_REGEXP, LF)
-        .replace(CUSTOM_CR_REGEXP, CR);
-    });
-  });
+        .replace(CUSTOM_CR_REGEXP, CR)
+    )
+  );
 }
 
 export function getCustomValue(
@@ -100,10 +100,7 @@ export function getCustomValue(
   rowAttrs: Row[],
   column: ColumnInfo
 ) {
-  if (typeof customValue === 'function') {
-    return customValue(value, rowAttrs, column);
-  }
-  return customValue;
+  return typeof customValue === 'function' ? customValue(value, rowAttrs, column) : customValue;
 }
 
 export function getTextWithCopyOptionsApplied(
@@ -113,40 +110,32 @@ export function getTextWithCopyOptionsApplied(
   copyOptions?: ClipboardCopyOptions,
   editorOptions?: Dictionary<Options>
 ) {
-  let retValue = valueMap.value;
+  let text = valueMap.value;
 
   // priority: customValue > useListItemText > useFormattedValue > original Data
   if (copyOptions) {
     if (copyOptions.customValue) {
-      retValue = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
+      text = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
     } else if (copyOptions.useListItemText && editorOptions) {
       const { listItems } = (editorOptions as unknown) as Options;
       const listItem = find((item) => item.value === valueMap.value, listItems);
-      retValue = listItem ? listItem.text : valueMap.value;
+      text = listItem ? listItem.text : valueMap.value;
     } else if (copyOptions.useFormattedValue) {
       const { prefix, postfix, formattedValue } = valueMap;
-      retValue = `${prefix}${formattedValue}${postfix}`;
+      text = `${prefix}${formattedValue}${postfix}`;
     }
   }
 
-  return retValue ? retValue.toString() : '';
+  if (typeof text === 'undefined' || text === null) {
+    return '';
+  }
+
+  return String(text);
 }
 
 export function isColumnEditable(viewData: ViewRow[], rowIndex: number, columnName: string) {
   const { disabled, editable } = viewData[rowIndex].valueMap[columnName];
   return editable && !disabled;
-}
-
-export function getEndIndexToPaste(
-  startIndex: Range,
-  pasteData: string[][],
-  totalColumnLength: number,
-  totalRowLength: number
-): Range {
-  const rowIndex = Math.min(pasteData.length + startIndex[0], totalRowLength) - 1;
-  const columnIndex = Math.min(pasteData[0].length + startIndex[1], totalColumnLength) - 1;
-
-  return [rowIndex, columnIndex];
 }
 
 export function isSupportWindowClipboardData() {

@@ -38,7 +38,7 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
       const { columnIndex, side } = this;
 
       if (columnIndex === null) {
-        return null;
+        return columnIndex;
       }
 
       return side === 'R' ? columnIndex + visibleColumnsBySide.L.length : columnIndex;

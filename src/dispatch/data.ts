@@ -1,6 +1,6 @@
 import { Store, CellValue, RowKey, SelectionRange } from '../store/types';
-import { findProp, arrayEqual } from '../helper/common';
-import { duplicateData, getRangeToPaste } from '../query/clipboard';
+import { findProp, arrayEqual, mapProp } from '../helper/common';
+import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 
@@ -74,7 +74,7 @@ function applyPasteDataToRawData(
     column: [startColumnIndex, endColumnIndex]
   } = indexToPaste;
 
-  const columnNames = visibleColumns.map(({ name }) => name);
+  const columnNames = mapProp('name', visibleColumns);
 
   for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
     const rawRowIndex = rowIdx + startRowIndex;
@@ -91,7 +91,7 @@ export function paste(store: Store, pasteData: string[][]) {
   const { selection } = store;
 
   if (selection.range) {
-    pasteData = duplicateData(selection.range, pasteData);
+    pasteData = copyDataToRange(selection.range, pasteData);
   }
 
   const rangeToPaste = getRangeToPaste(store, pasteData);
