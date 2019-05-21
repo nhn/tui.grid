@@ -1,4 +1,11 @@
-import { Store, CellValue, RowKey, SelectionRange } from '../store/types';
+import {
+  Store,
+  CellValue,
+  RowKey,
+  SelectionRange,
+  RowAttributes,
+  RowAttributeValue
+} from '../store/types';
 import { findProp, arrayEqual, mapProp } from '../helper/common';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { getSortedData } from '../helper/sort';
@@ -11,6 +18,28 @@ export function setValue({ data }: Store, rowKey: RowKey, columnName: string, va
   }
 }
 
+export function setRowAttribute(
+  { data }: Store,
+  rowKey: RowKey,
+  attrName: keyof RowAttributes,
+  value: RowAttributeValue
+) {
+  const targetRow = findProp('rowKey', rowKey, data.rawData);
+  if (targetRow) {
+    targetRow._attributes[attrName] = value;
+  }
+}
+
+export function setAllRowAttribute(
+  { data }: Store,
+  attrName: keyof RowAttributes,
+  value: RowAttributeValue
+) {
+  data.rawData.forEach((row) => {
+    row._attributes[attrName] = value;
+  });
+}
+
 export function setColumnValues(store: Store, columnName: string, value: CellValue) {
   store.data.rawData.forEach((targetRow) => {
     targetRow[columnName] = value;
@@ -21,21 +50,20 @@ export function check(store: Store, rowKey: RowKey) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType === 'radio') {
-    setColumnValues(store, '_checked', false);
+    setAllRowAttribute(store, 'checked', false);
   }
-
-  setValue(store, rowKey, '_checked', true);
+  setRowAttribute(store, rowKey, 'checked', true);
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  setValue(store, rowKey, '_checked', false);
+  setRowAttribute(store, rowKey, 'checked', false);
 }
 
 export function checkAll(store: Store) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType !== 'radio') {
-    setColumnValues(store, '_checked', true);
+    setAllRowAttribute(store, 'checked', true);
   }
 }
 
@@ -43,7 +71,7 @@ export function uncheckAll(store: Store) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
 
   if (rendererOptions.inputType !== 'radio') {
-    setColumnValues(store, '_checked', false);
+    setAllRowAttribute(store, 'checked', false);
   }
 }
 

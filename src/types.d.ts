@@ -4,7 +4,8 @@ import {
   Relations,
   SelectionUnit,
   Formatter,
-  ClipboardCopyOptions
+  ClipboardCopyOptions,
+  RowAttributes
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -28,18 +29,12 @@ export interface OptGrid {
   copyOptions?: ClipboardCopyOptions;
 }
 
-export interface ExtraData {
-  height?: number;
-}
-
 export type CellValue = number | string | boolean | null | undefined;
 
 export type SummaryPosition = 'top' | 'bottom';
 
-export type OptRow = {
-  [propName: string]: CellValue | ExtraData;
-} & {
-  _extraData?: ExtraData;
+export type OptRow = Dictionary<CellValue> & {
+  _attributes?: Partial<RowAttributes>;
 };
 
 export type OptRowHeader = string | OptColumn;

@@ -10,6 +10,7 @@ import {
   CellValue
 } from './types';
 import { reactive, watch, Reactive } from '../helper/reactive';
+import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
 import { someProp, encodeHTMLEntity, setDefaultProp } from '../helper/common';
 
@@ -57,9 +58,19 @@ function getListItems(fn: any, relationParams: Dictionary<any>) {
   return getRelationCbResult(fn, relationParams);
 }
 
+function getRowHeaderValue(row: Row, columnName: string) {
+  if (columnName === '_number') {
+    return row._attributes.rowNum;
+  }
+  if (columnName === '_checked') {
+    return row._attributes.checked;
+  }
+  return '';
+}
+
 function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions } = column;
-  const value = row[name];
+  const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
 
   return {
@@ -150,12 +161,19 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
     .map(({ name, defaultValue }) => ({ name, defaultValue }));
 
   const rawData = data.map((row, index) => {
-    const rowKeyAdded: Row = { rowKey: index, _number: index + 1, _checked: false, ...row };
-    defaultValues.forEach(({ name, defaultValue }) => {
-      setDefaultProp(rowKeyAdded, name, defaultValue);
+    row.rowKey = index;
+    row._attributes = reactive({
+      rowNum: index + 1,
+      checked: false,
+      disabled: false,
+      className: ''
     });
 
-    return reactive(rowKeyAdded as Row);
+    defaultValues.forEach(({ name, defaultValue }) => {
+      setDefaultProp(row, name, defaultValue);
+    });
+
+    return reactive(row as Row);
   });
 
   const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
