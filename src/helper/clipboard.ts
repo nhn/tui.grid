@@ -106,11 +106,10 @@ export function getCustomValue(
 export function getTextWithCopyOptionsApplied(
   valueMap: CellRenderData,
   rawData: Row[],
-  column: ColumnInfo,
-  copyOptions?: ClipboardCopyOptions,
-  editorOptions?: Dictionary<Options>
+  column: ColumnInfo
 ) {
   let text = valueMap.value;
+  const { copyOptions, editorOptions } = column;
 
   // priority: customValue > useListItemText > useFormattedValue > original Data
   if (copyOptions) {
@@ -118,8 +117,21 @@ export function getTextWithCopyOptionsApplied(
       text = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
     } else if (copyOptions.useListItemText && editorOptions) {
       const { listItems } = (editorOptions as unknown) as Options;
-      const listItem = find((item) => item.value === valueMap.value, listItems);
-      text = listItem ? listItem.text : valueMap.value;
+      const { value } = valueMap;
+      let valueList = [value];
+      const result: CellValue[] = [];
+
+      if (typeof value === 'string') {
+        valueList = value.split(',');
+      }
+
+      valueList.forEach((val) => {
+        const listItem = find((item) => item.value === val, listItems);
+
+        result.push(listItem ? listItem.text : val);
+      });
+
+      text = result.join(',');
     } else if (copyOptions.useFormattedValue) {
       const { prefix, postfix, formattedValue } = valueMap;
       text = `${prefix}${formattedValue}${postfix}`;

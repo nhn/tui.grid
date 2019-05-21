@@ -56,7 +56,7 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
 
 function getValueToString(store: Store) {
   const {
-    column: { visibleColumns, allColumnMap },
+    column: { visibleColumns },
     focus: { rowIndex, columnName, totalColumnIndex },
     data: { viewData, rawData }
   } = store;
@@ -64,17 +64,15 @@ function getValueToString(store: Store) {
   if (rowIndex === null || columnName === null || totalColumnIndex === null) {
     return '';
   }
-
   const valueMap = viewData[rowIndex].valueMap[columnName];
-  const { copyOptions } = visibleColumns[totalColumnIndex];
 
-  return getTextWithCopyOptionsApplied(valueMap, rawData, allColumnMap[columnName], copyOptions);
+  return getTextWithCopyOptionsApplied(valueMap, rawData, visibleColumns[totalColumnIndex]);
 }
 
 function getValuesToString(store: Store) {
   const {
     selection: { range },
-    column: { visibleColumns, allColumnMap },
+    column: { visibleColumns },
     data: { viewData, rawData }
   } = store;
 
@@ -84,25 +82,13 @@ function getValuesToString(store: Store) {
 
   const { row, column } = range;
   const rowList = viewData.slice(row[0], row[1] + 1);
-  const columnNames = visibleColumns
-    .slice(column[0], column[1] + 1)
-    .map(({ name, copyOptions, editorOptions }) => ({
-      name,
-      copyOptions,
-      editorOptions
-    }));
+  const columnInRange = visibleColumns.slice(column[0], column[1] + 1);
 
   return rowList
     .map(({ valueMap }) =>
-      columnNames
-        .map(({ name, copyOptions, editorOptions }) =>
-          getTextWithCopyOptionsApplied(
-            valueMap[name],
-            rawData,
-            allColumnMap[name],
-            copyOptions,
-            editorOptions
-          )
+      columnInRange
+        .map(({ name }, index) =>
+          getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumns[index])
         )
         .join('\t')
     )
@@ -119,7 +105,7 @@ export function getText(store: Store) {
     return getValuesToString(store);
   }
 
-  if (rowIndex && columnName) {
+  if (rowIndex !== null && columnName !== null) {
     return getValueToString(store);
   }
 
