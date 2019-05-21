@@ -1,61 +1,16 @@
-import {
-  CellValue,
-  Column,
-  Data,
-  Summary,
-  SummaryColumnContent,
-  SummaryColumnContents,
-  SummaryColumnContentMap,
-  SummaryValue,
-  SummaryValues
-} from './types';
+import { Column, Data, Summary, SummaryColumnContents, SummaryValues } from './types';
 import { reactive, watch } from '../helper/reactive';
 import { OptSummaryData } from '../types';
-import { calculate } from '../helper/summary';
-
-type ColumnContentType = string | SummaryColumnContentMap;
+import {
+  castToSummaryColumnContent,
+  createSummaryValue,
+  extractSummaryColumnContent
+} from '../helper/summary';
 
 interface SummaryOption {
   column: Column;
   data: Data;
   summary: OptSummaryData;
-}
-
-export function extractSummaryColumnContent(
-  content: SummaryColumnContent,
-  defaultContent: SummaryColumnContent
-) {
-  let summaryColumnContent: SummaryColumnContent = null;
-
-  if (content) {
-    summaryColumnContent = content;
-  } else if (!content && defaultContent) {
-    summaryColumnContent = defaultContent;
-  }
-  return summaryColumnContent;
-}
-
-export function castToSummaryColumnContent(content?: ColumnContentType): SummaryColumnContent {
-  if (!content) {
-    return null;
-  }
-
-  return typeof content === 'string'
-    ? { template: content, useAutoSummary: false }
-    : {
-        template: content.template,
-        useAutoSummary:
-          typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary
-      };
-}
-
-export function createSummaryValue(
-  content: SummaryColumnContentMap | null,
-  columnValues: CellValue[]
-): SummaryValue {
-  const initSummaryMap = { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
-
-  return content && content.useAutoSummary ? calculate(columnValues) : initSummaryMap;
 }
 
 export function create({ column, data, summary }: SummaryOption): Summary {

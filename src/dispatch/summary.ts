@@ -3,7 +3,7 @@ import {
   castToSummaryColumnContent,
   createSummaryValue,
   extractSummaryColumnContent
-} from '../store/summary';
+} from '../helper/summary';
 
 export function setSummaryColumnContent(
   { summary, data }: Store,
