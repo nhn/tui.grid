@@ -24,12 +24,16 @@ const columns = [
   {
     name: 'artist',
     width: 200,
-    editor: 'text'
+    editor: 'text',
+    editorOptions: {
+      dataType: 'number'
+    }
   },
   {
     header: 'Genre',
     name: 'genreCode',
     width: 200,
+    formatter: 'listItemText',
     editor: 'checkbox',
     editorOptions: {
       listItems: [
@@ -43,6 +47,8 @@ const columns = [
     header: 'Type',
     name: 'typeCode',
     width: 200,
+    prefix: 'Type: ',
+    formatter: 'listItemText',
     editor: 'radio',
     editorOptions: {
       listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
@@ -52,6 +58,7 @@ const columns = [
     header: 'Grade',
     name: 'grade',
     width: 200,
+    formatter: 'listItemText',
     editor: 'select',
     editorOptions: {
       listItems: [
