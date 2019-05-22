@@ -1,5 +1,4 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import Grid from '../src/grid';
@@ -7,7 +6,6 @@ import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
 const stories = storiesOf('Cell Editor', module);
-stories.addDecorator(withKnobs);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -76,15 +74,6 @@ stories.add('Text / Checkbox', () => {
   });
 
   (window as Window & { grid: Grid }).grid = grid;
-
-  button('enable', () => grid.enable());
-  button('disable', () => grid.disable());
-  button('disableRow(1)', () => grid.disableRow(1));
-  button('enableRow(1)', () => grid.enableRow(1));
-  button('disableRow(3, true)', () => grid.disableRow(3, true));
-  button('disableRow(4, false)', () => grid.disableRow(4, false));
-  button('enableRow(3, true)', () => grid.enableRow(3, true));
-  button('enableRow(4, false)', () => grid.enableRow(4, false));
 
   return el;
 });
