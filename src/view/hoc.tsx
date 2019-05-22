@@ -16,11 +16,19 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
     return class extends Component<OwnProps, SelectedProps> {
       public static displayName = `Connect:${WrappedComponent.name}`;
 
+      private unwatch?: () => void;
+
       public componentWillMount() {
         if (selector) {
-          watch(() => {
+          this.unwatch = watch(() => {
             this.setState(selector(this.context.store, this.props as DeepReadonly<OwnProps>));
           });
+        }
+      }
+
+      public componentWillUnmount() {
+        if (this.unwatch) {
+          this.unwatch();
         }
       }
 
