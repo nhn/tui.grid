@@ -1,14 +1,22 @@
+import { removeArrayItem, hasOwnProp, isObject } from './common';
 import { Dictionary } from 'src/store/types';
-import { removeArrayItem } from './common';
 
 interface ComputedProp<T> {
   key: keyof T;
   getter: Function;
-  handlers: Function[];
 }
+
+export type Reactive<T> = T & {
+  __storage__: T;
+  __handlerMap__: Dictionary<Function[]>;
+};
 
 let currWatcher: Function | null = null;
 let currWatcherHandlers: Function[][] | null = null;
+
+function isReactive<T>(obj: T): obj is Reactive<T> {
+  return isObject(obj) && hasOwnProp(obj, '__storage__');
+}
 
 export function watch(fn: Function) {
   currWatcher = fn;
@@ -29,15 +37,29 @@ export function watch(fn: Function) {
   return unwatch;
 }
 
-export type Reactive<T> = T & {
-  __storage__: Readonly<T>;
-  __handlerMap__: Dictionary<Function[]>;
-};
+function setValue<T, K extends keyof T>(
+  storage: T,
+  handlers: Function[],
+  key: keyof T,
+  value: T[K]
+) {
+  if (storage[key] !== value) {
+    storage[key] = value;
+    handlers.forEach((fn) => fn());
+  }
+}
+
+export function notify<T, K extends keyof T>(obj: T, key: K) {
+  if (isReactive(obj)) {
+    obj.__handlerMap__[key as string].forEach((fn) => fn());
+  }
+}
 
 export function reactive<T>(obj: T): Reactive<T> {
-  const storage: T = ({} as unknown) as T;
-  const handlerMap: Dictionary<Function[]> = {};
+  const reactiveObj = obj as Reactive<T>;
   const computedProps: ComputedProp<T>[] = [];
+  const storage = {} as T;
+  const handlerMap = {} as Dictionary<Function[]>;
 
   if (!Array.isArray(obj)) {
     // eslint-disable-next-line guard-for-in
@@ -46,15 +68,12 @@ export function reactive<T>(obj: T): Reactive<T> {
       const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
       if (typeof getter === 'function') {
-        computedProps.push({ key, handlers, getter });
+        computedProps.push({ key, getter });
       } else {
         storage[key] = obj[key];
         Object.defineProperty(obj, key, {
           set(value) {
-            if (storage[key] !== value) {
-              storage[key] = value;
-              handlers.forEach((fn) => fn());
-            }
+            setValue(storage, handlers, key, value);
           }
         });
       }
@@ -74,15 +93,13 @@ export function reactive<T>(obj: T): Reactive<T> {
     }
   }
 
-  (obj as Reactive<T>).__storage__ = storage;
+  reactiveObj.__storage__ = storage;
+  reactiveObj.__handlerMap__ = handlerMap;
 
-  computedProps.forEach(({ key, handlers, getter }) => {
+  computedProps.forEach(({ key, getter }) => {
     watch(() => {
       const value = getter.call(obj);
-      if (storage[key] !== value) {
-        storage[key] = value;
-        handlers.forEach((fn) => fn());
-      }
+      setValue(storage, handlerMap[key as string], key, value);
     });
   });
 

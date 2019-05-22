@@ -30,6 +30,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-triple-slash-reference': 0,
+    '@typescript-eslint/no-object-literal-type-assertion': 0,
     'react/no-unknown-property': 0,
     'accessor-pairs': 0,
     'require-jsdoc': 0,

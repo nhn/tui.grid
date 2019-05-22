@@ -134,6 +134,10 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   return resultMap;
 }
 
+export function isObject(obj: unknown): obj is object {
+  return typeof obj === 'object' && obj !== null;
+}
+
 export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
   return obj.hasOwnProperty(key);
 }
