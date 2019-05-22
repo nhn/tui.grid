@@ -28,6 +28,16 @@ it('reactive() and watch()', () => {
   expect(callback2.args[2]).to.be.undefined;
 });
 
+it('array index property should not be reactive', () => {
+  const numbers = reactive([1, 2, 3]);
+  const callback = cy.stub();
+
+  watch(() => callback(numbers[0]));
+  numbers[0] = 10;
+
+  expect(callback).to.be.calledOnce;
+});
+
 it('computed (getter) property and watch', () => {
   const person = reactive({
     p1: '1',
@@ -59,4 +69,33 @@ it('computed (getter) property and watch', () => {
 
   expect(person.p2).to.eql('A2');
   expect(person.p3).to.eql('A23');
+});
+
+it('watch returns a function which stops watching', () => {
+  const person = reactive({
+    p1: '1',
+    get p2() {
+      return `${this.p1}2`;
+    },
+    get p3() {
+      return `${this.p2}3`;
+    }
+  });
+
+  const callback1 = cy.stub();
+  const callback2 = cy.stub();
+  const callback3 = cy.stub();
+
+  const unwatch1 = watch(() => callback1(person.p1));
+  const unwatch2 = watch(() => callback2(person.p2));
+  const unwatch3 = watch(() => callback3(person.p3));
+  unwatch1();
+  unwatch2();
+  unwatch3();
+
+  person.p1 = 'A';
+
+  expect(callback1).to.be.calledOnce;
+  expect(callback2).to.be.calledOnce;
+  expect(callback3).to.be.calledOnce;
 });

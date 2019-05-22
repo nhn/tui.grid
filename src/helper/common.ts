@@ -117,6 +117,13 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
   return resultObj;
 }
 
+export function removeArrayItem<T>(targetItem: T, arr: T[]) {
+  const targetIdx = arr.findIndex((item) => item === targetItem);
+  arr.splice(targetIdx, 1);
+
+  return arr;
+}
+
 export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   const resultMap: { [key: string]: T } = {};
   arr.forEach((item) => {
