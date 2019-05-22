@@ -9,14 +9,14 @@ export class RowHeaderInputRenderer implements CellRenderer {
     const {
       grid,
       rowKey,
-      gridDisabled,
+      allDisabled,
       checkDisabled,
       columnInfo: { rendererOptions }
     } = props;
 
     el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
     el.name = '_checked';
-    el.disabled = gridDisabled || checkDisabled;
+    el.disabled = allDisabled || checkDisabled;
 
     el.addEventListener('change', () => {
       if (el.checked) {
@@ -35,9 +35,9 @@ export class RowHeaderInputRenderer implements CellRenderer {
   }
 
   public changed(props: CellRendererProps) {
-    const { value, gridDisabled, checkDisabled } = props;
+    const { value, allDisabled, checkDisabled } = props;
 
     this.el.checked = Boolean(value);
-    this.el.disabled = gridDisabled || checkDisabled;
+    this.el.disabled = allDisabled || checkDisabled;
   }
 }

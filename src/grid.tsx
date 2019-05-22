@@ -465,26 +465,26 @@ export default class Grid {
   /**
    * Disables the row identified by the rowkey.
    * @param {number|string} rowKey - The unique key of the target row
-   * @param {boolean} [include] - change including checkbox
+   * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
-  public disableRow(rowKey: RowKey, include?: boolean) {
-    if (typeof include === 'undefined') {
-      include = true;
+  public disableRow(rowKey: RowKey, withCheckbox?: boolean) {
+    if (typeof withCheckbox === 'undefined') {
+      withCheckbox = true;
     }
 
-    this.dispatch('setDisabledRow', true, rowKey, include);
+    this.dispatch('setRowDisabled', true, rowKey, withCheckbox);
   }
 
   /**
    * Enables the row identified by the rowKey.
    * @param {number|string} rowKey - The unique key of the target row
-   * @param {boolean} [include] - change including checkbox
+   * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
-  public enableRow(rowKey: RowKey, include?: boolean) {
-    if (typeof include === 'undefined') {
-      include = true;
+  public enableRow(rowKey: RowKey, withCheckbox?: boolean) {
+    if (typeof withCheckbox === 'undefined') {
+      withCheckbox = true;
     }
 
-    this.dispatch('setDisabledRow', false, rowKey, include);
+    this.dispatch('setRowDisabled', false, rowKey, withCheckbox);
   }
 }

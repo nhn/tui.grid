@@ -29,7 +29,7 @@ export class BodyCellComp extends Component<Props> {
   private el!: HTMLElement;
 
   public componentDidMount() {
-    const { grid, rowKey, renderData, columnInfo, disabled: gridDisabled } = this.props;
+    const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = this.props;
 
     // eslint-disable-next-line new-cap
     this.renderer = new columnInfo.renderer({
@@ -37,7 +37,7 @@ export class BodyCellComp extends Component<Props> {
       rowKey,
       columnInfo,
       ...renderData,
-      gridDisabled
+      allDisabled
     });
     this.el.appendChild(this.renderer.getElement());
 
@@ -48,14 +48,14 @@ export class BodyCellComp extends Component<Props> {
 
   public componentWillReceiveProps(nextProps: Props) {
     if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
-      const { grid, rowKey, renderData, columnInfo, disabled: gridDisabled } = nextProps;
+      const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = nextProps;
 
       this.renderer.changed({
         grid,
         rowKey,
         columnInfo,
         ...renderData,
-        gridDisabled
+        allDisabled
       });
     }
   }
@@ -65,7 +65,7 @@ export class BodyCellComp extends Component<Props> {
       rowKey,
       renderData: { disabled: cellDisabled, editable, invalidState, checkDisabled },
       columnInfo: { align, valign, name, validation = {} },
-      disabled: gridDisabled
+      disabled: allDisabled
     } = this.props;
 
     const style = {
@@ -77,7 +77,7 @@ export class BodyCellComp extends Component<Props> {
       'data-column-name': name
     };
 
-    const isDisabled = (name === '_checked' ? checkDisabled : cellDisabled) || gridDisabled;
+    const isDisabled = (name === '_checked' ? checkDisabled : cellDisabled) || allDisabled;
 
     return (
       <td

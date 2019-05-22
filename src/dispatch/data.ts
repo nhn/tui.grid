@@ -136,7 +136,7 @@ export function setDisabled(store: Store, disabled: boolean) {
   store.data.disabled = disabled;
 }
 
-export function setDisabledRow(store: Store, disabled: boolean, rowKey: RowKey, include: boolean) {
+export function setRowDisabled(store: Store, disabled: boolean, rowKey: RowKey, include: boolean) {
   const {
     data: { rawData }
   } = store;

@@ -64,10 +64,11 @@ export class ContainerComp extends Component<Props> {
     const address = getCellAddress(target);
 
     if (address) {
-      const row = find((data) => data.rowKey === address.rowKey, viewData);
-      const rowDisabled = row!.valueMap[address.columnName].disabled;
-      if (!disabled && !rowDisabled) {
-        dispatch('startEditing', address.rowKey, address.columnName);
+      const { rowKey, columnName } = address;
+      const row = find((data) => data.rowKey === rowKey, viewData);
+      const isRowDisabled = row!.valueMap[columnName].disabled;
+      if (!disabled && !isRowDisabled) {
+        dispatch('startEditing', rowKey, columnName);
       }
     }
 

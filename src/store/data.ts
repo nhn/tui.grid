@@ -91,7 +91,7 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { disabled, checkDisabled } = row._attributes;
 
   return {
-    editable: !!editor && !disabled,
+    editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     disabled,
     checkDisabled,
