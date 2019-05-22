@@ -165,6 +165,12 @@ export function create(
       };
     },
 
+    get defaultValues() {
+      return this.allColumns
+        .filter(({ defaultValue }) => Boolean(defaultValue))
+        .map(({ name, defaultValue }) => ({ name, value: defaultValue }));
+    },
+
     get visibleFrozenCount(this: Column) {
       return this.visibleColumnsBySide.L.length;
     },

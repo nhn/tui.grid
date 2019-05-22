@@ -37,6 +37,15 @@ export type OptRow = Dictionary<CellValue> & {
   _attributes?: Partial<RowAttributes>;
 };
 
+export interface OptAppendRow {
+  at?: number;
+  focus?: boolean;
+}
+
+export interface OptPrependRow {
+  focus?: boolean;
+}
+
 export type OptRowHeader = string | OptColumn;
 
 interface OptValidation {

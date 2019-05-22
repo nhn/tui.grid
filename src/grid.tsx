@@ -1,4 +1,12 @@
-import { OptGrid, OptPreset, OptI18nData, OptSummaryColumnContentMap } from './types';
+import {
+  OptGrid,
+  OptPreset,
+  OptI18nData,
+  OptSummaryColumnContentMap,
+  OptRow,
+  OptAppendRow,
+  OptPrependRow
+} from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
@@ -494,5 +502,36 @@ export default class Grid {
    */
   public enableRowCheck(rowKey: RowKey) {
     this.dispatch('setRowCheckDisabled', false, rowKey);
+  }
+
+  /*
+   * Inserts the new row with specified data to the end of table.
+   * @param {Object} [row] - The data for the new row
+   * @param {Object} [options] - Options
+   * @param {number} [options.at] - The index at which new row will be inserted
+   * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
+   *        has a rowspan data, the new row will extend the existing rowspan data.
+   * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+   * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
+   * @param {number} [options.offset] - Tree offset from first sibling
+   */
+  public appendRow(row: OptRow, options: OptAppendRow = {}) {
+    this.dispatch('appendRow', row, options);
+
+    if (options.focus) {
+      const rowIdx =
+        typeof options.at !== 'undefined' ? options.at : this.store.data.rawData.length - 1;
+      this.focusAt(rowIdx, 0);
+    }
+  }
+
+  /**
+   * Inserts the new row with specified data to the beginning of table.
+   * @param {Object} [row] - The data for the new row
+   * @param {Object} [options] - Options
+   * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+   */
+  public prependRow(row: OptRow, options: OptPrependRow = {}) {
+    this.appendRow(row, { ...options, at: 0 });
   }
 }

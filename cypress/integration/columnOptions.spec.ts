@@ -51,7 +51,7 @@ describe('formatter', () => {
     cy.getCell(0, 'age').should('to.have.text', 'AGE');
     cy.getCell(1, 'age').should('to.have.text', 'AGE');
 
-    cy.waitForGrid().then(() => {
+    cy.gridInstance().then(() => {
       assertAgeFormatterCallProps(formatterStub);
     });
   });
@@ -76,7 +76,7 @@ describe('formatter', () => {
     cy.getCell(0, 'age').should('to.have.text', 'Age: 30');
     cy.getCell(1, 'age').should('to.have.text', 'Age: 40');
 
-    cy.waitForGrid().then(() => {
+    cy.gridInstance().then(() => {
       assertAgeFormatterCallProps(prefixStub);
     });
   });
@@ -100,7 +100,7 @@ describe('formatter', () => {
     cy.getCell(0, 'age').should('to.have.text', '30 Old');
     cy.getCell(1, 'age').should('to.have.text', '40 Old');
 
-    cy.waitForGrid().then(() => {
+    cy.gridInstance().then(() => {
       assertAgeFormatterCallProps(postfixStub);
     });
   });
