@@ -174,29 +174,33 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   return { rowKey, valueMap };
 }
 
+function getAttributes(row: OptRow, index: number) {
+  if (
+    row._attributes &&
+    typeof row._attributes.disabled !== 'undefined' &&
+    typeof row._attributes.checkDisabled === 'undefined'
+  ) {
+    row._attributes.checkDisabled = row._attributes.disabled;
+  }
+
+  // @TODO className: {row, column}
+  return reactive({
+    rowNum: index + 1,
+    checked: false,
+    disabled: false,
+    checkDisabled: false,
+    ...row._attributes
+  });
+}
+
 export function create(data: OptRow[], column: Column): Reactive<Data> {
   const defaultValues = column.allColumns
     .filter(({ defaultValue }) => Boolean(defaultValue))
     .map(({ name, defaultValue }) => ({ name, defaultValue }));
 
   const rawData = data.map((row, index) => {
-    if (
-      row._attributes &&
-      typeof row._attributes.disabled !== 'undefined' &&
-      typeof row._attributes.checkDisabled === 'undefined'
-    ) {
-      row._attributes.checkDisabled = row._attributes.disabled;
-    }
-
     row.rowKey = index;
-    // @TODO className: {row, column}
-    row._attributes = reactive({
-      rowNum: index + 1,
-      checked: false,
-      disabled: false,
-      checkDisabled: false,
-      ...row._attributes
-    });
+    row._attributes = getAttributes(row, index);
 
     defaultValues.forEach(({ name, defaultValue }) => {
       setDefaultProp(row, name, defaultValue);

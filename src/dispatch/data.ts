@@ -19,6 +19,18 @@ export function setValue({ data }: Store, rowKey: RowKey, columnName: string, va
   }
 }
 
+function isCannotUpdateRowAttr(
+  attrName: keyof RowAttributes,
+  attributes: RowAttributes,
+  allDisabled: boolean
+) {
+  if (attrName === 'checked' && (attributes.checkDisabled || allDisabled)) {
+    return true;
+  }
+
+  return false;
+}
+
 export function setRowAttribute(
   { data }: Store,
   rowKey: RowKey,
@@ -27,6 +39,9 @@ export function setRowAttribute(
 ) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
   if (targetRow) {
+    if (isCannotUpdateRowAttr(attrName, targetRow._attributes, data.disabled)) {
+      return;
+    }
     targetRow._attributes[attrName] = value;
   }
 }
@@ -37,10 +52,9 @@ export function setAllRowAttribute(
   value: RowAttributeValue
 ) {
   data.rawData.forEach((row) => {
-    if (row._attributes.checkDisabled || data.disabled) {
+    if (isCannotUpdateRowAttr(attrName, row._attributes, data.disabled)) {
       return;
     }
-
     row._attributes[attrName] = value;
   });
 }
