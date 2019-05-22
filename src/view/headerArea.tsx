@@ -18,6 +18,7 @@ interface StoreProps {
   hasRowHeaderCheckbox: boolean;
   checkedAllRows: boolean;
   sortOptions: SortOptions;
+  disabled: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -60,11 +61,12 @@ class HeaderAreaComp extends Component<Props> {
   };
 
   private updateRowHeaderCheckbox() {
-    const { checkedAllRows } = this.props;
+    const { checkedAllRows, disabled } = this.props;
     const input = this.el!.querySelector('input[name=_checked]') as HTMLInputElement;
 
     if (input) {
       input.checked = checkedAllRows;
+      input.disabled = disabled;
     }
   }
 
@@ -139,6 +141,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
     hasRowHeaderCheckbox: !!column.allColumnMap._checked,
     checkedAllRows: data.checkedAllRows,
-    sortOptions: data.sortOptions
+    sortOptions: data.sortOptions,
+    disabled: data.disabled
   };
 })(HeaderAreaComp);

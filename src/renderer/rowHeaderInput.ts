@@ -5,14 +5,18 @@ export class RowHeaderInputRenderer implements CellRenderer {
 
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
+
     const {
       grid,
       rowKey,
+      gridDisabled,
+      checkDisabled,
       columnInfo: { rendererOptions }
     } = props;
 
     el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
     el.name = '_checked';
+    el.disabled = gridDisabled || checkDisabled;
 
     el.addEventListener('change', () => {
       if (el.checked) {
@@ -31,6 +35,9 @@ export class RowHeaderInputRenderer implements CellRenderer {
   }
 
   public changed(props: CellRendererProps) {
-    this.el.checked = Boolean(props.value);
+    const { value, gridDisabled, checkDisabled } = props;
+
+    this.el.checked = Boolean(value);
+    this.el.disabled = gridDisabled || checkDisabled;
   }
 }

@@ -88,11 +88,13 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
+  const { disabled, checkDisabled } = row._attributes;
 
   return {
-    editable: !!editor,
+    editable: !!editor && !disabled,
     editorOptions: editorOptions ? { ...editorOptions } : {},
-    disabled: false,
+    disabled,
+    checkDisabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
@@ -178,13 +180,22 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
     .map(({ name, defaultValue }) => ({ name, defaultValue }));
 
   const rawData = data.map((row, index) => {
+    if (
+      row._attributes &&
+      typeof row._attributes.disabled !== 'undefined' &&
+      typeof row._attributes.checkDisabled === 'undefined'
+    ) {
+      row._attributes.checkDisabled = row._attributes.disabled;
+    }
+
     row.rowKey = index;
+    // @TODO className: {row, column}
     row._attributes = reactive({
       rowNum: index + 1,
       checked: false,
       disabled: false,
       checkDisabled: false,
-      className: ''
+      ...row._attributes
     });
 
     defaultValues.forEach(({ name, defaultValue }) => {
@@ -199,12 +210,10 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
 
   return reactive({
+    disabled: false,
     rawData,
     viewData,
     sortOptions,
-    attributes: {
-      disabled: false
-    },
     // @TODO meta 프로퍼티 값으로 변경
     get checkedAllRows() {
       const checkedRows = rawData.filter(({ _checked }) => _checked);

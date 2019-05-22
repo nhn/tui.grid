@@ -30,7 +30,8 @@ export interface RowAttributes {
   rowNum: number;
   checked: boolean;
   disabled: boolean;
-  className: string;
+  checkDisabled: boolean;
+  className?: { row: string[]; column: Dictionary<string[]> };
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -56,6 +57,7 @@ export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
   editable: boolean;
+  checkDisabled: boolean;
   disabled: boolean;
   invalidState: '' | ValidationType;
   formattedValue: string;
@@ -99,10 +101,8 @@ export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortOptions: SortOptions;
+  disabled: boolean;
   checkedAllRows: boolean;
-  attributes: {
-    disabled: boolean;
-  };
 }
 
 export interface FormatterProps {
@@ -174,7 +174,6 @@ export interface RelationCallbackData {
   value?: CellValue;
   editable?: boolean;
   disabled?: boolean;
-  checkDisabled?: boolean;
   row?: Row;
 }
 

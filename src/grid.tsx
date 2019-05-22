@@ -452,45 +452,39 @@ export default class Grid {
    * Enables all rows.
    */
   public enable() {
-    console.log('enable');
+    this.dispatch('setDisabled', false);
   }
 
   /**
    * Disables all rows.
    */
   public disable() {
-    console.log('disable');
+    this.dispatch('setDisabled', true);
   }
 
   /**
    * Disables the row identified by the rowkey.
    * @param {number|string} rowKey - The unique key of the target row
+   * @param {boolean} [include] - change including checkbox
    */
-  public disableRow(rowKey: RowKey) {
-    console.log('disable row');
+  public disableRow(rowKey: RowKey, include?: boolean) {
+    if (typeof include === 'undefined') {
+      include = true;
+    }
+
+    this.dispatch('setDisabledRow', true, rowKey, include);
   }
 
   /**
    * Enables the row identified by the rowKey.
    * @param {number|string} rowKey - The unique key of the target row
+   * @param {boolean} [include] - change including checkbox
    */
-  public enableRow(rowKey: RowKey) {
-    console.log('enable row');
-  }
+  public enableRow(rowKey: RowKey, include?: boolean) {
+    if (typeof include === 'undefined') {
+      include = true;
+    }
 
-  /**
-   * Enables the row identified by the rowKey to be able to check.
-   * @param {number|string} rowKey - The unique key of the row
-   */
-  public enableCheck(rowKey: RowKey) {
-    console.log('enable Check');
-  }
-
-  /**
-   * Disables the row identified by the spcified rowKey to not be able to check.
-   * @param {number|string} rowKey - The unique keyof the row.
-   */
-  public disableCheck(rowKey: RowKey) {
-    console.log('diable Check');
+    this.dispatch('setDisabledRow', false, rowKey, include);
   }
 }

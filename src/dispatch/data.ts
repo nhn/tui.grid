@@ -7,7 +7,7 @@ import {
   RowAttributeValue
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
-import { findProp, arrayEqual, mapProp } from '../helper/common';
+import { findProp, arrayEqual, mapProp, find } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 
@@ -37,6 +37,10 @@ export function setAllRowAttribute(
   value: RowAttributeValue
 ) {
   data.rawData.forEach((row) => {
+    if (row._attributes.checkDisabled || data.disabled) {
+      return;
+    }
+
     row._attributes[attrName] = value;
   });
 }
@@ -126,4 +130,21 @@ export function paste(store: Store, pasteData: string[][]) {
   const rangeToPaste = getRangeToPaste(store, pasteData);
   applyPasteDataToRawData(store, pasteData, rangeToPaste);
   store.selection.inputRange = rangeToPaste;
+}
+
+export function setDisabled(store: Store, disabled: boolean) {
+  store.data.disabled = disabled;
+}
+
+export function setDisabledRow(store: Store, disabled: boolean, rowKey: RowKey, include: boolean) {
+  const {
+    data: { rawData }
+  } = store;
+  const row = find((data) => data.rowKey === rowKey, rawData);
+  if (row) {
+    row._attributes.disabled = disabled;
+    if (include) {
+      row._attributes.checkDisabled = disabled;
+    }
+  }
 }
