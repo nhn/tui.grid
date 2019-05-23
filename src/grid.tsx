@@ -515,7 +515,7 @@ export default class Grid {
    * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
    * @param {number} [options.offset] - Tree offset from first sibling
    */
-  public appendRow(row: OptRow, options: OptAppendRow = {}) {
+  public appendRow(row: OptRow = {}, options: OptAppendRow = {}) {
     this.dispatch('appendRow', row, options);
 
     if (options.focus) {

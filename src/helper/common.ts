@@ -118,7 +118,7 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {
-  const targetIdx = arr.findIndex((item) => item === targetItem);
+  const targetIdx = findIndex((item) => item === targetItem, arr);
   arr.splice(targetIdx, 1);
 
   return arr;

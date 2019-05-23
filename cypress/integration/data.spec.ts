@@ -45,6 +45,14 @@ describe('appendRow()', () => {
         value: 'Park'
       });
   });
+
+  it('if first argument is undefined, insert empty object', () => {
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('appendRow');
+    cy.getCellByIdx(2, 0).should('to.have.text', '');
+    cy.getCellByIdx(2, 1).should('to.have.text', '');
+  });
 });
 
 describe('prependRow()', () => {
@@ -73,5 +81,13 @@ describe('prependRow()', () => {
         columnName: 'name',
         value: 'Park'
       });
+  });
+
+  it('if first argument is undefined, insert empty object', () => {
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('prependRow');
+    cy.getCellByIdx(0, 0).should('to.have.text', '');
+    cy.getCellByIdx(0, 1).should('to.have.text', '');
   });
 });
