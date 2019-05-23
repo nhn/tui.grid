@@ -15,6 +15,7 @@ import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
 import { someProp, encodeHTMLEntity, setDefaultProp, isBlank, isUndefined } from '../helper/common';
+import { listItemText } from '../formatter/listItemText';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -26,7 +27,9 @@ export function getCellDisplayValue(value: CellValue) {
 function getFormattedValue(props: FormatterProps, formatter?: Formatter, defaultValue?: CellValue) {
   let value: CellValue;
 
-  if (typeof formatter === 'function') {
+  if (formatter === 'listItemText') {
+    value = listItemText(props);
+  } else if (typeof formatter === 'function') {
     value = formatter(props);
   } else if (typeof formatter === 'string') {
     value = formatter;
