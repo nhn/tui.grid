@@ -14,7 +14,7 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp, isBlank } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp, isBlank, isUndefined } from '../helper/common';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -88,11 +88,12 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
+  const { disabled, checkDisabled } = row._attributes;
 
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
-    disabled: false,
+    disabled: name === '_checked' ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
@@ -172,6 +173,25 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   return { rowKey, valueMap };
 }
 
+function getAttributes(row: OptRow, index: number) {
+  if (
+    row._attributes &&
+    typeof row._attributes.disabled === 'boolean' &&
+    isUndefined(row._attributes.checkDisabled)
+  ) {
+    row._attributes.checkDisabled = row._attributes.disabled;
+  }
+
+  // @TODO className: {row, column}
+  return reactive({
+    rowNum: index + 1,
+    checked: false,
+    disabled: false,
+    checkDisabled: false,
+    ...row._attributes
+  });
+}
+
 export function create(data: OptRow[], column: Column): Reactive<Data> {
   const defaultValues = column.allColumns
     .filter(({ defaultValue }) => Boolean(defaultValue))
@@ -179,12 +199,7 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
 
   const rawData = data.map((row, index) => {
     row.rowKey = index;
-    row._attributes = reactive({
-      rowNum: index + 1,
-      checked: false,
-      disabled: false,
-      className: ''
-    });
+    row._attributes = getAttributes(row, index);
 
     defaultValues.forEach(({ name, defaultValue }) => {
       setDefaultProp(row, name, defaultValue);
@@ -198,10 +213,10 @@ export function create(data: OptRow[], column: Column): Reactive<Data> {
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
 
   return reactive({
+    disabled: false,
     rawData,
     viewData,
     sortOptions,
-
     // @TODO meta 프로퍼티 값으로 변경
     get checkedAllRows() {
       const checkedRows = rawData.filter(({ _checked }) => _checked);

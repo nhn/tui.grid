@@ -8,7 +8,8 @@ import { Clipboard } from './clipboard';
 import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition } from '../store/types';
+import { SummaryPosition, ViewRow } from '../store/types';
+import { find } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -24,6 +25,8 @@ interface StoreProps {
   summaryHeight: number;
   summaryPosition: SummaryPosition;
   showLeftSide: boolean;
+  disabled: boolean;
+  viewData: ViewRow[];
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -61,7 +64,8 @@ export class ContainerComp extends Component<Props> {
     const address = getCellAddress(target);
 
     if (address) {
-      dispatch('startEditing', address.rowKey, address.columnName);
+      const { rowKey, columnName } = address;
+      dispatch('startEditing', rowKey, columnName);
     }
 
     const { top, left } = el.getBoundingClientRect();
@@ -150,7 +154,7 @@ export class ContainerComp extends Component<Props> {
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords }) => ({
+  ({ id, dimension, focus, columnCoords, data }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
@@ -159,6 +163,8 @@ export const Container = connect<StoreProps, OwnProps>(
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,
     summaryPosition: dimension.summaryPosition,
-    showLeftSide: !!columnCoords.areaWidth.L
+    showLeftSide: !!columnCoords.areaWidth.L,
+    disabled: data.disabled,
+    viewData: data.viewData
   })
 )(ContainerComp);

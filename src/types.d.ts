@@ -39,11 +39,6 @@ export type OptRow = Dictionary<CellValue> & {
 
 export type OptRowHeader = string | OptColumn;
 
-interface CellEditor {
-  type: string;
-  [propName: string]: any;
-}
-
 interface OptValidation {
   required?: boolean;
   dataType?: 'string' | 'number';

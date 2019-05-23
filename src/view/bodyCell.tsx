@@ -18,6 +18,7 @@ interface StoreProps {
   rowKey: RowKey;
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
+  disabled: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -28,10 +29,16 @@ export class BodyCellComp extends Component<Props> {
   private el!: HTMLElement;
 
   public componentDidMount() {
-    const { grid, rowKey, renderData, columnInfo } = this.props;
+    const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = this.props;
 
     // eslint-disable-next-line new-cap
-    this.renderer = new columnInfo.renderer({ grid, rowKey, columnInfo, ...renderData });
+    this.renderer = new columnInfo.renderer({
+      grid,
+      rowKey,
+      columnInfo,
+      ...renderData,
+      allDisabled
+    });
     this.el.appendChild(this.renderer.getElement());
 
     if (this.renderer.mounted) {
@@ -41,16 +48,24 @@ export class BodyCellComp extends Component<Props> {
 
   public componentWillReceiveProps(nextProps: Props) {
     if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
-      const { grid, rowKey, renderData, columnInfo } = nextProps;
-      this.renderer.changed({ grid, rowKey, columnInfo, ...renderData });
+      const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = nextProps;
+
+      this.renderer.changed({
+        grid,
+        rowKey,
+        columnInfo,
+        ...renderData,
+        allDisabled
+      });
     }
   }
 
   public render() {
     const {
       rowKey,
-      renderData: { editable, invalidState },
-      columnInfo: { align, valign, name, validation = {} }
+      renderData: { disabled, editable, invalidState },
+      columnInfo: { align, valign, name, validation = {} },
+      disabled: allDisabled
     } = this.props;
 
     const style = {
@@ -72,7 +87,8 @@ export class BodyCellComp extends Component<Props> {
           [editable, 'cell-editable'],
           [isRowHeader(name), 'cell-row-header'],
           [validation.required || false, 'cell-required'],
-          [!!invalidState, 'cell-invalid']
+          [!!invalidState, 'cell-invalid'],
+          [disabled || allDisabled, 'cell-disabled']
         )}
         ref={(el) => {
           this.el = el;
@@ -82,15 +98,19 @@ export class BodyCellComp extends Component<Props> {
   }
 }
 
-export const BodyCell = connect<StoreProps, OwnProps>(({ id, column }, { viewRow, columnName }) => {
-  const { rowKey, valueMap } = viewRow;
-  const grid = getInstance(id);
-  const columnInfo = column.allColumnMap[columnName];
+export const BodyCell = connect<StoreProps, OwnProps>(
+  ({ id, column, data }, { viewRow, columnName }) => {
+    const { rowKey, valueMap } = viewRow;
+    const { disabled } = data;
+    const grid = getInstance(id);
+    const columnInfo = column.allColumnMap[columnName];
 
-  return {
-    grid,
-    rowKey,
-    columnInfo,
-    renderData: valueMap[columnName]
-  };
-})(BodyCellComp);
+    return {
+      grid,
+      rowKey,
+      disabled,
+      columnInfo,
+      renderData: valueMap[columnName]
+    };
+  }
+)(BodyCellComp);

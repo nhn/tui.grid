@@ -30,7 +30,8 @@ export interface RowAttributes {
   rowNum: number;
   checked: boolean;
   disabled: boolean;
-  className: string;
+  checkDisabled: boolean;
+  className?: { row: string[]; column: Dictionary<string[]> };
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -99,6 +100,7 @@ export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortOptions: SortOptions;
+  disabled: boolean;
   checkedAllRows: boolean;
 }
 

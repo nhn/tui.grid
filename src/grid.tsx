@@ -447,4 +447,52 @@ export default class Grid {
   public validate(): InvalidRow[] {
     return getInvalidRows(this.store);
   }
+
+  /**
+   * Enables all rows.
+   */
+  public enable() {
+    this.dispatch('setDisabled', false);
+  }
+
+  /**
+   * Disables all rows.
+   */
+  public disable() {
+    this.dispatch('setDisabled', true);
+  }
+
+  /**
+   * Disables the row identified by the rowkey.
+   * @param {number|string} rowKey - The unique key of the target row
+   * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
+   */
+  public disableRow(rowKey: RowKey, withCheckbox: boolean = true) {
+    this.dispatch('setRowDisabled', true, rowKey, withCheckbox);
+  }
+
+  /**
+   * Enables the row identified by the rowKey.
+   * @param {number|string} rowKey - The unique key of the target row
+   * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
+   */
+  public enableRow(rowKey: RowKey, withCheckbox: boolean = true) {
+    this.dispatch('setRowDisabled', false, rowKey, withCheckbox);
+  }
+
+  /**
+   * Disables the row identified by the spcified rowKey to not be able to check.
+   * @param {number|string} rowKey - The unique keyof the row.
+   */
+  public disableRowCheck(rowKey: RowKey) {
+    this.dispatch('setRowCheckDisabled', true, rowKey);
+  }
+
+  /**
+   * Enables the row identified by the rowKey to be able to check.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public enableRowCheck(rowKey: RowKey) {
+    this.dispatch('setRowCheckDisabled', false, rowKey);
+  }
 }
