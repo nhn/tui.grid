@@ -186,6 +186,10 @@ export function isBlank(value: any) {
   return typeof value === 'undefined' || value === null;
 }
 
+export function isUndefined(value: any) {
+  return typeof value === 'undefined';
+}
+
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
 }

@@ -7,7 +7,7 @@ import {
   RowAttributeValue
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
-import { findProp, arrayEqual, mapProp, find } from '../helper/common';
+import { findProp, arrayEqual, mapProp } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 
@@ -19,16 +19,12 @@ export function setValue({ data }: Store, rowKey: RowKey, columnName: string, va
   }
 }
 
-function isCannotUpdateRowAttr(
-  attrName: keyof RowAttributes,
-  attributes: RowAttributes,
+function isUpdatableRowAttr(
+  name: keyof RowAttributes,
+  checkDisabled: boolean,
   allDisabled: boolean
 ) {
-  if (attrName === 'checked' && (attributes.checkDisabled || allDisabled)) {
-    return true;
-  }
-
-  return false;
+  return !(name === 'checked' && (checkDisabled || allDisabled));
 }
 
 export function setRowAttribute(
@@ -37,11 +33,9 @@ export function setRowAttribute(
   attrName: keyof RowAttributes,
   value: RowAttributeValue
 ) {
-  const targetRow = findProp('rowKey', rowKey, data.rawData);
-  if (targetRow) {
-    if (isCannotUpdateRowAttr(attrName, targetRow._attributes, data.disabled)) {
-      return;
-    }
+  const { disabled, rawData } = data;
+  const targetRow = findProp('rowKey', rowKey, rawData);
+  if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
     targetRow._attributes[attrName] = value;
   }
 }
@@ -52,10 +46,9 @@ export function setAllRowAttribute(
   value: RowAttributeValue
 ) {
   data.rawData.forEach((row) => {
-    if (isCannotUpdateRowAttr(attrName, row._attributes, data.disabled)) {
-      return;
+    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
+      row._attributes[attrName] = value;
     }
-    row._attributes[attrName] = value;
   });
 }
 
@@ -150,15 +143,26 @@ export function setDisabled(store: Store, disabled: boolean) {
   store.data.disabled = disabled;
 }
 
-export function setRowDisabled(store: Store, disabled: boolean, rowKey: RowKey, include: boolean) {
-  const {
-    data: { rawData }
-  } = store;
-  const row = find((data) => data.rowKey === rowKey, rawData);
+export function setRowDisabled(
+  store: Store,
+  disabled: boolean,
+  rowKey: RowKey,
+  withCheckbox: boolean
+) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
   if (row) {
     row._attributes.disabled = disabled;
-    if (include) {
+    if (withCheckbox) {
       row._attributes.checkDisabled = disabled;
     }
+  }
+}
+
+export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+  if (row) {
+    row._attributes.checkDisabled = disabled;
   }
 }

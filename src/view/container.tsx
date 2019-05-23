@@ -59,17 +59,13 @@ export class ContainerComp extends Component<Props> {
     }
 
     const { el } = this;
-    const { dispatch, disabled, viewData } = this.props;
+    const { dispatch } = this.props;
     const target = ev.target as HTMLElement;
     const address = getCellAddress(target);
 
     if (address) {
       const { rowKey, columnName } = address;
-      const row = find((data) => data.rowKey === rowKey, viewData);
-      const isRowDisabled = row!.valueMap[columnName].disabled;
-      if (!disabled && !isRowDisabled) {
-        dispatch('startEditing', rowKey, columnName);
-      }
+      dispatch('startEditing', rowKey, columnName);
     }
 
     const { top, left } = el.getBoundingClientRect();

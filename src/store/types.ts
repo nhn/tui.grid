@@ -57,7 +57,6 @@ export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
   editable: boolean;
-  checkDisabled: boolean;
   disabled: boolean;
   invalidState: '' | ValidationType;
   formattedValue: string;

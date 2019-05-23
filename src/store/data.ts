@@ -14,7 +14,7 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp, isBlank } from '../helper/common';
+import { someProp, encodeHTMLEntity, setDefaultProp, isBlank, isUndefined } from '../helper/common';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -93,8 +93,7 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
-    disabled,
-    checkDisabled,
+    disabled: name === '_checked' ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),
@@ -177,8 +176,8 @@ function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 function getAttributes(row: OptRow, index: number) {
   if (
     row._attributes &&
-    typeof row._attributes.disabled !== 'undefined' &&
-    typeof row._attributes.checkDisabled === 'undefined'
+    typeof row._attributes.disabled === 'boolean' &&
+    isUndefined(row._attributes.checkDisabled)
   ) {
     row._attributes.checkDisabled = row._attributes.disabled;
   }

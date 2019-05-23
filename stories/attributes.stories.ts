@@ -1,10 +1,9 @@
 import { storiesOf } from '@storybook/html';
 import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
+import { OptGrid, OptRow } from '../src/types';
 import { Omit } from 'utility-types';
-import { data as basicData } from '../samples/basic';
-import { data } from '../samples/attributes';
+import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
 const stories = storiesOf('Attributes', module);
@@ -32,11 +31,36 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
+function createButtons(grid) {
+  button('enable', () => grid.enable());
+  button('disable', () => grid.disable());
+  button('disableRow(1)', () => grid.disableRow(1));
+  button('enableRow(1)', () => grid.enableRow(1));
+  button('disableRow(3, true)', () => grid.disableRow(3, true));
+  button('disableRow(4, false)', () => grid.disableRow(4, false));
+  button('enableRow(3, true)', () => grid.enableRow(3, true));
+  button('enableRow(4, false)', () => grid.enableRow(4, false));
+}
+
+function createDataWithAttr(): OptRow[] {
+  const optRows: OptRow[] = data.slice();
+  optRows[0]._attributes = { disabled: true };
+  optRows[1]._attributes = {
+    checkDisabled: true
+  };
+  optRows[2]._attributes = {
+    disabled: true,
+    checkDisabled: false
+  };
+
+  return optRows;
+}
+
 stories.add(
   'basic',
   () => {
     const { el, grid } = createGrid({
-      data: basicData,
+      data,
       columns,
       bodyHeight: 'fitToParent',
       columnOptions: {
@@ -51,14 +75,7 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('enable', () => grid.enable());
-    button('disable', () => grid.disable());
-    button('disableRow(1)', () => grid.disableRow(1));
-    button('enableRow(1)', () => grid.enableRow(1));
-    button('disableRow(3, true)', () => grid.disableRow(3, true));
-    button('disableRow(4, false)', () => grid.disableRow(4, false));
-    button('enableRow(3, true)', () => grid.enableRow(3, true));
-    button('enableRow(4, false)', () => grid.enableRow(4, false));
+    createButtons(grid);
 
     return rootEl;
   },
@@ -69,7 +86,7 @@ stories.add(
   'row header with checkbox',
   () => {
     const { el, grid } = createGrid({
-      data,
+      data: createDataWithAttr(),
       columns,
       rowHeaders: ['_checked'],
       bodyHeight: 'fitToParent',
@@ -85,14 +102,9 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('enable', () => grid.enable());
-    button('disable', () => grid.disable());
-    button('disableRow(1)', () => grid.disableRow(1));
-    button('enableRow(1)', () => grid.enableRow(1));
-    button('disableRow(3, true)', () => grid.disableRow(3, true));
-    button('disableRow(4, false)', () => grid.disableRow(4, false));
-    button('enableRow(3, true)', () => grid.enableRow(3, true));
-    button('enableRow(4, false)', () => grid.enableRow(4, false));
+    createButtons(grid);
+    button('enableRowCheck(5)', () => grid.enableRowCheck(5));
+    button('disableRowCheck(5)', () => grid.disableRowCheck(5));
 
     return rootEl;
   },
@@ -103,7 +115,7 @@ stories.add(
   'row header with checkbox and number',
   () => {
     const { el, grid } = createGrid({
-      data,
+      data: createDataWithAttr(),
       columns,
       rowHeaders: ['_number', '_checked'],
       bodyHeight: 'fitToParent',
@@ -119,14 +131,9 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('enable', () => grid.enable());
-    button('disable', () => grid.disable());
-    button('disableRow(1)', () => grid.disableRow(1));
-    button('enableRow(1)', () => grid.enableRow(1));
-    button('disableRow(3, true)', () => grid.disableRow(3, true));
-    button('disableRow(4, false)', () => grid.disableRow(4, false));
-    button('enableRow(3, true)', () => grid.enableRow(3, true));
-    button('enableRow(4, false)', () => grid.enableRow(4, false));
+    createButtons(grid);
+    button('enableRowCheck(5)', () => grid.enableRowCheck(5));
+    button('disableRowCheck(5)', () => grid.disableRowCheck(5));
 
     return rootEl;
   },

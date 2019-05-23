@@ -63,7 +63,7 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { disabled: cellDisabled, editable, invalidState, checkDisabled },
+      renderData: { disabled, editable, invalidState },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled
     } = this.props;
@@ -77,8 +77,6 @@ export class BodyCellComp extends Component<Props> {
       'data-column-name': name
     };
 
-    const isDisabled = (name === '_checked' ? checkDisabled : cellDisabled) || allDisabled;
-
     return (
       <td
         {...attrs}
@@ -90,7 +88,7 @@ export class BodyCellComp extends Component<Props> {
           [isRowHeader(name), 'cell-row-header'],
           [validation.required || false, 'cell-required'],
           [!!invalidState, 'cell-invalid'],
-          [isDisabled, 'cell-disabled']
+          [disabled || allDisabled, 'cell-disabled']
         )}
         ref={(el) => {
           this.el = el;
