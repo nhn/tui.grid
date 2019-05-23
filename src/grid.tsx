@@ -607,4 +607,42 @@ export default class Grid {
   public resetData(data: OptRow[]) {
     this.dispatch('resetData', data);
   }
+
+  /**
+   * Adds the specified css class to cell element identified by the rowKey and className
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {string} className - The css class name to add
+   */
+  public addCellClassName(rowKey: RowKey, columnName: string, className: string) {
+    this.dispatch('addCellClassName', rowKey, columnName, className);
+  }
+
+  /**
+   * Adds the specified css class to all cell elements in the row identified by the rowKey
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} className - The css class name to add
+   */
+  public addRowClassName(rowKey: RowKey, className: string) {
+    this.dispatch('addRowClassName', rowKey, className);
+  }
+
+  /**
+   * Removes the specified css class from the cell element indentified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {string} className - The css class name to be removed
+   */
+  public removeCellClassName(rowKey: RowKey, columnName: string, className: string) {
+    this.dispatch('removeCellClassName', rowKey, columnName, className);
+  }
+
+  /**
+   * Removes the specified css class from all cell elements in the row identified by the rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} className - The css class name to be removed
+   */
+  public removeRowClassName(rowKey: RowKey, className: string) {
+    this.dispatch('removeRowClassName', rowKey, className);
+  }
 }

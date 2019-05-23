@@ -191,6 +191,10 @@ function getAttributes(row: OptRow, index: number) {
     checked: false,
     disabled: false,
     checkDisabled: false,
+    className: {
+      row: [],
+      column: {}
+    },
     ...row._attributes
   });
 }
