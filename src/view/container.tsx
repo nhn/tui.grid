@@ -9,7 +9,6 @@ import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow } from '../store/types';
-import { find } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;

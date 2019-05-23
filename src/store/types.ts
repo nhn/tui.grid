@@ -154,6 +154,7 @@ export interface Column {
   allColumnMap: Dictionary<ColumnInfo>;
   visibleColumns: ColumnInfo[];
   visibleColumnsBySide: VisibleColumnsBySide;
+  readonly defaultValues: { name: string; value: CellValue }[];
   validationColumns: ColumnInfo[];
 }
 

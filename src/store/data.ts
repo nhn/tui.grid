@@ -144,7 +144,7 @@ function createRelationViewCell(
   });
 }
 
-function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
+export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const { rowKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
@@ -192,22 +192,21 @@ function getAttributes(row: OptRow, index: number) {
   });
 }
 
-export function create(data: OptRow[], column: Column): Reactive<Data> {
-  const defaultValues = column.allColumns
-    .filter(({ defaultValue }) => Boolean(defaultValue))
-    .map(({ name, defaultValue }) => ({ name, defaultValue }));
+export function createRawRow(row: OptRow, index: number, defaultValues: Column['defaultValues']) {
+  row.rowKey = index;
+  row._attributes = getAttributes(row, index);
 
-  const rawData = data.map((row, index) => {
-    row.rowKey = index;
-    row._attributes = getAttributes(row, index);
-
-    defaultValues.forEach(({ name, defaultValue }) => {
-      setDefaultProp(row, name, defaultValue);
-    });
-
-    return reactive(row as Row);
+  defaultValues.forEach(({ name, value }) => {
+    setDefaultProp(row, name, value);
   });
 
+  return reactive(row as Row);
+}
+
+export function create(data: OptRow[], column: Column): Reactive<Data> {
+  const { defaultValues } = column;
+
+  const rawData = data.map((row, index) => createRawRow(row, index, defaultValues));
   const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
   // @TODO neet to modify useClient options with net api
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };

@@ -117,6 +117,13 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
   return resultObj;
 }
 
+export function removeArrayItem<T>(targetItem: T, arr: T[]) {
+  const targetIdx = findIndex((item) => item === targetItem, arr);
+  arr.splice(targetIdx, 1);
+
+  return arr;
+}
+
 export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   const resultMap: { [key: string]: T } = {};
   arr.forEach((item) => {
@@ -125,6 +132,10 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   });
 
   return resultMap;
+}
+
+export function isObject(obj: unknown): obj is object {
+  return typeof obj === 'object' && obj !== null;
 }
 
 export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
@@ -186,7 +197,7 @@ export function isBlank(value: any) {
   return typeof value === 'undefined' || value === null;
 }
 
-export function isUndefined(value: any) {
+export function isUndefined(value: unknown): value is undefined {
   return typeof value === 'undefined';
 }
 

@@ -5,11 +5,13 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     getCell(rowKey: number | string, column: string): Chainable<any>;
 
+    getCellByIdx(rowIdx: number, columnIdx: number): Chainable<any>;
+
     getCellContent(rowKey: number | string, column: string): Chainable<any>;
 
     createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
 
-    waitForGrid(): Chainable<any>;
+    gridInstance(): Chainable<any>;
 
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
   }

@@ -10,6 +10,9 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import { findProp, arrayEqual, mapProp } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
+import { OptRow, OptAppendRow } from '../types';
+import { createRawRow, createViewRow } from '../store/data';
+import { notify } from '../helper/reactive';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -165,4 +168,19 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   if (row) {
     row._attributes.checkDisabled = disabled;
   }
+}
+
+export function appendRow({ data, column }: Store, row: OptRow, options: OptAppendRow) {
+  const { rawData, viewData } = data;
+  const { defaultValues, allColumnMap } = column;
+  const { at = rawData.length } = options;
+
+  const rawRow = createRawRow(row, rawData.length, defaultValues);
+  const viewRow = createViewRow(rawRow, allColumnMap);
+
+  rawData.splice(at, 0, rawRow);
+  viewData.splice(at, 0, viewRow);
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
 }
