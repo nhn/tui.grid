@@ -7,7 +7,8 @@ import {
   ClipboardCopyOptions,
   RowAttributes,
   EditingEvent,
-  PageOptions
+  PageOptions,
+  Validation
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -34,6 +35,7 @@ export interface OptGrid {
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
   pageOptions?: PageOptions;
+  treeColumnOptions?: OptTreeOptions;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -42,9 +44,11 @@ export type SummaryPosition = 'top' | 'bottom';
 
 type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
-export type OptRow = Dictionary<CellValue> & {
+export interface OptRow {
+  [prop: string]: CellValue | RecursivePartial<RowAttributes> | OptRow[];
   _attributes?: RecursivePartial<RowAttributes>;
-};
+  _children?: OptRow[];
+}
 
 export interface OptAppendRow {
   at?: number;
@@ -62,9 +66,10 @@ export interface OptRemoveRow {
 
 export type OptRowHeader = string | OptColumn;
 
-interface OptValidation {
-  required?: boolean;
-  dataType?: 'string' | 'number';
+interface OptTreeOptions {
+  name: string;
+  useIcon?: boolean;
+  useCascadingCheckbox?: boolean;
 }
 
 export interface OptColumn {
@@ -91,10 +96,10 @@ export interface OptColumn {
   ellipsis?: boolean;
   sortable?: boolean;
   copyOptions?: ClipboardCopyOptions;
-  validation?: OptValidation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
   ignored?: boolean;
+  validation?: Validation;
 }
 
 export interface OptColumnOptions {

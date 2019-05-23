@@ -93,14 +93,15 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { disabled, editable, invalidState, className },
+      renderData: { disabled, editable, invalidState, className, tree },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled
     } = this.props;
 
     const style = {
       textAlign: align,
-      ...(valign && { verticalAlign: valign })
+      ...(valign && { verticalAlign: valign }),
+      ...(tree && { paddingLeft: tree.indentWidth })
     };
     const attrs: Attributes = {
       'data-row-key': String(rowKey),
@@ -118,7 +119,8 @@ export class BodyCellComp extends Component<Props> {
           [isRowHeader(name), 'cell-row-header'],
           [validation.required || false, 'cell-required'],
           [!!invalidState, 'cell-invalid'],
-          [disabled || allDisabled, 'cell-disabled']
+          [disabled || allDisabled, 'cell-disabled'],
+          [!!tree, 'cell-has-tree']
         )} ${className}`}
         ref={(el) => {
           this.el = el;

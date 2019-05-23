@@ -10,7 +10,8 @@ import {
   CellValue,
   ValidationType,
   Validation,
-  PageOptions
+  PageOptions,
+  TreeCellInfo
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
@@ -24,6 +25,7 @@ import {
   isBoolean
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
+import { flattenTreeData, getTreeCellInfo } from '../helper/data';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -157,7 +159,11 @@ function createRelationViewCell(
   });
 }
 
-export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
+export function createViewRow(
+  row: Row,
+  columnMap: Dictionary<ColumnInfo>,
+  treeCellInfo?: TreeCellInfo
+) {
   const { rowKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
@@ -168,11 +174,15 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
-    const { related, relationMap } = columnMap[name];
+    const { related, relationMap, tree } = columnMap[name];
+
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       observe(() => {
-        valueMap[name] = createViewCell(row, columnMap[name]);
+        valueMap[name] = {
+          ...createViewCell(row, columnMap[name]),
+          ...(tree ? { tree: treeCellInfo } : null)
+        };
       });
     }
     // @TODO need to improve relation
@@ -232,9 +242,25 @@ export function createRawRow(
 }
 
 export function createData(data: OptRow[], column: Column) {
-  const { defaultValues, keyColumnName } = column;
-  const rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
-  const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
+  const { defaultValues, keyColumnName, allColumnMap, hasTreeColumn } = column;
+
+  let rawData: Row[];
+
+  if (hasTreeColumn) {
+    rawData = flattenTreeData(data, defaultValues);
+  } else {
+    rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
+  }
+
+  const viewData = rawData.map((row: Row) => {
+    let treeCellInfo;
+
+    if (hasTreeColumn) {
+      treeCellInfo = getTreeCellInfo(rawData, row);
+    }
+
+    return createViewRow(row, allColumnMap, treeCellInfo);
+  });
 
   return { rawData, viewData };
 }

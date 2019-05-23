@@ -1,5 +1,5 @@
 import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
-import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
+import { OptColumn, OptColumnOptions, OptRowHeader, OptTreeOptions } from '../types';
 import { observable } from '../helper/observable';
 import { createMapFromArray, includes } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
@@ -23,6 +23,16 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
     };
   }
   return { editor, editorOptions };
+}
+
+function getTreeInfo(treeColumnOptions: OptTreeOptions, name: string) {
+  if (treeColumnOptions && treeColumnOptions.name === name) {
+    const { useIcon = true } = treeColumnOptions;
+
+    return { tree: { useIcon } };
+  }
+
+  return null;
 }
 
 function getRelationMap(relations: Relations[]) {
@@ -57,9 +67,11 @@ function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
   relationColumns: string[],
-  gridCopyOptions: ClipboardCopyOptions
+  gridCopyOptions: ClipboardCopyOptions,
+  treeColumnOptions: OptTreeOptions
 ): ColumnInfo {
   const {
+    name,
     header,
     width,
     minWidth,
@@ -78,7 +90,7 @@ function createColumn(
   return observable({
     ...column,
     escapeHTML: !!column.escapeHTML,
-    header: header || column.name,
+    header: header || name,
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
@@ -88,10 +100,11 @@ function createColumn(
     baseWidth: (width === 'auto' ? 0 : width) || 0,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap: getRelationMap(relations || []),
-    related: includes(relationColumns, column.name),
+    related: includes(relationColumns, name),
     sortable,
     ...getEditorInfo(editor, editorOptions),
-    validation: validation ? { ...validation } : {}
+    validation: validation ? { ...validation } : {},
+    ...getTreeInfo(treeColumnOptions, name)
   });
 }
 
@@ -134,6 +147,7 @@ interface ColumnOptions {
   rowHeaders: OptRowHeader[];
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;
+  treeColumnOptions: OptTreeOptions;
 }
 
 export function create({
@@ -141,7 +155,8 @@ export function create({
   columnOptions,
   rowHeaders,
   copyOptions,
-  keyColumnName
+  keyColumnName,
+  treeColumnOptions
 }: ColumnOptions): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
@@ -149,7 +164,7 @@ export function create({
   }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
   const columnInfos = columns.map((column) =>
-    createColumn(column, columnOptions, relationColumns, copyOptions)
+    createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
@@ -195,6 +210,10 @@ export function create({
 
     get ignoredColumns() {
       return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
+    },
+
+    get hasTreeColumn() {
+      return !!allColumns.filter(({ name }) => treeColumnOptions.name === name).length;
     }
   });
 }
