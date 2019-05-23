@@ -197,7 +197,7 @@ export function isBlank(value: any) {
   return typeof value === 'undefined' || value === null;
 }
 
-export function isUndefined(value: any) {
+export function isUndefined(value: unknown): value is undefined {
   return typeof value === 'undefined';
 }
 
