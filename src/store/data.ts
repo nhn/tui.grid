@@ -177,6 +177,7 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 }
 
 function getAttributes(row: OptRow, index: number) {
+  // @TODO className: {row, column}
   if (
     row._attributes &&
     typeof row._attributes.disabled === 'boolean' &&
@@ -185,16 +186,28 @@ function getAttributes(row: OptRow, index: number) {
     row._attributes.checkDisabled = row._attributes.disabled;
   }
 
-  // @TODO className: {row, column}
+  // if (row._attributes) {
+  //   if (isUndefined(row._attributes.className)) {
+  //     row._attributes.className = {
+  //       row: [],
+  //       column: {}
+  //     };
+  //   } else {
+  //     const classNameMap = row._attributes.className;
+  //     if (isUndefined(classNameMap.row)) {
+  //       classNameMap.row = [];
+  //     }
+  //     if (isUndefined(classNameMap.column)) {
+  //       classNameMap.column = {};
+  //     }
+  //   }
+  // }
+
   return reactive({
     rowNum: index + 1,
     checked: false,
     disabled: false,
     checkDisabled: false,
-    className: {
-      row: [],
-      column: {}
-    },
     ...row._attributes
   });
 }

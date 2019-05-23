@@ -7,7 +7,14 @@ import {
   RowAttributeValue
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
-import { findProp, arrayEqual, mapProp, findPropIndex, find, findIndex } from '../helper/common';
+import {
+  findProp,
+  arrayEqual,
+  mapProp,
+  findPropIndex,
+  findIndex,
+  isUndefined
+} from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
@@ -210,10 +217,10 @@ export function resetData({ data, column }: Store, inputData: OptRow[]) {
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { rawData } = store.data;
-  const row = find((data) => data.rowKey === rowKey, rawData);
+  const row = findProp('rowKey', rowKey, rawData);
   if (row) {
     const isExist = findIndex((name) => name === className, row._attributes.className.row) !== -1;
-    if (isExist) {
+    if (!isExist) {
       row._attributes.className.row.push(className);
     }
   }
@@ -221,10 +228,11 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { rawData } = store.data;
-  const row = find((data) => data.rowKey === rowKey, rawData);
+  const row = findProp('rowKey', rowKey, rawData);
   if (row) {
     const idx = findIndex((name) => name === className, row._attributes.className.row);
     if (idx !== -1) {
+      // @TODO: 머지되면 배열에서 인덱스 넣으면 삭제되는 helper 쓰기
       row._attributes.className.row.splice(idx);
     }
   }
@@ -237,11 +245,14 @@ export function addCellClassName(
   className: string
 ) {
   const { rawData } = store.data;
-  const row = find((data) => data.rowKey === rowKey, rawData);
+  const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const isExist =
-      findIndex((name) => name === className, row._attributes.className.column[columnName]) !== -1;
-    if (isExist) {
+    const classNameMap = row._attributes.className;
+    if (isUndefined(classNameMap.column[columnName])) {
+      classNameMap.column[columnName] = [];
+    }
+    const isExist = findIndex((name) => name === className, classNameMap.column[columnName]) !== -1;
+    if (!isExist) {
       row._attributes.className.column[columnName].push(className);
     }
   }
@@ -254,14 +265,16 @@ export function removeCellClassName(
   className: string
 ) {
   const { rawData } = store.data;
-  const row = find((data) => data.rowKey === rowKey, rawData);
+  const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const idx = findIndex(
-      (name) => name === className,
-      row._attributes.className.column[columnName]
-    );
+    const classNameMap = row._attributes.className;
+    if (isUndefined(classNameMap.column[columnName])) {
+      return;
+    }
+    const idx = findIndex((name) => name === className, classNameMap.column[columnName]);
     if (idx !== -1) {
-      row._attributes.className.column[columnName].splice(idx);
+      // @TODO: 머지되면 배열에서 인덱스 넣으면 삭제되는 helper 쓰기
+      classNameMap.column[columnName].splice(idx);
     }
   }
 }

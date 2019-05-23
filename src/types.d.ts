@@ -33,8 +33,10 @@ export type CellValue = number | string | boolean | null | undefined;
 
 export type SummaryPosition = 'top' | 'bottom';
 
+type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
+
 export type OptRow = Dictionary<CellValue> & {
-  _attributes?: Partial<RowAttributes>;
+  _attributes?: RecursivePartial<RowAttributes>;
 };
 
 export interface OptAppendRow {
