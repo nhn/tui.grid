@@ -5,7 +5,8 @@ import {
   OptSummaryColumnContentMap,
   OptRow,
   OptAppendRow,
-  OptPrependRow
+  OptPrependRow,
+  OptRemoveRow
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -533,5 +534,31 @@ export default class Grid {
    */
   public prependRow(row: OptRow, options: OptPrependRow = {}) {
     this.appendRow(row, { ...options, at: 0 });
+  }
+
+  /**
+   * Removes the row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
+   * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
+   *     removed although the target is first cell of them.
+   */
+  public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
+    this.dispatch('removeRow', rowKey, options);
+  }
+
+  /**
+   * Removes all rows.
+   */
+  public clear() {
+    this.dispatch('clearData');
+  }
+
+  /**
+   * Replaces all rows with the specified list. This will not change the original data.
+   * @param {Array} data - A list of new rows
+   */
+  public resetData(data: OptRow[]) {
+    this.dispatch('resetData', data);
   }
 }

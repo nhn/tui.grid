@@ -1,3 +1,5 @@
+import { cls } from '@/helper/dom';
+
 before(() => {
   cy.visit('/dist');
 });
@@ -89,5 +91,39 @@ describe('prependRow()', () => {
     cy.gridInstance().invoke('prependRow');
     cy.getCellByIdx(0, 0).should('to.have.text', '');
     cy.getCellByIdx(0, 1).should('to.have.text', '');
+  });
+});
+
+describe('removeRow()', () => {
+  it('remove a row matching given rowKey', () => {
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('removeRow', 0);
+
+    cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
+    cy.getCellByIdx(0, 1).should('to.have.text', '20');
+  });
+});
+
+describe('clear()', () => {
+  it('remove all rows', () => {
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('clear');
+
+    cy.get(`.${cls('body-area')} .${cls('cell')}`).should('not.exist');
+  });
+});
+
+describe('resetData()', () => {
+  it('reset all data', () => {
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
+
+    cy.getCellByIdx(0, 0).should('to.have.text', 'Park');
+    cy.getCellByIdx(0, 1).should('to.have.text', '30');
+    cy.getCellByIdx(1, 0).should('to.have.text', 'Han');
+    cy.getCellByIdx(1, 1).should('to.have.text', '40');
   });
 });

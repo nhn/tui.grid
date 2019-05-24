@@ -7,11 +7,11 @@ import {
   RowAttributeValue
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
-import { findProp, arrayEqual, mapProp } from '../helper/common';
+import { findProp, arrayEqual, mapProp, findPropIndex } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
-import { OptRow, OptAppendRow } from '../types';
-import { createRawRow, createViewRow } from '../store/data';
+import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
+import { createRawRow, createViewRow, createData } from '../store/data';
 import { notify } from '../helper/reactive';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
@@ -183,4 +183,27 @@ export function appendRow({ data, column }: Store, row: OptRow, options: OptAppe
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+}
+
+export function removeRow({ data }: Store, rowKey: RowKey, options: OptRemoveRow) {
+  const { rawData, viewData } = data;
+  const rowIdx = findPropIndex('rowKey', rowKey, rawData);
+
+  rawData.splice(rowIdx, 1);
+  viewData.splice(rowIdx, 1);
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+}
+
+export function clearData({ data }: Store) {
+  data.rawData = [];
+  data.viewData = [];
+}
+
+export function resetData({ data, column }: Store, inputData: OptRow[]) {
+  const { rawData, viewData } = createData(inputData, column);
+
+  data.rawData = rawData;
+  data.viewData = viewData;
 }
