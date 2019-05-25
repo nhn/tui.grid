@@ -1,4 +1,8 @@
 import { cls } from '@/helper/dom';
+import { OptRow } from '@/types';
+
+const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
+const columns = [{ name: 'name' }, { name: 'age' }];
 
 before(() => {
   cy.visit('/dist');
@@ -11,9 +15,6 @@ beforeEach(() => {
 
   cy.createGrid({ data, columns });
 });
-
-const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
-const columns = [{ name: 'name' }, { name: 'age' }];
 
 describe('appendRow()', () => {
   it('append a row at the end of the data', () => {
@@ -112,35 +113,57 @@ describe('resetData()', () => {
 });
 
 describe('getters', () => {
-  it('getRow() returns row matching given rowKey', () => {
-    const defaultAttr = {
-      checkDisabled: false,
-      checked: false,
-      disabled: false
+  function getRowDataWithAttrs(row: OptRow, rowNum: number) {
+    return {
+      ...row,
+      _attributes: {
+        checkDisabled: false,
+        checked: false,
+        disabled: false,
+        rowNum
+      }
     };
+  }
 
+  it('getRow() returns row matching given rowKey', () => {
     cy.gridInstance()
       .invoke('getRow', 0)
-      .should('eql', {
-        rowKey: 0,
-        name: 'Kim',
-        age: 10,
-        _attributes: {
-          ...defaultAttr,
-          rowNum: 1
-        }
-      });
+      .should('eql', getRowDataWithAttrs(data[0], 1));
 
     cy.gridInstance()
       .invoke('getRow', 1)
-      .should('eql', {
-        rowKey: 1,
-        name: 'Lee',
-        age: 20,
-        _attributes: {
-          ...defaultAttr,
-          rowNum: 2
-        }
-      });
+      .should('eql', getRowDataWithAttrs(data[1], 2));
+  });
+
+  it('getRowAt() returns row indexed by given index', () => {
+    cy.gridInstance()
+      .invoke('getRowAt', 0)
+      .should('eql', getRowDataWithAttrs(data[0], 1));
+
+    cy.gridInstance()
+      .invoke('getRowAt', 1)
+      .should('eql', getRowDataWithAttrs(data[1], 2));
+  });
+
+  it('getIndexOfRow() returns the index of the row matching given rowKey', () => {
+    cy.gridInstance()
+      .invoke('getIndexOfRow', 0)
+      .should('eql', 0);
+
+    cy.gridInstance()
+      .invoke('getIndexOfRow', 1)
+      .should('eql', 1);
+  });
+
+  it('getData() returns all rows', () => {
+    cy.gridInstance()
+      .invoke('getData')
+      .should('eql', [getRowDataWithAttrs(data[0], 1), getRowDataWithAttrs(data[1], 2)]);
+  });
+
+  it('getRowCount() returns the total number of the rows', () => {
+    cy.gridInstance()
+      .invoke('getRowCount')
+      .should('eq', 2);
   });
 });

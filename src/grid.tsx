@@ -19,7 +19,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findProp } from './helper/common';
+import { findPropIndex } from './helper/common';
 import { Reactive, getOriginObject } from './helper/reactive';
 
 /* eslint-disable */
@@ -555,11 +555,45 @@ export default class Grid {
    * @returns {Object} - The object that contains all values in the row.
    */
   public getRow(rowKey: RowKey) {
-    const row = findProp('rowKey', rowKey, this.store.data.rawData);
+    return this.getRowAt(this.getIndexOfRow(rowKey));
+  }
+
+  /**
+   * Returns the object that contains all values in the row at specified index.
+   * @param {number} rowIdx - The index of the row
+   * @returns {Object} - The object that contains all values in the row.
+   */
+  public getRowAt(rowIdx: number) {
+    const row = this.store.data.rawData[rowIdx];
     if (!row) {
       return null;
     }
     return getOriginObject(row as Reactive<Row>);
+  }
+
+  /**
+   * Returns the index of the row indentified by the rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {number} - The index of the row
+   */
+  public getIndexOfRow(rowKey: RowKey) {
+    return findPropIndex('rowKey', rowKey, this.store.data.rawData);
+  }
+
+  /**
+   * Returns a list of all rows.
+   * @returns {Array} - A list of all rows
+   */
+  public getData() {
+    return this.store.data.rawData.map((row) => getOriginObject(row as Reactive<Row>));
+  }
+
+  /**
+   * Returns the total number of the rows.
+   * @returns {number} - The total number of the rows
+   */
+  public getRowCount() {
+    return this.store.data.rawData.length;
   }
 
   /**
