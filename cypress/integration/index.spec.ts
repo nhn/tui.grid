@@ -97,14 +97,10 @@ it('watch returns a function which stops watching', () => {
   expect(callback3).to.be.calledOnce;
 });
 
-it('array index property should not be reactive', () => {
-  const numbers = reactive([1, 2, 3]);
-  const callback = cy.stub();
-
-  watch(() => callback(numbers[0]));
-  numbers[0] = 10;
-
-  expect(callback).to.be.calledOnce;
+it('array index property cannot be reactive', () => {
+  expect(() => {
+    reactive([1, 2, 3]);
+  }).to.throw(Error, 'Array object cannot be Reactive');
 });
 
 it('notify methods should invoke watching functions', () => {

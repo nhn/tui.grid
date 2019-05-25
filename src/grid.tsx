@@ -19,6 +19,8 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
+import { findProp } from './helper/common';
+import { Reactive, getOriginObject } from './helper/reactive';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -545,6 +547,19 @@ export default class Grid {
    */
   public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
     this.dispatch('removeRow', rowKey, options);
+  }
+
+  /**
+   * Returns the object that contains all values in the specified row.
+   * @param {number|string} rowKey - The unique key of the target row
+   * @returns {Object} - The object that contains all values in the row.
+   */
+  public getRow(rowKey: RowKey) {
+    const row = findProp('rowKey', rowKey, this.store.data.rawData);
+    if (!row) {
+      return null;
+    }
+    return getOriginObject(row as Reactive<Row>);
   }
 
   /**

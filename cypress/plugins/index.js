@@ -23,7 +23,8 @@ module.exports = (on) => {
           '@': path.resolve('./src')
         }
       },
-      devtool: 'source-map',
+      // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
+      devtool: 'cheap-module-eval-source-map',
       module: {
         rules: [
           {
