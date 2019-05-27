@@ -565,10 +565,7 @@ export default class Grid {
    */
   public getRowAt(rowIdx: number) {
     const row = this.store.data.rawData[rowIdx];
-    if (!row) {
-      return null;
-    }
-    return getOriginObject(row as Reactive<Row>);
+    return row ? getOriginObject(row as Reactive<Row>) : null;
   }
 
   /**

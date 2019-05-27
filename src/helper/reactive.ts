@@ -6,7 +6,7 @@ interface ComputedProp<T> {
   getter: Function;
 }
 
-export type Reactive<T> = T & {
+export type Reactive<T extends Dictionary<any>> = T & {
   __storage__: T;
   __handlerMap__: Dictionary<Function[]>;
 };
