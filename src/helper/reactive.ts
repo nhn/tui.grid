@@ -1,5 +1,15 @@
-import { removeArrayItem, hasOwnProp, isObject, forEachObject } from './common';
-import { Dictionary } from 'src/store/types';
+import { hasOwnProp, isObject, forEachObject } from './common';
+import { Dictionary } from '../store/types';
+
+const generateHandlerId = (() => {
+  let lastId = 0;
+  return () => {
+    lastId += 1;
+    return `@handler${lastId}`;
+  };
+})();
+
+const globalHandlerMap: Dictionary<Function> = {};
 
 interface ComputedProp<T> {
   key: keyof T;
@@ -8,57 +18,69 @@ interface ComputedProp<T> {
 
 export type Reactive<T extends Dictionary<any>> = T & {
   __storage__: T;
-  __handlerMap__: Dictionary<Function[]>;
+  __propHandlerIdMap__: Dictionary<Function[]>;
 };
 
-let currWatcher: Function | null = null;
-let currWatcherHandlers: Function[][] | null = null;
+let currWatcherId: string | null = null;
+let currWatcherHandlerIdMaps: Dictionary<boolean>[] | null = null;
 
 function isReactive<T>(resultObj: T): resultObj is Reactive<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
+function watchCall(id: string) {
+  currWatcherId = id;
+  currWatcherHandlerIdMaps = [];
+
+  globalHandlerMap[id]();
+  const handlerIdMaps = currWatcherHandlerIdMaps;
+
+  currWatcherId = null;
+  currWatcherHandlerIdMaps = null;
+
+  return handlerIdMaps;
+}
+
 export function watch(fn: Function) {
-  currWatcher = fn;
-  currWatcherHandlers = [];
-  const handlersArr = currWatcherHandlers;
+  const id = generateHandlerId();
+  globalHandlerMap[id] = fn;
 
-  fn();
+  const handlerIdMaps = watchCall(id);
 
-  const unwatch = () => {
-    handlersArr.forEach((handlers) => {
-      removeArrayItem(fn, handlers);
+  return () => {
+    handlerIdMaps.forEach((idMap) => {
+      delete idMap[id];
     });
   };
-
-  currWatcher = null;
-  currWatcherHandlers = null;
-
-  return unwatch;
 }
 
 function setValue<T, K extends keyof T>(
   storage: T,
-  handlers: Function[],
+  handlerIdMap: Dictionary<boolean>,
   key: keyof T,
   value: T[K]
 ) {
   if (storage[key] !== value) {
     storage[key] = value;
-    handlers.forEach((fn) => fn());
+    Object.keys(handlerIdMap).forEach((id) => {
+      watchCall(id);
+    });
   }
 }
 
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isReactive(obj)) {
-    obj.__handlerMap__[key as string].forEach((fn) => fn());
+    // const handlerIdMap = obj.__propHandlerIdMap__[key as string];
+    Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((id) => {
+      watchCall(id);
+    });
   }
 }
 
 export function reactive<T extends Dictionary<any>>(obj: T): Reactive<T> {
   const computedProps: ComputedProp<T>[] = [];
   const storage = {} as T;
-  const handlerMap = {} as Dictionary<Function[]>;
+  const propHandlerIdMap = {} as Dictionary<Dictionary<boolean>>;
 
   if (isReactive(obj)) {
     throw new Error('Target object is already Reactive');
@@ -70,9 +92,8 @@ export function reactive<T extends Dictionary<any>>(obj: T): Reactive<T> {
 
   const resultObj = {} as T;
 
-  // eslint-disable-next-line guard-for-in
-  for (const key in obj) {
-    const handlers: Function[] = [];
+  Object.keys(obj).forEach((key) => {
+    const handlerIdMap: Dictionary<boolean> = {};
     const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
 
     if (typeof getter === 'function') {
@@ -82,34 +103,35 @@ export function reactive<T extends Dictionary<any>>(obj: T): Reactive<T> {
       Object.defineProperty(resultObj, key, {
         configurable: true,
         set(value) {
-          setValue(storage, handlers, key, value);
+          setValue(storage, handlerIdMap, key, value);
         }
       });
     }
 
     Object.defineProperty(resultObj, key, {
-      // eslint-disable-next-line no-loop-func
       get() {
-        if (currWatcher && currWatcherHandlers) {
-          handlers.push(currWatcher);
-          currWatcherHandlers.push(handlers);
+        if (currWatcherId && currWatcherHandlerIdMaps) {
+          if (!handlerIdMap[currWatcherId]) {
+            handlerIdMap[currWatcherId] = true;
+          }
+          currWatcherHandlerIdMaps.push(handlerIdMap);
         }
         return storage[key];
       }
     });
 
-    handlerMap[key] = handlers;
-  }
+    propHandlerIdMap[key] = handlerIdMap;
+  });
 
   Object.defineProperties(resultObj, {
     __storage__: { value: storage },
-    __handlerMap__: { value: handlerMap }
+    __propHandlerIdMap__: { value: propHandlerIdMap }
   });
 
   computedProps.forEach(({ key, getter }) => {
     watch(() => {
       const value = getter.call(resultObj);
-      setValue(storage, handlerMap[key as string], key, value);
+      setValue(storage, propHandlerIdMap[key as string], key, value);
     });
   });
 

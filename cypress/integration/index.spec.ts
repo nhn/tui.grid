@@ -125,3 +125,25 @@ it('notify methods should invoke watching functions', () => {
   notify(person, 'p2');
   expect(callback2).to.be.calledWith('12');
 });
+
+it('watch should react to conditional logic', () => {
+  const person = reactive({
+    flag: false,
+    name: 'Kim'
+  });
+
+  const callback = cy.stub();
+  watch(() => {
+    if (person.flag) {
+      callback(person.name);
+    }
+  });
+
+  person.flag = true;
+
+  callback.reset();
+
+  person.name = 'Lee';
+
+  expect(callback).to.be.calledWith('Lee');
+});
