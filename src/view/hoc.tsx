@@ -18,12 +18,22 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
 
       private unwatch?: () => void;
 
+      private setStateUsingSelector(ownProps: OwnProps) {
+        if (selector) {
+          this.setState(selector(this.context.store, ownProps as DeepReadonly<OwnProps>));
+        }
+      }
+
       public componentWillMount() {
         if (selector) {
           this.unwatch = watch(() => {
-            this.setState(selector(this.context.store, this.props as DeepReadonly<OwnProps>));
+            this.setStateUsingSelector(this.props);
           });
         }
+      }
+
+      public componentWillReceiveProps(nextProps: OwnProps) {
+        this.setStateUsingSelector(nextProps);
       }
 
       public componentWillUnmount() {

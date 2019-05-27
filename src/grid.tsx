@@ -5,7 +5,8 @@ import {
   OptSummaryColumnContentMap,
   OptRow,
   OptAppendRow,
-  OptPrependRow
+  OptPrependRow,
+  OptRemoveRow
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -18,6 +19,8 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
+import { findPropIndex } from './helper/common';
+import { Reactive, getOriginObject } from './helper/reactive';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -533,5 +536,75 @@ export default class Grid {
    */
   public prependRow(row: OptRow, options: OptPrependRow = {}) {
     this.appendRow(row, { ...options, at: 0 });
+  }
+
+  /**
+   * Removes the row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
+   * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
+   *     removed although the target is first cell of them.
+   */
+  public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
+    this.dispatch('removeRow', rowKey, options);
+  }
+
+  /**
+   * Returns the object that contains all values in the specified row.
+   * @param {number|string} rowKey - The unique key of the target row
+   * @returns {Object} - The object that contains all values in the row.
+   */
+  public getRow(rowKey: RowKey) {
+    return this.getRowAt(this.getIndexOfRow(rowKey));
+  }
+
+  /**
+   * Returns the object that contains all values in the row at specified index.
+   * @param {number} rowIdx - The index of the row
+   * @returns {Object} - The object that contains all values in the row.
+   */
+  public getRowAt(rowIdx: number) {
+    const row = this.store.data.rawData[rowIdx];
+    return row ? getOriginObject(row as Reactive<Row>) : null;
+  }
+
+  /**
+   * Returns the index of the row indentified by the rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {number} - The index of the row
+   */
+  public getIndexOfRow(rowKey: RowKey) {
+    return findPropIndex('rowKey', rowKey, this.store.data.rawData);
+  }
+
+  /**
+   * Returns a list of all rows.
+   * @returns {Array} - A list of all rows
+   */
+  public getData() {
+    return this.store.data.rawData.map((row) => getOriginObject(row as Reactive<Row>));
+  }
+
+  /**
+   * Returns the total number of the rows.
+   * @returns {number} - The total number of the rows
+   */
+  public getRowCount() {
+    return this.store.data.rawData.length;
+  }
+
+  /**
+   * Removes all rows.
+   */
+  public clear() {
+    this.dispatch('clearData');
+  }
+
+  /**
+   * Replaces all rows with the specified list. This will not change the original data.
+   * @param {Array} data - A list of new rows
+   */
+  public resetData(data: OptRow[]) {
+    this.dispatch('resetData', data);
   }
 }

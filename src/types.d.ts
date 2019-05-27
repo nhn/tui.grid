@@ -46,6 +46,11 @@ export interface OptPrependRow {
   focus?: boolean;
 }
 
+export interface OptRemoveRow {
+  removeOriginalData?: boolean;
+  keepRowSpanData?: boolean;
+}
+
 export type OptRowHeader = string | OptColumn;
 
 interface OptValidation {

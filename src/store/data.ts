@@ -206,11 +206,17 @@ export function createRawRow(row: OptRow, index: number, defaultValues: Column['
   return reactive(row as Row);
 }
 
-export function create(data: OptRow[], column: Column): Reactive<Data> {
+export function createData(data: OptRow[], column: Column) {
   const { defaultValues } = column;
-
   const rawData = data.map((row, index) => createRawRow(row, index, defaultValues));
   const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
+
+  return { rawData, viewData };
+}
+
+export function create(data: OptRow[], column: Column): Reactive<Data> {
+  const { rawData, viewData } = createData(data, column);
+
   // @TODO neet to modify useClient options with net api
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
 
