@@ -68,6 +68,12 @@ function createDataClassNameAttr(): OptRow[] {
       column: { type: ['column-test-a'], genre: ['column-test-b'] }
     }
   };
+  optRows[2]._attributes = {
+    className: {
+      row: ['row-test-a'],
+      column: { name: ['column-test-a'], genre: ['column-test-b'] }
+    }
+  };
 
   return optRows;
 }
@@ -197,19 +203,20 @@ stories.add(
     `;
     rootEl.appendChild(styleElement);
 
-    // @TODO; 불필요한 버튼 제거, cypress로 테스트 옮기기
-    button("addCellClassName(0, 'name', 'tui-grid-cell-test')", () =>
-      grid.addCellClassName(0, 'name', 'tui-grid-cell-test')
+    button("addCellClassName(2, 'name', 'tui-grid-cell-test')", () =>
+      grid.addCellClassName(2, 'artist', 'tui-grid-cell-test')
     );
-    button("removeCellClassName(0, 'name', 'tui-grid-cell-test')", () =>
-      grid.removeCellClassName(0, 'name', 'tui-grid-cell-test')
+    button("removeCellClassName(2, 'name', 'tui-grid-cell-test')", () =>
+      grid.removeCellClassName(2, 'artist', 'tui-grid-cell-test')
     );
     button("addRowClassName(1, 'tui-grid-row-test')", () =>
-      grid.addRowClassName(1, 'tui-grid-row-test')
+      grid.addRowClassName(3, 'tui-grid-row-test')
     );
     button("removeRowClassName(1, 'tui-grid-row-test')", () =>
-      grid.removeRowClassName(1, 'tui-grid-row-test')
+      grid.removeRowClassName(3, 'tui-grid-row-test')
     );
+
+    (window as Window & { grid: Grid }).grid = grid;
 
     return rootEl;
   },

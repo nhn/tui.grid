@@ -13,7 +13,8 @@ import {
   mapProp,
   findPropIndex,
   findIndex,
-  isUndefined
+  isUndefined,
+  removeArrayItem
 } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
@@ -219,9 +220,14 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const isExist = findIndex((name) => name === className, row._attributes.className.row) !== -1;
+    const classNameMap = row._attributes.className;
+    const isExist = findIndex((name) => name === className, classNameMap.row) !== -1;
     if (!isExist) {
-      row._attributes.className.row.push(className);
+      // row._attributes.className.row.push(className);
+      row._attributes.className = {
+        ...classNameMap,
+        row: [...classNameMap.row, className]
+      };
     }
   }
 }
@@ -229,12 +235,13 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
+
   if (row) {
-    const idx = findIndex((name) => name === className, row._attributes.className.row);
-    if (idx !== -1) {
-      // @TODO: 머지되면 배열에서 인덱스 넣으면 삭제되는 helper 쓰기
-      row._attributes.className.row.splice(idx);
-    }
+    const classNameMap = row._attributes.className;
+    row._attributes.className = {
+      ...classNameMap,
+      row: removeArrayItem(className, row._attributes.className.row)
+    };
   }
 }
 
@@ -253,7 +260,13 @@ export function addCellClassName(
     }
     const isExist = findIndex((name) => name === className, classNameMap.column[columnName]) !== -1;
     if (!isExist) {
-      row._attributes.className.column[columnName].push(className);
+      row._attributes.className = {
+        ...classNameMap,
+        column: {
+          ...classNameMap.column,
+          [columnName]: [...classNameMap.column[columnName], className]
+        }
+      };
     }
   }
 }
@@ -271,10 +284,12 @@ export function removeCellClassName(
     if (isUndefined(classNameMap.column[columnName])) {
       return;
     }
-    const idx = findIndex((name) => name === className, classNameMap.column[columnName]);
-    if (idx !== -1) {
-      // @TODO: 머지되면 배열에서 인덱스 넣으면 삭제되는 helper 쓰기
-      classNameMap.column[columnName].splice(idx);
-    }
+    row._attributes.className = {
+      ...row._attributes.className,
+      column: {
+        ...classNameMap.column,
+        [columnName]: removeArrayItem(className, classNameMap.column[columnName])
+      }
+    };
   }
 }

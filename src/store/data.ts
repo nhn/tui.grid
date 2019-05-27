@@ -91,11 +91,14 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
-  const { disabled, checkDisabled } = row._attributes;
+  const { disabled, checkDisabled, className } = row._attributes;
+  const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
+  const cellClassName = [...className.row, ...columnClassName].join(' ');
 
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
+    className: cellClassName,
     disabled: name === '_checked' ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
@@ -156,7 +159,6 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   });
 
   const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
-
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
     // add condition expression to prevent to call watch function recursively
@@ -177,7 +179,6 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 }
 
 function getAttributes(row: OptRow, index: number) {
-  // @TODO className: {row, column}
   if (
     row._attributes &&
     typeof row._attributes.disabled === 'boolean' &&
@@ -186,28 +187,32 @@ function getAttributes(row: OptRow, index: number) {
     row._attributes.checkDisabled = row._attributes.disabled;
   }
 
-  // if (row._attributes) {
-  //   if (isUndefined(row._attributes.className)) {
-  //     row._attributes.className = {
-  //       row: [],
-  //       column: {}
-  //     };
-  //   } else {
-  //     const classNameMap = row._attributes.className;
-  //     if (isUndefined(classNameMap.row)) {
-  //       classNameMap.row = [];
-  //     }
-  //     if (isUndefined(classNameMap.column)) {
-  //       classNameMap.column = {};
-  //     }
-  //   }
-  // }
+  if (row._attributes) {
+    if (isUndefined(row._attributes.className)) {
+      row._attributes.className = {
+        row: [],
+        column: {}
+      };
+    } else {
+      const classNameMap = row._attributes.className;
+      if (isUndefined(classNameMap.row)) {
+        classNameMap.row = [];
+      }
+      if (isUndefined(classNameMap.column)) {
+        classNameMap.column = {};
+      }
+    }
+  }
 
   return reactive({
     rowNum: index + 1,
     checked: false,
     disabled: false,
     checkDisabled: false,
+    className: {
+      row: [],
+      column: {}
+    },
     ...row._attributes
   });
 }

@@ -64,6 +64,7 @@ export interface CellRenderData {
   postfix: string;
   value: CellValue;
   editorOptions: Dictionary<any>;
+  className: string;
 }
 
 export interface ViewRow {
