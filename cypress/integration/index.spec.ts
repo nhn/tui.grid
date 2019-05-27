@@ -147,3 +147,48 @@ it('watch should react to conditional logic', () => {
 
   expect(callback).to.be.calledWith('Lee');
 });
+
+it('recursive watches should work properly with dynamic watch', () => {
+  const callback1 = cy.stub();
+  const callback2 = cy.stub();
+  const callback3 = cy.stub();
+
+  const obj1 = reactive({ num: 0 });
+  const obj2 = reactive({ num: 0 });
+  const obj3 = reactive({ num: 0 });
+
+  watch(() => {
+    callback1(obj1.num);
+  });
+
+  watch(() => {
+    // This is recursive call (trigger callback2);
+    obj2.num = obj1.num + 10;
+    if (obj1.num === 0) {
+      callback1(obj1.num);
+    } else {
+      // This is dynamic watch (should add watch for obj3.num)
+      callback3(obj3.num);
+    }
+  });
+
+  watch(() => {
+    callback2(obj2.num);
+  });
+
+  callback1.reset();
+  callback2.reset();
+  callback3.reset();
+
+  obj1.num = 10;
+
+  expect(callback1).to.be.calledWith(10);
+  expect(callback2).to.be.calledWith(20);
+  expect(callback3).to.be.calledWith(0);
+
+  callback3.reset();
+
+  obj3.num = 10;
+
+  expect(callback3).to.be.calledWith(10);
+});

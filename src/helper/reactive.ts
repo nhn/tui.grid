@@ -9,7 +9,8 @@ const generateHandlerId = (() => {
   };
 })();
 
-const globalHandlerMap: Dictionary<Function> = {};
+const globalHandlerMap: Dictionary<{ fn: Function; targetHandlerMaps: Dictionary<boolean>[] }> = {};
+const watcherStack: string[] = [];
 
 interface ComputedProp<T> {
   key: keyof T;
@@ -21,34 +22,26 @@ export type Reactive<T extends Dictionary<any>> = T & {
   __propHandlerIdMap__: Dictionary<Function[]>;
 };
 
-let currWatcherId: string | null = null;
-let currWatcherHandlerIdMaps: Dictionary<boolean>[] | null = null;
-
 function isReactive<T>(resultObj: T): resultObj is Reactive<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
 function watchCall(id: string) {
-  currWatcherId = id;
-  currWatcherHandlerIdMaps = [];
+  watcherStack.push(id);
 
-  globalHandlerMap[id]();
-  const handlerIdMaps = currWatcherHandlerIdMaps;
+  globalHandlerMap[id].fn();
 
-  currWatcherId = null;
-  currWatcherHandlerIdMaps = null;
-
-  return handlerIdMaps;
+  watcherStack.pop();
 }
 
 export function watch(fn: Function) {
   const id = generateHandlerId();
-  globalHandlerMap[id] = fn;
+  globalHandlerMap[id] = { fn, targetHandlerMaps: [] };
 
-  const handlerIdMaps = watchCall(id);
+  watchCall(id);
 
   return () => {
-    handlerIdMaps.forEach((idMap) => {
+    globalHandlerMap[id].targetHandlerMaps.forEach((idMap) => {
       delete idMap[id];
     });
   };
@@ -70,7 +63,6 @@ function setValue<T, K extends keyof T>(
 
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isReactive(obj)) {
-    // const handlerIdMap = obj.__propHandlerIdMap__[key as string];
     Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((id) => {
       watchCall(id);
     });
@@ -110,11 +102,10 @@ export function reactive<T extends Dictionary<any>>(obj: T): Reactive<T> {
 
     Object.defineProperty(resultObj, key, {
       get() {
-        if (currWatcherId && currWatcherHandlerIdMaps) {
-          if (!handlerIdMap[currWatcherId]) {
-            handlerIdMap[currWatcherId] = true;
-          }
-          currWatcherHandlerIdMaps.push(handlerIdMap);
+        const watcherId = watcherStack[watcherStack.length - 1];
+        if (watcherId && !handlerIdMap[watcherId]) {
+          handlerIdMap[watcherId] = true;
+          globalHandlerMap[watcherId].targetHandlerMaps.push(handlerIdMap);
         }
         return storage[key];
       }
