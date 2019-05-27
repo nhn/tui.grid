@@ -42,7 +42,7 @@ function createButtons(grid) {
   button('disableRow(4, false)', () => grid.disableRow(4, false));
 }
 
-function createDataCheckAttr(): OptRow[] {
+function createDataWithCheckAttr(): OptRow[] {
   const optRows: OptRow[] = data.slice();
   optRows[0]._attributes = { disabled: true };
   optRows[1]._attributes = {
@@ -56,7 +56,7 @@ function createDataCheckAttr(): OptRow[] {
   return optRows;
 }
 
-function createDataClassNameAttr(): OptRow[] {
+function createDataWithClassNameAttr(): OptRow[] {
   const optRows: OptRow[] = data.slice();
   optRows[0]._attributes = {
     className: {
@@ -108,7 +108,7 @@ stories.add(
   'row header with checkbox',
   () => {
     const { el, grid } = createGrid({
-      data: createDataCheckAttr(),
+      data: createDataWithCheckAttr(),
       columns,
       rowHeaders: ['_checked'],
       bodyHeight: 'fitToParent',
@@ -137,7 +137,7 @@ stories.add(
   'row header with checkbox and number',
   () => {
     const { el, grid } = createGrid({
-      data: createDataCheckAttr(),
+      data: createDataWithCheckAttr(),
       columns,
       rowHeaders: ['_number', '_checked'],
       bodyHeight: 'fitToParent',
@@ -166,7 +166,7 @@ stories.add(
   'className',
   () => {
     const { el, grid } = createGrid({
-      data: createDataClassNameAttr(),
+      data: createDataWithClassNameAttr(),
       columns,
       bodyHeight: 'fitToParent',
       columnOptions: {

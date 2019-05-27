@@ -93,12 +93,11 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className } = row._attributes;
   const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
-  const cellClassName = [...className.row, ...columnClassName].join(' ');
 
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
-    className: cellClassName,
+    className: [...className.row, ...columnClassName].join(' '),
     disabled: name === '_checked' ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
@@ -159,6 +158,7 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
   });
 
   const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
+
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
     // add condition expression to prevent to call watch function recursively
@@ -179,32 +179,7 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 }
 
 function getAttributes(row: OptRow, index: number) {
-  if (
-    row._attributes &&
-    typeof row._attributes.disabled === 'boolean' &&
-    isUndefined(row._attributes.checkDisabled)
-  ) {
-    row._attributes.checkDisabled = row._attributes.disabled;
-  }
-
-  if (row._attributes) {
-    if (isUndefined(row._attributes.className)) {
-      row._attributes.className = {
-        row: [],
-        column: {}
-      };
-    } else {
-      const classNameMap = row._attributes.className;
-      if (isUndefined(classNameMap.row)) {
-        classNameMap.row = [];
-      }
-      if (isUndefined(classNameMap.column)) {
-        classNameMap.column = {};
-      }
-    }
-  }
-
-  return reactive({
+  const defaultAttr = {
     rowNum: index + 1,
     checked: false,
     disabled: false,
@@ -212,9 +187,27 @@ function getAttributes(row: OptRow, index: number) {
     className: {
       row: [],
       column: {}
-    },
-    ...row._attributes
-  });
+    }
+  };
+
+  if (row._attributes) {
+    if (
+      typeof row._attributes.disabled === 'boolean' &&
+      isUndefined(row._attributes.checkDisabled)
+    ) {
+      row._attributes.checkDisabled = row._attributes.disabled;
+    }
+
+    if (!isUndefined(row._attributes.className)) {
+      row._attributes.className = {
+        row: [],
+        column: {},
+        ...row._attributes.className
+      };
+    }
+  }
+
+  return reactive({ ...defaultAttr, ...row._attributes });
 }
 
 export function createRawRow(row: OptRow, index: number, defaultValues: Column['defaultValues']) {

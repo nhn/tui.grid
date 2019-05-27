@@ -223,7 +223,6 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
     const classNameMap = row._attributes.className;
     const isExist = findIndex((name) => name === className, classNameMap.row) !== -1;
     if (!isExist) {
-      // row._attributes.className.row.push(className);
       row._attributes.className = {
         ...classNameMap,
         row: [...classNameMap.row, className]

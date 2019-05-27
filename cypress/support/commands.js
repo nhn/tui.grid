@@ -44,10 +44,5 @@ Cypress.Commands.add('createStyle', (style = '') => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = style;
     document.head.appendChild(styleElement);
-    return new Promise((resolve) => {
-      requestAnimationFrame(() => {
-        resolve(win.grid);
-      });
-    });
   });
 });
