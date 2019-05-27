@@ -11,6 +11,8 @@ declare namespace Cypress {
 
     createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
 
+    createStyle(style: string): Chainable<any>;
+
     gridInstance(): Chainable<any>;
 
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
