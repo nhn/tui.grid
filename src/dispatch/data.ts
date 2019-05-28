@@ -12,11 +12,9 @@ import {
   arrayEqual,
   mapProp,
   findPropIndex,
-  findIndex,
   isUndefined,
   removeArrayItem,
-  some,
-  deepAssign
+  includes
 } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
@@ -223,11 +221,10 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
   const row = findProp('rowKey', rowKey, rawData);
   if (row) {
     const classNameMap = row._attributes.className;
-    const isExist = some((name) => name === className, classNameMap.row);
+    const isExist = includes(classNameMap.row, className);
     if (!isExist) {
-      row._attributes.className = deepAssign(classNameMap, {
-        row: [...classNameMap.row, className]
-      });
+      row._attributes.className.row.push(className);
+      notify(row._attributes, 'className');
     }
   }
 }
@@ -237,10 +234,8 @@ export function removeRowClassName(store: Store, rowKey: RowKey, className: stri
   const row = findProp('rowKey', rowKey, rawData);
 
   if (row) {
-    const classNameMap = row._attributes.className;
-    row._attributes.className = deepAssign(classNameMap, {
-      row: removeArrayItem(className, row._attributes.className.row)
-    });
+    removeArrayItem(className, row._attributes.className.row);
+    notify(row._attributes, 'className');
   }
 }
 
@@ -253,16 +248,16 @@ export function addCellClassName(
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const classNameMap = row._attributes.className;
-    if (isUndefined(classNameMap.column[columnName])) {
-      classNameMap.column[columnName] = [];
+    const columnClassMap = row._attributes.className.column;
+    if (isUndefined(columnClassMap[columnName])) {
+      columnClassMap[columnName] = [className];
+    } else {
+      const isExist = includes(columnClassMap[columnName], className);
+      if (!isExist) {
+        columnClassMap[columnName].push(className);
+      }
     }
-    const isExist = some((name) => name === className, classNameMap.column[columnName]);
-    if (!isExist) {
-      row._attributes.className = deepAssign(classNameMap, {
-        column: { [columnName]: [...classNameMap.column[columnName], className] }
-      });
-    }
+    notify(row._attributes, 'className');
   }
 }
 
@@ -279,8 +274,7 @@ export function removeCellClassName(
     if (isUndefined(classNameMap.column[columnName])) {
       return;
     }
-    row._attributes.className = deepAssign(classNameMap, {
-      column: { [columnName]: removeArrayItem(className, classNameMap.column[columnName]) }
-    });
+    removeArrayItem(className, row._attributes.className.column[columnName]);
+    notify(row._attributes, 'className');
   }
 }
