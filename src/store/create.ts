@@ -54,6 +54,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
 
+  // manual observe to resolve circular references
   observe(() => {
     setBodyHeight(dimension, rowCoords);
   });
