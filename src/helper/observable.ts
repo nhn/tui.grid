@@ -36,7 +36,7 @@ function isObservable<T>(resultObj: T): resultObj is Observable<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
-function observingCall(observerId: string) {
+function callObserver(observerId: string) {
   observerIdStack.push(observerId);
   observerInfoMap[observerId].fn();
   observerIdStack.pop();
@@ -51,7 +51,7 @@ function setValue<T, K extends keyof T>(
   if (storage[key] !== value) {
     storage[key] = value;
     Object.keys(observerIdSet).forEach((observerId) => {
-      observingCall(observerId);
+      callObserver(observerId);
     });
   }
 }
@@ -59,7 +59,7 @@ function setValue<T, K extends keyof T>(
 export function observe(fn: Function) {
   const observerId = generateObserverId();
   observerInfoMap[observerId] = { fn, targetObserverIdSets: [] };
-  observingCall(observerId);
+  callObserver(observerId);
 
   // return unobserve function
   return () => {
@@ -132,7 +132,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
     Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((observerId) => {
-      observingCall(observerId);
+      callObserver(observerId);
     });
   }
 }
