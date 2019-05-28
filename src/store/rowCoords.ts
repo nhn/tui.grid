@@ -10,9 +10,9 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
   return observable({
     get heights() {
       const heights = [];
-      const { rowHeight } = dimension;
+      const { rowHeight, minRowHeight } = dimension;
       for (let i = 0, len = data.viewData.length; i < len; i += 1) {
-        heights[i] = rowHeight;
+        heights[i] = Math.max(rowHeight, minRowHeight);
       }
 
       return heights;
@@ -20,13 +20,18 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
 
     get offsets() {
       const offsets = [0];
-      const { rowHeight } = dimension;
+      const { heights } = this;
 
-      for (let i = 1, len = data.viewData.length; i < len; i += 1) {
-        offsets.push(offsets[i - 1] + rowHeight);
+      for (let i = 1, len = heights.length; i < len; i += 1) {
+        offsets[i] = offsets[i - 1] + heights[i - 1];
       }
 
       return offsets;
+    },
+
+    get totalRowHeight() {
+      const { offsets, heights } = this;
+      return offsets[offsets.length - 1] + heights[heights.length - 1];
     }
   });
 }

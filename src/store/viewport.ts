@@ -44,7 +44,8 @@ export function create({
     },
 
     get maxScrollTop() {
-      const { bodyHeight, scrollbarWidth, totalRowHeight } = dimension;
+      const { bodyHeight, scrollbarWidth } = dimension;
+      const { totalRowHeight } = rowCoords;
 
       return totalRowHeight - bodyHeight + scrollbarWidth;
     },
@@ -81,7 +82,8 @@ export function create({
     },
 
     get dummyRowCount() {
-      const { rowHeight, bodyHeight, totalRowHeight, scrollXHeight, cellBorderWidth } = dimension;
+      const { rowHeight, bodyHeight, scrollXHeight, cellBorderWidth } = dimension;
+      const { totalRowHeight } = rowCoords;
       const adjustedRowHeight = rowHeight + cellBorderWidth;
       const adjustedBodyHeight = bodyHeight - scrollXHeight;
 

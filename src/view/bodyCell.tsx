@@ -11,6 +11,7 @@ import Grid from '../grid';
 interface OwnProps {
   viewRow: ViewRow;
   columnName: string;
+  refreshRowHeight: Function | null;
 }
 
 interface StoreProps {
@@ -29,7 +30,14 @@ export class BodyCellComp extends Component<Props> {
   private el!: HTMLElement;
 
   public componentDidMount() {
-    const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = this.props;
+    const {
+      grid,
+      rowKey,
+      renderData,
+      columnInfo,
+      refreshRowHeight,
+      disabled: allDisabled
+    } = this.props;
 
     // eslint-disable-next-line new-cap
     this.renderer = new columnInfo.renderer({
@@ -39,16 +47,33 @@ export class BodyCellComp extends Component<Props> {
       ...renderData,
       allDisabled
     });
-    this.el.appendChild(this.renderer.getElement());
+    const rendererEl = this.renderer.getElement();
+    this.el.appendChild(rendererEl);
 
     if (this.renderer.mounted) {
       this.renderer.mounted(this.el);
+    }
+
+    if (refreshRowHeight) {
+      // In Preact, the componentDidMount is called before the DOM elements are actually mounted.
+      // https://github.com/preactjs/preact/issues/648
+      // Use setTimeout to wait until the DOM element is actually mounted
+      //  - The requestAnimationFrame causes unexpected behavior if the width of grid is 'auto'
+      //  - because the callback function is called before the actual width of grid is calculated
+      window.setTimeout(() => refreshRowHeight(this.el.scrollHeight));
     }
   }
 
   public componentWillReceiveProps(nextProps: Props) {
     if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
-      const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = nextProps;
+      const {
+        grid,
+        rowKey,
+        renderData,
+        columnInfo,
+        refreshRowHeight,
+        disabled: allDisabled
+      } = nextProps;
 
       this.renderer.changed({
         grid,
@@ -57,6 +82,10 @@ export class BodyCellComp extends Component<Props> {
         ...renderData,
         allDisabled
       });
+
+      if (refreshRowHeight) {
+        refreshRowHeight(this.el.scrollHeight);
+      }
     }
   }
 

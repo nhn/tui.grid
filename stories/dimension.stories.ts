@@ -4,6 +4,7 @@ import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
+import { range } from '../src/helper/common';
 
 const stories = storiesOf('Dimension', module);
 
@@ -43,6 +44,33 @@ stories.add('bodyHeight: 500', () => {
 
 stories.add('rowHeight: 70', () => {
   return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
+});
+
+stories.add('rowHeight: auto', () => {
+  const myColumns: OptGrid['columns'] = [
+    { name: 'col1', whiteSpace: 'pre', editor: 'text' },
+    { name: 'col2', whiteSpace: 'normal', editor: 'text' }
+  ];
+  const myData = [
+    {
+      col1: 'Short',
+      col2: 'Short'
+    },
+    {
+      col1: 'Long\n\n\n\n\n\nSeven new lines',
+      col2: 'Short'
+    },
+    {
+      col1: 'Short',
+      col2: range(100).join('-')
+    },
+    {
+      col1: 'Short',
+      col2: 'Short'
+    }
+  ];
+
+  return createGrid({ data: myData, columns: myColumns, rowHeight: 'auto', bodyHeight: 'auto' }).el;
 });
 
 stories.add('column resizeable', () => {

@@ -200,7 +200,6 @@ export interface Dimension {
   scrollY: boolean;
   readonly contentsWidth: number;
   readonly frozenBorderWidth: number;
-  readonly totalRowHeight: number;
   readonly scrollXHeight: number;
   readonly scrollYWidth: number;
 }
@@ -227,6 +226,7 @@ export interface ColumnCoords {
 export interface RowCoords {
   readonly heights: number[];
   readonly offsets: number[];
+  readonly totalRowHeight: number;
 }
 
 export interface Rect {

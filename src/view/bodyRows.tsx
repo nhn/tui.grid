@@ -31,8 +31,8 @@ class BodyRowsComp extends Component<Props> {
 
     return (
       <tbody>
-        {rows.map((row) => (
-          <BodyRow key={row.rowKey} viewRow={row} columnNames={columnNames} />
+        {rows.map((row, index) => (
+          <BodyRow key={row.rowKey} rowIndex={index} viewRow={row} columnNames={columnNames} />
         ))}
         {range(dummyRowCount).map((index) => (
           <BodyDummyRow

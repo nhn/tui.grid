@@ -159,8 +159,9 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { column, dimension, viewport } = store;
-  const { bodyHeight, totalRowHeight, scrollXHeight } = dimension;
+  const { column, rowCoords, dimension, viewport } = store;
+  const { totalRowHeight } = rowCoords;
+  const { bodyHeight, scrollXHeight } = dimension;
   const { offsetY, scrollTop, scrollLeft, dummyRowCount } = viewport;
 
   return {

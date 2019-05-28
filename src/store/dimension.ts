@@ -1,12 +1,12 @@
-import { Dimension, Column, Data, SummaryPosition } from './types';
 import { observable } from '../helper/observable';
+import { Dimension, Column, SummaryPosition, RowCoords } from './types';
 import { OptGrid } from '../types';
 
 type OptDimension = {
-  data: Data;
   column: Column;
   frozenBorderWidth?: number;
   summaryHeight?: number;
+  domWidth: number;
   summaryPosition?: SummaryPosition;
 } & Pick<
   OptGrid,
@@ -14,9 +14,9 @@ type OptDimension = {
 >;
 
 export function create({
-  data,
   column,
   width = 'auto',
+  domWidth,
   rowHeight = 40,
   bodyHeight = 'auto',
   minRowHeight = 40,
@@ -32,7 +32,7 @@ export function create({
   return observable<Dimension>({
     offsetLeft: 0,
     offsetTop: 0,
-    width: width === 'auto' ? 0 : width,
+    width: width === 'auto' ? domWidth : width,
     autoWidth: width === 'auto',
     minBodyHeight,
     bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
@@ -64,10 +64,6 @@ export function create({
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
-    get totalRowHeight() {
-      return data.viewData.length * this.rowHeight + this.tableBorderWidth;
-    },
-
     get scrollXHeight() {
       return this.scrollX ? this.scrollbarWidth : 0;
     },
@@ -76,4 +72,13 @@ export function create({
       return this.scrollY ? this.scrollbarWidth : 0;
     }
   });
+}
+
+export function setBodyHeight(dimension: Dimension, rowCoords: RowCoords) {
+  const { totalRowHeight } = rowCoords;
+  const { autoHeight, scrollXHeight } = dimension;
+
+  if (autoHeight) {
+    dimension.bodyHeight = totalRowHeight + scrollXHeight;
+  }
 }
