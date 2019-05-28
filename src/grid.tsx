@@ -20,7 +20,7 @@ import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex } from './helper/common';
-import { Reactive, getOriginObject } from './helper/reactive';
+import { Observable, getOriginObject } from './helper/observable';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -565,7 +565,7 @@ export default class Grid {
    */
   public getRowAt(rowIdx: number) {
     const row = this.store.data.rawData[rowIdx];
-    return row ? getOriginObject(row as Reactive<Row>) : null;
+    return row ? getOriginObject(row as Observable<Row>) : null;
   }
 
   /**
@@ -582,7 +582,7 @@ export default class Grid {
    * @returns {Array} - A list of all rows
    */
   public getData() {
-    return this.store.data.rawData.map((row) => getOriginObject(row as Reactive<Row>));
+    return this.store.data.rawData.map((row) => getOriginObject(row as Observable<Row>));
   }
 
   /**

@@ -1,5 +1,5 @@
 import { Dimension, Column, Data, SummaryPosition } from './types';
-import { reactive } from '../helper/reactive';
+import { observable } from '../helper/observable';
 import { OptGrid } from '../types';
 
 type OptDimension = {
@@ -29,7 +29,7 @@ export function create({
 }: OptDimension): Dimension {
   const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
 
-  return reactive<Dimension>({
+  return observable<Dimension>({
     offsetLeft: 0,
     offsetTop: 0,
     width: width === 'auto' ? 0 : width,

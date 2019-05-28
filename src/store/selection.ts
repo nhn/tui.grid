@@ -9,7 +9,7 @@ import {
   SelectionUnit,
   Side
 } from './types';
-import { Reactive, reactive } from '../helper/reactive';
+import { Observable, observable } from '../helper/observable';
 
 type ColumnWidths = { [key in Side]: number[] };
 
@@ -85,8 +85,8 @@ export function create({
   columnCoords,
   column: { visibleFrozenCount },
   dimension: { cellBorderWidth }
-}: SelectionOptions): Reactive<Selection> {
-  return reactive({
+}: SelectionOptions): Observable<Selection> {
+  return observable({
     inputRange: null,
     unit: selectionUnit,
     type: 'cell' as SelectionType,

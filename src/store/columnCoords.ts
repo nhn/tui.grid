@@ -1,5 +1,5 @@
 import { ColumnCoords, Column, Dimension, ColumnInfo } from './types';
-import { reactive } from '../helper/reactive';
+import { observable } from '../helper/observable';
 import { sum, findIndexes, pipe, mapProp } from '../helper/common';
 
 function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], widths: number[]) {
@@ -112,7 +112,7 @@ interface ColumnCoordsOptions {
 }
 
 export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords {
-  return reactive<ColumnCoords>({
+  return observable<ColumnCoords>({
     get widths(this: ColumnCoords) {
       const { visibleColumns, visibleFrozenCount } = column;
       const widths = calculateWidths(visibleColumns, dimension.contentsWidth);

@@ -1,5 +1,5 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
-import { reactive, Reactive } from '../helper/reactive';
+import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 
 function indexOfRow(rowOffsets: number[], posY: number) {
@@ -24,10 +24,10 @@ export function create({
   rowCoords,
   columnCoords,
   showDummyRows
-}: ViewPortOption): Reactive<Viewport> {
+}: ViewPortOption): Observable<Viewport> {
   const { visibleColumns } = column;
 
-  return reactive({
+  return observable({
     scrollLeft: 0,
     scrollTop: 0,
     scrollPixelScale: 40,
@@ -53,7 +53,7 @@ export function create({
       return [0, visibleColumns.length] as Range;
     },
 
-    get rowRange(this: Reactive<Viewport>) {
+    get rowRange(this: Observable<Viewport>) {
       const { bodyHeight } = dimension;
       const { offsets } = rowCoords;
 

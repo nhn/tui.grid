@@ -140,6 +140,8 @@ stories.add(
 
     createButtons(grid);
 
+    (window as any).grid = grid;
+
     return rootEl;
   },
   { html: { preventForcedRender: true } }
