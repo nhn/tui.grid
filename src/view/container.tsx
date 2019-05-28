@@ -9,6 +9,7 @@ import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow } from '../store/types';
+import { EventBus, getEventBus } from '../eventBus';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -26,6 +27,7 @@ interface StoreProps {
   showLeftSide: boolean;
   disabled: boolean;
   viewData: ViewRow[];
+  eventBus: EventBus;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -38,8 +40,10 @@ export class ContainerComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, editing } = this.props;
+    const { dispatch, editing, eventBus } = this.props;
     const { el } = this;
+
+    eventBus.trigger('aa');
 
     dispatch('setNavigating', true);
     if (!editing) {
@@ -167,6 +171,7 @@ export const Container = connect<StoreProps, OwnProps>(
     summaryPosition: dimension.summaryPosition,
     showLeftSide: !!columnCoords.areaWidth.L,
     disabled: data.disabled,
-    viewData: data.viewData
+    viewData: data.viewData,
+    eventBus: getEventBus(id)
   })
 )(ContainerComp);
