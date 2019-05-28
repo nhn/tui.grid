@@ -1,5 +1,5 @@
 import { Column, Data, Summary, SummaryColumnContents, SummaryValues } from './types';
-import { reactive, watch } from '../helper/reactive';
+import { observable, observe } from '../helper/observable';
 import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
@@ -24,7 +24,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     const columnContent = orgColumnContent || {};
 
     column.allColumns.forEach(({ name }) => {
-      watch(() => {
+      observe(() => {
         const columnValues = rawData.map((row) => row[name]);
         const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
         const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
@@ -33,8 +33,8 @@ export function create({ column, data, summary }: SummaryOption): Summary {
         summaryValues[name] = createSummaryValue(content, columnValues);
       });
     });
-    summaryColumnContents = reactive(summaryColumnContents);
-    summaryValues = reactive(summaryValues);
+    summaryColumnContents = observable(summaryColumnContents);
+    summaryValues = observable(summaryValues);
   }
 
   return { summaryColumnContents, summaryValues };

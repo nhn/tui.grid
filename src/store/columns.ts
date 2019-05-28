@@ -1,6 +1,6 @@
 import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
-import { reactive } from '../helper/reactive';
+import { observable } from '../helper/observable';
 import { createMapFromArray, includes } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -75,7 +75,7 @@ function createColumn(
     validation
   } = column;
 
-  return reactive({
+  return observable({
     ...column,
     escapeHTML: !!column.escapeHTML,
     header: header || column.name,
@@ -113,7 +113,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     defaultHeader = DEF_ROW_HEADER_INPUT;
   }
 
-  return reactive({
+  return observable({
     name,
     header: header || defaultHeader,
     hidden: false,
@@ -144,7 +144,7 @@ export function create(
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
-  return reactive({
+  return observable({
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
 

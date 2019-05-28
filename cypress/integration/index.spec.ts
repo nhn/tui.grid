@@ -1,20 +1,20 @@
-import { notify, reactive, watch } from '@/helper/reactive';
+import { notify, observable, observe } from '@/helper/observable';
 
-it('watch() should invoke callback function whenever related props changed', () => {
-  const person = reactive({
+it('observe() should invoke callback function whenever related props changed', () => {
+  const person = observable({
     name: 'Kim',
     age: 20
   });
 
-  const book = reactive({
+  const book = observable({
     title: 'JS Guide',
     author: 'Lee'
   });
 
   const callback1 = cy.stub();
   const callback2 = cy.stub();
-  watch(() => callback1(person.name, book.title));
-  watch(() => callback2(person.age, book.author));
+  observe(() => callback1(person.name, book.title));
+  observe(() => callback2(person.age, book.author));
 
   // invoke callback function immediately
   expect(callback1).to.be.calledWith('Kim', 'JS Guide');
@@ -35,8 +35,8 @@ it('watch() should invoke callback function whenever related props changed', () 
   expect(callback2).not.to.be.called;
 });
 
-it('computed (getter) property and watch', () => {
-  const person = reactive({
+it('computed (getter) property and observe', () => {
+  const person = observable({
     p1: '1',
     get p2() {
       return `${this.p1}2`;
@@ -51,8 +51,8 @@ it('computed (getter) property and watch', () => {
 
   const callback2 = cy.stub();
   const callback3 = cy.stub();
-  watch(() => callback2(person.p2));
-  watch(() => callback3(person.p3));
+  observe(() => callback2(person.p2));
+  observe(() => callback3(person.p3));
 
   expect(callback2).to.be.calledWith('12');
   expect(callback3).to.be.calledWith('123');
@@ -68,8 +68,8 @@ it('computed (getter) property and watch', () => {
   expect(person.p3).to.eql('A23');
 });
 
-it('watch returns a function which stops watching', () => {
-  const person = reactive({
+it('observe returns a function which stops observing', () => {
+  const person = observable({
     p1: '1',
     get p2() {
       return `${this.p1}2`;
@@ -83,12 +83,12 @@ it('watch returns a function which stops watching', () => {
   const callback2 = cy.stub();
   const callback3 = cy.stub();
 
-  const unwatch1 = watch(() => callback1(person.p1));
-  const unwatch2 = watch(() => callback2(person.p2));
-  const unwatch3 = watch(() => callback3(person.p3));
-  unwatch1();
-  unwatch2();
-  unwatch3();
+  const unobserve1 = observe(() => callback1(person.p1));
+  const unobserve2 = observe(() => callback2(person.p2));
+  const unobserve3 = observe(() => callback3(person.p3));
+  unobserve1();
+  unobserve2();
+  unobserve3();
 
   person.p1 = 'A';
 
@@ -97,14 +97,14 @@ it('watch returns a function which stops watching', () => {
   expect(callback3).to.be.calledOnce;
 });
 
-it('array index property cannot be reactive', () => {
+it('array index property cannot be observable', () => {
   expect(() => {
-    reactive([1, 2, 3]);
+    observable([1, 2, 3]);
   }).to.throw(Error, 'Array object cannot be Reactive');
 });
 
-it('notify methods should invoke watching functions', () => {
-  const person = reactive({
+it('notify methods should invoke observers', () => {
+  const person = observable({
     p1: '1',
     get p2() {
       return `${this.p1}2`;
@@ -114,8 +114,8 @@ it('notify methods should invoke watching functions', () => {
   const callback1 = cy.stub();
   const callback2 = cy.stub();
 
-  watch(() => callback1(person.p1));
-  watch(() => callback2(person.p2));
+  observe(() => callback1(person.p1));
+  observe(() => callback2(person.p2));
 
   callback1.reset();
   notify(person, 'p1');
@@ -124,4 +124,71 @@ it('notify methods should invoke watching functions', () => {
   callback2.reset();
   notify(person, 'p2');
   expect(callback2).to.be.calledWith('12');
+});
+
+it('observe should react to conditional logic', () => {
+  const person = observable({
+    flag: false,
+    name: 'Kim'
+  });
+
+  const callback = cy.stub();
+  observe(() => {
+    if (person.flag) {
+      callback(person.name);
+    }
+  });
+
+  person.flag = true;
+
+  callback.reset();
+
+  person.name = 'Lee';
+
+  expect(callback).to.be.calledWith('Lee');
+});
+
+it('recursive observe should work properly with dynamic observe', () => {
+  const callback1 = cy.stub();
+  const callback2 = cy.stub();
+  const callback3 = cy.stub();
+
+  const obj1 = observable({ num: 0 });
+  const obj2 = observable({ num: 0 });
+  const obj3 = observable({ num: 0 });
+
+  observe(() => {
+    callback1(obj1.num);
+  });
+
+  observe(() => {
+    // This is recursive call (trigger callback2);
+    obj2.num = obj1.num + 10;
+    if (obj1.num === 0) {
+      callback1(obj1.num);
+    } else {
+      // This is dynamic observe (should add observe for obj3.num)
+      callback3(obj3.num);
+    }
+  });
+
+  observe(() => {
+    callback2(obj2.num);
+  });
+
+  callback1.reset();
+  callback2.reset();
+  callback3.reset();
+
+  obj1.num = 10;
+
+  expect(callback1).to.be.calledWith(10);
+  expect(callback2).to.be.calledWith(20);
+  expect(callback3).to.be.calledWith(0);
+
+  callback3.reset();
+
+  obj3.num = 10;
+
+  expect(callback3).to.be.calledWith(10);
 });

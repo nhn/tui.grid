@@ -11,7 +11,7 @@ import {
   ValidationType,
   Validation
 } from './types';
-import { reactive, watch, Reactive } from '../helper/reactive';
+import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
 import {
@@ -164,19 +164,19 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
     initValueMap[name] = null;
   });
 
-  const valueMap = reactive(initValueMap) as Dictionary<CellRenderData>;
+  const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
     // add condition expression to prevent to call watch function recursively
     if (!related) {
-      watch(() => {
+      observe(() => {
         valueMap[name] = createViewCell(row, columnMap[name]);
       });
     }
     // @TODO need to improve relation
     if (relationMap && Object.keys(relationMap).length) {
-      watch(() => {
+      observe(() => {
         createRelationViewCell(name, row, columnMap, valueMap);
       });
     }
@@ -211,7 +211,7 @@ function getAttributes(row: OptRow, index: number) {
     }
   }
 
-  return reactive({ ...defaultAttr, ...row._attributes });
+  return observable({ ...defaultAttr, ...row._attributes });
 }
 
 export function createRawRow(row: OptRow, index: number, defaultValues: Column['defaultValues']) {
@@ -222,7 +222,7 @@ export function createRawRow(row: OptRow, index: number, defaultValues: Column['
     setDefaultProp(row, name, value);
   });
 
-  return reactive(row as Row);
+  return observable(row as Row);
 }
 
 export function createData(data: OptRow[], column: Column) {
@@ -233,20 +233,20 @@ export function createData(data: OptRow[], column: Column) {
   return { rawData, viewData };
 }
 
-export function create(data: OptRow[], column: Column): Reactive<Data> {
+export function create(data: OptRow[], column: Column): Observable<Data> {
   const { rawData, viewData } = createData(data, column);
 
   // @TODO neet to modify useClient options with net api
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
 
-  return reactive({
+  return observable({
     disabled: false,
     rawData,
     viewData,
     sortOptions,
-    // @TODO meta 프로퍼티 값으로 변경
+
     get checkedAllRows() {
-      const checkedRows = rawData.filter(({ _checked }) => _checked);
+      const checkedRows = rawData.filter((row) => row._attributes.checked);
 
       return checkedRows.length === rawData.length;
     }

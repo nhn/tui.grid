@@ -1,5 +1,5 @@
 import { h, AnyComponent, Component } from 'preact';
-import { watch } from '../helper/reactive';
+import { observe } from '../helper/observable';
 import { Store } from '../store/types';
 import { DeepReadonly } from 'utility-types';
 import { DispatchProps } from '../dispatch/create';
@@ -16,7 +16,7 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
     return class extends Component<OwnProps, SelectedProps> {
       public static displayName = `Connect:${WrappedComponent.name}`;
 
-      private unwatch?: () => void;
+      private unobserve?: () => void;
 
       private setStateUsingSelector(ownProps: OwnProps) {
         if (selector) {
@@ -26,7 +26,7 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
 
       public componentWillMount() {
         if (selector) {
-          this.unwatch = watch(() => {
+          this.unobserve = observe(() => {
             this.setStateUsingSelector(this.props);
           });
         }
@@ -37,8 +37,8 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
       }
 
       public componentWillUnmount() {
-        if (this.unwatch) {
-          this.unwatch();
+        if (this.unobserve) {
+          this.unobserve();
         }
       }
 

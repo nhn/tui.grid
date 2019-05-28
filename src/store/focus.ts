@@ -1,5 +1,5 @@
 import { Focus, ColumnCoords, RowCoords, Column, Data } from './types';
-import { Reactive, reactive } from '../helper/reactive';
+import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 
 interface FocusOption {
@@ -9,8 +9,8 @@ interface FocusOption {
   columnCoords: ColumnCoords;
 }
 
-export function create({ column, data, rowCoords, columnCoords }: FocusOption): Reactive<Focus> {
-  return reactive({
+export function create({ column, data, rowCoords, columnCoords }: FocusOption): Observable<Focus> {
+  return observable({
     rowKey: null,
     columnName: null,
     editingAddress: null,

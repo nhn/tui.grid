@@ -1,5 +1,5 @@
 import { Data, Dimension, RowCoords } from './types';
-import { reactive } from '../helper/reactive';
+import { observable } from '../helper/observable';
 
 interface RowCoordsOption {
   data: Data;
@@ -7,7 +7,7 @@ interface RowCoordsOption {
 }
 
 export function create({ data, dimension }: RowCoordsOption): RowCoords {
-  return reactive({
+  return observable({
     get heights() {
       const heights = [];
       const { rowHeight } = dimension;

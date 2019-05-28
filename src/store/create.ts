@@ -1,6 +1,6 @@
 import { Store } from './types';
 import { OptGrid } from '../types';
-import { reactive } from '../helper/reactive';
+import { observable } from '..//helper/observable';
 import { create as createData } from './data';
 import { create as createColumn } from './columns';
 import { create as createDimension } from './dimension';
@@ -53,7 +53,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
 
-  return reactive({
+  return observable({
     id,
     data,
     column,
