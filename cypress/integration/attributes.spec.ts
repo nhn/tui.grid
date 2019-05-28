@@ -64,9 +64,7 @@ describe('className', () => {
   });
 
   it('add class by _attributes prop', () => {
-    cy.getCell(0, 'name').should('have.css', 'color', 'rgb(255, 255, 0)');
     cy.getCell(0, 'name').should('have.class', 'row-test-a');
-    cy.getCell(1, 'age').should('have.css', 'color', 'rgb(135, 206, 235)');
     cy.getCell(1, 'age').should('have.class', 'column-test-a');
     cy.getCell(1, 'location').should('have.class', 'column-test-b');
     cy.getCell(2, 'name').should('have.class', 'row-test-a');
@@ -79,7 +77,11 @@ describe('className', () => {
     cy.getCell(0, 'age').should('have.not.class', 'tui-grid-cell-test');
     cy.gridInstance().invoke('addRowClassName', 1, 'tui-grid-row-test');
     cy.getCell(1, 'age').should('have.class', 'tui-grid-row-test');
+    cy.getCell(1, 'location').should('have.class', 'tui-grid-row-test');
+    cy.getCell(1, 'name').should('have.class', 'tui-grid-row-test');
     cy.gridInstance().invoke('removeRowClassName', 1, 'tui-grid-row-test');
     cy.getCell(1, 'age').should('have.not.class', 'tui-grid-row-test');
+    cy.getCell(1, 'location').should('have.not.class', 'tui-grid-row-test');
+    cy.getCell(1, 'name').should('have.not.class', 'tui-grid-row-test');
   });
 });

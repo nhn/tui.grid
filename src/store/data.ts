@@ -14,7 +14,14 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp, isBlank, isUndefined } from '../helper/common';
+import {
+  someProp,
+  encodeHTMLEntity,
+  setDefaultProp,
+  isBlank,
+  isUndefined,
+  isBoolean
+} from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 
 export function getCellDisplayValue(value: CellValue) {
@@ -191,10 +198,7 @@ function getAttributes(row: OptRow, index: number) {
   };
 
   if (row._attributes) {
-    if (
-      typeof row._attributes.disabled === 'boolean' &&
-      isUndefined(row._attributes.checkDisabled)
-    ) {
+    if (isBoolean(row._attributes.disabled) && isUndefined(row._attributes.checkDisabled)) {
       row._attributes.checkDisabled = row._attributes.disabled;
     }
 

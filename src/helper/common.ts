@@ -1,3 +1,5 @@
+import { type } from 'os';
+
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -108,7 +110,11 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
 
   for (const prop of Object.keys(obj)) {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
-      resultObj[prop] = deepAssign(resultObj[prop], obj[prop]);
+      if (Array.isArray(obj[prop])) {
+        resultObj[prop] = obj[prop];
+      } else {
+        resultObj[prop] = deepAssign(resultObj[prop], obj[prop]);
+      }
     } else {
       resultObj[prop] = obj[prop];
     }
@@ -210,6 +216,10 @@ export function isBlank(value: any) {
 
 export function isUndefined(value: unknown): value is undefined {
   return typeof value === 'undefined';
+}
+
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
 }
 
 export function fromArray<T>(value: ArrayLike<T>): T[] {
