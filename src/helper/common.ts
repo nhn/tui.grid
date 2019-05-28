@@ -206,6 +206,10 @@ export function range(end: number) {
   return arr;
 }
 
+export function last(arr: any[]) {
+  return arr[arr.length - 1];
+}
+
 export function isBlank(value: any) {
   if (typeof value === 'string') {
     return !value.length;

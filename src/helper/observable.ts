@@ -1,13 +1,5 @@
-import { hasOwnProp, isObject, forEachObject } from './common';
+import { hasOwnProp, isObject, forEachObject, last } from './common';
 import { Dictionary } from '../store/types';
-
-const generateObserverId = (() => {
-  let lastId = 0;
-  return () => {
-    lastId += 1;
-    return `@observer${lastId}`;
-  };
-})();
 
 type BooleanSet = Dictionary<boolean>;
 
@@ -15,9 +7,6 @@ interface ObserverInfo {
   fn: Function;
   targetObserverIdSets: BooleanSet[];
 }
-
-const observerInfoMap: Dictionary<ObserverInfo> = {};
-const observerIdStack: string[] = [];
 
 interface ComputedProp<T> {
   key: keyof T;
@@ -29,28 +18,28 @@ export type Observable<T extends Dictionary<any>> = T & {
   __propHandlerIdMap__: Dictionary<Function[]>;
 };
 
+const generateObserverId = (() => {
+  let lastId = 0;
+  return () => {
+    lastId += 1;
+    return `@observer${lastId}`;
+  };
+})();
+
+// store all observer info
+const observerInfoMap: Dictionary<ObserverInfo> = {};
+
+// observer observerId stack for managing recursive observing calls
+const observerIdStack: string[] = [];
+
 function isObservable<T>(resultObj: T): resultObj is Observable<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
-function observedCall(id: string) {
-  observerIdStack.push(id);
-  observerInfoMap[id].fn();
+function observingCall(observerId: string) {
+  observerIdStack.push(observerId);
+  observerInfoMap[observerId].fn();
   observerIdStack.pop();
-}
-
-export function observe(fn: Function) {
-  const id = generateObserverId();
-  observerInfoMap[id] = { fn, targetObserverIdSets: [] };
-
-  observedCall(id);
-
-  // return unobserve function
-  return () => {
-    observerInfoMap[id].targetObserverIdSets.forEach((idSet) => {
-      delete idSet[id];
-    });
-  };
 }
 
 function setValue<T, K extends keyof T>(
@@ -61,18 +50,23 @@ function setValue<T, K extends keyof T>(
 ) {
   if (storage[key] !== value) {
     storage[key] = value;
-    Object.keys(observerIdSet).forEach((id) => {
-      observedCall(id);
+    Object.keys(observerIdSet).forEach((observerId) => {
+      observingCall(observerId);
     });
   }
 }
 
-export function notify<T, K extends keyof T>(obj: T, key: K) {
-  if (isObservable(obj)) {
-    Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((id) => {
-      observedCall(id);
+export function observe(fn: Function) {
+  const observerId = generateObserverId();
+  observerInfoMap[observerId] = { fn, targetObserverIdSets: [] };
+  observingCall(observerId);
+
+  // return unobserve function
+  return () => {
+    observerInfoMap[observerId].targetObserverIdSets.forEach((idSet) => {
+      delete idSet[observerId];
     });
-  }
+  };
 }
 
 export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
@@ -108,10 +102,10 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 
     Object.defineProperty(resultObj, key, {
       get() {
-        const id = observerIdStack[observerIdStack.length - 1];
-        if (id && !observerIdSet[id]) {
-          observerIdSet[id] = true;
-          observerInfoMap[id].targetObserverIdSets.push(observerIdSet);
+        const observerId = last(observerIdStack);
+        if (observerId && !observerIdSet[observerId]) {
+          observerIdSet[observerId] = true;
+          observerInfoMap[observerId].targetObserverIdSets.push(observerIdSet);
         }
         return storage[key];
       }
@@ -133,6 +127,14 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
   });
 
   return resultObj as Observable<T>;
+}
+
+export function notify<T, K extends keyof T>(obj: T, key: K) {
+  if (isObservable(obj)) {
+    Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((observerId) => {
+      observingCall(observerId);
+    });
+  }
 }
 
 export function getOriginObject<T>(obj: Observable<T>) {
