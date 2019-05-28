@@ -21,7 +21,7 @@ import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
-import { createEventBus, EventBus } from './eventBus';
+import { createEventBus, EventBus } from './event/eventBus';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -652,10 +652,10 @@ export default class Grid {
   }
 
   public on(eventName: string, fn: Function) {
-    this.eventBus.on('eventName', fn);
+    this.eventBus.on(eventName, fn);
   }
 
   public off(eventName: string, fn?: Function) {
-    this.eventBus.off('eventName', fn);
+    this.eventBus.off(eventName, fn);
   }
 }

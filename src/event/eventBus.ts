@@ -1,4 +1,5 @@
-import { removeArrayItem } from './helper/common';
+import { removeArrayItem } from '../helper/common';
+import GridEvent from './gridEvent';
 
 const eventBusMap: { [id: number]: EventBus } = {};
 
@@ -30,11 +31,10 @@ export function createEventBus(id: number) {
       }
     },
 
-    trigger(eventName: string) {
+    trigger(eventName: string, gridEvent: GridEvent) {
       if (eventMap[eventName]) {
         eventMap[eventName].forEach((func) => {
-          // @TODO: gridEvent 넣어주기
-          func();
+          func(gridEvent.data);
         });
       }
     }

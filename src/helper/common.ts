@@ -220,6 +220,10 @@ export function isUndefined(value: unknown): value is undefined {
   return typeof value === 'undefined';
 }
 
+export function isNull(value: unknown): value is null {
+  return value === null;
+}
+
 export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
 }
@@ -263,4 +267,19 @@ export function debounce(fn: Function, wait: number, immediate = false) {
       fn(...args);
     }
   };
+}
+
+export function isMetaColumn(columnName: string) {
+  return includes(['_button', '_number'], columnName);
+}
+
+export function pruneObject<T>(obj: T) {
+  const pruned: Partial<T> = {};
+  forEachObject((value, key) => {
+    if (!isUndefined(value) && !isNull(value)) {
+      pruned[key] = value;
+    }
+  }, obj);
+
+  return pruned;
 }

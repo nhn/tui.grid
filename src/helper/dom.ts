@@ -123,6 +123,15 @@ export function hasClass(el: HTMLElement, className: ClassNameType) {
   return el.className.split(' ').indexOf(cls(className)) !== -1;
 }
 
+export function findParentByTagName(el: HTMLElement, tagName: string) {
+  let currentEl: HTMLElement | null = el;
+  while (currentEl && currentEl.tagName.toLowerCase() !== tagName) {
+    currentEl = currentEl.parentElement;
+  }
+
+  return currentEl;
+}
+
 export function findParent(el: HTMLElement, className: ClassNameType) {
   let currentEl: HTMLElement | null = el;
   while (currentEl && !hasClass(currentEl, className)) {

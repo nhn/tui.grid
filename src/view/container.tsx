@@ -9,7 +9,8 @@ import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow } from '../store/types';
-import { EventBus, getEventBus } from '../eventBus';
+import { EventBus, getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -35,6 +36,57 @@ type Props = OwnProps & StoreProps & DispatchProps;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private handleMouseover = (ev: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent(ev);
+
+    /**
+     * Occurs when a mouse pointer is moved onto the Grid.
+     * The properties of the event object include the native MouseEvent object.
+     * @event Grid#mouseover
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mouseover', gridEvent);
+  };
+
+  private handleClick = (ev: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent(ev);
+
+    /**
+     * Occurs when a mouse button is clicked on the Grid.
+     * The properties of the event object include the native event object.
+     * @event Grid#click
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('click', gridEvent);
+  };
+
+  private handleMouseout = (ev: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent(ev);
+
+    /**
+     * Occurs when a mouse pointer is moved off from the Grid.
+     * The event object has all properties copied from the native MouseEvent.
+     * @event Grid#mouseout
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number | string} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mouseout', gridEvent);
+  };
+
   private handleMouseDown = (ev: MouseEvent) => {
     if (!this.el) {
       return;
@@ -42,8 +94,19 @@ export class ContainerComp extends Component<Props> {
 
     const { dispatch, editing, eventBus } = this.props;
     const { el } = this;
+    const gridEvent = new GridEvent(ev);
 
-    eventBus.trigger('aa');
+    /**
+     * Occurs when a mouse button is downed on the Grid.
+     * The event object has all properties copied from the native MouseEvent.
+     * @event Grid#mousedown
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number | string} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mousedown', gridEvent);
 
     dispatch('setNavigating', true);
     if (!editing) {
@@ -62,9 +125,22 @@ export class ContainerComp extends Component<Props> {
     }
 
     const { el } = this;
-    const { dispatch } = this.props;
+    const { dispatch, eventBus } = this.props;
     const target = ev.target as HTMLElement;
     const address = getCellAddress(target);
+    const gridEvent = new GridEvent(ev);
+
+    /**
+     * Occurs when a mouse button is double clicked on the Grid.
+     * The properties of the event object include the native event object.
+     * @event Grid#dblclick
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('dblClick', gridEvent);
 
     if (address) {
       const { rowKey, columnName } = address;
@@ -138,6 +214,9 @@ export class ContainerComp extends Component<Props> {
         class={cls('container', [showLeftSide, 'show-lside-area'])}
         onMouseDown={this.handleMouseDown}
         onDblClick={this.handleDblClick}
+        onClick={this.handleClick}
+        onMouseOut={this.handleMouseout}
+        onMouseOver={this.handleMouseover}
         ref={(el) => {
           this.el = el;
         }}
