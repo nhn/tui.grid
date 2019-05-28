@@ -1,5 +1,4 @@
 import { Store } from '../store/types';
-import { notify } from '../helper/observable';
 
 export function setWidth({ dimension }: Store, width: number, autoWidth: boolean) {
   dimension.autoWidth = autoWidth;

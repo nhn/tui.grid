@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

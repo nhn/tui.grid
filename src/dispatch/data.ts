@@ -201,15 +201,18 @@ export function appendRow(
   notify(rowCoords, 'heights');
 }
 
-export function removeRow({ data }: Store, rowKey: RowKey, options: OptRemoveRow) {
+export function removeRow({ data, rowCoords }: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { rawData, viewData } = data;
+  const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
 
   rawData.splice(rowIdx, 1);
   viewData.splice(rowIdx, 1);
+  heights.splice(rowIdx, 1);
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(rowCoords, 'heights');
 }
 
 export function clearData({ data }: Store) {
@@ -287,10 +290,8 @@ export function removeCellClassName(
 }
 
 export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
-  // const {rawData} = data;
   data.rawData[rowIndex]._attributes.height = rowHeight;
   rowCoords.heights[rowIndex] = rowHeight;
 
-  // data.heights[rowIndex] = rowHeight;
   notify(rowCoords, 'heights');
 }

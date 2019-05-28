@@ -1,4 +1,4 @@
-import { Data, Dimension, RowCoords, Row, RowAttributes } from './types';
+import { Data, Dimension, RowCoords, Row } from './types';
 import { observable } from '../helper/observable';
 import { isNumber } from '../helper/common';
 

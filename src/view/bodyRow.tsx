@@ -35,8 +35,8 @@ class BodyRowComp extends Component<Props> {
     this.updateRowHeightDebounced();
   };
 
-  public render({ viewRow, columnNames, rowHeight, autoRowHeight }: Props) {
-    const isOddRow = !!(Number(viewRow.rowKey) % 2);
+  public render({ rowIndex, viewRow, columnNames, rowHeight, autoRowHeight }: Props) {
+    const isOddRow = rowIndex % 2 === 0;
 
     return (
       <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>

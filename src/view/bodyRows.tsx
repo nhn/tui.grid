@@ -12,6 +12,7 @@ interface OwnProps {
 
 interface StoreProps {
   rows: ViewRow[];
+  rowIndexOffset: number;
   columns: ColumnInfo[];
   dummyRowCount: number;
 }
@@ -26,13 +27,18 @@ class BodyRowsComp extends Component<Props> {
     return true;
   }
 
-  public render({ rows, columns, dummyRowCount }: Props) {
+  public render({ rows, rowIndexOffset, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
 
     return (
       <tbody>
         {rows.map((row, index) => (
-          <BodyRow key={row.rowKey} rowIndex={index} viewRow={row} columnNames={columnNames} />
+          <BodyRow
+            key={row.rowKey}
+            rowIndex={index + rowIndexOffset}
+            viewRow={row}
+            columnNames={columnNames}
+          />
         ))}
         {range(dummyRowCount).map((index) => (
           <BodyDummyRow
@@ -48,6 +54,7 @@ class BodyRowsComp extends Component<Props> {
 
 export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => {
   return {
+    rowIndexOffset: viewport.rowRange[0],
     rows: viewport.rows,
     columns: column.visibleColumnsBySide[side],
     dummyRowCount: viewport.dummyRowCount
