@@ -7,7 +7,17 @@ import {
   RowAttributeValue
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
-import { findProp, arrayEqual, mapProp, findPropIndex } from '../helper/common';
+import {
+  findProp,
+  arrayEqual,
+  mapProp,
+  findPropIndex,
+  findIndex,
+  isUndefined,
+  removeArrayItem,
+  some,
+  deepAssign
+} from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
@@ -206,4 +216,71 @@ export function resetData({ data, column }: Store, inputData: OptRow[]) {
 
   data.rawData = rawData;
   data.viewData = viewData;
+}
+
+export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+  if (row) {
+    const classNameMap = row._attributes.className;
+    const isExist = some((name) => name === className, classNameMap.row);
+    if (!isExist) {
+      row._attributes.className = deepAssign(classNameMap, {
+        row: [...classNameMap.row, className]
+      });
+    }
+  }
+}
+
+export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+
+  if (row) {
+    const classNameMap = row._attributes.className;
+    row._attributes.className = deepAssign(classNameMap, {
+      row: removeArrayItem(className, row._attributes.className.row)
+    });
+  }
+}
+
+export function addCellClassName(
+  store: Store,
+  rowKey: RowKey,
+  columnName: string,
+  className: string
+) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+  if (row) {
+    const classNameMap = row._attributes.className;
+    if (isUndefined(classNameMap.column[columnName])) {
+      classNameMap.column[columnName] = [];
+    }
+    const isExist = some((name) => name === className, classNameMap.column[columnName]);
+    if (!isExist) {
+      row._attributes.className = deepAssign(classNameMap, {
+        column: { [columnName]: [...classNameMap.column[columnName], className] }
+      });
+    }
+  }
+}
+
+export function removeCellClassName(
+  store: Store,
+  rowKey: RowKey,
+  columnName: string,
+  className: string
+) {
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+  if (row) {
+    const classNameMap = row._attributes.className;
+    if (isUndefined(classNameMap.column[columnName])) {
+      return;
+    }
+    row._attributes.className = deepAssign(classNameMap, {
+      column: { [columnName]: removeArrayItem(className, classNameMap.column[columnName]) }
+    });
+  }
 }

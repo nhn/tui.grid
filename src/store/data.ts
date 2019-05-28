@@ -14,7 +14,14 @@ import {
 import { reactive, watch, Reactive } from '../helper/reactive';
 import { isRowHeader } from '../helper/column';
 import { OptRow } from '../types';
-import { someProp, encodeHTMLEntity, setDefaultProp, isBlank, isUndefined } from '../helper/common';
+import {
+  someProp,
+  encodeHTMLEntity,
+  setDefaultProp,
+  isBlank,
+  isUndefined,
+  isBoolean
+} from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 
 export function getCellDisplayValue(value: CellValue) {
@@ -91,11 +98,13 @@ function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
   const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
   const formatterProps = { row, column, value };
-  const { disabled, checkDisabled } = row._attributes;
+  const { disabled, checkDisabled, className } = row._attributes;
+  const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
 
   return {
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
+    className: [...className.row, ...columnClassName].join(' '),
     disabled: name === '_checked' ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
@@ -177,22 +186,32 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 }
 
 function getAttributes(row: OptRow, index: number) {
-  if (
-    row._attributes &&
-    typeof row._attributes.disabled === 'boolean' &&
-    isUndefined(row._attributes.checkDisabled)
-  ) {
-    row._attributes.checkDisabled = row._attributes.disabled;
-  }
-
-  // @TODO className: {row, column}
-  return reactive({
+  const defaultAttr = {
     rowNum: index + 1,
     checked: false,
     disabled: false,
     checkDisabled: false,
-    ...row._attributes
-  });
+    className: {
+      row: [],
+      column: {}
+    }
+  };
+
+  if (row._attributes) {
+    if (isBoolean(row._attributes.disabled) && isUndefined(row._attributes.checkDisabled)) {
+      row._attributes.checkDisabled = row._attributes.disabled;
+    }
+
+    if (!isUndefined(row._attributes.className)) {
+      row._attributes.className = {
+        row: [],
+        column: {},
+        ...row._attributes.className
+      };
+    }
+  }
+
+  return reactive({ ...defaultAttr, ...row._attributes });
 }
 
 export function createRawRow(row: OptRow, index: number, defaultValues: Column['defaultValues']) {

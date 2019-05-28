@@ -53,7 +53,7 @@ let messageMap: MessageMapType = {};
 /**
  * Flatten message map
  * @param {object} data - Messages
- * @returns {object} Flatten message object (key foramt is 'key.subKey')
+ * @returns {object} Flatten message object (key format is 'key.subKey')
  * @ignore
  */
 function flattenMessageMap(data: OptI18nData = {}): MessageMapType {

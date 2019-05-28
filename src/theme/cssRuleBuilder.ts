@@ -1,5 +1,6 @@
 import { OptScrollbarStyle, OptCellStyle } from './../types.d';
 import { cls, ClassNameType } from '../helper/dom';
+import { isBoolean } from '../helper/common';
 
 /**
  * create css rule string and returns it
@@ -57,12 +58,12 @@ class CSSRuleBuilder {
     const horizontal = options.showHorizontalBorder;
     let value: '1px' | '0';
 
-    if (typeof vertical === 'boolean') {
+    if (isBoolean(vertical)) {
       value = vertical ? '1px' : '0';
       this.add('border-left-width', value).add('border-right-width', value);
     }
 
-    if (typeof horizontal === 'boolean') {
+    if (isBoolean(horizontal)) {
       value = horizontal ? '1px' : '0';
       this.add('border-top-width', value).add('border-bottom-width', value);
     }
@@ -80,7 +81,7 @@ class CSSRuleBuilder {
     const vertical = options.showVerticalBorder;
     let value: 'solid' | 'hidden';
 
-    if (typeof vertical === 'boolean' && position) {
+    if (isBoolean(vertical) && position) {
       value = vertical ? 'solid' : 'hidden';
 
       this.add(`border-${position}-style`, value);

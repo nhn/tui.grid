@@ -63,7 +63,7 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { disabled, editable, invalidState },
+      renderData: { disabled, editable, invalidState, className },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled
     } = this.props;
@@ -81,7 +81,7 @@ export class BodyCellComp extends Component<Props> {
       <td
         {...attrs}
         style={style}
-        class={cls(
+        class={`${cls(
           'cell',
           'cell-has-input',
           [editable, 'cell-editable'],
@@ -89,7 +89,7 @@ export class BodyCellComp extends Component<Props> {
           [validation.required || false, 'cell-required'],
           [!!invalidState, 'cell-invalid'],
           [disabled || allDisabled, 'cell-disabled']
-        )}
+        )} ${className}`}
         ref={(el) => {
           this.el = el;
         }}

@@ -37,3 +37,12 @@ Cypress.Commands.add('createGrid', (gridOptions, elementStyle = {}) => {
 Cypress.Commands.add('gridInstance', () => {
   return cy.window().its('grid');
 });
+
+Cypress.Commands.add('createStyle', (style = '') => {
+  return cy.window().then((win) => {
+    const { document } = win;
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = style;
+    document.head.appendChild(styleElement);
+  });
+});

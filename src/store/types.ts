@@ -31,7 +31,7 @@ export interface RowAttributes {
   checked: boolean;
   disabled: boolean;
   checkDisabled: boolean;
-  className?: { row: string[]; column: Dictionary<string[]> };
+  className: { row: string[]; column: Dictionary<string[]> };
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -64,6 +64,7 @@ export interface CellRenderData {
   postfix: string;
   value: CellValue;
   editorOptions: Dictionary<any>;
+  className: string;
 }
 
 export interface ViewRow {
