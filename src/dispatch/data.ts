@@ -220,10 +220,10 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const classNameMap = row._attributes.className;
-    const isExist = includes(classNameMap.row, className);
+    const rowClassMap = row._attributes.className.row;
+    const isExist = includes(rowClassMap, className);
     if (!isExist) {
-      row._attributes.className.row.push(className);
+      rowClassMap.push(className);
       notify(row._attributes, 'className');
     }
   }
@@ -232,7 +232,6 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
-
   if (row) {
     removeArrayItem(className, row._attributes.className.row);
     notify(row._attributes, 'className');
@@ -270,11 +269,11 @@ export function removeCellClassName(
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
   if (row) {
-    const classNameMap = row._attributes.className;
-    if (isUndefined(classNameMap.column[columnName])) {
+    const columnClassMap = row._attributes.className.column;
+    if (isUndefined(columnClassMap[columnName])) {
       return;
     }
-    removeArrayItem(className, row._attributes.className.column[columnName]);
+    removeArrayItem(className, columnClassMap[columnName]);
     notify(row._attributes, 'className');
   }
 }
