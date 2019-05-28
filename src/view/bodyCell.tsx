@@ -60,7 +60,7 @@ export class BodyCellComp extends Component<Props> {
       // Use setTimeout to wait until the DOM element is actually mounted
       //  - The requestAnimationFrame causes unexpected behavior if the width of grid is 'auto'
       //  - because the callback function is called before the actual width of grid is calculated
-      window.setTimeout(() => refreshRowHeight(this.el.scrollHeight));
+      window.setTimeout(() => refreshRowHeight(rendererEl.clientHeight));
     }
   }
 

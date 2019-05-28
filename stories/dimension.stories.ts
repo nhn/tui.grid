@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
+import { OptGrid, OptRow } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
@@ -21,6 +21,8 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   el.style.width = '800px';
 
   const grid = new Grid({ el, ...options });
+
+  (window as any).grid = grid;
 
   return { el, grid };
 }
@@ -44,6 +46,18 @@ stories.add('bodyHeight: 500', () => {
 
 stories.add('rowHeight: 70', () => {
   return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
+});
+
+stories.add('rowHeight: custom', () => {
+  const myData: OptRow[] = data.map((row) => ({ ...row })).slice(0, 5);
+  myData[0]._attributes = {
+    height: 100
+  };
+  myData[2]._attributes = {
+    height: 200
+  };
+
+  return createGrid({ data: myData, columns, bodyHeight: 500 }).el;
 });
 
 stories.add('rowHeight: auto', () => {

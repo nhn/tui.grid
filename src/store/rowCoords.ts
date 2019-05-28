@@ -1,22 +1,22 @@
-import { Data, Dimension, RowCoords } from './types';
+import { Data, Dimension, RowCoords, Row, RowAttributes } from './types';
 import { observable } from '../helper/observable';
+import { isNumber } from '../helper/common';
 
 interface RowCoordsOption {
   data: Data;
   dimension: Dimension;
 }
 
-export function create({ data, dimension }: RowCoordsOption): RowCoords {
-  return observable({
-    get heights() {
-      const heights = [];
-      const { rowHeight, minRowHeight } = dimension;
-      for (let i = 0, len = data.viewData.length; i < len; i += 1) {
-        heights[i] = Math.max(rowHeight, minRowHeight);
-      }
+export function getRowHeight(row: Row, defaultRowHeight: number) {
+  const { height } = row._attributes;
+  return isNumber(height) ? height : defaultRowHeight;
+}
 
-      return heights;
-    },
+export function create({ data, dimension }: RowCoordsOption): RowCoords {
+  const { rowHeight } = dimension;
+
+  return observable({
+    heights: data.rawData.map((row) => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];

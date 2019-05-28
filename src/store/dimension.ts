@@ -1,6 +1,7 @@
-import { observable } from '../helper/observable';
-import { Dimension, Column, SummaryPosition, RowCoords } from './types';
 import { OptGrid } from '../types';
+import { Dimension, Column, SummaryPosition, RowCoords } from './types';
+import { observable } from '../helper/observable';
+import { isNumber } from '../helper/common';
 
 type OptDimension = {
   column: Column;
@@ -38,8 +39,8 @@ export function create({
     bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
     autoHeight: bodyHeight === 'auto',
     fitToParentHeight: bodyHeight === 'fitToParent',
-    rowHeight: typeof rowHeight === 'number' ? Math.max(rowHeight, minRowHeight) : 0,
     minRowHeight,
+    rowHeight: isNumber(rowHeight) ? Math.max(rowHeight, minRowHeight) : minRowHeight,
     autoRowHeight: rowHeight === 'auto',
     scrollX,
     scrollY,

@@ -24,8 +24,3 @@ export function setOffsetTop({ dimension }: Store, offsetTop: number) {
 export function setOffsetLeft({ dimension }: Store, offsetLeft: number) {
   dimension.offsetLeft = offsetLeft;
 }
-
-export function setRowHeight({ rowCoords }: Store, rowIndex: number, rowHeight: number) {
-  rowCoords.heights[rowIndex] = rowHeight;
-  notify(rowCoords, 'heights');
-}

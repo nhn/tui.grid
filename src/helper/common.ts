@@ -226,6 +226,10 @@ export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
 }
 
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
 }

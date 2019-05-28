@@ -32,6 +32,7 @@ export interface RowAttributes {
   disabled: boolean;
   checkDisabled: boolean;
   className: { row: string[]; column: Dictionary<string[]> };
+  height?: number;
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];

@@ -21,6 +21,7 @@ import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
 import { notify } from '../helper/observable';
+import { getRowHeight } from '../store/rowCoords';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -178,8 +179,13 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-export function appendRow({ data, column }: Store, row: OptRow, options: OptAppendRow) {
+export function appendRow(
+  { data, column, rowCoords, dimension }: Store,
+  row: OptRow,
+  options: OptAppendRow
+) {
   const { rawData, viewData } = data;
+  const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
 
@@ -188,9 +194,11 @@ export function appendRow({ data, column }: Store, row: OptRow, options: OptAppe
 
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
+  heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(rowCoords, 'heights');
 }
 
 export function removeRow({ data }: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -276,4 +284,13 @@ export function removeCellClassName(
     removeArrayItem(className, columnClassMap[columnName]);
     notify(row._attributes, 'className');
   }
+}
+
+export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
+  // const {rawData} = data;
+  data.rawData[rowIndex]._attributes.height = rowHeight;
+  rowCoords.heights[rowIndex] = rowHeight;
+
+  // data.heights[rowIndex] = rowHeight;
+  notify(rowCoords, 'heights');
 }
