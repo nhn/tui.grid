@@ -15,7 +15,7 @@ interface ComputedProp<T> {
 
 export type Observable<T extends Dictionary<any>> = T & {
   __storage__: T;
-  __propHandlerIdMap__: Dictionary<Function[]>;
+  __propObserverIdSetMap__: Dictionary<BooleanSet>;
 };
 
 const generateObserverId = (() => {
@@ -29,7 +29,7 @@ const generateObserverId = (() => {
 // store all observer info
 const observerInfoMap: Dictionary<ObserverInfo> = {};
 
-// observer observerId stack for managing recursive observing calls
+// observerId stack for managing recursive observing calls
 const observerIdStack: string[] = [];
 
 function isObservable<T>(resultObj: T): resultObj is Observable<T> {
@@ -116,7 +116,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 
   Object.defineProperties(resultObj, {
     __storage__: { value: storage },
-    __propHandlerIdMap__: { value: propObserverIdSetMap }
+    __propObserverIdSetMap__: { value: propObserverIdSetMap }
   });
 
   computedProps.forEach(({ key, getter }) => {
@@ -131,7 +131,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
-    Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((observerId) => {
+    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
       callObserver(observerId);
     });
   }
