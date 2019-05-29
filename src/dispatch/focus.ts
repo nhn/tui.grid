@@ -41,11 +41,6 @@ export function changeFocus(
     return;
   }
 
-  focus.prevColumnName = focus.columnName;
-  focus.prevRowKey = focus.rowKey;
-  focus.rowKey = rowKey;
-  focus.columnName = columnName;
-
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({
     rowKey,
@@ -55,4 +50,11 @@ export function changeFocus(
   });
 
   eventBus.trigger('focusChange', gridEvent);
+
+  if (!gridEvent.isStopped()) {
+    focus.prevColumnName = focus.columnName;
+    focus.prevRowKey = focus.rowKey;
+    focus.rowKey = rowKey;
+    focus.columnName = columnName;
+  }
 }

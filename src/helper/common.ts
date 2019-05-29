@@ -103,6 +103,7 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map((item) => item[propName]);
 }
 
+// @TODO: 이름 변경 필요
 export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
   const resultObj = { ...(targetObj as T1 & T2) };
 
@@ -119,6 +120,20 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
   }
 
   return resultObj;
+}
+
+export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+  for (const prop of Object.keys(obj)) {
+    if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
+      if (Array.isArray(obj[prop])) {
+        targetObj[prop] = obj[prop];
+      } else {
+        targetObj[prop] = assign(targetObj[prop], obj[prop]);
+      }
+    } else {
+      targetObj[prop] = obj[prop];
+    }
+  }
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {

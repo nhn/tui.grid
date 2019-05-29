@@ -34,9 +34,10 @@ export function createEventBus(id: number) {
 
     trigger(eventName: string, gridEvent: GridEvent) {
       const instance = getInstance(id);
+      gridEvent.setInstance(instance);
       if (eventMap[eventName]) {
         eventMap[eventName].forEach((func) => {
-          func({ instance, ...gridEvent.data });
+          func(gridEvent);
         });
       }
     }

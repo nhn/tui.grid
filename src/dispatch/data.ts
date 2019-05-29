@@ -24,6 +24,7 @@ import { notify } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { getEventBus } from '../event/eventBus';
 import { changeSelectionRange } from './selection';
+import GridEvent from '../event/gridEvent';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -75,6 +76,7 @@ export function setColumnValues(store: Store, columnName: string, value: CellVal
 export function check(store: Store, rowKey: RowKey) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
   const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
 
   /**
    * Occurs when a checkbox in row header is checked
@@ -82,7 +84,7 @@ export function check(store: Store, rowKey: RowKey) {
    * @property {number | string} rowKey - rowKey of the checked row
    * @property {Grid} instance - Current grid instance
    */
-  eventBus.trigger('check', rowKey);
+  eventBus.trigger('check', gridEvent);
 
   if (rendererOptions.inputType === 'radio') {
     setAllRowAttribute(store, 'checked', false);
@@ -92,6 +94,7 @@ export function check(store: Store, rowKey: RowKey) {
 
 export function uncheck(store: Store, rowKey: RowKey) {
   const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
 
   /**
    * Occurs when a checkbox in row header is unchecked
@@ -99,7 +102,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
    * @property {number | string} rowKey - rowKey of the unchecked row
    * @property {Grid} instance - Current grid instance
    */
-  eventBus.trigger('uncheck', rowKey);
+  eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
 }

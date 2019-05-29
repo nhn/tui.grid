@@ -108,15 +108,17 @@ export class ContainerComp extends Component<Props> {
      */
     eventBus.trigger('mousedown', gridEvent);
 
-    dispatch('setNavigating', true);
-    if (!editing) {
-      event.preventDefault();
+    if (!gridEvent.isStopped()) {
+      dispatch('setNavigating', true);
+      if (!editing) {
+        event.preventDefault();
+      }
+
+      const { top, left } = el.getBoundingClientRect();
+
+      dispatch('setOffsetTop', top + el.scrollTop);
+      dispatch('setOffsetLeft', left + el.scrollLeft);
     }
-
-    const { top, left } = el.getBoundingClientRect();
-
-    dispatch('setOffsetTop', top + el.scrollTop);
-    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   private handleDblClick = (event: MouseEvent) => {
@@ -142,15 +144,17 @@ export class ContainerComp extends Component<Props> {
      */
     eventBus.trigger('dblClick', gridEvent);
 
-    if (address) {
-      const { rowKey, columnName } = address;
-      dispatch('startEditing', rowKey, columnName);
+    if (!gridEvent.isStopped()) {
+      if (address) {
+        const { rowKey, columnName } = address;
+        dispatch('startEditing', rowKey, columnName);
+      }
+
+      const { top, left } = el.getBoundingClientRect();
+
+      dispatch('setOffsetTop', top + el.scrollTop);
+      dispatch('setOffsetLeft', left + el.scrollLeft);
     }
-
-    const { top, left } = el.getBoundingClientRect();
-
-    dispatch('setOffsetTop', top + el.scrollTop);
-    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   public componentDidMount() {

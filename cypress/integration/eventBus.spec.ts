@@ -1,9 +1,10 @@
 import { cls } from '@/helper/dom';
+import GridEvent from '@/event/gridEvent';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name' }, { name: 'age' }];
 
-describe('click / mouseover / mousedown / mouseout / dblClick', () => {
+describe('mouse', () => {
   before(() => {
     cy.visit('/dist');
     cy.document().then((doc) => {
@@ -26,6 +27,8 @@ describe('click / mouseover / mousedown / mouseout / dblClick', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'click');
   });
 
   it('mouseover', () => {
@@ -37,6 +40,8 @@ describe('click / mouseover / mousedown / mouseout / dblClick', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'mouseover');
   });
 
   it('mousedown', () => {
@@ -48,6 +53,22 @@ describe('click / mouseover / mousedown / mouseout / dblClick', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'mousedown');
+  });
+
+  it('mousedown stop', () => {
+    cy.gridInstance().invoke('on', 'mousedown', (ev: GridEvent) => {
+      ev.stop();
+    });
+
+    cy.getCell(1, 'age')
+      .trigger('mousedown')
+      .then(() => {
+        cy.get(`${cls('layer-focus')}`).should('not.exist');
+      });
+
+    cy.gridInstance().invoke('off', 'mousedown');
   });
 
   it('mouseout', () => {
@@ -59,6 +80,8 @@ describe('click / mouseover / mousedown / mouseout / dblClick', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'mouseout');
   });
 
   it('dblClick', () => {
@@ -70,6 +93,8 @@ describe('click / mouseover / mousedown / mouseout / dblClick', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'dblClick');
   });
 });
 
@@ -88,6 +113,8 @@ describe('focus / selection', () => {
       .then(() => {
         expect(callback).to.be.calledTwice;
       });
+
+    cy.gridInstance().invoke('off', 'focusChange');
   });
 
   it('focus change by api', () => {
@@ -105,6 +132,22 @@ describe('focus / selection', () => {
       .then(() => {
         expect(callback).to.be.calledTwice;
       });
+
+    cy.gridInstance().invoke('off', 'focusChange');
+  });
+
+  it('focus stop', () => {
+    cy.gridInstance().invoke('on', 'focusChange', (ev: GridEvent) => {
+      ev.stop();
+    });
+
+    cy.getCell(0, 'name')
+      .click()
+      .then(() => {
+        cy.get(`${cls('layer-focus')}`).should('not.exist');
+      });
+
+    cy.gridInstance().invoke('off', 'focusChange');
   });
 
   it('selection by api', () => {
@@ -117,12 +160,13 @@ describe('focus / selection', () => {
       .then(() => {
         expect(callback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'selection');
   });
 });
 
 describe('check / uncheck', () => {
   before(() => {
-    cy.visit('/dist');
     cy.document().then((doc) => {
       doc.body.innerHTML = '';
     });
@@ -139,7 +183,7 @@ describe('check / uncheck', () => {
     const uncheckCallback = cy.stub();
 
     cy.gridInstance().invoke('on', 'check', checkCallback);
-    cy.gridInstance().invoke('on', 'check', uncheckCallback);
+    cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
 
     cy.get(`.${cls('cell-row-header')}`)
       .get('input')
@@ -152,5 +196,8 @@ describe('check / uncheck', () => {
       .then(() => {
         expect(uncheckCallback).to.be.called;
       });
+
+    cy.gridInstance().invoke('off', 'check');
+    cy.gridInstance().invoke('off', 'uncheck');
   });
 });
