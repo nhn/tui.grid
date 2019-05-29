@@ -1,8 +1,8 @@
-import { Store, Range, SelectionRange, Selection } from '../store/types';
 import { clamp } from '../helper/common';
 import { getEventBus } from '../event/eventBus';
 import { isSameInputRange } from '../helper/selection';
 import GridEvent from '../event/gridEvent';
+import { Store, Range, SelectionRange, Selection } from '../store/types';
 
 export function changeSelectionRange(
   selection: Selection,

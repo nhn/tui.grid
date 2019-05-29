@@ -14,9 +14,9 @@ interface GridEventProps {
   range?: SelectionRange | null;
 }
 
-function getTargetInfo(event: MouseEvent) {
+function getTargetInfo(nativeEvent: MouseEvent) {
   let targetType: TargetType = 'etc';
-  const target = event.target as HTMLElement;
+  const target = nativeEvent.target as HTMLElement;
   let cell = findParentByTagName(target, 'td');
   let rowKey, columnName;
 
@@ -44,7 +44,7 @@ function getTargetInfo(event: MouseEvent) {
   }
 
   return pruneObject({
-    nativeEvent: event,
+    nativeEvent,
     targetType,
     rowKey,
     columnName

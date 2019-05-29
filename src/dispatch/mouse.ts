@@ -1,11 +1,10 @@
-import { Store, Side, Dimension, Selection, Viewport, SelectionRange } from '../store/types';
-import { findOffsetIndex, isNull } from '../helper/common';
+import { findOffsetIndex } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
-import { isSameInputRange } from '../helper/selection';
+import { Store, Side, Dimension, Selection, Viewport, SelectionRange } from '../store/types';
 
-export function setNavigating({ focus, id }: Store, navigating: boolean) {
+export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
 }
 
@@ -197,7 +196,7 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
     id
   } = store;
   const { pageX, pageY } = eventInfo;
-  const { inputRange } = selection;
+  const { inputRange: curInputRange } = selection;
 
   let startRowIndex, startColumnIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
@@ -206,20 +205,20 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
   const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
 
-  if (inputRange === null) {
+  if (curInputRange === null) {
     startRowIndex = rowIndex;
     startColumnIndex = columnIndex;
   } else {
-    startRowIndex = inputRange.row[0];
-    startColumnIndex = inputRange.column[0];
+    startRowIndex = curInputRange.row[0];
+    startColumnIndex = curInputRange.column[0];
   }
 
-  const adjustedInputRange: SelectionRange = {
+  const inputRange: SelectionRange = {
     row: [startRowIndex, rowIndex],
     column: [startColumnIndex, columnIndex]
   };
 
-  changeSelectionRange(selection, adjustedInputRange, id);
+  changeSelectionRange(selection, inputRange, id);
 }
 
 export function dragMoveBody(store: Store, eventInfo: MouseEvent) {
