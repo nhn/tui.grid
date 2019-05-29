@@ -6,11 +6,22 @@ import Grid from '../grid';
 // @TODO: 가이드하기. rowHead -> rowHeader / columnHead -> columnHeader
 type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 
+interface GridEventProps {
+  event?: MouseEvent;
+  rowKey?: RowKey | null;
+  columnName?: string | null;
+  prevRowKey?: RowKey | null;
+  prevColumnName?: string | null;
+  range?: SelectionRange | null;
+}
+
 interface TargetInfo {
-  nativeEvent?: Event;
+  nativeEvent?: MouseEvent;
   targetType?: TargetType;
   rowKey?: RowKey;
   columnName?: string;
+  prevRowKey?: RowKey;
+  prevColumnName?: string;
   instance?: Grid;
   columnNames?: string[];
   rowKeys?: RowKey[];
@@ -19,17 +30,15 @@ interface TargetInfo {
   requestParameter?: string;
   descendantRowKeys?: RowKey[];
   responseData?: object;
-  prevRowKey?: RowKey;
-  prevColumnName?: string;
   range?: SelectionRange;
 }
 
 export default class GridEvent {
   private stopped = false;
 
-  public data: TargetInfo;
+  public data: TargetInfo = {};
 
-  private getTargetInfo(event: Event) {
+  private getTargetInfo(event: MouseEvent) {
     let targetType: TargetType = 'etc';
     const target = event.target as HTMLElement;
     let cell = findParentByTagName(target, 'td');
@@ -66,8 +75,13 @@ export default class GridEvent {
     });
   }
 
-  public constructor(event: Event, el?: HTMLElement) {
-    this.data = this.getTargetInfo(event);
+  public constructor({ event, ...props }: GridEventProps) {
+    if (event) {
+      this.data = this.getTargetInfo(event);
+    }
+    if (props) {
+      this.data = deepAssign(this.data, props);
+    }
   }
 
   public stop() {

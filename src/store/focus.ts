@@ -13,6 +13,8 @@ export function create({ column, data, rowCoords, columnCoords }: FocusOption): 
   return observable({
     rowKey: null,
     columnName: null,
+    prevRowKey: null,
+    prevColumnName: null,
     editingAddress: null,
     navigating: false,
     get side(this: Focus) {

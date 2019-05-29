@@ -36,9 +36,9 @@ type Props = OwnProps & StoreProps & DispatchProps;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private handleMouseover = (ev: MouseEvent) => {
+  private handleMouseover = (event: MouseEvent) => {
     const { eventBus } = this.props;
-    const gridEvent = new GridEvent(ev);
+    const gridEvent = new GridEvent({ event });
 
     /**
      * Occurs when a mouse pointer is moved onto the Grid.
@@ -53,9 +53,9 @@ export class ContainerComp extends Component<Props> {
     eventBus.trigger('mouseover', gridEvent);
   };
 
-  private handleClick = (ev: MouseEvent) => {
+  private handleClick = (event: MouseEvent) => {
     const { eventBus } = this.props;
-    const gridEvent = new GridEvent(ev);
+    const gridEvent = new GridEvent({ event });
 
     /**
      * Occurs when a mouse button is clicked on the Grid.
@@ -70,9 +70,9 @@ export class ContainerComp extends Component<Props> {
     eventBus.trigger('click', gridEvent);
   };
 
-  private handleMouseout = (ev: MouseEvent) => {
+  private handleMouseout = (event: MouseEvent) => {
     const { eventBus } = this.props;
-    const gridEvent = new GridEvent(ev);
+    const gridEvent = new GridEvent({ event });
 
     /**
      * Occurs when a mouse pointer is moved off from the Grid.
@@ -87,14 +87,14 @@ export class ContainerComp extends Component<Props> {
     eventBus.trigger('mouseout', gridEvent);
   };
 
-  private handleMouseDown = (ev: MouseEvent) => {
+  private handleMouseDown = (event: MouseEvent) => {
     if (!this.el) {
       return;
     }
 
     const { dispatch, editing, eventBus } = this.props;
     const { el } = this;
-    const gridEvent = new GridEvent(ev);
+    const gridEvent = new GridEvent({ event });
 
     /**
      * Occurs when a mouse button is downed on the Grid.
@@ -110,7 +110,7 @@ export class ContainerComp extends Component<Props> {
 
     dispatch('setNavigating', true);
     if (!editing) {
-      ev.preventDefault();
+      event.preventDefault();
     }
 
     const { top, left } = el.getBoundingClientRect();
@@ -119,16 +119,16 @@ export class ContainerComp extends Component<Props> {
     dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
-  private handleDblClick = (ev: MouseEvent) => {
+  private handleDblClick = (event: MouseEvent) => {
     if (!this.el) {
       return;
     }
 
     const { el } = this;
     const { dispatch, eventBus } = this.props;
-    const target = ev.target as HTMLElement;
+    const target = event.target as HTMLElement;
     const address = getCellAddress(target);
-    const gridEvent = new GridEvent(ev);
+    const gridEvent = new GridEvent({ event });
 
     /**
      * Occurs when a mouse button is double clicked on the Grid.

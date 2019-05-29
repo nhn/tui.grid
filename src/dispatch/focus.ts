@@ -1,5 +1,7 @@
-import { Store, RowKey } from '../store/types';
+import { Store, RowKey, Focus } from '../store/types';
 import { findProp } from '../helper/common';
+import { getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 export function startEditing({ focus, column, data }: Store, rowKey: RowKey, columnName: string) {
   const { viewData, disabled } = data;
@@ -27,4 +29,30 @@ export function finishEditing({ focus }: Store, rowKey: RowKey, columnName: stri
     focus.editingAddress = null;
     focus.navigating = true;
   }
+}
+
+export function changeFocus(
+  focus: Focus,
+  rowKey: RowKey | null,
+  columnName: string | null,
+  id: number
+) {
+  if (rowKey === focus.rowKey && columnName === focus.columnName) {
+    return;
+  }
+
+  focus.prevColumnName = focus.columnName;
+  focus.prevRowKey = focus.rowKey;
+  focus.rowKey = rowKey;
+  focus.columnName = columnName;
+
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({
+    rowKey,
+    columnName,
+    prevColumnName: focus.prevColumnName,
+    prevRowKey: focus.prevRowKey
+  });
+
+  eventBus.trigger('focusChange', gridEvent);
 }

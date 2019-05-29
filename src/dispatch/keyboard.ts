@@ -1,12 +1,15 @@
-import { Store, RowKey } from '../store/types';
+import { Store, RowKey, SelectionRange } from '../store/types';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getNextCellIndex } from '../query/keyboard';
+import { changeFocus } from './focus';
+import { changeSelectionRange } from './selection';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
     data: { viewData },
-    column: { visibleColumns }
+    column: { visibleColumns },
+    id
   } = store;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
@@ -17,8 +20,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
 
   focus.navigating = true;
-  focus.rowKey = viewData[nextRowIndex].rowKey;
-  focus.columnName = visibleColumns[nextColumnIndex].name;
+  changeFocus(focus, viewData[nextRowIndex].rowKey, visibleColumns[nextColumnIndex].name, id);
 }
 
 export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
@@ -43,7 +45,8 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data: { viewData },
-    column: { visibleColumns }
+    column: { visibleColumns },
+    id
   } = store;
   let { inputRange: currentInputRange } = selection;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
@@ -76,11 +79,12 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
-
-  selection.inputRange = {
+  const inputRange: SelectionRange = {
     row: [rowStartIndex, nextRowIndex],
     column: [columnStartIndex, nextColumnIndex]
   };
+
+  changeSelectionRange(selection, inputRange, id);
 }
 
 export function removeFocus(store: Store) {
@@ -94,7 +98,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  store.focus.navigating = navigating;
-  store.focus.rowKey = rowKey;
-  store.focus.columnName = columnName;
+  const { focus, id } = store;
+  focus.navigating = navigating;
+
+  changeFocus(store.focus, rowKey, columnName, id);
 }

@@ -1,8 +1,11 @@
-import { Store, Side, Dimension, Selection, Viewport } from '../store/types';
-import { findOffsetIndex } from '../helper/common';
+import { Store, Side, Dimension, Selection, Viewport, SelectionRange } from '../store/types';
+import { findOffsetIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
+import { changeFocus } from './focus';
+import { changeSelectionRange } from './selection';
+import { isSameInputRange } from '../helper/selection';
 
-export function setNavigating({ focus }: Store, navigating: boolean) {
+export function setNavigating({ focus, id }: Store, navigating: boolean) {
   focus.navigating = navigating;
 }
 
@@ -190,7 +193,8 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
     viewport: { scrollTop, scrollLeft },
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
-    selection
+    selection,
+    id
   } = store;
   const { pageX, pageY } = eventInfo;
   const { inputRange } = selection;
@@ -210,10 +214,12 @@ export function selectionUpdate(store: Store, eventInfo: MouseEvent) {
     startColumnIndex = inputRange.column[0];
   }
 
-  selection.inputRange = {
+  const adjustedInputRange: SelectionRange = {
     row: [startRowIndex, rowIndex],
     column: [startColumnIndex, columnIndex]
   };
+
+  changeSelectionRange(selection, adjustedInputRange, id);
 }
 
 export function dragMoveBody(store: Store, eventInfo: MouseEvent) {
@@ -233,7 +239,7 @@ export function dragEndBody({ selection }: Store) {
 }
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: MouseEvent) {
-  const { data, column, columnCoords, rowCoords, focus } = store;
+  const { data, column, columnCoords, rowCoords, focus, id } = store;
   const { pageX, pageY, shiftKey } = eventInfo;
 
   const { side, scrollLeft, scrollTop, left, top } = elementInfo;
@@ -247,8 +253,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   if (shiftKey) {
     selectionUpdate(store, eventInfo);
   } else if (!isRowHeader(columnName)) {
-    focus.rowKey = data.viewData[rowIndex].rowKey;
-    focus.columnName = columnName;
+    changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
     selectionEnd(store);
   }
 }

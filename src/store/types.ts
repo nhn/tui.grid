@@ -243,8 +243,10 @@ export interface Focus {
     columnName: string;
   } | null;
   navigating: boolean;
-  rowKey: RowKey | string | null;
+  rowKey: RowKey | null;
   columnName: string | null;
+  prevRowKey: RowKey | null;
+  prevColumnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;

@@ -1,5 +1,6 @@
 import { removeArrayItem } from '../helper/common';
 import GridEvent from './gridEvent';
+import { getInstance } from '../instance';
 
 const eventBusMap: { [id: number]: EventBus } = {};
 
@@ -32,9 +33,10 @@ export function createEventBus(id: number) {
     },
 
     trigger(eventName: string, gridEvent: GridEvent) {
+      const instance = getInstance(id);
       if (eventMap[eventName]) {
         eventMap[eventName].forEach((func) => {
-          func(gridEvent.data);
+          func({ instance, ...gridEvent.data });
         });
       }
     }

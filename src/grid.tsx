@@ -214,7 +214,6 @@ export default class Grid {
    */
   public selection(range: { start: Range; end: Range }) {
     this.dispatch('setSelection', range);
-    // @TODO: selection event 발생
   }
 
   /**
@@ -250,9 +249,6 @@ export default class Grid {
    * @returns {Boolean} true if focused cell is changed
    */
   public focus(rowKey: RowKey, columnName: string, isScrollable?: boolean) {
-    this.blur();
-    // @TODO: focus change event 발생
-
     this.dispatch('setFocusInfo', rowKey, columnName, true);
     this.dispatch('setScrollToFocus');
 
