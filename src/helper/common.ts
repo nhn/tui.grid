@@ -103,8 +103,7 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map((item) => item[propName]);
 }
 
-// @TODO: 이름 변경 필요
-export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
+export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
   const resultObj = { ...(targetObj as T1 & T2) };
 
   for (const prop of Object.keys(obj)) {
@@ -112,7 +111,7 @@ export function deepAssign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T
       if (Array.isArray(obj[prop])) {
         resultObj[prop] = obj[prop];
       } else {
-        resultObj[prop] = deepAssign(resultObj[prop], obj[prop]);
+        resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
       }
     } else {
       resultObj[prop] = obj[prop];
@@ -128,7 +127,7 @@ export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
       if (Array.isArray(obj[prop])) {
         targetObj[prop] = obj[prop];
       } else {
-        targetObj[prop] = assign(targetObj[prop], obj[prop]);
+        assign(targetObj[prop], obj[prop]);
       }
     } else {
       targetObj[prop] = obj[prop];
@@ -282,10 +281,6 @@ export function debounce(fn: Function, wait: number, immediate = false) {
       fn(...args);
     }
   };
-}
-
-export function isMetaColumn(columnName: string) {
-  return includes(['_button', '_number'], columnName);
 }
 
 export function pruneObject<T>(obj: T) {

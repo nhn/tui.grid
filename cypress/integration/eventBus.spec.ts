@@ -1,11 +1,15 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
+import { isSubsetOf } from '../helper/compare';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name' }, { name: 'age' }];
 
 before(() => {
   cy.visit('/dist');
+});
+
+beforeEach(() => {
   cy.document().then((doc) => {
     doc.body.innerHTML = '';
   });
@@ -24,10 +28,9 @@ it('click', () => {
   cy.get(`.${cls('container')}`)
     .click()
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
+        .to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'click');
 });
 
 it('mouseover', () => {
@@ -37,10 +40,9 @@ it('mouseover', () => {
   cy.get(`.${cls('container')}`)
     .trigger('mouseover')
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
+        .to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'mouseover');
 });
 
 it('mousedown', () => {
@@ -50,10 +52,9 @@ it('mousedown', () => {
   cy.get(`.${cls('container')}`)
     .trigger('mousedown')
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
+        .to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'mousedown');
 });
 
 it('mousedown stop', () => {
@@ -66,8 +67,6 @@ it('mousedown stop', () => {
     .then(() => {
       cy.get(`${cls('layer-focus')}`).should('not.exist');
     });
-
-  cy.gridInstance().invoke('off', 'mousedown');
 });
 
 it('mouseout', () => {
@@ -77,10 +76,9 @@ it('mouseout', () => {
   cy.get(`.${cls('container')}`)
     .trigger('mouseout')
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
+        .to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'mouseout');
 });
 
 it('dblClick', () => {
@@ -90,10 +88,8 @@ it('dblClick', () => {
   cy.get(`.${cls('container')}`)
     .dblclick()
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ targetType: 'etc' }, callback.args[0][0])).to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'dblClick');
 });
 
 it('focus change', () => {
@@ -103,15 +99,23 @@ it('focus change', () => {
   cy.getCell(0, 'name')
     .click()
     .then(() => {
-      expect(callback).to.be.called;
+      expect(
+        isSubsetOf(
+          { rowKey: 0, columnName: 'name', prevRowKey: null, prevColumnName: null },
+          callback.args[0][0]
+        )
+      ).to.be.true;
     });
   cy.getCell(1, 'age')
     .click()
     .then(() => {
-      expect(callback).to.be.calledTwice;
+      expect(
+        isSubsetOf(
+          { rowKey: 1, columnName: 'age', prevRowKey: 0, prevColumnName: 'name' },
+          callback.args[1][0]
+        )
+      ).to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'focusChange');
 });
 
 it('focus change by api', () => {
@@ -121,16 +125,24 @@ it('focus change by api', () => {
   cy.gridInstance()
     .invoke('focus', 0, 'name')
     .then(() => {
-      expect(callback).to.be.called;
+      expect(
+        isSubsetOf(
+          { rowKey: 0, columnName: 'name', prevRowKey: null, prevColumnName: null },
+          callback.args[0][0]
+        )
+      ).to.be.true;
     });
 
   cy.gridInstance()
     .invoke('blur')
     .then(() => {
-      expect(callback).to.be.calledTwice;
+      expect(
+        isSubsetOf(
+          { rowKey: null, columnName: null, prevRowKey: 0, prevColumnName: 'name' },
+          callback.args[1][0]
+        )
+      ).to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'focusChange');
 });
 
 it('focus stop', () => {
@@ -143,8 +155,6 @@ it('focus stop', () => {
     .then(() => {
       cy.get(`${cls('layer-focus')}`).should('not.exist');
     });
-
-  cy.gridInstance().invoke('off', 'focusChange');
 });
 
 it('check / uncheck', () => {
@@ -159,15 +169,12 @@ it('check / uncheck', () => {
     .eq(1)
     .click()
     .then(() => {
-      expect(checkCallback).to.be.called;
+      expect(isSubsetOf({ rowKey: 0 }, checkCallback.args[0][0])).to.be.true;
     })
     .click()
     .then(() => {
-      expect(uncheckCallback).to.be.called;
+      expect(isSubsetOf({ rowKey: 0 }, uncheckCallback.args[0][0])).to.be.true;
     });
-
-  cy.gridInstance().invoke('off', 'check');
-  cy.gridInstance().invoke('off', 'uncheck');
 });
 
 it('selection by api', () => {
@@ -179,8 +186,30 @@ it('selection by api', () => {
   cy.gridInstance()
     .invoke('selection', { start: [0, 0], end: [1, 1] })
     .then(() => {
-      expect(callback).to.be.called;
+      expect(isSubsetOf({ range: { column: [0, 1], row: [0, 1] } }, callback.args[0][0])).to.be
+        .true;
+    });
+});
+
+it('off', () => {
+  const callback1 = cy.stub();
+  const callback2 = cy.stub();
+
+  cy.gridInstance().invoke('on', 'click', callback1);
+  cy.gridInstance().invoke('on', 'click', callback2);
+  cy.gridInstance().invoke('off', 'click', callback1);
+
+  cy.get(`.${cls('container')}`)
+    .click()
+    .then(() => {
+      expect(callback1).not.to.be.called;
+      expect(callback2).to.be.called;
     });
 
-  cy.gridInstance().invoke('off', 'selection');
+  cy.gridInstance().invoke('off', 'click');
+  cy.get(`.${cls('container')}`)
+    .click()
+    .then(() => {
+      expect(callback2).not.to.be.calledTwice;
+    });
 });

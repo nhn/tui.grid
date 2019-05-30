@@ -3,7 +3,7 @@ import { cls } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
-import { deepAssign } from '../../src/helper/common';
+import { deepMergedCopy } from '../../src/helper/common';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -16,7 +16,7 @@ const SCROLLBAR_WIDTH = 17;
 
 function createSummaryOption(
   customOptions: Record<string, unknown> = {},
-  needDeepAssign: boolean = false
+  needDeepMergedCopy: boolean = false
 ) {
   const summary = {
     height: 40,
@@ -33,8 +33,8 @@ function createSummaryOption(
       }
     }
   };
-  const summaryOptions = needDeepAssign
-    ? deepAssign(summary, customOptions)
+  const summaryOptions = needDeepMergedCopy
+    ? deepMergedCopy(summary, customOptions)
     : Object.assign(summary, customOptions);
 
   return summaryOptions as OptSummaryData;

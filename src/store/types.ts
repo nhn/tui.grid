@@ -17,6 +17,8 @@ export type RowKey = number | string;
 
 export type CellIndex = [number, number];
 
+export type GridId = number;
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -298,7 +300,7 @@ export interface Selection {
 }
 
 export interface Store {
-  readonly id: number;
+  readonly id: GridId;
   readonly data: Data;
   readonly column: Column;
   readonly dimension: Dimension;

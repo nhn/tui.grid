@@ -1,6 +1,7 @@
 import { findParentByTagName, getCellAddress } from '../helper/dom';
 import { RowKey, SelectionRange } from '../store/types';
-import { assign, isMetaColumn, pruneObject } from '../helper/common';
+import { assign, pruneObject } from '../helper/common';
+import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
 
 type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
@@ -27,11 +28,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
       rowKey = address.rowKey;
       // eslint-disable-next-line prefer-destructuring
       columnName = address.columnName;
-      if (isMetaColumn(address.columnName)) {
-        targetType = 'rowHeader';
-      } else {
-        targetType = 'cell';
-      }
+      targetType = isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
     } else {
       targetType = 'dummy';
     }
@@ -56,10 +53,10 @@ export default class GridEvent {
 
   public constructor({ event, ...props }: GridEventProps) {
     if (event) {
-      this.setData(getTargetInfo(event));
+      this.assignData(getTargetInfo(event));
     }
     if (props) {
-      this.setData(props);
+      this.assignData(props);
     }
   }
 
@@ -71,7 +68,7 @@ export default class GridEvent {
     return this.stopped;
   }
 
-  public setData(data: GridEventProps) {
+  public assignData(data: GridEventProps) {
     assign(this, data);
   }
 

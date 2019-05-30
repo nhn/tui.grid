@@ -1,6 +1,7 @@
 import { removeArrayItem } from '../helper/common';
 import GridEvent from './gridEvent';
 import { getInstance } from '../instance';
+import { GridId } from '../store/types';
 
 const eventBusMap: { [id: number]: EventBus } = {};
 
@@ -10,33 +11,30 @@ export interface EventBus {
   trigger: Function;
 }
 
-export function createEventBus(id: number) {
-  const eventMap: { [eventName: string]: Function[] } = {};
+export function createEventBus(id: GridId) {
+  const listenersMap: { [eventName: string]: Function[] } = {};
   eventBusMap[id] = {
     on(eventName: string, func: Function) {
-      if (eventMap[eventName]) {
-        eventMap[eventName] = [...eventMap[eventName], func];
-      } else {
-        eventMap[eventName] = [func];
-      }
+      const listeners = listenersMap[eventName];
+      listenersMap[eventName] = listeners ? [...listeners, func] : [func];
     },
 
     off(eventName: string, func?: Function) {
-      const eventList = eventMap[eventName];
-      if (eventList) {
+      const listeners = listenersMap[eventName];
+      if (listeners) {
         if (func) {
-          eventMap[eventName] = removeArrayItem(func, eventList);
+          listenersMap[eventName] = removeArrayItem(func, listeners);
         } else {
-          delete eventMap[eventName];
+          delete listenersMap[eventName];
         }
       }
     },
 
     trigger(eventName: string, gridEvent: GridEvent) {
-      if (eventMap[eventName]) {
+      if (listenersMap[eventName]) {
         const instance = getInstance(id);
         gridEvent.setInstance(instance);
-        eventMap[eventName].forEach((func) => {
+        listenersMap[eventName].forEach((func) => {
           func(gridEvent);
         });
       }
@@ -46,6 +44,6 @@ export function createEventBus(id: number) {
   return eventBusMap[id];
 }
 
-export function getEventBus(id: number) {
+export function getEventBus(id: GridId) {
   return eventBusMap[id];
 }

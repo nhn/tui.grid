@@ -45,8 +45,8 @@ export function changeFocus(
   const gridEvent = new GridEvent({
     rowKey,
     columnName,
-    prevColumnName: focus.prevColumnName,
-    prevRowKey: focus.prevRowKey
+    prevColumnName: focus.columnName,
+    prevRowKey: focus.rowKey
   });
 
   eventBus.trigger('focusChange', gridEvent);
