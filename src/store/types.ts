@@ -161,6 +161,7 @@ export interface SortOptions {
 
 export interface Column {
   frozenCount: number;
+  keyColumnName?: string;
   visibleFrozenCount: number;
   rowHeaderCount: number;
   allColumns: ColumnInfo[];

@@ -65,6 +65,28 @@ stories.add('frozenBorderWidth', () => {
 });
 
 stories.add(
+  'keyColumnName',
+  () => {
+    const myData = data.map((row, idx) => ({
+      ...row,
+      songId: String(idx + 1000)
+    }));
+    const myColumns = [{ name: 'songId', width: 100 }, ...columns];
+
+    const { grid, el } = createGrid({
+      data: myData,
+      columns: myColumns,
+      keyColumnName: 'songId'
+    });
+
+    button(`getValue('1001', 'artist')`, () => alert(grid.getValue('1001', 'artist')));
+
+    return el;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
   'show/hide column',
   () => {
     const { grid, el } = createGrid({
