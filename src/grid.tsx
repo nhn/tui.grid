@@ -179,30 +179,85 @@ export default class Grid {
     themeManager.apply(presetName, extOptions);
   }
 
+  /**
+   * Set language
+   * @static
+   * @param {string} localeCode - Code to set locale messages and
+   *     this is the language or language-region combination (ex: en-US)
+   * @param {Object} [data] - Messages using in Grid
+   * @example
+   * var Grid = tui.Grid; // or require('tui-grid')
+   *
+   * Grid.setLanguage('en'); // default and set English
+   * Grid.setLanguage('ko'); // set Korean
+   * Grid.setLanguage('en-US', { // set new language
+   *      display: {
+   *          noData: 'No data.',
+   *          loadingData: 'Loading data.',
+   *          resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+   *                              'and initialize the width by double-clicking.'
+   *      },
+   *      net: {
+   *          confirmCreate: 'Are you sure you want to create {{count}} data?',
+   *          confirmUpdate: 'Are you sure you want to update {{count}} data?',
+   *          confirmDelete: 'Are you sure you want to delete {{count}} data?',
+   *          confirmModify: 'Are you sure you want to modify {{count}} data?',
+   *          noDataToCreate: 'No data to create.',
+   *          noDataToUpdate: 'No data to update.',
+   *          noDataToDelete: 'No data to delete.',
+   *          noDataToModify: 'No data to modify.',
+   *          failResponse: 'An error occurred while requesting data.\nPlease try again.'
+   *      }
+   * });
+   */
   public static setLanguage(localeCode: string, data?: OptI18nData) {
     i18n.setLanguage(localeCode, data);
   }
 
+  /**
+   * Sets the width of the dimension.
+   * @param {number} width - The width of the dimension
+   */
   public setWidth(width: number) {
     this.dispatch('setWidth', width, false);
   }
 
+  /**
+   * Sets the height of the dimension.
+   * @param {number} height - The height of the dimension
+   */
   public setHeight(height: number) {
     this.dispatch('setHeight', height);
   }
 
+  /**
+   * Sets the height of body-area.
+   * @param {number} value - The number of pixel
+   */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
   }
 
+  /**
+   * Sets the count of frozen columns.
+   * @param {number} count - The count of columns to be frozen
+   */
   public setFrozenColumnCount(count: number) {
     this.dispatch('setFrozenColumnCount', count);
   }
 
+  /**
+   * Hides columns
+   * @param {...string} arguments - Column names to hide
+   */
   public hideColumn(columnName: string) {
     this.dispatch('hideColumn', columnName);
   }
 
+  /**
+   * Shows columns
+   * @param {...string} arguments - Column names to show
+   */
   public showColumn(columnName: string) {
     this.dispatch('showColumn', columnName);
   }
@@ -273,12 +328,24 @@ export default class Grid {
     return false;
   }
 
+  /**
+   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
+   */
   public startEditing(rowKey: RowKey, columnName: string) {
     if (this.focus(rowKey, columnName)) {
       this.dispatch('startEditing', rowKey, columnName);
     }
   }
 
+  /**
+   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * @param {number|string} rowIndex - The index of the row
+   * @param {string} columnIndex - The index of the column
+   * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
+   */
   public startEditingAt(rowIndex: number, columnIndex: number) {
     const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
 
