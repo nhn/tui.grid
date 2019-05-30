@@ -12,7 +12,7 @@ beforeEach(() => {
   });
 });
 
-it('SetValue / onBeforeChange / onAfterChange does not fire if the value is the same as before', () => {
+it('onBeforeChange, onAfterChange does not fire if the value is the same as before', () => {
   const beforeCallback = cy.stub();
   const afterCallback = cy.stub();
   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
@@ -28,6 +28,8 @@ it('SetValue / onBeforeChange / onAfterChange does not fire if the value is the 
 
   cy.createGrid({ data, columns });
 
+  // Click(focus) is not Preferentially occur when double click on cypress test.
+  // So, Explicitly triggers a click.
   cy.getCell(0, 'name')
     .click()
     .trigger('dblclick');
@@ -39,7 +41,7 @@ it('SetValue / onBeforeChange / onAfterChange does not fire if the value is the 
     });
 });
 
-it('onBeforeChange / onAfterChange', () => {
+it('onBeforeChange / onAfterChange must be called with gridEvent object', () => {
   const beforeCallback = cy.stub();
   const afterCallback = cy.stub();
   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
@@ -100,10 +102,6 @@ it('If gridEvent "stop" occurs in beforeChange, setValue does not occur.', () =>
     .then(() => {
       expect(callback).not.to.be.called;
     });
-
-  cy.getCell(0, 'name').within(($el) => {
-    $el.find('content-text');
-  });
 
   cy.getCellContent(0, 'name').should('have.text', 'Lee');
 });
