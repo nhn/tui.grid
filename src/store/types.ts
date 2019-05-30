@@ -75,9 +75,14 @@ export interface ViewRow {
   valueMap: Dictionary<CellRenderData>;
 }
 
-export interface DragData {
+export interface DragStartData {
   pageX: number | null;
   pageY: number | null;
+}
+
+export interface DragData {
+  pageX: number;
+  pageY: number;
 }
 
 export interface SelectionRange {

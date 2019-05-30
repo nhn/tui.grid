@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, ColumnInfo, DragData } from '../store/types';
+import { Side, ColumnInfo, DragData, DragStartData } from '../store/types';
 import { cls, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -41,7 +41,7 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private dragStartData: DragData = {
+  private dragStartData: DragStartData = {
     pageX: null,
     pageY: null
   };
@@ -62,12 +62,16 @@ class BodyAreaComp extends Component<Props> {
     }
 
     const { el } = this;
-    const { pageX, pageY } = ev;
+    const { pageX, pageY, shiftKey } = ev;
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
 
-    dispatch('mouseDownBody', { top, left, scrollTop, scrollLeft, side }, ev);
+    dispatch(
+      'mouseDownBody',
+      { top, left, scrollTop, scrollLeft, side },
+      { pageX, pageY, shiftKey }
+    );
 
     this.dragStartData = { pageX, pageY };
     setCursorStyle('default');
@@ -91,7 +95,8 @@ class BodyAreaComp extends Component<Props> {
   private handleMouseMove = (ev: MouseEvent) => {
     const { pageX, pageY } = ev;
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      this.props.dispatch('dragMoveBody', ev);
+      const dragData: DragData = { pageX, pageY };
+      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
     }
   };
 
