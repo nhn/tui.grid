@@ -3,6 +3,7 @@ import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getNextCellIndex } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
+import { isRowHeader } from '../helper/column';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -18,9 +19,11 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 
   const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-
-  focus.navigating = true;
-  changeFocus(focus, viewData[nextRowIndex].rowKey, visibleColumns[nextColumnIndex].name, id);
+  const nextColumnName = visibleColumns[nextColumnIndex].name;
+  if (!isRowHeader(nextColumnName)) {
+    focus.navigating = true;
+    changeFocus(focus, viewData[nextRowIndex].rowKey, nextColumnName, id);
+  }
 }
 
 export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
@@ -79,12 +82,15 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
-  const inputRange: SelectionRange = {
-    row: [rowStartIndex, nextRowIndex],
-    column: [columnStartIndex, nextColumnIndex]
-  };
+  const nextColumnName = visibleColumns[nextColumnIndex].name;
+  if (!isRowHeader(nextColumnName)) {
+    const inputRange: SelectionRange = {
+      row: [rowStartIndex, nextRowIndex],
+      column: [columnStartIndex, nextColumnIndex]
+    };
 
-  changeSelectionRange(selection, inputRange, id);
+    changeSelectionRange(selection, inputRange, id);
+  }
 }
 
 export function removeFocus(store: Store) {

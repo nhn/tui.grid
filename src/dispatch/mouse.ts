@@ -204,6 +204,7 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
     selection,
+    column: { visibleColumns },
     id
   } = store;
   const { pageX, pageY } = dragData;
@@ -229,6 +230,13 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
+  }
+
+  const startColumnName = visibleColumns[startColumnIndex].name;
+  const nextColumnName = visibleColumns[columnIndex].name;
+
+  if (isRowHeader(nextColumnName) || isRowHeader(startColumnName)) {
+    return;
   }
 
   const inputRange: SelectionRange = {
