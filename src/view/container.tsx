@@ -9,6 +9,8 @@ import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow } from '../store/types';
+import { EventBus, getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -26,6 +28,7 @@ interface StoreProps {
   showLeftSide: boolean;
   disabled: boolean;
   viewData: ViewRow[];
+  eventBus: EventBus;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -33,44 +36,125 @@ type Props = OwnProps & StoreProps & DispatchProps;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private handleMouseDown = (ev: MouseEvent) => {
-    if (!this.el) {
-      return;
-    }
+  private handleMouseover = (event: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent({ event });
 
-    const { dispatch, editing } = this.props;
-    const { el } = this;
-
-    dispatch('setNavigating', true);
-    if (!editing) {
-      ev.preventDefault();
-    }
-
-    const { top, left } = el.getBoundingClientRect();
-
-    dispatch('setOffsetTop', top + el.scrollTop);
-    dispatch('setOffsetLeft', left + el.scrollLeft);
+    /**
+     * Occurs when a mouse pointer is moved onto the Grid.
+     * The properties of the event object include the native MouseEvent object.
+     * @event Grid#mouseover
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mouseover', gridEvent);
   };
 
-  private handleDblClick = (ev: MouseEvent) => {
+  private handleClick = (event: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent({ event });
+
+    /**
+     * Occurs when a mouse button is clicked on the Grid.
+     * The properties of the event object include the native event object.
+     * @event Grid#click
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('click', gridEvent);
+  };
+
+  private handleMouseout = (event: MouseEvent) => {
+    const { eventBus } = this.props;
+    const gridEvent = new GridEvent({ event });
+
+    /**
+     * Occurs when a mouse pointer is moved off from the Grid.
+     * The event object has all properties copied from the native MouseEvent.
+     * @event Grid#mouseout
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number | string} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mouseout', gridEvent);
+  };
+
+  private handleMouseDown = (event: MouseEvent) => {
+    if (!this.el) {
+      return;
+    }
+
+    const { dispatch, editing, eventBus } = this.props;
+    const { el } = this;
+    const gridEvent = new GridEvent({ event });
+
+    /**
+     * Occurs when a mouse button is downed on the Grid.
+     * The event object has all properties copied from the native MouseEvent.
+     * @event Grid#mousedown
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number | string} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('mousedown', gridEvent);
+
+    if (!gridEvent.isStopped()) {
+      dispatch('setNavigating', true);
+      if (!editing) {
+        event.preventDefault();
+      }
+
+      const { top, left } = el.getBoundingClientRect();
+
+      dispatch('setOffsetTop', top + el.scrollTop);
+      dispatch('setOffsetLeft', left + el.scrollLeft);
+    }
+  };
+
+  private handleDblClick = (event: MouseEvent) => {
     if (!this.el) {
       return;
     }
 
     const { el } = this;
-    const { dispatch } = this.props;
-    const target = ev.target as HTMLElement;
+    const { dispatch, eventBus } = this.props;
+    const target = event.target as HTMLElement;
     const address = getCellAddress(target);
+    const gridEvent = new GridEvent({ event });
 
-    if (address) {
-      const { rowKey, columnName } = address;
-      dispatch('startEditing', rowKey, columnName);
+    /**
+     * Occurs when a mouse button is double clicked on the Grid.
+     * The properties of the event object include the native event object.
+     * @event Grid#dblclick
+     * @property {Event} nativeEvent - Event object
+     * @property {string} targetType - Type of event target
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {string} columnName - columnName of the target cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('dblClick', gridEvent);
+
+    if (!gridEvent.isStopped()) {
+      if (address) {
+        const { rowKey, columnName } = address;
+        dispatch('startEditing', rowKey, columnName);
+      }
+
+      const { top, left } = el.getBoundingClientRect();
+
+      dispatch('setOffsetTop', top + el.scrollTop);
+      dispatch('setOffsetLeft', left + el.scrollLeft);
     }
-
-    const { top, left } = el.getBoundingClientRect();
-
-    dispatch('setOffsetTop', top + el.scrollTop);
-    dispatch('setOffsetLeft', left + el.scrollLeft);
   };
 
   public componentDidMount() {
@@ -134,6 +218,9 @@ export class ContainerComp extends Component<Props> {
         class={cls('container', [showLeftSide, 'show-lside-area'])}
         onMouseDown={this.handleMouseDown}
         onDblClick={this.handleDblClick}
+        onClick={this.handleClick}
+        onMouseOut={this.handleMouseout}
+        onMouseOver={this.handleMouseover}
         ref={(el) => {
           this.el = el;
         }}
@@ -167,6 +254,7 @@ export const Container = connect<StoreProps, OwnProps>(
     summaryPosition: dimension.summaryPosition,
     showLeftSide: !!columnCoords.areaWidth.L,
     disabled: data.disabled,
-    viewData: data.viewData
+    viewData: data.viewData,
+    eventBus: getEventBus(id)
   })
 )(ContainerComp);

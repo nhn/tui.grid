@@ -21,6 +21,7 @@ import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
+import { createEventBus, EventBus } from './event/eventBus';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -33,15 +34,19 @@ export default class Grid {
 
   private dispatch: Dispatch;
 
+  private eventBus: EventBus;
+
   public constructor(options: OptGrid) {
     const { el } = options;
     const id = register(this);
 
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
+    const eventBus = createEventBus(id);
 
     this.store = store;
     this.dispatch = dispatch;
+    this.eventBus = eventBus;
 
     // @TODO: Only for Development env
     // eslint-disable-next-line
@@ -209,7 +214,6 @@ export default class Grid {
    */
   public selection(range: { start: Range; end: Range }) {
     this.dispatch('setSelection', range);
-    // @TODO: selection event 발생
   }
 
   /**
@@ -245,9 +249,6 @@ export default class Grid {
    * @returns {Boolean} true if focused cell is changed
    */
   public focus(rowKey: RowKey, columnName: string, isScrollable?: boolean) {
-    this.blur();
-    // @TODO: focus change event 발생
-
     this.dispatch('setFocusInfo', rowKey, columnName, true);
     this.dispatch('setScrollToFocus');
 
@@ -644,5 +645,13 @@ export default class Grid {
    */
   public removeRowClassName(rowKey: RowKey, className: string) {
     this.dispatch('removeRowClassName', rowKey, className);
+  }
+
+  public on(eventName: string, fn: Function) {
+    this.eventBus.on(eventName, fn);
+  }
+
+  public off(eventName: string, fn?: Function) {
+    this.eventBus.off(eventName, fn);
   }
 }

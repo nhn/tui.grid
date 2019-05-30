@@ -1,5 +1,5 @@
 import { presetDefault, clean, striped } from './preset';
-import { deepAssign } from '../helper/common';
+import { deepMergedCopy } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';
 import { OptPreset } from './../types.d';
 import * as styleGen from './styleGenerator';
@@ -127,7 +127,7 @@ export default {
       options = presetOptions['default'];
     }
     if (extOptions) {
-      options = deepAssign(options, extOptions);
+      options = deepMergedCopy(options, extOptions);
     }
 
     setDocumentStyle(options);

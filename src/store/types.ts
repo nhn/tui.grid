@@ -17,6 +17,8 @@ export type RowKey = number | string;
 
 export type CellIndex = [number, number];
 
+export type GridId = number;
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -243,8 +245,10 @@ export interface Focus {
     columnName: string;
   } | null;
   navigating: boolean;
-  rowKey: RowKey | string | null;
+  rowKey: RowKey | null;
   columnName: string | null;
+  prevRowKey: RowKey | null;
+  prevColumnName: string | null;
   readonly side: Side | null;
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;
@@ -296,7 +300,7 @@ export interface Selection {
 }
 
 export interface Store {
-  readonly id: number;
+  readonly id: GridId;
   readonly data: Data;
   readonly column: Column;
   readonly dimension: Dimension;

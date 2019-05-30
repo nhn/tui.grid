@@ -22,6 +22,9 @@ import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
 import { notify } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
+import { getEventBus } from '../event/eventBus';
+import { changeSelectionRange } from './selection';
+import GridEvent from '../event/gridEvent';
 
 export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
@@ -72,6 +75,16 @@ export function setColumnValues(store: Store, columnName: string, value: CellVal
 
 export function check(store: Store, rowKey: RowKey) {
   const { rendererOptions = {} } = store.column.allColumnMap._checked;
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
+
+  /**
+   * Occurs when a checkbox in row header is checked
+   * @event Grid#check
+   * @property {number | string} rowKey - rowKey of the checked row
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('check', gridEvent);
 
   if (rendererOptions.inputType === 'radio') {
     setAllRowAttribute(store, 'checked', false);
@@ -80,6 +93,17 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
+
+  /**
+   * Occurs when a checkbox in row header is unchecked
+   * @event Grid#uncheck
+   * @property {number | string} rowKey - rowKey of the unchecked row
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('uncheck', gridEvent);
+
   setRowAttribute(store, rowKey, 'checked', false);
 }
 
@@ -140,7 +164,7 @@ function applyPasteDataToRawData(
 }
 
 export function paste(store: Store, pasteData: string[][]) {
-  const { selection } = store;
+  const { selection, id } = store;
 
   if (selection.range) {
     pasteData = copyDataToRange(selection.range, pasteData);
@@ -148,7 +172,7 @@ export function paste(store: Store, pasteData: string[][]) {
 
   const rangeToPaste = getRangeToPaste(store, pasteData);
   applyPasteDataToRawData(store, pasteData, rangeToPaste);
-  store.selection.inputRange = rangeToPaste;
+  changeSelectionRange(selection, rangeToPaste, id);
 }
 
 export function setDisabled(store: Store, disabled: boolean) {

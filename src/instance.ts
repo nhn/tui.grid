@@ -1,4 +1,5 @@
 import Grid from './grid';
+import { GridId } from './store/types';
 
 let currentId = 0;
 
@@ -16,6 +17,6 @@ export function register(instance: Grid) {
   return id;
 }
 
-export function getInstance(id: number): Grid {
+export function getInstance(id: GridId): Grid {
   return instanceMap[id];
 }

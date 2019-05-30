@@ -1,4 +1,4 @@
-import { deepAssign } from '../helper/common';
+import { deepMergedCopy } from '../helper/common';
 
 export const presetDefault = {
   selection: {
@@ -102,7 +102,7 @@ export const presetDefault = {
   }
 };
 
-export const clean = deepAssign(presetDefault, {
+export const clean = deepMergedCopy(presetDefault, {
   outline: {
     border: '#eee',
     showVerticalBorder: false
@@ -144,7 +144,7 @@ export const clean = deepAssign(presetDefault, {
   }
 });
 
-export const striped = deepAssign(presetDefault, {
+export const striped = deepMergedCopy(presetDefault, {
   outline: {
     border: '#eee',
     showVerticalBorder: false
