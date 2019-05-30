@@ -8,7 +8,7 @@ import { Clipboard } from './clipboard';
 import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow } from '../store/types';
+import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
@@ -21,6 +21,7 @@ interface StoreProps {
   width: number;
   autoWidth: boolean;
   editing: boolean;
+  editingEvent: EditingEvent;
   scrollXHeight: number;
   fitToParentHeight: boolean;
   summaryHeight: number;
@@ -54,7 +55,7 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleClick = (event: MouseEvent) => {
-    const { eventBus } = this.props;
+    const { eventBus, editingEvent } = this.props;
     const gridEvent = new GridEvent({ event });
 
     /**
@@ -68,6 +69,10 @@ export class ContainerComp extends Component<Props> {
      * @property {Grid} instance - Current grid instance
      */
     eventBus.trigger('click', gridEvent);
+
+    if (!gridEvent.isStopped() && editingEvent === 'click') {
+      this.startEditing(event.target as HTMLElement);
+    }
   };
 
   private handleMouseout = (event: MouseEvent) => {
@@ -126,10 +131,7 @@ export class ContainerComp extends Component<Props> {
       return;
     }
 
-    const { el } = this;
-    const { dispatch, eventBus } = this.props;
-    const target = event.target as HTMLElement;
-    const address = getCellAddress(target);
+    const { eventBus, editingEvent } = this.props;
     const gridEvent = new GridEvent({ event });
 
     /**
@@ -144,18 +146,20 @@ export class ContainerComp extends Component<Props> {
      */
     eventBus.trigger('dblClick', gridEvent);
 
-    if (!gridEvent.isStopped()) {
-      if (address) {
-        const { rowKey, columnName } = address;
-        dispatch('startEditing', rowKey, columnName);
-      }
-
-      const { top, left } = el.getBoundingClientRect();
-
-      dispatch('setOffsetTop', top + el.scrollTop);
-      dispatch('setOffsetLeft', left + el.scrollLeft);
+    if (!gridEvent.isStopped() && editingEvent === 'dblclick') {
+      this.startEditing(event.target as HTMLElement);
     }
   };
+
+  private startEditing(eventTarget: HTMLElement) {
+    const { dispatch } = this.props;
+    const address = getCellAddress(eventTarget);
+
+    if (address) {
+      const { rowKey, columnName } = address;
+      dispatch('startEditing', rowKey, columnName);
+    }
+  }
 
   public componentDidMount() {
     if (this.props.autoWidth) {
@@ -254,6 +258,7 @@ export const Container = connect<StoreProps, OwnProps>(
     summaryPosition: dimension.summaryPosition,
     showLeftSide: !!columnCoords.areaWidth.L,
     disabled: data.disabled,
+    editingEvent: focus.editingEvent,
     viewData: data.viewData,
     eventBus: getEventBus(id)
   })

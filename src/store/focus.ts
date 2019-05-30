@@ -1,4 +1,4 @@
-import { Focus, ColumnCoords, RowCoords, Column, Data } from './types';
+import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './types';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 
@@ -7,15 +7,23 @@ interface FocusOption {
   column: Column;
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
+  editingEvent: EditingEvent;
 }
 
-export function create({ column, data, rowCoords, columnCoords }: FocusOption): Observable<Focus> {
+export function create({
+  column,
+  data,
+  rowCoords,
+  columnCoords,
+  editingEvent
+}: FocusOption): Observable<Focus> {
   return observable({
     rowKey: null,
     columnName: null,
     prevRowKey: null,
     prevColumnName: null,
     editingAddress: null,
+    editingEvent,
     navigating: false,
     get side(this: Focus) {
       if (this.columnName === null) {

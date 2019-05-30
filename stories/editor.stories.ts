@@ -1,11 +1,13 @@
 import { storiesOf } from '@storybook/html';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
+import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
 const stories = storiesOf('Cell Editor', module);
+stories.addDecorator(withKnobs);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -72,12 +74,33 @@ const columns = [
   }
 ];
 
-stories.add('Text / Checkbox', () => {
+stories.add(
+  'Text / Checkbox',
+  () => {
+    const { grid, el } = createGrid({
+      data,
+      columns,
+      columnOptions: { frozenCount: 1 },
+      bodyHeight: 400
+    });
+
+    (window as Window & { grid: Grid }).grid = grid;
+
+    button(`startEditing(1, 'artist')`, () => grid.startEditing(1, 'artist'));
+    button(`startEditingAt(2, 1)`, () => grid.startEditingAt(2, 1));
+
+    return el;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add('with editingEvent:click options', () => {
   const { grid, el } = createGrid({
     data,
     columns,
     columnOptions: { frozenCount: 1 },
-    bodyHeight: 400
+    bodyHeight: 400,
+    editingEvent: 'click'
   });
 
   (window as Window & { grid: Grid }).grid = grid;

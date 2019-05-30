@@ -12,16 +12,18 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Range, Row, InvalidRow } from './store/types';
+import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex } from './helper/common';
+import { findPropIndex, isUndefined, mapProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
+import { getCellAddressByIndex } from './query/data';
+import { isRowHeader } from './helper/column';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -178,30 +180,85 @@ export default class Grid {
     themeManager.apply(presetName, extOptions);
   }
 
+  /**
+   * Set language
+   * @static
+   * @param {string} localeCode - Code to set locale messages and
+   *     this is the language or language-region combination (ex: en-US)
+   * @param {Object} [data] - Messages using in Grid
+   * @example
+   * var Grid = tui.Grid; // or require('tui-grid')
+   *
+   * Grid.setLanguage('en'); // default and set English
+   * Grid.setLanguage('ko'); // set Korean
+   * Grid.setLanguage('en-US', { // set new language
+   *      display: {
+   *          noData: 'No data.',
+   *          loadingData: 'Loading data.',
+   *          resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+   *                              'and initialize the width by double-clicking.'
+   *      },
+   *      net: {
+   *          confirmCreate: 'Are you sure you want to create {{count}} data?',
+   *          confirmUpdate: 'Are you sure you want to update {{count}} data?',
+   *          confirmDelete: 'Are you sure you want to delete {{count}} data?',
+   *          confirmModify: 'Are you sure you want to modify {{count}} data?',
+   *          noDataToCreate: 'No data to create.',
+   *          noDataToUpdate: 'No data to update.',
+   *          noDataToDelete: 'No data to delete.',
+   *          noDataToModify: 'No data to modify.',
+   *          failResponse: 'An error occurred while requesting data.\nPlease try again.'
+   *      }
+   * });
+   */
   public static setLanguage(localeCode: string, data?: OptI18nData) {
     i18n.setLanguage(localeCode, data);
   }
 
+  /**
+   * Sets the width of the dimension.
+   * @param {number} width - The width of the dimension
+   */
   public setWidth(width: number) {
     this.dispatch('setWidth', width, false);
   }
 
+  /**
+   * Sets the height of the dimension.
+   * @param {number} height - The height of the dimension
+   */
   public setHeight(height: number) {
     this.dispatch('setHeight', height);
   }
 
+  /**
+   * Sets the height of body-area.
+   * @param {number} value - The number of pixel
+   */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
   }
 
+  /**
+   * Sets the count of frozen columns.
+   * @param {number} count - The count of columns to be frozen
+   */
   public setFrozenColumnCount(count: number) {
     this.dispatch('setFrozenColumnCount', count);
   }
 
+  /**
+   * Hides columns
+   * @param {...string} arguments - Column names to hide
+   */
   public hideColumn(columnName: string) {
     this.dispatch('hideColumn', columnName);
   }
 
+  /**
+   * Shows columns
+   * @param {...string} arguments - Column names to show
+   */
   public showColumn(columnName: string) {
     this.dispatch('showColumn', columnName);
   }
@@ -245,12 +302,15 @@ export default class Grid {
    * Focus to the cell identified by given rowKey and columnName.
    * @param {Number|String} rowKey - rowKey
    * @param {String} columnName - columnName
-   * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
+   * @param {Boolean} [setScroll=false] - if set to true, move scroll position to focused position
    * @returns {Boolean} true if focused cell is changed
    */
-  public focus(rowKey: RowKey, columnName: string, isScrollable?: boolean) {
+  public focus(rowKey: RowKey, columnName: string, setScroll?: boolean) {
     this.dispatch('setFocusInfo', rowKey, columnName, true);
-    this.dispatch('setScrollToFocus');
+
+    if (setScroll) {
+      this.dispatch('setScrollToFocus');
+    }
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
@@ -260,20 +320,47 @@ export default class Grid {
    * Focus to the cell identified by given rowIndex and columnIndex.
    * @param {Number} rowIndex - rowIndex
    * @param {Number} columnIndex - columnIndex
-   * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+   * @param {boolean} [setScroll=false] - if set to true, scroll to focused cell
    * @returns {Boolean} true if success
    */
   public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean) {
-    let result = false;
+    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
 
-    const { rowKey } = this.store.data.viewData[rowIndex];
-    const { name } = this.store.column.visibleColumns[columnIndex];
-
-    if (typeof rowKey !== 'undefined' && name) {
-      result = this.focus(rowKey, name, isScrollable);
+    if (!isUndefined(rowKey) && columnName) {
+      return this.focus(rowKey, columnName, isScrollable);
     }
+    return false;
+  }
 
-    return result;
+  /**
+   * Makes view ready to get keyboard input.
+   */
+  public activateFocus() {
+    this.dispatch('setNavigating', true);
+  }
+
+  /**
+   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
+   */
+  public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean) {
+    if (this.focus(rowKey, columnName, setScroll)) {
+      this.dispatch('startEditing', rowKey, columnName);
+    }
+  }
+
+  /**
+   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * @param {number|string} rowIndex - The index of the row
+   * @param {string} columnIndex - The index of the column
+   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
+   */
+  public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean) {
+    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
+
+    this.startEditing(rowKey, columnName, setScroll);
   }
 
   /**
@@ -302,6 +389,16 @@ export default class Grid {
     }
 
     return null;
+  }
+
+  /**
+   * Sets the all values in the specified column.
+   * @param {string} columnName - The name of the column
+   * @param {number|string} columnValue - The value to be set
+   * @param {boolean} [checkCellState=true] - If set to true, only editable and not disabled cells will be affected.
+   */
+  public setColumnValues(columnName: string, columnValue: CellValue, checkCellState?: boolean) {
+    this.dispatch('setColumnValues', columnName, columnValue, checkCellState);
   }
 
   /**
@@ -339,6 +436,34 @@ export default class Grid {
       return summary.summaryValues[columnName];
     }
     return null;
+  }
+
+  /**
+   * Returns a list of the column model.
+   * @returns {Array} - A list of the column model.
+   */
+  public getColumns() {
+    return this.store.column.allColumns
+      .filter(({ name }) => !isRowHeader(name))
+      .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+  }
+
+  /**
+   * Returns a list of all values in the specified column.
+   * @param {string} columnName - The name of the column
+   * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
+   */
+  public getColumnValues(columnName: string) {
+    return mapProp(columnName, this.store.data.rawData);
+  }
+
+  /**
+   * Returns the index of the column indentified by the column name.
+   * @param {string} columnName - The unique key of the column
+   * @returns {number} - The index of the column
+   */
+  public getIndexOfColumn(columnName: string) {
+    return findPropIndex('name', columnName, this.store.column.allColumns);
   }
 
   /**
@@ -523,8 +648,7 @@ export default class Grid {
     this.dispatch('appendRow', row, options);
 
     if (options.focus) {
-      const rowIdx =
-        typeof options.at !== 'undefined' ? options.at : this.store.data.rawData.length - 1;
+      const rowIdx = isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
       this.focusAt(rowIdx, 0);
     }
   }

@@ -54,6 +54,7 @@ stories.add(
         ${grid.getFocusedCell().value}
         `);
     });
+    button('activateFocus()', () => grid.activateFocus());
     button('blur()', () => grid.blur());
     button(`focus(1, 'type')`, () => grid.focus(1, 'type'));
     button(`focus(2, 'release')`, () => grid.focus(2, 'release'));

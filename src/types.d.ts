@@ -5,7 +5,8 @@ import {
   SelectionUnit,
   Formatter,
   ClipboardCopyOptions,
-  RowAttributes
+  RowAttributes,
+  EditingEvent
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -22,6 +23,7 @@ export interface OptGrid {
   minRowHeight?: number;
   scrollX?: boolean;
   scrollY?: boolean;
+  editingEvent?: EditingEvent;
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
   selectionUnit?: SelectionUnit;

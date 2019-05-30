@@ -1,17 +1,17 @@
 import { Store, RowKey, Focus } from '../store/types';
-import { findProp } from '../helper/common';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { isCellDisabled } from '../query/data';
+import { isFocusedCell } from '../query/focus';
 
-export function startEditing({ focus, column, data }: Store, rowKey: RowKey, columnName: string) {
-  const { viewData, disabled } = data;
-  const row = findProp('rowKey', rowKey, viewData)!;
-  const rowDisabled = row.valueMap[columnName].disabled;
-  if (disabled || rowDisabled) {
+export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
+  const { data, focus, column } = store;
+
+  if (isCellDisabled(data, rowKey, columnName) || !isFocusedCell(focus, rowKey, columnName)) {
     return;
   }
-  const columnInfo = column.allColumnMap[columnName];
 
+  const columnInfo = column.allColumnMap[columnName];
   if (columnInfo && columnInfo.editor) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
@@ -37,7 +37,7 @@ export function changeFocus(
   columnName: string | null,
   id: number
 ) {
-  if (rowKey === focus.rowKey && columnName === focus.columnName) {
+  if (isFocusedCell(focus, rowKey, columnName)) {
     return;
   }
 

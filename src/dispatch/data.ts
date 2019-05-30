@@ -88,7 +88,13 @@ export function setAllRowAttribute(
   });
 }
 
-export function setColumnValues(store: Store, columnName: string, value: CellValue) {
+export function setColumnValues(
+  store: Store,
+  columnName: string,
+  value: CellValue,
+  checkCellState = false
+) {
+  // @TODO Check Cell State
   store.data.rawData.forEach((targetRow) => {
     targetRow[columnName] = value;
   });

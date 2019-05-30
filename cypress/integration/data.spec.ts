@@ -171,3 +171,37 @@ describe('getters', () => {
       .should('eq', 2);
   });
 });
+
+describe('columns', () => {
+  it('getIndexOfColumn() returns the index of column having given columnName', () => {
+    cy.gridInstance()
+      .invoke('getIndexOfColumn', 'name')
+      .should('eq', 0);
+
+    cy.gridInstance()
+      .invoke('getIndexOfColumn', 'age')
+      .should('eq', 1);
+  });
+
+  it('getColumnValues() returns all values in the given column', () => {
+    cy.gridInstance()
+      .invoke('getColumnValues', 'name')
+      .should('eql', ['Kim', 'Lee']);
+
+    cy.gridInstance()
+      .invoke('getColumnValues', 'age')
+      .should('eql', [10, 20]);
+  });
+
+  it('setColumnValues() sets the all values in the given column', () => {
+    cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
+
+    cy.getCellByIdx(0, 0).should('to.have.text', 'Park');
+    cy.getCellByIdx(1, 0).should('to.have.text', 'Park');
+
+    cy.gridInstance().invoke('setColumnValues', 'age', 30);
+
+    cy.getCellByIdx(0, 1).should('to.have.text', '30');
+    cy.getCellByIdx(1, 1).should('to.have.text', '30');
+  });
+});
