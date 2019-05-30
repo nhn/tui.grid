@@ -142,6 +142,8 @@ export interface ColumnInfo {
   defaultValue?: CellValue;
   sortable?: boolean;
   validation?: Validation;
+  onBeforeChange?: Function;
+  onAfterChange?: Function;
 }
 
 export interface SortOptions {

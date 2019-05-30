@@ -26,11 +26,32 @@ import { getEventBus } from '../event/eventBus';
 import { changeSelectionRange } from './selection';
 import GridEvent from '../event/gridEvent';
 
-export function setValue({ data }: Store, rowKey: RowKey, columnName: string, value: CellValue) {
+export function setValue(
+  { column, data }: Store,
+  rowKey: RowKey,
+  columnName: string,
+  value: CellValue
+) {
   const targetRow = findProp('rowKey', rowKey, data.rawData);
+  if (!targetRow || targetRow[columnName] === value) {
+    return;
+  }
 
-  if (targetRow) {
-    targetRow[columnName] = value;
+  const targetColumn = findProp('name', columnName, column.visibleColumns);
+  let gridEvent = new GridEvent({ rowKey, columnName, value });
+
+  if (targetColumn && targetColumn.onBeforeChange) {
+    targetColumn.onBeforeChange(gridEvent);
+  }
+
+  if (!gridEvent.isStopped()) {
+    if (targetRow) {
+      targetRow[columnName] = value;
+    }
+    if (targetColumn && targetColumn.onAfterChange) {
+      gridEvent = new GridEvent({ rowKey, columnName, value });
+      targetColumn.onAfterChange(gridEvent);
+    }
   }
 }
 
