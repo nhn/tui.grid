@@ -23,7 +23,8 @@ export function createStore(id: number, options: OptGrid): Store {
     copyOptions = {},
     summary: summaryOptions = {},
     selectionUnit = 'cell',
-    showDummyRows = false
+    showDummyRows = false,
+    editingEvent = 'dblclick'
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -50,7 +51,7 @@ export function createStore(id: number, options: OptGrid): Store {
     columnCoords,
     showDummyRows
   });
-  const focus = createFocus({ data, column, columnCoords, rowCoords });
+  const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
 

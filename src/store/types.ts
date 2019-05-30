@@ -19,6 +19,8 @@ export type CellIndex = [number, number];
 
 export type GridId = number;
 
+export type EditingEvent = 'click' | 'dblclick';
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -253,6 +255,7 @@ export interface Focus {
   } | null;
   navigating: boolean;
   rowKey: RowKey | null;
+  editingEvent: EditingEvent;
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;

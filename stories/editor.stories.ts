@@ -84,3 +84,17 @@ stories.add('Text / Checkbox', () => {
 
   return el;
 });
+
+stories.add('with editingEvent:click options', () => {
+  const { grid, el } = createGrid({
+    data,
+    columns,
+    columnOptions: { frozenCount: 1 },
+    bodyHeight: 400,
+    editingEvent: 'click'
+  });
+
+  (window as Window & { grid: Grid }).grid = grid;
+
+  return el;
+});
