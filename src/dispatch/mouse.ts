@@ -204,7 +204,6 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
     selection,
-    column: { visibleColumns },
     id
   } = store;
   const { pageX, pageY } = dragData;
@@ -232,17 +231,12 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
     startColumnIndex = curInputRange.column[0];
   }
 
-  const startColumnName = visibleColumns[startColumnIndex].name;
-  const nextColumnName = visibleColumns[columnIndex].name;
+  const inputRange: SelectionRange = {
+    row: [startRowIndex, rowIndex],
+    column: [startColumnIndex, columnIndex]
+  };
 
-  if (!isRowHeader(nextColumnName) && !isRowHeader(startColumnName)) {
-    const inputRange: SelectionRange = {
-      row: [startRowIndex, rowIndex],
-      column: [startColumnIndex, columnIndex]
-    };
-
-    changeSelectionRange(selection, inputRange, id);
-  }
+  changeSelectionRange(selection, inputRange, id);
 }
 
 export function dragMoveBody(store: Store, dragStartData: DragStartData, dragData: DragData) {
