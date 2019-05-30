@@ -32,6 +32,7 @@ export interface RowAttributes {
   disabled: boolean;
   checkDisabled: boolean;
   className: { row: string[]; column: Dictionary<string[]> };
+  height?: number;
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -200,7 +201,6 @@ export interface Dimension {
   scrollY: boolean;
   readonly contentsWidth: number;
   readonly frozenBorderWidth: number;
-  readonly totalRowHeight: number;
   readonly scrollXHeight: number;
   readonly scrollYWidth: number;
 }
@@ -227,6 +227,7 @@ export interface ColumnCoords {
 export interface RowCoords {
   readonly heights: number[];
   readonly offsets: number[];
+  readonly totalRowHeight: number;
 }
 
 export interface Rect {

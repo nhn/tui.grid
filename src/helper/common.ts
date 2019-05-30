@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -226,6 +224,10 @@ export function isBoolean(value: unknown): value is boolean {
   return typeof value === 'boolean';
 }
 
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
 }
@@ -240,4 +242,25 @@ export function convertToNumber(value: any) {
   }
 
   return Number(value);
+}
+
+export function debounce(fn: Function, wait: number, immediate = false) {
+  let timeout: number | null = null;
+
+  return (...args: any[]) => {
+    const later = function() {
+      timeout = -1;
+      if (!immediate) {
+        fn(...args);
+      }
+    };
+    const callNow = immediate && !timeout;
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = window.setTimeout(later, wait);
+    if (callNow) {
+      fn(...args);
+    }
+  };
 }

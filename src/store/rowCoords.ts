@@ -1,32 +1,36 @@
-import { Data, Dimension, RowCoords } from './types';
+import { Data, Dimension, RowCoords, Row } from './types';
 import { observable } from '../helper/observable';
+import { isNumber, last } from '../helper/common';
 
 interface RowCoordsOption {
   data: Data;
   dimension: Dimension;
 }
 
-export function create({ data, dimension }: RowCoordsOption): RowCoords {
-  return observable({
-    get heights() {
-      const heights = [];
-      const { rowHeight } = dimension;
-      for (let i = 0, len = data.viewData.length; i < len; i += 1) {
-        heights[i] = rowHeight;
-      }
+export function getRowHeight(row: Row, defaultRowHeight: number) {
+  const { height } = row._attributes;
+  return isNumber(height) ? height : defaultRowHeight;
+}
 
-      return heights;
-    },
+export function create({ data, dimension }: RowCoordsOption): RowCoords {
+  const { rowHeight } = dimension;
+
+  return observable({
+    heights: data.rawData.map((row) => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];
-      const { rowHeight } = dimension;
+      const { heights } = this;
 
-      for (let i = 1, len = data.viewData.length; i < len; i += 1) {
-        offsets.push(offsets[i - 1] + rowHeight);
+      for (let i = 1, len = heights.length; i < len; i += 1) {
+        offsets[i] = offsets[i - 1] + heights[i - 1];
       }
 
       return offsets;
+    },
+
+    get totalRowHeight() {
+      return last(this.offsets) + last(this.heights);
     }
   });
 }

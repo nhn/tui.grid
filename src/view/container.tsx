@@ -76,6 +76,9 @@ export class ContainerComp extends Component<Props> {
   public componentDidMount() {
     if (this.props.autoWidth) {
       window.addEventListener('resize', this.syncWithDOMWidth);
+      // In Preact, the componentDidMount is called before the DOM elements are actually mounted.
+      // https://github.com/preactjs/preact/issues/648
+      // Use requestAnimationFrame to wait until the DOM element is actually mounted
       requestAnimationFrame(this.syncWithDOMWidth);
     }
   }

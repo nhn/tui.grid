@@ -120,6 +120,10 @@ describe('getters', () => {
         checkDisabled: false,
         checked: false,
         disabled: false,
+        className: {
+          row: [],
+          column: {}
+        },
         rowNum
       }
     };

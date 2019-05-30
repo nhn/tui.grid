@@ -1,9 +1,9 @@
 import { Store } from './types';
 import { OptGrid } from '../types';
-import { observable } from '..//helper/observable';
+import { observable, observe } from '..//helper/observable';
 import { create as createData } from './data';
 import { create as createColumn } from './columns';
-import { create as createDimension } from './dimension';
+import { create as createDimension, setBodyHeight } from './dimension';
 import { create as createViewport } from './viewport';
 import { create as createColumnCoords } from './columnCoords';
 import { create as createRowCoords } from './rowCoords';
@@ -13,6 +13,7 @@ import { create as createSelection } from './selection';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
+    el,
     width,
     rowHeight,
     bodyHeight,
@@ -29,9 +30,9 @@ export function createStore(id: number, options: OptGrid): Store {
   const column = createColumn(options.columns, columnOptions, rowHeaders, copyOptions);
   const data = createData(options.data || [], column);
   const dimension = createDimension({
-    data,
     column,
     width,
+    domWidth: el.clientWidth,
     rowHeight,
     bodyHeight,
     minBodyHeight,
@@ -52,6 +53,11 @@ export function createStore(id: number, options: OptGrid): Store {
   const focus = createFocus({ data, column, columnCoords, rowCoords });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+
+  // manual observe to resolve circular references
+  observe(() => {
+    setBodyHeight(dimension, rowCoords);
+  });
 
   return observable({
     id,

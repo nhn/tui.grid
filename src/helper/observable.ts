@@ -8,14 +8,9 @@ interface ObserverInfo {
   targetObserverIdSets: BooleanSet[];
 }
 
-interface ComputedProp<T> {
-  key: keyof T;
-  getter: Function;
-}
-
 export type Observable<T extends Dictionary<any>> = T & {
   __storage__: T;
-  __propHandlerIdMap__: Dictionary<Function[]>;
+  __propObserverIdSetMap__: Dictionary<BooleanSet>;
 };
 
 const generateObserverId = (() => {
@@ -29,7 +24,7 @@ const generateObserverId = (() => {
 // store all observer info
 const observerInfoMap: Dictionary<ObserverInfo> = {};
 
-// observer observerId stack for managing recursive observing calls
+// observerId stack for managing recursive observing calls
 const observerIdStack: string[] = [];
 
 function isObservable<T>(resultObj: T): resultObj is Observable<T> {
@@ -70,10 +65,6 @@ export function observe(fn: Function) {
 }
 
 export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
-  const computedProps: ComputedProp<T>[] = [];
-  const storage = {} as T;
-  const propObserverIdSetMap = {} as Dictionary<BooleanSet>;
-
   if (isObservable(obj)) {
     throw new Error('Target object is already Reactive');
   }
@@ -82,25 +73,21 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
     throw new Error('Array object cannot be Reactive');
   }
 
+  const storage = {} as T;
+  const propObserverIdSetMap = {} as Dictionary<BooleanSet>;
   const resultObj = {} as T;
 
-  Object.keys(obj).forEach((key) => {
-    const observerIdSet: BooleanSet = {};
-    const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
+  Object.defineProperties(resultObj, {
+    __storage__: { value: storage },
+    __propObserverIdSetMap__: { value: propObserverIdSetMap }
+  });
 
-    if (typeof getter === 'function') {
-      computedProps.push({ key, getter });
-    } else {
-      storage[key] = obj[key];
-      Object.defineProperty(resultObj, key, {
-        configurable: true,
-        set(value) {
-          setValue(storage, observerIdSet, key, value);
-        }
-      });
-    }
+  Object.keys(obj).forEach((key) => {
+    const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
+    const observerIdSet: BooleanSet = (propObserverIdSetMap[key] = {});
 
     Object.defineProperty(resultObj, key, {
+      configurable: true,
       get() {
         const observerId = last(observerIdStack);
         if (observerId && !observerIdSet[observerId]) {
@@ -111,19 +98,19 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
       }
     });
 
-    propObserverIdSetMap[key] = observerIdSet;
-  });
-
-  Object.defineProperties(resultObj, {
-    __storage__: { value: storage },
-    __propHandlerIdMap__: { value: propObserverIdSetMap }
-  });
-
-  computedProps.forEach(({ key, getter }) => {
-    observe(() => {
-      const value = getter.call(resultObj);
-      setValue(storage, propObserverIdSetMap[key as string], key, value);
-    });
+    if (typeof getter === 'function') {
+      observe(() => {
+        const value = getter.call(resultObj);
+        setValue(storage, observerIdSet, key, value);
+      });
+    } else {
+      storage[key] = obj[key];
+      Object.defineProperty(resultObj, key, {
+        set(value) {
+          setValue(storage, observerIdSet, key, value);
+        }
+      });
+    }
   });
 
   return resultObj as Observable<T>;
@@ -131,7 +118,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
-    Object.keys(obj.__propHandlerIdMap__[key as string]).forEach((observerId) => {
+    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
       callObserver(observerId);
     });
   }

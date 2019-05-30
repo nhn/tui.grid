@@ -1,12 +1,13 @@
-import { Dimension, Column, Data, SummaryPosition } from './types';
-import { observable } from '../helper/observable';
 import { OptGrid } from '../types';
+import { Dimension, Column, SummaryPosition, RowCoords } from './types';
+import { observable } from '../helper/observable';
+import { isNumber } from '../helper/common';
 
 type OptDimension = {
-  data: Data;
   column: Column;
   frozenBorderWidth?: number;
   summaryHeight?: number;
+  domWidth: number;
   summaryPosition?: SummaryPosition;
 } & Pick<
   OptGrid,
@@ -14,9 +15,9 @@ type OptDimension = {
 >;
 
 export function create({
-  data,
   column,
   width = 'auto',
+  domWidth,
   rowHeight = 40,
   bodyHeight = 'auto',
   minRowHeight = 40,
@@ -32,14 +33,14 @@ export function create({
   return observable<Dimension>({
     offsetLeft: 0,
     offsetTop: 0,
-    width: width === 'auto' ? 0 : width,
+    width: width === 'auto' ? domWidth : width,
     autoWidth: width === 'auto',
     minBodyHeight,
     bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
     autoHeight: bodyHeight === 'auto',
     fitToParentHeight: bodyHeight === 'fitToParent',
-    rowHeight: typeof rowHeight === 'number' ? Math.max(rowHeight, minRowHeight) : 0,
     minRowHeight,
+    rowHeight: isNumber(rowHeight) ? Math.max(rowHeight, minRowHeight) : minRowHeight,
     autoRowHeight: rowHeight === 'auto',
     scrollX,
     scrollY,
@@ -50,11 +51,12 @@ export function create({
     tableBorderWidth: 1,
     cellBorderWidth: 1,
 
-    get contentsWidth(this: Dimension) {
-      const columnLen = column.visibleColumns.length;
-      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+    get scrollYWidth() {
+      return this.scrollY ? this.scrollbarWidth : 0;
+    },
 
-      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+    get scrollXHeight() {
+      return this.scrollX ? this.scrollbarWidth : 0;
     },
 
     get frozenBorderWidth(this: Dimension) {
@@ -64,16 +66,20 @@ export function create({
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
-    get totalRowHeight() {
-      return data.viewData.length * this.rowHeight + this.tableBorderWidth;
-    },
+    get contentsWidth(this: Dimension) {
+      const columnLen = column.visibleColumns.length;
+      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
 
-    get scrollXHeight() {
-      return this.scrollX ? this.scrollbarWidth : 0;
-    },
-
-    get scrollYWidth() {
-      return this.scrollY ? this.scrollbarWidth : 0;
+      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
     }
   });
+}
+
+export function setBodyHeight(dimension: Dimension, rowCoords: RowCoords) {
+  const { totalRowHeight } = rowCoords;
+  const { autoHeight, scrollXHeight } = dimension;
+
+  if (autoHeight) {
+    dimension.bodyHeight = totalRowHeight + scrollXHeight;
+  }
 }
