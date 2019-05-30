@@ -172,7 +172,7 @@ describe('getters', () => {
   });
 });
 
-describe.only('columns', () => {
+describe('columns', () => {
   it('getIndexOfColumn() returns the index of column having given columnName', () => {
     cy.gridInstance()
       .invoke('getIndexOfColumn', 'name')
