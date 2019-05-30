@@ -19,9 +19,10 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex } from './helper/common';
+import { findPropIndex, isUndefined } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
+import { getCellAddressByIndex } from './query/data';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -264,16 +265,24 @@ export default class Grid {
    * @returns {Boolean} true if success
    */
   public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean) {
-    let result = false;
+    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
 
-    const { rowKey } = this.store.data.viewData[rowIndex];
-    const { name } = this.store.column.visibleColumns[columnIndex];
-
-    if (typeof rowKey !== 'undefined' && name) {
-      result = this.focus(rowKey, name, isScrollable);
+    if (isUndefined(rowKey) && columnName) {
+      return this.focus(rowKey, columnName, isScrollable);
     }
+    return false;
+  }
 
-    return result;
+  public startEditing(rowKey: RowKey, columnName: string) {
+    if (this.focus(rowKey, columnName)) {
+      this.dispatch('startEditing', rowKey, columnName);
+    }
+  }
+
+  public startEditingAt(rowIndex: number, columnIndex: number) {
+    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
+
+    this.startEditing(rowKey, columnName);
   }
 
   /**
