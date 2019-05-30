@@ -152,6 +152,10 @@ export function create(
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
     },
 
+    get rowHeaderCount() {
+      return rowHeaderInfos.length;
+    },
+
     get visibleColumns() {
       return allColumns.filter(({ hidden }) => !hidden);
     },
@@ -173,10 +177,6 @@ export function create(
 
     get visibleFrozenCount(this: Column) {
       return this.visibleColumnsBySide.L.length;
-    },
-
-    get rowHeaderCount() {
-      return rowHeaderInfos.length;
     },
 
     get validationColumns() {
