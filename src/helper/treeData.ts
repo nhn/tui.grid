@@ -75,13 +75,13 @@ export function flattenTreeData(
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return tree && tree.childrenRowKeys.length === 0;
+  return !!tree && tree.childrenRowKeys.length === 0;
 }
 
 export function isExpanded(row: Row) {
   const { tree } = row._attributes;
 
-  return tree && tree.expanded;
+  return !!tree && tree.expanded;
 }
 
 export function getParentRowKey(row: Row) {

@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
+import { TreeCellContents } from './treeCellContents';
 import { cls, Attributes } from '../helper/dom';
-import { ColumnInfo, ViewRow, CellRenderData, RowKey } from '../store/types';
+import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -20,6 +21,7 @@ interface StoreProps {
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
   disabled: boolean;
+  treeInfo?: TreeCellInfo;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -93,35 +95,50 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { disabled, editable, invalidState, className, tree },
+      renderData: { disabled, editable, invalidState, className },
       columnInfo: { align, valign, name, validation = {} },
-      disabled: allDisabled
+      disabled: allDisabled,
+      treeInfo
     } = this.props;
 
     const style = {
       textAlign: align,
-      ...(valign && { verticalAlign: valign }),
-      ...(tree && { paddingLeft: tree.indentWidth })
+      ...(valign && { verticalAlign: valign })
     };
     const attrs: Attributes = {
       'data-row-key': String(rowKey),
       'data-column-name': name
     };
+    const classNames = `${cls(
+      'cell',
+      'cell-has-input',
+      [editable, 'cell-editable'],
+      [isRowHeader(name), 'cell-row-header'],
+      [validation.required || false, 'cell-required'],
+      [!!invalidState, 'cell-invalid'],
+      [disabled || allDisabled, 'cell-disabled'],
+      [!!treeInfo, 'cell-has-tree']
+    )} ${className}`;
 
-    return (
+    return treeInfo ? (
+      <td {...attrs} style={style} class={classNames}>
+        <div class={cls('tree-wrapper-relative')}>
+          <div
+            class={cls('tree-wrapper-valign-center')}
+            style={{ paddingLeft: treeInfo.indentWidth }}
+            ref={(el) => {
+              this.el = el;
+            }}
+          >
+            <TreeCellContents treeInfo={treeInfo} rowKey={rowKey} />
+          </div>
+        </div>
+      </td>
+    ) : (
       <td
         {...attrs}
         style={style}
-        class={`${cls(
-          'cell',
-          'cell-has-input',
-          [editable, 'cell-editable'],
-          [isRowHeader(name), 'cell-row-header'],
-          [validation.required || false, 'cell-required'],
-          [!!invalidState, 'cell-invalid'],
-          [disabled || allDisabled, 'cell-disabled'],
-          [!!tree, 'cell-has-tree']
-        )} ${className}`}
+        class={classNames}
         ref={(el) => {
           this.el = el;
         }}
@@ -132,17 +149,20 @@ export class BodyCellComp extends Component<Props> {
 
 export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data }, { viewRow, columnName }) => {
-    const { rowKey, valueMap } = viewRow;
+    const { rowKey, valueMap, treeInfo } = viewRow;
+    const { allColumnMap, treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
-    const columnInfo = column.allColumnMap[columnName];
+    const columnInfo = allColumnMap[columnName];
 
     return {
       grid,
       rowKey,
       disabled,
       columnInfo,
-      renderData: valueMap[columnName]
+      renderData: valueMap[columnName],
+      test: treeInfo && treeInfo.expanded,
+      ...(columnName === treeColumnName ? { treeInfo } : null)
     };
   }
 )(BodyCellComp);

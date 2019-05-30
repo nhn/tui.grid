@@ -172,6 +172,7 @@ export function create({
     keyColumnName,
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
+    treeColumnName: treeColumnOptions.name || '',
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;

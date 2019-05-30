@@ -29,9 +29,9 @@ export class TreeCellContentsComp extends Component<Props> {
     const target = ev.target as HTMLElement;
 
     if (findParent(target, 'tree-button-collapse')) {
-      // dispatch('expand', rowKey);
+      dispatch('expand', rowKey);
     } else if (findParent(target, 'tree-button-expand')) {
-      // dispatch('collapse', rowKey);
+      dispatch('collapse', rowKey);
     }
   };
 

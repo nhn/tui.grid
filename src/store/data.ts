@@ -10,8 +10,7 @@ import {
   CellValue,
   ValidationType,
   Validation,
-  PageOptions,
-  TreeCellInfo
+  PageOptions
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
@@ -25,7 +24,7 @@ import {
   isBoolean
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
-import { flattenTreeData, getTreeCellInfo } from '../helper/data';
+import { flattenTreeData, createTreeCellInfo } from '../helper/treeData';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -162,7 +161,8 @@ function createRelationViewCell(
 export function createViewRow(
   row: Row,
   columnMap: Dictionary<ColumnInfo>,
-  treeCellInfo?: TreeCellInfo
+  rawData: Row[],
+  treeColumn?: ColumnInfo
 ) {
   const { rowKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
@@ -174,15 +174,12 @@ export function createViewRow(
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
 
   Object.keys(columnMap).forEach((name) => {
-    const { related, relationMap, tree } = columnMap[name];
+    const { related, relationMap } = columnMap[name];
 
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       observe(() => {
-        valueMap[name] = {
-          ...createViewCell(row, columnMap[name]),
-          ...(tree ? { tree: treeCellInfo } : null)
-        };
+        valueMap[name] = { ...createViewCell(row, columnMap[name]) };
       });
     }
     // @TODO need to improve relation
@@ -193,7 +190,11 @@ export function createViewRow(
     }
   });
 
-  return { rowKey, valueMap };
+  return {
+    rowKey,
+    valueMap,
+    ...(treeColumn && { treeInfo: createTreeCellInfo(rawData, row, treeColumn) })
+  };
 }
 
 function getAttributes(row: OptRow, index: number) {
@@ -220,6 +221,8 @@ function getAttributes(row: OptRow, index: number) {
         ...row._attributes.className
       };
     }
+
+    // @TODO tree row data extended by row data
   }
 
   return observable({ ...defaultAttr, ...row._attributes });
@@ -242,25 +245,19 @@ export function createRawRow(
 }
 
 export function createData(data: OptRow[], column: Column) {
-  const { defaultValues, keyColumnName, allColumnMap, hasTreeColumn } = column;
+  const { defaultValues, keyColumnName, allColumnMap, treeColumnName } = column;
 
   let rawData: Row[];
 
-  if (hasTreeColumn) {
+  if (treeColumnName) {
     rawData = flattenTreeData(data, defaultValues);
   } else {
     rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
   }
 
-  const viewData = rawData.map((row: Row) => {
-    let treeCellInfo;
-
-    if (hasTreeColumn) {
-      treeCellInfo = getTreeCellInfo(rawData, row);
-    }
-
-    return createViewRow(row, allColumnMap, treeCellInfo);
-  });
+  const viewData = rawData.map((row: Row) =>
+    createViewRow(row, allColumnMap, rawData, allColumnMap[treeColumnName])
+  );
 
   return { rawData, viewData };
 }

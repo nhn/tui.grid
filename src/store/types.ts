@@ -73,12 +73,12 @@ export interface CellRenderData {
   value: CellValue;
   editorOptions: Dictionary<any>;
   className: string;
-  tree?: TreeCellInfo;
 }
 
 export interface ViewRow {
   rowKey: RowKey;
   valueMap: Dictionary<CellRenderData>;
+  treeInfo?: TreeCellInfo;
 }
 
 export interface DragStartData {
@@ -122,8 +122,10 @@ export interface TreeColumnInfo {
 }
 
 export interface TreeCellInfo {
+  depth: number;
   indentWidth: number;
-  isLeaf: boolean;
+  leaf: boolean;
+  expanded: boolean;
 }
 
 export interface Data {
@@ -193,7 +195,7 @@ export interface Column {
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
-  hasTreeColumn?: boolean;
+  readonly treeColumnName: string;
 }
 
 export interface Relations {
