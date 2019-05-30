@@ -1,5 +1,5 @@
 import { findParentByTagName, getCellAddress } from '../helper/dom';
-import { RowKey, SelectionRange } from '../store/types';
+import { CellValue, RowKey, SelectionRange } from '../store/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
@@ -7,6 +7,7 @@ import Grid from '../grid';
 type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 
 interface GridEventProps {
+  value?: CellValue;
   event?: MouseEvent;
   rowKey?: RowKey | null;
   columnName?: string | null;

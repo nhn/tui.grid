@@ -85,6 +85,8 @@ export interface OptColumn {
   sortable?: boolean;
   copyOptions?: ClipboardCopyOptions;
   validation?: OptValidation;
+  onBeforeChange?: Function;
+  onAfterChange?: Function;
 }
 
 export interface OptColumnOptions {
