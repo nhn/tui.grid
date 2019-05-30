@@ -204,6 +204,7 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
     selection,
+    column: { visibleColumns },
     id
   } = store;
   const { pageX, pageY } = dragData;
@@ -231,12 +232,17 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
     startColumnIndex = curInputRange.column[0];
   }
 
-  const inputRange: SelectionRange = {
-    row: [startRowIndex, rowIndex],
-    column: [startColumnIndex, columnIndex]
-  };
+  const startColumnName = visibleColumns[startColumnIndex].name;
+  const nextColumnName = visibleColumns[columnIndex].name;
 
-  changeSelectionRange(selection, inputRange, id);
+  if (!isRowHeader(nextColumnName) && !isRowHeader(startColumnName)) {
+    const inputRange: SelectionRange = {
+      row: [startRowIndex, rowIndex],
+      column: [startColumnIndex, columnIndex]
+    };
+
+    changeSelectionRange(selection, inputRange, id);
+  }
 }
 
 export function dragMoveBody(store: Store, dragStartData: DragStartData, dragData: DragData) {
@@ -267,10 +273,13 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetX);
   const columnName = column.visibleColumnsBySide[side][columnIndex].name;
 
-  if (shiftKey) {
-    selectionUpdate(store, eventInfo);
-  } else if (!isRowHeader(columnName)) {
-    changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
-    selectionEnd(store);
+  if (!isRowHeader(columnName)) {
+    if (shiftKey) {
+      const dragData = { pageX, pageY };
+      selectionUpdate(store, dragData, dragData);
+    } else {
+      changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
+      selectionEnd(store);
+    }
   }
 }
