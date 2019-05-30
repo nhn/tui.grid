@@ -12,17 +12,18 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Range, Row, InvalidRow } from './store/types';
+import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined } from './helper/common';
+import { findPropIndex, isUndefined, mapProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import { getCellAddressByIndex } from './query/data';
+import { isRowHeader } from './helper/column';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -325,7 +326,7 @@ export default class Grid {
   public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean) {
     const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
 
-    if (isUndefined(rowKey) && columnName) {
+    if (!isUndefined(rowKey) && columnName) {
       return this.focus(rowKey, columnName, isScrollable);
     }
     return false;
@@ -391,6 +392,16 @@ export default class Grid {
   }
 
   /**
+   * Sets the all values in the specified column.
+   * @param {string} columnName - The name of the column
+   * @param {number|string} columnValue - The value to be set
+   * @param {boolean} [checkCellState=true] - If set to true, only editable and not disabled cells will be affected.
+   */
+  public setColumnValues(columnName: string, columnValue: CellValue, checkCellState?: boolean) {
+    this.dispatch('setColumnValues', columnName, columnValue, checkCellState);
+  }
+
+  /**
    * Sets the HTML string of given column summary.
    * The type of content is the same as the options.summary.columnContent of the constructor.
    * @param {string} columnName - column name
@@ -425,6 +436,35 @@ export default class Grid {
       return summary.summaryValues[columnName];
     }
     return null;
+  }
+
+  /**
+   * Returns a list of the column model.
+   * @returns {Array} - A list of the column model.
+   */
+  public getColumns() {
+    return this.store.column.allColumns
+      .filter(({ name }) => !isRowHeader(name))
+      .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+  }
+
+  /**
+   * Returns a list of all values in the specified column.
+   * @param {string} columnName - The name of the column
+   * @param {boolean} [isJsonString=false] - It set to true, return value will be converted to JSON string.
+   * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
+   */
+  public getColumnValues(columnName: string) {
+    return mapProp(columnName, this.store.data.rawData);
+  }
+
+  /**
+   * Returns the index of the column indentified by the column name.
+   * @param {string} columnName - The unique key of the column
+   * @returns {number} - The index of the column
+   */
+  public getIndexOfColumn(columnName: string) {
+    return findPropIndex('name', columnName, this.store.column.allColumns);
   }
 
   /**
@@ -609,8 +649,7 @@ export default class Grid {
     this.dispatch('appendRow', row, options);
 
     if (options.focus) {
-      const rowIdx =
-        typeof options.at !== 'undefined' ? options.at : this.store.data.rawData.length - 1;
+      const rowIdx = isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
       this.focusAt(rowIdx, 0);
     }
   }
