@@ -96,7 +96,7 @@ class BodyAreaComp extends Component<Props> {
     const { pageX, pageY } = ev;
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const dragData: DragData = { pageX, pageY };
-      this.props.dispatch('dragMoveBody', this.dragStartData, dragData);
+      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
     }
   };
 

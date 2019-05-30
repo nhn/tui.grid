@@ -9,8 +9,7 @@ import {
   Selection,
   Viewport,
   SelectionRange,
-  DragData,
-  DragStartData
+  DragData
 } from '../store/types';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
@@ -197,7 +196,7 @@ export function selectionEnd({ selection }: Store) {
   // selection.minimumColumnRange = null;
 }
 
-export function selectionUpdate(store: Store, dragStartData: DragStartData, dragData: DragData) {
+export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
   const {
     dimension,
     viewport: { scrollTop, scrollLeft },
@@ -219,8 +218,8 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
 
   if (curInputRange === null) {
     const startViewInfo = {
-      pageX: dragStartData.pageX!,
-      pageY: dragStartData.pageY!,
+      pageX: dragStartData.pageX,
+      pageY: dragStartData.pageY,
       scrollTop,
       scrollLeft
     };
@@ -247,7 +246,7 @@ export function selectionUpdate(store: Store, dragStartData: DragStartData, drag
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function dragMoveBody(store: Store, dragStartData: DragStartData, dragData: DragData) {
+export function dragMoveBody(store: Store, dragStartData: DragData, dragData: DragData) {
   const {
     dimension,
     columnCoords: { areaWidth },
