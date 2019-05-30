@@ -159,12 +159,6 @@ export class ContainerComp extends Component<Props> {
       const { rowKey, columnName } = address;
       dispatch('startEditing', rowKey, columnName);
     }
-
-    const el = this.el!;
-    const { top, left } = el.getBoundingClientRect();
-
-    dispatch('setOffsetTop', top + el.scrollTop);
-    dispatch('setOffsetLeft', left + el.scrollLeft);
   }
 
   public componentDidMount() {

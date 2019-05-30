@@ -306,7 +306,10 @@ export default class Grid {
    */
   public focus(rowKey: RowKey, columnName: string, isScrollable?: boolean) {
     this.dispatch('setFocusInfo', rowKey, columnName, true);
-    this.dispatch('setScrollToFocus');
+
+    if (isScrollable) {
+      this.dispatch('setScrollToFocus');
+    }
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
@@ -326,6 +329,13 @@ export default class Grid {
       return this.focus(rowKey, columnName, isScrollable);
     }
     return false;
+  }
+
+  /**
+   * Makes view ready to get keyboard input.
+   */
+  public activateFocus() {
+    this.dispatch('setNavigating', true);
   }
 
   /**
