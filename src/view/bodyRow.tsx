@@ -22,6 +22,9 @@ type Props = OwnProps & StoreProps & DispatchProps;
 class BodyRowComp extends Component<Props> {
   private renderedRowHeight = this.props.rowHeight;
 
+  // This debounced function is aimed to wait until setTimeout(.., 0) calls
+  // from the all child BodyCell components is made.
+  // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
     const { dispatch, rowIndex, rowHeight } = this.props;
 

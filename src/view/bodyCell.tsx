@@ -59,7 +59,8 @@ export class BodyCellComp extends Component<Props> {
       // https://github.com/preactjs/preact/issues/648
       // Use setTimeout to wait until the DOM element is actually mounted
       //  - The requestAnimationFrame causes unexpected behavior if the width of grid is 'auto'
-      //  - because the callback function is called before the actual width of grid is calculated
+      //  - because actual width of grid is calculated from the Container component using requestAnimationFrame.
+      //  - The setTimeout is used here for defer the function call later than the Container component.
       window.setTimeout(() => refreshRowHeight(rendererEl.clientHeight));
     }
   }

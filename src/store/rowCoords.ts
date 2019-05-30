@@ -1,6 +1,6 @@
 import { Data, Dimension, RowCoords, Row } from './types';
 import { observable } from '../helper/observable';
-import { isNumber } from '../helper/common';
+import { isNumber, last } from '../helper/common';
 
 interface RowCoordsOption {
   data: Data;
@@ -30,8 +30,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
     },
 
     get totalRowHeight() {
-      const { offsets, heights } = this;
-      return offsets[offsets.length - 1] + heights[heights.length - 1];
+      return last(this.offsets) + last(this.heights);
     }
   });
 }

@@ -51,11 +51,12 @@ export function create({
     tableBorderWidth: 1,
     cellBorderWidth: 1,
 
-    get contentsWidth(this: Dimension) {
-      const columnLen = column.visibleColumns.length;
-      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+    get scrollYWidth() {
+      return this.scrollY ? this.scrollbarWidth : 0;
+    },
 
-      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+    get scrollXHeight() {
+      return this.scrollX ? this.scrollbarWidth : 0;
     },
 
     get frozenBorderWidth(this: Dimension) {
@@ -65,12 +66,11 @@ export function create({
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
-    get scrollXHeight() {
-      return this.scrollX ? this.scrollbarWidth : 0;
-    },
+    get contentsWidth(this: Dimension) {
+      const columnLen = column.visibleColumns.length;
+      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
 
-    get scrollYWidth() {
-      return this.scrollY ? this.scrollbarWidth : 0;
+      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
     }
   });
 }
