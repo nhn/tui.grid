@@ -62,7 +62,9 @@ class BodyAreaComp extends Component<Props> {
     }
 
     const { el } = this;
-    const { pageX, pageY, shiftKey } = ev;
+    const { shiftKey } = ev;
+    const pageX = ev.pageX - window.pageXOffset;
+    const pageY = ev.pageY - window.pageYOffset;
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
@@ -93,7 +95,9 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const { pageX, pageY } = ev;
+    const pageX = ev.pageX - window.pageXOffset;
+    const pageY = ev.pageY - window.pageYOffset;
+
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
       const dragData: DragData = { pageX, pageY };
       this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
