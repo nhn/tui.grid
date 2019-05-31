@@ -54,6 +54,9 @@ module.exports = (env, { mode = 'development' }) => {
               compress: {
                 drop_console: true, // eslint-disable-line camelcase
                 warnings: true
+              },
+              output: {
+                comments: false
               }
             }
           }),
