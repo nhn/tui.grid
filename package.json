@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "4.0.0",
+  "version": "4.0.0-alpha.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
@@ -21,6 +21,10 @@
     "application",
     "grid",
     "tui-grid"
+  ],
+  "files": [
+    "src",
+    "dist"
   ],
   "author": "NHN. FE Development Lab",
   "license": "MIT",
