@@ -83,8 +83,8 @@ export function create({
   selectionUnit,
   rowCoords,
   columnCoords,
-  column: { visibleFrozenCount },
-  dimension: { cellBorderWidth }
+  column: columnInfo,
+  dimension
 }: SelectionOptions): Observable<Selection> {
   return observable({
     inputRange: null,
@@ -112,6 +112,7 @@ export function create({
       if (!this.range) {
         return null;
       }
+      const { visibleFrozenCount } = columnInfo;
       const { column, row } = this.range;
 
       return {
@@ -123,6 +124,8 @@ export function create({
       if (!this.rangeBySide) {
         return null;
       }
+
+      const { cellBorderWidth } = dimension;
       const { offsets: rowOffsets, heights: rowHeights } = rowCoords;
       const { widths: columnWidths } = columnCoords;
       const { L: leftRange, R: rightRange } = this.rangeBySide;
