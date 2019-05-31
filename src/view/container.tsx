@@ -30,6 +30,8 @@ interface StoreProps {
   disabled: boolean;
   viewData: ViewRow[];
   eventBus: EventBus;
+  scrollX: boolean;
+  scrollY: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -193,14 +195,6 @@ export class ContainerComp extends Component<Props> {
     }
   };
 
-  private getContentClassName = () => {
-    const { summaryHeight, summaryPosition } = this.props;
-    return cls('content-area', [
-      !!summaryHeight,
-      summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'
-    ]);
-  };
-
   public shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
@@ -210,9 +204,18 @@ export class ContainerComp extends Component<Props> {
   }
 
   public render() {
-    const { gridId, width, autoWidth, scrollXHeight, showLeftSide } = this.props;
+    const {
+      summaryHeight,
+      summaryPosition,
+      gridId,
+      width,
+      autoWidth,
+      scrollXHeight,
+      showLeftSide,
+      scrollX,
+      scrollY
+    } = this.props;
     const style = { width: autoWidth ? '100%' : width };
-    const contentClassName = this.getContentClassName();
     const attrs: Attributes = { 'data-grid-id': gridId };
 
     return (
@@ -229,7 +232,14 @@ export class ContainerComp extends Component<Props> {
           this.el = el;
         }}
       >
-        <div class={contentClassName}>
+        <div
+          class={cls(
+            'content-area',
+            [!!summaryHeight, summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'],
+            [!scrollX, 'no-scroll-x'],
+            [!scrollY, 'no-scroll-y']
+          )}
+        >
           <LeftSide />
           <RightSide />
           <div class={cls('border-line', 'border-line-top')} />
@@ -260,6 +270,8 @@ export const Container = connect<StoreProps, OwnProps>(
     disabled: data.disabled,
     editingEvent: focus.editingEvent,
     viewData: data.viewData,
-    eventBus: getEventBus(id)
+    eventBus: getEventBus(id),
+    scrollX: dimension.scrollX,
+    scrollY: dimension.scrollY
   })
 )(ContainerComp);

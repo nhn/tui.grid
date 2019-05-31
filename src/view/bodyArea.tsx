@@ -25,6 +25,8 @@ interface StoreProps {
   scrollXHeight: number;
   offsetY: number;
   dummyRowCount: number;
+  scrollX: boolean;
+  scrollY: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -127,9 +129,13 @@ class BodyAreaComp extends Component<Props> {
     totalRowHeight,
     scrollXHeight,
     offsetY,
-    dummyRowCount
+    dummyRowCount,
+    scrollX,
+    scrollY
   }: Props) {
-    const areaStyle = { overflow: 'scroll', height: bodyHeight };
+    const overflowX = scrollX ? 'scroll' : 'hidden';
+    const overflowY = scrollY ? 'scroll' : 'hidden';
+    const areaStyle = { overflowX, overflowY, height: bodyHeight };
     const tableContainerStyle = {
       top: offsetY,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
@@ -166,7 +172,7 @@ class BodyAreaComp extends Component<Props> {
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { column, rowCoords, dimension, viewport } = store;
   const { totalRowHeight } = rowCoords;
-  const { bodyHeight, scrollXHeight } = dimension;
+  const { bodyHeight, scrollXHeight, scrollX, scrollY } = dimension;
   const { offsetY, scrollTop, scrollLeft, dummyRowCount } = viewport;
 
   return {
@@ -177,6 +183,8 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     offsetY,
     scrollLeft: side === 'L' ? 0 : scrollLeft,
     scrollXHeight,
-    dummyRowCount
+    dummyRowCount,
+    scrollX,
+    scrollY
   };
 })(BodyAreaComp);

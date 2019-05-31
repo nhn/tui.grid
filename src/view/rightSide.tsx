@@ -16,6 +16,8 @@ interface StoreProps {
   scrollXHeight: number;
   frozenBorderWidth: number;
   cellBorderWidth: number;
+  scrollX: boolean;
+  scrollY: boolean;
   summaryPosition: SummaryPosition;
 }
 
@@ -69,7 +71,7 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
   }
 
   public render() {
-    const { marginLeft, width, summaryPosition } = this.props;
+    const { marginLeft, width, summaryPosition, scrollY } = this.props;
     const style = {
       display: 'block',
       marginLeft,
@@ -82,9 +84,9 @@ class RightSideComp extends Component<StoreProps & DispatchProps> {
         {summaryPosition === 'top' && <SummaryArea side="R" />}
         <BodyArea side="R" />
         {summaryPosition === 'bottom' && <SummaryArea side="R" />}
-        {this.renderScrollbarYInnerBorder()}
-        {this.renderScrollbarYOuterBorder()}
-        {this.renderScrollbarRightTop()}
+        {scrollY && this.renderScrollbarYInnerBorder()}
+        {scrollY && this.renderScrollbarYOuterBorder()}
+        {scrollY && this.renderScrollbarRightTop()}
         {this.renderScrollbarRightBottom()}
         {this.renderScrollbarFrozenBorder()}
         {this.renderFrozenBorder()}
@@ -136,6 +138,8 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
     bodyHeight,
     cellBorderWidth,
     frozenBorderWidth,
-    summaryPosition
+    summaryPosition,
+    scrollX,
+    scrollY
   };
 })(RightSideComp);
