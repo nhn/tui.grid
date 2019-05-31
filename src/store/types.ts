@@ -237,7 +237,7 @@ export interface ColumnCoords {
 }
 
 export interface RowCoords {
-  readonly heights: number[];
+  heights: number[];
   readonly offsets: number[];
   readonly totalRowHeight: number;
 }

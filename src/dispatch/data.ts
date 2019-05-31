@@ -271,11 +271,13 @@ export function clearData({ data }: Store) {
   data.viewData = [];
 }
 
-export function resetData({ data, column }: Store, inputData: OptRow[]) {
+export function resetData({ data, column, dimension, rowCoords }: Store, inputData: OptRow[]) {
   const { rawData, viewData } = createData(inputData, column);
+  const { rowHeight } = dimension;
 
   data.rawData = rawData;
   data.viewData = viewData;
+  rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
