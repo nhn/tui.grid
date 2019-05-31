@@ -4,6 +4,8 @@ const package = require('./package');
 const merge = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const commonConfig = {
   entry: './src/index.ts',
@@ -13,10 +15,6 @@ const commonConfig = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
-      },
-      {
-        test: /\.css$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
       }
     ]
   },
@@ -36,6 +34,19 @@ module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
     return merge(commonConfig, {
       mode,
+      plugins: [
+        new MiniCssExtractPlugin({
+          filename: 'tui-grid.css'
+        })
+      ],
+      module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader']
+          }
+        ]
+      },
       optimization: {
         minimizer: [
           new TerserPlugin({
@@ -45,7 +56,8 @@ module.exports = (env, { mode = 'development' }) => {
                 warnings: true
               }
             }
-          })
+          }),
+          new OptimizeCSSAssetsPlugin({})
         ]
       }
     });
@@ -54,6 +66,14 @@ module.exports = (env, { mode = 'development' }) => {
   return merge(commonConfig, {
     mode,
     devtool: 'inline-source-map',
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
+        }
+      ]
+    },
     plugins: [
       new HtmlWebpackPlugin({
         filename: 'dist/index.html'
