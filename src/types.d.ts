@@ -76,6 +76,10 @@ export interface OptColumn {
   rendererOptions?: Dictionary<any>;
   editor?: string | CellEditorClass;
   editorOptions?: Dictionary<any>;
+  component?: {
+    name?: string;
+    options?: Dictionary<any>;
+  };
   formatter?: Formatter;
   defaultValue?: CellValue;
   prefix?: Formatter;

@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { OptGrid } from '../src/types';
+import { OptColumn, OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
@@ -18,7 +18,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-const columns = [
+let columns: OptColumn[] = [
   {
     name: 'name',
     width: 150
@@ -107,3 +107,74 @@ stories.add('with editingEvent:click options', () => {
 
   return el;
 });
+
+stories.add(
+  'Datepicker',
+  () => {
+    columns = [
+      {
+        name: 'default',
+        editor: 'text',
+        component: {
+          name: 'datePicker'
+        }
+      },
+      {
+        name: 'options',
+        editor: 'text',
+        component: {
+          name: 'datePicker',
+          options: {
+            date: new Date(1992, 3, 25),
+            format: 'dd/MM/yyyy',
+            selectableRanges: [[new Date(1992, 3, 25), new Date(2020, 5, 20)]]
+          }
+        }
+      },
+      {
+        name: 'date-timePicker',
+        editor: 'text',
+        component: {
+          name: 'datePicker',
+          options: {
+            format: 'yyyy-MM-dd HH:mm A',
+            timepicker: true
+          }
+        }
+      },
+      {
+        name: 'month-picker',
+        editor: 'text',
+        component: {
+          name: 'datePicker',
+          options: {
+            format: 'yyyy-MM',
+            type: 'month'
+          }
+        }
+      },
+      {
+        name: 'year-picker',
+        editor: 'text',
+        component: {
+          name: 'datePicker',
+          options: {
+            format: 'yyyy',
+            type: 'year'
+          }
+        }
+      }
+    ];
+
+    const { grid, el } = createGrid({
+      data,
+      columns,
+      columnOptions: { frozenCount: 1 },
+      bodyHeight: 400,
+      width: 800
+    });
+
+    return el;
+  },
+  { html: { preventForcedRender: true } }
+);
