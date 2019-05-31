@@ -2,7 +2,7 @@ import { Store } from './types';
 import { OptGrid } from '../types';
 import { observable, observe } from '..//helper/observable';
 import { create as createData } from './data';
-import { create as createColumn } from './columns';
+import { create as createColumn } from './column';
 import { create as createDimension, setBodyHeight } from './dimension';
 import { create as createViewport } from './viewport';
 import { create as createColumnCoords } from './columnCoords';
