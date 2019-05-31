@@ -30,6 +30,8 @@ interface StoreProps {
   disabled: boolean;
   viewData: ViewRow[];
   eventBus: EventBus;
+  scrollX: boolean;
+  scrollY: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -194,11 +196,13 @@ export class ContainerComp extends Component<Props> {
   };
 
   private getContentClassName = () => {
-    const { summaryHeight, summaryPosition } = this.props;
-    return cls('content-area', [
-      !!summaryHeight,
-      summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'
-    ]);
+    const { summaryHeight, summaryPosition, scrollY, scrollX } = this.props;
+    return cls(
+      'content-area',
+      [!!summaryHeight, summaryPosition === 'top' ? 'has-summary-top' : 'has-summary-bottom'],
+      [!scrollX, 'no-scroll-x'],
+      [!scrollY, 'no-scroll-y']
+    );
   };
 
   public shouldComponentUpdate(nextProps: Props) {
@@ -260,6 +264,8 @@ export const Container = connect<StoreProps, OwnProps>(
     disabled: data.disabled,
     editingEvent: focus.editingEvent,
     viewData: data.viewData,
-    eventBus: getEventBus(id)
+    eventBus: getEventBus(id),
+    scrollX: dimension.scrollX,
+    scrollY: dimension.scrollY
   })
 )(ContainerComp);

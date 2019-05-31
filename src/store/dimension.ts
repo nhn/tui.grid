@@ -9,6 +9,8 @@ type OptDimension = {
   summaryHeight?: number;
   domWidth: number;
   summaryPosition?: SummaryPosition;
+  scrollX: boolean;
+  scrollY: boolean;
 } & Pick<
   OptGrid,
   'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
@@ -23,8 +25,8 @@ export function create({
   minRowHeight = 40,
   minBodyHeight = 130,
   frozenBorderWidth = 1,
-  scrollX = true,
-  scrollY = true,
+  scrollX,
+  scrollY,
   summaryHeight = 0,
   summaryPosition = 'bottom'
 }: OptDimension): Dimension {

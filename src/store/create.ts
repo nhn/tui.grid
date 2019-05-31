@@ -24,7 +24,9 @@ export function createStore(id: number, options: OptGrid): Store {
     summary: summaryOptions = {},
     selectionUnit = 'cell',
     showDummyRows = false,
-    editingEvent = 'dblclick'
+    editingEvent = 'dblclick',
+    scrollX = true,
+    scrollY = true
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -39,7 +41,9 @@ export function createStore(id: number, options: OptGrid): Store {
     minBodyHeight,
     frozenBorderWidth,
     summaryHeight,
-    summaryPosition
+    summaryPosition,
+    scrollX,
+    scrollY
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });

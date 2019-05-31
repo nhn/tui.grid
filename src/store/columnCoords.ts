@@ -141,6 +141,7 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
         leftAreaWidth += cellBorderWidth;
       }
 
+      // @TODO: areawidth 계산 때문에 매번 scrollX 나타나는 부분 수정필요
       return {
         L: leftAreaWidth,
         R: width - leftAreaWidth - cellBorderWidth
