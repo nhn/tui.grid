@@ -35,20 +35,6 @@ export function sum(nums: number[]) {
   return nums.reduce((acc, num) => acc + num, 0);
 }
 
-export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
-  return arr.reduce((acc, v, idx) => (predicate(v) ? [...acc, idx] : acc), [] as number[]);
-}
-
-export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number {
-  const index = arr.findIndex(predicate);
-
-  return index >= 0 ? index - 1 : arr.length - 1;
-}
-
-export function findOffsetIndex(offsets: number[], targetOffset: number) {
-  return findPrevIndex(offsets, (offset) => offset > targetOffset);
-}
-
 export function pipe<T>(initVal: T, ...args: Function[]) {
   return args.reduce((acc, fn) => fn(acc), initVal);
 }
@@ -97,6 +83,20 @@ export function findIndex<T>(predicate: (item: T) => boolean, arr: T[]) {
 
 export function findPropIndex<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
   return findIndex((item) => item[propName] === value, arr);
+}
+
+export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
+  return arr.reduce((acc, v, idx) => (predicate(v) ? [...acc, idx] : acc), [] as number[]);
+}
+
+export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number {
+  const index = findIndex(predicate, arr);
+
+  return index >= 0 ? index - 1 : arr.length - 1;
+}
+
+export function findOffsetIndex(offsets: number[], targetOffset: number) {
+  return findPrevIndex(offsets, (offset) => offset > targetOffset);
 }
 
 export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {

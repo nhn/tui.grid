@@ -16,6 +16,7 @@ export interface OptGrid {
   data?: OptRow[];
   columns: OptColumn[];
   columnOptions?: OptColumnOptions;
+  keyColumnName?: string;
   width?: number | 'auto';
   bodyHeight?: number | 'fitToParent' | 'auto';
   minBodyHeight?: number;

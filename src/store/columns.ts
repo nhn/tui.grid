@@ -128,12 +128,21 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
   });
 }
 
-export function create(
-  columns: OptColumn[],
-  columnOptions: OptColumnOptions = {},
-  rowHeaders: OptRowHeader[],
-  copyOptions: ClipboardCopyOptions
-): Column {
+interface ColumnOptions {
+  columns: OptColumn[];
+  columnOptions: OptColumnOptions;
+  rowHeaders: OptRowHeader[];
+  copyOptions: ClipboardCopyOptions;
+  keyColumnName?: string;
+}
+
+export function create({
+  columns,
+  columnOptions,
+  rowHeaders,
+  copyOptions,
+  keyColumnName
+}: ColumnOptions): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
@@ -145,11 +154,16 @@ export function create(
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   return observable({
+    keyColumnName,
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
+    },
+
+    get rowHeaderCount() {
+      return rowHeaderInfos.length;
     },
 
     get visibleColumns() {
@@ -173,10 +187,6 @@ export function create(
 
     get visibleFrozenCount(this: Column) {
       return this.visibleColumnsBySide.L.length;
-    },
-
-    get rowHeaderCount() {
-      return rowHeaderInfos.length;
     },
 
     get validationColumns() {

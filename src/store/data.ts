@@ -214,8 +214,13 @@ function getAttributes(row: OptRow, index: number) {
   return observable({ ...defaultAttr, ...row._attributes });
 }
 
-export function createRawRow(row: OptRow, index: number, defaultValues: Column['defaultValues']) {
-  row.rowKey = index;
+export function createRawRow(
+  row: OptRow,
+  index: number,
+  defaultValues: Column['defaultValues'],
+  keyColumnName?: string
+) {
+  row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row._attributes = getAttributes(row, index);
 
   defaultValues.forEach(({ name, value }) => {
@@ -226,8 +231,8 @@ export function createRawRow(row: OptRow, index: number, defaultValues: Column['
 }
 
 export function createData(data: OptRow[], column: Column) {
-  const { defaultValues } = column;
-  const rawData = data.map((row, index) => createRawRow(row, index, defaultValues));
+  const { defaultValues, keyColumnName } = column;
+  const rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
   const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
 
   return { rawData, viewData };
