@@ -2,10 +2,10 @@ import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } fro
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 
-function indexOfRow(rowOffsets: number[], posY: number) {
-  const rowOffset = findIndex((offset) => offset > posY, rowOffsets);
+function findIndexByPosition(offsets: number[], position: number) {
+  const rowOffset = findIndex((offset) => offset > position, offsets);
 
-  return rowOffset === -1 ? rowOffsets.length - 1 : rowOffset - 1;
+  return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
 }
 
 interface ViewPortOption {
@@ -25,8 +25,6 @@ export function create({
   columnCoords,
   showDummyRows
 }: ViewPortOption): Observable<Viewport> {
-  const { visibleColumns } = column;
-
   return observable({
     scrollLeft: 0,
     scrollTop: 0,
@@ -50,8 +48,29 @@ export function create({
       return totalRowHeight - bodyHeight + scrollbarWidth;
     },
 
-    get colRange(this: Viewport) {
-      return [0, visibleColumns.length] as Range;
+    get colRange(this: Observable<Viewport>) {
+      const offsets = columnCoords.offsets.R;
+      const areaWidth = columnCoords.areaWidth.R;
+
+      const scrollLeft = Math.max(this.scrollLeft, 0);
+      const start = findIndexByPosition(offsets, scrollLeft);
+      const end = findIndexByPosition(offsets, scrollLeft + areaWidth) + 1;
+      const value = [start, end] as Range;
+
+      const prevValue = this.__storage__.colRange;
+      if (prevValue && arrayEqual(prevValue, value)) {
+        return prevValue;
+      }
+
+      return value;
+    },
+
+    get columns(this: Viewport) {
+      return column.visibleColumnsBySide.R.slice(...this.colRange);
+    },
+
+    get offsetX(this: Viewport) {
+      return columnCoords.offsets.R[this.colRange[0]];
     },
 
     get rowRange(this: Observable<Viewport>) {
@@ -59,10 +78,10 @@ export function create({
       const { offsets } = rowCoords;
 
       // safari uses negative scrollTop for bouncing effect
-      const scrollY = Math.max(this.scrollTop, 0);
+      const scrollTop = Math.max(this.scrollTop, 0);
 
-      const start = indexOfRow(offsets, scrollY);
-      const end = indexOfRow(offsets, scrollY + bodyHeight) + 1;
+      const start = findIndexByPosition(offsets, scrollTop);
+      const end = findIndexByPosition(offsets, scrollTop + bodyHeight) + 1;
       const value = [start, end] as Range;
 
       const prevValue = this.__storage__.rowRange;

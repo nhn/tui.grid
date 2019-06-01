@@ -24,7 +24,7 @@ const columns = [
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
-  el.style.width = '800px';
+  el.style.width = '600px';
 
   const grid = new Grid({ el, ...options });
 
@@ -86,7 +86,7 @@ stories.add(
       columns,
       bodyHeight: 'fitToParent',
       columnOptions: {
-        frozenCount: 2,
+        frozenCount: 1,
         minWidth: 150
       },
       copyOptions: {

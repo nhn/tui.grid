@@ -228,9 +228,11 @@ export interface Viewport {
   readonly scrollPixelScale: number;
   readonly maxScrollLeft: number;
   readonly maxScrollTop: number;
+  readonly offsetX: number;
   readonly offsetY: number;
   readonly rowRange: Range;
   readonly colRange: Range;
+  readonly columns: ColumnInfo[];
   readonly rows: ViewRow[];
   readonly dummyRowCount: number;
 }
@@ -239,6 +241,7 @@ export interface ColumnCoords {
   readonly widths: { [key in Side]: number[] };
   readonly areaWidth: { [key in Side]: number };
   readonly offsets: { [key in Side]: number[] };
+  readonly totalColumnWidth: { [key in Side]: number };
 }
 
 export interface RowCoords {

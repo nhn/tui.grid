@@ -107,7 +107,7 @@ class HeaderAreaComp extends Component<Props> {
         }}
       >
         <table class={cls('table')}>
-          <ColGroup side={side} />
+          <ColGroup side={side} useViewport={false} />
           <tbody>
             <tr style={theadStyle} onClick={this.handleClick} onDblClick={this.handleDblClick}>
               {columns.map(({ name, header, sortable }) => (
