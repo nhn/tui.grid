@@ -21,6 +21,8 @@ export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
 
+export type State = 'DONE' | 'EMPTY' | 'LOADING';
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -113,6 +115,7 @@ export interface Data {
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
+  pageOptions: PageOptions;
 }
 
 export interface FormatterProps {
@@ -151,6 +154,7 @@ export interface ColumnInfo {
   validation?: Validation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
+  ignored?: boolean;
 }
 
 export interface SortOptions {
@@ -162,14 +166,15 @@ export interface SortOptions {
 export interface Column {
   frozenCount: number;
   keyColumnName?: string;
-  visibleFrozenCount: number;
-  rowHeaderCount: number;
   allColumns: ColumnInfo[];
-  allColumnMap: Dictionary<ColumnInfo>;
-  visibleColumns: ColumnInfo[];
-  visibleColumnsBySide: VisibleColumnsBySide;
+  readonly allColumnMap: Dictionary<ColumnInfo>;
+  readonly rowHeaderCount: number;
+  readonly visibleColumns: ColumnInfo[];
+  readonly visibleFrozenCount: number;
+  readonly visibleColumnsBySide: VisibleColumnsBySide;
   readonly defaultValues: { name: string; value: CellValue }[];
-  validationColumns: ColumnInfo[];
+  readonly validationColumns: ColumnInfo[];
+  readonly ignoredColumns: string[];
 }
 
 export interface Relations {
@@ -310,6 +315,16 @@ export interface Selection {
   readonly rangeAreaInfo: RangeAreaInfo | null;
 }
 
+export interface RenderState {
+  state: State;
+}
+
+export interface PageOptions {
+  perPage?: number;
+  page?: number;
+  totalCount?: number;
+}
+
 export interface Store {
   readonly id: GridId;
   readonly data: Data;
@@ -321,4 +336,5 @@ export interface Store {
   readonly focus: Focus;
   readonly selection: Selection;
   readonly summary: Summary;
+  readonly renderState: RenderState;
 }
