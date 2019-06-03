@@ -2,12 +2,6 @@ import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } fro
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 
-function findIndexByPosition(offsets: number[], position: number) {
-  const rowOffset = findIndex((offset) => offset > position, offsets);
-
-  return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
-}
-
 interface ViewPortOption {
   data: Data;
   column: Column;
@@ -15,6 +9,29 @@ interface ViewPortOption {
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   showDummyRows: boolean;
+}
+
+function findIndexByPosition(offsets: number[], position: number) {
+  const rowOffset = findIndex((offset) => offset > position, offsets);
+
+  return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
+}
+
+function calculateRange(scrollPos: number, totalSize: number, offsets: number[]) {
+  // safari uses negative scroll position for bouncing effect
+  scrollPos = Math.max(scrollPos, 0);
+
+  const start = findIndexByPosition(offsets, scrollPos);
+  const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
+
+  return [start, end] as Range;
+}
+
+function getCachedRange(cachedRange: Range, newRange: Range) {
+  if (cachedRange && arrayEqual(cachedRange, newRange)) {
+    return cachedRange;
+  }
+  return newRange;
 }
 
 export function create({
@@ -48,23 +65,17 @@ export function create({
       return totalRowHeight - bodyHeight + scrollbarWidth;
     },
 
+    // only for right side columns
     get colRange(this: Observable<Viewport>) {
-      const offsets = columnCoords.offsets.R;
-      const areaWidth = columnCoords.areaWidth.R;
-
-      const scrollLeft = Math.max(this.scrollLeft, 0);
-      const start = findIndexByPosition(offsets, scrollLeft);
-      const end = findIndexByPosition(offsets, scrollLeft + areaWidth) + 1;
-      const value = [start, end] as Range;
-
-      const prevValue = this.__storage__.colRange;
-      if (prevValue && arrayEqual(prevValue, value)) {
-        return prevValue;
-      }
-
-      return value;
+      const range = calculateRange(
+        this.scrollLeft,
+        columnCoords.areaWidth.R,
+        columnCoords.offsets.R
+      );
+      return getCachedRange(this.__storage__.colRange, range);
     },
 
+    // only for right side columns
     get columns(this: Viewport) {
       return column.visibleColumnsBySide.R.slice(...this.colRange);
     },
@@ -74,22 +85,8 @@ export function create({
     },
 
     get rowRange(this: Observable<Viewport>) {
-      const { bodyHeight } = dimension;
-      const { offsets } = rowCoords;
-
-      // safari uses negative scrollTop for bouncing effect
-      const scrollTop = Math.max(this.scrollTop, 0);
-
-      const start = findIndexByPosition(offsets, scrollTop);
-      const end = findIndexByPosition(offsets, scrollTop + bodyHeight) + 1;
-      const value = [start, end] as Range;
-
-      const prevValue = this.__storage__.rowRange;
-      if (prevValue && arrayEqual(prevValue, value)) {
-        return prevValue;
-      }
-
-      return value;
+      const range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets);
+      return getCachedRange(this.__storage__.rowRange, range);
     },
 
     get rows(this: Viewport) {
