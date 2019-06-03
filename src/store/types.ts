@@ -228,8 +228,8 @@ export interface Viewport {
   readonly scrollPixelScale: number;
   readonly maxScrollLeft: number;
   readonly maxScrollTop: number;
-  readonly offsetX: number;
-  readonly offsetY: number;
+  readonly offsetLeft: number;
+  readonly offsetTop: number;
   readonly rowRange: Range;
   readonly colRange: Range;
   readonly columns: ColumnInfo[];

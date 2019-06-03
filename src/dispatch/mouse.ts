@@ -267,11 +267,11 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const { pageX, pageY, shiftKey } = eventInfo;
 
   const { side, scrollLeft, scrollTop, left, top } = elementInfo;
-  const offsetX = pageX - left + scrollLeft;
-  const offsetY = pageY - top + scrollTop;
+  const offsetLeft = pageX - left + scrollLeft;
+  const offsetTop = pageY - top + scrollTop;
 
-  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetY);
-  const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetX);
+  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
+  const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
   const columnName = column.visibleColumnsBySide[side][columnIndex].name;
 
   if (!isRowHeader(columnName)) {

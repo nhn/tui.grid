@@ -80,7 +80,7 @@ export function create({
       return column.visibleColumnsBySide.R.slice(...this.colRange);
     },
 
-    get offsetX(this: Viewport) {
+    get offsetLeft(this: Viewport) {
       return columnCoords.offsets.R[this.colRange[0]];
     },
 
@@ -93,7 +93,7 @@ export function create({
       return data.viewData.slice(...this.rowRange);
     },
 
-    get offsetY(this: Viewport) {
+    get offsetTop(this: Viewport) {
       return rowCoords.offsets[this.rowRange[0]];
     },
 
