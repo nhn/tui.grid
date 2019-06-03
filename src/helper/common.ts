@@ -246,6 +246,22 @@ export function isNumber(value: unknown): value is number {
   return typeof value === 'number';
 }
 
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+export function isEmpty(obj: any) {
+  if (
+    isNull(obj) ||
+    isUndefined(obj) ||
+    (!isUndefined(obj.length) && obj.length === 0) ||
+    Object.keys(obj).length === 0
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
 }
@@ -292,4 +308,19 @@ export function pruneObject<T>(obj: T) {
   }, obj);
 
   return pruned;
+}
+
+export function omit<T extends object>(obj: T, propNames: string | string[]) {
+  const resultMap = {} as T;
+  for (const key in obj) {
+    if (hasOwnProp(obj, key)) {
+      if (
+        (isString(propNames) && key !== propNames) ||
+        (Array.isArray(propNames) && !includes(propNames, key))
+      ) {
+        resultMap[key] = obj[key];
+      }
+    }
+  }
+  return resultMap;
 }
