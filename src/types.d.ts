@@ -6,14 +6,16 @@ import {
   Formatter,
   ClipboardCopyOptions,
   RowAttributes,
-  EditingEvent
+  EditingEvent,
+  PageOptions
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
+import { DataSource } from './dataSource/types';
 
 export interface OptGrid {
   el: HTMLElement;
-  data?: OptRow[];
+  data?: OptRow[] | DataSource;
   columns: OptColumn[];
   columnOptions?: OptColumnOptions;
   keyColumnName?: string;
@@ -27,9 +29,11 @@ export interface OptGrid {
   editingEvent?: EditingEvent;
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
+  useClientSort?: boolean;
   selectionUnit?: SelectionUnit;
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
+  pageOptions?: PageOptions;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -90,6 +94,7 @@ export interface OptColumn {
   validation?: OptValidation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
+  ignored?: boolean;
 }
 
 export interface OptColumnOptions {

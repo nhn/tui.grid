@@ -9,7 +9,8 @@ import {
   FormatterProps,
   CellValue,
   ValidationType,
-  Validation
+  Validation,
+  PageOptions
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
@@ -238,22 +239,27 @@ export function createData(data: OptRow[], column: Column) {
   return { rawData, viewData };
 }
 
-export function create(data: OptRow[], column: Column): Observable<Data> {
+export function create(
+  data: OptRow[],
+  column: Column,
+  pageOptions: PageOptions,
+  useClientSort: boolean
+): Observable<Data> {
+  // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
-
-  // @TODO neet to modify useClient options with net api
-  const sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
+  const sortOptions = { columnName: 'rowKey', ascending: true, useClient: useClientSort };
 
   return observable({
     disabled: false,
     rawData,
     viewData,
     sortOptions,
+    pageOptions,
 
     get checkedAllRows() {
-      const checkedRows = rawData.filter((row) => row._attributes.checked);
-
-      return checkedRows.length === rawData.length;
+      const allRawData = this.rawData;
+      const checkedRows = allRawData.filter((row) => row._attributes.checked);
+      return checkedRows.length === allRawData.length;
     }
   });
 }

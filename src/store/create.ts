@@ -10,6 +10,7 @@ import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
+import { create as createRenderState } from './renderState';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -27,7 +28,9 @@ export function createStore(id: number, options: OptGrid): Store {
     showDummyRows = false,
     editingEvent = 'dblclick',
     scrollX = true,
-    scrollY = true
+    scrollY = true,
+    useClientSort = true,
+    pageOptions = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -38,7 +41,12 @@ export function createStore(id: number, options: OptGrid): Store {
     copyOptions,
     keyColumnName
   });
-  const data = createData(options.data || [], column);
+  const data = createData(
+    Array.isArray(options.data) ? options.data : [],
+    column,
+    pageOptions,
+    useClientSort
+  );
   const dimension = createDimension({
     column,
     width,
@@ -65,6 +73,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+  const renderState = createRenderState(data);
 
   // manual observe to resolve circular references
   observe(() => {
@@ -81,6 +90,7 @@ export function createStore(id: number, options: OptGrid): Store {
     viewport,
     focus,
     summary,
-    selection
+    selection,
+    renderState
   });
 }

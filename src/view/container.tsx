@@ -5,10 +5,11 @@ import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
+import { Pagination } from './pagination';
 import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
+import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
@@ -251,6 +252,7 @@ export class ContainerComp extends Component<Props> {
         <StateLayer />
         <EditingLayer />
         <Clipboard />
+        <Pagination />
       </div>
     );
   }
