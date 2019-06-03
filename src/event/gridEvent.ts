@@ -1,5 +1,6 @@
 import { findParentByTagName, getCellAddress } from '../helper/dom';
 import { CellValue, RowKey, SelectionRange } from '../store/types';
+import { XHROptions } from '../datasource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
@@ -14,6 +15,8 @@ interface GridEventProps {
   prevRowKey?: RowKey | null;
   prevColumnName?: string | null;
   range?: SelectionRange | null;
+  xhr?: XMLHttpRequest;
+  options?: XHROptions;
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {
