@@ -144,10 +144,6 @@ declare namespace tuiGrid {
     copyOptions?: IClipboardCopyOptions;
     relations?: IRelationOptions[];
     whiteSpace?: string;
-    component?: {
-      name?: string;
-      options?: any;
-    };
   }
 
   interface ISummaryColumnContentOptions {

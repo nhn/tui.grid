@@ -114,54 +114,39 @@ stories.add(
     columns = [
       {
         name: 'default',
-        editor: 'text',
-        component: {
-          name: 'datePicker'
-        }
+        editor: 'datepicker'
       },
       {
         name: 'options',
-        editor: 'text',
-        component: {
-          name: 'datePicker',
-          options: {
-            date: new Date(1992, 3, 25),
-            format: 'dd/MM/yyyy',
-            selectableRanges: [[new Date(1992, 3, 25), new Date(2020, 5, 20)]]
-          }
+        editor: 'datepicker',
+        editorOptions: {
+          date: new Date(1992, 3, 25),
+          format: 'dd/MM/yyyy',
+          selectableRanges: [[new Date(1992, 3, 25), new Date(2020, 5, 20)]]
         }
       },
       {
         name: 'date-timePicker',
-        editor: 'text',
-        component: {
-          name: 'datePicker',
-          options: {
-            format: 'yyyy-MM-dd HH:mm A',
-            timepicker: true
-          }
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM-dd HH:mm A',
+          timepicker: true
         }
       },
       {
         name: 'month-picker',
-        editor: 'text',
-        component: {
-          name: 'datePicker',
-          options: {
-            format: 'yyyy-MM',
-            type: 'month'
-          }
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM',
+          type: 'month'
         }
       },
       {
         name: 'year-picker',
-        editor: 'text',
-        component: {
-          name: 'datePicker',
-          options: {
-            format: 'yyyy',
-            type: 'year'
-          }
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy',
+          type: 'year'
         }
       }
     ];
