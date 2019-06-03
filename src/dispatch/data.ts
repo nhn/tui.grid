@@ -4,7 +4,8 @@ import {
   RowKey,
   SelectionRange,
   RowAttributes,
-  RowAttributeValue
+  RowAttributeValue,
+  PageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -25,9 +26,10 @@ import { getRowHeight } from '../store/rowCoords';
 import { getEventBus } from '../event/eventBus';
 import { changeSelectionRange } from './selection';
 import GridEvent from '../event/gridEvent';
+import { getDataManager } from '../helper/inject';
 
 export function setValue(
-  { column, data }: Store,
+  { column, data, id }: Store,
   rowKey: RowKey,
   columnName: string,
   value: CellValue
@@ -47,6 +49,7 @@ export function setValue(
   if (!gridEvent.isStopped()) {
     if (targetRow) {
       targetRow[columnName] = value;
+      getDataManager(id).push('U', targetRow);
     }
     if (targetColumn && targetColumn.onAfterChange) {
       gridEvent = new GridEvent({ rowKey, columnName, value });
@@ -150,12 +153,20 @@ export function uncheckAll(store: Store) {
   }
 }
 
-// @TODO neet to modify useClient options with net api
-export function sort({ data }: Store, columnName: string, ascending: boolean) {
+export function changeSortBtn({ data }: Store, columnName: string, ascending: boolean) {
   const { sortOptions } = data;
   if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
     data.sortOptions = { ...sortOptions, columnName, ascending };
   }
+}
+
+export function sort(store: Store, columnName: string, ascending: boolean) {
+  const { data } = store;
+  const { sortOptions } = data;
+  if (!sortOptions.useClient) {
+    return;
+  }
+  changeSortBtn(store, columnName, ascending);
   const { rawData, viewData } = getSortedData(data, columnName, ascending);
   if (!arrayEqual(rawData, data.rawData)) {
     data.rawData = rawData;
@@ -170,7 +181,8 @@ function applyPasteDataToRawData(
 ) {
   const {
     data: { rawData, viewData },
-    column: { visibleColumns }
+    column: { visibleColumns },
+    id
   } = store;
   const {
     row: [startRowIndex, endRowIndex],
@@ -180,12 +192,17 @@ function applyPasteDataToRawData(
   const columnNames = mapProp('name', visibleColumns);
 
   for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+    let pasted = false;
     const rawRowIndex = rowIdx + startRowIndex;
     for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
       const name = columnNames[columnIdx + startColumnIndex];
       if (isColumnEditable(viewData, rawRowIndex, name)) {
+        pasted = true;
         rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
       }
+    }
+    if (pasted) {
+      getDataManager(id).push('U', rawData[rawRowIndex]);
     }
   }
 }
@@ -231,7 +248,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 export function appendRow(
-  { data, column, rowCoords, dimension }: Store,
+  { data, column, rowCoords, dimension, id }: Store,
   row: OptRow,
   options: OptAppendRow
 ) {
@@ -250,34 +267,43 @@ export function appendRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  getDataManager(id).push('C', rawRow);
 }
 
-export function removeRow({ data, rowCoords }: Store, rowKey: RowKey, options: OptRemoveRow) {
+export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
 
-  rawData.splice(rowIdx, 1);
+  const removedRow = rawData.splice(rowIdx, 1);
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  getDataManager(id).push('D', removedRow[0]);
 }
 
-export function clearData({ data }: Store) {
+export function clearData({ data, id }: Store) {
+  data.rawData.forEach((row) => {
+    getDataManager(id).push('D', row);
+  });
   data.rawData = [];
   data.viewData = [];
 }
 
-export function resetData({ data, column, dimension, rowCoords }: Store, inputData: OptRow[]) {
+export function resetData({ data, column, dimension, rowCoords, id }: Store, inputData: OptRow[]) {
   const { rawData, viewData } = createData(inputData, column);
   const { rowHeight } = dimension;
 
   data.rawData = rawData;
   data.viewData = viewData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
+
+  // @TODO need to execute logic by condition
+  getDataManager(id).setOriginData(inputData);
+  getDataManager(id).clearAll();
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
@@ -347,4 +373,9 @@ export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHe
   rowCoords.heights[rowIndex] = rowHeight;
 
   notify(rowCoords, 'heights');
+}
+
+export function setPagination({ data }: Store, pageOptions: PageOptions) {
+  const { perPage } = data.pageOptions;
+  data.pageOptions = { ...pageOptions, perPage };
 }
