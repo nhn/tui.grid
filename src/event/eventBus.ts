@@ -3,8 +3,6 @@ import GridEvent from './gridEvent';
 import { getInstance } from '../instance';
 import { GridId } from '../store/types';
 
-const eventBusMap: { [id: number]: EventBus } = {};
-
 export interface EventBus {
   on: Function;
   off: Function;
@@ -13,7 +11,7 @@ export interface EventBus {
 
 export function createEventBus(id: GridId) {
   const listenersMap: { [eventName: string]: Function[] } = {};
-  eventBusMap[id] = {
+  return {
     on(eventName: string, func: Function) {
       const listeners = listenersMap[eventName];
       listenersMap[eventName] = listeners ? [...listeners, func] : [func];
@@ -40,10 +38,4 @@ export function createEventBus(id: GridId) {
       }
     }
   };
-
-  return eventBusMap[id];
-}
-
-export function getEventBus(id: GridId) {
-  return eventBusMap[id];
 }

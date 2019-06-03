@@ -5,8 +5,8 @@ import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
-import { getDataProvider } from '../helper/inject';
-import { DataProvider } from '../datasource/types';
+import { getDataProvider } from '../instance';
+import { DataProvider } from '../dataSource/types';
 
 interface OwnProps {
   side: Side;

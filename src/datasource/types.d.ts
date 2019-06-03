@@ -1,15 +1,13 @@
 import { Row, RowKey, Dictionary } from '../store/types';
 import { OptRow } from '../types';
 
-export type ModificationTypeCode = 'C' | 'U' | 'D';
+export type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export type ModifiedDataMap = { [type in ModificationTypeCode]: Row[] };
 
-export type RequestTypeCode = ModificationTypeCode | 'M';
+export type RequestTypeCode = ModificationTypeCode | 'MODIFY';
 
 export type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyData';
-
-export type DownloadType = 'downloadExcel' | 'downloadExcelAll';
 
 export type RequestFunction = (url: string, method: string, options: RequestOptions) => void;
 
@@ -17,7 +15,6 @@ export type Request = { [type in RequestType]: RequestFunction };
 
 export type DataProvider = Request & {
   request: (requestType: RequestType, options: RequestOptions) => void;
-  download: (dowloadType: DownloadType) => void;
   readData: (page: number, data?: Params, resetData?: boolean) => void;
   reloadData: () => void;
 };
@@ -44,11 +41,9 @@ export interface API {
   updateData?: APIInfo;
   deleteData?: APIInfo;
   modifyData?: APIInfo;
-  downloadExcel?: APIInfo;
-  downloadExcelAll?: APIInfo;
 }
 
-export interface Datasource {
+export interface DataSource {
   initialRequest?: boolean;
   withCredentials?: boolean;
   api: API;

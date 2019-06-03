@@ -11,11 +11,11 @@ import {
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
-import { Datasource } from './datasource/types';
+import { DataSource } from './dataSource/types';
 
 export interface OptGrid {
   el: HTMLElement;
-  data?: OptRow[] | Datasource;
+  data?: OptRow[] | DataSource;
   columns: OptColumn[];
   columnOptions?: OptColumnOptions;
   keyColumnName?: string;

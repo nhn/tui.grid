@@ -6,18 +6,18 @@ import {
   ModifiedRowsOptions,
   ModifiedDataManager
 } from './types';
-import { some, findIndex, isUndefined, isObject, omit } from '../helper/common';
+import { someProp, findIndex, isUndefined, isObject, omit } from '../helper/common';
 import { getOriginObject, Observable } from '../helper/observable';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
 
 const paramNameMap: ParamNameMap = {
-  C: 'createdRows',
-  U: 'updatedRows',
-  D: 'deletedRows'
+  CREATE: 'createdRows',
+  UPDATE: 'updatedRows',
+  DELETE: 'deletedRows'
 };
 
-export function getMappingData(targetRows: Row[], options: ModifiedRowsOptions = {}) {
+export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptions = {}) {
   const {
     checkedOnly = false,
     withRawData = false,
@@ -30,7 +30,7 @@ export function getMappingData(targetRows: Row[], options: ModifiedRowsOptions =
     rows = rows.filter((row) => row._attributes.checked);
   }
   if (ignoredColumns.length) {
-    rows = rows.map((row) => omit(row, ignoredColumns));
+    rows = rows.map((row) => omit(row, ...ignoredColumns));
   }
   if (!withRawData) {
     rows = rows.map((row) => omit(row, '_attributes'));
@@ -44,9 +44,9 @@ export function getMappingData(targetRows: Row[], options: ModifiedRowsOptions =
 export function createManager(): ModifiedDataManager {
   let originData: OptRow[] = [];
   const dataMap: ModifiedDataMap = {
-    C: [],
-    U: [],
-    D: []
+    CREATE: [],
+    UPDATE: [],
+    DELETE: []
   };
   const splice = (type: ModificationTypeCode, rowKey: RowKey, row?: Row) => {
     const index = findIndex((createdRow) => createdRow.rowKey === rowKey, dataMap[type]);
@@ -59,49 +59,51 @@ export function createManager(): ModifiedDataManager {
     }
   };
   const spliceAll = (rowKey: RowKey, row?: Row) => {
-    splice('C', rowKey, row);
-    splice('U', rowKey, row);
-    splice('D', rowKey, row);
+    splice('CREATE', rowKey, row);
+    splice('UPDATE', rowKey, row);
+    splice('DELETE', rowKey, row);
   };
 
   return {
     // only for restore
     setOriginData(data: OptRow[]) {
-      const copied = [...data];
-      originData = copied.map((row) => ({ ...row }));
+      originData = data.map((row) => ({ ...row }));
     },
+
     getOriginData() {
       return originData;
     },
+
     getModifiedData(type: ModificationTypeCode, options: ModifiedRowsOptions) {
-      return { [paramNameMap[type]]: getMappingData(dataMap[type], options) };
+      return { [paramNameMap[type]]: getDataWithOptions(dataMap[type], options) };
     },
+
     getAllModifiedData(options: ModifiedRowsOptions) {
       return Object.keys(dataMap)
-        .map((key) => {
-          const keyWithType = key as ModificationTypeCode;
-          return this.getModifiedData(keyWithType, options);
-        })
+        .map((key) => this.getModifiedData(key as ModificationTypeCode, options))
         .reduce((acc, data) => ({ ...acc, ...data }), {} as Dictionary<Row[] | RowKey[]>);
     },
+
     isModified() {
-      return !!(dataMap.C.length || dataMap.U.length || dataMap.D.length);
+      return !!(dataMap.CREATE.length || dataMap.UPDATE.length || dataMap.DELETE.length);
     },
+
     push(type: ModificationTypeCode, row: Row) {
       const { rowKey } = row;
       // filter duplicated row
-      if (type === 'U') {
-        splice('C', rowKey, row);
-        splice('U', rowKey, row);
+      if (type === 'UPDATE') {
+        splice('CREATE', rowKey, row);
+        splice('UPDATE', rowKey, row);
       }
-      if (type === 'D') {
-        splice('C', rowKey);
-        splice('U', rowKey);
+      if (type === 'DELETE') {
+        splice('CREATE', rowKey);
+        splice('UPDATE', rowKey);
       }
-      if (!some((targetRow) => targetRow.rowKey === rowKey, dataMap[type])) {
+      if (!someProp('rowKey', rowKey, dataMap[type])) {
         dataMap[type].push(row);
       }
     },
+
     clear(rowsMap: Dictionary<Row[] | RowKey[]>) {
       Object.keys(rowsMap).forEach((key) => {
         const rows = rowsMap[key];
@@ -110,10 +112,11 @@ export function createManager(): ModifiedDataManager {
         });
       });
     },
+
     clearAll() {
-      dataMap.C = [];
-      dataMap.U = [];
-      dataMap.D = [];
+      dataMap.CREATE = [];
+      dataMap.UPDATE = [];
+      dataMap.DELETE = [];
     }
   };
 }

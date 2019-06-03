@@ -2,12 +2,16 @@ import { isObject, isString, isUndefined, isNull } from '../../helper/common';
 import { Params } from '../types';
 import { Dictionary } from '../../store/types';
 
+const ENCODED_SPACE = '%20';
+const ENCODED_LEFT_BRACKET = '%5B';
+
 function encodeWithSpace(value: string) {
-  return encodeURIComponent(value).replace(/%20/g, '+');
+  const regExp = new RegExp(ENCODED_SPACE, 'g');
+  return encodeURIComponent(value).replace(regExp, '+');
 }
 
 function encodeParamKey(key: string) {
-  return key.indexOf('%5B') !== -1 ? key : encodeWithSpace(key);
+  return key.indexOf(ENCODED_LEFT_BRACKET) !== -1 ? key : encodeWithSpace(key);
 }
 
 function encodeObjParamKey(key: string, subKey: string | number) {
@@ -18,7 +22,6 @@ function encodeObjParamKey(key: string, subKey: string | number) {
 function getEncodedData(name: string, subKey: string | number, value: Dictionary<any> | any[]) {
   const encodedKey = encodeObjParamKey(name, subKey);
   const valueWithType = Array.isArray(value) ? value[subKey as number] : value[subKey];
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   return encodeFormData(encodedKey, valueWithType);
 }
 
@@ -55,7 +58,7 @@ export function encodeParams(params: Params) {
   const encodedDataList = Object.keys(params).reduce(
     (acc, name) => {
       const value = params[name];
-      return value !== '' ? acc.concat(encodeFormData(name, params[name])) : acc;
+      return value !== '' ? acc.concat(encodeFormData(name, value)) : acc;
     },
     [] as string[]
   );

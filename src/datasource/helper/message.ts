@@ -4,17 +4,17 @@ import i18n from '../../i18n';
 type MessageMap = { [key in RequestTypeCode]: string };
 
 const confirmMessageMap: MessageMap = {
-  C: 'net.confirmCreate',
-  U: 'net.confirmUpdate',
-  D: 'net.confirmDelete',
-  M: 'net.confirmModify'
+  CREATE: 'net.confirmCreate',
+  UPDATE: 'net.confirmUpdate',
+  DELETE: 'net.confirmDelete',
+  MODIFY: 'net.confirmModify'
 };
 
 const alertMessageMap: MessageMap = {
-  C: 'net.noDataToCreate',
-  U: 'net.noDataToUpdate',
-  D: 'net.noDataToDelete',
-  M: 'net.noDataToModify'
+  CREATE: 'net.noDataToCreate',
+  UPDATE: 'net.noDataToUpdate',
+  DELETE: 'net.noDataToDelete',
+  MODIFY: 'net.noDataToModify'
 };
 
 export function getConfirmMessage(type: RequestTypeCode, count: number) {

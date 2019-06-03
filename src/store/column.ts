@@ -194,7 +194,7 @@ export function create({
     },
 
     get ignoredColumns() {
-      return this.allColumns.filter((column) => column.ignored).map((column) => column.name);
+      return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
     }
   });
 }

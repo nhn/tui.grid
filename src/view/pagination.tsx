@@ -4,9 +4,9 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { shallowEqual, isNumber, isEmpty } from '../helper/common';
-import { getDataProvider, getPaginationManager } from '../helper/inject';
+import { getDataProvider, getPaginationManager } from '../instance';
 import { PageOptions } from '../store/types';
-import { DataProvider } from '../datasource/types';
+import { DataProvider } from '../dataSource/types';
 import { PaginationManager } from '../pagination/paginationManager';
 import 'tui-pagination/dist/tui-pagination.css';
 

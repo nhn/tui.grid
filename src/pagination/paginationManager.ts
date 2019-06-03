@@ -11,6 +11,7 @@ export function createPaginationManager(): PaginationManager {
     setPagination(targetPagination: TuiPagination) {
       pagination = targetPagination;
     },
+
     getPagination() {
       return pagination;
     }

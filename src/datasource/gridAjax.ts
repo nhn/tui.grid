@@ -13,7 +13,7 @@ export interface Options {
   eventBus: EventBus;
 }
 
-export default class CustomHttpRequest {
+export default class GridAjax {
   private method: string;
 
   private url: string;
@@ -39,7 +39,7 @@ export default class CustomHttpRequest {
       eventBus
     } = options;
 
-    this.method = method;
+    this.method = method.toUpperCase();
     this.url = url;
     this.params = params;
     this.callback = callback;
@@ -49,71 +49,70 @@ export default class CustomHttpRequest {
     this.xhr.withCredentials = withCredentials;
   }
 
-  private isGetMethod = () => {
-    return this.method.toUpperCase() === 'GET';
-  };
-
-  private isDeleteMethod = () => {
-    return this.method.toUpperCase() === 'DELETE';
+  private shouldEncode = () => {
+    return this.method === 'GET' || this.method === 'DELETE';
   };
 
   private handleReadyStateChange = () => {
     const { xhr, callback, eventBus, callbackWhenever } = this;
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      callbackWhenever();
-      const gridEvent = new GridEvent({ xhr });
-      /**
-       * Occurs when the response is received from the server
-       * @event Grid#response
-       * @type {module:event/gridEvent}
-       * @property {XmlHttpRequest} xhr - XmlHttpRequest
-       * @property {Grid} instance - Current grid instance
-       */
-      eventBus.trigger('response', gridEvent);
-      if (gridEvent.isStopped()) {
-        return;
-      }
-      if (xhr.status === 200) {
-        const response = JSON.parse(xhr.responseText);
-        if (response.result) {
-          /**
-           * Occurs after the response event, if the result is true
-           * @event Grid#successResponse
-           * @type {module:event/gridEvent}
-           * @property {XmlHttpRequest} xhr - XmlHttpRequest
-           * @property {Grid} instance - Current grid instance
-           */
-          eventBus.trigger('successResponse', gridEvent);
-        } else if (!response.result) {
-          /**
-           * Occurs after the response event, if the result is false
-           * @event Grid#failResponse
-           * @type {module:event/gridEvent}
-           * @property {XmlHttpRequest} xhr - XmlHttpRequest
-           * @property {Grid} instance - Current grid instance
-           */
-          eventBus.trigger('failResponse', gridEvent);
-        }
-        if (gridEvent.isStopped()) {
-          return;
-        }
-        callback(response);
-      } else {
+    if (xhr.readyState !== XMLHttpRequest.DONE) {
+      return;
+    }
+    callbackWhenever();
+    const gridEvent = new GridEvent({ xhr });
+    /**
+     * Occurs when the response is received from the server
+     * @event Grid#response
+     * @type {module:event/gridEvent}
+     * @property {XmlHttpRequest} xhr - XmlHttpRequest
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('response', gridEvent);
+
+    if (gridEvent.isStopped()) {
+      return;
+    }
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      if (response.result) {
         /**
-         * Occurs after the response event, if the response is Error
-         * @event Grid#errorResponse
+         * Occurs after the response event, if the result is true
+         * @event Grid#successResponse
          * @type {module:event/gridEvent}
          * @property {XmlHttpRequest} xhr - XmlHttpRequest
          * @property {Grid} instance - Current grid instance
          */
-        eventBus.trigger('errorResponse', gridEvent);
+        eventBus.trigger('successResponse', gridEvent);
+      } else if (!response.result) {
+        /**
+         * Occurs after the response event, if the result is false
+         * @event Grid#failResponse
+         * @type {module:event/gridEvent}
+         * @property {XmlHttpRequest} xhr - XmlHttpRequest
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('failResponse', gridEvent);
       }
+
+      if (gridEvent.isStopped()) {
+        return;
+      }
+      callback(response);
+    } else {
+      /**
+       * Occurs after the response event, if the response is Error
+       * @event Grid#errorResponse
+       * @type {module:event/gridEvent}
+       * @property {XmlHttpRequest} xhr - XmlHttpRequest
+       * @property {Grid} instance - Current grid instance
+       */
+      eventBus.trigger('errorResponse', gridEvent);
     }
   };
 
   public open() {
-    const { method, url, params, xhr, isGetMethod, isDeleteMethod } = this;
-    if (isGetMethod() || isDeleteMethod()) {
+    const { method, url, params, xhr, shouldEncode } = this;
+    if (shouldEncode()) {
       xhr.open(method, `${url}?${encodeParams(params)}`);
     } else {
       xhr.open(method, url);
@@ -124,7 +123,7 @@ export default class CustomHttpRequest {
   }
 
   public send() {
-    const { url, method, xhr, isGetMethod, isDeleteMethod, eventBus, callbackWhenever } = this;
+    const { url, method, xhr, shouldEncode, eventBus, callbackWhenever } = this;
     const options = {
       url,
       method,
@@ -143,7 +142,7 @@ export default class CustomHttpRequest {
       callbackWhenever();
       return;
     }
-    const params = isGetMethod() || isDeleteMethod() ? null : encodeParams(this.params);
+    const params = shouldEncode() ? null : encodeParams(this.params);
     xhr.send(params);
   }
 }

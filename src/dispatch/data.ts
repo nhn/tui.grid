@@ -23,10 +23,9 @@ import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
 import { notify } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
-import { getEventBus } from '../event/eventBus';
 import { changeSelectionRange } from './selection';
 import GridEvent from '../event/gridEvent';
-import { getDataManager } from '../helper/inject';
+import { getEventBus, getDataManager } from '../instance';
 
 export function setValue(
   { column, data, id }: Store,
@@ -49,7 +48,7 @@ export function setValue(
   if (!gridEvent.isStopped()) {
     if (targetRow) {
       targetRow[columnName] = value;
-      getDataManager(id).push('U', targetRow);
+      getDataManager(id).push('UPDATE', targetRow);
     }
     if (targetColumn && targetColumn.onAfterChange) {
       gridEvent = new GridEvent({ rowKey, columnName, value });
@@ -202,7 +201,7 @@ function applyPasteDataToRawData(
       }
     }
     if (pasted) {
-      getDataManager(id).push('U', rawData[rawRowIndex]);
+      getDataManager(id).push('UPDATE', rawData[rawRowIndex]);
     }
   }
 }
@@ -267,7 +266,7 @@ export function appendRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
-  getDataManager(id).push('C', rawRow);
+  getDataManager(id).push('CREATE', rawRow);
 }
 
 export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -282,12 +281,12 @@ export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, option
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
-  getDataManager(id).push('D', removedRow[0]);
+  getDataManager(id).push('DELETE', removedRow[0]);
 }
 
 export function clearData({ data, id }: Store) {
   data.rawData.forEach((row) => {
-    getDataManager(id).push('D', row);
+    getDataManager(id).push('DELETE', row);
   });
   data.rawData = [];
   data.viewData = [];

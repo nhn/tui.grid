@@ -1,6 +1,6 @@
 import { cls } from '../../src/helper/dom';
-import { data as sampleData } from '../../samples/datasource/data';
-import { data as sortedSampleData } from '../../samples/datasource/sortedData';
+import { data as sampleData } from '../../samples/dataSource/data';
+import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
 import { isSubsetOf } from '../helper/compare';
 import { Dictionary } from '@/store/types';
@@ -19,9 +19,7 @@ const data = {
     createData: { url: '/api/create', method: 'POST' },
     updateData: { url: '/api/update', method: 'PUT' },
     deleteData: { url: '/api/delete', method: 'DELETE' },
-    modifyData: { url: '/api/modify', method: 'POST' },
-    downloadExcel: { url: '/api/download/excel', method: 'GET' },
-    downloadExcelAll: { url: '/api/download/excelAll', method: 'GET' }
+    modifyData: { url: '/api/modify', method: 'POST' }
   }
 };
 

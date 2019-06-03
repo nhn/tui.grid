@@ -257,9 +257,9 @@ export function create(
     pageOptions,
 
     get checkedAllRows() {
-      const checkedRows = this.rawData.filter((row) => row._attributes.checked);
-
-      return checkedRows.length === this.rawData.length;
+      const allRawData = this.rawData;
+      const checkedRows = allRawData.filter((row) => row._attributes.checked);
+      return checkedRows.length === allRawData.length;
     }
   });
 }

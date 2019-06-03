@@ -14,7 +14,7 @@ import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
-import { register } from './instance';
+import { register, registerEventBus, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
@@ -24,8 +24,8 @@ import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import { getCellAddressByIndex } from './query/data';
 import { isRowHeader } from './helper/column';
-import { createProvider } from './datasource/serverSideDataProvider';
-import { createManager } from './datasource/modifiedDataManager';
+import { createProvider } from './dataSource/serverSideDataProvider';
+import { createManager } from './dataSource/modifiedDataManager';
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
 import {
   RequestOptions,
@@ -33,10 +33,8 @@ import {
   DataProvider,
   ModifiedRowsOptions,
   Params,
-  ModifiedDataManager,
-  DownloadType
-} from './datasource/types';
-import { inject } from './helper/inject';
+  ModifiedDataManager
+} from './dataSource/types';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -63,23 +61,22 @@ export default class Grid {
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
     const eventBus = createEventBus(id);
-    const dataProvider = createProvider(store, dispatch, options.data);
-    const dataManager = createManager();
-    const paginationManager = createPaginationManager();
+
+    registerEventBus(id, eventBus);
 
     this.store = store;
     this.dispatch = dispatch;
     this.eventBus = eventBus;
+
+    const dataProvider = createProvider(store, dispatch, options.data);
+    const dataManager = createManager();
+    const paginationManager = createPaginationManager();
+
+    registerDataSources(id, dataProvider, dataManager, paginationManager);
+
     this.dataProvider = dataProvider;
     this.dataManager = dataManager;
     this.paginationManager = paginationManager;
-
-    inject(
-      id,
-      ['dataProvider', dataProvider],
-      ['dataManager', dataManager],
-      ['paginationManager', paginationManager]
-    );
 
     // @TODO: Only for Development env
     // eslint-disable-next-line
@@ -855,10 +852,10 @@ export default class Grid {
    */
   public getModifiedRows(options: ModifiedRowsOptions = {}) {
     const { ignoredColumns } = options;
-    const { ignoredColumns: orginIgnoredColumns } = this.store.column;
+    const { ignoredColumns: originIgnoredColumns } = this.store.column;
     options.ignoredColumns = Array.isArray(ignoredColumns)
-      ? ignoredColumns.concat(orginIgnoredColumns)
-      : orginIgnoredColumns;
+      ? ignoredColumns.concat(originIgnoredColumns)
+      : originIgnoredColumns;
     return this.dataManager.getAllModifiedData(options);
   }
 
@@ -886,16 +883,6 @@ export default class Grid {
    */
   public request(requestType: RequestType, options: RequestOptions = {}) {
     this.dataProvider.request(requestType, options);
-  }
-
-  /**
-   * Change window.location to registered url for downloading data
-   * @param {string} type - Download type. 'excel' or 'excelAll'.
-   *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
-   */
-  // @TODO need to add client excel download
-  public download(type: DownloadType) {
-    this.dataProvider.download(type);
   }
 
   /**

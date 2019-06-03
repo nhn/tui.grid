@@ -1,24 +1,21 @@
 import {
   DataProvider,
-  Datasource,
+  DataSource,
   RequestOptions,
   API,
   Params,
   Response,
   RequestTypeCode,
-  RequestType,
-  DownloadType
+  RequestType
 } from './types';
 import { Store, Dictionary, Row, RowKey } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
-import { isUndefined, isObject, omit } from '../helper/common';
-import CustomHttpRequest from './customHttpRequest';
-import { getDataManager } from '../helper/inject';
+import { isUndefined, isObject } from '../helper/common';
+import GridAjax from './gridAjax';
+import { getEventBus, getDataManager } from '../instance';
 import { getConfirmMessage, getAlertMessage } from './helper/message';
-import { encodeParams } from './helper/encoder';
-import { getMappingData } from './modifiedDataManager';
-import { getEventBus } from '../event/eventBus';
+import { getDataWithOptions } from './modifiedDataManager';
 
 interface SendOptions {
   url: string;
@@ -40,9 +37,8 @@ class ServerSideDataProvider implements DataProvider {
 
   private dispatch: Dispatch;
 
-  public constructor(store: Store, dispatch: Dispatch, data: Datasource) {
-    const datasource = data;
-    const { api, initialRequest = true, withCredentials = false } = datasource;
+  public constructor(store: Store, dispatch: Dispatch, dataSource: DataSource) {
+    const { api, initialRequest = true, withCredentials = false } = dataSource;
 
     this.initialRequest = initialRequest;
     this.api = api;
@@ -51,7 +47,7 @@ class ServerSideDataProvider implements DataProvider {
     this.store = store;
     this.dispatch = dispatch;
 
-    if (this.initialRequest === true) {
+    if (this.initialRequest) {
       this.readData(1);
     }
   }
@@ -71,11 +67,11 @@ class ServerSideDataProvider implements DataProvider {
     const { ignoredColumns } = this.store.column;
     const manager = getDataManager(this.store.id);
     if (modifiedOnly) {
-      return type === 'M'
+      return type === 'MODIFY'
         ? manager.getAllModifiedData({ checkedOnly, ignoredColumns })
         : manager.getModifiedData(type, { checkedOnly, ignoredColumns });
     }
-    return { rows: getMappingData(this.store.data.rawData, { checkedOnly, ignoredColumns }) };
+    return { rows: getDataWithOptions(this.store.data.rawData, { checkedOnly, ignoredColumns }) };
   }
 
   private handleSuccessReadData = (response: Response) => {
@@ -101,7 +97,7 @@ class ServerSideDataProvider implements DataProvider {
       : { ...this.lastRequiredData, ...dataWithType, page };
     this.lastRequiredData = params;
 
-    const request = new CustomHttpRequest({
+    const request = new GridAjax({
       method,
       url,
       params,
@@ -117,19 +113,19 @@ class ServerSideDataProvider implements DataProvider {
   }
 
   public createData(url: string, method: string, options: RequestOptions) {
-    this.send({ url, method, options, requestTypeCode: 'C' });
+    this.send({ url, method, options, requestTypeCode: 'CREATE' });
   }
 
   public updateData(url: string, method: string, options: RequestOptions) {
-    this.send({ url, method, options, requestTypeCode: 'U' });
+    this.send({ url, method, options, requestTypeCode: 'UPDATE' });
   }
 
   public deleteData(url: string, method: string, options: RequestOptions) {
-    this.send({ url, method, options, requestTypeCode: 'D' });
+    this.send({ url, method, options, requestTypeCode: 'DELETE' });
   }
 
   public modifyData(url: string, method: string, options: RequestOptions) {
-    this.send({ url, method, options, requestTypeCode: 'M' });
+    this.send({ url, method, options, requestTypeCode: 'MODIFY' });
   }
 
   public request(requestType: RequestType, options: RequestOptions) {
@@ -146,23 +142,6 @@ class ServerSideDataProvider implements DataProvider {
     this[requestType](url, method, requestOptions);
   }
 
-  // @TODO need to imporove download logic by using blob or msSave
-  public download(downloadType: DownloadType) {
-    const data =
-      downloadType === 'downloadExcelAll'
-        ? omit(this.lastRequiredData, ['page', 'perPage'])
-        : this.lastRequiredData;
-    if (!this.api[downloadType]) {
-      throw new Error(`${downloadType} API should be essential for request.`);
-    }
-    if (!this.api[downloadType]!.url) {
-      throw new Error('url and method should be essential for request.');
-    }
-    const { url } = this.api[downloadType]!;
-    const params = encodeParams(data);
-    window.location.href = `${url}?${params}`;
-  }
-
   public reloadData() {
     this.readData(this.lastRequiredData.page || 1);
   }
@@ -174,7 +153,7 @@ class ServerSideDataProvider implements DataProvider {
 
     if (!options.showConfirm || this.confirm(requestTypeCode, this.getCount(params))) {
       const { withCredentials } = options;
-      const request = new CustomHttpRequest({
+      const request = new GridAjax({
         method,
         url,
         params,
@@ -195,34 +174,29 @@ class ServerSideDataProvider implements DataProvider {
 
   // @TODO need to options for custom conrifm UI
   private confirm(type: RequestTypeCode, count: number) {
-    let result = false;
-
-    if (count > 0) {
-      result = confirm(getConfirmMessage(type, count));
-    } else {
-      alert(getAlertMessage(type));
-    }
-    return result;
+    return count ? confirm(getConfirmMessage(type, count)) : alert(getAlertMessage(type));
   }
 }
 
 export function createProvider(
   store: Store,
   dispatch: Dispatch,
-  data?: OptRow[] | Datasource
+  data?: OptRow[] | DataSource
 ): DataProvider {
   if (!Array.isArray(data) && isObject(data)) {
-    return new ServerSideDataProvider(store, dispatch, data as Datasource);
+    return new ServerSideDataProvider(store, dispatch, data as DataSource);
   }
   // dummy instance
+  const providerErrorFn = () => {
+    throw new Error('cannot execute server side API. for using this API, have to set dataSource');
+  };
   return {
-    createData: () => {},
-    updateData: () => {},
-    deleteData: () => {},
-    modifyData: () => {},
-    request: () => {},
-    readData: () => {},
-    reloadData: () => {},
-    download: () => {}
+    createData: providerErrorFn,
+    updateData: providerErrorFn,
+    deleteData: providerErrorFn,
+    modifyData: providerErrorFn,
+    request: providerErrorFn,
+    readData: providerErrorFn,
+    reloadData: providerErrorFn
   };
 }
