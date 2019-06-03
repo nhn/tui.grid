@@ -120,13 +120,12 @@ stories.add(
         name: 'options',
         editor: 'datepicker',
         editorOptions: {
-          date: new Date(1992, 3, 25),
-          format: 'dd/MM/yyyy',
-          selectableRanges: [[new Date(1992, 3, 25), new Date(2020, 5, 20)]]
+          format: 'yyyy/MM/dd',
+          selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
         }
       },
       {
-        name: 'date-timePicker',
+        name: 'timePicker',
         editor: 'datepicker',
         editorOptions: {
           format: 'yyyy-MM-dd HH:mm A',
@@ -134,7 +133,18 @@ stories.add(
         }
       },
       {
-        name: 'month-picker',
+        name: 'timePickerWithTab',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM-dd HH:mm A',
+          timepicker: {
+            layoutType: 'tab',
+            inputType: 'spinbox'
+          }
+        }
+      },
+      {
+        name: 'monthPicker',
         editor: 'datepicker',
         editorOptions: {
           format: 'yyyy-MM',
@@ -142,7 +152,7 @@ stories.add(
         }
       },
       {
-        name: 'year-picker',
+        name: 'yearPicker',
         editor: 'datepicker',
         editorOptions: {
           format: 'yyyy',
@@ -151,12 +161,23 @@ stories.add(
       }
     ];
 
-    const { grid, el } = createGrid({
-      data,
+    const { el } = createGrid({
+      data: [
+        {
+          id: 549731,
+          default: '2019-11-11',
+          options: '1992/03/25',
+          timePicker: '2019-11-11 11:11 AM',
+          timePickerWithTab: '2019-11-11 11:11 AM',
+          monthPicker: '2019-11',
+          yearPicker: '2019'
+        }
+      ],
       columns,
       columnOptions: { frozenCount: 1 },
-      bodyHeight: 400,
-      width: 800
+      showDummyRows: true,
+      bodyHeight: 200,
+      width: 1200
     });
 
     return el;
