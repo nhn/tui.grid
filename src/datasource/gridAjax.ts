@@ -142,7 +142,7 @@ export default class GridAjax {
       callbackWhenever();
       return;
     }
-    const params = shouldEncode() ? null : encodeParams(this.params);
+    const params = shouldEncode() ? null : encodeParams(this.params, true);
     xhr.send(params);
   }
 }

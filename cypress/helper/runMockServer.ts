@@ -83,7 +83,7 @@ export function runMockServer() {
   cy.route({
     method: 'DELETE',
     url:
-      '/api/delete?deletedRows[0][id]=19&deletedRows[0][name]=The+Magic+Whip&deletedRows[0][artist]=Blur&deletedRows[0][rowKey]=1',
+      '/api/delete?deletedRows[0][id]=19&deletedRows[0][name]=The Magic Whip&deletedRows[0][artist]=Blur&deletedRows[0][rowKey]=1',
     response: successResponse
   }).as('deleteData');
 
