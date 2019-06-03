@@ -1,5 +1,6 @@
 /// <reference path="../../node_modules/cypress/types/sinon/index.d.ts" />
 /// <reference path="../../types/tui-pagination/index.d.ts" />
+/// <reference path="../../types/tui-date-picker/index.d.ts" />
 /// <reference types="cypress" />
 
 declare namespace Cypress {
