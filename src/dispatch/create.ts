@@ -7,6 +7,7 @@ import * as mouse from './mouse';
 import * as focus from './focus';
 import * as summary from './summary';
 import * as selection from './selection';
+import * as renderState from './renderState';
 import { Store } from '../store/types';
 
 const dispatchMap = {
@@ -18,7 +19,8 @@ const dispatchMap = {
   ...focus,
   ...keyboard,
   ...summary,
-  ...selection
+  ...selection,
+  ...renderState
 };
 
 type DispatchMap = typeof dispatchMap;

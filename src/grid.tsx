@@ -14,7 +14,7 @@ import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
-import { register } from './instance';
+import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
@@ -24,6 +24,17 @@ import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import { getCellAddressByIndex } from './query/data';
 import { isRowHeader } from './helper/column';
+import { createProvider } from './dataSource/serverSideDataProvider';
+import { createManager } from './dataSource/modifiedDataManager';
+import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
+import {
+  RequestOptions,
+  RequestType,
+  DataProvider,
+  ModifiedRowsOptions,
+  Params,
+  ModifiedDataManager
+} from './dataSource/types';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -38,17 +49,30 @@ export default class Grid {
 
   private eventBus: EventBus;
 
+  private dataProvider: DataProvider;
+
+  private dataManager: ModifiedDataManager;
+
+  private paginationManager: PaginationManager;
+
   public constructor(options: OptGrid) {
     const { el } = options;
     const id = register(this);
-
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
     const eventBus = createEventBus(id);
+    const dataProvider = createProvider(store, dispatch, options.data);
+    const dataManager = createManager();
+    const paginationManager = createPaginationManager();
 
     this.store = store;
     this.dispatch = dispatch;
     this.eventBus = eventBus;
+    this.dataProvider = dataProvider;
+    this.dataManager = dataManager;
+    this.paginationManager = paginationManager;
+
+    registerDataSources(id, dataProvider, dataManager, paginationManager);
 
     // @TODO: Only for Development env
     // eslint-disable-next-line
@@ -56,6 +80,9 @@ export default class Grid {
 
     if (!themeManager.isApplied()) {
       themeManager.apply('default');
+    }
+    if (Array.isArray(options.data)) {
+      this.dataManager.setOriginData(options.data);
     }
 
     render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
@@ -777,5 +804,95 @@ export default class Grid {
 
   public off(eventName: string, fn?: Function) {
     this.eventBus.off(eventName, fn);
+  }
+
+  /**
+   * Returns an instance of tui.Pagination.
+   * @returns {tui.Pagination}
+   */
+  public getPagination() {
+    return this.paginationManager.getPagination();
+  }
+
+  /**
+   * Set number of rows per page and reload current page
+   * @param {number} perPage - Number of rows per page
+   */
+  public setPerPage(perPage: number) {
+    const pagination = this.getPagination();
+    if (pagination) {
+      pagination.setItemsPerPage(perPage);
+      this.readData(1, { perPage });
+    }
+  }
+
+  /**
+   * Returns true if there are at least one row modified.
+   * @returns {boolean} - True if there are at least one row modified.
+   */
+  public isModified() {
+    return this.dataManager.isModified();
+  }
+
+  /**
+   * Returns the object that contains the lists of changed data compared to the original data.
+   * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
+   * @param {Object} [options] Options
+   *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+   *     @param {boolean} [options.withRawData=false] - If set to true, the data will contains
+   *         the row data for internal use.
+   *     @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
+   *         rows will be returned.
+   *     @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
+   * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
+   */
+  public getModifiedRows(options: ModifiedRowsOptions = {}) {
+    const { ignoredColumns } = options;
+    const { ignoredColumns: originIgnoredColumns } = this.store.column;
+    options.ignoredColumns = Array.isArray(ignoredColumns)
+      ? ignoredColumns.concat(originIgnoredColumns)
+      : originIgnoredColumns;
+    return this.dataManager.getAllModifiedData(options);
+  }
+
+  /**
+   * Requests 'readData' to the server. The last requested data will be extended with new data.
+   * @param {Number} page - Page number
+   * @param {Object} data - Data(parameters) to send to the server
+   * @param {Boolean} resetData - If set to true, last requested data will be ignored.
+   */
+  public readData(page: number, data?: Params, resetData?: boolean) {
+    this.dataProvider.readData(page, data, resetData);
+  }
+
+  /**
+   * Send request to server to sync data
+   * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+   * @param {object} options - Options
+   *      @param {String} [options.url] - URL to send the request
+   *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+   *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+   *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+   *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+   *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
+   * @returns {boolean} Whether requests or not
+   */
+  public request(requestType: RequestType, options: RequestOptions = {}) {
+    this.dataProvider.request(requestType, options);
+  }
+
+  /**
+   * Requests 'readData' with last requested data.
+   */
+  public reloadData() {
+    this.dataProvider.reloadData();
+  }
+
+  /**
+   * Restores the data to the original data.
+   * (Original data is set by {@link Grid#resetData|resetData}
+   */
+  public restore() {
+    this.resetData(this.dataManager.getOriginData());
   }
 }
