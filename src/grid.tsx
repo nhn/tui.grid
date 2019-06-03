@@ -14,7 +14,7 @@ import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
 import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
-import { register, registerEventBus, registerDataSources } from './instance';
+import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
@@ -61,22 +61,18 @@ export default class Grid {
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
     const eventBus = createEventBus(id);
-
-    registerEventBus(id, eventBus);
-
-    this.store = store;
-    this.dispatch = dispatch;
-    this.eventBus = eventBus;
-
     const dataProvider = createProvider(store, dispatch, options.data);
     const dataManager = createManager();
     const paginationManager = createPaginationManager();
 
-    registerDataSources(id, dataProvider, dataManager, paginationManager);
-
+    this.store = store;
+    this.dispatch = dispatch;
+    this.eventBus = eventBus;
     this.dataProvider = dataProvider;
     this.dataManager = dataManager;
     this.paginationManager = paginationManager;
+
+    registerDataSources(id, dataProvider, dataManager, paginationManager);
 
     // @TODO: Only for Development env
     // eslint-disable-next-line

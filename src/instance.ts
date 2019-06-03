@@ -2,7 +2,6 @@ import Grid from './grid';
 import { GridId } from './store/types';
 import { DataProvider, ModifiedDataManager } from './dataSource/types';
 import { PaginationManager } from './pagination/paginationManager';
-import { EventBus } from './event/eventBus';
 import { isObject } from './helper/common';
 
 interface Instances {
@@ -10,7 +9,6 @@ interface Instances {
   dataProvider: DataProvider;
   dataManager: ModifiedDataManager;
   paginationManager: PaginationManager;
-  eventBus: EventBus;
 }
 
 interface InstanceMap {
@@ -34,10 +32,6 @@ export function register(instance: Grid) {
   instanceMap[id].grid = instance;
 
   return id;
-}
-
-export function registerEventBus(id: number, eventBus: EventBus) {
-  instanceMap[id].eventBus = eventBus;
 }
 
 export function registerDataSources(
@@ -65,8 +59,4 @@ export function getDataManager(id: GridId) {
 
 export function getPaginationManager(id: GridId) {
   return instanceMap[id].paginationManager;
-}
-
-export function getEventBus(id: GridId) {
-  return instanceMap[id].eventBus;
 }

@@ -24,8 +24,9 @@ import { createRawRow, createViewRow, createData } from '../store/data';
 import { notify } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
+import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { getEventBus, getDataManager } from '../instance';
+import { getDataManager } from '../instance';
 
 export function setValue(
   { column, data, id }: Store,

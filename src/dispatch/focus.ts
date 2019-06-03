@@ -1,6 +1,6 @@
 import { Store, RowKey, Focus } from '../store/types';
-import { getEventBus } from '../instance';
 import GridEvent from '../event/gridEvent';
+import { getEventBus } from '../event/eventBus';
 import { isCellDisabled } from '../query/data';
 import { isFocusedCell } from '../query/focus';
 

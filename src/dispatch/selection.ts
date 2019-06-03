@@ -1,5 +1,5 @@
 import { clamp } from '../helper/common';
-import { getEventBus } from '../instance';
+import { getEventBus } from '../event/eventBus';
 import { isSameInputRange } from '../helper/selection';
 import GridEvent from '../event/gridEvent';
 import { Store, Range, SelectionRange, Selection } from '../store/types';

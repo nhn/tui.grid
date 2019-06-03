@@ -10,8 +10,7 @@ import { cls, getCellAddress, Attributes } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
-import { EventBus } from '../event/eventBus';
-import { getEventBus } from '../instance';
+import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
 interface OwnProps {

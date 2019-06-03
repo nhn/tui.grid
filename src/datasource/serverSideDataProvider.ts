@@ -13,7 +13,8 @@ import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
 import { isUndefined, isObject } from '../helper/common';
 import GridAjax from './gridAjax';
-import { getEventBus, getDataManager } from '../instance';
+import { getEventBus } from '../event/eventBus';
+import { getDataManager } from '../instance';
 import { getConfirmMessage, getAlertMessage } from './helper/message';
 import { getDataWithOptions } from './modifiedDataManager';
 
