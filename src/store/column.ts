@@ -191,6 +191,10 @@ export function create({
 
     get validationColumns() {
       return allColumns.filter(({ validation }) => !!validation);
+    },
+
+    get ignoredColumns() {
+      return this.allColumns.filter((column) => column.ignored).map((column) => column.name);
     }
   });
 }
