@@ -27,7 +27,6 @@ import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
-import { traverseDescendants } from '../helper/treeData';
 
 export function setValue(
   { column, data, id }: Store,
@@ -379,42 +378,4 @@ export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHe
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
   data.pageOptions = { ...pageOptions, perPage };
-}
-
-export function expand({ data }: Store, rowKey: RowKey) {
-  const { rawData } = data;
-  const row = findProp('rowKey', rowKey, rawData);
-
-  if (row) {
-    const { tree } = row._attributes;
-
-    if (tree && tree.expanded === false) {
-      tree.expanded = true;
-    }
-  }
-}
-
-export function collapse(store: Store, rowKey: RowKey) {
-  const { data, rowCoords, focus } = store;
-  const { rawData } = data;
-  const { heights } = rowCoords;
-  const { rowIndex } = focus;
-  const row = findProp('rowKey', rowKey, rawData);
-
-  if (row) {
-    const { tree } = row._attributes;
-
-    if (tree && tree.expanded === true) {
-      tree.expanded = false;
-
-      let index = rowIndex || 0;
-
-      traverseDescendants(rawData, row, () => {
-        index += 1;
-        heights[index] = 0;
-      });
-
-      notify(rowCoords, 'heights');
-    }
-  }
 }

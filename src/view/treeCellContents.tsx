@@ -3,7 +3,8 @@ import { cls, findParent } from '../helper/dom';
 import { RowKey, TreeCellInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { DEFAULT_INDENT_WIDTH } from '../helper/treeData';
+import { DEFAULT_INDENT_WIDTH } from '../helper/tree';
+import { isUndefined } from 'util';
 
 interface OwnProps {
   rowKey: RowKey;
@@ -29,9 +30,9 @@ export class TreeCellContentsComp extends Component<Props> {
     const target = ev.target as HTMLElement;
 
     if (findParent(target, 'tree-button-collapse')) {
-      dispatch('expand', rowKey);
+      dispatch('expandByRowKey', rowKey, false);
     } else if (findParent(target, 'tree-button-expand')) {
-      dispatch('collapse', rowKey);
+      dispatch('collapseByRowKey', rowKey, false);
     }
   };
 
@@ -83,14 +84,14 @@ export const TreeCellContents = connect<StoreProps, OwnProps>(
   ({ column }, { treeInfo, rowKey }) => {
     const { allColumnMap, treeColumnName } = column;
     const { tree } = allColumnMap[treeColumnName];
-    const { depth, indentWidth, leaf, expanded } = treeInfo;
+    const { depth, indentWidth, leaf } = treeInfo;
 
     return {
       rowKey,
       depth,
       indentWidth,
       leaf,
-      expanded,
+      expanded: !isUndefined(treeInfo.expanded) ? treeInfo.expanded : true,
       useIcon: !!tree && tree.useIcon
     };
   }

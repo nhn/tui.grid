@@ -24,7 +24,7 @@ import {
   isBoolean
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
-import { flattenTreeData, createTreeCellInfo } from '../helper/treeData';
+import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -179,7 +179,7 @@ export function createViewRow(
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       observe(() => {
-        valueMap[name] = { ...createViewCell(row, columnMap[name]) };
+        valueMap[name] = createViewCell(row, columnMap[name]);
       });
     }
     // @TODO need to improve relation
@@ -193,7 +193,7 @@ export function createViewRow(
   return {
     rowKey,
     valueMap,
-    ...(treeColumn && { treeInfo: createTreeCellInfo(rawData, row, treeColumn) })
+    ...(treeColumn && { treeInfo: createTreeCellInfo(rawData, row, treeColumn!.tree) })
   };
 }
 
@@ -221,8 +221,6 @@ function getAttributes(row: OptRow, index: number) {
         ...row._attributes.className
       };
     }
-
-    // @TODO tree row data extended by row data
   }
 
   return observable({ ...defaultAttr, ...row._attributes });
@@ -246,18 +244,17 @@ export function createRawRow(
 
 export function createData(data: OptRow[], column: Column) {
   const { defaultValues, keyColumnName, allColumnMap, treeColumnName } = column;
+  const treeColumn = allColumnMap[treeColumnName];
 
   let rawData: Row[];
 
-  if (treeColumnName) {
-    rawData = flattenTreeData(data, defaultValues);
+  if (treeColumn) {
+    rawData = createTreeRawData(data, defaultValues);
   } else {
     rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
   }
 
-  const viewData = rawData.map((row: Row) =>
-    createViewRow(row, allColumnMap, rawData, allColumnMap[treeColumnName])
-  );
+  const viewData = rawData.map((row: Row) => createViewRow(row, allColumnMap, rawData, treeColumn));
 
   return { rawData, viewData };
 }

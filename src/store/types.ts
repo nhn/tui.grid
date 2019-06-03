@@ -40,6 +40,7 @@ export interface RowAttributes {
   className: { row: string[]; column: Dictionary<string[]> };
   height?: number;
   tree?: TreeRowInfo;
+  expanded?: boolean;
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -114,7 +115,8 @@ export interface InvalidRow {
 export interface TreeRowInfo {
   parentRowKey: RowKey;
   childrenRowKeys: RowKey[];
-  expanded: boolean;
+  expanded?: boolean;
+  hiddenChild?: boolean;
 }
 
 export interface TreeColumnInfo {
@@ -125,7 +127,7 @@ export interface TreeCellInfo {
   depth: number;
   indentWidth: number;
   leaf: boolean;
-  expanded: boolean;
+  expanded?: boolean;
 }
 
 export interface Data {

@@ -1,5 +1,5 @@
 import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
-import { OptColumn, OptColumnOptions, OptRowHeader, OptTreeOptions } from '../types';
+import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
 import { observable } from '../helper/observable';
 import { createMapFromArray, includes } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
@@ -25,7 +25,7 @@ function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictio
   return { editor, editorOptions };
 }
 
-function getTreeInfo(treeColumnOptions: OptTreeOptions, name: string) {
+function getTreeInfo(treeColumnOptions: OptTree, name: string) {
   if (treeColumnOptions && treeColumnOptions.name === name) {
     const { useIcon = true } = treeColumnOptions;
 
@@ -68,7 +68,7 @@ function createColumn(
   columnOptions: OptColumnOptions,
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
-  treeColumnOptions: OptTreeOptions
+  treeColumnOptions: OptTree
 ): ColumnInfo {
   const {
     name,
@@ -147,7 +147,7 @@ interface ColumnOptions {
   rowHeaders: OptRowHeader[];
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;
-  treeColumnOptions: OptTreeOptions;
+  treeColumnOptions: OptTree;
 }
 
 export function create({
@@ -211,10 +211,6 @@ export function create({
 
     get ignoredColumns() {
       return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
-    },
-
-    get hasTreeColumn() {
-      return !!allColumns.filter(({ name }) => treeColumnOptions.name === name).length;
     }
   });
 }

@@ -35,7 +35,7 @@ export interface OptGrid {
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
   pageOptions?: PageOptions;
-  treeColumnOptions?: OptTreeOptions;
+  treeColumnOptions?: OptTree;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -66,7 +66,7 @@ export interface OptRemoveRow {
 
 export type OptRowHeader = string | OptColumn;
 
-interface OptTreeOptions {
+interface OptTree {
   name: string;
   useIcon?: boolean;
   useCascadingCheckbox?: boolean;

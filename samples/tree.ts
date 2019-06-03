@@ -12,7 +12,24 @@ export const data = [
     price: 10000,
     downloadCount: 1000,
     listenCount: 5000,
+    _attributes: {
+      expanded: true
+    },
     _children: [
+      {
+        id: 490500,
+        name: 'Blue Skies',
+        release: '2015.03.18',
+        artist: 'Lenka',
+        type: 'Single',
+        typeCode: '3',
+        genre: 'Pop,Rock',
+        genreCode: '1,2',
+        grade: '5',
+        price: 6000,
+        downloadCount: 1000,
+        listenCount: 5000
+      },
       {
         id: 491379,
         name: 'Chaos And The Calm',
@@ -26,6 +43,9 @@ export const data = [
         price: 12000,
         downloadCount: 1000,
         listenCount: 5000,
+        _attributes: {
+          expanded: false
+        },
         _children: [
           {
             id: 450720,
@@ -52,6 +72,20 @@ export const data = [
                 genreCode: '1',
                 grade: '3',
                 price: 20000,
+                downloadCount: 1000,
+                listenCount: 5000
+              },
+              {
+                id: 583551,
+                name: 'Following My Intuition',
+                artist: 'Craig David',
+                release: '2016.10.01',
+                type: 'Deluxe',
+                typeCode: '1',
+                genre: 'R&B,Electronic',
+                genreCode: '3,4',
+                grade: '5',
+                price: 15000,
                 downloadCount: 1000,
                 listenCount: 5000
               }
@@ -254,34 +288,6 @@ export const data = [
     genreCode: '1',
     grade: '2',
     price: 7000,
-    downloadCount: 1000,
-    listenCount: 5000
-  },
-  {
-    id: 583551,
-    name: 'Following My Intuition',
-    artist: 'Craig David',
-    release: '2016.10.01',
-    type: 'Deluxe',
-    typeCode: '1',
-    genre: 'R&B,Electronic',
-    genreCode: '3,4',
-    grade: '5',
-    price: 15000,
-    downloadCount: 1000,
-    listenCount: 5000
-  },
-  {
-    id: 490500,
-    name: 'Blue Skies',
-    release: '2015.03.18',
-    artist: 'Lenka',
-    type: 'Single',
-    typeCode: '3',
-    genre: 'Pop,Rock',
-    genreCode: '1,2',
-    grade: '5',
-    price: 6000,
     downloadCount: 1000,
     listenCount: 5000
   }

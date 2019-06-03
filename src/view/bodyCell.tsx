@@ -161,7 +161,6 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       disabled,
       columnInfo,
       renderData: valueMap[columnName],
-      test: treeInfo && treeInfo.expanded,
       ...(columnName === treeColumnName ? { treeInfo } : null)
     };
   }

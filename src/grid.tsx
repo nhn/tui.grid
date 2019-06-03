@@ -19,7 +19,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined, mapProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import { getCellAddressByIndex } from './query/data';
@@ -35,6 +35,8 @@ import {
   Params,
   ModifiedDataManager
 } from './dataSource/types';
+import { getParentRow, getChildRows, getAncestorRows, getDecendentRows } from './query/tree';
+import { getDepth } from './helper/tree';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -894,5 +896,89 @@ export default class Grid {
    */
   public restore() {
     this.resetData(this.dataManager.getOriginData());
+  }
+
+  /**
+   * Expands tree row.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} recursive - true for recursively expand all descendant
+   */
+  public expand(rowKey: RowKey, recursive?: boolean) {
+    this.dispatch('expandByRowKey', rowKey, recursive);
+  }
+
+  /**
+   * Expands all tree row.
+   */
+  public expandAll() {
+    this.dispatch('expandAll');
+  }
+
+  /**
+   * Expands tree row.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} recursive - true for recursively expand all descendant
+   */
+  public collapse(rowKey: RowKey, recursive?: boolean) {
+    this.dispatch('collapseByRowKey', rowKey, recursive);
+  }
+
+  /**
+   * Collapses all tree row.
+   */
+  public collapseAll() {
+    this.dispatch('collapseAll');
+  }
+
+  /**
+   * Gets the parent of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Object} - the parent row
+   */
+  public getParentRow(rowKey: RowKey) {
+    return getParentRow(this.store, rowKey, true);
+  }
+
+  /**
+   * Gets the children of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<Object>} - the children rows
+   */
+  public getChildRows(rowKey: RowKey) {
+    return getChildRows(this.store, rowKey, true);
+  }
+
+  /**
+   * Gets the ancestors of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<TreeRow>} - the ancestor rows
+   */
+  public getAncestorRows(rowKey: RowKey) {
+    return getAncestorRows(this.store, rowKey);
+  }
+
+  /**
+   * Gets the descendants of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<Object>} - the descendant rows
+   */
+  public getDecendentRows(rowKey: RowKey) {
+    return getDecendentRows(this.store, rowKey);
+  }
+
+  /**
+   * Gets the depth of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {number} - the depth
+   */
+  public getDepth(rowKey: RowKey) {
+    const { rawData } = this.store.data;
+    const row = findProp('rowKey', rowKey, rawData);
+
+    if (row) {
+      return getDepth(rawData, row);
+    }
+
+    return 0;
   }
 }
