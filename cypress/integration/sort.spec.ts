@@ -152,7 +152,7 @@ describe('sort', () => {
         expect(sortState).to.eql({
           ascending: true,
           columnName: 'rowKey',
-          useClient: false
+          useClient: true
         });
       });
 
@@ -164,7 +164,7 @@ describe('sort', () => {
         expect(sortState).to.eql({
           ascending: true,
           columnName: 'name',
-          useClient: false
+          useClient: true
         });
       });
   });

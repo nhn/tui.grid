@@ -5,6 +5,8 @@ import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
+import { getDataProvider } from '../helper/inject';
+import { DataProvider } from '../datasource/types';
 
 interface OwnProps {
   side: Side;
@@ -19,6 +21,7 @@ interface StoreProps {
   checkedAllRows: boolean;
   sortOptions: SortOptions;
   disabled: boolean;
+  dataProvider: DataProvider;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -44,7 +47,7 @@ class HeaderAreaComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, sortOptions } = this.props;
+    const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
     const targetColumnName = th!.getAttribute('data-column-name')!;
     let targetAscending = true;
@@ -53,7 +56,17 @@ class HeaderAreaComp extends Component<Props> {
       const { columnName, ascending } = sortOptions;
       targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
     }
-    dispatch('sort', targetColumnName, targetAscending);
+
+    if (sortOptions.useClient) {
+      dispatch('sort', targetColumnName, targetAscending);
+    } else {
+      dispatch('changeSortBtn', targetColumnName, targetAscending);
+      const data = {
+        sortColumn: targetColumnName,
+        sortAscending: targetAscending
+      };
+      dataProvider.readData(1, data, true);
+    }
   };
 
   private handleDblClick = (ev: MouseEvent) => {
@@ -131,7 +144,8 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     data,
     column,
     dimension: { headerHeight, cellBorderWidth },
-    viewport
+    viewport,
+    id
   } = store;
 
   return {
@@ -142,6 +156,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     hasRowHeaderCheckbox: !!column.allColumnMap._checked,
     checkedAllRows: data.checkedAllRows,
     sortOptions: data.sortOptions,
-    disabled: data.disabled
+    disabled: data.disabled,
+    dataProvider: getDataProvider(id)
   };
 })(HeaderAreaComp);
