@@ -1,6 +1,6 @@
 import { ColumnCoords, Column, Dimension, ColumnInfo } from './types';
 import { observable } from '../helper/observable';
-import { sum, findIndexes, pipe, mapProp } from '../helper/common';
+import { sum, findIndexes, pipe, mapProp, last } from '../helper/common';
 
 function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], widths: number[]) {
   const targetLen = targetIdxes.length;
@@ -145,6 +145,13 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
       return {
         L: leftAreaWidth,
         R: width - leftAreaWidth - cellBorderWidth
+      };
+    },
+
+    get totalColumnWidth(this: ColumnCoords) {
+      return {
+        L: last(this.offsets.L) + last(this.widths.L),
+        R: last(this.offsets.R) + last(this.widths.R)
       };
     }
   });
