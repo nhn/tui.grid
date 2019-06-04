@@ -114,8 +114,9 @@ interface ColumnCoordsOptions {
 export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords {
   return observable<ColumnCoords>({
     get widths(this: ColumnCoords) {
-      const { visibleColumns, visibleFrozenCount } = column;
+      const { visibleColumns, visibleFrozenCount, rowHeaderCount } = column;
       const widths = calculateWidths(visibleColumns, dimension.contentsWidth);
+      // @TODO: rowHeader 처리 필요
 
       return {
         L: widths.slice(0, visibleFrozenCount),
