@@ -1,9 +1,16 @@
 import { Store, Row, RowKey } from '../store/types';
+import { getRowHeight } from '../store/rowCoords';
 import { findProp, findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
-import { getRowHeight } from '../store/rowCoords';
-import { traverseDescendantRows, isLeaf, getHiddenChildState } from '../helper/tree';
+import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow } from '../query/tree';
+import {
+  traverseAncestorRows,
+  traverseDescendantRows,
+  isLeaf,
+  getChildRowKeys,
+  getHiddenChildState
+} from '../helper/tree';
 
 function changeExpandedState(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -115,4 +122,46 @@ export function collapseAll(store: Store) {
   });
 
   notify(rowCoords, 'heights');
+}
+
+function setCheckedState(disabled: boolean, row: Row, state: boolean) {
+  if (row && isUpdatableRowAttr('checked', row._attributes.checkDisabled, disabled)) {
+    row._attributes.checked = state;
+  }
+}
+
+function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
+  const { rawData, disabled } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+
+  if (row) {
+    traverseAncestorRows(rawData, row, (parentRow: Row) => {
+      const childRowKeys = getChildRowKeys(parentRow);
+      const checkedChildRows = childRowKeys.filter((childRowKey) => {
+        const childRow = findProp('rowKey', childRowKey, rawData);
+
+        return !!childRow && !!childRow._attributes && childRow._attributes.checked;
+      });
+      const checked = childRowKeys.length === checkedChildRows.length;
+
+      setCheckedState(disabled, parentRow, checked);
+    });
+  }
+}
+
+function changeDecendantRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
+  const { rawData, disabled } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+
+  if (row) {
+    traverseDescendantRows(rawData, row, (childRow: Row) => {
+      setCheckedState(disabled, childRow, state);
+    });
+  }
+}
+
+export function checkTreeRow(store: Store, rowKey: RowKey, state: boolean) {
+  // useCascading 체크
+  changeDecendantRowsCheckedState(store, rowKey, state);
+  changeAncestorRowsCheckedState(store, rowKey);
 }

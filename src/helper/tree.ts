@@ -160,12 +160,25 @@ export function createTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: Tr
   return treeInfo;
 }
 
+export function traverseAncestorRows(rawData: Row[], row: Row, iteratee: Function) {
+  let parentRowKey = getParentRowKey(row);
+  let parentRow;
+
+  while (parentRowKey > -1) {
+    parentRow = findProp('rowKey', parentRowKey, rawData);
+
+    iteratee(parentRow);
+
+    parentRowKey = parentRow ? getParentRowKey(parentRow) : -1;
+  }
+}
+
 export function traverseDescendantRows(rawData: Row[], row: Row, iteratee: Function) {
   let childRowKeys = getChildRowKeys(row);
   let rowKey, childRow;
 
   while (childRowKeys.length) {
-    rowKey = childRowKeys.pop();
+    rowKey = childRowKeys.shift();
     childRow = findProp('rowKey', rowKey, rawData);
 
     iteratee(childRow);
