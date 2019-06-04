@@ -5,6 +5,7 @@ import { DispatchProps } from '../dispatch/create';
 
 interface OwnProps {
   side: Side;
+  useViewport: boolean;
 }
 
 interface StoreProps {
@@ -28,9 +29,9 @@ class ColGroupComp extends Component<Props> {
 }
 
 export const ColGroup = connect<StoreProps, OwnProps>(
-  ({ columnCoords, dimension, column }, { side }) => ({
+  ({ columnCoords, viewport, dimension, column }, { side, useViewport }) => ({
     widths: columnCoords.widths[side],
-    columns: column.visibleColumnsBySide[side],
+    columns: useViewport && side === 'R' ? viewport.columns : column.visibleColumnsBySide[side],
     borderWidth: dimension.cellBorderWidth
   })
 )(ColGroupComp);

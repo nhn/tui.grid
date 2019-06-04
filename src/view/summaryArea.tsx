@@ -48,7 +48,7 @@ class SummaryAreaComp extends Component<Props> {
           }}
         >
           <table class={cls('table')} style={tableStyle}>
-            <ColGroup side={side} />
+            <ColGroup side={side} useViewport={false} />
             <SummaryBodyRow columns={columns} />
           </table>
         </div>
