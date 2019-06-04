@@ -10,27 +10,12 @@ declare namespace tuiGrid {
   type RowStateType = 'DISABLED' | 'DISABLED_CHECK' | 'CHECKED';
   type TreeStateType = 'EXPAND' | 'COLLAPSE';
   type ErrorCodeType = 'REQUIRED' | 'TYPE_NUMBER';
-  type CustomEventType =
-    | 'click'
-    | 'check'
-    | 'uncheck'
-    | 'dblclick'
-    | 'mouseover'
-    | 'mouseout'
-    | 'mousedown'
-    | 'focusChange'
-    | 'expanded'
-    | 'expandedAll'
-    | 'collapsed'
-    | 'collapsedAll'
-    | 'beforeRequest'
-    | 'response'
-    | 'successResponse'
-    | 'failResponse'
-    | 'errorResponse'
-    | 'selection'
-    | 'deleteRange';
-  type RowConditionType = { key: string; value: RowKeyType } | ((row: IRow) => boolean);
+  type CustomEventType = 'click' | 'check' | 'uncheck' | 'dblclick' |
+    'mouseover' | 'mouseout' | 'mousedown' | 'focusChange' |
+    'expanded' | 'expandedAll' | 'collapsed' | 'collapsedAll' |
+    'beforeRequest' | 'response' | 'successResponse' | 'failResponse' |
+    'errorResponse' | 'selection' | 'deleteRange';
+  type RowConditionType = { key: string, value: RowKeyType } | ((row: IRow) => boolean);
   type PostPrefixConverterFunc = (cellValue: string, rowAttrs: IRow) => string;
   type RowType = IRow | ITreeRow;
   type Pagination = any;
@@ -188,7 +173,7 @@ declare namespace tuiGrid {
   }
 
   interface ISummaryAllValues {
-    [propName: string]: ISummaryColumnValues;
+    [propName: string]: ISummaryColumnValues
   }
 
   interface IColumnOptions {
