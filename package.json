@@ -62,6 +62,7 @@
   },
   "dependencies": {
     "preact": "^8.4.2",
-    "tui-pagination": "^3.3.2"
+    "tui-pagination": "^3.3.2",
+    "tui-date-picker": "^3.3.3"
   }
 }

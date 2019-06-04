@@ -249,7 +249,7 @@
 .tui-grid-cell-content label + input {
   margin-left: 10px;
 }
-.tui-grid-cell-content select {
+.tui-grid-cell-content select:not('.tui-time-picker-select') {
   box-sizing: border-box;
   width: 100%;
 }

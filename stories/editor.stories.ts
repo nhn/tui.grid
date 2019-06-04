@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { OptGrid } from '../src/types';
+import { OptColumn, OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
@@ -18,7 +18,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-const columns = [
+let columns: OptColumn[] = [
   {
     name: 'name',
     width: 150
@@ -107,3 +107,80 @@ stories.add('with editingEvent:click options', () => {
 
   return el;
 });
+
+stories.add(
+  'Datepicker',
+  () => {
+    columns = [
+      {
+        name: 'default',
+        editor: 'datepicker'
+      },
+      {
+        name: 'options',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy/MM/dd',
+          selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
+        }
+      },
+      {
+        name: 'timePicker',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM-dd HH:mm A',
+          timepicker: true
+        }
+      },
+      {
+        name: 'timePickerWithTab',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM-dd HH:mm A',
+          timepicker: {
+            layoutType: 'tab',
+            inputType: 'spinbox'
+          }
+        }
+      },
+      {
+        name: 'monthPicker',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy-MM',
+          type: 'month'
+        }
+      },
+      {
+        name: 'yearPicker',
+        editor: 'datepicker',
+        editorOptions: {
+          format: 'yyyy',
+          type: 'year'
+        }
+      }
+    ];
+
+    const { el } = createGrid({
+      data: [
+        {
+          id: 549731,
+          default: '2019-11-11',
+          options: '1992/03/25',
+          timePicker: '2019-11-11 11:11 AM',
+          timePickerWithTab: '2019-11-11 11:11 AM',
+          monthPicker: '2019-11',
+          yearPicker: '2019'
+        }
+      ],
+      columns,
+      columnOptions: { frozenCount: 1 },
+      showDummyRows: true,
+      bodyHeight: 200,
+      width: 1200
+    });
+
+    return el;
+  },
+  { html: { preventForcedRender: true } }
+);
