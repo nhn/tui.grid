@@ -12,16 +12,7 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import {
-  Store,
-  CellValue,
-  RowKey,
-  Range,
-  Row,
-  InvalidRow,
-  ColumnInfo,
-  GridId
-} from './store/types';
+import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
 import i18n from './i18n';

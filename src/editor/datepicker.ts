@@ -1,9 +1,9 @@
-import { CellEditor, CellEditorProps } from './types';
-import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString } from '../helper/common';
 import TuiDatePicker from 'tui-date-picker';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
+import { CellEditor, CellEditorProps } from './types';
+import { cls } from '../helper/dom';
+import { deepMergedCopy, isNumber, isString } from '../helper/common';
 
 export class DatepickerEditor implements CellEditor {
   private el: HTMLDivElement;
@@ -13,31 +13,37 @@ export class DatepickerEditor implements CellEditor {
   private datepickerEl: TuiDatePicker;
 
   public constructor(props: CellEditorProps) {
-    let format;
+    let format = 'yyyy-MM-dd';
+    let date = new Date();
     const el = document.createElement('div');
     const inputEl = document.createElement('input');
     const calendarWrapper = document.createElement('div');
 
-    el.appendChild(inputEl);
-    el.appendChild(calendarWrapper);
-
-    el.className = cls('layer-datepicker');
     inputEl.className = cls('content-text');
     inputEl.type = 'text';
+    el.className = cls('layer-datepicker');
     calendarWrapper.style.marginTop = '-4px';
+
+    el.appendChild(inputEl);
+    el.appendChild(calendarWrapper);
 
     this.inputEl = inputEl;
     this.el = el;
 
     const { editorOptions } = props.columnInfo;
 
-    if (editorOptions) {
-      format = editorOptions.format ? editorOptions.format : 'yyyy-MM-dd';
+    if (editorOptions && editorOptions.format) {
+      // eslint-disable-next-line prefer-destructuring
+      format = editorOptions.format;
+      delete editorOptions.format;
+    }
+
+    if (isNumber(props.value) || isString(props.value)) {
+      date = new Date(props.value);
     }
 
     const defaultOptions = {
-      date: isNumber(props.value) || isString(props.value) ? new Date(props.value) : new Date(),
-      format: 'yyyy-MM-dd',
+      date,
       type: 'date',
       input: {
         element: inputEl,
