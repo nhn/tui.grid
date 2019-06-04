@@ -5,35 +5,48 @@ import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString } from '../helper/common';
 
-export class DatepickerEditor implements CellEditor {
+export class DatePickerEditor implements CellEditor {
   private el: HTMLDivElement;
 
   private inputEl: HTMLInputElement;
 
-  private datepickerEl: TuiDatePicker;
+  private datePickerEl: TuiDatePicker;
+
+  private createWrapper() {
+    const el = document.createElement('div');
+    el.className = cls('layer-datepicker');
+
+    return el;
+  }
+
+  private createInputElement() {
+    const inputEl = document.createElement('input');
+    inputEl.className = cls('content-text');
+    inputEl.type = 'text';
+    this.el.appendChild(inputEl);
+
+    return inputEl;
+  }
+
+  private createCalendarWrapper() {
+    const calendarWrapper = document.createElement('div');
+    calendarWrapper.style.marginTop = '-4px';
+    this.el.appendChild(calendarWrapper);
+
+    return calendarWrapper;
+  }
 
   public constructor(props: CellEditorProps) {
     let format = 'yyyy-MM-dd';
     let date = new Date();
-    const el = document.createElement('div');
-    const inputEl = document.createElement('input');
-    const calendarWrapper = document.createElement('div');
 
-    inputEl.className = cls('content-text');
-    inputEl.type = 'text';
-    el.className = cls('layer-datepicker');
-    calendarWrapper.style.marginTop = '-4px';
-
-    el.appendChild(inputEl);
-    el.appendChild(calendarWrapper);
-
-    this.inputEl = inputEl;
-    this.el = el;
+    this.el = this.createWrapper();
+    this.inputEl = this.createInputElement();
+    const calendarWrapper = this.createCalendarWrapper();
 
     const { editorOptions } = props.columnInfo;
 
     if (editorOptions && editorOptions.format) {
-      // eslint-disable-next-line prefer-destructuring
       format = editorOptions.format;
       delete editorOptions.format;
     }
@@ -46,12 +59,12 @@ export class DatepickerEditor implements CellEditor {
       date,
       type: 'date',
       input: {
-        element: inputEl,
+        element: this.inputEl,
         format
       }
     };
 
-    this.datepickerEl = new TuiDatePicker(
+    this.datePickerEl = new TuiDatePicker(
       calendarWrapper,
       deepMergedCopy(defaultOptions, editorOptions || {})
     );
@@ -67,6 +80,6 @@ export class DatepickerEditor implements CellEditor {
 
   public start() {
     this.inputEl.select();
-    this.datepickerEl.open();
+    this.datePickerEl.open();
   }
 }

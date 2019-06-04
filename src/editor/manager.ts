@@ -3,7 +3,7 @@ import { TextEditor } from './text';
 import { CheckboxEditor } from './checkbox';
 import { SelectEditor } from './select';
 import { Dictionary } from '../store/types';
-import { DatepickerEditor } from './datepicker';
+import { DatePickerEditor } from './datePicker';
 
 export interface EditorMap {
   [editorName: string]: [CellEditorClass, Dictionary<any>?];
@@ -15,5 +15,5 @@ export const editorMap: EditorMap = {
   checkbox: [CheckboxEditor, { type: 'checkbox' }],
   radio: [CheckboxEditor, { type: 'radio' }],
   select: [SelectEditor],
-  datepicker: [DatepickerEditor]
+  datePicker: [DatePickerEditor]
 };

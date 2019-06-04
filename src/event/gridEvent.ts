@@ -28,9 +28,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
   if (cell) {
     const address = getCellAddress(cell);
     if (address) {
-      // eslint-disable-next-line prefer-destructuring
       rowKey = address.rowKey;
-      // eslint-disable-next-line prefer-destructuring
       columnName = address.columnName;
       targetType = isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
     } else {

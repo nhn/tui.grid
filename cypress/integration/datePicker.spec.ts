@@ -1,11 +1,11 @@
 const columns = [
   {
     name: 'default',
-    editor: 'datepicker'
+    editor: 'datePicker'
   },
   {
     name: 'timePicker',
-    editor: 'datepicker',
+    editor: 'datePicker',
     editorOptions: {
       format: 'yyyy-MM-dd HH:mm A',
       timepicker: true
@@ -13,7 +13,7 @@ const columns = [
   },
   {
     name: 'timePickerWithTab',
-    editor: 'datepicker',
+    editor: 'datePicker',
     editorOptions: {
       format: 'yyyy-MM-dd HH:mm A',
       timepicker: {
@@ -24,7 +24,7 @@ const columns = [
   },
   {
     name: 'monthPicker',
-    editor: 'datepicker',
+    editor: 'datePicker',
     editorOptions: {
       format: 'yyyy-MM',
       type: 'month'
@@ -32,7 +32,7 @@ const columns = [
   },
   {
     name: 'yearPicker',
-    editor: 'datepicker',
+    editor: 'datePicker',
     editorOptions: {
       format: 'yyyy',
       type: 'year'
@@ -65,17 +65,16 @@ beforeEach(() => {
   });
 });
 
-describe('default Datepicker', () => {
-  it('Cell value is applied correctly in the datepicker.', () => {
+describe('default datePicker', () => {
+  it('Cell value is applied correctly in the datePicker.', () => {
     cy.getCellContent(0, 'default').should('have.text', '2019-11-11');
 
     cy.getCell(0, 'default')
       .click()
-      .trigger('dblclick')
-      .then(() => {
-        cy.get('.tui-calendar-title').should('have.text', 'November 2019');
-        cy.get('.tui-is-selected').should('have.text', '11');
-      });
+      .trigger('dblclick');
+
+    cy.get('.tui-calendar-title').should('have.text', 'November 2019');
+    cy.get('.tui-is-selected').should('have.text', '11');
   });
 
   it('select the date, the selected date is applied in the cell.', () => {
@@ -87,11 +86,8 @@ describe('default Datepicker', () => {
       .contains('14')
       .click();
 
-    cy.getCell(0, 'timePicker')
-      .click()
-      .then(() => {
-        cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
-      });
+    cy.getCell(0, 'timePicker').click();
+    cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
   });
 });
 
@@ -108,11 +104,8 @@ describe('timepicker', () => {
       .eq(2)
       .select('PM');
 
-    cy.getCell(0, 'default')
-      .click()
-      .then(() => {
-        cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
-      });
+    cy.getCell(0, 'default').click();
+    cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
   });
 
   it('use time picker tab', () => {
@@ -120,19 +113,15 @@ describe('timepicker', () => {
 
     cy.getCell(0, 'timePickerWithTab')
       .click()
-      .trigger('dblclick')
-      .then(() => {
-        cy.get('.tui-datepicker-selector-button')
-          .eq(1)
-          .click();
-      });
+      .trigger('dblclick');
+    cy.get('.tui-datepicker-selector-button')
+      .eq(1)
+      .click();
 
     cy.get('.tui-timepicker-btn-up')
       .eq(1)
-      .click()
-      .then(() => {
-        cy.getCell(0, 'default').click();
-      });
+      .click();
+    cy.getCell(0, 'default').click();
 
     cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:12 AM');
   });
@@ -144,13 +133,12 @@ describe('month picker', () => {
 
     cy.getCell(0, 'monthPicker')
       .click()
-      .trigger('dblclick')
-      .then(() => {
-        cy.get('.tui-calendar-month')
-          .contains('Mar')
-          .click();
-        cy.getCell(0, 'default').click();
-      });
+      .trigger('dblclick');
+
+    cy.get('.tui-calendar-month')
+      .contains('Mar')
+      .click();
+    cy.getCell(0, 'default').click();
 
     cy.getCellContent(0, 'monthPicker').should('have.text', '2019-03');
   });
@@ -162,13 +150,11 @@ describe('year picker', () => {
 
     cy.getCell(0, 'yearPicker')
       .click()
-      .trigger('dblclick')
-      .then(() => {
-        cy.get('.tui-calendar-year')
-          .contains('2020')
-          .click();
-        cy.getCell(0, 'default').click();
-      });
+      .trigger('dblclick');
+    cy.get('.tui-calendar-year')
+      .contains('2020')
+      .click();
+    cy.getCell(0, 'default').click();
 
     cy.getCellContent(0, 'yearPicker').should('have.text', '2020');
   });
