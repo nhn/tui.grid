@@ -4,7 +4,6 @@ import { RowKey, TreeCellInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { DEFAULT_INDENT_WIDTH } from '../helper/tree';
-import { isUndefined } from 'util';
 
 interface OwnProps {
   rowKey: RowKey;
@@ -84,14 +83,14 @@ export const TreeCellContents = connect<StoreProps, OwnProps>(
   ({ column }, { treeInfo, rowKey }) => {
     const { allColumnMap, treeColumnName } = column;
     const { tree } = allColumnMap[treeColumnName];
-    const { depth, indentWidth, leaf } = treeInfo;
+    const { depth, indentWidth, leaf, expanded = true } = treeInfo;
 
     return {
       rowKey,
       depth,
       indentWidth,
       leaf,
-      expanded: !isUndefined(treeInfo.expanded) ? treeInfo.expanded : true,
+      expanded,
       useIcon: !!tree && tree.useIcon
     };
   }

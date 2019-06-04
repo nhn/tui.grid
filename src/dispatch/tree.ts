@@ -2,14 +2,13 @@ import { Store, Row, RowKey } from '../store/types';
 import { findProp, findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
-import { traverseDescendantRows, isLeaf, getHiddenState } from '../helper/tree';
-import { isUndefined } from 'util';
+import { traverseDescendantRows, isLeaf, getHiddenChildState } from '../helper/tree';
 import { getParentRow } from '../query/tree';
 
 function changeExpandedState(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
 
-  if (tree && !isUndefined(tree.expanded)) {
+  if (tree) {
     tree.expanded = expanded;
   }
 }
@@ -17,12 +16,12 @@ function changeExpandedState(row: Row, expanded: boolean) {
 function changeHiddenChildState(row: Row, hidden: boolean) {
   const { tree } = row._attributes;
 
-  if (tree && !isUndefined(tree.hiddenChild)) {
+  if (tree) {
     tree.hiddenChild = hidden;
   }
 }
 
-function expand(store: Store, row: Row, recursive?: boolean) {
+function expand(store: Store, row: Row, recursive?: boolean, silent?: boolean) {
   const { data, rowCoords, dimension } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
@@ -38,7 +37,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
       }
 
       const parentRow = getParentRow(store, childRow.rowKey);
-      const hiddenChild = parentRow ? getHiddenState(parentRow) : false;
+      const hiddenChild = parentRow ? getHiddenChildState(parentRow) : false;
 
       changeHiddenChildState(childRow, hiddenChild);
 
@@ -46,7 +45,9 @@ function expand(store: Store, row: Row, recursive?: boolean) {
       heights[index] = getRowHeight(childRow, dimension.rowHeight);
     });
 
-    notify(rowCoords, 'heights');
+    if (silent) {
+      notify(rowCoords, 'heights');
+    }
   }
 }
 
@@ -54,17 +55,21 @@ export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
-    expand(store, row, recursive);
+    expand(store, row, recursive, true);
   }
 }
 
 export function expandAll(store: Store) {
-  store.data.rawData.forEach((row) => {
-    expand(store, row);
+  const { data, rowCoords } = store;
+
+  data.rawData.forEach((row) => {
+    expand(store, row, true, false);
   });
+
+  notify(rowCoords, 'heights');
 }
 
-function collapse(store: Store, row: Row, recursive?: boolean) {
+function collapse(store: Store, row: Row, recursive?: boolean, silent?: boolean) {
   const { data, rowCoords } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
@@ -80,7 +85,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
       }
 
       const parentRow = getParentRow(store, childRow.rowKey);
-      const hiddenChild = parentRow ? getHiddenState(parentRow) : true;
+      const hiddenChild = parentRow ? getHiddenChildState(parentRow) : true;
 
       changeHiddenChildState(childRow, hiddenChild);
 
@@ -88,7 +93,9 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
       heights[index] = 0;
     });
 
-    notify(rowCoords, 'heights');
+    if (silent) {
+      notify(rowCoords, 'heights');
+    }
   }
 }
 
@@ -96,12 +103,16 @@ export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boole
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
-    collapse(store, row, recursive);
+    collapse(store, row, recursive, true);
   }
 }
 
 export function collapseAll(store: Store) {
-  store.data.rawData.forEach((row) => {
-    collapse(store, row);
+  const { data, rowCoords } = store;
+
+  data.rawData.forEach((row) => {
+    collapse(store, row, true, false);
   });
+
+  notify(rowCoords, 'heights');
 }

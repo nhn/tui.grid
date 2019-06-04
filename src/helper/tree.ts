@@ -1,8 +1,8 @@
-import { Row, Column, RowKey, TreeColumnInfo } from '../store/types';
-import { OptRow } from '../types';
-import { observable, observe } from '../helper/observable';
+import { Row, ColumnDefaultValues, RowKey, TreeColumnInfo } from '../store/types';
 import { createRawRow } from '../store/data';
-import { findProp, isUndefined } from '../helper/common';
+import { OptRow } from '../types';
+import { observable, observe } from './observable';
+import { includes, findProp } from './common';
 
 export const DEFAULT_INDENT_WIDTH = 22;
 
@@ -17,7 +17,7 @@ function generateTreeRowKey() {
 function addChildRowKeys(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
-  if (tree && tree.childrenRowKeys.indexOf(rowKey) === -1) {
+  if (tree && !includes(tree.childrenRowKeys, rowKey)) {
     tree.childrenRowKeys.push(rowKey);
   }
 }
@@ -37,7 +37,7 @@ export function getChildRowKeys(row: Row) {
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && tree.childrenRowKeys.length === 0;
+  return !!tree && !tree.childrenRowKeys.length;
 }
 
 export function isExpanded(row: Row) {
@@ -47,62 +47,50 @@ export function isExpanded(row: Row) {
 }
 
 export function getDepth(rawData: Row[], row: Row) {
-  let parentRowKey = getParentRowKey(row);
-  let parentRow = findProp('rowKey', parentRowKey, rawData);
-
+  let parentRow: Row | undefined = row;
   let depth = 0;
 
-  while (parentRow) {
+  do {
     depth += 1;
-    parentRowKey = getParentRowKey(parentRow);
-    parentRow = findProp('rowKey', parentRowKey, rawData)!;
-  }
+    parentRow = findProp('rowKey', getParentRowKey(parentRow), rawData);
+  } while (parentRow);
 
   return depth;
 }
 
 function hasChildrenState(row: OptRow) {
-  if (row) {
-    const { _children } = row;
+  const { _children } = row;
 
-    return Array.isArray(_children) && _children.length > 0;
-  }
-
-  return false;
+  return Array.isArray(_children) && _children.length > 0;
 }
 
 function getExpandedState(row: OptRow) {
-  if (row) {
-    const { _attributes } = row;
+  if (row && row._attributes) {
+    const { expanded = true } = row._attributes;
 
-    if (!!_attributes && !isUndefined(_attributes.expanded)) {
-      return _attributes.expanded;
-    }
+    return expanded;
   }
 
   return true;
 }
 
-export function getHiddenState(row?: Row) {
+export function getHiddenChildState(row: Row) {
   if (row) {
     const { tree } = row._attributes;
-    const collapsed = isExpanded(row) === false;
-    const hiddenChild = tree && !isUndefined(tree.hiddenChild) && tree.hiddenChild === true;
+    const collapsed = !isExpanded(row);
+    const hiddenChild = !!(tree && tree.hiddenChild);
 
-    if (collapsed || hiddenChild) {
-      return true;
-    }
+    return collapsed || hiddenChild;
   }
 
   return false;
 }
 
-function createTreeRawRow(row: OptRow, defaultValues: Column['defaultValues'], parentRow?: Row) {
-  const rawData = createRawRow(row, generateTreeRowKey(), defaultValues);
-  const { rowKey } = rawData;
-
+function createTreeRawRow(row: OptRow, defaultValues: ColumnDefaultValues, parentRow?: Row) {
+  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues);
+  const { rowKey } = rawRow;
   const defaultAttributes = {
-    parentRowKey: parentRow ? parentRow.rowKey : rowKey,
+    parentRowKey: parentRow ? parentRow.rowKey : -1,
     childrenRowKeys: []
   };
 
@@ -110,37 +98,37 @@ function createTreeRawRow(row: OptRow, defaultValues: Column['defaultValues'], p
     addChildRowKeys(parentRow, rowKey);
   }
 
-  rawData._attributes.tree = observable({
+  rawRow._attributes.tree = observable({
     ...defaultAttributes,
-    ...(hasChildrenState(row) ? { expanded: getExpandedState(row) } : null),
-    ...(parentRow ? { hiddenChild: getHiddenState(parentRow) } : null)
+    ...(hasChildrenState(row) && { expanded: getExpandedState(row) }),
+    ...(!!parentRow && { hiddenChild: getHiddenChildState(parentRow) })
   });
 
-  return rawData;
+  return rawRow;
 }
 
 export function flattenTreeData(
   data: OptRow[],
-  defaultValues: Column['defaultValues'],
+  defaultValues: ColumnDefaultValues,
   parentRow?: Row
-): Row[] {
+) {
   const flattenedRows: Row[] = [];
 
   data.forEach((row) => {
-    const rawData = createTreeRawRow(row, defaultValues, parentRow);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow);
 
-    flattenedRows.push(rawData);
+    flattenedRows.push(rawRow);
 
     if (hasChildrenState(row)) {
-      flattenedRows.push(...flattenTreeData(row._children || [], defaultValues, rawData));
-      delete rawData._children;
+      flattenedRows.push(...flattenTreeData(row._children || [], defaultValues, rawRow));
+      delete rawRow._children;
     }
   });
 
   return flattenedRows;
 }
 
-export function createTreeRawData(data: OptRow[], defaultValues: Column['defaultValues']) {
+export function createTreeRawData(data: OptRow[], defaultValues: ColumnDefaultValues) {
   treeRowKey = -1;
 
   return flattenTreeData(data, defaultValues);
@@ -148,10 +136,9 @@ export function createTreeRawData(data: OptRow[], defaultValues: Column['default
 
 export function getTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeColumnInfo) {
   const depth = getDepth(rawData, row);
-
   let indentWidth = (depth + 1) * DEFAULT_INDENT_WIDTH;
 
-  if (treeColumnInfo && !isUndefined(treeColumnInfo.useIcon)) {
+  if (treeColumnInfo && treeColumnInfo.useIcon === true) {
     indentWidth += DEFAULT_INDENT_WIDTH;
   }
 
@@ -164,15 +151,10 @@ export function getTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeC
 }
 
 export function createTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeColumnInfo) {
-  const initialInfo = getTreeCellInfo(rawData, row, treeColumnInfo);
-  const treeInfo = observable(initialInfo);
+  const treeInfo = observable(getTreeCellInfo(rawData, row, treeColumnInfo));
 
   observe(() => {
-    const { expanded } = getTreeCellInfo(rawData, row, treeColumnInfo);
-
-    if (treeInfo) {
-      treeInfo.expanded = expanded;
-    }
+    treeInfo.expanded = isExpanded(row);
   });
 
   return treeInfo;

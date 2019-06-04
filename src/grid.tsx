@@ -35,7 +35,7 @@ import {
   Params,
   ModifiedDataManager
 } from './dataSource/types';
-import { getParentRow, getChildRows, getAncestorRows, getDecendentRows } from './query/tree';
+import { getParentRow, getChildRows, getAncestorRows, getDecendantRows } from './query/tree';
 import { getDepth } from './helper/tree';
 
 /* eslint-disable */
@@ -962,8 +962,8 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Array.<Object>} - the descendant rows
    */
-  public getDecendentRows(rowKey: RowKey) {
-    return getDecendentRows(this.store, rowKey);
+  public getDecendantRows(rowKey: RowKey) {
+    return getDecendantRows(this.store, rowKey);
   }
 
   /**
@@ -975,10 +975,6 @@ export default class Grid {
     const { rawData } = this.store.data;
     const row = findProp('rowKey', rowKey, rawData);
 
-    if (row) {
-      return getDepth(rawData, row);
-    }
-
-    return 0;
+    return row ? getDepth(rawData, row) : 0;
   }
 }

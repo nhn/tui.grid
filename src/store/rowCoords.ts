@@ -9,12 +9,9 @@ interface RowCoordsOption {
 
 export function getRowHeight(row: Row, defaultRowHeight: number) {
   const { height, tree } = row._attributes;
-  let adjustedHeight = height;
+  const rowHeight = tree && tree.hiddenChild ? 0 : height;
 
-  if (tree && tree.hiddenChild === true) {
-    adjustedHeight = 0;
-  }
-  return isNumber(adjustedHeight) ? adjustedHeight : defaultRowHeight;
+  return isNumber(rowHeight) ? rowHeight : defaultRowHeight;
 }
 
 export function create({ data, dimension }: RowCoordsOption): RowCoords {

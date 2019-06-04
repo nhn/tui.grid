@@ -4,6 +4,7 @@ import {
   Dictionary,
   Column,
   ColumnInfo,
+  ColumnDefaultValues,
   Formatter,
   CellRenderData,
   FormatterProps,
@@ -229,7 +230,7 @@ function getAttributes(row: OptRow, index: number) {
 export function createRawRow(
   row: OptRow,
   index: number,
-  defaultValues: Column['defaultValues'],
+  defaultValues: ColumnDefaultValues,
   keyColumnName?: string
 ) {
   row.rowKey = keyColumnName ? row[keyColumnName] : index;

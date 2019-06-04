@@ -49,7 +49,7 @@ export function getAncestorRows(store: Store, rowKey: RowKey) {
   return ancestorRows;
 }
 
-export function getDecendentRows(store: Store, rowKey: RowKey) {
+export function getDecendantRows(store: Store, rowKey: RowKey) {
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
 

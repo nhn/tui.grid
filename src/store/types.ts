@@ -1,6 +1,8 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
 
+export type ColumnDefaultValues = { name: string; value: CellValue }[];
+
 export type CellValue = number | string | boolean | null | undefined;
 
 export type Range = [number, number];
@@ -62,6 +64,7 @@ export interface ClipboardCopyOptions {
   useListItemText?: boolean;
   customValue?: CustomValue;
 }
+
 export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
