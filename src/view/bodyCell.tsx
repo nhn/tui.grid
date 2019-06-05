@@ -22,6 +22,7 @@ interface StoreProps {
   renderData: CellRenderData;
   disabled: boolean;
   treeInfo?: TreeCellInfo;
+  isSelectedRow: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -98,7 +99,8 @@ export class BodyCellComp extends Component<Props> {
       renderData: { disabled, editable, invalidState, className },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled,
-      treeInfo
+      treeInfo,
+      isSelectedRow
     } = this.props;
 
     const style = {
@@ -117,7 +119,8 @@ export class BodyCellComp extends Component<Props> {
       [validation.required || false, 'cell-required'],
       [!!invalidState, 'cell-invalid'],
       [disabled || allDisabled, 'cell-disabled'],
-      [!!treeInfo, 'cell-has-tree']
+      [!!treeInfo, 'cell-has-tree'],
+      [isRowHeader(name) && isSelectedRow, 'cell-selected']
     )} ${className}`;
 
     return treeInfo ? (
@@ -148,12 +151,13 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data }, { viewRow, columnName }) => {
+  ({ id, column, data, selection }, { viewRow, columnName }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { allColumnMap, treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
     const columnInfo = allColumnMap[columnName];
+    const { range } = selection;
 
     return {
       grid,
@@ -161,7 +165,8 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       disabled,
       columnInfo,
       renderData: valueMap[columnName],
-      ...(columnName === treeColumnName ? { treeInfo } : null)
+      ...(columnName === treeColumnName ? { treeInfo } : null),
+      isSelectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
     };
   }
 )(BodyCellComp);
