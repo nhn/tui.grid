@@ -48,7 +48,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data: { viewData },
-    column: { visibleColumns },
+    column: { visibleColumns, rowHeaderCount },
     id
   } = store;
   let { inputRange: currentInputRange } = selection;
@@ -61,7 +61,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   if (!currentInputRange) {
     currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
-      column: [totalFocusColumnIndex, totalFocusColumnIndex]
+      column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
     };
   }
 
@@ -82,15 +82,12 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
-  const nextColumnName = visibleColumns[nextColumnIndex].name;
-  if (!isRowHeader(nextColumnName)) {
-    const inputRange: SelectionRange = {
-      row: [rowStartIndex, nextRowIndex],
-      column: [columnStartIndex, nextColumnIndex]
-    };
+  const inputRange: SelectionRange = {
+    row: [rowStartIndex, nextRowIndex],
+    column: [columnStartIndex, nextColumnIndex]
+  };
 
-    changeSelectionRange(selection, inputRange, id);
-  }
+  changeSelectionRange(selection, inputRange, id);
 }
 
 export function removeFocus(store: Store) {
