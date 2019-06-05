@@ -28,16 +28,19 @@ function getSortedRange(range: Range): Range {
 function getOwnSideColumnRange(
   columnRange: Range,
   side: Side,
-  visibleFrozenCount: number
+  visibleFrozenCount: number,
+  rowHeaderCount: number
 ): Range | null {
+  const rangeWithRowHeader = [columnRange[0] + rowHeaderCount, columnRange[1] + rowHeaderCount];
+
   if (side === 'L') {
-    if (columnRange[0] < visibleFrozenCount) {
-      return [columnRange[0], Math.min(columnRange[1], visibleFrozenCount - 1)];
+    if (rangeWithRowHeader[0] < visibleFrozenCount) {
+      return [rangeWithRowHeader[0], Math.min(rangeWithRowHeader[1], visibleFrozenCount - 1)];
     }
-  } else if (columnRange[1] >= visibleFrozenCount) {
+  } else if (rangeWithRowHeader[1] >= visibleFrozenCount) {
     return [
-      Math.max(columnRange[0], visibleFrozenCount) - visibleFrozenCount,
-      columnRange[1] - visibleFrozenCount
+      Math.max(rangeWithRowHeader[0], visibleFrozenCount) - visibleFrozenCount,
+      rangeWithRowHeader[1] - visibleFrozenCount
     ];
   }
 
@@ -112,12 +115,12 @@ export function create({
       if (!this.range) {
         return null;
       }
-      const { visibleFrozenCount } = columnInfo;
+      const { visibleFrozenCount, rowHeaderCount } = columnInfo;
       const { column, row } = this.range;
 
       return {
-        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
-        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
+        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount, rowHeaderCount) },
+        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
       };
     },
     get rangeAreaInfo(this: Selection) {
