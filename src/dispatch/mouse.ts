@@ -203,7 +203,7 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     columnCoords: { widths, areaWidth },
     rowCoords: { offsets: rowOffsets },
     selection,
-    column: { visibleColumns },
+    column: { rowHeaderCount },
     id
   } = store;
   const { pageX, pageY } = dragData;
@@ -214,7 +214,7 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
   const rowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-  const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
+  const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
 
   if (curInputRange === null) {
     const startViewInfo = {
@@ -225,16 +225,14 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     };
     const startScrolledPosition = getScrolledPosition(startViewInfo, dimension, areaWidth.L);
     startRowIndex = findOffsetIndex(rowOffsets, startScrolledPosition.y);
-    startColumnIndex = findOffsetIndex(totalColumnOffsets, startScrolledPosition.x);
+    startColumnIndex =
+      findOffsetIndex(totalColumnOffsets, startScrolledPosition.x) - rowHeaderCount;
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
   }
 
-  const startColumnName = visibleColumns[startColumnIndex].name;
-  const nextColumnName = visibleColumns[columnIndex].name;
-
-  if (isRowHeader(nextColumnName) || isRowHeader(startColumnName)) {
+  if (startColumnIndex < 0 || columnIndex < 0) {
     return;
   }
 
@@ -265,6 +263,7 @@ export function dragEndBody({ selection }: Store) {
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
   const { pageX, pageY, shiftKey } = eventInfo;
+  const { visibleColumnsBySide } = column;
 
   const { side, scrollLeft, scrollTop, left, top } = elementInfo;
   const offsetLeft = pageX - left + scrollLeft;
@@ -272,7 +271,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
   const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
-  const columnName = column.visibleColumnsBySide[side][columnIndex].name;
+  const columnName = visibleColumnsBySide[side][columnIndex].name;
 
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
