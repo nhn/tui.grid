@@ -19,3 +19,7 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
 
   return disabled || rowDisabled;
 }
+
+export function getCheckedRows({ data }: Store) {
+  return data.rawData.filter(({ _attributes }) => _attributes.checked);
+}

@@ -22,7 +22,7 @@ import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getCellAddressByIndex } from './query/data';
+import { getCellAddressByIndex, getCheckedRows } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -35,7 +35,7 @@ import {
   Params,
   ModifiedDataManager
 } from './dataSource/types';
-import { getParentRow, getChildRows, getAncestorRows, getDecendantRows } from './query/tree';
+import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
 import { getDepth } from './helper/tree';
 
 /* eslint-disable */
@@ -530,9 +530,7 @@ export default class Grid {
    * @returns {Array.<string|number>} - A list of the rowKey.
    */
   public getCheckedRowKeys(): RowKey[] {
-    return this.store.data.rawData
-      .filter(({ _attributes }) => _attributes.checked)
-      .map(({ rowKey }) => rowKey);
+    return getCheckedRows(this.store).map(({ rowKey }) => rowKey);
   }
 
   /**
@@ -540,9 +538,7 @@ export default class Grid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    return this.store.data.rawData
-      .filter(({ _attributes }) => _attributes.checked)
-      .map((row) => getOriginObject(row as Observable<Row>));
+    return getCheckedRows(this.store).map((row) => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -977,8 +973,8 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Array.<Object>} - the descendant rows
    */
-  public getDecendantRows(rowKey: RowKey) {
-    return getDecendantRows(this.store, rowKey);
+  public getDescendantRows(rowKey: RowKey) {
+    return getDescendantRows(this.store, rowKey);
   }
 
   /**

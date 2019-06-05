@@ -27,7 +27,7 @@ import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
-import { changeTreeRowsCheckedState } from '../dispatch/tree';
+import { changeTreeRowsCheckedState } from './tree';
 
 export function setValue(
   { column, data, id }: Store,

@@ -231,7 +231,7 @@ describe('toggle button', () => {
   });
 });
 
-describe('collpase / expand', () => {
+describe('ccollapse', () => {
   context('collapse()', () => {
     it('hide child rows.', () => {
       cy.getCell(1, 'c1').should('be.visible');
@@ -266,6 +266,23 @@ describe('collpase / expand', () => {
     });
   });
 
+  it('collapseAll() hide decendent rows.', () => {
+    cy.getCell(0, 'c1').should('be.visible');
+    cy.getCell(1, 'c1').should('be.visible');
+    cy.getCell(2, 'c1').should('be.visible');
+    cy.getCell(3, 'c1').should('not.be.visible');
+
+    cy.gridInstance().invoke('collapseAll');
+    cy.gridInstance().invoke('expand', 0);
+
+    cy.getCell(0, 'c1').should('be.visible');
+    cy.getCell(1, 'c1').should('be.visible');
+    cy.getCell(2, 'c1').should('not.be.visible');
+    cy.getCell(3, 'c1').should('not.be.visible');
+  });
+});
+
+describe('expand', () => {
   context('expand()', () => {
     it('show child rows.', () => {
       cy.getCell(3, 'c1').should('not.be.visible');
@@ -302,21 +319,6 @@ describe('collpase / expand', () => {
       assertToggleButtonExpanded(1, 'c1');
       assertToggleButtonExpanded(2, 'c1');
     });
-  });
-
-  it('collapseAll() hide decendent rows.', () => {
-    cy.getCell(0, 'c1').should('be.visible');
-    cy.getCell(1, 'c1').should('be.visible');
-    cy.getCell(2, 'c1').should('be.visible');
-    cy.getCell(3, 'c1').should('not.be.visible');
-
-    cy.gridInstance().invoke('collapseAll');
-    cy.gridInstance().invoke('expand', 0);
-
-    cy.getCell(0, 'c1').should('be.visible');
-    cy.getCell(1, 'c1').should('be.visible');
-    cy.getCell(2, 'c1').should('not.be.visible');
-    cy.getCell(3, 'c1').should('not.be.visible');
   });
 
   it('expandAll() show decendent rows.', () => {

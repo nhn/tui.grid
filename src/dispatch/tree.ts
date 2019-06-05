@@ -176,7 +176,7 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
   }
 }
 
-function changeDecendantRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
+function changeDescendantRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
   const { rawData, disabled } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
 
@@ -191,7 +191,7 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
   const { treeColumnName, treeCascadingCheckbox } = store.column;
 
   if (treeColumnName && treeCascadingCheckbox) {
-    changeDecendantRowsCheckedState(store, rowKey, state);
+    changeDescendantRowsCheckedState(store, rowKey, state);
     changeAncestorRowsCheckedState(store, rowKey);
   }
 }
