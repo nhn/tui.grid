@@ -33,11 +33,11 @@ function getOwnSideColumnRange(
 ): Range | null {
   const rangeWithRowHeader = [columnRange[0] + rowHeaderCount, columnRange[1] + rowHeaderCount];
 
-  if (side === 'L') {
-    if (rangeWithRowHeader[0] < visibleFrozenCount) {
-      return [rangeWithRowHeader[0], Math.min(rangeWithRowHeader[1], visibleFrozenCount - 1)];
-    }
-  } else if (rangeWithRowHeader[1] >= visibleFrozenCount) {
+  if (side === 'L' && rangeWithRowHeader[0] < visibleFrozenCount) {
+    return [rangeWithRowHeader[0], Math.min(rangeWithRowHeader[1], visibleFrozenCount - 1)];
+  }
+
+  if (side === 'R' && rangeWithRowHeader[1] >= visibleFrozenCount) {
     return [
       Math.max(rangeWithRowHeader[0], visibleFrozenCount) - visibleFrozenCount,
       rangeWithRowHeader[1] - visibleFrozenCount
