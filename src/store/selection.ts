@@ -31,17 +31,14 @@ function getOwnSideColumnRange(
   visibleFrozenCount: number,
   rowHeaderCount: number
 ): Range | null {
-  const rangeWithRowHeader = [columnRange[0] + rowHeaderCount, columnRange[1] + rowHeaderCount];
+  const [start, end] = columnRange.map((columnIdx) => columnIdx + rowHeaderCount);
 
-  if (side === 'L' && rangeWithRowHeader[0] < visibleFrozenCount) {
-    return [rangeWithRowHeader[0], Math.min(rangeWithRowHeader[1], visibleFrozenCount - 1)];
+  if (side === 'L' && start < visibleFrozenCount) {
+    return [start, Math.min(end, visibleFrozenCount - 1)];
   }
 
-  if (side === 'R' && rangeWithRowHeader[1] >= visibleFrozenCount) {
-    return [
-      Math.max(rangeWithRowHeader[0], visibleFrozenCount) - visibleFrozenCount,
-      rangeWithRowHeader[1] - visibleFrozenCount
-    ];
+  if (side === 'R' && end >= visibleFrozenCount) {
+    return [Math.max(start, visibleFrozenCount) - visibleFrozenCount, end - visibleFrozenCount];
   }
 
   return null;
