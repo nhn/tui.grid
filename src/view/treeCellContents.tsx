@@ -81,8 +81,7 @@ export class TreeCellContentsComp extends Component<Props> {
 
 export const TreeCellContents = connect<StoreProps, OwnProps>(
   ({ column }, { treeInfo, rowKey }) => {
-    const { allColumnMap, treeColumnName } = column;
-    const { tree } = allColumnMap[treeColumnName];
+    const { treeIcon: useIcon = true } = column;
     const { depth, indentWidth, leaf, expanded = true } = treeInfo;
 
     return {
@@ -91,7 +90,7 @@ export const TreeCellContents = connect<StoreProps, OwnProps>(
       indentWidth,
       leaf,
       expanded,
-      useIcon: !!tree && tree.useIcon
+      useIcon
     };
   }
 )(TreeCellContentsComp);

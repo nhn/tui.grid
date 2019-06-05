@@ -27,7 +27,7 @@ import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
-import { checkTreeRow } from '../dispatch/tree';
+import { changeTreeRowsCheckedState } from '../dispatch/tree';
 
 export function setValue(
   { column, data, id }: Store,
@@ -105,7 +105,7 @@ export function setColumnValues(
 }
 
 export function check(store: Store, rowKey: RowKey) {
-  const { allColumnMap, treeColumnName } = store.column;
+  const { allColumnMap, treeColumnName = '' } = store.column;
   const { rendererOptions = {} } = allColumnMap._checked;
   const eventBus = getEventBus(store.id);
   const gridEvent = new GridEvent({ rowKey });
@@ -124,12 +124,12 @@ export function check(store: Store, rowKey: RowKey) {
   setRowAttribute(store, rowKey, 'checked', true);
 
   if (allColumnMap[treeColumnName]) {
-    checkTreeRow(store, rowKey, true);
+    changeTreeRowsCheckedState(store, rowKey, true);
   }
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { allColumnMap, treeColumnName } = store.column;
+  const { allColumnMap, treeColumnName = '' } = store.column;
   const eventBus = getEventBus(store.id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -144,7 +144,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   setRowAttribute(store, rowKey, 'checked', false);
 
   if (allColumnMap[treeColumnName]) {
-    checkTreeRow(store, rowKey, false);
+    changeTreeRowsCheckedState(store, rowKey, false);
   }
 }
 

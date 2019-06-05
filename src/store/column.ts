@@ -167,12 +167,16 @@ export function create({
     createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
+  const {
+    name: treeColumnName,
+    useIcon: treeIcon = true,
+    useCascadingCheckbox: treeCascadingCheckbox = true
+  } = treeColumnOptions;
 
   return observable({
     keyColumnName,
     frozenCount: columnOptions.frozenCount || 0,
     allColumns,
-    treeColumnName: treeColumnOptions.name || '',
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
@@ -211,6 +215,8 @@ export function create({
 
     get ignoredColumns() {
       return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
-    }
+    },
+
+    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
   });
 }

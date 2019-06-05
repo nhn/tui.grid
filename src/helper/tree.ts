@@ -1,4 +1,4 @@
-import { Row, ColumnDefaultValues, RowKey, TreeColumnInfo } from '../store/types';
+import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
 import { observable, observe } from './observable';
@@ -14,11 +14,19 @@ function generateTreeRowKey() {
   return treeRowKey;
 }
 
-function addChildRowKeys(row: Row, rowKey: RowKey) {
+function addChildRowKey(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
-  if (tree && !includes(tree.childrenRowKeys, rowKey)) {
-    tree.childrenRowKeys.push(rowKey);
+  if (tree && !includes(tree.childRowKeys, rowKey)) {
+    tree.childRowKeys.push(rowKey);
+  }
+}
+
+export function resetChildRowKeys(row: Row) {
+  const { tree } = row._attributes;
+
+  if (tree) {
+    tree.childRowKeys = [];
   }
 }
 
@@ -31,13 +39,13 @@ export function getParentRowKey(row: Row) {
 export function getChildRowKeys(row: Row) {
   const { tree } = row._attributes;
 
-  return tree ? tree.childrenRowKeys.slice() : [];
+  return tree ? tree.childRowKeys.slice() : [];
 }
 
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && !tree.childrenRowKeys.length;
+  return !!tree && !tree.childRowKeys.length;
 }
 
 export function isExpanded(row: Row) {
@@ -91,11 +99,11 @@ function createTreeRawRow(row: OptRow, defaultValues: ColumnDefaultValues, paren
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : -1,
-    childrenRowKeys: []
+    childRowKeys: []
   };
 
   if (parentRow) {
-    addChildRowKeys(parentRow, rowKey);
+    addChildRowKey(parentRow, rowKey);
   }
 
   rawRow._attributes.tree = observable({
@@ -134,11 +142,11 @@ export function createTreeRawData(data: OptRow[], defaultValues: ColumnDefaultVa
   return flattenTreeData(data, defaultValues);
 }
 
-export function getTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeColumnInfo) {
+export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
   const depth = getDepth(rawData, row);
   let indentWidth = (depth + 1) * DEFAULT_INDENT_WIDTH;
 
-  if (treeColumnInfo && treeColumnInfo.useIcon === true) {
+  if (useIcon) {
     indentWidth += DEFAULT_INDENT_WIDTH;
   }
 
@@ -150,8 +158,8 @@ export function getTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeC
   };
 }
 
-export function createTreeCellInfo(rawData: Row[], row: Row, treeColumnInfo?: TreeColumnInfo) {
-  const treeInfo = observable(getTreeCellInfo(rawData, row, treeColumnInfo));
+export function createTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
+  const treeInfo = observable(getTreeCellInfo(rawData, row, useIcon));
 
   observe(() => {
     treeInfo.expanded = isExpanded(row);

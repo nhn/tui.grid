@@ -1,3 +1,4 @@
+import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { getRowHeight } from '../store/rowCoords';
 import { findProp, findPropIndex } from '../helper/common';
@@ -11,6 +12,8 @@ import {
   getChildRowKeys,
   getHiddenChildState
 } from '../helper/tree';
+import { getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 function changeExpandedState(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -62,6 +65,18 @@ export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
+    const eventBus = getEventBus(store.id);
+    const gridEvent = new GridEvent({ rowKey });
+
+    /**
+     * Occurs when the row having child rows is expanded
+     * @event Grid#expanded
+     * @type {module:event/gridEvent}
+     * @property {number|string} rowKey - rowKey of the expanded row
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('expand', gridEvent);
+
     expand(store, row, recursive, true);
   }
 }
@@ -110,6 +125,18 @@ export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boole
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
+    const eventBus = getEventBus(store.id);
+    const gridEvent = new GridEvent({ rowKey });
+
+    /**
+     * Occurs when the row having child rows is collapsed
+     * @event Grid#collapsed
+     * @type {module:event/gridEvent}
+     * @property {number|string} rowKey - rowKey of the collapsed row
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('collapse', gridEvent);
+
     collapse(store, row, recursive, true);
   }
 }
@@ -140,7 +167,7 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
       const checkedChildRows = childRowKeys.filter((childRowKey) => {
         const childRow = findProp('rowKey', childRowKey, rawData);
 
-        return !!childRow && !!childRow._attributes && childRow._attributes.checked;
+        return !!childRow && childRow._attributes.checked;
       });
       const checked = childRowKeys.length === checkedChildRows.length;
 
@@ -160,8 +187,19 @@ function changeDecendantRowsCheckedState(store: Store, rowKey: RowKey, state: bo
   }
 }
 
-export function checkTreeRow(store: Store, rowKey: RowKey, state: boolean) {
-  // useCascading 체크
-  changeDecendantRowsCheckedState(store, rowKey, state);
-  changeAncestorRowsCheckedState(store, rowKey);
+export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
+  const { treeColumnName, treeCascadingCheckbox } = store.column;
+
+  if (treeColumnName && treeCascadingCheckbox) {
+    changeDecendantRowsCheckedState(store, rowKey, state);
+    changeAncestorRowsCheckedState(store, rowKey);
+  }
+}
+
+export function appendTreeRow(store: Store, row: OptRow, options: OptAppendRow) {
+  // @TODO 로직 추가
+}
+
+export function removeTreeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
+  // @TODO 로직 추가
 }

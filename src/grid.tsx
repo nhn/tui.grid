@@ -530,7 +530,9 @@ export default class Grid {
    * @returns {Array.<string|number>} - A list of the rowKey.
    */
   public getCheckedRowKeys(): RowKey[] {
-    return this.store.data.rawData.filter(({ _checked }) => _checked).map(({ rowKey }) => rowKey);
+    return this.store.data.rawData
+      .filter(({ _attributes }) => _attributes.checked)
+      .map(({ rowKey }) => rowKey);
   }
 
   /**
@@ -538,8 +540,9 @@ export default class Grid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    // @TODO 반환되는 값 - 순수 객체 처리 변환
-    return this.store.data.rawData.filter(({ _checked }) => _checked);
+    return this.store.data.rawData
+      .filter(({ _attributes }) => _attributes.checked)
+      .map((row) => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -674,7 +677,13 @@ export default class Grid {
    * @param {number} [options.offset] - Tree offset from first sibling
    */
   public appendRow(row: OptRow = {}, options: OptAppendRow = {}) {
-    this.dispatch('appendRow', row, options);
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('appendTreeRow', row, options);
+    } else {
+      this.dispatch('appendRow', row, options);
+    }
 
     if (options.focus) {
       const rowIdx = isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
@@ -700,7 +709,13 @@ export default class Grid {
    *     removed although the target is first cell of them.
    */
   public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
-    this.dispatch('removeRow', rowKey, options);
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('removeTreeRow', rowKey, options);
+    } else {
+      this.dispatch('removeRow', rowKey, options);
+    }
   }
 
   /**

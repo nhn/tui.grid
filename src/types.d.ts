@@ -8,7 +8,8 @@ import {
   RowAttributes,
   EditingEvent,
   PageOptions,
-  Validation
+  Validation,
+  RowKey
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -53,6 +54,7 @@ export interface OptRow {
 export interface OptAppendRow {
   at?: number;
   focus?: boolean;
+  parentRowKey?: RowKey;
 }
 
 export interface OptPrependRow {

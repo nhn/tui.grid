@@ -29,7 +29,8 @@ stories.add(
       columns,
       rowHeaders: ['_number', '_checked'],
       treeColumnOptions: {
-        name: 'name'
+        name: 'name',
+        useCascadingCheckbox: true
       }
     });
     const rootEl = document.createElement('div');
