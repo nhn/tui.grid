@@ -4,6 +4,7 @@ import {
   Dictionary,
   Column,
   ColumnInfo,
+  ColumnDefaultValues,
   Formatter,
   CellRenderData,
   FormatterProps,
@@ -24,6 +25,7 @@ import {
   isBoolean
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
+import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -157,7 +159,13 @@ function createRelationViewCell(
   });
 }
 
-export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
+export function createViewRow(
+  row: Row,
+  columnMap: Dictionary<ColumnInfo>,
+  rawData: Row[],
+  treeColumnName?: string,
+  treeIcon?: boolean
+) {
   const { rowKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
@@ -169,6 +177,7 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
 
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
+
     // add condition expression to prevent to call watch function recursively
     if (!related) {
       observe(() => {
@@ -183,12 +192,16 @@ export function createViewRow(row: Row, columnMap: Dictionary<ColumnInfo>) {
     }
   });
 
-  return { rowKey, valueMap };
+  return {
+    rowKey,
+    valueMap,
+    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) })
+  };
 }
 
 function getAttributes(row: OptRow, index: number) {
   const defaultAttr = {
-    rowNum: index + 1,
+    rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
     checked: false,
     disabled: false,
     checkDisabled: false,
@@ -218,7 +231,7 @@ function getAttributes(row: OptRow, index: number) {
 export function createRawRow(
   row: OptRow,
   index: number,
-  defaultValues: Column['defaultValues'],
+  defaultValues: ColumnDefaultValues,
   keyColumnName?: string
 ) {
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
@@ -232,9 +245,25 @@ export function createRawRow(
 }
 
 export function createData(data: OptRow[], column: Column) {
-  const { defaultValues, keyColumnName } = column;
-  const rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
-  const viewData = rawData.map((row: Row) => createViewRow(row, column.allColumnMap));
+  const {
+    defaultValues,
+    keyColumnName,
+    allColumnMap,
+    treeColumnName = '',
+    treeIcon = true
+  } = column;
+
+  let rawData: Row[];
+
+  if (treeColumnName) {
+    rawData = createTreeRawData(data, defaultValues);
+  } else {
+    rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
+  }
+
+  const viewData = rawData.map((row: Row) =>
+    createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+  );
 
   return { rawData, viewData };
 }

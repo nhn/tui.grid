@@ -30,7 +30,8 @@ export function createStore(id: number, options: OptGrid): Store {
     scrollX = true,
     scrollY = true,
     useClientSort = true,
-    pageOptions = {}
+    pageOptions = {},
+    treeColumnOptions = { name: '' }
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -39,7 +40,8 @@ export function createStore(id: number, options: OptGrid): Store {
     columnOptions,
     rowHeaders,
     copyOptions,
-    keyColumnName
+    keyColumnName,
+    treeColumnOptions
   });
   const data = createData(
     Array.isArray(options.data) ? options.data : [],

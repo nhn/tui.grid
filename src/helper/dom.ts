@@ -64,6 +64,7 @@ export type ClassNameType =
   | 'rside-area'
   | 'row-odd'
   | 'row-even'
+  | 'row-hidden'
   | 'no-scroll-x'
   | 'no-scroll-y'
   | 'pagination'

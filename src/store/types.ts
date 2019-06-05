@@ -1,6 +1,8 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
 
+export type ColumnDefaultValues = { name: string; value: CellValue }[];
+
 export type CellValue = number | string | boolean | null | undefined;
 
 export type Range = [number, number];
@@ -39,6 +41,8 @@ export interface RowAttributes {
   checkDisabled: boolean;
   className: { row: string[]; column: Dictionary<string[]> };
   height?: number;
+  tree?: TreeRowInfo;
+  expanded?: boolean;
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -60,6 +64,7 @@ export interface ClipboardCopyOptions {
   useListItemText?: boolean;
   customValue?: CustomValue;
 }
+
 export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
@@ -77,6 +82,7 @@ export interface CellRenderData {
 export interface ViewRow {
   rowKey: RowKey;
   valueMap: Dictionary<CellRenderData>;
+  treeInfo?: TreeCellInfo;
 }
 
 export interface DragStartData {
@@ -107,6 +113,20 @@ export interface InvalidColumn {
 export interface InvalidRow {
   rowKey: RowKey;
   errors: InvalidColumn[];
+}
+
+export interface TreeRowInfo {
+  parentRowKey: RowKey;
+  childRowKeys: RowKey[];
+  expanded?: boolean;
+  hiddenChild?: boolean;
+}
+
+export interface TreeCellInfo {
+  depth: number;
+  indentWidth: number;
+  leaf: boolean;
+  expanded?: boolean;
 }
 
 export interface Data {
@@ -175,6 +195,9 @@ export interface Column {
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
+  readonly treeColumnName?: string;
+  readonly treeIcon?: boolean;
+  readonly treeCascadingCheckbox?: boolean;
 }
 
 export interface Relations {
