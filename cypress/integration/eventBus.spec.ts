@@ -25,9 +25,10 @@ it('click', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'click', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .click()
     .then(() => {
+      console.log(callback.args[0][0]);
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
         .to.be.true;
     });
@@ -37,7 +38,7 @@ it('mouseover', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseover', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mouseover')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
@@ -49,7 +50,7 @@ it('mousedown', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mousedown', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mousedown')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
@@ -73,7 +74,7 @@ it('mouseout', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseout', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mouseout')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
