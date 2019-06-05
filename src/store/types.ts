@@ -117,13 +117,9 @@ export interface InvalidRow {
 
 export interface TreeRowInfo {
   parentRowKey: RowKey;
-  childrenRowKeys: RowKey[];
+  childRowKeys: RowKey[];
   expanded?: boolean;
   hiddenChild?: boolean;
-}
-
-export interface TreeColumnInfo {
-  useIcon: boolean;
 }
 
 export interface TreeCellInfo {
@@ -179,7 +175,6 @@ export interface ColumnInfo {
   onBeforeChange?: Function;
   onAfterChange?: Function;
   ignored?: boolean;
-  tree?: TreeColumnInfo;
 }
 
 export interface SortOptions {
@@ -200,7 +195,9 @@ export interface Column {
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
-  readonly treeColumnName: string;
+  readonly treeColumnName?: string;
+  readonly treeIcon?: boolean;
+  readonly treeCascadingCheckbox?: boolean;
 }
 
 export interface Relations {

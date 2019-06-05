@@ -104,6 +104,69 @@ describe('options', () => {
       });
     });
   });
+
+  context('useCascading', () => {
+    function assertCheckedRow(rowKey: RowKey, checked: boolean) {
+      cy.getCell(rowKey, '_checked').within(() => {
+        cy.get('[type="checkbox"]').should(checked ? 'be.checked' : 'not.be.checked');
+      });
+    }
+
+    it ('set true or by default then row is checked recursively by parent or child row is checked.', () => {
+      createGrid({
+        data,
+        columns,
+        rowHeaders: ['_checked'],
+        treeColumnOptions: {
+          name: 'c1',
+          useCascadingCheckbox: true
+        }
+      });
+      
+      assertCheckedRow(0, false);
+      assertCheckedRow(1, false);
+      assertCheckedRow(2, false);
+      assertCheckedRow(3, false);
+
+      cy.gridInstance().invoke('check', 2);
+
+      assertCheckedRow(0, true);
+      assertCheckedRow(1, true);
+      assertCheckedRow(2, true);
+      assertCheckedRow(3, true);
+
+      cy.gridInstance().invoke('uncheck', 2);
+
+      assertCheckedRow(0, false);
+      assertCheckedRow(1, false);
+      assertCheckedRow(2, false);
+      assertCheckedRow(3, false);
+    });
+
+    it('set false then check only each row.', () => {
+      createGrid({
+        data,
+        columns,
+        rowHeaders: ['_checked'],
+        treeColumnOptions: {
+          name: 'c1',
+          useCascadingCheckbox: false
+        }
+      });
+
+      assertCheckedRow(0, false);
+      assertCheckedRow(1, false);
+      assertCheckedRow(2, false);
+      assertCheckedRow(3, false);
+
+      cy.gridInstance().invoke('check', 2);
+
+      assertCheckedRow(0, false);
+      assertCheckedRow(1, false);
+      assertCheckedRow(2, true);
+      assertCheckedRow(3, false);
+    })
+  });
 });
 
 describe('toggle button', () => {
@@ -168,7 +231,7 @@ describe('toggle button', () => {
   });
 });
 
-describe('API', () => {
+describe('ccollapse', () => {
   context('collapse()', () => {
     it('hide child rows.', () => {
       cy.getCell(1, 'c1').should('be.visible');
@@ -203,6 +266,23 @@ describe('API', () => {
     });
   });
 
+  it('collapseAll() hide decendent rows.', () => {
+    cy.getCell(0, 'c1').should('be.visible');
+    cy.getCell(1, 'c1').should('be.visible');
+    cy.getCell(2, 'c1').should('be.visible');
+    cy.getCell(3, 'c1').should('not.be.visible');
+
+    cy.gridInstance().invoke('collapseAll');
+    cy.gridInstance().invoke('expand', 0);
+
+    cy.getCell(0, 'c1').should('be.visible');
+    cy.getCell(1, 'c1').should('be.visible');
+    cy.getCell(2, 'c1').should('not.be.visible');
+    cy.getCell(3, 'c1').should('not.be.visible');
+  });
+});
+
+describe('expand', () => {
   context('expand()', () => {
     it('show child rows.', () => {
       cy.getCell(3, 'c1').should('not.be.visible');
@@ -239,21 +319,6 @@ describe('API', () => {
       assertToggleButtonExpanded(1, 'c1');
       assertToggleButtonExpanded(2, 'c1');
     });
-  });
-
-  it('collapseAll() hide decendent rows.', () => {
-    cy.getCell(0, 'c1').should('be.visible');
-    cy.getCell(1, 'c1').should('be.visible');
-    cy.getCell(2, 'c1').should('be.visible');
-    cy.getCell(3, 'c1').should('not.be.visible');
-
-    cy.gridInstance().invoke('collapseAll');
-    cy.gridInstance().invoke('expand', 0);
-
-    cy.getCell(0, 'c1').should('be.visible');
-    cy.getCell(1, 'c1').should('be.visible');
-    cy.getCell(2, 'c1').should('not.be.visible');
-    cy.getCell(3, 'c1').should('not.be.visible');
   });
 
   it('expandAll() show decendent rows.', () => {

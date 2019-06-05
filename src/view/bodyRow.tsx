@@ -44,7 +44,7 @@ class BodyRowComp extends Component<Props> {
     return (
       <tr
         style={{ height: rowHeight }}
-        class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [rowHeight === 0, 'row-hidden'])}
+        class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [!rowHeight, 'row-hidden'])}
       >
         {columnNames.map((name) => {
           // Pass row object directly instead of passing value of it only,

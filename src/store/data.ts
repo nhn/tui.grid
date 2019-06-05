@@ -163,7 +163,8 @@ export function createViewRow(
   row: Row,
   columnMap: Dictionary<ColumnInfo>,
   rawData: Row[],
-  treeColumn?: ColumnInfo
+  treeColumnName?: string,
+  treeIcon?: boolean
 ) {
   const { rowKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
@@ -194,13 +195,13 @@ export function createViewRow(
   return {
     rowKey,
     valueMap,
-    ...(treeColumn && { treeInfo: createTreeCellInfo(rawData, row, treeColumn!.tree) })
+    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) })
   };
 }
 
 function getAttributes(row: OptRow, index: number) {
   const defaultAttr = {
-    rowNum: index + 1,
+    rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
     checked: false,
     disabled: false,
     checkDisabled: false,
@@ -244,18 +245,25 @@ export function createRawRow(
 }
 
 export function createData(data: OptRow[], column: Column) {
-  const { defaultValues, keyColumnName, allColumnMap, treeColumnName } = column;
-  const treeColumn = allColumnMap[treeColumnName];
+  const {
+    defaultValues,
+    keyColumnName,
+    allColumnMap,
+    treeColumnName = '',
+    treeIcon = true
+  } = column;
 
   let rawData: Row[];
 
-  if (treeColumn) {
+  if (treeColumnName) {
     rawData = createTreeRawData(data, defaultValues);
   } else {
     rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
   }
 
-  const viewData = rawData.map((row: Row) => createViewRow(row, allColumnMap, rawData, treeColumn));
+  const viewData = rawData.map((row: Row) =>
+    createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+  );
 
   return { rawData, viewData };
 }

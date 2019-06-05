@@ -27,9 +27,10 @@ stories.add(
     const { el } = createGrid({
       data,
       columns,
-      rowHeaders: ['_number'],
+      rowHeaders: ['_number', '_checked'],
       treeColumnOptions: {
-        name: 'name'
+        name: 'name',
+        useCascadingCheckbox: true
       }
     });
     const rootEl = document.createElement('div');

@@ -1,7 +1,12 @@
 import { Store, Row, RowKey } from '../store/types';
 import { Observable, getOriginObject } from '../helper/observable';
 import { findProp } from '../helper/common';
-import { getParentRowKey, getChildRowKeys, traverseDescendantRows } from '../helper/tree';
+import {
+  getParentRowKey,
+  getChildRowKeys,
+  traverseAncestorRows,
+  traverseDescendantRows
+} from '../helper/tree';
 
 export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
   const { rawData } = store.data;
@@ -37,31 +42,29 @@ export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
 }
 
 export function getAncestorRows(store: Store, rowKey: RowKey) {
-  const ancestorRows = [];
+  const { rawData } = store.data;
+  const row = findProp('rowKey', rowKey, rawData);
+  const ancestorRows: Row[] = [];
 
-  let parentRow = getParentRow(store, rowKey, true);
-
-  while (parentRow) {
-    ancestorRows.unshift(parentRow);
-    parentRow = getParentRow(store, parentRow.rowKey, true);
+  if (row) {
+    traverseAncestorRows(rawData, row, (parentRow: Row) => {
+      ancestorRows.unshift(getOriginObject(parentRow as Observable<Row>));
+    });
   }
 
   return ancestorRows;
 }
 
-export function getDecendantRows(store: Store, rowKey: RowKey) {
+export function getDescendantRows(store: Store, rowKey: RowKey) {
   const { rawData } = store.data;
   const row = findProp('rowKey', rowKey, rawData);
+  const childRows: Row[] = [];
 
   if (row) {
-    let childRows: (Row | Observable<Row>)[] = getChildRows(store, rowKey, true);
-
     traverseDescendantRows(rawData, row, (childRow: Row) => {
-      childRows = childRows.concat(getChildRows(store, childRow.rowKey, true));
+      childRows.push(getOriginObject(childRow as Observable<Row>));
     });
-
-    return childRows;
   }
 
-  return [];
+  return childRows;
 }
