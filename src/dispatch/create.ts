@@ -8,6 +8,7 @@ import * as focus from './focus';
 import * as summary from './summary';
 import * as selection from './selection';
 import * as renderState from './renderState';
+import * as tree from './tree';
 import { Store } from '../store/types';
 
 const dispatchMap = {
@@ -20,7 +21,8 @@ const dispatchMap = {
   ...keyboard,
   ...summary,
   ...selection,
-  ...renderState
+  ...renderState,
+  ...tree
 };
 
 type DispatchMap = typeof dispatchMap;
