@@ -1,8 +1,8 @@
 import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
-import { observable, observe } from './observable';
-import { includes, findProp } from './common';
+import { observable, observe, notify } from './observable';
+import { includes, findProp, removeArrayItem } from './common';
 
 export const DEFAULT_INDENT_WIDTH = 22;
 
@@ -14,19 +14,21 @@ function generateTreeRowKey() {
   return treeRowKey;
 }
 
-function addChildRowKey(row: Row, rowKey: RowKey) {
+export function addChildRowKey(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.push(rowKey);
+    notify(tree, 'childRowKeys');
   }
 }
 
-export function resetChildRowKeys(row: Row) {
+export function removeChildRowKey(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
   if (tree) {
-    tree.childRowKeys = [];
+    removeArrayItem(rowKey, tree.childRowKeys);
+    notify(tree, 'childRowKeys');
   }
 }
 
@@ -163,6 +165,7 @@ export function createTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) 
 
   observe(() => {
     treeInfo.expanded = isExpanded(row);
+    treeInfo.leaf = isLeaf(row);
   });
 
   return treeInfo;
