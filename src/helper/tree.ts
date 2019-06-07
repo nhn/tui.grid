@@ -146,7 +146,7 @@ export function createTreeRawData(data: OptRow[], defaultValues: ColumnDefaultVa
 
 export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
   const depth = getDepth(rawData, row);
-  let indentWidth = (depth + 1) * DEFAULT_INDENT_WIDTH;
+  let indentWidth = depth * DEFAULT_INDENT_WIDTH;
 
   if (useIcon) {
     indentWidth += DEFAULT_INDENT_WIDTH;

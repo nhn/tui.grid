@@ -38,7 +38,7 @@ export class TreeCellContentsComp extends Component<Props> {
   private getIndentComponent(depth: number, leaf: boolean) {
     const indentItem = [];
 
-    for (let i = 0, len = depth + 1; i < len; i += 1) {
+    for (let i = 0, len = depth; i < len; i += 1) {
       indentItem.push(
         <span class={cls('tree-depth')}>
           {i === len - 1 && !leaf && (
