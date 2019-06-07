@@ -10,7 +10,7 @@ import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
 
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-const MIN_DISATNCE_FOR_DRAG = 10;
+export const MIN_DISTANCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
@@ -90,7 +90,7 @@ class BodyAreaComp extends Component<Props> {
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
-    return distance >= MIN_DISATNCE_FOR_DRAG;
+    return distance >= MIN_DISTANCE_FOR_DRAG;
   };
 
   private handleSelectStart = (ev: Event) => {
@@ -109,7 +109,7 @@ class BodyAreaComp extends Component<Props> {
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: null, pageY: null };
-    this.props.dispatch('dragEndBody');
+    this.props.dispatch('dragEnd');
 
     setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);

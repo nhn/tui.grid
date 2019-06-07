@@ -1,7 +1,14 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
-import { cls, Attributes } from '../helper/dom';
-import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
+import {
+  ColumnInfo,
+  ViewRow,
+  CellRenderData,
+  RowKey,
+  TreeCellInfo,
+  DragData
+} from '../store/types';
+import { cls, Attributes, setCursorStyle } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -93,6 +100,39 @@ export class BodyCellComp extends Component<Props> {
     }
   }
 
+  private handleMouseMove = (ev: MouseEvent) => {
+    const pageX = ev.pageX - window.pageXOffset;
+    const pageY = ev.pageY - window.pageYOffset;
+
+    const dragData: DragData = { pageX, pageY };
+    this.props.dispatch('dragMoveRowHeader', dragData);
+  };
+
+  private handleMouseDown = (ev: MouseEvent, name: string, rowKey: RowKey) => {
+    if (name !== '_number') {
+      return;
+    }
+
+    this.props.dispatch('mouseDownRowHeader', rowKey);
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private clearDocumentEvents = () => {
+    this.props.dispatch('dragEnd');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
   public render() {
     const {
       rowKey,
@@ -145,6 +185,7 @@ export class BodyCellComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
+        onMouseDown={(ev) => this.handleMouseDown(ev, name, rowKey)}
       />
     );
   }

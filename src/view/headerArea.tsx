@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { ColumnInfo, Side, SortOptions, Range } from '../store/types';
+import { ColumnInfo, Side, SortOptions, Range, DragData } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, hasClass, findParent } from '../helper/dom';
+import { cls, hasClass, findParent, setCursorStyle } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -75,6 +75,39 @@ class HeaderAreaComp extends Component<Props> {
     ev.stopPropagation();
   };
 
+  private handleMouseMove = (ev: MouseEvent) => {
+    const pageX = ev.pageX - window.pageXOffset;
+    const pageY = ev.pageY - window.pageYOffset;
+
+    const dragData: DragData = { pageX, pageY };
+    this.props.dispatch('dragMoveHeader', dragData);
+  };
+
+  private handleMouseDown = (ev: MouseEvent, name: string, sortable?: boolean) => {
+    if (sortable) {
+      return;
+    }
+
+    this.props.dispatch('mouseDownHeader', name);
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private clearDocumentEvents = () => {
+    this.props.dispatch('dragEnd');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
   private updateRowHeaderCheckbox() {
     const { checkedAllRows, disabled } = this.props;
     const input = this.el!.querySelector('input[name=_checked]') as HTMLInputElement;
@@ -129,6 +162,7 @@ class HeaderAreaComp extends Component<Props> {
                     !isRowHeader(name) && this.isSelected(index),
                     'cell-selected'
                   ])}
+                  onMouseDown={(ev) => this.handleMouseDown(ev, name, sortable)}
                 >
                   {name === '_checked' ? (
                     <span
