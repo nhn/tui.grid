@@ -4,6 +4,7 @@ import { getNextCellIndex } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
+import { isNull } from '../helper/common';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -90,9 +91,34 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function removeFocus(store: Store) {
-  // @TODO: 이후 관련 키보드 이벤트 작업 필요
-  console.log(store);
+export function removeContent(store: Store) {
+  const { focus, column, data, selection } = store;
+  const { totalColumnIndex, rowIndex } = focus;
+  const { visibleColumns } = column;
+  const { range } = selection;
+  const { rawData } = data;
+  let rowStart, rowEnd, columnStart, columnEnd;
+
+  if (range) {
+    [columnStart, columnEnd] = range.column;
+    [rowStart, rowEnd] = range.row;
+  } else if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
+    columnStart = columnEnd = totalColumnIndex;
+    rowStart = rowEnd = rowIndex;
+  } else {
+    return;
+  }
+
+  for (let colIdx = columnStart; colIdx <= columnEnd; colIdx += 1) {
+    const editorOptions = visibleColumns[colIdx].editorOptions;
+    const name = visibleColumns[colIdx].name;
+    if (!editorOptions) {
+      continue;
+    }
+    for (let rowIdx = rowStart; rowIdx <= rowEnd; rowIdx += 1) {
+      rawData[rowIdx][name] = '';
+    }
+  }
 }
 
 export function setFocusInfo(
