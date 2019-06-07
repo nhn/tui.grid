@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import { Side, DragData, DragStartData } from '../store/types';
-import { cls, setCursorStyle } from '../helper/dom';
+import { cls, getCoordinateWithOffset, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
@@ -10,7 +10,7 @@ import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
 
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-const MIN_DISATNCE_FOR_DRAG = 10;
+const MIN_DISTANCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
@@ -66,8 +66,7 @@ class BodyAreaComp extends Component<Props> {
 
     const { el } = this;
     const { shiftKey } = ev;
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
@@ -90,7 +89,7 @@ class BodyAreaComp extends Component<Props> {
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
-    return distance >= MIN_DISATNCE_FOR_DRAG;
+    return distance >= MIN_DISTANCE_FOR_DRAG;
   };
 
   private handleSelectStart = (ev: Event) => {
@@ -98,18 +97,15 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
-
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      const dragData: DragData = { pageX, pageY };
-      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
+      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, { pageX, pageY });
     }
   };
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: null, pageY: null };
-    this.props.dispatch('dragEndBody');
+    this.props.dispatch('dragEnd');
 
     setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);

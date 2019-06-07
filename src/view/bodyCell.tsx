@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
-import { cls, Attributes } from '../helper/dom';
 import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
+import { cls, Attributes, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -22,6 +22,7 @@ interface StoreProps {
   renderData: CellRenderData;
   disabled: boolean;
   treeInfo?: TreeCellInfo;
+  selectedRow: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -92,13 +93,44 @@ export class BodyCellComp extends Component<Props> {
     }
   }
 
+  private handleMouseMove = (ev: MouseEvent) => {
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
+  };
+
+  private handleMouseDown = (ev: MouseEvent, name: string, rowKey: RowKey) => {
+    if (name !== '_number') {
+      return;
+    }
+
+    this.props.dispatch('mouseDownRowHeader', rowKey);
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private clearDocumentEvents = () => {
+    this.props.dispatch('dragEnd');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
   public render() {
     const {
       rowKey,
       renderData: { disabled, editable, invalidState, className },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled,
-      treeInfo
+      treeInfo,
+      selectedRow
     } = this.props;
 
     const style = {
@@ -117,7 +149,8 @@ export class BodyCellComp extends Component<Props> {
       [validation.required || false, 'cell-required'],
       [!!invalidState, 'cell-invalid'],
       [disabled || allDisabled, 'cell-disabled'],
-      [!!treeInfo, 'cell-has-tree']
+      [!!treeInfo, 'cell-has-tree'],
+      [isRowHeader(name) && selectedRow, 'cell-selected']
     )} ${className}`;
 
     return treeInfo ? (
@@ -142,18 +175,20 @@ export class BodyCellComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
+        onMouseDown={(ev) => this.handleMouseDown(ev, name, rowKey)}
       />
     );
   }
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data }, { viewRow, columnName }) => {
+  ({ id, column, data, selection }, { viewRow, columnName }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { allColumnMap, treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
     const columnInfo = allColumnMap[columnName];
+    const { range } = selection;
 
     return {
       grid,
@@ -161,7 +196,8 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       disabled,
       columnInfo,
       renderData: valueMap[columnName],
-      ...(columnName === treeColumnName ? { treeInfo } : null)
+      ...(columnName === treeColumnName ? { treeInfo } : null),
+      selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
     };
   }
 )(BodyCellComp);

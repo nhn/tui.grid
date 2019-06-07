@@ -172,3 +172,10 @@ export function appendStyleElement(id: string, cssString: string) {
 export function setCursorStyle(type: string) {
   document.body.style.cursor = type;
 }
+
+export function getCoordinateWithOffset(pageX: number, pageY: number) {
+  const pageXWithOffset = pageX - window.pageXOffset;
+  const pageYWithOffset = pageY - window.pageYOffset;
+
+  return [pageXWithOffset, pageYWithOffset];
+}
