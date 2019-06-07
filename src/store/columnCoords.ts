@@ -133,18 +133,16 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
     get areaWidth(this: ColumnCoords) {
       const { visibleFrozenCount } = column;
       const { width, frozenBorderWidth, cellBorderWidth } = dimension;
-      const leftBorderWidth = visibleFrozenCount * dimension.cellBorderWidth;
+      let leftAreaWidth = 0;
 
-      let leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
-
-      if (!frozenBorderWidth) {
-        leftAreaWidth += cellBorderWidth;
+      if (visibleFrozenCount) {
+        const leftBorderWidth = (visibleFrozenCount + 1) * cellBorderWidth;
+        leftAreaWidth = sum(this.widths.L) + leftBorderWidth;
       }
 
-      // @TODO: areawidth 계산 때문에 매번 scrollX 나타나는 부분 수정필요
       return {
-        L: leftAreaWidth,
-        R: width - leftAreaWidth - cellBorderWidth
+        L: leftAreaWidth - frozenBorderWidth,
+        R: width - leftAreaWidth
       };
     },
 
