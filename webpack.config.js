@@ -21,6 +21,20 @@ const commonConfig = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
   },
+  externals: {
+    'tui-pagination': {
+      commonjs: 'tui-pagination',
+      commonjs2: 'tui-pagination',
+      amd: 'tui-pagination',
+      root: ['tui', 'Pagination']
+    },
+    'tui-date-picker': {
+      commonjs: 'tui-date-picker',
+      commonjs2: 'tui-date-picker',
+      amd: 'tui-date-picker',
+      root: ['tui', 'DatePicker']
+    }
+  },
   output: {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
