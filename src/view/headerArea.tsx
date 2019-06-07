@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { ColumnInfo, Side, SortOptions, Range, DragData } from '../store/types';
+import { ColumnInfo, Side, SortOptions, Range } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, hasClass, findParent, setCursorStyle } from '../helper/dom';
+import { cls, hasClass, findParent, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -76,11 +76,8 @@ class HeaderAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
-
-    const dragData: DragData = { pageX, pageY };
-    this.props.dispatch('dragMoveHeader', dragData);
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    this.props.dispatch('dragMoveHeader', { pageX, pageY });
   };
 
   private handleMouseDown = (ev: MouseEvent, name: string, sortable?: boolean) => {

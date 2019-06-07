@@ -279,7 +279,8 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
 export function mouseDownHeader(store: Store, name: string) {
   const { data, selection, id, column } = store;
-  const columnIndex = findPropIndex('name', name, column.visibleColumns) - column.rowHeaderCount;
+  const { visibleColumns, rowHeaderCount } = column;
+  const columnIndex = findPropIndex('name', name, visibleColumns) - rowHeaderCount;
   const lastRowIndex = data.viewData.length - 1;
   const inputRange: SelectionRange = {
     row: [0, lastRowIndex],

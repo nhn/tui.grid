@@ -1,14 +1,7 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
-import {
-  ColumnInfo,
-  ViewRow,
-  CellRenderData,
-  RowKey,
-  TreeCellInfo,
-  DragData
-} from '../store/types';
-import { cls, Attributes, setCursorStyle } from '../helper/dom';
+import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
+import { cls, Attributes, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -29,7 +22,7 @@ interface StoreProps {
   renderData: CellRenderData;
   disabled: boolean;
   treeInfo?: TreeCellInfo;
-  isSelectedRow: boolean;
+  selectedRow: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -101,11 +94,8 @@ export class BodyCellComp extends Component<Props> {
   }
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
-
-    const dragData: DragData = { pageX, pageY };
-    this.props.dispatch('dragMoveRowHeader', dragData);
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
   };
 
   private handleMouseDown = (ev: MouseEvent, name: string, rowKey: RowKey) => {
@@ -140,7 +130,7 @@ export class BodyCellComp extends Component<Props> {
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled,
       treeInfo,
-      isSelectedRow
+      selectedRow
     } = this.props;
 
     const style = {
@@ -160,7 +150,7 @@ export class BodyCellComp extends Component<Props> {
       [!!invalidState, 'cell-invalid'],
       [disabled || allDisabled, 'cell-disabled'],
       [!!treeInfo, 'cell-has-tree'],
-      [isRowHeader(name) && isSelectedRow, 'cell-selected']
+      [isRowHeader(name) && selectedRow, 'cell-selected']
     )} ${className}`;
 
     return treeInfo ? (
@@ -207,7 +197,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       columnInfo,
       renderData: valueMap[columnName],
       ...(columnName === treeColumnName ? { treeInfo } : null),
-      isSelectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
+      selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
     };
   }
 )(BodyCellComp);

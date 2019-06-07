@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import { Side, DragData, DragStartData } from '../store/types';
-import { cls, setCursorStyle } from '../helper/dom';
+import { cls, getCoordinateWithOffset, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
@@ -66,8 +66,7 @@ class BodyAreaComp extends Component<Props> {
 
     const { el } = this;
     const { shiftKey } = ev;
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
@@ -98,12 +97,9 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
-
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      const dragData: DragData = { pageX, pageY };
-      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
+      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, { pageX, pageY });
     }
   };
 
