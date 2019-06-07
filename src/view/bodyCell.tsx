@@ -11,7 +11,7 @@ import Grid from '../grid';
 
 interface OwnProps {
   viewRow: ViewRow;
-  columnName: string;
+  columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
 }
 
@@ -182,13 +182,13 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data, selection }, { viewRow, columnName }) => {
+  ({ id, column, data, selection }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
-    const { allColumnMap, treeColumnName } = column;
+    const { treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
-    const columnInfo = allColumnMap[columnName];
     const { range } = selection;
+    const columnName = columnInfo.name;
 
     return {
       grid,

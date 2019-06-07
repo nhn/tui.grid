@@ -63,7 +63,7 @@ function getRelationColumns(relations: Relations[]) {
   return relationColumns;
 }
 
-function createColumn(
+export function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
   relationColumns: string[],
@@ -175,7 +175,17 @@ export function create({
 
   return observable({
     keyColumnName,
+
     frozenCount: columnOptions.frozenCount || 0,
+
+    dataForColumnCreation: {
+      copyOptions,
+      columnOptions,
+      treeColumnOptions,
+      relationColumns,
+      rowHeaders: rowHeaderInfos
+    },
+
     allColumns,
 
     get allColumnMap() {
@@ -187,7 +197,7 @@ export function create({
     },
 
     get visibleColumns() {
-      return allColumns.filter(({ hidden }) => !hidden);
+      return this.allColumns.filter(({ hidden }) => !hidden);
     },
 
     get visibleColumnsBySide() {
@@ -210,7 +220,7 @@ export function create({
     },
 
     get validationColumns() {
-      return allColumns.filter(({ validation }) => !!validation);
+      return this.allColumns.filter(({ validation }) => !!validation);
     },
 
     get ignoredColumns() {

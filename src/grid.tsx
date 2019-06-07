@@ -6,7 +6,8 @@ import {
   OptRow,
   OptAppendRow,
   OptPrependRow,
-  OptRemoveRow
+  OptRemoveRow,
+  OptColumn
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -481,8 +482,8 @@ export default class Grid {
    * Sets the list of column model.
    * @param {Array} columns - A new list of column model
    */
-  public setColumns() {
-    // @TODO implements
+  public setColumns(columns: OptColumn[]) {
+    this.dispatch('setColumns', columns);
   }
 
   /**
