@@ -10,7 +10,7 @@ import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
 
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-export const MIN_DISTANCE_FOR_DRAG = 10;
+const MIN_DISTANCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
