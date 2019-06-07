@@ -1,12 +1,13 @@
 import { h, Component } from 'preact';
-import { ColumnInfo, Side, SortOptions } from '../store/types';
+import { ColumnInfo, Side, SortOptions, Range } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, hasClass, findParent } from '../helper/dom';
+import { cls, hasClass, findParent, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
+import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
   side: Side;
@@ -22,6 +23,7 @@ interface StoreProps {
   sortOptions: SortOptions;
   disabled: boolean;
   dataProvider: DataProvider;
+  columnSelectionRange: Range | null;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -73,6 +75,36 @@ class HeaderAreaComp extends Component<Props> {
     ev.stopPropagation();
   };
 
+  private handleMouseMove = (ev: MouseEvent) => {
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    this.props.dispatch('dragMoveHeader', { pageX, pageY });
+  };
+
+  private handleMouseDown = (ev: MouseEvent, name: string, sortable?: boolean) => {
+    if (sortable) {
+      return;
+    }
+
+    this.props.dispatch('mouseDownHeader', name);
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private clearDocumentEvents = () => {
+    this.props.dispatch('dragEnd');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
   private updateRowHeaderCheckbox() {
     const { checkedAllRows, disabled } = this.props;
     const input = this.el!.querySelector('input[name=_checked]') as HTMLInputElement;
@@ -93,6 +125,15 @@ class HeaderAreaComp extends Component<Props> {
     }
   }
 
+  private isSelected(index: number) {
+    const { columnSelectionRange } = this.props;
+    if (!columnSelectionRange) {
+      return false;
+    }
+    const [start, end] = columnSelectionRange;
+    return index >= start && index <= end;
+  }
+
   public render() {
     const { headerHeight, cellBorderWidth, columns, side, sortOptions } = this.props;
     const areaStyle = { height: headerHeight + cellBorderWidth };
@@ -110,8 +151,16 @@ class HeaderAreaComp extends Component<Props> {
           <ColGroup side={side} useViewport={false} />
           <tbody>
             <tr style={theadStyle} onClick={this.handleClick} onDblClick={this.handleDblClick}>
-              {columns.map(({ name, header, sortable }) => (
-                <th key={name} data-column-name={name} class={cls('cell', 'cell-header')}>
+              {columns.map(({ name, header, sortable }, index) => (
+                <th
+                  key={name}
+                  data-column-name={name}
+                  class={cls('cell', 'cell-header', [
+                    !isRowHeader(name) && this.isSelected(index),
+                    'cell-selected'
+                  ])}
+                  onMouseDown={(ev) => this.handleMouseDown(ev, name, sortable)}
+                >
                   {name === '_checked' ? (
                     <span
                       dangerouslySetInnerHTML={{ __html: header }}
@@ -145,7 +194,8 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     column,
     dimension: { headerHeight, cellBorderWidth },
     viewport,
-    id
+    id,
+    selection: { rangeBySide }
   } = store;
 
   return {
@@ -157,6 +207,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     checkedAllRows: data.checkedAllRows,
     sortOptions: data.sortOptions,
     disabled: data.disabled,
-    dataProvider: getDataProvider(id)
+    dataProvider: getDataProvider(id),
+    columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null
   };
 })(HeaderAreaComp);

@@ -65,6 +65,40 @@ stories.add(
 );
 
 stories.add(
+  'Selection with rowheader',
+  () => {
+    const { el, grid } = createGrid({
+      data,
+      columns,
+      bodyHeight: 'fitToParent',
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      rowHeaders: ['_checked', '_number']
+    });
+    const rootEl = document.createElement('div');
+    rootEl.appendChild(el);
+    rootEl.style.height = '400px';
+
+    button('selection({ start: 1, 2, end: 3, 4 })', () =>
+      grid.selection({ start: [1, 2], end: [3, 4] })
+    );
+
+    button('selection({ start: 3, 5, end: 1, 2 })', () =>
+      grid.selection({ start: [3, 5], end: [1, 2] })
+    );
+
+    button('selection({ start: -1, -1, end: 20, 20 })', () =>
+      grid.selection({ start: [-1, -1], end: [20, 20] })
+    );
+
+    return rootEl;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
   'Row Selection',
   () => {
     const { el } = createGrid({
