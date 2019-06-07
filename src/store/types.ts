@@ -116,7 +116,7 @@ export interface InvalidRow {
 }
 
 export interface TreeRowInfo {
-  parentRowKey: RowKey;
+  parentRowKey: RowKey | null;
   childRowKeys: RowKey[];
   expanded?: boolean;
   hiddenChild?: boolean;

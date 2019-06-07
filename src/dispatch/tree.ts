@@ -1,16 +1,19 @@
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
+import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex } from '../helper/common';
+import { findProp, findPropIndex, isNull } from '../helper/common';
 import { notify } from '../helper/observable';
 import { isUpdatableRowAttr } from '../dispatch/data';
-import { getParentRow } from '../query/tree';
+import { getParentRow, getDescendantRows } from '../query/tree';
 import {
+  flattenTreeData,
   traverseAncestorRows,
   traverseDescendantRows,
+  removeChildRowKey,
   isLeaf,
-  getChildRowKeys,
-  getHiddenChildState
+  getHiddenChildState,
+  getChildRowKeys
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -197,9 +200,63 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
 }
 
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendRow) {
-  // @TODO 로직 추가
+  const { data, column, rowCoords, dimension } = store;
+  const { rawData, viewData } = data;
+  const { defaultValues, allColumnMap, treeColumnName, treeIcon } = column;
+  const { heights } = rowCoords;
+  const { parentRowKey = null } = options;
+  let parentRowIdx, parentRow, startIdx;
+
+  if (!isNull(parentRowKey)) {
+    parentRowIdx = findPropIndex('rowKey', parentRowKey, rawData);
+    parentRow = rawData[parentRowIdx];
+    startIdx = parentRowIdx + getDescendantRows(store, parentRow.rowKey).length + 1;
+  } else {
+    parentRow = null;
+    startIdx = rawData.length;
+  }
+
+  const rawRows = flattenTreeData([row], defaultValues, parentRow, column.keyColumnName);
+  rawData.splice(startIdx, 0, ...rawRows);
+
+  const viewRows = rawRows.map((rawRow) =>
+    createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon)
+  );
+  viewData.splice(startIdx, 0, ...viewRows);
+
+  const rowHeights = rawRows.map((rawRow) => getRowHeight(rawRow, dimension.rowHeight));
+  heights.splice(startIdx, 0, ...rowHeights);
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(rowCoords, 'heights');
+
+  // @todo net 연동
 }
 
 export function removeTreeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
-  // @TODO 로직 추가
+  const { data, rowCoords } = store;
+  const { rawData, viewData } = data;
+  const { heights } = rowCoords;
+
+  if (!isNull(rowKey)) {
+    const parentRow = getParentRow(store, rowKey);
+
+    if (parentRow) {
+      removeChildRowKey(parentRow, parentRow.rowKey);
+    }
+  }
+
+  const startIdx = findPropIndex('rowKey', rowKey, rawData);
+  const endIdx = getDescendantRows(store, rowKey).length + 1;
+
+  rawData.splice(startIdx, endIdx);
+  viewData.splice(startIdx, endIdx);
+  heights.splice(startIdx, endIdx);
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(rowCoords, 'heights');
+
+  // @todo net 연동
 }

@@ -256,7 +256,7 @@ export function createData(data: OptRow[], column: Column) {
   let rawData: Row[];
 
   if (treeColumnName) {
-    rawData = createTreeRawData(data, defaultValues);
+    rawData = createTreeRawData(data, defaultValues, keyColumnName);
   } else {
     rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
   }
