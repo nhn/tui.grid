@@ -2,7 +2,7 @@ import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex } from '../helper/common';
+import { findProp, findPropIndex, isNull } from '../helper/common';
 import { notify } from '../helper/observable';
 import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow, getDescendantRows } from '../query/tree';
@@ -204,25 +204,27 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendRow) 
   const { rawData, viewData } = data;
   const { defaultValues, allColumnMap, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
-  const { parentRowKey = -1 } = options;
+  const { parentRowKey = null } = options;
+  let parentRowIdx, parentRow, startIdx;
 
-  const parentRowIdx = findPropIndex('rowKey', parentRowKey, rawData);
-  const parentRow = rawData[parentRowIdx];
+  if (!isNull(parentRowKey)) {
+    parentRowIdx = findPropIndex('rowKey', parentRowKey, rawData);
+    parentRow = rawData[parentRowIdx];
+    startIdx = parentRowIdx + getDescendantRows(store, parentRow.rowKey).length + 1;
+  } else {
+    parentRow = null;
+    startIdx = rawData.length;
+  }
 
-  const startIdx =
-    parentRowKey > -1
-      ? parentRowIdx + getDescendantRows(store, parentRow.rowKey).length + 1
-      : rawData.length;
-
-  const rawRows = flattenTreeData([row], defaultValues, parentRow);
+  const rawRows = flattenTreeData([row], defaultValues, parentRow, column.keyColumnName);
   rawData.splice(startIdx, 0, ...rawRows);
 
-  const viewRows = rawRows.map((rawRow: Row) =>
+  const viewRows = rawRows.map((rawRow) =>
     createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon)
   );
   viewData.splice(startIdx, 0, ...viewRows);
 
-  const rowHeights = rawRows.map((rawRow: Row) => getRowHeight(rawRow, dimension.rowHeight));
+  const rowHeights = rawRows.map((rawRow) => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);
 
   notify(data, 'rawData');
@@ -237,10 +239,12 @@ export function removeTreeRow(store: Store, rowKey: RowKey, options: OptRemoveRo
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
 
-  const parentRow = getParentRow(store, rowKey);
+  if (!isNull(rowKey)) {
+    const parentRow = getParentRow(store, rowKey);
 
-  if (parentRow) {
-    removeChildRowKey(parentRow, parentRow.rowKey);
+    if (parentRow) {
+      removeChildRowKey(parentRow, parentRow.rowKey);
+    }
   }
 
   const startIdx = findPropIndex('rowKey', rowKey, rawData);
