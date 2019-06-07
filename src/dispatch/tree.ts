@@ -2,7 +2,7 @@ import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex, isUndefined } from '../helper/common';
+import { findProp, findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow, getDescendantRows } from '../query/tree';
