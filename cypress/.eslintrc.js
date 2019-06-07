@@ -12,6 +12,6 @@ module.exports = {
     'padding-line-between-statements': 0,
     'no-unused-expressions': 0,
     'dot-notation': 0,
-    'max-nested-callbacks': { 'max': 5 }
+    'max-nested-callbacks': [2, { max: 5 }]
   }
 };
