@@ -9,7 +9,8 @@ import {
   EditingEvent,
   PageOptions,
   Validation,
-  RowKey
+  RowKey,
+  ComplexColumnInfo
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -37,6 +38,7 @@ export interface OptGrid {
   copyOptions?: ClipboardCopyOptions;
   pageOptions?: PageOptions;
   treeColumnOptions?: OptTree;
+  header?: OptHeader;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -367,4 +369,9 @@ export interface OptSummaryValueMap {
   min: number;
   max: number;
   cnt: number;
+}
+
+export interface OptHeader {
+  height?: number;
+  complexColumns?: ComplexColumnInfo[];
 }
