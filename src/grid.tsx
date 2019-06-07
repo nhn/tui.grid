@@ -478,6 +478,29 @@ export default class Grid {
   }
 
   /**
+   * Sets the list of column model.
+   * @param {Array} columns - A new list of column model
+   */
+  public setColumns() {
+    // @TODO implements
+  }
+
+  /**
+   * Set columns title
+   * @param {string} columnsMap - columns map to be change
+   */
+  public setColumnTitles() {
+    // @TODO implements
+  }
+
+  /**
+   * Resets the width of each column by using initial setting of column models.
+   */
+  public resetColumnWidths() {
+    // @TODO implements
+  }
+
+  /**
    * Returns a list of all values in the specified column.
    * @param {string} columnName - The name of the column
    * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
