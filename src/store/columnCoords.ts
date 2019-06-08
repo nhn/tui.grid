@@ -84,16 +84,16 @@ function adjustWidths(
   return result;
 }
 
-function calculateWidths(columns: ColumnInfo[], contentWidth: number) {
-  const baseWidths = mapProp('baseWidth', columns);
-  const minWidths = mapProp('minWidth', columns);
+function calculateWidths(columns: ColumnInfo[], cellBorderWidth: number, contentsWidth: number) {
+  const baseWidths = columns.map(({ baseWidth }) => (baseWidth ? baseWidth - cellBorderWidth : 0));
+  const minWidths = columns.map(({ minWidth }) => minWidth - cellBorderWidth);
   const fixedFlags = mapProp('fixedWidth', columns);
 
   return pipe(
     baseWidths,
-    fillEmptyWidth.bind(null, contentWidth),
+    fillEmptyWidth.bind(null, contentsWidth),
     applyMinimumWidth.bind(null, minWidths),
-    adjustWidths.bind(null, minWidths, fixedFlags, contentWidth, true)
+    adjustWidths.bind(null, minWidths, fixedFlags, contentsWidth, true)
   );
 }
 
@@ -115,7 +115,11 @@ export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords
   return observable<ColumnCoords>({
     get widths(this: ColumnCoords) {
       const { visibleColumns, visibleFrozenCount } = column;
-      const widths = calculateWidths(visibleColumns, dimension.contentsWidth);
+      const widths = calculateWidths(
+        visibleColumns,
+        dimension.cellBorderWidth,
+        dimension.contentsWidth
+      );
 
       return {
         L: widths.slice(0, visibleFrozenCount),

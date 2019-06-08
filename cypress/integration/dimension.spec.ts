@@ -13,6 +13,7 @@ interface GridGlobal {
 const CONTENT_WIDTH = 600;
 // @TODO: Retrieve scrollbar-width from real browser
 const SCROLLBAR_WIDTH = 17;
+const CELL_BORDER_WIDTH = 1;
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   cy.window().then((win: Window & Partial<GridGlobal>) => {
@@ -100,7 +101,7 @@ function assertHandleOffset(index: number, offsetLeft: number) {
     .invoke('position')
     // @ts-ignore
     .its('left')
-    .should('be.eql', offsetLeft - HANDLE_WIDTH_HALF);
+    .should('be.eq', offsetLeft - HANDLE_WIDTH_HALF);
 }
 
 function assertHandleLength(length: number) {
@@ -148,7 +149,7 @@ describe('auto calculate column widths (container: 600)', () => {
     assertColumnWidth([300, 300]);
   });
 
-  it('[empty, empty, 200] -> [200, 200, 200]', () => {
+  it('[empty, empty, empty] -> [200, 200, 200]', () => {
     createGridWithWidths([{}, {}, {}]);
     assertColumnWidth([200, 200, 200]);
   });
@@ -231,7 +232,7 @@ describe('auto calculate column widths (container: 600)', () => {
         .trigger('mousedown')
         .then(($el) => {
           const { left, top } = $el.offset()!;
-          const pageX = left + distance + HANDLE_WIDTH_HALF;
+          const pageX = left + distance + CELL_BORDER_WIDTH + HANDLE_WIDTH_HALF;
           const pageY = top;
 
           cy.root().trigger('mousemove', { pageX, pageY });
@@ -260,14 +261,14 @@ describe('auto calculate column widths (container: 600)', () => {
 });
 
 describe('body height', () => {
-  const DEF_HEADER_HEIGHT = 30;
+  const DEF_HEADER_HEIGHT = 40;
   const BORER_WIDTH = 1;
   const columns = [{ name: 'c1' }];
   const data = [{ c1: 'test' }];
 
   function assertBodyHeight(height: number) {
     cy.get(`.${cls('body-area')}`).each(($body) => {
-      expect($body.height()).to.eql(height);
+      expect($body.height()).to.eq(height);
     });
   }
 
