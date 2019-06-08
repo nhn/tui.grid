@@ -37,6 +37,12 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
   data.viewData = rawData.map((row) => createViewRow(row, allColumnMap, rawData));
 }
 
+export function resetColumnWidths({ column }: Store, widths: number[]) {
+  column.visibleColumns.forEach((columnInfo, idx) => {
+    columnInfo.baseWidth = widths[idx];
+  });
+}
+
 export function hideColumn({ column }: Store, columnName: string) {
   const columnItem = column.allColumnMap[columnName];
 

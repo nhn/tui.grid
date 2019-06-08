@@ -498,7 +498,7 @@ export default class Grid {
    * Resets the width of each column by using initial setting of column models.
    */
   public resetColumnWidths(widths: number[]) {
-    /* this.dispatch('resetColumnWidths', widths); */
+    this.dispatch('resetColumnWidths', widths);
   }
 
   /**

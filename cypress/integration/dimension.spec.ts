@@ -210,6 +210,14 @@ describe('auto calculate column widths (container: 600)', () => {
     });
   });
 
+  context.only('resetColumnWidths', () => {
+    it('[150, 150, 300]', () => {
+      createGridWithWidths([{}, {}, {}]);
+      cy.gridInstance().invoke('resetColumnWidths', [150, 150, 300]);
+      assertColumnWidth([150, 150, 300]);
+    });
+  });
+
   context('when window.resize event occur', () => {
     it('reset container width and column width', () => {
       createGridWithWidths([{}, {}, {}]);
