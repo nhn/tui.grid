@@ -1,4 +1,4 @@
-import { cls } from '../../src/helper/dom';
+import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
@@ -71,7 +71,7 @@ function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
   const testData = (sortedData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
-  cy.get(`td[data-column-name=${columnName}]`).each(($el, index) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
     expect($el.text()).to.eql(testData[index]);
   });
 }
@@ -80,7 +80,7 @@ function assertPagingData(columnName: string, page = 1) {
   const pagingData = page === 1 ? sampleData.slice(0, 10) : sampleData.slice(10);
   const testData = (pagingData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
-  cy.get(`td[data-column-name=${columnName}]`).each(($el, index) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
     expect($el.text()).to.eql(testData[index]);
   });
 }
@@ -118,7 +118,7 @@ beforeEach(() => {
 
 it('initialize grid with server side data', () => {
   const testData = sampleData.map((sample) => String(sample.name));
-  cy.get(`td[data-column-name=name]`).each(($el, index) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
     expect($el.text()).to.eql(testData[index]);
   });
 });
@@ -140,7 +140,7 @@ it('render grid with server side data when calls readData method', () => {
   cy.gridInstance()
     .invoke('readData', 1)
     .then(() => {
-      cy.get(`td[data-column-name=name]`).each(($el, index) => {
+      cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
         expect($el.text()).to.eql(testData[index]);
       });
     });

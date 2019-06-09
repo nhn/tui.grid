@@ -38,6 +38,7 @@ import {
 } from './dataSource/types';
 import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
 import { getDepth } from './helper/tree';
+import { cls, dataAttr } from './helper/dom';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -46,6 +47,8 @@ if ((module as any).hot) {
 /* eslint-enable */
 
 export default class Grid {
+  private el: HTMLElement;
+
   private store: Store;
 
   private dispatch: Dispatch;
@@ -68,6 +71,7 @@ export default class Grid {
     const dataManager = createManager();
     const paginationManager = createPaginationManager();
 
+    this.el = el;
     this.store = store;
     this.dispatch = dispatch;
     this.eventBus = eventBus;
@@ -429,6 +433,18 @@ export default class Grid {
    */
   public setColumnValues(columnName: string, columnValue: CellValue, checkCellState?: boolean) {
     this.dispatch('setColumnValues', columnName, columnValue, checkCellState);
+  }
+
+  /**
+   * Returns the HTMLElement of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {HTMLElement} - The HTMLElement of the cell element
+   */
+  public getElement(rowKey: RowKey, columnName: string) {
+    return this.el.querySelector(
+      `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
+    );
   }
 
   /**

@@ -1,7 +1,9 @@
-import { cls } from '@/helper/dom';
+import { cls, dataAttr } from '@/helper/dom';
 
 Cypress.Commands.add('getCell', (rowKey, columnName) => {
-  return cy.get(`.${cls('cell')}[data-row-key="${rowKey}"][data-column-name="${columnName}"]`);
+  return cy.get(
+    `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
+  );
 });
 
 Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx) => {

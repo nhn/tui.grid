@@ -1,7 +1,14 @@
 import { h, Component } from 'preact';
 import { ColumnInfo, Side, SortOptions, Range } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, hasClass, findParent, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
+import {
+  cls,
+  hasClass,
+  findParent,
+  setCursorStyle,
+  getCoordinateWithOffset,
+  dataAttr
+} from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -51,7 +58,7 @@ class HeaderAreaComp extends Component<Props> {
 
     const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
-    const targetColumnName = th!.getAttribute('data-column-name')!;
+    const targetColumnName = th!.getAttribute(dataAttr.COLUMN_NAME)!;
     let targetAscending = true;
 
     if (sortOptions) {
@@ -138,6 +145,7 @@ class HeaderAreaComp extends Component<Props> {
     const { headerHeight, cellBorderWidth, columns, side, sortOptions } = this.props;
     const areaStyle = { height: headerHeight + cellBorderWidth };
     const theadStyle = { height: headerHeight };
+    const attrs = { [dataAttr.COLUMN_NAME]: name };
 
     return (
       <div
@@ -153,8 +161,8 @@ class HeaderAreaComp extends Component<Props> {
             <tr style={theadStyle} onClick={this.handleClick} onDblClick={this.handleDblClick}>
               {columns.map(({ name, header, sortable }, index) => (
                 <th
+                  {...attrs}
                   key={name}
-                  data-column-name={name}
                   class={cls('cell', 'cell-header', [
                     !isRowHeader(name) && this.isSelected(index),
                     'cell-selected'

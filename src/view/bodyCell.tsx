@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
 import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
-import { cls, Attributes, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -137,9 +137,9 @@ export class BodyCellComp extends Component<Props> {
       textAlign: align,
       ...(valign && { verticalAlign: valign })
     };
-    const attrs: Attributes = {
-      'data-row-key': String(rowKey),
-      'data-column-name': name
+    const attrs = {
+      [dataAttr.ROW_KEY]: String(rowKey),
+      [dataAttr.COLUMN_NAME]: name
     };
     const classNames = `${cls(
       'cell',

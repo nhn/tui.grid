@@ -6,7 +6,7 @@ import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, Attributes } from '../helper/dom';
+import { cls, getCellAddress, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
@@ -217,7 +217,7 @@ export class ContainerComp extends Component<Props> {
       scrollY
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
-    const attrs: Attributes = { 'data-grid-id': gridId };
+    const attrs = { [dataAttr.GRID_ID]: gridId };
 
     return (
       <div

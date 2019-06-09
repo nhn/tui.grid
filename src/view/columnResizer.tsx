@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls, setCursorStyle } from '../helper/dom';
+import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';
@@ -63,19 +63,22 @@ class ColumnResizerComp extends Component<Props> {
   private renderHandle(index: number) {
     const { columns, offsets, cellBorderWidth, widths } = this.props;
     const { name, resizable } = columns[index];
-    const offset = offsets[index];
-    const width = widths[index];
-
     if (!resizable) {
       return null;
     }
 
+    const offset = offsets[index];
+    const width = widths[index];
+    const attrs = {
+      [dataAttr.COLUMN_INDEX]: index,
+      [dataAttr.COLUMN_NAME]: name
+    };
+
     return (
       <div
-        data-column-index={index}
-        data-column-name={name}
         class={cls('column-resize-handle')}
         title={''}
+        {...attrs}
         style={{
           height: 33,
           width: HANDLE_WIDTH,
