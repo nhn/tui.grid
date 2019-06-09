@@ -15,11 +15,11 @@ Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
   return cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`);
 });
 
-Cypress.Commands.add('createGrid', (gridOptions, elementStyle = {}) => {
+Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
   return cy.window().then((win) => {
     const { document, tui } = win;
     const el = document.createElement('div');
-    const styles = { width: '800px', ...elementStyle };
+    const styles = { width: '800px', ...containerStyle };
 
     Object.assign(el.style, styles);
     document.body.appendChild(el);
