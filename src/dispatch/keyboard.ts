@@ -1,18 +1,19 @@
-import { Store, RowKey, SelectionRange } from '../store/types';
+import { Store, RowKey, SelectionRange, Range } from '../store/types';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
-import { isNull } from '../helper/common';
+import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
-    data: { viewData },
+    data,
     column: { visibleColumns },
     id
   } = store;
+  const { viewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -23,7 +24,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumns[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, viewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
@@ -48,12 +49,13 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   const {
     selection,
     focus,
-    data: { viewData },
+    data,
     column: { visibleColumns, rowHeaderCount },
     id
   } = store;
-  let { inputRange: currentInputRange } = selection;
+  const { viewData } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
+  let { inputRange: currentInputRange } = selection;
 
   if (focusRowIndex === null || totalFocusColumnIndex === null) {
     return;
@@ -79,12 +81,29 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     columnStartIndex = 0;
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
+    // @TODO need to fix cell index for considering rowSpan
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
+
+  let startRowIndex = rowStartIndex;
+  let endRowIndex = nextRowIndex;
+
+  if (enableRowSpan(data)) {
+    const rowRange: Range = [startRowIndex, endRowIndex];
+    const colRange: Range = [columnStartIndex, nextColumnIndex];
+    [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+      rowRange,
+      colRange,
+      visibleColumns,
+      focus.rowIndex,
+      data
+    );
+  }
+
   const inputRange: SelectionRange = {
-    row: [rowStartIndex, nextRowIndex],
+    row: [startRowIndex, endRowIndex],
     column: [columnStartIndex, nextColumnIndex]
   };
 
@@ -122,8 +141,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  const { focus, id } = store;
+  const { focus, id, data } = store;
   focus.navigating = navigating;
 
-  changeFocus(store.focus, rowKey, columnName, id);
+  changeFocus(focus, data, rowKey, columnName, id);
 }

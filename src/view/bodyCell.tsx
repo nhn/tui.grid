@@ -13,6 +13,7 @@ interface OwnProps {
   viewRow: ViewRow;
   columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
+  rowSpanAttr: { rowSpan: number } | null;
 }
 
 interface StoreProps {
@@ -130,7 +131,8 @@ export class BodyCellComp extends Component<Props> {
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled,
       treeInfo,
-      selectedRow
+      selectedRow,
+      rowSpanAttr
     } = this.props;
 
     const style = {
@@ -170,6 +172,7 @@ export class BodyCellComp extends Component<Props> {
     ) : (
       <td
         {...attrs}
+        {...rowSpanAttr}
         style={style}
         class={classNames}
         ref={(el) => {

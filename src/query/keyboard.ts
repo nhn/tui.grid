@@ -5,6 +5,7 @@ import {
   getPageMovedPosition,
   KeyboardEventCommandType
 } from '../helper/keyboard';
+import { getRowSpanTopIndex, getRowSpanBottomIndex, enableRowSpan } from '../helper/rowSpan';
 
 export function getNextCellIndex(
   store: Store,
@@ -12,17 +13,25 @@ export function getNextCellIndex(
   [rowIndex, columnIndex]: CellIndex
 ): CellIndex {
   const {
-    data: { viewData },
+    data,
     column: { visibleColumns },
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
+  const { rawData, viewData } = data;
+  const columnName = visibleColumns[columnIndex].name;
 
   switch (command) {
     case 'up':
+      if (enableRowSpan(data)) {
+        rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
+      }
       rowIndex -= 1;
       break;
     case 'down':
+      if (enableRowSpan(data)) {
+        rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
+      }
       rowIndex += 1;
       break;
     case 'left':

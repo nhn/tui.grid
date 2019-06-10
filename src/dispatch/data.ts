@@ -15,7 +15,8 @@ import {
   findPropIndex,
   isUndefined,
   removeArrayItem,
-  includes
+  includes,
+  isEmpty
 } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
@@ -28,6 +29,7 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
+import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
 
 export function setValue(
   { column, data, id }: Store,
@@ -35,7 +37,8 @@ export function setValue(
   columnName: string,
   value: CellValue
 ) {
-  const targetRow = findProp('rowKey', rowKey, data.rawData);
+  const rawData = data.rawData;
+  const targetRow = findProp('rowKey', rowKey, rawData);
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
@@ -49,8 +52,21 @@ export function setValue(
 
   if (!gridEvent.isStopped()) {
     if (targetRow) {
+      const { rowSpanMap } = targetRow;
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
+
+      if (isEmpty(rowSpanMap) || !enableRowSpan(data)) {
+        return;
+      }
+
+      const { spanCount } = rowSpanMap[columnName];
+      const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
+      // update sub rows value
+      for (let count = 1; count < spanCount; count += 1) {
+        rawData[mainRowIndex + count][columnName] = value;
+        getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
+      }
     }
     if (targetColumn && targetColumn.onAfterChange) {
       gridEvent = new GridEvent({ rowKey, columnName, value });
@@ -267,6 +283,7 @@ export function appendRow(
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
+  const prevRow = rawData[at - 1];
 
   const rawRow = createRawRow(row, rawData.length, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
@@ -274,6 +291,10 @@ export function appendRow(
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
+
+  if (prevRow && enableRowSpan(data)) {
+    updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
+  }
 
   notify(data, 'rawData');
   notify(data, 'viewData');
@@ -285,10 +306,15 @@ export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, option
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
+  const nextRow = rawData[rowIdx + 1];
 
   const removedRow = rawData.splice(rowIdx, 1);
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
+
+  if (nextRow && enableRowSpan(data)) {
+    updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+  }
 
   notify(data, 'rawData');
   notify(data, 'viewData');
