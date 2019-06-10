@@ -1,5 +1,6 @@
 import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
+import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name' }, { name: 'age' }];
@@ -203,5 +204,18 @@ describe('columns', () => {
 
     cy.getCellByIdx(0, 1).should('to.have.text', '30');
     cy.getCellByIdx(1, 1).should('to.have.text', '30');
+  });
+});
+
+describe('rows', () => {
+  it('findRows() returns rows that meet the conditions.', () => {
+    cy.gridInstance().invoke('findRows', { name: 'Kim' });
+
+    cy.gridInstance().invoke('findRows', { name: 'Lee', age: 10 }); // 반환하는 거 없음
+
+    cy.gridInstance().invoke('findRows', function(row: Row) {
+      console.log(row);
+      return !!row.age && row.age > 10;
+    });
   });
 });
