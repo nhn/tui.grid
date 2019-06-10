@@ -1,5 +1,5 @@
 import { CellIndex, Store } from '../store/types';
-import { clamp } from '../helper/common';
+import { clamp, isNull } from '../helper/common';
 import {
   getPageMovedIndex,
   getPageMovedPosition,
@@ -63,4 +63,21 @@ export function getNextCellIndex(
   columnIndex = clamp(columnIndex, 0, visibleColumns.length - 1);
 
   return [rowIndex, columnIndex];
+}
+
+export function getRemoveRange(store: Store) {
+  const { focus, selection } = store;
+  const { totalColumnIndex, rowIndex } = focus;
+  const { range } = selection;
+
+  if (range) {
+    return range;
+  }
+  if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
+    return {
+      column: [totalColumnIndex, totalColumnIndex],
+      row: [rowIndex, rowIndex]
+    };
+  }
+  return null;
 }
