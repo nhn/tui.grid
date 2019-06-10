@@ -45,9 +45,14 @@ export type SummaryPosition = 'top' | 'bottom';
 
 type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
+export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
+export interface RowSpanAttribute {
+  rowSpan?: Dictionary<number>;
+}
+
 export interface OptRow {
-  [prop: string]: CellValue | RecursivePartial<RowAttributes> | OptRow[];
-  _attributes?: RecursivePartial<RowAttributes>;
+  [prop: string]: CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
+  _attributes?: RecursivePartial<RowAttributes & RowSpanAttribute>;
   _children?: OptRow[];
 }
 
@@ -55,6 +60,7 @@ export interface OptAppendRow {
   at?: number;
   focus?: boolean;
   parentRowKey?: RowKey;
+  extendPrevRowSpan?: boolean;
 }
 
 export interface OptPrependRow {
