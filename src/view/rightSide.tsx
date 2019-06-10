@@ -121,12 +121,12 @@ export const RightSide = connect<StoreProps>(({ dimension, columnCoords }) => {
   }
 
   const scrollXHeight = scrollX ? scrollbarWidth : 0;
-  const width = columnCoords.areaWidth.R;
+  let width = columnCoords.areaWidth.R;
+  let marginLeft = columnCoords.areaWidth.L + frozenBorderWidth;
 
-  let marginLeft = columnCoords.areaWidth.L + tableBorderWidth;
-
-  if (!frozenBorderWidth) {
+  if (marginLeft && !frozenBorderWidth) {
     marginLeft -= cellBorderWidth;
+    width += cellBorderWidth;
   }
 
   return {

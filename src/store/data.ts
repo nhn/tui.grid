@@ -174,27 +174,33 @@ export function createViewRow(
   });
 
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
+  const __unobserveFns__: Function[] = [];
 
   Object.keys(columnMap).forEach((name) => {
     const { related, relationMap } = columnMap[name];
 
     // add condition expression to prevent to call watch function recursively
     if (!related) {
-      observe(() => {
-        valueMap[name] = createViewCell(row, columnMap[name]);
-      });
+      __unobserveFns__.push(
+        observe(() => {
+          valueMap[name] = createViewCell(row, columnMap[name]);
+        })
+      );
     }
     // @TODO need to improve relation
     if (relationMap && Object.keys(relationMap).length) {
-      observe(() => {
-        createRelationViewCell(name, row, columnMap, valueMap);
-      });
+      __unobserveFns__.push(
+        observe(() => {
+          createRelationViewCell(name, row, columnMap, valueMap);
+        })
+      );
     }
   });
 
   return {
     rowKey,
     valueMap,
+    __unobserveFns__,
     ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) })
   };
 }

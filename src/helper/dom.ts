@@ -92,14 +92,12 @@ export type ClassNameType =
   | 'tree-button-collapse'
   | 'tree-icon';
 
-export type AttributeKey =
-  | 'data-row-key'
-  | 'data-column-name'
-  | 'data-column-index'
-  | 'data-edit-type'
-  | 'data-grid-id';
-
-export type Attributes = { [key in AttributeKey]?: number | string };
+export const dataAttr = {
+  ROW_KEY: 'data-row-key',
+  COLUMN_NAME: 'data-column-name',
+  COLUMN_INDEX: 'data-column-index',
+  GRID_ID: 'data-grid-id'
+};
 
 export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   const result = [];
@@ -148,8 +146,8 @@ export function getCellAddress(el: HTMLElement) {
   if (!cellElement) {
     return null;
   }
-  const rowKey = Number(cellElement.getAttribute('data-row-key'));
-  const columnName = cellElement.getAttribute('data-column-name') as string;
+  const rowKey = Number(cellElement.getAttribute(dataAttr.ROW_KEY));
+  const columnName = cellElement.getAttribute(dataAttr.COLUMN_NAME) as string;
 
   return { rowKey, columnName };
 }

@@ -30,7 +30,7 @@ export function create({
   summaryHeight = 0,
   summaryPosition = 'bottom'
 }: OptDimension): Dimension {
-  const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
+  const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
   return observable<Dimension>({
     offsetLeft: 0,
@@ -70,18 +70,18 @@ export function create({
 
     get contentsWidth(this: Dimension) {
       const columnLen = column.visibleColumns.length;
-      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+      const totalBorderWidth = columnLen * this.cellBorderWidth;
 
-      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+      return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
     }
   });
 }
 
 export function setBodyHeight(dimension: Dimension, rowCoords: RowCoords) {
   const { totalRowHeight } = rowCoords;
-  const { autoHeight, scrollXHeight } = dimension;
+  const { autoHeight, scrollXHeight, minBodyHeight } = dimension;
 
   if (autoHeight) {
-    dimension.bodyHeight = totalRowHeight + scrollXHeight;
+    dimension.bodyHeight = Math.max(totalRowHeight + scrollXHeight, minBodyHeight);
   }
 }

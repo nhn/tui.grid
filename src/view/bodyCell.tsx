@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
 import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
-import { cls, Attributes, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
@@ -11,7 +11,7 @@ import Grid from '../grid';
 
 interface OwnProps {
   viewRow: ViewRow;
-  columnName: string;
+  columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
 }
 
@@ -137,9 +137,9 @@ export class BodyCellComp extends Component<Props> {
       textAlign: align,
       ...(valign && { verticalAlign: valign })
     };
-    const attrs: Attributes = {
-      'data-row-key': String(rowKey),
-      'data-column-name': name
+    const attrs = {
+      [dataAttr.ROW_KEY]: String(rowKey),
+      [dataAttr.COLUMN_NAME]: name
     };
     const classNames = `${cls(
       'cell',
@@ -182,13 +182,13 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data, selection }, { viewRow, columnName }) => {
+  ({ id, column, data, selection }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
-    const { allColumnMap, treeColumnName } = column;
+    const { treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
-    const columnInfo = allColumnMap[columnName];
     const { range } = selection;
+    const columnName = columnInfo.name;
 
     return {
       grid,

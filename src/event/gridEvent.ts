@@ -1,4 +1,4 @@
-import { findParentByTagName, getCellAddress } from '../helper/dom';
+import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
 import { CellValue, RowKey, SelectionRange } from '../store/types';
 import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
@@ -37,7 +37,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
   } else {
     cell = findParentByTagName(target, 'th');
     if (cell) {
-      columnName = cell.getAttribute('data-column-name') as string;
+      columnName = cell.getAttribute(dataAttr.COLUMN_NAME) as string;
       targetType = 'columnHeader';
     }
   }

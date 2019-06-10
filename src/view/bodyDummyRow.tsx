@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { connect } from './hoc';
-import { cls, Attributes } from '../helper/dom';
+import { cls, dataAttr } from '../helper/dom';
 import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
@@ -20,9 +20,7 @@ const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
       {columnNames.map((name) => {
-        const attrs: Attributes = {
-          'data-column-name': name
-        };
+        const attrs = { [dataAttr.COLUMN_NAME]: name };
 
         return (
           <td

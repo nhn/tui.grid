@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls, Attributes } from '../helper/dom';
+import { cls, dataAttr } from '../helper/dom';
 import { shallowEqual } from '../helper/common';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
@@ -38,9 +38,7 @@ export class SummaryBodyCellComp extends Component<Props> {
 
   public render() {
     const { columnName } = this.props;
-    const attrs: Attributes = {
-      'data-column-name': columnName
-    };
+    const attrs = { [dataAttr.COLUMN_NAME]: columnName };
     const template = this.getTemplate();
 
     return (
