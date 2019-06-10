@@ -1,9 +1,10 @@
 import { Store, RowKey, SelectionRange } from '../store/types';
 import { KeyboardEventCommandType } from '../helper/keyboard';
-import { getNextCellIndex } from '../query/keyboard';
+import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
+import { isNull } from '../helper/common';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -90,9 +91,29 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function removeFocus(store: Store) {
-  // @TODO: 이후 관련 키보드 이벤트 작업 필요
-  console.log(store);
+export function removeContent(store: Store) {
+  const { column, data } = store;
+  const { visibleColumns } = column;
+  const { rawData } = data;
+  const removeRange = getRemoveRange(store);
+
+  if (!removeRange) {
+    return;
+  }
+
+  const {
+    column: [columnStart, columnEnd],
+    row: [rowStart, rowEnd]
+  } = removeRange;
+
+  visibleColumns
+    .slice(columnStart, columnEnd + 1)
+    .filter(({ editor }) => !!editor)
+    .forEach(({ name }) => {
+      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
+        row[name] = '';
+      });
+    });
 }
 
 export function setFocusInfo(
