@@ -11,21 +11,25 @@ import {
   CellValue,
   ValidationType,
   Validation,
-  PageOptions
+  PageOptions,
+  RowKey,
+  RowSpanMap
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
-import { OptRow } from '../types';
+import { OptRow, RowSpanAttributeValue } from '../types';
 import {
   someProp,
   encodeHTMLEntity,
   setDefaultProp,
   isBlank,
   isUndefined,
-  isBoolean
+  isBoolean,
+  isEmpty
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
+import { createRowSpan } from '../helper/rowSpan';
 
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
@@ -234,14 +238,69 @@ function getAttributes(row: OptRow, index: number) {
   return observable({ ...defaultAttr, ...row._attributes });
 }
 
+function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
+  const mainRowSpanMap: RowSpanMap = {};
+
+  if (!rowSpan) {
+    return mainRowSpanMap;
+  }
+
+  Object.keys(rowSpan).forEach((columnName) => {
+    const spanCount = rowSpan[columnName];
+    mainRowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
+  });
+  return mainRowSpanMap;
+}
+
+function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
+  const subRowSpanMap: RowSpanMap = {};
+
+  Object.keys(prevRowSpanMap).forEach((columnName) => {
+    const prevRowSpan = prevRowSpanMap[columnName];
+
+    if (prevRowSpan.spanCount > -prevRowSpan.count + 1) {
+      const { mainRowKey, count, spanCount } = prevRowSpan;
+      const subRowCount = count >= 0 ? -1 : count - 1;
+      subRowSpanMap[columnName] = createRowSpan(false, mainRowKey, subRowCount, spanCount);
+    }
+  });
+  return subRowSpanMap;
+}
+
+function createRowSpanMap(row: OptRow, rowSpan: RowSpanAttributeValue, prevRow?: Row) {
+  const rowSpanMap: RowSpanMap = {};
+  const rowKey = row.rowKey as RowKey;
+
+  if (!isEmpty(rowSpan)) {
+    return createMainRowSpanMap(rowSpan, rowKey);
+  }
+  if (prevRow) {
+    const { rowSpanMap: prevRowSpanMap } = prevRow;
+    if (!isEmpty(prevRowSpanMap)) {
+      return createSubRowSpan(prevRowSpanMap);
+    }
+  }
+
+  return rowSpanMap;
+}
+
 export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
-  keyColumnName?: string
+  keyColumnName?: string,
+  prevRow?: Row
 ) {
+  // this rowSpan variable is attribute option before creating rowSpanDataMap
+  let rowSpan: RowSpanAttributeValue;
+  if (row._attributes) {
+    rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
+    // protect to create uneccesary reactive data
+    delete row._attributes.rowSpan;
+  }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row._attributes = getAttributes(row, index);
+  (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
@@ -264,7 +323,9 @@ export function createData(data: OptRow[], column: Column) {
   if (treeColumnName) {
     rawData = createTreeRawData(data, defaultValues, keyColumnName);
   } else {
-    rawData = data.map((row, index) => createRawRow(row, index, defaultValues, keyColumnName));
+    rawData = data.map((row, index, rows) =>
+      createRawRow(row, index, defaultValues, keyColumnName, rows[index - 1] as Row)
+    );
   }
 
   const viewData = rawData.map((row: Row) =>
