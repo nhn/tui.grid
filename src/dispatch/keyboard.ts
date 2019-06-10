@@ -1,6 +1,6 @@
 import { Store, RowKey, SelectionRange } from '../store/types';
 import { KeyboardEventCommandType } from '../helper/keyboard';
-import { getNextCellIndex } from '../query/keyboard';
+import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
@@ -92,32 +92,28 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 }
 
 export function removeContent(store: Store) {
-  const { focus, column, data, selection } = store;
-  const { totalColumnIndex, rowIndex } = focus;
+  const { column, data } = store;
   const { visibleColumns } = column;
-  const { range } = selection;
   const { rawData } = data;
-  let rowStart, rowEnd, columnStart, columnEnd;
+  const removeRange = getRemoveRange(store);
 
-  if (range) {
-    [columnStart, columnEnd] = range.column;
-    [rowStart, rowEnd] = range.row;
-  } else if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
-    columnStart = columnEnd = totalColumnIndex;
-    rowStart = rowEnd = rowIndex;
-  } else {
+  if (!removeRange) {
     return;
   }
 
-  for (let colIdx = columnStart; colIdx <= columnEnd; colIdx += 1) {
-    const { editorOptions, name } = visibleColumns[colIdx];
-    if (!editorOptions) {
-      continue;
-    }
-    for (let rowIdx = rowStart; rowIdx <= rowEnd; rowIdx += 1) {
-      rawData[rowIdx][name] = '';
-    }
-  }
+  const {
+    column: [columnStart, columnEnd],
+    row: [rowStart, rowEnd]
+  } = removeRange;
+
+  visibleColumns
+    .slice(columnStart, columnEnd + 1)
+    .filter(({ editor }) => !!editor)
+    .forEach(({ name }) => {
+      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
+        row[name] = '';
+      });
+    });
 }
 
 export function setFocusInfo(
