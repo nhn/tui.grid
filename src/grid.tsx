@@ -565,8 +565,7 @@ export default class Grid {
    *     return (/b/ig.test(row.artist) && row.price > 10000);
    * });
    */
-  public findRows(conditions: (row: Row) => boolean | Dictionary<any>) {
-    // console.log(getConditionalRows(this.store, conditions));
+  public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>) {
     return getConditionalRows(this.store, conditions);
   }
 

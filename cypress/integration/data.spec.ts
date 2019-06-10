@@ -212,7 +212,9 @@ describe('rows', () => {
     cy.gridInstance()
       .invoke('findRows', { name: 'Kim' })
       .should('have.length', 1)
-      .should('eql', [{}]);
+      .then((res) => {
+        expect(res[0]).to.contain({ name: 'Kim', age: 10 });
+      });
 
     cy.gridInstance()
       .invoke('findRows', { name: 'Lee', age: 10 })
@@ -222,6 +224,8 @@ describe('rows', () => {
       .invoke('findRows', function(row: Row) {
         return !!row.age && row.age > 10;
       })
-      .should('have.length', 1);
+      .then((res) => {
+        expect(res[0]).to.contain({ name: 'Lee', age: 20 });
+      });
   });
 });

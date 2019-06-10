@@ -26,7 +26,7 @@ export function getCheckedRows({ data }: Store) {
 
 export function getConditionalRows(
   { data }: Store,
-  conditions: (row: Row) => boolean | Dictionary<any>
+  conditions: ((row: Row) => boolean) | Dictionary<any>
 ) {
   const { rawData } = data;
 
@@ -37,8 +37,7 @@ export function getConditionalRows(
   let result: Row[] = rawData;
 
   Object.keys(conditions).forEach((key) => {
-    const keyWithType = key as keyof typeof conditions;
-    result = result.filter((row) => row[key] === conditions[keyWithType]);
+    result = result.filter((row) => row[key] === conditions[key]);
   });
 
   return result;
