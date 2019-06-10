@@ -1,6 +1,7 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
+import { getMaxRowSpanCount, enableRowSpan } from '../helper/rowSpan';
 
 interface ViewPortOption {
   data: Data;
@@ -17,14 +18,26 @@ function findIndexByPosition(offsets: number[], position: number) {
   return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
 }
 
-function calculateRange(scrollPos: number, totalSize: number, offsets: number[]) {
+function calculateRange(
+  scrollPos: number,
+  totalSize: number,
+  offsets: number[],
+  data: Data
+): Range {
   // safari uses negative scroll position for bouncing effect
   scrollPos = Math.max(scrollPos, 0);
 
   const start = findIndexByPosition(offsets, scrollPos);
   const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
 
-  return [start, end] as Range;
+  if (enableRowSpan(data)) {
+    const maxRowSpanCount = getMaxRowSpanCount(start, data.rawData);
+    const topRowSpanIndex = start - maxRowSpanCount;
+
+    return [topRowSpanIndex >= 0 ? topRowSpanIndex : 0, end];
+  }
+
+  return [start, end];
 }
 
 function getCachedRange(cachedRange: Range, newRange: Range) {
@@ -70,7 +83,8 @@ export function create({
       const range = calculateRange(
         this.scrollLeft,
         columnCoords.areaWidth.R,
-        columnCoords.offsets.R
+        columnCoords.offsets.R,
+        data
       );
       return getCachedRange(this.__storage__.colRange, range);
     },
@@ -85,7 +99,7 @@ export function create({
     },
 
     get rowRange(this: Observable<Viewport>) {
-      const range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets);
+      const range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets, data);
       return getCachedRange(this.__storage__.rowRange, range);
     },
 

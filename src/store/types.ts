@@ -32,8 +32,18 @@ export interface Dictionary<T> {
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
+  rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
 };
+
+export type RowSpanMap = Dictionary<RowSpan>;
+
+export interface RowSpan {
+  mainRow: boolean;
+  mainRowKey: RowKey;
+  count: number;
+  spanCount: number;
+}
 
 export interface RowAttributes {
   rowNum: number;

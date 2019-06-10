@@ -251,20 +251,17 @@ export function isString(value: unknown): value is string {
 }
 
 /**
- * check the emptiness of object or array. if obj parameter is null or undefind, return true
+ * check the emptiness(included null) of object or array. if obj parameter is null or undefind, return true
  * @param obj - target object or array
  * @returns the emptiness of obj
  */
-export function isEmpty(obj: object | any[]) {
-  if (
+export function isEmpty(obj: any) {
+  return (
     isNull(obj) ||
     isUndefined(obj) ||
-    (!isUndefined((obj as any[]).length) && (obj as any[]).length === 0) ||
+    (!isUndefined(obj.length) && obj.length === 0) ||
     Object.keys(obj).length === 0
-  ) {
-    return true;
-  }
-  return false;
+  );
 }
 
 export function fromArray<T>(value: ArrayLike<T>): T[] {

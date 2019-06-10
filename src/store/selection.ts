@@ -10,6 +10,7 @@ import {
   Side
 } from './types';
 import { Observable, observable } from '../helper/observable';
+import { getSortedRange } from '../helper/selection';
 
 type ColumnWidths = { [key in Side]: number[] };
 
@@ -19,10 +20,6 @@ interface SelectionOptions {
   column: Column;
   dimension: Dimension;
   rowCoords: RowCoords;
-}
-
-function getSortedRange(range: Range): Range {
-  return range[0] > range[1] ? [range[1], range[0]] : range;
 }
 
 function getOwnSideColumnRange(
