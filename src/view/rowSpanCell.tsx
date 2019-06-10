@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { ViewRow, RowSpan, Row } from '../store/types';
+import { ViewRow, RowSpan, Row, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { getRowSpanByRowKey } from '../helper/rowSpan';
@@ -7,7 +7,7 @@ import { BodyCell } from './bodyCell';
 
 interface OwnProps {
   viewRow: ViewRow;
-  columnName: string;
+  columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
 }
 
@@ -20,7 +20,7 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 export class RowSpanCellComp extends Component<Props> {
   public render() {
-    const { columnName, refreshRowHeight, rowSpan, enableRowSpan, viewRow } = this.props;
+    const { columnInfo, refreshRowHeight, rowSpan, enableRowSpan, viewRow } = this.props;
     let rowSpanAttr = null;
 
     if (enableRowSpan && rowSpan) {
@@ -33,7 +33,7 @@ export class RowSpanCellComp extends Component<Props> {
     return (
       <BodyCell
         viewRow={viewRow}
-        columnName={columnName}
+        columnInfo={columnInfo}
         refreshRowHeight={refreshRowHeight}
         rowSpanAttr={rowSpanAttr}
       />
@@ -41,10 +41,10 @@ export class RowSpanCellComp extends Component<Props> {
   }
 }
 
-export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, columnName }) => {
+export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, columnInfo }) => {
   const { rowKey } = viewRow;
   const { sortOptions, rawData } = data;
-  const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData as Row[]);
+  const rowSpan = getRowSpanByRowKey(rowKey, columnInfo.name, rawData as Row[]);
   const enableRowSpan = sortOptions.columnName === 'rowKey';
 
   return { rowSpan, enableRowSpan };
