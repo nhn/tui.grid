@@ -110,8 +110,7 @@ export function removeContent(store: Store) {
   }
 
   for (let colIdx = columnStart; colIdx <= columnEnd; colIdx += 1) {
-    const editorOptions = visibleColumns[colIdx].editorOptions;
-    const name = visibleColumns[colIdx].name;
+    const { editorOptions, name } = visibleColumns[colIdx];
     if (!editorOptions) {
       continue;
     }
