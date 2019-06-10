@@ -209,13 +209,19 @@ describe('columns', () => {
 
 describe('rows', () => {
   it('findRows() returns rows that meet the conditions.', () => {
-    cy.gridInstance().invoke('findRows', { name: 'Kim' });
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Kim' })
+      .should('have.length', 1)
+      .should('eql', [{}]);
 
-    cy.gridInstance().invoke('findRows', { name: 'Lee', age: 10 }); // 반환하는 거 없음
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Lee', age: 10 })
+      .should('have.length', 0);
 
-    cy.gridInstance().invoke('findRows', function(row: Row) {
-      console.log(row);
-      return !!row.age && row.age > 10;
-    });
+    cy.gridInstance()
+      .invoke('findRows', function(row: Row) {
+        return !!row.age && row.age > 10;
+      })
+      .should('have.length', 1);
   });
 });

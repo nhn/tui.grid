@@ -566,7 +566,7 @@ export default class Grid {
    * });
    */
   public findRows(conditions: (row: Row) => boolean | Dictionary<any>) {
-    console.log(getConditionalRows(this.store, conditions));
+    // console.log(getConditionalRows(this.store, conditions));
     return getConditionalRows(this.store, conditions);
   }
 

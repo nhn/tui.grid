@@ -34,5 +34,12 @@ export function getConditionalRows(
     return rawData.filter(conditions);
   }
 
-  return [];
+  let result: Row[] = rawData;
+
+  Object.keys(conditions).forEach((key) => {
+    const keyWithType = key as keyof typeof conditions;
+    result = result.filter((row) => row[key] === conditions[keyWithType]);
+  });
+
+  return result;
 }
