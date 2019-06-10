@@ -10,8 +10,10 @@ import {
   Viewport,
   SelectionRange,
   DragData,
-  RowKey
+  RowKey,
+  Range
 } from '../store/types';
+import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -198,20 +200,21 @@ export function selectionEnd({ selection }: Store) {
 }
 
 export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
-  const { dimension, viewport, columnCoords, rowCoords, selection, column, id } = store;
+  const { dimension, viewport, columnCoords, rowCoords, selection, column, id, data } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { widths, areaWidth } = columnCoords;
   const { offsets: rowOffsets } = rowCoords;
   const { rowHeaderCount } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
+  const { visibleColumns } = column;
 
-  let startRowIndex, startColumnIndex;
+  let startRowIndex, startColumnIndex, endRowIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-  const rowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-  const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+  const endColumnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+  endRowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
 
   if (curInputRange === null) {
     const startViewInfo = {
@@ -229,13 +232,25 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     startColumnIndex = curInputRange.column[0];
   }
 
-  if (startColumnIndex < 0 || columnIndex < 0 || startRowIndex < 0 || rowIndex < 0) {
+  if (startColumnIndex < 0 || endColumnIndex < 0 || startRowIndex < 0 || endRowIndex < 0) {
     return;
   }
 
+  if (enableRowSpan(data)) {
+    const rowRange: Range = [startRowIndex, endRowIndex];
+    const colRange: Range = [startColumnIndex, endColumnIndex];
+    [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+      rowRange,
+      colRange,
+      visibleColumns,
+      store.focus.rowIndex,
+      data
+    );
+  }
+
   const inputRange: SelectionRange = {
-    row: [startRowIndex, rowIndex],
-    column: [startColumnIndex, columnIndex]
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);
@@ -271,7 +286,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       const dragData = { pageX, pageY };
       selectionUpdate(store, dragData, dragData);
     } else {
-      changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
+      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
       selectionEnd(store);
     }
   }

@@ -3,6 +3,7 @@ import { getEventBus } from '../event/eventBus';
 import { isSameInputRange } from '../helper/selection';
 import GridEvent from '../event/gridEvent';
 import { Store, Range, SelectionRange, Selection } from '../store/types';
+import { enableRowSpan, getRowRangeWithRowSpan } from '../helper/rowSpan';
 
 export function changeSelectionRange(
   selection: Selection,
@@ -20,17 +21,31 @@ export function changeSelectionRange(
 export function setSelection(store: Store, range: { start: Range; end: Range }) {
   const {
     selection,
-    data: { viewData },
+    data,
     column: { visibleColumns },
     id
   } = store;
+  const { viewData } = data;
   const rowLength = viewData.length;
   const columnLength = visibleColumns.length;
 
-  const startRowIndex = clamp(range.start[0], 0, rowLength - 1);
-  const endRowIndex = clamp(range.end[0], 0, rowLength - 1);
+  let startRowIndex = clamp(range.start[0], 0, rowLength - 1);
+  let endRowIndex = clamp(range.end[0], 0, rowLength - 1);
   const startColumnIndex = clamp(range.start[1], 0, columnLength - 1);
   const endColumnIndex = clamp(range.end[1], 0, columnLength - 1);
+
+  if (enableRowSpan(data)) {
+    const rowRange: Range = [startRowIndex, endRowIndex];
+    const colRange: Range = [startColumnIndex, endColumnIndex];
+    [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+      rowRange,
+      colRange,
+      visibleColumns,
+      null,
+      data
+    );
+  }
+
   const inputRange: SelectionRange = {
     row: [startRowIndex, endRowIndex],
     column: [startColumnIndex, endColumnIndex]

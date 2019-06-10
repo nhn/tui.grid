@@ -1,4 +1,4 @@
-import { SelectionRange } from '../store/types';
+import { SelectionRange, Range } from '../store/types';
 import { isNull } from './common';
 
 export function isSameInputRange(inp1: SelectionRange | null, inp2: SelectionRange | null) {
@@ -12,4 +12,8 @@ export function isSameInputRange(inp1: SelectionRange | null, inp2: SelectionRan
     inp1.row[0] === inp2.row[0] &&
     inp1.row[1] === inp2.row[1]
   );
+}
+
+export function getSortedRange(range: Range): Range {
+  return range[0] > range[1] ? [range[1], range[0]] : range;
 }
