@@ -256,15 +256,12 @@ export function isString(value: unknown): value is string {
  * @returns the emptiness of obj
  */
 export function isEmpty(obj: any) {
-  if (
+  return (
     isNull(obj) ||
     isUndefined(obj) ||
     (!isUndefined(obj.length) && obj.length === 0) ||
     Object.keys(obj).length === 0
-  ) {
-    return true;
-  }
-  return false;
+  );
 }
 
 export function fromArray<T>(value: ArrayLike<T>): T[] {

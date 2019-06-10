@@ -58,9 +58,8 @@ export function getRowRangeWithRowSpan(
 
   let startRowIndex = rowRange[0];
 
-  /* if start row index is different from focused index ,
-   * change start row index to focused row index for getting proper row range
-   */
+  // if start row index is different from focused index,
+  // change start row index to focused row index for getting proper row range
   startRowIndex =
     !isNull(focusRowIndex) && startRowIndex !== focusRowIndex ? focusRowIndex : startRowIndex;
 
@@ -146,11 +145,10 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
     return 0;
   }
 
-  const maxRowSpanCount = Object.keys(rowSpanMap).reduce(
+  return Object.keys(rowSpanMap).reduce(
     (acc, columnName) => Math.max(acc, rowSpanMap[columnName].spanCount),
     0
   );
-  return maxRowSpanCount;
 }
 
 export function enableRowSpan(data: Data) {

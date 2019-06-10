@@ -1,4 +1,4 @@
-import { findOffsetIndex, findPropIndex } from '../helper/common';
+import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
@@ -277,14 +277,24 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const offsetLeft = pageX - left + scrollLeft;
   const offsetTop = pageY - top + scrollTop;
 
-  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
+  const [colOffsets, colWidths] = [columnCoords.offsets[side], columnCoords.widths[side]];
+  const [rowOffsets, rowHeights] = [rowCoords.offsets, rowCoords.heights];
+
+  const rowIndex = findOffsetIndex(rowOffsets, offsetTop);
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
   const columnName = visibleColumnsBySide[side][columnIndex].name;
 
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
       const dragData = { pageX, pageY };
-      selectionUpdate(store, dragData, dragData);
+      let focusData = dragData;
+      if (!isNull(focus.columnIndex) && !isNull(focus.rowIndex)) {
+        focusData = {
+          pageX: colOffsets[focus.columnIndex] + colWidths[focus.columnIndex],
+          pageY: rowOffsets[focus.rowIndex] + rowHeights[focus.rowIndex]
+        };
+      }
+      selectionUpdate(store, focusData, dragData);
     } else {
       changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
       selectionEnd(store);
