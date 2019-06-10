@@ -39,6 +39,7 @@ import {
 import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
 import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
+import { getRowSpanByRowKey } from './helper/rowSpan';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -595,6 +596,7 @@ export default class Grid {
    * Unsorts all rows. (Sorts by rowKey).
    */
   public unSort() {
+    // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
     this.dispatch('sort', 'rowKey', true);
   }
 
@@ -1027,5 +1029,15 @@ export default class Grid {
     const row = findProp('rowKey', rowKey, rawData);
 
     return row ? getDepth(rawData, row) : 0;
+  }
+
+  /**
+   * Returns the rowspan data of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {Object} - Row span data
+   */
+  public getRowSpanData(rowKey: RowKey, columnName: string) {
+    return getRowSpanByRowKey(rowKey, columnName, this.store.data.rawData);
   }
 }
