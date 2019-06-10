@@ -1,5 +1,6 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
+import { OptColumnOptions, OptTree } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -83,6 +84,7 @@ export interface ViewRow {
   rowKey: RowKey;
   valueMap: Dictionary<CellRenderData>;
   treeInfo?: TreeCellInfo;
+  __unobserveFns__: Function[];
 }
 
 export interface DragStartData {
@@ -183,8 +185,17 @@ export interface SortOptions {
   useClient: boolean;
 }
 
+interface DataForColumnCreation {
+  copyOptions: ClipboardCopyOptions;
+  columnOptions: OptColumnOptions;
+  rowHeaders: ColumnInfo[];
+  relationColumns: string[];
+  treeColumnOptions: OptTree;
+}
+
 export interface Column {
   frozenCount: number;
+  dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
   allColumns: ColumnInfo[];
   readonly allColumnMap: Dictionary<ColumnInfo>;

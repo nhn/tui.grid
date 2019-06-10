@@ -6,7 +6,8 @@ import {
   OptRow,
   OptAppendRow,
   OptPrependRow,
-  OptRemoveRow
+  OptRemoveRow,
+  OptColumn
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -37,6 +38,7 @@ import {
 } from './dataSource/types';
 import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
 import { getDepth } from './helper/tree';
+import { cls, dataAttr } from './helper/dom';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -45,6 +47,8 @@ if ((module as any).hot) {
 /* eslint-enable */
 
 export default class Grid {
+  private el: HTMLElement;
+
   private store: Store;
 
   private dispatch: Dispatch;
@@ -67,6 +71,7 @@ export default class Grid {
     const dataManager = createManager();
     const paginationManager = createPaginationManager();
 
+    this.el = el;
     this.store = store;
     this.dispatch = dispatch;
     this.eventBus = eventBus;
@@ -431,6 +436,18 @@ export default class Grid {
   }
 
   /**
+   * Returns the HTMLElement of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {HTMLElement} - The HTMLElement of the cell element
+   */
+  public getElement(rowKey: RowKey, columnName: string) {
+    return this.el.querySelector(
+      `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
+    );
+  }
+
+  /**
    * Sets the HTML string of given column summary.
    * The type of content is the same as the options.summary.columnContent of the constructor.
    * @param {string} columnName - column name
@@ -475,6 +492,29 @@ export default class Grid {
     return this.store.column.allColumns
       .filter(({ name }) => !isRowHeader(name))
       .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+  }
+
+  /**
+   * Sets the list of column model.
+   * @param {Array} columns - A new list of column model
+   */
+  public setColumns(columns: OptColumn[]) {
+    this.dispatch('setColumns', columns);
+  }
+
+  /**
+   * Set columns title
+   * @param {string} columnsMap - columns map to be change
+   */
+  public setColumnTitles() {
+    // @TODO implements
+  }
+
+  /**
+   * Resets the width of each column by using initial setting of column models.
+   */
+  public resetColumnWidths(widths: number[]) {
+    this.dispatch('resetColumnWidths', widths);
   }
 
   /**

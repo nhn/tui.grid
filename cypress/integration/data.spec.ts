@@ -173,16 +173,6 @@ describe('getters', () => {
 });
 
 describe('columns', () => {
-  it('getIndexOfColumn() returns the index of column having given columnName', () => {
-    cy.gridInstance()
-      .invoke('getIndexOfColumn', 'name')
-      .should('eq', 0);
-
-    cy.gridInstance()
-      .invoke('getIndexOfColumn', 'age')
-      .should('eq', 1);
-  });
-
   it('getColumnValues() returns all values in the given column', () => {
     cy.gridInstance()
       .invoke('getColumnValues', 'name')

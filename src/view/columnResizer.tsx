@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { cls, setCursorStyle } from '../helper/dom';
+import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';
@@ -15,6 +15,7 @@ interface StoreProps {
   offsets: number[];
   widths: number[];
   columns: ColumnInfo[];
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -60,25 +61,28 @@ class ColumnResizerComp extends Component<Props> {
   }
 
   private renderHandle(index: number) {
-    const { columns, offsets, widths } = this.props;
+    const { columns, offsets, cellBorderWidth, widths } = this.props;
     const { name, resizable } = columns[index];
-    const offset = offsets[index];
-    const width = widths[index];
-
     if (!resizable) {
       return null;
     }
 
+    const offset = offsets[index];
+    const width = widths[index];
+    const attrs = {
+      [dataAttr.COLUMN_INDEX]: index,
+      [dataAttr.COLUMN_NAME]: name
+    };
+
     return (
       <div
-        data-column-index={index}
-        data-column-name={name}
         class={cls('column-resize-handle')}
         title={''}
+        {...attrs}
         style={{
           height: 33,
           width: HANDLE_WIDTH,
-          left: offset + width - HANDLE_WIDTH_HALF
+          left: offset + width + cellBorderWidth - HANDLE_WIDTH_HALF
         }}
         onMouseDown={(ev) => this.handleMouseDown(ev, index)}
       />
@@ -98,9 +102,10 @@ class ColumnResizerComp extends Component<Props> {
 }
 
 export const ColumnResizer = connect<StoreProps, OwnProps>(
-  ({ column, columnCoords }, { side }) => ({
+  ({ column, columnCoords, dimension }, { side }) => ({
     widths: columnCoords.widths[side],
     offsets: columnCoords.offsets[side],
+    cellBorderWidth: dimension.cellBorderWidth,
     columns: column.visibleColumnsBySide[side]
   })
 )(ColumnResizerComp);
