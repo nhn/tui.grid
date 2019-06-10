@@ -1,10 +1,10 @@
 import { h, Component } from 'preact';
-import { BodyCell } from './bodyCell';
 import { ViewRow, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
+import { RowSpanCell } from './rowSpanCell';
 
 interface OwnProps {
   rowIndex: number;
@@ -50,7 +50,7 @@ class BodyRowComp extends Component<Props> {
           // Pass row object directly instead of passing value of it only,
           // so that BodyCell component can watch the change of value using selector function.
           return (
-            <BodyCell
+            <RowSpanCell
               key={columnInfo.name}
               viewRow={viewRow}
               columnInfo={columnInfo}
