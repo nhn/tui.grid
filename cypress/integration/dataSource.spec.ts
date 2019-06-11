@@ -109,7 +109,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
-    rowHeaders: ['_number', '_checked'],
+    rowHeaders: ['rowNum', 'checkbox'],
     useClientSort: false,
     pageOptions: { perPage: 10 }
   });

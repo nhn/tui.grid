@@ -27,7 +27,7 @@ stories.add(
     const { el } = createGrid({
       data,
       columns,
-      rowHeaders: ['_number', '_checked'],
+      rowHeaders: ['rowNum', 'checkbox'],
       treeColumnOptions: {
         name: 'name',
         useCascadingCheckbox: true

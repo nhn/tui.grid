@@ -8,17 +8,20 @@ import {
 } from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
 import { observable } from '../helper/observable';
-import { createMapFromArray, includes } from '../helper/common';
+import { createMapFromArray, includes, omit } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
+const ROW_HEADERS_MAP = {
+  rowNum: '_number',
+  checkbox: '_checked'
+};
 const defMinWidth = {
   ROW_HEADER: 40,
   COLUMN: 50
 };
-
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
 function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
@@ -116,7 +119,10 @@ export function createColumn(
 }
 
 function createRowHeader(data: OptRowHeader): ColumnInfo {
-  const rowHeader = typeof data === 'string' ? { name: data } : data;
+  const rowHeader: OptColumn =
+    typeof data === 'string'
+      ? { name: ROW_HEADERS_MAP[data] }
+      : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
   const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
 
   const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
