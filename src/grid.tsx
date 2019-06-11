@@ -1079,10 +1079,10 @@ export default class Grid {
   }
 
   /** Removes all checked rows.
-   * @param {boolean} showConfirm - If set to true, confirm message will be shown before remove.
+   * @param {boolean} [showConfirm] - If set to true, confirm message will be shown before remove.
    * @returns {boolean} - True if there's at least one row removed.
    */
-  public removeCheckedRows(showConfirm: boolean) {
+  public removeCheckedRows(showConfirm?: boolean) {
     const rowKeys = this.getCheckedRowKeys();
     const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
 
