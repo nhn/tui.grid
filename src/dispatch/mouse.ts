@@ -236,7 +236,7 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     return;
   }
 
-  if (enableRowSpan(data)) {
+  if (enableRowSpan(data.sortOptions.columnName)) {
     const rowRange: Range = [startRowIndex, endRowIndex];
     const colRange: Range = [startColumnIndex, endColumnIndex];
     [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(

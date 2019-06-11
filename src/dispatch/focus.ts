@@ -43,6 +43,7 @@ export function changeFocus(
     return;
   }
 
+  const { rawData, sortOptions } = data;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({
     rowKey,
@@ -56,8 +57,8 @@ export function changeFocus(
   if (!gridEvent.isStopped()) {
     let focusRowKey = rowKey;
 
-    if (rowKey && columnName && enableRowSpan(data)) {
-      const rowSpan = getRowSpanByRowKey(rowKey, columnName, data.rawData);
+    if (rowKey && columnName && enableRowSpan(sortOptions.columnName)) {
+      const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
       if (rowSpan) {
         focusRowKey = rowSpan.mainRowKey;
       }

@@ -18,18 +18,18 @@ export function getNextCellIndex(
     dimension: { bodyHeight, cellBorderWidth },
     rowCoords: { offsets }
   } = store;
-  const { rawData, viewData } = data;
+  const { rawData, viewData, sortOptions } = data;
   const columnName = visibleColumns[columnIndex].name;
 
   switch (command) {
     case 'up':
-      if (enableRowSpan(data)) {
+      if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
       }
       rowIndex -= 1;
       break;
     case 'down':
-      if (enableRowSpan(data)) {
+      if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
       }
       rowIndex += 1;
