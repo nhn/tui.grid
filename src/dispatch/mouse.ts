@@ -307,7 +307,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
     if (shiftKey) {
       const dragData = { pageX, pageY };
       const focusCellPos = getFocusCellPos(store);
-      const focusData = !isNull(focusCellPos) ? focusCellPos : dragData;
+      const focusData = isNull(focusCellPos) ? dragData : focusCellPos;
       selectionUpdate(store, focusData, dragData);
     } else {
       changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
