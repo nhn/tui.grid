@@ -48,7 +48,7 @@ stories.add('use row headers', () => {
     columns,
     showDummyRows: true,
     bodyHeight: 400,
-    rowHeaders: ['_number', '_checked']
+    rowHeaders: ['rowNum', 'checkbox']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -62,7 +62,7 @@ stories.add('apply striped theme', () => {
     columns,
     showDummyRows: true,
     bodyHeight: 400,
-    rowHeaders: ['_number', '_checked']
+    rowHeaders: ['rowNum', 'checkbox']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);

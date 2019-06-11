@@ -110,7 +110,7 @@ stories.add(
     const { el, grid } = createGrid({
       data: createDataWithCheckAttr(),
       columns,
-      rowHeaders: ['_checked'],
+      rowHeaders: ['checkbox'],
       bodyHeight: 'fitToParent',
       columnOptions: {
         frozenCount: 2,
@@ -139,7 +139,7 @@ stories.add(
     const { el, grid } = createGrid({
       data: createDataWithCheckAttr(),
       columns,
-      rowHeaders: ['_number', '_checked'],
+      rowHeaders: ['rowNum', 'checkbox'],
       bodyHeight: 'fitToParent',
       columnOptions: {
         frozenCount: 2,

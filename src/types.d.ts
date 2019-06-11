@@ -75,7 +75,13 @@ export interface OptRemoveRow {
   keepRowSpanData?: boolean;
 }
 
-export type OptRowHeader = string | OptColumn;
+type RowHeaderType = 'rowNum' | 'checkbox';
+
+interface OptRowHeaderColumn extends Partial<OptColumn> {
+  type: RowHeaderType;
+}
+
+export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
 
 interface OptTree {
   name: string;

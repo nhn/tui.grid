@@ -60,7 +60,7 @@ stories.add(
     const { el } = createGrid({
       data,
       columns,
-      rowHeaders: ['_number', '_checked'],
+      rowHeaders: ['rowNum', 'checkbox'],
       header: {
         height: 200,
         complexColumns: [

@@ -129,7 +129,7 @@ describe('treeColumnOptions', () => {
       createGrid({
         data,
         columns,
-        rowHeaders: ['_checked'],
+        rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
           useCascadingCheckbox: true
@@ -157,7 +157,7 @@ describe('treeColumnOptions', () => {
       createGrid({
         data,
         columns,
-        rowHeaders: ['_checked'],
+        rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
           useCascadingCheckbox: false
