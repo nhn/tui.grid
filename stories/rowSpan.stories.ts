@@ -6,7 +6,7 @@ import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('rowSpan', module);
+const stories = storiesOf('RowSpan', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
