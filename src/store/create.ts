@@ -31,17 +31,20 @@ export function createStore(id: number, options: OptGrid): Store {
     scrollY = true,
     useClientSort = true,
     pageOptions = {},
-    treeColumnOptions = { name: '' }
+    treeColumnOptions = { name: '' },
+    header = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
+  const { height: headerHeight = 40, complexColumns = [] } = header;
   const column = createColumn({
     columns: options.columns,
     columnOptions,
     rowHeaders,
     copyOptions,
     keyColumnName,
-    treeColumnOptions
+    treeColumnOptions,
+    complexColumns
   });
   const data = createData(
     Array.isArray(options.data) ? options.data : [],
@@ -60,7 +63,8 @@ export function createStore(id: number, options: OptGrid): Store {
     summaryHeight,
     summaryPosition,
     scrollX,
-    scrollY
+    scrollY,
+    headerHeight
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
