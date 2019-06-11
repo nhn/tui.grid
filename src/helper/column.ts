@@ -13,7 +13,7 @@ export function isCheckboxColumn(columnName: string) {
   return columnName === '_checked';
 }
 
-export function isParentColumn(complexHeaderColumns: ComplexColumnInfo[], name: string) {
+export function isParentColumnHeader(complexHeaderColumns: ComplexColumnInfo[], name: string) {
   return (
     !!complexHeaderColumns.length &&
     findIndex((item) => item.name === name, complexHeaderColumns) !== -1

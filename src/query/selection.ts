@@ -1,5 +1,5 @@
 import { findIndex, findProp, findPropIndex } from '../helper/common';
-import { isParentColumn } from '../helper/column';
+import { isParentColumHeader } from '../helper/column';
 import { ColumnInfo, ComplexColumnInfo } from '../store/types';
 
 function sortBasedVisibleColumns(visibleColumns: ColumnInfo[], childNames: string[]) {
@@ -22,7 +22,7 @@ export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[
   }
 
   column.childNames!.forEach((childName) => {
-    if (isParentColumn(complexHeaderColumns, childName)) {
+    if (isParentColumHeader(complexHeaderColumns, childName)) {
       result = [...result, ...getLeafChildColumnNames(complexHeaderColumns, childName)];
     } else {
       result = [...result, childName];

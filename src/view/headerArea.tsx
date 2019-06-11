@@ -7,7 +7,7 @@ import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
-import { isRowHeader, isCheckboxColumn, isParentColumn } from '../helper/column';
+import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/column';
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
@@ -32,7 +32,7 @@ type Props = OwnProps & StoreProps & DispatchProps;
 class HeaderAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private selectionStartName: string | null = null;
+  private startSelectedName: string | null = null;
 
   private handleDblClick = (ev: MouseEvent) => {
     ev.stopPropagation();
@@ -40,13 +40,13 @@ class HeaderAreaComp extends Component<Props> {
 
   private handleMouseMove = (ev: MouseEvent) => {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
-    this.props.dispatch('dragMoveHeader', { pageX, pageY }, this.selectionStartName!);
+    this.props.dispatch('dragMoveHeader', { pageX, pageY }, this.startSelectedName!);
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
     const { dispatch, columns, complexHeaderColumns } = this.props;
     const name = (ev.target as HTMLElement).getAttribute('data-column-name')!;
-    const parentHeader = isParentColumn(complexHeaderColumns, name);
+    const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
 
     if (isRowHeader(name)) {
       return;
@@ -59,7 +59,7 @@ class HeaderAreaComp extends Component<Props> {
       }
     }
 
-    this.selectionStartName = name;
+    this.startSelectedName = name;
     dispatch('mouseDownHeader', name, parentHeader);
 
     document.addEventListener('mousemove', this.handleMouseMove);

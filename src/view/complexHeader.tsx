@@ -8,7 +8,7 @@ import { findIndex } from '../helper/common';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
 import { isRowHeader } from '../helper/column';
-import { getChildColumnRange } from '../query/mouse';
+import { getChildColumnRange } from '../query/selection';
 
 interface OwnProps {
   side: Side;

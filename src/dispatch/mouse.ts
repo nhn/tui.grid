@@ -14,7 +14,7 @@ import {
   Range
 } from '../store/types';
 import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
-import { getChildColumnRange } from '../query/mouse';
+import { getChildColumnRange } from '../query/selection';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -344,7 +344,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function dragMoveHeader(store: Store, dragData: DragData, selectionStartName: string) {
+export function dragMoveHeader(store: Store, dragData: DragData, startSelectedName: string) {
   const { dimension, viewport, columnCoords, selection, column, id } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { areaWidth, widths } = columnCoords;
@@ -359,7 +359,7 @@ export function dragMoveHeader(store: Store, dragData: DragData, selectionStartN
   let [startColumnIdx, endColumnIdx] = getChildColumnRange(
     visibleColumns,
     complexHeaderColumns,
-    selectionStartName,
+    startSelectedName,
     rowHeaderCount
   );
 
