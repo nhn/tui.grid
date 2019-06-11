@@ -193,6 +193,28 @@ function setScrolling(
   }
 }
 
+function getFocusCellPos(store: Store) {
+  const { columnCoords, rowCoords, focus, dimension, viewport } = store;
+  const { columnIndex, rowIndex, side, cellPosRect } = focus;
+
+  if (isNull(columnIndex) || isNull(rowIndex) || isNull(side) || isNull(cellPosRect)) {
+    return null;
+  }
+
+  const { left, right } = cellPosRect;
+  const { offsets, heights } = rowCoords;
+  const { areaWidth, widths } = columnCoords;
+  const { headerHeight, tableBorderWidth, width } = dimension;
+  const { scrollLeft } = viewport;
+  const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
+  const focusCellWidth = widths[side][columnIndex];
+
+  return {
+    pageX: left + focusCellWidth + (side === 'L' ? 0 : offsetLeft),
+    pageY: offsets[rowIndex] + heights[rowIndex] + headerHeight
+  };
+}
+
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
   // @TODO: minimumColumnRange 고려 필요
@@ -277,23 +299,15 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   const offsetLeft = pageX - left + scrollLeft;
   const offsetTop = pageY - top + scrollTop;
 
-  const [colOffsets, colWidths] = [columnCoords.offsets[side], columnCoords.widths[side]];
-  const [rowOffsets, rowHeights] = [rowCoords.offsets, rowCoords.heights];
-
-  const rowIndex = findOffsetIndex(rowOffsets, offsetTop);
+  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
   const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
   const columnName = visibleColumnsBySide[side][columnIndex].name;
 
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
       const dragData = { pageX, pageY };
-      let focusData = dragData;
-      if (!isNull(focus.columnIndex) && !isNull(focus.rowIndex)) {
-        focusData = {
-          pageX: colOffsets[focus.columnIndex] + colWidths[focus.columnIndex],
-          pageY: rowOffsets[focus.rowIndex] + rowHeights[focus.rowIndex]
-        };
-      }
+      const focusCellPos = getFocusCellPos(store);
+      const focusData = !isNull(focusCellPos) ? focusCellPos : dragData;
       selectionUpdate(store, focusData, dragData);
     } else {
       changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
