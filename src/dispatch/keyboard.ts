@@ -5,6 +5,32 @@ import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getSortedRange } from '../helper/selection';
+
+function getNextCellIndexWithRowSpan(
+  store: Store,
+  command: KeyboardEventCommandType,
+  rowIndex: number,
+  columnRange: Range,
+  cellIndexes: Range
+) {
+  let nextRowIndex;
+  const [startColumnIndex, endColumnIndex] = getSortedRange(columnRange);
+  const nextColumnIndex = cellIndexes[1];
+
+  for (let columnIndex = startColumnIndex; columnIndex <= endColumnIndex; columnIndex += 1) {
+    const prevRowIndex = cellIndexes[0];
+    nextRowIndex = getNextCellIndex(store, command, [rowIndex, columnIndex])[0];
+
+    if (command === 'up' && nextRowIndex < prevRowIndex) {
+      cellIndexes = [nextRowIndex, nextColumnIndex];
+    }
+    if (command === 'down' && nextRowIndex > prevRowIndex) {
+      cellIndexes = [nextRowIndex, nextColumnIndex];
+    }
+  }
+  return cellIndexes;
+}
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -81,8 +107,16 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     columnStartIndex = 0;
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
-    // @TODO need to fix cell index for considering rowSpan
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
+    if (enableRowSpan(data)) {
+      nextCellIndexes = getNextCellIndexWithRowSpan(
+        store,
+        command,
+        rowIndex,
+        [columnStartIndex, columnIndex],
+        nextCellIndexes
+      );
+    }
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
