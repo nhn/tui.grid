@@ -250,6 +250,7 @@ export interface Dimension {
   autoHeight: boolean;
   minBodyHeight: number;
   fitToParentHeight: boolean;
+  heightResizable: boolean;
   rowHeight: number;
   minRowHeight: number;
   autoRowHeight: boolean;

@@ -99,7 +99,7 @@ export class BodyCellComp extends Component<Props> {
     this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
   };
 
-  private handleMouseDown = (ev: MouseEvent, name: string, rowKey: RowKey) => {
+  private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
     if (name !== '_number') {
       return;
     }

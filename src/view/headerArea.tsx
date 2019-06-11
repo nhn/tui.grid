@@ -40,7 +40,7 @@ class HeaderAreaComp extends Component<Props> {
     this.props.dispatch('dragMoveHeader', { pageX, pageY });
   };
 
-  private handleMouseDown = (ev: MouseEvent, name: string, sortable?: boolean) => {
+  private handleMouseDown = (_: MouseEvent, name: string, sortable?: boolean) => {
     if (sortable) {
       return;
     }

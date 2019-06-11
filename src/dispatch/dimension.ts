@@ -23,3 +23,18 @@ export function setOffsetTop({ dimension }: Store, offsetTop: number) {
 export function setOffsetLeft({ dimension }: Store, offsetLeft: number) {
   dimension.offsetLeft = offsetLeft;
 }
+
+export function refreshLayout(store: Store, containerEl: HTMLElement, parentEl: HTMLElement) {
+  const { dimension } = store;
+  const { autoWidth, fitToParentHeight } = dimension;
+  const { clientHeight, clientWidth, scrollTop, scrollLeft } = containerEl;
+  const { top, left } = containerEl.getBoundingClientRect();
+
+  setOffsetTop(store, top + scrollTop);
+  setOffsetLeft(store, left + scrollLeft);
+  setWidth(store, clientWidth, autoWidth);
+
+  if (fitToParentHeight && parentEl && parentEl.clientHeight !== clientHeight) {
+    setHeight(store, parentEl.clientHeight);
+  }
+}

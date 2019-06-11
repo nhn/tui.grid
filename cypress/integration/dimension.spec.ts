@@ -311,7 +311,7 @@ describe('body height', () => {
     }
 
     it('reset bodyHeight when dragging', () => {
-      cy.createGrid({ data, columns, bodyHeight: 200 }, containerStyle);
+      cy.createGrid({ data, columns, bodyHeight: 200, heightResizable: true }, containerStyle);
 
       dragHeightReiszeHandle(100);
       assertBodyHeight(300);

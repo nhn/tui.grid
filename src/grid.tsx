@@ -1096,4 +1096,14 @@ export default class Grid {
 
     return false;
   }
+
+  /**
+   * Refreshs the layout view. Use this method when the view was rendered while hidden.
+   */
+  public refreshLayout() {
+    const containerEl = this.el.querySelector(`.${cls('container')}`) as HTMLElement;
+    const { parentElement } = this.el;
+
+    this.dispatch('refreshLayout', containerEl, parentElement!);
+  }
 }
