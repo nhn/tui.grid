@@ -9,12 +9,17 @@ type OptDimension = {
   summaryHeight?: number;
   domWidth: number;
   summaryPosition?: SummaryPosition;
-  scrollX: boolean;
-  scrollY: boolean;
   headerHeight: number;
 } & Pick<
   OptGrid,
-  'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
+  | 'width'
+  | 'rowHeight'
+  | 'minRowHeight'
+  | 'bodyHeight'
+  | 'minBodyHeight'
+  | 'heightResizable'
+  | 'scrollX'
+  | 'scrollY'
 >;
 
 export function create({
@@ -26,8 +31,9 @@ export function create({
   minRowHeight = 40,
   minBodyHeight = 130,
   frozenBorderWidth = 1,
-  scrollX,
-  scrollY,
+  heightResizable = false,
+  scrollX = true,
+  scrollY = true,
   summaryHeight = 0,
   summaryPosition = 'bottom',
   headerHeight = 40
@@ -42,6 +48,7 @@ export function create({
     minBodyHeight,
     bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
     autoHeight: bodyHeight === 'auto',
+    heightResizable,
     fitToParentHeight: bodyHeight === 'fitToParent',
     minRowHeight,
     rowHeight: isNumber(rowHeight) ? Math.max(rowHeight, minRowHeight) : minRowHeight,

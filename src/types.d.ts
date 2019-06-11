@@ -24,6 +24,7 @@ export interface OptGrid {
   keyColumnName?: string;
   width?: number | 'auto';
   bodyHeight?: number | 'fitToParent' | 'auto';
+  heightResizable?: boolean;
   minBodyHeight?: number;
   rowHeight?: number | 'auto';
   minRowHeight?: number;

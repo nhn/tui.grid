@@ -25,6 +25,7 @@ interface StoreProps {
   editingEvent: EditingEvent;
   scrollXHeight: number;
   fitToParentHeight: boolean;
+  heightResizable: boolean;
   summaryHeight: number;
   summaryPosition: SummaryPosition;
   showLeftSide: boolean;
@@ -181,26 +182,13 @@ export class ContainerComp extends Component<Props> {
   }
 
   private syncWithDOMWidth = () => {
-    const { clientWidth, clientHeight } = this.el!;
-    const { width, fitToParentHeight, rootElement } = this.props;
-
-    if (clientWidth !== width) {
-      this.props.dispatch('setWidth', clientWidth, true);
-    }
-
-    if (fitToParentHeight) {
-      const { parentElement } = rootElement;
-      if (parentElement && parentElement.clientHeight !== clientHeight) {
-        this.props.dispatch('setHeight', parentElement.clientHeight);
-      }
-    }
+    this.props.dispatch('refreshLayout', this.el!, this.props.rootElement.parentElement!);
   };
 
   public shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
     }
-
     return true;
   }
 
@@ -208,6 +196,7 @@ export class ContainerComp extends Component<Props> {
     const {
       summaryHeight,
       summaryPosition,
+      heightResizable,
       gridId,
       width,
       autoWidth,
@@ -248,7 +237,7 @@ export class ContainerComp extends Component<Props> {
           <div class={cls('border-line', 'border-line-right')} />
           <div class={cls('border-line', 'border-line-bottom')} style={{ bottom: scrollXHeight }} />
         </div>
-        <HeightResizeHandle />
+        {heightResizable && <HeightResizeHandle />}
         <StateLayer />
         <EditingLayer />
         <Clipboard />
@@ -268,6 +257,7 @@ export const Container = connect<StoreProps, OwnProps>(
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,
     summaryPosition: dimension.summaryPosition,
+    heightResizable: dimension.heightResizable,
     showLeftSide: !!columnCoords.areaWidth.L,
     disabled: data.disabled,
     editingEvent: focus.editingEvent,
