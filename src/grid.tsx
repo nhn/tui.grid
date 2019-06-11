@@ -561,7 +561,7 @@ export default class Grid {
    *     price: 10000
    * });
    * @example <caption>Conditions type is function.</caption>
-   * grid.findRows(function(row) {
+   * grid.findRows((row) => {
    *     return (/b/ig.test(row.artist) && row.price > 10000);
    * });
    */
