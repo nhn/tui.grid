@@ -10,7 +10,7 @@ export class TextEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('input');
-    const options = props.editorOptions as Options;
+    const options = props.columnInfo.editorOptions as Options;
 
     el.className = cls('content-text');
     el.type = options.type;
@@ -27,7 +27,7 @@ export class TextEditor implements CellEditor {
     return this.el.value;
   }
 
-  public start() {
+  public mounted() {
     this.el.select();
   }
 }

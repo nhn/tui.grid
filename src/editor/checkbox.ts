@@ -15,7 +15,7 @@ export class CheckboxEditor implements CellEditor {
   public constructor(props: CellEditorProps) {
     const name = 'tui-grid-check-input';
     const el = document.createElement('fieldset');
-    const { listItems, type } = props.editorOptions as CheckboxOptions;
+    const { listItems, type } = props.columnInfo.editorOptions as CheckboxOptions;
 
     listItems.forEach(({ text, value }) => {
       const id = `${name}-${value}`;
@@ -81,7 +81,7 @@ export class CheckboxEditor implements CellEditor {
     return checkedValues.join(',');
   }
 
-  public start() {
+  public mounted() {
     const firstInput = this.getFirstInput();
     if (firstInput) {
       firstInput.focus();

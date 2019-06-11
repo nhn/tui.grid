@@ -64,7 +64,7 @@ export class RowNumberRenderer implements CellRenderer {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.innerHTML = props.formattedValue;
   }
 }
@@ -100,14 +100,14 @@ class SingleCheckRenderer implements CellRenderer {
 
     this.el = label;
 
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     const hiddenInput = this.el.querySelector('.hidden-input') as HTMLInputElement;
     const checked = Boolean(props.value);
 

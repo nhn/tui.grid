@@ -12,7 +12,7 @@ export class SelectEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('select');
-    const { listItems } = props.editorOptions as Options;
+    const { listItems } = props.columnInfo.editorOptions as Options;
 
     listItems.forEach(({ text, value }) => {
       el.appendChild(this.createOptions(text, value));
@@ -38,7 +38,7 @@ export class SelectEditor implements CellEditor {
     return this.el.value;
   }
 
-  public start() {
+  public mounted() {
     this.el.focus();
   }
 }
