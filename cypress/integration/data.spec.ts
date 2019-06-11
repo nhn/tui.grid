@@ -94,6 +94,49 @@ describe('removeRow()', () => {
   });
 });
 
+describe('removeCheckedRows()', () => {
+  beforeEach(() => {
+    cy.document().then((doc) => {
+      doc.body.innerHTML = '';
+    });
+
+    cy.createGrid({
+      data,
+      columns,
+      rowHeaders: ['_checked']
+    });
+  });
+
+  it('remove checked rows.', () => {
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.getCell(0, 'name').should('exist');
+    cy.getCell(1, 'name').should('not.exist');
+  });
+
+  it('use confirm message.', () => {
+    const stub = cy.stub();
+    cy.on('window:confirm', stub);
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance()
+      .invoke('removeCheckedRows', true)
+      .then(() => {
+        expect(stub.args[0][0]).to.be.eql('Are you sure you want to delete 1 data?');
+      });
+  });
+
+  it('use confirm cancel.', () => {
+    cy.on('window:confirm', () => false);
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance()
+      .invoke('removeCheckedRows', true)
+      .then(() => {
+        cy.getCell(1, 'name').should('exist');
+      });
+  });
+});
+
 describe('clear()', () => {
   it('remove all rows', () => {
     cy.gridInstance().invoke('clear');
