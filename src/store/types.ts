@@ -162,12 +162,17 @@ export interface CellEditorOptions {
   options?: Dictionary<any>;
 }
 
+export interface CellRendererOptions {
+  type: CellRendererClass;
+  options?: Dictionary<any>;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
   minWidth: number;
   editor?: CellEditorOptions;
-  renderer: CellRendererClass;
+  renderer: CellRendererOptions;
   rendererOptions?: Dictionary<any>;
   copyOptions?: ClipboardCopyOptions;
   hidden: boolean;

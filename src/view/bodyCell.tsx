@@ -44,7 +44,7 @@ export class BodyCellComp extends Component<Props> {
     } = this.props;
 
     // eslint-disable-next-line new-cap
-    this.renderer = new columnInfo.renderer({
+    this.renderer = new columnInfo.renderer.type({
       grid,
       rowKey,
       columnInfo,

@@ -78,7 +78,7 @@ class SliderRenderer implements CellRenderer {
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
-    const { min, max } = props.columnInfo.rendererOptions;
+    const { min, max } = props.columnInfo.renderer.options;
 
     el.type = 'range';
     el.min = String(min);
@@ -134,8 +134,10 @@ const columns: OptColumn[] = [
   { name: 'name', renderer: ToolTipRenderer, align: 'center' },
   {
     name: 'score',
-    renderer: SliderRenderer,
-    rendererOptions: { min: 10, max: 30 },
+    renderer: {
+      type: SliderRenderer,
+      options: { min: 10, max: 30 }
+    },
     align: 'center'
   },
   { name: 'vip', renderer: SingleCheckRenderer, align: 'center' }

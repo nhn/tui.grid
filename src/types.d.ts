@@ -90,21 +90,22 @@ interface OptTree {
   useCascadingCheckbox?: boolean;
 }
 
-export type OptCellEditor =
-  | string
-  | CellEditorClass
+type TypeObjectOptions<T> =
+  | T
   | {
-      type: string | CellEditorClass;
-      options: Dictionary<any>;
+      type: T;
+      options?: Dictionary<any>;
     };
+
+export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
+export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
 export interface OptColumn {
   name: string;
   header?: string;
   hidden?: boolean;
   width?: number | 'auto';
-  renderer?: CellRendererClass;
-  rendererOptions?: Dictionary<any>;
+  renderer?: OptCellRenderer;
   editor?: OptCellEditor;
   formatter?: Formatter;
   defaultValue?: CellValue;

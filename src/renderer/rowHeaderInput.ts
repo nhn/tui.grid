@@ -5,16 +5,9 @@ export class RowHeaderInputRenderer implements CellRenderer {
 
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
+    const { grid, rowKey, disabled, allDisabled } = props;
 
-    const {
-      grid,
-      rowKey,
-      disabled,
-      allDisabled,
-      columnInfo: { rendererOptions }
-    } = props;
-
-    el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
+    el.type = 'checkbox';
     el.name = '_checked';
     el.disabled = allDisabled || disabled;
 

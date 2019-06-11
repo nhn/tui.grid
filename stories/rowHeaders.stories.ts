@@ -148,59 +148,12 @@ stories.add(
 );
 
 stories.add(
-  'single use - radio',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'checkbox',
-          rendererOptions: { inputType: 'radio' }
-        }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
   'multi use - checkbox, row number',
   () => {
     const { el, grid } = createGrid({
       data,
       columns,
       rowHeaders: ['checkbox', 'rowNum']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'multi use - radio, row number',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'checkbox',
-          rendererOptions: { inputType: 'radio' }
-        },
-        'rowNum'
-      ]
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
