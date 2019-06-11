@@ -36,6 +36,8 @@ import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './que
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
+import { getConfirmMessage } from './dataSource/helper/message';
+
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
 import {
   RequestOptions,
@@ -1075,5 +1077,24 @@ export default class Grid {
    */
   public resetOriginData() {
     this.dataManager.setOriginData(this.getData());
+  }
+
+  /** Removes all checked rows.
+   * @param {boolean} showConfirm - If set to true, confirm message will be shown before remove.
+   * @returns {boolean} - True if there's at least one row removed.
+   */
+  public removeCheckedRows(showConfirm: boolean) {
+    const rowKeys = this.getCheckedRowKeys();
+    const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
+
+    if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
+      rowKeys.forEach((rowKey) => {
+        this.removeRow(rowKey);
+      });
+
+      return true;
+    }
+
+    return false;
   }
 }
