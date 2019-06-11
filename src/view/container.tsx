@@ -182,16 +182,13 @@ export class ContainerComp extends Component<Props> {
   }
 
   private syncWithDOMWidth = () => {
-    const { rootElement } = this.props;
-
-    this.props.dispatch('refreshLayout', this.el!, rootElement.parentElement!);
+    this.props.dispatch('refreshLayout', this.el!, this.props.rootElement.parentElement!);
   };
 
   public shouldComponentUpdate(nextProps: Props) {
     if (this.props.autoWidth && nextProps.autoWidth) {
       return false;
     }
-
     return true;
   }
 
