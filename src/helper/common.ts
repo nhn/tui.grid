@@ -152,6 +152,10 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   return resultMap;
 }
 
+export function isFunction(obj: unknown): obj is Function {
+  return typeof obj === 'function';
+}
+
 export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }

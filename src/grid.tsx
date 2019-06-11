@@ -13,7 +13,16 @@ import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
+import {
+  Store,
+  CellValue,
+  RowKey,
+  Range,
+  Row,
+  InvalidRow,
+  ColumnInfo,
+  Dictionary
+} from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
 import i18n from './i18n';
@@ -23,7 +32,7 @@ import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getCellAddressByIndex, getCheckedRows } from './query/data';
+import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -580,6 +589,25 @@ export default class Grid {
    */
   public getCheckedRows(): Row[] {
     return getCheckedRows(this.store).map((row) => getOriginObject(row as Observable<Row>));
+  }
+
+  /**
+   * Finds rows by conditions
+   * @param {Object|Function} conditions - object (key: column name, value: column value) or
+   *     function that check the value and returns true/false result to find rows
+   * @returns {Array} Row list
+   * @example <caption>Conditions type is object.</caption>
+   * grid.findRows({
+   *     artist: 'Birdy',
+   *     price: 10000
+   * });
+   * @example <caption>Conditions type is function.</caption>
+   * grid.findRows((row) => {
+   *     return (/b/ig.test(row.artist) && row.price > 10000);
+   * });
+   */
+  public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>) {
+    return getConditionalRows(this.store, conditions);
   }
 
   /**
