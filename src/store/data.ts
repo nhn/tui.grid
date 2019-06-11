@@ -101,9 +101,14 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   return '';
 }
 
-function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
+function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
-  const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
+
+  let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
+  if (related) {
+    value = '';
+  }
+
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className } = row._attributes;
   const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
@@ -146,7 +151,7 @@ function createRelationViewCell(
     const hasValue = targetListItems ? someProp('value', cellData.value, targetListItems) : false;
 
     if (!hasValue) {
-      cellData = createViewCell(row, columnMap[targetName]);
+      cellData = createViewCell(row, columnMap[targetName], true);
     }
 
     if (!targetEditable) {
