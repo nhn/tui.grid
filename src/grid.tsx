@@ -37,7 +37,6 @@ import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
 import { getConfirmMessage } from './dataSource/helper/message';
-
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
 import {
   RequestOptions,
