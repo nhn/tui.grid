@@ -1,5 +1,6 @@
 import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
+import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name' }, { name: 'age' }];
@@ -193,5 +194,29 @@ describe('columns', () => {
 
     cy.getCellByIdx(0, 1).should('to.have.text', '30');
     cy.getCellByIdx(1, 1).should('to.have.text', '30');
+  });
+});
+
+describe('rows', () => {
+  it('findRows() returns rows that meet the conditions.', () => {
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Kim' })
+      .then((res) => {
+        expect(res).to.have.length(1);
+        expect(res[0]).to.contain({ name: 'Kim', age: 10 });
+      });
+
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Lee', age: 10 })
+      .should('have.length', 0);
+
+    cy.gridInstance()
+      .invoke('findRows', function(row: Row) {
+        return !!row.age && row.age > 10;
+      })
+      .then((res) => {
+        expect(res).to.have.length(1);
+        expect(res[0]).to.contain({ name: 'Lee', age: 20 });
+      });
   });
 });

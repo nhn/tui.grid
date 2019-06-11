@@ -114,11 +114,11 @@ stories.add(
     columns = [
       {
         name: 'default',
-        editor: 'datepicker'
+        editor: 'datePicker'
       },
       {
         name: 'options',
-        editor: 'datepicker',
+        editor: 'datePicker',
         editorOptions: {
           format: 'yyyy/MM/dd',
           selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
@@ -126,7 +126,7 @@ stories.add(
       },
       {
         name: 'timePicker',
-        editor: 'datepicker',
+        editor: 'datePicker',
         editorOptions: {
           format: 'yyyy-MM-dd HH:mm A',
           timepicker: true
@@ -134,7 +134,7 @@ stories.add(
       },
       {
         name: 'timePickerWithTab',
-        editor: 'datepicker',
+        editor: 'datePicker',
         editorOptions: {
           format: 'yyyy-MM-dd HH:mm A',
           timepicker: {
@@ -145,7 +145,7 @@ stories.add(
       },
       {
         name: 'monthPicker',
-        editor: 'datepicker',
+        editor: 'datePicker',
         editorOptions: {
           format: 'yyyy-MM',
           type: 'month'
@@ -153,7 +153,7 @@ stories.add(
       },
       {
         name: 'yearPicker',
-        editor: 'datepicker',
+        editor: 'datePicker',
         editorOptions: {
           format: 'yyyy',
           type: 'year'
