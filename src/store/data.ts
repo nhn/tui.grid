@@ -13,7 +13,8 @@ import {
   Validation,
   PageOptions,
   RowKey,
-  RowSpanMap
+  RowSpanMap,
+  ListItem
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader } from '../helper/column';
@@ -60,20 +61,20 @@ function getFormattedValue(props: FormatterProps, formatter?: Formatter, default
 }
 
 function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {
-  return typeof fn === 'function' ? fn(relationParams) : null;
+  return typeof fn === 'function' ? fn(relationParams) || null : null;
 }
 
-function getEditable(fn: any, relationParams: Dictionary<any>) {
+function getEditable(fn: any, relationParams: Dictionary<any>): boolean {
   const result = getRelationCbResult(fn, relationParams);
   return result === null ? true : result;
 }
 
-function getDisabled(fn: any, relationParams: Dictionary<any>) {
+function getDisabled(fn: any, relationParams: Dictionary<any>): boolean {
   const result = getRelationCbResult(fn, relationParams);
   return result === null ? false : result;
 }
 
-function getListItems(fn: any, relationParams: Dictionary<any>) {
+function getListItems(fn: any, relationParams: Dictionary<any>): ListItem[] | null {
   return getRelationCbResult(fn, relationParams);
 }
 
@@ -101,9 +102,13 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   return '';
 }
 
-function createViewCell(row: Row, column: ColumnInfo): CellRenderData {
+function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRenderData {
   const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
-  const value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
+  let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
+
+  if (related) {
+    value = '';
+  }
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className } = row._attributes;
   const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
@@ -140,23 +145,22 @@ function createRelationViewCell(
     const targetEditable = getEditable(editableCallback, relationCbParams);
     const targetDisabled = getDisabled(disabledCallback, relationCbParams);
     const targetListItems = getListItems(listItemsCallback, relationCbParams);
+    const targetValue = row[targetName];
+    const targetEditorOptions = columnMap[targetName].editorOptions;
 
-    let cellData = createViewCell(row, columnMap[targetName]);
+    const hasValue = targetListItems ? someProp('value', targetValue, targetListItems) : false;
 
-    const hasValue = targetListItems ? someProp('value', cellData.value, targetListItems) : false;
-
-    if (!hasValue) {
-      cellData = createViewCell(row, columnMap[targetName]);
+    if (targetEditorOptions && Array.isArray(targetEditorOptions.listItems)) {
+      targetEditorOptions.listItems = targetListItems || [];
     }
+
+    const cellData = createViewCell(row, columnMap[targetName], !hasValue);
 
     if (!targetEditable) {
       cellData.editable = false;
     }
     if (targetDisabled) {
       cellData.disabled = true;
-    }
-    if (Array.isArray(cellData.editorOptions.listItems)) {
-      cellData.editorOptions.listItems = targetListItems || [];
     }
 
     valueMap[targetName] = cellData;

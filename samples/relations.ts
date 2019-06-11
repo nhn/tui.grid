@@ -2,19 +2,19 @@ import { Dictionary, ListItem, Relations } from '../src/store/types';
 
 const twoDepthData: Dictionary<ListItem[]> = {
   '01': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Balad/Dance/Pop', value: '01_01' },
     { text: 'Hiphop/R&B', value: '01_02' },
     { text: 'Indie', value: '01_03' }
   ],
   '02': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Pop', value: '02_01' },
     { text: 'Hiphop', value: '02_02' },
     { text: 'R&B', value: '02_03' }
   ],
   '03': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'OST', value: '03_01' },
     { text: 'Classic', value: '03_02' },
     { text: 'New Age', value: '03_03' }
@@ -23,7 +23,7 @@ const twoDepthData: Dictionary<ListItem[]> = {
 
 const threeDepthData: Dictionary<ListItem[]> = {
   '01_01': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'I Miss You', value: '01_01_0001' },
     { text: 'Russian Roulette', value: '01_01_0002' },
     { text: 'TT', value: '01_01_0003' },
@@ -33,7 +33,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Round And Round', value: '01_01_0007' }
   ],
   '01_02': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'BERMUDA TRIANGLE', value: '01_02_0001' },
     { text: 'Day Day', value: '01_02_0002' },
     { text: 'Bye bye my blue', value: '01_02_0003' },
@@ -43,7 +43,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'I NEED U', value: '01_02_0007' }
   ],
   '01_03': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Madeleine Love', value: '01_03_0001' },
     { text: 'Mood Indigo', value: '01_03_0002' },
     { text: "I Don't Wanna Love You", value: '01_03_0003' },
@@ -53,7 +53,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Vineyard', value: '01_03_0007' }
   ],
   '02_01': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Cave Me In', value: '02_01_0001' },
     { text: 'Hello', value: '02_01_0002' },
     { text: 'When We Were Young', value: '02_01_0003' },
@@ -63,7 +63,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Love On Top', value: '02_01_0007' }
   ],
   '02_02': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Love The Way You Lie', value: '02_02_0001' },
     { text: 'Flower Dance', value: '02_02_0002' },
     { text: 'I Feel It Coming', value: '02_02_0003' },
@@ -73,7 +73,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Love Me In Everything', value: '02_02_0007' }
   ],
   '02_03': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Marry You', value: '02_03_0001' },
     { text: 'Hello', value: '02_03_0002' },
     { text: 'Coastal Love', value: '02_03_0003' },
@@ -83,7 +83,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Get Lucky', value: '02_03_0007' }
   ],
   '03_01': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'City Of Stars', value: '03_01_0001' },
     { text: 'You Are My Everything', value: '03_01_0002' },
     { text: 'Summer Montage / Madeline', value: '03_01_0003' },
@@ -91,7 +91,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'A Lovely Night', value: '03_01_0005' }
   ],
   '03_02': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Ravel: Pavane Pour Une Infant Defunte', value: '03_02_0001' },
     { text: 'Elgar: Salut D`amour', value: '03_02_0002' },
     { text: 'Refuse', value: '03_02_0003' },
@@ -99,7 +99,7 @@ const threeDepthData: Dictionary<ListItem[]> = {
     { text: 'Three Romances Op94: nr 2 in A', value: '03_02_0005' }
   ],
   '03_03': [
-    { text: 'Select', value: '' },
+    { text: '', value: '' },
     { text: 'Kiss The Rain', value: '03_03_0001' },
     { text: 'Blind Film', value: '03_03_0002' },
     { text: 'Merry Christmas Mr.Lawrence', value: '03_03_0003' },
@@ -134,10 +134,11 @@ export const columns = [
   {
     header: 'Category1',
     name: 'category1',
+    formatter: 'listItemText',
     editor: 'select',
     editorOptions: {
       listItems: [
-        { text: 'Select', value: '' },
+        { text: '', value: '' },
         { text: 'Domestic', value: '01' },
         { text: 'Overseas', value: '02' },
         { text: 'Etc', value: '03' }
@@ -158,6 +159,7 @@ export const columns = [
   {
     header: 'Category2',
     name: 'category2',
+    formatter: 'listItemText',
     editor: 'select',
     editorOptions: {
       listItems: []
@@ -177,6 +179,7 @@ export const columns = [
   {
     header: 'Category3',
     name: 'category3',
+    formatter: 'listItemText',
     editor: 'select',
     editorOptions: {
       listItems: []
@@ -185,6 +188,7 @@ export const columns = [
   {
     header: 'No relation',
     name: 'category4',
+    formatter: 'listItemText',
     editor: 'select',
     editorOptions: {
       listItems: [
