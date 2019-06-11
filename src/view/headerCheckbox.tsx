@@ -26,7 +26,9 @@ class HeaderCheckboxComp extends Component<Props> {
 
   public componentDidUpdate() {
     const { checkedAllRows, disabled } = this.props;
-    const input = this.el!.querySelector('input[name=_checked]') as HTMLInputElement;
+    const input: HTMLInputElement | null = this.el!.querySelector(
+      'input[name=_checked]'
+    ) as HTMLInputElement;
 
     if (input) {
       input.checked = checkedAllRows;

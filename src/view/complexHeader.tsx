@@ -48,17 +48,13 @@ class ComplexHeaderComp extends Component<Props> {
     return complexColumns;
   }
 
-  private getHierarchyMaxRowCount(hierarchyList: ComplexColumnInfo[][]) {
-    const lengthList = [0];
+  private getHierarchyMaxRowCount(hierarchies: ComplexColumnInfo[][]) {
+    const lengths = [0, ...hierarchies.map((value) => value.length)];
 
-    hierarchyList.forEach((hierarchy) => {
-      lengthList.push(hierarchy.length);
-    });
-
-    return Math.max(...lengthList);
+    return Math.max(...lengths);
   }
 
-  private createTableHeadComponent(
+  private createTableHeaderComponent(
     column: ComplexColumnInfo,
     height: number,
     colspan: number,
@@ -83,8 +79,8 @@ class ComplexHeaderComp extends Component<Props> {
 
   public render() {
     const { columns, headerHeight } = this.props;
-    const hierarchyList = columns.map((column) => this.getColumnHierarchy(column).reverse());
-    const maxRowCount = this.getHierarchyMaxRowCount(hierarchyList);
+    const hierarchies = columns.map((column) => this.getColumnHierarchy(column).reverse());
+    const maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
     const rows = new Array(maxRowCount);
     const columnNames = new Array(maxRowCount);
     const colspans: number[] = [];
@@ -93,8 +89,8 @@ class ComplexHeaderComp extends Component<Props> {
     let rowspan = 1;
     let height;
 
-    hierarchyList.forEach((hierarchy, i) => {
-      const { length } = hierarchyList[i];
+    hierarchies.forEach((hierarchy, i) => {
+      const { length } = hierarchies[i];
       let curHeight = 0;
 
       hierarchy.forEach((column, j) => {
@@ -119,7 +115,7 @@ class ComplexHeaderComp extends Component<Props> {
         columnNames[j] = columnName;
         rows[j] = rows[j] || [];
 
-        rows[j].push(this.createTableHeadComponent(column, height, colspans[j], rowspan));
+        rows[j].push(this.createTableHeaderComponent(column, height, colspans[j], rowspan));
       });
     });
 

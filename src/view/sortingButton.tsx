@@ -44,9 +44,7 @@ class SortingButtonComp extends Component<Props> {
   };
 
   public render() {
-    const {
-      sortOptions: { columnName, ascending }
-    } = this.props;
+    const { columnName, ascending } = this.props.sortOptions;
 
     return (
       <a
