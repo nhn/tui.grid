@@ -173,7 +173,6 @@ export interface ColumnInfo {
   minWidth: number;
   editor?: CellEditorOptions;
   renderer: CellRendererOptions;
-  rendererOptions?: Dictionary<any>;
   copyOptions?: ClipboardCopyOptions;
   hidden: boolean;
   formatter?: Formatter;
