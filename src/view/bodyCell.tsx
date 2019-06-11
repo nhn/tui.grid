@@ -6,7 +6,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
-import { isRowHeader } from '../helper/column';
+import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -100,7 +100,7 @@ export class BodyCellComp extends Component<Props> {
   };
 
   private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
-    if (name !== '_number') {
+    if (!isRowNumColumn(name)) {
       return;
     }
 

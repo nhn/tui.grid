@@ -7,7 +7,7 @@ import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
-import { isRowHeader } from '../helper/column';
+import { isRowHeader, isCheckboxColumn } from '../helper/column';
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
@@ -108,7 +108,7 @@ class HeaderAreaComp extends Component<Props> {
                     ])}
                     onMouseDown={(ev) => this.handleMouseDown(ev, name, sortable)}
                   >
-                    {name === '_checked' ? <HeaderCheckbox /> : header}
+                    {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
                     {!!sortable && <SortingButton />}
                   </th>
                 ))}
