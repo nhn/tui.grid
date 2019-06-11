@@ -12,6 +12,7 @@ import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { isNull } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -25,6 +26,7 @@ interface StoreProps {
   editingEvent: EditingEvent;
   scrollXHeight: number;
   fitToParentHeight: boolean;
+  heightResizable: boolean;
   summaryHeight: number;
   summaryPosition: SummaryPosition;
   showLeftSide: boolean;
@@ -181,19 +183,9 @@ export class ContainerComp extends Component<Props> {
   }
 
   private syncWithDOMWidth = () => {
-    const { clientWidth, clientHeight } = this.el!;
-    const { width, fitToParentHeight, rootElement } = this.props;
+    const { rootElement } = this.props;
 
-    if (clientWidth !== width) {
-      this.props.dispatch('setWidth', clientWidth, true);
-    }
-
-    if (fitToParentHeight) {
-      const { parentElement } = rootElement;
-      if (parentElement && parentElement.clientHeight !== clientHeight) {
-        this.props.dispatch('setHeight', parentElement.clientHeight);
-      }
-    }
+    this.props.dispatch('refreshLayout', this.el!, rootElement.parentElement!);
   };
 
   public shouldComponentUpdate(nextProps: Props) {
@@ -208,6 +200,7 @@ export class ContainerComp extends Component<Props> {
     const {
       summaryHeight,
       summaryPosition,
+      heightResizable,
       gridId,
       width,
       autoWidth,
@@ -218,6 +211,7 @@ export class ContainerComp extends Component<Props> {
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
+    console.log('heightResizable', heightResizable);
 
     return (
       <div
@@ -248,7 +242,7 @@ export class ContainerComp extends Component<Props> {
           <div class={cls('border-line', 'border-line-right')} />
           <div class={cls('border-line', 'border-line-bottom')} style={{ bottom: scrollXHeight }} />
         </div>
-        <HeightResizeHandle />
+        {heightResizable && <HeightResizeHandle />}
         <StateLayer />
         <EditingLayer />
         <Clipboard />
@@ -268,6 +262,7 @@ export const Container = connect<StoreProps, OwnProps>(
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,
     summaryPosition: dimension.summaryPosition,
+    heightResizable: dimension.heightResizable,
     showLeftSide: !!columnCoords.areaWidth.L,
     disabled: data.disabled,
     editingEvent: focus.editingEvent,
