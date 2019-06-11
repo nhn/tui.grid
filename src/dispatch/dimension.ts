@@ -34,9 +34,7 @@ export function refreshLayout(store: Store, containerEl: HTMLElement, parentEl: 
   setOffsetLeft(store, left + scrollLeft);
   setWidth(store, clientWidth, autoWidth);
 
-  if (fitToParentHeight) {
-    if (parentEl && parentEl.clientHeight !== clientHeight) {
-      setHeight(store, parentEl.clientHeight);
-    }
+  if (fitToParentHeight && parentEl && parentEl.clientHeight !== clientHeight) {
+    setHeight(store, parentEl.clientHeight);
   }
 }

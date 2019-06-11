@@ -211,7 +211,6 @@ export class ContainerComp extends Component<Props> {
     } = this.props;
     const style = { width: autoWidth ? '100%' : width };
     const attrs = { [dataAttr.GRID_ID]: gridId };
-    console.log('heightResizable', heightResizable);
 
     return (
       <div
