@@ -12,7 +12,6 @@ import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { isNull } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;
