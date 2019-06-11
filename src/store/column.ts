@@ -1,4 +1,11 @@
-import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
+import {
+  Column,
+  ColumnInfo,
+  Dictionary,
+  Relations,
+  ClipboardCopyOptions,
+  ComplexColumnInfo
+} from './types';
 import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
 import { observable } from '../helper/observable';
 import { createMapFromArray, includes } from '../helper/common';
@@ -148,6 +155,7 @@ interface ColumnOptions {
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;
   treeColumnOptions: OptTree;
+  complexColumns: ComplexColumnInfo[];
 }
 
 export function create({
@@ -156,7 +164,8 @@ export function create({
   rowHeaders,
   copyOptions,
   keyColumnName,
-  treeColumnOptions
+  treeColumnOptions,
+  complexColumns
 }: ColumnOptions): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
@@ -187,6 +196,7 @@ export function create({
     },
 
     allColumns,
+    complexHeaderColumns: complexColumns,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;

@@ -208,6 +208,7 @@ export interface Column {
   dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
   allColumns: ColumnInfo[];
+  complexHeaderColumns: ComplexColumnInfo[];
   readonly allColumnMap: Dictionary<ColumnInfo>;
   readonly rowHeaderCount: number;
   readonly visibleColumns: ColumnInfo[];
@@ -384,4 +385,11 @@ export interface Store {
   readonly selection: Selection;
   readonly summary: Summary;
   readonly renderState: RenderState;
+}
+
+export interface ComplexColumnInfo {
+  header: string;
+  name: string;
+  childNames?: string[];
+  sortable?: boolean;
 }
