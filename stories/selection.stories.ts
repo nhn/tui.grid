@@ -75,7 +75,7 @@ stories.add(
         frozenCount: 2,
         minWidth: 150
       },
-      rowHeaders: ['_checked', '_number']
+      rowHeaders: ['checkbox', 'rowNum']
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);

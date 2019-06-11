@@ -119,7 +119,7 @@ stories.add('single use - row number', () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['_number']
+    rowHeaders: ['rowNum']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -133,7 +133,7 @@ stories.add(
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_checked']
+      rowHeaders: ['checkbox']
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
@@ -155,7 +155,7 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_checked',
+          type: 'checkbox',
           rendererOptions: { inputType: 'radio' }
         }
       ]
@@ -176,7 +176,7 @@ stories.add(
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_checked', '_number']
+      rowHeaders: ['checkbox', 'rowNum']
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
@@ -196,10 +196,10 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_checked',
+          type: 'checkbox',
           rendererOptions: { inputType: 'radio' }
         },
-        '_number'
+        'rowNum'
       ]
     });
     const rootEl = document.createElement('div');
@@ -220,14 +220,14 @@ stories.add(
       columns,
       rowHeaders: [
         {
+          type: 'rowNum',
           header: 'row number',
-          name: '_number',
           width: 100,
           align: 'left'
         },
         {
+          type: 'checkbox',
           header: 'checkbox',
-          name: '_checked',
           width: 100,
           align: 'left'
         }
@@ -251,7 +251,7 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_number',
+          type: 'rowNum',
           renderer: RowNumberRenderer
         }
       ]
@@ -274,7 +274,7 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_checked',
+          type: 'checkbox',
           header: `
             <label for="all-checkbox" class="checkbox">
               <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
@@ -301,7 +301,7 @@ stories.add(
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_number', '_checked'],
+      rowHeaders: ['rowNum', 'checkbox'],
       columnOptions: {
         frozenCount: 2
       }

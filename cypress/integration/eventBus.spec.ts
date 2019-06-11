@@ -17,7 +17,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
-    rowHeaders: ['_number', '_checked']
+    rowHeaders: ['rowNum', 'checkbox']
   });
 });
 
@@ -28,7 +28,6 @@ it('click', () => {
   cy.getCell(1, 'name')
     .click()
     .then(() => {
-      console.log(callback.args[0][0]);
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
         .to.be.true;
     });

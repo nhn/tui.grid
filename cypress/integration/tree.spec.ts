@@ -125,17 +125,17 @@ describe('treeColumnOptions', () => {
       });
     }
 
-    it ('set true or by default then row is checked recursively by parent or child row is checked.', () => {
+    it('set true or by default then row is checked recursively by parent or child row is checked.', () => {
       createGrid({
         data,
         columns,
-        rowHeaders: ['_checked'],
+        rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
           useCascadingCheckbox: true
         }
       });
-      
+
       assertCheckedRow(1, false);
       assertCheckedRow(2, false);
       assertCheckedRow(3, false);
@@ -157,7 +157,7 @@ describe('treeColumnOptions', () => {
       createGrid({
         data,
         columns,
-        rowHeaders: ['_checked'],
+        rowHeaders: ['checkbox'],
         treeColumnOptions: {
           name: 'c1',
           useCascadingCheckbox: false
@@ -182,7 +182,7 @@ describe('treeColumnOptions', () => {
       assertCheckedRow(1, false);
       assertCheckedRow(2, true);
       assertCheckedRow(3, false);
-    })
+    });
   });
 });
 
@@ -288,10 +288,10 @@ describe('collapseAll()', () => {
     cy.getCell(1, 'c1').should('be.visible');
     cy.getCell(2, 'c1').should('be.visible');
     cy.getCell(3, 'c1').should('not.be.visible');
-  
+
     cy.gridInstance().invoke('collapseAll');
     cy.gridInstance().invoke('expand', 0);
-  
+
     cy.getCell(0, 'c1').should('be.visible');
     cy.getCell(1, 'c1').should('be.visible');
     cy.getCell(2, 'c1').should('not.be.visible');
@@ -343,10 +343,10 @@ describe('expandAll()', () => {
     cy.getCell(1, 'c1').should('be.visible');
     cy.getCell(2, 'c1').should('be.visible');
     cy.getCell(3, 'c1').should('not.be.visible');
-  
+
     cy.gridInstance().invoke('collapse', 0);
     cy.gridInstance().invoke('expandAll');
-  
+
     cy.getCell(0, 'c1').should('be.visible');
     cy.getCell(1, 'c1').should('be.visible');
     cy.getCell(2, 'c1').should('be.visible');
@@ -356,7 +356,7 @@ describe('expandAll()', () => {
 
 describe('appendRow()', () => {
   context('leaf row append at', () => {
-    let appendedData = {c1: 'test'};
+    const appendedData = { c1: 'test' };
 
     it('root.', () => {
       cy.gridInstance().invoke('appendRow', appendedData);
@@ -364,7 +364,7 @@ describe('appendRow()', () => {
       cy.get(`.${cls('body-area')} tr:nth-child(6)`).should('have.text', 'test');
     });
 
-    it('specific parent.', () =>{
+    it('specific parent.', () => {
       cy.gridInstance().invoke('appendRow', appendedData, { parentRowKey: 0 });
       cy.get(`.${cls('body-area')} tr:nth-child(5)`).should('have.text', 'quxx');
       cy.get(`.${cls('body-area')} tr:nth-child(6)`).should('have.text', 'test');
@@ -372,12 +372,9 @@ describe('appendRow()', () => {
   });
 
   context('internal row append to', () => {
-    let appendedData = {
+    const appendedData = {
       c1: 'a',
-      _children: [
-        {c1: 'b'},
-        {c1: 'c'}
-      ]
+      _children: [{ c1: 'b' }, { c1: 'c' }]
     };
 
     it('root.', () => {
@@ -410,7 +407,9 @@ describe('appendRow()', () => {
 describe('removeRow()', () => {
   function assertInternalRow(rowKey: RowKey) {
     cy.getCell(rowKey, 'c1').within(() => {
-      cy.get(`.${cls('btn-tree')}`).its('length').should('be.eql', 1);
+      cy.get(`.${cls('btn-tree')}`)
+        .its('length')
+        .should('be.eql', 1);
     });
   }
 
@@ -421,33 +420,41 @@ describe('removeRow()', () => {
   }
 
   it('leaf row is removed.', () => {
-    cy.getCell(4, 'c1').its('length').should('be.eql', 1);
+    cy.getCell(4, 'c1')
+      .its('length')
+      .should('be.eql', 1);
     cy.gridInstance().invoke('removeRow', 4);
     cy.getCell(4, 'c1').should('not.exist');
   });
-   
+
   context('internal row', () => {
     it('is removed.', () => {
-      cy.getCell(3, 'c1').its('length').should('be.eql', 1);
+      cy.getCell(3, 'c1')
+        .its('length')
+        .should('be.eql', 1);
       cy.gridInstance().invoke('removeRow', 3);
       cy.getCell(3, 'c1').should('not.exist');
     });
 
     it('is removed then descendant rows are removed.', () => {
-      cy.gridInstance().invoke('getDescendantRows', 2)
+      cy.gridInstance()
+        .invoke('getDescendantRows', 2)
         .then((rows) => {
-          rows.forEach(({rowKey}: Row) => {
-            cy.getCell(rowKey, 'c1').its('length').should('be.eql', 1);
-          })
+          rows.forEach(({ rowKey }: Row) => {
+            cy.getCell(rowKey, 'c1')
+              .its('length')
+              .should('be.eql', 1);
+          });
         });
 
       cy.gridInstance().invoke('removeRow', 1);
 
-      cy.gridInstance().invoke('getDescendantRows', 2)
+      cy.gridInstance()
+        .invoke('getDescendantRows', 2)
         .then((rows) => {
-          rows.forEach(({rowKey}: Row) => {
+          rows.forEach(({ rowKey }: Row) => {
             cy.getCell(rowKey, 'c1').should('not.exist');
-          })
+          });
         });
     });
   });
