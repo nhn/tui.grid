@@ -1068,4 +1068,12 @@ export default class Grid {
   public getRowSpanData(rowKey: RowKey, columnName: string) {
     return getRowSpanByRowKey(rowKey, columnName, this.store.data.rawData);
   }
+
+  /**
+   * reset original data to current data.
+   * (Original data is set by {@link Grid#resetData|resetData}
+   */
+  public resetOriginData() {
+    this.dataManager.setOriginData(this.getData());
+  }
 }
