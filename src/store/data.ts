@@ -105,7 +105,7 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
 }
 
 function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRenderData {
-  const { name, formatter, prefix, postfix, editor, editorOptions, validation } = column;
+  const { name, formatter, prefix, postfix, editor, validation } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
   if (related) {
@@ -117,7 +117,6 @@ function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRe
 
   return {
     editable: !!editor,
-    editorOptions: editorOptions ? { ...editorOptions } : {},
     className: [...className.row, ...columnClassName].join(' '),
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
@@ -148,7 +147,8 @@ function createRelationViewCell(
     const targetDisabled = getDisabled(disabledCallback, relationCbParams);
     const targetListItems = getListItems(listItemsCallback, relationCbParams);
     const targetValue = row[targetName];
-    const targetEditorOptions = columnMap[targetName].editorOptions;
+    const targetEditor = columnMap[targetName].editor;
+    const targetEditorOptions = targetEditor && targetEditor.options;
 
     const hasValue = targetListItems ? someProp('value', targetValue, targetListItems) : false;
 

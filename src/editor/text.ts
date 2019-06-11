@@ -10,7 +10,7 @@ export class TextEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('input');
-    const options = props.columnInfo.editorOptions as Options;
+    const options = props.columnInfo.editor!.options as Options;
 
     el.className = cls('content-text');
     el.type = options.type;

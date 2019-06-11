@@ -4,15 +4,22 @@ import {
   Dictionary,
   Relations,
   ClipboardCopyOptions,
-  ComplexColumnInfo
+  ComplexColumnInfo,
+  CellEditorOptions
 } from './types';
-import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
+import { OptColumn, OptColumnOptions, OptRowHeader, OptTree, OptCellEditor } from '../types';
 import { observable } from '../helper/observable';
-import { createMapFromArray, includes, omit } from '../helper/common';
 import { isRowNumColumn } from '../helper/column';
+import {
+  createMapFromArray,
+  includes,
+  omit,
+  isString,
+  isFunction,
+  isObject
+} from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
-import { CellEditorClass } from '../editor/types';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
 const ROW_HEADERS_MAP = {
@@ -25,15 +32,32 @@ const defMinWidth = {
 };
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
-function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
-  if (typeof editor === 'string') {
-    const editInfo = editorMap[editor];
-    return {
-      editor: editInfo[0],
-      editorOptions: { ...editInfo[1], ...editorOptions }
-    };
+function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
+  const editInfo = editorMap[editorType];
+  return {
+    type: editInfo[0],
+    options: {
+      ...editInfo[1],
+      ...options,
+      type: editorType
+    }
+  };
+}
+
+function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
+  if (isFunction(editor)) {
+    return { type: editor };
   }
-  return { editor, editorOptions };
+  if (isString(editor)) {
+    return getBuiltInEditorOptions(editor);
+  }
+  if (isObject(editor)) {
+    if (isString(editor.type)) {
+      return getBuiltInEditorOptions(editor.type, editor.options);
+    }
+    return editor as CellEditorOptions;
+  }
+  return null;
 }
 
 function getTreeInfo(treeColumnOptions: OptTree, name: string) {
@@ -90,7 +114,6 @@ export function createColumn(
     hidden,
     resizable,
     editor,
-    editorOptions,
     renderer,
     relations,
     sortable,
@@ -98,8 +121,10 @@ export function createColumn(
     validation
   } = column;
 
+  const editorOptions = getEditorOptions(editor);
+
   return observable({
-    ...column,
+    name,
     escapeHTML: !!column.escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
@@ -113,8 +138,8 @@ export function createColumn(
     relationMap: getRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,
-    ...getEditorInfo(editor, editorOptions),
     validation: validation ? { ...validation } : {},
+    ...(editorOptions ? { editor: editorOptions } : null),
     ...getTreeInfo(treeColumnOptions, name)
   });
 }

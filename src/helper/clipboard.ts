@@ -8,7 +8,7 @@ import {
   CustomValue
 } from '../store/types';
 import { find, fromArray } from './common';
-import { Options } from '../editor/select';
+import { ListItemOptions } from '../editor/types';
 import { WindowWithClipboard } from '../view/clipboard';
 
 const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
@@ -107,14 +107,15 @@ export function getTextWithCopyOptionsApplied(
   column: ColumnInfo
 ) {
   let text = valueMap.value;
-  const { copyOptions, editorOptions } = column;
+  const { copyOptions, editor } = column;
+  const editorOptions = editor && editor.options;
 
   // priority: customValue > useListItemText > useFormattedValue > original Data
   if (copyOptions) {
     if (copyOptions.customValue) {
       text = getCustomValue(copyOptions.customValue, valueMap.value, rawData, column);
     } else if (copyOptions.useListItemText && editorOptions) {
-      const { listItems } = (editorOptions as unknown) as Options;
+      const { listItems } = (editorOptions as unknown) as ListItemOptions;
       const { value } = valueMap;
       let valueList = [value];
       const result: CellValue[] = [];

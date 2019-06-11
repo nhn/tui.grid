@@ -7,6 +7,7 @@ import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
+import { isFunction } from '../helper/common';
 
 interface StoreProps {
   left: number;
@@ -80,7 +81,7 @@ export class EditingLayerInnerComp extends Component<Props> {
   public componentDidMount() {
     const { grid, rowKey, columnInfo, value } = this.props;
 
-    const EditorClass: CellEditorClass = columnInfo.editor!;
+    const EditorClass: CellEditorClass = columnInfo.editor!.type;
     const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
     const cellEditor: CellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
@@ -89,7 +90,7 @@ export class EditingLayerInnerComp extends Component<Props> {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
 
-      if (typeof cellEditor.mounted === 'function') {
+      if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
       }
       document.addEventListener('mousedown', this.handleMouseDownDocument);
@@ -99,6 +100,9 @@ export class EditingLayerInnerComp extends Component<Props> {
   public componentWillUnmount() {
     this.finishEditing(false);
     document.removeEventListener('mousedown', this.handleMouseDownDocument);
+    if (this.editor && this.editor.beforeDestroy) {
+      this.editor.beforeDestroy();
+    }
   }
 
   public render() {

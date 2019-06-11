@@ -12,7 +12,7 @@ function getListItemText(listItems: ListItem[], value: CellValue) {
 }
 
 export function listItemText({ column, value }: FormatterProps) {
-  const { type, listItems } = column.editorOptions as ListItemOptions;
+  const { type, listItems } = column.editor!.options as ListItemOptions;
   if (type === 'checkbox') {
     return String(value)
       .split(',')
