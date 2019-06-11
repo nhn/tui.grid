@@ -211,8 +211,8 @@ describe('rows', () => {
   it('findRows() returns rows that meet the conditions.', () => {
     cy.gridInstance()
       .invoke('findRows', { name: 'Kim' })
-      .should('have.length', 1)
       .then((res) => {
+        expect(res).to.have.length(1);
         expect(res[0]).to.contain({ name: 'Kim', age: 10 });
       });
 
@@ -225,6 +225,7 @@ describe('rows', () => {
         return !!row.age && row.age > 10;
       })
       .then((res) => {
+        expect(res).to.have.length(1);
         expect(res[0]).to.contain({ name: 'Lee', age: 20 });
       });
   });
