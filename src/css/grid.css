@@ -188,6 +188,7 @@
   border-style: solid;
   white-space: nowrap;
   padding: 0;
+  overflow: hidden;
 }
 .tui-grid-cell .tui-grid-cell-content {
   padding: 12px 12px 11px;
