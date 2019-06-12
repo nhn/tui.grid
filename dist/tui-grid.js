@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("tui-date-picker"), require("tui-pagination"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["tui-date-picker", "tui-pagination"], factory);
 	else if(typeof exports === 'object')
-		exports["Grid"] = factory();
+		exports["Grid"] = factory(require("tui-date-picker"), require("tui-pagination"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["Grid"] = factory();
-})(window, function() {
+		root["tui"] = root["tui"] || {}, root["tui"]["Grid"] = factory(root["tui"]["DatePicker"], root["tui"]["Pagination"]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE__46__, __WEBPACK_EXTERNAL_MODULE__78__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -469,6 +469,10 @@ function createMapFromArray(arr, propName) {
     return resultMap;
 }
 exports.createMapFromArray = createMapFromArray;
+function isFunction(obj) {
+    return typeof obj === 'function';
+}
+exports.isFunction = isFunction;
 function isObject(obj) {
     return typeof obj === 'object' && obj !== null;
 }
@@ -555,6 +559,22 @@ function isNumber(value) {
     return typeof value === 'number';
 }
 exports.isNumber = isNumber;
+function isString(value) {
+    return typeof value === 'string';
+}
+exports.isString = isString;
+/**
+ * check the emptiness(included null) of object or array. if obj parameter is null or undefind, return true
+ * @param obj - target object or array
+ * @returns the emptiness of obj
+ */
+function isEmpty(obj) {
+    return (isNull(obj) ||
+        isUndefined(obj) ||
+        (!isUndefined(obj.length) && obj.length === 0) ||
+        Object.keys(obj).length === 0);
+}
+exports.isEmpty = isEmpty;
 function fromArray(value) {
     return Array.prototype.slice.call(value);
 }
@@ -604,10 +624,115 @@ function pruneObject(obj) {
     return pruned;
 }
 exports.pruneObject = pruneObject;
+function omit(obj) {
+    var propNames = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        propNames[_i - 1] = arguments[_i];
+    }
+    var resultMap = {};
+    for (var key in obj) {
+        if (hasOwnProp(obj, key) && !includes(propNames, key)) {
+            resultMap[key] = obj[key];
+        }
+    }
+    return resultMap;
+}
+exports.omit = omit;
 
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var CLS_PREFIX = 'tui-grid-';
+exports.dataAttr = {
+    ROW_KEY: 'data-row-key',
+    COLUMN_NAME: 'data-column-name',
+    COLUMN_INDEX: 'data-column-index',
+    GRID_ID: 'data-grid-id'
+};
+function cls() {
+    var names = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        names[_i] = arguments[_i];
+    }
+    var result = [];
+    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
+        var name_1 = names_1[_a];
+        var className = void 0;
+        if (Array.isArray(name_1)) {
+            className = name_1[0] ? name_1[1] : null;
+        }
+        else {
+            className = name_1;
+        }
+        if (className) {
+            result.push("" + CLS_PREFIX + className);
+        }
+    }
+    return result.join(' ');
+}
+exports.cls = cls;
+function hasClass(el, className) {
+    return el.className.split(' ').indexOf(cls(className)) !== -1;
+}
+exports.hasClass = hasClass;
+function findParentByTagName(el, tagName) {
+    var currentEl = el;
+    while (currentEl && currentEl.tagName.toLowerCase() !== tagName) {
+        currentEl = currentEl.parentElement;
+    }
+    return currentEl;
+}
+exports.findParentByTagName = findParentByTagName;
+function findParent(el, className) {
+    var currentEl = el;
+    while (currentEl && !hasClass(currentEl, className)) {
+        currentEl = currentEl.parentElement;
+    }
+    return currentEl;
+}
+exports.findParent = findParent;
+function getCellAddress(el) {
+    var cellElement = findParent(el, 'cell');
+    if (!cellElement) {
+        return null;
+    }
+    var rowKey = Number(cellElement.getAttribute(exports.dataAttr.ROW_KEY));
+    var columnName = cellElement.getAttribute(exports.dataAttr.COLUMN_NAME);
+    return { rowKey: rowKey, columnName: columnName };
+}
+exports.getCellAddress = getCellAddress;
+/**
+ * create style element and append it into the head element.
+ * @param {String} id - element id
+ * @param {String} cssString - css string
+ */
+function appendStyleElement(id, cssString) {
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.id = id;
+    style.appendChild(document.createTextNode(cssString));
+    document.getElementsByTagName('head')[0].appendChild(style);
+}
+exports.appendStyleElement = appendStyleElement;
+function setCursorStyle(type) {
+    document.body.style.cursor = type;
+}
+exports.setCursorStyle = setCursorStyle;
+function getCoordinateWithOffset(pageX, pageY) {
+    var pageXWithOffset = pageX - window.pageXOffset;
+    var pageYWithOffset = pageY - window.pageYOffset;
+    return [pageXWithOffset, pageYWithOffset];
+}
+exports.getCoordinateWithOffset = getCoordinateWithOffset;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1347,85 +1472,6 @@ var preact = {
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var CLS_PREFIX = 'tui-grid-';
-function cls() {
-    var names = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        names[_i] = arguments[_i];
-    }
-    var result = [];
-    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
-        var name_1 = names_1[_a];
-        var className = void 0;
-        if (Array.isArray(name_1)) {
-            className = name_1[0] ? name_1[1] : null;
-        }
-        else {
-            className = name_1;
-        }
-        if (className) {
-            result.push("" + CLS_PREFIX + className);
-        }
-    }
-    return result.join(' ');
-}
-exports.cls = cls;
-function hasClass(el, className) {
-    return el.className.split(' ').indexOf(cls(className)) !== -1;
-}
-exports.hasClass = hasClass;
-function findParentByTagName(el, tagName) {
-    var currentEl = el;
-    while (currentEl && currentEl.tagName.toLowerCase() !== tagName) {
-        currentEl = currentEl.parentElement;
-    }
-    return currentEl;
-}
-exports.findParentByTagName = findParentByTagName;
-function findParent(el, className) {
-    var currentEl = el;
-    while (currentEl && !hasClass(currentEl, className)) {
-        currentEl = currentEl.parentElement;
-    }
-    return currentEl;
-}
-exports.findParent = findParent;
-function getCellAddress(el) {
-    var cellElement = findParent(el, 'cell');
-    if (!cellElement) {
-        return null;
-    }
-    var rowKey = Number(cellElement.getAttribute('data-row-key'));
-    var columnName = cellElement.getAttribute('data-column-name');
-    return { rowKey: rowKey, columnName: columnName };
-}
-exports.getCellAddress = getCellAddress;
-/**
- * create style element and append it into the head element.
- * @param {String} id - element id
- * @param {String} cssString - css string
- */
-function appendStyleElement(id, cssString) {
-    var style = document.createElement('style');
-    style.type = 'text/css';
-    style.id = id;
-    style.appendChild(document.createTextNode(cssString));
-    document.getElementsByTagName('head')[0].appendChild(style);
-}
-exports.appendStyleElement = appendStyleElement;
-function setCursorStyle(type) {
-    document.body.style.cursor = type;
-}
-exports.setCursorStyle = setCursorStyle;
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1433,7 +1479,7 @@ exports.setCursorStyle = setCursorStyle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
 var observable_1 = __webpack_require__(5);
 function connect(selector) {
     return function (WrappedComponent) {
@@ -1596,14 +1642,266 @@ exports.getOriginObject = getOriginObject;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
 function isRowHeader(columnName) {
     return ['_number', '_checked'].indexOf(columnName) > -1;
 }
 exports.isRowHeader = isRowHeader;
+function isRowNumColumn(columnName) {
+    return columnName === '_number';
+}
+exports.isRowNumColumn = isRowNumColumn;
+function isCheckboxColumn(columnName) {
+    return columnName === '_checked';
+}
+exports.isCheckboxColumn = isCheckboxColumn;
+function isParentColumnHeader(complexHeaderColumns, name) {
+    return !!complexHeaderColumns.length && common_1.some(function (item) { return item.name === name; }, complexHeaderColumns);
+}
+exports.isParentColumnHeader = isParentColumnHeader;
 
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+var selection_1 = __webpack_require__(13);
+function getMainRowSpan(columnName, rowSpan, data) {
+    var mainRow = rowSpan.mainRow, mainRowKey = rowSpan.mainRowKey;
+    if (mainRow) {
+        return rowSpan;
+    }
+    var mainRowIndex = common_1.findPropIndex('rowKey', mainRowKey, data);
+    return data[mainRowIndex].rowSpanMap[columnName];
+}
+function getRowSpanRange(rowRange, colRange, visibleColumns, data) {
+    var startColumnIndex = colRange[0], endColumnIndex = colRange[1];
+    var startRowIndex = rowRange[0], endRowIndex = rowRange[1];
+    for (var index = startColumnIndex; index <= endColumnIndex; index += 1) {
+        var rawData = data.rawData;
+        var startRowSpanMap = rawData[startRowIndex].rowSpanMap;
+        var endRowSpanMap = rawData[endRowIndex].rowSpanMap;
+        var columnName = visibleColumns[index].name;
+        // get top row index of topmost rowSpan
+        if (startRowSpanMap[columnName]) {
+            var mainRowKey = startRowSpanMap[columnName].mainRowKey;
+            var topRowSpanIndex = common_1.findPropIndex('rowKey', mainRowKey, rawData);
+            startRowIndex = startRowIndex > topRowSpanIndex ? topRowSpanIndex : startRowIndex;
+        }
+        // get bottom row index of bottommost rowSpan
+        if (endRowSpanMap[columnName]) {
+            var _a = endRowSpanMap[columnName], mainRowKey = _a.mainRowKey, spanCount = _a.spanCount;
+            var bottomRowSpanIndex = common_1.findPropIndex('rowKey', mainRowKey, rawData) + spanCount - 1;
+            endRowIndex = endRowIndex < bottomRowSpanIndex ? bottomRowSpanIndex : endRowIndex;
+        }
+    }
+    return startRowIndex !== rowRange[0] || endRowIndex !== rowRange[1]
+        ? getRowSpanRange([startRowIndex, endRowIndex], colRange, visibleColumns, data)
+        : [startRowIndex, endRowIndex];
+}
+function getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, focusRowIndex, data) {
+    var sortedColRange = selection_1.getSortedRange(colRange);
+    var endRowIndex = rowRange[1];
+    var startRowIndex = rowRange[0];
+    // if start row index is different from focused index,
+    // change start row index to focused row index for getting proper row range
+    startRowIndex =
+        !common_1.isNull(focusRowIndex) && startRowIndex !== focusRowIndex ? focusRowIndex : startRowIndex;
+    var sortedRowRange = selection_1.getSortedRange([startRowIndex, endRowIndex]);
+    var _a = getRowSpanRange(sortedRowRange, sortedColRange, visibleColumns, data), startRowSpanIndex = _a[0], endRowSpanIndex = _a[1];
+    return startRowIndex > endRowIndex
+        ? [endRowSpanIndex, startRowSpanIndex]
+        : [startRowSpanIndex, endRowSpanIndex];
+}
+exports.getRowRangeWithRowSpan = getRowRangeWithRowSpan;
+function getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, data) {
+    var mainRowSpan = getMainRowSpan(columnName, rowSpan, data);
+    var mainRowIndex = common_1.findPropIndex('rowKey', mainRowSpan.mainRowKey, data);
+    var spanCount = mainRowSpan.spanCount;
+    var top = rowCoords.offsets[mainRowIndex];
+    var bottom = top;
+    for (var count = 0; count < spanCount; count += 1) {
+        bottom += rowCoords.heights[mainRowIndex + count];
+    }
+    return [top, bottom];
+}
+exports.getVerticalPosWithRowSpan = getVerticalPosWithRowSpan;
+function getRowSpan(rowIndex, columnName, data) {
+    var rowSpanMap = data[rowIndex].rowSpanMap;
+    return rowSpanMap[columnName];
+}
+exports.getRowSpan = getRowSpan;
+/*
+ * get top row index of specific rowSpan cell
+ */
+function getRowSpanTopIndex(rowIndex, columnName, data) {
+    var rowSpan = getRowSpan(rowIndex, columnName, data);
+    if (!rowSpan) {
+        return rowIndex;
+    }
+    return common_1.findPropIndex('rowKey', rowSpan.mainRowKey, data);
+}
+exports.getRowSpanTopIndex = getRowSpanTopIndex;
+/*
+ * get bottom row index of specific rowSpan cell
+ */
+function getRowSpanBottomIndex(rowIndex, columnName, data) {
+    var rowSpan = getRowSpan(rowIndex, columnName, data);
+    if (!rowSpan) {
+        return rowIndex;
+    }
+    var mainRowIndex = common_1.findPropIndex('rowKey', rowSpan.mainRowKey, data);
+    return mainRowIndex + rowSpan.spanCount - 1;
+}
+exports.getRowSpanBottomIndex = getRowSpanBottomIndex;
+function getRowSpanByRowKey(rowKey, columnName, data) {
+    var rowIndex = common_1.findPropIndex('rowKey', rowKey, data);
+    if (rowIndex === -1) {
+        return null;
+    }
+    return getRowSpan(rowIndex, columnName, data) || null;
+}
+exports.getRowSpanByRowKey = getRowSpanByRowKey;
+/*
+ * get max rowSpan count in all columns that have rowSpan
+ */
+function getMaxRowSpanCount(rowIndex, data) {
+    var rowSpanMap = data[rowIndex].rowSpanMap;
+    if (common_1.isEmpty(rowSpanMap)) {
+        return 0;
+    }
+    return Object.keys(rowSpanMap).reduce(function (acc, columnName) { return Math.max(acc, rowSpanMap[columnName].spanCount); }, 0);
+}
+exports.getMaxRowSpanCount = getMaxRowSpanCount;
+function enableRowSpan(columnName) {
+    return columnName === 'rowKey';
+}
+exports.enableRowSpan = enableRowSpan;
+function createRowSpan(mainRow, rowKey, count, spanCount) {
+    return { mainRow: mainRow, mainRowKey: rowKey, count: count, spanCount: spanCount };
+}
+exports.createRowSpan = createRowSpan;
+function updateSubRowSpan(data, mainRow, columnName, startOffset, spanCount) {
+    var mainRowIndex = common_1.findPropIndex('rowKey', mainRow.rowKey, data);
+    for (var offset = startOffset; offset < spanCount; offset += 1) {
+        var row = data[mainRowIndex + offset];
+        row.rowSpanMap[columnName] = createRowSpan(false, mainRow.rowKey, -offset, spanCount);
+    }
+}
+function updateRowSpanWhenAppend(data, prevRow, extendPrevRowSpan) {
+    var prevRowSpanMap = prevRow.rowSpanMap;
+    if (common_1.isEmpty(prevRowSpanMap)) {
+        return;
+    }
+    Object.keys(prevRowSpanMap).forEach(function (columnName) {
+        var prevRowSpan = prevRowSpanMap[columnName];
+        if (prevRowSpan) {
+            var count = prevRowSpan.count, keyRow = prevRowSpan.mainRow, mainRowKey = prevRowSpan.mainRowKey;
+            var mainRow = keyRow ? prevRow : common_1.findProp('rowKey', mainRowKey, data);
+            var mainRowSpan = mainRow.rowSpanMap[columnName];
+            var startOffset = keyRow || extendPrevRowSpan ? 1 : -count + 1;
+            // keep rowSpan state when appends row in the middle of rowSpan
+            if (mainRowSpan.spanCount > startOffset) {
+                mainRowSpan.count += 1;
+                mainRowSpan.spanCount += 1;
+                updateSubRowSpan(data, mainRow, columnName, 1, mainRowSpan.spanCount);
+            }
+        }
+    });
+}
+exports.updateRowSpanWhenAppend = updateRowSpanWhenAppend;
+function updateRowSpanWhenRemove(data, removedRow, nextRow, keepRowSpanData) {
+    var removedRowSpanMap = removedRow.rowSpanMap;
+    if (common_1.isEmpty(removedRowSpanMap)) {
+        return;
+    }
+    Object.keys(removedRowSpanMap).forEach(function (columnName) {
+        var removedRowSpan = removedRowSpanMap[columnName];
+        var count = removedRowSpan.count, keyRow = removedRowSpan.mainRow, mainRowKey = removedRowSpan.mainRowKey;
+        var mainRow, spanCount;
+        if (keyRow) {
+            mainRow = nextRow;
+            spanCount = count - 1;
+            if (spanCount > 1) {
+                var mainRowSpan = mainRow.rowSpanMap[columnName];
+                mainRowSpan.mainRowKey = mainRow.rowKey;
+                mainRowSpan.mainRow = true;
+            }
+            if (keepRowSpanData) {
+                mainRow[columnName] = removedRow[columnName];
+            }
+        }
+        else {
+            mainRow = common_1.findProp('rowKey', mainRowKey, data);
+            spanCount = mainRow.rowSpanMap[columnName].spanCount - 1;
+        }
+        if (spanCount > 1) {
+            var mainRowSpan = mainRow.rowSpanMap[columnName];
+            mainRowSpan.count = spanCount;
+            mainRowSpan.spanCount = spanCount;
+            updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
+        }
+        else {
+            delete mainRow.rowSpanMap[columnName];
+        }
+    });
+}
+exports.updateRowSpanWhenRemove = updateRowSpanWhenRemove;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+var currentId = 0;
+var instanceMap = {};
+function generateId() {
+    currentId += 1;
+    return currentId;
+}
+function register(instance) {
+    var id = generateId();
+    if (!common_1.isObject(instanceMap[id])) {
+        instanceMap[id] = {};
+    }
+    instanceMap[id].grid = instance;
+    return id;
+}
+exports.register = register;
+function registerDataSources(id, dataProvider, dataManager, paginationManager) {
+    instanceMap[id].dataProvider = dataProvider;
+    instanceMap[id].dataManager = dataManager;
+    instanceMap[id].paginationManager = paginationManager;
+}
+exports.registerDataSources = registerDataSources;
+function getInstance(id) {
+    return instanceMap[id].grid;
+}
+exports.getInstance = getInstance;
+function getDataProvider(id) {
+    return instanceMap[id].dataProvider;
+}
+exports.getDataProvider = getDataProvider;
+function getDataManager(id) {
+    return instanceMap[id].dataManager;
+}
+exports.getDataManager = getDataManager;
+function getPaginationManager(id) {
+    return instanceMap[id].paginationManager;
+}
+exports.getPaginationManager = getPaginationManager;
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1650,32 +1948,527 @@ exports.getEventBus = getEventBus;
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var currentId = 0;
-var instanceMap = {};
-function generateId() {
-    currentId += 1;
-    return currentId;
+var tslib_1 = __webpack_require__(0);
+var dom_1 = __webpack_require__(2);
+var common_1 = __webpack_require__(1);
+var column_1 = __webpack_require__(6);
+function getTargetInfo(nativeEvent) {
+    var targetType = 'etc';
+    var target = nativeEvent.target;
+    var cell = dom_1.findParentByTagName(target, 'td');
+    var rowKey, columnName;
+    if (cell) {
+        var address = dom_1.getCellAddress(cell);
+        if (address) {
+            rowKey = address.rowKey;
+            columnName = address.columnName;
+            targetType = column_1.isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
+        }
+        else {
+            targetType = 'dummy';
+        }
+    }
+    else {
+        cell = dom_1.findParentByTagName(target, 'th');
+        if (cell) {
+            columnName = cell.getAttribute(dom_1.dataAttr.COLUMN_NAME);
+            targetType = 'columnHeader';
+        }
+    }
+    return common_1.pruneObject({
+        nativeEvent: nativeEvent,
+        targetType: targetType,
+        rowKey: rowKey,
+        columnName: columnName
+    });
 }
-function register(instance) {
-    var id = generateId();
-    instanceMap[id] = instance;
-    return id;
-}
-exports.register = register;
-function getInstance(id) {
-    return instanceMap[id];
-}
-exports.getInstance = getInstance;
+var GridEvent = /** @class */ (function () {
+    function GridEvent(_a) {
+        var event = _a.event, props = tslib_1.__rest(_a, ["event"]);
+        this.stopped = false;
+        if (event) {
+            this.assignData(getTargetInfo(event));
+        }
+        if (props) {
+            this.assignData(props);
+        }
+    }
+    GridEvent.prototype.stop = function () {
+        this.stopped = true;
+    };
+    GridEvent.prototype.isStopped = function () {
+        return this.stopped;
+    };
+    GridEvent.prototype.assignData = function (data) {
+        common_1.assign(this, data);
+    };
+    GridEvent.prototype.setInstance = function (instance) {
+        common_1.assign(this, { instance: instance });
+    };
+    return GridEvent;
+}());
+exports.default = GridEvent;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var observable_1 = __webpack_require__(5);
+var column_1 = __webpack_require__(6);
+var common_1 = __webpack_require__(1);
+var listItemText_1 = __webpack_require__(39);
+var tree_1 = __webpack_require__(12);
+var rowSpan_1 = __webpack_require__(7);
+function getCellDisplayValue(value) {
+    if (typeof value === 'undefined' || value === null) {
+        return '';
+    }
+    return String(value);
+}
+exports.getCellDisplayValue = getCellDisplayValue;
+function getFormattedValue(props, formatter, defaultValue) {
+    var value;
+    if (formatter === 'listItemText') {
+        value = listItemText_1.listItemText(props);
+    }
+    else if (typeof formatter === 'function') {
+        value = formatter(props);
+    }
+    else if (typeof formatter === 'string') {
+        value = formatter;
+    }
+    else {
+        value = defaultValue;
+    }
+    var strValue = getCellDisplayValue(value);
+    if (strValue && props.column.escapeHTML) {
+        return common_1.encodeHTMLEntity(strValue);
+    }
+    return strValue;
+}
+function getRelationCbResult(fn, relationParams) {
+    return typeof fn === 'function' ? fn(relationParams) || null : null;
+}
+function getEditable(fn, relationParams) {
+    var result = getRelationCbResult(fn, relationParams);
+    return result === null ? true : result;
+}
+function getDisabled(fn, relationParams) {
+    var result = getRelationCbResult(fn, relationParams);
+    return result === null ? false : result;
+}
+function getListItems(fn, relationParams) {
+    return getRelationCbResult(fn, relationParams);
+}
+function getRowHeaderValue(row, columnName) {
+    if (column_1.isRowNumColumn(columnName)) {
+        return row._attributes.rowNum;
+    }
+    if (column_1.isCheckboxColumn(columnName)) {
+        return row._attributes.checked;
+    }
+    return '';
+}
+function getValidationCode(value, validation) {
+    if (validation && validation.required && common_1.isBlank(value)) {
+        return 'REQUIRED';
+    }
+    if (validation && validation.dataType === 'string' && !common_1.isString(value)) {
+        return 'TYPE_STRING';
+    }
+    if (validation && validation.dataType === 'number' && !common_1.isNumber(value)) {
+        return 'TYPE_NUMBER';
+    }
+    return '';
+}
+function createViewCell(row, column, related) {
+    var name = column.name, formatter = column.formatter, prefix = column.prefix, postfix = column.postfix, editor = column.editor, validation = column.validation;
+    var value = column_1.isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
+    if (related) {
+        value = '';
+    }
+    var formatterProps = { row: row, column: column, value: value };
+    var _a = row._attributes, disabled = _a.disabled, checkDisabled = _a.checkDisabled, className = _a.className;
+    var columnClassName = common_1.isUndefined(className.column[name]) ? [] : className.column[name];
+    return {
+        editable: !!editor,
+        className: className.row.concat(columnClassName).join(' '),
+        disabled: column_1.isCheckboxColumn(name) ? checkDisabled : disabled,
+        invalidState: getValidationCode(value, validation),
+        formattedValue: getFormattedValue(formatterProps, formatter, value),
+        prefix: getFormattedValue(formatterProps, prefix),
+        postfix: getFormattedValue(formatterProps, postfix),
+        value: value
+    };
+}
+function createRelationViewCell(name, row, columnMap, valueMap) {
+    var _a = valueMap[name], editable = _a.editable, disabled = _a.disabled, value = _a.value;
+    var _b = columnMap[name].relationMap, relationMap = _b === void 0 ? {} : _b;
+    Object.keys(relationMap).forEach(function (targetName) {
+        var _a = relationMap[targetName], editableCallback = _a.editable, disabledCallback = _a.disabled, listItemsCallback = _a.listItems;
+        var relationCbParams = { value: value, editable: editable, disabled: disabled, row: row };
+        var targetEditable = getEditable(editableCallback, relationCbParams);
+        var targetDisabled = getDisabled(disabledCallback, relationCbParams);
+        var targetListItems = getListItems(listItemsCallback, relationCbParams);
+        var targetValue = row[targetName];
+        var targetEditor = columnMap[targetName].editor;
+        var targetEditorOptions = targetEditor && targetEditor.options;
+        var hasValue = targetListItems ? common_1.someProp('value', targetValue, targetListItems) : false;
+        if (targetEditorOptions && Array.isArray(targetEditorOptions.listItems)) {
+            targetEditorOptions.listItems = targetListItems || [];
+        }
+        var cellData = createViewCell(row, columnMap[targetName], !hasValue);
+        if (!targetEditable) {
+            cellData.editable = false;
+        }
+        if (targetDisabled) {
+            cellData.disabled = true;
+        }
+        valueMap[targetName] = cellData;
+    });
+}
+function createViewRow(row, columnMap, rawData, treeColumnName, treeIcon) {
+    var rowKey = row.rowKey;
+    var initValueMap = {};
+    Object.keys(columnMap).forEach(function (name) {
+        initValueMap[name] = null;
+    });
+    var valueMap = observable_1.observable(initValueMap);
+    var __unobserveFns__ = [];
+    Object.keys(columnMap).forEach(function (name) {
+        var _a = columnMap[name], related = _a.related, relationMap = _a.relationMap;
+        // add condition expression to prevent to call watch function recursively
+        if (!related) {
+            __unobserveFns__.push(observable_1.observe(function () {
+                valueMap[name] = createViewCell(row, columnMap[name]);
+            }));
+        }
+        // @TODO need to improve relation
+        if (relationMap && Object.keys(relationMap).length) {
+            __unobserveFns__.push(observable_1.observe(function () {
+                createRelationViewCell(name, row, columnMap, valueMap);
+            }));
+        }
+    });
+    return tslib_1.__assign({ rowKey: rowKey,
+        valueMap: valueMap,
+        __unobserveFns__: __unobserveFns__ }, (treeColumnName && { treeInfo: tree_1.createTreeCellInfo(rawData, row, treeIcon) }));
+}
+exports.createViewRow = createViewRow;
+function getAttributes(row, index) {
+    var defaultAttr = {
+        rowNum: index + 1,
+        checked: false,
+        disabled: false,
+        checkDisabled: false,
+        className: {
+            row: [],
+            column: {}
+        }
+    };
+    if (row._attributes) {
+        if (common_1.isBoolean(row._attributes.disabled) && common_1.isUndefined(row._attributes.checkDisabled)) {
+            row._attributes.checkDisabled = row._attributes.disabled;
+        }
+        if (!common_1.isUndefined(row._attributes.className)) {
+            row._attributes.className = tslib_1.__assign({ row: [], column: {} }, row._attributes.className);
+        }
+    }
+    return observable_1.observable(tslib_1.__assign({}, defaultAttr, row._attributes));
+}
+function createMainRowSpanMap(rowSpan, rowKey) {
+    var mainRowSpanMap = {};
+    if (!rowSpan) {
+        return mainRowSpanMap;
+    }
+    Object.keys(rowSpan).forEach(function (columnName) {
+        var spanCount = rowSpan[columnName];
+        mainRowSpanMap[columnName] = rowSpan_1.createRowSpan(true, rowKey, spanCount, spanCount);
+    });
+    return mainRowSpanMap;
+}
+function createSubRowSpan(prevRowSpanMap) {
+    var subRowSpanMap = {};
+    Object.keys(prevRowSpanMap).forEach(function (columnName) {
+        var prevRowSpan = prevRowSpanMap[columnName];
+        if (prevRowSpan.spanCount > -prevRowSpan.count + 1) {
+            var mainRowKey = prevRowSpan.mainRowKey, count = prevRowSpan.count, spanCount = prevRowSpan.spanCount;
+            var subRowCount = count >= 0 ? -1 : count - 1;
+            subRowSpanMap[columnName] = rowSpan_1.createRowSpan(false, mainRowKey, subRowCount, spanCount);
+        }
+    });
+    return subRowSpanMap;
+}
+function createRowSpanMap(row, rowSpan, prevRow) {
+    var rowSpanMap = {};
+    var rowKey = row.rowKey;
+    if (!common_1.isEmpty(rowSpan)) {
+        return createMainRowSpanMap(rowSpan, rowKey);
+    }
+    if (prevRow) {
+        var prevRowSpanMap = prevRow.rowSpanMap;
+        if (!common_1.isEmpty(prevRowSpanMap)) {
+            return createSubRowSpan(prevRowSpanMap);
+        }
+    }
+    return rowSpanMap;
+}
+function createRawRow(row, index, defaultValues, keyColumnName, prevRow) {
+    // this rowSpan variable is attribute option before creating rowSpanDataMap
+    var rowSpan;
+    if (row._attributes) {
+        rowSpan = row._attributes.rowSpan;
+        // protect to create uneccesary reactive data
+        delete row._attributes.rowSpan;
+    }
+    row.rowKey = keyColumnName ? row[keyColumnName] : index;
+    row._attributes = getAttributes(row, index);
+    row.rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
+    defaultValues.forEach(function (_a) {
+        var name = _a.name, value = _a.value;
+        common_1.setDefaultProp(row, name, value);
+    });
+    return observable_1.observable(row);
+}
+exports.createRawRow = createRawRow;
+function createData(data, column) {
+    var defaultValues = column.defaultValues, keyColumnName = column.keyColumnName, allColumnMap = column.allColumnMap, _a = column.treeColumnName, treeColumnName = _a === void 0 ? '' : _a, _b = column.treeIcon, treeIcon = _b === void 0 ? true : _b;
+    var rawData;
+    if (treeColumnName) {
+        rawData = tree_1.createTreeRawData(data, defaultValues, keyColumnName);
+    }
+    else {
+        rawData = data.map(function (row, index, rows) {
+            return createRawRow(row, index, defaultValues, keyColumnName, rows[index - 1]);
+        });
+    }
+    var viewData = rawData.map(function (row) {
+        return createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
+    });
+    return { rawData: rawData, viewData: viewData };
+}
+exports.createData = createData;
+function create(data, column, pageOptions, useClientSort) {
+    // @TODO add client pagination logic
+    var _a = createData(data, column), rawData = _a.rawData, viewData = _a.viewData;
+    var sortOptions = { columnName: 'rowKey', ascending: true, useClient: useClientSort };
+    return observable_1.observable({
+        disabled: false,
+        rawData: rawData,
+        viewData: viewData,
+        sortOptions: sortOptions,
+        pageOptions: pageOptions,
+        get checkedAllRows() {
+            var allRawData = this.rawData;
+            var checkedRows = allRawData.filter(function (row) { return row._attributes.checked; });
+            return checkedRows.length === allRawData.length;
+        }
+    });
+}
+exports.create = create;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var data_1 = __webpack_require__(11);
+var observable_1 = __webpack_require__(5);
+var common_1 = __webpack_require__(1);
+exports.DEFAULT_INDENT_WIDTH = 22;
+var treeRowKey = -1;
+function generateTreeRowKey() {
+    // @TODO 키 제너레이터 추가
+    treeRowKey += 1;
+    return treeRowKey;
+}
+function addChildRowKey(row, rowKey) {
+    var tree = row._attributes.tree;
+    if (tree && !common_1.includes(tree.childRowKeys, rowKey)) {
+        tree.childRowKeys.push(rowKey);
+        observable_1.notify(tree, 'childRowKeys');
+    }
+}
+exports.addChildRowKey = addChildRowKey;
+function removeChildRowKey(row, rowKey) {
+    var tree = row._attributes.tree;
+    if (tree) {
+        common_1.removeArrayItem(rowKey, tree.childRowKeys);
+        observable_1.notify(tree, 'childRowKeys');
+    }
+}
+exports.removeChildRowKey = removeChildRowKey;
+function getParentRowKey(row) {
+    var tree = row._attributes.tree;
+    return tree && tree.parentRowKey !== row.rowKey ? tree.parentRowKey : null;
+}
+exports.getParentRowKey = getParentRowKey;
+function getChildRowKeys(row) {
+    var tree = row._attributes.tree;
+    return tree ? tree.childRowKeys.slice() : [];
+}
+exports.getChildRowKeys = getChildRowKeys;
+function isLeaf(row) {
+    var tree = row._attributes.tree;
+    return !!tree && !tree.childRowKeys.length;
+}
+exports.isLeaf = isLeaf;
+function isExpanded(row) {
+    var tree = row._attributes.tree;
+    return !!tree && tree.expanded;
+}
+exports.isExpanded = isExpanded;
+function getDepth(rawData, row) {
+    var parentRow = row;
+    var depth = 0;
+    do {
+        depth += 1;
+        parentRow = common_1.findProp('rowKey', getParentRowKey(parentRow), rawData);
+    } while (parentRow);
+    return depth;
+}
+exports.getDepth = getDepth;
+function hasChildrenState(row) {
+    var _children = row._children;
+    return Array.isArray(_children) && _children.length > 0;
+}
+function getExpandedState(row) {
+    if (row && row._attributes) {
+        var _a = row._attributes.expanded, expanded = _a === void 0 ? true : _a;
+        return expanded;
+    }
+    return true;
+}
+function getHiddenChildState(row) {
+    if (row) {
+        var tree = row._attributes.tree;
+        var collapsed = !isExpanded(row);
+        var hiddenChild = !!(tree && tree.hiddenChild);
+        return collapsed || hiddenChild;
+    }
+    return false;
+}
+exports.getHiddenChildState = getHiddenChildState;
+function createTreeRawRow(row, defaultValues, parentRow, keyColumnName) {
+    var rawRow = data_1.createRawRow(row, generateTreeRowKey(), defaultValues, keyColumnName);
+    var rowKey = rawRow.rowKey;
+    var defaultAttributes = {
+        parentRowKey: parentRow ? parentRow.rowKey : null,
+        childRowKeys: []
+    };
+    if (parentRow) {
+        addChildRowKey(parentRow, rowKey);
+    }
+    rawRow._attributes.tree = observable_1.observable(tslib_1.__assign({}, defaultAttributes, (hasChildrenState(row) && { expanded: getExpandedState(row) }), (!!parentRow && { hiddenChild: getHiddenChildState(parentRow) })));
+    return rawRow;
+}
+function flattenTreeData(data, defaultValues, parentRow, keyColumnName) {
+    var flattenedRows = [];
+    data.forEach(function (row) {
+        var rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName);
+        flattenedRows.push(rawRow);
+        if (hasChildrenState(row)) {
+            flattenedRows.push.apply(flattenedRows, flattenTreeData(row._children || [], defaultValues, rawRow, keyColumnName));
+            delete rawRow._children;
+        }
+    });
+    return flattenedRows;
+}
+exports.flattenTreeData = flattenTreeData;
+function createTreeRawData(data, defaultValues, keyColumnName) {
+    treeRowKey = -1;
+    return flattenTreeData(data, defaultValues, null, keyColumnName);
+}
+exports.createTreeRawData = createTreeRawData;
+function getTreeCellInfo(rawData, row, useIcon) {
+    var depth = getDepth(rawData, row);
+    var indentWidth = depth * exports.DEFAULT_INDENT_WIDTH;
+    if (useIcon) {
+        indentWidth += exports.DEFAULT_INDENT_WIDTH;
+    }
+    return {
+        depth: depth,
+        indentWidth: indentWidth,
+        leaf: isLeaf(row),
+        expanded: isExpanded(row)
+    };
+}
+exports.getTreeCellInfo = getTreeCellInfo;
+function createTreeCellInfo(rawData, row, useIcon) {
+    var treeInfo = observable_1.observable(getTreeCellInfo(rawData, row, useIcon));
+    observable_1.observe(function () {
+        treeInfo.expanded = isExpanded(row);
+        treeInfo.leaf = isLeaf(row);
+    });
+    return treeInfo;
+}
+exports.createTreeCellInfo = createTreeCellInfo;
+function traverseAncestorRows(rawData, row, iteratee) {
+    var parentRowKey = getParentRowKey(row);
+    var parentRow;
+    while (!common_1.isNull(parentRowKey)) {
+        parentRow = common_1.findProp('rowKey', parentRowKey, rawData);
+        iteratee(parentRow);
+        parentRowKey = parentRow ? getParentRowKey(parentRow) : null;
+    }
+}
+exports.traverseAncestorRows = traverseAncestorRows;
+function traverseDescendantRows(rawData, row, iteratee) {
+    var childRowKeys = getChildRowKeys(row);
+    var rowKey, childRow;
+    while (childRowKeys.length) {
+        rowKey = childRowKeys.shift();
+        childRow = common_1.findProp('rowKey', rowKey, rawData);
+        iteratee(childRow);
+        if (childRow) {
+            childRowKeys = childRowKeys.concat(getChildRowKeys(childRow));
+        }
+    }
+}
+exports.traverseDescendantRows = traverseDescendantRows;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+function isSameInputRange(inp1, inp2) {
+    if (common_1.isNull(inp1) || common_1.isNull(inp2)) {
+        return inp1 === inp2;
+    }
+    return (inp1.column[0] === inp2.column[0] &&
+        inp1.column[1] === inp2.column[1] &&
+        inp1.row[0] === inp2.row[0] &&
+        inp1.row[1] === inp2.row[1]);
+}
+exports.isSameInputRange = isSameInputRange;
+function getSortedRange(range) {
+    return range[0] > range[1] ? [range[1], range[0]] : range;
+}
+exports.getSortedRange = getSortedRange;
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1751,7 +2544,8 @@ function getCustomValue(customValue, value, rowAttrs, column) {
 exports.getCustomValue = getCustomValue;
 function getTextWithCopyOptionsApplied(valueMap, rawData, column) {
     var text = valueMap.value;
-    var copyOptions = column.copyOptions, editorOptions = column.editorOptions;
+    var copyOptions = column.copyOptions, editor = column.editor;
+    var editorOptions = editor && editor.options;
     // priority: customValue > useListItemText > useFormattedValue > original Data
     if (copyOptions) {
         if (copyOptions.customValue) {
@@ -1794,78 +2588,7 @@ exports.isSupportWindowClipboardData = isSupportWindowClipboardData;
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var dom_1 = __webpack_require__(3);
-var common_1 = __webpack_require__(1);
-var column_1 = __webpack_require__(6);
-function getTargetInfo(nativeEvent) {
-    var targetType = 'etc';
-    var target = nativeEvent.target;
-    var cell = dom_1.findParentByTagName(target, 'td');
-    var rowKey, columnName;
-    if (cell) {
-        var address = dom_1.getCellAddress(cell);
-        if (address) {
-            // eslint-disable-next-line prefer-destructuring
-            rowKey = address.rowKey;
-            // eslint-disable-next-line prefer-destructuring
-            columnName = address.columnName;
-            targetType = column_1.isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
-        }
-        else {
-            targetType = 'dummy';
-        }
-    }
-    else {
-        cell = dom_1.findParentByTagName(target, 'th');
-        if (cell) {
-            columnName = cell.getAttribute('data-column-name');
-            targetType = 'columnHeader';
-        }
-    }
-    return common_1.pruneObject({
-        nativeEvent: nativeEvent,
-        targetType: targetType,
-        rowKey: rowKey,
-        columnName: columnName
-    });
-}
-var GridEvent = /** @class */ (function () {
-    function GridEvent(_a) {
-        var event = _a.event, props = tslib_1.__rest(_a, ["event"]);
-        this.stopped = false;
-        if (event) {
-            this.assignData(getTargetInfo(event));
-        }
-        if (props) {
-            this.assignData(props);
-        }
-    }
-    GridEvent.prototype.stop = function () {
-        this.stopped = true;
-    };
-    GridEvent.prototype.isStopped = function () {
-        return this.stopped;
-    };
-    GridEvent.prototype.assignData = function (data) {
-        common_1.assign(this, data);
-    };
-    GridEvent.prototype.setInstance = function (instance) {
-        common_1.assign(this, { instance: instance });
-    };
-    return GridEvent;
-}());
-exports.default = GridEvent;
-
-
-/***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1873,9 +2596,10 @@ exports.default = GridEvent;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
-var eventBus_1 = __webpack_require__(7);
-var selection_1 = __webpack_require__(64);
+var eventBus_1 = __webpack_require__(9);
+var selection_1 = __webpack_require__(13);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
+var rowSpan_1 = __webpack_require__(7);
 function changeSelectionRange(selection, inputRange, id) {
     if (!selection_1.isSameInputRange(selection.inputRange, inputRange)) {
         selection.inputRange = inputRange;
@@ -1886,13 +2610,20 @@ function changeSelectionRange(selection, inputRange, id) {
 }
 exports.changeSelectionRange = changeSelectionRange;
 function setSelection(store, range) {
-    var selection = store.selection, viewData = store.data.viewData, visibleColumns = store.column.visibleColumns, id = store.id;
+    var _a;
+    var selection = store.selection, data = store.data, visibleColumns = store.column.visibleColumns, id = store.id;
+    var viewData = data.viewData, sortOptions = data.sortOptions;
     var rowLength = viewData.length;
     var columnLength = visibleColumns.length;
     var startRowIndex = common_1.clamp(range.start[0], 0, rowLength - 1);
     var endRowIndex = common_1.clamp(range.end[0], 0, rowLength - 1);
     var startColumnIndex = common_1.clamp(range.start[1], 0, columnLength - 1);
     var endColumnIndex = common_1.clamp(range.end[1], 0, columnLength - 1);
+    if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        var rowRange = [startRowIndex, endRowIndex];
+        var colRange = [startColumnIndex, endColumnIndex];
+        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, null, data), startRowIndex = _a[0], endRowIndex = _a[1];
+    }
     var inputRange = {
         row: [startRowIndex, endRowIndex],
         column: [startColumnIndex, endColumnIndex]
@@ -1903,42 +2634,194 @@ exports.setSelection = setSelection;
 
 
 /***/ }),
-/* 12 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var observable_1 = __webpack_require__(5);
+var common_1 = __webpack_require__(1);
+function getRowHeight(row, defaultRowHeight) {
+    var _a = row._attributes, height = _a.height, tree = _a.tree;
+    var rowHeight = tree && tree.hiddenChild ? 0 : height;
+    return common_1.isNumber(rowHeight) ? rowHeight : defaultRowHeight;
+}
+exports.getRowHeight = getRowHeight;
+function create(_a) {
+    var data = _a.data, dimension = _a.dimension;
+    var rowHeight = dimension.rowHeight;
+    return observable_1.observable({
+        heights: data.rawData.map(function (row) { return getRowHeight(row, rowHeight); }),
+        get offsets() {
+            var offsets = [0];
+            var heights = this.heights;
+            for (var i = 1, len = heights.length; i < len; i += 1) {
+                offsets[i] = offsets[i - 1] + heights[i - 1];
+            }
+            return offsets;
+        },
+        get totalRowHeight() {
+            return common_1.last(this.offsets) + common_1.last(this.heights);
+        }
+    });
+}
+exports.create = create;
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
+var dom_1 = __webpack_require__(2);
 var ColGroupComp = /** @class */ (function (_super) {
     tslib_1.__extends(ColGroupComp, _super);
     function ColGroupComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ColGroupComp.prototype.render = function (_a) {
+        var _b;
         var columns = _a.columns, widths = _a.widths, borderWidth = _a.borderWidth;
+        var attrs = (_b = {}, _b[dom_1.dataAttr.COLUMN_NAME] = name, _b);
         return (preact_1.h("colgroup", null, columns.map(function (_a, idx) {
             var name = _a.name;
-            return (preact_1.h("col", { key: name, "data-column-name": name, style: { width: widths[idx] + borderWidth } }));
+            return (preact_1.h("col", tslib_1.__assign({ key: name }, attrs, { style: { width: widths[idx] + borderWidth } })));
         })));
     };
     return ColGroupComp;
 }(preact_1.Component));
 exports.ColGroup = hoc_1.connect(function (_a, _b) {
-    var columnCoords = _a.columnCoords, dimension = _a.dimension, column = _a.column;
-    var side = _b.side;
+    var columnCoords = _a.columnCoords, viewport = _a.viewport, dimension = _a.dimension, column = _a.column;
+    var side = _b.side, useViewport = _b.useViewport;
     return ({
         widths: columnCoords.widths[side],
-        columns: column.visibleColumnsBySide[side],
+        columns: useViewport && side === 'R' ? viewport.columns : column.visibleColumnsBySide[side],
         borderWidth: dimension.cellBorderWidth
     });
 })(ColGroupComp);
 
 
 /***/ }),
-/* 13 */
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var messages = {
+    en: {
+        display: {
+            noData: 'No data.',
+            loadingData: 'Loading data.',
+            resizeHandleGuide: 'You can change the width of the column by mouse drag, and initialize the width by double-clicking.'
+        },
+        net: {
+            confirmCreate: 'Are you sure you want to create {{count}} data?',
+            confirmUpdate: 'Are you sure you want to update {{count}} data?',
+            confirmDelete: 'Are you sure you want to delete {{count}} data?',
+            confirmModify: 'Are you sure you want to modify {{count}} data?',
+            noDataToCreate: 'No data to create.',
+            noDataToUpdate: 'No data to update.',
+            noDataToDelete: 'No data to delete.',
+            noDataToModify: 'No data to modify.',
+            failResponse: 'An error occurred while requesting data.\nPlease try again.'
+        }
+    },
+    ko: {
+        display: {
+            noData: '데이터가 존재하지 않습니다.',
+            loadingData: '데이터를 불러오는 중입니다.',
+            resizeHandleGuide: '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
+        },
+        net: {
+            confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',
+            confirmUpdate: '{{count}}건의 데이터를 수정하겠습니까?',
+            confirmDelete: '{{count}}건의 데이터를 삭제하겠습니까?',
+            confirmModify: '{{count}}건의 데이터를 처리하겠습니까?',
+            noDataToCreate: '생성할 데이터가 없습니다.',
+            noDataToUpdate: '수정할 데이터가 없습니다.',
+            noDataToDelete: '삭제할 데이터가 없습니다.',
+            noDataToModify: '처리할 데이터가 없습니다.',
+            failResponse: '데이터 요청 중에 에러가 발생하였습니다.\n다시 시도하여 주시기 바랍니다.'
+        }
+    }
+};
+var messageMap = {};
+/**
+ * Flatten message map
+ * @param {object} data - Messages
+ * @returns {object} Flatten message object (key format is 'key.subKey')
+ * @ignore
+ */
+function flattenMessageMap(data) {
+    if (data === void 0) { data = {}; }
+    var obj = {};
+    var newKey;
+    Object.keys(data).forEach(function (key) {
+        var keyWithType = key;
+        var groupMessages = data[keyWithType];
+        Object.keys(groupMessages).forEach(function (subKey) {
+            newKey = key + "." + subKey;
+            obj[newKey] = groupMessages[subKey];
+        });
+    });
+    return obj;
+}
+/**
+ * Replace text
+ * @param {string} text - Text including handlebar expression
+ * @param {Object} values - Replaced values
+ * @returns {string} Replaced text
+ */
+function replaceText(text, values) {
+    return text.replace(/\{\{(\w*)\}\}/g, function (_, prop) {
+        return values.hasOwnProperty(prop) ? values[prop] : '';
+    });
+}
+exports.default = {
+    /**
+     * Set messages
+     * @param {string} localeCode - Code to set locale messages and
+     *     this is the language or language-region combination. (ex: en-US)
+     * @param {object} [data] - Messages using in Grid
+     */
+    setLanguage: function (localeCode, data) {
+        var localeMessages = messages[localeCode];
+        if (!localeMessages && !data) {
+            throw new Error('You should set messages to map the locale code.');
+        }
+        var newData = flattenMessageMap(data);
+        if (localeMessages) {
+            var originData = flattenMessageMap(localeMessages);
+            messageMap = tslib_1.__assign({}, originData, newData);
+        }
+        else {
+            messageMap = newData;
+        }
+    },
+    /**
+     * Get message
+     * @param {string} key - Key to find message (ex: 'net.confirmCreate')
+     * @param {object} [replacements] - Values to replace string
+     * @returns {string} Message
+     */
+    get: function (key, replacements) {
+        if (replacements === void 0) { replacements = {}; }
+        var message = messageMap[key];
+        return replaceText(message, replacements);
+    }
+};
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2075,16 +2958,38 @@ function getPageMovedIndex(offsets, cellBorderWidth, movedPosition) {
     return common_1.clamp(movedIndex, 0, offsets.length - 1);
 }
 exports.getPageMovedIndex = getPageMovedIndex;
+function getPrevRowIndex(rowIndex, heights) {
+    var index = rowIndex;
+    while (index > 0) {
+        index -= 1;
+        if (heights[index]) {
+            break;
+        }
+    }
+    return index;
+}
+exports.getPrevRowIndex = getPrevRowIndex;
+function getNextRowIndex(rowIndex, heights) {
+    var index = rowIndex;
+    while (index < heights.length - 1) {
+        index += 1;
+        if (heights[index]) {
+            break;
+        }
+    }
+    return index;
+}
+exports.getNextRowIndex = getNextRowIndex;
 
 
 /***/ }),
-/* 14 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var clipboard_1 = __webpack_require__(9);
+var clipboard_1 = __webpack_require__(14);
 function getRangeToPaste(store, pasteData) {
     var range = store.selection.range, _a = store.focus, rowIndex = _a.rowIndex, totalColumnIndex = _a.totalColumnIndex, visibleColumns = store.column.visibleColumns, viewData = store.data.viewData;
     var startRowIndex, startColumnIndex;
@@ -2168,17 +3073,18 @@ exports.getText = getText;
 
 
 /***/ }),
-/* 15 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var eventBus_1 = __webpack_require__(7);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
-var data_1 = __webpack_require__(22);
-var focus_1 = __webpack_require__(68);
+var eventBus_1 = __webpack_require__(9);
+var data_1 = __webpack_require__(33);
+var focus_1 = __webpack_require__(86);
+var rowSpan_1 = __webpack_require__(7);
 function startEditing(store, rowKey, columnName) {
     var data = store.data, focus = store.focus, column = store.column;
     if (data_1.isCellDisabled(data, rowKey, columnName) || !focus_1.isFocusedCell(focus, rowKey, columnName)) {
@@ -2202,10 +3108,11 @@ function finishEditing(_a, rowKey, columnName) {
     }
 }
 exports.finishEditing = finishEditing;
-function changeFocus(focus, rowKey, columnName, id) {
+function changeFocus(focus, data, rowKey, columnName, id) {
     if (focus_1.isFocusedCell(focus, rowKey, columnName)) {
         return;
     }
+    var rawData = data.rawData, sortOptions = data.sortOptions;
     var eventBus = eventBus_1.getEventBus(id);
     var gridEvent = new gridEvent_1.default({
         rowKey: rowKey,
@@ -2215,17 +3122,24 @@ function changeFocus(focus, rowKey, columnName, id) {
     });
     eventBus.trigger('focusChange', gridEvent);
     if (!gridEvent.isStopped()) {
+        var focusRowKey = rowKey;
+        if (rowKey && columnName && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+            var rowSpan = rowSpan_1.getRowSpanByRowKey(rowKey, columnName, rawData);
+            if (rowSpan) {
+                focusRowKey = rowSpan.mainRowKey;
+            }
+        }
         focus.prevColumnName = focus.columnName;
         focus.prevRowKey = focus.rowKey;
-        focus.rowKey = rowKey;
         focus.columnName = columnName;
+        focus.rowKey = focusRowKey;
     }
 }
 exports.changeFocus = changeFocus;
 
 
 /***/ }),
-/* 16 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2235,231 +3149,181 @@ var tslib_1 = __webpack_require__(0);
 var observable_1 = __webpack_require__(5);
 var column_1 = __webpack_require__(6);
 var common_1 = __webpack_require__(1);
-var listItemText_1 = __webpack_require__(26);
-function getCellDisplayValue(value) {
-    if (typeof value === 'undefined' || value === null) {
-        return '';
-    }
-    return String(value);
-}
-exports.getCellDisplayValue = getCellDisplayValue;
-function getFormattedValue(props, formatter, defaultValue) {
-    var value;
-    if (formatter === 'listItemText') {
-        value = listItemText_1.listItemText(props);
-    }
-    else if (typeof formatter === 'function') {
-        value = formatter(props);
-    }
-    else if (typeof formatter === 'string') {
-        value = formatter;
-    }
-    else {
-        value = defaultValue;
-    }
-    var strValue = getCellDisplayValue(value);
-    if (strValue && props.column.escapeHTML) {
-        return common_1.encodeHTMLEntity(strValue);
-    }
-    return strValue;
-}
-function getRelationCbResult(fn, relationParams) {
-    return typeof fn === 'function' ? fn(relationParams) : null;
-}
-function getEditable(fn, relationParams) {
-    var result = getRelationCbResult(fn, relationParams);
-    return result === null ? true : result;
-}
-function getDisabled(fn, relationParams) {
-    var result = getRelationCbResult(fn, relationParams);
-    return result === null ? false : result;
-}
-function getListItems(fn, relationParams) {
-    return getRelationCbResult(fn, relationParams);
-}
-function getRowHeaderValue(row, columnName) {
-    if (columnName === '_number') {
-        return row._attributes.rowNum;
-    }
-    if (columnName === '_checked') {
-        return row._attributes.checked;
-    }
-    return '';
-}
-function getValidationCode(value, validation) {
-    if (validation && validation.required && common_1.isBlank(value)) {
-        return 'REQUIRED';
-    }
-    if (validation && validation.dataType === 'string' && typeof value !== 'string') {
-        return 'TYPE_STRING';
-    }
-    if (validation && validation.dataType === 'number' && typeof value !== 'number') {
-        return 'TYPE_NUMBER';
-    }
-    return '';
-}
-function createViewCell(row, column) {
-    var name = column.name, formatter = column.formatter, prefix = column.prefix, postfix = column.postfix, editor = column.editor, editorOptions = column.editorOptions, validation = column.validation;
-    var value = column_1.isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
-    var formatterProps = { row: row, column: column, value: value };
-    var _a = row._attributes, disabled = _a.disabled, checkDisabled = _a.checkDisabled, className = _a.className;
-    var columnClassName = common_1.isUndefined(className.column[name]) ? [] : className.column[name];
+var default_1 = __webpack_require__(40);
+var manager_1 = __webpack_require__(41);
+var rowHeaderInput_1 = __webpack_require__(47);
+var ROW_HEADERS_MAP = {
+    rowNum: '_number',
+    checkbox: '_checked'
+};
+var defMinWidth = {
+    ROW_HEADER: 40,
+    COLUMN: 50
+};
+var DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
+function getBuiltInEditorOptions(editorType, options) {
+    var editInfo = manager_1.editorMap[editorType];
     return {
-        editable: !!editor,
-        editorOptions: editorOptions ? tslib_1.__assign({}, editorOptions) : {},
-        className: className.row.concat(columnClassName).join(' '),
-        disabled: name === '_checked' ? checkDisabled : disabled,
-        invalidState: getValidationCode(value, validation),
-        formattedValue: getFormattedValue(formatterProps, formatter, value),
-        prefix: getFormattedValue(formatterProps, prefix),
-        postfix: getFormattedValue(formatterProps, postfix),
-        value: value
+        type: editInfo[0],
+        options: tslib_1.__assign({}, editInfo[1], options, { type: editorType })
     };
 }
-function createRelationViewCell(name, row, columnMap, valueMap) {
-    var _a = valueMap[name], editable = _a.editable, disabled = _a.disabled, value = _a.value;
-    var _b = columnMap[name].relationMap, relationMap = _b === void 0 ? {} : _b;
-    Object.keys(relationMap).forEach(function (targetName) {
-        var _a = relationMap[targetName], editableCallback = _a.editable, disabledCallback = _a.disabled, listItemsCallback = _a.listItems;
-        var relationCbParams = { value: value, editable: editable, disabled: disabled, row: row };
-        var targetEditable = getEditable(editableCallback, relationCbParams);
-        var targetDisabled = getDisabled(disabledCallback, relationCbParams);
-        var targetListItems = getListItems(listItemsCallback, relationCbParams);
-        var cellData = createViewCell(row, columnMap[targetName]);
-        var hasValue = targetListItems ? common_1.someProp('value', cellData.value, targetListItems) : false;
-        if (!hasValue) {
-            cellData = createViewCell(row, columnMap[targetName]);
-        }
-        if (!targetEditable) {
-            cellData.editable = false;
-        }
-        if (targetDisabled) {
-            cellData.disabled = true;
-        }
-        if (Array.isArray(cellData.editorOptions.listItems)) {
-            cellData.editorOptions.listItems = targetListItems || [];
-        }
-        valueMap[targetName] = cellData;
-    });
-}
-function createViewRow(row, columnMap) {
-    var rowKey = row.rowKey;
-    var initValueMap = {};
-    Object.keys(columnMap).forEach(function (name) {
-        initValueMap[name] = null;
-    });
-    var valueMap = observable_1.observable(initValueMap);
-    Object.keys(columnMap).forEach(function (name) {
-        var _a = columnMap[name], related = _a.related, relationMap = _a.relationMap;
-        // add condition expression to prevent to call watch function recursively
-        if (!related) {
-            observable_1.observe(function () {
-                valueMap[name] = createViewCell(row, columnMap[name]);
-            });
-        }
-        // @TODO need to improve relation
-        if (relationMap && Object.keys(relationMap).length) {
-            observable_1.observe(function () {
-                createRelationViewCell(name, row, columnMap, valueMap);
-            });
-        }
-    });
-    return { rowKey: rowKey, valueMap: valueMap };
-}
-exports.createViewRow = createViewRow;
-function getAttributes(row, index) {
-    var defaultAttr = {
-        rowNum: index + 1,
-        checked: false,
-        disabled: false,
-        checkDisabled: false,
-        className: {
-            row: [],
-            column: {}
-        }
-    };
-    if (row._attributes) {
-        if (common_1.isBoolean(row._attributes.disabled) && common_1.isUndefined(row._attributes.checkDisabled)) {
-            row._attributes.checkDisabled = row._attributes.disabled;
-        }
-        if (!common_1.isUndefined(row._attributes.className)) {
-            row._attributes.className = tslib_1.__assign({ row: [], column: {} }, row._attributes.className);
-        }
+function getEditorOptions(editor) {
+    if (common_1.isFunction(editor)) {
+        return { type: editor };
     }
-    return observable_1.observable(tslib_1.__assign({}, defaultAttr, row._attributes));
+    if (common_1.isString(editor)) {
+        return getBuiltInEditorOptions(editor);
+    }
+    if (common_1.isObject(editor)) {
+        return common_1.isString(editor.type)
+            ? getBuiltInEditorOptions(editor.type, editor.options)
+            : editor;
+    }
+    return null;
 }
-function createRawRow(row, index, defaultValues, keyColumnName) {
-    row.rowKey = keyColumnName ? row[keyColumnName] : index;
-    row._attributes = getAttributes(row, index);
-    defaultValues.forEach(function (_a) {
-        var name = _a.name, value = _a.value;
-        common_1.setDefaultProp(row, name, value);
+function getRendererOptions(renderer) {
+    if (common_1.isObject(renderer) && !common_1.isFunction(renderer) && common_1.isFunction(renderer.type)) {
+        return renderer;
+    }
+    return { type: default_1.DefaultRenderer };
+}
+function getTreeInfo(treeColumnOptions, name) {
+    if (treeColumnOptions && treeColumnOptions.name === name) {
+        var _a = treeColumnOptions.useIcon, useIcon = _a === void 0 ? true : _a;
+        return { tree: { useIcon: useIcon } };
+    }
+    return null;
+}
+function getRelationMap(relations) {
+    var relationMap = {};
+    relations.forEach(function (relation) {
+        var editable = relation.editable, disabled = relation.disabled, listItems = relation.listItems, _a = relation.targetNames, targetNames = _a === void 0 ? [] : _a;
+        targetNames.forEach(function (targetName) {
+            relationMap[targetName] = {
+                editable: editable,
+                disabled: disabled,
+                listItems: listItems
+            };
+        });
     });
-    return observable_1.observable(row);
+    return relationMap;
 }
-exports.createRawRow = createRawRow;
-function createData(data, column) {
-    var defaultValues = column.defaultValues, keyColumnName = column.keyColumnName;
-    var rawData = data.map(function (row, index) { return createRawRow(row, index, defaultValues, keyColumnName); });
-    var viewData = rawData.map(function (row) { return createViewRow(row, column.allColumnMap); });
-    return { rawData: rawData, viewData: viewData };
+function getRelationColumns(relations) {
+    var relationColumns = [];
+    relations.forEach(function (relation) {
+        var _a = relation.targetNames, targetNames = _a === void 0 ? [] : _a;
+        targetNames.forEach(function (targetName) {
+            relationColumns.push(targetName);
+        });
+    });
+    return relationColumns;
 }
-exports.createData = createData;
-function create(data, column) {
-    var _a = createData(data, column), rawData = _a.rawData, viewData = _a.viewData;
-    // @TODO neet to modify useClient options with net api
-    var sortOptions = { columnName: 'rowKey', ascending: true, useClient: false };
+function createColumn(column, columnOptions, relationColumns, gridCopyOptions, treeColumnOptions) {
+    var name = column.name, header = column.header, width = column.width, minWidth = column.minWidth, align = column.align, hidden = column.hidden, resizable = column.resizable, editor = column.editor, renderer = column.renderer, relations = column.relations, sortable = column.sortable, copyOptions = column.copyOptions, validation = column.validation;
+    var editorOptions = getEditorOptions(editor);
+    var rendererOptions = getRendererOptions(renderer);
+    return observable_1.observable(tslib_1.__assign({ name: name, escapeHTML: !!column.escapeHTML, header: header || name, hidden: Boolean(hidden), resizable: Boolean(resizable), align: align || 'left', fixedWidth: typeof width === 'number', copyOptions: tslib_1.__assign({}, gridCopyOptions, copyOptions), baseWidth: (width === 'auto' ? 0 : width) || 0, minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, relationMap: getRelationMap(relations || []), related: common_1.includes(relationColumns, name), sortable: sortable, validation: validation ? tslib_1.__assign({}, validation) : {}, renderer: rendererOptions }, (!!editorOptions && { editor: editorOptions }), getTreeInfo(treeColumnOptions, name)));
+}
+exports.createColumn = createColumn;
+function createRowHeader(data) {
+    var rowHeader = typeof data === 'string'
+        ? { name: ROW_HEADERS_MAP[data] }
+        : tslib_1.__assign({ name: ROW_HEADERS_MAP[data.type] }, common_1.omit(data, 'type'));
+    var name = rowHeader.name, header = rowHeader.header, align = rowHeader.align, renderer = rowHeader.renderer, width = rowHeader.width, minWidth = rowHeader.minWidth;
+    var baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
+    var baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
+    var rowNumColumn = column_1.isRowNumColumn(name);
+    var defaultHeader = rowNumColumn ? 'No. ' : DEF_ROW_HEADER_INPUT;
+    var rendererOptions = renderer || {
+        type: rowNumColumn ? default_1.DefaultRenderer : rowHeaderInput_1.RowHeaderInputRenderer
+    };
     return observable_1.observable({
-        disabled: false,
-        rawData: rawData,
-        viewData: viewData,
-        sortOptions: sortOptions,
-        get checkedAllRows() {
-            var checkedRows = rawData.filter(function (row) { return row._attributes.checked; });
-            return checkedRows.length === rawData.length;
-        }
+        name: name,
+        header: header || defaultHeader,
+        hidden: false,
+        resizable: false,
+        align: align || 'center',
+        renderer: getRendererOptions(rendererOptions),
+        fixedWidth: true,
+        baseWidth: baseWidth,
+        escapeHTML: false,
+        minWidth: baseMinWith
     });
 }
-exports.create = create;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var observable_1 = __webpack_require__(5);
-var common_1 = __webpack_require__(1);
-function getRowHeight(row, defaultRowHeight) {
-    var height = row._attributes.height;
-    return common_1.isNumber(height) ? height : defaultRowHeight;
-}
-exports.getRowHeight = getRowHeight;
 function create(_a) {
-    var data = _a.data, dimension = _a.dimension;
-    var rowHeight = dimension.rowHeight;
-    return observable_1.observable({
-        heights: data.rawData.map(function (row) { return getRowHeight(row, rowHeight); }),
-        get offsets() {
-            var offsets = [0];
-            var heights = this.heights;
-            for (var i = 1, len = heights.length; i < len; i += 1) {
-                offsets[i] = offsets[i - 1] + heights[i - 1];
-            }
-            return offsets;
-        },
-        get totalRowHeight() {
-            return common_1.last(this.offsets) + common_1.last(this.heights);
-        }
+    var columns = _a.columns, columnOptions = _a.columnOptions, rowHeaders = _a.rowHeaders, copyOptions = _a.copyOptions, keyColumnName = _a.keyColumnName, treeColumnOptions = _a.treeColumnOptions, complexColumns = _a.complexColumns;
+    var relationColumns = columns.reduce(function (acc, _a) {
+        var relations = _a.relations;
+        acc = acc.concat(getRelationColumns(relations || []));
+        return acc.filter(function (columnName, idx) { return acc.indexOf(columnName) === idx; });
+    }, []);
+    var rowHeaderInfos = rowHeaders.map(function (rowHeader) { return createRowHeader(rowHeader); });
+    var columnInfos = columns.map(function (column) {
+        return createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions);
     });
+    var allColumns = rowHeaderInfos.concat(columnInfos);
+    var treeColumnName = treeColumnOptions.name, _b = treeColumnOptions.useIcon, treeIcon = _b === void 0 ? true : _b, _c = treeColumnOptions.useCascadingCheckbox, treeCascadingCheckbox = _c === void 0 ? true : _c;
+    return observable_1.observable(tslib_1.__assign({ keyColumnName: keyColumnName, frozenCount: columnOptions.frozenCount || 0, dataForColumnCreation: {
+            copyOptions: copyOptions,
+            columnOptions: columnOptions,
+            treeColumnOptions: treeColumnOptions,
+            relationColumns: relationColumns,
+            rowHeaders: rowHeaderInfos
+        }, allColumns: allColumns, complexHeaderColumns: complexColumns, get allColumnMap() {
+            return common_1.createMapFromArray(this.allColumns, 'name');
+        },
+        get rowHeaderCount() {
+            return rowHeaderInfos.length;
+        },
+        get visibleColumns() {
+            return this.allColumns.filter(function (_a) {
+                var hidden = _a.hidden;
+                return !hidden;
+            });
+        },
+        get visibleColumnsBySide() {
+            var frozenLastIndex = this.frozenCount + this.rowHeaderCount;
+            return {
+                L: this.visibleColumns.slice(0, frozenLastIndex),
+                R: this.visibleColumns.slice(frozenLastIndex)
+            };
+        },
+        get defaultValues() {
+            return this.allColumns
+                .filter(function (_a) {
+                var defaultValue = _a.defaultValue;
+                return Boolean(defaultValue);
+            })
+                .map(function (_a) {
+                var name = _a.name, defaultValue = _a.defaultValue;
+                return ({ name: name, value: defaultValue });
+            });
+        },
+        get visibleFrozenCount() {
+            return this.visibleColumnsBySide.L.length;
+        },
+        get validationColumns() {
+            return this.allColumns.filter(function (_a) {
+                var validation = _a.validation;
+                return !!validation;
+            });
+        },
+        get ignoredColumns() {
+            return this.allColumns.filter(function (_a) {
+                var ignored = _a.ignored;
+                return ignored;
+            }).map(function (_a) {
+                var name = _a.name;
+                return name;
+            });
+        } }, (treeColumnName && { treeColumnName: treeColumnName, treeIcon: treeIcon, treeCascadingCheckbox: treeCascadingCheckbox })));
 }
 exports.create = create;
 
 
 /***/ }),
-/* 18 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2524,21 +3388,130 @@ exports.extractSummaryColumnContent = extractSummaryColumnContent;
 
 
 /***/ }),
-/* 19 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var colGroup_1 = __webpack_require__(12);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var colGroup_1 = __webpack_require__(17);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var columnResizer_1 = __webpack_require__(43);
+var columnResizer_1 = __webpack_require__(58);
+var instance_1 = __webpack_require__(8);
+var column_1 = __webpack_require__(6);
+var complexHeader_1 = __webpack_require__(59);
+var headerCheckbox_1 = __webpack_require__(25);
+var sortingButton_1 = __webpack_require__(26);
+var common_1 = __webpack_require__(1);
 var HeaderAreaComp = /** @class */ (function (_super) {
     tslib_1.__extends(HeaderAreaComp, _super);
     function HeaderAreaComp() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.startSelectedName = null;
+        _this.handleDblClick = function (ev) {
+            ev.stopPropagation();
+        };
+        _this.handleMouseMove = function (ev) {
+            var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
+            _this.props.dispatch('dragMoveHeader', { pageX: pageX, pageY: pageY }, _this.startSelectedName);
+        };
+        _this.handleMouseDown = function (ev) {
+            var _a = _this.props, dispatch = _a.dispatch, columns = _a.columns, complexHeaderColumns = _a.complexHeaderColumns;
+            var name = ev.target.getAttribute('data-column-name');
+            var parentHeader = column_1.isParentColumnHeader(complexHeaderColumns, name);
+            if (column_1.isRowHeader(name)) {
+                return;
+            }
+            if (!parentHeader) {
+                var sortable = common_1.findProp('name', name, columns).sortable;
+                if (sortable) {
+                    return;
+                }
+            }
+            _this.startSelectedName = name;
+            dispatch('mouseDownHeader', name, parentHeader);
+            document.addEventListener('mousemove', _this.handleMouseMove);
+            document.addEventListener('mouseup', _this.clearDocumentEvents);
+            document.addEventListener('selectstart', _this.handleSelectStart);
+        };
+        _this.clearDocumentEvents = function () {
+            _this.props.dispatch('dragEnd');
+            dom_1.setCursorStyle('');
+            document.removeEventListener('mousemove', _this.handleMouseMove);
+            document.removeEventListener('mouseup', _this.clearDocumentEvents);
+            document.removeEventListener('selectstart', _this.handleSelectStart);
+        };
+        _this.handleSelectStart = function (ev) {
+            ev.preventDefault();
+        };
+        return _this;
+    }
+    HeaderAreaComp.prototype.isSelected = function (index) {
+        var columnSelectionRange = this.props.columnSelectionRange;
+        if (!columnSelectionRange) {
+            return false;
+        }
+        var start = columnSelectionRange[0], end = columnSelectionRange[1];
+        return index >= start && index <= end;
+    };
+    HeaderAreaComp.prototype.componentDidUpdate = function () {
+        this.el.scrollLeft = this.props.scrollLeft;
+    };
+    HeaderAreaComp.prototype.render = function () {
+        var _this = this;
+        var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight, cellBorderWidth = _a.cellBorderWidth, side = _a.side, complexHeaderColumns = _a.complexHeaderColumns;
+        var areaStyle = { height: headerHeight + cellBorderWidth };
+        var theadStyle = { height: headerHeight };
+        return (preact_1.h("div", { class: dom_1.cls('header-area'), style: areaStyle, ref: function (el) {
+                _this.el = el;
+            } },
+            preact_1.h("table", { class: dom_1.cls('table'), onMouseDown: this.handleMouseDown },
+                preact_1.h(colGroup_1.ColGroup, { side: side, useViewport: false }),
+                complexHeaderColumns.length ? (preact_1.h(complexHeader_1.ComplexHeader, { side: side })) : (preact_1.h("tbody", null,
+                    preact_1.h("tr", { style: theadStyle, onDblClick: this.handleDblClick }, columns.map(function (_a, index) {
+                        var name = _a.name, header = _a.header, sortable = _a.sortable;
+                        return (preact_1.h("th", { key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [
+                                !column_1.isRowHeader(name) && _this.isSelected(index),
+                                'cell-selected'
+                            ]) },
+                            column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
+                            !!sortable && preact_1.h(sortingButton_1.SortingButton, null)));
+                    }))))),
+            preact_1.h(columnResizer_1.ColumnResizer, { side: side })));
+    };
+    return HeaderAreaComp;
+}(preact_1.Component));
+exports.HeaderArea = hoc_1.connect(function (store, _a) {
+    var side = _a.side;
+    var _b = store.column, visibleColumnsBySide = _b.visibleColumnsBySide, complexHeaderColumns = _b.complexHeaderColumns, _c = store.dimension, headerHeight = _c.headerHeight, cellBorderWidth = _c.cellBorderWidth, rangeBySide = store.selection.rangeBySide, viewport = store.viewport, id = store.id;
+    return {
+        headerHeight: headerHeight,
+        cellBorderWidth: cellBorderWidth,
+        columns: visibleColumnsBySide[side],
+        scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
+        dataProvider: instance_1.getDataProvider(id),
+        columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
+        complexHeaderColumns: complexHeaderColumns
+    };
+})(HeaderAreaComp);
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var preact_1 = __webpack_require__(3);
+var hoc_1 = __webpack_require__(4);
+var HeaderCheckboxComp = /** @class */ (function (_super) {
+    tslib_1.__extends(HeaderCheckboxComp, _super);
+    function HeaderCheckboxComp() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.handleChange = function (ev) {
             var target = ev.target;
@@ -2550,27 +3523,9 @@ var HeaderAreaComp = /** @class */ (function (_super) {
                 dispatch('uncheckAll');
             }
         };
-        _this.handleClick = function (ev) {
-            var target = ev.target;
-            if (!dom_1.hasClass(target, 'btn-sorting')) {
-                return;
-            }
-            var _a = _this.props, dispatch = _a.dispatch, sortOptions = _a.sortOptions;
-            var th = dom_1.findParent(target, 'cell');
-            var targetColumnName = th.getAttribute('data-column-name');
-            var targetAscending = true;
-            if (sortOptions) {
-                var columnName = sortOptions.columnName, ascending = sortOptions.ascending;
-                targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
-            }
-            dispatch('sort', targetColumnName, targetAscending);
-        };
-        _this.handleDblClick = function (ev) {
-            ev.stopPropagation();
-        };
         return _this;
     }
-    HeaderAreaComp.prototype.updateRowHeaderCheckbox = function () {
+    HeaderCheckboxComp.prototype.componentDidUpdate = function () {
         var _a = this.props, checkedAllRows = _a.checkedAllRows, disabled = _a.disabled;
         var input = this.el.querySelector('input[name=_checked]');
         if (input) {
@@ -2578,78 +3533,155 @@ var HeaderAreaComp = /** @class */ (function (_super) {
             input.disabled = disabled;
         }
     };
-    HeaderAreaComp.prototype.componentDidUpdate = function () {
-        var _a = this.props, scrollLeft = _a.scrollLeft, hasRowHeaderCheckbox = _a.hasRowHeaderCheckbox;
-        this.el.scrollLeft = scrollLeft;
-        if (hasRowHeaderCheckbox) {
-            this.updateRowHeaderCheckbox();
-        }
-    };
-    HeaderAreaComp.prototype.render = function () {
+    HeaderCheckboxComp.prototype.render = function () {
         var _this = this;
-        var _a = this.props, headerHeight = _a.headerHeight, cellBorderWidth = _a.cellBorderWidth, columns = _a.columns, side = _a.side, sortOptions = _a.sortOptions;
-        var areaStyle = { height: headerHeight + cellBorderWidth };
-        var theadStyle = { height: headerHeight };
-        return (preact_1.h("div", { class: dom_1.cls('header-area'), style: areaStyle, ref: function (el) {
+        return (preact_1.h("span", { ref: function (el) {
                 _this.el = el;
-            } },
-            preact_1.h("table", { class: dom_1.cls('table') },
-                preact_1.h(colGroup_1.ColGroup, { side: side }),
-                preact_1.h("tbody", null,
-                    preact_1.h("tr", { style: theadStyle, onClick: this.handleClick, onDblClick: this.handleDblClick }, columns.map(function (_a) {
-                        var name = _a.name, header = _a.header, sortable = _a.sortable;
-                        return (preact_1.h("th", { key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header') },
-                            name === '_checked' ? (preact_1.h("span", { dangerouslySetInnerHTML: { __html: header }, onChange: _this.handleChange })) : (header),
-                            sortable && (preact_1.h("a", { class: dom_1.cls('btn-sorting', [
-                                    sortOptions.columnName === name,
-                                    sortOptions.ascending ? 'btn-sorting-up' : 'btn-sorting-down'
-                                ]) }))));
-                    })))),
-            preact_1.h(columnResizer_1.ColumnResizer, { side: side })));
+            }, dangerouslySetInnerHTML: { __html: this.props.header }, onChange: this.handleChange }));
     };
-    return HeaderAreaComp;
+    return HeaderCheckboxComp;
 }(preact_1.Component));
-exports.HeaderArea = hoc_1.connect(function (store, _a) {
-    var side = _a.side;
-    var data = store.data, column = store.column, _b = store.dimension, headerHeight = _b.headerHeight, cellBorderWidth = _b.cellBorderWidth, viewport = store.viewport;
+exports.HeaderCheckbox = hoc_1.connect(function (store) {
+    var _a = store.data, checkedAllRows = _a.checkedAllRows, disabled = _a.disabled, allColumnMap = store.column.allColumnMap;
     return {
-        headerHeight: headerHeight,
-        cellBorderWidth: cellBorderWidth,
-        columns: store.column.visibleColumnsBySide[side],
-        scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
-        hasRowHeaderCheckbox: !!column.allColumnMap._checked,
-        checkedAllRows: data.checkedAllRows,
-        sortOptions: data.sortOptions,
-        disabled: data.disabled
+        header: allColumnMap._checked.header,
+        checkedAllRows: checkedAllRows,
+        disabled: disabled
     };
-})(HeaderAreaComp);
+})(HeaderCheckboxComp);
 
 
 /***/ }),
-/* 20 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var bodyRows_1 = __webpack_require__(44);
-var colGroup_1 = __webpack_require__(12);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var focusLayer_1 = __webpack_require__(48);
-var selectionLayer_1 = __webpack_require__(49);
+var instance_1 = __webpack_require__(8);
+var SortingButtonComp = /** @class */ (function (_super) {
+    tslib_1.__extends(SortingButtonComp, _super);
+    function SortingButtonComp() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.handleClick = function (ev) {
+            var target = ev.target;
+            if (!dom_1.hasClass(target, 'btn-sorting')) {
+                return;
+            }
+            var _a = _this.props, dispatch = _a.dispatch, sortOptions = _a.sortOptions, dataProvider = _a.dataProvider;
+            var th = dom_1.findParent(target, 'cell');
+            var targetColumnName = th.getAttribute('data-column-name');
+            var targetAscending = true;
+            if (sortOptions) {
+                var columnName = sortOptions.columnName, ascending = sortOptions.ascending;
+                targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
+            }
+            if (sortOptions.useClient) {
+                dispatch('sort', targetColumnName, targetAscending);
+            }
+            else {
+                dispatch('changeSortBtn', targetColumnName, targetAscending);
+                var data = {
+                    sortColumn: targetColumnName,
+                    sortAscending: targetAscending
+                };
+                dataProvider.readData(1, data, true);
+            }
+        };
+        return _this;
+    }
+    SortingButtonComp.prototype.render = function () {
+        var _a = this.props.sortOptions, columnName = _a.columnName, ascending = _a.ascending;
+        return (preact_1.h("a", { class: dom_1.cls('btn-sorting', [
+                columnName === name,
+                ascending ? 'btn-sorting-up' : 'btn-sorting-down'
+            ]), onClick: this.handleClick }));
+    };
+    return SortingButtonComp;
+}(preact_1.Component));
+exports.SortingButton = hoc_1.connect(function (store) {
+    var data = store.data, id = store.id;
+    return {
+        sortOptions: data.sortOptions,
+        dataProvider: instance_1.getDataProvider(id)
+    };
+})(SortingButtonComp);
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+var column_1 = __webpack_require__(6);
+function sortByVisibleColumns(visibleColumns, childNames) {
+    var result = [];
+    visibleColumns.forEach(function (column) {
+        if (common_1.includes(childNames, column.name)) {
+            result.push(column.name);
+        }
+    });
+    return result;
+}
+function getLeafChildColumnNames(complexHeaderColumns, name) {
+    var column = common_1.findProp('name', name, complexHeaderColumns);
+    if (!column) {
+        return [name];
+    }
+    var result = [];
+    column.childNames.forEach(function (childName) {
+        if (column_1.isParentColumnHeader(complexHeaderColumns, childName)) {
+            result = result.concat(getLeafChildColumnNames(complexHeaderColumns, childName));
+        }
+        else {
+            result = result.concat([childName]);
+        }
+    });
+    return result;
+}
+exports.getLeafChildColumnNames = getLeafChildColumnNames;
+function getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount) {
+    var unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
+    var childNames = sortByVisibleColumns(visibleColumns, unsortedChildNames);
+    var startIndex = common_1.findPropIndex('name', childNames[0], visibleColumns) - rowHeaderCount;
+    var endIndex = common_1.findPropIndex('name', childNames[childNames.length - 1], visibleColumns) - rowHeaderCount;
+    return [startIndex, endIndex];
+}
+exports.getChildColumnRange = getChildColumnRange;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var preact_1 = __webpack_require__(3);
+var bodyRows_1 = __webpack_require__(60);
+var colGroup_1 = __webpack_require__(17);
+var dom_1 = __webpack_require__(2);
+var hoc_1 = __webpack_require__(4);
+var focusLayer_1 = __webpack_require__(66);
+var selectionLayer_1 = __webpack_require__(67);
 var common_1 = __webpack_require__(1);
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-var MIN_DISATNCE_FOR_DRAG = 10;
+var MIN_DISTANCE_FOR_DRAG = 10;
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
 var PROPS_FOR_UPDATE = [
-    'columns',
     'bodyHeight',
     'totalRowHeight',
-    'offsetY'
+    'offsetLeft',
+    'offsetTop'
 ];
 var BodyAreaComp = /** @class */ (function (_super) {
     tslib_1.__extends(BodyAreaComp, _super);
@@ -2673,11 +3705,10 @@ var BodyAreaComp = /** @class */ (function (_super) {
             }
             var el = _this.el;
             var shiftKey = ev.shiftKey;
-            var pageX = ev.pageX - window.pageXOffset;
-            var pageY = ev.pageY - window.pageYOffset;
+            var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
             var scrollTop = el.scrollTop, scrollLeft = el.scrollLeft;
-            var _a = _this.props, side = _a.side, dispatch = _a.dispatch;
-            var _b = el.getBoundingClientRect(), top = _b.top, left = _b.left;
+            var _b = _this.props, side = _b.side, dispatch = _b.dispatch;
+            var _c = el.getBoundingClientRect(), top = _c.top, left = _c.left;
             dispatch('mouseDownBody', { top: top, left: left, scrollTop: scrollTop, scrollLeft: scrollLeft, side: side }, { pageX: pageX, pageY: pageY, shiftKey: shiftKey });
             _this.dragStartData = { pageX: pageX, pageY: pageY };
             dom_1.setCursorStyle('default');
@@ -2689,22 +3720,20 @@ var BodyAreaComp = /** @class */ (function (_super) {
             var dx = Math.abs(_this.dragStartData.pageX - current.pageX);
             var dy = Math.abs(_this.dragStartData.pageY - current.pageY);
             var distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
-            return distance >= MIN_DISATNCE_FOR_DRAG;
+            return distance >= MIN_DISTANCE_FOR_DRAG;
         };
         _this.handleSelectStart = function (ev) {
             ev.preventDefault();
         };
         _this.handleMouseMove = function (ev) {
-            var pageX = ev.pageX - window.pageXOffset;
-            var pageY = ev.pageY - window.pageYOffset;
+            var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
             if (_this.moveEnoughToTriggerDragEvent({ pageX: pageX, pageY: pageY })) {
-                var dragData = { pageX: pageX, pageY: pageY };
-                _this.props.dispatch('dragMoveBody', _this.dragStartData, dragData);
+                _this.props.dispatch('dragMoveBody', _this.dragStartData, { pageX: pageX, pageY: pageY });
             }
         };
         _this.clearDocumentEvents = function () {
             _this.dragStartData = { pageX: null, pageY: null };
-            _this.props.dispatch('dragEndBody');
+            _this.props.dispatch('dragEnd');
             dom_1.setCursorStyle('');
             document.removeEventListener('mousemove', _this.handleMouseMove);
             document.removeEventListener('mouseup', _this.clearDocumentEvents);
@@ -2722,23 +3751,27 @@ var BodyAreaComp = /** @class */ (function (_super) {
     };
     BodyAreaComp.prototype.render = function (_a) {
         var _this = this;
-        var side = _a.side, bodyHeight = _a.bodyHeight, totalRowHeight = _a.totalRowHeight, scrollXHeight = _a.scrollXHeight, offsetY = _a.offsetY, dummyRowCount = _a.dummyRowCount, scrollX = _a.scrollX, scrollY = _a.scrollY;
+        var side = _a.side, bodyHeight = _a.bodyHeight, totalRowHeight = _a.totalRowHeight, totalColumnWidth = _a.totalColumnWidth, scrollXHeight = _a.scrollXHeight, offsetTop = _a.offsetTop, offsetLeft = _a.offsetLeft, dummyRowCount = _a.dummyRowCount, scrollX = _a.scrollX, scrollY = _a.scrollY;
         var overflowX = scrollX ? 'scroll' : 'hidden';
         var overflowY = scrollY ? 'scroll' : 'hidden';
         var areaStyle = { overflowX: overflowX, overflowY: overflowY, height: bodyHeight };
         var tableContainerStyle = {
-            top: offsetY,
+            top: offsetTop,
+            left: offsetLeft,
             height: dummyRowCount ? bodyHeight - scrollXHeight : '',
             overflow: dummyRowCount ? 'hidden' : 'visible'
         };
-        var containerStyle = { height: totalRowHeight };
+        var containerStyle = {
+            width: totalColumnWidth,
+            height: totalRowHeight
+        };
         return (preact_1.h("div", { class: dom_1.cls('body-area'), style: areaStyle, onScroll: this.handleScroll, onMouseDown: this.handleMouseDown, ref: function (el) {
                 _this.el = el;
             } },
             preact_1.h("div", { class: dom_1.cls('body-container'), style: containerStyle },
                 preact_1.h("div", { class: dom_1.cls('table-container'), style: tableContainerStyle },
                     preact_1.h("table", { class: dom_1.cls('table') },
-                        preact_1.h(colGroup_1.ColGroup, { side: side }),
+                        preact_1.h(colGroup_1.ColGroup, { side: side, useViewport: true }),
                         preact_1.h(bodyRows_1.BodyRows, { side: side }))),
                 preact_1.h("div", { class: dom_1.cls('layer-selection'), style: "display: none;" }),
                 preact_1.h(focusLayer_1.FocusLayer, { side: side }),
@@ -2748,16 +3781,18 @@ var BodyAreaComp = /** @class */ (function (_super) {
 }(preact_1.Component));
 exports.BodyArea = hoc_1.connect(function (store, _a) {
     var side = _a.side;
-    var column = store.column, rowCoords = store.rowCoords, dimension = store.dimension, viewport = store.viewport;
+    var columnCoords = store.columnCoords, rowCoords = store.rowCoords, dimension = store.dimension, viewport = store.viewport;
     var totalRowHeight = rowCoords.totalRowHeight;
+    var totalColumnWidth = columnCoords.totalColumnWidth;
     var bodyHeight = dimension.bodyHeight, scrollXHeight = dimension.scrollXHeight, scrollX = dimension.scrollX, scrollY = dimension.scrollY;
-    var offsetY = viewport.offsetY, scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft, dummyRowCount = viewport.dummyRowCount;
+    var offsetLeft = viewport.offsetLeft, offsetTop = viewport.offsetTop, scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft, dummyRowCount = viewport.dummyRowCount;
     return {
-        columns: column.visibleColumnsBySide[side],
         bodyHeight: bodyHeight,
         totalRowHeight: totalRowHeight,
+        offsetTop: offsetTop,
         scrollTop: scrollTop,
-        offsetY: offsetY,
+        totalColumnWidth: totalColumnWidth[side],
+        offsetLeft: side === 'L' ? 0 : offsetLeft,
         scrollLeft: side === 'L' ? 0 : scrollLeft,
         scrollXHeight: scrollXHeight,
         dummyRowCount: dummyRowCount,
@@ -2768,17 +3803,17 @@ exports.BodyArea = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 21 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var colGroup_1 = __webpack_require__(12);
-var summaryBodyRow_1 = __webpack_require__(50);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var colGroup_1 = __webpack_require__(17);
+var summaryBodyRow_1 = __webpack_require__(68);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var SummaryAreaComp = /** @class */ (function (_super) {
     tslib_1.__extends(SummaryAreaComp, _super);
@@ -2806,7 +3841,7 @@ var SummaryAreaComp = /** @class */ (function (_super) {
                 _this.el = el;
             } },
             preact_1.h("table", { class: dom_1.cls('table'), style: tableStyle },
-                preact_1.h(colGroup_1.ColGroup, { side: side }),
+                preact_1.h(colGroup_1.ColGroup, { side: side, useViewport: false }),
                 preact_1.h(summaryBodyRow_1.SummaryBodyRow, { columns: columns })))));
     };
     return SummaryAreaComp;
@@ -2825,7 +3860,614 @@ exports.SummaryArea = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 22 */
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var clipboard_1 = __webpack_require__(20);
+var common_1 = __webpack_require__(1);
+var sort_1 = __webpack_require__(82);
+var clipboard_2 = __webpack_require__(14);
+var data_1 = __webpack_require__(11);
+var observable_1 = __webpack_require__(5);
+var rowCoords_1 = __webpack_require__(16);
+var selection_1 = __webpack_require__(15);
+var eventBus_1 = __webpack_require__(9);
+var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
+var instance_1 = __webpack_require__(8);
+var tree_1 = __webpack_require__(31);
+var rowSpan_1 = __webpack_require__(7);
+function setValue(_a, rowKey, columnName, value) {
+    var column = _a.column, data = _a.data, id = _a.id;
+    var rawData = data.rawData, sortOptions = data.sortOptions;
+    var targetRow = common_1.findProp('rowKey', rowKey, rawData);
+    if (!targetRow || targetRow[columnName] === value) {
+        return;
+    }
+    var targetColumn = common_1.findProp('name', columnName, column.visibleColumns);
+    var gridEvent = new gridEvent_1.default({ rowKey: rowKey, columnName: columnName, value: value });
+    if (targetColumn && targetColumn.onBeforeChange) {
+        targetColumn.onBeforeChange(gridEvent);
+    }
+    if (!gridEvent.isStopped()) {
+        if (targetRow) {
+            var rowSpanMap = targetRow.rowSpanMap;
+            targetRow[columnName] = value;
+            instance_1.getDataManager(id).push('UPDATE', targetRow);
+            if (common_1.isEmpty(rowSpanMap) || !rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+                return;
+            }
+            var spanCount = rowSpanMap[columnName].spanCount;
+            var mainRowIndex = common_1.findPropIndex('rowKey', rowKey, rawData);
+            // update sub rows value
+            for (var count = 1; count < spanCount; count += 1) {
+                rawData[mainRowIndex + count][columnName] = value;
+                instance_1.getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
+            }
+        }
+        if (targetColumn && targetColumn.onAfterChange) {
+            gridEvent = new gridEvent_1.default({ rowKey: rowKey, columnName: columnName, value: value });
+            targetColumn.onAfterChange(gridEvent);
+        }
+    }
+}
+exports.setValue = setValue;
+function isUpdatableRowAttr(name, checkDisabled, allDisabled) {
+    return !(name === 'checked' && (checkDisabled || allDisabled));
+}
+exports.isUpdatableRowAttr = isUpdatableRowAttr;
+function setRowAttribute(_a, rowKey, attrName, value) {
+    var data = _a.data;
+    var disabled = data.disabled, rawData = data.rawData;
+    var targetRow = common_1.findProp('rowKey', rowKey, rawData);
+    if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
+        targetRow._attributes[attrName] = value;
+    }
+}
+exports.setRowAttribute = setRowAttribute;
+function setAllRowAttribute(_a, attrName, value) {
+    var data = _a.data;
+    data.rawData.forEach(function (row) {
+        if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
+            row._attributes[attrName] = value;
+        }
+    });
+}
+exports.setAllRowAttribute = setAllRowAttribute;
+function setColumnValues(store, columnName, value, checkCellState) {
+    if (checkCellState === void 0) { checkCellState = false; }
+    // @TODO Check Cell State
+    store.data.rawData.forEach(function (targetRow) {
+        targetRow[columnName] = value;
+    });
+}
+exports.setColumnValues = setColumnValues;
+function check(store, rowKey) {
+    var _a = store.column, allColumnMap = _a.allColumnMap, _b = _a.treeColumnName, treeColumnName = _b === void 0 ? '' : _b;
+    var eventBus = eventBus_1.getEventBus(store.id);
+    var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
+    /**
+     * Occurs when a checkbox in row header is checked
+     * @event Grid#check
+     * @property {number | string} rowKey - rowKey of the checked row
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('check', gridEvent);
+    setRowAttribute(store, rowKey, 'checked', true);
+    if (allColumnMap[treeColumnName]) {
+        tree_1.changeTreeRowsCheckedState(store, rowKey, true);
+    }
+}
+exports.check = check;
+function uncheck(store, rowKey) {
+    var _a = store.column, allColumnMap = _a.allColumnMap, _b = _a.treeColumnName, treeColumnName = _b === void 0 ? '' : _b;
+    var eventBus = eventBus_1.getEventBus(store.id);
+    var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
+    /**
+     * Occurs when a checkbox in row header is unchecked
+     * @event Grid#uncheck
+     * @property {number | string} rowKey - rowKey of the unchecked row
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('uncheck', gridEvent);
+    setRowAttribute(store, rowKey, 'checked', false);
+    if (allColumnMap[treeColumnName]) {
+        tree_1.changeTreeRowsCheckedState(store, rowKey, false);
+    }
+}
+exports.uncheck = uncheck;
+function checkAll(store) {
+    setAllRowAttribute(store, 'checked', true);
+}
+exports.checkAll = checkAll;
+function uncheckAll(store) {
+    setAllRowAttribute(store, 'checked', false);
+}
+exports.uncheckAll = uncheckAll;
+function changeSortBtn(_a, columnName, ascending) {
+    var data = _a.data;
+    var sortOptions = data.sortOptions;
+    if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
+        data.sortOptions = tslib_1.__assign({}, sortOptions, { columnName: columnName, ascending: ascending });
+    }
+}
+exports.changeSortBtn = changeSortBtn;
+function sort(store, columnName, ascending) {
+    var data = store.data;
+    var sortOptions = data.sortOptions;
+    if (!sortOptions.useClient) {
+        return;
+    }
+    changeSortBtn(store, columnName, ascending);
+    var _a = sort_1.getSortedData(data, columnName, ascending), rawData = _a.rawData, viewData = _a.viewData;
+    if (!common_1.arrayEqual(rawData, data.rawData)) {
+        data.rawData = rawData;
+        data.viewData = viewData;
+    }
+}
+exports.sort = sort;
+function applyPasteDataToRawData(store, pasteData, indexToPaste) {
+    var _a = store.data, rawData = _a.rawData, viewData = _a.viewData, visibleColumns = store.column.visibleColumns, id = store.id;
+    var _b = indexToPaste.row, startRowIndex = _b[0], endRowIndex = _b[1], _c = indexToPaste.column, startColumnIndex = _c[0], endColumnIndex = _c[1];
+    var columnNames = common_1.mapProp('name', visibleColumns);
+    for (var rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
+        var pasted = false;
+        var rawRowIndex = rowIdx + startRowIndex;
+        for (var columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
+            var name_1 = columnNames[columnIdx + startColumnIndex];
+            if (clipboard_2.isColumnEditable(viewData, rawRowIndex, name_1)) {
+                pasted = true;
+                rawData[rawRowIndex][name_1] = pasteData[rowIdx][columnIdx];
+            }
+        }
+        if (pasted) {
+            instance_1.getDataManager(id).push('UPDATE', rawData[rawRowIndex]);
+        }
+    }
+}
+function paste(store, pasteData) {
+    var selection = store.selection, id = store.id;
+    if (selection.range) {
+        pasteData = clipboard_1.copyDataToRange(selection.range, pasteData);
+    }
+    var rangeToPaste = clipboard_1.getRangeToPaste(store, pasteData);
+    applyPasteDataToRawData(store, pasteData, rangeToPaste);
+    selection_1.changeSelectionRange(selection, rangeToPaste, id);
+}
+exports.paste = paste;
+function setDisabled(store, disabled) {
+    store.data.disabled = disabled;
+}
+exports.setDisabled = setDisabled;
+function setRowDisabled(store, disabled, rowKey, withCheckbox) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        row._attributes.disabled = disabled;
+        if (withCheckbox) {
+            row._attributes.checkDisabled = disabled;
+        }
+    }
+}
+exports.setRowDisabled = setRowDisabled;
+function setRowCheckDisabled(store, disabled, rowKey) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        row._attributes.checkDisabled = disabled;
+    }
+}
+exports.setRowCheckDisabled = setRowCheckDisabled;
+function appendRow(_a, row, options) {
+    var data = _a.data, column = _a.column, rowCoords = _a.rowCoords, dimension = _a.dimension, id = _a.id;
+    var rawData = data.rawData, viewData = data.viewData, sortOptions = data.sortOptions;
+    var heights = rowCoords.heights;
+    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap;
+    var _b = options.at, at = _b === void 0 ? rawData.length : _b;
+    var prevRow = rawData[at - 1];
+    var rawRow = data_1.createRawRow(row, rawData.length, defaultValues);
+    var viewRow = data_1.createViewRow(rawRow, allColumnMap, rawData);
+    rawData.splice(at, 0, rawRow);
+    viewData.splice(at, 0, viewRow);
+    heights.splice(at, 0, rowCoords_1.getRowHeight(rawRow, dimension.rowHeight));
+    if (prevRow && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        rowSpan_1.updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
+    }
+    observable_1.notify(data, 'rawData');
+    observable_1.notify(data, 'viewData');
+    observable_1.notify(rowCoords, 'heights');
+    instance_1.getDataManager(id).push('CREATE', rawRow);
+}
+exports.appendRow = appendRow;
+function removeRow(_a, rowKey, options) {
+    var data = _a.data, rowCoords = _a.rowCoords, id = _a.id;
+    var rawData = data.rawData, viewData = data.viewData, sortOptions = data.sortOptions;
+    var heights = rowCoords.heights;
+    var rowIdx = common_1.findPropIndex('rowKey', rowKey, rawData);
+    var nextRow = rawData[rowIdx + 1];
+    var removedRow = rawData.splice(rowIdx, 1);
+    viewData.splice(rowIdx, 1);
+    heights.splice(rowIdx, 1);
+    if (nextRow && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        rowSpan_1.updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+    }
+    observable_1.notify(data, 'rawData');
+    observable_1.notify(data, 'viewData');
+    observable_1.notify(rowCoords, 'heights');
+    instance_1.getDataManager(id).push('DELETE', removedRow[0]);
+}
+exports.removeRow = removeRow;
+function clearData(_a) {
+    var data = _a.data, id = _a.id;
+    data.rawData.forEach(function (row) {
+        instance_1.getDataManager(id).push('DELETE', row);
+    });
+    data.rawData = [];
+    data.viewData = [];
+}
+exports.clearData = clearData;
+function resetData(_a, inputData) {
+    var data = _a.data, column = _a.column, dimension = _a.dimension, rowCoords = _a.rowCoords, id = _a.id;
+    var _b = data_1.createData(inputData, column), rawData = _b.rawData, viewData = _b.viewData;
+    var rowHeight = dimension.rowHeight;
+    data.rawData = rawData;
+    data.viewData = viewData;
+    rowCoords.heights = rawData.map(function (row) { return rowCoords_1.getRowHeight(row, rowHeight); });
+    // @TODO need to execute logic by condition
+    instance_1.getDataManager(id).setOriginData(inputData);
+    instance_1.getDataManager(id).clearAll();
+}
+exports.resetData = resetData;
+function addRowClassName(store, rowKey, className) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        var rowClassMap = row._attributes.className.row;
+        var isExist = common_1.includes(rowClassMap, className);
+        if (!isExist) {
+            rowClassMap.push(className);
+            observable_1.notify(row._attributes, 'className');
+        }
+    }
+}
+exports.addRowClassName = addRowClassName;
+function removeRowClassName(store, rowKey, className) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        common_1.removeArrayItem(className, row._attributes.className.row);
+        observable_1.notify(row._attributes, 'className');
+    }
+}
+exports.removeRowClassName = removeRowClassName;
+function addCellClassName(store, rowKey, columnName, className) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        var columnClassMap = row._attributes.className.column;
+        if (common_1.isUndefined(columnClassMap[columnName])) {
+            columnClassMap[columnName] = [className];
+        }
+        else {
+            var isExist = common_1.includes(columnClassMap[columnName], className);
+            if (!isExist) {
+                columnClassMap[columnName].push(className);
+            }
+        }
+        observable_1.notify(row._attributes, 'className');
+    }
+}
+exports.addCellClassName = addCellClassName;
+function removeCellClassName(store, rowKey, columnName, className) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        var columnClassMap = row._attributes.className.column;
+        if (common_1.isUndefined(columnClassMap[columnName])) {
+            return;
+        }
+        common_1.removeArrayItem(className, columnClassMap[columnName]);
+        observable_1.notify(row._attributes, 'className');
+    }
+}
+exports.removeCellClassName = removeCellClassName;
+function setRowHeight(_a, rowIndex, rowHeight) {
+    var data = _a.data, rowCoords = _a.rowCoords;
+    data.rawData[rowIndex]._attributes.height = rowHeight;
+    rowCoords.heights[rowIndex] = rowHeight;
+    observable_1.notify(rowCoords, 'heights');
+}
+exports.setRowHeight = setRowHeight;
+function setPagination(_a, pageOptions) {
+    var data = _a.data;
+    var perPage = data.pageOptions.perPage;
+    data.pageOptions = tslib_1.__assign({}, pageOptions, { perPage: perPage });
+}
+exports.setPagination = setPagination;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var data_1 = __webpack_require__(11);
+var rowCoords_1 = __webpack_require__(16);
+var common_1 = __webpack_require__(1);
+var observable_1 = __webpack_require__(5);
+var data_2 = __webpack_require__(30);
+var tree_1 = __webpack_require__(32);
+var tree_2 = __webpack_require__(12);
+var eventBus_1 = __webpack_require__(9);
+var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
+function changeExpandedState(row, expanded) {
+    var tree = row._attributes.tree;
+    if (tree) {
+        tree.expanded = expanded;
+    }
+}
+function changeHiddenChildState(row, hidden) {
+    var tree = row._attributes.tree;
+    if (tree) {
+        tree.hiddenChild = hidden;
+    }
+}
+function expand(store, row, recursive, silent) {
+    var data = store.data, rowCoords = store.rowCoords, dimension = store.dimension;
+    var rawData = data.rawData;
+    var heights = rowCoords.heights;
+    if (row) {
+        if (!tree_2.isLeaf(row)) {
+            changeExpandedState(row, true);
+        }
+        tree_2.traverseDescendantRows(rawData, row, function (childRow) {
+            if (recursive) {
+                changeExpandedState(childRow, true);
+            }
+            var parentRow = tree_1.getParentRow(store, childRow.rowKey);
+            var hiddenChild = parentRow ? tree_2.getHiddenChildState(parentRow) : false;
+            changeHiddenChildState(childRow, hiddenChild);
+            var index = common_1.findPropIndex('rowKey', childRow.rowKey, rawData);
+            heights[index] = rowCoords_1.getRowHeight(childRow, dimension.rowHeight);
+        });
+        if (silent) {
+            observable_1.notify(rowCoords, 'heights');
+        }
+    }
+}
+function expandByRowKey(store, rowKey, recursive) {
+    var row = common_1.findProp('rowKey', rowKey, store.data.rawData);
+    if (row) {
+        var eventBus = eventBus_1.getEventBus(store.id);
+        var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
+        /**
+         * Occurs when the row having child rows is expanded
+         * @event Grid#expanded
+         * @type {module:event/gridEvent}
+         * @property {number|string} rowKey - rowKey of the expanded row
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('expand', gridEvent);
+        expand(store, row, recursive, true);
+    }
+}
+exports.expandByRowKey = expandByRowKey;
+function expandAll(store) {
+    var data = store.data, rowCoords = store.rowCoords;
+    data.rawData.forEach(function (row) {
+        expand(store, row, true, false);
+    });
+    observable_1.notify(rowCoords, 'heights');
+}
+exports.expandAll = expandAll;
+function collapse(store, row, recursive, silent) {
+    var data = store.data, rowCoords = store.rowCoords;
+    var rawData = data.rawData;
+    var heights = rowCoords.heights;
+    if (row) {
+        if (!tree_2.isLeaf(row)) {
+            changeExpandedState(row, false);
+        }
+        tree_2.traverseDescendantRows(rawData, row, function (childRow) {
+            if (recursive) {
+                changeExpandedState(childRow, false);
+            }
+            var parentRow = tree_1.getParentRow(store, childRow.rowKey);
+            var hiddenChild = parentRow ? tree_2.getHiddenChildState(parentRow) : true;
+            changeHiddenChildState(childRow, hiddenChild);
+            var index = common_1.findPropIndex('rowKey', childRow.rowKey, rawData);
+            heights[index] = 0;
+        });
+        if (silent) {
+            observable_1.notify(rowCoords, 'heights');
+        }
+    }
+}
+function collapseByRowKey(store, rowKey, recursive) {
+    var row = common_1.findProp('rowKey', rowKey, store.data.rawData);
+    if (row) {
+        var eventBus = eventBus_1.getEventBus(store.id);
+        var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
+        /**
+         * Occurs when the row having child rows is collapsed
+         * @event Grid#collapsed
+         * @type {module:event/gridEvent}
+         * @property {number|string} rowKey - rowKey of the collapsed row
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('collapse', gridEvent);
+        collapse(store, row, recursive, true);
+    }
+}
+exports.collapseByRowKey = collapseByRowKey;
+function collapseAll(store) {
+    var data = store.data, rowCoords = store.rowCoords;
+    data.rawData.forEach(function (row) {
+        collapse(store, row, true, false);
+    });
+    observable_1.notify(rowCoords, 'heights');
+}
+exports.collapseAll = collapseAll;
+function setCheckedState(disabled, row, state) {
+    if (row && data_2.isUpdatableRowAttr('checked', row._attributes.checkDisabled, disabled)) {
+        row._attributes.checked = state;
+    }
+}
+function changeAncestorRowsCheckedState(store, rowKey) {
+    var _a = store.data, rawData = _a.rawData, disabled = _a.disabled;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        tree_2.traverseAncestorRows(rawData, row, function (parentRow) {
+            var childRowKeys = tree_2.getChildRowKeys(parentRow);
+            var checkedChildRows = childRowKeys.filter(function (childRowKey) {
+                var childRow = common_1.findProp('rowKey', childRowKey, rawData);
+                return !!childRow && childRow._attributes.checked;
+            });
+            var checked = childRowKeys.length === checkedChildRows.length;
+            setCheckedState(disabled, parentRow, checked);
+        });
+    }
+}
+function changeDescendantRowsCheckedState(store, rowKey, state) {
+    var _a = store.data, rawData = _a.rawData, disabled = _a.disabled;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        tree_2.traverseDescendantRows(rawData, row, function (childRow) {
+            setCheckedState(disabled, childRow, state);
+        });
+    }
+}
+function changeTreeRowsCheckedState(store, rowKey, state) {
+    var _a = store.column, treeColumnName = _a.treeColumnName, treeCascadingCheckbox = _a.treeCascadingCheckbox;
+    if (treeColumnName && treeCascadingCheckbox) {
+        changeDescendantRowsCheckedState(store, rowKey, state);
+        changeAncestorRowsCheckedState(store, rowKey);
+    }
+}
+exports.changeTreeRowsCheckedState = changeTreeRowsCheckedState;
+function appendTreeRow(store, row, options) {
+    var data = store.data, column = store.column, rowCoords = store.rowCoords, dimension = store.dimension;
+    var rawData = data.rawData, viewData = data.viewData;
+    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
+    var heights = rowCoords.heights;
+    var _a = options.parentRowKey, parentRowKey = _a === void 0 ? null : _a;
+    var parentRowIdx, parentRow, startIdx;
+    if (!common_1.isNull(parentRowKey)) {
+        parentRowIdx = common_1.findPropIndex('rowKey', parentRowKey, rawData);
+        parentRow = rawData[parentRowIdx];
+        startIdx = parentRowIdx + tree_1.getDescendantRows(store, parentRow.rowKey).length + 1;
+    }
+    else {
+        parentRow = null;
+        startIdx = rawData.length;
+    }
+    var rawRows = tree_2.flattenTreeData([row], defaultValues, parentRow, column.keyColumnName);
+    rawData.splice.apply(rawData, [startIdx, 0].concat(rawRows));
+    var viewRows = rawRows.map(function (rawRow) {
+        return data_1.createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon);
+    });
+    viewData.splice.apply(viewData, [startIdx, 0].concat(viewRows));
+    var rowHeights = rawRows.map(function (rawRow) { return rowCoords_1.getRowHeight(rawRow, dimension.rowHeight); });
+    heights.splice.apply(heights, [startIdx, 0].concat(rowHeights));
+    observable_1.notify(data, 'rawData');
+    observable_1.notify(data, 'viewData');
+    observable_1.notify(rowCoords, 'heights');
+    // @todo net 연동
+}
+exports.appendTreeRow = appendTreeRow;
+function removeTreeRow(store, rowKey, options) {
+    var data = store.data, rowCoords = store.rowCoords;
+    var rawData = data.rawData, viewData = data.viewData;
+    var heights = rowCoords.heights;
+    if (!common_1.isNull(rowKey)) {
+        var parentRow = tree_1.getParentRow(store, rowKey);
+        if (parentRow) {
+            tree_2.removeChildRowKey(parentRow, parentRow.rowKey);
+        }
+    }
+    var startIdx = common_1.findPropIndex('rowKey', rowKey, rawData);
+    var endIdx = tree_1.getDescendantRows(store, rowKey).length + 1;
+    rawData.splice(startIdx, endIdx);
+    viewData.splice(startIdx, endIdx);
+    heights.splice(startIdx, endIdx);
+    observable_1.notify(data, 'rawData');
+    observable_1.notify(data, 'viewData');
+    observable_1.notify(rowCoords, 'heights');
+    // @todo net 연동
+}
+exports.removeTreeRow = removeTreeRow;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var observable_1 = __webpack_require__(5);
+var common_1 = __webpack_require__(1);
+var tree_1 = __webpack_require__(12);
+function getParentRow(store, rowKey, plainObj) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        var parentRowKey = tree_1.getParentRowKey(row);
+        var parentRow = common_1.findProp('rowKey', parentRowKey, rawData);
+        if (parentRow) {
+            return plainObj ? observable_1.getOriginObject(parentRow) : parentRow;
+        }
+    }
+    return null;
+}
+exports.getParentRow = getParentRow;
+function getChildRows(store, rowKey, plainObj) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    if (row) {
+        var childRowKeys = tree_1.getChildRowKeys(row);
+        return childRowKeys.map(function (childRowKey) {
+            var childRow = common_1.findProp('rowKey', childRowKey, rawData);
+            return plainObj ? observable_1.getOriginObject(childRow) : childRow;
+        });
+    }
+    return [];
+}
+exports.getChildRows = getChildRows;
+function getAncestorRows(store, rowKey) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    var ancestorRows = [];
+    if (row) {
+        tree_1.traverseAncestorRows(rawData, row, function (parentRow) {
+            ancestorRows.unshift(observable_1.getOriginObject(parentRow));
+        });
+    }
+    return ancestorRows;
+}
+exports.getAncestorRows = getAncestorRows;
+function getDescendantRows(store, rowKey) {
+    var rawData = store.data.rawData;
+    var row = common_1.findProp('rowKey', rowKey, rawData);
+    var childRows = [];
+    if (row) {
+        tree_1.traverseDescendantRows(rawData, row, function (childRow) {
+            childRows.push(observable_1.getOriginObject(childRow));
+        });
+    }
+    return childRows;
+}
+exports.getDescendantRows = getDescendantRows;
+
+
+/***/ }),
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2847,43 +4489,215 @@ function isCellDisabled(data, rowKey, columnName) {
     return disabled || rowDisabled;
 }
 exports.isCellDisabled = isCellDisabled;
+function getCheckedRows(_a) {
+    var data = _a.data;
+    return data.rawData.filter(function (_a) {
+        var _attributes = _a._attributes;
+        return _attributes.checked;
+    });
+}
+exports.getCheckedRows = getCheckedRows;
+function getConditionalRows(_a, conditions) {
+    var data = _a.data;
+    var rawData = data.rawData;
+    if (common_1.isFunction(conditions)) {
+        return rawData.filter(conditions);
+    }
+    var result = rawData;
+    Object.keys(conditions).forEach(function (key) {
+        result = result.filter(function (row) { return row[key] === conditions[key]; });
+    });
+    return result;
+}
+exports.getConditionalRows = getConditionalRows;
 
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var tslib_1 = __webpack_require__(0);
-var grid_1 = tslib_1.__importDefault(__webpack_require__(24));
-__webpack_require__(77);
-module.exports = grid_1.default;
-
-
-/***/ }),
-/* 24 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var create_1 = __webpack_require__(25);
-var root_1 = __webpack_require__(40);
-var preact_1 = __webpack_require__(2);
-var create_2 = __webpack_require__(59);
-var manager_1 = tslib_1.__importDefault(__webpack_require__(71));
-var instance_1 = __webpack_require__(8);
-var i18n_1 = tslib_1.__importDefault(__webpack_require__(75));
-var clipboard_1 = __webpack_require__(14);
-var validation_1 = __webpack_require__(76);
-var clipboard_2 = __webpack_require__(9);
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
+var confirmMessageMap = {
+    CREATE: 'net.confirmCreate',
+    UPDATE: 'net.confirmUpdate',
+    DELETE: 'net.confirmDelete',
+    MODIFY: 'net.confirmModify'
+};
+var alertMessageMap = {
+    CREATE: 'net.noDataToCreate',
+    UPDATE: 'net.noDataToUpdate',
+    DELETE: 'net.noDataToDelete',
+    MODIFY: 'net.noDataToModify'
+};
+function getConfirmMessage(type, count) {
+    return i18n_1.default.get(confirmMessageMap[type], { count: String(count) });
+}
+exports.getConfirmMessage = getConfirmMessage;
+function getAlertMessage(type) {
+    return i18n_1.default.get(alertMessageMap[type]);
+}
+exports.getAlertMessage = getAlertMessage;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
 var observable_1 = __webpack_require__(5);
-var eventBus_1 = __webpack_require__(7);
-var data_1 = __webpack_require__(22);
+var paramNameMap = {
+    CREATE: 'createdRows',
+    UPDATE: 'updatedRows',
+    DELETE: 'deletedRows'
+};
+function getDataWithOptions(targetRows, options) {
+    if (options === void 0) { options = {}; }
+    var _a = options.checkedOnly, checkedOnly = _a === void 0 ? false : _a, _b = options.withRawData, withRawData = _b === void 0 ? false : _b, _c = options.rowKeyOnly, rowKeyOnly = _c === void 0 ? false : _c, _d = options.ignoredColumns, ignoredColumns = _d === void 0 ? [] : _d;
+    var rows = targetRows.map(function (row) { return observable_1.getOriginObject(row); });
+    if (checkedOnly) {
+        rows = rows.filter(function (row) { return row._attributes.checked; });
+    }
+    if (ignoredColumns.length) {
+        rows = rows.map(function (row) { return common_1.omit.apply(void 0, [row].concat(ignoredColumns)); });
+    }
+    if (!withRawData) {
+        rows = rows.map(function (row) { return common_1.omit(row, '_attributes'); });
+    }
+    if (rowKeyOnly) {
+        return rows.map(function (row) { return row.rowKey; });
+    }
+    return rows;
+}
+exports.getDataWithOptions = getDataWithOptions;
+function createManager() {
+    var originData = [];
+    var dataMap = {
+        CREATE: [],
+        UPDATE: [],
+        DELETE: []
+    };
+    var splice = function (type, rowKey, row) {
+        var index = common_1.findIndex(function (createdRow) { return createdRow.rowKey === rowKey; }, dataMap[type]);
+        if (index !== -1) {
+            if (common_1.isUndefined(row)) {
+                dataMap[type].splice(index, 1);
+            }
+            else {
+                dataMap[type].splice(index, 1, row);
+            }
+        }
+    };
+    var spliceAll = function (rowKey, row) {
+        splice('CREATE', rowKey, row);
+        splice('UPDATE', rowKey, row);
+        splice('DELETE', rowKey, row);
+    };
+    return {
+        // only for restore
+        setOriginData: function (data) {
+            originData = data.map(function (row) { return (tslib_1.__assign({}, row)); });
+        },
+        getOriginData: function () {
+            return originData;
+        },
+        getModifiedData: function (type, options) {
+            var _a;
+            return _a = {}, _a[paramNameMap[type]] = getDataWithOptions(dataMap[type], options), _a;
+        },
+        getAllModifiedData: function (options) {
+            var _this = this;
+            return Object.keys(dataMap)
+                .map(function (key) { return _this.getModifiedData(key, options); })
+                .reduce(function (acc, data) { return (tslib_1.__assign({}, acc, data)); }, {});
+        },
+        isModified: function () {
+            return !!(dataMap.CREATE.length || dataMap.UPDATE.length || dataMap.DELETE.length);
+        },
+        push: function (type, row) {
+            var rowKey = row.rowKey;
+            // filter duplicated row
+            if (type === 'UPDATE') {
+                splice('CREATE', rowKey, row);
+                splice('UPDATE', rowKey, row);
+            }
+            if (type === 'DELETE') {
+                splice('CREATE', rowKey);
+                splice('UPDATE', rowKey);
+            }
+            if (!common_1.someProp('rowKey', rowKey, dataMap[type])) {
+                dataMap[type].push(row);
+            }
+        },
+        clear: function (rowsMap) {
+            Object.keys(rowsMap).forEach(function (key) {
+                var rows = rowsMap[key];
+                rows.forEach(function (row) {
+                    spliceAll(common_1.isObject(row) ? row.rowKey : row);
+                });
+            });
+        },
+        clearAll: function () {
+            dataMap.CREATE = [];
+            dataMap.UPDATE = [];
+            dataMap.DELETE = [];
+        }
+    };
+}
+exports.createManager = createManager;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var tslib_1 = __webpack_require__(0);
+var grid_1 = tslib_1.__importDefault(__webpack_require__(37));
+__webpack_require__(99);
+grid_1.default.setLanguage('en');
+module.exports = grid_1.default;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var create_1 = __webpack_require__(38);
+var root_1 = __webpack_require__(55);
+var preact_1 = __webpack_require__(3);
+var create_2 = __webpack_require__(79);
+var manager_1 = tslib_1.__importDefault(__webpack_require__(90));
+var instance_1 = __webpack_require__(8);
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
+var clipboard_1 = __webpack_require__(20);
+var validation_1 = __webpack_require__(94);
+var clipboard_2 = __webpack_require__(14);
+var common_1 = __webpack_require__(1);
+var observable_1 = __webpack_require__(5);
+var eventBus_1 = __webpack_require__(9);
+var data_1 = __webpack_require__(33);
 var column_1 = __webpack_require__(6);
+var serverSideDataProvider_1 = __webpack_require__(95);
+var modifiedDataManager_1 = __webpack_require__(35);
+var message_1 = __webpack_require__(34);
+var paginationManager_1 = __webpack_require__(98);
+var tree_1 = __webpack_require__(32);
+var tree_2 = __webpack_require__(12);
+var dom_1 = __webpack_require__(2);
+var rowSpan_1 = __webpack_require__(7);
 /* eslint-disable */
 if (false) {}
 /* eslint-enable */
@@ -2894,14 +4708,25 @@ var Grid = /** @class */ (function () {
         var store = create_1.createStore(id, options);
         var dispatch = create_2.createDispatcher(store);
         var eventBus = eventBus_1.createEventBus(id);
+        var dataProvider = serverSideDataProvider_1.createProvider(store, dispatch, options.data);
+        var dataManager = modifiedDataManager_1.createManager();
+        var paginationManager = paginationManager_1.createPaginationManager();
+        this.el = el;
         this.store = store;
         this.dispatch = dispatch;
         this.eventBus = eventBus;
+        this.dataProvider = dataProvider;
+        this.dataManager = dataManager;
+        this.paginationManager = paginationManager;
+        instance_1.registerDataSources(id, dataProvider, dataManager, paginationManager);
         // @TODO: Only for Development env
         // eslint-disable-next-line
         window.store = store;
         if (!manager_1.default.isApplied()) {
             manager_1.default.apply('default');
+        }
+        if (Array.isArray(options.data)) {
+            this.dataManager.setOriginData(options.data);
         }
         preact_1.render(preact_1.h(root_1.Root, { store: store, dispatch: dispatch, rootElement: el }), el);
     }
@@ -3105,7 +4930,7 @@ var Grid = /** @class */ (function () {
      *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
      *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
      */
-    Grid.prototype.selection = function (range) {
+    Grid.prototype.setSelectionRange = function (range) {
         this.dispatch('setSelection', range);
     };
     /**
@@ -3219,6 +5044,15 @@ var Grid = /** @class */ (function () {
         this.dispatch('setColumnValues', columnName, columnValue, checkCellState);
     };
     /**
+     * Returns the HTMLElement of the cell identified by the rowKey and columnName.
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {string} columnName - The name of the column
+     * @returns {HTMLElement} - The HTMLElement of the cell element
+     */
+    Grid.prototype.getElement = function (rowKey, columnName) {
+        return this.el.querySelector("." + dom_1.cls('cell') + "[" + dom_1.dataAttr.ROW_KEY + "=\"" + rowKey + "\"][" + dom_1.dataAttr.COLUMN_NAME + "=\"" + columnName + "\"]");
+    };
+    /**
      * Sets the HTML string of given column summary.
      * The type of content is the same as the options.summary.columnContent of the constructor.
      * @param {string} columnName - column name
@@ -3261,6 +5095,26 @@ var Grid = /** @class */ (function () {
             return !column_1.isRowHeader(name);
         })
             .map(function (column) { return observable_1.getOriginObject(column); });
+    };
+    /**
+     * Sets the list of column model.
+     * @param {Array} columns - A new list of column model
+     */
+    Grid.prototype.setColumns = function (columns) {
+        this.dispatch('setColumns', columns);
+    };
+    /**
+     * Set columns title
+     * @param {string} columnsMap - columns map to be change
+     */
+    Grid.prototype.setColumnTitles = function () {
+        // @TODO implements
+    };
+    /**
+     * Resets the width of each column by using initial setting of column models.
+     */
+    Grid.prototype.resetColumnWidths = function (widths) {
+        this.dispatch('resetColumnWidths', widths);
     };
     /**
      * Returns a list of all values in the specified column.
@@ -3309,10 +5163,7 @@ var Grid = /** @class */ (function () {
      * @returns {Array.<string|number>} - A list of the rowKey.
      */
     Grid.prototype.getCheckedRowKeys = function () {
-        return this.store.data.rawData.filter(function (_a) {
-            var _checked = _a._checked;
-            return _checked;
-        }).map(function (_a) {
+        return data_1.getCheckedRows(this.store).map(function (_a) {
             var rowKey = _a.rowKey;
             return rowKey;
         });
@@ -3322,11 +5173,25 @@ var Grid = /** @class */ (function () {
      * @returns {Array.<object>} - A list of the checked rows.
      */
     Grid.prototype.getCheckedRows = function () {
-        // @TODO 반환되는 값 - 순수 객체 처리 변환
-        return this.store.data.rawData.filter(function (_a) {
-            var _checked = _a._checked;
-            return _checked;
-        });
+        return data_1.getCheckedRows(this.store).map(function (row) { return observable_1.getOriginObject(row); });
+    };
+    /**
+     * Finds rows by conditions
+     * @param {Object|Function} conditions - object (key: column name, value: column value) or
+     *     function that check the value and returns true/false result to find rows
+     * @returns {Array} Row list
+     * @example <caption>Conditions type is object.</caption>
+     * grid.findRows({
+     *     artist: 'Birdy',
+     *     price: 10000
+     * });
+     * @example <caption>Conditions type is function.</caption>
+     * grid.findRows((row) => {
+     *     return (/b/ig.test(row.artist) && row.price > 10000);
+     * });
+     */
+    Grid.prototype.findRows = function (conditions) {
+        return data_1.getConditionalRows(this.store, conditions);
     };
     /**
      * Sorts all rows by the specified column.
@@ -3340,7 +5205,8 @@ var Grid = /** @class */ (function () {
     /**
      * Unsorts all rows. (Sorts by rowKey).
      */
-    Grid.prototype.unSort = function () {
+    Grid.prototype.unsort = function () {
+        // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
         this.dispatch('sort', 'rowKey', true);
     };
     /**
@@ -3452,7 +5318,13 @@ var Grid = /** @class */ (function () {
     Grid.prototype.appendRow = function (row, options) {
         if (row === void 0) { row = {}; }
         if (options === void 0) { options = {}; }
-        this.dispatch('appendRow', row, options);
+        var treeColumnName = this.store.column.treeColumnName;
+        if (treeColumnName) {
+            this.dispatch('appendTreeRow', row, options);
+        }
+        else {
+            this.dispatch('appendRow', row, options);
+        }
         if (options.focus) {
             var rowIdx = common_1.isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
             this.focusAt(rowIdx, 0);
@@ -3477,7 +5349,13 @@ var Grid = /** @class */ (function () {
      */
     Grid.prototype.removeRow = function (rowKey, options) {
         if (options === void 0) { options = {}; }
-        this.dispatch('removeRow', rowKey, options);
+        var treeColumnName = this.store.column.treeColumnName;
+        if (treeColumnName) {
+            this.dispatch('removeTreeRow', rowKey, options);
+        }
+        else {
+            this.dispatch('removeRow', rowKey, options);
+        }
     };
     /**
      * Returns the object that contains all values in the specified row.
@@ -3571,40 +5449,238 @@ var Grid = /** @class */ (function () {
     Grid.prototype.off = function (eventName, fn) {
         this.eventBus.off(eventName, fn);
     };
+    /**
+     * Returns an instance of tui.Pagination.
+     * @returns {tui.Pagination}
+     */
+    Grid.prototype.getPagination = function () {
+        return this.paginationManager.getPagination();
+    };
+    /**
+     * Set number of rows per page and reload current page
+     * @param {number} perPage - Number of rows per page
+     */
+    Grid.prototype.setPerPage = function (perPage) {
+        var pagination = this.getPagination();
+        if (pagination) {
+            pagination.setItemsPerPage(perPage);
+            this.readData(1, { perPage: perPage });
+        }
+    };
+    /**
+     * Returns true if there are at least one row modified.
+     * @returns {boolean} - True if there are at least one row modified.
+     */
+    Grid.prototype.isModified = function () {
+        return this.dataManager.isModified();
+    };
+    /**
+     * Returns the object that contains the lists of changed data compared to the original data.
+     * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
+     * @param {Object} [options] Options
+     *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+     *     @param {boolean} [options.withRawData=false] - If set to true, the data will contains
+     *         the row data for internal use.
+     *     @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
+     *         rows will be returned.
+     *     @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
+     * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
+     */
+    Grid.prototype.getModifiedRows = function (options) {
+        if (options === void 0) { options = {}; }
+        var ignoredColumns = options.ignoredColumns;
+        var originIgnoredColumns = this.store.column.ignoredColumns;
+        options.ignoredColumns = Array.isArray(ignoredColumns)
+            ? ignoredColumns.concat(originIgnoredColumns)
+            : originIgnoredColumns;
+        return this.dataManager.getAllModifiedData(options);
+    };
+    /**
+     * Requests 'readData' to the server. The last requested data will be extended with new data.
+     * @param {Number} page - Page number
+     * @param {Object} data - Data(parameters) to send to the server
+     * @param {Boolean} resetData - If set to true, last requested data will be ignored.
+     */
+    Grid.prototype.readData = function (page, data, resetData) {
+        this.dataProvider.readData(page, data, resetData);
+    };
+    /**
+     * Send request to server to sync data
+     * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+     * @param {object} options - Options
+     *      @param {String} [options.url] - URL to send the request
+     *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+     *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+     *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+     *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+     *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
+     * @returns {boolean} Whether requests or not
+     */
+    Grid.prototype.request = function (requestType, options) {
+        if (options === void 0) { options = {}; }
+        this.dataProvider.request(requestType, options);
+    };
+    /**
+     * Requests 'readData' with last requested data.
+     */
+    Grid.prototype.reloadData = function () {
+        this.dataProvider.reloadData();
+    };
+    /**
+     * Restores the data to the original data.
+     * (Original data is set by {@link Grid#resetData|resetData}
+     */
+    Grid.prototype.restore = function () {
+        this.resetData(this.dataManager.getOriginData());
+    };
+    /**
+     * Expands tree row.
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {boolean} recursive - true for recursively expand all descendant
+     */
+    Grid.prototype.expand = function (rowKey, recursive) {
+        this.dispatch('expandByRowKey', rowKey, recursive);
+    };
+    /**
+     * Expands all tree row.
+     */
+    Grid.prototype.expandAll = function () {
+        this.dispatch('expandAll');
+    };
+    /**
+     * Expands tree row.
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {boolean} recursive - true for recursively expand all descendant
+     */
+    Grid.prototype.collapse = function (rowKey, recursive) {
+        this.dispatch('collapseByRowKey', rowKey, recursive);
+    };
+    /**
+     * Collapses all tree row.
+     */
+    Grid.prototype.collapseAll = function () {
+        this.dispatch('collapseAll');
+    };
+    /**
+     * Gets the parent of the row which has the given row key.
+     * @param {number|string} rowKey - The unique key of the row
+     * @returns {Object} - the parent row
+     */
+    Grid.prototype.getParentRow = function (rowKey) {
+        return tree_1.getParentRow(this.store, rowKey, true);
+    };
+    /**
+     * Gets the children of the row which has the given row key.
+     * @param {number|string} rowKey - The unique key of the row
+     * @returns {Array.<Object>} - the children rows
+     */
+    Grid.prototype.getChildRows = function (rowKey) {
+        return tree_1.getChildRows(this.store, rowKey, true);
+    };
+    /**
+     * Gets the ancestors of the row which has the given row key.
+     * @param {number|string} rowKey - The unique key of the row
+     * @returns {Array.<TreeRow>} - the ancestor rows
+     */
+    Grid.prototype.getAncestorRows = function (rowKey) {
+        return tree_1.getAncestorRows(this.store, rowKey);
+    };
+    /**
+     * Gets the descendants of the row which has the given row key.
+     * @param {number|string} rowKey - The unique key of the row
+     * @returns {Array.<Object>} - the descendant rows
+     */
+    Grid.prototype.getDescendantRows = function (rowKey) {
+        return tree_1.getDescendantRows(this.store, rowKey);
+    };
+    /**
+     * Gets the depth of the row which has the given row key.
+     * @param {number|string} rowKey - The unique key of the row
+     * @returns {number} - the depth
+     */
+    Grid.prototype.getDepth = function (rowKey) {
+        var rawData = this.store.data.rawData;
+        var row = common_1.findProp('rowKey', rowKey, rawData);
+        return row ? tree_2.getDepth(rawData, row) : 0;
+    };
+    /**
+     * Returns the rowspan data of the cell identified by the rowKey and columnName.
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {string} columnName - The name of the column
+     * @returns {Object} - Row span data
+     */
+    Grid.prototype.getRowSpanData = function (rowKey, columnName) {
+        return rowSpan_1.getRowSpanByRowKey(rowKey, columnName, this.store.data.rawData);
+    };
+    /**
+     * reset original data to current data.
+     * (Original data is set by {@link Grid#resetData|resetData}
+     */
+    Grid.prototype.resetOriginData = function () {
+        this.dataManager.setOriginData(this.getData());
+    };
+    /** Removes all checked rows.
+     * @param {boolean} [showConfirm] - If set to true, confirm message will be shown before remove.
+     * @returns {boolean} - True if there's at least one row removed.
+     */
+    Grid.prototype.removeCheckedRows = function (showConfirm) {
+        var _this = this;
+        var rowKeys = this.getCheckedRowKeys();
+        var confirmMessage = message_1.getConfirmMessage('DELETE', rowKeys.length);
+        if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
+            rowKeys.forEach(function (rowKey) {
+                _this.removeRow(rowKey);
+            });
+            return true;
+        }
+        return false;
+    };
+    /**
+     * Refreshs the layout view. Use this method when the view was rendered while hidden.
+     */
+    Grid.prototype.refreshLayout = function () {
+        var containerEl = this.el.querySelector("." + dom_1.cls('container'));
+        var parentElement = this.el.parentElement;
+        this.dispatch('refreshLayout', containerEl, parentElement);
+    };
     return Grid;
 }());
 exports.default = Grid;
 
 
 /***/ }),
-/* 25 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
-var data_1 = __webpack_require__(16);
-var column_1 = __webpack_require__(27);
-var dimension_1 = __webpack_require__(34);
-var viewport_1 = __webpack_require__(35);
-var columnCoords_1 = __webpack_require__(36);
-var rowCoords_1 = __webpack_require__(17);
-var focus_1 = __webpack_require__(37);
-var summary_1 = __webpack_require__(38);
-var selection_1 = __webpack_require__(39);
+var data_1 = __webpack_require__(11);
+var column_1 = __webpack_require__(22);
+var dimension_1 = __webpack_require__(48);
+var viewport_1 = __webpack_require__(49);
+var columnCoords_1 = __webpack_require__(50);
+var rowCoords_1 = __webpack_require__(16);
+var focus_1 = __webpack_require__(51);
+var summary_1 = __webpack_require__(52);
+var selection_1 = __webpack_require__(53);
+var renderState_1 = __webpack_require__(54);
 function createStore(id, options) {
-    var el = options.el, width = options.width, rowHeight = options.rowHeight, bodyHeight = options.bodyHeight, minBodyHeight = options.minBodyHeight, _a = options.columnOptions, columnOptions = _a === void 0 ? {} : _a, keyColumnName = options.keyColumnName, _b = options.rowHeaders, rowHeaders = _b === void 0 ? [] : _b, _c = options.copyOptions, copyOptions = _c === void 0 ? {} : _c, _d = options.summary, summaryOptions = _d === void 0 ? {} : _d, _e = options.selectionUnit, selectionUnit = _e === void 0 ? 'cell' : _e, _f = options.showDummyRows, showDummyRows = _f === void 0 ? false : _f, _g = options.editingEvent, editingEvent = _g === void 0 ? 'dblclick' : _g, _h = options.scrollX, scrollX = _h === void 0 ? true : _h, _j = options.scrollY, scrollY = _j === void 0 ? true : _j;
+    var el = options.el, width = options.width, rowHeight = options.rowHeight, bodyHeight = options.bodyHeight, heightResizable = options.heightResizable, minBodyHeight = options.minBodyHeight, _a = options.columnOptions, columnOptions = _a === void 0 ? {} : _a, keyColumnName = options.keyColumnName, _b = options.rowHeaders, rowHeaders = _b === void 0 ? [] : _b, _c = options.copyOptions, copyOptions = _c === void 0 ? {} : _c, _d = options.summary, summaryOptions = _d === void 0 ? {} : _d, _e = options.selectionUnit, selectionUnit = _e === void 0 ? 'cell' : _e, _f = options.showDummyRows, showDummyRows = _f === void 0 ? false : _f, _g = options.editingEvent, editingEvent = _g === void 0 ? 'dblclick' : _g, scrollX = options.scrollX, scrollY = options.scrollY, _h = options.useClientSort, useClientSort = _h === void 0 ? true : _h, _j = options.pageOptions, pageOptions = _j === void 0 ? {} : _j, _k = options.treeColumnOptions, treeColumnOptions = _k === void 0 ? { name: '' } : _k, _l = options.header, header = _l === void 0 ? {} : _l;
     var frozenBorderWidth = columnOptions.frozenBorderWidth;
     var summaryHeight = summaryOptions.height, summaryPosition = summaryOptions.position;
+    var _m = header.height, headerHeight = _m === void 0 ? 40 : _m, _o = header.complexColumns, complexColumns = _o === void 0 ? [] : _o;
     var column = column_1.create({
         columns: options.columns,
         columnOptions: columnOptions,
         rowHeaders: rowHeaders,
         copyOptions: copyOptions,
-        keyColumnName: keyColumnName
+        keyColumnName: keyColumnName,
+        treeColumnOptions: treeColumnOptions,
+        complexColumns: complexColumns
     });
-    var data = data_1.create(options.data || [], column);
+    var data = data_1.create(Array.isArray(options.data) ? options.data : [], column, pageOptions, useClientSort);
     var dimension = dimension_1.create({
         column: column,
         width: width,
@@ -3612,11 +5688,13 @@ function createStore(id, options) {
         rowHeight: rowHeight,
         bodyHeight: bodyHeight,
         minBodyHeight: minBodyHeight,
+        heightResizable: heightResizable,
         frozenBorderWidth: frozenBorderWidth,
         summaryHeight: summaryHeight,
         summaryPosition: summaryPosition,
         scrollX: scrollX,
-        scrollY: scrollY
+        scrollY: scrollY,
+        headerHeight: headerHeight
     });
     var columnCoords = columnCoords_1.create({ column: column, dimension: dimension });
     var rowCoords = rowCoords_1.create({ data: data, dimension: dimension });
@@ -3631,6 +5709,7 @@ function createStore(id, options) {
     var focus = focus_1.create({ data: data, column: column, columnCoords: columnCoords, rowCoords: rowCoords, editingEvent: editingEvent });
     var summary = summary_1.create({ column: column, data: data, summary: summaryOptions });
     var selection = selection_1.create({ selectionUnit: selectionUnit, columnCoords: columnCoords, column: column, dimension: dimension, rowCoords: rowCoords });
+    var renderState = renderState_1.create(data);
     // manual observe to resolve circular references
     observable_1.observe(function () {
         dimension_1.setBodyHeight(dimension, rowCoords);
@@ -3645,14 +5724,15 @@ function createStore(id, options) {
         viewport: viewport,
         focus: focus,
         summary: summary,
-        selection: selection
+        selection: selection,
+        renderState: renderState
     });
 }
 exports.createStore = createStore;
 
 
 /***/ }),
-/* 26 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3665,7 +5745,7 @@ function getListItemText(listItems, value) {
 }
 function listItemText(_a) {
     var column = _a.column, value = _a.value;
-    var _b = column.editorOptions, type = _b.type, listItems = _b.listItems;
+    var _b = column.editor.options, type = _b.type, listItems = _b.listItems;
     if (type === 'checkbox') {
         return String(value)
             .split(',')
@@ -3678,157 +5758,13 @@ exports.listItemText = listItemText;
 
 
 /***/ }),
-/* 27 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var observable_1 = __webpack_require__(5);
-var common_1 = __webpack_require__(1);
-var default_1 = __webpack_require__(28);
-var manager_1 = __webpack_require__(29);
-var rowHeaderInput_1 = __webpack_require__(33);
-var defMinWidth = {
-    ROW_HEADER: 40,
-    COLUMN: 50
-};
-var DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
-function getEditorInfo(editor, editorOptions) {
-    if (typeof editor === 'string') {
-        var editInfo = manager_1.editorMap[editor];
-        return {
-            editor: editInfo[0],
-            editorOptions: tslib_1.__assign({}, editInfo[1], editorOptions)
-        };
-    }
-    return { editor: editor, editorOptions: editorOptions };
-}
-function getRelationMap(relations) {
-    var relationMap = {};
-    relations.forEach(function (relation) {
-        var editable = relation.editable, disabled = relation.disabled, listItems = relation.listItems, _a = relation.targetNames, targetNames = _a === void 0 ? [] : _a;
-        targetNames.forEach(function (targetName) {
-            relationMap[targetName] = {
-                editable: editable,
-                disabled: disabled,
-                listItems: listItems
-            };
-        });
-    });
-    return relationMap;
-}
-function getRelationColumns(relations) {
-    var relationColumns = [];
-    relations.forEach(function (relation) {
-        var _a = relation.targetNames, targetNames = _a === void 0 ? [] : _a;
-        targetNames.forEach(function (targetName) {
-            relationColumns.push(targetName);
-        });
-    });
-    return relationColumns;
-}
-function createColumn(column, columnOptions, relationColumns, gridCopyOptions) {
-    var header = column.header, width = column.width, minWidth = column.minWidth, align = column.align, hidden = column.hidden, resizable = column.resizable, editor = column.editor, editorOptions = column.editorOptions, renderer = column.renderer, relations = column.relations, sortable = column.sortable, copyOptions = column.copyOptions, validation = column.validation;
-    return observable_1.observable(tslib_1.__assign({}, column, { escapeHTML: !!column.escapeHTML, header: header || column.name, hidden: Boolean(hidden), resizable: Boolean(resizable), align: align || 'left', renderer: renderer || default_1.DefaultRenderer, fixedWidth: typeof width === 'number', copyOptions: tslib_1.__assign({}, gridCopyOptions, copyOptions), baseWidth: (width === 'auto' ? 0 : width) || 0, minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, relationMap: getRelationMap(relations || []), related: common_1.includes(relationColumns, column.name), sortable: sortable }, getEditorInfo(editor, editorOptions), { validation: validation ? tslib_1.__assign({}, validation) : {} }));
-}
-function createRowHeader(data) {
-    var rowHeader = typeof data === 'string' ? { name: data } : data;
-    var name = rowHeader.name, header = rowHeader.header, align = rowHeader.align, renderer = rowHeader.renderer, rendererOptions = rowHeader.rendererOptions, width = rowHeader.width, minWidth = rowHeader.minWidth;
-    var baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
-    var baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
-    var baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
-    var isRowNum = name === '_number';
-    var defaultHeader = '';
-    if (isRowNum) {
-        defaultHeader = 'No.';
-    }
-    else if (baseRendererOptions.inputType === 'checkbox') {
-        defaultHeader = DEF_ROW_HEADER_INPUT;
-    }
-    return observable_1.observable({
-        name: name,
-        header: header || defaultHeader,
-        hidden: false,
-        resizable: false,
-        align: align || 'center',
-        renderer: renderer || (isRowNum ? default_1.DefaultRenderer : rowHeaderInput_1.RowHeaderInputRenderer),
-        rendererOptions: baseRendererOptions,
-        fixedWidth: true,
-        baseWidth: baseWidth,
-        escapeHTML: false,
-        minWidth: baseMinWith
-    });
-}
-function create(_a) {
-    var columns = _a.columns, columnOptions = _a.columnOptions, rowHeaders = _a.rowHeaders, copyOptions = _a.copyOptions, keyColumnName = _a.keyColumnName;
-    var relationColumns = columns.reduce(function (acc, _a) {
-        var relations = _a.relations;
-        acc = acc.concat(getRelationColumns(relations || []));
-        return acc.filter(function (columnName, idx) { return acc.indexOf(columnName) === idx; });
-    }, []);
-    var rowHeaderInfos = rowHeaders.map(function (rowHeader) { return createRowHeader(rowHeader); });
-    var columnInfos = columns.map(function (column) {
-        return createColumn(column, columnOptions, relationColumns, copyOptions);
-    });
-    var allColumns = rowHeaderInfos.concat(columnInfos);
-    return observable_1.observable({
-        keyColumnName: keyColumnName,
-        frozenCount: columnOptions.frozenCount || 0,
-        allColumns: allColumns,
-        get allColumnMap() {
-            return common_1.createMapFromArray(this.allColumns, 'name');
-        },
-        get rowHeaderCount() {
-            return rowHeaderInfos.length;
-        },
-        get visibleColumns() {
-            return allColumns.filter(function (_a) {
-                var hidden = _a.hidden;
-                return !hidden;
-            });
-        },
-        get visibleColumnsBySide() {
-            var frozenLastIndex = this.frozenCount + this.rowHeaderCount;
-            return {
-                L: this.visibleColumns.slice(0, frozenLastIndex),
-                R: this.visibleColumns.slice(frozenLastIndex)
-            };
-        },
-        get defaultValues() {
-            return this.allColumns
-                .filter(function (_a) {
-                var defaultValue = _a.defaultValue;
-                return Boolean(defaultValue);
-            })
-                .map(function (_a) {
-                var name = _a.name, defaultValue = _a.defaultValue;
-                return ({ name: name, value: defaultValue });
-            });
-        },
-        get visibleFrozenCount() {
-            return this.visibleColumnsBySide.L.length;
-        },
-        get validationColumns() {
-            return allColumns.filter(function (_a) {
-                var validation = _a.validation;
-                return !!validation;
-            });
-        }
-    });
-}
-exports.create = create;
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var DefaultRenderer = /** @class */ (function () {
     function DefaultRenderer(props) {
         var el = document.createElement('div');
@@ -3841,12 +5777,12 @@ var DefaultRenderer = /** @class */ (function () {
             el.style.whiteSpace = whiteSpace;
         }
         this.el = el;
-        this.changed(props);
+        this.render(props);
     }
     DefaultRenderer.prototype.getElement = function () {
         return this.el;
     };
-    DefaultRenderer.prototype.changed = function (props) {
+    DefaultRenderer.prototype.render = function (props) {
         this.el.innerHTML = "" + props.prefix + props.formattedValue + props.postfix;
     };
     return DefaultRenderer;
@@ -3855,36 +5791,38 @@ exports.DefaultRenderer = DefaultRenderer;
 
 
 /***/ }),
-/* 29 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var text_1 = __webpack_require__(30);
-var checkbox_1 = __webpack_require__(31);
-var select_1 = __webpack_require__(32);
+var text_1 = __webpack_require__(42);
+var checkbox_1 = __webpack_require__(43);
+var select_1 = __webpack_require__(44);
+var datePicker_1 = __webpack_require__(45);
 exports.editorMap = {
     text: [text_1.TextEditor, { type: 'text' }],
     password: [text_1.TextEditor, { type: 'password' }],
     checkbox: [checkbox_1.CheckboxEditor, { type: 'checkbox' }],
     radio: [checkbox_1.CheckboxEditor, { type: 'radio' }],
-    select: [select_1.SelectEditor]
+    select: [select_1.SelectEditor],
+    datePicker: [datePicker_1.DatePickerEditor]
 };
 
 
 /***/ }),
-/* 30 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var TextEditor = /** @class */ (function () {
     function TextEditor(props) {
         var el = document.createElement('input');
-        var options = props.editorOptions;
+        var options = props.columnInfo.editor.options;
         el.className = dom_1.cls('content-text');
         el.type = options.type;
         el.value = String(props.value);
@@ -3896,7 +5834,7 @@ var TextEditor = /** @class */ (function () {
     TextEditor.prototype.getValue = function () {
         return this.el.value;
     };
-    TextEditor.prototype.start = function () {
+    TextEditor.prototype.mounted = function () {
         this.el.select();
     };
     return TextEditor;
@@ -3905,7 +5843,7 @@ exports.TextEditor = TextEditor;
 
 
 /***/ }),
-/* 31 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3916,7 +5854,7 @@ var CheckboxEditor = /** @class */ (function () {
         var _this = this;
         var name = 'tui-grid-check-input';
         var el = document.createElement('fieldset');
-        var _a = props.editorOptions, listItems = _a.listItems, type = _a.type;
+        var _a = props.columnInfo.editor.options, type = _a.type, listItems = _a.listItems;
         listItems.forEach(function (_a) {
             var text = _a.text, value = _a.value;
             var id = name + "-" + value;
@@ -3966,7 +5904,7 @@ var CheckboxEditor = /** @class */ (function () {
         }
         return checkedValues.join(',');
     };
-    CheckboxEditor.prototype.start = function () {
+    CheckboxEditor.prototype.mounted = function () {
         var firstInput = this.getFirstInput();
         if (firstInput) {
             firstInput.focus();
@@ -3978,7 +5916,7 @@ exports.CheckboxEditor = CheckboxEditor;
 
 
 /***/ }),
-/* 32 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3988,7 +5926,7 @@ var SelectEditor = /** @class */ (function () {
     function SelectEditor(props) {
         var _this = this;
         var el = document.createElement('select');
-        var listItems = props.editorOptions.listItems;
+        var listItems = props.columnInfo.editor.options.listItems;
         listItems.forEach(function (_a) {
             var text = _a.text, value = _a.value;
             el.appendChild(_this.createOptions(text, value));
@@ -4008,7 +5946,7 @@ var SelectEditor = /** @class */ (function () {
     SelectEditor.prototype.getValue = function () {
         return this.el.value;
     };
-    SelectEditor.prototype.start = function () {
+    SelectEditor.prototype.mounted = function () {
         this.el.focus();
     };
     return SelectEditor;
@@ -4017,7 +5955,85 @@ exports.SelectEditor = SelectEditor;
 
 
 /***/ }),
-/* 33 */
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var tui_date_picker_1 = tslib_1.__importDefault(__webpack_require__(46));
+var dom_1 = __webpack_require__(2);
+var common_1 = __webpack_require__(1);
+var DatePickerEditor = /** @class */ (function () {
+    function DatePickerEditor(props) {
+        var format = 'yyyy-MM-dd';
+        var date = new Date();
+        this.el = this.createWrapper();
+        this.inputEl = this.createInputElement();
+        var calendarWrapper = this.createCalendarWrapper();
+        var options = props.columnInfo.editor.options;
+        if (options) {
+            delete options.type;
+            if (options.format) {
+                format = options.format;
+                delete options.format;
+            }
+        }
+        if (common_1.isNumber(props.value) || common_1.isString(props.value)) {
+            date = new Date(props.value);
+        }
+        var defaultOptions = {
+            date: date,
+            type: 'date',
+            input: {
+                element: this.inputEl,
+                format: format
+            }
+        };
+        this.datePickerEl = new tui_date_picker_1.default(calendarWrapper, common_1.deepMergedCopy(defaultOptions, options || {}));
+    }
+    DatePickerEditor.prototype.createWrapper = function () {
+        var el = document.createElement('div');
+        el.className = dom_1.cls('layer-datepicker');
+        return el;
+    };
+    DatePickerEditor.prototype.createInputElement = function () {
+        var inputEl = document.createElement('input');
+        inputEl.className = dom_1.cls('content-text');
+        inputEl.type = 'text';
+        this.el.appendChild(inputEl);
+        return inputEl;
+    };
+    DatePickerEditor.prototype.createCalendarWrapper = function () {
+        var calendarWrapper = document.createElement('div');
+        calendarWrapper.style.marginTop = '-4px';
+        this.el.appendChild(calendarWrapper);
+        return calendarWrapper;
+    };
+    DatePickerEditor.prototype.getElement = function () {
+        return this.el;
+    };
+    DatePickerEditor.prototype.getValue = function () {
+        return this.inputEl.value;
+    };
+    DatePickerEditor.prototype.mounted = function () {
+        this.inputEl.select();
+        this.datePickerEl.open();
+    };
+    return DatePickerEditor;
+}());
+exports.DatePickerEditor = DatePickerEditor;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__46__;
+
+/***/ }),
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4026,8 +6042,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var RowHeaderInputRenderer = /** @class */ (function () {
     function RowHeaderInputRenderer(props) {
         var el = document.createElement('input');
-        var grid = props.grid, rowKey = props.rowKey, disabled = props.disabled, allDisabled = props.allDisabled, rendererOptions = props.columnInfo.rendererOptions;
-        el.type = rendererOptions ? rendererOptions.inputType : 'checkbox';
+        var grid = props.grid, rowKey = props.rowKey, disabled = props.disabled, allDisabled = props.allDisabled;
+        el.type = 'checkbox';
         el.name = '_checked';
         el.disabled = allDisabled || disabled;
         el.addEventListener('change', function () {
@@ -4039,12 +6055,12 @@ var RowHeaderInputRenderer = /** @class */ (function () {
             }
         });
         this.el = el;
-        this.changed(props);
+        this.render(props);
     }
     RowHeaderInputRenderer.prototype.getElement = function () {
         return this.el;
     };
-    RowHeaderInputRenderer.prototype.changed = function (props) {
+    RowHeaderInputRenderer.prototype.render = function (props) {
         var value = props.value, allDisabled = props.allDisabled, disabled = props.disabled;
         this.el.checked = Boolean(value);
         this.el.disabled = allDisabled || disabled;
@@ -4055,7 +6071,7 @@ exports.RowHeaderInputRenderer = RowHeaderInputRenderer;
 
 
 /***/ }),
-/* 34 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4064,8 +6080,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
 function create(_a) {
-    var column = _a.column, _b = _a.width, width = _b === void 0 ? 'auto' : _b, domWidth = _a.domWidth, _c = _a.rowHeight, rowHeight = _c === void 0 ? 40 : _c, _d = _a.bodyHeight, bodyHeight = _d === void 0 ? 'auto' : _d, _e = _a.minRowHeight, minRowHeight = _e === void 0 ? 40 : _e, _f = _a.minBodyHeight, minBodyHeight = _f === void 0 ? 130 : _f, _g = _a.frozenBorderWidth, frozenBorderWidth = _g === void 0 ? 1 : _g, scrollX = _a.scrollX, scrollY = _a.scrollY, _h = _a.summaryHeight, summaryHeight = _h === void 0 ? 0 : _h, _j = _a.summaryPosition, summaryPosition = _j === void 0 ? 'bottom' : _j;
-    var bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
+    var column = _a.column, _b = _a.width, width = _b === void 0 ? 'auto' : _b, domWidth = _a.domWidth, _c = _a.rowHeight, rowHeight = _c === void 0 ? 40 : _c, _d = _a.bodyHeight, bodyHeight = _d === void 0 ? 'auto' : _d, _e = _a.minRowHeight, minRowHeight = _e === void 0 ? 40 : _e, _f = _a.minBodyHeight, minBodyHeight = _f === void 0 ? 130 : _f, _g = _a.frozenBorderWidth, frozenBorderWidth = _g === void 0 ? 1 : _g, _h = _a.heightResizable, heightResizable = _h === void 0 ? false : _h, _j = _a.scrollX, scrollX = _j === void 0 ? true : _j, _k = _a.scrollY, scrollY = _k === void 0 ? true : _k, _l = _a.summaryHeight, summaryHeight = _l === void 0 ? 0 : _l, _m = _a.summaryPosition, summaryPosition = _m === void 0 ? 'bottom' : _m, _o = _a.headerHeight, headerHeight = _o === void 0 ? 40 : _o;
+    var bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
     return observable_1.observable({
         offsetLeft: 0,
         offsetTop: 0,
@@ -4074,6 +6090,7 @@ function create(_a) {
         minBodyHeight: minBodyHeight,
         bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
         autoHeight: bodyHeight === 'auto',
+        heightResizable: heightResizable,
         fitToParentHeight: bodyHeight === 'fitToParent',
         minRowHeight: minRowHeight,
         rowHeight: common_1.isNumber(rowHeight) ? Math.max(rowHeight, minRowHeight) : minRowHeight,
@@ -4082,7 +6099,7 @@ function create(_a) {
         scrollY: scrollY,
         summaryHeight: summaryHeight,
         summaryPosition: summaryPosition,
-        headerHeight: 40,
+        headerHeight: headerHeight,
         scrollbarWidth: 17,
         tableBorderWidth: 1,
         cellBorderWidth: 1,
@@ -4099,24 +6116,24 @@ function create(_a) {
         },
         get contentsWidth() {
             var columnLen = column.visibleColumns.length;
-            var totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
-            return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+            var totalBorderWidth = columnLen * this.cellBorderWidth;
+            return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
         }
     });
 }
 exports.create = create;
 function setBodyHeight(dimension, rowCoords) {
     var totalRowHeight = rowCoords.totalRowHeight;
-    var autoHeight = dimension.autoHeight, scrollXHeight = dimension.scrollXHeight;
+    var autoHeight = dimension.autoHeight, scrollXHeight = dimension.scrollXHeight, minBodyHeight = dimension.minBodyHeight;
     if (autoHeight) {
-        dimension.bodyHeight = totalRowHeight + scrollXHeight;
+        dimension.bodyHeight = Math.max(totalRowHeight + scrollXHeight, minBodyHeight);
     }
 }
 exports.setBodyHeight = setBodyHeight;
 
 
 /***/ }),
-/* 35 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4124,13 +6141,32 @@ exports.setBodyHeight = setBodyHeight;
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
-function indexOfRow(rowOffsets, posY) {
-    var rowOffset = common_1.findIndex(function (offset) { return offset > posY; }, rowOffsets);
-    return rowOffset === -1 ? rowOffsets.length - 1 : rowOffset - 1;
+var rowSpan_1 = __webpack_require__(7);
+function findIndexByPosition(offsets, position) {
+    var rowOffset = common_1.findIndex(function (offset) { return offset > position; }, offsets);
+    return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
+}
+function calculateRange(scrollPos, totalSize, offsets, data) {
+    // safari uses negative scroll position for bouncing effect
+    scrollPos = Math.max(scrollPos, 0);
+    var start = findIndexByPosition(offsets, scrollPos);
+    var end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
+    var rawData = data.rawData, sortOptions = data.sortOptions;
+    if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        var maxRowSpanCount = rowSpan_1.getMaxRowSpanCount(start, rawData);
+        var topRowSpanIndex = start - maxRowSpanCount;
+        return [topRowSpanIndex >= 0 ? topRowSpanIndex : 0, end];
+    }
+    return [start, end];
+}
+function getCachedRange(cachedRange, newRange) {
+    if (cachedRange && common_1.arrayEqual(cachedRange, newRange)) {
+        return cachedRange;
+    }
+    return newRange;
 }
 function create(_a) {
     var data = _a.data, column = _a.column, dimension = _a.dimension, rowCoords = _a.rowCoords, columnCoords = _a.columnCoords, showDummyRows = _a.showDummyRows;
-    var visibleColumns = column.visibleColumns;
     return observable_1.observable({
         scrollLeft: 0,
         scrollTop: 0,
@@ -4149,28 +6185,28 @@ function create(_a) {
             var totalRowHeight = rowCoords.totalRowHeight;
             return totalRowHeight - bodyHeight + scrollbarWidth;
         },
+        // only for right side columns
         get colRange() {
-            return [0, visibleColumns.length];
+            var range = calculateRange(this.scrollLeft, columnCoords.areaWidth.R, columnCoords.offsets.R, data);
+            return getCachedRange(this.__storage__.colRange, range);
+        },
+        // only for right side columns
+        get columns() {
+            var _a;
+            return (_a = column.visibleColumnsBySide.R).slice.apply(_a, this.colRange);
+        },
+        get offsetLeft() {
+            return columnCoords.offsets.R[this.colRange[0]];
         },
         get rowRange() {
-            var bodyHeight = dimension.bodyHeight;
-            var offsets = rowCoords.offsets;
-            // safari uses negative scrollTop for bouncing effect
-            var scrollY = Math.max(this.scrollTop, 0);
-            var start = indexOfRow(offsets, scrollY);
-            var end = indexOfRow(offsets, scrollY + bodyHeight) + 1;
-            var value = [start, end];
-            var prevValue = this.__storage__.rowRange;
-            if (prevValue && common_1.arrayEqual(prevValue, value)) {
-                return prevValue;
-            }
-            return value;
+            var range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets, data);
+            return getCachedRange(this.__storage__.rowRange, range);
         },
         get rows() {
             var _a;
             return (_a = data.viewData).slice.apply(_a, this.rowRange);
         },
-        get offsetY() {
+        get offsetTop() {
             return rowCoords.offsets[this.rowRange[0]];
         },
         get dummyRowCount() {
@@ -4189,7 +6225,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 36 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4260,11 +6296,17 @@ function adjustWidths(minWidths, fixedFlags, availableWidth, fitToReducedTotal, 
     }
     return result;
 }
-function calculateWidths(columns, contentWidth) {
-    var baseWidths = common_1.mapProp('baseWidth', columns);
-    var minWidths = common_1.mapProp('minWidth', columns);
+function calculateWidths(columns, cellBorderWidth, contentsWidth) {
+    var baseWidths = columns.map(function (_a) {
+        var baseWidth = _a.baseWidth;
+        return (baseWidth ? baseWidth - cellBorderWidth : 0);
+    });
+    var minWidths = columns.map(function (_a) {
+        var minWidth = _a.minWidth;
+        return minWidth - cellBorderWidth;
+    });
     var fixedFlags = common_1.mapProp('fixedWidth', columns);
-    return common_1.pipe(baseWidths, fillEmptyWidth.bind(null, contentWidth), applyMinimumWidth.bind(null, minWidths), adjustWidths.bind(null, minWidths, fixedFlags, contentWidth, true));
+    return common_1.pipe(baseWidths, fillEmptyWidth.bind(null, contentsWidth), applyMinimumWidth.bind(null, minWidths), adjustWidths.bind(null, minWidths, fixedFlags, contentsWidth, true));
 }
 function calculateOffsets(widths, borderWidth) {
     var offsets = [0];
@@ -4278,7 +6320,7 @@ function create(_a) {
     return observable_1.observable({
         get widths() {
             var visibleColumns = column.visibleColumns, visibleFrozenCount = column.visibleFrozenCount;
-            var widths = calculateWidths(visibleColumns, dimension.contentsWidth);
+            var widths = calculateWidths(visibleColumns, dimension.cellBorderWidth, dimension.contentsWidth);
             return {
                 L: widths.slice(0, visibleFrozenCount),
                 R: widths.slice(visibleFrozenCount)
@@ -4293,15 +6335,20 @@ function create(_a) {
         get areaWidth() {
             var visibleFrozenCount = column.visibleFrozenCount;
             var width = dimension.width, frozenBorderWidth = dimension.frozenBorderWidth, cellBorderWidth = dimension.cellBorderWidth;
-            var leftBorderWidth = visibleFrozenCount * dimension.cellBorderWidth;
-            var leftAreaWidth = common_1.sum(this.widths.L) + leftBorderWidth;
-            if (!frozenBorderWidth) {
-                leftAreaWidth += cellBorderWidth;
+            var leftAreaWidth = 0;
+            if (visibleFrozenCount) {
+                var leftBorderWidth = (visibleFrozenCount + 1) * cellBorderWidth;
+                leftAreaWidth = common_1.sum(this.widths.L) + leftBorderWidth;
             }
-            // @TODO: areawidth 계산 때문에 매번 scrollX 나타나는 부분 수정필요
             return {
-                L: leftAreaWidth,
-                R: width - leftAreaWidth - cellBorderWidth
+                L: leftAreaWidth - frozenBorderWidth,
+                R: width - leftAreaWidth
+            };
+        },
+        get totalColumnWidth() {
+            return {
+                L: common_1.last(this.offsets.L) + common_1.last(this.widths.L),
+                R: common_1.last(this.offsets.R) + common_1.last(this.widths.R)
             };
         }
     });
@@ -4310,7 +6357,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 37 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4318,6 +6365,7 @@ exports.create = create;
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
+var rowSpan_1 = __webpack_require__(7);
 function create(_a) {
     var column = _a.column, data = _a.data, rowCoords = _a.rowCoords, columnCoords = _a.columnCoords, editingEvent = _a.editingEvent;
     return observable_1.observable({
@@ -4357,14 +6405,20 @@ function create(_a) {
             return common_1.findPropIndex('rowKey', rowKey, data.rawData);
         },
         get cellPosRect() {
-            var _a = this, columnIndex = _a.columnIndex, rowIndex = _a.rowIndex, side = _a.side;
-            if (columnIndex === null || rowIndex === null || side === null) {
+            var _a = this, columnIndex = _a.columnIndex, rowIndex = _a.rowIndex, side = _a.side, columnName = _a.columnName;
+            var rawData = data.rawData, sortOptions = data.sortOptions;
+            if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
                 return null;
             }
             var left = columnCoords.offsets[side][columnIndex];
             var right = left + columnCoords.widths[side][columnIndex];
             var top = rowCoords.offsets[rowIndex];
             var bottom = top + rowCoords.heights[rowIndex];
+            var rowSpan = rowSpan_1.getRowSpan(rowIndex, columnName, rawData);
+            if (rowSpan_1.enableRowSpan(sortOptions.columnName) && rowSpan) {
+                var verticalPos = rowSpan_1.getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, rawData);
+                return { left: left, right: right, top: verticalPos[0], bottom: verticalPos[1] };
+            }
             return { left: left, right: right, top: top, bottom: bottom };
         }
     });
@@ -4373,14 +6427,14 @@ exports.create = create;
 
 
 /***/ }),
-/* 38 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
-var summary_1 = __webpack_require__(18);
+var summary_1 = __webpack_require__(23);
 function create(_a) {
     var column = _a.column, data = _a.data, summary = _a.summary;
     var summaryColumnContents = {};
@@ -4409,7 +6463,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 39 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4417,20 +6471,14 @@ exports.create = create;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var observable_1 = __webpack_require__(5);
-function getSortedRange(range) {
-    return range[0] > range[1] ? [range[1], range[0]] : range;
-}
-function getOwnSideColumnRange(columnRange, side, visibleFrozenCount) {
-    if (side === 'L') {
-        if (columnRange[0] < visibleFrozenCount) {
-            return [columnRange[0], Math.min(columnRange[1], visibleFrozenCount - 1)];
-        }
+var selection_1 = __webpack_require__(13);
+function getOwnSideColumnRange(columnRange, side, visibleFrozenCount, rowHeaderCount) {
+    var _a = columnRange.map(function (columnIdx) { return columnIdx + rowHeaderCount; }), start = _a[0], end = _a[1];
+    if (side === 'L' && start < visibleFrozenCount) {
+        return [start, Math.min(end, visibleFrozenCount - 1)];
     }
-    else if (columnRange[1] >= visibleFrozenCount) {
-        return [
-            Math.max(columnRange[0], visibleFrozenCount) - visibleFrozenCount,
-            columnRange[1] - visibleFrozenCount
-        ];
+    if (side === 'R' && end >= visibleFrozenCount) {
+        return [Math.max(start, visibleFrozenCount) - visibleFrozenCount, end - visibleFrozenCount];
     }
     return null;
 }
@@ -4471,24 +6519,23 @@ function create(_a) {
                 return null;
             }
             var columnWidths = columnCoords.widths;
-            var row = getSortedRange(this.inputRange.row);
-            var column = getSortedRange(this.inputRange.column);
+            var row = selection_1.getSortedRange(this.inputRange.row);
+            var column = selection_1.getSortedRange(this.inputRange.column);
             if (this.unit === 'row') {
-                var lastColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
-                column = [0, lastColumnIndex];
+                var endColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
+                column = [0, endColumnIndex];
             }
-            // @TODO: span 처리 필요
             return { row: row, column: column };
         },
         get rangeBySide() {
             if (!this.range) {
                 return null;
             }
-            var visibleFrozenCount = columnInfo.visibleFrozenCount;
+            var visibleFrozenCount = columnInfo.visibleFrozenCount, rowHeaderCount = columnInfo.rowHeaderCount;
             var _a = this.range, column = _a.column, row = _a.row;
             return {
-                L: { row: row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
-                R: { row: row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
+                L: { row: row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount, rowHeaderCount) },
+                R: { row: row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
             };
         },
         get rangeAreaInfo() {
@@ -4518,15 +6565,30 @@ exports.create = create;
 
 
 /***/ }),
-/* 40 */
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var observable_1 = __webpack_require__(5);
+function create(data) {
+    var state = data.rawData.length ? 'DONE' : 'EMPTY';
+    return observable_1.observable({ state: state });
+}
+exports.create = create;
+
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var container_1 = __webpack_require__(41);
+var preact_1 = __webpack_require__(3);
+var container_1 = __webpack_require__(56);
 var Root = /** @class */ (function (_super) {
     tslib_1.__extends(Root, _super);
     function Root() {
@@ -4547,23 +6609,24 @@ exports.Root = Root;
 
 
 /***/ }),
-/* 41 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var leftSide_1 = __webpack_require__(42);
-var rightSide_1 = __webpack_require__(52);
-var stateLayer_1 = __webpack_require__(53);
-var editingLayer_1 = __webpack_require__(54);
-var heightResizeHandle_1 = __webpack_require__(56);
-var clipboard_1 = __webpack_require__(57);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var leftSide_1 = __webpack_require__(57);
+var rightSide_1 = __webpack_require__(70);
+var stateLayer_1 = __webpack_require__(71);
+var editingLayer_1 = __webpack_require__(72);
+var heightResizeHandle_1 = __webpack_require__(74);
+var clipboard_1 = __webpack_require__(75);
+var pagination_1 = __webpack_require__(77);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var eventBus_1 = __webpack_require__(7);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
 var ContainerComp = /** @class */ (function (_super) {
     tslib_1.__extends(ContainerComp, _super);
@@ -4667,17 +6730,7 @@ var ContainerComp = /** @class */ (function (_super) {
             }
         };
         _this.syncWithDOMWidth = function () {
-            var _a = _this.el, clientWidth = _a.clientWidth, clientHeight = _a.clientHeight;
-            var _b = _this.props, width = _b.width, fitToParentHeight = _b.fitToParentHeight, rootElement = _b.rootElement;
-            if (clientWidth !== width) {
-                _this.props.dispatch('setWidth', clientWidth, true);
-            }
-            if (fitToParentHeight) {
-                var parentElement = rootElement.parentElement;
-                if (parentElement && parentElement.clientHeight !== clientHeight) {
-                    _this.props.dispatch('setHeight', parentElement.clientHeight);
-                }
-            }
+            _this.props.dispatch('refreshLayout', _this.el, _this.props.rootElement.parentElement);
         };
         return _this;
     }
@@ -4711,9 +6764,10 @@ var ContainerComp = /** @class */ (function (_super) {
     };
     ContainerComp.prototype.render = function () {
         var _this = this;
-        var _a = this.props, summaryHeight = _a.summaryHeight, summaryPosition = _a.summaryPosition, gridId = _a.gridId, width = _a.width, autoWidth = _a.autoWidth, scrollXHeight = _a.scrollXHeight, showLeftSide = _a.showLeftSide, scrollX = _a.scrollX, scrollY = _a.scrollY;
+        var _a;
+        var _b = this.props, summaryHeight = _b.summaryHeight, summaryPosition = _b.summaryPosition, heightResizable = _b.heightResizable, gridId = _b.gridId, width = _b.width, autoWidth = _b.autoWidth, scrollXHeight = _b.scrollXHeight, showLeftSide = _b.showLeftSide, scrollX = _b.scrollX, scrollY = _b.scrollY;
         var style = { width: autoWidth ? '100%' : width };
-        var attrs = { 'data-grid-id': gridId };
+        var attrs = (_a = {}, _a[dom_1.dataAttr.GRID_ID] = gridId, _a);
         return (preact_1.h("div", tslib_1.__assign({}, attrs, { style: style, class: dom_1.cls('container', [showLeftSide, 'show-lside-area']), onMouseDown: this.handleMouseDown, onDblClick: this.handleDblClick, onClick: this.handleClick, onMouseOut: this.handleMouseout, onMouseOver: this.handleMouseover, ref: function (el) {
                 _this.el = el;
             } }),
@@ -4724,10 +6778,11 @@ var ContainerComp = /** @class */ (function (_super) {
                 preact_1.h("div", { class: dom_1.cls('border-line', 'border-line-left') }),
                 preact_1.h("div", { class: dom_1.cls('border-line', 'border-line-right') }),
                 preact_1.h("div", { class: dom_1.cls('border-line', 'border-line-bottom'), style: { bottom: scrollXHeight } })),
-            preact_1.h(heightResizeHandle_1.HeightResizeHandle, null),
+            heightResizable && preact_1.h(heightResizeHandle_1.HeightResizeHandle, null),
             preact_1.h(stateLayer_1.StateLayer, null),
             preact_1.h(editingLayer_1.EditingLayer, null),
-            preact_1.h(clipboard_1.Clipboard, null)));
+            preact_1.h(clipboard_1.Clipboard, null),
+            preact_1.h(pagination_1.Pagination, null)));
     };
     return ContainerComp;
 }(preact_1.Component));
@@ -4743,6 +6798,7 @@ exports.Container = hoc_1.connect(function (_a) {
         fitToParentHeight: dimension.fitToParentHeight,
         summaryHeight: dimension.summaryHeight,
         summaryPosition: dimension.summaryPosition,
+        heightResizable: dimension.heightResizable,
         showLeftSide: !!columnCoords.areaWidth.L,
         disabled: data.disabled,
         editingEvent: focus.editingEvent,
@@ -4755,18 +6811,18 @@ exports.Container = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 42 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var headerArea_1 = __webpack_require__(19);
-var bodyArea_1 = __webpack_require__(20);
-var summaryArea_1 = __webpack_require__(21);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var headerArea_1 = __webpack_require__(24);
+var bodyArea_1 = __webpack_require__(28);
+var summaryArea_1 = __webpack_require__(29);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var LeftSideComp = /** @class */ (function (_super) {
     tslib_1.__extends(LeftSideComp, _super);
@@ -4797,15 +6853,15 @@ exports.LeftSide = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 43 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 exports.HANDLE_WIDTH = 7;
 exports.HANDLE_WIDTH_HALF = 3;
@@ -4846,18 +6902,23 @@ var ColumnResizerComp = /** @class */ (function (_super) {
     };
     ColumnResizerComp.prototype.renderHandle = function (index) {
         var _this = this;
-        var _a = this.props, columns = _a.columns, offsets = _a.offsets, widths = _a.widths;
-        var _b = columns[index], name = _b.name, resizable = _b.resizable;
-        var offset = offsets[index];
-        var width = widths[index];
+        var _a;
+        var _b = this.props, columns = _b.columns, offsets = _b.offsets, cellBorderWidth = _b.cellBorderWidth, widths = _b.widths;
+        var _c = columns[index], name = _c.name, resizable = _c.resizable;
         if (!resizable) {
             return null;
         }
-        return (preact_1.h("div", { "data-column-index": index, "data-column-name": name, class: dom_1.cls('column-resize-handle'), title: '', style: {
+        var offset = offsets[index];
+        var width = widths[index];
+        var attrs = (_a = {},
+            _a[dom_1.dataAttr.COLUMN_INDEX] = index,
+            _a[dom_1.dataAttr.COLUMN_NAME] = name,
+            _a);
+        return (preact_1.h("div", tslib_1.__assign({ class: dom_1.cls('column-resize-handle'), title: '' }, attrs, { style: {
                 height: 33,
                 width: exports.HANDLE_WIDTH,
-                left: offset + width - exports.HANDLE_WIDTH_HALF
-            }, onMouseDown: function (ev) { return _this.handleMouseDown(ev, index); } }));
+                left: offset + width + cellBorderWidth - exports.HANDLE_WIDTH_HALF
+            }, onMouseDown: function (ev) { return _this.handleMouseDown(ev, index); } })));
     };
     ColumnResizerComp.prototype.render = function (_a) {
         var _this = this;
@@ -4867,27 +6928,148 @@ var ColumnResizerComp = /** @class */ (function (_super) {
     return ColumnResizerComp;
 }(preact_1.Component));
 exports.ColumnResizer = hoc_1.connect(function (_a, _b) {
-    var column = _a.column, columnCoords = _a.columnCoords;
+    var column = _a.column, columnCoords = _a.columnCoords, dimension = _a.dimension;
     var side = _b.side;
     return ({
         widths: columnCoords.widths[side],
         offsets: columnCoords.offsets[side],
+        cellBorderWidth: dimension.cellBorderWidth,
         columns: column.visibleColumnsBySide[side]
     });
 })(ColumnResizerComp);
 
 
 /***/ }),
-/* 44 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var bodyRow_1 = __webpack_require__(45);
-var bodyDummyRow_1 = __webpack_require__(47);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
+var column_1 = __webpack_require__(6);
+var hoc_1 = __webpack_require__(4);
+var common_1 = __webpack_require__(1);
+var headerCheckbox_1 = __webpack_require__(25);
+var sortingButton_1 = __webpack_require__(26);
+var selection_1 = __webpack_require__(27);
+var ComplexHeaderComp = /** @class */ (function (_super) {
+    tslib_1.__extends(ComplexHeaderComp, _super);
+    function ComplexHeaderComp() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ComplexHeaderComp.prototype.getColumnHierarchy = function (column, mergedComplexColumns) {
+        var _this = this;
+        var complexHeaderColumns = this.props.complexHeaderColumns;
+        var complexColumns = mergedComplexColumns || [];
+        if (column) {
+            complexColumns.push(column);
+            if (complexHeaderColumns) {
+                complexHeaderColumns.forEach(function (complexHeaderColumn) {
+                    var childNames = complexHeaderColumn.childNames;
+                    if (childNames) {
+                        var index = common_1.findIndex(function (name) { return column.name === name; }, childNames);
+                        if (index !== -1) {
+                            _this.getColumnHierarchy(complexHeaderColumn, complexColumns);
+                        }
+                    }
+                });
+            }
+        }
+        return complexColumns;
+    };
+    ComplexHeaderComp.prototype.getHierarchyMaxRowCount = function (hierarchies) {
+        var lengths = [0].concat(hierarchies.map(function (value) { return value.length; }));
+        return Math.max.apply(Math, lengths);
+    };
+    ComplexHeaderComp.prototype.isSelected = function (name) {
+        var _a = this.props, columnSelectionRange = _a.columnSelectionRange, visibleColumns = _a.visibleColumns, rowHeaderCount = _a.rowHeaderCount, complexHeaderColumns = _a.complexHeaderColumns;
+        if (!columnSelectionRange) {
+            return false;
+        }
+        var selectionStart = columnSelectionRange[0], selectionEnd = columnSelectionRange[1];
+        var _b = selection_1.getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount), columnStart = _b[0], columnEnd = _b[1];
+        return (columnStart >= selectionStart &&
+            columnStart <= selectionEnd &&
+            columnEnd >= selectionStart &&
+            columnEnd <= selectionEnd);
+    };
+    ComplexHeaderComp.prototype.createTableHeaderComponent = function (column, height, colspan, rowspan) {
+        var name = column.name, header = column.header, sortable = column.sortable;
+        return (preact_1.h("th", tslib_1.__assign({ key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [
+                !column_1.isRowHeader(name) && this.isSelected(name),
+                'cell-selected'
+            ]), height: height }, !!colspan && { colspan: colspan }, !!rowspan && { rowspan: rowspan }),
+            column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
+            !!sortable && preact_1.h(sortingButton_1.SortingButton, null)));
+    };
+    ComplexHeaderComp.prototype.render = function () {
+        var _this = this;
+        var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight;
+        var hierarchies = columns.map(function (column) { return _this.getColumnHierarchy(column).reverse(); });
+        var maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
+        var rows = new Array(maxRowCount);
+        var columnNames = new Array(maxRowCount);
+        var colspans = [];
+        var rowHeight = (maxRowCount ? Math.floor((headerHeight - 1) / maxRowCount) : 0) - 1;
+        var rowspan = 1;
+        var height;
+        hierarchies.forEach(function (hierarchy, i) {
+            var length = hierarchies[i].length;
+            var curHeight = 0;
+            hierarchy.forEach(function (column, j) {
+                var columnName = column.name;
+                rowspan = length - 1 === j && maxRowCount - length + 1 > 1 ? maxRowCount - length + 1 : 1;
+                height = rowHeight * rowspan;
+                if (j === length - 1) {
+                    height = headerHeight - curHeight - 2;
+                }
+                else {
+                    curHeight += height + 1;
+                }
+                if (columnNames[j] === columnName) {
+                    rows[j].pop();
+                    colspans[j] += 1;
+                }
+                else {
+                    colspans[j] = 1;
+                }
+                columnNames[j] = columnName;
+                rows[j] = rows[j] || [];
+                rows[j].push(_this.createTableHeaderComponent(column, height, colspans[j], rowspan));
+            });
+        });
+        return (preact_1.h("tbody", null, rows.map(function (row, index) { return (preact_1.h("tr", { key: "complex-header-" + index }, row)); })));
+    };
+    return ComplexHeaderComp;
+}(preact_1.Component));
+exports.ComplexHeader = hoc_1.connect(function (store, _a) {
+    var side = _a.side;
+    var _b = store.column, rowHeaderCount = _b.rowHeaderCount, visibleColumns = _b.visibleColumns, visibleColumnsBySide = _b.visibleColumnsBySide, complexHeaderColumns = _b.complexHeaderColumns, headerHeight = store.dimension.headerHeight, rangeBySide = store.selection.rangeBySide;
+    return {
+        headerHeight: headerHeight,
+        columns: visibleColumnsBySide[side],
+        complexHeaderColumns: complexHeaderColumns,
+        columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
+        visibleColumns: visibleColumns,
+        rowHeaderCount: rowHeaderCount
+    };
+})(ComplexHeaderComp);
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var preact_1 = __webpack_require__(3);
+var bodyRow_1 = __webpack_require__(61);
+var bodyDummyRow_1 = __webpack_require__(65);
 var common_1 = __webpack_require__(1);
 var hoc_1 = __webpack_require__(4);
 var BodyRowsComp = /** @class */ (function (_super) {
@@ -4908,7 +7090,7 @@ var BodyRowsComp = /** @class */ (function (_super) {
             return name;
         });
         return (preact_1.h("tbody", null,
-            rows.map(function (row, index) { return (preact_1.h(bodyRow_1.BodyRow, { key: row.rowKey, rowIndex: index + rowIndexOffset, viewRow: row, columnNames: columnNames })); }),
+            rows.map(function (row, index) { return (preact_1.h(bodyRow_1.BodyRow, { key: row.rowKey, rowIndex: index + rowIndexOffset, viewRow: row, columns: columns })); }),
             common_1.range(dummyRowCount).map(function (index) { return (preact_1.h(bodyDummyRow_1.BodyDummyRow, { key: "dummy-" + index, index: rows.length + index, columnNames: columnNames })); })));
     };
     return BodyRowsComp;
@@ -4916,28 +7098,28 @@ var BodyRowsComp = /** @class */ (function (_super) {
 exports.BodyRows = hoc_1.connect(function (_a, _b) {
     var viewport = _a.viewport, column = _a.column;
     var side = _b.side;
-    return {
+    return ({
         rowIndexOffset: viewport.rowRange[0],
         rows: viewport.rows,
-        columns: column.visibleColumnsBySide[side],
+        columns: side === 'L' ? column.visibleColumnsBySide.L : viewport.columns,
         dummyRowCount: viewport.dummyRowCount
-    };
+    });
 })(BodyRowsComp);
 
 
 /***/ }),
-/* 45 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var bodyCell_1 = __webpack_require__(46);
+var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var dom_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
+var rowSpanCell_1 = __webpack_require__(62);
 var BodyRowComp = /** @class */ (function (_super) {
     tslib_1.__extends(BodyRowComp, _super);
     function BodyRowComp() {
@@ -4960,12 +7142,12 @@ var BodyRowComp = /** @class */ (function (_super) {
     }
     BodyRowComp.prototype.render = function (_a) {
         var _this = this;
-        var rowIndex = _a.rowIndex, viewRow = _a.viewRow, columnNames = _a.columnNames, rowHeight = _a.rowHeight, autoRowHeight = _a.autoRowHeight;
+        var rowIndex = _a.rowIndex, viewRow = _a.viewRow, columns = _a.columns, rowHeight = _a.rowHeight, autoRowHeight = _a.autoRowHeight;
         var isOddRow = rowIndex % 2 === 0;
-        return (preact_1.h("tr", { style: { height: rowHeight }, class: dom_1.cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even']) }, columnNames.map(function (name) {
+        return (preact_1.h("tr", { style: { height: rowHeight }, class: dom_1.cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [!rowHeight, 'row-hidden']) }, columns.map(function (columnInfo) {
             // Pass row object directly instead of passing value of it only,
             // so that BodyCell component can watch the change of value using selector function.
-            return (preact_1.h(bodyCell_1.BodyCell, { key: name, viewRow: viewRow, columnName: name, refreshRowHeight: autoRowHeight ? _this.refreshRowHeight : null }));
+            return (preact_1.h(rowSpanCell_1.RowSpanCell, { key: columnInfo.name, viewRow: viewRow, columnInfo: columnInfo, refreshRowHeight: autoRowHeight ? _this.refreshRowHeight : null }));
         })));
     };
     return BodyRowComp;
@@ -4981,27 +7163,94 @@ exports.BodyRow = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 46 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var hoc_1 = __webpack_require__(4);
+var rowSpan_1 = __webpack_require__(7);
+var bodyCell_1 = __webpack_require__(63);
+var RowSpanCellComp = /** @class */ (function (_super) {
+    tslib_1.__extends(RowSpanCellComp, _super);
+    function RowSpanCellComp() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    RowSpanCellComp.prototype.render = function () {
+        var _a = this.props, columnInfo = _a.columnInfo, refreshRowHeight = _a.refreshRowHeight, rowSpan = _a.rowSpan, enableRowSpan = _a.enableRowSpan, viewRow = _a.viewRow;
+        var rowSpanAttr = null;
+        if (enableRowSpan && rowSpan) {
+            if (!rowSpan.mainRow) {
+                return null;
+            }
+            rowSpanAttr = { rowSpan: rowSpan.spanCount };
+        }
+        return (preact_1.h(bodyCell_1.BodyCell, { viewRow: viewRow, columnInfo: columnInfo, refreshRowHeight: refreshRowHeight, rowSpanAttr: rowSpanAttr }));
+    };
+    return RowSpanCellComp;
+}(preact_1.Component));
+exports.RowSpanCellComp = RowSpanCellComp;
+exports.RowSpanCell = hoc_1.connect(function (_a, _b) {
+    var data = _a.data;
+    var viewRow = _b.viewRow, columnInfo = _b.columnInfo;
+    var rowKey = viewRow.rowKey;
+    var sortOptions = data.sortOptions, rawData = data.rawData;
+    var rowSpan = rowSpan_1.getRowSpanByRowKey(rowKey, columnInfo.name, rawData);
+    var enableRowSpan = sortOptions.columnName === 'rowKey';
+    return { rowSpan: rowSpan, enableRowSpan: enableRowSpan };
+})(RowSpanCellComp);
+
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var preact_1 = __webpack_require__(3);
+var treeCellContents_1 = __webpack_require__(64);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var instance_1 = __webpack_require__(8);
 var column_1 = __webpack_require__(6);
 var BodyCellComp = /** @class */ (function (_super) {
     tslib_1.__extends(BodyCellComp, _super);
     function BodyCellComp() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.handleMouseMove = function (ev) {
+            var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
+            _this.props.dispatch('dragMoveRowHeader', { pageX: pageX, pageY: pageY });
+        };
+        _this.handleMouseDown = function (_, name, rowKey) {
+            if (!column_1.isRowNumColumn(name)) {
+                return;
+            }
+            _this.props.dispatch('mouseDownRowHeader', rowKey);
+            document.addEventListener('mousemove', _this.handleMouseMove);
+            document.addEventListener('mouseup', _this.clearDocumentEvents);
+            document.addEventListener('selectstart', _this.handleSelectStart);
+        };
+        _this.clearDocumentEvents = function () {
+            _this.props.dispatch('dragEnd');
+            dom_1.setCursorStyle('');
+            document.removeEventListener('mousemove', _this.handleMouseMove);
+            document.removeEventListener('mouseup', _this.clearDocumentEvents);
+            document.removeEventListener('selectstart', _this.handleSelectStart);
+        };
+        _this.handleSelectStart = function (ev) {
+            ev.preventDefault();
+        };
+        return _this;
     }
     BodyCellComp.prototype.componentDidMount = function () {
         var _a = this.props, grid = _a.grid, rowKey = _a.rowKey, renderData = _a.renderData, columnInfo = _a.columnInfo, refreshRowHeight = _a.refreshRowHeight, allDisabled = _a.disabled;
         // eslint-disable-next-line new-cap
-        this.renderer = new columnInfo.renderer(tslib_1.__assign({ grid: grid,
+        this.renderer = new columnInfo.renderer.type(tslib_1.__assign({ grid: grid,
             rowKey: rowKey,
             columnInfo: columnInfo }, renderData, { allDisabled: allDisabled }));
         var rendererEl = this.renderer.getElement();
@@ -5020,9 +7269,9 @@ var BodyCellComp = /** @class */ (function (_super) {
         }
     };
     BodyCellComp.prototype.componentWillReceiveProps = function (nextProps) {
-        if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
+        if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
             var grid = nextProps.grid, rowKey = nextProps.rowKey, renderData = nextProps.renderData, columnInfo = nextProps.columnInfo, refreshRowHeight = nextProps.refreshRowHeight, allDisabled = nextProps.disabled;
-            this.renderer.changed(tslib_1.__assign({ grid: grid,
+            this.renderer.render(tslib_1.__assign({ grid: grid,
                 rowKey: rowKey,
                 columnInfo: columnInfo }, renderData, { allDisabled: allDisabled }));
             if (refreshRowHeight) {
@@ -5032,55 +7281,123 @@ var BodyCellComp = /** @class */ (function (_super) {
     };
     BodyCellComp.prototype.render = function () {
         var _this = this;
-        var _a = this.props, rowKey = _a.rowKey, _b = _a.renderData, disabled = _b.disabled, editable = _b.editable, invalidState = _b.invalidState, className = _b.className, _c = _a.columnInfo, align = _c.align, valign = _c.valign, name = _c.name, _d = _c.validation, validation = _d === void 0 ? {} : _d, allDisabled = _a.disabled;
+        var _a;
+        var _b = this.props, rowKey = _b.rowKey, _c = _b.renderData, disabled = _c.disabled, editable = _c.editable, invalidState = _c.invalidState, className = _c.className, _d = _b.columnInfo, align = _d.align, valign = _d.valign, name = _d.name, _e = _d.validation, validation = _e === void 0 ? {} : _e, allDisabled = _b.disabled, treeInfo = _b.treeInfo, selectedRow = _b.selectedRow, rowSpanAttr = _b.rowSpanAttr;
         var style = tslib_1.__assign({ textAlign: align }, (valign && { verticalAlign: valign }));
-        var attrs = {
-            'data-row-key': String(rowKey),
-            'data-column-name': name
-        };
-        return (preact_1.h("td", tslib_1.__assign({}, attrs, { style: style, class: dom_1.cls('cell', 'cell-has-input', [editable, 'cell-editable'], [column_1.isRowHeader(name), 'cell-row-header'], [validation.required || false, 'cell-required'], [!!invalidState, 'cell-invalid'], [disabled || allDisabled, 'cell-disabled']) + " " + className, ref: function (el) {
+        var attrs = (_a = {},
+            _a[dom_1.dataAttr.ROW_KEY] = String(rowKey),
+            _a[dom_1.dataAttr.COLUMN_NAME] = name,
+            _a);
+        var classNames = dom_1.cls('cell', 'cell-has-input', [editable, 'cell-editable'], [column_1.isRowHeader(name), 'cell-row-header'], [validation.required || false, 'cell-required'], [!!invalidState, 'cell-invalid'], [disabled || allDisabled, 'cell-disabled'], [!!treeInfo, 'cell-has-tree'], [column_1.isRowHeader(name) && selectedRow, 'cell-selected']) + " " + className;
+        return treeInfo ? (preact_1.h("td", tslib_1.__assign({}, attrs, { style: style, class: classNames }),
+            preact_1.h("div", { class: dom_1.cls('tree-wrapper-relative') },
+                preact_1.h("div", { class: dom_1.cls('tree-wrapper-valign-center'), style: { paddingLeft: treeInfo.indentWidth }, ref: function (el) {
+                        _this.el = el;
+                    } },
+                    preact_1.h(treeCellContents_1.TreeCellContents, { treeInfo: treeInfo, rowKey: rowKey }))))) : (preact_1.h("td", tslib_1.__assign({}, attrs, rowSpanAttr, { style: style, class: classNames, ref: function (el) {
                 _this.el = el;
-            } })));
+            }, onMouseDown: function (ev) { return _this.handleMouseDown(ev, name, rowKey); } })));
     };
     return BodyCellComp;
 }(preact_1.Component));
 exports.BodyCellComp = BodyCellComp;
 exports.BodyCell = hoc_1.connect(function (_a, _b) {
-    var id = _a.id, column = _a.column, data = _a.data;
-    var viewRow = _b.viewRow, columnName = _b.columnName;
-    var rowKey = viewRow.rowKey, valueMap = viewRow.valueMap;
+    var id = _a.id, column = _a.column, data = _a.data, selection = _a.selection;
+    var viewRow = _b.viewRow, columnInfo = _b.columnInfo;
+    var rowKey = viewRow.rowKey, valueMap = viewRow.valueMap, treeInfo = viewRow.treeInfo;
+    var treeColumnName = column.treeColumnName;
     var disabled = data.disabled;
     var grid = instance_1.getInstance(id);
-    var columnInfo = column.allColumnMap[columnName];
-    return {
-        grid: grid,
+    var range = selection.range;
+    var columnName = columnInfo.name;
+    return tslib_1.__assign({ grid: grid,
         rowKey: rowKey,
         disabled: disabled,
-        columnInfo: columnInfo,
-        renderData: valueMap[columnName]
-    };
+        columnInfo: columnInfo, renderData: valueMap[columnName] }, (columnName === treeColumnName ? { treeInfo: treeInfo } : null), { selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false });
 })(BodyCellComp);
 
 
 /***/ }),
-/* 47 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var dom_1 = __webpack_require__(3);
+var tree_1 = __webpack_require__(12);
+var TreeCellContentsComp = /** @class */ (function (_super) {
+    tslib_1.__extends(TreeCellContentsComp, _super);
+    function TreeCellContentsComp() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.handleClick = function (ev) {
+            ev.stopPropagation();
+            var _a = _this.props, dispatch = _a.dispatch, rowKey = _a.rowKey;
+            var target = ev.target;
+            if (dom_1.findParent(target, 'tree-button-collapse')) {
+                dispatch('expandByRowKey', rowKey, false);
+            }
+            else if (dom_1.findParent(target, 'tree-button-expand')) {
+                dispatch('collapseByRowKey', rowKey, false);
+            }
+        };
+        return _this;
+    }
+    TreeCellContentsComp.prototype.getIndentComponent = function (depth, leaf) {
+        var indentItem = [];
+        for (var i = 0, len = depth; i < len; i += 1) {
+            indentItem.push(preact_1.h("span", { class: dom_1.cls('tree-depth') }, i === len - 1 && !leaf && (preact_1.h("button", { class: dom_1.cls('btn-tree'), style: { left: i * tree_1.DEFAULT_INDENT_WIDTH }, onClick: this.handleClick },
+                preact_1.h("i", null)))));
+        }
+        return indentItem;
+    };
+    TreeCellContentsComp.prototype.render = function () {
+        var _a = this.props, depth = _a.depth, indentWidth = _a.indentWidth, leaf = _a.leaf, expanded = _a.expanded, useIcon = _a.useIcon;
+        return (preact_1.h("div", { class: dom_1.cls('tree-extra-content', [!leaf && expanded, 'tree-button-expand'], [!leaf && !expanded, 'tree-button-collapse']) },
+            this.getIndentComponent(depth, leaf),
+            useIcon && (preact_1.h("span", { class: dom_1.cls('tree-icon'), style: { left: indentWidth - tree_1.DEFAULT_INDENT_WIDTH } },
+                preact_1.h("i", null)))));
+    };
+    return TreeCellContentsComp;
+}(preact_1.Component));
+exports.TreeCellContentsComp = TreeCellContentsComp;
+exports.TreeCellContents = hoc_1.connect(function (_a, _b) {
+    var column = _a.column;
+    var treeInfo = _b.treeInfo, rowKey = _b.rowKey;
+    var _c = column.treeIcon, useIcon = _c === void 0 ? true : _c;
+    var depth = treeInfo.depth, indentWidth = treeInfo.indentWidth, leaf = treeInfo.leaf, _d = treeInfo.expanded, expanded = _d === void 0 ? true : _d;
+    return {
+        rowKey: rowKey,
+        depth: depth,
+        indentWidth: indentWidth,
+        leaf: leaf,
+        expanded: expanded,
+        useIcon: useIcon
+    };
+})(TreeCellContentsComp);
+
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var preact_1 = __webpack_require__(3);
+var hoc_1 = __webpack_require__(4);
+var dom_1 = __webpack_require__(2);
 var column_1 = __webpack_require__(6);
 var BodyDummyRowComp = function (_a) {
     var columnNames = _a.columnNames, rowHeight = _a.rowHeight, index = _a.index;
     var isOddRow = !!(index % 2);
     return (preact_1.h("tr", { style: { height: rowHeight }, class: dom_1.cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even']) }, columnNames.map(function (name) {
-        var attrs = {
-            'data-column-name': name
-        };
+        var _a;
+        var attrs = (_a = {}, _a[dom_1.dataAttr.COLUMN_NAME] = name, _a);
         return (preact_1.h("td", tslib_1.__assign({}, attrs, { key: index, class: dom_1.cls('cell', 'cell-dummy', [column_1.isRowHeader(name), 'cell-row-header']) })));
     })));
 };
@@ -5093,15 +7410,15 @@ exports.BodyDummyRow = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 48 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var FocusLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(FocusLayerComp, _super);
@@ -5161,15 +7478,15 @@ exports.FocusLayer = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 49 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var SelectionLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(SelectionLayerComp, _super);
@@ -5191,15 +7508,15 @@ exports.SelectionLayer = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 50 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var summaryBodyCell_1 = __webpack_require__(51);
+var preact_1 = __webpack_require__(3);
+var summaryBodyCell_1 = __webpack_require__(69);
 var common_1 = __webpack_require__(1);
 var SummaryBodyRow = /** @class */ (function (_super) {
     tslib_1.__extends(SummaryBodyRow, _super);
@@ -5227,15 +7544,15 @@ exports.SummaryBodyRow = SummaryBodyRow;
 
 
 /***/ }),
-/* 51 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
 var hoc_1 = __webpack_require__(4);
 var SummaryBodyCellComp = /** @class */ (function (_super) {
@@ -5259,10 +7576,9 @@ var SummaryBodyCellComp = /** @class */ (function (_super) {
         return true;
     };
     SummaryBodyCellComp.prototype.render = function () {
+        var _a;
         var columnName = this.props.columnName;
-        var attrs = {
-            'data-column-name': columnName
-        };
+        var attrs = (_a = {}, _a[dom_1.dataAttr.COLUMN_NAME] = columnName, _a);
         var template = this.getTemplate();
         return (preact_1.h("td", tslib_1.__assign({ class: dom_1.cls('cell', 'cell-summary'), dangerouslySetInnerHTML: { __html: template } }, attrs)));
     };
@@ -5280,18 +7596,18 @@ exports.SummaryBodyCell = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 52 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
-var bodyArea_1 = __webpack_require__(20);
-var headerArea_1 = __webpack_require__(19);
-var summaryArea_1 = __webpack_require__(21);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
+var bodyArea_1 = __webpack_require__(28);
+var headerArea_1 = __webpack_require__(24);
+var summaryArea_1 = __webpack_require__(29);
 var hoc_1 = __webpack_require__(4);
 var RightSideComp = /** @class */ (function (_super) {
     tslib_1.__extends(RightSideComp, _super);
@@ -5370,9 +7686,10 @@ exports.RightSide = hoc_1.connect(function (_a) {
     }
     var scrollXHeight = scrollX ? scrollbarWidth : 0;
     var width = columnCoords.areaWidth.R;
-    var marginLeft = columnCoords.areaWidth.L + tableBorderWidth;
-    if (!frozenBorderWidth) {
+    var marginLeft = columnCoords.areaWidth.L + frozenBorderWidth;
+    if (marginLeft && !frozenBorderWidth) {
         marginLeft -= cellBorderWidth;
+        width += cellBorderWidth;
     }
     return {
         width: width,
@@ -5391,38 +7708,50 @@ exports.RightSide = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 53 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
+var common_1 = __webpack_require__(1);
 var StateLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(StateLayerComp, _super);
     function StateLayerComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    // @TODO: need to match i18n code and net api
-    // private getMessage(renderState: string) {}
+    StateLayerComp.prototype.shouldComponentUpdate = function (nextProps) {
+        return !common_1.shallowEqual(nextProps, this.props);
+    };
     StateLayerComp.prototype.render = function (_a) {
-        var hasData = _a.hasData, top = _a.top, height = _a.height, left = _a.left, right = _a.right;
-        var display = hasData ? 'none' : 'block';
+        var state = _a.state, top = _a.top, height = _a.height, left = _a.left, right = _a.right;
+        var display = state === 'DONE' ? 'none' : 'block';
         var layerStyle = { display: display, top: top, height: height, left: left, right: right };
+        var message = null;
+        if (state === 'EMPTY') {
+            message = i18n_1.default.get('display.noData');
+        }
+        else if (state === 'LOADING') {
+            message = i18n_1.default.get('display.loadingData');
+        }
         return (preact_1.h("div", { class: dom_1.cls('layer-state'), style: layerStyle },
             preact_1.h("div", { class: dom_1.cls('layer-state-content') },
-                preact_1.h("p", null, "No data."))));
+                preact_1.h("p", null, message),
+                state === 'LOADING' && preact_1.h("div", { class: dom_1.cls('layer-state-loading') }))));
     };
     return StateLayerComp;
 }(preact_1.Component));
 exports.StateLayer = hoc_1.connect(function (_a) {
-    var data = _a.data, dimension = _a.dimension;
+    var data = _a.data, renderState = _a.renderState, dimension = _a.dimension;
     var headerHeight = dimension.headerHeight, bodyHeight = dimension.bodyHeight, cellBorderWidth = dimension.cellBorderWidth, tableBorderWidth = dimension.tableBorderWidth, scrollXHeight = dimension.scrollXHeight, scrollYWidth = dimension.scrollYWidth;
+    var state = renderState.state;
     return {
-        hasData: !!data.rawData.length,
+        state: state === 'DONE' && data.rawData.length === 0 ? 'EMPTY' : state,
         top: headerHeight + cellBorderWidth + 1,
         height: bodyHeight - scrollXHeight - tableBorderWidth,
         left: 0,
@@ -5432,16 +7761,16 @@ exports.StateLayer = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 54 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var editingLayerInner_1 = __webpack_require__(55);
+var editingLayerInner_1 = __webpack_require__(73);
 var EditingLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(EditingLayerComp, _super);
     function EditingLayerComp() {
@@ -5467,18 +7796,19 @@ exports.EditingLayer = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 55 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
-var dom_1 = __webpack_require__(3);
+var preact_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var keyboard_1 = __webpack_require__(13);
+var keyboard_1 = __webpack_require__(19);
 var instance_1 = __webpack_require__(8);
+var common_1 = __webpack_require__(1);
 var EditingLayerInnerComp = /** @class */ (function (_super) {
     tslib_1.__extends(EditingLayerInnerComp, _super);
     function EditingLayerInnerComp() {
@@ -5514,23 +7844,23 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
                     dispatch('sort', columnName, sortOptions.ascending);
                 }
             }
-            if (typeof this.editor.finish === 'function') {
-                this.editor.finish();
+            if (common_1.isFunction(this.editor.beforeDestroy)) {
+                this.editor.beforeDestroy();
             }
             dispatch('finishEditing', rowKey, columnName);
         }
     };
     EditingLayerInnerComp.prototype.componentDidMount = function () {
-        var _a = this.props, grid = _a.grid, rowKey = _a.rowKey, columnInfo = _a.columnInfo, value = _a.value, editorOptions = _a.editorOptions;
-        var EditorClass = columnInfo.editor;
-        var editorProps = { grid: grid, rowKey: rowKey, columnInfo: columnInfo, value: value, editorOptions: editorOptions };
+        var _a = this.props, grid = _a.grid, rowKey = _a.rowKey, columnInfo = _a.columnInfo, value = _a.value;
+        var EditorClass = columnInfo.editor.type;
+        var editorProps = { grid: grid, rowKey: rowKey, columnInfo: columnInfo, value: value };
         var cellEditor = new EditorClass(editorProps);
         var editorEl = cellEditor.getElement();
         if (editorEl && this.contentEl) {
             this.contentEl.appendChild(editorEl);
             this.editor = cellEditor;
-            if (typeof cellEditor.start === 'function') {
-                cellEditor.start();
+            if (common_1.isFunction(cellEditor.mounted)) {
+                cellEditor.mounted();
             }
             document.addEventListener('mousedown', this.handleMouseDownDocument);
         }
@@ -5538,6 +7868,9 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
     EditingLayerInnerComp.prototype.componentWillUnmount = function () {
         this.finishEditing(false);
         document.removeEventListener('mousedown', this.handleMouseDownDocument);
+        if (this.editor && this.editor.beforeDestroy) {
+            this.editor.beforeDestroy();
+        }
     };
     EditingLayerInnerComp.prototype.render = function () {
         var _this = this;
@@ -5565,7 +7898,7 @@ exports.EditingLayerInner = hoc_1.connect(function (store, _a) {
     var offsetTop = headerHeight - scrollTop + tableBorderWidth;
     var offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
     var targetRow = viewData.find(function (row) { return row.rowKey === rowKey; });
-    var _g = targetRow.valueMap[columnName], value = _g.value, editorOptions = _g.editorOptions;
+    var value = targetRow.valueMap[columnName].value;
     return {
         grid: instance_1.getInstance(store.id),
         left: left + (side === 'L' ? 0 : offsetLeft),
@@ -5575,23 +7908,22 @@ exports.EditingLayerInner = hoc_1.connect(function (store, _a) {
         contentHeight: cellHeight - 2 * cellBorderWidth,
         columnInfo: allColumnMap[columnName],
         value: value,
-        editorOptions: editorOptions,
         sortOptions: sortOptions
     };
 })(EditingLayerInnerComp);
 
 
 /***/ }),
-/* 56 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var dom_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var HeightResizeHandleComp = /** @class */ (function (_super) {
     tslib_1.__extends(HeightResizeHandleComp, _super);
     function HeightResizeHandleComp() {
@@ -5637,20 +7969,20 @@ exports.HeightResizeHandle = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 57 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preact_1 = __webpack_require__(2);
+var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var dom_1 = __webpack_require__(3);
-var keyboard_1 = __webpack_require__(13);
-var browser_1 = __webpack_require__(58);
-var clipboard_1 = __webpack_require__(9);
-var clipboard_2 = __webpack_require__(14);
+var dom_1 = __webpack_require__(2);
+var keyboard_1 = __webpack_require__(19);
+var browser_1 = __webpack_require__(76);
+var clipboard_1 = __webpack_require__(14);
+var clipboard_2 = __webpack_require__(20);
 var KEYDOWN_LOCK_TIME = 10;
 var ClipboardComp = /** @class */ (function (_super) {
     tslib_1.__extends(ClipboardComp, _super);
@@ -5687,7 +8019,7 @@ var ClipboardComp = /** @class */ (function (_super) {
                     dispatch('setScrollToSelection');
                     break;
                 case 'remove':
-                    dispatch('removeFocus');
+                    dispatch('removeContent');
                     break;
                 /*
                  * Call directly because of timing issues
@@ -5840,7 +8172,7 @@ exports.Clipboard = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 58 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5854,23 +8186,123 @@ exports.isEdge = isEdge;
 
 
 /***/ }),
-/* 59 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var viewport = tslib_1.__importStar(__webpack_require__(60));
-var dimension = tslib_1.__importStar(__webpack_require__(61));
-var data = tslib_1.__importStar(__webpack_require__(62));
-var column = tslib_1.__importStar(__webpack_require__(65));
-var keyboard = tslib_1.__importStar(__webpack_require__(66));
-var mouse = tslib_1.__importStar(__webpack_require__(69));
-var focus = tslib_1.__importStar(__webpack_require__(15));
-var summary = tslib_1.__importStar(__webpack_require__(70));
-var selection = tslib_1.__importStar(__webpack_require__(11));
-var dispatchMap = tslib_1.__assign({}, viewport, dimension, data, column, mouse, focus, keyboard, summary, selection);
+var preact_1 = __webpack_require__(3);
+var tui_pagination_1 = tslib_1.__importDefault(__webpack_require__(78));
+var hoc_1 = __webpack_require__(4);
+var dom_1 = __webpack_require__(2);
+var common_1 = __webpack_require__(1);
+var instance_1 = __webpack_require__(8);
+var PaginationComp = /** @class */ (function (_super) {
+    tslib_1.__extends(PaginationComp, _super);
+    function PaginationComp() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    PaginationComp.prototype.shouldComponentUpdate = function (nextProps) {
+        return !common_1.shallowEqual(this.props.pageOptions, nextProps.pageOptions);
+    };
+    PaginationComp.prototype.componentDidMount = function () {
+        if (!this.el) {
+            return;
+        }
+        this.createPagination();
+    };
+    PaginationComp.prototype.componentWillReceiveProps = function (nextProps) {
+        if (!this.el || !this.tuiPagination) {
+            return;
+        }
+        var pageOptions = nextProps.pageOptions;
+        var totalCount = pageOptions.totalCount, page = pageOptions.page, perPage = pageOptions.perPage;
+        if (common_1.isNumber(perPage) && this.props.pageOptions.perPage !== perPage) {
+            this.tuiPagination.setItemsPerPage(perPage);
+        }
+        if (common_1.isNumber(totalCount) && this.props.pageOptions.totalCount !== totalCount) {
+            this.tuiPagination.reset(totalCount);
+        }
+        if (common_1.isNumber(page) && this.tuiPagination.getCurrentPage() !== page) {
+            this.removeEventListener();
+            this.tuiPagination.movePageTo(page);
+            this.addEventListener();
+        }
+    };
+    PaginationComp.prototype.componentWillUnmount = function () {
+        if (this.tuiPagination) {
+            this.removeEventListener();
+        }
+    };
+    PaginationComp.prototype.createPagination = function () {
+        var _a = this.props, pageOptions = _a.pageOptions, paginationHolder = _a.paginationHolder;
+        var totalCount = pageOptions.totalCount, perPage = pageOptions.perPage, page = pageOptions.page;
+        var options = {
+            totalItems: totalCount,
+            itemsPerPage: perPage,
+            page: page
+        };
+        this.tuiPagination = new tui_pagination_1.default(this.el, options);
+        this.addEventListener();
+        paginationHolder.setPagination(this.tuiPagination);
+    };
+    PaginationComp.prototype.addEventListener = function () {
+        var dataProvider = this.props.dataProvider;
+        this.tuiPagination.on('beforeMove', function (evt) {
+            var currentPage = evt.page;
+            dataProvider.readData(currentPage);
+        });
+    };
+    PaginationComp.prototype.removeEventListener = function () {
+        this.tuiPagination.off('beforeMove');
+    };
+    PaginationComp.prototype.render = function (_a) {
+        var _this = this;
+        var pageOptions = _a.pageOptions;
+        return (!common_1.isEmpty(pageOptions) && (preact_1.h("div", { ref: function (el) {
+                _this.el = el;
+            }, class: "tui-pagination " + dom_1.cls('pagination') })));
+    };
+    return PaginationComp;
+}(preact_1.Component));
+exports.Pagination = hoc_1.connect(function (_a) {
+    var id = _a.id, data = _a.data;
+    return ({
+        pageOptions: data.pageOptions,
+        dataProvider: instance_1.getDataProvider(id),
+        paginationHolder: instance_1.getPaginationManager(id)
+    });
+})(PaginationComp);
+
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__78__;
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var viewport = tslib_1.__importStar(__webpack_require__(80));
+var dimension = tslib_1.__importStar(__webpack_require__(81));
+var data = tslib_1.__importStar(__webpack_require__(30));
+var column = tslib_1.__importStar(__webpack_require__(83));
+var keyboard = tslib_1.__importStar(__webpack_require__(84));
+var mouse = tslib_1.__importStar(__webpack_require__(87));
+var focus = tslib_1.__importStar(__webpack_require__(21));
+var summary = tslib_1.__importStar(__webpack_require__(88));
+var selection = tslib_1.__importStar(__webpack_require__(15));
+var renderState = tslib_1.__importStar(__webpack_require__(89));
+var tree = tslib_1.__importStar(__webpack_require__(31));
+var dispatchMap = tslib_1.__assign({}, viewport, dimension, data, column, mouse, focus, keyboard, summary, selection, renderState, tree);
 function createDispatcher(store) {
     return function dispatch(fname) {
         var args = [];
@@ -5885,7 +8317,7 @@ exports.createDispatcher = createDispatcher;
 
 
 /***/ }),
-/* 60 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5967,7 +8399,7 @@ exports.setScrollTop = setScrollTop;
 
 
 /***/ }),
-/* 61 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6001,290 +8433,23 @@ function setOffsetLeft(_a, offsetLeft) {
     dimension.offsetLeft = offsetLeft;
 }
 exports.setOffsetLeft = setOffsetLeft;
+function refreshLayout(store, containerEl, parentEl) {
+    var dimension = store.dimension;
+    var autoWidth = dimension.autoWidth, fitToParentHeight = dimension.fitToParentHeight;
+    var clientHeight = containerEl.clientHeight, clientWidth = containerEl.clientWidth, scrollTop = containerEl.scrollTop, scrollLeft = containerEl.scrollLeft;
+    var _a = containerEl.getBoundingClientRect(), top = _a.top, left = _a.left;
+    setOffsetTop(store, top + scrollTop);
+    setOffsetLeft(store, left + scrollLeft);
+    setWidth(store, clientWidth, autoWidth);
+    if (fitToParentHeight && parentEl && parentEl.clientHeight !== clientHeight) {
+        setHeight(store, parentEl.clientHeight);
+    }
+}
+exports.refreshLayout = refreshLayout;
 
 
 /***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var clipboard_1 = __webpack_require__(14);
-var common_1 = __webpack_require__(1);
-var sort_1 = __webpack_require__(63);
-var clipboard_2 = __webpack_require__(9);
-var data_1 = __webpack_require__(16);
-var observable_1 = __webpack_require__(5);
-var rowCoords_1 = __webpack_require__(17);
-var eventBus_1 = __webpack_require__(7);
-var selection_1 = __webpack_require__(11);
-var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
-function setValue(_a, rowKey, columnName, value) {
-    var column = _a.column, data = _a.data;
-    var targetRow = common_1.findProp('rowKey', rowKey, data.rawData);
-    if (!targetRow || targetRow[columnName] === value) {
-        return;
-    }
-    var targetColumn = common_1.findProp('name', columnName, column.visibleColumns);
-    var gridEvent = new gridEvent_1.default({ rowKey: rowKey, columnName: columnName, value: value });
-    if (targetColumn && targetColumn.onBeforeChange) {
-        targetColumn.onBeforeChange(gridEvent);
-    }
-    if (!gridEvent.isStopped()) {
-        if (targetRow) {
-            targetRow[columnName] = value;
-        }
-        if (targetColumn && targetColumn.onAfterChange) {
-            gridEvent = new gridEvent_1.default({ rowKey: rowKey, columnName: columnName, value: value });
-            targetColumn.onAfterChange(gridEvent);
-        }
-    }
-}
-exports.setValue = setValue;
-function isUpdatableRowAttr(name, checkDisabled, allDisabled) {
-    return !(name === 'checked' && (checkDisabled || allDisabled));
-}
-function setRowAttribute(_a, rowKey, attrName, value) {
-    var data = _a.data;
-    var disabled = data.disabled, rawData = data.rawData;
-    var targetRow = common_1.findProp('rowKey', rowKey, rawData);
-    if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
-        targetRow._attributes[attrName] = value;
-    }
-}
-exports.setRowAttribute = setRowAttribute;
-function setAllRowAttribute(_a, attrName, value) {
-    var data = _a.data;
-    data.rawData.forEach(function (row) {
-        if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
-            row._attributes[attrName] = value;
-        }
-    });
-}
-exports.setAllRowAttribute = setAllRowAttribute;
-function setColumnValues(store, columnName, value, checkCellState) {
-    if (checkCellState === void 0) { checkCellState = false; }
-    // @TODO Check Cell State
-    store.data.rawData.forEach(function (targetRow) {
-        targetRow[columnName] = value;
-    });
-}
-exports.setColumnValues = setColumnValues;
-function check(store, rowKey) {
-    var _a = store.column.allColumnMap._checked.rendererOptions, rendererOptions = _a === void 0 ? {} : _a;
-    var eventBus = eventBus_1.getEventBus(store.id);
-    var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
-    /**
-     * Occurs when a checkbox in row header is checked
-     * @event Grid#check
-     * @property {number | string} rowKey - rowKey of the checked row
-     * @property {Grid} instance - Current grid instance
-     */
-    eventBus.trigger('check', gridEvent);
-    if (rendererOptions.inputType === 'radio') {
-        setAllRowAttribute(store, 'checked', false);
-    }
-    setRowAttribute(store, rowKey, 'checked', true);
-}
-exports.check = check;
-function uncheck(store, rowKey) {
-    var eventBus = eventBus_1.getEventBus(store.id);
-    var gridEvent = new gridEvent_1.default({ rowKey: rowKey });
-    /**
-     * Occurs when a checkbox in row header is unchecked
-     * @event Grid#uncheck
-     * @property {number | string} rowKey - rowKey of the unchecked row
-     * @property {Grid} instance - Current grid instance
-     */
-    eventBus.trigger('uncheck', gridEvent);
-    setRowAttribute(store, rowKey, 'checked', false);
-}
-exports.uncheck = uncheck;
-function checkAll(store) {
-    var _a = store.column.allColumnMap._checked.rendererOptions, rendererOptions = _a === void 0 ? {} : _a;
-    if (rendererOptions.inputType !== 'radio') {
-        setAllRowAttribute(store, 'checked', true);
-    }
-}
-exports.checkAll = checkAll;
-function uncheckAll(store) {
-    var _a = store.column.allColumnMap._checked.rendererOptions, rendererOptions = _a === void 0 ? {} : _a;
-    if (rendererOptions.inputType !== 'radio') {
-        setAllRowAttribute(store, 'checked', false);
-    }
-}
-exports.uncheckAll = uncheckAll;
-// @TODO neet to modify useClient options with net api
-function sort(_a, columnName, ascending) {
-    var data = _a.data;
-    var sortOptions = data.sortOptions;
-    if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-        data.sortOptions = tslib_1.__assign({}, sortOptions, { columnName: columnName, ascending: ascending });
-    }
-    var _b = sort_1.getSortedData(data, columnName, ascending), rawData = _b.rawData, viewData = _b.viewData;
-    if (!common_1.arrayEqual(rawData, data.rawData)) {
-        data.rawData = rawData;
-        data.viewData = viewData;
-    }
-}
-exports.sort = sort;
-function applyPasteDataToRawData(store, pasteData, indexToPaste) {
-    var _a = store.data, rawData = _a.rawData, viewData = _a.viewData, visibleColumns = store.column.visibleColumns;
-    var _b = indexToPaste.row, startRowIndex = _b[0], endRowIndex = _b[1], _c = indexToPaste.column, startColumnIndex = _c[0], endColumnIndex = _c[1];
-    var columnNames = common_1.mapProp('name', visibleColumns);
-    for (var rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
-        var rawRowIndex = rowIdx + startRowIndex;
-        for (var columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
-            var name_1 = columnNames[columnIdx + startColumnIndex];
-            if (clipboard_2.isColumnEditable(viewData, rawRowIndex, name_1)) {
-                rawData[rawRowIndex][name_1] = pasteData[rowIdx][columnIdx];
-            }
-        }
-    }
-}
-function paste(store, pasteData) {
-    var selection = store.selection, id = store.id;
-    if (selection.range) {
-        pasteData = clipboard_1.copyDataToRange(selection.range, pasteData);
-    }
-    var rangeToPaste = clipboard_1.getRangeToPaste(store, pasteData);
-    applyPasteDataToRawData(store, pasteData, rangeToPaste);
-    selection_1.changeSelectionRange(selection, rangeToPaste, id);
-}
-exports.paste = paste;
-function setDisabled(store, disabled) {
-    store.data.disabled = disabled;
-}
-exports.setDisabled = setDisabled;
-function setRowDisabled(store, disabled, rowKey, withCheckbox) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        row._attributes.disabled = disabled;
-        if (withCheckbox) {
-            row._attributes.checkDisabled = disabled;
-        }
-    }
-}
-exports.setRowDisabled = setRowDisabled;
-function setRowCheckDisabled(store, disabled, rowKey) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        row._attributes.checkDisabled = disabled;
-    }
-}
-exports.setRowCheckDisabled = setRowCheckDisabled;
-function appendRow(_a, row, options) {
-    var data = _a.data, column = _a.column, rowCoords = _a.rowCoords, dimension = _a.dimension;
-    var rawData = data.rawData, viewData = data.viewData;
-    var heights = rowCoords.heights;
-    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap;
-    var _b = options.at, at = _b === void 0 ? rawData.length : _b;
-    var rawRow = data_1.createRawRow(row, rawData.length, defaultValues);
-    var viewRow = data_1.createViewRow(rawRow, allColumnMap);
-    rawData.splice(at, 0, rawRow);
-    viewData.splice(at, 0, viewRow);
-    heights.splice(at, 0, rowCoords_1.getRowHeight(rawRow, dimension.rowHeight));
-    observable_1.notify(data, 'rawData');
-    observable_1.notify(data, 'viewData');
-    observable_1.notify(rowCoords, 'heights');
-}
-exports.appendRow = appendRow;
-function removeRow(_a, rowKey, options) {
-    var data = _a.data, rowCoords = _a.rowCoords;
-    var rawData = data.rawData, viewData = data.viewData;
-    var heights = rowCoords.heights;
-    var rowIdx = common_1.findPropIndex('rowKey', rowKey, rawData);
-    rawData.splice(rowIdx, 1);
-    viewData.splice(rowIdx, 1);
-    heights.splice(rowIdx, 1);
-    observable_1.notify(data, 'rawData');
-    observable_1.notify(data, 'viewData');
-    observable_1.notify(rowCoords, 'heights');
-}
-exports.removeRow = removeRow;
-function clearData(_a) {
-    var data = _a.data;
-    data.rawData = [];
-    data.viewData = [];
-}
-exports.clearData = clearData;
-function resetData(_a, inputData) {
-    var data = _a.data, column = _a.column, dimension = _a.dimension, rowCoords = _a.rowCoords;
-    var _b = data_1.createData(inputData, column), rawData = _b.rawData, viewData = _b.viewData;
-    var rowHeight = dimension.rowHeight;
-    data.rawData = rawData;
-    data.viewData = viewData;
-    rowCoords.heights = rawData.map(function (row) { return rowCoords_1.getRowHeight(row, rowHeight); });
-}
-exports.resetData = resetData;
-function addRowClassName(store, rowKey, className) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        var rowClassMap = row._attributes.className.row;
-        var isExist = common_1.includes(rowClassMap, className);
-        if (!isExist) {
-            rowClassMap.push(className);
-            observable_1.notify(row._attributes, 'className');
-        }
-    }
-}
-exports.addRowClassName = addRowClassName;
-function removeRowClassName(store, rowKey, className) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        common_1.removeArrayItem(className, row._attributes.className.row);
-        observable_1.notify(row._attributes, 'className');
-    }
-}
-exports.removeRowClassName = removeRowClassName;
-function addCellClassName(store, rowKey, columnName, className) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        var columnClassMap = row._attributes.className.column;
-        if (common_1.isUndefined(columnClassMap[columnName])) {
-            columnClassMap[columnName] = [className];
-        }
-        else {
-            var isExist = common_1.includes(columnClassMap[columnName], className);
-            if (!isExist) {
-                columnClassMap[columnName].push(className);
-            }
-        }
-        observable_1.notify(row._attributes, 'className');
-    }
-}
-exports.addCellClassName = addCellClassName;
-function removeCellClassName(store, rowKey, columnName, className) {
-    var rawData = store.data.rawData;
-    var row = common_1.findProp('rowKey', rowKey, rawData);
-    if (row) {
-        var columnClassMap = row._attributes.className.column;
-        if (common_1.isUndefined(columnClassMap[columnName])) {
-            return;
-        }
-        common_1.removeArrayItem(className, columnClassMap[columnName]);
-        observable_1.notify(row._attributes, 'className');
-    }
-}
-exports.removeCellClassName = removeCellClassName;
-function setRowHeight(_a, rowIndex, rowHeight) {
-    var data = _a.data, rowCoords = _a.rowCoords;
-    data.rawData[rowIndex]._attributes.height = rowHeight;
-    rowCoords.heights[rowIndex] = rowHeight;
-    observable_1.notify(rowCoords, 'heights');
-}
-exports.setRowHeight = setRowHeight;
-
-
-/***/ }),
-/* 63 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6326,32 +8491,14 @@ exports.getSortedData = getSortedData;
 
 
 /***/ }),
-/* 64 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var common_1 = __webpack_require__(1);
-function isSameInputRange(inp1, inp2) {
-    if (common_1.isNull(inp1) || common_1.isNull(inp2)) {
-        return inp1 === inp2;
-    }
-    return (inp1.column[0] === inp2.column[0] &&
-        inp1.column[1] === inp2.column[1] &&
-        inp1.row[0] === inp2.row[0] &&
-        inp1.row[1] === inp2.row[1]);
-}
-exports.isSameInputRange = isSameInputRange;
-
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
+var column_1 = __webpack_require__(22);
+var data_1 = __webpack_require__(11);
 function setFrozenColumnCount(_a, count) {
     var column = _a.column;
     column.frozenCount = count;
@@ -6364,6 +8511,28 @@ function setColumnWidth(_a, side, index, width) {
     columnItem.fixedWidth = true;
 }
 exports.setColumnWidth = setColumnWidth;
+function setColumns(_a, optColumns) {
+    var column = _a.column, data = _a.data;
+    var _b = column.dataForColumnCreation, columnOptions = _b.columnOptions, copyOptions = _b.copyOptions, treeColumnOptions = _b.treeColumnOptions, rowHeaders = _b.rowHeaders, relationColumns = _b.relationColumns;
+    var columnInfos = optColumns.map(function (optColumn) {
+        return column_1.createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions);
+    });
+    column.allColumns = rowHeaders.concat(columnInfos);
+    var allColumnMap = column.allColumnMap;
+    var rawData = data.rawData;
+    data.viewData.forEach(function (viewRow) {
+        viewRow.__unobserveFns__.forEach(function (fn) { return fn(); });
+    });
+    data.viewData = rawData.map(function (row) { return data_1.createViewRow(row, allColumnMap, rawData); });
+}
+exports.setColumns = setColumns;
+function resetColumnWidths(_a, widths) {
+    var column = _a.column;
+    column.visibleColumns.forEach(function (columnInfo, idx) {
+        columnInfo.baseWidth = widths[idx];
+    });
+}
+exports.resetColumnWidths = resetColumnWidths;
 function hideColumn(_a, columnName) {
     var column = _a.column;
     var columnItem = column.allColumnMap[columnName];
@@ -6383,18 +8552,34 @@ exports.showColumn = showColumn;
 
 
 /***/ }),
-/* 66 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var keyboard_1 = __webpack_require__(67);
-var focus_1 = __webpack_require__(15);
-var selection_1 = __webpack_require__(11);
+var keyboard_1 = __webpack_require__(85);
+var focus_1 = __webpack_require__(21);
+var selection_1 = __webpack_require__(15);
 var column_1 = __webpack_require__(6);
+var rowSpan_1 = __webpack_require__(7);
+var selection_2 = __webpack_require__(13);
+function getNextCellIndexWithRowSpan(store, command, currentRowIndex, columnRange, cellIndexes) {
+    var rowIndex = cellIndexes[0];
+    var columnIndex = cellIndexes[1];
+    var _a = selection_2.getSortedRange(columnRange), startColumnIndex = _a[0], endColumnIndex = _a[1];
+    for (var index = startColumnIndex; index <= endColumnIndex; index += 1) {
+        var nextRowIndex = keyboard_1.getNextCellIndex(store, command, [currentRowIndex, index])[0];
+        if ((command === 'up' && nextRowIndex < rowIndex) ||
+            (command === 'down' && nextRowIndex > rowIndex)) {
+            rowIndex = nextRowIndex;
+        }
+    }
+    return [rowIndex, columnIndex];
+}
 function moveFocus(store, command) {
-    var focus = store.focus, viewData = store.data.viewData, visibleColumns = store.column.visibleColumns, id = store.id;
+    var focus = store.focus, data = store.data, visibleColumns = store.column.visibleColumns, id = store.id;
+    var viewData = data.viewData;
     var rowIndex = focus.rowIndex, columnIndex = focus.totalColumnIndex;
     if (rowIndex === null || columnIndex === null) {
         return;
@@ -6403,7 +8588,7 @@ function moveFocus(store, command) {
     var nextColumnName = visibleColumns[nextColumnIndex].name;
     if (!column_1.isRowHeader(nextColumnName)) {
         focus.navigating = true;
-        focus_1.changeFocus(focus, viewData[nextRowIndex].rowKey, nextColumnName, id);
+        focus_1.changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
     }
 }
 exports.moveFocus = moveFocus;
@@ -6423,16 +8608,18 @@ function editFocus(_a, command) {
 }
 exports.editFocus = editFocus;
 function changeSelection(store, command) {
-    var selection = store.selection, focus = store.focus, viewData = store.data.viewData, visibleColumns = store.column.visibleColumns, id = store.id;
-    var currentInputRange = selection.inputRange;
+    var _a;
+    var selection = store.selection, focus = store.focus, data = store.data, _b = store.column, visibleColumns = _b.visibleColumns, rowHeaderCount = _b.rowHeaderCount, id = store.id;
+    var viewData = data.viewData, sortOptions = data.sortOptions;
     var focusRowIndex = focus.rowIndex, totalFocusColumnIndex = focus.totalColumnIndex;
+    var currentInputRange = selection.inputRange;
     if (focusRowIndex === null || totalFocusColumnIndex === null) {
         return;
     }
     if (!currentInputRange) {
         currentInputRange = selection.inputRange = {
             row: [focusRowIndex, focusRowIndex],
-            column: [totalFocusColumnIndex, totalFocusColumnIndex]
+            column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
         };
     }
     var rowLength = viewData.length;
@@ -6449,49 +8636,83 @@ function changeSelection(store, command) {
     }
     else {
         nextCellIndexes = keyboard_1.getNextCellIndex(store, command, [rowIndex, columnIndex]);
+        if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+            nextCellIndexes = getNextCellIndexWithRowSpan(store, command, rowIndex, [columnStartIndex, columnIndex], nextCellIndexes);
+        }
     }
     var nextRowIndex = nextCellIndexes[0], nextColumnIndex = nextCellIndexes[1];
-    var nextColumnName = visibleColumns[nextColumnIndex].name;
-    if (!column_1.isRowHeader(nextColumnName)) {
-        var inputRange = {
-            row: [rowStartIndex, nextRowIndex],
-            column: [columnStartIndex, nextColumnIndex]
-        };
-        selection_1.changeSelectionRange(selection, inputRange, id);
+    var startRowIndex = rowStartIndex;
+    var endRowIndex = nextRowIndex;
+    if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        var rowRange = [startRowIndex, endRowIndex];
+        var colRange = [columnStartIndex, nextColumnIndex];
+        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
     }
+    var inputRange = {
+        row: [startRowIndex, endRowIndex],
+        column: [columnStartIndex, nextColumnIndex]
+    };
+    selection_1.changeSelectionRange(selection, inputRange, id);
 }
 exports.changeSelection = changeSelection;
-function removeFocus(store) {
-    // @TODO: 이후 관련 키보드 이벤트 작업 필요
-    console.log(store);
+function removeContent(store) {
+    var column = store.column, data = store.data;
+    var visibleColumns = column.visibleColumns;
+    var rawData = data.rawData;
+    var removeRange = keyboard_1.getRemoveRange(store);
+    if (!removeRange) {
+        return;
+    }
+    var _a = removeRange.column, columnStart = _a[0], columnEnd = _a[1], _b = removeRange.row, rowStart = _b[0], rowEnd = _b[1];
+    visibleColumns
+        .slice(columnStart, columnEnd + 1)
+        .filter(function (_a) {
+        var editor = _a.editor;
+        return !!editor;
+    })
+        .forEach(function (_a) {
+        var name = _a.name;
+        rawData.slice(rowStart, rowEnd + 1).forEach(function (row) {
+            row[name] = '';
+        });
+    });
 }
-exports.removeFocus = removeFocus;
+exports.removeContent = removeContent;
 function setFocusInfo(store, rowKey, columnName, navigating) {
-    var focus = store.focus, id = store.id;
+    var focus = store.focus, id = store.id, data = store.data;
     focus.navigating = navigating;
-    focus_1.changeFocus(store.focus, rowKey, columnName, id);
+    focus_1.changeFocus(focus, data, rowKey, columnName, id);
 }
 exports.setFocusInfo = setFocusInfo;
 
 
 /***/ }),
-/* 67 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
-var keyboard_1 = __webpack_require__(13);
+var keyboard_1 = __webpack_require__(19);
+var rowSpan_1 = __webpack_require__(7);
 function getNextCellIndex(store, command, _a) {
     var rowIndex = _a[0], columnIndex = _a[1];
-    var viewData = store.data.viewData, visibleColumns = store.column.visibleColumns, _b = store.dimension, bodyHeight = _b.bodyHeight, cellBorderWidth = _b.cellBorderWidth, offsets = store.rowCoords.offsets;
+    var data = store.data, visibleColumns = store.column.visibleColumns, _b = store.dimension, bodyHeight = _b.bodyHeight, cellBorderWidth = _b.cellBorderWidth, _c = store.rowCoords, offsets = _c.offsets, heights = _c.heights;
+    var rawData = data.rawData, viewData = data.viewData, sortOptions = data.sortOptions;
+    var columnName = visibleColumns[columnIndex].name;
     switch (command) {
         case 'up':
-            rowIndex -= 1;
+            if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+                rowIndex = rowSpan_1.getRowSpanTopIndex(rowIndex, columnName, rawData);
+            }
+            rowIndex = keyboard_1.getPrevRowIndex(rowIndex, heights);
             break;
         case 'down':
-            rowIndex += 1;
+            if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+                rowIndex = rowSpan_1.getRowSpanBottomIndex(rowIndex, columnName, rawData);
+            }
+            rowIndex = keyboard_1.getNextRowIndex(rowIndex, heights);
             break;
         case 'left':
             columnIndex -= 1;
@@ -6531,10 +8752,26 @@ function getNextCellIndex(store, command, _a) {
     return [rowIndex, columnIndex];
 }
 exports.getNextCellIndex = getNextCellIndex;
+function getRemoveRange(store) {
+    var focus = store.focus, selection = store.selection;
+    var totalColumnIndex = focus.totalColumnIndex, rowIndex = focus.rowIndex;
+    var range = selection.range;
+    if (range) {
+        return range;
+    }
+    if (!common_1.isNull(totalColumnIndex) && !common_1.isNull(rowIndex)) {
+        return {
+            column: [totalColumnIndex, totalColumnIndex],
+            row: [rowIndex, rowIndex]
+        };
+    }
+    return null;
+}
+exports.getRemoveRange = getRemoveRange;
 
 
 /***/ }),
-/* 68 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6547,7 +8784,7 @@ exports.isFocusedCell = isFocusedCell;
 
 
 /***/ }),
-/* 69 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6555,8 +8792,10 @@ exports.isFocusedCell = isFocusedCell;
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(6);
-var focus_1 = __webpack_require__(15);
-var selection_1 = __webpack_require__(11);
+var focus_1 = __webpack_require__(21);
+var selection_1 = __webpack_require__(15);
+var rowSpan_1 = __webpack_require__(7);
+var selection_2 = __webpack_require__(27);
 function setNavigating(_a, navigating) {
     var focus = _a.focus;
     focus.navigating = navigating;
@@ -6661,6 +8900,24 @@ function setScrolling(_a, bodyWidth, selection, dimension, viewport) {
         selection.intervalIdForAutoScroll = setInterval(adjustScroll.bind(null, viewport, overflow));
     }
 }
+function getFocusCellPos(store) {
+    var columnCoords = store.columnCoords, rowCoords = store.rowCoords, focus = store.focus, dimension = store.dimension, viewport = store.viewport;
+    var columnIndex = focus.columnIndex, rowIndex = focus.rowIndex, side = focus.side, cellPosRect = focus.cellPosRect;
+    if (common_1.isNull(columnIndex) || common_1.isNull(rowIndex) || common_1.isNull(side) || common_1.isNull(cellPosRect)) {
+        return null;
+    }
+    var left = cellPosRect.left, right = cellPosRect.right;
+    var offsets = rowCoords.offsets, heights = rowCoords.heights;
+    var areaWidth = columnCoords.areaWidth, widths = columnCoords.widths;
+    var headerHeight = dimension.headerHeight, tableBorderWidth = dimension.tableBorderWidth, width = dimension.width;
+    var scrollLeft = viewport.scrollLeft;
+    var offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
+    var focusCellWidth = widths[side][columnIndex];
+    return {
+        pageX: left + focusCellWidth + (side === 'L' ? 0 : offsetLeft),
+        pageY: offsets[rowIndex] + heights[rowIndex] + headerHeight
+    };
+}
 function selectionEnd(_a) {
     var selection = _a.selection;
     selection.inputRange = null;
@@ -6669,15 +8926,21 @@ function selectionEnd(_a) {
 }
 exports.selectionEnd = selectionEnd;
 function selectionUpdate(store, dragStartData, dragData) {
-    var dimension = store.dimension, _a = store.viewport, scrollTop = _a.scrollTop, scrollLeft = _a.scrollLeft, _b = store.columnCoords, widths = _b.widths, areaWidth = _b.areaWidth, rowOffsets = store.rowCoords.offsets, selection = store.selection, visibleColumns = store.column.visibleColumns, id = store.id;
+    var _a;
+    var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, rowCoords = store.rowCoords, selection = store.selection, column = store.column, id = store.id, data = store.data;
+    var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
+    var widths = columnCoords.widths, areaWidth = columnCoords.areaWidth;
+    var rowOffsets = rowCoords.offsets;
+    var rowHeaderCount = column.rowHeaderCount;
     var pageX = dragData.pageX, pageY = dragData.pageY;
     var curInputRange = selection.inputRange;
-    var startRowIndex, startColumnIndex;
+    var visibleColumns = column.visibleColumns;
+    var startRowIndex, startColumnIndex, endRowIndex;
     var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
     var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-    var rowIndex = common_1.findOffsetIndex(rowOffsets, scrolledPosition.y);
     var totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-    var columnIndex = common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
+    var endColumnIndex = common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+    endRowIndex = common_1.findOffsetIndex(rowOffsets, scrolledPosition.y);
     if (curInputRange === null) {
         var startViewInfo = {
             pageX: dragStartData.pageX,
@@ -6687,66 +8950,160 @@ function selectionUpdate(store, dragStartData, dragData) {
         };
         var startScrolledPosition = getScrolledPosition(startViewInfo, dimension, areaWidth.L);
         startRowIndex = common_1.findOffsetIndex(rowOffsets, startScrolledPosition.y);
-        startColumnIndex = common_1.findOffsetIndex(totalColumnOffsets, startScrolledPosition.x);
+        startColumnIndex =
+            common_1.findOffsetIndex(totalColumnOffsets, startScrolledPosition.x) - rowHeaderCount;
     }
     else {
         startRowIndex = curInputRange.row[0];
         startColumnIndex = curInputRange.column[0];
     }
-    var startColumnName = visibleColumns[startColumnIndex].name;
-    var nextColumnName = visibleColumns[columnIndex].name;
-    if (column_1.isRowHeader(nextColumnName) || column_1.isRowHeader(startColumnName)) {
+    if (startColumnIndex < 0 || endColumnIndex < 0 || startRowIndex < 0 || endRowIndex < 0) {
         return;
     }
+    if (rowSpan_1.enableRowSpan(data.sortOptions.columnName)) {
+        var rowRange = [startRowIndex, endRowIndex];
+        var colRange = [startColumnIndex, endColumnIndex];
+        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, store.focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
+    }
     var inputRange = {
-        row: [startRowIndex, rowIndex],
-        column: [startColumnIndex, columnIndex]
+        row: [startRowIndex, endRowIndex],
+        column: [startColumnIndex, endColumnIndex]
     };
     selection_1.changeSelectionRange(selection, inputRange, id);
 }
 exports.selectionUpdate = selectionUpdate;
 function dragMoveBody(store, dragStartData, dragData) {
-    var dimension = store.dimension, areaWidth = store.columnCoords.areaWidth, selection = store.selection, viewport = store.viewport;
+    var dimension = store.dimension, columnCoords = store.columnCoords, selection = store.selection, viewport = store.viewport;
+    var areaWidth = columnCoords.areaWidth;
     selectionUpdate(store, dragStartData, dragData);
     setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
 }
 exports.dragMoveBody = dragMoveBody;
-function dragEndBody(_a) {
+function dragEnd(_a) {
     var selection = _a.selection;
     stopAutoScroll(selection);
 }
-exports.dragEndBody = dragEndBody;
+exports.dragEnd = dragEnd;
 function mouseDownBody(store, elementInfo, eventInfo) {
     var data = store.data, column = store.column, columnCoords = store.columnCoords, rowCoords = store.rowCoords, focus = store.focus, id = store.id;
     var pageX = eventInfo.pageX, pageY = eventInfo.pageY, shiftKey = eventInfo.shiftKey;
+    var visibleColumnsBySide = column.visibleColumnsBySide;
     var side = elementInfo.side, scrollLeft = elementInfo.scrollLeft, scrollTop = elementInfo.scrollTop, left = elementInfo.left, top = elementInfo.top;
-    var offsetX = pageX - left + scrollLeft;
-    var offsetY = pageY - top + scrollTop;
-    var rowIndex = common_1.findOffsetIndex(rowCoords.offsets, offsetY);
-    var columnIndex = common_1.findOffsetIndex(columnCoords.offsets[side], offsetX);
-    var columnName = column.visibleColumnsBySide[side][columnIndex].name;
+    var offsetLeft = pageX - left + scrollLeft;
+    var offsetTop = pageY - top + scrollTop;
+    var rowIndex = common_1.findOffsetIndex(rowCoords.offsets, offsetTop);
+    var columnIndex = common_1.findOffsetIndex(columnCoords.offsets[side], offsetLeft);
+    var columnName = visibleColumnsBySide[side][columnIndex].name;
     if (!column_1.isRowHeader(columnName)) {
         if (shiftKey) {
             var dragData = { pageX: pageX, pageY: pageY };
-            selectionUpdate(store, dragData, dragData);
+            var focusCellPos = getFocusCellPos(store);
+            var focusData = common_1.isNull(focusCellPos) ? dragData : focusCellPos;
+            selectionUpdate(store, focusData, dragData);
         }
         else {
-            focus_1.changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
+            focus_1.changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
             selectionEnd(store);
         }
     }
 }
 exports.mouseDownBody = mouseDownBody;
+function mouseDownHeader(store, name, parentHeader) {
+    var _a;
+    var data = store.data, selection = store.selection, id = store.id, column = store.column;
+    var visibleColumns = column.visibleColumns, rowHeaderCount = column.rowHeaderCount, complexHeaderColumns = column.complexHeaderColumns;
+    var endRowIndex = data.viewData.length - 1;
+    var startColumnIndex, endColumnIndex;
+    if (parentHeader) {
+        _a = selection_2.getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount), startColumnIndex = _a[0], endColumnIndex = _a[1];
+    }
+    else {
+        startColumnIndex = endColumnIndex =
+            common_1.findPropIndex('name', name, visibleColumns) - rowHeaderCount;
+    }
+    var inputRange = {
+        row: [0, endRowIndex],
+        column: [startColumnIndex, endColumnIndex]
+    };
+    selection_1.changeSelectionRange(selection, inputRange, id);
+}
+exports.mouseDownHeader = mouseDownHeader;
+function dragMoveHeader(store, dragData, startSelectedName) {
+    var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, selection = store.selection, column = store.column, id = store.id;
+    var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
+    var areaWidth = columnCoords.areaWidth, widths = columnCoords.widths;
+    var rowHeaderCount = column.rowHeaderCount, visibleColumns = column.visibleColumns, complexHeaderColumns = column.complexHeaderColumns;
+    var pageX = dragData.pageX, pageY = dragData.pageY;
+    var curInputRange = selection.inputRange;
+    if (curInputRange === null) {
+        return;
+    }
+    var _a = selection_2.getChildColumnRange(visibleColumns, complexHeaderColumns, startSelectedName, rowHeaderCount), startColumnIdx = _a[0], endColumnIdx = _a[1];
+    var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
+    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+    var totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
+    var columnIndex = common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+    var rowIndex = curInputRange.row[1];
+    if (columnIndex < startColumnIdx) {
+        startColumnIdx = columnIndex;
+    }
+    if (columnIndex > endColumnIdx) {
+        endColumnIdx = columnIndex;
+    }
+    if (columnIndex >= 0) {
+        var inputRange = {
+            row: [0, rowIndex],
+            column: [startColumnIdx, endColumnIdx]
+        };
+        selection_1.changeSelectionRange(selection, inputRange, id);
+        setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
+    }
+}
+exports.dragMoveHeader = dragMoveHeader;
+function mouseDownRowHeader(store, rowKey) {
+    var selection = store.selection, id = store.id, column = store.column, data = store.data;
+    var visibleColumns = column.visibleColumns, rowHeaderCount = column.rowHeaderCount;
+    var rowIndex = common_1.findPropIndex('rowKey', rowKey, data.rawData);
+    var endColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
+    var inputRange = {
+        row: [rowIndex, rowIndex],
+        column: [0, endColumnIndex]
+    };
+    selection_1.changeSelectionRange(selection, inputRange, id);
+}
+exports.mouseDownRowHeader = mouseDownRowHeader;
+function dragMoveRowHeader(store, dragData) {
+    var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, rowCoords = store.rowCoords, selection = store.selection, id = store.id;
+    var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
+    var areaWidth = columnCoords.areaWidth;
+    var rowOffsets = rowCoords.offsets;
+    var pageX = dragData.pageX, pageY = dragData.pageY;
+    var curInputRange = selection.inputRange;
+    if (curInputRange === null) {
+        return;
+    }
+    var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
+    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+    var rowIndex = common_1.findOffsetIndex(rowOffsets, scrolledPosition.y);
+    var startRowIndex = curInputRange.row[0];
+    var columnIndex = curInputRange.column[1];
+    var inputRange = {
+        row: [startRowIndex, rowIndex],
+        column: [0, columnIndex]
+    };
+    selection_1.changeSelectionRange(selection, inputRange, id);
+}
+exports.dragMoveRowHeader = dragMoveRowHeader;
 
 
 /***/ }),
-/* 70 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var summary_1 = __webpack_require__(18);
+var summary_1 = __webpack_require__(23);
 function setSummaryColumnContent(_a, columnName, columnContent) {
     var summary = _a.summary, data = _a.data;
     var rawData = data.rawData;
@@ -6760,17 +9117,31 @@ exports.setSummaryColumnContent = setSummaryColumnContent;
 
 
 /***/ }),
-/* 71 */
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function setRenderState(_a, state) {
+    var renderState = _a.renderState;
+    renderState.state = state;
+}
+exports.setRenderState = setRenderState;
+
+
+/***/ }),
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preset_1 = __webpack_require__(72);
+var preset_1 = __webpack_require__(91);
 var common_1 = __webpack_require__(1);
-var dom_1 = __webpack_require__(3);
-var styleGen = tslib_1.__importStar(__webpack_require__(73));
+var dom_1 = __webpack_require__(2);
+var styleGen = tslib_1.__importStar(__webpack_require__(92));
 var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 var presetOptions = {
     default: preset_1.presetDefault,
@@ -6887,7 +9258,7 @@ exports.default = {
 
 
 /***/ }),
-/* 72 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7086,14 +9457,14 @@ exports.striped = common_1.deepMergedCopy(exports.presetDefault, {
 
 
 /***/ }),
-/* 73 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(3);
-var cssRuleBuilder_1 = __webpack_require__(74);
+var dom_1 = __webpack_require__(2);
+var cssRuleBuilder_1 = __webpack_require__(93);
 /**
  * Creates a rule string for background and text colors.
  * @param {String} className - class name
@@ -7457,13 +9828,13 @@ exports.cellCurrentRow = cellCurrentRow;
 
 
 /***/ }),
-/* 74 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dom_1 = __webpack_require__(3);
+var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
 /**
  * create css rule string and returns it
@@ -7632,120 +10003,7 @@ exports.buildAll = buildAll;
 
 
 /***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var messages = {
-    en: {
-        display: {
-            noData: 'No data.',
-            loadingData: 'Loading data.',
-            resizeHandleGuide: 'You can change the width of the column by mouse drag, and initialize the width by double-clicking.'
-        },
-        net: {
-            confirmCreate: 'Are you sure you want to create {{count}} data?',
-            confirmUpdate: 'Are you sure you want to update {{count}} data?',
-            confirmDelete: 'Are you sure you want to delete {{count}} data?',
-            confirmModify: 'Are you sure you want to modify {{count}} data?',
-            noDataToCreate: 'No data to create.',
-            noDataToUpdate: 'No data to update.',
-            noDataToDelete: 'No data to delete.',
-            noDataToModify: 'No data to modify.',
-            failResponse: 'An error occurred while requesting data.\nPlease try again.'
-        }
-    },
-    ko: {
-        display: {
-            noData: '데이터가 존재하지 않습니다.',
-            loadingData: '데이터를 불러오는 중입니다.',
-            resizeHandleGuide: '마우스 드래그하여 컬럼 너비를 조정할 수 있고, 더블 클릭으로 컬럼 너비를 초기화할 수 있습니다.'
-        },
-        net: {
-            confirmCreate: '{{count}}건의 데이터를 생성하겠습니까?',
-            confirmUpdate: '{{count}}건의 데이터를 수정하겠습니까?',
-            confirmDelete: '{{count}}건의 데이터를 삭제하겠습니까?',
-            confirmModify: '{{count}}건의 데이터를 처리하겠습니까?',
-            noDataToCreate: '생성할 데이터가 없습니다.',
-            noDataToUpdate: '수정할 데이터가 없습니다.',
-            noDataToDelete: '삭제할 데이터가 없습니다.',
-            noDataToModify: '처리할 데이터가 없습니다.',
-            failResponse: '데이터 요청 중에 에러가 발생하였습니다.\n다시 시도하여 주시기 바랍니다.'
-        }
-    }
-};
-var messageMap = {};
-/**
- * Flatten message map
- * @param {object} data - Messages
- * @returns {object} Flatten message object (key format is 'key.subKey')
- * @ignore
- */
-function flattenMessageMap(data) {
-    if (data === void 0) { data = {}; }
-    var obj = {};
-    var newKey;
-    Object.keys(data).forEach(function (key) {
-        var keyWithType = key;
-        var groupMessages = data[keyWithType];
-        Object.keys(groupMessages).forEach(function (subKey) {
-            newKey = key + "." + subKey;
-            obj[newKey] = groupMessages[subKey];
-        });
-    });
-    return obj;
-}
-/**
- * Replace text
- * @param {string} text - Text including handlebar expression
- * @param {Object} values - Replaced values
- * @returns {string} Replaced text
- */
-function replaceText(text, values) {
-    return text.replace(/\{\{(\w*)\}\}/g, function (value, prop) {
-        return values.hasOwnProperty(prop) ? values[prop] : '';
-    });
-}
-exports.default = {
-    /**
-     * Set messages
-     * @param {string} localeCode - Code to set locale messages and
-     *     this is the language or language-region combination. (ex: en-US)
-     * @param {object} [data] - Messages using in Grid
-     */
-    setLanguage: function (localeCode, data) {
-        var localeMessages = messages[localeCode];
-        if (!localeMessages && !data) {
-            throw new Error('You should set messages to map the locale code.');
-        }
-        var newData = flattenMessageMap(data);
-        if (localeMessages) {
-            var originData = flattenMessageMap(localeMessages);
-            messageMap = tslib_1.__assign({}, originData, newData);
-        }
-        else {
-            messageMap = newData;
-        }
-    },
-    /**
-     * Get message
-     * @param {string} key - Key to find message (ex: 'net.confirmCreate')
-     * @param {object} [replacements] - Values to replace string
-     * @returns {string} Message
-     */
-    get: function (key, replacements) {
-        if (replacements === void 0) { replacements = {}; }
-        var message = messageMap[key];
-        return replaceText(message, replacements);
-    }
-};
-
-
-/***/ }),
-/* 76 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7777,7 +10035,380 @@ exports.getInvalidRows = getInvalidRows;
 
 
 /***/ }),
-/* 77 */
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var common_1 = __webpack_require__(1);
+var gridAjax_1 = tslib_1.__importDefault(__webpack_require__(96));
+var eventBus_1 = __webpack_require__(9);
+var instance_1 = __webpack_require__(8);
+var message_1 = __webpack_require__(34);
+var modifiedDataManager_1 = __webpack_require__(35);
+var ServerSideDataProvider = /** @class */ (function () {
+    function ServerSideDataProvider(store, dispatch, dataSource) {
+        var _this = this;
+        this.handleSuccessReadData = function (response) {
+            var result = response.result, data = response.data;
+            if (!result || common_1.isUndefined(data)) {
+                return;
+            }
+            _this.dispatch('resetData', data.contents);
+            _this.dispatch('setPagination', data.pagination);
+        };
+        var api = dataSource.api, _a = dataSource.initialRequest, initialRequest = _a === void 0 ? true : _a, _b = dataSource.withCredentials, withCredentials = _b === void 0 ? false : _b;
+        this.initialRequest = initialRequest;
+        this.api = api;
+        this.withCredentials = withCredentials;
+        this.lastRequiredData = { perPage: store.data.pageOptions.perPage };
+        this.store = store;
+        this.dispatch = dispatch;
+        if (this.initialRequest) {
+            this.readData(1);
+        }
+    }
+    ServerSideDataProvider.prototype.createRequestOptions = function (options) {
+        if (options === void 0) { options = {}; }
+        var defaultOptions = {
+            checkedOnly: false,
+            modifiedOnly: true,
+            showConfirm: true,
+            withCredentials: this.withCredentials
+        };
+        return tslib_1.__assign({}, defaultOptions, options);
+    };
+    ServerSideDataProvider.prototype.createRequestParams = function (type, options) {
+        var checkedOnly = options.checkedOnly, modifiedOnly = options.modifiedOnly;
+        var ignoredColumns = this.store.column.ignoredColumns;
+        var manager = instance_1.getDataManager(this.store.id);
+        if (modifiedOnly) {
+            return type === 'MODIFY'
+                ? manager.getAllModifiedData({ checkedOnly: checkedOnly, ignoredColumns: ignoredColumns })
+                : manager.getModifiedData(type, { checkedOnly: checkedOnly, ignoredColumns: ignoredColumns });
+        }
+        return { rows: modifiedDataManager_1.getDataWithOptions(this.store.data.rawData, { checkedOnly: checkedOnly, ignoredColumns: ignoredColumns }) };
+    };
+    ServerSideDataProvider.prototype.readData = function (page, data, resetData) {
+        var _this = this;
+        if (data === void 0) { data = {}; }
+        if (resetData === void 0) { resetData = false; }
+        if (!this.api) {
+            return;
+        }
+        var _a = this, api = _a.api, withCredentials = _a.withCredentials;
+        var perPage = this.store.data.pageOptions.perPage;
+        var _b = api.readData, method = _b.method, url = _b.url;
+        var dataWithType = data;
+        // assign request params
+        var params = resetData
+            ? tslib_1.__assign({ perPage: perPage }, dataWithType, { page: page }) : tslib_1.__assign({}, this.lastRequiredData, dataWithType, { page: page });
+        this.lastRequiredData = params;
+        var request = new gridAjax_1.default({
+            method: method,
+            url: url,
+            params: params,
+            callback: this.handleSuccessReadData,
+            callbackWhenever: function () { return _this.dispatch('setRenderState', 'DONE'); },
+            withCredentials: withCredentials,
+            eventBus: eventBus_1.getEventBus(this.store.id)
+        });
+        this.dispatch('setRenderState', 'LOADING');
+        request.open();
+        request.send();
+    };
+    ServerSideDataProvider.prototype.createData = function (url, method, options) {
+        this.send({ url: url, method: method, options: options, requestTypeCode: 'CREATE' });
+    };
+    ServerSideDataProvider.prototype.updateData = function (url, method, options) {
+        this.send({ url: url, method: method, options: options, requestTypeCode: 'UPDATE' });
+    };
+    ServerSideDataProvider.prototype.deleteData = function (url, method, options) {
+        this.send({ url: url, method: method, options: options, requestTypeCode: 'DELETE' });
+    };
+    ServerSideDataProvider.prototype.modifyData = function (url, method, options) {
+        this.send({ url: url, method: method, options: options, requestTypeCode: 'MODIFY' });
+    };
+    ServerSideDataProvider.prototype.request = function (requestType, options) {
+        var url = options.url, method = options.method;
+        if (this.api && common_1.isObject(this.api[requestType])) {
+            url = url || this.api[requestType].url;
+            method = method || this.api[requestType].method;
+        }
+        if (!url || !method) {
+            throw new Error('url and method should be essential for request.');
+        }
+        var requestOptions = this.createRequestOptions(options);
+        this[requestType](url, method, requestOptions);
+    };
+    ServerSideDataProvider.prototype.reloadData = function () {
+        this.readData(this.lastRequiredData.page || 1);
+    };
+    ServerSideDataProvider.prototype.send = function (sendOptions) {
+        var _this = this;
+        var url = sendOptions.url, method = sendOptions.method, options = sendOptions.options, requestTypeCode = sendOptions.requestTypeCode;
+        var manager = instance_1.getDataManager(this.store.id);
+        var params = this.createRequestParams(requestTypeCode, options);
+        if (!options.showConfirm || this.confirm(requestTypeCode, this.getCount(params))) {
+            var withCredentials = options.withCredentials;
+            var request = new gridAjax_1.default({
+                method: method,
+                url: url,
+                params: params,
+                callback: function () { return manager.clear(params); },
+                callbackWhenever: function () { return _this.dispatch('setRenderState', 'DONE'); },
+                withCredentials: common_1.isUndefined(withCredentials) ? this.withCredentials : withCredentials,
+                eventBus: eventBus_1.getEventBus(this.store.id)
+            });
+            this.dispatch('setRenderState', 'LOADING');
+            request.open();
+            request.send();
+        }
+    };
+    ServerSideDataProvider.prototype.getCount = function (rowsMap) {
+        return Object.keys(rowsMap).reduce(function (acc, key) { return acc + rowsMap[key].length; }, 0);
+    };
+    // @TODO need to options for custom conrifm UI
+    ServerSideDataProvider.prototype.confirm = function (type, count) {
+        return count ? confirm(message_1.getConfirmMessage(type, count)) : alert(message_1.getAlertMessage(type));
+    };
+    return ServerSideDataProvider;
+}());
+function createProvider(store, dispatch, data) {
+    if (!Array.isArray(data) && common_1.isObject(data)) {
+        return new ServerSideDataProvider(store, dispatch, data);
+    }
+    // dummy instance
+    var providerErrorFn = function () {
+        throw new Error('cannot execute server side API. for using this API, have to set dataSource');
+    };
+    return {
+        createData: providerErrorFn,
+        updateData: providerErrorFn,
+        deleteData: providerErrorFn,
+        modifyData: providerErrorFn,
+        request: providerErrorFn,
+        readData: providerErrorFn,
+        reloadData: providerErrorFn
+    };
+}
+exports.createProvider = createProvider;
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var encoder_1 = __webpack_require__(97);
+var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
+var GridAjax = /** @class */ (function () {
+    function GridAjax(options) {
+        var _this = this;
+        this.shouldEncode = function () {
+            return _this.method === 'GET' || _this.method === 'DELETE';
+        };
+        this.handleReadyStateChange = function () {
+            var _a = _this, xhr = _a.xhr, callback = _a.callback, eventBus = _a.eventBus, callbackWhenever = _a.callbackWhenever;
+            if (xhr.readyState !== XMLHttpRequest.DONE) {
+                return;
+            }
+            callbackWhenever();
+            var gridEvent = new gridEvent_1.default({ xhr: xhr });
+            /**
+             * Occurs when the response is received from the server
+             * @event Grid#response
+             * @type {module:event/gridEvent}
+             * @property {XmlHttpRequest} xhr - XmlHttpRequest
+             * @property {Grid} instance - Current grid instance
+             */
+            eventBus.trigger('response', gridEvent);
+            if (gridEvent.isStopped()) {
+                return;
+            }
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.result) {
+                    /**
+                     * Occurs after the response event, if the result is true
+                     * @event Grid#successResponse
+                     * @type {module:event/gridEvent}
+                     * @property {XmlHttpRequest} xhr - XmlHttpRequest
+                     * @property {Grid} instance - Current grid instance
+                     */
+                    eventBus.trigger('successResponse', gridEvent);
+                }
+                else if (!response.result) {
+                    /**
+                     * Occurs after the response event, if the result is false
+                     * @event Grid#failResponse
+                     * @type {module:event/gridEvent}
+                     * @property {XmlHttpRequest} xhr - XmlHttpRequest
+                     * @property {Grid} instance - Current grid instance
+                     */
+                    eventBus.trigger('failResponse', gridEvent);
+                }
+                if (gridEvent.isStopped()) {
+                    return;
+                }
+                callback(response);
+            }
+            else {
+                /**
+                 * Occurs after the response event, if the response is Error
+                 * @event Grid#errorResponse
+                 * @type {module:event/gridEvent}
+                 * @property {XmlHttpRequest} xhr - XmlHttpRequest
+                 * @property {Grid} instance - Current grid instance
+                 */
+                eventBus.trigger('errorResponse', gridEvent);
+            }
+        };
+        var method = options.method, url = options.url, withCredentials = options.withCredentials, _a = options.params, params = _a === void 0 ? {} : _a, _b = options.callback, callback = _b === void 0 ? function () { } : _b, callbackWhenever = options.callbackWhenever, eventBus = options.eventBus;
+        this.method = method.toUpperCase();
+        this.url = url;
+        this.params = params;
+        this.callback = callback;
+        this.callbackWhenever = callbackWhenever;
+        this.eventBus = eventBus;
+        this.xhr = new XMLHttpRequest();
+        this.xhr.withCredentials = withCredentials;
+    }
+    GridAjax.prototype.open = function () {
+        var _a = this, method = _a.method, url = _a.url, params = _a.params, xhr = _a.xhr, shouldEncode = _a.shouldEncode;
+        if (shouldEncode()) {
+            xhr.open(method, url + "?" + encoder_1.encodeParams(params));
+        }
+        else {
+            xhr.open(method, url);
+            // @TODO neeto to application/json content-type options and custom options(authorization, custom header etc..)
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoder');
+        }
+        xhr.onreadystatechange = this.handleReadyStateChange;
+    };
+    GridAjax.prototype.send = function () {
+        var _a = this, url = _a.url, method = _a.method, xhr = _a.xhr, shouldEncode = _a.shouldEncode, eventBus = _a.eventBus, callbackWhenever = _a.callbackWhenever;
+        var options = {
+            url: url,
+            method: method,
+            withCredentials: xhr.withCredentials,
+            params: this.params
+        };
+        var gridEvent = new gridEvent_1.default({ options: options });
+        /**
+         * Occurs before the http request is sent
+         * @event Grid#beforeRequest
+         * @type {module:event/gridEvent}
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('beforeRequest', gridEvent);
+        if (gridEvent.isStopped()) {
+            callbackWhenever();
+            return;
+        }
+        var params = shouldEncode() ? null : encoder_1.encodeParams(this.params, true);
+        xhr.send(params);
+    };
+    return GridAjax;
+}());
+exports.default = GridAjax;
+
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+var ENCODED_SPACE = '%20';
+var ENCODED_LEFT_BRACKET = '%5B';
+function encodeWithSpace(value, hasBody) {
+    var regExp = new RegExp(ENCODED_SPACE, 'g');
+    return hasBody ? encodeURIComponent(value).replace(regExp, '+') : encodeURIComponent(value);
+}
+function encodeParamKey(key, hasBody) {
+    return key.indexOf(ENCODED_LEFT_BRACKET) !== -1 ? key : encodeWithSpace(key, hasBody);
+}
+function encodeObjParamKey(key, subKey, hasBody) {
+    var encodedKey = encodeParamKey(key, hasBody);
+    return "" + encodedKey + encodeURIComponent('[') + subKey + encodeURIComponent(']');
+}
+function getEncodedData(name, subKey, value, hasBody) {
+    var encodedKey = encodeObjParamKey(name, subKey, hasBody);
+    var valueWithType = Array.isArray(value) ? value[subKey] : value[subKey];
+    return encodeFormData(encodedKey, valueWithType, hasBody);
+}
+function encodeFormData(key, value, hasBody) {
+    if (common_1.isUndefined(value) || common_1.isNull(value) || value === '') {
+        return '';
+    }
+    var encodedDataList = [];
+    if (Array.isArray(value)) {
+        for (var index = 0; index < value.length; index += 1) {
+            var encodedData = getEncodedData(key, index, value, hasBody);
+            encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
+        }
+    }
+    else if (common_1.isObject(value)) {
+        Object.keys(value).forEach(function (subKey) {
+            var valueWithType = value;
+            var encodedData = getEncodedData(key, subKey, valueWithType, hasBody);
+            encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
+        });
+    }
+    else {
+        var encodedKey = encodeParamKey(key, hasBody);
+        var encodedValue = common_1.isString(value) ? encodeWithSpace(value, hasBody) : value;
+        if (encodedValue !== '') {
+            encodedDataList.push(encodedKey + "=" + encodedValue);
+        }
+    }
+    return encodedDataList;
+}
+function encodeParams(params, hasBody) {
+    if (hasBody === void 0) { hasBody = false; }
+    if (!params) {
+        return '';
+    }
+    var encodedDataList = Object.keys(params).reduce(function (acc, name) {
+        var value = params[name];
+        return value !== '' ? acc.concat(encodeFormData(name, value, hasBody)) : acc;
+    }, []);
+    return encodedDataList.join('&');
+}
+exports.encodeParams = encodeParams;
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function createPaginationManager() {
+    var pagination = null;
+    return {
+        setPagination: function (targetPagination) {
+            pagination = targetPagination;
+        },
+        getPagination: function () {
+            return pagination;
+        }
+    };
+}
+exports.createPaginationManager = createPaginationManager;
+
+
+/***/ }),
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
