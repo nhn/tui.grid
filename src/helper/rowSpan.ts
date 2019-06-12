@@ -151,8 +151,8 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
   );
 }
 
-export function enableRowSpan(data: Data) {
-  return data.sortOptions.columnName === 'rowKey';
+export function enableRowSpan(columnName: string) {
+  return columnName === 'rowKey';
 }
 
 export function createRowSpan(

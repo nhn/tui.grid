@@ -5,6 +5,31 @@ import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getSortedRange } from '../helper/selection';
+
+function getNextCellIndexWithRowSpan(
+  store: Store,
+  command: KeyboardEventCommandType,
+  currentRowIndex: number,
+  columnRange: Range,
+  cellIndexes: Range
+) {
+  let rowIndex = cellIndexes[0];
+  const columnIndex = cellIndexes[1];
+  const [startColumnIndex, endColumnIndex] = getSortedRange(columnRange);
+
+  for (let index = startColumnIndex; index <= endColumnIndex; index += 1) {
+    const nextRowIndex = getNextCellIndex(store, command, [currentRowIndex, index])[0];
+
+    if (
+      (command === 'up' && nextRowIndex < rowIndex) ||
+      (command === 'down' && nextRowIndex > rowIndex)
+    ) {
+      rowIndex = nextRowIndex;
+    }
+  }
+  return [rowIndex, columnIndex];
+}
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -53,7 +78,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     column: { visibleColumns, rowHeaderCount },
     id
   } = store;
-  const { viewData } = data;
+  const { viewData, sortOptions } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
   let { inputRange: currentInputRange } = selection;
 
@@ -81,8 +106,16 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     columnStartIndex = 0;
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
-    // @TODO need to fix cell index for considering rowSpan
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
+    if (enableRowSpan(sortOptions.columnName)) {
+      nextCellIndexes = getNextCellIndexWithRowSpan(
+        store,
+        command,
+        rowIndex,
+        [columnStartIndex, columnIndex],
+        nextCellIndexes
+      );
+    }
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
@@ -90,7 +123,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   let startRowIndex = rowStartIndex;
   let endRowIndex = nextRowIndex;
 
-  if (enableRowSpan(data)) {
+  if (enableRowSpan(sortOptions.columnName)) {
     const rowRange: Range = [startRowIndex, endRowIndex];
     const colRange: Range = [columnStartIndex, nextColumnIndex];
     [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
