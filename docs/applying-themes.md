@@ -10,7 +10,7 @@ tui.Grid.applyTheme('default');
 
 If you run the code above or don't apply any preset, the **default** preset will be applied. It looks like below.
 
-![screen shot 2016-05-03 at 5 17 22 pm](https://cloud.githubusercontent.com/assets/12269489/14979546/0a71f726-115e-11e6-8c27-36b0e4d3a706.png)
+![theme_default](https://user-images.githubusercontent.com/35371660/59335524-b3c10580-8d37-11e9-9ad6-a74e1f30896e.png)
 
 Using the **striped** preset adds zebra-striping to the table.
 ```javascript
@@ -18,7 +18,7 @@ tui.Grid.applyTheme('striped');
 ```
 The result will looks like this:
 
-![screen shot 2016-05-03 at 5 18 03 pm](https://cloud.githubusercontent.com/assets/12269489/14979547/0bb33ea6-115e-11e6-9107-148826fc6291.png)
+![theme_striped](https://user-images.githubusercontent.com/35371660/59335525-b3c10580-8d37-11e9-8d0a-4fc67c58cb6b.png)
 
 If you want more clean and basic style, use the **clean** preset.
 ```javascript
@@ -26,7 +26,7 @@ tui.Grid.applyTheme('clean');
 ```
 It has a very simple design like below.
 
-![screen shot 2016-05-03 at 5 18 52 pm](https://cloud.githubusercontent.com/assets/12269489/14979553/118cdcc4-115e-11e6-89ec-01111587a8d5.png)
+![theme_clean](https://user-images.githubusercontent.com/35371660/59335522-b3c10580-8d37-11e9-83aa-a7cd6e9bbdc6.png)
 
 ### Customizing themes
 
@@ -46,7 +46,7 @@ tui.Grid.applyTheme('striped', {
 ```
 The result will looks like this:
 
-![screen shot 2016-05-03 at 6 13 19 pm](https://cloud.githubusercontent.com/assets/12269489/14979733/29b829a6-115f-11e6-820d-aa973be07577.png)
+![theme_custom](https://user-images.githubusercontent.com/35371660/59335763-321da780-8d38-11e9-89db-fbd0620ce9e2.png)
 
 The following example extends the **default** preset with the custom options. The options are the same with the **clean** preset. You can see the result by comparing the **default** and the **clean** preset in the screenshots above.
 
@@ -76,9 +76,9 @@ tui.Grid.applyTheme('default',
 });
 ```
 
-You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhnent.github.io/tui.grid/api).
+You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
 
 
 ### Example page
 
-You can apply preset themes and customize them with a sample grid [here](http://nhnent.github.io/tui.grid/api/tutorial-example07-applying-themes.html).
+You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes).
