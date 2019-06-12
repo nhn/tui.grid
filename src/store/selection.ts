@@ -71,7 +71,8 @@ function getHorizontalStyles(
       width += widths[i] + cellBorderWidth;
     }
   }
-  width -= cellBorderWidth;
+
+  width -= cellBorderWidth * 2;
 
   return { left, width };
 }
@@ -102,9 +103,9 @@ export function create({
         column = [0, lastColumnIndex];
       }
 
-      // @TODO: span 처리 필요
       return { row, column };
     },
+
     get rangeBySide(this: Selection) {
       if (!this.range) {
         return null;
@@ -117,6 +118,7 @@ export function create({
         R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
       };
     },
+
     get rangeAreaInfo(this: Selection) {
       if (!this.rangeBySide) {
         return null;

@@ -158,3 +158,21 @@ export function getPageMovedIndex(
 
   return clamp(movedIndex, 0, offsets.length - 1);
 }
+
+export function getTreeRowIndex(
+  rowIndex: number,
+  heights: number[],
+  command: KeyboardEventCommandType
+) {
+  let index = rowIndex;
+  const offset = command === 'up' ? -1 : 1;
+
+  while (index >= 0) {
+    if (heights[index + offset] !== 0) {
+      break;
+    }
+    index += offset;
+  }
+
+  return index;
+}
