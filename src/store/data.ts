@@ -17,7 +17,7 @@ import {
   ListItem
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
-import { isRowHeader } from '../helper/column';
+import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import { OptRow, RowSpanAttributeValue } from '../types';
 import {
   someProp,
@@ -26,7 +26,9 @@ import {
   isBlank,
   isUndefined,
   isBoolean,
-  isEmpty
+  isEmpty,
+  isString,
+  isNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -79,10 +81,10 @@ function getListItems(fn: any, relationParams: Dictionary<any>): ListItem[] | nu
 }
 
 function getRowHeaderValue(row: Row, columnName: string) {
-  if (columnName === '_number') {
+  if (isRowNumColumn(columnName)) {
     return row._attributes.rowNum;
   }
-  if (columnName === '_checked') {
+  if (isCheckboxColumn(columnName)) {
     return row._attributes.checked;
   }
   return '';
@@ -92,10 +94,10 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   if (validation && validation.required && isBlank(value)) {
     return 'REQUIRED';
   }
-  if (validation && validation.dataType === 'string' && typeof value !== 'string') {
+  if (validation && validation.dataType === 'string' && !isString(value)) {
     return 'TYPE_STRING';
   }
-  if (validation && validation.dataType === 'number' && typeof value !== 'number') {
+  if (validation && validation.dataType === 'number' && !isNumber(value)) {
     return 'TYPE_NUMBER';
   }
 
@@ -117,7 +119,7 @@ function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRe
     editable: !!editor,
     editorOptions: editorOptions ? { ...editorOptions } : {},
     className: [...className.row, ...columnClassName].join(' '),
-    disabled: name === '_checked' ? checkDisabled : disabled,
+    disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value),
     prefix: getFormattedValue(formatterProps, prefix),

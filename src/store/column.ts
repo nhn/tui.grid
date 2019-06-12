@@ -9,6 +9,7 @@ import {
 import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
 import { observable } from '../helper/observable';
 import { createMapFromArray, includes, omit } from '../helper/common';
+import { isRowNumColumn } from '../helper/column';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { CellEditorClass } from '../editor/types';
@@ -128,12 +129,11 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
   const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
   const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
-
-  const isRowNum = name === '_number';
+  const rowNumColumn = isRowNumColumn(name);
 
   let defaultHeader = '';
 
-  if (isRowNum) {
+  if (rowNumColumn) {
     defaultHeader = 'No.';
   } else if (baseRendererOptions.inputType === 'checkbox') {
     defaultHeader = DEF_ROW_HEADER_INPUT;
@@ -145,7 +145,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     hidden: false,
     resizable: false,
     align: align || 'center',
-    renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
+    renderer: renderer || (rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer),
     rendererOptions: baseRendererOptions,
     fixedWidth: true,
     baseWidth,
