@@ -1,8 +1,10 @@
 import { CellIndex, Store } from '../store/types';
 import { clamp, isNull } from '../helper/common';
 import {
+  getNextRowIndex,
   getPageMovedIndex,
   getPageMovedPosition,
+  getPrevRowIndex,
   KeyboardEventCommandType
 } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, enableRowSpan } from '../helper/rowSpan';
@@ -16,7 +18,7 @@ export function getNextCellIndex(
     data,
     column: { visibleColumns },
     dimension: { bodyHeight, cellBorderWidth },
-    rowCoords: { offsets }
+    rowCoords: { offsets, heights }
   } = store;
   const { rawData, viewData, sortOptions } = data;
   const columnName = visibleColumns[columnIndex].name;
@@ -26,13 +28,13 @@ export function getNextCellIndex(
       if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
       }
-      rowIndex -= 1;
+      rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
       if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
       }
-      rowIndex += 1;
+      rowIndex = getNextRowIndex(rowIndex, heights);
       break;
     case 'left':
       columnIndex -= 1;
