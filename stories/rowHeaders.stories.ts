@@ -64,7 +64,7 @@ export class RowNumberRenderer implements CellRenderer {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.innerHTML = props.formattedValue;
   }
 }
@@ -100,14 +100,14 @@ class SingleCheckRenderer implements CellRenderer {
 
     this.el = label;
 
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     const hiddenInput = this.el.querySelector('.hidden-input') as HTMLInputElement;
     const checked = Boolean(props.value);
 
@@ -148,59 +148,12 @@ stories.add(
 );
 
 stories.add(
-  'single use - radio',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'checkbox',
-          rendererOptions: { inputType: 'radio' }
-        }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
   'multi use - checkbox, row number',
   () => {
     const { el, grid } = createGrid({
       data,
       columns,
       rowHeaders: ['checkbox', 'rowNum']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'multi use - radio, row number',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'checkbox',
-          rendererOptions: { inputType: 'radio' }
-        },
-        'rowNum'
-      ]
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);

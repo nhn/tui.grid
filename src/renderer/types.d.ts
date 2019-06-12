@@ -12,7 +12,8 @@ export interface CellRenderer {
   getElement(): HTMLElement;
   focused?(): void;
   mounted?(parent: HTMLElement): void;
-  changed?(props: CellRendererProps): void;
+  render(props: CellRendererProps): void;
+  beforeDestroy?(): void;
 }
 
 export interface CellRendererClass {

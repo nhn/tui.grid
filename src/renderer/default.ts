@@ -17,14 +17,14 @@ export class DefaultRenderer implements CellRenderer {
     }
 
     this.el = el;
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.innerHTML = `${props.prefix}${props.formattedValue}${props.postfix}`;
   }
 }
