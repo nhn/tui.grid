@@ -47,16 +47,16 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('selection({ start: 1, 2, end: 3, 4 })', () =>
-      grid.selection({ start: [1, 2], end: [3, 4] })
+    button('setSelectionRange({ start: 1, 2, end: 3, 4 })', () =>
+      grid.setSelectionRange({ start: [1, 2], end: [3, 4] })
     );
 
-    button('selection({ start: 3, 5, end: 1, 2 })', () =>
-      grid.selection({ start: [3, 5], end: [1, 2] })
+    button('setSelectionRange({ start: 3, 5, end: 1, 2 })', () =>
+      grid.setSelectionRange({ start: [3, 5], end: [1, 2] })
     );
 
-    button('selection({ start: -1, -1, end: 20, 20 })', () =>
-      grid.selection({ start: [-1, -1], end: [20, 20] })
+    button('setSelectionRange({ start: -1, -1, end: 20, 20 })', () =>
+      grid.setSelectionRange({ start: [-1, -1], end: [20, 20] })
     );
 
     return rootEl;
@@ -81,16 +81,16 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('selection({ start: 1, 2, end: 3, 4 })', () =>
-      grid.selection({ start: [1, 2], end: [3, 4] })
+    button('setSelectionRange({ start: 1, 2, end: 3, 4 })', () =>
+      grid.setSelectionRange({ start: [1, 2], end: [3, 4] })
     );
 
-    button('selection({ start: 3, 5, end: 1, 2 })', () =>
-      grid.selection({ start: [3, 5], end: [1, 2] })
+    button('setSelectionRange({ start: 3, 5, end: 1, 2 })', () =>
+      grid.setSelectionRange({ start: [3, 5], end: [1, 2] })
     );
 
-    button('selection({ start: -1, -1, end: 20, 20 })', () =>
-      grid.selection({ start: [-1, -1], end: [20, 20] })
+    button('setSelectionRange({ start: -1, -1, end: 20, 20 })', () =>
+      grid.setSelectionRange({ start: [-1, -1], end: [20, 20] })
     );
 
     return rootEl;

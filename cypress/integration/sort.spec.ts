@@ -131,11 +131,11 @@ describe('sort', () => {
     assertSortedData('name', false);
   });
 
-  it('data is sorted after calling unSort()', () => {
+  it('data is sorted after calling unsort()', () => {
     createGrid();
     createSortButonAlias();
     getGridInst().invoke('sort', 'name', false);
-    getGridInst().invoke('unSort');
+    getGridInst().invoke('unsort');
 
     const testData = sampleData.map((data) => String(data.name));
     cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {

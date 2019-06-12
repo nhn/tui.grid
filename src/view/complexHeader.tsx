@@ -1,13 +1,12 @@
 import { h, Component } from 'preact';
 import { ComplexColumnInfo, ColumnInfo, Side, Range } from '../store/types';
 import { cls } from '../helper/dom';
-import { isCheckboxColumn } from '../helper/column';
+import { isCheckboxColumn, isRowHeader } from '../helper/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
-import { isRowHeader } from '../helper/column';
 import { getChildColumnRange } from '../query/selection';
 
 interface OwnProps {
