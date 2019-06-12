@@ -320,25 +320,25 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
   const { data, selection, id, column } = store;
   const { visibleColumns, rowHeaderCount, complexHeaderColumns } = column;
-  const lastRowIndex = data.viewData.length - 1;
+  const endRowIndex = data.viewData.length - 1;
 
-  let startColumnIndex, lastColumnIndex;
+  let startColumnIndex, endColumnIndex;
 
   if (parentHeader) {
-    [startColumnIndex, lastColumnIndex] = getChildColumnRange(
+    [startColumnIndex, endColumnIndex] = getChildColumnRange(
       visibleColumns,
       complexHeaderColumns,
       name,
       rowHeaderCount
     );
   } else {
-    startColumnIndex = lastColumnIndex =
+    startColumnIndex = endColumnIndex =
       findPropIndex('name', name, visibleColumns) - rowHeaderCount;
   }
 
   const inputRange: SelectionRange = {
-    row: [0, lastRowIndex],
-    column: [startColumnIndex, lastColumnIndex]
+    row: [0, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);
@@ -392,10 +392,10 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumns, rowHeaderCount } = column;
   const rowIndex = findPropIndex('rowKey', rowKey, data.rawData);
-  const lastColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
+  const endColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
   const inputRange: SelectionRange = {
     row: [rowIndex, rowIndex],
-    column: [0, lastColumnIndex]
+    column: [0, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);

@@ -1,12 +1,12 @@
-import { findIndex, findProp, findPropIndex } from '../helper/common';
-import { isParentColumHeader } from '../helper/column';
+import { findProp, findPropIndex, includes } from '../helper/common';
+import { isParentColumnHeader } from '../helper/column';
 import { ColumnInfo, ComplexColumnInfo } from '../store/types';
 
-function sortBasedVisibleColumns(visibleColumns: ColumnInfo[], childNames: string[]) {
+function sortByVisibleColumns(visibleColumns: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];
 
   visibleColumns.forEach((column) => {
-    if (findIndex((name) => name === column.name, childNames) !== -1) {
+    if (includes(childNames, column.name)) {
       result.push(column.name);
     }
   });
@@ -15,14 +15,14 @@ function sortBasedVisibleColumns(visibleColumns: ColumnInfo[], childNames: strin
 }
 
 export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[], name: string) {
-  const column = findProp('name', name, complexHeaderColumns)!;
-  let result: string[] = [];
+  const column = findProp('name', name, complexHeaderColumns);
   if (!column) {
     return [name];
   }
 
+  let result: string[] = [];
   column.childNames!.forEach((childName) => {
-    if (isParentColumHeader(complexHeaderColumns, childName)) {
+    if (isParentColumnHeader(complexHeaderColumns, childName)) {
       result = [...result, ...getLeafChildColumnNames(complexHeaderColumns, childName)];
     } else {
       result = [...result, childName];
@@ -38,12 +38,12 @@ export function getChildColumnRange(
   name: string,
   rowHeaderCount: number
 ) {
-  const unSortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
-  const childNames = sortBasedVisibleColumns(visibleColumns, unSortedChildNames);
+  const unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
+  const childNames = sortByVisibleColumns(visibleColumns, unsortedChildNames);
 
-  const lastIndex = childNames.length - 1;
   const startIndex = findPropIndex('name', childNames[0], visibleColumns) - rowHeaderCount;
-  const endIndex = findPropIndex('name', childNames[lastIndex], visibleColumns) - rowHeaderCount;
+  const endIndex =
+    findPropIndex('name', childNames[childNames.length - 1], visibleColumns) - rowHeaderCount;
 
   return [startIndex, endIndex];
 }

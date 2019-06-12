@@ -98,8 +98,8 @@ export function create({
       let column = getSortedRange(this.inputRange.column);
 
       if (this.unit === 'row') {
-        const lastColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
-        column = [0, lastColumnIndex];
+        const endColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
+        column = [0, endColumnIndex];
       }
 
       // @TODO: span 처리 필요

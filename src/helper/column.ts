@@ -1,5 +1,5 @@
 import { ComplexColumnInfo } from '../store/types';
-import { findIndex } from './common';
+import { some } from './common';
 
 export function isRowHeader(columnName: string) {
   return ['_number', '_checked'].indexOf(columnName) > -1;
@@ -14,8 +14,5 @@ export function isCheckboxColumn(columnName: string) {
 }
 
 export function isParentColumnHeader(complexHeaderColumns: ComplexColumnInfo[], name: string) {
-  return (
-    !!complexHeaderColumns.length &&
-    findIndex((item) => item.name === name, complexHeaderColumns) !== -1
-  );
+  return !!complexHeaderColumns.length && some((item) => item.name === name, complexHeaderColumns);
 }

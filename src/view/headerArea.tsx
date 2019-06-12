@@ -53,7 +53,7 @@ class HeaderAreaComp extends Component<Props> {
     }
 
     if (!parentHeader) {
-      const sortable = findProp('name', name, columns)!.sortable;
+      const { sortable } = findProp('name', name, columns)!;
       if (sortable) {
         return;
       }
