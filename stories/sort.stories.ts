@@ -43,7 +43,7 @@ stories.add(
     button('sort(name, false)', () => grid.sort('name', false));
     button('sort(artist, true)', () => grid.sort('artist', true));
     button('sort(artist, false)', () => grid.sort('artist', false));
-    button('unsort()', () => grid.unSort());
+    button('unsort()', () => grid.unsort());
     button('getSortState()', () => alert(JSON.stringify(grid.getSortState())));
     return el;
   },

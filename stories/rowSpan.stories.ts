@@ -60,9 +60,9 @@ stories.add(
     rootEl.appendChild(el);
     rootEl.style.height = '400px';
 
-    button('unsort()', () => grid.unSort());
-    button('selection({ start: 0, 0, end: 1, 1 })', () =>
-      grid.selection({ start: [0, 0], end: [1, 1] })
+    button('unsort()', () => grid.unsort());
+    button('setSelectionRange({ start: 0, 0, end: 1, 1 })', () =>
+      grid.setSelectionRange({ start: [0, 0], end: [1, 1] })
     );
 
     return rootEl;

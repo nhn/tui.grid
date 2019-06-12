@@ -314,7 +314,7 @@ export default class Grid {
    *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
    *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
    */
-  public selection(range: { start: Range; end: Range }) {
+  public setSelectionRange(range: { start: Range; end: Range }) {
     this.dispatch('setSelection', range);
   }
 
@@ -624,7 +624,7 @@ export default class Grid {
   /**
    * Unsorts all rows. (Sorts by rowKey).
    */
-  public unSort() {
+  public unsort() {
     // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
     this.dispatch('sort', 'rowKey', true);
   }
