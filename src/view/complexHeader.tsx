@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import { ComplexColumnInfo, ColumnInfo, Side } from '../store/types';
 import { cls } from '../helper/dom';
+import { isCheckboxColumn } from '../helper/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
@@ -71,7 +72,7 @@ class ComplexHeaderComp extends Component<Props> {
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
       >
-        {name === '_checked' ? <HeaderCheckbox /> : header}
+        {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
         {!!sortable && <SortingButton />}
       </th>
     );
