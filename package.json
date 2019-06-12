@@ -5,7 +5,7 @@
   "main": "dist/tui-grid.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production & webpack --mode=production --minify",
     "test": "cypress open",
     "test:ci": "cypress run",
     "storybook": "start-storybook -p 6006",

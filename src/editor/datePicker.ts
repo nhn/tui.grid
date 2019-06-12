@@ -1,6 +1,4 @@
 import TuiDatePicker from 'tui-date-picker';
-import 'tui-date-picker/dist/tui-date-picker.css';
-import 'tui-time-picker/dist/tui-time-picker.css';
 import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString } from '../helper/common';
