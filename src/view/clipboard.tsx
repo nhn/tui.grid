@@ -66,7 +66,7 @@ class ClipboardComp extends Component<Props> {
         dispatch('setScrollToSelection');
         break;
       case 'remove':
-        dispatch('removeFocus');
+        dispatch('removeContent');
         break;
       /*
        * Call directly because of timing issues

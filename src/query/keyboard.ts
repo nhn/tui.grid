@@ -1,10 +1,13 @@
 import { CellIndex, Store } from '../store/types';
-import { clamp } from '../helper/common';
+import { clamp, isNull } from '../helper/common';
 import {
+  getNextRowIndex,
   getPageMovedIndex,
   getPageMovedPosition,
+  getPrevRowIndex,
   KeyboardEventCommandType
 } from '../helper/keyboard';
+import { getRowSpanTopIndex, getRowSpanBottomIndex, enableRowSpan } from '../helper/rowSpan';
 
 export function getNextCellIndex(
   store: Store,
@@ -12,18 +15,26 @@ export function getNextCellIndex(
   [rowIndex, columnIndex]: CellIndex
 ): CellIndex {
   const {
-    data: { viewData },
+    data,
     column: { visibleColumns },
     dimension: { bodyHeight, cellBorderWidth },
-    rowCoords: { offsets }
+    rowCoords: { offsets, heights }
   } = store;
+  const { rawData, viewData, sortOptions } = data;
+  const columnName = visibleColumns[columnIndex].name;
 
   switch (command) {
     case 'up':
-      rowIndex -= 1;
+      if (enableRowSpan(sortOptions.columnName)) {
+        rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
+      }
+      rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
-      rowIndex += 1;
+      if (enableRowSpan(sortOptions.columnName)) {
+        rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
+      }
+      rowIndex = getNextRowIndex(rowIndex, heights);
       break;
     case 'left':
       columnIndex -= 1;
@@ -63,4 +74,21 @@ export function getNextCellIndex(
   columnIndex = clamp(columnIndex, 0, visibleColumns.length - 1);
 
   return [rowIndex, columnIndex];
+}
+
+export function getRemoveRange(store: Store) {
+  const { focus, selection } = store;
+  const { totalColumnIndex, rowIndex } = focus;
+  const { range } = selection;
+
+  if (range) {
+    return range;
+  }
+  if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
+    return {
+      column: [totalColumnIndex, totalColumnIndex],
+      row: [rowIndex, rowIndex]
+    };
+  }
+  return null;
 }

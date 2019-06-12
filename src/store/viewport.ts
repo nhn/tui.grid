@@ -1,12 +1,7 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
-
-function indexOfRow(rowOffsets: number[], posY: number) {
-  const rowOffset = findIndex((offset) => offset > posY, rowOffsets);
-
-  return rowOffset === -1 ? rowOffsets.length - 1 : rowOffset - 1;
-}
+import { getMaxRowSpanCount, enableRowSpan } from '../helper/rowSpan';
 
 interface ViewPortOption {
   data: Data;
@@ -17,6 +12,42 @@ interface ViewPortOption {
   showDummyRows: boolean;
 }
 
+function findIndexByPosition(offsets: number[], position: number) {
+  const rowOffset = findIndex((offset) => offset > position, offsets);
+
+  return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
+}
+
+function calculateRange(
+  scrollPos: number,
+  totalSize: number,
+  offsets: number[],
+  data: Data
+): Range {
+  // safari uses negative scroll position for bouncing effect
+  scrollPos = Math.max(scrollPos, 0);
+
+  const start = findIndexByPosition(offsets, scrollPos);
+  const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
+  const { rawData, sortOptions } = data;
+
+  if (enableRowSpan(sortOptions.columnName)) {
+    const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
+    const topRowSpanIndex = start - maxRowSpanCount;
+
+    return [topRowSpanIndex >= 0 ? topRowSpanIndex : 0, end];
+  }
+
+  return [start, end];
+}
+
+function getCachedRange(cachedRange: Range, newRange: Range) {
+  if (cachedRange && arrayEqual(cachedRange, newRange)) {
+    return cachedRange;
+  }
+  return newRange;
+}
+
 export function create({
   data,
   column,
@@ -25,8 +56,6 @@ export function create({
   columnCoords,
   showDummyRows
 }: ViewPortOption): Observable<Viewport> {
-  const { visibleColumns } = column;
-
   return observable({
     scrollLeft: 0,
     scrollTop: 0,
@@ -50,34 +79,36 @@ export function create({
       return totalRowHeight - bodyHeight + scrollbarWidth;
     },
 
-    get colRange(this: Viewport) {
-      return [0, visibleColumns.length] as Range;
+    // only for right side columns
+    get colRange(this: Observable<Viewport>) {
+      const range = calculateRange(
+        this.scrollLeft,
+        columnCoords.areaWidth.R,
+        columnCoords.offsets.R,
+        data
+      );
+      return getCachedRange(this.__storage__.colRange, range);
+    },
+
+    // only for right side columns
+    get columns(this: Viewport) {
+      return column.visibleColumnsBySide.R.slice(...this.colRange);
+    },
+
+    get offsetLeft(this: Viewport) {
+      return columnCoords.offsets.R[this.colRange[0]];
     },
 
     get rowRange(this: Observable<Viewport>) {
-      const { bodyHeight } = dimension;
-      const { offsets } = rowCoords;
-
-      // safari uses negative scrollTop for bouncing effect
-      const scrollY = Math.max(this.scrollTop, 0);
-
-      const start = indexOfRow(offsets, scrollY);
-      const end = indexOfRow(offsets, scrollY + bodyHeight) + 1;
-      const value = [start, end] as Range;
-
-      const prevValue = this.__storage__.rowRange;
-      if (prevValue && arrayEqual(prevValue, value)) {
-        return prevValue;
-      }
-
-      return value;
+      const range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets, data);
+      return getCachedRange(this.__storage__.rowRange, range);
     },
 
     get rows(this: Viewport) {
       return data.viewData.slice(...this.rowRange);
     },
 
-    get offsetY(this: Viewport) {
+    get offsetTop(this: Viewport) {
       return rowCoords.offsets[this.rowRange[0]];
     },
 

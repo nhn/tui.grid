@@ -1,5 +1,5 @@
 import { Omit } from 'utility-types';
-import { cls } from '../../src/helper/dom';
+import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
@@ -71,7 +71,7 @@ function getGridInst(): Cypress.Chainable<Grid> {
 }
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
-  cy.get(`.${cls('cell-summary')}[data-column-name=${columnName}]`).as('summaryCell');
+  cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
   contents.forEach((content) => {
     cy.get('@summaryCell').contains(content);
   });

@@ -1,4 +1,4 @@
-import { findOffsetIndex } from '../helper/common';
+import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
@@ -9,8 +9,12 @@ import {
   Selection,
   Viewport,
   SelectionRange,
-  DragData
+  DragData,
+  RowKey,
+  Range
 } from '../store/types';
+import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getChildColumnRange } from '../query/selection';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -190,6 +194,28 @@ function setScrolling(
   }
 }
 
+function getFocusCellPos(store: Store) {
+  const { columnCoords, rowCoords, focus, dimension, viewport } = store;
+  const { columnIndex, rowIndex, side, cellPosRect } = focus;
+
+  if (isNull(columnIndex) || isNull(rowIndex) || isNull(side) || isNull(cellPosRect)) {
+    return null;
+  }
+
+  const { left, right } = cellPosRect;
+  const { offsets, heights } = rowCoords;
+  const { areaWidth, widths } = columnCoords;
+  const { headerHeight, tableBorderWidth, width } = dimension;
+  const { scrollLeft } = viewport;
+  const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
+  const focusCellWidth = widths[side][columnIndex];
+
+  return {
+    pageX: left + focusCellWidth + (side === 'L' ? 0 : offsetLeft),
+    pageY: offsets[rowIndex] + heights[rowIndex] + headerHeight
+  };
+}
+
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
   // @TODO: minimumColumnRange 고려 필요
@@ -197,24 +223,21 @@ export function selectionEnd({ selection }: Store) {
 }
 
 export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
-  const {
-    dimension,
-    viewport: { scrollTop, scrollLeft },
-    columnCoords: { widths, areaWidth },
-    rowCoords: { offsets: rowOffsets },
-    selection,
-    column: { visibleColumns },
-    id
-  } = store;
+  const { dimension, viewport, columnCoords, rowCoords, selection, column, id, data } = store;
+  const { scrollTop, scrollLeft } = viewport;
+  const { widths, areaWidth } = columnCoords;
+  const { offsets: rowOffsets } = rowCoords;
+  const { rowHeaderCount } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
+  const { visibleColumns } = column;
 
-  let startRowIndex, startColumnIndex;
+  let startRowIndex, startColumnIndex, endRowIndex;
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-  const rowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-  const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
+  const endColumnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+  endRowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
 
   if (curInputRange === null) {
     const startViewInfo = {
@@ -225,62 +248,181 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     };
     const startScrolledPosition = getScrolledPosition(startViewInfo, dimension, areaWidth.L);
     startRowIndex = findOffsetIndex(rowOffsets, startScrolledPosition.y);
-    startColumnIndex = findOffsetIndex(totalColumnOffsets, startScrolledPosition.x);
+    startColumnIndex =
+      findOffsetIndex(totalColumnOffsets, startScrolledPosition.x) - rowHeaderCount;
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
   }
 
-  const startColumnName = visibleColumns[startColumnIndex].name;
-  const nextColumnName = visibleColumns[columnIndex].name;
-
-  if (isRowHeader(nextColumnName) || isRowHeader(startColumnName)) {
+  if (startColumnIndex < 0 || endColumnIndex < 0 || startRowIndex < 0 || endRowIndex < 0) {
     return;
   }
 
+  if (enableRowSpan(data.sortOptions.columnName)) {
+    const rowRange: Range = [startRowIndex, endRowIndex];
+    const colRange: Range = [startColumnIndex, endColumnIndex];
+    [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+      rowRange,
+      colRange,
+      visibleColumns,
+      store.focus.rowIndex,
+      data
+    );
+  }
+
   const inputRange: SelectionRange = {
-    row: [startRowIndex, rowIndex],
-    column: [startColumnIndex, columnIndex]
+    row: [startRowIndex, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);
 }
 
 export function dragMoveBody(store: Store, dragStartData: DragData, dragData: DragData) {
-  const {
-    dimension,
-    columnCoords: { areaWidth },
-    selection,
-    viewport
-  } = store;
+  const { dimension, columnCoords, selection, viewport } = store;
+  const { areaWidth } = columnCoords;
 
   selectionUpdate(store, dragStartData, dragData);
   setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
 }
 
-export function dragEndBody({ selection }: Store) {
+export function dragEnd({ selection }: Store) {
   stopAutoScroll(selection);
 }
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
   const { pageX, pageY, shiftKey } = eventInfo;
+  const { visibleColumnsBySide } = column;
 
   const { side, scrollLeft, scrollTop, left, top } = elementInfo;
-  const offsetX = pageX - left + scrollLeft;
-  const offsetY = pageY - top + scrollTop;
+  const offsetLeft = pageX - left + scrollLeft;
+  const offsetTop = pageY - top + scrollTop;
 
-  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetY);
-  const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetX);
-  const columnName = column.visibleColumnsBySide[side][columnIndex].name;
+  const rowIndex = findOffsetIndex(rowCoords.offsets, offsetTop);
+  const columnIndex = findOffsetIndex(columnCoords.offsets[side], offsetLeft);
+  const columnName = visibleColumnsBySide[side][columnIndex].name;
 
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
       const dragData = { pageX, pageY };
-      selectionUpdate(store, dragData, dragData);
+      const focusCellPos = getFocusCellPos(store);
+      const focusData = isNull(focusCellPos) ? dragData : focusCellPos;
+      selectionUpdate(store, focusData, dragData);
     } else {
-      changeFocus(focus, data.viewData[rowIndex].rowKey, columnName, id);
+      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
       selectionEnd(store);
     }
   }
+}
+
+export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
+  const { data, selection, id, column } = store;
+  const { visibleColumns, rowHeaderCount, complexHeaderColumns } = column;
+  const endRowIndex = data.viewData.length - 1;
+
+  let startColumnIndex, endColumnIndex;
+
+  if (parentHeader) {
+    [startColumnIndex, endColumnIndex] = getChildColumnRange(
+      visibleColumns,
+      complexHeaderColumns,
+      name,
+      rowHeaderCount
+    );
+  } else {
+    startColumnIndex = endColumnIndex =
+      findPropIndex('name', name, visibleColumns) - rowHeaderCount;
+  }
+
+  const inputRange: SelectionRange = {
+    row: [0, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
+  };
+
+  changeSelectionRange(selection, inputRange, id);
+}
+
+export function dragMoveHeader(store: Store, dragData: DragData, startSelectedName: string) {
+  const { dimension, viewport, columnCoords, selection, column, id } = store;
+  const { scrollTop, scrollLeft } = viewport;
+  const { areaWidth, widths } = columnCoords;
+  const { rowHeaderCount, visibleColumns, complexHeaderColumns } = column;
+  const { pageX, pageY } = dragData;
+  const { inputRange: curInputRange } = selection;
+
+  if (curInputRange === null) {
+    return;
+  }
+
+  let [startColumnIdx, endColumnIdx] = getChildColumnRange(
+    visibleColumns,
+    complexHeaderColumns,
+    startSelectedName,
+    rowHeaderCount
+  );
+
+  const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
+  const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+  const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
+  const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+  const rowIndex = curInputRange.row[1];
+
+  if (columnIndex < startColumnIdx) {
+    startColumnIdx = columnIndex;
+  }
+
+  if (columnIndex > endColumnIdx) {
+    endColumnIdx = columnIndex;
+  }
+
+  if (columnIndex >= 0) {
+    const inputRange: SelectionRange = {
+      row: [0, rowIndex],
+      column: [startColumnIdx, endColumnIdx]
+    };
+
+    changeSelectionRange(selection, inputRange, id);
+    setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
+  }
+}
+
+export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
+  const { selection, id, column, data } = store;
+  const { visibleColumns, rowHeaderCount } = column;
+  const rowIndex = findPropIndex('rowKey', rowKey, data.rawData);
+  const endColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
+  const inputRange: SelectionRange = {
+    row: [rowIndex, rowIndex],
+    column: [0, endColumnIndex]
+  };
+
+  changeSelectionRange(selection, inputRange, id);
+}
+
+export function dragMoveRowHeader(store: Store, dragData: DragData) {
+  const { dimension, viewport, columnCoords, rowCoords, selection, id } = store;
+  const { scrollTop, scrollLeft } = viewport;
+  const { areaWidth } = columnCoords;
+  const { offsets: rowOffsets } = rowCoords;
+  const { pageX, pageY } = dragData;
+  const { inputRange: curInputRange } = selection;
+
+  if (curInputRange === null) {
+    return;
+  }
+
+  const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
+  const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+  const rowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
+  const startRowIndex = curInputRange.row[0];
+  const columnIndex = curInputRange.column[1];
+
+  const inputRange: SelectionRange = {
+    row: [startRowIndex, rowIndex],
+    column: [0, columnIndex]
+  };
+
+  changeSelectionRange(selection, inputRange, id);
 }

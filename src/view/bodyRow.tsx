@@ -1,15 +1,15 @@
 import { h, Component } from 'preact';
-import { BodyCell } from './bodyCell';
-import { ViewRow } from '../store/types';
+import { ViewRow, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
+import { RowSpanCell } from './rowSpanCell';
 
 interface OwnProps {
   rowIndex: number;
   viewRow: ViewRow;
-  columnNames: string[];
+  columns: ColumnInfo[];
 }
 
 interface StoreProps {
@@ -38,19 +38,22 @@ class BodyRowComp extends Component<Props> {
     this.updateRowHeightDebounced();
   };
 
-  public render({ rowIndex, viewRow, columnNames, rowHeight, autoRowHeight }: Props) {
+  public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
     const isOddRow = rowIndex % 2 === 0;
 
     return (
-      <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
-        {columnNames.map((name) => {
+      <tr
+        style={{ height: rowHeight }}
+        class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [!rowHeight, 'row-hidden'])}
+      >
+        {columns.map((columnInfo) => {
           // Pass row object directly instead of passing value of it only,
           // so that BodyCell component can watch the change of value using selector function.
           return (
-            <BodyCell
-              key={name}
+            <RowSpanCell
+              key={columnInfo.name}
               viewRow={viewRow}
-              columnName={name}
+              columnInfo={columnInfo}
               refreshRowHeight={autoRowHeight ? this.refreshRowHeight : null}
             />
           );

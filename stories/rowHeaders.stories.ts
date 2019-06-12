@@ -64,7 +64,7 @@ export class RowNumberRenderer implements CellRenderer {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.innerHTML = props.formattedValue;
   }
 }
@@ -100,14 +100,14 @@ class SingleCheckRenderer implements CellRenderer {
 
     this.el = label;
 
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     const hiddenInput = this.el.querySelector('.hidden-input') as HTMLInputElement;
     const checked = Boolean(props.value);
 
@@ -119,7 +119,7 @@ stories.add('single use - row number', () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['_number']
+    rowHeaders: ['rowNum']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -133,7 +133,7 @@ stories.add(
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_checked']
+      rowHeaders: ['checkbox']
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
@@ -148,59 +148,12 @@ stories.add(
 );
 
 stories.add(
-  'single use - radio',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          name: '_checked',
-          rendererOptions: { inputType: 'radio' }
-        }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
   'multi use - checkbox, row number',
   () => {
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_checked', '_number']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'multi use - radio, row number',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          name: '_checked',
-          rendererOptions: { inputType: 'radio' }
-        },
-        '_number'
-      ]
+      rowHeaders: ['checkbox', 'rowNum']
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
@@ -220,14 +173,14 @@ stories.add(
       columns,
       rowHeaders: [
         {
+          type: 'rowNum',
           header: 'row number',
-          name: '_number',
           width: 100,
           align: 'left'
         },
         {
+          type: 'checkbox',
           header: 'checkbox',
-          name: '_checked',
           width: 100,
           align: 'left'
         }
@@ -251,7 +204,7 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_number',
+          type: 'rowNum',
           renderer: RowNumberRenderer
         }
       ]
@@ -274,7 +227,7 @@ stories.add(
       columns,
       rowHeaders: [
         {
-          name: '_checked',
+          type: 'checkbox',
           header: `
             <label for="all-checkbox" class="checkbox">
               <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
@@ -301,7 +254,7 @@ stories.add(
     const { el, grid } = createGrid({
       data,
       columns,
-      rowHeaders: ['_number', '_checked'],
+      rowHeaders: ['rowNum', 'checkbox'],
       columnOptions: {
         frozenCount: 2
       }

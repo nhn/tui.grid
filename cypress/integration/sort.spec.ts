@@ -1,5 +1,5 @@
 import { Omit } from 'utility-types';
-import { cls } from '../../src/helper/dom';
+import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid } from '../../src/types';
@@ -67,7 +67,7 @@ function assertSortedData(columnName: string, ascending: boolean) {
   const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
   testData.sort((a, b) => comparator(a, b, ascending));
 
-  cy.get(`td[data-column-name=${columnName}]`).each(($el, index) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
     expect($el.text()).to.eql(testData[index]);
   });
 }
@@ -131,14 +131,14 @@ describe('sort', () => {
     assertSortedData('name', false);
   });
 
-  it('data is sorted after calling unSort()', () => {
+  it('data is sorted after calling unsort()', () => {
     createGrid();
     createSortButonAlias();
     getGridInst().invoke('sort', 'name', false);
-    getGridInst().invoke('unSort');
+    getGridInst().invoke('unsort');
 
     const testData = sampleData.map((data) => String(data.name));
-    cy.get(`td[data-column-name=name]`).each(($el, index) => {
+    cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
       expect($el.text()).to.eql(testData[index]);
     });
   });
@@ -152,7 +152,7 @@ describe('sort', () => {
         expect(sortState).to.eql({
           ascending: true,
           columnName: 'rowKey',
-          useClient: false
+          useClient: true
         });
       });
 
@@ -164,7 +164,7 @@ describe('sort', () => {
         expect(sortState).to.eql({
           ascending: true,
           columnName: 'name',
-          useClient: false
+          useClient: true
         });
       });
   });

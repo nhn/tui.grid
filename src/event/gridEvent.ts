@@ -1,5 +1,6 @@
-import { findParentByTagName, getCellAddress } from '../helper/dom';
+import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
 import { CellValue, RowKey, SelectionRange } from '../store/types';
+import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
@@ -14,6 +15,8 @@ interface GridEventProps {
   prevRowKey?: RowKey | null;
   prevColumnName?: string | null;
   range?: SelectionRange | null;
+  xhr?: XMLHttpRequest;
+  options?: XHROptions;
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {
@@ -25,9 +28,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
   if (cell) {
     const address = getCellAddress(cell);
     if (address) {
-      // eslint-disable-next-line prefer-destructuring
       rowKey = address.rowKey;
-      // eslint-disable-next-line prefer-destructuring
       columnName = address.columnName;
       targetType = isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
     } else {
@@ -36,7 +37,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
   } else {
     cell = findParentByTagName(target, 'th');
     if (cell) {
-      columnName = cell.getAttribute('data-column-name') as string;
+      columnName = cell.getAttribute(dataAttr.COLUMN_NAME) as string;
       targetType = 'columnHeader';
     }
   }

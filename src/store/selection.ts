@@ -10,6 +10,7 @@ import {
   Side
 } from './types';
 import { Observable, observable } from '../helper/observable';
+import { getSortedRange } from '../helper/selection';
 
 type ColumnWidths = { [key in Side]: number[] };
 
@@ -21,24 +22,20 @@ interface SelectionOptions {
   rowCoords: RowCoords;
 }
 
-function getSortedRange(range: Range): Range {
-  return range[0] > range[1] ? [range[1], range[0]] : range;
-}
-
 function getOwnSideColumnRange(
   columnRange: Range,
   side: Side,
-  visibleFrozenCount: number
+  visibleFrozenCount: number,
+  rowHeaderCount: number
 ): Range | null {
-  if (side === 'L') {
-    if (columnRange[0] < visibleFrozenCount) {
-      return [columnRange[0], Math.min(columnRange[1], visibleFrozenCount - 1)];
-    }
-  } else if (columnRange[1] >= visibleFrozenCount) {
-    return [
-      Math.max(columnRange[0], visibleFrozenCount) - visibleFrozenCount,
-      columnRange[1] - visibleFrozenCount
-    ];
+  const [start, end] = columnRange.map((columnIdx) => columnIdx + rowHeaderCount);
+
+  if (side === 'L' && start < visibleFrozenCount) {
+    return [start, Math.min(end, visibleFrozenCount - 1)];
+  }
+
+  if (side === 'R' && end >= visibleFrozenCount) {
+    return [Math.max(start, visibleFrozenCount) - visibleFrozenCount, end - visibleFrozenCount];
   }
 
   return null;
@@ -74,6 +71,7 @@ function getHorizontalStyles(
       width += widths[i] + cellBorderWidth;
     }
   }
+
   width -= cellBorderWidth;
 
   return { left, width };
@@ -101,25 +99,26 @@ export function create({
       let column = getSortedRange(this.inputRange.column);
 
       if (this.unit === 'row') {
-        const lastColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
-        column = [0, lastColumnIndex];
+        const endColumnIndex = columnWidths.L.length + columnWidths.R.length - 1;
+        column = [0, endColumnIndex];
       }
 
-      // @TODO: span 처리 필요
       return { row, column };
     },
+
     get rangeBySide(this: Selection) {
       if (!this.range) {
         return null;
       }
-      const { visibleFrozenCount } = columnInfo;
+      const { visibleFrozenCount, rowHeaderCount } = columnInfo;
       const { column, row } = this.range;
 
       return {
-        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
-        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
+        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount, rowHeaderCount) },
+        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
       };
     },
+
     get rangeAreaInfo(this: Selection) {
       if (!this.rangeBySide) {
         return null;

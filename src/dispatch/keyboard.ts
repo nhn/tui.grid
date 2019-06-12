@@ -1,17 +1,44 @@
-import { Store, RowKey, SelectionRange } from '../store/types';
+import { Store, RowKey, SelectionRange, Range } from '../store/types';
 import { KeyboardEventCommandType } from '../helper/keyboard';
-import { getNextCellIndex } from '../query/keyboard';
+import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
+import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getSortedRange } from '../helper/selection';
+
+function getNextCellIndexWithRowSpan(
+  store: Store,
+  command: KeyboardEventCommandType,
+  currentRowIndex: number,
+  columnRange: Range,
+  cellIndexes: Range
+) {
+  let rowIndex = cellIndexes[0];
+  const columnIndex = cellIndexes[1];
+  const [startColumnIndex, endColumnIndex] = getSortedRange(columnRange);
+
+  for (let index = startColumnIndex; index <= endColumnIndex; index += 1) {
+    const nextRowIndex = getNextCellIndex(store, command, [currentRowIndex, index])[0];
+
+    if (
+      (command === 'up' && nextRowIndex < rowIndex) ||
+      (command === 'down' && nextRowIndex > rowIndex)
+    ) {
+      rowIndex = nextRowIndex;
+    }
+  }
+  return [rowIndex, columnIndex];
+}
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
-    data: { viewData },
+    data,
     column: { visibleColumns },
     id
   } = store;
+  const { viewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -22,7 +49,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumns[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, viewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
@@ -47,12 +74,13 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   const {
     selection,
     focus,
-    data: { viewData },
-    column: { visibleColumns },
+    data,
+    column: { visibleColumns, rowHeaderCount },
     id
   } = store;
-  let { inputRange: currentInputRange } = selection;
+  const { viewData, sortOptions } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
+  let { inputRange: currentInputRange } = selection;
 
   if (focusRowIndex === null || totalFocusColumnIndex === null) {
     return;
@@ -61,7 +89,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   if (!currentInputRange) {
     currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
-      column: [totalFocusColumnIndex, totalFocusColumnIndex]
+      column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
     };
   }
 
@@ -79,23 +107,65 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
+    if (enableRowSpan(sortOptions.columnName)) {
+      nextCellIndexes = getNextCellIndexWithRowSpan(
+        store,
+        command,
+        rowIndex,
+        [columnStartIndex, columnIndex],
+        nextCellIndexes
+      );
+    }
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
-  const nextColumnName = visibleColumns[nextColumnIndex].name;
-  if (!isRowHeader(nextColumnName)) {
-    const inputRange: SelectionRange = {
-      row: [rowStartIndex, nextRowIndex],
-      column: [columnStartIndex, nextColumnIndex]
-    };
 
-    changeSelectionRange(selection, inputRange, id);
+  let startRowIndex = rowStartIndex;
+  let endRowIndex = nextRowIndex;
+
+  if (enableRowSpan(sortOptions.columnName)) {
+    const rowRange: Range = [startRowIndex, endRowIndex];
+    const colRange: Range = [columnStartIndex, nextColumnIndex];
+    [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+      rowRange,
+      colRange,
+      visibleColumns,
+      focus.rowIndex,
+      data
+    );
   }
+
+  const inputRange: SelectionRange = {
+    row: [startRowIndex, endRowIndex],
+    column: [columnStartIndex, nextColumnIndex]
+  };
+
+  changeSelectionRange(selection, inputRange, id);
 }
 
-export function removeFocus(store: Store) {
-  // @TODO: 이후 관련 키보드 이벤트 작업 필요
-  console.log(store);
+export function removeContent(store: Store) {
+  const { column, data } = store;
+  const { visibleColumns } = column;
+  const { rawData } = data;
+  const removeRange = getRemoveRange(store);
+
+  if (!removeRange) {
+    return;
+  }
+
+  const {
+    column: [columnStart, columnEnd],
+    row: [rowStart, rowEnd]
+  } = removeRange;
+
+  visibleColumns
+    .slice(columnStart, columnEnd + 1)
+    .filter(({ editor }) => !!editor)
+    .forEach(({ name }) => {
+      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
+        row[name] = '';
+      });
+    });
 }
 
 export function setFocusInfo(
@@ -104,8 +174,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  const { focus, id } = store;
+  const { focus, id, data } = store;
   focus.navigating = navigating;
 
-  changeFocus(store.focus, rowKey, columnName, id);
+  changeFocus(focus, data, rowKey, columnName, id);
 }

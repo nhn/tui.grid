@@ -29,7 +29,6 @@ class BodyRowsComp extends Component<Props> {
 
   public render({ rows, rowIndexOffset, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
-
     return (
       <tbody>
         {rows.map((row, index) => (
@@ -37,7 +36,7 @@ class BodyRowsComp extends Component<Props> {
             key={row.rowKey}
             rowIndex={index + rowIndexOffset}
             viewRow={row}
-            columnNames={columnNames}
+            columns={columns}
           />
         ))}
         {range(dummyRowCount).map((index) => (
@@ -52,11 +51,9 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => {
-  return {
-    rowIndexOffset: viewport.rowRange[0],
-    rows: viewport.rows,
-    columns: column.visibleColumnsBySide[side],
-    dummyRowCount: viewport.dummyRowCount
-  };
-})(BodyRowsComp);
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
+  rowIndexOffset: viewport.rowRange[0],
+  rows: viewport.rows,
+  columns: side === 'L' ? column.visibleColumnsBySide.L : viewport.columns,
+  dummyRowCount: viewport.dummyRowCount
+}))(BodyRowsComp);

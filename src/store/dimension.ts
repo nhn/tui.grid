@@ -9,11 +9,17 @@ type OptDimension = {
   summaryHeight?: number;
   domWidth: number;
   summaryPosition?: SummaryPosition;
-  scrollX: boolean;
-  scrollY: boolean;
+  headerHeight: number;
 } & Pick<
   OptGrid,
-  'width' | 'rowHeight' | 'minRowHeight' | 'bodyHeight' | 'minBodyHeight' | 'scrollX' | 'scrollY'
+  | 'width'
+  | 'rowHeight'
+  | 'minRowHeight'
+  | 'bodyHeight'
+  | 'minBodyHeight'
+  | 'heightResizable'
+  | 'scrollX'
+  | 'scrollY'
 >;
 
 export function create({
@@ -25,12 +31,14 @@ export function create({
   minRowHeight = 40,
   minBodyHeight = 130,
   frozenBorderWidth = 1,
-  scrollX,
-  scrollY,
+  heightResizable = false,
+  scrollX = true,
+  scrollY = true,
   summaryHeight = 0,
-  summaryPosition = 'bottom'
+  summaryPosition = 'bottom',
+  headerHeight = 40
 }: OptDimension): Dimension {
-  const bodyHeightVal = typeof bodyHeight === 'number' ? Math.max(bodyHeight, minBodyHeight) : 0;
+  const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
   return observable<Dimension>({
     offsetLeft: 0,
@@ -40,6 +48,7 @@ export function create({
     minBodyHeight,
     bodyHeight: Math.max(bodyHeightVal, minBodyHeight),
     autoHeight: bodyHeight === 'auto',
+    heightResizable,
     fitToParentHeight: bodyHeight === 'fitToParent',
     minRowHeight,
     rowHeight: isNumber(rowHeight) ? Math.max(rowHeight, minRowHeight) : minRowHeight,
@@ -48,7 +57,7 @@ export function create({
     scrollY,
     summaryHeight,
     summaryPosition,
-    headerHeight: 40,
+    headerHeight,
     scrollbarWidth: 17,
     tableBorderWidth: 1,
     cellBorderWidth: 1,
@@ -70,18 +79,18 @@ export function create({
 
     get contentsWidth(this: Dimension) {
       const columnLen = column.visibleColumns.length;
-      const totalBorderWidth = (columnLen + 1) * this.cellBorderWidth;
+      const totalBorderWidth = columnLen * this.cellBorderWidth;
 
-      return this.width - this.scrollYWidth - totalBorderWidth - this.frozenBorderWidth;
+      return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
     }
   });
 }
 
 export function setBodyHeight(dimension: Dimension, rowCoords: RowCoords) {
   const { totalRowHeight } = rowCoords;
-  const { autoHeight, scrollXHeight } = dimension;
+  const { autoHeight, scrollXHeight, minBodyHeight } = dimension;
 
   if (autoHeight) {
-    dimension.bodyHeight = totalRowHeight + scrollXHeight;
+    dimension.bodyHeight = Math.max(totalRowHeight + scrollXHeight, minBodyHeight);
   }
 }

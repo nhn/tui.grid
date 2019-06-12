@@ -17,7 +17,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
-    rowHeaders: ['_number', '_checked']
+    rowHeaders: ['rowNum', 'checkbox']
   });
 });
 
@@ -25,7 +25,7 @@ it('click', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'click', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .click()
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
@@ -37,7 +37,7 @@ it('mouseover', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseover', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mouseover')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
@@ -49,7 +49,7 @@ it('mousedown', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mousedown', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mousedown')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
@@ -73,7 +73,7 @@ it('mouseout', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseout', callback);
 
-  cy.get(`.${cls('container')}`)
+  cy.getCell(1, 'name')
     .trigger('mouseout')
     .then(() => {
       expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))

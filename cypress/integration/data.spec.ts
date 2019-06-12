@@ -1,5 +1,6 @@
 import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
+import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name' }, { name: 'age' }];
@@ -93,6 +94,49 @@ describe('removeRow()', () => {
   });
 });
 
+describe('removeCheckedRows()', () => {
+  beforeEach(() => {
+    cy.document().then((doc) => {
+      doc.body.innerHTML = '';
+    });
+
+    cy.createGrid({
+      data,
+      columns,
+      rowHeaders: ['_checked']
+    });
+  });
+
+  it('remove checked rows.', () => {
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance().invoke('removeCheckedRows');
+
+    cy.getCell(0, 'name').should('exist');
+    cy.getCell(1, 'name').should('not.exist');
+  });
+
+  it('use confirm message.', () => {
+    const stub = cy.stub();
+    cy.on('window:confirm', stub);
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance()
+      .invoke('removeCheckedRows', true)
+      .then(() => {
+        expect(stub.args[0][0]).to.be.eql('Are you sure you want to delete 1 data?');
+      });
+  });
+
+  it('use confirm cancel.', () => {
+    cy.on('window:confirm', () => false);
+    cy.gridInstance().invoke('check', 1);
+    cy.gridInstance()
+      .invoke('removeCheckedRows', true)
+      .then(() => {
+        cy.getCell(1, 'name').should('exist');
+      });
+  });
+});
+
 describe('clear()', () => {
   it('remove all rows', () => {
     cy.gridInstance().invoke('clear');
@@ -173,16 +217,6 @@ describe('getters', () => {
 });
 
 describe('columns', () => {
-  it('getIndexOfColumn() returns the index of column having given columnName', () => {
-    cy.gridInstance()
-      .invoke('getIndexOfColumn', 'name')
-      .should('eq', 0);
-
-    cy.gridInstance()
-      .invoke('getIndexOfColumn', 'age')
-      .should('eq', 1);
-  });
-
   it('getColumnValues() returns all values in the given column', () => {
     cy.gridInstance()
       .invoke('getColumnValues', 'name')
@@ -203,5 +237,29 @@ describe('columns', () => {
 
     cy.getCellByIdx(0, 1).should('to.have.text', '30');
     cy.getCellByIdx(1, 1).should('to.have.text', '30');
+  });
+});
+
+describe('rows', () => {
+  it('findRows() returns rows that meet the conditions.', () => {
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Kim' })
+      .then((res) => {
+        expect(res).to.have.length(1);
+        expect(res[0]).to.contain({ name: 'Kim', age: 10 });
+      });
+
+    cy.gridInstance()
+      .invoke('findRows', { name: 'Lee', age: 10 })
+      .should('have.length', 0);
+
+    cy.gridInstance()
+      .invoke('findRows', function(row: Row) {
+        return !!row.age && row.age > 10;
+      })
+      .then((res) => {
+        expect(res).to.have.length(1);
+        expect(res[0]).to.contain({ name: 'Lee', age: 20 });
+      });
   });
 });

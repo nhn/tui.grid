@@ -10,6 +10,7 @@ import { create as createRowCoords } from './rowCoords';
 import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
+import { create as createRenderState } from './renderState';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -17,6 +18,7 @@ export function createStore(id: number, options: OptGrid): Store {
     width,
     rowHeight,
     bodyHeight,
+    heightResizable,
     minBodyHeight,
     columnOptions = {},
     keyColumnName,
@@ -26,19 +28,31 @@ export function createStore(id: number, options: OptGrid): Store {
     selectionUnit = 'cell',
     showDummyRows = false,
     editingEvent = 'dblclick',
-    scrollX = true,
-    scrollY = true
+    scrollX,
+    scrollY,
+    useClientSort = true,
+    pageOptions = {},
+    treeColumnOptions = { name: '' },
+    header = {}
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
+  const { height: headerHeight = 40, complexColumns = [] } = header;
   const column = createColumn({
     columns: options.columns,
     columnOptions,
     rowHeaders,
     copyOptions,
-    keyColumnName
+    keyColumnName,
+    treeColumnOptions,
+    complexColumns
   });
-  const data = createData(options.data || [], column);
+  const data = createData(
+    Array.isArray(options.data) ? options.data : [],
+    column,
+    pageOptions,
+    useClientSort
+  );
   const dimension = createDimension({
     column,
     width,
@@ -46,11 +60,13 @@ export function createStore(id: number, options: OptGrid): Store {
     rowHeight,
     bodyHeight,
     minBodyHeight,
+    heightResizable,
     frozenBorderWidth,
     summaryHeight,
     summaryPosition,
     scrollX,
-    scrollY
+    scrollY,
+    headerHeight
   });
   const columnCoords = createColumnCoords({ column, dimension });
   const rowCoords = createRowCoords({ data, dimension });
@@ -65,6 +81,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+  const renderState = createRenderState(data);
 
   // manual observe to resolve circular references
   observe(() => {
@@ -81,6 +98,7 @@ export function createStore(id: number, options: OptGrid): Store {
     viewport,
     focus,
     summary,
-    selection
+    selection,
+    renderState
   });
 }

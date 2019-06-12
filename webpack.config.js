@@ -7,6 +7,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+const minify = process.argv.indexOf('--minify') >= 0;
+
 const commonConfig = {
   entry: './src/index.ts',
   module: {
@@ -24,7 +26,7 @@ const commonConfig = {
   output: {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
-    filename: package.name + '.js',
+    filename: package.name + (minify ? '.min' : '') + '.js',
     publicPath: '/',
     path: path.resolve(__dirname, 'dist')
   }
@@ -32,22 +34,43 @@ const commonConfig = {
 
 module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
-    return merge(commonConfig, {
+    const productionConfig = {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
-          filename: 'tui-grid.css'
+          filename: package.name + (minify ? '.min' : '') + '.css'
         })
       ],
       module: {
         rules: [
           {
             test: /\.css$/,
+            exclude: /node_modules/,
             use: [MiniCssExtractPlugin.loader, 'css-loader']
           }
         ]
       },
+      externals: {
+        'tui-pagination': {
+          commonjs: 'tui-pagination',
+          commonjs2: 'tui-pagination',
+          amd: 'tui-pagination',
+          root: ['tui', 'Pagination']
+        },
+        'tui-date-picker': {
+          commonjs: 'tui-date-picker',
+          commonjs2: 'tui-date-picker',
+          amd: 'tui-date-picker',
+          root: ['tui', 'DatePicker']
+        }
+      },
       optimization: {
+        minimize: false
+      }
+    };
+
+    if (minify) {
+      productionConfig.optimization = {
         minimizer: [
           new TerserPlugin({
             terserOptions: {
@@ -63,7 +86,9 @@ module.exports = (env, { mode = 'development' }) => {
           new OptimizeCSSAssetsPlugin({})
         ]
       }
-    });
+    }
+
+    return merge(commonConfig, productionConfig);
   }
 
   return merge(commonConfig, {

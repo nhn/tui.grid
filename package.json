@@ -1,11 +1,11 @@
 {
   "name": "tui-grid",
-  "version": "4.0.0-alpha.0",
+  "version": "4.0.0-alpha.1",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production & webpack --mode=production --minify",
     "test": "cypress open",
     "test:ci": "cypress run",
     "storybook": "start-storybook -p 6006",
@@ -61,6 +61,8 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "preact": "^8.4.2"
+    "preact": "^8.4.2",
+    "tui-pagination": "^3.3.2",
+    "tui-date-picker": "^3.3.3"
   }
 }

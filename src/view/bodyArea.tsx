@@ -1,8 +1,8 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, ColumnInfo, DragData, DragStartData } from '../store/types';
-import { cls, setCursorStyle } from '../helper/dom';
+import { Side, DragData, DragStartData } from '../store/types';
+import { cls, getCoordinateWithOffset, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
@@ -10,20 +10,21 @@ import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
 
 // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-const MIN_DISATNCE_FOR_DRAG = 10;
+const MIN_DISTANCE_FOR_DRAG = 10;
 
 interface OwnProps {
   side: Side;
 }
 
 interface StoreProps {
-  columns: ColumnInfo[];
   bodyHeight: number;
   totalRowHeight: number;
+  totalColumnWidth: number;
   scrollTop: number;
   scrollLeft: number;
   scrollXHeight: number;
-  offsetY: number;
+  offsetTop: number;
+  offsetLeft: number;
   dummyRowCount: number;
   scrollX: boolean;
   scrollY: boolean;
@@ -34,10 +35,10 @@ type Props = OwnProps & StoreProps & DispatchProps;
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
 const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
-  'columns',
   'bodyHeight',
   'totalRowHeight',
-  'offsetY'
+  'offsetLeft',
+  'offsetTop'
 ];
 
 class BodyAreaComp extends Component<Props> {
@@ -65,8 +66,7 @@ class BodyAreaComp extends Component<Props> {
 
     const { el } = this;
     const { shiftKey } = ev;
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
@@ -89,7 +89,7 @@ class BodyAreaComp extends Component<Props> {
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
-    return distance >= MIN_DISATNCE_FOR_DRAG;
+    return distance >= MIN_DISTANCE_FOR_DRAG;
   };
 
   private handleSelectStart = (ev: Event) => {
@@ -97,18 +97,15 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const pageX = ev.pageX - window.pageXOffset;
-    const pageY = ev.pageY - window.pageYOffset;
-
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      const dragData: DragData = { pageX, pageY };
-      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, dragData);
+      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, { pageX, pageY });
     }
   };
 
   private clearDocumentEvents = () => {
     this.dragStartData = { pageX: null, pageY: null };
-    this.props.dispatch('dragEndBody');
+    this.props.dispatch('dragEnd');
 
     setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);
@@ -131,8 +128,10 @@ class BodyAreaComp extends Component<Props> {
     side,
     bodyHeight,
     totalRowHeight,
+    totalColumnWidth,
     scrollXHeight,
-    offsetY,
+    offsetTop,
+    offsetLeft,
     dummyRowCount,
     scrollX,
     scrollY
@@ -141,11 +140,15 @@ class BodyAreaComp extends Component<Props> {
     const overflowY = scrollY ? 'scroll' : 'hidden';
     const areaStyle = { overflowX, overflowY, height: bodyHeight };
     const tableContainerStyle = {
-      top: offsetY,
+      top: offsetTop,
+      left: offsetLeft,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible'
     };
-    const containerStyle = { height: totalRowHeight };
+    const containerStyle = {
+      width: totalColumnWidth,
+      height: totalRowHeight
+    };
 
     return (
       <div
@@ -160,7 +163,7 @@ class BodyAreaComp extends Component<Props> {
         <div class={cls('body-container')} style={containerStyle}>
           <div class={cls('table-container')} style={tableContainerStyle}>
             <table class={cls('table')}>
-              <ColGroup side={side} />
+              <ColGroup side={side} useViewport={true} />
               <BodyRows side={side} />
             </table>
           </div>
@@ -174,17 +177,19 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { column, rowCoords, dimension, viewport } = store;
+  const { columnCoords, rowCoords, dimension, viewport } = store;
   const { totalRowHeight } = rowCoords;
+  const { totalColumnWidth } = columnCoords;
   const { bodyHeight, scrollXHeight, scrollX, scrollY } = dimension;
-  const { offsetY, scrollTop, scrollLeft, dummyRowCount } = viewport;
+  const { offsetLeft, offsetTop, scrollTop, scrollLeft, dummyRowCount } = viewport;
 
   return {
-    columns: column.visibleColumnsBySide[side],
     bodyHeight,
     totalRowHeight,
+    offsetTop,
     scrollTop,
-    offsetY,
+    totalColumnWidth: totalColumnWidth[side],
+    offsetLeft: side === 'L' ? 0 : offsetLeft,
     scrollLeft: side === 'L' ? 0 : scrollLeft,
     scrollXHeight,
     dummyRowCount,

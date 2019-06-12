@@ -6,19 +6,26 @@ import {
   Formatter,
   ClipboardCopyOptions,
   RowAttributes,
-  EditingEvent
+  EditingEvent,
+  PageOptions,
+  Validation,
+  RowKey,
+  ComplexColumnInfo,
+  CellEditorOptions
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
+import { DataSource } from './dataSource/types';
 
 export interface OptGrid {
   el: HTMLElement;
-  data?: OptRow[];
+  data?: OptRow[] | DataSource;
   columns: OptColumn[];
   columnOptions?: OptColumnOptions;
   keyColumnName?: string;
   width?: number | 'auto';
   bodyHeight?: number | 'fitToParent' | 'auto';
+  heightResizable?: boolean;
   minBodyHeight?: number;
   rowHeight?: number | 'auto';
   minRowHeight?: number;
@@ -27,9 +34,13 @@ export interface OptGrid {
   editingEvent?: EditingEvent;
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
+  useClientSort?: boolean;
   selectionUnit?: SelectionUnit;
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
+  pageOptions?: PageOptions;
+  treeColumnOptions?: OptTree;
+  header?: OptHeader;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -38,13 +49,22 @@ export type SummaryPosition = 'top' | 'bottom';
 
 type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
-export type OptRow = Dictionary<CellValue> & {
-  _attributes?: RecursivePartial<RowAttributes>;
-};
+export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
+export interface RowSpanAttribute {
+  rowSpan?: Dictionary<number>;
+}
+
+export interface OptRow {
+  [prop: string]: CellValue | RecursivePartial<RowAttributes & RowSpanAttribute> | OptRow[];
+  _attributes?: RecursivePartial<RowAttributes & RowSpanAttribute>;
+  _children?: OptRow[];
+}
 
 export interface OptAppendRow {
   at?: number;
   focus?: boolean;
+  parentRowKey?: RowKey;
+  extendPrevRowSpan?: boolean;
 }
 
 export interface OptPrependRow {
@@ -56,22 +76,37 @@ export interface OptRemoveRow {
   keepRowSpanData?: boolean;
 }
 
-export type OptRowHeader = string | OptColumn;
+type RowHeaderType = 'rowNum' | 'checkbox';
 
-interface OptValidation {
-  required?: boolean;
-  dataType?: 'string' | 'number';
+interface OptRowHeaderColumn extends Partial<OptColumn> {
+  type: RowHeaderType;
 }
+
+export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
+
+interface OptTree {
+  name: string;
+  useIcon?: boolean;
+  useCascadingCheckbox?: boolean;
+}
+
+type TypeObjectOptions<T> =
+  | T
+  | {
+      type: T;
+      options?: Dictionary<any>;
+    };
+
+export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
+export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
 export interface OptColumn {
   name: string;
   header?: string;
   hidden?: boolean;
   width?: number | 'auto';
-  renderer?: CellRendererClass;
-  rendererOptions?: Dictionary<any>;
-  editor?: string | CellEditorClass;
-  editorOptions?: Dictionary<any>;
+  renderer?: OptCellRenderer;
+  editor?: OptCellEditor;
   formatter?: Formatter;
   defaultValue?: CellValue;
   prefix?: Formatter;
@@ -87,9 +122,10 @@ export interface OptColumn {
   ellipsis?: boolean;
   sortable?: boolean;
   copyOptions?: ClipboardCopyOptions;
-  validation?: OptValidation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
+  ignored?: boolean;
+  validation?: Validation;
 }
 
 export interface OptColumnOptions {
@@ -349,4 +385,9 @@ export interface OptSummaryValueMap {
   min: number;
   max: number;
   cnt: number;
+}
+
+export interface OptHeader {
+  height?: number;
+  complexColumns?: ComplexColumnInfo[];
 }

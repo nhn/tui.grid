@@ -2,8 +2,7 @@ import { cls } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import { HANDLE_WIDTH_HALF } from '../../src/view/columnResizer';
 import Grid from '../../src/grid';
-import { OptGrid, OptRow } from '../../src/types';
-import { Omit } from 'utility-types';
+import { OptRow } from '../../src/types';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -13,22 +12,8 @@ interface GridGlobal {
 const CONTENT_WIDTH = 600;
 // @TODO: Retrieve scrollbar-width from real browser
 const SCROLLBAR_WIDTH = 17;
-
-function createGrid(options: Omit<OptGrid, 'el'>) {
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
-}
-
-function getGridInst(): Cypress.Chainable<Grid> {
-  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
-}
+const CELL_BORDER_WIDTH = 1;
+const containerStyle = { width: `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px` };
 
 function assertContainerWidth(width: number) {
   cy.get(`.${cls('container')}`)
@@ -90,7 +75,7 @@ function createGridWithWidths(widths: WidthInfo[], commonMinWidth?: number) {
 
   const columnOptions = { minWidth: commonMinWidth };
 
-  createGrid({ data, columns, columnOptions });
+  cy.createGrid({ data, columns, columnOptions }, containerStyle);
 }
 
 function assertHandleOffset(index: number, offsetLeft: number) {
@@ -100,7 +85,7 @@ function assertHandleOffset(index: number, offsetLeft: number) {
     .invoke('position')
     // @ts-ignore
     .its('left')
-    .should('be.eql', offsetLeft - HANDLE_WIDTH_HALF);
+    .should('be.eq', offsetLeft - HANDLE_WIDTH_HALF);
 }
 
 function assertHandleLength(length: number) {
@@ -124,7 +109,7 @@ describe('container width', () => {
     const data = sampleData.slice(10);
     const columns = [{ name: 'name' }, { name: 'artist' }];
 
-    createGrid({ data, columns });
+    cy.createGrid({ data, columns }, containerStyle);
   });
 
   it('default with is the same as the DOM width', () => {
@@ -132,7 +117,7 @@ describe('container width', () => {
   });
 
   it('setWidth() changes container width', () => {
-    getGridInst().invoke('setWidth', 700);
+    cy.gridInstance().invoke('setWidth', 700);
     assertContainerWidth(700);
   });
 });
@@ -148,7 +133,7 @@ describe('auto calculate column widths (container: 600)', () => {
     assertColumnWidth([300, 300]);
   });
 
-  it('[empty, empty, 200] -> [200, 200, 200]', () => {
+  it('[empty, empty, empty] -> [200, 200, 200]', () => {
     createGridWithWidths([{}, {}, {}]);
     assertColumnWidth([200, 200, 200]);
   });
@@ -199,13 +184,21 @@ describe('auto calculate column widths (container: 600)', () => {
     });
 
     it('setWidth(720) -> [240, 240, 240]', () => {
-      getGridInst().invoke('setWidth', 720 + SCROLLBAR_WIDTH);
+      cy.gridInstance().invoke('setWidth', 720 + SCROLLBAR_WIDTH);
       assertColumnWidth([240, 240, 240]);
     });
 
     it('setWidth(420) -> [150, 150, 120]', () => {
-      getGridInst().invoke('setWidth', 420 + SCROLLBAR_WIDTH);
+      cy.gridInstance().invoke('setWidth', 420 + SCROLLBAR_WIDTH);
       assertColumnWidth([150, 150, 120]);
+    });
+  });
+
+  context('resetColumnWidths', () => {
+    it('[150, 150, 300]', () => {
+      createGridWithWidths([{}, {}, {}]);
+      cy.gridInstance().invoke('resetColumnWidths', [150, 150, 300]);
+      assertColumnWidth([150, 150, 300]);
     });
   });
 
@@ -231,7 +224,7 @@ describe('auto calculate column widths (container: 600)', () => {
         .trigger('mousedown')
         .then(($el) => {
           const { left, top } = $el.offset()!;
-          const pageX = left + distance + HANDLE_WIDTH_HALF;
+          const pageX = left + distance + CELL_BORDER_WIDTH + HANDLE_WIDTH_HALF;
           const pageY = top;
 
           cy.root().trigger('mousemove', { pageX, pageY });
@@ -260,14 +253,14 @@ describe('auto calculate column widths (container: 600)', () => {
 });
 
 describe('body height', () => {
-  const DEF_HEADER_HEIGHT = 30;
+  const DEF_HEADER_HEIGHT = 40;
   const BORER_WIDTH = 1;
   const columns = [{ name: 'c1' }];
   const data = [{ c1: 'test' }];
 
   function assertBodyHeight(height: number) {
     cy.get(`.${cls('body-area')}`).each(($body) => {
-      expect($body.height()).to.eql(height);
+      expect($body.height()).to.eq(height);
     });
   }
 
@@ -291,17 +284,17 @@ describe('body height', () => {
   });
 
   it('bodyHeight: 200', () => {
-    createGrid({ data, columns, bodyHeight: 200 });
+    cy.createGrid({ data, columns, bodyHeight: 200 }, containerStyle);
     assertBodyHeight(200);
   });
 
   it('minBodyHeight: 200', () => {
-    createGrid({ data, columns, minBodyHeight: 200 });
+    cy.createGrid({ data, columns, minBodyHeight: 200 }, containerStyle);
     assertBodyHeight(200);
   });
 
   it('minBodyHeight takes precedence over bodyHeight', () => {
-    createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 });
+    cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
     assertBodyHeight(300);
   });
 
@@ -318,7 +311,7 @@ describe('body height', () => {
     }
 
     it('reset bodyHeight when dragging', () => {
-      createGrid({ data, columns, bodyHeight: 200 });
+      cy.createGrid({ data, columns, bodyHeight: 200, heightResizable: true }, containerStyle);
 
       dragHeightReiszeHandle(100);
       assertBodyHeight(300);

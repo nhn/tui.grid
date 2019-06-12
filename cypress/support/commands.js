@@ -1,7 +1,9 @@
-import { cls } from '@/helper/dom';
+import { cls, dataAttr } from '@/helper/dom';
 
 Cypress.Commands.add('getCell', (rowKey, columnName) => {
-  return cy.get(`.${cls('cell')}[data-row-key="${rowKey}"][data-column-name="${columnName}"]`);
+  return cy.get(
+    `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
+  );
 });
 
 Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx) => {
@@ -15,11 +17,11 @@ Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
   return cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`);
 });
 
-Cypress.Commands.add('createGrid', (gridOptions, elementStyle = {}) => {
+Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
   return cy.window().then((win) => {
     const { document, tui } = win;
     const el = document.createElement('div');
-    const styles = { width: '800px', ...elementStyle };
+    const styles = { width: '800px', ...containerStyle };
 
     Object.assign(el.style, styles);
     document.body.appendChild(el);

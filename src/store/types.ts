@@ -1,5 +1,8 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
+import { OptColumnOptions, OptTree } from '../types';
+
+export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
 export type CellValue = number | string | boolean | null | undefined;
 
@@ -21,14 +24,26 @@ export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
 
+export type State = 'DONE' | 'EMPTY' | 'LOADING';
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
+  rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
 };
+
+export type RowSpanMap = Dictionary<RowSpan>;
+
+export interface RowSpan {
+  mainRow: boolean;
+  mainRowKey: RowKey;
+  count: number;
+  spanCount: number;
+}
 
 export interface RowAttributes {
   rowNum: number;
@@ -37,6 +52,8 @@ export interface RowAttributes {
   checkDisabled: boolean;
   className: { row: string[]; column: Dictionary<string[]> };
   height?: number;
+  tree?: TreeRowInfo;
+  expanded?: boolean;
 }
 
 export type RowAttributeValue = RowAttributes[keyof RowAttributes];
@@ -58,6 +75,7 @@ export interface ClipboardCopyOptions {
   useListItemText?: boolean;
   customValue?: CustomValue;
 }
+
 export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
 export interface CellRenderData {
@@ -68,13 +86,14 @@ export interface CellRenderData {
   prefix: string;
   postfix: string;
   value: CellValue;
-  editorOptions: Dictionary<any>;
   className: string;
 }
 
 export interface ViewRow {
   rowKey: RowKey;
   valueMap: Dictionary<CellRenderData>;
+  treeInfo?: TreeCellInfo;
+  __unobserveFns__: Function[];
 }
 
 export interface DragStartData {
@@ -107,12 +126,27 @@ export interface InvalidRow {
   errors: InvalidColumn[];
 }
 
+export interface TreeRowInfo {
+  parentRowKey: RowKey | null;
+  childRowKeys: RowKey[];
+  expanded?: boolean;
+  hiddenChild?: boolean;
+}
+
+export interface TreeCellInfo {
+  depth: number;
+  indentWidth: number;
+  leaf: boolean;
+  expanded?: boolean;
+}
+
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
+  pageOptions: PageOptions;
 }
 
 export interface FormatterProps {
@@ -123,14 +157,22 @@ export interface FormatterProps {
 
 export type Formatter = ((props: FormatterProps) => string) | string;
 
+export interface CellEditorOptions {
+  type: CellEditorClass;
+  options?: Dictionary<any>;
+}
+
+export interface CellRendererOptions {
+  type: CellRendererClass;
+  options?: Dictionary<any>;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
   minWidth: number;
-  editor?: CellEditorClass;
-  editorOptions?: Dictionary<any>;
-  renderer: CellRendererClass;
-  rendererOptions?: Dictionary<any>;
+  editor?: CellEditorOptions;
+  renderer: CellRendererOptions;
   copyOptions?: ClipboardCopyOptions;
   hidden: boolean;
   formatter?: Formatter;
@@ -151,6 +193,7 @@ export interface ColumnInfo {
   validation?: Validation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
+  ignored?: boolean;
 }
 
 export interface SortOptions {
@@ -159,17 +202,31 @@ export interface SortOptions {
   useClient: boolean;
 }
 
+interface DataForColumnCreation {
+  copyOptions: ClipboardCopyOptions;
+  columnOptions: OptColumnOptions;
+  rowHeaders: ColumnInfo[];
+  relationColumns: string[];
+  treeColumnOptions: OptTree;
+}
+
 export interface Column {
   frozenCount: number;
+  dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
-  visibleFrozenCount: number;
-  rowHeaderCount: number;
   allColumns: ColumnInfo[];
-  allColumnMap: Dictionary<ColumnInfo>;
-  visibleColumns: ColumnInfo[];
-  visibleColumnsBySide: VisibleColumnsBySide;
+  complexHeaderColumns: ComplexColumnInfo[];
+  readonly allColumnMap: Dictionary<ColumnInfo>;
+  readonly rowHeaderCount: number;
+  readonly visibleColumns: ColumnInfo[];
+  readonly visibleFrozenCount: number;
+  readonly visibleColumnsBySide: VisibleColumnsBySide;
   readonly defaultValues: { name: string; value: CellValue }[];
-  validationColumns: ColumnInfo[];
+  readonly validationColumns: ColumnInfo[];
+  readonly ignoredColumns: string[];
+  readonly treeColumnName?: string;
+  readonly treeIcon?: boolean;
+  readonly treeCascadingCheckbox?: boolean;
 }
 
 export interface Relations {
@@ -200,6 +257,7 @@ export interface Dimension {
   autoHeight: boolean;
   minBodyHeight: number;
   fitToParentHeight: boolean;
+  heightResizable: boolean;
   rowHeight: number;
   minRowHeight: number;
   autoRowHeight: boolean;
@@ -223,9 +281,11 @@ export interface Viewport {
   readonly scrollPixelScale: number;
   readonly maxScrollLeft: number;
   readonly maxScrollTop: number;
-  readonly offsetY: number;
+  readonly offsetLeft: number;
+  readonly offsetTop: number;
   readonly rowRange: Range;
   readonly colRange: Range;
+  readonly columns: ColumnInfo[];
   readonly rows: ViewRow[];
   readonly dummyRowCount: number;
 }
@@ -234,6 +294,7 @@ export interface ColumnCoords {
   readonly widths: { [key in Side]: number[] };
   readonly areaWidth: { [key in Side]: number };
   readonly offsets: { [key in Side]: number[] };
+  readonly totalColumnWidth: { [key in Side]: number };
 }
 
 export interface RowCoords {
@@ -310,6 +371,16 @@ export interface Selection {
   readonly rangeAreaInfo: RangeAreaInfo | null;
 }
 
+export interface RenderState {
+  state: State;
+}
+
+export interface PageOptions {
+  perPage?: number;
+  page?: number;
+  totalCount?: number;
+}
+
 export interface Store {
   readonly id: GridId;
   readonly data: Data;
@@ -321,4 +392,12 @@ export interface Store {
   readonly focus: Focus;
   readonly selection: Selection;
   readonly summary: Summary;
+  readonly renderState: RenderState;
+}
+
+export interface ComplexColumnInfo {
+  header: string;
+  name: string;
+  childNames?: string[];
+  sortable?: boolean;
 }

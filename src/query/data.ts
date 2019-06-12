@@ -1,5 +1,5 @@
-import { Store, RowKey, Data } from '../store/types';
-import { findProp } from '../helper/common';
+import { Store, RowKey, Data, Row, Dictionary } from '../store/types';
+import { findProp, isFunction } from '../helper/common';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -18,4 +18,27 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
   const rowDisabled = row.valueMap[columnName].disabled;
 
   return disabled || rowDisabled;
+}
+
+export function getCheckedRows({ data }: Store) {
+  return data.rawData.filter(({ _attributes }) => _attributes.checked);
+}
+
+export function getConditionalRows(
+  { data }: Store,
+  conditions: ((row: Row) => boolean) | Dictionary<any>
+) {
+  const { rawData } = data;
+
+  if (isFunction(conditions)) {
+    return rawData.filter(conditions);
+  }
+
+  let result: Row[] = rawData;
+
+  Object.keys(conditions).forEach((key) => {
+    result = result.filter((row) => row[key] === conditions[key]);
+  });
+
+  return result;
 }

@@ -6,24 +6,50 @@ import {
   OptRow,
   OptAppendRow,
   OptPrependRow,
-  OptRemoveRow
+  OptRemoveRow,
+  OptColumn
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import { Store, CellValue, RowKey, Range, Row, InvalidRow, ColumnInfo } from './store/types';
+import {
+  Store,
+  CellValue,
+  RowKey,
+  Range,
+  Row,
+  InvalidRow,
+  ColumnInfo,
+  Dictionary
+} from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
-import { register } from './instance';
+import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined, mapProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getCellAddressByIndex } from './query/data';
+import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
 import { isRowHeader } from './helper/column';
+import { createProvider } from './dataSource/serverSideDataProvider';
+import { createManager } from './dataSource/modifiedDataManager';
+import { getConfirmMessage } from './dataSource/helper/message';
+import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
+import {
+  RequestOptions,
+  RequestType,
+  DataProvider,
+  ModifiedRowsOptions,
+  Params,
+  ModifiedDataManager
+} from './dataSource/types';
+import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
+import { getDepth } from './helper/tree';
+import { cls, dataAttr } from './helper/dom';
+import { getRowSpanByRowKey } from './helper/rowSpan';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -32,23 +58,39 @@ if ((module as any).hot) {
 /* eslint-enable */
 
 export default class Grid {
+  private el: HTMLElement;
+
   private store: Store;
 
   private dispatch: Dispatch;
 
   private eventBus: EventBus;
 
+  private dataProvider: DataProvider;
+
+  private dataManager: ModifiedDataManager;
+
+  private paginationManager: PaginationManager;
+
   public constructor(options: OptGrid) {
     const { el } = options;
     const id = register(this);
-
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
     const eventBus = createEventBus(id);
+    const dataProvider = createProvider(store, dispatch, options.data);
+    const dataManager = createManager();
+    const paginationManager = createPaginationManager();
 
+    this.el = el;
     this.store = store;
     this.dispatch = dispatch;
     this.eventBus = eventBus;
+    this.dataProvider = dataProvider;
+    this.dataManager = dataManager;
+    this.paginationManager = paginationManager;
+
+    registerDataSources(id, dataProvider, dataManager, paginationManager);
 
     // @TODO: Only for Development env
     // eslint-disable-next-line
@@ -56,6 +98,9 @@ export default class Grid {
 
     if (!themeManager.isApplied()) {
       themeManager.apply('default');
+    }
+    if (Array.isArray(options.data)) {
+      this.dataManager.setOriginData(options.data);
     }
 
     render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
@@ -269,7 +314,7 @@ export default class Grid {
    *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
    *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
    */
-  public selection(range: { start: Range; end: Range }) {
+  public setSelectionRange(range: { start: Range; end: Range }) {
     this.dispatch('setSelection', range);
   }
 
@@ -402,6 +447,18 @@ export default class Grid {
   }
 
   /**
+   * Returns the HTMLElement of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {HTMLElement} - The HTMLElement of the cell element
+   */
+  public getElement(rowKey: RowKey, columnName: string) {
+    return this.el.querySelector(
+      `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
+    );
+  }
+
+  /**
    * Sets the HTML string of given column summary.
    * The type of content is the same as the options.summary.columnContent of the constructor.
    * @param {string} columnName - column name
@@ -446,6 +503,29 @@ export default class Grid {
     return this.store.column.allColumns
       .filter(({ name }) => !isRowHeader(name))
       .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+  }
+
+  /**
+   * Sets the list of column model.
+   * @param {Array} columns - A new list of column model
+   */
+  public setColumns(columns: OptColumn[]) {
+    this.dispatch('setColumns', columns);
+  }
+
+  /**
+   * Set columns title
+   * @param {string} columnsMap - columns map to be change
+   */
+  public setColumnTitles() {
+    // @TODO implements
+  }
+
+  /**
+   * Resets the width of each column by using initial setting of column models.
+   */
+  public resetColumnWidths(widths: number[]) {
+    this.dispatch('resetColumnWidths', widths);
   }
 
   /**
@@ -501,7 +581,7 @@ export default class Grid {
    * @returns {Array.<string|number>} - A list of the rowKey.
    */
   public getCheckedRowKeys(): RowKey[] {
-    return this.store.data.rawData.filter(({ _checked }) => _checked).map(({ rowKey }) => rowKey);
+    return getCheckedRows(this.store).map(({ rowKey }) => rowKey);
   }
 
   /**
@@ -509,8 +589,26 @@ export default class Grid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    // @TODO 반환되는 값 - 순수 객체 처리 변환
-    return this.store.data.rawData.filter(({ _checked }) => _checked);
+    return getCheckedRows(this.store).map((row) => getOriginObject(row as Observable<Row>));
+  }
+
+  /**
+   * Finds rows by conditions
+   * @param {Object|Function} conditions - object (key: column name, value: column value) or
+   *     function that check the value and returns true/false result to find rows
+   * @returns {Array} Row list
+   * @example <caption>Conditions type is object.</caption>
+   * grid.findRows({
+   *     artist: 'Birdy',
+   *     price: 10000
+   * });
+   * @example <caption>Conditions type is function.</caption>
+   * grid.findRows((row) => {
+   *     return (/b/ig.test(row.artist) && row.price > 10000);
+   * });
+   */
+  public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>) {
+    return getConditionalRows(this.store, conditions);
   }
 
   /**
@@ -526,7 +624,8 @@ export default class Grid {
   /**
    * Unsorts all rows. (Sorts by rowKey).
    */
-  public unSort() {
+  public unsort() {
+    // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
     this.dispatch('sort', 'rowKey', true);
   }
 
@@ -645,7 +744,13 @@ export default class Grid {
    * @param {number} [options.offset] - Tree offset from first sibling
    */
   public appendRow(row: OptRow = {}, options: OptAppendRow = {}) {
-    this.dispatch('appendRow', row, options);
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('appendTreeRow', row, options);
+    } else {
+      this.dispatch('appendRow', row, options);
+    }
 
     if (options.focus) {
       const rowIdx = isUndefined(options.at) ? this.getRowCount() - 1 : options.at;
@@ -671,7 +776,13 @@ export default class Grid {
    *     removed although the target is first cell of them.
    */
   public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
-    this.dispatch('removeRow', rowKey, options);
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('removeTreeRow', rowKey, options);
+    } else {
+      this.dispatch('removeRow', rowKey, options);
+    }
   }
 
   /**
@@ -777,5 +888,222 @@ export default class Grid {
 
   public off(eventName: string, fn?: Function) {
     this.eventBus.off(eventName, fn);
+  }
+
+  /**
+   * Returns an instance of tui.Pagination.
+   * @returns {tui.Pagination}
+   */
+  public getPagination() {
+    return this.paginationManager.getPagination();
+  }
+
+  /**
+   * Set number of rows per page and reload current page
+   * @param {number} perPage - Number of rows per page
+   */
+  public setPerPage(perPage: number) {
+    const pagination = this.getPagination();
+    if (pagination) {
+      pagination.setItemsPerPage(perPage);
+      this.readData(1, { perPage });
+    }
+  }
+
+  /**
+   * Returns true if there are at least one row modified.
+   * @returns {boolean} - True if there are at least one row modified.
+   */
+  public isModified() {
+    return this.dataManager.isModified();
+  }
+
+  /**
+   * Returns the object that contains the lists of changed data compared to the original data.
+   * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
+   * @param {Object} [options] Options
+   *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
+   *     @param {boolean} [options.withRawData=false] - If set to true, the data will contains
+   *         the row data for internal use.
+   *     @param {boolean} [options.rowKeyOnly=false] - If set to true, only keys of the changed
+   *         rows will be returned.
+   *     @param {Array} [options.ignoredColumns] - A list of column name to be excluded.
+   * @returns {{createdRows: Array, updatedRows: Array, deletedRows: Array}} - Object that contains the result list.
+   */
+  public getModifiedRows(options: ModifiedRowsOptions = {}) {
+    const { ignoredColumns } = options;
+    const { ignoredColumns: originIgnoredColumns } = this.store.column;
+    options.ignoredColumns = Array.isArray(ignoredColumns)
+      ? ignoredColumns.concat(originIgnoredColumns)
+      : originIgnoredColumns;
+    return this.dataManager.getAllModifiedData(options);
+  }
+
+  /**
+   * Requests 'readData' to the server. The last requested data will be extended with new data.
+   * @param {Number} page - Page number
+   * @param {Object} data - Data(parameters) to send to the server
+   * @param {Boolean} resetData - If set to true, last requested data will be ignored.
+   */
+  public readData(page: number, data?: Params, resetData?: boolean) {
+    this.dataProvider.readData(page, data, resetData);
+  }
+
+  /**
+   * Send request to server to sync data
+   * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+   * @param {object} options - Options
+   *      @param {String} [options.url] - URL to send the request
+   *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+   *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+   *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
+   *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
+   *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
+   * @returns {boolean} Whether requests or not
+   */
+  public request(requestType: RequestType, options: RequestOptions = {}) {
+    this.dataProvider.request(requestType, options);
+  }
+
+  /**
+   * Requests 'readData' with last requested data.
+   */
+  public reloadData() {
+    this.dataProvider.reloadData();
+  }
+
+  /**
+   * Restores the data to the original data.
+   * (Original data is set by {@link Grid#resetData|resetData}
+   */
+  public restore() {
+    this.resetData(this.dataManager.getOriginData());
+  }
+
+  /**
+   * Expands tree row.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} recursive - true for recursively expand all descendant
+   */
+  public expand(rowKey: RowKey, recursive?: boolean) {
+    this.dispatch('expandByRowKey', rowKey, recursive);
+  }
+
+  /**
+   * Expands all tree row.
+   */
+  public expandAll() {
+    this.dispatch('expandAll');
+  }
+
+  /**
+   * Expands tree row.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {boolean} recursive - true for recursively expand all descendant
+   */
+  public collapse(rowKey: RowKey, recursive?: boolean) {
+    this.dispatch('collapseByRowKey', rowKey, recursive);
+  }
+
+  /**
+   * Collapses all tree row.
+   */
+  public collapseAll() {
+    this.dispatch('collapseAll');
+  }
+
+  /**
+   * Gets the parent of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Object} - the parent row
+   */
+  public getParentRow(rowKey: RowKey) {
+    return getParentRow(this.store, rowKey, true);
+  }
+
+  /**
+   * Gets the children of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<Object>} - the children rows
+   */
+  public getChildRows(rowKey: RowKey) {
+    return getChildRows(this.store, rowKey, true);
+  }
+
+  /**
+   * Gets the ancestors of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<TreeRow>} - the ancestor rows
+   */
+  public getAncestorRows(rowKey: RowKey) {
+    return getAncestorRows(this.store, rowKey);
+  }
+
+  /**
+   * Gets the descendants of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {Array.<Object>} - the descendant rows
+   */
+  public getDescendantRows(rowKey: RowKey) {
+    return getDescendantRows(this.store, rowKey);
+  }
+
+  /**
+   * Gets the depth of the row which has the given row key.
+   * @param {number|string} rowKey - The unique key of the row
+   * @returns {number} - the depth
+   */
+  public getDepth(rowKey: RowKey) {
+    const { rawData } = this.store.data;
+    const row = findProp('rowKey', rowKey, rawData);
+
+    return row ? getDepth(rawData, row) : 0;
+  }
+
+  /**
+   * Returns the rowspan data of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @returns {Object} - Row span data
+   */
+  public getRowSpanData(rowKey: RowKey, columnName: string) {
+    return getRowSpanByRowKey(rowKey, columnName, this.store.data.rawData);
+  }
+
+  /**
+   * reset original data to current data.
+   * (Original data is set by {@link Grid#resetData|resetData}
+   */
+  public resetOriginData() {
+    this.dataManager.setOriginData(this.getData());
+  }
+
+  /** Removes all checked rows.
+   * @param {boolean} [showConfirm] - If set to true, confirm message will be shown before remove.
+   * @returns {boolean} - True if there's at least one row removed.
+   */
+  public removeCheckedRows(showConfirm?: boolean) {
+    const rowKeys = this.getCheckedRowKeys();
+    const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
+
+    if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
+      rowKeys.forEach((rowKey) => {
+        this.removeRow(rowKey);
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Refreshs the layout view. Use this method when the view was rendered while hidden.
+   */
+  public refreshLayout() {
+    const containerEl = this.el.querySelector(`.${cls('container')}`) as HTMLElement;
+    const { parentElement } = this.el;
+
+    this.dispatch('refreshLayout', containerEl, parentElement!);
   }
 }

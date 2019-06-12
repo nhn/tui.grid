@@ -1,8 +1,9 @@
-import { Store, RowKey, Focus } from '../store/types';
-import { getEventBus } from '../event/eventBus';
+import { Store, RowKey, Focus, Data } from '../store/types';
 import GridEvent from '../event/gridEvent';
+import { getEventBus } from '../event/eventBus';
 import { isCellDisabled } from '../query/data';
 import { isFocusedCell } from '../query/focus';
+import { getRowSpanByRowKey, enableRowSpan } from '../helper/rowSpan';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
@@ -33,6 +34,7 @@ export function finishEditing({ focus }: Store, rowKey: RowKey, columnName: stri
 
 export function changeFocus(
   focus: Focus,
+  data: Data,
   rowKey: RowKey | null,
   columnName: string | null,
   id: number
@@ -41,6 +43,7 @@ export function changeFocus(
     return;
   }
 
+  const { rawData, sortOptions } = data;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({
     rowKey,
@@ -52,9 +55,18 @@ export function changeFocus(
   eventBus.trigger('focusChange', gridEvent);
 
   if (!gridEvent.isStopped()) {
+    let focusRowKey = rowKey;
+
+    if (rowKey && columnName && enableRowSpan(sortOptions.columnName)) {
+      const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
+      if (rowSpan) {
+        focusRowKey = rowSpan.mainRowKey;
+      }
+    }
+
     focus.prevColumnName = focus.columnName;
     focus.prevRowKey = focus.rowKey;
-    focus.rowKey = rowKey;
     focus.columnName = columnName;
+    focus.rowKey = focusRowKey;
   }
 }

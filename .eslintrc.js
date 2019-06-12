@@ -17,13 +17,7 @@ module.exports = {
     parser: 'typescript-eslint-parser'
   },
   rules: {
-    'prefer-destructuring': [
-      'error',
-      {
-        object: true,
-        array: false
-      }
-    ],
+    'prefer-destructuring': 0,
     'newline-before-return': 0,
     'padding-line-between-statements': 0,
     '@typescript-eslint/no-non-null-assertion': 0,
@@ -31,6 +25,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-triple-slash-reference': 0,
     '@typescript-eslint/no-object-literal-type-assertion': 0,
+    '@typescript-eslint/no-use-before-define': 0,
     'react/no-unknown-property': 0,
     'accessor-pairs': 0,
     'require-jsdoc': 0,

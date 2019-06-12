@@ -1,28 +1,87 @@
-import { Column, ColumnInfo, Dictionary, Relations, ClipboardCopyOptions } from './types';
-import { OptColumn, OptColumnOptions, OptRowHeader } from '../types';
+import {
+  Column,
+  ColumnInfo,
+  Dictionary,
+  Relations,
+  ClipboardCopyOptions,
+  ComplexColumnInfo,
+  CellEditorOptions,
+  CellRendererOptions
+} from './types';
+import {
+  OptColumn,
+  OptColumnOptions,
+  OptRowHeader,
+  OptTree,
+  OptCellEditor,
+  OptCellRenderer
+} from '../types';
 import { observable } from '../helper/observable';
-import { createMapFromArray, includes } from '../helper/common';
+import { isRowNumColumn } from '../helper/column';
+import {
+  createMapFromArray,
+  includes,
+  omit,
+  isString,
+  isFunction,
+  isObject
+} from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
-import { CellEditorClass } from '../editor/types';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
+const ROW_HEADERS_MAP = {
+  rowNum: '_number',
+  checkbox: '_checked'
+};
 const defMinWidth = {
   ROW_HEADER: 40,
   COLUMN: 50
 };
-
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
-function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
-  if (typeof editor === 'string') {
-    const editInfo = editorMap[editor];
-    return {
-      editor: editInfo[0],
-      editorOptions: { ...editInfo[1], ...editorOptions }
-    };
+function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
+  const editInfo = editorMap[editorType];
+  return {
+    type: editInfo[0],
+    options: {
+      ...editInfo[1],
+      ...options,
+      type: editorType
+    }
+  };
+}
+
+function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
+  if (isFunction(editor)) {
+    return { type: editor };
   }
-  return { editor, editorOptions };
+  if (isString(editor)) {
+    return getBuiltInEditorOptions(editor);
+  }
+  if (isObject(editor)) {
+    return isString(editor.type)
+      ? getBuiltInEditorOptions(editor.type, editor.options)
+      : (editor as CellEditorOptions);
+  }
+  return null;
+}
+
+function getRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
+  if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
+    return renderer as CellRendererOptions;
+  }
+  return { type: DefaultRenderer };
+}
+
+function getTreeInfo(treeColumnOptions: OptTree, name: string) {
+  if (treeColumnOptions && treeColumnOptions.name === name) {
+    const { useIcon = true } = treeColumnOptions;
+
+    return { tree: { useIcon } };
+  }
+
+  return null;
 }
 
 function getRelationMap(relations: Relations[]) {
@@ -53,13 +112,15 @@ function getRelationColumns(relations: Relations[]) {
   return relationColumns;
 }
 
-function createColumn(
+export function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
   relationColumns: string[],
-  gridCopyOptions: ClipboardCopyOptions
+  gridCopyOptions: ClipboardCopyOptions,
+  treeColumnOptions: OptTree
 ): ColumnInfo {
   const {
+    name,
     header,
     width,
     minWidth,
@@ -67,7 +128,6 @@ function createColumn(
     hidden,
     resizable,
     editor,
-    editorOptions,
     renderer,
     relations,
     sortable,
@@ -75,43 +135,44 @@ function createColumn(
     validation
   } = column;
 
+  const editorOptions = getEditorOptions(editor);
+  const rendererOptions = getRendererOptions(renderer);
+
   return observable({
-    ...column,
+    name,
     escapeHTML: !!column.escapeHTML,
-    header: header || column.name,
+    header: header || name,
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
-    renderer: renderer || DefaultRenderer,
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
     baseWidth: (width === 'auto' ? 0 : width) || 0,
     minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
     relationMap: getRelationMap(relations || []),
-    related: includes(relationColumns, column.name),
+    related: includes(relationColumns, name),
     sortable,
-    ...getEditorInfo(editor, editorOptions),
-    validation: validation ? { ...validation } : {}
+    validation: validation ? { ...validation } : {},
+    renderer: rendererOptions,
+    ...(!!editorOptions && { editor: editorOptions }),
+    ...getTreeInfo(treeColumnOptions, name)
   });
 }
 
 function createRowHeader(data: OptRowHeader): ColumnInfo {
-  const rowHeader = typeof data === 'string' ? { name: data } : data;
-  const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
-
-  const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
+  const rowHeader: OptColumn =
+    typeof data === 'string'
+      ? { name: ROW_HEADERS_MAP[data] }
+      : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
+  const { name, header, align, renderer, width, minWidth } = rowHeader;
   const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
+  const rowNumColumn = isRowNumColumn(name);
 
-  const isRowNum = name === '_number';
-
-  let defaultHeader = '';
-
-  if (isRowNum) {
-    defaultHeader = 'No.';
-  } else if (baseRendererOptions.inputType === 'checkbox') {
-    defaultHeader = DEF_ROW_HEADER_INPUT;
-  }
+  const defaultHeader = rowNumColumn ? 'No. ' : DEF_ROW_HEADER_INPUT;
+  const rendererOptions = renderer || {
+    type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
+  };
 
   return observable({
     name,
@@ -119,8 +180,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     hidden: false,
     resizable: false,
     align: align || 'center',
-    renderer: renderer || (isRowNum ? DefaultRenderer : RowHeaderInputRenderer),
-    rendererOptions: baseRendererOptions,
+    renderer: getRendererOptions(rendererOptions),
     fixedWidth: true,
     baseWidth,
     escapeHTML: false,
@@ -134,6 +194,8 @@ interface ColumnOptions {
   rowHeaders: OptRowHeader[];
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;
+  treeColumnOptions: OptTree;
+  complexColumns: ComplexColumnInfo[];
 }
 
 export function create({
@@ -141,7 +203,9 @@ export function create({
   columnOptions,
   rowHeaders,
   copyOptions,
-  keyColumnName
+  keyColumnName,
+  treeColumnOptions,
+  complexColumns
 }: ColumnOptions): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
@@ -149,14 +213,30 @@ export function create({
   }, []);
   const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
   const columnInfos = columns.map((column) =>
-    createColumn(column, columnOptions, relationColumns, copyOptions)
+    createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
+  const {
+    name: treeColumnName,
+    useIcon: treeIcon = true,
+    useCascadingCheckbox: treeCascadingCheckbox = true
+  } = treeColumnOptions;
 
   return observable({
     keyColumnName,
+
     frozenCount: columnOptions.frozenCount || 0,
+
+    dataForColumnCreation: {
+      copyOptions,
+      columnOptions,
+      treeColumnOptions,
+      relationColumns,
+      rowHeaders: rowHeaderInfos
+    },
+
     allColumns,
+    complexHeaderColumns: complexColumns,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
@@ -167,7 +247,7 @@ export function create({
     },
 
     get visibleColumns() {
-      return allColumns.filter(({ hidden }) => !hidden);
+      return this.allColumns.filter(({ hidden }) => !hidden);
     },
 
     get visibleColumnsBySide() {
@@ -190,7 +270,13 @@ export function create({
     },
 
     get validationColumns() {
-      return allColumns.filter(({ validation }) => !!validation);
-    }
+      return this.allColumns.filter(({ validation }) => !!validation);
+    },
+
+    get ignoredColumns() {
+      return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
+    },
+
+    ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
   });
 }

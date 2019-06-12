@@ -152,6 +152,10 @@ export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   return resultMap;
 }
 
+export function isFunction(obj: unknown): obj is Function {
+  return typeof obj === 'function';
+}
+
 export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
@@ -246,6 +250,24 @@ export function isNumber(value: unknown): value is number {
   return typeof value === 'number';
 }
 
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+/**
+ * check the emptiness(included null) of object or array. if obj parameter is null or undefind, return true
+ * @param obj - target object or array
+ * @returns the emptiness of obj
+ */
+export function isEmpty(obj: any) {
+  return (
+    isNull(obj) ||
+    isUndefined(obj) ||
+    (!isUndefined(obj.length) && obj.length === 0) ||
+    Object.keys(obj).length === 0
+  );
+}
+
 export function fromArray<T>(value: ArrayLike<T>): T[] {
   return Array.prototype.slice.call(value);
 }
@@ -292,4 +314,14 @@ export function pruneObject<T>(obj: T) {
   }, obj);
 
   return pruned;
+}
+
+export function omit<T extends object>(obj: T, ...propNames: string[]) {
+  const resultMap = {} as T;
+  for (const key in obj) {
+    if (hasOwnProp(obj, key) && !includes(propNames, key)) {
+      resultMap[key] = obj[key];
+    }
+  }
+  return resultMap;
 }

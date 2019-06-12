@@ -1,17 +1,19 @@
 import { h, Component } from 'preact';
-import { cls, Attributes } from '../helper/dom';
-import { ColumnInfo, ViewRow, CellRenderData, RowKey } from '../store/types';
+import { TreeCellContents } from './treeCellContents';
+import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
+import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
-import { isRowHeader } from '../helper/column';
+import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
 
 interface OwnProps {
   viewRow: ViewRow;
-  columnName: string;
+  columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
+  rowSpanAttr: { rowSpan: number } | null;
 }
 
 interface StoreProps {
@@ -20,6 +22,8 @@ interface StoreProps {
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
   disabled: boolean;
+  treeInfo?: TreeCellInfo;
+  selectedRow: boolean;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -40,7 +44,7 @@ export class BodyCellComp extends Component<Props> {
     } = this.props;
 
     // eslint-disable-next-line new-cap
-    this.renderer = new columnInfo.renderer({
+    this.renderer = new columnInfo.renderer.type({
       grid,
       rowKey,
       columnInfo,
@@ -66,7 +70,7 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.changed) {
+    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
       const {
         grid,
         rowKey,
@@ -76,7 +80,7 @@ export class BodyCellComp extends Component<Props> {
         disabled: allDisabled
       } = nextProps;
 
-      this.renderer.changed({
+      this.renderer.render({
         grid,
         rowKey,
         columnInfo,
@@ -90,57 +94,113 @@ export class BodyCellComp extends Component<Props> {
     }
   }
 
+  private handleMouseMove = (ev: MouseEvent) => {
+    const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
+    this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
+  };
+
+  private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
+    if (!isRowNumColumn(name)) {
+      return;
+    }
+
+    this.props.dispatch('mouseDownRowHeader', rowKey);
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseup', this.clearDocumentEvents);
+    document.addEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private clearDocumentEvents = () => {
+    this.props.dispatch('dragEnd');
+
+    setCursorStyle('');
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.clearDocumentEvents);
+    document.removeEventListener('selectstart', this.handleSelectStart);
+  };
+
+  private handleSelectStart = (ev: Event) => {
+    ev.preventDefault();
+  };
+
   public render() {
     const {
       rowKey,
       renderData: { disabled, editable, invalidState, className },
       columnInfo: { align, valign, name, validation = {} },
-      disabled: allDisabled
+      disabled: allDisabled,
+      treeInfo,
+      selectedRow,
+      rowSpanAttr
     } = this.props;
 
     const style = {
       textAlign: align,
       ...(valign && { verticalAlign: valign })
     };
-    const attrs: Attributes = {
-      'data-row-key': String(rowKey),
-      'data-column-name': name
+    const attrs = {
+      [dataAttr.ROW_KEY]: String(rowKey),
+      [dataAttr.COLUMN_NAME]: name
     };
+    const classNames = `${cls(
+      'cell',
+      'cell-has-input',
+      [editable, 'cell-editable'],
+      [isRowHeader(name), 'cell-row-header'],
+      [validation.required || false, 'cell-required'],
+      [!!invalidState, 'cell-invalid'],
+      [disabled || allDisabled, 'cell-disabled'],
+      [!!treeInfo, 'cell-has-tree'],
+      [isRowHeader(name) && selectedRow, 'cell-selected']
+    )} ${className}`;
 
-    return (
+    return treeInfo ? (
+      <td {...attrs} style={style} class={classNames}>
+        <div class={cls('tree-wrapper-relative')}>
+          <div
+            class={cls('tree-wrapper-valign-center')}
+            style={{ paddingLeft: treeInfo.indentWidth }}
+            ref={(el) => {
+              this.el = el;
+            }}
+          >
+            <TreeCellContents treeInfo={treeInfo} rowKey={rowKey} />
+          </div>
+        </div>
+      </td>
+    ) : (
       <td
         {...attrs}
+        {...rowSpanAttr}
         style={style}
-        class={`${cls(
-          'cell',
-          'cell-has-input',
-          [editable, 'cell-editable'],
-          [isRowHeader(name), 'cell-row-header'],
-          [validation.required || false, 'cell-required'],
-          [!!invalidState, 'cell-invalid'],
-          [disabled || allDisabled, 'cell-disabled']
-        )} ${className}`}
+        class={classNames}
         ref={(el) => {
           this.el = el;
         }}
+        onMouseDown={(ev) => this.handleMouseDown(ev, name, rowKey)}
       />
     );
   }
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data }, { viewRow, columnName }) => {
-    const { rowKey, valueMap } = viewRow;
+  ({ id, column, data, selection }, { viewRow, columnInfo }) => {
+    const { rowKey, valueMap, treeInfo } = viewRow;
+    const { treeColumnName } = column;
     const { disabled } = data;
     const grid = getInstance(id);
-    const columnInfo = column.allColumnMap[columnName];
+    const { range } = selection;
+    const columnName = columnInfo.name;
 
     return {
       grid,
       rowKey,
       disabled,
       columnInfo,
-      renderData: valueMap[columnName]
+      renderData: valueMap[columnName],
+      ...(columnName === treeColumnName ? { treeInfo } : null),
+      selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
     };
   }
 )(BodyCellComp);
