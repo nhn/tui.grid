@@ -71,7 +71,7 @@ export class EditingLayerInnerComp extends Component<Props> {
           dispatch('sort', columnName, sortOptions.ascending);
         }
       }
-      if (typeof this.editor.beforeDestroy === 'function') {
+      if (isFunction(this.editor.beforeDestroy)) {
         this.editor.beforeDestroy();
       }
       dispatch('finishEditing', rowKey, columnName);

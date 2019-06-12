@@ -60,10 +60,9 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
     return getBuiltInEditorOptions(editor);
   }
   if (isObject(editor)) {
-    if (isString(editor.type)) {
-      return getBuiltInEditorOptions(editor.type, editor.options);
-    }
-    return editor as CellEditorOptions;
+    return isString(editor.type)
+      ? getBuiltInEditorOptions(editor.type, editor.options)
+      : (editor as CellEditorOptions);
   }
   return null;
 }
@@ -155,7 +154,7 @@ export function createColumn(
     sortable,
     validation: validation ? { ...validation } : {},
     renderer: rendererOptions,
-    ...(editorOptions ? { editor: editorOptions } : null),
+    ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
 }
