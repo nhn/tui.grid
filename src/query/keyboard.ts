@@ -1,9 +1,10 @@
 import { CellIndex, Store } from '../store/types';
 import { clamp, isNull } from '../helper/common';
 import {
+  getNextRowIndex,
   getPageMovedIndex,
   getPageMovedPosition,
-  getTreeRowIndex,
+  getPrevRowIndex,
   KeyboardEventCommandType
 } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, enableRowSpan } from '../helper/rowSpan';
@@ -21,26 +22,19 @@ export function getNextCellIndex(
   } = store;
   const { rawData, viewData, sortOptions } = data;
   const columnName = visibleColumns[columnIndex].name;
-  const { treeInfo } = viewData[rowIndex];
 
   switch (command) {
     case 'up':
       if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
       }
-      if (treeInfo) {
-        rowIndex = getTreeRowIndex(rowIndex, heights, command);
-      }
-      rowIndex -= 1;
+      rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
       if (enableRowSpan(sortOptions.columnName)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
       }
-      if (treeInfo) {
-        rowIndex = getTreeRowIndex(rowIndex, heights, command);
-      }
-      rowIndex += 1;
+      rowIndex = getNextRowIndex(rowIndex, heights);
       break;
     case 'left':
       columnIndex -= 1;

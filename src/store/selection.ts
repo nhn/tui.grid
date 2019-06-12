@@ -72,7 +72,7 @@ function getHorizontalStyles(
     }
   }
 
-  width -= cellBorderWidth * 2;
+  width -= cellBorderWidth;
 
   return { left, width };
 }
