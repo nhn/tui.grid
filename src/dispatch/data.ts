@@ -37,7 +37,7 @@ export function setValue(
   columnName: string,
   value: CellValue
 ) {
-  const rawData = data.rawData;
+  const { rawData, sortOptions } = data;
   const targetRow = findProp('rowKey', rowKey, rawData);
   if (!targetRow || targetRow[columnName] === value) {
     return;
@@ -56,7 +56,7 @@ export function setValue(
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
 
-      if (isEmpty(rowSpanMap) || !enableRowSpan(data)) {
+      if (isEmpty(rowSpanMap) || !enableRowSpan(sortOptions.columnName)) {
         return;
       }
 
@@ -279,7 +279,7 @@ export function appendRow(
   row: OptRow,
   options: OptAppendRow
 ) {
-  const { rawData, viewData } = data;
+  const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -292,7 +292,7 @@ export function appendRow(
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
-  if (prevRow && enableRowSpan(data)) {
+  if (prevRow && enableRowSpan(sortOptions.columnName)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -303,7 +303,7 @@ export function appendRow(
 }
 
 export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, options: OptRemoveRow) {
-  const { rawData, viewData } = data;
+  const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
   const nextRow = rawData[rowIdx + 1];
@@ -312,7 +312,7 @@ export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, option
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
-  if (nextRow && enableRowSpan(data)) {
+  if (nextRow && enableRowSpan(sortOptions.columnName)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 

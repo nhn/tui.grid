@@ -29,9 +29,10 @@ function calculateRange(
 
   const start = findIndexByPosition(offsets, scrollPos);
   const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
+  const { rawData, sortOptions } = data;
 
-  if (enableRowSpan(data)) {
-    const maxRowSpanCount = getMaxRowSpanCount(start, data.rawData);
+  if (enableRowSpan(sortOptions.columnName)) {
+    const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
     return [topRowSpanIndex >= 0 ? topRowSpanIndex : 0, end];
