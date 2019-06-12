@@ -26,9 +26,11 @@ let columns: OptColumn[] = [
   {
     name: 'artist',
     width: 200,
-    editor: 'text',
-    editorOptions: {
-      dataType: 'number'
+    editor: {
+      type: 'text',
+      options: {
+        dataType: 'number'
+      }
     }
   },
   {
@@ -36,13 +38,15 @@ let columns: OptColumn[] = [
     name: 'genreCode',
     width: 200,
     formatter: 'listItemText',
-    editor: 'checkbox',
-    editorOptions: {
-      listItems: [
-        { text: 'Pop', value: '1' },
-        { text: 'Rock', value: '2' },
-        { text: 'R&B', value: '3' }
-      ]
+    editor: {
+      type: 'checkbox',
+      options: {
+        listItems: [
+          { text: 'Pop', value: '1' },
+          { text: 'Rock', value: '2' },
+          { text: 'R&B', value: '3' }
+        ]
+      }
     }
   },
   {
@@ -51,9 +55,11 @@ let columns: OptColumn[] = [
     width: 200,
     prefix: 'Type: ',
     formatter: 'listItemText',
-    editor: 'radio',
-    editorOptions: {
-      listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+    editor: {
+      type: 'radio',
+      options: {
+        listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+      }
     }
   },
   {
@@ -61,15 +67,17 @@ let columns: OptColumn[] = [
     name: 'grade',
     width: 200,
     formatter: 'listItemText',
-    editor: 'select',
-    editorOptions: {
-      listItems: [
-        { text: '*', value: '1' },
-        { text: '**', value: '2' },
-        { text: '***', value: '3' },
-        { text: '****', value: '4' },
-        { text: '*****', value: '5' }
-      ]
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: '*', value: '1' },
+          { text: '**', value: '2' },
+          { text: '***', value: '3' },
+          { text: '****', value: '4' },
+          { text: '*****', value: '5' }
+        ]
+      }
     }
   }
 ];
@@ -118,45 +126,55 @@ stories.add(
       },
       {
         name: 'options',
-        editor: 'datePicker',
-        editorOptions: {
-          format: 'yyyy/MM/dd',
-          selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
+        editor: {
+          type: 'datePicker',
+          options: {
+            format: 'yyyy/MM/dd',
+            selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
+          }
         }
       },
       {
         name: 'timePicker',
-        editor: 'datePicker',
-        editorOptions: {
-          format: 'yyyy-MM-dd HH:mm A',
-          timepicker: true
+        editor: {
+          type: 'datePicker',
+          options: {
+            format: 'yyyy-MM-dd HH:mm A',
+            timepicker: true
+          }
         }
       },
       {
         name: 'timePickerWithTab',
-        editor: 'datePicker',
-        editorOptions: {
-          format: 'yyyy-MM-dd HH:mm A',
-          timepicker: {
-            layoutType: 'tab',
-            inputType: 'spinbox'
+        editor: {
+          type: 'datePicker',
+          options: {
+            format: 'yyyy-MM-dd HH:mm A',
+            timepicker: {
+              layoutType: 'tab',
+              inputType: 'spinbox'
+            }
           }
         }
       },
       {
         name: 'monthPicker',
-        editor: 'datePicker',
-        editorOptions: {
-          format: 'yyyy-MM',
-          type: 'month'
+        editor: {
+          type: 'datePicker',
+          options: {
+            format: 'yyyy-MM',
+            type: 'month'
+          }
         }
       },
       {
         name: 'yearPicker',
-        editor: 'datePicker',
-        editorOptions: {
-          format: 'yyyy',
-          type: 'year'
+        editor: {
+          type: 'datePicker',
+          options: {
+            format: 'yyyy',
+            type: 'year'
+          }
         }
       }
     ];

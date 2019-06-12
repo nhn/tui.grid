@@ -86,7 +86,6 @@ export interface CellRenderData {
   prefix: string;
   postfix: string;
   value: CellValue;
-  editorOptions: Dictionary<any>;
   className: string;
 }
 
@@ -158,14 +157,22 @@ export interface FormatterProps {
 
 export type Formatter = ((props: FormatterProps) => string) | string;
 
+export interface CellEditorOptions {
+  type: CellEditorClass;
+  options?: Dictionary<any>;
+}
+
+export interface CellRendererOptions {
+  type: CellRendererClass;
+  options?: Dictionary<any>;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
   minWidth: number;
-  editor?: CellEditorClass;
-  editorOptions?: Dictionary<any>;
-  renderer: CellRendererClass;
-  rendererOptions?: Dictionary<any>;
+  editor?: CellEditorOptions;
+  renderer: CellRendererOptions;
   copyOptions?: ClipboardCopyOptions;
   hidden: boolean;
   formatter?: Formatter;

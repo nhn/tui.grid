@@ -10,7 +10,8 @@ import {
   PageOptions,
   Validation,
   RowKey,
-  ComplexColumnInfo
+  ComplexColumnInfo,
+  CellEditorOptions
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -89,15 +90,23 @@ interface OptTree {
   useCascadingCheckbox?: boolean;
 }
 
+type TypeObjectOptions<T> =
+  | T
+  | {
+      type: T;
+      options?: Dictionary<any>;
+    };
+
+export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
+export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
+
 export interface OptColumn {
   name: string;
   header?: string;
   hidden?: boolean;
   width?: number | 'auto';
-  renderer?: CellRendererClass;
-  rendererOptions?: Dictionary<any>;
-  editor?: string | CellEditorClass;
-  editorOptions?: Dictionary<any>;
+  renderer?: OptCellRenderer;
+  editor?: OptCellEditor;
   formatter?: Formatter;
   defaultValue?: CellValue;
   prefix?: Formatter;

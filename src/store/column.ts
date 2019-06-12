@@ -4,15 +4,30 @@ import {
   Dictionary,
   Relations,
   ClipboardCopyOptions,
-  ComplexColumnInfo
+  ComplexColumnInfo,
+  CellEditorOptions,
+  CellRendererOptions
 } from './types';
-import { OptColumn, OptColumnOptions, OptRowHeader, OptTree } from '../types';
+import {
+  OptColumn,
+  OptColumnOptions,
+  OptRowHeader,
+  OptTree,
+  OptCellEditor,
+  OptCellRenderer
+} from '../types';
 import { observable } from '../helper/observable';
-import { createMapFromArray, includes, omit } from '../helper/common';
 import { isRowNumColumn } from '../helper/column';
+import {
+  createMapFromArray,
+  includes,
+  omit,
+  isString,
+  isFunction,
+  isObject
+} from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
-import { CellEditorClass } from '../editor/types';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
 
 const ROW_HEADERS_MAP = {
@@ -25,15 +40,38 @@ const defMinWidth = {
 };
 const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
-function getEditorInfo(editor?: string | CellEditorClass, editorOptions?: Dictionary<any>) {
-  if (typeof editor === 'string') {
-    const editInfo = editorMap[editor];
-    return {
-      editor: editInfo[0],
-      editorOptions: { ...editInfo[1], ...editorOptions }
-    };
+function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
+  const editInfo = editorMap[editorType];
+  return {
+    type: editInfo[0],
+    options: {
+      ...editInfo[1],
+      ...options,
+      type: editorType
+    }
+  };
+}
+
+function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
+  if (isFunction(editor)) {
+    return { type: editor };
   }
-  return { editor, editorOptions };
+  if (isString(editor)) {
+    return getBuiltInEditorOptions(editor);
+  }
+  if (isObject(editor)) {
+    return isString(editor.type)
+      ? getBuiltInEditorOptions(editor.type, editor.options)
+      : (editor as CellEditorOptions);
+  }
+  return null;
+}
+
+function getRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
+  if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
+    return renderer as CellRendererOptions;
+  }
+  return { type: DefaultRenderer };
 }
 
 function getTreeInfo(treeColumnOptions: OptTree, name: string) {
@@ -90,7 +128,6 @@ export function createColumn(
     hidden,
     resizable,
     editor,
-    editorOptions,
     renderer,
     relations,
     sortable,
@@ -98,14 +135,16 @@ export function createColumn(
     validation
   } = column;
 
+  const editorOptions = getEditorOptions(editor);
+  const rendererOptions = getRendererOptions(renderer);
+
   return observable({
-    ...column,
+    name,
     escapeHTML: !!column.escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
     resizable: Boolean(resizable),
     align: align || 'left',
-    renderer: renderer || DefaultRenderer,
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
     baseWidth: (width === 'auto' ? 0 : width) || 0,
@@ -113,8 +152,9 @@ export function createColumn(
     relationMap: getRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,
-    ...getEditorInfo(editor, editorOptions),
     validation: validation ? { ...validation } : {},
+    renderer: rendererOptions,
+    ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
 }
@@ -124,20 +164,15 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     typeof data === 'string'
       ? { name: ROW_HEADERS_MAP[data] }
       : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
-  const { name, header, align, renderer, rendererOptions, width, minWidth } = rowHeader;
-
-  const baseRendererOptions = rendererOptions || { inputType: 'checkbox' };
+  const { name, header, align, renderer, width, minWidth } = rowHeader;
   const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
   const rowNumColumn = isRowNumColumn(name);
 
-  let defaultHeader = '';
-
-  if (rowNumColumn) {
-    defaultHeader = 'No.';
-  } else if (baseRendererOptions.inputType === 'checkbox') {
-    defaultHeader = DEF_ROW_HEADER_INPUT;
-  }
+  const defaultHeader = rowNumColumn ? 'No. ' : DEF_ROW_HEADER_INPUT;
+  const rendererOptions = renderer || {
+    type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
+  };
 
   return observable({
     name,
@@ -145,8 +180,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     hidden: false,
     resizable: false,
     align: align || 'center',
-    renderer: renderer || (rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer),
-    rendererOptions: baseRendererOptions,
+    renderer: getRendererOptions(rendererOptions),
     fixedWidth: true,
     baseWidth,
     escapeHTML: false,

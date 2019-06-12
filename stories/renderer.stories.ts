@@ -41,7 +41,7 @@ class ToolTipRenderer implements CellRenderer {
     this.el = el;
     this.tooltip = tooltip;
     this.value = renderData.value;
-    this.changed(renderData);
+    this.render(renderData);
   }
 
   private showTooltip = () => {
@@ -65,7 +65,7 @@ class ToolTipRenderer implements CellRenderer {
     this.el.appendChild(this.tooltip);
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.value = props.value;
     this.el.innerHTML = String(props.value);
     this.tooltip.innerHTML = String(props.value);
@@ -78,7 +78,7 @@ class SliderRenderer implements CellRenderer {
   public constructor(props: CellRendererProps) {
     const el = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
-    const { min, max } = props.columnInfo.rendererOptions;
+    const { min, max } = props.columnInfo.renderer.options;
 
     el.type = 'range';
     el.min = String(min);
@@ -93,14 +93,14 @@ class SliderRenderer implements CellRenderer {
     });
 
     this.el = el;
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.value = String(props.value);
   }
 }
@@ -118,14 +118,14 @@ class SingleCheckRenderer implements CellRenderer {
     });
 
     this.el = el;
-    this.changed(props);
+    this.render(props);
   }
 
   public getElement() {
     return this.el;
   }
 
-  public changed(props: CellRendererProps) {
+  public render(props: CellRendererProps) {
     this.el.checked = Boolean(props.value);
   }
 }
@@ -134,8 +134,10 @@ const columns: OptColumn[] = [
   { name: 'name', renderer: ToolTipRenderer, align: 'center' },
   {
     name: 'score',
-    renderer: SliderRenderer,
-    rendererOptions: { min: 10, max: 30 },
+    renderer: {
+      type: SliderRenderer,
+      options: { min: 10, max: 30 }
+    },
     align: 'center'
   },
   { name: 'vip', renderer: SingleCheckRenderer, align: 'center' }

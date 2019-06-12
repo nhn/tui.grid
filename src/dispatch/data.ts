@@ -122,7 +122,6 @@ export function setColumnValues(
 
 export function check(store: Store, rowKey: RowKey) {
   const { allColumnMap, treeColumnName = '' } = store.column;
-  const { rendererOptions = {} } = allColumnMap._checked;
   const eventBus = getEventBus(store.id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -134,9 +133,6 @@ export function check(store: Store, rowKey: RowKey) {
    */
   eventBus.trigger('check', gridEvent);
 
-  if (rendererOptions.inputType === 'radio') {
-    setAllRowAttribute(store, 'checked', false);
-  }
   setRowAttribute(store, rowKey, 'checked', true);
 
   if (allColumnMap[treeColumnName]) {
@@ -165,19 +161,11 @@ export function uncheck(store: Store, rowKey: RowKey) {
 }
 
 export function checkAll(store: Store) {
-  const { rendererOptions = {} } = store.column.allColumnMap._checked;
-
-  if (rendererOptions.inputType !== 'radio') {
-    setAllRowAttribute(store, 'checked', true);
-  }
+  setAllRowAttribute(store, 'checked', true);
 }
 
 export function uncheckAll(store: Store) {
-  const { rendererOptions = {} } = store.column.allColumnMap._checked;
-
-  if (rendererOptions.inputType !== 'radio') {
-    setAllRowAttribute(store, 'checked', false);
-  }
+  setAllRowAttribute(store, 'checked', false);
 }
 
 export function changeSortBtn({ data }: Store, columnName: string, ascending: boolean) {

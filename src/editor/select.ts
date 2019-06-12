@@ -1,18 +1,12 @@
-import { CellEditor, CellEditorProps } from './types';
+import { CellEditor, CellEditorProps, ListItemOptions } from './types';
 import { CellValue } from '../store/types';
 
-export interface Options {
-  listItems: {
-    text: string;
-    value: CellValue;
-  }[];
-}
 export class SelectEditor implements CellEditor {
   private el: HTMLSelectElement;
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('select');
-    const { listItems } = props.editorOptions as Options;
+    const { listItems } = props.columnInfo.editor!.options as ListItemOptions;
 
     listItems.forEach(({ text, value }) => {
       el.appendChild(this.createOptions(text, value));
@@ -38,7 +32,7 @@ export class SelectEditor implements CellEditor {
     return this.el.value;
   }
 
-  public start() {
+  public mounted() {
     this.el.focus();
   }
 }

@@ -44,11 +44,14 @@ export class DatePickerEditor implements CellEditor {
     this.inputEl = this.createInputElement();
     const calendarWrapper = this.createCalendarWrapper();
 
-    const { editorOptions } = props.columnInfo;
+    const { options } = props.columnInfo.editor!;
 
-    if (editorOptions && editorOptions.format) {
-      format = editorOptions.format;
-      delete editorOptions.format;
+    if (options) {
+      delete options.type;
+      if (options.format) {
+        format = options.format;
+        delete options.format;
+      }
     }
 
     if (isNumber(props.value) || isString(props.value)) {
@@ -66,7 +69,7 @@ export class DatePickerEditor implements CellEditor {
 
     this.datePickerEl = new TuiDatePicker(
       calendarWrapper,
-      deepMergedCopy(defaultOptions, editorOptions || {})
+      deepMergedCopy(defaultOptions, options || {})
     );
   }
 
@@ -78,7 +81,7 @@ export class DatePickerEditor implements CellEditor {
     return this.inputEl.value;
   }
 
-  public start() {
+  public mounted() {
     this.inputEl.select();
     this.datePickerEl.open();
   }
