@@ -7,10 +7,11 @@ import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
-import { isRowHeader, isCheckboxColumn } from '../helper/column';
+import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/column';
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
+import { findProp } from '../helper/common';
 
 interface OwnProps {
   side: Side;
@@ -31,21 +32,35 @@ type Props = OwnProps & StoreProps & DispatchProps;
 class HeaderAreaComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private startSelectedName: string | null = null;
+
   private handleDblClick = (ev: MouseEvent) => {
     ev.stopPropagation();
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
-    this.props.dispatch('dragMoveHeader', { pageX, pageY });
+    this.props.dispatch('dragMoveHeader', { pageX, pageY }, this.startSelectedName!);
   };
 
-  private handleMouseDown = (_: MouseEvent, name: string, sortable?: boolean) => {
-    if (sortable) {
+  private handleMouseDown = (ev: MouseEvent) => {
+    const { dispatch, columns, complexHeaderColumns } = this.props;
+    const name = (ev.target as HTMLElement).getAttribute('data-column-name')!;
+    const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
+
+    if (isRowHeader(name)) {
       return;
     }
 
-    this.props.dispatch('mouseDownHeader', name);
+    if (!parentHeader) {
+      const { sortable } = findProp('name', name, columns)!;
+      if (sortable) {
+        return;
+      }
+    }
+
+    this.startSelectedName = name;
+    dispatch('mouseDownHeader', name, parentHeader);
 
     document.addEventListener('mousemove', this.handleMouseMove);
     document.addEventListener('mouseup', this.clearDocumentEvents);
@@ -91,7 +106,7 @@ class HeaderAreaComp extends Component<Props> {
           this.el = el;
         }}
       >
-        <table class={cls('table')}>
+        <table class={cls('table')} onMouseDown={this.handleMouseDown}>
           <ColGroup side={side} useViewport={false} />
           {complexHeaderColumns.length ? (
             <ComplexHeader side={side} />
@@ -106,7 +121,6 @@ class HeaderAreaComp extends Component<Props> {
                       !isRowHeader(name) && this.isSelected(index),
                       'cell-selected'
                     ])}
-                    onMouseDown={(ev) => this.handleMouseDown(ev, name, sortable)}
                   >
                     {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
                     {!!sortable && <SortingButton />}

@@ -14,6 +14,7 @@ import {
   Range
 } from '../store/types';
 import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getChildColumnRange } from '../query/selection';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -316,24 +317,38 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   }
 }
 
-export function mouseDownHeader(store: Store, name: string) {
+export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
   const { data, selection, id, column } = store;
-  const { visibleColumns, rowHeaderCount } = column;
-  const columnIndex = findPropIndex('name', name, visibleColumns) - rowHeaderCount;
-  const lastRowIndex = data.viewData.length - 1;
+  const { visibleColumns, rowHeaderCount, complexHeaderColumns } = column;
+  const endRowIndex = data.viewData.length - 1;
+
+  let startColumnIndex, endColumnIndex;
+
+  if (parentHeader) {
+    [startColumnIndex, endColumnIndex] = getChildColumnRange(
+      visibleColumns,
+      complexHeaderColumns,
+      name,
+      rowHeaderCount
+    );
+  } else {
+    startColumnIndex = endColumnIndex =
+      findPropIndex('name', name, visibleColumns) - rowHeaderCount;
+  }
+
   const inputRange: SelectionRange = {
-    row: [0, lastRowIndex],
-    column: [columnIndex, columnIndex]
+    row: [0, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function dragMoveHeader(store: Store, dragData: DragData) {
+export function dragMoveHeader(store: Store, dragData: DragData, startSelectedName: string) {
   const { dimension, viewport, columnCoords, selection, column, id } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { areaWidth, widths } = columnCoords;
-  const { rowHeaderCount } = column;
+  const { rowHeaderCount, visibleColumns, complexHeaderColumns } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
 
@@ -341,17 +356,31 @@ export function dragMoveHeader(store: Store, dragData: DragData) {
     return;
   }
 
+  let [startColumnIdx, endColumnIdx] = getChildColumnRange(
+    visibleColumns,
+    complexHeaderColumns,
+    startSelectedName,
+    rowHeaderCount
+  );
+
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
   const columnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
-  const startColumnIndex = curInputRange.column[0];
   const rowIndex = curInputRange.row[1];
+
+  if (columnIndex < startColumnIdx) {
+    startColumnIdx = columnIndex;
+  }
+
+  if (columnIndex > endColumnIdx) {
+    endColumnIdx = columnIndex;
+  }
 
   if (columnIndex >= 0) {
     const inputRange: SelectionRange = {
       row: [0, rowIndex],
-      column: [startColumnIndex, columnIndex]
+      column: [startColumnIdx, endColumnIdx]
     };
 
     changeSelectionRange(selection, inputRange, id);
@@ -363,10 +392,10 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumns, rowHeaderCount } = column;
   const rowIndex = findPropIndex('rowKey', rowKey, data.rawData);
-  const lastColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
+  const endColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
   const inputRange: SelectionRange = {
     row: [rowIndex, rowIndex],
-    column: [0, lastColumnIndex]
+    column: [0, endColumnIndex]
   };
 
   changeSelectionRange(selection, inputRange, id);

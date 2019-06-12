@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { ComplexColumnInfo, ColumnInfo, Side } from '../store/types';
+import { ComplexColumnInfo, ColumnInfo, Side, Range } from '../store/types';
 import { cls } from '../helper/dom';
 import { isCheckboxColumn } from '../helper/column';
 import { connect } from './hoc';
@@ -7,6 +7,8 @@ import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
+import { isRowHeader } from '../helper/column';
+import { getChildColumnRange } from '../query/selection';
 
 interface OwnProps {
   side: Side;
@@ -16,6 +18,9 @@ interface StoreProps {
   headerHeight: number;
   columns: ColumnInfo[];
   complexHeaderColumns: ComplexColumnInfo[];
+  columnSelectionRange: Range | null;
+  visibleColumns: ColumnInfo[];
+  rowHeaderCount: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -55,6 +60,34 @@ class ComplexHeaderComp extends Component<Props> {
     return Math.max(...lengths);
   }
 
+  private isSelected(name: string) {
+    const {
+      columnSelectionRange,
+      visibleColumns,
+      rowHeaderCount,
+      complexHeaderColumns
+    } = this.props;
+
+    if (!columnSelectionRange) {
+      return false;
+    }
+
+    const [selectionStart, selectionEnd] = columnSelectionRange;
+    const [columnStart, columnEnd] = getChildColumnRange(
+      visibleColumns,
+      complexHeaderColumns,
+      name,
+      rowHeaderCount
+    );
+
+    return (
+      columnStart >= selectionStart &&
+      columnStart <= selectionEnd &&
+      columnEnd >= selectionStart &&
+      columnEnd <= selectionEnd
+    );
+  }
+
   private createTableHeaderComponent(
     column: ComplexColumnInfo,
     height: number,
@@ -67,7 +100,10 @@ class ComplexHeaderComp extends Component<Props> {
       <th
         key={name}
         data-column-name={name}
-        class={cls('cell', 'cell-header')}
+        class={cls('cell', 'cell-header', [
+          !isRowHeader(name) && this.isSelected(name),
+          'cell-selected'
+        ])}
         height={height}
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
@@ -132,13 +168,17 @@ class ComplexHeaderComp extends Component<Props> {
 
 export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
-    column: { visibleColumnsBySide, complexHeaderColumns },
-    dimension: { headerHeight }
+    column: { rowHeaderCount, visibleColumns, visibleColumnsBySide, complexHeaderColumns },
+    dimension: { headerHeight },
+    selection: { rangeBySide }
   } = store;
 
   return {
     headerHeight,
     columns: visibleColumnsBySide[side],
-    complexHeaderColumns
+    complexHeaderColumns,
+    columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
+    visibleColumns,
+    rowHeaderCount
   };
 })(ComplexHeaderComp);
