@@ -8,7 +8,6 @@ import { getDataProvider, getPaginationManager } from '../instance';
 import { PageOptions } from '../store/types';
 import { DataProvider } from '../dataSource/types';
 import { PaginationManager } from '../pagination/paginationManager';
-import 'tui-pagination/dist/tui-pagination.css';
 
 interface StoreProps {
   pageOptions: PageOptions;
