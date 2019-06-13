@@ -59,9 +59,6 @@ export function showColumn({ column }: Store, columnName: string) {
   }
 }
 
-export function setComplexHeaderColumns(
-  { column }: Store,
-  complexHeaderColumns: ComplexColumnInfo[]
-) {
-  column.complexHeaderColumns = complexHeaderColumns;
+export function setComplexHeaderColumns(store: Store, complexHeaderColumns: ComplexColumnInfo[]) {
+  store.column.complexHeaderColumns = complexHeaderColumns;
 }

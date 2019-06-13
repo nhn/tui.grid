@@ -16,16 +16,16 @@ export function setBodyHeight({ dimension }: Store, bodyHeight: number) {
   dimension.bodyHeight = Math.max(bodyHeight, dimension.minBodyHeight);
 }
 
-export function setOffsetTop({ dimension }: Store, offsetTop: number) {
-  dimension.offsetTop = offsetTop;
+export function setOffsetTop(store: Store, offsetTop: number) {
+  store.dimension.offsetTop = offsetTop;
 }
 
-export function setOffsetLeft({ dimension }: Store, offsetLeft: number) {
-  dimension.offsetLeft = offsetLeft;
+export function setOffsetLeft(store: Store, offsetLeft: number) {
+  store.dimension.offsetLeft = offsetLeft;
 }
 
-export function setHeaderHeight({ dimension }: Store, height: number) {
-  dimension.headerHeight = height;
+export function setHeaderHeight(store: Store, height: number) {
+  store.dimension.headerHeight = height;
 }
 
 export function refreshLayout(store: Store, containerEl: HTMLElement, parentEl: HTMLElement) {

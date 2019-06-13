@@ -291,13 +291,13 @@ export default class Grid {
    * @param {number} [options.height] -  The height value
    * @param {Array} [options.complexColumns] - The complex columns info
    */
-  public setHeader(options: OptHeader) {
-    if (options.height) {
-      this.dispatch('setHeaderHeight', options.height);
+  public setHeader({ height, complexColumns }: OptHeader) {
+    if (height) {
+      this.dispatch('setHeaderHeight', height);
     }
 
-    if (options.complexColumns) {
-      this.dispatch('setComplexHeaderColumns', options.complexColumns);
+    if (complexColumns) {
+      this.dispatch('setComplexHeaderColumns', complexColumns);
     }
   }
 
