@@ -35,7 +35,7 @@ If you want to apply your own styles to the grid, you can extend the preset them
 ```javascript
 tui.Grid.applyTheme('striped', {
     cell: {
-        head: {
+        header: {
             background: '#eef'
         },
         evenRow: {
@@ -65,11 +65,11 @@ tui.Grid.applyTheme('default',
             showVerticalBorder: false,
             showHorizontalBorder: true
         },
-        head: {
+        header: {
             background: '#fff',
             border: '#e0e0e0'
         },
-        selectedHead: {
+        selectedHeader: {
             background: '#e0e0e0'
         }
     }
