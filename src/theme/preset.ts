@@ -48,14 +48,14 @@ export const presetDefault = {
       showVerticalBorder: false,
       showHorizontalBorder: true
     },
-    head: {
+    header: {
       background: '#fff',
       border: '#eee',
       text: '#222',
       showVerticalBorder: true,
       showHorizontalBorder: true
     },
-    rowHead: {
+    rowHeader: {
       background: '#fff',
       border: '#eee',
       text: '#333',
@@ -68,10 +68,10 @@ export const presetDefault = {
       text: '#333',
       showVerticalBorder: false
     },
-    selectedHead: {
+    selectedHeader: {
       background: '#e5f6ff'
     },
-    selectedRowHead: {
+    selectedRowHeader: {
       background: '#e5f6ff'
     },
     focused: {
@@ -130,13 +130,13 @@ export const clean = deepMergedCopy(presetDefault, {
       showVerticalBorder: false,
       showHorizontalBorder: false
     },
-    head: {
+    header: {
       background: '#f9f9f9',
       border: '#eee',
       showVerticalBorder: true,
       showHorizontalBorder: true
     },
-    rowHead: {
+    rowHeader: {
       border: '#eee',
       showVerticalBorder: false,
       showHorizontalBorder: false
@@ -172,13 +172,13 @@ export const striped = deepMergedCopy(presetDefault, {
       showVerticalBorder: false,
       showHorizontalBorder: false
     },
-    head: {
+    header: {
       background: '#eee',
       border: '#fff',
       showVerticalBorder: true,
       showHorizontalBorder: true
     },
-    rowHead: {
+    rowHeader: {
       border: '#fff',
       showVerticalBorder: false,
       showHorizontalBorder: false
