@@ -1,4 +1,4 @@
-import { Store, Side } from '../store/types';
+import { Store, Side, ComplexColumnInfo } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn } from '../store/column';
 import { createViewRow } from '../store/data';
@@ -57,4 +57,11 @@ export function showColumn({ column }: Store, columnName: string) {
   if (columnItem) {
     columnItem.hidden = false;
   }
+}
+
+export function setComplexHeaderColumns(
+  { column }: Store,
+  complexHeaderColumns: ComplexColumnInfo[]
+) {
+  column.complexHeaderColumns = complexHeaderColumns;
 }
