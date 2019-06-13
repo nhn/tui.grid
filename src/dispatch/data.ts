@@ -406,7 +406,7 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
   data.pageOptions = { ...pageOptions, perPage };
 }
 
-export function changeColumnTitlesByName({ column }: Store, columnsMap: Dictionary<string>) {
+export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
   const { allColumns, complexHeaderColumns } = column;
 
   Object.keys(columnsMap).forEach((key) => {

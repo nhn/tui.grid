@@ -96,8 +96,8 @@ describe('setHeader()', () => {
   });
 });
 
-describe.only('setColumnTitles()', () => {
-  it('change column titles', () => {
+describe.only('setColumnHeaders()', () => {
+  it('change column headers', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
 
     cy.createGrid({
@@ -115,7 +115,7 @@ describe.only('setColumnTitles()', () => {
       }
     });
 
-    cy.gridInstance().invoke('setColumnTitles', {
+    cy.gridInstance().invoke('setColumnHeaders', {
       id: '_id',
       name: '_name',
       mergeColumn1: '_info'

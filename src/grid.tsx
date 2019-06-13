@@ -540,8 +540,8 @@ export default class Grid {
    *      columnName3: 'title3'
    * }
    */
-  public setColumnTitles(columnsMap: Dictionary<string>) {
-    this.dispatch('changeColumnTitlesByName', columnsMap);
+  public setColumnHeaders(columnsMap: Dictionary<string>) {
+    this.dispatch('changeColumnHeadersByName', columnsMap);
   }
 
   /**
