@@ -25,7 +25,7 @@ const styleGenMethodMap = {
 };
 
 const styleGenAreaMethodMap = {
-  header: styleGen.headArea,
+  header: styleGen.headerArea,
   body: styleGen.bodyArea,
   summary: styleGen.summaryArea
 };
@@ -34,8 +34,8 @@ const styleGenCellMethodMap = {
   normal: styleGen.cell,
   dummy: styleGen.cellDummy,
   editable: styleGen.cellEditable,
-  head: styleGen.cellHead,
-  rowHead: styleGen.cellRowHead,
+  header: styleGen.cellHeader,
+  rowHeader: styleGen.cellRowHeader,
   summary: styleGen.cellSummary,
   oddRow: styleGen.cellOddRow,
   evenRow: styleGen.cellEvenRow,
@@ -43,8 +43,8 @@ const styleGenCellMethodMap = {
   disabled: styleGen.cellDisabled,
   invalid: styleGen.cellInvalid,
   currentRow: styleGen.cellCurrentRow,
-  selectedHead: styleGen.cellSelectedHead,
-  selectedRowHead: styleGen.cellSelectedRowHead,
+  selectedHeader: styleGen.cellSelectedHeader,
+  selectedRowHeader: styleGen.cellSelectedRowHeader,
   focused: styleGen.cellFocused,
   focusedInactive: styleGen.cellFocusedInactive
 };
