@@ -131,6 +131,7 @@ export interface OptColumnOptions {
   minWidth?: number;
   frozenCount?: number;
   frozenBorderWidth?: number;
+  resizable?: boolean;
 }
 
 export interface OptHeightResizeHandleStyle {
