@@ -5,7 +5,8 @@ import {
   SelectionRange,
   RowAttributes,
   RowAttributeValue,
-  PageOptions
+  PageOptions,
+  Dictionary
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -403,4 +404,24 @@ export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHe
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
   data.pageOptions = { ...pageOptions, perPage };
+}
+
+export function changeColumnTitlesByName({ column }: Store, columnsMap: Dictionary<string>) {
+  const { allColumns, complexHeaderColumns } = column;
+
+  Object.keys(columnsMap).forEach((key) => {
+    const col = findProp('name', key, allColumns);
+    if (col) {
+      col.header = columnsMap[key];
+    }
+
+    if (complexHeaderColumns.length) {
+      const complexCol = findProp('name', key, complexHeaderColumns);
+      if (complexCol) {
+        complexCol.header = columnsMap[key];
+      }
+    }
+  });
+
+  notify(column, 'allColumns');
 }

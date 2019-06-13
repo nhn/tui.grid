@@ -95,3 +95,40 @@ describe('setHeader()', () => {
     cy.get('[data-column-name=mergeColumn1]').should('have.text', 'information');
   });
 });
+
+describe.only('setColumnTitles()', () => {
+  it('change column titles', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        complexColumns: [
+          {
+            header: 'info',
+            name: 'mergeColumn1',
+            childNames: ['id', 'name']
+          }
+        ]
+      }
+    });
+
+    cy.gridInstance().invoke('setColumnTitles', {
+      id: '_id',
+      name: '_name',
+      mergeColumn1: '_info'
+    });
+
+    cy.get('[data-column-name=id]')
+      .eq(0)
+      .should('have.text', '_id');
+
+    cy.get('[data-column-name=name]')
+      .eq(0)
+      .should('have.text', '_name');
+
+    cy.get('[data-column-name=mergeColumn1]').should('have.text', '_info');
+  });
+});

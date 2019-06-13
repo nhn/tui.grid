@@ -532,10 +532,16 @@ export default class Grid {
 
   /**
    * Set columns title
-   * @param {string} columnsMap - columns map to be change
+   * @param {Object} columnsMap - columns map to be change
+   * @example
+   * {
+   *      columnName1: 'title1',
+   *      columnName2: 'title2',
+   *      columnName3: 'title3'
+   * }
    */
-  public setColumnTitles() {
-    // @TODO implements
+  public setColumnTitles(columnsMap: Dictionary<string>) {
+    this.dispatch('changeColumnTitlesByName', columnsMap);
   }
 
   /**
