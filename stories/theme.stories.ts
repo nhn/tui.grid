@@ -189,7 +189,7 @@ stories.add('applyTheme - customTheme', () => {
         background: '#e8edff',
         border: '#fff'
       },
-      head: {
+      header: {
         background: '#b9c9fe',
         border: '#aabcfe',
         text: '#039'
@@ -197,7 +197,7 @@ stories.add('applyTheme - customTheme', () => {
       editable: {
         background: '#fbfbfb'
       },
-      selectedHead: {
+      selectedHeader: {
         background: '#d8d8d8'
       },
       focused: {
