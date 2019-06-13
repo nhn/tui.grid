@@ -209,10 +209,10 @@ export interface OptCellDummyStyle {
 
 export interface OptTableCellStyle {
   normal?: OptCellStyle;
-  head?: OptCellStyle;
-  selectedHead?: OptBasicCellStyle;
-  rowHead?: OptCellStyle;
-  selectedRowHead?: OptBasicCellStyle;
+  header?: OptCellStyle;
+  selectedHeader?: OptBasicCellStyle;
+  rowHeader?: OptCellStyle;
+  selectedRowHeader?: OptBasicCellStyle;
   summary?: OptCellStyle;
   focused?: OptCellFocusedStyle;
   focusedInactive?: OptCellFocusedStyle;
@@ -313,9 +313,9 @@ export interface OptCellDummyStyle {
 
 export interface OptTableCellStyle {
   normal?: OptCellStyle;
-  head?: OptCellStyle;
-  selectedHead?: OptBasicCellStyle;
-  rowHead?: OptCellStyle;
+  header?: OptCellStyle;
+  selectedHeader?: OptBasicCellStyle;
+  rowHeader?: OptCellStyle;
   selectedRowHead?: OptBasicCellStyle;
   summary?: OptCellStyle;
   focused?: OptCellFocusedStyle;
