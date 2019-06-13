@@ -96,7 +96,7 @@ describe('setHeader()', () => {
   });
 });
 
-describe.only('setColumnHeaders()', () => {
+describe('setColumnHeaders()', () => {
   it('change column headers', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
 

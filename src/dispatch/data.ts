@@ -407,18 +407,18 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
-  const { allColumns, complexHeaderColumns } = column;
+  const { complexHeaderColumns, allColumnMap } = column;
 
-  Object.keys(columnsMap).forEach((key) => {
-    const col = findProp('name', key, allColumns);
+  Object.keys(columnsMap).forEach((columnName) => {
+    const col = allColumnMap[columnName];
     if (col) {
-      col.header = columnsMap[key];
+      col.header = columnsMap[columnName];
     }
 
     if (complexHeaderColumns.length) {
-      const complexCol = findProp('name', key, complexHeaderColumns);
+      const complexCol = findProp('name', columnName, complexHeaderColumns);
       if (complexCol) {
-        complexCol.header = columnsMap[key];
+        complexCol.header = columnsMap[columnName];
       }
     }
   });
