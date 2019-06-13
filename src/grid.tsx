@@ -151,26 +151,26 @@ export default class Grid {
    *                 normal cells are visible.
    *             @param {boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
    *                 normal cells are visible.
-   *         @param {Object} [extOptions.cell.head] - Styles for head cells.
-   *             @param {string} [extOptions.cell.head.background] - Background color of head cells.
-   *             @param {string} [extOptions.cell.head.border] - border color of head cells.
-   *             @param {string} [extOptions.cell.head.text] - text color of head cells.
-   *             @param {boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
-   *                 head cells are visible.
-   *             @param {boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
-   *                 head cells are visible.
-   *         @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
-   *             @param {string} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
-   *         @param {Object} [extOptions.cell.rowHead] - Styles for row's head cells.
-   *             @param {string} [extOptions.cell.rowHead.background] - Background color of row's head cells.
-   *             @param {string} [extOptions.cell.rowHead.border] - border color of row's head cells.
-   *             @param {string} [extOptions.cell.rowHead.text] - text color of row's head cells.
-   *             @param {boolean} [extOptions.cell.rowHead.showVerticalBorder] - Whether vertical borders of
-   *                 row's head cells are visible.
-   *             @param {boolean} [extOptions.cell.rowHead.showHorizontalBorder] - Whether horizontal borders of
-   *                 row's head cells are visible.
-   *         @param {Object} [extOptions.cell.selectedRowHead] - Styles for selected row's head cells.
-   *             @param {string} [extOptions.cell.selectedRowHead.background] - background color of selected row's haed cells.
+   *         @param {Object} [extOptions.cell.header] - Styles for header cells.
+   *             @param {string} [extOptions.cell.header.background] - Background color of header cells.
+   *             @param {string} [extOptions.cell.header.border] - border color of header cells.
+   *             @param {string} [extOptions.cell.header.text] - text color of header cells.
+   *             @param {boolean} [extOptions.cell.header.showVerticalBorder] - Whether vertical borders of
+   *                 header cells are visible.
+   *             @param {boolean} [extOptions.cell.header.showHorizontalBorder] - Whether horizontal borders of
+   *                 header cells are visible.
+   *         @param {Object} [extOptions.cell.selectedHeader] - Styles for selected header cells.
+   *             @param {string} [extOptions.cell.selectedHeader.background] - background color of selected header cells.
+   *         @param {Object} [extOptions.cell.rowHeader] - Styles for row's header cells.
+   *             @param {string} [extOptions.cell.rowHeader.background] - Background color of row's header cells.
+   *             @param {string} [extOptions.cell.rowHeader.border] - border color of row's header cells.
+   *             @param {string} [extOptions.cell.rowHeader.text] - text color of row's header cells.
+   *             @param {boolean} [extOptions.cell.rowHeader.showVerticalBorder] - Whether vertical borders of
+   *                 row's header cells are visible.
+   *             @param {boolean} [extOptions.cell.rowHeader.showHorizontalBorder] - Whether horizontal borders of
+   *                 row's header cells are visible.
+   *         @param {Object} [extOptions.cell.selectedRowHeader] - Styles for selected row's header cells.
+   *             @param {string} [extOptions.cell.selectedRowHeader.background] - background color of selected row's haed cells.
    *         @param {Object} [extOptions.cell.summary] - Styles for cells in the summary area.
    *             @param {string} [extOptions.cell.summary.background] - Background color of cells in the summary area.
    *             @param {string} [extOptions.cell.summary.border] - border color of cells in the summary area.
