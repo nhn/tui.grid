@@ -7,7 +7,8 @@ import {
   OptAppendRow,
   OptPrependRow,
   OptRemoveRow,
-  OptColumn
+  OptColumn,
+  OptHeader
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -282,6 +283,22 @@ export default class Grid {
    */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
+  }
+
+  /**
+   * Sets options for header.
+   * @param {Object} options - Options for header
+   * @param {number} [options.height] -  The height value
+   * @param {Array} [options.complexColumns] - The complex columns info
+   */
+  public setHeader({ height, complexColumns }: OptHeader) {
+    if (height) {
+      this.dispatch('setHeaderHeight', height);
+    }
+
+    if (complexColumns) {
+      this.dispatch('setComplexHeaderColumns', complexColumns);
+    }
   }
 
   /**

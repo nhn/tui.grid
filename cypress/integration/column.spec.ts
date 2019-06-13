@@ -1,3 +1,5 @@
+import { cls } from '@/helper/dom';
+
 export {};
 
 const data = [
@@ -21,7 +23,7 @@ function assertRowText(rowIdx: number, cellTexts: string[]) {
   });
 }
 
-describe.only('setColumns()', () => {
+describe('setColumns()', () => {
   it('resets the column data', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
     cy.createGrid({ data, columns });
@@ -45,5 +47,51 @@ describe('getIndexOfColumn()', () => {
     cy.gridInstance()
       .invoke('getIndexOfColumn', 'age')
       .should('eq', 2);
+  });
+});
+
+describe('setHeader()', () => {
+  it('change height', () => {
+    const cellBorderWidth = 1;
+    const height = 300;
+    const columns = [{ name: 'id' }, { name: 'name' }, { name: 'age' }];
+    cy.createGrid({ data, columns });
+
+    cy.gridInstance().invoke('setHeader', { height });
+    cy.get(`.${cls('cell-header')}`).each(($header) => {
+      expect($header.height()).to.eq(height - cellBorderWidth * 2);
+    });
+  });
+
+  it('change complexColumns', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        complexColumns: [
+          {
+            header: 'info',
+            name: 'mergeColumn1',
+            childNames: ['id', 'name']
+          }
+        ]
+      }
+    });
+
+    cy.get('[data-column-name=mergeColumn1]').should('have.text', 'info');
+
+    cy.gridInstance().invoke('setHeader', {
+      complexColumns: [
+        {
+          header: 'information',
+          name: 'mergeColumn1',
+          childNames: ['id', 'name']
+        }
+      ]
+    });
+
+    cy.get('[data-column-name=mergeColumn1]').should('have.text', 'information');
   });
 });
