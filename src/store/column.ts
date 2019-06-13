@@ -24,7 +24,8 @@ import {
   omit,
   isString,
   isFunction,
-  isObject
+  isObject,
+  isUndefined
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -143,7 +144,7 @@ export function createColumn(
     escapeHTML: !!column.escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
-    resizable: Boolean(resizable),
+    resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
     align: align || 'left',
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
