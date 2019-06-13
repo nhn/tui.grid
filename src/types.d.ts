@@ -10,8 +10,7 @@ import {
   PageOptions,
   Validation,
   RowKey,
-  ComplexColumnInfo,
-  CellEditorOptions
+  ComplexColumnInfo
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
