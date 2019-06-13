@@ -22,7 +22,8 @@ function calculateRange(
   scrollPos: number,
   totalSize: number,
   offsets: number[],
-  data: Data
+  data: Data,
+  rowCalculation?: boolean
 ): Range {
   // safari uses negative scroll position for bouncing effect
   scrollPos = Math.max(scrollPos, 0);
@@ -31,7 +32,7 @@ function calculateRange(
   const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
   const { rawData, sortOptions } = data;
 
-  if (enableRowSpan(sortOptions.columnName)) {
+  if (rowCalculation && enableRowSpan(sortOptions.columnName)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
@@ -100,7 +101,13 @@ export function create({
     },
 
     get rowRange(this: Observable<Viewport>) {
-      const range = calculateRange(this.scrollTop, dimension.bodyHeight, rowCoords.offsets, data);
+      const range = calculateRange(
+        this.scrollTop,
+        dimension.bodyHeight,
+        rowCoords.offsets,
+        data,
+        true
+      );
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
