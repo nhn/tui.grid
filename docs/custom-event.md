@@ -1,4 +1,4 @@
-# Using Custom Event
+# Using Custom Event 🛎
 
 The TOAST UI Grid has a powerful event system which provides ways to extend custom functionality on top of the built-in features. 
 
