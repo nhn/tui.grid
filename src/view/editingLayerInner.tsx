@@ -141,17 +141,13 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const cellWidth = right - left + cellBorderWidth;
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
-  const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
+  const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
   const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
   const { value } = targetRow.valueMap[columnName];
-  const leftPosition =
-    left +
-    (side === 'L' ? 0 : offsetLeft) +
-    (side === 'R' && frozenCount ? frozenCount * frozenBorderWidth : 0);
 
   return {
     grid: getInstance(store.id),
-    left: leftPosition,
+    left: left + (side === 'L' ? 0 : offsetLeft + frozenCount * frozenBorderWidth),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
