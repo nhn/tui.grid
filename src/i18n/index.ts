@@ -82,9 +82,9 @@ function flattenMessageMap(data: OptI18nData = {}): MessageMapType {
  * @returns {string} Replaced text
  */
 function replaceText(text: string, values: ReplacementObjType): string {
-  return text.replace(/\{\{(\w*)\}\}/g, (_, prop) =>
-    values.hasOwnProperty(prop) ? values[prop] : ''
-  );
+  return text
+    ? text.replace(/\{\{(\w*)\}\}/g, (_, prop) => (values.hasOwnProperty(prop) ? values[prop] : ''))
+    : '';
 }
 
 export default {
