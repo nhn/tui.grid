@@ -161,10 +161,13 @@ function createRelationViewCell(
     const targetEditor = columnMap[targetName].editor;
     const targetEditorOptions = targetEditor && targetEditor.options;
 
-    const relationMatched = targetListItems
-      ? someProp('value', targetValue, targetListItems)
-      : true;
+    let relationMatched = targetListItems ? someProp('value', targetValue, targetListItems) : false;
 
+    if (!isFunction(listItemsCallback)) {
+      relationMatched = true;
+    }
+
+    // should set relation list to map per rowKey of the column for preventing share relation list in columns
     if (targetEditorOptions) {
       targetEditorOptions.relationListItemMap = targetEditorOptions.relationListItemMap || {};
       targetEditorOptions.relationListItemMap[row.rowKey] = targetListItems || [];
