@@ -25,6 +25,11 @@ var grid = new tui.Grid({
                     return 'col2 footer';
                 }
             }
+        },
+        defaultContent: {
+            template: function() {
+                return 'default footer';
+            }
         }
     }
 });
@@ -36,9 +41,11 @@ The `summary.height` property sets the height of the summary by pixel unit. If t
 
 The `summary.columnContent` property is the key-value object which configures the content of each column. Each key is a name of column, and each value is an obejct which contains a `template` function which returns the HTML string. The returning string from a `template` is used to render each column(&lt;th&gt; tag).
 
+The `summary.defaultContent` property sets all column content except columns which set by `summary.columnContent` property. The `template` key is same as `template` function property of `summary.columnContent`.
+
 ## Using Automatic Summary
 
-If you set an object for a specific column to the `columnContent` property, the Grid automatically calculates the summary of that column. It means that whenever some values in the column are changed, the Grid re-calculate the summary. A result of summary is passed to a `template` function as a paramater so that you can use it for generating HTML string of the summary.
+If you set an object for a specific column to the `columnContent` property, the Grid automatically calculates the summary of that column. It means that whenever some values in the column are changed, the Grid re-calculate the summary. A result of summary is passed to a `template` function as a paramater so that you can use it for generating HTML string of the summary. In the case of `template` function of the `defaultContent` property, it works the same.
 
 ```javascript
 // …
@@ -52,6 +59,16 @@ columnContent: {
         template: function(summary) {
             return 'max: ' + summary.max + '<br>min: ' + summary.min;
         }
+    }
+}
+// …
+```
+
+```javascript
+// …
+defaultContent: {
+    template: function(summary) {
+        return 'default: ' + summary.sum;
     }
 }
 // …
@@ -72,7 +89,7 @@ One important thing is that every value in the column must be a `Number` type. I
 
 ## Disabling Automatic Summary
 
-There is another property available for a value object of the `columnContent`. The name of the property is `useAutoSummary` and this determines whether using the automatic summary or not. As a default value of a `useAutoSummary` is `true`, if you want to use a `template` function without auto-summary, use should set this property to `false` like example below.
+There is another property available for a value object of the `columnContent` or `defaultContent`. The name of the property is `useAutoSummary` and this determines whether using the automatic summary or not. As a default value of a `useAutoSummary` is `true`, if you want to use a `template` function without auto-summary, use should set this property to `false` like example below.
 
 ```javascript
 // …
@@ -88,17 +105,36 @@ columnContent: {
 // …
 ```
 
-Although it's possible to use a `templete` function for a static content without setting `useAutoSummary:false`, It's better to set it explicitly for preventing unnecessary calculation.
+
+```javascript
+// …
+defaultContent: {
+    useAutoSummary: false,
+    template: function(summary) {
+        return 'default content';
+    }
+}
+// …
+```
+
+Even if `templete` function returns static content without setting `useAutoSummary:false`, the Grid sets `useAutoSummary:false` automatically for preventing unnecessary calculation.
 
 ## setSummaryColumnContent()
 
-A Grid instance also has a public API to change a content of each column in the summary. `setSummaryColumnContent()` sets the HTML string to the summary of the given column. 
+A Grid instance also has a public API to change a content of each column in the summary. `setSummaryColumnContent()` sets the HTML string or `template` function to the summary of the given column. 
 
 ```javascript
 grid.setSummaryColumnContent('col1', 'content');
+
+// or if you want set template function, use as below.
+grid.setSummaryColumnContent('col1', {
+    template(summary) {
+        'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
+    }
+});
 ```
 
-This method is useful when you don't want to use the auto-summary and want to set your own value to the column in the summary dynamically. In this case, you'd better to set `useAutoSummary: false` to prevent a Grid from changing the summary content automatically.
+This method is useful when you want to set your own value to the column in the summary dynamically.
 
 ## Example
 
