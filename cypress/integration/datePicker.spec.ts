@@ -5,37 +5,45 @@ const columns = [
   },
   {
     name: 'timePicker',
-    editor: 'datePicker',
-    editorOptions: {
-      format: 'yyyy-MM-dd HH:mm A',
-      timepicker: true
+    editor: {
+      type: 'datePicker',
+      options: {
+        format: 'yyyy-MM-dd HH:mm A',
+        timepicker: true
+      }
     }
   },
   {
     name: 'timePickerWithTab',
-    editor: 'datePicker',
-    editorOptions: {
-      format: 'yyyy-MM-dd HH:mm A',
-      timepicker: {
-        layoutType: 'tab',
-        inputType: 'spinbox'
+    editor: {
+      type: 'datePicker',
+      options: {
+        format: 'yyyy-MM-dd HH:mm A',
+        timepicker: {
+          layoutType: 'tab',
+          inputType: 'spinbox'
+        }
       }
     }
   },
   {
     name: 'monthPicker',
-    editor: 'datePicker',
-    editorOptions: {
-      format: 'yyyy-MM',
-      type: 'month'
+    editor: {
+      type: 'datePicker',
+      options: {
+        format: 'yyyy-MM',
+        type: 'month'
+      }
     }
   },
   {
     name: 'yearPicker',
-    editor: 'datePicker',
-    editorOptions: {
-      format: 'yyyy',
-      type: 'year'
+    editor: {
+      type: 'datePicker',
+      options: {
+        format: 'yyyy',
+        type: 'year'
+      }
     }
   }
 ];

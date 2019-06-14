@@ -41,11 +41,9 @@ export class DatePickerEditor implements CellEditor {
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
     const calendarWrapper = this.createCalendarWrapper();
-
     const { options } = props.columnInfo.editor!;
 
     if (options) {
-      delete options.type;
       if (options.format) {
         format = options.format;
         delete options.format;
