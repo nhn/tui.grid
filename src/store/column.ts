@@ -24,8 +24,7 @@ import {
   omit,
   isString,
   isFunction,
-  isObject,
-  isUndefined
+  isObject
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -43,12 +42,12 @@ const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
 function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
   const editInfo = editorMap[editorType];
+
   return {
     type: editInfo[0],
     options: {
       ...editInfo[1],
-      ...options,
-      type: editorType
+      ...options
     }
   };
 }
@@ -144,7 +143,7 @@ export function createColumn(
     escapeHTML: !!column.escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
-    resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
+    resizable: Boolean(resizable),
     align: align || 'left',
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
