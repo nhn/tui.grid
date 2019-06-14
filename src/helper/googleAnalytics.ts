@@ -20,7 +20,7 @@ function isExpired(date: number) {
 function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
   const queryString = Object.keys(trackingInfo)
     .map((id, index) => {
-      const idWithType = id as keyof typeof trackingInfo;
+      const idWithType = id as keyof TrackingInfo;
 
       return `${index === 0 ? '' : '&'}${idWithType}=${trackingInfo[idWithType]}`;
     })
