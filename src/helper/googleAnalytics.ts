@@ -22,7 +22,7 @@ function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
     .map((id, index) => {
       const idWithType = id as keyof TrackingInfo;
 
-      return `${index === 0 ? '' : '&'}${idWithType}=${trackingInfo[idWithType]}`;
+      return `${index ? '&' : ''}${idWithType}=${trackingInfo[idWithType]}`;
     })
     .join('');
 
