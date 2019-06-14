@@ -43,12 +43,12 @@ const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
 function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
   const editInfo = editorMap[editorType];
+
   return {
     type: editInfo[0],
     options: {
       ...editInfo[1],
-      ...options,
-      type: editorType
+      ...options
     }
   };
 }
