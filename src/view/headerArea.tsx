@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { ColumnInfo, Side, Range, ComplexColumnInfo } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, setCursorStyle, getCoordinateWithOffset } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, hasClass } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -11,7 +11,6 @@ import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/c
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
-import { findProp } from '../helper/common';
 
 interface OwnProps {
   side: Side;
@@ -44,19 +43,13 @@ class HeaderAreaComp extends Component<Props> {
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
-    const { dispatch, columns, complexHeaderColumns } = this.props;
+    const { dispatch, complexHeaderColumns } = this.props;
     const name = (ev.target as HTMLElement).getAttribute('data-column-name')!;
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
+    const target = ev.target as HTMLElement;
 
-    if (isRowHeader(name)) {
+    if (isRowHeader(name) || hasClass(target, 'btn-sorting')) {
       return;
-    }
-
-    if (!parentHeader) {
-      const { sortable } = findProp('name', name, columns)!;
-      if (sortable) {
-        return;
-      }
     }
 
     this.startSelectedName = name;
