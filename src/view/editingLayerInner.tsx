@@ -144,7 +144,6 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
   const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
   const { value } = targetRow.valueMap[columnName];
-
   const leftPosition =
     left +
     (side === 'L' ? 0 : offsetLeft) +
