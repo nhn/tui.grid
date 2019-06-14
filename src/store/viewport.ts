@@ -1,6 +1,6 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { observable, Observable } from '../helper/observable';
-import { arrayEqual, findIndex } from '../helper/common';
+import { arrayEqual, findIndex, isEmpty } from '../helper/common';
 import { getMaxRowSpanCount, enableRowSpan } from '../helper/rowSpan';
 
 interface ViewPortOption {
@@ -32,7 +32,7 @@ function calculateRange(
   const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
   const { rawData, sortOptions } = data;
 
-  if (rowCalculation && enableRowSpan(sortOptions.columnName)) {
+  if (rawData.length && rowCalculation && enableRowSpan(sortOptions.columnName)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
