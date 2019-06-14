@@ -125,11 +125,17 @@ export class EditingLayerInnerComp extends Component<Props> {
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { cellPosRect, side } = store.focus;
-  const { cellBorderWidth, tableBorderWidth, headerHeight, width } = store.dimension;
+  const {
+    cellBorderWidth,
+    tableBorderWidth,
+    headerHeight,
+    width,
+    frozenBorderWidth
+  } = store.dimension;
   const { scrollLeft, scrollTop } = store.viewport;
   const { areaWidth } = store.columnCoords;
   const { viewData, sortOptions } = store.data;
-  const { allColumnMap } = store.column;
+  const { allColumnMap, frozenCount } = store.column;
 
   const { top, left, right, bottom } = cellPosRect!;
   const cellWidth = right - left + cellBorderWidth;
@@ -139,9 +145,14 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
   const { value } = targetRow.valueMap[columnName];
 
+  const leftPosition =
+    left +
+    (side === 'L' ? 0 : offsetLeft) +
+    (side === 'R' && frozenCount ? frozenCount * frozenBorderWidth : 0);
+
   return {
     grid: getInstance(store.id),
-    left: left + (side === 'L' ? 0 : offsetLeft),
+    left: leftPosition,
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
