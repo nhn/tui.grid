@@ -1,5 +1,6 @@
 import { CellEditor, CellEditorProps, ListItemOptions } from './types';
 import { CellValue } from '../store/types';
+import { isEmpty } from '../helper/common';
 
 type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';
@@ -11,9 +12,16 @@ export class CheckboxEditor implements CellEditor {
   public constructor(props: CellEditorProps) {
     const name = 'tui-grid-check-input';
     const el = document.createElement('fieldset');
-    const { type, listItems } = props.columnInfo.editor!.options as CheckboxOptions;
+    const { type, listItems, relationListItemMap } = props.columnInfo.editor!
+      .options as CheckboxOptions;
 
-    listItems.forEach(({ text, value }) => {
+    let resultListItems = listItems;
+
+    if (!isEmpty(relationListItemMap) && Array.isArray(relationListItemMap![props.rowKey])) {
+      resultListItems = relationListItemMap![props.rowKey];
+    }
+
+    resultListItems.forEach(({ text, value }) => {
       const id = `${name}-${value}`;
       el.appendChild(this.createCheckbox(value, name, id, type));
       el.appendChild(this.createLabel(text, id));

@@ -11,12 +11,17 @@ function getListItemText(listItems: ListItem[], value: CellValue) {
   return item ? item.text : '';
 }
 
-export function listItemText({ column, value }: FormatterProps) {
-  const { type, listItems } = column.editor!.options as ListItemOptions;
+export function listItemText({ column, value }: FormatterProps, relationListItems?: ListItem[]) {
+  let { listItems } = column.editor!.options as ListItemOptions;
+  const { type } = column.editor!.options as ListItemOptions;
+  if (Array.isArray(relationListItems)) {
+    listItems = relationListItems;
+  }
   if (type === 'checkbox') {
     return String(value)
       .split(',')
       .map(getListItemText.bind(null, listItems))
+      .filter((text) => text !== '')
       .join(',');
   }
   return getListItemText(listItems, value);

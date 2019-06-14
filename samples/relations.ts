@@ -135,14 +135,16 @@ export const columns = [
     header: 'Category1',
     name: 'category1',
     formatter: 'listItemText',
-    editor: 'select',
-    editorOptions: {
-      listItems: [
-        { text: '', value: '' },
-        { text: 'Domestic', value: '01' },
-        { text: 'Overseas', value: '02' },
-        { text: 'Etc', value: '03' }
-      ]
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: '', value: '' },
+          { text: 'Domestic', value: '01' },
+          { text: 'Overseas', value: '02' },
+          { text: 'Etc', value: '03' }
+        ]
+      }
     },
     relations: [
       {
@@ -160,9 +162,11 @@ export const columns = [
     header: 'Category2',
     name: 'category2',
     formatter: 'listItemText',
-    editor: 'select',
-    editorOptions: {
-      listItems: []
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
     },
     relations: [
       {
@@ -180,22 +184,26 @@ export const columns = [
     header: 'Category3',
     name: 'category3',
     formatter: 'listItemText',
-    editor: 'select',
-    editorOptions: {
-      listItems: []
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
     }
   },
   {
     header: 'No relation',
     name: 'category4',
     formatter: 'listItemText',
-    editor: 'select',
-    editorOptions: {
-      listItems: [
-        { text: 'Select', value: '' },
-        { text: 'no', value: '01' },
-        { text: 'relation', value: '02' }
-      ]
+    editor: {
+      type: 'select',
+      options: {
+        listItems: [
+          { text: 'Select', value: '' },
+          { text: 'no', value: '01' },
+          { text: 'relation', value: '02' }
+        ]
+      }
     }
   }
 ];

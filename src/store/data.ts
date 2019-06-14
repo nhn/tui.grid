@@ -28,7 +28,8 @@ import {
   isBoolean,
   isEmpty,
   isString,
-  isNumber
+  isNumber,
+  isFunction
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -41,11 +42,16 @@ export function getCellDisplayValue(value: CellValue) {
   return String(value);
 }
 
-function getFormattedValue(props: FormatterProps, formatter?: Formatter, defaultValue?: CellValue) {
+function getFormattedValue(
+  props: FormatterProps,
+  formatter?: Formatter,
+  defaultValue?: CellValue,
+  relationListItems?: ListItem[]
+) {
   let value: CellValue;
 
   if (formatter === 'listItemText') {
-    value = listItemText(props);
+    value = listItemText(props, relationListItems);
   } else if (typeof formatter === 'function') {
     value = formatter(props);
   } else if (typeof formatter === 'string') {
@@ -63,7 +69,8 @@ function getFormattedValue(props: FormatterProps, formatter?: Formatter, default
 }
 
 function getRelationCbResult(fn: any, relationParams: Dictionary<any>) {
-  return typeof fn === 'function' ? fn(relationParams) || null : null;
+  const result = isFunction(fn) ? fn(relationParams) : null;
+  return isUndefined(result) ? null : result;
 }
 
 function getEditable(fn: any, relationParams: Dictionary<any>): boolean {
@@ -104,11 +111,15 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   return '';
 }
 
-function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRenderData {
+function createViewCell(
+  row: Row,
+  column: ColumnInfo,
+  relationMatched?: boolean,
+  relationListItems?: ListItem[]
+): CellRenderData {
   const { name, formatter, prefix, postfix, editor, validation } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
-
-  if (related) {
+  if (relationMatched === false) {
     value = '';
   }
   const formatterProps = { row, column, value };
@@ -120,7 +131,7 @@ function createViewCell(row: Row, column: ColumnInfo, related?: boolean): CellRe
     className: [...className.row, ...columnClassName].join(' '),
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
-    formattedValue: getFormattedValue(formatterProps, formatter, value),
+    formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     prefix: getFormattedValue(formatterProps, prefix),
     postfix: getFormattedValue(formatterProps, postfix),
     value
@@ -150,13 +161,21 @@ function createRelationViewCell(
     const targetEditor = columnMap[targetName].editor;
     const targetEditorOptions = targetEditor && targetEditor.options;
 
-    const hasValue = targetListItems ? someProp('value', targetValue, targetListItems) : false;
+    const relationMatched = targetListItems
+      ? someProp('value', targetValue, targetListItems)
+      : true;
 
-    if (targetEditorOptions && Array.isArray(targetEditorOptions.listItems)) {
-      targetEditorOptions.listItems = targetListItems || [];
+    if (targetEditorOptions) {
+      targetEditorOptions.relationListItemMap = targetEditorOptions.relationListItemMap || {};
+      targetEditorOptions.relationListItemMap[row.rowKey] = targetListItems || [];
     }
 
-    const cellData = createViewCell(row, columnMap[targetName], !hasValue);
+    const cellData = createViewCell(
+      row,
+      columnMap[targetName],
+      relationMatched,
+      targetListItems || []
+    );
 
     if (!targetEditable) {
       cellData.editable = false;
