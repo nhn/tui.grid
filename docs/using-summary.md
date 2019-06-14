@@ -138,4 +138,4 @@ This method is useful when you want to set your own value to the column in the s
 
 ## Example
 
-You can see a Grid using a summary with the auto-summary at the [example page](http://nhnent.github.io/tui.grid/api/tutorial-example09-using-summary.html).
+You can see a Grid using a summary with the auto-summary at the [example page](http://nhn.github.io/tui.grid/api/tutorial-example09-using-summary.html).

@@ -4,7 +4,11 @@ TOAST UI Grid allows you to set relations between columns using the `relations` 
 
 A relation has a `targetNames` property to specify the list of target columns. It also has callback functions like `editable`, `disabled` and `listItems` to specify the rules to change the state of target columns. The columns whose names are in the `targetNames` will be affected by the result of the callback functions whenever a current column value is changed.
 
-Every callback function receives two parameters - `value` and `rowData`. The `value` parameter is a value of the current (changing) cell. The `rowData` parameter is an object that contains the all values of the row, where the current cell is located.
+Every callback function receives one object parameters. The available properties are listed below.
+- `value`: a value of the current (changing) cell
+- `editable`: an editable status of the current (changing) cell
+- `disabled`: a disabled status of the current (changing) cell
+- `rowData`: an object that contains the all values of the row, where the current cell is located
 
 ### editable
 
@@ -13,23 +17,23 @@ The `editable` callback function determines the `editable` state of the target c
 ```javascript
 grid.setColumns([
     {
-        title: 'col1',
+        header: 'col1',
         name: 'col1',
         relations: [
             {
                 targetNames: ['col2', 'col3'],
-                editable: function(value, rowData) {
+                editable: function({ value }) {
                     return value === '1';
                 }
             }    
         ]        
     },
     {
-        title: 'col2',
+        header: 'col2',
         name: 'col2'
     },
     {
-        title: 'col3',
+        header: 'col3',
         name: 'col3'
     }
 ]);
@@ -46,16 +50,23 @@ The form of the callback function is the same with `editable`.
 
 ### listItems
 
-The `listItems` callback function determines the option list of the target columns. It can be only used for list type columns like `checkbox`, `radio`, and `select`. It returns an array of list options, which has a same form as  `editOptions.listItems`. Whenever the returning value of the callback function is changed, the option list of the cells in the target columns will be changed to the returning value.
+The `listItems` callback function determines the option list of the target columns. It can be only used for list type columns like `checkbox`, `radio`, and `select`. It returns an array of list options, which has a same form as  `editor.options.listItems`. Whenever the returning value of the callback function is changed, the option list of the cells in the target columns will be changed to the returning value.
 
 ```javascript
 grid.setColumns([
     {
-        title: 'col1',
+        header: 'col1',
         name: 'col1',
+        formatter: 'listItemText',
+        editor: {
+            type: 'select',
+            options: {
+                listItems: []
+            }
+        },
         relations: [
             targetNames: ['col2'],
-            listItems: function(value, rowData) {
+            listItems: function({ value }) {
                 var items;
 
                 if (value === '1') {
@@ -74,11 +85,15 @@ grid.setColumns([
         ]    
     },
     {
-        title: 'col2',
+        header: 'col2',
         name: 'col2',
-        editOptions: {
-            type: 'select'    
-        }    
+        formatter: 'listItemText',
+        editor: {
+            type: 'select',
+            options: {
+                listItems: []
+            }
+        }
     }
 ]);
 ```
@@ -87,4 +102,4 @@ In the example above, the value of the 'col1' column determines the option list 
 
 ## Example Page
 
-You can see the sample Grid, which uses `relations` [here](https://nhnent.github.io/tui.grid/api/tutorial-example05-relation-columns.html).
+You can see the sample Grid, which uses `relations` [here](https://nhn.github.io/tui.grid/api/tutorial-example05-relation-columns.html).
