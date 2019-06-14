@@ -4,7 +4,7 @@ import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
-import { CellRenderer, CellRendererProps } from '../src/renderer/types';
+import { CellRendererProps } from '../src/renderer/types';
 
 import '../src/css/grid.css';
 import '../samples/css/rowHeaders.css';
@@ -49,7 +49,7 @@ function createButtons(grid) {
   });
 }
 
-export class RowNumberRenderer implements CellRenderer {
+export class RowNumberRenderer {
   private el: HTMLElement;
 
   public constructor(props: CellRendererProps) {
@@ -69,7 +69,7 @@ export class RowNumberRenderer implements CellRenderer {
   }
 }
 
-class SingleCheckRenderer implements CellRenderer {
+class SingleCheckRenderer {
   private el: HTMLLabelElement;
 
   public constructor(props: CellRendererProps) {
@@ -205,7 +205,9 @@ stories.add(
       rowHeaders: [
         {
           type: 'rowNum',
-          renderer: RowNumberRenderer
+          renderer: {
+            type: RowNumberRenderer
+          }
         }
       ]
     });
@@ -234,7 +236,9 @@ stories.add(
               <span class="custom-input"></span>
             </label>
           `,
-          renderer: SingleCheckRenderer
+          renderer: {
+            type: SingleCheckRenderer
+          }
         }
       ]
     });
