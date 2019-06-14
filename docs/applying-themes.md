@@ -1,3 +1,5 @@
+# Applying Theme
+
 The TOAST UI Grid provides you an easy way to customize the style of the grid. With `applyTheme()` method, you can easily change entire styles of the grid. 
 
 ### Using Built-in Presets
