@@ -51,6 +51,7 @@ import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from '
 import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
+import { sendHostname } from './helper/googleAnalytics';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -74,7 +75,7 @@ export default class Grid {
   private paginationManager: PaginationManager;
 
   public constructor(options: OptGrid) {
-    const { el } = options;
+    const { el, usageStatistics = true } = options;
     const id = register(this);
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
@@ -90,6 +91,10 @@ export default class Grid {
     this.dataProvider = dataProvider;
     this.dataManager = dataManager;
     this.paginationManager = paginationManager;
+
+    if (usageStatistics) {
+      sendHostname();
+    }
 
     registerDataSources(id, dataProvider, dataManager, paginationManager);
 
