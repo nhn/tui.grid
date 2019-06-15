@@ -11,7 +11,7 @@
 - [Using Summary](using-summary.md)
 - [Binding to remote data](binding-to-remote-data.md)
 - [CustomEvent](custom-event.md)
-- [Keymap](Keymap.md)
+- [Keymap](keymap.md)
 
 ## Migration Guide 
 

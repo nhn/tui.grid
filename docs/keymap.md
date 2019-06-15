@@ -46,7 +46,7 @@ The TOAST UI Grid makes it easy to use the grid by providing several keyboard ev
 | Select to the last cell of last column based on focus | `Cmd(Ctrl)` + `Shift` + `End` |
 | Select all cells | `Cmd(Ctrl)` + `A` |
 
-![focus_2](https://user-images.githubusercontent.com/35371660/59552261-91411d80-8fbf-11e9-8c61-6e76d763a61c.gif)
+![focus2](https://user-images.githubusercontent.com/35371660/59552787-21826100-8fc6-11e9-8749-43aebf3e1eff.gif)
 * `Cmd(Ctrl)` + `Shift` + `Home` / `Cmd(Ctrl)` + `Shift` + `End` screenshot
 
 
