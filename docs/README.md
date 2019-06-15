@@ -1,3 +1,5 @@
+# Documents 📄
+
 ## Tutorials
 
 - [Getting Started](getting-started.md)
@@ -9,12 +11,14 @@
 - [Using Summary](using-summary.md)
 - [Binding to remote data](binding-to-remote-data.md)
 - [CustomEvent](custom-event.md)
+- [Keymap](Keymap.md)
 
-## Documents
+## Migration Guide 
 
-- [Code of Conducting](../CODE_OF_CONDUCTING.md)
-- [Contributing Guide](../CONTRIBUTING.md)
-- [Commit Message Convention](COMMIT_MESSAGE_CONVENTION.md)
-- [API & Examples](https://nhnent.github.io/tui.grid/api)
 - [v3.0.0 Migration Guide](v3.0.0-migration-guide.md)
 - [v3.0.0 Migration Guide (Korean)](v3.0.0-migration-guide-kor.md)
+
+## Contributing
+
+- [Contributing Guide](../CONTRIBUTING.md)
+- [Commit Message Convention](COMMIT_MESSAGE_CONVENTION.md)
