@@ -1,256 +1,33 @@
-// Type definitions for TOAST UI Grid v3.6.0
-// TypeScript Version: 3.2.2
-
-/// <reference types="jquery" />
+// Type definitions for TOAST UI Grid v4.0.0
+// TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
-  type RowKeyType = number | string;
-  type ColumnValueType = number | string | object | null;
-  type ColumnNameType = string;
-  type RowStateType = 'DISABLED' | 'DISABLED_CHECK' | 'CHECKED';
-  type TreeStateType = 'EXPAND' | 'COLLAPSE';
-  type ErrorCodeType = 'REQUIRED' | 'TYPE_NUMBER';
-  type CustomEventType = 'click' | 'check' | 'uncheck' | 'dblclick' |
-    'mouseover' | 'mouseout' | 'mousedown' | 'focusChange' |
-    'expanded' | 'expandedAll' | 'collapsed' | 'collapsedAll' |
-    'beforeRequest' | 'response' | 'successResponse' | 'failResponse' |
-    'errorResponse' | 'selection' | 'deleteRange';
-  type RowConditionType = { key: string, value: RowKeyType } | ((row: IRow) => boolean);
-  type PostPrefixConverterFunc = (cellValue: string, rowAttrs: IRow) => string;
-  type RowType = IRow | ITreeRow;
-  type Pagination = any;
-
-  interface IRow {
-    [propName: string]: ColumnValueType;
-    _extraData?: {
-      rowState?: RowStateType;
-    };
+  //
+  // Utility type
+  // ----------------------------------------------------------------------
+  type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
+  type TypeObjectOptions<T> =
+    | T
+    | {
+        type: T;
+        options?: Dictionary<any>;
+      };
+  interface Dictionary<T> {
+    [index: string]: T;
   }
 
-  interface ITreeRow {
-    [propName: string]: ColumnValueType;
-    _extraData?: {
-      rowState?: RowStateType;
-      treeState?: TreeStateType;
-    };
-    _children: ITreeRow[];
-  }
+  //
+  // Cell Value
+  // ----------------------------------------------------------------------
+  type CellValue = number | string | boolean | null | undefined;
 
-  interface IComplexColumnsOptions {
-    title: string;
-    name: string;
-    childNames: string[];
-  }
+  //
+  // Theme
+  // ----------------------------------------------------------------------
+  type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
 
-  interface IHeaderOptions {
-    height?: number;
-    complexColumns?: IComplexColumnsOptions[];
-  }
-
-  interface IValueMap {
-    sum: number;
-    avg: number;
-    min: number;
-    max: number;
-    cnt: number;
-  }
-
-  interface ICopyOptions {
-    useFormattedValue: boolean;
-  }
-
-  interface IRowHeaderProps {
-    className: string;
-    type: string;
-    name: string;
-    disabled: boolean;
-    checked: boolean;
-  }
-
-  interface IRowHeadersOptions {
-    type?: string;
-    title?: string;
-    width?: number;
-    template?: (props: IRowHeaderProps) => string;
-  }
-  interface IValidationOptions {
-    required?: boolean;
-    dataType?: boolean | string | number;
-  }
-
-  interface IEditingItemOptions {
-    text: string;
-    value: string;
-  }
-
-  interface ICellAddressOptions {
-    columnName: string;
-    rowKey: number;
-  }
-
-  interface IEditingUIOptions {
-    name?: string;
-    useViewMode?: boolean;
-    listItems?: IEditingItemOptions[];
-    onFocus?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
-    onBlur?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
-    onKeyDown?: (ev: JQuery.Event, cellAddress: ICellAddressOptions) => void;
-    prefix?: string | PostPrefixConverterFunc;
-    postfix?: string | PostPrefixConverterFunc;
-    converter?: PostPrefixConverterFunc;
-  }
-
-  interface IClipboardCopyOptions {
-    useFormattedValue?: boolean;
-    useListItemText?: boolean;
-    customValue?: (cellValue: string, rowAttrs: IRow, column: IColumnInfoOptions) => string;
-  }
-
-  interface IRelationOptions {
-    targetNames?: string[];
-    disabled?: (value: string) => boolean;
-    editable?: (value: string) => boolean;
-    listItems?: (value: string) => IEditingItemOptions[];
-  }
-
-  interface IColumnEventOptions {
-    columnName: string;
-    rowKey: number;
-    instance: Grid;
-    value: string;
-    _stopped: boolean;
-  }
-
-  interface IColumnInfoOptions {
-    name: string;
-    ellipsis?: boolean;
-    align?: string;
-    valign?: string;
-    className?: string;
-    title?: string;
-    width?: number;
-    minWidth?: number;
-    hidden?: boolean;
-    resizable?: boolean;
-    validation?: IValidationOptions;
-    defaultValue?: string;
-    formatter?: (cellValue: string, rowAttrs: IRow, column: IColumnInfoOptions) => string;
-    useHtmlEntity?: boolean;
-    ignored?: boolean;
-    sortable?: boolean;
-    onBeforeChange?: (ev: IColumnEventOptions) => void;
-    onAfterChange?: (ev: IColumnEventOptions) => void;
-    editOptions?: IEditingUIOptions;
-    copyOptions?: IClipboardCopyOptions;
-    relations?: IRelationOptions[];
-    whiteSpace?: string;
-    component?: {
-      name?: string;
-      options?: any;
-    };
-  }
-
-  interface ISummaryColumnContentOptions {
-    useAutoSummary?: boolean;
-    template?: string | ((valueMap: IValueMap) => string);
-  }
-
-  interface ISummaryObject {
-    height?: number;
-    position?: string;
-    defaultContent: string | ISummaryColumnContentOptions;
-    columnContent?: {
-      [propName: string]: string | ISummaryColumnContentOptions;
-    };
-  }
-
-  interface ISummaryColumnValues {
-    sum: number;
-    avg: number;
-    max: number;
-    min: number;
-    cnt: number;
-  }
-
-  interface ISummaryAllValues {
-    [propName: string]: ISummaryColumnValues
-  }
-
-  interface IColumnOptions {
-    minWidth?: number;
-    resizable?: boolean;
-    frozenCount?: number;
-    frozenBorderWidth?: number;
-  }
-
-  interface ITreeColumnOptions {
-    name?: string;
-    useIcon: boolean;
-    useCascadingCheckbox?: boolean;
-  }
-
-  interface IGridOptions {
-    el: Element | JQuery;
-    data?: IRow[] | ITreeRow[];
-    header?: IHeaderOptions;
-    virtualScrolling?: boolean;
-    rowHeight?: string | number;
-    minRowHeight?: number;
-    bodyHeight?: string | number;
-    minBodyHeight?: number;
-    columnOptions?: IColumnOptions;
-    treeColumnOptions?: ITreeColumnOptions;
-    copyOptions?: ICopyOptions;
-    useClientSort?: boolean;
-    editingEvent?: string;
-    scrollX?: boolean;
-    scrollY?: boolean;
-    showDummyRows?: boolean;
-    keyColumnName?: string | null;
-    heightResizable?: boolean;
-    pagination?: boolean | Pagination;
-    selectionUnit?: string;
-    rowHeaders?: IRowHeadersOptions;
-    columns: IColumnInfoOptions[];
-    summary?: ISummaryObject;
-    usageStatistics?: boolean;
-  }
-
-  interface ITableOutlineStyleOptions {
-    border?: string;
-    showVerticalBorder?: boolean;
-  }
-
-  interface ISelectionLayerStyleOptions {
-    background?: string;
-    border?: string;
-  }
-
-  interface IScrollbarStyleOptions {
-    border?: string;
-    background?: string;
-    emptySpace?: string;
-    thumb?: string;
-    active?: string;
-  }
-
-  interface ITableHeaderStyleOptions {
-    background?: string;
-    border?: string;
-  }
-
-  interface ITableSummaryStyleOptions {
-    background?: string;
-    border?: string;
-  }
-
-  interface ITableAreaStyleOptions {
-    header?: ITableHeaderStyleOptions;
-    body?: { background?: string };
-    summary?: ITableSummaryStyleOptions;
-  }
-
-  interface ICellStyleOptions {
+  // Cell Style
+  interface ICellStyle {
     background?: string;
     border?: string;
     text?: string;
@@ -258,40 +35,163 @@ declare namespace tuiGrid {
     showHorizontalBorder?: boolean;
   }
 
-  interface IBasicCellStyleOptions {
+  interface IBasicCellStyle {
     background?: string;
     text?: string;
   }
 
-  interface ITableCellStyleOptions {
-    normal?: ICellStyleOptions;
-    head?: ICellStyleOptions;
-    selectedHead?: { background?: string };
-    rowHead?: ICellStyleOptions;
-    selectedRowHead?: { background?: string };
-    summary?: ICellStyleOptions;
-    focused?: {
-      background?: string;
-      border?: string;
-    };
-    focusedInactive?: { border?: string };
-    required?: IBasicCellStyleOptions;
-    editable?: IBasicCellStyleOptions;
-    disabled?: IBasicCellStyleOptions;
-    invalid?: IBasicCellStyleOptions;
-    currentRow?: IBasicCellStyleOptions;
-    evenRow?: IBasicCellStyleOptions;
-    oddRow?: IBasicCellStyleOptions;
-    dummy?: { background?: string };
+  interface ICellFocusedStyle {
+    background?: string;
+    border?: string;
   }
 
-  interface IPresetOptions {
-    outline?: ITableOutlineStyleOptions;
-    selection?: ISelectionLayerStyleOptions;
-    scrollbar?: IScrollbarStyleOptions;
-    frozenBorder?: { border?: string };
-    area?: ITableAreaStyleOptions;
-    cell?: ITableCellStyleOptions;
+  interface ICellDummyStyle {
+    background?: string;
+  }
+
+  // Table Style
+  interface ITableHeaderStyle {
+    background?: string;
+    border?: string;
+  }
+
+  interface ITableSummaryStyle {
+    background?: string;
+    border?: string;
+  }
+
+  interface ITableBodyStyle {
+    background?: string;
+  }
+
+  interface ITableOutlineStyle {
+    border?: string;
+    showVerticalBorder?: boolean;
+  }
+
+  interface ISelectionLayerStyle {
+    background?: string;
+    border?: string;
+  }
+
+  interface IScrollbarStyle {
+    border?: string;
+    background?: string;
+    emptySpace?: string;
+    thumb?: string;
+    active?: string;
+  }
+
+  interface IFrozenBorderStyle {
+    border?: string;
+  }
+
+  interface ITableAreaStyle {
+    header?: ITableHeaderStyle;
+    body?: ITableBodyStyle;
+    summary?: ITableSummaryStyle;
+  }
+
+  interface ITableCellStyle {
+    normal?: ICellStyle;
+    header?: ICellStyle;
+    selectedHeader?: IBasicCellStyle;
+    rowHeader?: ICellStyle;
+    selectedRowHead?: IBasicCellStyle;
+    summary?: ICellStyle;
+    focused?: ICellFocusedStyle;
+    focusedInactive?: ICellFocusedStyle;
+    required?: IBasicCellStyle;
+    editable?: IBasicCellStyle;
+    disabled?: IBasicCellStyle;
+    invalid?: IBasicCellStyle;
+    currentRow?: IBasicCellStyle;
+    evenRow?: IBasicCellStyle;
+    oddRow?: IBasicCellStyle;
+    dummy?: ICellDummyStyle;
+  }
+
+  interface IHeightResizeHandleStyle {
+    background?: string;
+    border?: string;
+  }
+
+  interface IPaginationStyle {
+    background?: string;
+    border?: string;
+  }
+
+  interface IPreset {
+    outline?: ITableOutlineStyle;
+    selection?: ISelectionLayerStyle;
+    scrollbar?: IScrollbarStyle;
+    frozenBorder?: IFrozenBorderStyle;
+    area?: ITableAreaStyle;
+    cell?: ITableCellStyle;
+    heightResizeHandle?: IHeightResizeHandleStyle;
+    pagination?: IPaginationStyle;
+  }
+
+  //
+  // Row
+  // ----------------------------------------------------------------------
+  type RowKey = number | string;
+  type Row = Dictionary<CellValue> & {
+    rowKey: RowKey;
+    rowSpanMap: RowSpanMap;
+    _attributes: IRowAttributes;
+  };
+
+  interface IRow {
+    [prop: string]: CellValue | RecursivePartial<IRowAttributes & IRowSpanAttribute> | IRow[];
+    _attributes?: RecursivePartial<IRowAttributes & IRowSpanAttribute>;
+    _children?: IRow[];
+  }
+
+  // RowSpan
+  type RowSpanMap = Dictionary<IRowSpan>;
+
+  interface IRowSpan {
+    mainRow: boolean;
+    mainRowKey: RowKey;
+    count: number;
+    spanCount: number;
+  }
+
+  interface IRowSpanAttribute {
+    rowSpan?: Dictionary<number>;
+  }
+
+  // RowHeader
+  type RowHeader = RowHeaderType | IRowHeaderColumn;
+  type RowHeaderType = 'rowNum' | 'checkbox';
+
+  interface IRowHeaderColumn extends Partial<IColumn> {
+    type: RowHeaderType;
+  }
+
+  // RowAttribute
+  interface IRowAttributes {
+    rowNum: number;
+    checked: boolean;
+    disabled: boolean;
+    checkDisabled: boolean;
+    className: { row: string[]; column: Dictionary<string[]> };
+    height?: number;
+    tree?: TreeRowInfo;
+    expanded?: boolean;
+  }
+
+  // Row Options
+  interface IAppendRowOptions {
+    at?: number;
+    focus?: boolean;
+    parentRowKey?: RowKey;
+    extendPrevRowSpan?: boolean;
+  }
+
+  interface IPrependRowOptions {
+    focus?: boolean;
   }
 
   interface IRemoveRowOptions {
@@ -299,60 +199,170 @@ declare namespace tuiGrid {
     keepRowSpanData?: boolean;
   }
 
-  interface IRowOptions {
-    at?: number;
-    extendPrevRowSpan?: boolean;
-    focus?: boolean;
-    parentRowKey?: number | string;
-    offset?: number;
+  //
+  // Column
+  // ----------------------------------------------------------------------
+  interface IColumn {
+    name: string;
+    header?: string;
+    hidden?: boolean;
+    width?: number | 'auto';
+    renderer?: CellRenderer;
+    editor?: CellEditor;
+    formatter?: Formatter;
+    defaultValue?: CellValue;
+    prefix?: Formatter;
+    postfix?: Formatter;
+    viewer?: string | boolean;
+    resizable?: boolean;
+    minWidth?: number;
+    escapeHTML?: false;
+    relations?: IRelations[];
+    align?: 'left' | 'center' | 'right';
+    valign?: 'top' | 'middle' | 'bottom';
+    whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+    ellipsis?: boolean;
+    sortable?: boolean;
+    copyOptions?: ClipboardCopyOptions;
+    onBeforeChange?: Function;
+    onAfterChange?: Function;
+    ignored?: boolean;
+    validation?: IValidation;
   }
 
-  interface IModifiedOptions {
-    checkedOnly?: boolean;
-    withRawData?: boolean;
-    rowKeyOnly?: boolean;
-    ignoredColumns?: ColumnNameType[];
+  interface IColumnInfo {
+    readonly name: string;
+    header: string;
+    minWidth: number;
+    editor?: ICellEditorOptions;
+    renderer: ICellRendererOptions;
+    copyOptions?: ClipboardCopyOptions;
+    hidden: boolean;
+    formatter?: Formatter;
+    prefix?: Formatter;
+    postfix?: Formatter;
+    baseWidth: number;
+    resizable: boolean;
+    fixedWidth: boolean;
+    relationMap?: Dictionary<IRelations>;
+    related?: boolean;
+    align?: 'left' | 'center' | 'right';
+    valign?: 'top' | 'middle' | 'bottom';
+    whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+    ellipsis?: boolean;
+    escapeHTML?: boolean;
+    defaultValue?: CellValue;
+    sortable?: boolean;
+    validation?: IValidation;
+    onBeforeChange?: Function;
+    onAfterChange?: Function;
+    ignored?: boolean;
   }
 
-  interface IRequestOptions {
-    url?: string;
-    hasDataParam?: boolean;
-    checkedOnly?: boolean;
-    modifiedOnly?: boolean;
-    showConfirm?: boolean;
-    updateOriginal?: boolean;
-    withCredentials?: boolean;
+  interface ComplexColumnInfo {
+    header: string;
+    name: string;
+    childNames?: string[];
+    sortable?: boolean;
   }
 
-  class AddOn {
-    public reloadData(): void;
-    public readData(page: number, data?: object | null, resetData?: boolean): void;
-    public request(requestType: string, options: IRequestOptions): boolean;
-    public download(type: string): void;
-    public setPerPage(perPage: number): void;
+  // ColumnOptions
+  interface IColumnOptions {
+    minWidth?: number;
+    frozenCount?: number;
+    frozenBorderWidth?: number;
+    resizable?: boolean;
   }
 
-  interface IUrlMapObject {
-    readData?: string;
-    createData?: string;
-    updateData?: string;
-    modifyData?: string;
-    deleteData?: string;
-    downloadExcel?: string;
-    downloadExcelAll?: string;
+  //
+  // Summary
+  // ----------------------------------------------------------------------
+  type SummaryPosition = 'top' | 'bottom';
+
+  interface ISummaryData {
+    height?: number;
+    position?: SummaryPosition;
+    defaultContent?: string | ISummaryColumnContentMap;
+    columnContent?: {
+      [propName: string]: string | ISummaryColumnContentMap;
+    };
   }
 
-  interface IAddOnOptions {
-    el?: JQuery;
-    initialRequest?: boolean;
-    readDataMethod?: string;
-    api?: IUrlMapObject;
-    perPage?: number;
-    enableAjaxHistory?: boolean;
-    withCredentials?: boolean;
+  interface ISummaryColumnContentMap {
+    useAutoSummary?: boolean;
+    template?: (valueMap: ISummaryValueMap) => string;
   }
 
-  interface ILanguageOptions {
+  interface ISummaryValueMap {
+    sum: number;
+    avg: number;
+    min: number;
+    max: number;
+    cnt: number;
+  }
+
+  //
+  // Relations
+  // ----------------------------------------------------------------------
+  interface IRelations {
+    targetNames?: string[];
+    listItems?: (relationParams: IRelationCallbackData) => IListItem[];
+    editable?: (relationParams: IRelationCallbackData) => boolean;
+    disabled?: (relationParams: IRelationCallbackData) => boolean;
+  }
+
+  interface IListItem {
+    text: string;
+    value: CellValue;
+  }
+
+  interface IRelationCallbackData {
+    value?: CellValue;
+    editable?: boolean;
+    disabled?: boolean;
+    row?: Row;
+  }
+
+  //
+  // Validation
+  // ----------------------------------------------------------------------
+  type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
+
+  interface IValidation {
+    required?: boolean;
+    dataType?: 'string' | 'number';
+  }
+
+  interface IInvalidColumn {
+    columnName: string;
+    errorCode: '' | ValidationType;
+  }
+
+  interface IInvalidRow {
+    rowKey: RowKey;
+    errors: IInvalidColumn[];
+  }
+
+  //
+  // Tree
+  // ----------------------------------------------------------------------
+  interface ITree {
+    name: string;
+    useIcon?: boolean;
+    useCascadingCheckbox?: boolean;
+  }
+
+  interface TreeRowInfo {
+    parentRowKey: RowKey | null;
+    childRowKeys: RowKey[];
+    expanded?: boolean;
+    hiddenChild?: boolean;
+  }
+
+  //
+  // I18n
+  // ----------------------------------------------------------------------
+  interface II18nData {
     display?: {
       noData?: string;
       loadingData?: string;
@@ -371,115 +381,405 @@ declare namespace tuiGrid {
     };
   }
 
-  interface ISortedCommonState {
+  //
+  // SortOptions
+  // ----------------------------------------------------------------------
+  interface SortOptions {
     columnName: string;
     ascending: boolean;
     useClient: boolean;
   }
 
-  interface IRowSpanData {
-    count: number;
-    isMainRow: boolean;
-    mainRowKey: string | number;
+  //
+  // ClipboardCopyOptions
+  // ----------------------------------------------------------------------
+  type CustomValue = string | ((value: CellValue, rowAttrs: Row[], column: IColumnInfo) => string);
+
+  interface ClipboardCopyOptions {
+    useFormattedValue?: boolean;
+    useListItemText?: boolean;
+    customValue?: CustomValue;
   }
 
-  interface IError {
-    columnName: string;
-    errorCode: ErrorCodeType;
+  //
+  // PageOptions
+  // ----------------------------------------------------------------------
+  interface PageOptions {
+    perPage?: number;
+    page?: number;
+    totalCount?: number;
   }
 
-  interface IValidation {
-    rowKey: number | string;
-    errors: IError[];
+  //
+  // DataSource
+  // ----------------------------------------------------------------------
+  type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyData';
+
+  type Params = {
+    rows?: Row[] | RowKey[];
+    createdRows?: Row[] | RowKey[];
+    updatedRows?: Row[] | RowKey[];
+    deletedRows?: Row[] | RowKey[];
+    page?: number;
+    perPage?: number;
+    sortColumn?: string;
+    sortAscending?: boolean;
+  } & Dictionary<any>;
+
+  interface IDataSource {
+    initialRequest?: boolean;
+    withCredentials?: boolean;
+    api: IAPI;
+  }
+
+  interface IAPI {
+    createData?: IAPIInfo;
+    readData: IAPIInfo;
+    updateData?: IAPIInfo;
+    deleteData?: IAPIInfo;
+    modifyData?: IAPIInfo;
+  }
+
+  interface IAPIInfo {
+    url: string;
+    method: string;
+  }
+
+  interface IRequestOptions {
+    url?: string;
+    method?: string;
+    checkedOnly?: boolean;
+    modifiedOnly?: boolean;
+    showConfirm?: boolean;
+    withCredentials?: boolean;
+  }
+
+  interface IModifiedRowsOptions {
+    checkedOnly?: boolean;
+    withRawData?: boolean;
+    rowKeyOnly?: boolean;
+    ignoredColumns?: string[];
+  }
+
+  //
+  // Custom Editor
+  // ----------------------------------------------------------------------
+  type CellEditor = TypeObjectOptions<string | ICellEditorClass>;
+
+  interface ICellEditorClass {
+    new (props: ICellEditorProps): ICellEditor;
+  }
+
+  interface ICellEditorProps {
+    grid: Grid;
+    rowKey: RowKey;
+    columnInfo: IColumnInfo;
+    value: CellValue;
+  }
+
+  interface ICellEditorOptions {
+    type: ICellEditorClass;
+    options?: Dictionary<any>;
+  }
+
+  interface ICellEditor {
+    getElement(): HTMLElement | undefined;
+    getValue(): string;
+    mounted?(): void;
+    beforeDestroy?(): void;
+  }
+
+  //
+  // Custom Renderer
+  // ----------------------------------------------------------------------
+  type CellRenderer = TypeObjectOptions<string | ICellRendererClass>;
+  type CellRendererProps = ICellRenderData & {
+    grid: Grid;
+    rowKey: RowKey;
+    columnInfo: IColumnInfo;
+    allDisabled: boolean;
+  };
+
+  interface ICellRenderData {
+    editable: boolean;
+    disabled: boolean;
+    invalidState: '' | ValidationType;
+    formattedValue: string;
+    prefix: string;
+    postfix: string;
+    value: CellValue;
+    className: string;
+  }
+
+  interface ICellRendererClass {
+    new (params: CellRendererProps, options?: any): ICellRenderer;
+  }
+
+  interface ICellRendererOptions {
+    type: ICellRendererClass;
+    options?: Dictionary<any>;
+  }
+
+  interface ICellRenderer {
+    getElement(): HTMLElement;
+    focused?(): void;
+    mounted?(parent: HTMLElement): void;
+    render(props: CellRendererProps): void;
+    beforeDestroy?(): void;
+  }
+
+  //
+  // Formatter
+  // ----------------------------------------------------------------------
+  type Formatter = ((props: IFormatterProps) => string) | string;
+
+  interface IFormatterProps {
+    row: Row;
+    column: IColumnInfo;
+    value: CellValue;
+  }
+
+  //
+  // Header
+  // ----------------------------------------------------------------------
+  interface IHeader {
+    height?: number;
+    complexColumns?: ComplexColumnInfo[];
+  }
+
+  //
+  // Selection unit, Editing Event
+  // ----------------------------------------------------------------------
+  type SelectionUnit = 'cell' | 'row';
+  type EditingEvent = 'click' | 'dblclick';
+
+  //
+  // Grid Options
+  // ----------------------------------------------------------------------
+  interface IGridOptions {
+    el: HTMLElement;
+    data?: IRow[] | IDataSource;
+    columns: IColumn[];
+    columnOptions?: IColumnOptions;
+    keyColumnName?: string;
+    width?: number | 'auto';
+    bodyHeight?: number | 'fitToParent' | 'auto';
+    heightResizable?: boolean;
+    minBodyHeight?: number;
+    rowHeight?: number | 'auto';
+    minRowHeight?: number;
+    scrollX?: boolean;
+    scrollY?: boolean;
+    editingEvent?: EditingEvent;
+    rowHeaders?: RowHeader[];
+    summary?: ISummaryData;
+    useClientSort?: boolean;
+    selectionUnit?: SelectionUnit;
+    showDummyRows?: boolean;
+    copyOptions?: ClipboardCopyOptions;
+    pageOptions?: PageOptions;
+    treeColumnOptions?: ITree;
+    header?: IHeader;
+    usageStatistics?: boolean;
+  }
+
+  class Pagination {
+    constructor(element: string | HTMLElement, options?: object);
+
+    getCurrentPage(): number;
+
+    movePageTo(targetPage: number): void;
+
+    reset(totalItems: number): void;
+
+    setItemsPerPage(itemCount: number): void;
+
+    setTotalItems(itemCount: number): void;
+
+    on(eventType: string, callback: (evt: any) => void): void;
+
+    off(eventType: string): void;
   }
 
   class Grid {
-    // public static getInstanceById(id: number): Grid;
-    // public static applyTheme(parseName: string, extOptions?: IPresetOptions): void;
-    // public static setLanguage(localeCode: string, data?: ILanguageOptions): void;
+    public static applyTheme(presetName: ThemeOptionPresetNames, extOptions?: IPreset): void;
 
-    constructor(options: IGridOptions);
+    public static setLanguage(localeCode: string, data?: II18nData): void;
 
-    // public disable(): void;
-    // public enable(): void;
-    // public disableRow(rowKey: RowKeyType): void;
-    // public enableRow(rowKey: RowKeyType): void;
-    // public getValue(rowKey: RowKeyType, columnName: ColumnNameType, isOriginal?: boolean): number | string;
-    // public getColumnValues(columnName: ColumnNameType, isJsonString?: boolean): ColumnValueType[] | string;
-    // public getRow(rowKey: RowKeyType, isJsonString?: boolean): RowType | string;
-    // public getRowAt(index: number, isJsonString?: boolean): RowType | string;
-    // public getRowCount(): number;
-    // public getFocusedCell(): number;
-    // public getElement(rowKey: RowKeyType, columnName: ColumnNameType): JQuery;
-    // public setValue(rowKey: RowKeyType, columnName: ColumnNameType, columnValue: ColumnValueType): void;
-    // public setColumnValues(columnName: ColumnNameType, columnValue: ColumnValueType,
-    //                        sCheckCellState?: boolean): void;
-    // public resetData(data: RowType[]): void;
-    // public setData(data: RowType[], callback: () => void): void;
-    // public setBodyHeight(value: number): void;
-    // public focus(rowKey: RowKeyType, columnName: ColumnNameType, isScrollable?: boolean): void;
-    // public focusAt(rowIndex: RowKeyType, columnIndex: string, isScrollable?: boolean): void;
-    // public focusIn(rowKey: RowKeyType, columnName: ColumnNameType, isScrollable?: boolean): void;
-    // public focusInAt(rowIndex: RowKeyType, columnIndex: string, isScrollable?: boolean): void;
-    // public activateFocus(): void;
-    // public blur(): void;
-    // public checkAll(): void;
-    // public check(rowKey: RowKeyType): void;
-    // public uncheckAll(): void;
-    // public uncheck(rowKey: RowKeyType): void;
-    // public clear(): void;
-    // public removeRow(rowKey: RowKeyType, options: boolean | IRemoveRowOptions): void;
-    // public removeCheckedRows(showConfirm: boolean): boolean;
-    // public enableCheck(rowKey: RowKeyType): boolean;
-    // public disableCheck(rowKey: RowKeyType): boolean;
-    // public getCheckedRowKeys(isJsonString?: boolean): RowKeyType[] | string;
-    // public getCheckedRows(useJson?: boolean): RowType[] | string;
-    // public getColumns(): IColumnInfoOptions[];
-    // public getModifiedRows(options?: IModifiedOptions): RowType[];
-    // public appendRow(row?: RowType | RowType[], options?: IRowOptions): void;
-    // public prependRow(row?: RowType | RowType[], options?: {focus?: boolean}): void;
-    // public isModified(): boolean;
-    // public getAddOn(name: string): AddOn;
-    // public restore(): void;
-    // public setFrozenColumnCount(count: number): void;
-    // public setColumns(columns: IColumnInfoOptions[]): void;
-    // public use(name: string, options: IAddOnOptions): Grid;
-    // public getRows(): IRow[];
-    // public sort(columnName: ColumnNameType, ascending?: boolean): void;
-    // public unSort(): void;
-    // public getSortState(): ISortedCommonState;
-    // public addCellClassName(rowKey: RowKeyType, columnName: ColumnNameType, className: string): void;
-    // public addRowClassName(rowKey: RowKeyType, className: string): void;
-    // public removeCellClassName(rowKey: RowKeyType, columnName: ColumnNameType, className: string): void;
-    // public removeRowClassName(rowKey: RowKeyType, className: string): void;
-    // public getRowSpanData(rowKey: RowKeyType, columnName: ColumnNameType): IRowSpanData;
-    // public getIndexOfRow(rowKey: RowKeyType): number;
-    // public getIndexOfColumn(columnName: ColumnNameType): number;
-    // public getPagination(): Pagination;
-    // public setWidth(width: number): void;
-    // public setHeight(height: number): void;
-    // public refreshLayout(): void;
-    // public resetColumnWidths(): void;
-    // public showColumn(...args: string[]): void;
-    // public hideColumn(...args: string[]): void;
-    // public setSummaryColumnContent(columnName: ColumnNameType, contents: string | ISummaryColumnContentOptions): void;
-    // public getSummaryValues(): ISummaryAllValues;
-    // public getSummaryValues(columnName: ColumnNameType): ISummaryColumnValues;
-    // public setFooterColumnContent(columnName: ColumnNameType, contents: string): void;
-    // public validate(): IValidation[];
-    // public findRows(conditions: RowConditionType): IRow[];
-    // public copyToClipboard(): void;
-    // public selection(range: Range): void;
-    // public expand(rowKey: RowKeyType, recursive: boolean): RowKeyType[];
-    // public expandAll(): void;
-    // public collapse(rowKey: RowKeyType, recursive: boolean): ITreeRow[];
-    // public collapseAll(): void;
-    // public getAncestors(rowKey: RowKeyType): ITreeRow[];
-    // public getParent(rowKey: RowKeyType): ITreeRow;
-    // public getChildren(rowKey: RowKeyType): ITreeRow[];
-    // public getDepth(rowKey: RowKeyType): number;
-    // public destroy(): void;
-    // public on(eventName: CustomEventType, handler: (ev: any) => void): void;
+    public setWidth(width: number): void;
+
+    public setHeight(height: number): void;
+
+    public setBodyHeight(bodyHeight: number): void;
+
+    public setHeader({ height, complexColumns }: IHeader): void;
+
+    public setFrozenColumnCount(count: number): void;
+
+    public hideColumn(columnName: string): void;
+
+    public showColumn(columnName: string): void;
+
+    public setSelectionRange(range: { start: Range; end: Range }): void;
+
+    public getFocusedCell(): {
+      rowKey: string | number | null;
+      columnName: string | null;
+      value: CellValue;
+    };
+
+    public blur(): void;
+
+    public focus(rowKey: RowKey, columnName: string, setScroll?: boolean): boolean;
+
+    public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean): boolean;
+
+    public activateFocus(): void;
+
+    public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean): void;
+
+    public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean): void;
+
+    public setValue(rowKey: RowKey, columnName: string, value: CellValue): void;
+
+    public getValue(rowKey: RowKey, columnName: string): CellValue | null;
+
+    public setColumnValues(
+      columnName: string,
+      columnValue: CellValue,
+      checkCellState?: boolean
+    ): void;
+
+    public getElement(rowKey: RowKey, columnName: string): Element | null;
+
+    public setSummaryColumnContent(
+      columnName: string,
+      columnContent: string | ISummaryColumnContentMap
+    ): void;
+
+    public getSummaryValues(columnName: string): ISummaryValueMap | null;
+
+    public getColumns(): IColumnInfo[];
+
+    public setColumns(columns: IColumn[]): void;
+
+    public setColumnHeaders(columnsMap: Dictionary<string>): void;
+
+    public resetColumnWidths(widths: number[]): void;
+
+    public getColumnValues(columnName: string): CellValue[];
+
+    public getIndexOfColumn(columnName: string): number;
+
+    public check(rowKey: RowKey): void;
+
+    public uncheck(rowKey: RowKey): void;
+
+    public checkAll(): void;
+
+    public uncheckAll(): void;
+
+    public getCheckedRowKeys(): RowKey[];
+
+    public getCheckedRows(): Row[];
+
+    public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>): Row[];
+
+    public sort(columnName: string, ascending: boolean): void;
+
+    public unsort(): void;
+
+    public getSortState(): SortOptions;
+
+    public copyToClipboard(): void;
+
+    public validate(): IInvalidRow[];
+
+    public enable(): void;
+
+    public disable(): void;
+
+    public disableRow(rowKey: RowKey, withCheckbox?: boolean): void;
+
+    public enableRow(rowKey: RowKey, withCheckbox?: boolean): void;
+
+    public disableRowCheck(rowKey: RowKey): void;
+
+    public enableRowCheck(rowKey: RowKey): void;
+
+    public appendRow(row?: IRow, options?: IAppendRowOptions): void;
+
+    public prependRow(row: IRow, options?: IPrependRowOptions): void;
+
+    public removeRow(rowKey: RowKey, options?: IRemoveRowOptions): void;
+
+    public getRow(rowKey: RowKey): Row | null;
+
+    public getRowAt(rowIdx: number): Row | null;
+
+    public getIndexOfRow(rowKey: RowKey): number;
+
+    public getData(): Row[];
+
+    public getRowCount(): number;
+
+    public clear(): void;
+
+    public resetData(data: IRow[]): void;
+
+    public addCellClassName(rowKey: RowKey, columnName: string, className: string): void;
+
+    public addRowClassName(rowKey: RowKey, className: string): void;
+
+    public removeCellClassName(rowKey: RowKey, columnName: string, className: string): void;
+
+    public removeRowClassName(rowKey: RowKey, className: string): void;
+
+    public on(eventName: string, fn: Function): void;
+
+    public off(eventName: string, fn?: Function): void;
+
+    public getPagination(): Pagination | null;
+
+    public setPerPage(perPage: number): void;
+
+    public isModified(): boolean;
+
+    public getModifiedRows(options?: IModifiedRowsOptions): Dictionary<Row[] | RowKey[]>;
+
+    public readData(page: number, data?: Params, resetData?: boolean): void;
+
+    public request(requestType: RequestType, options?: IRequestOptions): void;
+
+    public reloadData(): void;
+
+    public restore(): void;
+
+    public expand(rowKey: RowKey, recursive?: boolean): void;
+
+    public expandAll(): void;
+
+    public collapse(rowKey: RowKey, recursive?: boolean): void;
+
+    public collapseAll(): void;
+
+    public getParentRow(rowKey: RowKey): Row | null;
+
+    public getChildRows(rowKey: RowKey): Row[];
+
+    public getAncestorRows(rowKey: RowKey): Row[];
+
+    public getDescendantRows(rowKey: RowKey): Row[];
+
+    public getDepth(rowKey: RowKey): number;
+
+    public getRowSpanData(rowKey: RowKey, columnName: string): IRowSpan | null;
+
+    public resetOriginData(): void;
+
+    public removeCheckedRows(showConfirm?: boolean): boolean;
+
+    public refreshLayout(): void;
   }
 }
 
