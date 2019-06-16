@@ -14,7 +14,6 @@ export class CheckboxEditor implements CellEditor {
     const el = document.createElement('fieldset');
     const { type, listItems, relationListItemMap } = props.columnInfo.editor!
       .options as CheckboxOptions;
-
     let resultListItems = listItems;
 
     if (!isEmpty(relationListItemMap) && Array.isArray(relationListItemMap![props.rowKey])) {

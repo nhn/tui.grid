@@ -156,35 +156,27 @@ function createRelationViewCell(
     const relationCbParams = { value, editable, disabled, row };
     const targetEditable = getEditable(editableCallback, relationCbParams);
     const targetDisabled = getDisabled(disabledCallback, relationCbParams);
-    const targetListItems = getListItems(listItemsCallback, relationCbParams);
+    const targetListItems = getListItems(listItemsCallback, relationCbParams) || [];
     const targetValue = row[targetName];
     const targetEditor = columnMap[targetName].editor;
     const targetEditorOptions = targetEditor && targetEditor.options;
 
-    let relationMatched = targetListItems ? someProp('value', targetValue, targetListItems) : false;
+    const relationMatched = isFunction(listItemsCallback)
+      ? someProp('value', targetValue, targetListItems)
+      : true;
 
-    if (!isFunction(listItemsCallback)) {
-      relationMatched = true;
-    }
-
-    // should set relation list to map per rowKey of the column for preventing share relation list in columns
-    if (targetEditorOptions) {
-      targetEditorOptions.relationListItemMap = targetEditorOptions.relationListItemMap || {};
-      targetEditorOptions.relationListItemMap[row.rowKey] = targetListItems || [];
-    }
-
-    const cellData = createViewCell(
-      row,
-      columnMap[targetName],
-      relationMatched,
-      targetListItems || []
-    );
+    const cellData = createViewCell(row, columnMap[targetName], relationMatched, targetListItems);
 
     if (!targetEditable) {
       cellData.editable = false;
     }
     if (targetDisabled) {
       cellData.disabled = true;
+    }
+    // should set the relation list to relationListItemMap for preventing to share relation list in other rows
+    if (targetEditorOptions) {
+      targetEditorOptions.relationListItemMap = targetEditorOptions.relationListItemMap || {};
+      targetEditorOptions.relationListItemMap[row.rowKey] = targetListItems;
     }
 
     valueMap[targetName] = cellData;

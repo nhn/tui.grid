@@ -12,8 +12,9 @@ function getListItemText(listItems: ListItem[], value: CellValue) {
 }
 
 export function listItemText({ column, value }: FormatterProps, relationListItems?: ListItem[]) {
-  let { listItems } = column.editor!.options as ListItemOptions;
   const { type } = column.editor!.options as ListItemOptions;
+  let { listItems } = column.editor!.options as ListItemOptions;
+
   if (Array.isArray(relationListItems)) {
     listItems = relationListItems;
   }
