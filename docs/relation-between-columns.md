@@ -4,7 +4,7 @@ TOAST UI Grid allows you to set relations between columns using the `relations` 
 
 A relation has a `targetNames` property to specify the list of target columns. It also has callback functions like `editable`, `disabled` and `listItems` to specify the rules to change the state of target columns. The columns whose names are in the `targetNames` will be affected by the result of the callback functions whenever a current column value is changed.
 
-Every callback function receives one object parameters. The available properties are listed below.
+Every callback function receives one object parameter. The available properties of the parameter are listed below.
 - `value`: a value of the current (changing) cell
 - `editable`: an editable status of the current (changing) cell
 - `disabled`: a disabled status of the current (changing) cell
@@ -50,7 +50,7 @@ The form of the callback function is the same with `editable`.
 
 ### listItems
 
-The `listItems` callback function determines the option list of the target columns. It can be only used for list type columns like `checkbox`, `radio`, and `select`. It returns an array of list options, which has a same form as  `editor.options.listItems`. Whenever the returning value of the callback function is changed, the option list of the cells in the target columns will be changed to the returning value.
+The `listItems` callback function determines the option list of the target columns. It can be only used for list type columns like `checkbox`, `radio`, and `select`. It returns an array of list options, which has a same form as  `editor.options.listItems`. Whenever the returning value of the callback function is changed, the option list of the cells in the target columns will be changed to the returning value. And you need to configure the `listItemText` built-in formatter option for showing the `label` of it not value.
 
 ```javascript
 grid.setColumns([
