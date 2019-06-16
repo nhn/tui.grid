@@ -72,9 +72,9 @@ The `CellEditor` format is as below.
   | property | type | return type |
   |--------|--------|--------|
   | `grid` | `Grid` | The `grid` property is an instance of TOAST UI Grid itself. This can be useful if you want to get specific data or manipulate the data manually. |
-  | `rowKey` | `string | number` | The `rowKey` of the row contained cell. |
+  | `rowKey` | `string \| number` | The `rowKey` of the row which contains the cell. |
   | `columnInfo` | `ColumnInfo` | The `columnInfo` property contains the all information of the column in which the target cell is contained. The inerface of the ColumnInfo is defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
-  | `value` | `string | number | boolean` | The current `value` of the cell |
+  | `value` | `string \| number \| boolean` | The current `value` of the cell |
 
 * `getElement`
    The `getElement` method should return the root DOM element of the editor. When editing is started, the returned element will be appended to the editing layer DOM.
