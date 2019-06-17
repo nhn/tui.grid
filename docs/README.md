@@ -9,7 +9,6 @@
 - [👨‍🎨 Applying Themes](applying-themes.md)
 - [📅 Using DatePicker component](using-date-picker-component.md)
 - [ ✍️ Using Summary](using-summary.md)
-- [Binding to remote data](binding-to-remote-data.md)
 - [🛎 Custom Event](custom-event.md)
 - [⌨️ Keymap](keymap.md)
 - [📎 Clipboard](clipboard.md)
