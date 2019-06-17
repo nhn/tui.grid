@@ -83,4 +83,4 @@ const grid = new tui.Grid({
 
 ## Example Page
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/api/tutorial-example04-custom-renderer.html).
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example05-custom-renderer).

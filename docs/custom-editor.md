@@ -152,4 +152,4 @@ Unlike other types, the `checkbox` type uses multiple values. When you check mul
 
 ## Example Page
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/api/tutorial-example04-custom-editor.html).
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-editor).

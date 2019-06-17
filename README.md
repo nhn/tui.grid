@@ -140,13 +140,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 ## 🐾 Examples
 
 * [Basic](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic)
-* [Input types](https://nhn.github.io/tui.grid/latest/tutorial-example04-input-types)
-* [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns)
-* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes)
-* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
-* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-summary)
-* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example10-using-net)
-* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
+* [Input types](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-editor)
+* [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example06-relation-columns)
+* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example08-applying-themes)
+* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-datepicker)
+* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example10-using-summary)
+* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example12-using-net)
+* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example15-tree)
 
 Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
 
