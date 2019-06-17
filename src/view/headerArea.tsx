@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { ColumnInfo, Side, Range, ComplexColumnInfo } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, setCursorStyle, getCoordinateWithOffset, hasClass } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
@@ -48,7 +48,7 @@ class HeaderAreaComp extends Component<Props> {
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
-    if (isRowHeader(name) || hasClass(target, 'btn-sorting')) {
+    if (findParent(target, 'cell-row-header') || hasClass(target, 'btn-sorting')) {
       return;
     }
 
