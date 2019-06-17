@@ -29,6 +29,7 @@
 * [Usage](#-usage)
     * [HTML](#html)
     * [JavaScript](#javascript)
+    * [TypeScript](#TypeScript)
 * [Pull Request Steps](#-pull-request-steps)
     * [Setup](#setup)
     * [Develop](#develop)
@@ -132,7 +133,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Merging cell
 * Frozen(Pinned) columns
 * [Relation between each columns](./docs/relation-between-columns.md)
-* [Binding to remote data](./docs/dataSource.md)
+* [Data Source](./docs/dataSource.md)
 * [Summarize all values of each column](./docs/using-summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * Representing tree data
