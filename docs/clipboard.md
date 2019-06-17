@@ -37,10 +37,10 @@ const grid = new Grid({
 ```
 
 | property | type | action | 
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | customValue | `string` / `function` | Copy string value or changed values through function |
 | useListItemText | `boolean` | Copy select or checkbox cell values to `text` rather than` value` of listItem |
-| useFormattedValue | `boolean` | Copy text with all `formatter`, `prefix`, and `postfix` in cell  |
+| useFormattedValue | `boolean` | Copy text with `formatter` in cell  |
 
 If multiple copy options are used, It has the following this order.
 1. customValue
