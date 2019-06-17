@@ -22,10 +22,13 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
     rowHeaders
   } = column.dataForColumnCreation;
 
-  const relationColumns = optColumns.reduce((acc: string[], { relations }) => {
-    acc = acc.concat(getRelationColumns(relations || []));
-    return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
-  }, []);
+  const relationColumns = optColumns.reduce(
+    (acc: string[], { relations = [] }) =>
+      acc
+        .concat(getRelationColumns(relations))
+        .filter((columnName, idx) => acc.indexOf(columnName) === idx),
+    []
+  );
 
   const columnInfos = optColumns.map((optColumn) =>
     createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)

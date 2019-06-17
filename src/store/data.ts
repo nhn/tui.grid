@@ -114,14 +114,16 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
 function createViewCell(
   row: Row,
   column: ColumnInfo,
-  relationMatched?: boolean,
+  relationMatched = true,
   relationListItems?: ListItem[]
 ): CellRenderData {
   const { name, formatter, prefix, postfix, editor, validation } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
-  if (relationMatched === false) {
+
+  if (!relationMatched) {
     value = '';
   }
+
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className } = row._attributes;
   const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
@@ -211,7 +213,7 @@ export function createViewRow(
         })
       );
     }
-    // @TODO need to improve relation
+
     if (relationMap && Object.keys(relationMap).length) {
       __unobserveFns__.push(
         observe(() => {
