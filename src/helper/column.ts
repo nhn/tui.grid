@@ -1,19 +1,6 @@
 import { ComplexColumnInfo } from '../store/types';
 import { some } from './common';
 
-export function isRowHeaderElement(el: HTMLElement) {
-  let element: HTMLElement | null = el;
-
-  while (element) {
-    const name = element.getAttribute('data-column-name');
-    if (name && isRowHeader(name)) {
-      return true;
-    }
-    element = element.parentElement;
-  }
-  return false;
-}
-
 export function isRowHeader(columnName: string) {
   return ['_number', '_checked'].indexOf(columnName) > -1;
 }

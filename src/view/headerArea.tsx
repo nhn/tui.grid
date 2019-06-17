@@ -1,18 +1,13 @@
 import { h, Component } from 'preact';
 import { ColumnInfo, Side, Range, ComplexColumnInfo } from '../store/types';
 import { ColGroup } from './colGroup';
-import { cls, setCursorStyle, getCoordinateWithOffset, hasClass } from '../helper/dom';
+import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
-import {
-  isParentColumnHeader,
-  isRowHeader,
-  isCheckboxColumn,
-  isRowHeaderElement
-} from '../helper/column';
+import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/column';
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
@@ -53,7 +48,7 @@ class HeaderAreaComp extends Component<Props> {
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
-    if (isRowHeaderElement(target) || hasClass(target, 'btn-sorting')) {
+    if (findParent(target, 'cell-row-header') || hasClass(target, 'btn-sorting')) {
       return;
     }
 
