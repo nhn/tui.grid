@@ -3,7 +3,7 @@ import { CellValue } from '../store/types';
 import { getListItems } from '../helper/editor';
 
 export class SelectEditor implements CellEditor {
-  private el: HTMLSelectElement;
+  public el: HTMLSelectElement;
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('select');

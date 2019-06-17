@@ -7,7 +7,7 @@ type CheckboxOptions = ListItemOptions & {
 };
 
 export class CheckboxEditor implements CellEditor {
-  private el: HTMLElement;
+  public el: HTMLElement;
 
   public constructor(props: CellEditorProps) {
     const name = 'tui-grid-check-input';
