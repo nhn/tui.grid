@@ -123,23 +123,23 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 * Custom cell formatter & converter
 * Various input types _(checkbox, radio, select, password, etc)_
-* Full keyboard navigation _(move, select, copy, paste, delete, etc)_
+* [Full keyboard navigation _(move, select, copy, paste, delete, etc)_](./docs/keymap.md)
 * Virtual scrolling _(Handling large dataset without performance loses)_
-* Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_
+* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
 * Column resize & reorder & show & hide
 * Multi column headers
 * Inline Editing
 * Validation
 * Selection
 * Pagination
-* Picking date
+* [Picking date](./docs/using-date-picker.md)
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns
 * Relation between each columns
 * Binding to remote data
 * Summarize all values of each column
-* Customizing styles _(Three basic themes)_
+* [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * Representing tree data
 
 ## 🐾 Examples
