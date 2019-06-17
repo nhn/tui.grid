@@ -93,8 +93,8 @@ export class EditingLayerInnerComp extends Component<Props> {
       const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
 
       if (editorWidth > width) {
-        // add cell padding width
-        (this.contentEl as HTMLElement).style.width = `${editorWidth + 10}px`;
+        const CELL_PADDING_WIDTH = 10;
+        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
       }
 
       if (isFunction(cellEditor.mounted)) {
