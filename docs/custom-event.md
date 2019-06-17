@@ -7,7 +7,7 @@ The TOAST UI Grid has a powerful event system which provides ways to extend cust
 To attach a handler to a specific event, you can use the public method `on()`. The first argument is a name of target event, and the second argument is a handler to attach. 
 
 ```javascript
-var grid = new tui.Grid({
+const grid = new tui.Grid({
   // options…
 });
 
@@ -79,3 +79,6 @@ There are other events that can be used when using `DataSource`.
 
 You can see the detail information of these events at the [API page](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest).
 
+## Example Page
+
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example16-custom-event).

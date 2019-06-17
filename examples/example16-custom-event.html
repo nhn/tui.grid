@@ -55,12 +55,6 @@
         {
           title: 'Type',
           name: 'typeCode',
-          onBeforeChange: function(ev) {
-            console.log('Before change:' + ev);
-          },
-          onAfterChange: function(ev) {
-            console.log('After change:' + ev);
-          },
           editor: {
             type: 'select',
             options: {
@@ -75,12 +69,6 @@
         {
           title: 'Genre',
           name: 'genreCode',
-          onBeforeChange: function(ev) {
-            console.log('Before change:' + ev);
-          },
-          onAfterChange: function(ev) {
-            console.log('After change:' + ev);
-          },
           editor: {
             type: 'checkbox',
             options: {
@@ -92,20 +80,11 @@
                 { text: 'etc.', value: '5' }
               ]
             }
-          },
-          copyOptions: {
-            useListItemText: true // when this option is used, the copy value is concatenated text
           }
         },
         {
           title: 'Grade',
           name: 'grade',
-          onBeforeChange: function(ev) {
-            console.log('Before change:' + ev);
-          },
-          onAfterChange: function(ev) {
-            console.log('After change:' + ev);
-          },
           copyOptions: {
             useListItemText: true
           },
