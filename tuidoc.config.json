@@ -40,7 +40,8 @@
       "example11-customizing-rowheaders" : "11. Customizing Row headers",
       "example12-using-whitespace" : "12. Using whiteSpace",
       "example13-i18n" : "13. Internationalization (i18n)",
-      "example14-tree" : "14. Using tree column"
+      "example14-tree" : "14. Using tree column",
+      "example16-custom-event" : "16. custom Event"
     }
   },
   "pathPrefix" : "tui.grid"
