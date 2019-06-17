@@ -1,6 +1,6 @@
 import { Store, Side, ComplexColumnInfo } from '../store/types';
 import { OptColumn } from '../types';
-import { createColumn } from '../store/column';
+import { createColumn, getRelationColumns } from '../store/column';
 import { createViewRow } from '../store/data';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
@@ -19,9 +19,16 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
     columnOptions,
     copyOptions,
     treeColumnOptions,
-    rowHeaders,
-    relationColumns
+    rowHeaders
   } = column.dataForColumnCreation;
+
+  const relationColumns = optColumns.reduce(
+    (acc: string[], { relations = [] }) =>
+      acc
+        .concat(getRelationColumns(relations))
+        .filter((columnName, idx) => acc.indexOf(columnName) === idx),
+    []
+  );
 
   const columnInfos = optColumns.map((optColumn) =>
     createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)

@@ -1,6 +1,6 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { observable, Observable } from '../helper/observable';
-import { arrayEqual, findIndex, isEmpty } from '../helper/common';
+import { arrayEqual, findIndex } from '../helper/common';
 import { getMaxRowSpanCount, enableRowSpan } from '../helper/rowSpan';
 
 interface ViewPortOption {

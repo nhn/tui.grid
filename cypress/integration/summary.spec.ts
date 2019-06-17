@@ -66,10 +66,6 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   });
 }
 
-function getGridInst(): Cypress.Chainable<Grid> {
-  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
-}
-
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
   contents.forEach((content) => {
@@ -102,8 +98,8 @@ function assertSyncScrollLeft(index: number) {
   cy.get('@summaryArea').scrollTo(50, 0);
   assertScrollLeft('@bodyArea', 50);
 
-  cy.get('@bodyArea').scrollTo(150, 0);
-  assertScrollLeft('@summaryArea', 150);
+  cy.get('@bodyArea').scrollTo(100, 0);
+  assertScrollLeft('@summaryArea', 100);
 }
 
 before(() => {
@@ -247,17 +243,17 @@ describe('summary', () => {
 
   it("change summary's value properly after call setSummaryColumnContent()", () => {
     createGrid();
-    getGridInst().invoke('setSummaryColumnContent', 'price', 'static content');
+    cy.gridInstance().invoke('setSummaryColumnContent', 'price', 'static content');
     assertSummaryContent('price', 'static content');
 
-    getGridInst().invoke('setSummaryColumnContent', 'price', {
+    cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
       template(valueMap: OptSummaryValueMap) {
         return `auto calculate: ${valueMap.max}`;
       }
     });
     assertSummaryContent('price', 'auto calculate: 30000');
 
-    getGridInst().invoke('setSummaryColumnContent', 'price', {
+    cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
       template(valueMap: OptSummaryValueMap) {
         return `no auto calculate: ${valueMap.max}`;
       },
@@ -265,7 +261,7 @@ describe('summary', () => {
     });
     assertSummaryContent('price', 'no auto calculate: 0');
 
-    getGridInst().invoke('setSummaryColumnContent', 'name', {
+    cy.gridInstance().invoke('setSummaryColumnContent', 'name', {
       template(valueMap: OptSummaryValueMap) {
         return `auto calculate: ${valueMap.sum}`;
       }
@@ -276,7 +272,7 @@ describe('summary', () => {
 
   it('return prpper values when calls getSummaryValues() method', () => {
     createGrid();
-    getGridInst()
+    cy.gridInstance()
       .invoke('getSummaryValues', 'price')
       .should((summaryValues) => {
         expect(summaryValues).to.be.eql({
