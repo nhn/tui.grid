@@ -128,13 +128,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Validation
 * Selection
 * Pagination
-* [Picking date](./docs/using-date-picker.md)
+* [Picking date](./docs/date-picker.md)
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns
 * [Relation between each columns](./docs/relation-between-columns.md)
 * [Data Source](./docs/dataSource.md)
-* [Summarize all values of each column](./docs/using-summary.md)
+* [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * Representing tree data
 
@@ -145,8 +145,8 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example06-relation-columns)
 * [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example08-applying-themes)
 * [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-datepicker)
-* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example10-using-summary)
-* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example12-using-net)
+* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example10-summary)
+* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example12-data-source)
 * [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example15-tree)
 
 Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
