@@ -4,7 +4,7 @@
 
 - [🚀 Getting Started](getting-started.md)
 - [🔗 Complex columns](complex-columns.md)
-- [🛠 Using Built-in Editor](custom-editor.md)
+- [🛠 Custom Editor](custom-editor.md)
 - [🤝 Relation between columns](relation-between-columns.md)
 - [👨‍🎨 Applying Themes](applying-themes.md)
 - [📅 Using DatePicker component](date-picker.md)
@@ -12,7 +12,7 @@
 - [🛎 Custom Event](custom-event.md)
 - [⌨️ Keymap](keymap.md)
 - [📎 Clipboard](clipboard.md)
-- [🛰 Data Source](dataSource.md)
+- [🛰 Data Source](data-source.md)
 - [🌳 Tree](tree.md)
 
 ## Migration Guide 

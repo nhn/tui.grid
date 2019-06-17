@@ -133,7 +133,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Merging cell
 * Frozen(Pinned) columns
 * [Relation between each columns](./docs/relation-between-columns.md)
-* [Data Source](./docs/dataSource.md)
+* [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * Representing tree data
@@ -141,13 +141,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 ## 🐾 Examples
 
 * [Basic](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic)
-* [Input types](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-editor)
-* [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example06-relation-columns)
-* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example08-applying-themes)
-* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-datepicker)
-* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example10-summary)
-* [Binding to remote data](https://nhn.github.io/tui.grid/latest/tutorial-example12-data-source)
-* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example15-tree)
+* [Custom Editor](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor)
+* [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns)
+* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes)
+* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
+* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary)
+* [Data Source](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source)
+* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
 
 Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
 
