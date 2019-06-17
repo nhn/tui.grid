@@ -134,7 +134,9 @@ export function createColumn(
     sortable,
     copyOptions,
     validation,
-    formatter
+    formatter,
+    onBeforeChange,
+    onAfterChange
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -157,6 +159,8 @@ export function createColumn(
     validation: validation ? { ...validation } : {},
     renderer: rendererOptions,
     formatter,
+    onBeforeChange,
+    onAfterChange,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });

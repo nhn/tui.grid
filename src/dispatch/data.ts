@@ -51,16 +51,16 @@ export function setValue(
     targetColumn.onBeforeChange(gridEvent);
   }
 
-  if (!gridEvent.isStopped()) {
-    if (targetRow) {
-      const { rowSpanMap } = targetRow;
-      targetRow[columnName] = value;
-      getDataManager(id).push('UPDATE', targetRow);
+  if (gridEvent.isStopped()) {
+    return;
+  }
 
-      if (isEmpty(rowSpanMap) || !enableRowSpan(sortOptions.columnName)) {
-        return;
-      }
+  if (targetRow) {
+    const { rowSpanMap } = targetRow;
+    targetRow[columnName] = value;
+    getDataManager(id).push('UPDATE', targetRow);
 
+    if (!isEmpty(rowSpanMap) && enableRowSpan(sortOptions.columnName)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -69,10 +69,11 @@ export function setValue(
         getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
       }
     }
-    if (targetColumn && targetColumn.onAfterChange) {
-      gridEvent = new GridEvent({ rowKey, columnName, value });
-      targetColumn.onAfterChange(gridEvent);
-    }
+  }
+
+  if (targetColumn && targetColumn.onAfterChange) {
+    gridEvent = new GridEvent({ rowKey, columnName, value });
+    targetColumn.onAfterChange(gridEvent);
   }
 }
 
