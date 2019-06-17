@@ -22,76 +22,75 @@
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
   <script type="text/javascript" class="code-js">
-  var grid = new tui.Grid({
-      el: $('#grid'),
-      scrollX: false,
-      scrollY: false,
-      header: {
-          height: 160,
-          complexColumns: [
-              {
-                  title: 'Basic',
-                  name: 'mergeColumn1',
-                  childNames: ['name', 'artist']
-              },
-              {
-                  title: 'Extra',
-                  name: 'mergeColumn2',
-                  childNames: ['type', 'release', 'genre']
-              },
-              {
-                  title: 'Detail',
-                  name: 'mergeColumn3',
-                  childNames: ['mergeColumn1', 'mergeColumn2']
-              },
-              {
-                  title: 'Count',
-                  name: 'mergeColumn4',
-                  childNames: ['downloadCount', 'listenCount']
-              },
-              {
-                  title: 'Album Info',
-                  name: 'mergeColumn5',
-                  childNames: ['price', 'mergeColumn3', 'mergeColumn4']
-              }
-          ]
-      },
-      columns: [
-          {
-              title: 'Name',
-              name: 'name'
-          },
-          {
-              title: 'Artist',
-              name: 'artist'
-          },
-          {
-              title: 'Type',
-              name: 'type'
-          },
-          {
-              title: 'Release',
-              name: 'release'
-          },
-          {
-              title: 'Genre',
-              name: 'genre'
-          },
-          {
-              title: 'Price',
-              name: 'price'
-          },
-          {
-              title: 'Download',
-              name: 'downloadCount'
-          },
-          {
-              title: 'Listen',
-              name: 'listenCount'
-          }
+  const grid = new tui.Grid({
+    el: document.getElementById('grid'),
+    scrollX: false,
+    scrollY: false,
+    data: gridData,
+    header: {
+      height: 160,
+      complexColumns: [
+        {
+          header: 'Basic',
+          name: 'mergeColumn1',
+          childNames: ['name', 'artist']
+        },
+        {
+          header: 'Extra',
+          name: 'mergeColumn2',
+          childNames: ['type', 'release', 'genre']
+        },
+        {
+          header: 'Detail',
+          name: 'mergeColumn3',
+          childNames: ['mergeColumn1', 'mergeColumn2']
+        },
+        {
+          header: 'Count',
+          name: 'mergeColumn4',
+          childNames: ['downloadCount', 'listenCount']
+        },
+        {
+          header: 'Album Info',
+          name: 'mergeColumn5',
+          childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+        }
       ]
+    },
+    columns: [
+      {
+        header: 'Name',
+        name: 'name'
+      },
+      {
+        header: 'Artist',
+        name: 'artist'
+      },
+      {
+        header: 'Type',
+        name: 'type'
+      },
+      {
+        header: 'Release',
+        name: 'release'
+      },
+      {
+        header: 'Genre',
+        name: 'genre'
+      },
+      {
+        header: 'Price',
+        name: 'price'
+      },
+      {
+        header: 'Download',
+        name: 'downloadCount'
+      },
+      {
+        header: 'Listen',
+        name: 'listenCount'
+      }
+    ]
   });
-
-  grid.setData(gridData);
   </script>
 </html>
