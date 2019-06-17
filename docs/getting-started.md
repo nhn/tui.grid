@@ -34,8 +34,6 @@ The CDN directory has the following structure.
 ```
 tui-grid/
 ├─ latest/
-│  ├─ tui-grid.comb.js // This file includes the backbone and underscore.
-│  ├─ tui-grid.comb.min.js
 │  ├─ tui-grid.css
 │  ├─ tui-grid.min.css
 │  ├─ tui-grid.js
@@ -167,11 +165,11 @@ var grid = new Grid({
   ...
 });
 
-// case 2 : using setData method
-grid.setData(data);
+// case 2 : using resetData method
+grid.resetData(data);
 ```
 
-The `data` option or the `setData()` method receives an array as a parameter, in which each element specifies a row data. The data is just a plain object. You can see that the properties of each row data matches the `name` properties of the column models, that is specified above.
+The `data` option or the `resetData()` method receives an array as a parameter, in which each element specifies a row data. The data is just a plain object. You can see that the properties of each row data matches the `name` properties of the column models, that is specified above.
 
 Then you can see the table of your data on your screen.
 

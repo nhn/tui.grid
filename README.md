@@ -2,14 +2,10 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
-
-## The New Grid is Comming!!
-We've been working diligently for the major update of the version 4. The **entire source code is rewritten from scratch without any dependencies**, and it'll be **way lighter than before**. For more information, see the [release note of the alpha.0](https://github.com/nhn/tui.grid/releases/tag/v4.0.0-alpha.0). We are planning to release the official version by the 4th week of the June. Stay tune!!
-
 
 ## Wrappers
 
@@ -37,7 +33,6 @@ We've been working diligently for the major update of the version 4. The **entir
     * [Setup](#setup)
     * [Develop](#develop)
     * [Pull Request Steps](#pull-request)
-* [Dependency](#-dependency)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
@@ -66,7 +61,7 @@ var instance = new Grid(options);
 
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
-| Yes | 8+ | Yes | Yes | Yes |
+| Yes | 9+ | Yes | Yes | Yes |
 
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
@@ -95,14 +90,14 @@ Now let's process the data we want.
 ![tree](https://user-images.githubusercontent.com/18183560/41572383-780a9c08-73b2-11e8-9ffb-7bc5e58860e6.png)
 
 
-### Provides a Variety of Editing Elements
+### Provides a Custom Editing Elements
 
 In order to edit the data, you don't need to use `html` to create the editing elements yourself.
 It supports various `input` elements such as **text**, **select box**, **checkbox**, **radio button.**
 You can set the data editing method just by setting options.
-You can also show editing elements only while you're editing **using view mode**.
+You can also show editing elements whatever you want through **Custom Editor**.
 
-![input](https://user-images.githubusercontent.com/18183560/41572386-7adca7d2-73b2-11e8-927d-f082841ee3e5.png)
+![customEditor](https://user-images.githubusercontent.com/37766175/59417111-9e181280-8e01-11e9-8de7-2df819b36354.png)
 
 
 ### Simple, Easy to Use Themes
@@ -163,8 +158,8 @@ However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
-TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
-You can conveniently install it using the commands provided by each package manager.
+TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/).
+You can conveniently install it using the commands provided by the package manager.
 When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
 
 #### npm
@@ -172,13 +167,6 @@ When using npm, be sure to use it in the environment [Node.js](https://nodejs.or
 ``` sh
 $ npm install --save tui-grid # Latest version
 $ npm install --save tui-grid@<version> # Specific version
-```
-
-#### bower
-
-``` sh
-$ bower install tui-grid # Latest version
-$ bower install tui-grid#<tag> # Specific version
 ```
 
 ### Via Contents Delivery Network (CDN)
@@ -200,13 +188,11 @@ The CDN directory has the following structure.
 ```
 tui-grid/
 ├─ latest/
-│  ├─ tui-grid.comb.js // This file includes the backbone and underscore.
-│  ├─ tui-grid.comb.min.js
 │  ├─ tui-grid.css
 │  ├─ tui-grid.min.css
 │  ├─ tui-grid.js
 │  └─ tui-grid.min.js
-├─ v2.10.0/
+├─ v3.8.0/
 │  ├─ ...
 ```
 
@@ -214,19 +200,6 @@ tui-grid/
 
 * [Download bundle files](https://github.com/nhn/tui.grid/tree/production/dist)
 * [Download all sources for each version](https://github.com/nhn/tui.grid/releases)
-
-
-## 🔩 Dependency
-
-* [jquery](https://jquery.com/) >=1.11.0 (Available with `bower` from 1.8.3)
-* [underscore](http://underscorejs.org/) >=1.8.3
-* [backbone](http://backbonejs.org/) >=1.3.3
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippett) >=1.5.0
-* component (optional)
-    * [tui-date-picker](https://github.com/nhn/tui.date-picker) >=3.2.1
-    * [tui-pagination](https://github.com/nhn/tui.pagination) >=3.3.0
-
-You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 
 ## 🔨 Usage
@@ -264,22 +237,22 @@ You can create an instance with options and call various APIs after creating an 
 
 ``` javascript
 var instance = new Grid({
-  el: $('#grid'), // Container element
+  el: document.getElementById('grid), // Container element
   columns: [
     {
-      title: 'Name',
+      header: 'Name',
       name: 'name'
     },
     {
-      title: 'Artist',
+      header: 'Artist',
       name: 'artist'
     },
     {
-      title: 'Release',
+      header: 'Release',
       name: 'release'
     },
     {
-      title: 'Genre',
+      header: 'Genre',
       name: 'genre'
     }
   ],
@@ -293,7 +266,7 @@ var instance = new Grid({
   ]
 });
 
-instance.setData(newData); // Call API of instance's public method
+instance.resetData(newData); // Call API of instance's public method
 
 Grid.applyTheme('striped'); // Call API of static method
 ```
@@ -337,11 +310,16 @@ Don't miss adding test cases and then make green rights.
 #### Run webpack-dev-server
 
 ``` sh
-$ npm run dev
-$ npm run dev:ie8 # Run on Internet Explorer 8
+$ npm start
 ```
 
-#### Run karma test
+#### Run storybook
+
+``` sh
+$ npm run storybook
+```
+
+#### Run cypress test
 
 ``` sh
 $ npm run test
