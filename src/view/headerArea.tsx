@@ -7,7 +7,12 @@ import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
 import { getDataProvider } from '../instance';
 import { DataProvider } from '../dataSource/types';
-import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/column';
+import {
+  isParentColumnHeader,
+  isRowHeader,
+  isCheckboxColumn,
+  isRowHeaderElement
+} from '../helper/column';
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
@@ -48,7 +53,7 @@ class HeaderAreaComp extends Component<Props> {
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
-    if (isRowHeader(name) || hasClass(target, 'btn-sorting')) {
+    if (isRowHeaderElement(target) || hasClass(target, 'btn-sorting')) {
       return;
     }
 
