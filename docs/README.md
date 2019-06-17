@@ -3,7 +3,7 @@
 ## Tutorials
 
 - [🚀 Getting Started](getting-started.md)
-- [Complex columns](complex-columns.md)
+- [🔗 Complex columns](complex-columns.md)
 - [🛠 Using Built-in Editor](custom-editor.md)
 - [🤝 Relation between columns](relation-between-columns.md)
 - [👨‍🎨 Applying Themes](applying-themes.md)
