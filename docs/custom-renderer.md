@@ -32,7 +32,7 @@ The following is the source code of the simple slider renderer.
 
 ```javascript
 class CustomSliderRenderer {
-  public constructor(props) {
+  constructor(props) {
     const el = document.createElement('input');
     // you can access the renderer custom options as below.
     const { min, max } = props.columnInfo.renderer.options;
@@ -49,11 +49,11 @@ class CustomSliderRenderer {
     this.render(props);
   }
 
-  public getElement() {
+  getElement() {
     return this.el;
   }
 
-  public render(props) {
+  render(props) {
     this.el.value = String(props.value);
   }
 }
@@ -63,21 +63,21 @@ To use your own `Custom Renderer`, just specify it with the `renderer.type` opti
 
 ```javascript
 const grid = new tui.Grid({
-    // ... another options
-    columns: [
-        {
-            header: 'Custom',
-            name: 'custom',
-            renderer: {
-                type: CustomSliderRenderer,
-                options: {
-                    min: 0,
-                    max: 30
-                }
-            }        
+  // ... another options
+  columns: [
+    {
+      header: 'Custom',
+      name: 'custom',
+      renderer: {
+        type: CustomSliderRenderer,
+        options: {
+          min: 0,
+          max: 30
         }
-        // ...
-    ]
+      }        
+    }
+    // ...
+  ]
 });
 ```
 

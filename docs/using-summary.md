@@ -10,7 +10,7 @@ The `summary` replaces the existing `footer` option and is the same as the `foot
 To enable the summary, you should add `summary` property to the option object which is used when creating an instance of `tui.Grid`.
 
 ```javascript
-var grid = new tui.Grid({
+const grid = new tui.Grid({
   el: document.getElementbyId('grid'),
   columns: [/* … */],
   summary: {
@@ -18,18 +18,18 @@ var grid = new tui.Grid({
     height: 100,  // by pixel
     columnContent: {
       col1: {
-        template: function() {
+        template() {
           return 'col1 footer';
         }
       },
       col2: {
-        template: function() {
+        template() {
           return 'col2 footer';
         }
       }
     },
     defaultContent: {
-      template: function() {
+      template() {
         return 'default footer';
       }
     }
@@ -53,18 +53,18 @@ If you set an object for a specific column to the `columnContent` property, the 
 // …
 columnContent: {
   col1: {
-    template: function(summary) {
+    template(summary) {
       return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
     }
   },
   col2: {
-    template: function(summary) {
+    template(summary) {
       return 'max: ' + summary.max + '<br>min: ' + summary.min;
     }
   }
 },
 defaultContent: {
-  template: function(summary) {
+  template(summary) {
     return 'default: ' + summary.sum;
   }
 }
@@ -92,7 +92,7 @@ There is another property available for a value object of the `columnContent` an
 columnContent: {
   col1: {
     useAutoSummary: false,
-    template: function(summary) {
+    template(summary) {
       return 'max: ' + summary.max + '<br>min: ' + summary.min;;
     }
   }
@@ -100,7 +100,7 @@ columnContent: {
 },
 defaultContent: {
     useAutoSummary: false,
-    template: function(summary) {
+    template(summary) {
         return 'default: ' + summary.sum;
     }
 }

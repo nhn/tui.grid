@@ -22,7 +22,7 @@ grid.setColumns([
     relations: [
       {
         targetNames: ['col2', 'col3'],
-        editable: function({ value }) {
+        editable({ value }) {
           return value === '1';
         }
       }    
@@ -66,7 +66,7 @@ grid.setColumns([
     },
     relations: [
       targetNames: ['col2'],
-      listItems: function({ value }) {
+      listItems({ value }) {
         let items;
 
         if (value === '1') {
