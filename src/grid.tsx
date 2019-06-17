@@ -987,7 +987,6 @@ export default class Grid {
    *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
    *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
    *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
-   * @returns {boolean} Whether requests or not
    */
   public request(requestType: RequestType, options: RequestOptions = {}) {
     this.dataProvider.request(requestType, options);
