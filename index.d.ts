@@ -2,9 +2,6 @@
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
-  //
-  // Utility type
-  // ----------------------------------------------------------------------
   type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
   type TypeObjectOptions<T> =
     | T
@@ -16,17 +13,10 @@ declare namespace tuiGrid {
     [index: string]: T;
   }
 
-  //
-  // Cell Value
-  // ----------------------------------------------------------------------
   type CellValue = number | string | boolean | null | undefined;
 
-  //
-  // Theme
-  // ----------------------------------------------------------------------
   type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
 
-  // Cell Style
   interface ICellStyle {
     background?: string;
     border?: string;
@@ -132,9 +122,6 @@ declare namespace tuiGrid {
     pagination?: IPaginationStyle;
   }
 
-  //
-  // Row
-  // ----------------------------------------------------------------------
   type RowKey = number | string;
   type Row = Dictionary<CellValue> & {
     rowKey: RowKey;
@@ -148,7 +135,6 @@ declare namespace tuiGrid {
     _children?: IRow[];
   }
 
-  // RowSpan
   type RowSpanMap = Dictionary<IRowSpan>;
 
   interface IRowSpan {
@@ -162,7 +148,6 @@ declare namespace tuiGrid {
     rowSpan?: Dictionary<number>;
   }
 
-  // RowHeader
   type RowHeader = RowHeaderType | IRowHeaderColumn;
   type RowHeaderType = 'rowNum' | 'checkbox';
 
@@ -170,7 +155,6 @@ declare namespace tuiGrid {
     type: RowHeaderType;
   }
 
-  // RowAttribute
   interface IRowAttributes {
     rowNum: number;
     checked: boolean;
@@ -182,7 +166,6 @@ declare namespace tuiGrid {
     expanded?: boolean;
   }
 
-  // Row Options
   interface IAppendRowOptions {
     at?: number;
     focus?: boolean;
@@ -199,9 +182,6 @@ declare namespace tuiGrid {
     keepRowSpanData?: boolean;
   }
 
-  //
-  // Column
-  // ----------------------------------------------------------------------
   interface IColumn {
     name: string;
     header?: string;
@@ -211,8 +191,6 @@ declare namespace tuiGrid {
     editor?: CellEditor;
     formatter?: Formatter;
     defaultValue?: CellValue;
-    prefix?: Formatter;
-    postfix?: Formatter;
     viewer?: string | boolean;
     resizable?: boolean;
     minWidth?: number;
@@ -239,8 +217,6 @@ declare namespace tuiGrid {
     copyOptions?: ClipboardCopyOptions;
     hidden: boolean;
     formatter?: Formatter;
-    prefix?: Formatter;
-    postfix?: Formatter;
     baseWidth: number;
     resizable: boolean;
     fixedWidth: boolean;
@@ -266,7 +242,6 @@ declare namespace tuiGrid {
     sortable?: boolean;
   }
 
-  // ColumnOptions
   interface IColumnOptions {
     minWidth?: number;
     frozenCount?: number;
@@ -274,9 +249,6 @@ declare namespace tuiGrid {
     resizable?: boolean;
   }
 
-  //
-  // Summary
-  // ----------------------------------------------------------------------
   type SummaryPosition = 'top' | 'bottom';
 
   interface ISummaryData {
@@ -301,9 +273,6 @@ declare namespace tuiGrid {
     cnt: number;
   }
 
-  //
-  // Relations
-  // ----------------------------------------------------------------------
   interface IRelations {
     targetNames?: string[];
     listItems?: (relationParams: IRelationCallbackData) => IListItem[];
@@ -323,9 +292,6 @@ declare namespace tuiGrid {
     row?: Row;
   }
 
-  //
-  // Validation
-  // ----------------------------------------------------------------------
   type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
 
   interface IValidation {
@@ -343,9 +309,6 @@ declare namespace tuiGrid {
     errors: IInvalidColumn[];
   }
 
-  //
-  // Tree
-  // ----------------------------------------------------------------------
   interface ITree {
     name: string;
     useIcon?: boolean;
@@ -359,9 +322,6 @@ declare namespace tuiGrid {
     hiddenChild?: boolean;
   }
 
-  //
-  // I18n
-  // ----------------------------------------------------------------------
   interface II18nData {
     display?: {
       noData?: string;
@@ -381,18 +341,12 @@ declare namespace tuiGrid {
     };
   }
 
-  //
-  // SortOptions
-  // ----------------------------------------------------------------------
   interface SortOptions {
     columnName: string;
     ascending: boolean;
     useClient: boolean;
   }
 
-  //
-  // ClipboardCopyOptions
-  // ----------------------------------------------------------------------
   type CustomValue = string | ((value: CellValue, rowAttrs: Row[], column: IColumnInfo) => string);
 
   interface ClipboardCopyOptions {
@@ -401,18 +355,12 @@ declare namespace tuiGrid {
     customValue?: CustomValue;
   }
 
-  //
-  // PageOptions
-  // ----------------------------------------------------------------------
   interface PageOptions {
     perPage?: number;
     page?: number;
     totalCount?: number;
   }
 
-  //
-  // DataSource
-  // ----------------------------------------------------------------------
   type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyData';
 
   type Params = {
@@ -429,18 +377,18 @@ declare namespace tuiGrid {
   interface IDataSource {
     initialRequest?: boolean;
     withCredentials?: boolean;
-    api: IAPI;
+    api: IApi;
   }
 
-  interface IAPI {
-    createData?: IAPIInfo;
-    readData: IAPIInfo;
-    updateData?: IAPIInfo;
-    deleteData?: IAPIInfo;
-    modifyData?: IAPIInfo;
+  interface IApi {
+    createData?: IApiInfo;
+    readData: IApiInfo;
+    updateData?: IApiInfo;
+    deleteData?: IApiInfo;
+    modifyData?: IApiInfo;
   }
 
-  interface IAPIInfo {
+  interface IApiInfo {
     url: string;
     method: string;
   }
@@ -461,9 +409,6 @@ declare namespace tuiGrid {
     ignoredColumns?: string[];
   }
 
-  //
-  // Custom Editor
-  // ----------------------------------------------------------------------
   type CellEditor = TypeObjectOptions<string | ICellEditorClass>;
 
   interface ICellEditorClass {
@@ -489,9 +434,6 @@ declare namespace tuiGrid {
     beforeDestroy?(): void;
   }
 
-  //
-  // Custom Renderer
-  // ----------------------------------------------------------------------
   type CellRenderer = TypeObjectOptions<string | ICellRendererClass>;
   type CellRendererProps = ICellRenderData & {
     grid: Grid;
@@ -505,8 +447,6 @@ declare namespace tuiGrid {
     disabled: boolean;
     invalidState: '' | ValidationType;
     formattedValue: string;
-    prefix: string;
-    postfix: string;
     value: CellValue;
     className: string;
   }
@@ -528,9 +468,6 @@ declare namespace tuiGrid {
     beforeDestroy?(): void;
   }
 
-  //
-  // Formatter
-  // ----------------------------------------------------------------------
   type Formatter = ((props: IFormatterProps) => string) | string;
 
   interface IFormatterProps {
@@ -539,23 +476,14 @@ declare namespace tuiGrid {
     value: CellValue;
   }
 
-  //
-  // Header
-  // ----------------------------------------------------------------------
   interface IHeader {
     height?: number;
     complexColumns?: ComplexColumnInfo[];
   }
 
-  //
-  // Selection unit, Editing Event
-  // ----------------------------------------------------------------------
   type SelectionUnit = 'cell' | 'row';
   type EditingEvent = 'click' | 'dblclick';
 
-  //
-  // Grid Options
-  // ----------------------------------------------------------------------
   interface IGridOptions {
     el: HTMLElement;
     data?: IRow[] | IDataSource;
