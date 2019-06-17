@@ -79,7 +79,7 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentDidMount() {
-    const { grid, rowKey, columnInfo, value } = this.props;
+    const { grid, rowKey, columnInfo, value, width } = this.props;
 
     const EditorClass: CellEditorClass = columnInfo.editor!.type;
     const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
@@ -89,6 +89,13 @@ export class EditingLayerInnerComp extends Component<Props> {
     if (editorEl && this.contentEl) {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
+
+      const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
+
+      if (editorWidth > width) {
+        const CELL_PADDING_WIDTH = 10;
+        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
+      }
 
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();

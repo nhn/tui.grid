@@ -13,6 +13,7 @@ export interface CellEditor {
   getValue(): string;
   mounted?(): void;
   beforeDestroy?(): void;
+  el?: HTMLElement;
 }
 
 export interface ListItemOptions {
