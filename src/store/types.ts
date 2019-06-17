@@ -83,8 +83,6 @@ export interface CellRenderData {
   disabled: boolean;
   invalidState: '' | ValidationType;
   formattedValue: string;
-  prefix: string;
-  postfix: string;
   value: CellValue;
   className: string;
 }
@@ -176,8 +174,6 @@ export interface ColumnInfo {
   copyOptions?: ClipboardCopyOptions;
   hidden: boolean;
   formatter?: Formatter;
-  prefix?: Formatter;
-  postfix?: Formatter;
   baseWidth: number;
   resizable: boolean;
   fixedWidth: boolean;
