@@ -99,10 +99,12 @@ class ComplexHeaderComp extends Component<Props> {
       <th
         key={name}
         data-column-name={name}
-        class={cls('cell', 'cell-header', [
-          !isRowHeader(name) && this.isSelected(name),
-          'cell-selected'
-        ])}
+        class={cls(
+          'cell',
+          'cell-header',
+          [!isRowHeader(name) && this.isSelected(name), 'cell-selected'],
+          [isRowHeader(name), 'cell-row-header']
+        )}
         height={height}
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
