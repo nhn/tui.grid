@@ -132,8 +132,7 @@ export function getTextWithCopyOptionsApplied(
 
       text = result.join(',');
     } else if (copyOptions.useFormattedValue) {
-      const { prefix, postfix, formattedValue } = valueMap;
-      text = `${prefix}${formattedValue}${postfix}`;
+      text = `${valueMap.formattedValue}`;
     }
   }
 

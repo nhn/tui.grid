@@ -117,7 +117,7 @@ function createViewCell(
   relationMatched = true,
   relationListItems?: ListItem[]
 ): CellRenderData {
-  const { name, formatter, prefix, postfix, editor, validation } = column;
+  const { name, formatter, editor, validation } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
   if (!relationMatched) {
@@ -134,8 +134,6 @@ function createViewCell(
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
-    prefix: getFormattedValue(formatterProps, prefix),
-    postfix: getFormattedValue(formatterProps, postfix),
     value
   };
 }
