@@ -77,12 +77,12 @@ function hasChildrenState(row: OptRow) {
 
 function getExpandedState(row: OptRow) {
   if (row && row._attributes) {
-    const { expanded = true } = row._attributes;
+    const { expanded = false } = row._attributes;
 
     return expanded;
   }
 
-  return true;
+  return false;
 }
 
 export function getHiddenChildState(row: Row) {
