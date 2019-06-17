@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>15. Tree</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+    See the 'tree-dummy.js' file for tree data.<br />
+    You can check for custom events in the console.<br />
+    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/tree.md" target="_blank">here</a>.
+    </div>
+    <div class="contents">
+      <div style="margin-bottom:10px;">
+        <button id="append">append on 'rowKey: 0'</button>
+        <button id="remove">remove at 'rowKey: 0'</button>
+      </div>
+      <div class="code-html">
+        <div id="grid"></div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/tree-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+  const grid = new tui.Grid({
+    el: document.getElementById('grid'),
+    data: treeData,
+    rowHeaders: ['checkbox'],
+    bodyHeight: 500,
+    treeColumnOptions: {
+      name: 'name',
+      useCascadingCheckbox: true
+    },
+    columns: [
+      {
+        title: 'Name',
+        name: 'name',
+        width: 300,
+        editor: {
+          type: 'text'
+        }
+      },
+      {
+        title: 'Artist',
+        name: 'artist'
+      },
+      {
+        title: 'Type',
+        name: 'type'
+      },
+      {
+        title: 'Release',
+        name: 'release'
+      },
+      {
+        title: 'Genre',
+        name: 'genre'
+      }
+    ]});
+
+    document.getElementById('append').addEventListener('click', () => {
+      const addedData = {
+        id: 502795,
+        name: 'test1',
+        artist: 'test1',
+        release: '2015.05.12',
+        type: 'EP',
+        typeCode: '2',
+        genre: 'Hiphop',
+        genreCode: '5',
+        grade: '5',
+        price: 18000,
+        downloadCount: 1000,
+        listenCount: 5000,
+        _attributes: {
+          expanded: true
+        },
+        _children: [
+          {
+            id: 502793,
+            name: 'test2',
+            artist: 'test2',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000
+          },
+          {
+            id: 502797,
+            name: 'test3',
+            artist: 'test3',
+            release: '2015.05.12',
+            type: 'EP',
+            typeCode: '2',
+            genre: 'Hiphop',
+            genreCode: '5',
+            grade: '5',
+            price: 18000,
+            downloadCount: 1000,
+            listenCount: 5000
+          }
+        ]
+      };
+
+      grid.appendRow(addedData, {parentRowKey: 0});
+    });
+
+    document.getElementById('remove').addEventListener('click', () => {
+      grid.removeRow(0);
+    });
+
+    grid.on('expand', (ev) => {
+      const {rowKey} = ev;
+      const descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('ededescendantRows: ' + descendantRows);
+    });
+
+    grid.on('collapse', (ev) => {
+      const {rowKey} = ev;
+      const descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('ededescendantRows: ' + descendantRows);
+    });
+  </script>
+</html>

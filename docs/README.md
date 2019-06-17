@@ -8,11 +8,12 @@
 - [🤝 Relation between columns](relation-between-columns.md)
 - [👨‍🎨 Applying Themes](applying-themes.md)
 - [📅 Using DatePicker component](date-picker.md)
-- [ ✍️ Using Summary](summary.md)
+- [✍️ Using Summary](summary.md)
 - [🛎 Custom Event](custom-event.md)
 - [⌨️ Keymap](keymap.md)
 - [📎 Clipboard](clipboard.md)
-- [ 🛰 Data Source](dataSource.md)
+- [🛰 Data Source](dataSource.md)
+- [🌳 Tree](tree.md)
 
 ## Migration Guide 
 
