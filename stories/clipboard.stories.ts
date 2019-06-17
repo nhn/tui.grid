@@ -26,8 +26,7 @@ const columns = [
 const columnsUseFormattedValue = [
   {
     name: 'name',
-    editor: 'text',
-    prefix: 'prefix__'
+    editor: 'text'
   },
   {
     name: 'artist',
@@ -41,7 +40,7 @@ const columnsUseFormattedValue = [
       useFormattedValue: false
     }
   },
-  { name: 'release', editor: 'text', postfix: '__postfix' },
+  { name: 'release', editor: 'text' },
   { name: 'genre', editor: 'text' },
   { name: 'genreCode', editor: 'text' },
   { name: 'grade', editor: 'text' },
