@@ -1,4 +1,4 @@
-## Data Source
+## Data Source 🛰
 
 In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the `data` option like the example below.
 
@@ -10,8 +10,8 @@ const dataSource = {
 };
 
 const grid = new tui.Grid({
-    // ... another options
-    data: dataSource
+  // ... another options
+  data: dataSource
 });
 ```
 
@@ -48,14 +48,14 @@ The response data should be a JSON string. If the request is processed successfu
 
 ```json
 {
-    "result": true,
-    "data": {
-        "contents": [],
-        "pagination": {
-            "page": 1,
-            "totalCount": 100
-        }
+  "result": true,
+  "data": {
+    "contents": [],
+    "pagination": {
+      "page": 1,
+      "totalCount": 100
     }
+  }
 }
 ```
 
@@ -70,8 +70,8 @@ If an error occurred when processing the request, `result` should be `false`.
 
 ```json
 {
-    "result": false,
-    "message": "Error message from the server"
+  "result": false,
+  "message": "Error message from the server"
 }
 ```
 
@@ -81,11 +81,11 @@ When sends the request to the remote server, usually you need the `Pagination`. 
 
 ```javascript
 const grid = new tui.Grid({
-    // ... another options
-    data: dataSource,
-    pageOptions: {
-      perPage: 10
-    }
+  // ... another options
+  data: dataSource,
+  pageOptions: {
+    perPage: 10
+  }
 });
 ```
 
@@ -102,18 +102,18 @@ To use these APIs, you have to register the `URL` and `method` of each request i
 
 ```javascript
 const dataSource = {
-    api: {
-        readData: { url: '/api/readData', method: 'GET' },
-        createData: { url: '/api/createData', method: 'POST' },
-        updateData: { url: '/api/updateData', method: 'PUT' },
-        modifyData: { url: '/api/modifyData', method: 'PUT' },
-        deleteData: { url: '/api/deleteData', method: 'DELETE' }
-    }
+  api: {
+    readData: { url: '/api/readData', method: 'GET' },
+    createData: { url: '/api/createData', method: 'POST' },
+    updateData: { url: '/api/updateData', method: 'PUT' },
+    modifyData: { url: '/api/modifyData', method: 'PUT' },
+    deleteData: { url: '/api/deleteData', method: 'DELETE' }
+  }
 };
 
 const grid = new tui.Grid({
-    // ... another options
-    data: dataSource
+  // ... another options
+  data: dataSource
 });
 ```
 
@@ -137,8 +137,8 @@ The response data from the remote server, which is also a JSON string, should be
 
 ```json
 {
-    "result": true,
-    "data": {}
+  "result": true,
+  "data": {}
 }
 ```
 
@@ -146,8 +146,8 @@ The `data` property is optional. You can use it if you want to send data from th
 
 ```json
 {
-    "result": false,
-    "message": "Error message from the server"
+  "result": false,
+  "message": "Error message from the server"
 }
 ```
 
@@ -157,15 +157,15 @@ You can register callback functions for each state of the process using the `on(
 
 ```javascript
 grid.on('beforeRequest', function(data) {
-    // before sending a request
+  // before sending a request
 }).on('response', function(data) {
-    // when receiving response regardless of success/fail
+  // when receiving response regardless of success/fail
 }).on('successResponse', function(data) {
-    // when the result is true
+  // when the result is true
 }).on('failResponse', function(data) {
-    // when the result is false
+  // when the result is false
 }).on('errorResponse', function(data) {
-    // when an error occurred
+  // when an error occurred
 });
 ```
 

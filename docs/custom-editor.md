@@ -1,23 +1,23 @@
-## Using `Built-in Editor`
+## Using `Built-in Editor` 🛠
 
 
 In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
 
 ```javascript
 const grid = new tui.Grid({
-    // ... another options
-    columns: [
-        {
-            header: 'ID',
-            name: 'id',
-            editor: 'text'
-        },
-        {
-            header: 'PASSWORD',
-            name: 'password',
-            editor: 'password'
-        }
-    ]
+  // ... another options
+  columns: [
+    {
+      header: 'ID',
+      name: 'id',
+      editor: 'text'
+    },
+    {
+      header: 'PASSWORD',
+      name: 'password',
+      editor: 'password'
+    }
+  ]
 });
 ```
 
@@ -36,24 +36,24 @@ To use the `checkbox`, `radio`, and `select` types, you need to set list options
 
 ```javascript
 columns: [
-    {
-        header: 'BROWSER',
-        name: 'browser',
-        formatter: 'listItemText'
-        editor: {
-            type: 'checkbox',
-            options: {
-                listItems: [
-                    { text: 'IE 9', value: 1 },
-                    { text: 'IE 10', value: 2 },
-                    { text: 'IE 11', value: 3 },
-                    { text: 'Firefox', value: 4 }
-                    { text: 'Chrome', value: 5 }
-                ]
-            }
-        }        
-    }
-    // ...
+  {
+    header: 'BROWSER',
+    name: 'browser',
+    formatter: 'listItemText'
+    editor: {
+      type: 'checkbox',
+      options: {
+        listItems: [
+          { text: 'IE 9', value: 1 },
+          { text: 'IE 10', value: 2 },
+          { text: 'IE 11', value: 3 },
+          { text: 'Firefox', value: 4 }
+          { text: 'Chrome', value: 5 }
+        ]
+      }
+    }        
+  }
+  // ...
 ]
 ```
 
@@ -116,22 +116,22 @@ To use your own `Custom Editor`, just specify it with the `editor.type` option o
 
 ```javascript
 const grid = new tui.Grid({
-    // ... another options
-    columns: [
-        {
-            header: 'Custom',
-            name: 'custom',
-            editor: {
-                type: CustomTextEditor,
-                options: {
-                    customTextEditorOptions: {
-                        // ...
-                    }
-                }
-            }        
+  // ... another options
+  columns: [
+    {
+      header: 'Custom',
+      name: 'custom',
+      editor: {
+        type: CustomTextEditor,
+        options: {
+          customTextEditorOptions: {
+            // ...
+          }
         }
-        // ...
-    ]
+      }        
+    }
+    // ...
+  ]
 });
 ```
 The `Custom Options` can be used in the constructor function using `props.columnInfo.editor.options` as below.

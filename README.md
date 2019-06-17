@@ -122,13 +122,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 ## 🎨 Features
 
 * Custom cell formatter & converter
-* Various input types _(checkbox, radio, select, password, etc)_
+* [Various input types _(checkbox, radio, select, password, etc)_](./docs/custom-editor.md)
 * [Full keyboard navigation _(move, select, copy, paste, delete, etc)_](./docs/keymap.md)
 * Virtual scrolling _(Handling large dataset without performance loses)_
 * [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
 * Column resize & reorder & show & hide
 * Multi column headers
-* Inline Editing
+* [Inline Editing](./docs/custom-editor.md)
 * Validation
 * Selection
 * Pagination
@@ -136,9 +136,9 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns
-* Relation between each columns
-* Binding to remote data
-* Summarize all values of each column
+* [Relation between each columns](./docs/relation-between-columns.md)
+* [Binding to remote data](./docs/dataSource.md)
+* [Summarize all values of each column](./docs/using-summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * Representing tree data
 

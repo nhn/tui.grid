@@ -1,4 +1,4 @@
-## Using `relations`
+## Using `relations` 🤝
 
 TOAST UI Grid allows you to set relations between columns using the `relations` option of a column model. The value of the `relations` option is an array in which each element defines a unique relation between current column and the target columns.
 
@@ -16,26 +16,26 @@ The `editable` callback function determines the `editable` state of the target c
 
 ```javascript
 grid.setColumns([
-    {
-        header: 'col1',
-        name: 'col1',
-        relations: [
-            {
-                targetNames: ['col2', 'col3'],
-                editable: function({ value }) {
-                    return value === '1';
-                }
-            }    
-        ]        
-    },
-    {
-        header: 'col2',
-        name: 'col2'
-    },
-    {
-        header: 'col3',
-        name: 'col3'
-    }
+  {
+    header: 'col1',
+    name: 'col1',
+    relations: [
+      {
+        targetNames: ['col2', 'col3'],
+        editable: function({ value }) {
+          return value === '1';
+        }
+      }    
+    ]        
+  },
+  {
+    header: 'col2',
+    name: 'col2'
+  },
+  {
+    header: 'col3',
+    name: 'col3'
+  }
 ]);
 ```
 
@@ -54,47 +54,47 @@ The `listItems` callback function determines the option list of the target colum
 
 ```javascript
 grid.setColumns([
-    {
-        header: 'col1',
-        name: 'col1',
-        formatter: 'listItemText',
-        editor: {
-            type: 'select',
-            options: {
-                listItems: []
-            }
-        },
-        relations: [
-            targetNames: ['col2'],
-            listItems: function({ value }) {
-                var items;
-
-                if (value === '1') {
-                    items = [
-                        { text: 'opt1', value: '1' }
-                        { text: 'opt2', value: '2' }    
-                    ];
-                } else {
-                    items = [
-                        { text: 'opt3', value: '3' }
-                        { text: 'opt4', value: '4' }    
-                    ]    
-                }
-                return items;
-            }
-        ]    
+  {
+    header: 'col1',
+    name: 'col1',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
     },
-    {
-        header: 'col2',
-        name: 'col2',
-        formatter: 'listItemText',
-        editor: {
-            type: 'select',
-            options: {
-                listItems: []
-            }
+    relations: [
+      targetNames: ['col2'],
+      listItems: function({ value }) {
+        let items;
+
+        if (value === '1') {
+          items = [
+            { text: 'opt1', value: '1' }
+            { text: 'opt2', value: '2' }    
+          ];
+        } else {
+          items = [
+            { text: 'opt3', value: '3' }
+            { text: 'opt4', value: '4' }    
+          ]    
         }
+        return items;
+      }
+    ]    
+  },
+  {
+    header: 'col2',
+    name: 'col2',
+    formatter: 'listItemText',
+    editor: {
+      type: 'select',
+      options: {
+        listItems: []
+      }
     }
+  }
 ]);
 ```
 

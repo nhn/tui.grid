@@ -1,3 +1,5 @@
+# Using Summary  ✍️
+
 The TOAST UI Grid provides the **summary** which is usually used to represent the summaries of each column, the TOAST UI Grid also provides useful options for that purpose.
 
 _* Caveat : 
@@ -9,29 +11,29 @@ To enable the summary, you should add `summary` property to the option object wh
 
 ```javascript
 var grid = new tui.Grid({
-    el: document.getElementbyId('grid'),
-    columns: [/* … */],
-    summary: {
-        position: 'bottom',
-        height: 100,  // by pixel
-        columnContent: {
-            col1: {
-                template: function() {
-                    return 'col1 footer';
-                }
-            },
-            col2: {
-                template: function() {
-                    return 'col2 footer';
-                }
-            }
-        },
-        defaultContent: {
-            template: function() {
-                return 'default footer';
-            }
+  el: document.getElementbyId('grid'),
+  columns: [/* … */],
+  summary: {
+    position: 'bottom',
+    height: 100,  // by pixel
+    columnContent: {
+      col1: {
+        template: function() {
+          return 'col1 footer';
         }
+      },
+      col2: {
+        template: function() {
+          return 'col2 footer';
+        }
+      }
+    },
+    defaultContent: {
+      template: function() {
+        return 'default footer';
+      }
     }
+  }
 });
 ```
 
@@ -50,21 +52,21 @@ If you set an object for a specific column to the `columnContent` property, the 
 ```javascript
 // …
 columnContent: {
-    col1: {
-        template: function(summary) {
-            return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
-        }
-    },
-    col2: {
-        template: function(summary) {
-            return 'max: ' + summary.max + '<br>min: ' + summary.min;
-        }
+  col1: {
+    template: function(summary) {
+      return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
     }
+  },
+  col2: {
+    template: function(summary) {
+      return 'max: ' + summary.max + '<br>min: ' + summary.min;
+    }
+  }
 },
 defaultContent: {
-    template: function(summary) {
-        return 'default: ' + summary.sum;
-    }
+  template: function(summary) {
+    return 'default: ' + summary.sum;
+  }
 }
 ```
 
@@ -88,12 +90,12 @@ There is another property available for a value object of the `columnContent` an
 ```javascript
 // …
 columnContent: {
-    col1: {
-        useAutoSummary: false,
-        template: function(summary) {
-            return 'max: ' + summary.max + '<br>min: ' + summary.min;;
-        }
+  col1: {
+    useAutoSummary: false,
+    template: function(summary) {
+      return 'max: ' + summary.max + '<br>min: ' + summary.min;;
     }
+  }
     // …
 },
 defaultContent: {
@@ -110,7 +112,7 @@ To return the static content as the result of `columnContent` of each column or 
 ```javascript
 // …
 columnContent: {
-    col1: 'col1 content'
+  col1: 'col1 content'
 },
 defaultContent: 'static content'
 // …
@@ -125,9 +127,9 @@ grid.setSummaryColumnContent('col1', 'content');
 
 // or if you want to set template function, use as below.
 grid.setSummaryColumnContent('col1', {
-    template(summary) {
-        'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
-    }
+  template(summary) {
+    'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
+  }
 });
 ```
 
@@ -135,4 +137,4 @@ This method is useful when you want to set your own value to the column in the s
 
 ## Example
 
-You can see a Grid using a summary with the auto-summary at the [example page](http://nhn.github.io/tui.grid/api/tutorial-example09-using-summary.html).
+You can see a Grid using a summary with the auto-summary at the [example page](https://nhn.github.io/tui.grid/latest/tutorial-example09-using-summary).

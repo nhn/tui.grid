@@ -4,15 +4,16 @@
 
 - [🚀 Getting Started](getting-started.md)
 - [Complex columns](complex-columns.md)
-- [Input types](input-types.md)
-- [Relation between columns](relation-between-columns.md)
+- [🛠 Using Built-in Editor](custom-editor.md)
+- [🤝 Relation between columns](relation-between-columns.md)
 - [👨‍🎨 Applying Themes](applying-themes.md)
 - [📅 Using DatePicker component](using-date-picker-component.md)
-- [Using Summary](using-summary.md)
+- [ ✍️ Using Summary](using-summary.md)
 - [Binding to remote data](binding-to-remote-data.md)
 - [🛎 Custom Event](custom-event.md)
 - [⌨️ Keymap](keymap.md)
 - [📎 Clipboard](clipboard.md)
+- [ 🛰 Data Source](dataSource.md)
 
 ## Migration Guide 
 
