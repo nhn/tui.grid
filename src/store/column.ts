@@ -101,7 +101,7 @@ function getRelationMap(relations: Relations[]) {
   return relationMap;
 }
 
-function getRelationColumns(relations: Relations[]) {
+export function getRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
   relations.forEach((relation) => {
     const { targetNames = [] } = relation;
@@ -133,7 +133,8 @@ export function createColumn(
     relations,
     sortable,
     copyOptions,
-    validation
+    validation,
+    formatter
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -155,6 +156,7 @@ export function createColumn(
     sortable,
     validation: validation ? { ...validation } : {},
     renderer: rendererOptions,
+    formatter,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
