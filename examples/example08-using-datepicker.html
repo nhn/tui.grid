@@ -24,12 +24,17 @@
 	<script type="text/javascript" src="../dist/tui-grid.js"></script>
 	<script type="text/javascript" class="code-js">
 
-	const gridData = [];
-	(function() {
-		for(let i = 0; i < 21; i += 1) {
-			gridData.push({ });
+	const gridData = [
+		{
+			c1: '1992/03/25',
+			c2: '12/06/2019',
+			c3: '2014-04-16',
+			c4: '2019-11-19 09:00 AM',
+			c5: '2019-11-19 09:00 AM',
+			c6: '2019-01',
+			c7: '2019'
 		}
-	})();
+	];
 
 	const grid = new tui.Grid({
 		el: document.getElementById('grid'),
@@ -38,33 +43,26 @@
 		data: gridData,
 		columns: [
 			{
-				title: 'DatePicker (Off)',
+				header: 'DatePicker (Default)',
 				name: 'c1',
-				editor: 'text'
-			},
-			{
-				title: 'DatePicker (Default)',
-				name: 'c2',
 				editor: 'datePicker'
 			},
 			{
-				title: 'DatePicker (Using options)',
-				name: 'c3',
+				header: 'DatePicker (Using options)',
+				name: 'c2',
 				editor: {
 					type: 'datePicker',
 					options: {
-						date: new Date(2017, 3, 10),
 						format: 'dd/MM/yyyy'
 					}
 				}
 			},
 			{
-				title: 'DatePicker (selectableRanges)',
-				name: 'c4',
+				header: 'DatePicker (selectableRanges)',
+				name: 'c3',
 				editor: {
 					type: 'datePicker',
 					options: {
-						date: new Date(2014, 3, 10),
 						selectableRanges: [
 							[new Date(2014, 3, 10), new Date(2014, 5, 20)]
 						]
@@ -72,8 +70,8 @@
 				}
 			},
 			{
-				title: 'Date-TimePicker',
-				name: 'c5',
+				header: 'Date-TimePicker',
+				name: 'c4',
 				editor: {
 					type: 'datePicker',
 					options: {
@@ -83,7 +81,21 @@
 				}
 			},
 			{
-				title: 'MonthPicker',
+				header: 'Date-TimePicker With tab',
+				name: 'c5',
+				editor: {
+					type: 'datePicker',
+					options: {
+						format: 'yyyy-MM-dd HH:mm A',
+						timepicker: {
+							layoutType: 'tab',
+							inputType: 'spinbox'
+						}
+					}
+				}
+			},
+			{
+				header: 'MonthPicker',
 				name: 'c6',
 				editor: {
 					type: 'datePicker',
@@ -94,9 +106,9 @@
 				}
 			},
 			{
-				title: 'YearPicker',
+				header: 'YearPicker',
 				name: 'c7',
-				component: {
+				editor: {
 					type: 'datePicker',
 					options: {
 						format: 'yyyy',
