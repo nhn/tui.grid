@@ -15,6 +15,7 @@ interface OwnProps {
 interface StoreProps {
   rowHeight: number;
   autoRowHeight: boolean;
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -26,10 +27,10 @@ class BodyRowComp extends Component<Props> {
   // from the all child BodyCell components is made.
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
-    const { dispatch, rowIndex, rowHeight } = this.props;
+    const { dispatch, rowIndex, rowHeight, cellBorderWidth } = this.props;
 
     if (rowHeight !== this.renderedRowHeight) {
-      dispatch('setRowHeight', rowIndex, this.renderedRowHeight);
+      dispatch('setRowHeight', rowIndex, this.renderedRowHeight + cellBorderWidth);
     }
   }, 10);
 
@@ -65,5 +66,6 @@ class BodyRowComp extends Component<Props> {
 
 export const BodyRow = connect<StoreProps, OwnProps>(({ rowCoords, dimension }, { rowIndex }) => ({
   rowHeight: rowCoords.heights[rowIndex],
-  autoRowHeight: dimension.autoRowHeight
+  autoRowHeight: dimension.autoRowHeight,
+  cellBorderWidth: dimension.cellBorderWidth
 }))(BodyRowComp);
