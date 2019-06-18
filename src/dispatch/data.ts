@@ -31,6 +31,7 @@ import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import { getRenderState } from '../helper/renderState';
 
 export function setValue(
   { column, data, id }: Store,
@@ -265,7 +266,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 export function appendRow(
-  { data, column, rowCoords, dimension, id }: Store,
+  { data, column, rowCoords, dimension, id, renderState }: Store,
   row: OptRow,
   options: OptAppendRow
 ) {
@@ -289,10 +290,15 @@ export function appendRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  renderState.state = 'DONE';
   getDataManager(id).push('CREATE', rawRow);
 }
 
-export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, options: OptRemoveRow) {
+export function removeRow(
+  { data, rowCoords, id, renderState }: Store,
+  rowKey: RowKey,
+  options: OptRemoveRow
+) {
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
@@ -309,24 +315,30 @@ export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, option
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow[0]);
 }
 
-export function clearData({ data, id }: Store) {
+export function clearData({ data, id, renderState }: Store) {
   data.rawData.forEach((row) => {
     getDataManager(id).push('DELETE', row);
   });
   data.rawData = [];
   data.viewData = [];
+  renderState.state = 'EMPTY';
 }
 
-export function resetData({ data, column, dimension, rowCoords, id }: Store, inputData: OptRow[]) {
+export function resetData(
+  { data, column, dimension, rowCoords, id, renderState }: Store,
+  inputData: OptRow[]
+) {
   const { rawData, viewData } = createData(inputData, column);
   const { rowHeight } = dimension;
 
   data.rawData = rawData;
   data.viewData = viewData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
+  renderState.state = getRenderState(rawData);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
