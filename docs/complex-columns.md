@@ -10,30 +10,30 @@ Let's see the example below.
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  el: document.getElementbyId('grid'),
+  el: document.getElementById('grid'),
   columns: [
     {
-      title: 'col1',
+      header: 'col1',
       name: 'col1'
     },
     {
-      title: 'col2',
+      header: 'col2',
       name: 'col2'
     },
     {
-      title: 'col3',
+      header: 'col3',
       name: 'col3'    
     }
   ],
   header: {
     complexColumns: [
       {
-        title: 'col1 + col2',
+        header: 'col1 + col2',
         name: 'parent1',
         childNames: ['col1', 'col2']            
       },
       {
-        title: 'col1 + col2 + col3',
+        header: 'col1 + col2 + col3',
         name: 'parent2',
         childNames: ['parent1', 'col3']
       }

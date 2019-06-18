@@ -113,7 +113,7 @@ grid.setColumns([
 
 The `setColumns()` method receives an array as a parameter, in which each element specifies a column definition. The `name` property is only required, and it's used as a key of row data. The string value defined as the `header` property is shown in the column header. It's optional, but it would be better to set it because the column header will be empty without this value.
 
-You can specify the input type of the column using the `editor` property. The `text` type uses an `input[type=text]` element to present the value of the cell. More types like `select`, `checkbox` can be used as an `editor.type`. In addition, there are other options which can be used as a property of the `editor.options`. You can find the details about the `editor.options` at the [Cell Editor Interface issue](https://github.com/nhn/tui.grid/issues/387).
+You can specify the input type of the column using the `editor` property. The `text` type uses an `input[type=text]` element to present the value of the cell. More types like `select`, `checkbox` can be used as an `editor.type`. In addition, there are other options which can be used as a property of the `editor.options`. You can find the details about the `editor.options` at the [Cell Editor Interface issue](./custom-editor.md).
 
 You can also define the column models with a `columns` option when creating the Grid instance.
 

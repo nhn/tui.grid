@@ -13,7 +13,7 @@ To enable the summary, you should add `summary` property to the option object wh
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  el: document.getElementbyId('grid'),
+  el: document.getElementById('grid'),
   columns: [/* … */],
   summary: {
     position: 'bottom',
