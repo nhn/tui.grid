@@ -32,7 +32,7 @@ class FocusLayerComp extends Component<Props> {
       top,
       left,
       width: cellBorderWidth,
-      height
+      height: height + cellBorderWidth
     };
 
     const topStyle = {

@@ -136,7 +136,8 @@ export function createColumn(
     validation,
     formatter,
     onBeforeChange,
-    onAfterChange
+    onAfterChange,
+    whiteSpace
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -161,6 +162,7 @@ export function createColumn(
     formatter,
     onBeforeChange,
     onAfterChange,
+    whiteSpace,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
