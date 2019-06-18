@@ -1,12 +1,12 @@
-O# Documents 📄
+# Documents 📄
 
 ## Tutorials
 
 - [🚀 Getting Started](getting-started.md)
-- [🔗 Complex columns](complex-columns.md)
+- [🔗 Complex Columns](complex-columns.md)
 - [🛠 Custom Editor](custom-editor.md)
 - [🔩 Custom Renderer](custom-renderer.md)
-- [🤝 Relation between columns](relation-between-columns.md)
+- [🤝 Relation Between Columns](relation-between-columns.md)
 - [👨‍🎨 Themes](themes.md)
 - [📅 DatePicker](date-picker.md)
 - [✍️ Summary](summary.md)
