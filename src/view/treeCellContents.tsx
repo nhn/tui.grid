@@ -82,7 +82,7 @@ export class TreeCellContentsComp extends Component<Props> {
 export const TreeCellContents = connect<StoreProps, OwnProps>(
   ({ column }, { treeInfo, rowKey }) => {
     const { treeIcon: useIcon = true } = column;
-    const { depth, indentWidth, leaf, expanded = true } = treeInfo;
+    const { depth, indentWidth, leaf, expanded = false } = treeInfo;
 
     return {
       rowKey,
