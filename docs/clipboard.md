@@ -29,7 +29,7 @@ const grid = new Grid({
       name: 'type',
       editor: 'text',
       copyOptions: {
-        useFormattedvalue: true,
+        useFormattedValue: true,
         useListItem,
         customValue: (value, rowAttrs, column) => `Column name is ${column.name}`
       }
@@ -60,7 +60,7 @@ const columns = [
       customValue: (value, rowAttrs, column) => `Column name is ${column.name}`
     }
   },
-  ...
+  //...
 ];
 const grid = new Grid({
   el: document.getElementById('wrapper'),
@@ -83,3 +83,7 @@ grid.copyToClipboard();
 Press keys `Cmd(Ctrl)` + `v` while focus or selection is on the grid. The value is changed only when using the Cell Editor.
 
 ![clipboard_paste](https://user-images.githubusercontent.com/35371660/59558284-8d49e580-9029-11e9-9598-824595da75d4.gif)
+
+## Example
+
+You can see the example that clipboard [here](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic).

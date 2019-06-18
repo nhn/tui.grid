@@ -1,4 +1,4 @@
-## Data Source 🛰
+# Data Source 🛰
 
 In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the `data` option like the example below.
 
@@ -120,7 +120,7 @@ const grid = new Grid({
 ```
 
 Then you can use the `request()` method to send each request like the example below.
-(This is just a simplified example. See [the API page](http://nhn.github.io/tui.grid/api) for more information.)
+(This is just a simplified example. See [the API page](http://nhn.github.io/tui.grid/latest/) for more information.)
 
 ```javascript
 grid.request('createData'); // Send a request to '/api/createData' as 'GET' method

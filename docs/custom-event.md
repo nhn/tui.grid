@@ -81,6 +81,6 @@ There are other events that can be used when using `DataSource`.
 
 You can see the detail information of these events at the [API page](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest).
 
-## Example Page
+## Example
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example15-custom-event).
+You can see the example which uses custom event [here](https://nhn.github.io/tui.grid/latest/tutorial-example15-custom-event).
