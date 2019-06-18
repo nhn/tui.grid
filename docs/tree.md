@@ -125,4 +125,4 @@ When using a tree column, there are restrictions on the use of **sorting**, **ro
 
 ## Example Page
 
-You can see the sample Grid, which uses tree column [here](https://nhn.github.io/tui.grid/latest/tutorial-example15-tree).
+You can see the sample Grid, which uses tree column [here](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree).

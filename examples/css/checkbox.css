@@ -1,22 +1,14 @@
-.Checkbox_checkbox {
+.checkbox {
     position: relative;
     display: inline-block
 }
 
-.Checkbox_checkbox+.Checkbox_checkbox {
-    margin-left: 36px
-}
-
-.Checkbox_checkbox+.Checkbox_checkbox:first-child {
-    margin-left: 0
-}
-
-.Checkbox_input[type=checkbox] {
+.hidden-input[type=checkbox] {
     display: none;
     box-sizing: border-box
 }
 
-.Checkbox_indicator {
+.custom-input {
     cursor: pointer;
     position: relative;
     padding: 0;
@@ -25,7 +17,7 @@
     display: flex
 }
 
-.Checkbox_indicator:before {
+.custom-input:before {
     transition: .2s ease-out;
     content: "";
     width: 16px;
@@ -37,7 +29,7 @@
     vertical-align: middle
 }
 
-.Checkbox_indicator:after {
+.custom-input:after {
     transition: .2s ease-out;
     content: "";
     position: absolute;
@@ -50,57 +42,21 @@
     transform: rotate(45deg)
 }
 
-.Checkbox_label {
-    margin-left: 8px;
-    margin-top: 8px;
-    color: #242727
-}
-
-input[type=checkbox][disabled]~.Checkbox_indicator {
+input[type=checkbox][disabled]~.custom-input {
     opacity: .4;
     cursor: not-allowed
 }
 
-input[type=checkbox]:checked~.Checkbox_indicator:before {
+input[type=checkbox]:checked~.custom-input:before {
     background: #3b7b8f;
     border: 1px solid #3b7b8f
 }
 
-input[type=checkbox]:checked~.Checkbox_indicator.Checkbox_isTypeSecondary:before {
-    background: #39a898;
-    border: 1px solid #39a898
-}
-
-input[type=checkbox]~.Checkbox_indicator:after {
+input[type=checkbox]~.custom-input:after {
     visibility: hidden
 }
 
-input[type=checkbox]:checked~.Checkbox_indicator:after {
+input[type=checkbox]:checked~.custom-input:after {
     visibility: visible;
     visibility: initial
-}
-
-input[type=checkbox]+.Checkbox_indicator+.Checkbox_label {
-    font-weight: 700;
-    color: #648089
-}
-
-input[type=checkbox]:checked+.Checkbox_indicator+.Checkbox_label {
-    font-weight: 700;
-    color: #242727
-}
-
-input[type=checkbox]+.Checkbox_indicator>.Checkbox_label, input[type=checkbox]:checked+.Checkbox_indicator>.Checkbox_label {
-    font-weight: 500;
-    color: #242727
-}
-
-input[type=checkbox]+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
-    font-weight: 700;
-    color: #648089
-}
-
-input[type=checkbox]:checked+.Checkbox_indicator.Checkbox_isTypeSecondary>.Checkbox_label {
-    font-weight: 700;
-    color: #242727
 }
