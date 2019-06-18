@@ -142,7 +142,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Custom Editor](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor)
 * [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns)
 * [Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-themes)
-* [DatePicker](https://nhn.github.io/tui.grid/latest/tutorial-example08-datepicker)
+* [DatePicker](https://nhn.github.io/tui.grid/latest/tutorial-example08-date-picker)
 * [Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary)
 * [Data Source](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source)
 * [Tree](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)

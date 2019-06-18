@@ -76,4 +76,4 @@ The result will looks like this:
 
 ## Example
 
-You can see the sample Grid using datePicker [here](https://nhn.github.io/tui.grid/latest/tutorial-example08-datepicker).
+You can see the sample Grid using datePicker [here](https://nhn.github.io/tui.grid/latest/tutorial-example08-date-picker).

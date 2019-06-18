@@ -20,7 +20,7 @@
     "example07-themes": {
         "title": "7. Themes"
     },
-    "example08-datepicker": {
+    "example08-date-picker": {
         "title": "8. DatePicker"
     },
     "example09-summary": {
@@ -29,7 +29,7 @@
     "example10-data-source": {
         "title": "10. DataSource"
     },
-    "example11-customizing-rowheaders": {
+    "example11-row-headers": {
         "title": "11. Customizing Row headers"
     },
     "example12-whitespace": {
