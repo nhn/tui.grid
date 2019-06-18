@@ -50,12 +50,12 @@ It also serves as important index to determine the future course of projects.
 To disable GA, use the following `usageStatistics` option when creating the instance.
 
 ```js
-var options = {
-  ...
+const options = {
+  // ...
   usageStatistics: false
 }
 
-var instance = new Grid(options);
+const instance = new Grid(options);
 ```
 
 ## 🌏 Browser Support
@@ -123,7 +123,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * Virtual scrolling _(Handling large dataset without performance loses)_
 * [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
 * Column resize & reorder & show & hide
-* Multi column headers
+* [Multi column headers](./docs/complex-columns.md)
 * [Inline Editing](./docs/custom-editor.md)
 * Validation
 * Selection
@@ -136,7 +136,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
-* Representing tree data
+* [Representing tree data](./docs/tree.md)
 
 ## 🐾 Examples
 
@@ -221,13 +221,13 @@ To get the constructor function, you should import the module using one of the f
 #### Using namespace in browser environment
 
 ``` javascript
-var Grid = tui.Grid;
+const Grid = tui.Grid;
 ```
 
 #### Using module format in node environment
 
 ``` javascript
-var Grid = require('tui-grid'); /* CommonJS */
+const Grid = require('tui-grid'); /* CommonJS */
 ```
 
 ``` javascript
@@ -237,7 +237,7 @@ import Grid from 'tui-grid'; /* ES6 */
 You can create an instance with options and call various APIs after creating an instance.
 
 ``` javascript
-var instance = new Grid({
+const instance = new Grid({
   el: document.getElementById('grid), // Container element
   columns: [
     {
@@ -279,7 +279,7 @@ If you are using TypeScript, you must use `import module = require('module')` to
 ```typescript
 import Grid = require('tui-grid');
 
-var instance = new Grid({
+const instance = new Grid({
     // ...options
 });
 ```
