@@ -31,6 +31,7 @@ import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import { getRenderState } from '../helper/renderState';
 
 export function setValue(
   { column, data, id }: Store,
@@ -314,7 +315,7 @@ export function removeRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
-  renderState.state = rawData.length ? 'DONE' : 'EMPTY';
+  renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow[0]);
 }
 
@@ -337,7 +338,7 @@ export function resetData(
   data.rawData = rawData;
   data.viewData = viewData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
-  renderState.state = rawData.length ? 'DONE' : 'EMPTY';
+  renderState.state = getRenderState(rawData);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
