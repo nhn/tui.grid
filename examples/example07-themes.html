@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-      <meta charset="utf-8">
-      <title>7. Applying Themes</title>
-      <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
-      <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
-      <style>
-      #grid {width: 600px; float:left; margin-right:20px;}
-      #theme {width: 200px; float:left;}
-      #custom-text {width: 300px; height:520px; font-size:12px;}
-      h4 {margin: 5px 0;}
-      .preset {margin-bottom:15px;}
-      .custom p {margin: 5px 0}
-      </style>
+    <meta charset="utf-8">
+    <title>7. Themes</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <style>
+    #grid {width: 600px; float:left; margin-right:20px;}
+    #theme {width: 200px; float:left;}
+    #custom-text {width: 300px; height:520px; font-size:12px;}
+    h4 {margin: 5px 0;}
+    .preset {margin-bottom:15px;}
+    .custom p {margin: 5px 0}
+    </style>
   </head>
   <body>
     <div class="description">
@@ -21,16 +21,16 @@
     <div class="code-html contents">
       <div id="grid"></div>
       <div id="theme">
-          <div class="preset">
-              <h4>Preset</h4>
-              <button class="btn-theme" data-preset="default">default</button>
-              <button class="btn-theme" data-preset="striped">striped</button>
-              <button class="btn-theme" data-preset="clean">clean</button>
-          </div>
-          <div class="custom">
-              <h4>Custom options</h4>
-              <p>
-                <textarea id="custom-text">
+        <div class="preset">
+          <h4>Preset</h4>
+          <button class="btn-theme" data-preset="default">default</button>
+          <button class="btn-theme" data-preset="striped">striped</button>
+          <button class="btn-theme" data-preset="clean">clean</button>
+        </div>
+        <div class="custom">
+          <h4>Custom options</h4>
+          <p>
+            <textarea id="custom-text">
 {
   grid: {
     background: '#fff',
@@ -79,10 +79,10 @@
     }
   }
 }
-                </textarea>
-              </p>
-              <p><button class="btn-custom">Apply</button></p>
-          </div>
+            </textarea>
+          </p>
+          <p><button class="btn-custom">Apply</button></p>
+        </div>
       </div>
     </div>
   </body>

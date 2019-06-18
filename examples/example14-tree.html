@@ -2,7 +2,7 @@
 <html lang="ko">
   <head>
     <meta charset="utf-8">
-    <title>15. Tree</title>
+    <title>14. Tree</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
   </head>
@@ -37,27 +37,25 @@
     },
     columns: [
       {
-        title: 'Name',
+        header: 'Name',
         name: 'name',
         width: 300,
-        editor: {
-          type: 'text'
-        }
+        editor: 'text'
       },
       {
-        title: 'Artist',
+        header: 'Artist',
         name: 'artist'
       },
       {
-        title: 'Type',
+        header: 'Type',
         name: 'type'
       },
       {
-        title: 'Release',
+        header: 'Release',
         name: 'release'
       },
       {
-        title: 'Genre',
+        header: 'Genre',
         name: 'genre'
       }
     ]});
@@ -123,7 +121,7 @@
       const descendantRows = grid.getDescendantRows(rowKey);
 
       console.log('rowKey: ' + rowKey);
-      console.log('ededescendantRows: ' + descendantRows);
+      console.log('descendantRows: ' + descendantRows);
     });
 
     grid.on('collapse', (ev) => {
@@ -131,7 +129,7 @@
       const descendantRows = grid.getDescendantRows(rowKey);
 
       console.log('rowKey: ' + rowKey);
-      console.log('ededescendantRows: ' + descendantRows);
+      console.log('descendantRows: ' + descendantRows);
     });
   </script>
 </html>
