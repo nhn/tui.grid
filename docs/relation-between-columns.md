@@ -1,4 +1,4 @@
-## Using `relations` 🤝
+## Relations 🤝
 
 TOAST UI Grid allows you to set relations between columns using the `relations` option of a column model. The value of the `relations` option is an array in which each element defines a unique relation between current column and the target columns.
 
@@ -102,4 +102,4 @@ In the example above, the value of the 'col1' column determines the option list 
 
 ## Example Page
 
-You can see the sample Grid, which uses `relations` [here](https://nhn.github.io/tui.grid/latest/tutorial-example06-relation-columns).
+You can see the sample Grid, which uses `relations` [here](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns).

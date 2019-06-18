@@ -169,6 +169,6 @@ grid.on('beforeRequest', function(data) {
 });
 ```
 
-## Example Page
+## Example
 
-You can see the example that binding to remote data [here](https://nhn.github.io/tui.grid/latest/tutorial-example11-using-net).
+You can see the example that binding to remote data [here](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source).

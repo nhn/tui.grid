@@ -175,6 +175,6 @@ Then you can see the table of your data on your screen.
 
 ![getting_started](https://user-images.githubusercontent.com/35371660/59482121-72993480-8ea2-11e9-8dba-46c04c727b31.png)
 
-## Example Page
+## Example
 
 You can see the basic example [here](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic).

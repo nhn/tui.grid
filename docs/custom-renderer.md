@@ -1,4 +1,4 @@
-## Using `Custom Renderer`
+## Custom Renderer 🔩
 
 The TOAST UI Grid provides the `Custom Renderer` in the `CellRenderer` format for users to customize the cell UI to meet their own requirements. It's more powerful than `formatter` option to control of cell rendering behavior.
 
@@ -81,6 +81,6 @@ const grid = new tui.Grid({
 });
 ```
 
-## Example Page
+## Example
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example05-custom-renderer).
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer).

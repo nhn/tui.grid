@@ -1,4 +1,4 @@
-## Using `Built-in Editor` 🛠
+## Built-in Editor 🛠
 
 
 In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
@@ -150,6 +150,6 @@ class CustomTextEditor {
 Unlike other types, the `checkbox` type uses multiple values. When you check multiple checkboxes, the value of the cell will be the concatenated string of all checked values separated with comma. For example, if the model of the 'browser' column is like the sample above and the boxes of 'IE 9', 'Firefox' and 'Chrome' are checked, the value of the cell should be `'1,4,5'`.
 
 
-## Example Page
+## Example
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-editor).
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor).

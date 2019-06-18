@@ -2,8 +2,7 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
-
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn) ![npm bundle size](https://img.shields.io/bundlephobia/min/tui-grid.svg?color=515CE6&label=min%20size)
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -39,7 +38,6 @@
 * [TOAST UI Family](#-toast-ui-family)
 * [Used By](#-used-by)
 * [License](#-license)
-
 
 ## Collect statistics on the use of open source
 

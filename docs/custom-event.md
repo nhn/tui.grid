@@ -1,4 +1,4 @@
-# Using Custom Event 🛎
+# Custom Event 🛎
 
 The TOAST UI Grid has a powerful event system which provides ways to extend custom functionality on top of the built-in features. 
 
@@ -81,4 +81,4 @@ You can see the detail information of these events at the [API page](https://nhn
 
 ## Example Page
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example16-custom-event).
+You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example15-custom-event).

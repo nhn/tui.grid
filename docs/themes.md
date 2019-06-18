@@ -1,4 +1,4 @@
-# Applying Theme 👨‍🎨
+# Theme 👨‍🎨
 
 The TOAST UI Grid provides you an easy way to customize the style of the grid. With `applyTheme()` method, you can easily change entire styles of the grid. 
 
@@ -85,6 +85,6 @@ tui.Grid.applyTheme('default',
 You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
 
 
-### Example page
+### Example
 
-You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes).
+You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-themes).

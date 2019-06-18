@@ -1,4 +1,4 @@
-# Using DatePicker 📅
+# DatePicker 📅
 
 The [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) component can be easily integrated into the TOAST UI Grid. Just by using [cell editor]() options to the `columns`, you can use a DatePicker in the Grid without extra coding.
 
@@ -74,6 +74,6 @@ The result will looks like this:
 
 ![options_datepicker](https://user-images.githubusercontent.com/35371660/59477679-37dad080-8e91-11e9-9156-1aab1e8aecd1.gif)
 
-## Example Page
+## Example
 
-You can see the sample Grid using datePicker [here](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker).
+You can see the sample Grid using datePicker [here](https://nhn.github.io/tui.grid/latest/tutorial-example08-datepicker).

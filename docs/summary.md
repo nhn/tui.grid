@@ -1,4 +1,4 @@
-# Using Summary  ✍️
+# Summary  ✍️
 
 The TOAST UI Grid provides the **summary** which is usually used to represent the summaries of each column, the TOAST UI Grid also provides useful options for that purpose.
 
@@ -137,4 +137,4 @@ This method is useful when you want to set your own value to the column in the s
 
 ## Example
 
-You can see a Grid using a summary with the auto-summary at the [example page](https://nhn.github.io/tui.grid/latest/tutorial-example10-summary).
+You can see a Grid using a summary with the auto-summary at the [example page](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary).

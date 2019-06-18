@@ -1,4 +1,4 @@
-# Using the `header.complexColumns` 🔗
+# Complex Columns 🔗
 
 The TOAST UI Grid allows you to group columns under a parent column header. Using the `header.complexColumns` option, you can build a tree-like structure, where one or more columns can be grouped together by a parent header. The parent header can also be a child of another parent header.
 
@@ -46,6 +46,6 @@ The result of the sample code looks like this:
 
 ![The result of the sample code](https://user-images.githubusercontent.com/18183560/59605689-49023680-914a-11e9-99f9-25bb26316b04.png)
 
-## Example Page
+## Example
 
-You can see the example that is using more complex column headers [here](https://nhn.github.io/tui.grid/api/tutorial-example03-complex-columns.html).
+You can see the example that is using more complex column headers [here](http://nhn.github.io/tui.grid/latest/tutorial-example03-complex-columns).
