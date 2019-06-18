@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>15. Custom Event</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/custom-event.md" target="_blank">here</a>.
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      rowHeaders: ['checkbox'],
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          title: 'Name',
+          name: 'name',
+          onBeforeChange: function(ev) {
+            console.log('Before change:' + ev);
+          },
+          onAfterChange: function(ev) {
+            console.log('After change:' + ev);
+          },
+          editor: 'text',
+        },
+        {
+          title: 'Artist',
+          name: 'artist',
+          onBeforeChange: function(ev) {
+            console.log('Before change:' + ev);
+            ev.stop();
+          },
+          onAfterChange: function(ev) {
+            console.log('After change:' + ev);
+          },
+          editor: 'text',
+        },
+        {
+          title: 'Type',
+          name: 'typeCode',
+          editor: {
+            type: 'select',
+            options: {
+              listItems: [
+                { text: 'Deluxe', value: '1' },
+                { text: 'EP', value: '2' },
+                { text: 'Single', value: '3' }
+              ]
+            }
+          }
+        },
+        {
+          title: 'Genre',
+          name: 'genreCode',
+          editor: {
+            type: 'checkbox',
+            options: {
+              listItems: [
+                { text: 'Pop', value: '1' },
+                { text: 'Rock', value: '2' },
+                { text: 'R&B', value: '3' },
+                { text: 'Electronic', value: '4' },
+                { text: 'etc.', value: '5' }
+              ]
+            }
+          }
+        },
+        {
+          title: 'Grade',
+          name: 'grade',
+          copyOptions: {
+            useListItemText: true
+          },
+          editor: {
+            type: 'radio',
+            options: {
+              listItems: [
+                { text: '★☆☆☆☆', value: '1' },
+                { text: '★★☆☆☆', value: '2' },
+                { text: '★★★☆☆', value: '3' },
+                { text: '★★★★☆', value: '4' },
+                { text: '★★★★★', value: '5' }
+              ]
+            }
+          }
+        }
+      ]
+    });
+
+    grid.on('check', function() {
+      alert('check!');
+    });
+
+    grid.on('uncheck', function() {
+      alert('uncheck!');
+    });
+  </script>
+</html>
