@@ -3,6 +3,7 @@ import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { Rect, Side } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
+import { cell } from '../theme/styleGenerator';
 
 interface StoreProps {
   active: boolean;
@@ -32,7 +33,7 @@ class FocusLayerComp extends Component<Props> {
       top,
       left,
       width: cellBorderWidth,
-      height
+      height: height + cellBorderWidth
     };
 
     const topStyle = {
