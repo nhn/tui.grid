@@ -2,7 +2,7 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn) ![npm bundle size](https://img.shields.io/bundlephobia/min/tui-grid.svg?color=515CE6&label=min%20size)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -115,37 +115,37 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🎨 Features
 
-* Custom cell formatter & converter
 * [Various input types _(checkbox, radio, select, password, etc)_](./docs/custom-editor.md)
 * [Full keyboard navigation _(move, select, copy, paste, delete, etc)_](./docs/keymap.md)
-* Virtual scrolling _(Handling large dataset without performance loses)_
 * [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
-* Column resize & reorder & show & hide
 * [Multi column headers](./docs/complex-columns.md)
 * [Inline Editing](./docs/custom-editor.md)
-* Validation
-* Selection
-* Pagination
 * [Picking date](./docs/date-picker.md)
-* Sorting
-* Merging cell
-* Frozen(Pinned) columns
 * [Relation between each columns](./docs/relation-between-columns.md)
 * [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * [Representing tree data](./docs/tree.md)
+* Custom cell formatter & converter
+* Virtual scrolling _(Handling large dataset without performance loses)_
+* Column resize & reorder & show & hide
+* Validation
+* Selection
+* Pagination
+* Sorting
+* Merging cell
+* Frozen(Pinned) columns
 
 ## 🐾 Examples
 
 * [Basic](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic)
 * [Custom Editor](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor)
 * [Relation between columns](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns)
-* [Applying Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-applying-themes)
-* [Using DatePicker component](https://nhn.github.io/tui.grid/latest/tutorial-example08-using-datepicker)
-* [Using Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary)
+* [Themes](https://nhn.github.io/tui.grid/latest/tutorial-example07-themes)
+* [DatePicker](https://nhn.github.io/tui.grid/latest/tutorial-example08-datepicker)
+* [Summary](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary)
 * [Data Source](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source)
-* [Using tree data](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
+* [Tree](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
 
 Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
 
