@@ -27,15 +27,16 @@ class BodyRowComp extends Component<Props> {
   // from the all child BodyCell components is made.
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
-    const { dispatch, rowIndex, rowHeight, cellBorderWidth } = this.props;
+    const { dispatch, rowIndex, rowHeight } = this.props;
 
     if (rowHeight !== this.renderedRowHeight) {
-      dispatch('setRowHeight', rowIndex, this.renderedRowHeight + cellBorderWidth);
+      dispatch('setRowHeight', rowIndex, this.renderedRowHeight);
     }
   }, 10);
 
   private refreshRowHeight = (cellHeight: number) => {
-    this.renderedRowHeight = Math.max(cellHeight, this.renderedRowHeight);
+    this.renderedRowHeight =
+      Math.max(cellHeight, this.renderedRowHeight) + this.props.cellBorderWidth;
     this.updateRowHeightDebounced();
   };
 
