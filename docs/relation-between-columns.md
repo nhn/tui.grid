@@ -1,4 +1,4 @@
-## Relations 🤝
+# Relations 🤝
 
 TOAST UI Grid allows you to set relations between columns using the `relations` option of a column model. The value of the `relations` option is an array in which each element defines a unique relation between current column and the target columns.
 
@@ -10,7 +10,7 @@ Every callback function receives one object parameter. The available properties 
 - `disabled`: a disabled status of the current (changing) cell
 - `rowData`: an object that contains the all values of the row, where the current cell is located
 
-### editable
+## editable
 
 The `editable` callback function determines the `editable` state of the target columns. If it returns `true`, the cells in the target columns will be editable. Otherwise, the cells will not be editable.
 
@@ -42,13 +42,13 @@ grid.setColumns([
 In the example above, 'col1' column has a `relations` option, and the target columns are 'col2' and 'col3'. If the value of a cell in 'col1' is changed to '1', the cells in the same row that are under 'col2' or 'col3' will become not editable.
 
 
-### disabled
+## disabled
 
 The `disabled` callback function determines the `disabled` state of the target columns. If it returns `true`, the cells in the target column will be disabled. Otherwise, the cells will not be disabled.
 
 The form of the callback function is the same with `editable`.
 
-### listItems
+## listItems
 
 The `listItems` callback function determines the option list of the target columns. It can be only used for list type columns like `checkbox`, `radio`, and `select`. It returns an array of list options, which has a same form as  `editor.options.listItems`. Whenever the returning value of the callback function is changed, the option list of the cells in the target columns will be changed to the returning value. And you need to configure the `listItemText` built-in formatter option for showing the `label` of it not value.
 

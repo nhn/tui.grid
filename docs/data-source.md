@@ -3,13 +3,15 @@
 In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the `data` option like the example below.
 
 ```javascript
+import Grid from 'tui-grid';
+
 const dataSource = {
   api: {
     readData: { url: '/api/read', method: 'GET' }
   }
 };
 
-const grid = new tui.Grid({
+const grid = new Grid({
   // ... another options
   data: dataSource
 });
@@ -80,7 +82,7 @@ If an error occurred when processing the request, `result` should be `false`.
 When sends the request to the remote server, usually you need the `Pagination`. The `Pagination` can be defined as `pageOptions` option like below.
 
 ```javascript
-const grid = new tui.Grid({
+const grid = new Grid({
   // ... another options
   data: dataSource,
   pageOptions: {
@@ -111,7 +113,7 @@ const dataSource = {
   }
 };
 
-const grid = new tui.Grid({
+const grid = new Grid({
   // ... another options
   data: dataSource
 });

@@ -10,7 +10,9 @@ The `summary` replaces the existing `footer` option and is the same as the `foot
 To enable the summary, you should add `summary` property to the option object which is used when creating an instance of `tui.Grid`.
 
 ```javascript
-const grid = new tui.Grid({
+import Grid from 'tui-grid';
+
+const grid = new Grid({
   el: document.getElementbyId('grid'),
   columns: [/* … */],
   summary: {

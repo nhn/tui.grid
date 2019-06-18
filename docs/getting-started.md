@@ -76,7 +76,9 @@ import Grid from 'tui-grid'; /* ES6 */
 You can create an instance with options and call various APIs after creating an instance.
 
 ```javascript
-const grid = new tui.Grid({
+import Grid from 'tui-grid';
+
+const grid = new Grid({
   el: document.getElemetById('wrapper'), // Conatiner element
   columns: [ ... ],
   ...

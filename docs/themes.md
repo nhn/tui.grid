@@ -7,7 +7,9 @@ The TOAST UI Grid provides you an easy way to customize the style of the grid. W
 There are three built-in presets in the TOAST UI Grid - **default**, **striped** and **clean**. To apply one of these presets, you only have to add one line of code to your source code:
 
 ```js
-tui.Grid.applyTheme('default');
+import Grid from 'tui-grid';
+
+Grid.applyTheme('default');
 ```
 
 If you run the code above or don't apply any preset, the **default** preset will be applied. It looks like below.
@@ -17,7 +19,7 @@ If you run the code above or don't apply any preset, the **default** preset will
 Using the **striped** preset adds zebra-striping to the table.
 
 ```js
-tui.Grid.applyTheme('striped');
+Grid.applyTheme('striped');
 ```
 
 The result will looks like this:
@@ -27,7 +29,7 @@ The result will looks like this:
 If you want more clean and basic style, use the **clean** preset.
 
 ```js
-tui.Grid.applyTheme('clean');
+Grid.applyTheme('clean');
 ```
 
 It has a very simple design like below.
@@ -39,7 +41,7 @@ It has a very simple design like below.
 If you want to apply your own styles to the grid, you can extend the preset theme with your own options. The `applyTheme()` method has a second parameter, which extends the existing theme options. For example, if you want to use **striped** preset with changing the background colors of head-cells and cells in even rows, you can use the code below.
 
 ```js
-tui.Grid.applyTheme('striped', {
+Grid.applyTheme('striped', {
   cell: {
     header: {
       background: '#eef'
@@ -57,7 +59,7 @@ The result will looks like this:
 The following example extends the **default** preset with the custom options. The options are the same with the **clean** preset. You can see the result by comparing the **default** and the **clean** preset in the screenshots above.
 
 ```js
-tui.Grid.applyTheme('default',
+Grid.applyTheme('default',
   grid: {
     border: '#e0e0e0'
   },

@@ -9,6 +9,8 @@ Press keys `Cmd(Ctrl)` + `c` while focus or selection is on the grid. The copy o
 CopyOptions can be specified by grid option or by column. You can modify which values are copied through copyOptions.
 
 ```js
+import Grid from 'tui-grid';
+
 const grid = new Grid({
   //...options
   copyOptions: {

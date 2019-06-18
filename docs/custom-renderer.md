@@ -62,7 +62,9 @@ class CustomSliderRenderer {
 To use your own `Custom Renderer`, just specify it with the `renderer.type` option of `columns`. If you need the `Custom Options` to be used in your `Custom Renderer`, set it to the `renderer.options`.
 
 ```javascript
-const grid = new tui.Grid({
+import Grid from 'tui-grid';
+
+const grid = new Grid({
   // ... another options
   columns: [
     {

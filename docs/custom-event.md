@@ -7,7 +7,9 @@ The TOAST UI Grid has a powerful event system which provides ways to extend cust
 To attach a handler to a specific event, you can use the public method `on()`. The first argument is a name of target event, and the second argument is a handler to attach. 
 
 ```javascript
-const grid = new tui.Grid({
+import Grid from 'tui-grid';
+
+const grid = new Grid({
   // options…
 });
 

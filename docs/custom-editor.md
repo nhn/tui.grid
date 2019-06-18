@@ -4,7 +4,9 @@
 In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
 
 ```javascript
-const grid = new tui.Grid({
+import Grid from 'tui-grid';
+
+const grid = new Grid({
   // ... another options
   columns: [
     {
@@ -115,7 +117,7 @@ class CustomTextEditor {
 To use your own `Custom Editor`, just specify it with the `editor.type` option of `columns`. If you need the `Custom Options` to be used in your `Custom Editor`, set it to the `editor.options`.
 
 ```javascript
-const grid = new tui.Grid({
+const grid = new Grid({
   // ... another options
   columns: [
     {

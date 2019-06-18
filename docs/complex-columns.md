@@ -7,6 +7,8 @@ The `header.complexColumns` option is an array, in which each element specifies 
 Let's see the example below.
 
 ```javascript
+import Grid from 'tui-grid';
+
 const grid = new Grid({
   el: document.getElementbyId('grid'),
   columns: [
