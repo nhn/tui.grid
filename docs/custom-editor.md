@@ -1,68 +1,4 @@
-## Built-in Editor 🛠
-
-
-In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
-
-```javascript
-import Grid from 'tui-grid';
-
-const grid = new Grid({
-  // ... another options
-  columns: [
-    {
-      header: 'ID',
-      name: 'id',
-      editor: 'text'
-    },
-    {
-      header: 'PASSWORD',
-      name: 'password',
-      editor: 'password'
-    }
-  ]
-});
-```
-
-Available types are in the following list:
-
-- **text** : Text input (`input[type=text]`)
-- **password** : Password input (`input[type=password]`)
-- **checkbox** : Check box (`input[type=checkbox]`)
-- **radio** : Radio button (`input[type=radio]`)
-- **select** : Select box (`select`)
-
-
-## Using `editor.options.listItems`
-
-To use the `checkbox`, `radio`, and `select` types, you need to set list options using the `editor.options.listItems` option and the `listItemText` built-in formatter option.
-
-```javascript
-columns: [
-  {
-    header: 'BROWSER',
-    name: 'browser',
-    formatter: 'listItemText'
-    editor: {
-      type: 'checkbox',
-      options: {
-        listItems: [
-          { text: 'IE 9', value: 1 },
-          { text: 'IE 10', value: 2 },
-          { text: 'IE 11', value: 3 },
-          { text: 'Firefox', value: 4 }
-          { text: 'Chrome', value: 5 }
-        ]
-      }
-    }        
-  }
-  // ...
-]
-```
-
-The `editor.options.listItems` is an array, in which each element has the `text` and the `value` property. The `text` property will be shown as a label of the item, and the `value` property will be used as a value of the cell through the `listItemText` built-in formatter.
-
-## Using `Custom Editor`
-
+# Custom Editor 🛠
 
 You can use any `Custom Editor` you want for presenting cell data more effectively in the `CellEditor` format TOAST UI Grid provides. The `CellEditor` should be the constructor function. The TOAST UI Grid will make instances of it using `new` keyword internally. We recommend using class keyword, but in case class keyword is not available, `function` and `prototype` can be used instead.
 
@@ -146,6 +82,73 @@ class CustomTextEditor {
   // ...
 }
 ```
+
+## Built-in Editor 
+
+In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
+
+```javascript
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ... another options
+  columns: [
+    {
+      header: 'ID',
+      name: 'id',
+      editor: 'text'
+    },
+    {
+      header: 'PASSWORD',
+      name: 'password',
+      editor: 'password'
+    }
+  ]
+});
+```
+
+Available types are in the following list:
+
+- **text** : Text input (`input[type=text]`)
+- **password** : Password input (`input[type=password]`)
+- **checkbox** : Check box (`input[type=checkbox]`)
+- **radio** : Radio button (`input[type=radio]`)
+- **select** : Select box (`select`)
+
+
+## Using `editor.options.listItems`
+
+To use the `checkbox`, `radio`, and `select` types, you need to set list options using the `editor.options.listItems` option and the `listItemText` built-in formatter option.
+
+```javascript
+const columns = [
+  {
+    header: 'BROWSER',
+    name: 'browser',
+    formatter: 'listItemText',
+    editor: {
+      type: 'checkbox',
+      options: {
+        listItems: [
+          { text: 'IE 9', value: 1 },
+          { text: 'IE 10', value: 2 },
+          { text: 'IE 11', value: 3 },
+          { text: 'Firefox', value: 4 },
+          { text: 'Chrome', value: 5 }
+        ]
+      }
+    }        
+  }
+  // ...
+];
+
+const grid = new Grid({
+  //...options
+  columns  
+});
+```
+
+The `editor.options.listItems` is an array, in which each element has the `text` and the `value` property. The `text` property will be shown as a label of the item, and the `value` property will be used as a value of the cell through the `listItemText` built-in formatter.
 
 ## Value of `checkbox` Type
 

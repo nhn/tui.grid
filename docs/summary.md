@@ -52,24 +52,28 @@ The `summary.defaultContent` property is also the key-value object which sets co
 If you set an object for a specific column to the `columnContent` property, the Grid automatically calculates the summary of that column. It means that whenever some values in the column are changed, the Grid re-calculate the summary. A result of summary is passed to a `template` function as a paramater so that you can use it for generating HTML string of the summary. In the case of `template` function of the `defaultContent` property, it works the same.
 
 ```javascript
-// …
-columnContent: {
-  col1: {
-    template(summary) {
-      return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
-    }
-  },
-  col2: {
-    template(summary) {
-      return 'max: ' + summary.max + '<br>min: ' + summary.min;
+const grid = new Grid({
+  //...options
+  summary: {
+    columnContent: {
+      col1: {
+        template(summary) {
+          return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
+        }
+      },
+      col2: {
+        template(summary) {
+          return 'max: ' + summary.max + '<br>min: ' + summary.min;
+        }
+      }
+    },
+    defaultContent: {
+      template(summary) {
+        return 'default: ' + summary.sum;
+      }
     }
   }
-},
-defaultContent: {
-  template(summary) {
-    return 'default: ' + summary.sum;
-  }
-}
+})
 ```
 
 As you can see above, a `template` function takes a `summary` object as a parameter and it contains values like `sum`, `avg`, etc. The available types are listed below.
@@ -90,34 +94,40 @@ One important thing is that every value in the column must be a `Number` type. I
 There is another property available for a value object of the `columnContent` and `defaultContent`. The name of the property is `useAutoSummary` and this determines whether using the automatic summary or not. As a default value of a `useAutoSummary` is `true`, if you want to use a `template` function without auto-summary, use should set this property to `false` like example below.
 
 ```javascript
-// …
-columnContent: {
-  col1: {
-    useAutoSummary: false,
-    template(summary) {
-      return 'max: ' + summary.max + '<br>min: ' + summary.min;;
+const grid = new Grid({
+  //...options
+  summary: {
+    columnContent: {
+      col1: {
+        useAutoSummary: false,
+        template(summary) {
+          return 'max: ' + summary.max + '<br>min: ' + summary.min;;
+        }
+      }
+      // …
+    },
+    defaultContent: {
+      useAutoSummary: false,
+      template(summary) {
+        return 'default: ' + summary.sum;
+      }
     }
   }
-    // …
-},
-defaultContent: {
-    useAutoSummary: false,
-    template(summary) {
-        return 'default: ' + summary.sum;
-    }
-}
-// …
+});
 ```
 
 To return the static content as the result of `columnContent` of each column or `defaultContent`, sets the HTML string as their value. Then, the Grid sets `useAutoSummary:false` internally for preventing unnecessary calculation.
 
 ```javascript
-// …
-columnContent: {
-  col1: 'col1 content'
-},
-defaultContent: 'static content'
-// …
+const grid = new Grid({
+  //...options
+  summary: {
+    columnContent: {
+      col1: 'col1 content'
+    },
+    defaultContent: 'static content'
+  }
+});
 ```
 
 ## setSummaryColumnContent()
@@ -130,7 +140,7 @@ grid.setSummaryColumnContent('col1', 'content');
 // or if you want to set template function, use as below.
 grid.setSummaryColumnContent('col1', {
   template(summary) {
-    'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
+    return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
   }
 });
 ```

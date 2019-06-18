@@ -59,7 +59,7 @@ The result will looks like this:
 The following example extends the **default** preset with the custom options. The options are the same with the **clean** preset. You can see the result by comparing the **default** and the **clean** preset in the screenshots above.
 
 ```js
-Grid.applyTheme('default',
+Grid.applyTheme('default', {
   grid: {
     border: '#e0e0e0'
   },
@@ -84,9 +84,9 @@ Grid.applyTheme('default',
 });
 ```
 
-You can see all available options at the `tui.Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
+You can see all available options at the `Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
 
 
-### Example
+## Example
 
 You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-themes).

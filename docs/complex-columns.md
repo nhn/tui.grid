@@ -50,4 +50,4 @@ The result of the sample code looks like this:
 
 ## Example
 
-You can see the example that is using more complex column headers [here](http://nhn.github.io/tui.grid/latest/tutorial-example03-complex-columns).
+You can see the example that is using more complex column headers [here](http://nhn.github.io/tui.grid/latest/tutorial-example02-complex-columns).

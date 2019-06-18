@@ -65,24 +65,20 @@ grid.setColumns([
       }
     },
     relations: [
-      targetNames: ['col2'],
-      listItems({ value }) {
-        let items;
+      {
+        targetNames: ['col2'],
+        listItems({ value }) {
+          let items;
 
-        if (value === '1') {
-          items = [
-            { text: 'opt1', value: '1' }
-            { text: 'opt2', value: '2' }    
-          ];
-        } else {
-          items = [
-            { text: 'opt3', value: '3' }
-            { text: 'opt4', value: '4' }    
-          ]    
+          if (value === '1') {
+            items = [{ text: 'opt1', value: '1' }, { text: 'opt2', value: '2' }];
+          } else {
+            items = [{ text: 'opt3', value: '3' }, { text: 'opt4', value: '4' }];
+          }
+          return items;
         }
-        return items;
       }
-    ]    
+    ]
   },
   {
     header: 'col2',

@@ -20,7 +20,7 @@ The `CellRenderer` format is as below.
 * `mounted`
   The `mounted` method is an `optional`, and can be used to initialize Input elements. This method is invoked immediately after the root element returned by getElement() is attached to the DOM.
 * `render`
-  The `render` method is used to sychronize the rendered contents and the value of the cell. This method is invoked whenever the value of the cell is changed.
+  The `render` method is used to synchronize the rendered contents and the value of the cell. This method is invoked whenever the value of the cell is changed.
 * `focused`
   The `focused` method is an `optional`, and can be used to add some behavior when the focus is set on the cell. This method is invoked whenever the focus is changed and set on the cell.
 * `beforeDestroy`

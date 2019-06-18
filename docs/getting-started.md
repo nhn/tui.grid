@@ -7,7 +7,7 @@ TOAST UI products can be used by using the package manager or downloading the so
 ### Via Package Manager
 
 You can conveniently install it using the commands provided by each package manager.
-When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
+When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
 
 ### npm
 
@@ -79,9 +79,11 @@ You can create an instance with options and call various APIs after creating an 
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  el: document.getElemetById('wrapper'), // Conatiner element
-  columns: [ ... ],
-  ...
+  el: document.getElementById('wrapper'), // Container element
+  columns: [ 
+    //... 
+  ],
+  // ...
 });
 ```
 
@@ -161,7 +163,7 @@ const data = [
 ];
 
 // case 1 : using data option
-var grid = new Grid({
+const grid = new Grid({
   el: document.getElementById('wrapper'),
   data,
   ...
