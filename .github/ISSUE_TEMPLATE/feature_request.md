@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: ''
 labels: Enhancement, Need Discussion
-assignees: dongwoo-kim, seonim-ryu, jung-han, js87zz
+assignees: ''
 
 ---
 
