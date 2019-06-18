@@ -115,19 +115,19 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🎨 Features
 
-* [Various input types _(checkbox, radio, select, password, etc)_](./docs/custom-editor.md)
-* [Full keyboard navigation _(move, select, copy, paste, delete, etc)_](./docs/keymap.md)
+* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](./docs/custom-editor.md)
+* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](./docs/keymap.md)
 * [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
 * [Multi column headers](./docs/complex-columns.md)
 * [Inline Editing](./docs/custom-editor.md)
 * [Picking date](./docs/date-picker.md)
-* [Relation between each columns](./docs/relation-between-columns.md)
+* [Relational Structure Between Columns](./docs/relation-between-columns.md)
 * [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
-* [Representing tree data](./docs/tree.md)
+* [Tree Data Representation](./docs/tree.md)
 * Custom cell formatter & converter
-* Virtual scrolling _(Handling large dataset without performance loses)_
+* Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
 * Selection
@@ -159,7 +159,7 @@ However, we highly recommend using the package manager.
 
 TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/).
 You can conveniently install it using the commands provided by the package manager.
-When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
+When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/en/) is installed.
 
 #### npm
 
