@@ -10,8 +10,9 @@
     "test:ci": "cypress run",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
-    "doc:dev" : "tuidoc --dev",
-    "doc" : "tuidoc"
+    "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015",
+    "doc:dev" : "npm run ts2js && tuidoc --dev",
+    "doc" : "npm run ts2js && tuidoc"
   },
   "repository": {
     "type": "git",
