@@ -14,8 +14,8 @@
     "example05-relation-columns": {
         "title": "5. Relation between columns"
     },
-    "example06-using-extradata": {
-        "title": "6. Using _extraData"
+    "example06-attributes": {
+        "title": "6. _attributes"
     },
     "example07-themes": {
         "title": "7. Themes"
@@ -30,7 +30,7 @@
         "title": "10. DataSource"
     },
     "example11-customizing-rowheaders": {
-        "title": "11. Customizing RowHeaders"
+        "title": "11. Customizing Row headers"
     },
     "example12-whitespace": {
         "title": "12. WhiteSpace"
