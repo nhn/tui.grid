@@ -3,7 +3,6 @@ import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { Rect, Side } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
-import { cell } from '../theme/styleGenerator';
 
 interface StoreProps {
   active: boolean;
