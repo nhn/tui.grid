@@ -119,14 +119,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](./docs/keymap.md)
 * [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
 * [Multi column headers](./docs/complex-columns.md)
-* [Inline Editing](./docs/custom-editor.md)
 * [Picking date](./docs/date-picker.md)
 * [Relational Structure Between Columns](./docs/relation-between-columns.md)
 * [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
 * [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
 * [Tree Data Representation](./docs/tree.md)
-* Custom cell formatter & converter
+* [Custom cell renderer](./docs/custom-renderer.md)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
