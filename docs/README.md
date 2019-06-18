@@ -18,7 +18,7 @@
 
 ## Migration Guide 
 
-- **🇺🇸 v4.0 Migration Guide (Coming soon!)**
+- [🇺🇸 v4.0 Migration Guide](v4.0-migration-guide.md)
 - [🇰🇷 v4.0 Migration Guide (Korean)](v4.0-migration-guide-kor.md)
 
 ## Etc
