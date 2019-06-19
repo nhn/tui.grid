@@ -24,7 +24,8 @@ import {
   omit,
   isString,
   isFunction,
-  isObject
+  isObject,
+  isUndefined
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -42,12 +43,12 @@ const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 
 function getBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
   const editInfo = editorMap[editorType];
+
   return {
     type: editInfo[0],
     options: {
       ...editInfo[1],
-      ...options,
-      type: editorType
+      ...options
     }
   };
 }
@@ -100,7 +101,7 @@ function getRelationMap(relations: Relations[]) {
   return relationMap;
 }
 
-function getRelationColumns(relations: Relations[]) {
+export function getRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
   relations.forEach((relation) => {
     const { targetNames = [] } = relation;
@@ -132,7 +133,11 @@ export function createColumn(
     relations,
     sortable,
     copyOptions,
-    validation
+    validation,
+    formatter,
+    onBeforeChange,
+    onAfterChange,
+    whiteSpace
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -143,7 +148,7 @@ export function createColumn(
     escapeHTML: !!column.escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
-    resizable: Boolean(resizable),
+    resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
     align: align || 'left',
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
@@ -154,6 +159,10 @@ export function createColumn(
     sortable,
     validation: validation ? { ...validation } : {},
     renderer: rendererOptions,
+    formatter,
+    onBeforeChange,
+    onAfterChange,
+    whiteSpace,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });

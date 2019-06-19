@@ -1,4 +1,4 @@
-import { CellValue, RowKey, ColumnInfo, ListItem } from '../store/types';
+import { CellValue, RowKey, ColumnInfo, ListItem, Dictionary } from '../store/types';
 import Grid from '../grid';
 
 export interface CellEditorProps {
@@ -13,10 +13,12 @@ export interface CellEditor {
   getValue(): string;
   mounted?(): void;
   beforeDestroy?(): void;
+  el?: HTMLElement;
 }
 
 export interface ListItemOptions {
   listItems: ListItem[];
+  relationListItemMap?: Dictionary<ListItem[]>;
 }
 
 export interface CellEditorClass {

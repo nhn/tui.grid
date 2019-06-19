@@ -1,12 +1,13 @@
-import { CellEditor, CellEditorProps, ListItemOptions } from './types';
+import { CellEditor, CellEditorProps } from './types';
 import { CellValue } from '../store/types';
+import { getListItems } from '../helper/editor';
 
 export class SelectEditor implements CellEditor {
-  private el: HTMLSelectElement;
+  public el: HTMLSelectElement;
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('select');
-    const { listItems } = props.columnInfo.editor!.options as ListItemOptions;
+    const listItems = getListItems(props);
 
     listItems.forEach(({ text, value }) => {
       el.appendChild(this.createOptions(text, value));

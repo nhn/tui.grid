@@ -53,7 +53,6 @@ let columns: OptColumn[] = [
     header: 'Type',
     name: 'typeCode',
     width: 200,
-    prefix: 'Type: ',
     formatter: 'listItemText',
     editor: {
       type: 'radio',

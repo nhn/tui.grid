@@ -25,6 +25,6 @@ export class DefaultRenderer implements CellRenderer {
   }
 
   public render(props: CellRendererProps) {
-    this.el.innerHTML = `${props.prefix}${props.formattedValue}${props.postfix}`;
+    this.el.innerHTML = `${props.formattedValue}`;
   }
 }

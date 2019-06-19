@@ -4,7 +4,7 @@ import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString } from '../helper/common';
 
 export class DatePickerEditor implements CellEditor {
-  private el: HTMLDivElement;
+  public el: HTMLDivElement;
 
   private inputEl: HTMLInputElement;
 
@@ -41,11 +41,9 @@ export class DatePickerEditor implements CellEditor {
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
     const calendarWrapper = this.createCalendarWrapper();
-
     const { options } = props.columnInfo.editor!;
 
     if (options) {
-      delete options.type;
       if (options.format) {
         format = options.format;
         delete options.format;

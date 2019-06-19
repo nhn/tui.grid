@@ -150,11 +150,11 @@ export function selection(options: OptSelectionLayerStyle): string {
   return bgBorderRuleString('layer-selection', options);
 }
 /**
- * Generates a css string for head area.
+ * Generates a css string for header area.
  * @param {Object} options - options
  * @returns {String}
  */
-export function headArea(options: OptTableHeaderStyle): string {
+export function headerArea(options: OptTableHeaderStyle): string {
   return createClassRule('header-area')
     .bg(options.background)
     .border(options.border)
@@ -198,11 +198,11 @@ export function cell(options: OptCellStyle): string {
     .build();
 }
 /*
- * Generates a css string for head cells.
+ * Generates a css string for header cells.
  * @param {Object} options - options
  * @returns {String}
  */
-export function cellHead(options: OptCellStyle): string {
+export function cellHeader(options: OptCellStyle): string {
   const { background, border, text } = options;
   const tableRule = createNestedClassRule(' .', [
     'show-lside-area',
@@ -219,11 +219,11 @@ export function cellHead(options: OptCellStyle): string {
   return buildAll([tableRule, cellRule]);
 }
 /*
- * Generates a css string for row's head cells.
+ * Generates a css string for row's header cells.
  * @param {Object} options - options
  * @returns {String}
  */
-export function cellRowHead(options: OptCellStyle): string {
+export function cellRowHeader(options: OptCellStyle): string {
   const { background, border, text } = options;
   const tableRule = createNestedClassRule(' .', [
     'show-lside-area',
@@ -281,22 +281,22 @@ export function cellOddRow(options: OptBasicCellStyle): string {
     .build();
 }
 /**
- * Generates a css string for selected head cells.
+ * Generates a css string for selected header cells.
  * @param {Object} options - options
  * @returns {String}
  */
-export function cellSelectedHead(options: OptBasicCellStyle): string {
+export function cellSelectedHeader(options: OptBasicCellStyle): string {
   return createNestedClassRule('.', ['cell-header', 'cell-selected'])
     .bg(options.background)
     .text(options.text)
     .build();
 }
 /**
- * Generates a css string for selected row head cells.
+ * Generates a css string for selected row header cells.
  * @param {Object} options - options
  * @returns {String}
  */
-export function cellSelectedRowHead(options: OptBasicCellStyle): string {
+export function cellSelectedRowHeader(options: OptBasicCellStyle): string {
   return createNestedClassRule('.', ['cell-row-header', 'cell-selected'])
     .bg(options.background)
     .text(options.text)

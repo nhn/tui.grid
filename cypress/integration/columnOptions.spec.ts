@@ -55,55 +55,6 @@ describe('formatter', () => {
       assertAgeFormatterCallProps(formatterStub);
     });
   });
-
-  it('prefix should be displayed before the value', () => {
-    const prefixStub = cy.stub();
-    const columns = [
-      {
-        name: 'name',
-        prefix: 'Mr. '
-      },
-      {
-        name: 'age',
-        prefix: prefixStub.returns('Age: ')
-      }
-    ];
-
-    cy.createGrid({ data, columns });
-
-    cy.getCell(0, 'name').should('to.have.text', 'Mr. Kim');
-    cy.getCell(1, 'name').should('to.have.text', 'Mr. Lee');
-    cy.getCell(0, 'age').should('to.have.text', 'Age: 30');
-    cy.getCell(1, 'age').should('to.have.text', 'Age: 40');
-
-    cy.gridInstance().then(() => {
-      assertAgeFormatterCallProps(prefixStub);
-    });
-  });
-
-  it('postfix should be displayed after the value', () => {
-    const postfixStub = cy.stub();
-    const columns = [
-      {
-        name: 'name',
-        postfix: '!!'
-      },
-      {
-        name: 'age',
-        postfix: postfixStub.returns(' Old')
-      }
-    ];
-
-    cy.createGrid({ data, columns });
-    cy.getCell(0, 'name').should('to.have.text', 'Kim!!');
-    cy.getCell(1, 'name').should('to.have.text', 'Lee!!');
-    cy.getCell(0, 'age').should('to.have.text', '30 Old');
-    cy.getCell(1, 'age').should('to.have.text', '40 Old');
-
-    cy.gridInstance().then(() => {
-      assertAgeFormatterCallProps(postfixStub);
-    });
-  });
 });
 
 describe('escapeHTML / defaultValue', () => {
@@ -116,8 +67,6 @@ describe('escapeHTML / defaultValue', () => {
       },
       {
         name: 'age',
-        prefix: '<b>',
-        postfix: '</b>',
         formatter: ({ value }: FormatterProps) => `${value}<br/>`,
         escapeHTML: true
       }
@@ -125,7 +74,7 @@ describe('escapeHTML / defaultValue', () => {
 
     cy.createGrid({ data, columns });
     cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
-    cy.getCell(0, 'age').should('to.have.text', '<b>10<br/></b>');
+    cy.getCell(0, 'age').should('to.have.text', '10<br/>');
   });
 });
 

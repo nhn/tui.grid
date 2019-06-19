@@ -44,7 +44,7 @@ export const data = [
         downloadCount: 1000,
         listenCount: 5000,
         _attributes: {
-          expanded: false
+          expanded: true
         },
         _children: [
           {

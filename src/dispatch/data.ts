@@ -5,7 +5,8 @@ import {
   SelectionRange,
   RowAttributes,
   RowAttributeValue,
-  PageOptions
+  PageOptions,
+  Dictionary
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -30,6 +31,7 @@ import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import { getRenderState } from '../helper/renderState';
 
 export function setValue(
   { column, data, id }: Store,
@@ -50,16 +52,16 @@ export function setValue(
     targetColumn.onBeforeChange(gridEvent);
   }
 
-  if (!gridEvent.isStopped()) {
-    if (targetRow) {
-      const { rowSpanMap } = targetRow;
-      targetRow[columnName] = value;
-      getDataManager(id).push('UPDATE', targetRow);
+  if (gridEvent.isStopped()) {
+    return;
+  }
 
-      if (isEmpty(rowSpanMap) || !enableRowSpan(sortOptions.columnName)) {
-        return;
-      }
+  if (targetRow) {
+    const { rowSpanMap } = targetRow;
+    targetRow[columnName] = value;
+    getDataManager(id).push('UPDATE', targetRow);
 
+    if (!isEmpty(rowSpanMap) && enableRowSpan(sortOptions.columnName)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -68,10 +70,11 @@ export function setValue(
         getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
       }
     }
-    if (targetColumn && targetColumn.onAfterChange) {
-      gridEvent = new GridEvent({ rowKey, columnName, value });
-      targetColumn.onAfterChange(gridEvent);
-    }
+  }
+
+  if (targetColumn && targetColumn.onAfterChange) {
+    gridEvent = new GridEvent({ rowKey, columnName, value });
+    targetColumn.onAfterChange(gridEvent);
   }
 }
 
@@ -263,7 +266,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 export function appendRow(
-  { data, column, rowCoords, dimension, id }: Store,
+  { data, column, rowCoords, dimension, id, renderState }: Store,
   row: OptRow,
   options: OptAppendRow
 ) {
@@ -287,10 +290,15 @@ export function appendRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  renderState.state = 'DONE';
   getDataManager(id).push('CREATE', rawRow);
 }
 
-export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, options: OptRemoveRow) {
+export function removeRow(
+  { data, rowCoords, id, renderState }: Store,
+  rowKey: RowKey,
+  options: OptRemoveRow
+) {
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
@@ -307,24 +315,30 @@ export function removeRow({ data, rowCoords, id }: Store, rowKey: RowKey, option
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow[0]);
 }
 
-export function clearData({ data, id }: Store) {
+export function clearData({ data, id, renderState }: Store) {
   data.rawData.forEach((row) => {
     getDataManager(id).push('DELETE', row);
   });
   data.rawData = [];
   data.viewData = [];
+  renderState.state = 'EMPTY';
 }
 
-export function resetData({ data, column, dimension, rowCoords, id }: Store, inputData: OptRow[]) {
+export function resetData(
+  { data, column, dimension, rowCoords, id, renderState }: Store,
+  inputData: OptRow[]
+) {
   const { rawData, viewData } = createData(inputData, column);
   const { rowHeight } = dimension;
 
   data.rawData = rawData;
   data.viewData = viewData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
+  renderState.state = getRenderState(rawData);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -403,4 +417,24 @@ export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHe
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
   data.pageOptions = { ...pageOptions, perPage };
+}
+
+export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
+  const { complexHeaderColumns, allColumnMap } = column;
+
+  Object.keys(columnsMap).forEach((columnName) => {
+    const col = allColumnMap[columnName];
+    if (col) {
+      col.header = columnsMap[columnName];
+    }
+
+    if (complexHeaderColumns.length) {
+      const complexCol = findProp('name', columnName, complexHeaderColumns);
+      if (complexCol) {
+        complexCol.header = columnsMap[columnName];
+      }
+    }
+  });
+
+  notify(column, 'allColumns');
 }

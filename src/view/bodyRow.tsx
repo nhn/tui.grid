@@ -15,6 +15,7 @@ interface OwnProps {
 interface StoreProps {
   rowHeight: number;
   autoRowHeight: boolean;
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -34,7 +35,8 @@ class BodyRowComp extends Component<Props> {
   }, 10);
 
   private refreshRowHeight = (cellHeight: number) => {
-    this.renderedRowHeight = Math.max(cellHeight, this.renderedRowHeight);
+    this.renderedRowHeight =
+      Math.max(cellHeight, this.renderedRowHeight) + this.props.cellBorderWidth;
     this.updateRowHeightDebounced();
   };
 
@@ -65,5 +67,6 @@ class BodyRowComp extends Component<Props> {
 
 export const BodyRow = connect<StoreProps, OwnProps>(({ rowCoords, dimension }, { rowIndex }) => ({
   rowHeight: rowCoords.heights[rowIndex],
-  autoRowHeight: dimension.autoRowHeight
+  autoRowHeight: dimension.autoRowHeight,
+  cellBorderWidth: dimension.cellBorderWidth
 }))(BodyRowComp);

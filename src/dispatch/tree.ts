@@ -73,7 +73,7 @@ export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean
 
     /**
      * Occurs when the row having child rows is expanded
-     * @event Grid#expanded
+     * @event Grid#expand
      * @type {module:event/gridEvent}
      * @property {number|string} rowKey - rowKey of the expanded row
      * @property {Grid} instance - Current grid instance
@@ -133,7 +133,7 @@ export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boole
 
     /**
      * Occurs when the row having child rows is collapsed
-     * @event Grid#collapsed
+     * @event Grid#collapse
      * @type {module:event/gridEvent}
      * @property {number|string} rowKey - rowKey of the collapsed row
      * @property {Grid} instance - Current grid instance

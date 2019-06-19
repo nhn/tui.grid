@@ -10,8 +10,7 @@ import {
   PageOptions,
   Validation,
   RowKey,
-  ComplexColumnInfo,
-  CellEditorOptions
+  ComplexColumnInfo
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -41,6 +40,7 @@ export interface OptGrid {
   pageOptions?: PageOptions;
   treeColumnOptions?: OptTree;
   header?: OptHeader;
+  usageStatistics?: boolean;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -109,8 +109,6 @@ export interface OptColumn {
   editor?: OptCellEditor;
   formatter?: Formatter;
   defaultValue?: CellValue;
-  prefix?: Formatter;
-  postfix?: Formatter;
   viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
@@ -132,6 +130,7 @@ export interface OptColumnOptions {
   minWidth?: number;
   frozenCount?: number;
   frozenBorderWidth?: number;
+  resizable?: boolean;
 }
 
 export interface OptHeightResizeHandleStyle {
@@ -210,10 +209,10 @@ export interface OptCellDummyStyle {
 
 export interface OptTableCellStyle {
   normal?: OptCellStyle;
-  head?: OptCellStyle;
-  selectedHead?: OptBasicCellStyle;
-  rowHead?: OptCellStyle;
-  selectedRowHead?: OptBasicCellStyle;
+  header?: OptCellStyle;
+  selectedHeader?: OptBasicCellStyle;
+  rowHeader?: OptCellStyle;
+  selectedRowHeader?: OptBasicCellStyle;
   summary?: OptCellStyle;
   focused?: OptCellFocusedStyle;
   focusedInactive?: OptCellFocusedStyle;
@@ -314,9 +313,9 @@ export interface OptCellDummyStyle {
 
 export interface OptTableCellStyle {
   normal?: OptCellStyle;
-  head?: OptCellStyle;
-  selectedHead?: OptBasicCellStyle;
-  rowHead?: OptCellStyle;
+  header?: OptCellStyle;
+  selectedHeader?: OptBasicCellStyle;
+  rowHeader?: OptCellStyle;
   selectedRowHead?: OptBasicCellStyle;
   summary?: OptCellStyle;
   focused?: OptCellFocusedStyle;
