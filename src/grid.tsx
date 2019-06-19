@@ -62,14 +62,14 @@ if ((module as any).hot) {
 /**
  * Grid public API
  * @param {Object} options
- *      @param {Array} [options.data] - Grid data for making rows.
+ *      @param {HTMLElement} el - The target element to create grid.
+ *      @param {Array| Object} [options.data] - Grid data for making rows. When using the data source, sets to object.
+ *      @param {Object} [options.pageOptions={}] The object for the pagination options with the data source.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=40] - The height of the header area.
  *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
- *      @param {boolean} [options.virtualScrolling=false] - If set to true, use virtual-scrolling so that large
- *          amount of data can be processed performantly. When using this option that sets true, the rowHeight option
- *          must set value.
+ *      @param {string|number} [options.width='auto'] - Options for grid width.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
  *      @param {number} [options.minRowHeight=40] - The minimum height of each rows. When this value is larger than
@@ -97,6 +97,9 @@ if ((module as any).hot) {
  *      @param {Object} [options.copyOptions] - Option object for clipboard copying
  *      @param {boolean} [options.copyOptions.useFormattedValue] - Whether to use formatted values or original values
  *          as a string to be copied to the clipboard
+ *      @param {boolean} [options.copyOptions.useListItemText] - Copy select or checkbox cell values to 'text'
+ *          rather than 'value' of the listItem option.
+ *      @param {string|function} [options.copyOptions.customValue] - Copy text with 'formatter' in cell.
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
  *      @param {string} [options.editingEvent='dblclick'] - If set to 'click', editable cell in the view-mode will be
@@ -104,7 +107,7 @@ if ((module as any).hot) {
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
- *      @param {?string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
+ *      @param {string} [options.keyColumnName] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {boolean} [options.heightResizable=false] - If set to true, a handle for resizing height will be shown.
  *      @param {Object} [options.pagination=null] - Options for tui.Pagination.
@@ -112,11 +115,13 @@ if ((module as any).hot) {
  *      @param {string} [options.selectionUnit='cell'] - The unit of selection on Grid. ('cell', 'row')
  *      @param {Array} [options.rowHeaders] - Options for making the row header. The row header content is number of
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
- *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox', 'radio')
- *          @param {string} [options.rowHeaders.title] - The title of the row header on the grid header area.
+ *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox')
+ *          @param {string} [options.rowHeaders.header] - The header of the row header.
  *          @param {number} [options.rowHeaders.width] - The width of the row header.
- *          @param {function} [options.rowHeaders.template] - Template function which returns the content(HTML) of
- *              the row header. This function takes a parameter an K-V object as a parameter to match template values.
+ *          @param {string} [options.rowHeaders.align=left] - Horizontal alignment of the row header content. Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.rowHeaders.valign=middle] - Vertical alignment of the row header content. Available values are 'top', 'middle', 'bottom'.
+ *          @param {number} [options.rowHeaders.width] - The width of the row header column. The unit is pixel. If this value isn't set, the column's width sets to default value.
+ *          @param {function} [options.rowHeaders.renderer] - Sets the custom renderer to customize the header content.
  *      @param {Array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
  *          @param {boolean} [options.columns.ellipsis=false] - If set to true, ellipsis will be used
@@ -127,7 +132,7 @@ if ((module as any).hot) {
  *              Available values are 'top', 'middle', 'bottom'.
  *          @param {string} [options.columns.className] - The name of the class to be used for all cells of
  *              the column.
- *          @param {string} [options.columns.title] - The title of the column to be shown on the header.
+ *          @param {string} [options.columns.header] - The header of the column to be shown on the header.
  *          @param {number} [options.columns.width] - The width of the column. The unit is pixel. If this value
  *              isn't set, the column's width is automatically resized.
  *          @param {number} [options.columns.minWidth=50] - The minimum width of the column. The unit is pixel.
@@ -138,12 +143,13 @@ if ((module as any).hot) {
  *              Validation is executed whenever data is changed or the {@link Grid#validate} is called.
  *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
  *              will be checked to be not empty.
- *          @param {string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
+ *          @param {number|string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
  *              Avilable types are 'string' and 'number'.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
- *          @param {function} [options.columns.formatter] - The function that formats the value of the cell.
- *              The retrurn value of the function will be shown as the value of the cell.
+ *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
+ *              The retrurn value of the function will be shown as the value of the cell. If set to 'listItemText',
+ *              the value will be shown the text.
  *          @param {boolean} [options.columns.useHtmlEntity=true] - If set to true, the value of the cell
  *              will be encoded as HTML entities.
  *          @param {boolean} [options.columns.ignored=false] - If set to true, the value of the column will be
@@ -155,30 +161,14 @@ if ((module as any).hot) {
  *              the changing will be canceled.
  *          @param {function} [options.columns.onAfterChange] - The function that will be
  *              called after changing the value of the cell.
- *          @param {Object} [options.columns.editOptions] - The object for configuring editing UI.
- *              @param {string} [options.columns.editOptions.type='text'] - The string value that specifies
- *                  the type of the editing UI.
- *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
- *              @param {boolean} [options.columns.editOptions.useViewMode=true] - If set to true, default mode
- *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
- *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
- *                  input elements as a default.
- *              @param {Array} [options.columns.editOptions.listItems] - Specifies the option items for the
- *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
- *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columns.editOptions.onFocus] - The function that will be
- *                  called when a 'focus' event occurred on an input element
- *              @param {function} [options.columns.editOptions.onBlur] - The function that will be
- *                  called when a 'blur' event occurred on an input element
- *              @param {function} [options.columns.editOptions.onKeyDown] - The function that will be
- *                  called when a 'keydown' event occurred on an input element
- *              @param {(string|function)} [options.columns.editOptions.prefix] - The HTML string to be
- *                  shown left to the input element. If it's a function, the return value will be used.
- *              @param {(string|function)} [options.columns.editOptions.postfix] - The HTML string to be
- *                  shown right to the input element. If it's a function, the return value will be used.
- *              @param {function} [options.columns.editOptions.converter] - The function whose
- *                  return value (HTML) represents the UI of the cell. If the return value is
- *                  falsy(null|undefined|false), default UI will be shown.
+ *          @param {Object} [options.columns.editor] - The object for configuring editing UI.
+ *              @param {string|function} [options.columns.editor.type='text'] - The string value that specifies
+ *                  the type of the editing UI. Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
+ *                  When using the custom editor, sets to the customized renderer constructor.
+ *              @param {Object} [options.columns.editor.options] - Option object using editor
+ *                  @param {Array} [options.columns.editor.options.listItems] - Specifies the option items for the
+ *                       'select', 'radio', 'checkbox' type. The item of the array must contain properties named
+ *                       'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
  *              @param {Object} [options.columns.copyOptions] - Option object for clipboard copying.
  *                  This option is column specific, and overrides the global copyOptions.
  *              @param {boolean} [options.columns.copyOptions.useFormattedValue] - Whether to use
@@ -201,11 +191,6 @@ if ((module as any).hot) {
  *              new line characters. If set to 'pre-wrap', spaces are preserved, the text line is broken by
  *              fitting to the column's width and new line characters. If set to 'pre-line', spaces are merged,
  *              the text line is broken by fitting to the column's width and new line characters.
- *          @param {Object} [options.columns.component] - Option for using tui-component
- *              @param {string} [options.columns.component.name] - The name of the compnent to use
- *                  for this column
- *              @param {Object} [options.columns.component.options] - The options object to be used for
- *                  creating the component
  *      @param {Object} [options.summary] - The object for configuring summary area.
  *          @param {number} [options.summary.height] - The height of the summary area.
  *          @param {string} [options.summary.position='bottom'] - The position of the summary area. ('bottom', 'top')
