@@ -26,7 +26,7 @@
       scrollY: false,
       columns: [
         {
-          title: 'Name',
+          header: 'Name',
           name: 'name',
           onBeforeChange: function(ev) {
             console.log('Before change:' + ev);
@@ -37,7 +37,7 @@
           editor: 'text',
         },
         {
-          title: 'Artist',
+          header: 'Artist',
           name: 'artist',
           onBeforeChange: function(ev) {
             console.log('Before change:' + ev);
@@ -49,7 +49,7 @@
           editor: 'text',
         },
         {
-          title: 'Type',
+          header: 'Type',
           name: 'typeCode',
           editor: {
             type: 'select',
@@ -63,7 +63,7 @@
           }
         },
         {
-          title: 'Genre',
+          header: 'Genre',
           name: 'genreCode',
           editor: {
             type: 'checkbox',
@@ -79,7 +79,7 @@
           }
         },
         {
-          title: 'Grade',
+          header: 'Grade',
           name: 'grade',
           copyOptions: {
             useListItemText: true
