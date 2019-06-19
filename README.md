@@ -123,7 +123,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Relational Structure Between Columns](./docs/relation-between-columns.md)
 * [Data Source](./docs/data-source.md)
 * [Summarize all values of each column](./docs/summary.md)
-* [Customizing styles _(Three basic themes)_](./docs/applying-themes.md)
+* [Customizing styles _(Three basic themes)_](./docs/themes.md)
 * [Tree Data Representation](./docs/tree.md)
 * [Custom cell renderer](./docs/custom-renderer.md)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_

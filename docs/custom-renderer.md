@@ -1,4 +1,4 @@
-## Custom Renderer 🔩
+# Custom Renderer 🔩
 
 The TOAST UI Grid provides the `Custom Renderer` in the `CellRenderer` format for users to customize the cell UI to meet their own requirements. It's more powerful than `formatter` option to control of cell rendering behavior.
 
