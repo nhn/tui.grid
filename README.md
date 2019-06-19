@@ -2,7 +2,7 @@
 
 > The Powerful Component to Display and Edit Data. Experience the Ultimate Data Transformer!
 
-![npm bundle size](https://img.shields.io/bundlephobia/min/tui-grid.svg?color=%23800080&label=bundle%20size) [![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
@@ -96,7 +96,7 @@ It supports various `input` elements such as **text**, **select box**, **checkbo
 You can set the data editing method just by setting options.
 You can also show editing elements whatever you want through **Custom Editor**.
 
-![customEditor](https://user-images.githubusercontent.com/37766175/59417111-9e181280-8e01-11e9-8de7-2df819b36354.png)
+![59417111-9e181280-8e01-11e9-8de7-2df819b36354](https://user-images.githubusercontent.com/37766175/59748226-9b139b00-92b5-11e9-9e72-d4b6e3fbd5ff.png)
 
 
 ### Simple, Easy to Use Themes
