@@ -2,7 +2,7 @@
 
 The TOAST UI Grid allows you to group columns under a parent column header. Using the `header.complexColumns` option, you can build a tree-like structure, where one or more columns can be grouped together by a parent header. The parent header can also be a child of another parent header.
 
-The `header.complexColumns` option is an array, in which each element specifies a parent column. Similar to normal columns, the parent column has the `name` and the `title` properties. But you can specify child columns with the `childNames` property.
+The `header.complexColumns` option is an array, in which each element specifies a parent column. Similar to normal columns, the parent column has the `name` and the `header` properties. But you can specify child columns with the `childNames` property.
 
 Let's see the example below.
 
