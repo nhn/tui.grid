@@ -117,10 +117,12 @@ if ((module as any).hot) {
  *          each row or input element. The value of each item is enable to set string type. (ex: ['rowNum', 'checkbox'])
  *          @param {string} [options.rowHeaders.type] - The type of the row header. ('rowNum', 'checkbox')
  *          @param {string} [options.rowHeaders.header] - The header of the row header.
- *          @param {number} [options.rowHeaders.width] - The width of the row header.
- *          @param {string} [options.rowHeaders.align=left] - Horizontal alignment of the row header content. Available values are 'left', 'center', 'right'.
- *          @param {string} [options.rowHeaders.valign=middle] - Vertical alignment of the row header content. Available values are 'top', 'middle', 'bottom'.
- *          @param {number} [options.rowHeaders.width] - The width of the row header column. The unit is pixel. If this value isn't set, the column's width sets to default value.
+ *          @param {number} [options.rowHeaders.width] - The width of the row header column. The unit is pixel.
+ *              If this value isn't set, the column's width sets to default value.
+ *          @param {string} [options.rowHeaders.align=left] - Horizontal alignment of the row header content.
+ *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.rowHeaders.valign=middle] - Vertical alignment of the row header content.
+ *              Available values are 'top', 'middle', 'bottom'.
  *          @param {function} [options.rowHeaders.renderer] - Sets the custom renderer to customize the header content.
  *      @param {Array} options.columns - The configuration of the grid columns.
  *          @param {string} options.columns.name - The name of the column.
