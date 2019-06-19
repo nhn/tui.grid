@@ -96,6 +96,6 @@ grid.setColumns([
 
 In the example above, the value of the 'col1' column determines the option list of the 'col2'. If the value of a cell in the 'col1' is changed to '1', the option list of a cell in 'col2' in the same row will become 'opt1' and 'opt2'. Otherwise, it will become 'opt3' and 'opt4'.
 
-## Example Page
+## Example
 
 You can see the sample Grid, which uses `relations` [here](https://nhn.github.io/tui.grid/latest/tutorial-example05-relation-columns).
