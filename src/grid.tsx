@@ -63,7 +63,7 @@ if ((module as any).hot) {
  * Grid public API
  * @param {Object} options
  *      @param {HTMLElement} el - The target element to create grid.
- *      @param {Array| Object} [options.data] - Grid data for making rows. When using the data source, sets to object.
+ *      @param {Array|Object} [options.data] - Grid data for making rows. When using the data source, sets to object.
  *      @param {Object} [options.pageOptions={}] The object for the pagination options with the data source.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=40] - The height of the header area.
