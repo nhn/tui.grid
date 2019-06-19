@@ -22,7 +22,15 @@
     "filePath" : "README.md"
   },
   "api" : {
-    "filePath" : "dist/tui-grid.js"
+    "filePath" : [
+      "tmpdoc/grid.js",
+      "tmpdoc/dataSource/gridAjax.js",
+      "tmpdoc/event/gridEvent.js",
+      "tmpdoc/dispatch/data.js",
+      "tmpdoc/dispatch/tree.js",
+      "tmpdoc/view/container.js"
+    ],
+    "fileLink": false
   },
   "examples" : {
     "filePath" : "examples",
