@@ -50,6 +50,11 @@ function getTargetInfo(nativeEvent: MouseEvent) {
   });
 }
 
+/**
+ * Event class for public event of Grid
+ * @module event/gridEvent
+ * @param {Object} data - Event data for handler
+ */
 export default class GridEvent {
   private stopped = false;
 
@@ -62,6 +67,10 @@ export default class GridEvent {
     }
   }
 
+  /**
+   * Stops propogation of this event.
+   * @memberof event/gridEvent
+   */
   public stop() {
     this.stopped = true;
   }
