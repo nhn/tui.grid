@@ -115,17 +115,17 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🎨 Features
 
-* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](./docs/custom-editor.md)
-* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](./docs/keymap.md)
-* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](./docs/clipboard.md)
-* [Multi column headers](./docs/complex-columns.md)
-* [Picking date](./docs/date-picker.md)
-* [Relational Structure Between Columns](./docs/relation-between-columns.md)
-* [Data Source](./docs/data-source.md)
-* [Summarize all values of each column](./docs/summary.md)
-* [Customizing styles _(Three basic themes)_](./docs/themes.md)
-* [Tree Data Representation](./docs/tree.md)
-* [Custom cell renderer](./docs/custom-renderer.md)
+* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/custom-editor.md)
+* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/keymap.md)
+* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](https://github.com/nhn/tui.grid/blob/master/docs/clipboard.md)
+* [Multi column headers](https://github.com/nhn/tui.grid/blob/master/docs/complex-columns.md)
+* [Picking date](https://github.com/nhn/tui.grid/blob/master/docs/date-picker.md)
+* [Relational Structure Between Columns](https://github.com/nhn/tui.grid/blob/master/docs/relation-between-columns.md)
+* [Data Source](https://github.com/nhn/tui.grid/blob/master/docs/data-source.md)
+* [Summarize all values of each column](https://github.com/nhn/tui.grid/blob/master/docs/summary.md)
+* [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/themes.md)
+* [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/tree.md)
+* [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/custom-renderer.md)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
