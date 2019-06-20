@@ -6,6 +6,10 @@
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
+## TOAST UI Grid 4 is released!!
+
+We have **eliminated the unnecessary dependencies**; **enhanced the performance through the virtual DOM**; and **undertaken a massive task of improving the overall API**. Finally, we are proud to present to you the more **powerful** and **lighter** TOAST UI Grid 4.0! Also, We are planning to maintain the existing version(3.8) in the 3.8 branch for only bugfixes.
+
 ## Wrappers
 
 * [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN. 
