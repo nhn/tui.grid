@@ -8,7 +8,7 @@
 
 ## TOAST UI Grid 4 is released!!
 
-We have **eliminated the unnecessary dependencies**; **enhanced the performance through the virtual DOM**; and **undertaken a massive task of improving the overall API**. Finally, we are proud to present to you the more **powerful** and **lighter** TOAST UI Grid 4.0! Also, We are planning to maintain the existing version(3.8) in the 3.8 branch for only bugfixes.
+We have **eliminated the unnecessary dependencies**; **enhanced the performance through the virtual DOM**; and **undertaken a massive task of improving the overall API**. Finally, we are proud to present to you the more **powerful** and **lighter** TOAST UI Grid 4.0! Also, we are planning to maintain the existing version(3.8) in the 3.8 branch for only bugfixes.
 
 ## Wrappers
 
