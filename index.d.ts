@@ -534,6 +534,8 @@ declare namespace tuiGrid {
 
     public static setLanguage(localeCode: string, data?: II18nData): void;
 
+    constructor(options: IGridOptions);
+
     public setWidth(width: number): void;
 
     public setHeight(height: number): void;
