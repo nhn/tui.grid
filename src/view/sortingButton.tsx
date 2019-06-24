@@ -6,12 +6,15 @@ import { getDataProvider } from '../instance';
 import { DispatchProps } from '../dispatch/create';
 import { DataProvider } from '../dataSource/types';
 
+interface OwnProps {
+  columnName: string;
+}
 interface StoreProps {
   sortOptions: SortOptions;
   dataProvider: DataProvider;
 }
 
-type Props = StoreProps & DispatchProps;
+type Props = StoreProps & OwnProps & DispatchProps;
 
 class SortingButtonComp extends Component<Props> {
   private handleClick = (ev: MouseEvent) => {
@@ -44,12 +47,12 @@ class SortingButtonComp extends Component<Props> {
   };
 
   public render() {
-    const { columnName, ascending } = this.props.sortOptions;
-
+    const { columnName, sortOptions } = this.props;
+    const { columnName: sortedColumnName, ascending } = sortOptions;
     return (
       <a
         class={cls('btn-sorting', [
-          columnName === name,
+          columnName === sortedColumnName,
           ascending ? 'btn-sorting-up' : 'btn-sorting-down'
         ])}
         onClick={this.handleClick}
@@ -58,7 +61,7 @@ class SortingButtonComp extends Component<Props> {
   }
 }
 
-export const SortingButton = connect<StoreProps>((store) => {
+export const SortingButton = connect<StoreProps, OwnProps>((store) => {
   const { data, id } = store;
 
   return {
