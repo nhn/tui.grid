@@ -54,6 +54,8 @@ stories.add(
     const { el, grid } = createGrid({
       data: createDataWithRowSpanAttr(),
       columns,
+      scrollX: false,
+      rowHeaders: ['checkbox', 'rowNum'],
       bodyHeight: 'fitToParent'
     });
     const rootEl = document.createElement('div');
