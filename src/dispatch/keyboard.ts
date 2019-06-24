@@ -75,7 +75,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data,
-    column: { visibleColumns, rowHeaderCount },
+    column: { visibleColumns },
     id
   } = store;
   const { viewData, sortOptions } = data;
@@ -89,7 +89,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   if (!currentInputRange) {
     currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
-      column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
+      column: [totalFocusColumnIndex, totalFocusColumnIndex]
     };
   }
 

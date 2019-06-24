@@ -22,7 +22,7 @@ export function setSelection(store: Store, range: { start: Range; end: Range }) 
   const {
     selection,
     data,
-    column: { visibleColumns },
+    column: { visibleColumns, rowHeaderCount },
     id
   } = store;
   const { viewData, sortOptions } = data;
@@ -31,8 +31,8 @@ export function setSelection(store: Store, range: { start: Range; end: Range }) 
 
   let startRowIndex = clamp(range.start[0], 0, rowLength - 1);
   let endRowIndex = clamp(range.end[0], 0, rowLength - 1);
-  const startColumnIndex = clamp(range.start[1], 0, columnLength - 1);
-  const endColumnIndex = clamp(range.end[1], 0, columnLength - 1);
+  const startColumnIndex = clamp(range.start[1] + rowHeaderCount, 0, columnLength - 1);
+  const endColumnIndex = clamp(range.end[1] + rowHeaderCount, 0, columnLength - 1);
 
   if (enableRowSpan(sortOptions.columnName)) {
     const rowRange: Range = [startRowIndex, endRowIndex];

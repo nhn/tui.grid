@@ -25,10 +25,9 @@ interface SelectionOptions {
 function getOwnSideColumnRange(
   columnRange: Range,
   side: Side,
-  visibleFrozenCount: number,
-  rowHeaderCount: number
+  visibleFrozenCount: number
 ): Range | null {
-  const [start, end] = columnRange.map((columnIdx) => columnIdx + rowHeaderCount);
+  const [start, end] = columnRange.map((columnIdx) => columnIdx);
 
   if (side === 'L' && start < visibleFrozenCount) {
     return [start, Math.min(end, visibleFrozenCount - 1)];
@@ -110,12 +109,12 @@ export function create({
       if (!this.range) {
         return null;
       }
-      const { visibleFrozenCount, rowHeaderCount } = columnInfo;
+      const { visibleFrozenCount } = columnInfo;
       const { column, row } = this.range;
 
       return {
-        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount, rowHeaderCount) },
-        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
+        L: { row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
+        R: { row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
       };
     },
 

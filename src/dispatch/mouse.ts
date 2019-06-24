@@ -227,7 +227,6 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   const { scrollTop, scrollLeft } = viewport;
   const { widths, areaWidth } = columnCoords;
   const { offsets: rowOffsets } = rowCoords;
-  const { rowHeaderCount } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
   const { visibleColumns } = column;
@@ -236,7 +235,7 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   const viewInfo = { pageX, pageY, scrollTop, scrollLeft };
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
   const totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-  const endColumnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+  const endColumnIndex = findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
   endRowIndex = findOffsetIndex(rowOffsets, scrolledPosition.y);
 
   if (curInputRange === null) {
@@ -248,8 +247,7 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
     };
     const startScrolledPosition = getScrolledPosition(startViewInfo, dimension, areaWidth.L);
     startRowIndex = findOffsetIndex(rowOffsets, startScrolledPosition.y);
-    startColumnIndex =
-      findOffsetIndex(totalColumnOffsets, startScrolledPosition.x) - rowHeaderCount;
+    startColumnIndex = findOffsetIndex(totalColumnOffsets, startScrolledPosition.x);
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
