@@ -10558,7 +10558,7 @@ var GridAjax = /** @class */ (function () {
         else {
             xhr.open(method, url);
             // @TODO neeto to application/json content-type options and custom options(authorization, custom header etc..)
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoder');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         }
         xhr.onreadystatechange = this.handleReadyStateChange;
     };
