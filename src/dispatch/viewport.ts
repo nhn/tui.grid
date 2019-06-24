@@ -53,7 +53,7 @@ function setScrollPosition(
 
 export function setScrollToFocus(store: Store) {
   const {
-    dimension: { bodyHeight, scrollbarWidth, tableBorderWidth },
+    dimension: { bodyHeight, scrollXHeight, scrollYWidth, tableBorderWidth },
     columnCoords: { areaWidth },
     focus: { cellPosRect, side },
     viewport
@@ -68,14 +68,14 @@ export function setScrollToFocus(store: Store) {
   const changedScrollLeft =
     side === 'R'
       ? getHorizontalScrollPosition(
-          areaWidth.R - scrollbarWidth,
+          areaWidth.R - scrollYWidth,
           cellPosRect,
           scrollLeft,
           tableBorderWidth
         )
       : null;
   const changedScrollTop = getVerticalScrollPosition(
-    bodyHeight - scrollbarWidth,
+    bodyHeight - scrollXHeight,
     cellPosRect,
     scrollTop,
     tableBorderWidth
@@ -86,7 +86,7 @@ export function setScrollToFocus(store: Store) {
 
 export function setScrollToSelection(store: Store) {
   const {
-    dimension: { bodyHeight, scrollbarWidth, tableBorderWidth },
+    dimension: { bodyHeight, scrollXHeight, scrollYWidth, tableBorderWidth },
     columnCoords: { areaWidth, widths, offsets: columnOffsets },
     rowCoords: { heights, offsets: rowOffsets },
     selection: { inputRange },
@@ -112,14 +112,14 @@ export function setScrollToSelection(store: Store) {
   const changedScrollLeft =
     cellSide === 'R'
       ? getHorizontalScrollPosition(
-          areaWidth.R - scrollbarWidth,
+          areaWidth.R - scrollYWidth,
           cellPosRect,
           scrollLeft,
           tableBorderWidth
         )
       : null;
   const changedScrollTop = getVerticalScrollPosition(
-    bodyHeight - scrollbarWidth,
+    bodyHeight - scrollXHeight,
     cellPosRect,
     scrollTop,
     tableBorderWidth
