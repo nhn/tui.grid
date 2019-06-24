@@ -72,12 +72,10 @@ class ComplexHeaderComp extends Component<Props> {
     }
 
     const [selectionStart, selectionEnd] = columnSelectionRange;
-    const [columnStart, columnEnd] = getChildColumnRange(
-      visibleColumns,
-      complexHeaderColumns,
-      name,
-      rowHeaderCount
-    );
+    let [columnStart, columnEnd] = getChildColumnRange(visibleColumns, complexHeaderColumns, name);
+
+    columnStart -= rowHeaderCount;
+    columnEnd -= rowHeaderCount;
 
     return (
       columnStart >= selectionStart &&

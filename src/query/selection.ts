@@ -35,15 +35,13 @@ export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[
 export function getChildColumnRange(
   visibleColumns: ColumnInfo[],
   complexHeaderColumns: ComplexColumnInfo[],
-  name: string,
-  rowHeaderCount: number
+  name: string
 ) {
   const unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
   const childNames = sortByVisibleColumns(visibleColumns, unsortedChildNames);
 
-  const startIndex = findPropIndex('name', childNames[0], visibleColumns) - rowHeaderCount;
-  const endIndex =
-    findPropIndex('name', childNames[childNames.length - 1], visibleColumns) - rowHeaderCount;
+  const startIndex = findPropIndex('name', childNames[0], visibleColumns);
+  const endIndex = findPropIndex('name', childNames[childNames.length - 1], visibleColumns);
 
   return [startIndex, endIndex];
 }

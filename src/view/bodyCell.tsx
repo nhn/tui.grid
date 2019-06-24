@@ -97,6 +97,7 @@ export class BodyCellComp extends Component<Props> {
   private handleMouseMove = (ev: MouseEvent) => {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
+    ev.stopImmediatePropagation();
   };
 
   private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
