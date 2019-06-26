@@ -118,7 +118,7 @@ class HeaderAreaComp extends Component<Props> {
                     )}
                   >
                     {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-                    {!!sortable && <SortingButton />}
+                    {!!sortable && <SortingButton columnName={name} />}
                   </th>
                 ))}
               </tr>
