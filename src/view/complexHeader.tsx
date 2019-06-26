@@ -110,7 +110,7 @@ class ComplexHeaderComp extends Component<Props> {
         {...!!rowspan && { rowspan }}
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-        {!!sortable && <SortingButton />}
+        {!!sortable && <SortingButton columnName={name} />}
       </th>
     );
   }
