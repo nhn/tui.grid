@@ -38,7 +38,7 @@ function getVerticalScrollPosition(
   return null;
 }
 
-function getChangedScrollPosition(store: Store, cellPosRect?: Rect) {
+function getChangedScrollPosition(store: Store, changedCellPosRect?: Rect) {
   const {
     dimension: { bodyHeight, scrollXHeight, scrollYWidth, tableBorderWidth },
     columnCoords: { areaWidth },
@@ -47,19 +47,20 @@ function getChangedScrollPosition(store: Store, cellPosRect?: Rect) {
   } = store;
 
   const { scrollLeft, scrollTop } = viewport;
+  const cellPosRect = changedCellPosRect || focusCellPostRect!;
 
   const changedScrollLeft =
     side === 'R'
       ? getHorizontalScrollPosition(
           areaWidth.R - scrollYWidth,
-          cellPosRect || focusCellPostRect!,
+          cellPosRect,
           scrollLeft,
           tableBorderWidth
         )
       : null;
   const changedScrollTop = getVerticalScrollPosition(
     bodyHeight - scrollXHeight,
-    cellPosRect || focusCellPostRect!,
+    cellPosRect,
     scrollTop,
     tableBorderWidth
   );
