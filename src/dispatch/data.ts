@@ -32,6 +32,7 @@ import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
+import { changeFocus } from './focus';
 
 export function setValue(
   { column, data, id }: Store,
@@ -61,7 +62,7 @@ export function setValue(
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && enableRowSpan(sortOptions.columnName)) {
+    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && enableRowSpan(sortOptions.columnName)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -295,7 +296,7 @@ export function appendRow(
 }
 
 export function removeRow(
-  { data, rowCoords, id, renderState }: Store,
+  { data, rowCoords, id, renderState, focus }: Store,
   rowKey: RowKey,
   options: OptRemoveRow
 ) {
@@ -310,6 +311,14 @@ export function removeRow(
 
   if (nextRow && enableRowSpan(sortOptions.columnName)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+  }
+
+  if (findPropIndex('rowKey', focus.rowKey, rawData) === -1) {
+    changeFocus(focus, data, null, null, id);
+    if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
+      focus.editingAddress = null;
+      focus.navigating = true;
+    }
   }
 
   notify(data, 'rawData');
