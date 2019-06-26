@@ -62,6 +62,7 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         }
 
         this.on('change:range', this._triggerSelectionEvent);
+        $(document).on('mouseup', $.proxy(this.stopAutoScroll, this));
     },
 
     defaults: {
