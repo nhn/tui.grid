@@ -17,7 +17,8 @@ import {
   isUndefined,
   removeArrayItem,
   includes,
-  isEmpty
+  isEmpty,
+  someProp
 } from '../helper/common';
 import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
@@ -313,11 +314,11 @@ export function removeRow(
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 
-  if (findPropIndex('rowKey', focus.rowKey, rawData) === -1) {
+  if (!someProp('rowKey', focus.rowKey, rawData)) {
+    focus.navigating = false;
     changeFocus(focus, data, null, null, id);
     if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
       focus.editingAddress = null;
-      focus.navigating = true;
     }
   }
 
