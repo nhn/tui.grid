@@ -8,6 +8,7 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
+import { findPropIndex } from '../helper/common';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -97,6 +98,7 @@ export class BodyCellComp extends Component<Props> {
   private handleMouseMove = (ev: MouseEvent) => {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
+    ev.stopImmediatePropagation();
   };
 
   private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
@@ -192,6 +194,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
+    const rowIndex = findPropIndex('rowKey', rowKey, data.viewData as ViewRow[]);
 
     return {
       grid,
@@ -200,7 +203,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       columnInfo,
       renderData: valueMap[columnName],
       ...(columnName === treeColumnName ? { treeInfo } : null),
-      selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
+      selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false
     };
   }
 )(BodyCellComp);
