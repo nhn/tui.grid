@@ -48,9 +48,9 @@ The `treeColumnOptions` option is used to set the tree column, and there are thr
 | `useIcon` | Sets whether to use the icon |
 | `useCascadingCheckbox` | Sets whether to change state of the checkbox with keeping parent-child relationship |
 
-The default value of `useIcon` the option is true, the parent row displays the folder icon and the child row displays the file icon.
+The default value of `useIcon` the option is `true`, the parent row displays the folder icon and the child row displays the file icon.
 
-The default value of the useCascadingCheckbox option is `true`. When all child rows are selected, the parent row is selected. When the parent row is selected, all children are selected. If set to `false`, you can check individual rows.
+The default value of the `useCascadingCheckbox` option is `true`. When all child rows are selected, the parent row is selected. When the parent row is selected, all children are selected. If set to `false`, you can check individual rows.
 
 You can add options on the grid instance option.
 
@@ -117,7 +117,7 @@ The behavior of some API is changing when a tree column is activated.
 | `prependRow` | Creates child rows below current row |
 | `removeRow` | If there are child rows, deletes them together |
 | `check` | If sets `useCascadingCheckbox: true`, changes state of the checkbox with keeping the parent-child relationship |
-| `uncheck` | If sets `useCascadingCheckbox: true`, changes state of the checkbox width keeping the parent-child relationship |
+| `uncheck` | If sets `useCascadingCheckbox: true`, changes state of the checkbox with keeping the parent-child relationship |
 
 ### Notice
 

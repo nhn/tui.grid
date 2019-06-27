@@ -14,7 +14,7 @@
 - [⌨️ Keymap](keymap.md)
 - [📎 Clipboard](clipboard.md)
 - [🛰 Data Source](data-source.md)
-- [🌳 Tree](tree.md)
+- 🌳 Tree: [English](./en/tree.md) / [Korean](./ko/tree.md)
 
 ## Migration Guide 
 
