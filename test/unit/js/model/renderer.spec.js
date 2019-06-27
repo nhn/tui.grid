@@ -410,4 +410,25 @@ describe('model.renderer', function() {
             });
         });
     });
+
+    describe('remove row', function() {
+        it('all row heights are synchronized.', function() {
+            dataModel.set([
+                {
+                    c1: 'foo'
+                },
+                {
+                    c1: 'bar'
+                },
+                {
+                    c1: 'baz'
+                }
+            ], {parse: true});
+            renderModel.refresh();
+            dataModel.removeRow(0);
+
+            expect(renderModel.get('partialLside').at(0).get('height')).toBe(coordRowModel.getHeightAt(0));
+            expect(renderModel.get('partialLside').at(1).get('height')).toBe(coordRowModel.getHeightAt(1));
+        });
+    });
 });

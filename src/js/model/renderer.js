@@ -384,6 +384,7 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         this._setRenderingRange(true);
 
         this.refresh({
+            type: 'remove',
             dataListChanged: true
         });
     },
@@ -699,6 +700,9 @@ var Renderer = Model.extend(/** @lends module:model/renderer.prototype */{
         } else {
             this.trigger('rowListChanged', dataListChanged);
             if (dataListChanged) {
+                if (eventType === 'remove') {
+                    this._onChangeRowHeights();
+                }
                 this.coordRowModel.syncWithDom();
             }
         }
