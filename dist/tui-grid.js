@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Jun 11 2018 11:30:05 GMT+0900 (KST)"
- * version: 2.10.1
+ * bundle created at "Thu Jun 27 2019 16:41:35 GMT+0900 (KST)"
+ * version: 2.10.2
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7934,6 +7934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setRenderingRange(true);
 
 	        this.refresh({
+	            type: 'remove',
 	            dataListChanged: true
 	        });
 	    },
@@ -8249,6 +8250,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            this.trigger('rowListChanged', dataListChanged);
 	            if (dataListChanged) {
+	                if (eventType === 'remove') {
+	                    this._onChangeRowHeights();
+	                }
 	                this.coordRowModel.syncWithDom();
 	            }
 	        }
