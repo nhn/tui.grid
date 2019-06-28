@@ -578,7 +578,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
     _getResizeHandleHeights: function() {
         var hierarchyList = this._getColumnHierarchyList();
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        var rowHeight = util.getRowHeight(maxRowCount, this.headerHeight) - 1;
+        var rowHeight = util.getRowHeight(maxRowCount, this.dimensionModel.get('headerHeight')) - 1;
         var handleHeights = [];
         var index = 1;
         var coulmnLen = hierarchyList.length;
