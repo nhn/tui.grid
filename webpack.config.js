@@ -1,6 +1,7 @@
 /* eslint-disable */
 const path = require('path');
 const package = require('./package');
+const webpack = require('webpack');
 const merge = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -31,15 +32,22 @@ const commonConfig = {
     path: path.resolve(__dirname, 'dist')
   }
 };
-
 module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
+    const { version, author, license } = package;
+    const banner = [
+      `TOAST UI Grid`,
+      `@version ${version} | ${new Date().toDateString()}`,
+      `@author ${author}`,
+      `@license ${license}`
+    ].join('\n');
     const productionConfig = {
       mode,
       plugins: [
         new MiniCssExtractPlugin({
           filename: package.name + (minify ? '.min' : '') + '.css'
-        })
+        }),
+        new webpack.BannerPlugin({ banner, entryOnly: true })
       ],
       module: {
         rules: [
@@ -79,13 +87,13 @@ module.exports = (env, { mode = 'development' }) => {
                 warnings: true
               },
               output: {
-                comments: false
+                comments: /TOAST UI Grid/i
               }
             }
           }),
           new OptimizeCSSAssetsPlugin({})
         ]
-      }
+      };
     }
 
     return merge(commonConfig, productionConfig);
