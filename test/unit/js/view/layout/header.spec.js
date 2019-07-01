@@ -11,6 +11,7 @@ var classNameConst = require('common/classNameConst');
 var constMap = require('common/constMap');
 var frameConst = constMap.frame;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+var sort = constMap.sort;
 
 function create(whichSide, columns) {
     var columnModel = new ColumnModel({
@@ -138,7 +139,8 @@ describe('Header', function() {
                 {
                     title: 'c2',
                     name: 'c2',
-                    sortable: true
+                    sortable: true,
+                    sort: 'desc'
                 },
                 {
                     title: 'c3',
@@ -184,6 +186,21 @@ describe('Header', function() {
             expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_UP);
 
             eventData.ascending = false;
+            header.dataModel.trigger('sortChanged', eventData);
+            expect($btns.eq(1)).not.toHaveClass(classNameConst.BTN_SORT_UP);
+            expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_DOWN);
+        });
+
+        it('should sort properly by sort option when click sort button', function() {
+            var $btns = header.$el.find('.' + classNameConst.BTN_SORT);
+            var columnSort = header._getColumnSortOption('c2');
+            var eventData = {
+                columnName: 'c2',
+                ascending: columnSort === sort.ASC
+            };
+
+            expect(columnSort).toEqual(sort.DESC);
+
             header.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(1)).not.toHaveClass(classNameConst.BTN_SORT_UP);
             expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_DOWN);
