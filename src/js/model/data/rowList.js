@@ -9,8 +9,10 @@ var $ = require('jquery');
 var _ = require('underscore');
 
 var Collection = require('../../base/collection');
+var constMap = require('../../common/constMap');
 var Row = require('./row');
 var GridEvent = require('../../event/gridEvent');
+var sort = constMap.sort;
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -89,6 +91,11 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @private
      */
     _onClickHeaderSort: function(ev) {
+        if (ev.sort && this.sortOptions.columnName !== ev.columnName) {
+            this.sortByField(ev.columnName, ev.sort === sort.ASC);
+
+            return;
+        }
         this.sortByField(ev.columnName);
     },
 

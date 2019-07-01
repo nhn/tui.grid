@@ -83,5 +83,9 @@ module.exports = {
     treeState: {
         EXPAND: 'EXPAND',
         COLLAPSE: 'COLLAPSE'
+    },
+    sort: {
+        ASC: 'asc',
+        DESC: 'desc'
     }
 };
