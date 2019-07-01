@@ -18,13 +18,13 @@ export function create({ column, data, summary }: SummaryOption): Summary {
   let summaryValues: SummaryValues = {};
 
   if (Object.keys(summary).length) {
-    const { rawData } = data;
     const { columnContent: orgColumnContent, defaultContent: orgDefaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(orgDefaultContent || '');
     const columnContent = orgColumnContent || {};
 
     column.allColumns.forEach(({ name }) => {
       observe(() => {
+        const { rawData } = data;
         const columnValues = rawData.map((row) => row[name]);
         const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
         const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
