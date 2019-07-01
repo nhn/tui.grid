@@ -8,6 +8,7 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
+import { findPropIndex } from '../helper/common';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -99,7 +100,7 @@ export class BodyCellComp extends Component<Props> {
     this.props.dispatch('dragMoveRowHeader', { pageX, pageY });
   };
 
-  private handleMouseDown = (_: MouseEvent, name: string, rowKey: RowKey) => {
+  private handleMouseDown = (name: string, rowKey: RowKey) => {
     if (!isRowNumColumn(name)) {
       return;
     }
@@ -178,7 +179,7 @@ export class BodyCellComp extends Component<Props> {
         ref={(el) => {
           this.el = el;
         }}
-        onMouseDown={(ev) => this.handleMouseDown(ev, name, rowKey)}
+        onMouseDown={() => this.handleMouseDown(name, rowKey)}
       />
     );
   }
@@ -188,10 +189,11 @@ export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data, selection }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
-    const { disabled } = data;
+    const { disabled, viewData } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
+    const rowIndex = findPropIndex('rowKey', rowKey, viewData as ViewRow[]);
 
     return {
       grid,
@@ -200,7 +202,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       columnInfo,
       renderData: valueMap[columnName],
       ...(columnName === treeColumnName ? { treeInfo } : null),
-      selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false
+      selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false
     };
   }
 )(BodyCellComp);
