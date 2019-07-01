@@ -3,7 +3,7 @@ import { OptRow } from '@/types';
 import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
-const columns = [{ name: 'name' }, { name: 'age' }];
+const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
 
 before(() => {
   cy.visit('/dist');
@@ -91,6 +91,38 @@ describe('removeRow()', () => {
 
     cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
     cy.getCellByIdx(0, 1).should('to.have.text', '20');
+  });
+
+  it('remove a row when focus layer is active', () => {
+    cy.gridInstance().invoke('focus', 1, 'name', true);
+    cy.gridInstance().invoke('removeRow', 0);
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .then((res) => {
+        expect(res).to.eql({ rowKey: 1, columnName: 'name', value: 'Lee' });
+      });
+    cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
+    cy.getCellByIdx(0, 1).should('to.have.text', '20');
+  });
+
+  it('remove a row when editing layer is active', () => {
+    cy.gridInstance().invoke('startEditing', 1, 'name', true);
+    cy.gridInstance().invoke('removeRow', 0);
+
+    cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
+    cy.getCellByIdx(0, 1).should('to.have.text', '20');
+    cy.get(`.${cls('layer-editing')}`).should('be.visible');
+  });
+
+  it('remove a row included focus cell', () => {
+    cy.gridInstance().invoke('focus', 0, 'name', true);
+    cy.gridInstance().invoke('removeRow', 0);
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .then((res) => {
+        expect(res).to.eql({ rowKey: null, columnName: null, value: null });
+      });
   });
 });
 
