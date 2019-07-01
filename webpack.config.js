@@ -36,11 +36,11 @@ module.exports = (env, { mode = 'development' }) => {
   if (mode === 'production') {
     const { version, author, license } = package;
     const banner = [
-      'TOAST UI Grid',
+      `TOAST UI Grid`,
       `@version ${version} | ${new Date().toDateString()}`,
       `@author ${author}`,
       `@license ${license}`
-  ].join('\n');
+    ].join('\n');
     const productionConfig = {
       mode,
       plugins: [
