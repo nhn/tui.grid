@@ -43,7 +43,7 @@ The `summary.position` property sets the position of the summary. The default va
 
 The `summary.height` property sets the height of the summary by pixel unit. If this property is set to `0`, the summary is not shown. 
 
-The `summary.columnContent` property is the key-value object which configures the content of each column. Each key is a name of column, and each value is an obejct which contains a `template` function which returns the HTML string. The returning string from a `template` is used to render each column(&lt;th&gt; tag).
+The `summary.columnContent` property is the key-value object which configures the content of each column. Each key is a name of column, and each value is an object which contains a `template` function which returns the HTML string. The returning string from a `template` is used to render each column(`&lt;th&gt;` tag).
 
 The `summary.defaultContent` property is also the key-value object which sets content of all columns except columns set by `summary.columnContent` property. The `template` property is same as `template` function property of `summary.columnContent`.
 
@@ -116,7 +116,7 @@ const grid = new Grid({
 });
 ```
 
-To return the static content as the result of `columnContent` of each column or `defaultContent`, sets the HTML string as their value. Then, the Grid sets `useAutoSummary:false` internally for preventing unnecessary calculation.
+To return the static content as the result of `columnContent` of each column or `defaultContent`, sets the HTML string as their value. Then, the Grid sets `useAutoSummary: false` internally for preventing unnecessary calculation.
 
 ```javascript
 const grid = new Grid({

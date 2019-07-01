@@ -119,17 +119,17 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🎨 Features
 
-* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/custom-editor.md)
-* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/keymap.md)
-* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](https://github.com/nhn/tui.grid/blob/master/docs/clipboard.md)
-* [Multi column headers](https://github.com/nhn/tui.grid/blob/master/docs/complex-columns.md)
-* [Picking date](https://github.com/nhn/tui.grid/blob/master/docs/date-picker.md)
-* [Relational Structure Between Columns](https://github.com/nhn/tui.grid/blob/master/docs/relation-between-columns.md)
-* [Data Source](https://github.com/nhn/tui.grid/blob/master/docs/data-source.md)
-* [Summarize all values of each column](https://github.com/nhn/tui.grid/blob/master/docs/summary.md)
-* [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/themes.md)
-* [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/tree.md)
-* [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/custom-renderer.md)
+* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-editor.md)
+* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/en/keymap.md)
+* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](https://github.com/nhn/tui.grid/blob/master/docs/en/clipboard.md)
+* [Multi column headers](https://github.com/nhn/tui.grid/blob/master/docs/en/complex-columns.md)
+* [Picking date](https://github.com/nhn/tui.grid/blob/master/docs/en/date-picker.md)
+* [Relational Structure Between Columns](https://github.com/nhn/tui.grid/blob/master/docs/en/relation-between-columns.md)
+* [Data Source](https://github.com/nhn/tui.grid/blob/master/docs/en/data-source.md)
+* [Summarize all values of each column](https://github.com/nhn/tui.grid/blob/master/docs/en/summary.md)
+* [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/en/themes.md)
+* [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md)
+* [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-renderer.md)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
@@ -337,7 +337,7 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
 
-* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/getting-started.md)
+* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
 * [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
 * [APIs](https://nhn.github.io/tui.grid/latest)
 
