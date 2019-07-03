@@ -14,6 +14,14 @@ export function changeSelectionRange(
     selection.inputRange = inputRange;
     const eventBus = getEventBus(id);
     const gridEvent = new GridEvent({ range: selection.range });
+    /**
+     * Occurs when selecting cells
+     * @event Grid#selection
+     * @property {Object} range - Range of selection
+     * @property {Array} range.start - Info of start cell (ex: [rowKey, columnName])
+     * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+     * @property {Grid} instance - Current grid instance
+     */
     eventBus.trigger('selection', gridEvent);
   }
 }
