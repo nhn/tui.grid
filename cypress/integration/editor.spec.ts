@@ -1,6 +1,7 @@
 import { isSubsetOf } from '../helper/compare';
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
+import { createCustomLayerEditor } from '../helper/customLayerEditor';
 
 before(() => {
   cy.visit('/dist');
@@ -104,4 +105,60 @@ it('If gridEvent "stop" occurs in beforeChange, setValue does not occur.', () =>
     });
 
   cy.getCellContent(0, 'name').should('have.text', 'Lee');
+});
+
+it('should destroy the editing layer, when only focus layer is changed.', () => {
+  const stub = cy.stub();
+  const CustomLayerEditor = createCustomLayerEditor(stub);
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
+  const columns = [
+    {
+      name: 'name',
+      editor: {
+        type: CustomLayerEditor
+      }
+    },
+    { name: 'age' }
+  ];
+
+  cy.createGrid({ data, columns });
+  cy.createStyle(`
+  .custom-editor-layer {
+    width: 300px;
+    height: 300px;
+    left: 55%;
+    top: 50%;
+    position: absolute;
+    border: 1px solid #000;
+    z-ndex: 25;
+    text-align: center;
+    line-height: 300px;
+    background-color: #fff;
+  }
+`);
+
+  cy.getCell(0, 'name')
+    .click()
+    .trigger('dblclick');
+
+  cy.getCell(1, 'name')
+    .click()
+    .trigger('mousedown')
+    .then(() => {
+      expect(stub).to.be.calledOnce;
+    });
+
+  cy.getCell(1, 'name')
+    .click()
+    .trigger('dblclick');
+
+  cy.get(`.${cls('layer-editing')}`)
+    .click()
+    .within(() => {
+      cy.get('.custom-editor-layer')
+        .click()
+        .then(() => {
+          expect(stub).to.be.calledTwice;
+        });
+    });
 });
