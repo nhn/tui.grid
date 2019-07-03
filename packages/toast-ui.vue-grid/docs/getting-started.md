@@ -10,7 +10,6 @@
         * [data](#data)
         * [options](#options)
         * [theme](#theme)
-        * [map](#map) 
     * [Event](#event)
     * [Method](#method)
 
@@ -27,9 +26,9 @@ npm install --save @toast-ui/vue-grid
 
 ### Load
 
-You can use Toast UI Grid for Vue as moudule format or namespace. Also you can use Single File Component (SFC of Vue). When using module format and SFC, you should load `tui-grid.css` in the script.
+You can use Toast UI Grid for Vue as module format or namespace. Also you can use Single File Component (SFC of Vue). When using module format and SFC, you should load `tui-grid.css` in the script.
 
-* Using Ecmascript module
+* Using EcmaScript module
 
     ```js
     import 'tui-grid/dist/tui-grid.css'
@@ -62,80 +61,46 @@ You can use Toast UI Grid for Vue as moudule format or namespace. Also you can u
 First insert `<grid>` in the template or html. `rowData` and `columnData` props are required.
 
 ```html
-<grid :rowData="rows" :columnData="columns" />
+<grid :rowData="options.rows" :columnData="options.columns" />
 ```
 
 Load grid component and then add it to the `components` in your component or Vue instance.
+
+> Tui-grid has its own reactivity system, and does not use the reactivity system of vue. So, instead of adding props in the `data`, declare props in the `created` lifecycle method.
 
 ```js
 import 'tui-grid/dist/tui-grid.css'
 import { Grid } from '@toast-ui/vue-grid'
 
 export default {
-    components: {
-        'grid': Grid
-    },
-    data() {
-        return {
-            rows: [ // for rowData prop
-                {
-                    name: 'Beautiful Lies',
-                    artist: 'Birdy'
-                },
-                {
-                    name: 'X',
-                    artist: 'Ed Sheeran'
-                }
-            ],
-            columns: [ // for columnData prop
-                {
-                    title: 'Name',
-                    name: 'name',
-                },
-                {
-                    title: 'Artist',
-                    name: 'artist'
-                }
-            ]
+  components: {
+    'grid': Grid
+  },
+  created() {
+    this.options = {
+      rows: [ // for rowData prop
+        {
+          name: 'Beautiful Lies',
+          artist: 'Birdy'
+        },
+        {
+          name: 'X',
+          artist: 'Ed Sheeran'
         }
+      ],
+      columns: [ // for columnData prop
+        {
+          title: 'Name',
+          name: 'name',
+        },
+        {
+          title: 'Artist',
+          name: 'artist'
+        }
+      ]
     }
+  }
 }
-```
-or
-```js
-import 'tui-grid/dist/tui-grid.css'
-import { Grid } from '@toast-ui/vue-grid'
-
-new Vue({
-    el: '#app',
-    components: {
-        'grid': Grid
-    },
-    data() {
-        return {
-            rows: [ // for rowData prop
-                {
-                    name: 'Beautiful Lies',
-                    artist: 'Birdy'
-                },
-                {
-                    name: 'X',
-                    artist: 'Ed Sheeran'
-                }
-            ],
-            columns: [ // for columnData prop
-                {
-                    title: 'Name',
-                    name: 'name',
-                },
-                {
-                    title: 'Artist',
-                    name: 'artist'
-                }
-            ]
-        }
-    }
-});
 ```
 
 ### Props
@@ -154,41 +119,41 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     ``` html
     <template>
-        <grid :rowData="rows" :columnData="columns" />
+      <grid :rowData="rows" :columnData="columns" />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
     import { Grid } from '@toast-ui/vue-grid';
 
     export default {
-        name: 'myGrid',
-        components: {
-            'grid': Grid
-        },
-        data() {
-            return {
-                rows: [ // for rowData prop
-                    {
-                        name: 'Beautiful Lies',
-                        artist: 'Birdy'
-                    },
-                    {
-                        name: 'X',
-                        artist: 'Ed Sheeran'
-                    }
-                ],
-                columns: [ // for columnData prop
-                    {
-                        title: 'Name',
-                        name: 'name',
-                    },
-                    {
-                        title: 'Artist',
-                        name: 'artist'
-                    }
-                ]
+      name: 'myGrid',
+      components: {
+        'grid': Grid
+      },
+      created() {
+        this.options = {
+          rows: [ // for rowData prop
+            {
+              name: 'Beautiful Lies',
+              artist: 'Birdy'
+            },
+            {
+              name: 'X',
+              artist: 'Ed Sheeran'
             }
+          ],
+          columns: [ // for columnData prop
+            {
+              title: 'Name',
+              name: 'name',
+            },
+            {
+              title: 'Artist',
+              name: 'artist'
+            }
+          ]
         }
+      }
     };
     </script>
     ```
@@ -199,13 +164,17 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     | --- | --- |
     | Object | X |
 
-    You can configurate your grid using `options` prop. For more information which properties can be set in `options`, see [options of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html).
+    You can configurate your grid using `options` prop. For more information which properties can be set in `options`, see [options of tui.grid](https://nhn.github.io/tui.grid/latest/Grid).
 
     Example:
 
     ``` html
     <template>
-        <grid :rowData="rows" :columnData="columns" :options="options"/>
+        <grid
+          :rowData="options.rows"
+          :columnData="options.columns"
+          :options="options.options"
+        />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
@@ -214,23 +183,23 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     export default {
         name: 'myGrid',
         components: {
-            'grid': Grid
+          'grid': Grid
         },
-        data() {
-            return {
-                rows: [
-                    // ... omit
-                ],
-                columns: [ 
-                    // ... omit
-                ],
-                options: {
-                    scrollX: false,
-                    scrollY: false,
-                    rowHeight: 30,
-                    rowHeaders: ['checkbox']
-                }
+        created() {
+          this.options = {
+            rows: [
+              // ... omit
+            ],
+            columns: [ 
+              // ... omit
+            ],
+            options: {
+              scrollX: false,
+              scrollY: false,
+              rowHeight: 30,
+              rowHeaders: ['checkbox']
             }
+          }
         }
     };
     </script>
@@ -244,33 +213,37 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     This prop can change theme of the grid. We support `default`, `striped` and `clean` themes. So in case you just set `String` of these themes.
 
-    If you want to use other theme, you set `Object` that is required `name` and `value`. For more information which properties of `value` are available, see `extOptions` of [applyTheme of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html#.applyTheme).
+    If you want to use other theme, you set `Object` that is required `name` and `value`. For more information which properties of `value` are available, see `extOptions` of [applyTheme of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#applyTheme).
 
     Example using `String`:
 
     ``` html
     <template>
-        <grid :rowData="rows" :columnData="columns" :theme="striped"/>
+      <grid
+        :rowData="options.rows"
+        :columnData="options.columns"
+        :theme="'striped'"
+      />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
     import { Grid } from '@toast-ui/vue-grid';
 
     export default {
-        name: 'myGrid',
-        components: {
-            'grid': Grid
-        },
-        data() {
-            return {
-                rows: [
-                    // ... omit
-                ],
-                columns: [ 
-                    // ... omit
-                ]
-            }
+      name: 'myGrid',
+      components: {
+        'grid': Grid
+      },
+      created() {
+        this.options = {
+          rows: [
+            // ... omit
+          ],
+          columns: [ 
+            // ... omit
+          ]
         }
+      }
     };
     </script>
     ```
@@ -279,45 +252,49 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     ``` html
     <template>
-        <grid :rowData="rows" :columnData="columns" :theme="myTheme"/>
+      <grid
+        :rowData="options.rows"
+        :columnData="options.columns"
+        :theme="options.myTheme"
+      />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
     import { Grid } from '@toast-ui/vue-grid';
 
     export default {
-        name: 'myGrid',
-        components: {
-            'grid': Grid
-        },
-        data() {
-            return {
-                rows: [
-                    // ... omit
-                ],
-                columns: [ 
-                    // ... omit
-                ],
-                myTheme: {
-                    name: 'myTheme',
-                    value: {
-                        cell: {
-                            normal: {
-                                background: '#00ff00',
-                                border: '#e0e0e0'
-                            },
-                            head: {
-                                background: '#ff0000',
-                                border: '#ffff00'
-                            },
-                            editable: {
-                                background: '#fbfbfb'
-                            }
-                        }
-                    }
+      name: 'myGrid',
+      components: {
+        'grid': Grid
+      },
+      created() {
+        this.options = {
+          rows: [
+            // ... omit
+          ],
+          columns: [ 
+            // ... omit
+          ],
+          myTheme: {
+            name: 'myTheme',
+            value: {
+              cell: {
+                normal: {
+                  background: '#00ff00',
+                  border: '#e0e0e0'
+                },
+                head: {
+                  background: '#ff0000',
+                  border: '#ffff00'
+                },
+                editable: {
+                  background: '#fbfbfb'
                 }
+              }
             }
+          }
         }
+      }
     };
     </script>
     ```
@@ -330,33 +307,26 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     This prop can change language of the grid. We support `en` and `ko`. So in case you just set `String` of these languages.
 
-    If you want to use other languages, you set `Object` that is required `name` and `value`. For more infomation which properties of `value` are available, see `data` of [setLanguage of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html#.setLanguage).
+    If you want to use other languages, you set `Object` that is required `name` and `value`. For more infomation which properties of `value` are available, see `data` of [setLanguage of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#setLanguage).
 
     Example using `String`:
 
     ```html
     <template>
-        <grid :rowData="rows" :columnData="columns" :theme="ko"/>
+        <grid :rowData="rows" :columnData="columns" :language="'ko'"/>
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
     import { Grid } from '@toast-ui/vue-grid';
 
     export default {
-        name: 'myGrid',
-        components: {
-            'grid': Grid
-        },
-        data() {
-            return {
-                rows: [
-                    // ... omit
-                ],
-                columns: [ 
-                    // ... omit
-                ]
-            }
-        }
+      name: 'myGrid',
+      components: {
+        'grid': Grid
+      },
+      created() {
+        // ...
+      }
     };
     </script>
     ```
@@ -365,49 +335,53 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     ```html
     <template>
-        <grid :rowData="rows" :columnData="columns" :language="myLang"/>
+      <grid 
+        :rowData="options.rows" 
+        :columnData="options.columns" 
+        :language="options.myLang"
+      />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
     import { Grid } from '@toast-ui/vue-grid';
 
     export default {
-        name: 'myGrid',
-        components: {
-            'grid': Grid
-        },
-        data() {
-            return {
-                rows: [
-                    // ... omit
-                ],
-                columns: [ 
-                    // ... omit
-                ],
-                myLang: {
-                    name: 'en-US',
-                    value: {
-                        display: {
-                            noData: 'No data.',
-                            loadingData: 'Loading data.',
-                            resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
-                                                'and initialize the width by double-clicking.'
-                        },
-                        net: {
-                            confirmCreate: 'Are you sure you want to create {{count}} data?',
-                            confirmUpdate: 'Are you sure you want to update {{count}} data?',
-                            confirmDelete: 'Are you sure you want to delete {{count}} data?',
-                            confirmModify: 'Are you sure you want to modify {{count}} data?',
-                            noDataToCreate: 'No data to create.',
-                            noDataToUpdate: 'No data to update.',
-                            noDataToDelete: 'No data to delete.',
-                            noDataToModify: 'No data to modify.',
-                            failResponse: 'An error occurred while requesting data.\nPlease try again.'
-                        }
-                    }
-                }
+      name: 'myGrid',
+      components: {
+        'grid': Grid
+      },
+      created() {
+        this.options = {
+          rows: [
+              // ... omit
+          ],
+          columns: [ 
+              // ... omit
+          ],
+          myLang: {
+            name: 'en-US',
+            value: {
+              display: {
+                noData: 'No data.',
+                loadingData: 'Loading data.',
+                resizeHandleGuide: 'You can change the width of the column by mouse drag, ' +
+                                    'and initialize the width by double-clicking.'
+              },
+              net: {
+                confirmCreate: 'Are you sure you want to create {{count}} data?',
+                confirmUpdate: 'Are you sure you want to update {{count}} data?',
+                confirmDelete: 'Are you sure you want to delete {{count}} data?',
+                confirmModify: 'Are you sure you want to modify {{count}} data?',
+                noDataToCreate: 'No data to create.',
+                noDataToUpdate: 'No data to update.',
+                noDataToDelete: 'No data to delete.',
+                noDataToModify: 'No data to modify.',
+                failResponse: 'An error occurred while requesting data.\nPlease try again.'
+              }
             }
+          }
         }
+      }
     };
     </script>
     ```
@@ -422,58 +396,55 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 * mouseout : Occurs when a mouse pointer is moved off from the Grid.
 * mousedown : Occurs when a mouse button is downed on the Grid.
 * focusChange : Occurs when focused cell is about to change.
-* expanded : Occurs when the row having child rows is expanded.
-* expandedAll : Occurs when all rows having child rows are expanded.
-* collapsed : Occurs when the row having child rows is collapsed.
-* collapsedAll : Occurs when all rows having child rows are expanded.
+* expande : Occurs when the row having child rows is expanded.
+* collapse : Occurs when the row having child rows is collapsed.
 * beforeRequest : Occurs before the http request is sent.
 * response : Occurs when the response is received from the server.
 * successResponse : Occurs after the response event, if the result is true.
 * failResponse : Occurs after the response event, if the result is false.
 * errorResponse : Occurs after the response event, if the response is Error.
 * selection : Occurs when selecting cells.
-* deleteRange : Occurs when cells are deleted by 'del' key.
 
-For more information such as the parameters of each event, see [event of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html).
+For more information such as the parameters of each event, see [event of tui.grid](https://nhn.github.io/tui.grid/latest/Grid).
 
 Example :
 
 ```html
 <template>
-    <grid
-        :rowData="rows"
-        :columnData="columns"
-        @click="onClick"
-        @check="onCheck"
-    />
+  <grid
+    :rowData="rows"
+    :columnData="columns"
+    @click="onClick"
+    @check="onCheck"
+  />
 </template>
 <script>
 import 'tui-grid/dist/tui-grid.css'
 import { Grid } from '@toast-ui/vue-grid';
 
 export default {
-    name: 'myGrid',
-    components: {
-        'grid': Grid
-    },
-    data() {
-        return {
-            rows: [
-                // ... omit
-            ],
-            columns: [ 
-                // ... omit
-            ]
-        }
-    },
-    methods: {
-        onClick(evt) {
-            // implement your code
-        },
-        onCheck(evt) {
-            // implement your code
-        }
+  name: 'myGrid',
+  components: {
+    'grid': Grid
+  },
+  created() {
+    this.options = {
+      rows: [
+        // ... omit
+      ],
+      columns: [ 
+        // ... omit
+      ]
     }
+  },
+  methods: {
+    onClick(evt) {
+      // implement your code
+    },
+    onCheck(evt) {
+      // implement your code
+    }
+  }
 };
 </script>
 ```
@@ -498,7 +469,7 @@ After then you can use methods through `this.$refs`. We provide `getRootElement`
 
 * `invoke`
 
-    If you want to more manipulate the Grid, you can use `invoke` method to call the method of tui.grid. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.grid](http://nhnent.github.io/tui.grid/api/Grid.html).
+    If you want to more manipulate the Grid, you can use `invoke` method to call the method of tui.grid. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.grid](http://nhn.github.io/tui.grid/latest/Grid).
 
     ```js
     const info = this.$refs.tuiGrid.invoke('getFocusedCell');

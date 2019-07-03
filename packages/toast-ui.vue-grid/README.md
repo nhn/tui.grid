@@ -1,13 +1,13 @@
 # TOAST UI Grid for Vue
 
-> This is Vue component wrapping [TOAST UI Grid](https://github.com/nhnent/tui.grid).
+> This is Vue component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhnent/toast-ui.vue-grid/releases/latest)
+[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-grid.svg)](https://www.npmjs.com/package/@toast-ui/vue-grid)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhnent/toast-ui.vue-grid/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.vue-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -30,14 +30,9 @@ Vue Wrapper of TOAST UI Grid applies Google Analytics (GA) to collect statistics
 
 ```js
 var options = {
-    ...
-    usageStatistics: false
+  ...
+  usageStatistics: false
 }
-```
-
-Or, include `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
-```js
-tui.usageStatistics = false;
 ```
 
 ## 💾 Install
@@ -97,39 +92,39 @@ import 'tui-grid/dist/tui-grid.css'
 import { Grid } from '@toast-ui/vue-grid'
 
 export default {
-    components: {
-        'grid': Grid
-    },
-    data() {
-        return {
-            rows: [ // for rowData prop
-                {
-                    name: 'Beautiful Lies',
-                    artist: 'Birdy'
-                },
-                {
-                    name: 'X',
-                    artist: 'Ed Sheeran'
-                }
-            ],
-            columns: [ // for columnData prop
-                {
-                    title: 'Name',
-                    name: 'name',
-                },
-                {
-                    title: 'Artist',
-                    name: 'artist'
-                }
-            ]
+  components: {
+      'grid': Grid
+  },
+  data() {
+    return {
+      rows: [ // for rowData prop
+        {
+          name: 'Beautiful Lies',
+          artist: 'Birdy'
+        },
+        {
+          name: 'X',
+          artist: 'Ed Sheeran'
         }
+    ],
+    columns: [ // for columnData prop
+        {
+          title: 'Name',
+          name: 'name',
+        },
+        {
+          title: 'Artist',
+          name: 'artist'
+        }
+      ]
     }
+  }
 }
 ```
 
 ### Props
 
-You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Example of each props is in the [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md#props).
+You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Example of each props is in the [Getting Started](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/getting-started.md#props).
 
 * `rowData`, `columnData`
 
@@ -145,17 +140,17 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
     | --- | --- |
     | Object | X |
 
-    You can configurate your grid using `options` prop. For more information which properties can be set in `options`, see [options of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html).
+    You can configurate your grid using `options` prop. For more information which properties can be set in `options`, see [options of tui.grid](https://nhn.github.io/tui.grid/latest/Grid).
 
 * `theme`
 
     | Type | Required |
     | --- | --- |
-    | Strinf or Object | X |
+    | String or Object | X |
 
     This prop can change theme of the grid. We support `default`, `striped` and `clean` themes. So in case you just set `String` of these themes.
 
-    If you want to use other theme, you set `Object` that is required `name` and `value`. For more information which properties of `value` are available, see `extOptions` of [applyTheme of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html#.applyTheme).
+    If you want to use other theme, you set `Object` that is required `name` and `value`. For more information which properties of `value` are available, see `extOptions` of [applyTheme of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#applyTheme).
 
 * `language`
 
@@ -165,7 +160,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
 
     This prop can change language of the grid. We support `en` and `ko`. So in case you just set `String` of these languages.
 
-    If you want to use other languages, you set `Object` that is required `name` and `value`. For more infomation which properties of `value` are available, see `data` of [setLanguage of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html#.setLanguage).
+    If you want to use other languages, you set `Object` that is required `name` and `value`. For more infomation which properties of `value` are available, see `data` of [setLanguage of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#setLanguage).
 
 ### Event
 
@@ -211,7 +206,7 @@ After then you can use methods through `this.$refs`. We provide `getRootElement`
 
 * `invoke`
 
-    If you want to more manipulate the Grid, you can use `invoke` method to call the method of tui.grid. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.grid](http://nhnent.github.io/tui.grid/api/Grid.html).
+    If you want to more manipulate the Grid, you can use `invoke` method to call the method of tui.grid. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.grid](http://nhn.github.io/tui.grid/latest/Grid).
 
     ```js
     const info = this.$refs.tuiGrid.invoke('getFocusedCell');
@@ -227,7 +222,7 @@ Run npm scripts and develop yourself with the following process.
 
 Fork `develop` branch into your personal repository.
 Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
+Before starting development, you should check to have any errors.
 
 ``` sh
 $ git clone https://github.com/{your-personal-repo}/[[repo name]].git
@@ -247,12 +242,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md)
+* [Getting Started](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.vue-grid/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.vue-grid/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.vue-grid/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.vue-grid/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN Ent.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)
