@@ -52,6 +52,15 @@ export function changeFocus(
     prevRowKey: focus.rowKey
   });
 
+  /**
+   * Occurs when focused cell is about to change
+   * @event Grid#focusChange
+   * @property {number} rowKey - rowKey of the target cell
+   * @property {number} columnName - columnName of the target cell
+   * @property {number} prevRowKey - rowKey of the currently focused cell
+   * @property {number} prevColumnName - columnName of the currently focused cell
+   * @property {Grid} instance - Current grid instance
+   */
   eventBus.trigger('focusChange', gridEvent);
 
   if (!gridEvent.isStopped()) {
