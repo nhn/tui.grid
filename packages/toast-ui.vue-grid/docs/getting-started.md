@@ -90,11 +90,11 @@ export default {
       ],
       columns: [ // for columnData prop
         {
-          title: 'Name',
+          header: 'Name',
           name: 'name',
         },
         {
-          title: 'Artist',
+          header: 'Artist',
           name: 'artist'
         }
       ]
@@ -144,11 +144,11 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
           ],
           columns: [ // for columnData prop
             {
-              title: 'Name',
+              header: 'Name',
               name: 'name',
             },
             {
-              title: 'Artist',
+              header: 'Artist',
               name: 'artist'
             }
           ]

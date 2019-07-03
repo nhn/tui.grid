@@ -3,14 +3,16 @@
 > This is Vue component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-grid.svg)](https://www.npmjs.com/package/@toast-ui/vue-grid)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-grid.svg)](https://github.com/nhn/toast-ui.vue-grid/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.vue-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhn)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
+
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
+* [Documents](#-documents)
 * [Install](#-install)
     * [Using npm](#using-npm)
 * [Usage](#-usage)
@@ -20,7 +22,6 @@
     * [Event](#event)
     * [Method](#method)
 * [Pull Request Steps](#-pull-request-steps)
-* [Documents](#-documents)
 * [Contributing](#-contributing)
 * [License](#-license)
 
@@ -34,6 +35,9 @@ var options = {
   usageStatistics: false
 }
 ```
+
+## 📙 Documents
+* [Getting Started](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/getting-started.md)
 
 ## 💾 Install
 
@@ -82,10 +86,12 @@ You can use Toast UI Grid for Vue as moudule format or namespace. Also you can u
 First insert `<grid>` in the template or html. `rowData` and `columnData` props are required.
 
 ```html
-<grid :rowData="rows" :columnData="columns" />
+<grid :rowData="options.rows" :columnData="options.columns" />
 ```
 
 Load grid component and then add it to the `components` in your component or Vue instance.
+
+> Tui-grid has its own reactivity system, and does not use the reactivity system of vue. So, instead of adding props in the `data`, declare props in the `created` lifecycle method.
 
 ```js
 import 'tui-grid/dist/tui-grid.css'
@@ -93,10 +99,10 @@ import { Grid } from '@toast-ui/vue-grid'
 
 export default {
   components: {
-      'grid': Grid
+    'grid': Grid
   },
-  data() {
-    return {
+  created() {
+    this.options = {
       rows: [ // for rowData prop
         {
           name: 'Beautiful Lies',
@@ -106,14 +112,14 @@ export default {
           name: 'X',
           artist: 'Ed Sheeran'
         }
-    ],
-    columns: [ // for columnData prop
+      ],
+      columns: [ // for columnData prop
         {
-          title: 'Name',
+          header: 'Name',
           name: 'name',
         },
         {
-          title: 'Artist',
+          header: 'Artist',
           name: 'artist'
         }
       ]
@@ -172,19 +178,16 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
 * mouseout : Occurs when a mouse pointer is moved off from the Grid.
 * mousedown : Occurs when a mouse button is downed on the Grid.
 * focusChange : Occurs when focused cell is about to change.
-* expanded : Occurs when the row having child rows is expanded.
-* expandedAll : Occurs when all rows having child rows are expanded.
-* collapsed : Occurs when the row having child rows is collapsed.
-* collapsedAll : Occurs when all rows having child rows are expanded.
+* expande : Occurs when the row having child rows is expanded.
+* collapse : Occurs when the row having child rows is collapsed.
 * beforeRequest : Occurs before the http request is sent.
 * response : Occurs when the response is received from the server.
 * successResponse : Occurs after the response event, if the result is true.
 * failResponse : Occurs after the response event, if the result is false.
 * errorResponse : Occurs after the response event, if the response is Error.
 * selection : Occurs when selecting cells.
-* deleteRange : Occurs when cells are deleted by 'del' key.
 
-For more information such as the parameters of each event, see [event of tui.grid](https://nhnent.github.io/tui.grid/api/Grid.html). Example of event is in the [Getting Started](https://github.com/nhnent/toast-ui.vue-grid/blob/master/docs/getting-started.md#event).
+For more information such as the parameters of each event, see [event of tui.grid](https://nhn.github.io/tui.grid/latest/Grid). Example of event is in the [Getting Started](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/getting-started.md#event).
 
 ### Method
 
@@ -240,9 +243,6 @@ Before PR, check to test lastly and then check any errors.
 If it has no error, commit and then push it!
 
 For more information on PR's step, please see links of Contributing section.
-
-## 📙 Documents
-* [Getting Started](https://github.com/nhn/toast-ui.vue-grid/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
 * [Code of Conduct](https://github.com/nhn/toast-ui.vue-grid/blob/master/CODE_OF_CONDUCT.md)
