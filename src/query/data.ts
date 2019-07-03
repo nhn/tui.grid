@@ -42,3 +42,7 @@ export function getConditionalRows(
 
   return result;
 }
+
+export function getSortOptions({ data }: Store) {
+  return data.sortOptions;
+}
