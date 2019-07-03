@@ -19,6 +19,8 @@ interface StoreProps {
   grid: Grid;
   value: CellValue;
   sortOptions: SortOptions;
+  focusColumnName: string | null;
+  focusRowKey: RowKey | null;
 }
 
 interface OwnProps {
@@ -55,7 +57,6 @@ export class EditingLayerInnerComp extends Component<Props> {
   private handleMouseDownDocument = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const { contentEl } = this;
-
     if (contentEl && contentEl !== target && !contentEl.contains(target)) {
       this.finishEditing(true);
     }
@@ -70,9 +71,6 @@ export class EditingLayerInnerComp extends Component<Props> {
         if (sortOptions.columnName === columnName) {
           dispatch('sort', columnName, sortOptions.ascending);
         }
-      }
-      if (isFunction(this.editor.beforeDestroy)) {
-        this.editor.beforeDestroy();
       }
       dispatch('finishEditing', rowKey, columnName);
     }
@@ -100,15 +98,21 @@ export class EditingLayerInnerComp extends Component<Props> {
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
       }
-      document.addEventListener('mousedown', this.handleMouseDownDocument);
     }
   }
 
   public componentWillUnmount() {
     this.finishEditing(false);
-    document.removeEventListener('mousedown', this.handleMouseDownDocument);
     if (this.editor && this.editor.beforeDestroy) {
       this.editor.beforeDestroy();
+    }
+  }
+
+  public componentWillReceiveProps(nextProps: Props) {
+    const { focusColumnName: prevFocusColumnName, focusRowKey: prevFocusRowKey } = this.props;
+    const { focusColumnName, focusRowKey } = nextProps;
+    if (focusColumnName !== prevFocusColumnName || focusRowKey !== prevFocusRowKey) {
+      this.finishEditing(true);
     }
   }
 
@@ -131,7 +135,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 }
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
-  const { cellPosRect, side } = store.focus;
+  const { cellPosRect, side, columnName: focusColumnName, rowKey: focusRowKey } = store.focus;
   const {
     cellBorderWidth,
     tableBorderWidth,
@@ -161,6 +165,8 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
     value,
-    sortOptions
+    sortOptions,
+    focusColumnName,
+    focusRowKey
   };
 })(EditingLayerInnerComp);
