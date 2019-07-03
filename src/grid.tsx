@@ -33,7 +33,12 @@ import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
+import {
+  getConditionalRows,
+  getCellAddressByIndex,
+  getCheckedRows,
+  getSortOptions
+} from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -578,6 +583,23 @@ export default class Grid {
     if (this.focus(rowKey, columnName, setScroll)) {
       this.dispatch('startEditing', rowKey, columnName);
     }
+  }
+
+  /**
+   * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {string} value - The value of editing result
+   */
+  public finishEditing(rowKey: RowKey, columnName: string, value: string) {
+    const sortOptions = getSortOptions(this.store);
+    this.dispatch('setValue', rowKey, columnName, value);
+
+    if (sortOptions.columnName === columnName) {
+      this.dispatch('sort', columnName, sortOptions.ascending);
+    }
+
+    this.dispatch('finishEditing', rowKey, columnName);
   }
 
   /**

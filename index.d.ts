@@ -570,6 +570,8 @@ declare namespace tuiGrid {
 
     public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean): void;
 
+    public finishEditing(rowKey: RowKey, columnName: string, value: string): void;
+
     public setValue(rowKey: RowKey, columnName: string, value: CellValue): void;
 
     public getValue(rowKey: RowKey, columnName: string): CellValue | null;
