@@ -137,7 +137,11 @@ export function createColumn(
     formatter,
     onBeforeChange,
     onAfterChange,
-    whiteSpace
+    whiteSpace,
+    ellipsis,
+    valign,
+    defaultValue,
+    escapeHTML
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -145,7 +149,7 @@ export function createColumn(
 
   return observable({
     name,
-    escapeHTML: !!column.escapeHTML,
+    escapeHTML: !!escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
     resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
@@ -163,6 +167,9 @@ export function createColumn(
     onBeforeChange,
     onAfterChange,
     whiteSpace,
+    ellipsis,
+    valign,
+    defaultValue: defaultValue || '',
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
