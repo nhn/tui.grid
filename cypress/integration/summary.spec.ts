@@ -284,4 +284,25 @@ describe('summary', () => {
         });
       });
   });
+
+  it('should change summary value by resetData API', () => {
+    const data = [
+      { name: 100, price: 2, downloadCount: 10 },
+      { name: 200, price: 5, downloadCount: 20 }
+    ];
+    createGrid();
+    cy.gridInstance().invoke('resetData', data);
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should((summaryValues) => {
+        expect(summaryValues).to.be.eql({
+          avg: 3.5,
+          cnt: 2,
+          max: 5,
+          min: 2,
+          sum: 7
+        });
+      });
+  });
 });
