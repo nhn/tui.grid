@@ -378,10 +378,9 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      * expand tree row
      * @param {number|string} rowKey - row key
      * @param {boolean} recursive - true for recursively expand all descendant
-     * @param {boolean} silent - true to mute event
      * @returns {Array.<number|string>} - children or descendant of given row
      */
-    treeExpand: function(rowKey, recursive, silent) {
+    treeExpand: function(rowKey, recursive) {
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
         var row = this.get(rowKey);
         row.setTreeExpanded(true);
@@ -399,20 +398,18 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
             }, this);
         }
 
-        if (!silent) {
-            /**
-             * Occurs when the row having child rows is expanded
-             * @event Grid#expanded
-             * @type {module:event/gridEvent}
-             * @property {number|string} rowKey - rowKey of the expanded row
-             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-             * @property {Grid} instance - Current grid instance
-             */
-            this.trigger('expanded', {
-                rowKey: rowKey,
-                descendantRowKeys: descendantRowKeys.slice(0)
-            });
-        }
+        /**
+         * Occurs when the row having child rows is expanded
+         * @event Grid#expanded
+         * @type {module:event/gridEvent}
+         * @property {number|string} rowKey - rowKey of the expanded row
+         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('expanded', {
+            rowKey: rowKey,
+            descendantRowKeys: descendantRowKeys.slice(0)
+        });
 
         return descendantRowKeys;
     },
@@ -423,25 +420,24 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
     treeExpandAll: function() {
         var topMostRowKeys = this.getTopMostRowKeys();
 
-        _.each(topMostRowKeys, function(topMostRowKey) {
-            this.treeExpand(topMostRowKey, true, true);
-        }, this);
-
         /**
          * Occurs when all rows having child rows are expanded
          * @event Grid#expandedAll
          */
         this.trigger('expandedAll');
+
+        _.each(topMostRowKeys, function(topMostRowKey) {
+            this.treeExpand(topMostRowKey, true, true);
+        }, this);
     },
 
     /**
      * collapse tree row
      * @param {number|string} rowKey - row key
      * @param {boolean} recursive - true for recursively expand all descendant
-     * @param {boolean} silent - true to mute event
      * @returns {Array.<number|string>} - children or descendant of given row
      */
-    treeCollapse: function(rowKey, recursive, silent) {
+    treeCollapse: function(rowKey, recursive) {
         var row = this.get(rowKey);
 
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
@@ -461,20 +457,18 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
 
         row.setTreeExpanded(false);
 
-        if (!silent) {
-            /**
-             * Occurs when the row having child rows is collapsed
-             * @event Grid#collapsed
-             * @type {module:event/gridEvent}
-             * @property {number|string} rowKey - rowKey of the collapsed row
-             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-             * @property {Grid} instance - Current grid instance
-             */
-            this.trigger('collapsed', {
-                rowKey: rowKey,
-                descendantRowKeys: descendantRowKeys.slice(0)
-            });
-        }
+        /**
+         * Occurs when the row having child rows is collapsed
+         * @event Grid#collapsed
+         * @type {module:event/gridEvent}
+         * @property {number|string} rowKey - rowKey of the collapsed row
+         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+         * @property {Grid} instance - Current grid instance
+         */
+        this.trigger('collapsed', {
+            rowKey: rowKey,
+            descendantRowKeys: descendantRowKeys.slice(0)
+        });
 
         return descendantRowKeys;
     },
@@ -485,15 +479,15 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
     treeCollapseAll: function() {
         var topMostRowKeys = this.getTopMostRowKeys();
 
-        _.each(topMostRowKeys, function(topMostRowKey) {
-            this.treeCollapse(topMostRowKey, true, true);
-        }, this);
-
         /**
          * Occurs when all rows having child rows are collapsed
          * @event Grid#collapsedAll
          */
         this.trigger('collapsedAll');
+
+        _.each(topMostRowKeys, function(topMostRowKey) {
+            this.treeCollapse(topMostRowKey, true);
+        }, this);
     },
 
     /**

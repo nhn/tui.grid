@@ -197,24 +197,6 @@ describe('data.treeModel', function() {
 
             expect(childrenRowKeys).toEqual([1, 2, 3, 4]);
         });
-
-        it('should trigger expanded event', function() {
-            var spy = jasmine.createSpy('expanded');
-            treeRowList.on('expanded', spy);
-
-            treeRowList.treeExpand(0);
-
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should not trigger expanded event if silent option enabled', function() {
-            var spy = jasmine.createSpy('expanded');
-            treeRowList.on('expanded', spy);
-
-            treeRowList.treeExpand(0, false, true);
-
-            expect(spy).not.toHaveBeenCalled();
-        });
     });
 
     describe('treeExpandAll', function() {
@@ -297,15 +279,6 @@ describe('data.treeModel', function() {
             treeRowList.treeCollapse(0);
 
             expect(spy).toHaveBeenCalled();
-        });
-
-        it('should not trigger collapsed event if silent option enabled', function() {
-            var spy = jasmine.createSpy('collapsed');
-            treeRowList.on('collapsed', spy);
-
-            treeRowList.treeCollapse(0, false, true);
-
-            expect(spy).not.toHaveBeenCalled();
         });
     });
 
