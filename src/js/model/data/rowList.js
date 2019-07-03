@@ -91,12 +91,13 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
      * @private
      */
     _onClickHeaderSort: function(ev) {
-        if (ev.sort && this.sortOptions.columnName !== ev.columnName) {
-            this.sortByField(ev.columnName, ev.sort === sort.ASC);
+        var asc;
 
-            return;
+        if (ev.sort && this.sortOptions.columnName !== ev.columnName) {
+            asc = ev.sort === sort.ASC;
         }
-        this.sortByField(ev.columnName);
+
+        this.sortByField(ev.columnName, asc);
     },
 
     /**

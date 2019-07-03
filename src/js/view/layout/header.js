@@ -604,8 +604,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
      */
     _getColumnSortOption: function(columnName) {
         var columnData = this._getColumnData();
-        var columns = columnData.columns;
-        var column = _.findWhere(columns, {name: columnName});
+        var column = _.findWhere(columnData.columns, {name: columnName});
 
         return column.sort;
     }
