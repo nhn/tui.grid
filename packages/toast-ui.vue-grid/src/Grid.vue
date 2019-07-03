@@ -8,13 +8,10 @@ const gridEvents = [
   'beforeRequest',
   'check',
   'click',
-  'collapsed',
-  'collapsedAll',
+  'collapse',
   'dblclick',
-  'deleteRange',
   'errorResponse',
-  'expanded',
-  'expandedAll',
+  'expand',
   'failResponse',
   'focusChange',
   'mousedown',
@@ -79,14 +76,6 @@ export default {
       gridInstance: null
     };
   },
-  watch: {
-    rowData(newData) {
-      this.invoke('setData', newData);
-    },
-    columnData(newColumns) {
-      this.invoke('setColumns', newColumns);
-    }
-  },
   mounted() {
     const options = Object.assign({}, this.options, {
       el: this.$refs.tuiGrid,
@@ -131,7 +120,7 @@ export default {
     },
     invoke(methodName, ...args) {
       let result;
-      if ((methodName === 'setData' || methodName === 'resetData') && args.length > 0) {
+      if (methodName === 'resetData' && args.length > 0) {
         const clonedData = JSON.parse(JSON.stringify(args[0]));
         if (args.length > 1) {
           this.gridInstance[methodName](clonedData, args[1]);

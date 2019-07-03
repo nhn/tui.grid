@@ -2,34 +2,37 @@
   <div class="container">
     <h1>🍞🔡 TOAST UI Grid + Vue</h1>
     <grid
-      :rowData="data"
-      :columnData="columns"
-      :options="options"
+      :rowData="options.data"
+      :columnData="options.columns"
+      :options="options.options"
+      :theme="options.myTheme"
       @check="onCheck"
       @uncheck="onUnCheck"
     ></grid>
   </div>
 </template>
 <script>
+import 'tui-grid/dist/tui-grid.css';
 import {Grid} from '../src/index.js';
 
 export default {
   components: {
     grid: Grid
   },
-  data() {
-    return {
+  created() {
+    this.options = {
       columns: [
         {
-          title: 'Name',
-          name: 'name'
+          header: 'Name',
+          name: 'name',
+          editor: 'text'
         },
         {
-          title: 'Artist',
+          header: 'Artist',
           name: 'artist'
         },
         {
-          title: 'Personal Score',
+          header: 'Personal Score',
           name: 'score',
           onBeforeChange(ev) {
             console.log('executes before the value changes : ', ev);
@@ -40,31 +43,32 @@ export default {
           copyOptions: {
             useListItemText: true
           },
-          editOptions: {
+          editor: {
             type: 'radio',
-            listItems: [
-              {
-                text: '★☆☆☆☆',
-                value: '1'
-              },
-              {
-                text: '★★☆☆☆',
-                value: '2'
-              },
-              {
-                text: '★★★☆☆',
-                value: '3'
-              },
-              {
-                text: '★★★★☆',
-                value: '4'
-              },
-              {
-                text: '★★★★★',
-                value: '5'
-              }
-            ],
-            useViewMode: true
+            options: {
+              listItems: [
+                {
+                  text: '★☆☆☆☆',
+                  value: '1'
+                },
+                {
+                  text: '★★☆☆☆',
+                  value: '2'
+                },
+                {
+                  text: '★★★☆☆',
+                  value: '3'
+                },
+                {
+                  text: '★★★★☆',
+                  value: '4'
+                },
+                {
+                  text: '★★★★★',
+                  value: '5'
+                }
+              ]
+            }
           }
         }
       ],
@@ -120,12 +124,24 @@ export default {
           score: '5'
         }
       ],
-      options: {
-        rowHeaders: [
-          {
-            type: 'checkbox'
+      rowHeaders: ['checkbox'],
+      myTheme: {
+        name: 'myTheme',
+        value: {
+          cell: {
+            normal: {
+              background: '#00ff00',
+              border: '#e0e0e0'
+            },
+            header: {
+              background: '#ff0000',
+              border: '#ffff00'
+            },
+            editable: {
+              background: '#fbfbfb'
+            }
           }
-        ]
+        }
       }
     };
   },
