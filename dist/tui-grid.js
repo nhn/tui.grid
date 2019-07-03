@@ -1,3 +1,9 @@
+/*!
+ * TOAST UI Grid
+ * @version 4.0.3 | Wed Jul 03 2019
+ * @author NHN. FE Development Lab
+ * @license MIT
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("tui-date-picker"), require("tui-pagination"));
@@ -2616,6 +2622,14 @@ function changeSelectionRange(selection, inputRange, id) {
         selection.inputRange = inputRange;
         var eventBus = eventBus_1.getEventBus(id);
         var gridEvent = new gridEvent_1.default({ range: selection.range });
+        /**
+         * Occurs when selecting cells
+         * @event Grid#selection
+         * @property {Object} range - Range of selection
+         * @property {Array} range.start - Info of start cell (ex: [rowKey, columnName])
+         * @property {Array} range.end - Info of end cell (ex: [rowKey, columnName])
+         * @property {Grid} instance - Current grid instance
+         */
         eventBus.trigger('selection', gridEvent);
     }
 }
@@ -2651,6 +2665,81 @@ exports.setSelection = setSelection;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
+var eventBus_1 = __webpack_require__(9);
+var data_1 = __webpack_require__(34);
+var focus_1 = __webpack_require__(85);
+var rowSpan_1 = __webpack_require__(7);
+function startEditing(store, rowKey, columnName) {
+    var data = store.data, focus = store.focus, column = store.column;
+    if (data_1.isCellDisabled(data, rowKey, columnName) || !focus_1.isFocusedCell(focus, rowKey, columnName)) {
+        return;
+    }
+    var columnInfo = column.allColumnMap[columnName];
+    if (columnInfo && columnInfo.editor) {
+        focus.navigating = false;
+        focus.editingAddress = { rowKey: rowKey, columnName: columnName };
+    }
+}
+exports.startEditing = startEditing;
+function finishEditing(_a, rowKey, columnName) {
+    var focus = _a.focus;
+    var editingAddress = focus.editingAddress;
+    if (editingAddress &&
+        editingAddress.rowKey === rowKey &&
+        editingAddress.columnName === columnName) {
+        focus.editingAddress = null;
+        focus.navigating = true;
+    }
+}
+exports.finishEditing = finishEditing;
+function changeFocus(focus, data, rowKey, columnName, id) {
+    if (focus_1.isFocusedCell(focus, rowKey, columnName)) {
+        return;
+    }
+    var rawData = data.rawData, sortOptions = data.sortOptions;
+    var eventBus = eventBus_1.getEventBus(id);
+    var gridEvent = new gridEvent_1.default({
+        rowKey: rowKey,
+        columnName: columnName,
+        prevColumnName: focus.columnName,
+        prevRowKey: focus.rowKey
+    });
+    /**
+     * Occurs when focused cell is about to change
+     * @event Grid#focusChange
+     * @property {number} rowKey - rowKey of the target cell
+     * @property {number} columnName - columnName of the target cell
+     * @property {number} prevRowKey - rowKey of the currently focused cell
+     * @property {number} prevColumnName - columnName of the currently focused cell
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('focusChange', gridEvent);
+    if (!gridEvent.isStopped()) {
+        var focusRowKey = rowKey;
+        if (rowKey && columnName && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+            var rowSpan = rowSpan_1.getRowSpanByRowKey(rowKey, columnName, rawData);
+            if (rowSpan) {
+                focusRowKey = rowSpan.mainRowKey;
+            }
+        }
+        focus.prevColumnName = focus.columnName;
+        focus.prevRowKey = focus.rowKey;
+        focus.columnName = columnName;
+        focus.rowKey = focusRowKey;
+    }
+}
+exports.changeFocus = changeFocus;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
 function getRowHeight(row, defaultRowHeight) {
@@ -2681,7 +2770,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2719,7 +2808,7 @@ exports.ColGroup = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2832,7 +2921,7 @@ exports.default = {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2994,7 +3083,7 @@ exports.getNextRowIndex = getNextRowIndex;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3081,72 +3170,6 @@ function getText(store) {
     return '';
 }
 exports.getText = getText;
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
-var eventBus_1 = __webpack_require__(9);
-var data_1 = __webpack_require__(34);
-var focus_1 = __webpack_require__(88);
-var rowSpan_1 = __webpack_require__(7);
-function startEditing(store, rowKey, columnName) {
-    var data = store.data, focus = store.focus, column = store.column;
-    if (data_1.isCellDisabled(data, rowKey, columnName) || !focus_1.isFocusedCell(focus, rowKey, columnName)) {
-        return;
-    }
-    var columnInfo = column.allColumnMap[columnName];
-    if (columnInfo && columnInfo.editor) {
-        focus.navigating = false;
-        focus.editingAddress = { rowKey: rowKey, columnName: columnName };
-    }
-}
-exports.startEditing = startEditing;
-function finishEditing(_a, rowKey, columnName) {
-    var focus = _a.focus;
-    var editingAddress = focus.editingAddress;
-    if (editingAddress &&
-        editingAddress.rowKey === rowKey &&
-        editingAddress.columnName === columnName) {
-        focus.editingAddress = null;
-        focus.navigating = true;
-    }
-}
-exports.finishEditing = finishEditing;
-function changeFocus(focus, data, rowKey, columnName, id) {
-    if (focus_1.isFocusedCell(focus, rowKey, columnName)) {
-        return;
-    }
-    var rawData = data.rawData, sortOptions = data.sortOptions;
-    var eventBus = eventBus_1.getEventBus(id);
-    var gridEvent = new gridEvent_1.default({
-        rowKey: rowKey,
-        columnName: columnName,
-        prevColumnName: focus.columnName,
-        prevRowKey: focus.rowKey
-    });
-    eventBus.trigger('focusChange', gridEvent);
-    if (!gridEvent.isStopped()) {
-        var focusRowKey = rowKey;
-        if (rowKey && columnName && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
-            var rowSpan = rowSpan_1.getRowSpanByRowKey(rowKey, columnName, rawData);
-            if (rowSpan) {
-                focusRowKey = rowSpan.mainRowKey;
-            }
-        }
-        focus.prevColumnName = focus.columnName;
-        focus.prevRowKey = focus.rowKey;
-        focus.columnName = columnName;
-        focus.rowKey = focusRowKey;
-    }
-}
-exports.changeFocus = changeFocus;
 
 
 /***/ }),
@@ -3429,7 +3452,7 @@ exports.extractSummaryColumnContent = extractSummaryColumnContent;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var colGroup_1 = __webpack_require__(17);
+var colGroup_1 = __webpack_require__(18);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var columnResizer_1 = __webpack_require__(59);
@@ -3502,7 +3525,7 @@ var HeaderAreaComp = /** @class */ (function (_super) {
                         var name = _a.name, header = _a.header, sortable = _a.sortable;
                         return (preact_1.h("th", { key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && _this.isSelected(index), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']) },
                             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
-                            !!sortable && preact_1.h(sortingButton_1.SortingButton, null)));
+                            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name })));
                     }))))),
             preact_1.h(columnResizer_1.ColumnResizer, { side: side })));
     };
@@ -3619,9 +3642,10 @@ var SortingButtonComp = /** @class */ (function (_super) {
         return _this;
     }
     SortingButtonComp.prototype.render = function () {
-        var _a = this.props.sortOptions, columnName = _a.columnName, ascending = _a.ascending;
+        var _a = this.props, columnName = _a.columnName, sortOptions = _a.sortOptions;
+        var sortedColumnName = sortOptions.columnName, ascending = sortOptions.ascending;
         return (preact_1.h("a", { class: dom_1.cls('btn-sorting', [
-                columnName === name,
+                columnName === sortedColumnName,
                 ascending ? 'btn-sorting-up' : 'btn-sorting-down'
             ]), onClick: this.handleClick }));
     };
@@ -3691,7 +3715,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var bodyRows_1 = __webpack_require__(61);
-var colGroup_1 = __webpack_require__(17);
+var colGroup_1 = __webpack_require__(18);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var focusLayer_1 = __webpack_require__(67);
@@ -3835,7 +3859,7 @@ exports.BodyArea = hoc_1.connect(function (store, _a) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var colGroup_1 = __webpack_require__(17);
+var colGroup_1 = __webpack_require__(18);
 var summaryBodyRow_1 = __webpack_require__(69);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
@@ -3891,13 +3915,13 @@ exports.SummaryArea = hoc_1.connect(function (store, _a) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var clipboard_1 = __webpack_require__(20);
+var clipboard_1 = __webpack_require__(21);
 var common_1 = __webpack_require__(1);
 var sort_1 = __webpack_require__(83);
 var clipboard_2 = __webpack_require__(14);
 var data_1 = __webpack_require__(11);
 var observable_1 = __webpack_require__(5);
-var rowCoords_1 = __webpack_require__(16);
+var rowCoords_1 = __webpack_require__(17);
 var selection_1 = __webpack_require__(15);
 var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(10));
@@ -3905,6 +3929,7 @@ var instance_1 = __webpack_require__(8);
 var tree_1 = __webpack_require__(32);
 var rowSpan_1 = __webpack_require__(7);
 var renderState_1 = __webpack_require__(84);
+var focus_1 = __webpack_require__(16);
 function setValue(_a, rowKey, columnName, value) {
     var column = _a.column, data = _a.data, id = _a.id;
     var rawData = data.rawData, sortOptions = data.sortOptions;
@@ -3924,7 +3949,7 @@ function setValue(_a, rowKey, columnName, value) {
         var rowSpanMap = targetRow.rowSpanMap;
         targetRow[columnName] = value;
         instance_1.getDataManager(id).push('UPDATE', targetRow);
-        if (!common_1.isEmpty(rowSpanMap) && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
+        if (!common_1.isEmpty(rowSpanMap) && rowSpanMap[columnName] && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
             var spanCount = rowSpanMap[columnName].spanCount;
             var mainRowIndex = common_1.findPropIndex('rowKey', rowKey, rawData);
             // update sub rows value
@@ -4109,7 +4134,7 @@ function appendRow(_a, row, options) {
 }
 exports.appendRow = appendRow;
 function removeRow(_a, rowKey, options) {
-    var data = _a.data, rowCoords = _a.rowCoords, id = _a.id, renderState = _a.renderState;
+    var data = _a.data, rowCoords = _a.rowCoords, id = _a.id, renderState = _a.renderState, focus = _a.focus;
     var rawData = data.rawData, viewData = data.viewData, sortOptions = data.sortOptions;
     var heights = rowCoords.heights;
     var rowIdx = common_1.findPropIndex('rowKey', rowKey, rawData);
@@ -4119,6 +4144,13 @@ function removeRow(_a, rowKey, options) {
     heights.splice(rowIdx, 1);
     if (nextRow && rowSpan_1.enableRowSpan(sortOptions.columnName)) {
         rowSpan_1.updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+    }
+    if (!common_1.someProp('rowKey', focus.rowKey, rawData)) {
+        focus.navigating = false;
+        focus_1.changeFocus(focus, data, null, null, id);
+        if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
+            focus.editingAddress = null;
+        }
     }
     observable_1.notify(data, 'rawData');
     observable_1.notify(data, 'viewData');
@@ -4245,7 +4277,7 @@ exports.changeColumnHeadersByName = changeColumnHeadersByName;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_1 = __webpack_require__(11);
-var rowCoords_1 = __webpack_require__(16);
+var rowCoords_1 = __webpack_require__(17);
 var common_1 = __webpack_require__(1);
 var observable_1 = __webpack_require__(5);
 var data_2 = __webpack_require__(31);
@@ -4567,7 +4599,7 @@ exports.getConditionalRows = getConditionalRows;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(19));
 var confirmMessageMap = {
     CREATE: 'net.confirmCreate',
     UPDATE: 'net.confirmUpdate',
@@ -4728,8 +4760,8 @@ var preact_1 = __webpack_require__(3);
 var create_2 = __webpack_require__(80);
 var manager_1 = tslib_1.__importDefault(__webpack_require__(92));
 var instance_1 = __webpack_require__(8);
-var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
-var clipboard_1 = __webpack_require__(20);
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(19));
+var clipboard_1 = __webpack_require__(21);
 var validation_1 = __webpack_require__(96);
 var clipboard_2 = __webpack_require__(14);
 var common_1 = __webpack_require__(1);
@@ -5894,13 +5926,13 @@ var column_1 = __webpack_require__(22);
 var dimension_1 = __webpack_require__(49);
 var viewport_1 = __webpack_require__(50);
 var columnCoords_1 = __webpack_require__(51);
-var rowCoords_1 = __webpack_require__(16);
+var rowCoords_1 = __webpack_require__(17);
 var focus_1 = __webpack_require__(52);
 var summary_1 = __webpack_require__(53);
 var selection_1 = __webpack_require__(54);
 var renderState_1 = __webpack_require__(55);
 function createStore(id, options) {
-    var el = options.el, width = options.width, rowHeight = options.rowHeight, bodyHeight = options.bodyHeight, heightResizable = options.heightResizable, minBodyHeight = options.minBodyHeight, _a = options.columnOptions, columnOptions = _a === void 0 ? {} : _a, keyColumnName = options.keyColumnName, _b = options.rowHeaders, rowHeaders = _b === void 0 ? [] : _b, _c = options.copyOptions, copyOptions = _c === void 0 ? {} : _c, _d = options.summary, summaryOptions = _d === void 0 ? {} : _d, _e = options.selectionUnit, selectionUnit = _e === void 0 ? 'cell' : _e, _f = options.showDummyRows, showDummyRows = _f === void 0 ? false : _f, _g = options.editingEvent, editingEvent = _g === void 0 ? 'dblclick' : _g, scrollX = options.scrollX, scrollY = options.scrollY, _h = options.useClientSort, useClientSort = _h === void 0 ? true : _h, _j = options.pageOptions, pageOptions = _j === void 0 ? {} : _j, _k = options.treeColumnOptions, treeColumnOptions = _k === void 0 ? { name: '' } : _k, _l = options.header, header = _l === void 0 ? {} : _l;
+    var el = options.el, width = options.width, rowHeight = options.rowHeight, bodyHeight = options.bodyHeight, heightResizable = options.heightResizable, minRowHeight = options.minRowHeight, minBodyHeight = options.minBodyHeight, _a = options.columnOptions, columnOptions = _a === void 0 ? {} : _a, keyColumnName = options.keyColumnName, _b = options.rowHeaders, rowHeaders = _b === void 0 ? [] : _b, _c = options.copyOptions, copyOptions = _c === void 0 ? {} : _c, _d = options.summary, summaryOptions = _d === void 0 ? {} : _d, _e = options.selectionUnit, selectionUnit = _e === void 0 ? 'cell' : _e, _f = options.showDummyRows, showDummyRows = _f === void 0 ? false : _f, _g = options.editingEvent, editingEvent = _g === void 0 ? 'dblclick' : _g, scrollX = options.scrollX, scrollY = options.scrollY, _h = options.useClientSort, useClientSort = _h === void 0 ? true : _h, _j = options.pageOptions, pageOptions = _j === void 0 ? {} : _j, _k = options.treeColumnOptions, treeColumnOptions = _k === void 0 ? { name: '' } : _k, _l = options.header, header = _l === void 0 ? {} : _l;
     var frozenBorderWidth = columnOptions.frozenBorderWidth;
     var summaryHeight = summaryOptions.height, summaryPosition = summaryOptions.position;
     var _m = header.height, headerHeight = _m === void 0 ? 40 : _m, _o = header.complexColumns, complexColumns = _o === void 0 ? [] : _o;
@@ -5921,6 +5953,7 @@ function createStore(id, options) {
         rowHeight: rowHeight,
         bodyHeight: bodyHeight,
         minBodyHeight: minBodyHeight,
+        minRowHeight: minRowHeight,
         heightResizable: heightResizable,
         frozenBorderWidth: frozenBorderWidth,
         summaryHeight: summaryHeight,
@@ -6645,7 +6678,7 @@ function create(_a) {
             return common_1.findPropIndex('rowKey', rowKey, data.rawData);
         },
         get cellPosRect() {
-            var _a = this, columnIndex = _a.columnIndex, rowIndex = _a.rowIndex, side = _a.side, columnName = _a.columnName;
+            var _a = this, columnIndex = _a.columnIndex, rowIndex = _a.rowIndex, side = _a.side, columnName = _a.columnName, rowKey = _a.rowKey;
             var rawData = data.rawData, sortOptions = data.sortOptions;
             if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
                 return null;
@@ -6654,7 +6687,7 @@ function create(_a) {
             var right = left + columnCoords.widths[side][columnIndex];
             var top = rowCoords.offsets[rowIndex];
             var bottom = top + rowCoords.heights[rowIndex];
-            var rowSpan = rowSpan_1.getRowSpan(rowIndex, columnName, rawData);
+            var rowSpan = rowSpan_1.getRowSpanByRowKey(rowKey, columnName, rawData);
             if (rowSpan_1.enableRowSpan(sortOptions.columnName) && rowSpan) {
                 var verticalPos = rowSpan_1.getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, rawData);
                 return { left: left, right: right, top: verticalPos[0], bottom: verticalPos[1] };
@@ -6680,14 +6713,14 @@ function create(_a) {
     var summaryColumnContents = {};
     var summaryValues = {};
     if (Object.keys(summary).length) {
-        var rawData_1 = data.rawData;
         var orgColumnContent = summary.columnContent, orgDefaultContent = summary.defaultContent;
         var castedDefaultContent_1 = summary_1.castToSummaryColumnContent(orgDefaultContent || '');
         var columnContent_1 = orgColumnContent || {};
         column.allColumns.forEach(function (_a) {
             var name = _a.name;
             observable_1.observe(function () {
-                var columnValues = rawData_1.map(function (row) { return row[name]; });
+                var rawData = data.rawData;
+                var columnValues = rawData.map(function (row) { return row[name]; });
                 var castedColumnContent = summary_1.castToSummaryColumnContent(columnContent_1[name]);
                 var content = summary_1.extractSummaryColumnContent(castedColumnContent, castedDefaultContent_1);
                 summaryColumnContents[name] = content;
@@ -7240,7 +7273,7 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
         var name = column.name, header = column.header, sortable = column.sortable;
         return (preact_1.h("th", tslib_1.__assign({ key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && this.isSelected(name), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']), height: height }, !!colspan && { colspan: colspan }, !!rowspan && { rowspan: rowspan }),
             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
-            !!sortable && preact_1.h(sortingButton_1.SortingButton, null)));
+            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name })));
     };
     ComplexHeaderComp.prototype.render = function () {
         var _this = this;
@@ -7457,6 +7490,7 @@ var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var instance_1 = __webpack_require__(8);
 var column_1 = __webpack_require__(6);
+var common_1 = __webpack_require__(1);
 var BodyCellComp = /** @class */ (function (_super) {
     tslib_1.__extends(BodyCellComp, _super);
     function BodyCellComp() {
@@ -7465,7 +7499,7 @@ var BodyCellComp = /** @class */ (function (_super) {
             var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
             _this.props.dispatch('dragMoveRowHeader', { pageX: pageX, pageY: pageY });
         };
-        _this.handleMouseDown = function (_, name, rowKey) {
+        _this.handleMouseDown = function (name, rowKey) {
             if (!column_1.isRowNumColumn(name)) {
                 return;
             }
@@ -7535,7 +7569,7 @@ var BodyCellComp = /** @class */ (function (_super) {
                     } },
                     preact_1.h(treeCellContents_1.TreeCellContents, { treeInfo: treeInfo, rowKey: rowKey }))))) : (preact_1.h("td", tslib_1.__assign({}, attrs, rowSpanAttr, { style: style, class: classNames, ref: function (el) {
                 _this.el = el;
-            }, onMouseDown: function (ev) { return _this.handleMouseDown(ev, name, rowKey); } })));
+            }, onMouseDown: function () { return _this.handleMouseDown(name, rowKey); } })));
     };
     return BodyCellComp;
 }(preact_1.Component));
@@ -7545,14 +7579,15 @@ exports.BodyCell = hoc_1.connect(function (_a, _b) {
     var viewRow = _b.viewRow, columnInfo = _b.columnInfo;
     var rowKey = viewRow.rowKey, valueMap = viewRow.valueMap, treeInfo = viewRow.treeInfo;
     var treeColumnName = column.treeColumnName;
-    var disabled = data.disabled;
+    var disabled = data.disabled, viewData = data.viewData;
     var grid = instance_1.getInstance(id);
     var range = selection.range;
     var columnName = columnInfo.name;
+    var rowIndex = common_1.findPropIndex('rowKey', rowKey, viewData);
     return tslib_1.__assign({ grid: grid,
         rowKey: rowKey,
         disabled: disabled,
-        columnInfo: columnInfo, renderData: valueMap[columnName] }, (columnName === treeColumnName ? { treeInfo: treeInfo } : null), { selectedRow: range ? rowKey >= range.row[0] && rowKey <= range.row[1] : false });
+        columnInfo: columnInfo, renderData: valueMap[columnName] }, (columnName === treeColumnName ? { treeInfo: treeInfo } : null), { selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false });
 })(BodyCellComp);
 
 
@@ -7957,7 +7992,7 @@ var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var i18n_1 = tslib_1.__importDefault(__webpack_require__(18));
+var i18n_1 = tslib_1.__importDefault(__webpack_require__(19));
 var common_1 = __webpack_require__(1);
 var StateLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(StateLayerComp, _super);
@@ -8045,7 +8080,7 @@ var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var keyboard_1 = __webpack_require__(19);
+var keyboard_1 = __webpack_require__(20);
 var instance_1 = __webpack_require__(8);
 var common_1 = __webpack_require__(1);
 var EditingLayerInnerComp = /** @class */ (function (_super) {
@@ -8223,10 +8258,10 @@ var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
 var dom_1 = __webpack_require__(2);
-var keyboard_1 = __webpack_require__(19);
+var keyboard_1 = __webpack_require__(20);
 var browser_1 = __webpack_require__(77);
 var clipboard_1 = __webpack_require__(14);
-var clipboard_2 = __webpack_require__(20);
+var clipboard_2 = __webpack_require__(21);
 var KEYDOWN_LOCK_TIME = 10;
 var ClipboardComp = /** @class */ (function (_super) {
     tslib_1.__extends(ClipboardComp, _super);
@@ -8538,10 +8573,10 @@ var tslib_1 = __webpack_require__(0);
 var viewport = tslib_1.__importStar(__webpack_require__(81));
 var dimension = tslib_1.__importStar(__webpack_require__(82));
 var data = tslib_1.__importStar(__webpack_require__(31));
-var column = tslib_1.__importStar(__webpack_require__(85));
-var keyboard = tslib_1.__importStar(__webpack_require__(86));
+var column = tslib_1.__importStar(__webpack_require__(86));
+var keyboard = tslib_1.__importStar(__webpack_require__(87));
 var mouse = tslib_1.__importStar(__webpack_require__(89));
-var focus = tslib_1.__importStar(__webpack_require__(21));
+var focus = tslib_1.__importStar(__webpack_require__(16));
 var summary = tslib_1.__importStar(__webpack_require__(90));
 var selection = tslib_1.__importStar(__webpack_require__(15));
 var renderState = tslib_1.__importStar(__webpack_require__(91));
@@ -8587,6 +8622,16 @@ function getVerticalScrollPosition(height, cellPosRect, scrollTop, tableBorderWi
     }
     return null;
 }
+function getChangedScrollPosition(store, changedCellPosRect) {
+    var _a = store.dimension, bodyHeight = _a.bodyHeight, scrollXHeight = _a.scrollXHeight, scrollYWidth = _a.scrollYWidth, tableBorderWidth = _a.tableBorderWidth, areaWidth = store.columnCoords.areaWidth, _b = store.focus, focusCellPostRect = _b.cellPosRect, side = _b.side, viewport = store.viewport;
+    var scrollLeft = viewport.scrollLeft, scrollTop = viewport.scrollTop;
+    var cellPosRect = changedCellPosRect || focusCellPostRect;
+    var changedScrollLeft = side === 'R'
+        ? getHorizontalScrollPosition(areaWidth.R - scrollYWidth, cellPosRect, scrollLeft, tableBorderWidth)
+        : null;
+    var changedScrollTop = getVerticalScrollPosition(bodyHeight - scrollXHeight, cellPosRect, scrollTop, tableBorderWidth);
+    return [changedScrollLeft, changedScrollTop];
+}
 function setScrollPosition(viewport, changedScrollTop, changedScrollLeft) {
     if (changedScrollLeft !== null) {
         viewport.scrollLeft = changedScrollLeft;
@@ -8596,24 +8641,19 @@ function setScrollPosition(viewport, changedScrollTop, changedScrollLeft) {
     }
 }
 function setScrollToFocus(store) {
-    var _a = store.dimension, bodyHeight = _a.bodyHeight, scrollbarWidth = _a.scrollbarWidth, tableBorderWidth = _a.tableBorderWidth, areaWidth = store.columnCoords.areaWidth, _b = store.focus, cellPosRect = _b.cellPosRect, side = _b.side, viewport = store.viewport;
-    var scrollLeft = viewport.scrollLeft, scrollTop = viewport.scrollTop;
+    var _a = store.focus, cellPosRect = _a.cellPosRect, side = _a.side, viewport = store.viewport;
     if (cellPosRect === null || side === null) {
         return;
     }
-    var changedScrollLeft = side === 'R'
-        ? getHorizontalScrollPosition(areaWidth.R - scrollbarWidth, cellPosRect, scrollLeft, tableBorderWidth)
-        : null;
-    var changedScrollTop = getVerticalScrollPosition(bodyHeight - scrollbarWidth, cellPosRect, scrollTop, tableBorderWidth);
+    var _b = getChangedScrollPosition(store), changedScrollLeft = _b[0], changedScrollTop = _b[1];
     setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 exports.setScrollToFocus = setScrollToFocus;
 function setScrollToSelection(store) {
-    var _a = store.dimension, bodyHeight = _a.bodyHeight, scrollbarWidth = _a.scrollbarWidth, tableBorderWidth = _a.tableBorderWidth, _b = store.columnCoords, areaWidth = _b.areaWidth, widths = _b.widths, columnOffsets = _b.offsets, _c = store.rowCoords, heights = _c.heights, rowOffsets = _c.offsets, inputRange = store.selection.inputRange, viewport = store.viewport;
+    var _a = store.columnCoords, widths = _a.widths, columnOffsets = _a.offsets, _b = store.rowCoords, heights = _b.heights, rowOffsets = _b.offsets, inputRange = store.selection.inputRange, viewport = store.viewport;
     if (!inputRange) {
         return;
     }
-    var scrollLeft = viewport.scrollLeft, scrollTop = viewport.scrollTop;
     var rowIndex = inputRange.row[1];
     var columnIndex = inputRange.column[1];
     var cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
@@ -8623,10 +8663,7 @@ function setScrollToSelection(store) {
     var top = rowOffsets[rowIndex];
     var bottom = top + heights[rowIndex];
     var cellPosRect = { left: left, right: right, top: top, bottom: bottom };
-    var changedScrollLeft = cellSide === 'R'
-        ? getHorizontalScrollPosition(areaWidth.R - scrollbarWidth, cellPosRect, scrollLeft, tableBorderWidth)
-        : null;
-    var changedScrollTop = getVerticalScrollPosition(bodyHeight - scrollbarWidth, cellPosRect, scrollTop, tableBorderWidth);
+    var _c = getChangedScrollPosition(store, cellPosRect), changedScrollLeft = _c[0], changedScrollTop = _c[1];
     setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 exports.setScrollToSelection = setScrollToSelection;
@@ -8756,6 +8793,19 @@ exports.getRenderState = getRenderState;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+function isFocusedCell(focus, rowKey, columnName) {
+    return rowKey === focus.rowKey && columnName === focus.columnName;
+}
+exports.isFocusedCell = isFocusedCell;
+
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var column_1 = __webpack_require__(22);
 var data_1 = __webpack_require__(11);
 function setFrozenColumnCount(_a, count) {
@@ -8821,14 +8871,14 @@ exports.setComplexHeaderColumns = setComplexHeaderColumns;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var keyboard_1 = __webpack_require__(87);
-var focus_1 = __webpack_require__(21);
+var keyboard_1 = __webpack_require__(88);
+var focus_1 = __webpack_require__(16);
 var selection_1 = __webpack_require__(15);
 var column_1 = __webpack_require__(6);
 var rowSpan_1 = __webpack_require__(7);
@@ -8956,14 +9006,14 @@ exports.setFocusInfo = setFocusInfo;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
-var keyboard_1 = __webpack_require__(19);
+var keyboard_1 = __webpack_require__(20);
 var rowSpan_1 = __webpack_require__(7);
 function getNextCellIndex(store, command, _a) {
     var rowIndex = _a[0], columnIndex = _a[1];
@@ -9040,19 +9090,6 @@ exports.getRemoveRange = getRemoveRange;
 
 
 /***/ }),
-/* 88 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function isFocusedCell(focus, rowKey, columnName) {
-    return rowKey === focus.rowKey && columnName === focus.columnName;
-}
-exports.isFocusedCell = isFocusedCell;
-
-
-/***/ }),
 /* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9061,7 +9098,7 @@ exports.isFocusedCell = isFocusedCell;
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(6);
-var focus_1 = __webpack_require__(21);
+var focus_1 = __webpack_require__(16);
 var selection_1 = __webpack_require__(15);
 var rowSpan_1 = __webpack_require__(7);
 var selection_2 = __webpack_require__(28);
