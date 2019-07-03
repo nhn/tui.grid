@@ -377,7 +377,8 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
             this.domEventBus.trigger('click:headerCheck', eventData);
         } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
             eventData.setData({
-                columnName: columnName
+                columnName: columnName,
+                sort: this._getColumnSortOption(columnName)
             });
             this.domEventBus.trigger('click:headerSort', eventData);
         }
@@ -399,7 +400,6 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
         this._$currentSortBtn = this.$el.find(
             'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
-
         className = sortOptions.ascending ? classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN;
 
         this._$currentSortBtn.addClass(className);
@@ -578,7 +578,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
     _getResizeHandleHeights: function() {
         var hierarchyList = this._getColumnHierarchyList();
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        var rowHeight = util.getRowHeight(maxRowCount, this.headerHeight) - 1;
+        var rowHeight = util.getRowHeight(maxRowCount, this.dimensionModel.get('headerHeight')) - 1;
         var handleHeights = [];
         var index = 1;
         var coulmnLen = hierarchyList.length;
@@ -594,6 +594,19 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
         handleHeights.push(rowHeight * maxRowCount); // last resize handle
 
         return handleHeights;
+    },
+
+    /**
+     * Get sort option of the column
+     * @param {string} columnName - target column
+     * @returns {string|undefined} sort option of the column
+     * @private
+     */
+    _getColumnSortOption: function(columnName) {
+        var columnData = this._getColumnData();
+        var column = _.findWhere(columnData.columns, {name: columnName});
+
+        return column.sort;
     }
 });
 
