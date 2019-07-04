@@ -54,14 +54,6 @@ export class EditingLayerInnerComp extends Component<Props> {
     }
   };
 
-  private handleMouseDownDocument = (ev: MouseEvent) => {
-    const target = ev.target as HTMLElement;
-    const { contentEl } = this;
-    if (contentEl && contentEl !== target && !contentEl.contains(target)) {
-      this.finishEditing(true);
-    }
-  };
-
   private finishEditing(save: boolean) {
     if (this.editor) {
       const { dispatch, rowKey, columnName, sortOptions } = this.props;
