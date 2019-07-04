@@ -107,13 +107,13 @@ describe('data.treeModel', function() {
         });
     });
 
-    describe('getTopMostRowKeys', function() {
+    describe('getRootChildRowKeys', function() {
         beforeEach(function() {
             treeRowList.setData(treeData, true);
         });
 
-        it('should return all top most rows', function() {
-            expect(treeRowList.getTopMostRowKeys()).toEqual([0, 5, 6]);
+        it('should return root\'s all child rows', function() {
+            expect(treeRowList.getRootChildRowKeys()).toEqual([0, 5, 6]);
         });
     });
 
@@ -455,7 +455,7 @@ describe('data.treeModel', function() {
             expect(result[2].hasTreeNextSibling()).toEqual([true, false, false]);
         });
 
-        it('should add to model list as a top most row', function() {
+        it('should add to model list as a root\'s child row', function() {
             var result;
 
             appendOptions.parentRowKey = null;
@@ -469,7 +469,7 @@ describe('data.treeModel', function() {
             expect(result[1].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
             expect(result[2].getTreeParentRowKey()).toBe(result[0].get('rowKey'));
             // children
-            expect(treeRowList.getTopMostRowKeys()).toContain(result[0].get('rowKey'));
+            expect(treeRowList.getRootChildRowKeys()).toContain(result[0].get('rowKey'));
             expect(result[0].getTreeChildrenRowKeys()).toContain(result[1].get('rowKey'));
             expect(result[0].getTreeChildrenRowKeys()).toContain(result[2].get('rowKey'));
             expect(result[1].getTreeChildrenRowKeys().length).toBe(0);
@@ -532,7 +532,7 @@ describe('data.treeModel', function() {
             expect(treeRowList.length).toBe(6);
             expect(treeRowList.get(6)).not.toBeDefined();
             expect(treeRowList.get(7)).not.toBeDefined();
-            expect(treeRowList.getTopMostRowKeys()).toEqual([0, 5]);
+            expect(treeRowList.getRootChildRowKeys()).toEqual([0, 5]);
             expect(treeRowList.get(5).hasTreeNextSibling()).toEqual([false]);
         });
 

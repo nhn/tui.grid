@@ -338,10 +338,10 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
     },
 
     /**
-     * get top most row keys
+     * get root's child row keys
      * @returns {Array.<number|string>} - row keys
      */
-    getTopMostRowKeys: function() {
+    getRootChildRowKeys: function() {
         return this._rootRow._treeData.childrenRowKeys;
     },
 
@@ -418,7 +418,7 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      * expand all rows
      */
     treeExpandAll: function() {
-        var topMostRowKeys = this.getTopMostRowKeys();
+        var rootChildRowKeys = this.getRootChildRowKeys();
 
         /**
          * Occurs when all rows having child rows are expanded
@@ -426,8 +426,8 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
          */
         this.trigger('expandedAll');
 
-        _.each(topMostRowKeys, function(topMostRowKey) {
-            this.treeExpand(topMostRowKey, true, true);
+        _.each(rootChildRowKeys, function(rootChildRowKey) {
+            this.treeExpand(rootChildRowKey, true, true);
         }, this);
     },
 
@@ -477,7 +477,7 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      * collapse all rows
      */
     treeCollapseAll: function() {
-        var topMostRowKeys = this.getTopMostRowKeys();
+        var rootChildRowKeys = this.getRootChildRowKeys();
 
         /**
          * Occurs when all rows having child rows are collapsed
@@ -485,8 +485,8 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
          */
         this.trigger('collapsedAll');
 
-        _.each(topMostRowKeys, function(topMostRowKey) {
-            this.treeCollapse(topMostRowKey, true);
+        _.each(rootChildRowKeys, function(rootChildRowKey) {
+            this.treeCollapse(rootChildRowKey, true);
         }, this);
     },
 
