@@ -141,7 +141,8 @@ export function createColumn(
     ellipsis,
     valign,
     defaultValue,
-    escapeHTML
+    escapeHTML,
+    ignored
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -170,6 +171,7 @@ export function createColumn(
     ellipsis,
     valign,
     defaultValue,
+    ignored,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
