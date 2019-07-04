@@ -30,11 +30,11 @@ const presetLanguage = ['en', 'ko'];
 export default {
   name: 'TuiGrid',
   props: {
-    rowData: {
+    data: {
       type: Array,
       required: true
     },
-    columnData: {
+    columns: {
       type: Array,
       required: true
     },
@@ -79,8 +79,8 @@ export default {
   mounted() {
     const options = Object.assign({}, this.options, {
       el: this.$refs.tuiGrid,
-      data: this.rowData,
-      columns: this.columnData
+      data: this.data,
+      columns: this.columns
     });
     this.gridInstance = new Grid(options);
     this.addEventListeners();
