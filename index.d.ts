@@ -191,10 +191,9 @@ declare namespace tuiGrid {
     editor?: CellEditor;
     formatter?: Formatter;
     defaultValue?: CellValue;
-    viewer?: string | boolean;
     resizable?: boolean;
     minWidth?: number;
-    escapeHTML?: false;
+    escapeHTML?: boolean;
     relations?: IRelations[];
     align?: 'left' | 'center' | 'right';
     valign?: 'top' | 'middle' | 'bottom';
