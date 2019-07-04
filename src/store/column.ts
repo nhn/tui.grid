@@ -149,7 +149,7 @@ export function createColumn(
 
   return observable({
     name,
-    escapeHTML: !!escapeHTML,
+    escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
     resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
@@ -169,7 +169,7 @@ export function createColumn(
     whiteSpace,
     ellipsis,
     valign,
-    defaultValue: defaultValue || '',
+    defaultValue,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
