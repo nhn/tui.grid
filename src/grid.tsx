@@ -586,6 +586,18 @@ export default class Grid {
   }
 
   /**
+   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * @param {number|string} rowIndex - The index of the row
+   * @param {string} columnIndex - The index of the column
+   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
+   */
+  public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean) {
+    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
+
+    this.startEditing(rowKey, columnName, setScroll);
+  }
+
+  /**
    * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
@@ -600,18 +612,6 @@ export default class Grid {
     }
 
     this.dispatch('finishEditing', rowKey, columnName);
-  }
-
-  /**
-   * Sets focus on the cell at the specified index of row and column and starts to edit.
-   * @param {number|string} rowIndex - The index of the row
-   * @param {string} columnIndex - The index of the column
-   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
-   */
-  public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean) {
-    const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
-
-    this.startEditing(rowKey, columnName, setScroll);
   }
 
   /**
