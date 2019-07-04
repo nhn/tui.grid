@@ -194,7 +194,7 @@ For more information such as the parameters of each event, see [event of tui.gri
 For use method, first you need to assign `ref` attribute of element like this:
 
 ```html
-<grid ref="tuiGrid" :rowData="rows" :columnData="columns"/>
+<grid ref="tuiGrid" :data="rows" :columns="columns"/>
 ```
 
 After then you can use methods through `this.$refs`. We provide `getRootElement` and `invoke` methods.
