@@ -25,6 +25,7 @@ export function createCustomLayerEditor(stub: Function) {
       layer.addEventListener('click', () => {
         props.grid.finishEditing(props.rowKey, props.columnInfo.name, this.getValue());
       });
+
       this.el = el;
       this.layer = layer;
       this.value = value;
