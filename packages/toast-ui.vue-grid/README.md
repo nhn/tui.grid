@@ -86,12 +86,12 @@ You can use Toast UI Grid for Vue as moudule format or namespace. Also you can u
 First insert `<grid>` in the template or html. `rowData` and `columnData` props are required.
 
 ```html
-<grid :rowData="options.rows" :columnData="options.columns" />
+<grid :data="gridProps.data" :columns="gridProps.columns" />
 ```
 
 Load grid component and then add it to the `components` in your component or Vue instance.
 
-> Tui-grid has its own reactivity system, and does not use the reactivity system of vue. So, instead of adding props in the `data`, declare props in the `created` lifecycle method.
+> TOAST UI Grid has its own reactivity system, and does not use the reactivity system of Vue. So, instead of adding props in the `data`, declare `props` in the `created` lifecycle method.
 
 ```js
 import 'tui-grid/dist/tui-grid.css'
@@ -102,8 +102,8 @@ export default {
     'grid': Grid
   },
   created() {
-    this.options = {
-      rows: [ // for rowData prop
+    this.gridProps = {
+      data: [ // for rowData prop
         {
           name: 'Beautiful Lies',
           artist: 'Birdy'
@@ -178,7 +178,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
 * mouseout : Occurs when a mouse pointer is moved off from the Grid.
 * mousedown : Occurs when a mouse button is downed on the Grid.
 * focusChange : Occurs when focused cell is about to change.
-* expande : Occurs when the row having child rows is expanded.
+* expand : Occurs when the row having child rows is expanded.
 * collapse : Occurs when the row having child rows is collapsed.
 * beforeRequest : Occurs before the http request is sent.
 * response : Occurs when the response is received from the server.

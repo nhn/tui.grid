@@ -61,12 +61,12 @@ You can use Toast UI Grid for Vue as module format or namespace. Also you can us
 First insert `<grid>` in the template or html. `rowData` and `columnData` props are required.
 
 ```html
-<grid :rowData="options.rows" :columnData="options.columns" />
+<grid :data="gridProps.data" :columns="gridProps.columns" />
 ```
 
 Load grid component and then add it to the `components` in your component or Vue instance.
 
-> Tui-grid has its own reactivity system, and does not use the reactivity system of vue. So, instead of adding props in the `data`, declare props in the `created` lifecycle method.
+> TOAST UI Grid has its own reactivity system, and does not use the reactivity system of Vue. So, instead of adding props in the `data`, declare `props` in the `created` lifecycle method.
 
 ```js
 import 'tui-grid/dist/tui-grid.css'
@@ -78,7 +78,7 @@ export default {
   },
   created() {
     this.options = {
-      rows: [ // for rowData prop
+      data: [ // for rowData prop
         {
           name: 'Beautiful Lies',
           artist: 'Birdy'
@@ -119,7 +119,10 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     ``` html
     <template>
-      <grid :rowData="rows" :columnData="columns" />
+      <grid
+        :data="gridProps.data" 
+        :columns="gridProps.columns" 
+      />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
@@ -131,8 +134,8 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
         'grid': Grid
       },
       created() {
-        this.options = {
-          rows: [ // for rowData prop
+        this.gridProps = {
+          data: [ // for rowData prop
             {
               name: 'Beautiful Lies',
               artist: 'Birdy'
@@ -171,9 +174,9 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     ``` html
     <template>
         <grid
-          :rowData="options.rows"
-          :columnData="options.columns"
-          :options="options.options"
+          :data="gridProps.data"
+          :columns="gridProps.columns"
+          :options="gridProps.options"
         />
     </template>
     <script>
@@ -186,8 +189,8 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
           'grid': Grid
         },
         created() {
-          this.options = {
-            rows: [
+          this.gridProps = {
+            data: [
               // ... omit
             ],
             columns: [ 
@@ -220,8 +223,8 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     ``` html
     <template>
       <grid
-        :rowData="options.rows"
-        :columnData="options.columns"
+        :data="gridProps.data"
+        :columns="gridProps.columns"
         :theme="'striped'"
       />
     </template>
@@ -235,7 +238,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
         'grid': Grid
       },
       created() {
-        this.options = {
+        this.gridProps = {
           rows: [
             // ... omit
           ],
@@ -253,9 +256,9 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     ``` html
     <template>
       <grid
-        :rowData="options.rows"
-        :columnData="options.columns"
-        :theme="options.myTheme"
+        :data="gridProps.rows"
+        :columns="gridProps.columns"
+        :theme="gridProps.myTheme"
       />
     </template>
     <script>
@@ -268,8 +271,8 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
         'grid': Grid
       },
       created() {
-        this.options = {
-          rows: [
+        this.gridProps = {
+          data: [
             // ... omit
           ],
           columns: [ 
@@ -313,7 +316,11 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     ```html
     <template>
-        <grid :rowData="rows" :columnData="columns" :language="'ko'"/>
+        <grid 
+          :data="rows" 
+          :columns="columns" 
+          :language="'ko'"
+        />
     </template>
     <script>
     import 'tui-grid/dist/tui-grid.css'
@@ -336,9 +343,9 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
     ```html
     <template>
       <grid 
-        :rowData="options.rows" 
-        :columnData="options.columns" 
-        :language="options.myLang"
+        :data="gridProps.data" 
+        :columns="gridProps.columns" 
+        :language="gridProps.myLang"
       />
     </template>
     <script>
@@ -351,8 +358,8 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
         'grid': Grid
       },
       created() {
-        this.options = {
-          rows: [
+        this.gridProps = {
+          data: [
               // ... omit
           ],
           columns: [ 
@@ -412,8 +419,8 @@ Example :
 ```html
 <template>
   <grid
-    :rowData="rows"
-    :columnData="columns"
+    :data="gridProps.data"
+    :columns="gridProps.columns"
     @click="onClick"
     @check="onCheck"
   />
@@ -428,8 +435,8 @@ export default {
     'grid': Grid
   },
   created() {
-    this.options = {
-      rows: [
+    this.gridProps = {
+      data: [
         // ... omit
       ],
       columns: [ 
@@ -454,7 +461,7 @@ export default {
 For use method, first you need to assign `ref` attribute of element like this:
 
 ```html
-<grid ref="tuiGrid" :rowData="rows" :columnData="columns"/>
+<grid ref="tuiGrid" :data="rows" :columns="columns"/>
 ```
 
 After then you can use methods through `this.$refs`. We provide `getRootElement` and `invoke` methods.

@@ -2,10 +2,10 @@
   <div class="container">
     <h1>🍞🔡 TOAST UI Grid + Vue</h1>
     <grid
-      :rowData="options.data"
-      :columnData="options.columns"
-      :options="options.options"
-      :theme="options.myTheme"
+      :data="gridProps.data"
+      :columns="gridProps.columns"
+      :options="gridProps.options"
+      :theme="gridProps.myTheme"
       @check="onCheck"
       @uncheck="onUnCheck"
     ></grid>
@@ -20,7 +20,7 @@ export default {
     grid: Grid
   },
   created() {
-    this.options = {
+    this.gridProps = {
       columns: [
         {
           header: 'Name',
@@ -43,6 +43,7 @@ export default {
           copyOptions: {
             useListItemText: true
           },
+          formatter: 'listItemText',
           editor: {
             type: 'radio',
             options: {

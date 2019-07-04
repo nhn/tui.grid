@@ -5,7 +5,6 @@
   "main": "dist/toastui-vue-grid.js",
   "files": [
     "dist",
-    "src",
     "index.d.ts"
   ],
   "scripts": {

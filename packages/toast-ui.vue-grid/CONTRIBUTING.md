@@ -17,7 +17,7 @@ Explain the problem and include additional details to help maintainers reproduce
 * **Include screenshots and animated GIFs** which show you following the described steps and clearly demonstrate the problem.
 
 ## Suggesting Enhancements
-In case you want to suggest for TOAST UI Editor, please follow this guideline to help maintainers and the community understand your suggestion.
+In case you want to suggest for TOAST UI Grid, please follow this guideline to help maintainers and the community understand your suggestion.
 Before creating suggestions, please check [issue list](https://github.com/nhn/toast-ui.vue-grid/labels/feature%20request) if there's already a request.
 
 Create an issue and provide the following information:
@@ -25,7 +25,7 @@ Create an issue and provide the following information:
 * **Use a clear and descriptive title** for the issue to identify the suggestion.
 * **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
 * **Provide specific examples to demonstrate the steps.** Include copy/pasteable snippets which you use in those examples, as Markdown code blocks.
-* **Include screenshots and animated GIFs** which helps demonstrate the steps or point out the part of TOAST UI Editor which the suggestion is related to.
+* **Include screenshots and animated GIFs** which helps demonstrate the steps or point out the part of TOAST UI Grid which the suggestion is related to.
 * **Explain why this enhancement would be useful** to most TOAST UI users.
 * **List some other text editors or applications where this enhancement exists.**
 
