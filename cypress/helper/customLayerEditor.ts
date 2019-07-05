@@ -11,7 +11,8 @@ export function createCustomLayerEditor(stub: Function) {
     public constructor(props: CellEditorProps) {
       const el = document.createElement('div');
       const layer = document.createElement('div');
-      const value = String(props.value) || '';
+      const { grid, rowKey, columnInfo, value: cellValue } = props;
+      const value = String(cellValue) || '';
 
       el.textContent = value;
 
@@ -23,7 +24,7 @@ export function createCustomLayerEditor(stub: Function) {
       });
 
       layer.addEventListener('click', () => {
-        props.grid.finishEditing(props.rowKey, props.columnInfo.name, this.getValue());
+        grid.finishEditing(rowKey, columnInfo.name, this.getValue());
       });
 
       this.el = el;
