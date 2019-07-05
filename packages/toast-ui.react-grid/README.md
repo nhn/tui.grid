@@ -1,12 +1,12 @@
 # TOAST UI Grid for React
 
-> This is a React component wrapping [TOAST UI Grid](https://github.com/nhnent/tui.grid).
+> This is a React component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-grid.svg)](https://github.com/nhnent/toast-ui.react-grid/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.react-grid.svg)](https://github.com/nhn/toast-ui.react-grid/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-grid.svg)](https://www.npmjs.com/package/@toast-ui/react-grid)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.react-grid.svg)](https://github.com/nhnent/toast-ui.react-grid/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.react-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.react-grid.svg)](https://github.com/nhn/toast-ui.react-grid/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.react-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -73,7 +73,7 @@ const Grid = require('@toast-ui/react-grid');
 
 ### Props
 
-[All the options of the TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid) are supported in the form of props. Note that `data` and `columns` props are required and other props are optional.
+[All the options of the TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid) are supported in the form of props. Note that `data` and `columns` props are required and other props are optional.
 
 ```js
 const data = [
@@ -83,8 +83,8 @@ const data = [
 ];
 
 const columns = [
-  {name: 'id', title: 'ID'},
-  {name: 'name', title: 'Name'}
+  {name: 'id', header: 'ID'},
+  {name: 'name', header: 'Name'}
 ];
 
 const MyComponent = () => (
@@ -126,7 +126,7 @@ const MyComponent = () => (
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid#activateFocus), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Grid directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#activateFocus), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Grid directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 class MyComponent extends React.Component {
@@ -180,7 +180,7 @@ class MyComponent extends React.Component {
 
 ### Static Methods
 
-The wrapper component does not provide a way to call [static methods of TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid#applyTheme). If you want to use static methods such as `applyTheme` or `setLanguage` you should use it via importing `tui-grid` directly.
+The wrapper component does not provide a way to call [static methods of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#applyTheme). If you want to use static methods such as `applyTheme` or `setLanguage` you should use it via importing `tui-grid` directly.
 
 ```js
 import TuiGrid from 'tui-grid';
@@ -190,7 +190,7 @@ TuiGrid.applyTheme('striped');
 ```
 
 ### Events
-[All the events of TOAST UI Grid](http://nhnent.github.io/tui.grid/latest/Grid#event-beforeRequest) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
+[All the events of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
@@ -210,25 +210,45 @@ class MyComponent extends React.Component {
 }
 ```
 
-### Addons
-TOAST UI Grid uses the **Addon** to extend functionality, which can be setup with the `addon` prop. The `addon` prop recieves an object which conatins the name of the addon as a key, and the option object as a value. For example, if you want to use the [Net addon](https://github.com/nhnent/tui.grid/blob/production/docs/binding-to-remote-data.md#net-add-on) you can set it up like the example below.
+### DataSource
+In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the data option like the example below.
 
 ```js
 const columns = [/* ... */];
-const netOptions = {
-  perPage: 10,
+const dataSource = {
+  withCredentials: false,
+  initialRequest: true,
   api: {
-    readData: 'api/readData'
+    readData: {url: 'api/readData', method: 'GET'}
   }
 };
 
 const MyComponent = () => (
   <Grid 
-    columns={columns}
-    addon={{Net: netOptions}}
+    columns={columns} 
+    data={dataSource} 
+    pagination={true} 
+    pageOptions={{perPage: 3}}
   />
 );
 ```
+
+### With React Hooks
+
+React Hooks can be used together.
+
+```js
+import React, {useCallback} from 'react';
+
+const MyComponentWithHooks = () => {
+  const onClick = useCallback(() => {
+    console.log('condition:', condition);
+  }, [condition]);
+
+  return <Grid columns={columns} data={data} onClick={onClick} />;
+};
+```
+
 
 ## 🔧 Pull Request Steps
 
@@ -259,9 +279,9 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.react-grid/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.react-grid/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.react-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.react-grid/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.react-grid/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.react-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)

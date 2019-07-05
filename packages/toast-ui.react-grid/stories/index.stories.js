@@ -1,21 +1,20 @@
-import React from 'react';
+import React, {useCallback} from 'react';
+import XHRMock from 'xhr-mock';
 import {storiesOf} from '@storybook/react';
 import Grid from '../src/index';
 import TuiGrid from 'tui-grid';
 import {actions} from '@storybook/addon-actions';
 import {withKnobs, number, radios, button, object, array} from '@storybook/addon-knobs';
-import $ from 'jquery';
-import mockjax from 'jquery-mockjax';
 import {data} from './dummy-data';
 import 'tui-grid/dist/tui-grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
 
 const columns = [
-  {title: 'Name', name: 'name'},
-  {title: 'Artist', name: 'artist'},
-  {title: 'Type', name: 'type', editOptions: {type: 'text'}},
-  {title: 'Release', name: 'release', editOptions: {type: 'text'}},
-  {title: 'Genre', name: 'genre', editOptions: {type: 'text'}}
+  {header: 'Name', name: 'name'},
+  {header: 'Artist', name: 'artist'},
+  {header: 'Type', name: 'type', editor: 'text'},
+  {header: 'Release', name: 'release', editor: 'text'},
+  {header: 'Genre', name: 'genre', editor: 'text'}
 ];
 
 const stories = storiesOf('Toast UI Grid', module).addDecorator(withKnobs);
@@ -58,7 +57,8 @@ stories.add('getRootElement', () => {
     ref = React.createRef();
 
     handleClick = () => {
-      alert(this.ref.current.getRootElement().className);
+      alert('see console!');
+      console.log(this.ref.current.getRootElement());
     };
 
     render() {
@@ -93,7 +93,7 @@ stories.add('Using Method', () => {
     };
 
     handleClickUnSort = () => {
-      this.grid.unSort();
+      this.grid.unsort();
     };
 
     render() {
@@ -136,52 +136,110 @@ stories.add('Reactive Props', () => {
     <Grid
       columns={columnsValue}
       data={dataValue}
+      frozenColumnCount={frozenColumnCountValue}
       pagination={false}
       bodyHeight={bodyHeightValue}
-      frozenColumnCount={frozenColumnCountValue}
       oneTimeBindingProps={oneTimeBindingProps}
     />
   );
 });
 
-stories.add('Addon Net', () => {
-  const mock = mockjax($, window);
+stories.add('dataSource', () => {
+  XHRMock.setup();
 
-  mock({
-    url: 'api/readData',
-    responseTime: 0,
-    response(settings) {
-      const {page, perPage} = settings.data;
-      const start = (page - 1) * perPage;
-      const end = start + perPage;
-      const contents = data.slice(start, end);
-
-      this.responseText = JSON.stringify({
+  XHRMock.get('api/readData?perPage=3&page=1', {
+    status: 200,
+    body: JSON.stringify({
+      result: true,
+      data: {
+        contents: data.slice(0, 3),
+        pagination: {
+          page: 1,
+          totalCount: data.length
+        }
+      }
+    })
+  })
+    .get('api/readData?perPage=3&page=2', {
+      status: 200,
+      body: JSON.stringify({
         result: true,
         data: {
-          contents,
+          contents: data.slice(3, 6),
           pagination: {
-            page,
+            page: 2,
             totalCount: data.length
           }
         }
-      });
+      })
+    })
+    .get('api/readData?perPage=3&page=3', {
+      status: 200,
+      body: JSON.stringify({
+        result: true,
+        data: {
+          contents: data.slice(6, 9),
+          pagination: {
+            page: 3,
+            totalCount: data.length
+          }
+        }
+      })
+    })
+    .get('api/readData?perPage=3&page=4', {
+      status: 200,
+      body: JSON.stringify({
+        result: true,
+        data: {
+          contents: data.slice(9, 12),
+          pagination: {
+            page: 4,
+            totalCount: data.length
+          }
+        }
+      })
+    });
+
+  const dataSource = {
+    withCredentials: false,
+    initialRequest: true,
+    api: {
+      readData: {url: 'api/readData', method: 'GET'}
     }
-  });
+  };
+
+  return <Grid columns={columns} pagination={true} data={dataSource} pageOptions={{perPage: 3}} />;
+});
+
+stories.add('hook', () => {
+  const condition = radios('condition', {true: 'true', false: 'false'}, 'true');
+  const ReactComponent = () => {
+    const onClick = useCallback(() => {
+      console.log('condition:', condition);
+    }, [condition]);
+
+    return <Grid columns={columns} data={data} onClick={onClick} />;
+  };
+
+  return <ReactComponent />;
+});
+
+stories.add('change event based on condition', () => {
+  const condition = radios('condition', {true: 'true', false: 'false'}, 'true');
 
   return (
     <Grid
       columns={columns}
-      pagination={true}
-      addon={{
-        Net: {
-          perPage: 3,
-          readDataMethod: 'GET',
-          api: {
-            readData: 'api/readData'
-          }
-        }
-      }}
+      data={data}
+      onClick={
+        condition === 'true'
+          ? () => {
+              console.log('true');
+            }
+          : () => {
+              console.log('false');
+            }
+      }
     />
   );
 });
