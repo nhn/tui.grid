@@ -71,8 +71,8 @@ const grid = new Grid({
 
 ![paste_custom](https://user-images.githubusercontent.com/35371660/59573554-8a64f880-90ee-11e9-9f7d-e4cdf950e553.gif)
 
-### `copyToClipboard()`
-You can use the `copyToClipboard()` method to copy the selected of focused area.
+### copyToClipboard()
+You can use the `copyToClipboard()` method to copy the selected of focused area. As well as the key event, the copy operation can be also used by calling the API. When you want to copy rather than the key event, you can use the `copyToClipboard()` method.
 
 ```js
 const grid = new Grid ({ ... });

@@ -21,7 +21,7 @@ The TOAST UI Grid makes it easy to use the grid by providing several keyboard ev
 
 | Action | Shortcut |
 | --- | --- |
-| move | `→` `←` `↑` `↓`|
+| Move | `→` `←` `↑` `↓`|
 | Move to the first cell in row | `Home`|
 | Move to the last cell in row | `End`|
 | Move to the previous page cell in column | `PageUp`|

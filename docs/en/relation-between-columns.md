@@ -39,7 +39,7 @@ grid.setColumns([
 ]);
 ```
 
-In the example above, 'col1' column has a `relations` option, and the target columns are 'col2' and 'col3'. If the value of a cell in 'col1' is changed to '1', the cells in the same row that are under 'col2' or 'col3' will become not editable.
+In the example above, 'col1' column has a `relations` option, and the target columns are 'col2' and 'col3'. If the value of a cell in 'col1' is changed to '1', the cells in the same row that are under 'col2' or 'col3' will become editable.
 
 
 ## disabled

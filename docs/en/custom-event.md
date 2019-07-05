@@ -31,7 +31,7 @@ grid.off('click', onClickHandler);
 ```
 
 ## GridEvent
-When an event occurs, an instance of the `GridEvent` class is passed to the handler attached to the event. It has useful information which can be used by event handler. For example, if the `click` event occurs, `rowKey`, `targetType` and `columnName` value is set to the `GridEvent` object so that user can figure out the address of the target cell.
+When an event occurs, an instance of the `GridEvent` instance is passed to the handler attached to the event. It has useful information which can be used by event handler. For example, if the `click` event occurs, `rowKey`, `targetType` and `columnName` value is set to the `GridEvent` instance so that user can figure out the address of the target cell.
 
 ```javascript
 grid.on('click', function(ev) {
@@ -41,7 +41,7 @@ grid.on('click', function(ev) {
 });
 ```
 
-The `GridEvent` class also has the `stop()` method which can be used to prevent default action of the event. For example, if you want to prevent for a specific row not to be selected, you can attach a handler to the `click` event and call the `ev.stop()`.
+The `GridEvent` instance also has the `stop()` method which can be used to prevent default action of the event. For example, if you want to prevent for a specific row not to be selected, you can attach a handler to the `click` event and call the `ev.stop()`.
 
 ```javascript
 grid.on('click', function(ev) {
@@ -51,7 +51,7 @@ grid.on('click', function(ev) {
 });
 ```
 
-The `GridEvent` class can have a `nativeEvent` property, this is the browser's native events like `click`, `mousedown` and so on.
+The `GridEvent` instance can have a `nativeEvent` property, this is the browser's native events like `click`, `mousedown` and so on.
 
 ```javascript
 grid.on('mousedown', function(ev) {
@@ -69,7 +69,7 @@ grid.on('mousedown', function(ev) {
 - `focusChange` : When a table cell focus is selected
 - `check`: When a row header checkbox is filled
 - `uncheck`: When a row header checkbox is cleared
-- `selection`: hen the selection area of the table is changed.
+- `selection`: When the selection area of the table is changed.
 
 There are other events that can be used when using `DataSource`.
 

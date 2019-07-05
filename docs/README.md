@@ -2,19 +2,19 @@
 
 ## Tutorials
 
-- [🚀 Getting Started](getting-started.md)
-- [🔗 Complex Columns](complex-columns.md)
-- [🛠 Custom Editor](custom-editor.md)
-- [🔩 Custom Renderer](custom-renderer.md)
-- [🤝 Relation Between Columns](relation-between-columns.md)
-- [👨‍🎨 Themes](themes.md)
-- [📅 DatePicker](date-picker.md)
-- [✍️ Summary](summary.md)
-- [🛎 Custom Event](custom-event.md)
-- [⌨️ Keymap](keymap.md)
-- [📎 Clipboard](clipboard.md)
-- [🛰 Data Source](data-source.md)
-- [🌳 Tree](tree.md)
+- [🚀 Getting Started](./en/getting-started.md)
+- [🔗 Complex Columns](./en/complex-columns.md)
+- [🛠 Custom Editor](./en/custom-editor.md)
+- [🔩 Custom Renderer](./en/custom-renderer.md)
+- [🤝 Relation Between Columns](./en/relation-between-columns.md)
+- [👨‍🎨 Themes](./en/themes.md)
+- [📅 DatePicker](./en/date-picker.md)
+- [✍️ Summary](./en/summary.md)
+- [🛎 Custom Event](./en/custom-event.md)
+- [⌨️ Keymap](./en/keymap.md)
+- [📎 Clipboard](./en/clipboard.md)
+- [🛰 Data Source](./en/data-source.md)
+- [🌳 Tree](./en/tree.md)
 
 ## Migration Guide 
 

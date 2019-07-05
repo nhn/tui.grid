@@ -1,6 +1,6 @@
 # DatePicker 📅
 
-The [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) component can be easily integrated into the TOAST UI Grid. Just by using [cell editor]() options to the `columns`, you can use a DatePicker in the Grid without extra coding.
+The [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) component can be easily integrated into the TOAST UI Grid. Just by using [cell editor](./custom-editor.md) options to the `columns`, you can use a DatePicker in the Grid without extra coding.
 
 ## Styles
 
@@ -15,7 +15,7 @@ import 'tui-time-picker/dist/tui-time-picker.css';
 
 To use a DatePicker, you need to add the `editor` option to the `columns`. This is all you need to do, since the Grid internally creates a instance of `tui-date-picker`, and controls it in response to user control. The option looks like below.
 
-You can easily use the default datepicker by specifying `datePicker` to the editor property of columns.
+You can easily use the default Datepicker by specifying `datePicker` to the `editor` property of columns.
 
 ```js
 const columns = [
