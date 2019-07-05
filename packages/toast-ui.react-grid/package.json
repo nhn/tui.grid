@@ -49,10 +49,10 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "xhr-mock": "^2.4.1"
   },
   "dependencies": {
-    "tui-grid": "^4.0.0",
-    "xhr-mock": "^2.4.1"
+    "tui-grid": "^4.0.0"
   }
 }
