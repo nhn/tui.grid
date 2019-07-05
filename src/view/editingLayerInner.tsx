@@ -103,6 +103,7 @@ export class EditingLayerInnerComp extends Component<Props> {
   public componentWillReceiveProps(nextProps: Props) {
     const { focusColumnName: prevFocusColumnName, focusRowKey: prevFocusRowKey } = this.props;
     const { focusColumnName, focusRowKey } = nextProps;
+
     if (focusColumnName !== prevFocusColumnName || focusRowKey !== prevFocusRowKey) {
       this.finishEditing(true);
     }
