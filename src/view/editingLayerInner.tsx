@@ -19,8 +19,8 @@ interface StoreProps {
   grid: Grid;
   value: CellValue;
   sortOptions: SortOptions;
-  focusColumnName: string | null;
-  focusRowKey: RowKey | null;
+  focusedColumnName: string | null;
+  focusedRowKey: RowKey | null;
 }
 
 interface OwnProps {
@@ -101,10 +101,13 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    const { focusColumnName: prevFocusColumnName, focusRowKey: prevFocusRowKey } = this.props;
-    const { focusColumnName, focusRowKey } = nextProps;
+    const {
+      focusedColumnName: prevFocusedColumnName,
+      focusedRowKey: prevFocusedRowKey
+    } = this.props;
+    const { focusedColumnName, focusedRowKey } = nextProps;
 
-    if (focusColumnName !== prevFocusColumnName || focusRowKey !== prevFocusRowKey) {
+    if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
       this.finishEditing(true);
     }
   }
@@ -128,7 +131,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 }
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
-  const { cellPosRect, side, columnName: focusColumnName, rowKey: focusRowKey } = store.focus;
+  const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = store.focus;
   const {
     cellBorderWidth,
     tableBorderWidth,
@@ -159,7 +162,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     columnInfo: allColumnMap[columnName],
     value,
     sortOptions,
-    focusColumnName,
-    focusRowKey
+    focusedColumnName,
+    focusedRowKey
   };
 })(EditingLayerInnerComp);
