@@ -191,10 +191,9 @@ declare namespace tuiGrid {
     editor?: CellEditor;
     formatter?: Formatter;
     defaultValue?: CellValue;
-    viewer?: string | boolean;
     resizable?: boolean;
     minWidth?: number;
-    escapeHTML?: false;
+    escapeHTML?: boolean;
     relations?: IRelations[];
     align?: 'left' | 'center' | 'right';
     valign?: 'top' | 'middle' | 'bottom';
@@ -569,6 +568,8 @@ declare namespace tuiGrid {
     public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean): void;
 
     public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean): void;
+
+    public finishEditing(rowKey: RowKey, columnName: string, value: string): void;
 
     public setValue(rowKey: RowKey, columnName: string, value: CellValue): void;
 

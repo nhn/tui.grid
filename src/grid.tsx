@@ -593,6 +593,23 @@ export default class Grid {
   }
 
   /**
+   * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {string} value - The value of editing result
+   */
+  public finishEditing(rowKey: RowKey, columnName: string, value: string) {
+    const sortOptions = this.store.data.sortOptions;
+    this.dispatch('setValue', rowKey, columnName, value);
+
+    if (sortOptions.columnName === columnName) {
+      this.dispatch('sort', columnName, sortOptions.ascending);
+    }
+
+    this.dispatch('finishEditing', rowKey, columnName);
+  }
+
+  /**
    * Sets the value of the cell identified by the specified rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
