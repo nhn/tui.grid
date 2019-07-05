@@ -19,6 +19,7 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
 
 * [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 * [Browser Support](#-browser-support)
+* [Documents](#-documents)
 * [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
     * [Data Can Be Displayed in Any Format](#data-can-be-displayed-in-any-format)
     * [Provides a Variety of Editing Elements](#provides-a-variety-of-editing-elements)
@@ -37,7 +38,6 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
     * [Setup](#setup)
     * [Develop](#develop)
     * [Pull Request Steps](#pull-request)
-* [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [Used By](#-used-by)
@@ -65,6 +65,14 @@ const instance = new Grid(options);
 | <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | 9+ | Yes | Yes | Yes |
+
+## 📙 Documents
+
+* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
+* [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
+* [API](https://nhn.github.io/tui.grid/latest)
+
+You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
@@ -235,7 +243,7 @@ const Grid = require('tui-grid'); /* CommonJS */
 import Grid from 'tui-grid'; /* ES6 */
 ```
 
-You can create an instance with options and call various APIs after creating an instance.
+You can create an instance with options and call various API after creating an instance.
 
 ``` javascript
 const instance = new Grid({
@@ -333,15 +341,6 @@ Before PR, check to test lastly and then check any errors.
 If it has no error, commit and then push it!
 
 For more information on PR's step, please see links of Contributing section.
-
-
-## 📙 Documents
-
-* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
-* [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
-* [APIs](https://nhn.github.io/tui.grid/latest)
-
-You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
 
 ## 💬 Contributing
