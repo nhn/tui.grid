@@ -367,7 +367,6 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  z-index: 10;
 }
 .tui-grid-lside-area .tui-grid-body-area {
   margin-right: -17px;
