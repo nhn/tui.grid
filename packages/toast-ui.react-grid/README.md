@@ -228,6 +228,9 @@ const MyComponent = () => (
     columns={columns} 
     data={dataSource} 
     pageOptions={{perPage: 3}}
+    onSuccessResponse={(data) => {
+      console.log(data);
+    }}
   />
 );
 ```

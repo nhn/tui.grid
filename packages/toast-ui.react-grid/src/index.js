@@ -18,6 +18,7 @@ export default class Grid extends React.Component {
       .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
       .forEach((key) => {
         const eventName = key[2].toLowerCase() + key.slice(3);
+        // For <Grid onFocus={condition ? onFocus1 : onFocus2} />
         if (prevProps && prevProps[key] === props[key]) {
           this.gridInst.off(eventName);
         }
