@@ -35,7 +35,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
     focus,
     data,
-    column: { visibleColumns },
+    column: { visibleColumnsWithRowHeader },
     id
   } = store;
   const { viewData } = data;
@@ -46,7 +46,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 
   const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-  const nextColumnName = visibleColumns[nextColumnIndex].name;
+  const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
     changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
@@ -75,7 +75,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     selection,
     focus,
     data,
-    column: { visibleColumns, rowHeaderCount },
+    column: { visibleColumnsWithRowHeader, rowHeaderCount },
     id
   } = store;
   const { viewData, sortOptions } = data;
@@ -89,12 +89,12 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   if (!currentInputRange) {
     currentInputRange = selection.inputRange = {
       row: [focusRowIndex, focusRowIndex],
-      column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
+      column: [totalFocusColumnIndex, totalFocusColumnIndex]
     };
   }
 
   const rowLength = viewData.length;
-  const columnLength = visibleColumns.length;
+  const columnLength = visibleColumnsWithRowHeader.length;
   let rowStartIndex = currentInputRange.row[0];
   const rowIndex = currentInputRange.row[1];
   let columnStartIndex = currentInputRange.column[0];
@@ -103,7 +103,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 
   if (command === 'all') {
     rowStartIndex = 0;
-    columnStartIndex = 0;
+    columnStartIndex = rowHeaderCount;
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
@@ -119,33 +119,33 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
   }
 
   const [nextRowIndex, nextColumnIndex] = nextCellIndexes;
-
+  const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   let startRowIndex = rowStartIndex;
   let endRowIndex = nextRowIndex;
 
-  if (enableRowSpan(sortOptions.columnName)) {
-    const rowRange: Range = [startRowIndex, endRowIndex];
-    const colRange: Range = [columnStartIndex, nextColumnIndex];
+  if (command !== 'all') {
     [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
-      rowRange,
-      colRange,
-      visibleColumns,
+      [startRowIndex, endRowIndex],
+      [columnStartIndex, nextColumnIndex],
+      visibleColumnsWithRowHeader,
       focus.rowIndex,
       data
     );
   }
 
-  const inputRange: SelectionRange = {
-    row: [startRowIndex, endRowIndex],
-    column: [columnStartIndex, nextColumnIndex]
-  };
+  if (!isRowHeader(nextColumnName)) {
+    const inputRange: SelectionRange = {
+      row: [startRowIndex, endRowIndex],
+      column: [columnStartIndex, nextColumnIndex]
+    };
 
-  changeSelectionRange(selection, inputRange, id);
+    changeSelectionRange(selection, inputRange, id);
+  }
 }
 
 export function removeContent(store: Store) {
   const { column, data } = store;
-  const { visibleColumns } = column;
+  const { visibleColumnsWithRowHeader } = column;
   const { rawData } = data;
   const removeRange = getRemoveRange(store);
 
@@ -158,7 +158,7 @@ export function removeContent(store: Store) {
     row: [rowStart, rowEnd]
   } = removeRange;
 
-  visibleColumns
+  visibleColumnsWithRowHeader
     .slice(columnStart, columnEnd + 1)
     .filter(({ editor }) => !!editor)
     .forEach(({ name }) => {
