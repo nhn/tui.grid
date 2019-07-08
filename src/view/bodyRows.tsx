@@ -54,6 +54,6 @@ class BodyRowsComp extends Component<Props> {
 export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
   rowIndexOffset: viewport.rowRange[0],
   rows: viewport.rows,
-  columns: side === 'L' ? column.visibleColumnsBySide.L : viewport.columns,
+  columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
   dummyRowCount: viewport.dummyRowCount
 }))(BodyRowsComp);
