@@ -277,9 +277,8 @@ function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
 
   Object.keys(prevRowSpanMap).forEach((columnName) => {
     const prevRowSpan = prevRowSpanMap[columnName];
-
-    if (prevRowSpan.spanCount > -prevRowSpan.count + 1) {
-      const { mainRowKey, count, spanCount } = prevRowSpan;
+    const { mainRowKey, count, spanCount } = prevRowSpan;
+    if (spanCount > -count + 1) {
       const subRowCount = count >= 0 ? -1 : count - 1;
       subRowSpanMap[columnName] = createRowSpan(false, mainRowKey, subRowCount, spanCount);
     }
@@ -288,20 +287,21 @@ function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
 }
 
 function createRowSpanMap(row: OptRow, rowSpan: RowSpanAttributeValue, prevRow?: Row) {
-  const rowSpanMap: RowSpanMap = {};
   const rowKey = row.rowKey as RowKey;
+  let mainRowSpanMap: RowSpanMap = {};
+  let subRowSpanMap: RowSpanMap = {};
 
   if (!isEmpty(rowSpan)) {
-    return createMainRowSpanMap(rowSpan, rowKey);
+    mainRowSpanMap = createMainRowSpanMap(rowSpan, rowKey);
   }
   if (prevRow) {
     const { rowSpanMap: prevRowSpanMap } = prevRow;
     if (!isEmpty(prevRowSpanMap)) {
-      return createSubRowSpan(prevRowSpanMap);
+      subRowSpanMap = createSubRowSpan(prevRowSpanMap);
     }
   }
 
-  return rowSpanMap;
+  return { ...mainRowSpanMap, ...subRowSpanMap };
 }
 
 export function createRawRow(
