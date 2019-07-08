@@ -1,4 +1,4 @@
-import { Rect, Store, Viewport } from '../store/types';
+import { Rect, Store, Viewport, Side } from '../store/types';
 
 function getHorizontalScrollPosition(
   rightSideWidth: number,
@@ -38,16 +38,16 @@ function getVerticalScrollPosition(
   return null;
 }
 
-function getChangedScrollPosition(store: Store, changedCellPosRect?: Rect) {
+function getChangedScrollPosition(store: Store, side: Side, changedCellPosRect?: Rect) {
   const {
     dimension: { bodyHeight, scrollXHeight, scrollYWidth, tableBorderWidth },
     columnCoords: { areaWidth },
-    focus: { cellPosRect: focusCellPostRect, side },
+    focus: { cellPosRect: focusedCellPostRect },
     viewport
   } = store;
 
   const { scrollLeft, scrollTop } = viewport;
-  const cellPosRect = changedCellPosRect || focusCellPostRect!;
+  const cellPosRect = changedCellPosRect || focusedCellPostRect!;
 
   const changedScrollLeft =
     side === 'R'
@@ -91,7 +91,7 @@ export function setScrollToFocus(store: Store) {
     return;
   }
 
-  const [changedScrollLeft, changedScrollTop] = getChangedScrollPosition(store);
+  const [changedScrollLeft, changedScrollTop] = getChangedScrollPosition(store, side);
   setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 
@@ -109,15 +109,19 @@ export function setScrollToSelection(store: Store) {
   const rowIndex = inputRange.row[1];
   const columnIndex = inputRange.column[1];
   const cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
-  const rightSideColumnIndex = columnIndex - widths.L.length;
-
+  const rightSideColumnIndex =
+    columnIndex - widths.L.length < 0 ? widths.L.length : columnIndex - widths.L.length;
   const left = columnOffsets[cellSide][rightSideColumnIndex];
   const right = left + widths[cellSide][rightSideColumnIndex];
   const top = rowOffsets[rowIndex];
   const bottom = top + heights[rowIndex];
 
   const cellPosRect = { left, right, top, bottom };
-  const [changedScrollLeft, changedScrollTop] = getChangedScrollPosition(store, cellPosRect);
+  const [changedScrollLeft, changedScrollTop] = getChangedScrollPosition(
+    store,
+    cellSide,
+    cellPosRect
+  );
   setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 
