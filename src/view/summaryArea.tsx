@@ -63,7 +63,7 @@ export const SummaryArea = connect<StoreProps, OwnProps>((store, { side }) => {
 
   return {
     height: summaryHeight,
-    columns: column.visibleColumnsBySide[side],
+    columns: column.visibleColumnsBySideWithRowHeader[side],
     scrollLeft
   };
 })(SummaryAreaComp);
