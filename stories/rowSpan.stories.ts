@@ -39,6 +39,12 @@ function createDataWithRowSpanAttr(): OptRow[] {
     }
   };
 
+  optRows[4]._attributes = {
+    rowSpan: {
+      artist: 3
+    }
+  };
+
   optRows[10]._attributes = {
     rowSpan: {
       type: 2
