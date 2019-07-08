@@ -46,7 +46,7 @@ function getRowSpanRange(
     : [startRowIndex, endRowIndex];
 }
 
-export function getRowRangeWithRowSpan(
+export function getMaxRowSpanRange(
   rowRange: Range,
   colRange: Range,
   visibleColumns: ColumnInfo[],
@@ -75,6 +75,27 @@ export function getRowRangeWithRowSpan(
   return startRowIndex > endRowIndex
     ? [endRowSpanIndex, startRowSpanIndex]
     : [startRowSpanIndex, endRowSpanIndex];
+}
+
+export function getRowRangeWithRowSpan(
+  rowRange: Range,
+  colRange: Range,
+  visibleColumnsWithRowHeader: ColumnInfo[],
+  rowIndex: number | null,
+  data: Data
+): Range {
+  if (enableRowSpan(data.sortOptions.columnName)) {
+    const [startRowIndex, endRowIndex] = getMaxRowSpanRange(
+      rowRange,
+      colRange,
+      visibleColumnsWithRowHeader,
+      rowIndex,
+      data
+    );
+    return [startRowIndex, endRowIndex];
+  }
+
+  return rowRange;
 }
 
 export function getVerticalPosWithRowSpan(
