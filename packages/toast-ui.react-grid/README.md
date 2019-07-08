@@ -227,7 +227,6 @@ const MyComponent = () => (
   <Grid 
     columns={columns} 
     data={dataSource} 
-    pagination={true} 
     pageOptions={{perPage: 3}}
   />
 );
