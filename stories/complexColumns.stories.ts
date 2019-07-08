@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/html';
 import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
+import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/tree';
 
@@ -10,10 +10,12 @@ import '../src/css/grid.css';
 const stories = storiesOf('Complex Columns', module);
 stories.addDecorator(withKnobs);
 
-const columns = [
+const columns: OptColumn[] = [
   {
     header: 'Name',
-    name: 'name'
+    name: 'name',
+    sortable: true,
+    sort: 'desc'
   },
   {
     header: 'Artist',

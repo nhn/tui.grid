@@ -2,7 +2,7 @@ import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
-import { OptGrid } from '../../src/types';
+import { OptGrid, OptColumn } from '../../src/types';
 import { comparator } from '@/helper/sort';
 import { Dictionary } from '@/store/types';
 
@@ -15,10 +15,10 @@ const CONTENT_WIDTH = 700;
 // @TODO: Retrieve scrollbar-width from real browser
 const SCROLLBAR_WIDTH = 17;
 
-const columns = [
+const columns: OptColumn[] = [
   { name: 'name', minWidth: 150, sortable: true },
-  { name: 'price', minWidth: 150, sortable: true },
-  { name: 'downloadCount', minWidth: 150 }
+  { name: 'price', minWidth: 150, sortable: true, sort: 'asc' },
+  { name: 'downloadCount', minWidth: 150, sortable: true, sort: 'desc' }
 ];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
@@ -52,6 +52,9 @@ function createSortButonAlias() {
   cy.get(`.${cls('btn-sorting')}`)
     .eq(1)
     .as('second');
+  cy.get(`.${cls('btn-sorting')}`)
+    .eq(2)
+    .as('third');
 }
 
 function assertSortClassNames(target: string, ascending: boolean, hasClass: boolean) {
@@ -113,6 +116,15 @@ describe('sort', () => {
 
     assertSortClassNames('@first', true, false);
     assertSortClassNames('@first', false, false);
+  });
+
+  it('sort by descending order when the sort button is first clicked.', () => {
+    createGrid();
+    createSortButonAlias();
+
+    cy.get('@third').click();
+    assertSortClassNames('@third', true, false);
+    assertSortClassNames('@third', false, true);
   });
 
   it('data is sorted properly', () => {

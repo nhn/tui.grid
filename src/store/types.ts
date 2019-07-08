@@ -26,6 +26,8 @@ export type EditingEvent = 'click' | 'dblclick';
 
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
+export type SortingType = 'asc' | 'desc';
+
 export interface Dictionary<T> {
   [index: string]: T;
 }
@@ -186,6 +188,7 @@ export interface ColumnInfo {
   escapeHTML?: boolean;
   defaultValue?: CellValue;
   sortable?: boolean;
+  sort?: SortingType;
   validation?: Validation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
@@ -396,4 +399,5 @@ export interface ComplexColumnInfo {
   name: string;
   childNames?: string[];
   sortable?: boolean;
+  sort?: SortingType;
 }
