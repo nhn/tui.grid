@@ -143,7 +143,8 @@ stories.add(
       bodyHeight: 'fitToParent',
       columnOptions: {
         frozenCount: 2,
-        minWidth: 150
+        minWidth: 150,
+        resizable: true
       },
       copyOptions: {
         useFormattedValue: true
