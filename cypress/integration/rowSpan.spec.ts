@@ -17,6 +17,12 @@ function createDataWithRowSpanAttr(): OptRow[] {
     }
   };
 
+  optRows[4]._attributes = {
+    rowSpan: {
+      artist: 3
+    }
+  };
+
   optRows[10]._attributes = {
     rowSpan: {
       type: 2
@@ -56,6 +62,7 @@ it('render rowSpan cell properly', () => {
   cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
   cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
   cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
+  cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
 });
 
 describe('getRowSpanData()', () => {
