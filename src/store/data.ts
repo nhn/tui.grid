@@ -278,7 +278,7 @@ function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
   Object.keys(prevRowSpanMap).forEach((columnName) => {
     const prevRowSpan = prevRowSpanMap[columnName];
     const { mainRowKey, count, spanCount } = prevRowSpan;
-    if (spanCount > -count + 1) {
+    if (spanCount > 1 - count) {
       const subRowCount = count >= 0 ? -1 : count - 1;
       subRowSpanMap[columnName] = createRowSpan(false, mainRowKey, subRowCount, spanCount);
     }
