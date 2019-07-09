@@ -142,7 +142,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const { scrollLeft, scrollTop } = store.viewport;
   const { areaWidth } = store.columnCoords;
   const { viewData, sortOptions } = store.data;
-  const { allColumnMap, frozenCount } = store.column;
+  const { allColumnMap } = store.column;
 
   const { top, left, right, bottom } = cellPosRect!;
   const cellWidth = right - left + cellBorderWidth;
@@ -154,7 +154,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
 
   return {
     grid: getInstance(store.id),
-    left: left + (side === 'L' ? 0 : offsetLeft + frozenCount * frozenBorderWidth),
+    left: left + (side === 'L' ? 0 : offsetLeft + frozenBorderWidth),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
