@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v3.5.0
+// Type definitions for TOAST UI Grid v3.9.0
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />
@@ -138,7 +138,7 @@ declare namespace tuiGrid {
         useHtmlEntity?: boolean;
         ignored?: boolean;
         sortable?: boolean;
-        sort?: string;
+        sortingType?: string;
         onBeforeChange?: (ev: IColumnEventOptions) => void;
         onAfterChange?: (ev: IColumnEventOptions) => void;
         editOptions?: IEditingUIOptions;
