@@ -91,7 +91,7 @@ export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
 
 export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number {
   const index = findIndex(predicate, arr);
-  const positiveIndex = index - 1 < 0 ? 0 : index - 1;
+  const positiveIndex = index <= 0 ? 0 : index - 1;
 
   return index >= 0 ? positiveIndex : arr.length - 1;
 }

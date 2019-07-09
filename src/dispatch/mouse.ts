@@ -228,6 +228,7 @@ function findRowIndexByPosition(store: Store, viewInfo: ViewInfo) {
   const { dimension, columnCoords, rowCoords } = store;
   const { areaWidth } = columnCoords;
   const scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+
   return findOffsetIndex(rowCoords.offsets, scrolledPosition.y);
 }
 
@@ -434,9 +435,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const rowIndex = findPropIndex('rowKey', rowKey, data.rawData);
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
-  let [startRowIndex, endRowIndex] = [rowIndex, rowIndex];
-
-  [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
+  const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [rowIndex, rowIndex],
     [rowHeaderCount, endColumnIndex],
     visibleColumnsWithRowHeader,

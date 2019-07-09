@@ -144,8 +144,10 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
 }
 
 export function removeContent(store: Store) {
-  const { column, data } = store;
-  const { visibleColumnsWithRowHeader } = column;
+  const {
+    column: { visibleColumnsWithRowHeader },
+    data
+  } = store;
   const { rawData } = data;
   const removeRange = getRemoveRange(store);
 

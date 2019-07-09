@@ -85,14 +85,7 @@ export function getRowRangeWithRowSpan(
   data: Data
 ): Range {
   if (enableRowSpan(data.sortOptions.columnName)) {
-    const [startRowIndex, endRowIndex] = getMaxRowSpanRange(
-      rowRange,
-      colRange,
-      visibleColumnsWithRowHeader,
-      rowIndex,
-      data
-    );
-    return [startRowIndex, endRowIndex];
+    return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
   }
 
   return rowRange;
