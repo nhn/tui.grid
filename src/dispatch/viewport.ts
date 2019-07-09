@@ -110,7 +110,7 @@ export function setScrollToSelection(store: Store) {
   const columnIndex = inputRange.column[1];
   const cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
   const rightSideColumnIndex =
-    columnIndex - widths.L.length < 0 ? widths.L.length : columnIndex - widths.L.length;
+    columnIndex < widths.L.length ? widths.L.length : columnIndex - widths.L.length;
   const left = columnOffsets[cellSide][rightSideColumnIndex];
   const right = left + widths[cellSide][rightSideColumnIndex];
   const top = rowOffsets[rowIndex];
