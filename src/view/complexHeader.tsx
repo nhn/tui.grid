@@ -15,10 +15,10 @@ interface OwnProps {
 
 interface StoreProps {
   headerHeight: number;
+  cellBorderWidth: number;
   columns: ColumnInfo[];
   complexHeaderColumns: ComplexColumnInfo[];
   columnSelectionRange: Range | null;
-  visibleColumns: ColumnInfo[];
   rowHeaderCount: number;
 }
 
@@ -60,24 +60,14 @@ class ComplexHeaderComp extends Component<Props> {
   }
 
   private isSelected(name: string) {
-    const {
-      columnSelectionRange,
-      visibleColumns,
-      rowHeaderCount,
-      complexHeaderColumns
-    } = this.props;
+    const { columnSelectionRange, columns, complexHeaderColumns } = this.props;
 
     if (!columnSelectionRange) {
       return false;
     }
 
     const [selectionStart, selectionEnd] = columnSelectionRange;
-    const [columnStart, columnEnd] = getChildColumnRange(
-      visibleColumns,
-      complexHeaderColumns,
-      name,
-      rowHeaderCount
-    );
+    const [columnStart, columnEnd] = getChildColumnRange(columns, complexHeaderColumns, name);
 
     return (
       columnStart >= selectionStart &&
@@ -105,9 +95,9 @@ class ComplexHeaderComp extends Component<Props> {
           [!isRowHeader(name) && this.isSelected(name), 'cell-selected'],
           [isRowHeader(name), 'cell-row-header']
         )}
-        height={height}
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
+        style={{ height }}
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
         {!!sortable && <SortingButton columnName={name} />}
@@ -116,7 +106,7 @@ class ComplexHeaderComp extends Component<Props> {
   }
 
   public render() {
-    const { columns, headerHeight } = this.props;
+    const { columns, headerHeight, cellBorderWidth } = this.props;
     const hierarchies = columns.map((column) => this.getColumnHierarchy(column).reverse());
     const maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
     const rows = new Array(maxRowCount);
@@ -153,7 +143,9 @@ class ComplexHeaderComp extends Component<Props> {
         columnNames[j] = columnName;
         rows[j] = rows[j] || [];
 
-        rows[j].push(this.createTableHeaderComponent(column, height, colspans[j], rowspan));
+        rows[j].push(
+          this.createTableHeaderComponent(column, height + cellBorderWidth, colspans[j], rowspan)
+        );
       });
     });
 
@@ -169,17 +161,17 @@ class ComplexHeaderComp extends Component<Props> {
 
 export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
-    column: { rowHeaderCount, visibleColumns, visibleColumnsBySide, complexHeaderColumns },
-    dimension: { headerHeight },
+    column: { rowHeaderCount, visibleColumnsBySideWithRowHeader, complexHeaderColumns },
+    dimension: { headerHeight, cellBorderWidth },
     selection: { rangeBySide }
   } = store;
 
   return {
     headerHeight,
-    columns: visibleColumnsBySide[side],
+    cellBorderWidth,
+    columns: visibleColumnsBySideWithRowHeader[side],
     complexHeaderColumns,
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
-    visibleColumns,
     rowHeaderCount
   };
 })(ComplexHeaderComp);
