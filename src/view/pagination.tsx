@@ -1,10 +1,11 @@
 import { Component, h } from 'preact';
+import Grid from '../grid';
 import TuiPagination from 'tui-pagination';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { shallowEqual, isNumber, isEmpty } from '../helper/common';
-import { getDataProvider, getPaginationManager } from '../instance';
+import { getDataProvider, getPaginationManager, getInstance } from '../instance';
 import { PageOptions } from '../store/types';
 import { DataProvider } from '../dataSource/types';
 import { PaginationManager } from '../pagination/paginationManager';
@@ -13,6 +14,7 @@ interface StoreProps {
   pageOptions: PageOptions;
   dataProvider: DataProvider;
   paginationHolder: PaginationManager;
+  grid: Grid;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -59,12 +61,17 @@ class PaginationComp extends Component<Props> {
   }
 
   private createPagination() {
-    const { pageOptions, paginationHolder } = this.props;
+    const {
+      pageOptions,
+      paginationHolder,
+      grid: { usageStatistics }
+    } = this.props;
     const { totalCount, perPage, page } = pageOptions;
     const options = {
       totalItems: totalCount,
       itemsPerPage: perPage,
-      page
+      page,
+      usageStatistics
     };
     this.tuiPagination = new TuiPagination(this.el!, options);
     this.addEventListener();
@@ -99,5 +106,6 @@ class PaginationComp extends Component<Props> {
 export const Pagination = connect<StoreProps>(({ id, data }) => ({
   pageOptions: data.pageOptions,
   dataProvider: getDataProvider(id),
-  paginationHolder: getPaginationManager(id)
+  paginationHolder: getPaginationManager(id),
+  grid: getInstance(id)
 }))(PaginationComp);
