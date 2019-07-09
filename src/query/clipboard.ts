@@ -5,7 +5,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
   const {
     selection: { range },
     focus: { rowIndex, totalColumnIndex },
-    column: { visibleColumns },
+    column: { visibleColumnsWithRowHeader },
     data: { viewData }
   } = store;
   let startRowIndex, startColumnIndex;
@@ -20,7 +20,7 @@ export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionR
 
   const endRowIndex = Math.min(pasteData.length + startRowIndex, viewData.length) - 1;
   const endColumnIndex =
-    Math.min(pasteData[0].length + startColumnIndex, visibleColumns.length) - 1;
+    Math.min(pasteData[0].length + startColumnIndex, visibleColumnsWithRowHeader.length) - 1;
 
   return {
     row: [startRowIndex, endRowIndex],
@@ -56,7 +56,7 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
 
 function getValueToString(store: Store) {
   const {
-    column: { visibleColumns },
+    column: { visibleColumnsWithRowHeader },
     focus: { rowIndex, columnName, totalColumnIndex },
     data: { viewData, rawData }
   } = store;
@@ -66,13 +66,17 @@ function getValueToString(store: Store) {
   }
   const valueMap = viewData[rowIndex].valueMap[columnName];
 
-  return getTextWithCopyOptionsApplied(valueMap, rawData, visibleColumns[totalColumnIndex]);
+  return getTextWithCopyOptionsApplied(
+    valueMap,
+    rawData,
+    visibleColumnsWithRowHeader[totalColumnIndex]
+  );
 }
 
 function getValuesToString(store: Store) {
   const {
     selection: { range },
-    column: { visibleColumns },
+    column: { visibleColumnsWithRowHeader },
     data: { viewData, rawData }
   } = store;
 
@@ -82,13 +86,13 @@ function getValuesToString(store: Store) {
 
   const { row, column } = range;
   const rowList = viewData.slice(row[0], row[1] + 1);
-  const columnInRange = visibleColumns.slice(column[0], column[1] + 1);
+  const columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
 
   return rowList
     .map(({ valueMap }) =>
       columnInRange
         .map(({ name }, index) =>
-          getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumns[index])
+          getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumnsWithRowHeader[index])
         )
         .join('\t')
     )

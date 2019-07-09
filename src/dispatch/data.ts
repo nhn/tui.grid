@@ -201,7 +201,7 @@ function applyPasteDataToRawData(
 ) {
   const {
     data: { rawData, viewData },
-    column: { visibleColumns },
+    column: { visibleColumnsWithRowHeader },
     id
   } = store;
   const {
@@ -209,7 +209,7 @@ function applyPasteDataToRawData(
     column: [startColumnIndex, endColumnIndex]
   } = indexToPaste;
 
-  const columnNames = mapProp('name', visibleColumns);
+  const columnNames = mapProp('name', visibleColumnsWithRowHeader);
 
   for (let rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
     let pasted = false;

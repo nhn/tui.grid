@@ -750,7 +750,11 @@ export default class Grid {
    * @returns {number} - The index of the column
    */
   public getIndexOfColumn(columnName: string) {
-    return findPropIndex('name', columnName, this.store.column.allColumns);
+    return findPropIndex(
+      'name',
+      columnName,
+      this.store.column.allColumns.filter(({ name }) => !isRowHeader(name))
+    );
   }
 
   /**

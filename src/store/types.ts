@@ -215,8 +215,10 @@ export interface Column {
   readonly allColumnMap: Dictionary<ColumnInfo>;
   readonly rowHeaderCount: number;
   readonly visibleColumns: ColumnInfo[];
+  readonly visibleColumnsWithRowHeader: ColumnInfo[];
   readonly visibleFrozenCount: number;
   readonly visibleColumnsBySide: VisibleColumnsBySide;
+  readonly visibleColumnsBySideWithRowHeader: VisibleColumnsBySide;
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];

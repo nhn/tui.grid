@@ -26,12 +26,15 @@ export function create({
     editingAddress: null,
     editingEvent,
     navigating: false,
+
     get side(this: Focus) {
       if (this.columnName === null) {
         return null;
       }
 
-      return someProp('name', this.columnName, column.visibleColumnsBySide.R) ? 'R' : 'L';
+      return someProp('name', this.columnName, column.visibleColumnsBySideWithRowHeader.R)
+        ? 'R'
+        : 'L';
     },
 
     get columnIndex(this: Focus) {
@@ -41,18 +44,18 @@ export function create({
         return null;
       }
 
-      return findPropIndex('name', columnName, column.visibleColumnsBySide[side]);
+      return findPropIndex('name', columnName, column.visibleColumnsBySideWithRowHeader[side]);
     },
 
     get totalColumnIndex(this: Focus) {
-      const { visibleColumnsBySide } = column;
+      const { visibleColumnsBySideWithRowHeader } = column;
       const { columnIndex, side } = this;
 
       if (columnIndex === null) {
         return columnIndex;
       }
 
-      return side === 'R' ? columnIndex + visibleColumnsBySide.L.length : columnIndex;
+      return side === 'R' ? columnIndex + visibleColumnsBySideWithRowHeader.L.length : columnIndex;
     },
 
     get rowIndex(this: Focus) {

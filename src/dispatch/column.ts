@@ -8,7 +8,7 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
 }
 
 export function setColumnWidth({ column }: Store, side: Side, index: number, width: number) {
-  const columnItem = column.visibleColumnsBySide[side][index];
+  const columnItem = column.visibleColumnsBySideWithRowHeader[side][index];
 
   columnItem.baseWidth = width;
   columnItem.fixedWidth = true;

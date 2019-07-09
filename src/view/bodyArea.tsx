@@ -28,6 +28,7 @@ interface StoreProps {
   dummyRowCount: number;
   scrollX: boolean;
   scrollY: boolean;
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -43,6 +44,8 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
+
+  private boundingRect?: { top: number; left: number };
 
   private dragStartData: DragStartData = {
     pageX: null,
@@ -70,10 +73,11 @@ class BodyAreaComp extends Component<Props> {
     const { scrollTop, scrollLeft } = el;
     const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
+    this.boundingRect = { top, left };
 
     dispatch(
       'mouseDownBody',
-      { top, left, scrollTop, scrollLeft, side },
+      { scrollTop, scrollLeft, side, ...this.boundingRect },
       { pageX, pageY, shiftKey }
     );
 
@@ -99,7 +103,16 @@ class BodyAreaComp extends Component<Props> {
   private handleMouseMove = (ev: MouseEvent) => {
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     if (this.moveEnoughToTriggerDragEvent({ pageX, pageY })) {
-      this.props.dispatch('dragMoveBody', this.dragStartData as DragData, { pageX, pageY });
+      const { el, boundingRect, props } = this;
+      const { scrollTop, scrollLeft } = el!;
+      const { side, dispatch } = props;
+
+      dispatch(
+        'dragMoveBody',
+        this.dragStartData as DragData,
+        { pageX, pageY },
+        { scrollTop, scrollLeft, side, ...boundingRect! }
+      );
     }
   };
 
@@ -134,7 +147,8 @@ class BodyAreaComp extends Component<Props> {
     offsetLeft,
     dummyRowCount,
     scrollX,
-    scrollY
+    scrollY,
+    cellBorderWidth
   }: Props) {
     const overflowX = scrollX ? 'scroll' : 'hidden';
     const overflowY = scrollY ? 'scroll' : 'hidden';
@@ -147,7 +161,7 @@ class BodyAreaComp extends Component<Props> {
     };
     const containerStyle = {
       width: totalColumnWidth,
-      height: totalRowHeight
+      height: totalRowHeight + cellBorderWidth
     };
 
     return (
@@ -180,7 +194,7 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const { columnCoords, rowCoords, dimension, viewport } = store;
   const { totalRowHeight } = rowCoords;
   const { totalColumnWidth } = columnCoords;
-  const { bodyHeight, scrollXHeight, scrollX, scrollY } = dimension;
+  const { bodyHeight, scrollXHeight, scrollX, scrollY, cellBorderWidth } = dimension;
   const { offsetLeft, offsetTop, scrollTop, scrollLeft, dummyRowCount } = viewport;
 
   return {
@@ -194,6 +208,7 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollXHeight,
     dummyRowCount,
     scrollX,
-    scrollY
+    scrollY,
+    cellBorderWidth
   };
 })(BodyAreaComp);

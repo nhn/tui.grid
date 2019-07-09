@@ -106,6 +106,6 @@ export const ColumnResizer = connect<StoreProps, OwnProps>(
     widths: columnCoords.widths[side],
     offsets: columnCoords.offsets[side],
     cellBorderWidth: dimension.cellBorderWidth,
-    columns: column.visibleColumnsBySide[side]
+    columns: column.visibleColumnsBySideWithRowHeader[side]
   })
 )(ColumnResizerComp);

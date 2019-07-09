@@ -2,10 +2,10 @@ import { findProp, findPropIndex, includes } from '../helper/common';
 import { isParentColumnHeader } from '../helper/column';
 import { ColumnInfo, ComplexColumnInfo } from '../store/types';
 
-function sortByVisibleColumns(visibleColumns: ColumnInfo[], childNames: string[]) {
+function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];
 
-  visibleColumns.forEach((column) => {
+  visibleColumnsWithRowHeader.forEach((column) => {
     if (includes(childNames, column.name)) {
       result.push(column.name);
     }
@@ -33,17 +33,19 @@ export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[
 }
 
 export function getChildColumnRange(
-  visibleColumns: ColumnInfo[],
+  visibleColumnsWithRowHeader: ColumnInfo[],
   complexHeaderColumns: ComplexColumnInfo[],
-  name: string,
-  rowHeaderCount: number
+  name: string
 ) {
   const unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
-  const childNames = sortByVisibleColumns(visibleColumns, unsortedChildNames);
+  const childNames = sortByVisibleColumns(visibleColumnsWithRowHeader, unsortedChildNames);
 
-  const startIndex = findPropIndex('name', childNames[0], visibleColumns) - rowHeaderCount;
-  const endIndex =
-    findPropIndex('name', childNames[childNames.length - 1], visibleColumns) - rowHeaderCount;
+  const startIndex = findPropIndex('name', childNames[0], visibleColumnsWithRowHeader);
+  const endIndex = findPropIndex(
+    'name',
+    childNames[childNames.length - 1],
+    visibleColumnsWithRowHeader
+  );
 
   return [startIndex, endIndex];
 }
