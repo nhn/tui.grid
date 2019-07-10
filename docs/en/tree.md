@@ -1,22 +1,22 @@
 # Tree 🌳
 
-The TOAST UI Grid provides the function to represent hierarchical data. When a tree column is set, the data on a specific column is displayed in the tree form.
+TOAST UI Grid supports hierarchical data representation. By enabling the tree column settings, you can display a certain column of data in a tree structure. 
 
 ## Tree UI
 
-When a tree column is activated, each cell with tree data is represented by the following UI:
+When the tree column has been enabled, each cell that contains tree data is displayed in the UI like the following.
 
-* Depth : Represents a hierarchical relationship between parent and child rows. The minimum depth starts with `1`.
-* Expanded/collapsed button : It is created on the parent row that has a child row, and child rows are visible or hidden.
-* Icon : You can use a status icon that shows whether a parent row has child rows.
+* Depth: Represents the parent-child relationship between rows. It must have a minimum depth of 1. 
+* Expand / Collapse Button: This feature is enabled for parent rows with children. You can choose to make the children visible or hidden. 
+* Icon: Lets the users know whether the parent row has children or not. 
 
 ![tree-column](https://user-images.githubusercontent.com/18183560/41633101-0bd39096-7478-11e8-814f-5acbd21ea7d5.png)
 
-## How to Use
+## Usage
 
-### Set Tree Data
+### Configuring Tree Data
 
-Initialize the tree data(`object`) in an array like the common row data. If there are child rows, add the row data for each child row in the `_children` property of the parent row data. To initialize the expanded/closed button, use the `_attribute.expanded` property. The default value is `false` (collpased state). If set to `true`, the button is shown as expanded state.
+Like regular row data, tree data (`object`) are configured as arrays. If there are children rows, each child row's data is added to the parent row's `_children` attribute. Expand/Collapse button uses the `_attribute.expanded` attribute to initialize. The default value is `false` (collapsed,) and when the value is set to `true`,  the data are expanded. 
 
 ```js
 const data = [
@@ -38,21 +38,16 @@ const data = [
 ];
 ```
 
-### Activate Tree Column
+### Initializing Tree Columns
 
-The `treeColumnOptions` option is used to set the tree column, and there are three sub-options `name`, `useIcon` and `useCascadingCheckbox`. The function of each option is as follows.
+The `treeColumnOptions` option is used to configure tree columns, and has three lower options: `name`, `useIcon`, and `useCascadingCheckbox`. The purpose of each lower option is as follows. 
 
 | Option | Description |
 | --- | --- |
-| `name` | Sets column name to display tree data |
-| `useIcon` | Sets whether to use the icon |
-| `useCascadingCheckbox` | Sets whether to change state of the checkbox with keeping parent-child relationship |
+| `name` | Configures the name of the column represented in tree structure. |
+| `useIcon` | Determines whether to display the Icon or not. |
+| `useCascadingCheckbox` | Determines whether to change the state of the checkbox or not while maintaining the parent-child relationship. |
 
-The default value of `useIcon` the option is `true`, the parent row displays the folder icon and the child row displays the file icon.
-
-The default value of the `useCascadingCheckbox` option is `true`. When all child rows are selected, the parent row is selected. When the parent row is selected, all children are selected. If set to `false`, you can check individual rows.
-
-You can add options on the grid instance option.
 
 ```js
 import Grid from 'tui-grid';
@@ -69,33 +64,35 @@ const options = {
 const grid = new Grid(options);
 ```
 
-### Using Tree APIs
+### Using the Tree API
 
-When a tree column is activated, you can call the following tree related methods:
+When the tree column has been initialized, you can call the following tree related methods. 
 
-| Name | Description |
+| Method | Description |
 | --- | --- |
-| `expand` | Expands the child rows of a particular row |
-| `expandAll` | Expands all child rows |
-| `collapse` | Collapses the child rows of a particular row |
-| `collapseAll` | Collapses all child rows |
-| `getAncestorRows` | Returns all ancestor rows of the particular row |
-| `getDescendantRows` | Returns all descendant rows of the particular row |
-| `getParent` | Returns the parent row of the particular row |
-| `getChildRows` | Returns the child rows of the particular row |
-| `getDepth` | Returns the depth value of the particular row |
+| `expand` | Expands all children of a certain row. |
+| `expandAll` | Expands all children of all rows. |
+| `collapse` | Collapses all children of a certain row. |
+| `collapseAll` | Collapses all children of all rows. |
+| `getAncestorRows` | Returns all ancestor rows of a certain row. |
+| `getDescendantRows` | Returns all descendant rows of a certain row. |
+| `getParent` | Returns the parent row of a certain row. |
+| `getChildRows` | Returns all children rows of a certain row. |
+| `getDepth` | Returns the depth of a certain row. |
+
 
 ```js
 const rowKey = 1;
 grid.getAncestors(rowKey, true);
 grid.expandAll();
 ```
-It also provides custom events and occurs when the parent row is expanded or collapsed.
 
-| Name | Description |
+Furthermore, custom events are provided, so that corresponding events are emitted when a parent row is expanded or collapsed. 
+
+| Event | Description |
 | --- | --- |
-| `expand` | Occurs when the particular parent row is expanded |
-| `collapsed` | Occurs when the particular parent row is collapsed |
+| `expand` | Emitted when a certain parent row has been expanded. | 
+| `collapse` | Emitted when a certain parent row has been collapsed. |
 
 ```js
 grid.on('expand', (ev) => {
@@ -103,26 +100,26 @@ grid.on('expand', (ev) => {
   const descendantRows = grid.getDescendantRows(rowKey);
 
   console.log('rowKey: ' + rowKey);
-  console.log('ededescendantRows: ' + descendantRows);
+  console.log('descendantRows: ' + descendantRows);
 });
 ```
 
-### Behavior Changed APIs
+### How Tree Columns Affect Other API
 
-The behavior of some API is changing when a tree column is activated.
+When tree columns have been initialized, certain API acts differently. 
 
 | Name | Description |
 | --- | --- |
-| `appendRow` | Creates child rows below current row  |
-| `prependRow` | Creates child rows below current row |
-| `removeRow` | If there are child rows, deletes them together |
-| `check` | If sets `useCascadingCheckbox: true`, changes state of the checkbox with keeping the parent-child relationship |
-| `uncheck` | If sets `useCascadingCheckbox: true`, changes state of the checkbox with keeping the parent-child relationship |
+| `appendRow` | Creates and pushes a child row under the last child of the current row.  |
+| `prependRow` | Creates and pushes a child row under the first child of the current row. |
+| `removeRow` | Removes all data of a certain row. (If there are children rows, children rows are removed as well.) |
+| `check` | If `useCascadingCheckbox: true`, change the state of the checkbox while maintaining the parent-child relationship. |
+| `uncheck` | If `useCascadingCheckbox: true`, change the state of the checkbox while maintaining the parent-child relationship. |
 
-### Notice
+### Reference
 
-When using a tree column, there are restrictions on the use of **sorting**, **row merging**, **pagination**.
+If you are using tree columns, there are restrictions on using **sorting**, **row merging**, and **pagination.**
 
-## Example
+## Examples
 
-You can see the sample Grid, which uses tree column [here](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree).
+Examples of using tree columns can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree).
