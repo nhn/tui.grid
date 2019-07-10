@@ -1,4 +1,4 @@
-# Complex 컬럼 🔗
+# 복합 컬럼 🔗
 
 TOAST UI Grid는 컬럼들을 그룹 지어 부모 컬럼 헤더로 묶을 수 있다. `header.complexColumns` 옵션으로 여러 컬럼을 하나의 부모 헤더로 그룹 지어 트리 형태의 구조를 만들 수 있다. 부모 헤더 역시 또 다른 부모 헤더의 안으로 들어갈 수 있다.
 
@@ -44,7 +44,7 @@ const grid = new Grid({
 
 `parent1` 컬럼은 이제 `col1` 과 `col2` 컬럼의 부모가 된다. 그리고 `parent1` 은 `col3` 컬럼을 포함하고 있는 `parent2` 컬럼의 자식이 된다.
 
-위 Grid는 다음과 같은 모습이다.
+복합 컬럼의 결과는 다음과 같다.
 
 ![그리드](https://user-images.githubusercontent.com/18183560/59605689-49023680-914a-11e9-99f9-25bb26316b04.png)
 

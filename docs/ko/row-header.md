@@ -1,11 +1,11 @@
 # 로우 헤더 ✅
 
-TOAST UI Grid는 `rowHeaders` 옵션을 이용하여 각 row에 쉽게 체크박스를 추가하거나 번호를 지정해 줄 수 있다.
+TOAST UI Grid는 `rowHeaders` 옵션을 이용하여 각 로우에 쉽게 체크박스를 추가하거나 번호를 지정해 줄 수 있다.
 
 ## 옵션
 ### type
 
-row Header type에는 행의 번호를 나타내주는 'rowNum', 행을 선택할 수 있는 `checkbox`가 존재한다. 
+로우 Header type에는 행의 번호를 나타내주는 `rowNum`, 행을 선택할 수 있는 `checkbox`가 존재한다. 
 
 ```js
 import Grid from 'tui-grid';
@@ -17,7 +17,7 @@ const grid = new Grid({
 });
 ```
 
-위 코드를 실행하면 밑 그림처럼 각 row에 행 번호와 체크박스가 나타난다. 
+위 코드를 실행하면 아래 그림처럼 각 로우에 행 번호와 체크박스가 나타난다. 
 
 ![image](https://user-images.githubusercontent.com/35371660/60868741-9b75d500-a268-11e9-98f3-18a9293d32b4.png)
 
@@ -58,7 +58,7 @@ const grid = new Grid({
 });
 ```
 
-위 코드처럼 문자열 형태로 들어갈 로우 헤더를 커스터마이징 했다. 위 결과는 밑 그림처럼 나타난다.
+위 코드처럼 문자열 형태로 들어갈 로우 헤더를 커스터마이징 했다. 위 결과는 아래 그림처럼 나타난다.
 
 ![image](https://user-images.githubusercontent.com/35371660/60875736-7340a300-a275-11e9-9cd6-9472c2763323.png)
 
@@ -125,7 +125,7 @@ const grid = new tui.Grid({
 });
 ```
 
-위 코드는 밑 그림처럼 나타난다.
+위 코드는 아래 그림처럼 나타난다.
 
 ![image](https://user-images.githubusercontent.com/35371660/60876491-f6aec400-a276-11e9-8ff6-b2b30c5f6f4a.png)
 
@@ -133,7 +133,7 @@ const grid = new tui.Grid({
 자세한 Custom Renderer 설명은 다음 [링크](./custom-renderer)에서 확인할 수 있다.
 
 ## 로우헤더 체크 박스 활용
-### `check`, `uncheck` 이벤트
+### check, uncheck 이벤트
 
 체크박스가 선택 되었을 때, 그리고 해제 되었을 때 이벤트를 발생 시킬 수 있다.
 
@@ -152,13 +152,13 @@ grid.on('uncheck', (ev) => {
 });
 ```
 
-위 코드를 실행하면 밑 그림 처럼 이벤트가 발생하는 것을 볼 수 있다.
+위 코드를 실행하면 아래 그림 처럼 이벤트가 발생하는 것을 볼 수 있다.
 
 ![check_uncheck](https://user-images.githubusercontent.com/35371660/60872188-3a053480-a26f-11e9-8af4-e5280bf45f69.gif)
 
-### `_attributes`의 `checkDisabled` 옵션 사용하기
+### _attributes의 checkDisabled 옵션 사용하기
 
-`_attributes`옵션의 `checkDisabled`를 `true`로 지정하면 해당 row의 checkbox를 선택할 수 없다.
+`_attributes`옵션의 `checkDisabled`를 `true`로 지정하면 해당 로우의 checkbox를 선택할 수 없다.
 
 ```js
 const data = [

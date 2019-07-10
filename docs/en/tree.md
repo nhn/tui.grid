@@ -8,7 +8,7 @@ When the tree column has been enabled, each cell that contains tree data is disp
 
 * Depth: Represents the parent-child relationship between rows. It must have a minimum depth of 1. 
 * Expand / Collapse Button: This feature is enabled for parent rows with children. You can choose to make the children visible or hidden. 
-* Icon: Lets the users know whether the parent row has children or not. 
+* Icon: Let's the users know whether the parent row has children or not. 
 
 ![tree-column](https://user-images.githubusercontent.com/18183560/41633101-0bd39096-7478-11e8-814f-5acbd21ea7d5.png)
 
@@ -16,7 +16,7 @@ When the tree column has been enabled, each cell that contains tree data is disp
 
 ### Configuring Tree Data
 
-Like regular row data, tree data (`object`) are configured as arrays. If there are children rows, each child row's data is added to the parent row's `_children` attribute. Expand/Collapse button uses the `_attribute.expanded` attribute to initialize. The default value is `false` (collapsed,) and when the value is set to `true`,  the data are expanded. 
+Like regular row data, tree data (`object`) are configured as arrays. If there are children rows, each child row's data is added to the parent row's `_children` attribute. The expand/collapse button uses the `_attribute.expanded` attribute to initialize. The default value is `false` (collapsed) and when the value is set to `true`, the data are expanded. 
 
 ```js
 const data = [
@@ -45,7 +45,7 @@ The `treeColumnOptions` option is used to configure tree columns, and has three 
 | Option | Description |
 | --- | --- |
 | `name` | Configures the name of the column represented in tree structure. |
-| `useIcon` | Determines whether to display the Icon or not. |
+| `useIcon` | Determines whether to display the icon or not. |
 | `useCascadingCheckbox` | Determines whether to change the state of the checkbox or not while maintaining the parent-child relationship. |
 
 

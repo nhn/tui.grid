@@ -50,7 +50,7 @@
       "example13-i18n": "13. Internationalization (i18n)",
       "example14-tree": "14. Tree",
       "example15-custom-event": "15. Custom Event",
-      "example15-frozen-columns": "16. Frozen Columns"
+      "example16-frozen-columns": "16. Frozen Columns"
     }
   },
   "pathPrefix" : "tui.grid"

@@ -75,8 +75,8 @@ const instance = new Grid(options);
   * [English](https://github.com/nhn/tui.grid/tree/production/docs)
   * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/ko)
 * v4.0 Migration Guide
-  * [English](./docs/v4.0-migration-guide.md)
-  * [한국어](./docs/v4.0-migration-guide-kor.md)
+  * [English](https://github.com/nhn/tui.grid/tree/production/docs/v4.0-migration-guide.md)
+  * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/v4.0-migration-guide-kor.md)
 * [APIs](https://nhn.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
@@ -144,11 +144,11 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/en/themes.md)
 * [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md)
 * [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-renderer.md)
+* [Pagination](https://github.com/nhn/tui.grid/blob/master/docs/en/data-source.md#pagination)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
 * Selection
-* Pagination
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns

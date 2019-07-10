@@ -2,7 +2,7 @@
 
 ## 튜토리얼(🇰🇷)
 - [🚀 시작하기](./getting-started.md)
-- [🔗 Complex 컬럼](./complex-columns.md)
+- [🔗 복합 컬럼](./complex-columns.md)
 - [🛠 커스텀 에디터](./custom-editor.md)
 - [🔩 커스텀 렌더러](./custom-renderer.md)
 - [🤝 컬럼 관계 설정](./relation-between-columns.md)
