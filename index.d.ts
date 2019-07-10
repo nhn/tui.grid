@@ -17,6 +17,8 @@ declare namespace tuiGrid {
 
   type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
 
+  type SortingType = 'asc' | 'desc';
+
   interface ICellStyle {
     background?: string;
     border?: string;
@@ -200,6 +202,7 @@ declare namespace tuiGrid {
     whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
     ellipsis?: boolean;
     sortable?: boolean;
+    sortingType?: SortingType;
     copyOptions?: ClipboardCopyOptions;
     onBeforeChange?: Function;
     onAfterChange?: Function;
@@ -228,6 +231,7 @@ declare namespace tuiGrid {
     escapeHTML?: boolean;
     defaultValue?: CellValue;
     sortable?: boolean;
+    sortingType?: SortingType;
     validation?: IValidation;
     onBeforeChange?: Function;
     onAfterChange?: Function;
@@ -239,6 +243,7 @@ declare namespace tuiGrid {
     name: string;
     childNames?: string[];
     sortable?: boolean;
+    sortingType?: SortingType;
   }
 
   interface IColumnOptions {
