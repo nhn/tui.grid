@@ -12,8 +12,8 @@ stories.addDecorator(withKnobs);
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const data = sampleData.slice();
   const columns: OptColumn[] = [
-    { name: 'name', minWidth: 150, sortable: true, sort: 'desc', editor: 'text' },
-    { name: 'artist', minWidth: 150, sortable: true, sort: 'asc', editor: 'text' },
+    { name: 'name', minWidth: 150, sortable: true, sortingType: 'desc', editor: 'text' },
+    { name: 'artist', minWidth: 150, sortable: true, sortingType: 'asc', editor: 'text' },
     { name: 'type', minWidth: 150 },
     { name: 'genre', minWidth: 150 },
     { name: 'price', minWidth: 150 },

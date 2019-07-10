@@ -120,7 +120,7 @@ export interface OptColumn {
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
-  sort?: SortingType;
+  sortingType?: SortingType;
   copyOptions?: ClipboardCopyOptions;
   onBeforeChange?: Function;
   onAfterChange?: Function;

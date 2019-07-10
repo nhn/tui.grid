@@ -188,7 +188,7 @@ export interface ColumnInfo {
   escapeHTML?: boolean;
   defaultValue?: CellValue;
   sortable?: boolean;
-  sort?: SortingType;
+  sortingType?: SortingType;
   validation?: Validation;
   onBeforeChange?: Function;
   onAfterChange?: Function;
@@ -399,5 +399,5 @@ export interface ComplexColumnInfo {
   name: string;
   childNames?: string[];
   sortable?: boolean;
-  sort?: SortingType;
+  sortingType?: SortingType;
 }

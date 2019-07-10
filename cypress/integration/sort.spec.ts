@@ -17,8 +17,8 @@ const SCROLLBAR_WIDTH = 17;
 
 const columns: OptColumn[] = [
   { name: 'name', minWidth: 150, sortable: true },
-  { name: 'price', minWidth: 150, sortable: true, sort: 'asc' },
-  { name: 'downloadCount', minWidth: 150, sortable: true, sort: 'desc' }
+  { name: 'price', minWidth: 150, sortable: true, sortingType: 'asc' },
+  { name: 'downloadCount', minWidth: 150, sortable: true, sortingType: 'desc' }
 ];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {

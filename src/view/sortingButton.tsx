@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { SortOptions, SortingType } from '../store/types';
+import { SortOptions } from '../store/types';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
@@ -12,7 +12,7 @@ interface OwnProps {
 interface StoreProps {
   sortOptions: SortOptions;
   dataProvider: DataProvider;
-  sortingType: SortingType;
+  ascending: boolean;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -25,10 +25,10 @@ class SortingButtonComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, sortOptions, dataProvider, sortingType } = this.props;
+    const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
     const targetColumnName = th!.getAttribute('data-column-name')!;
-    let targetAscending = sortingType === 'asc';
+    let { ascending: targetAscending } = this.props;
 
     if (sortOptions) {
       const { columnName, ascending } = sortOptions;
@@ -65,11 +65,11 @@ class SortingButtonComp extends Component<Props> {
 export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
   const { data, column, id } = store;
   const { columnName } = props;
-  const { sort = 'asc' } = column.allColumnMap[columnName];
+  const { sortingType } = column.allColumnMap[columnName];
 
   return {
     sortOptions: data.sortOptions,
     dataProvider: getDataProvider(id),
-    sortingType: sort
+    ascending: sortingType === 'asc'
   };
 })(SortingButtonComp);

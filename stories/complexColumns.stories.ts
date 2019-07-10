@@ -14,12 +14,13 @@ const columns: OptColumn[] = [
   {
     header: 'Name',
     name: 'name',
-    sortable: true,
-    sort: 'desc'
+    sortable: true
   },
   {
     header: 'Artist',
-    name: 'artist'
+    name: 'artist',
+    sortable: true,
+    sortingType: 'desc'
   },
   {
     header: 'Type',
