@@ -32,8 +32,14 @@ class ColGroupComp extends Component<Props> {
 
 export const ColGroup = connect<StoreProps, OwnProps>(
   ({ columnCoords, viewport, dimension, column }, { side, useViewport }) => ({
-    widths: columnCoords.widths[side],
-    columns: useViewport && side === 'R' ? viewport.columns : column.visibleColumnsBySide[side],
+    widths:
+      useViewport && side === 'R'
+        ? columnCoords.widths[side].slice(...viewport.colRange)
+        : columnCoords.widths[side],
+    columns:
+      useViewport && side === 'R'
+        ? viewport.columns
+        : column.visibleColumnsBySideWithRowHeader[side],
     borderWidth: dimension.cellBorderWidth
   })
 )(ColGroupComp);
