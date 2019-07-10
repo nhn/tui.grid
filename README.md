@@ -68,12 +68,15 @@ const instance = new Grid(options);
 
 ## 📙 Documents
 
-* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
-* [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
+* Getting Started
+  * [English](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
+  * [한국어](https://github.com/nhn/tui.grid/blob/production/docs/ko/getting-started.md)
+* Tutorials
+  * [English](https://github.com/nhn/tui.grid/tree/production/docs)
+  * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/ko)
 * [API](https://nhn.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
-
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
