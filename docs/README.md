@@ -16,10 +16,8 @@
 - [🛰 Data Source](./en/data-source.md)
 - [🌳 Tree](./en/tree.md)
 
-## Migration Guide 
-
-- [🇺🇸 v4.0 Migration Guide](v4.0-migration-guide.md)
-- [🇰🇷 v4.0 Migration Guide (Korean)](v4.0-migration-guide-kor.md)
+### Migration Guide
+- [✈️ v4.0 Migration Guide](v4.0-migration-guide.md)
 
 ## Etc
 

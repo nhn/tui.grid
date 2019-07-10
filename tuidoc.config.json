@@ -49,7 +49,8 @@
       "example12-whitespace": "12. WhiteSpace",
       "example13-i18n": "13. Internationalization (i18n)",
       "example14-tree": "14. Tree",
-      "example15-custom-event": "15. Custom Event"
+      "example15-custom-event": "15. Custom Event",
+      "example16-frozen-columns": "16. Frozen Columns"
     }
   },
   "pathPrefix" : "tui.grid"
