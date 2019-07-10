@@ -30,6 +30,7 @@ var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.componentHolder = options.componentHolder;
+        this.usageStatistics = options.usageStatistics;
 
         this._stopEventPropagation();
 
@@ -78,7 +79,9 @@ var Pagination = View.extend(/** @lends module:view/pagination.prototype */{
             customOptions = {};
         }
 
-        return _.assign({}, defaultOptions, customOptions);
+        return _.assign({
+            usageStatistics: this.usageStatistics
+        }, defaultOptions, customOptions);
     },
 
     /**
