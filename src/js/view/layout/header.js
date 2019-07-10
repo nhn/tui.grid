@@ -378,7 +378,7 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
         } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
             eventData.setData({
                 columnName: columnName,
-                sort: this._getColumnSortOption(columnName)
+                sortingType: this._getColumnSortingType(columnName)
             });
             this.domEventBus.trigger('click:headerSort', eventData);
         }
@@ -597,16 +597,16 @@ Header = View.extend(/** @lends module:view/layout/header.prototype */{
     },
 
     /**
-     * Get sort option of the column
+     * Get sorting type of the column
      * @param {string} columnName - target column
-     * @returns {string|undefined} sort option of the column
+     * @returns {string|undefined} sorting type of the column
      * @private
      */
-    _getColumnSortOption: function(columnName) {
+    _getColumnSortingType: function(columnName) {
         var columnData = this._getColumnData();
         var column = _.findWhere(columnData.columns, {name: columnName});
 
-        return column.sort;
+        return column.sortingType;
     }
 });
 

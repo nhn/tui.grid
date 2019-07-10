@@ -84,7 +84,7 @@ module.exports = {
         EXPAND: 'EXPAND',
         COLLAPSE: 'COLLAPSE'
     },
-    sort: {
+    sortingType: {
         ASC: 'asc',
         DESC: 'desc'
     }
