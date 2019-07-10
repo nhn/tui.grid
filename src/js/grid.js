@@ -292,7 +292,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'summary'
+            'heightResizable', 'summary', 'usageStatistics'
         ]);
         var dependencies = {
             modelManager: this.modelManager,

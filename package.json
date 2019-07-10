@@ -17,8 +17,8 @@
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
     "bundle:full": "webpack --production --full & webpack --production --full --minify",
     "tslint": "tslint index.d.ts",
-    "doc:dev" : "tuidoc --dev",
-    "doc" : "tuidoc"
+    "doc:dev": "tuidoc --dev",
+    "doc": "tuidoc"
   },
   "repository": {
     "type": "git",
@@ -86,7 +86,7 @@
     "backbone": "^1.3.3",
     "jquery": "^1.11.0",
     "tui-code-snippet": "^1.5.0",
-    "tui-date-picker": "^3.2.1",
+    "tui-date-picker": "^3.3.4",
     "tui-pagination": "^3.3.0",
     "underscore": "^1.8.3"
   }
