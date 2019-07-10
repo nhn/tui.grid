@@ -95,7 +95,7 @@ grid.expandAll();
 | 이름 | 설명 |
 | --- | --- |
 | `expand` | 특정 부모 로우를 펼칠 때 발생한다. |
-| `collapsed` | 특정 부모 로우를 접을 때 발생한다. |
+| `collapse` | 특정 부모 로우를 접을 때 발생한다. |
 
 ```js
 grid.on('expand', (ev) => {
@@ -103,7 +103,7 @@ grid.on('expand', (ev) => {
   const descendantRows = grid.getDescendantRows(rowKey);
 
   console.log('rowKey: ' + rowKey);
-  console.log('ededescendantRows: ' + descendantRows);
+  console.log('descendantRows: ' + descendantRows);
 });
 ```
 
@@ -113,8 +113,8 @@ grid.on('expand', (ev) => {
 
 | 이름 | 설명 |
 | --- | --- |
-| `appendRow` | 현재 로우 아래에 자식 로우를 만든다.  |
-| `prependRow` | 현재 로우 아래에 자식 로우를 만든다. |
+| `appendRow` | 현재 로우의 마지막 자식 아래에 로우를 만든다.  |
+| `prependRow` | 현재 로우의 첫 번째 자식 아래에 로우를 만든다. |
 | `removeRow` | 자식 로우가 있다면 자식 로우를 포함하여 모두 지운다. |
 | `check` | `useCascadingCheckbox: true`로 설정되어있다면 부모-자식 관계를 유지하며 체크 박스의 상태를 바꾼다. |
 | `uncheck` | `useCascadingCheckbox: true`로 설정되어있다면 부모-자식 관계를 유지하며 체크 박스의 상태를 바꾼다. |
