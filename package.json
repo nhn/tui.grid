@@ -32,6 +32,10 @@
     "grid",
     "tui-grid"
   ],
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "author": "NHN. FE Development Lab",
   "license": "MIT",
   "devDependencies": {

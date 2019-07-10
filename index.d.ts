@@ -138,7 +138,7 @@ declare namespace tuiGrid {
         useHtmlEntity?: boolean;
         ignored?: boolean;
         sortable?: boolean;
-        sort?: string;
+        sortingType?: string;
         onBeforeChange?: (ev: IColumnEventOptions) => void;
         onAfterChange?: (ev: IColumnEventOptions) => void;
         editOptions?: IEditingUIOptions;

@@ -12,7 +12,7 @@ var Collection = require('../../base/collection');
 var constMap = require('../../common/constMap');
 var Row = require('./row');
 var GridEvent = require('../../event/gridEvent');
-var sort = constMap.sort;
+var sortingType = constMap.sortingType;
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -93,8 +93,8 @@ var RowList = Collection.extend(/** @lends module:model/data/rowList.prototype *
     _onClickHeaderSort: function(ev) {
         var asc;
 
-        if (ev.sort && this.sortOptions.columnName !== ev.columnName) {
-            asc = ev.sort === sort.ASC;
+        if (ev.sortingType && this.sortOptions.columnName !== ev.columnName) {
+            asc = ev.sortingType === sortingType.ASC;
         }
 
         this.sortByField(ev.columnName, asc);
