@@ -236,6 +236,8 @@ export default class Grid {
 
   private paginationManager: PaginationManager;
 
+  public usageStatistics: boolean;
+
   public constructor(options: OptGrid) {
     const { el, usageStatistics = true } = options;
     const id = register(this);
@@ -253,8 +255,9 @@ export default class Grid {
     this.dataProvider = dataProvider;
     this.dataManager = dataManager;
     this.paginationManager = paginationManager;
+    this.usageStatistics = usageStatistics;
 
-    if (usageStatistics) {
+    if (this.usageStatistics) {
       sendHostname();
     }
 

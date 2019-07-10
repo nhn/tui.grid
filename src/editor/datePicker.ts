@@ -41,7 +41,12 @@ export class DatePickerEditor implements CellEditor {
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
     const calendarWrapper = this.createCalendarWrapper();
-    const { options } = props.columnInfo.editor!;
+    const {
+      grid: { usageStatistics },
+      columnInfo,
+      value
+    } = props;
+    const { options } = columnInfo.editor!;
 
     if (options) {
       if (options.format) {
@@ -50,8 +55,8 @@ export class DatePickerEditor implements CellEditor {
       }
     }
 
-    if (isNumber(props.value) || isString(props.value)) {
-      date = new Date(props.value);
+    if (isNumber(value) || isString(value)) {
+      date = new Date(value);
     }
 
     const defaultOptions = {
@@ -60,7 +65,8 @@ export class DatePickerEditor implements CellEditor {
       input: {
         element: this.inputEl,
         format
-      }
+      },
+      usageStatistics
     };
 
     this.datePickerEl = new TuiDatePicker(
