@@ -190,4 +190,4 @@ const grid = new Grid({
 
 ## 예제
 
-[여기](http://nhn.github.io/tui.grid/latest/tutorial-example11-row-headers)서 예제 Grid에 프리셋 테마와 커스터마이즈 옵션을 덧붙여볼 수 있다.
+[여기](http://nhn.github.io/tui.grid/latest/tutorial-example11-row-headers)서 로우 헤더 커스터 마이징을 확인해 볼 수 있다.

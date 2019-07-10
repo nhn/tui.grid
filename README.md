@@ -74,7 +74,10 @@ const instance = new Grid(options);
 * Tutorials
   * [English](https://github.com/nhn/tui.grid/tree/production/docs)
   * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/ko)
-* [API](https://nhn.github.io/tui.grid/latest)
+* v4.0 Migration Guide
+  * [English](./docs/v4.0-migration-guide.md)
+  * [한국어](./docs/v4.0-migration-guide-kor.md)
+* [APIs](https://nhn.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
