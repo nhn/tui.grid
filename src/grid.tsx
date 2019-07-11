@@ -158,6 +158,8 @@ if ((module as any).hot) {
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
+ *          @param {string} [options.columns.sortingType='asc'] - If set to 'desc', will execute descending sort initially
+ *              when sort button is clicked.
  *          @param {function} [options.columns.onBeforeChange] - The function that will be
  *              called before changing the value of the cell. If stop() method in event object is called,
  *              the changing will be canceled.
@@ -236,6 +238,8 @@ export default class Grid {
 
   private paginationManager: PaginationManager;
 
+  public usageStatistics: boolean;
+
   public constructor(options: OptGrid) {
     const { el, usageStatistics = true } = options;
     const id = register(this);
@@ -253,8 +257,9 @@ export default class Grid {
     this.dataProvider = dataProvider;
     this.dataManager = dataManager;
     this.paginationManager = paginationManager;
+    this.usageStatistics = usageStatistics;
 
-    if (usageStatistics) {
+    if (this.usageStatistics) {
       sendHostname();
     }
 
@@ -593,6 +598,23 @@ export default class Grid {
   }
 
   /**
+   * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {string} columnName - The name of the column
+   * @param {string} value - The value of editing result
+   */
+  public finishEditing(rowKey: RowKey, columnName: string, value: string) {
+    const sortOptions = this.store.data.sortOptions;
+    this.dispatch('setValue', rowKey, columnName, value);
+
+    if (sortOptions.columnName === columnName) {
+      this.dispatch('sort', columnName, sortOptions.ascending);
+    }
+
+    this.dispatch('finishEditing', rowKey, columnName);
+  }
+
+  /**
    * Sets the value of the cell identified by the specified rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
@@ -733,7 +755,11 @@ export default class Grid {
    * @returns {number} - The index of the column
    */
   public getIndexOfColumn(columnName: string) {
-    return findPropIndex('name', columnName, this.store.column.allColumns);
+    return findPropIndex(
+      'name',
+      columnName,
+      this.store.column.allColumns.filter(({ name }) => !isRowHeader(name))
+    );
   }
 
   /**

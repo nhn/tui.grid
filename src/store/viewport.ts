@@ -93,7 +93,7 @@ export function create({
 
     // only for right side columns
     get columns(this: Viewport) {
-      return column.visibleColumnsBySide.R.slice(...this.colRange);
+      return column.visibleColumnsBySideWithRowHeader.R.slice(...this.colRange);
     },
 
     get offsetLeft(this: Viewport) {

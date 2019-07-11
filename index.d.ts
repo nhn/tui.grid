@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.0.3
+// Type definitions for TOAST UI Grid v4.1.0
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
@@ -16,6 +16,8 @@ declare namespace tuiGrid {
   type CellValue = number | string | boolean | null | undefined;
 
   type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';
+
+  type SortingType = 'asc' | 'desc';
 
   interface ICellStyle {
     background?: string;
@@ -191,16 +193,16 @@ declare namespace tuiGrid {
     editor?: CellEditor;
     formatter?: Formatter;
     defaultValue?: CellValue;
-    viewer?: string | boolean;
     resizable?: boolean;
     minWidth?: number;
-    escapeHTML?: false;
+    escapeHTML?: boolean;
     relations?: IRelations[];
     align?: 'left' | 'center' | 'right';
     valign?: 'top' | 'middle' | 'bottom';
     whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
     ellipsis?: boolean;
     sortable?: boolean;
+    sortingType?: SortingType;
     copyOptions?: ClipboardCopyOptions;
     onBeforeChange?: Function;
     onAfterChange?: Function;
@@ -229,6 +231,7 @@ declare namespace tuiGrid {
     escapeHTML?: boolean;
     defaultValue?: CellValue;
     sortable?: boolean;
+    sortingType?: SortingType;
     validation?: IValidation;
     onBeforeChange?: Function;
     onAfterChange?: Function;
@@ -240,6 +243,7 @@ declare namespace tuiGrid {
     name: string;
     childNames?: string[];
     sortable?: boolean;
+    sortingType?: SortingType;
   }
 
   interface IColumnOptions {
@@ -569,6 +573,8 @@ declare namespace tuiGrid {
     public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean): void;
 
     public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean): void;
+
+    public finishEditing(rowKey: RowKey, columnName: string, value: string): void;
 
     public setValue(rowKey: RowKey, columnName: string, value: CellValue): void;
 

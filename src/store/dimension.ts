@@ -71,14 +71,14 @@ export function create({
     },
 
     get frozenBorderWidth(this: Dimension) {
-      const { visibleFrozenCount, rowHeaderCount } = column;
-      const visibleLeftColumnCount = visibleFrozenCount - rowHeaderCount;
+      const { visibleColumnsBySide } = column;
+      const visibleLeftColumnCount = visibleColumnsBySide.L.length;
 
       return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
     },
 
     get contentsWidth(this: Dimension) {
-      const columnLen = column.visibleColumns.length;
+      const columnLen = column.visibleColumnsWithRowHeader.length;
       const totalBorderWidth = columnLen * this.cellBorderWidth;
 
       return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;

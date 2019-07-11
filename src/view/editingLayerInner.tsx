@@ -19,6 +19,8 @@ interface StoreProps {
   grid: Grid;
   value: CellValue;
   sortOptions: SortOptions;
+  focusedColumnName: string | null;
+  focusedRowKey: RowKey | null;
 }
 
 interface OwnProps {
@@ -52,15 +54,6 @@ export class EditingLayerInnerComp extends Component<Props> {
     }
   };
 
-  private handleMouseDownDocument = (ev: MouseEvent) => {
-    const target = ev.target as HTMLElement;
-    const { contentEl } = this;
-
-    if (contentEl && contentEl !== target && !contentEl.contains(target)) {
-      this.finishEditing(true);
-    }
-  };
-
   private finishEditing(save: boolean) {
     if (this.editor) {
       const { dispatch, rowKey, columnName, sortOptions } = this.props;
@@ -70,9 +63,6 @@ export class EditingLayerInnerComp extends Component<Props> {
         if (sortOptions.columnName === columnName) {
           dispatch('sort', columnName, sortOptions.ascending);
         }
-      }
-      if (isFunction(this.editor.beforeDestroy)) {
-        this.editor.beforeDestroy();
       }
       dispatch('finishEditing', rowKey, columnName);
     }
@@ -100,15 +90,25 @@ export class EditingLayerInnerComp extends Component<Props> {
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
       }
-      document.addEventListener('mousedown', this.handleMouseDownDocument);
     }
   }
 
   public componentWillUnmount() {
     this.finishEditing(false);
-    document.removeEventListener('mousedown', this.handleMouseDownDocument);
     if (this.editor && this.editor.beforeDestroy) {
       this.editor.beforeDestroy();
+    }
+  }
+
+  public componentWillReceiveProps(nextProps: Props) {
+    const {
+      focusedColumnName: prevFocusedColumnName,
+      focusedRowKey: prevFocusedRowKey
+    } = this.props;
+    const { focusedColumnName, focusedRowKey } = nextProps;
+
+    if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
+      this.finishEditing(true);
     }
   }
 
@@ -131,7 +131,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 }
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
-  const { cellPosRect, side } = store.focus;
+  const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = store.focus;
   const {
     cellBorderWidth,
     tableBorderWidth,
@@ -142,7 +142,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const { scrollLeft, scrollTop } = store.viewport;
   const { areaWidth } = store.columnCoords;
   const { viewData, sortOptions } = store.data;
-  const { allColumnMap, frozenCount } = store.column;
+  const { allColumnMap } = store.column;
 
   const { top, left, right, bottom } = cellPosRect!;
   const cellWidth = right - left + cellBorderWidth;
@@ -154,13 +154,15 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
 
   return {
     grid: getInstance(store.id),
-    left: left + (side === 'L' ? 0 : offsetLeft + frozenCount * frozenBorderWidth),
+    left: left + (side === 'L' ? 0 : offsetLeft + frozenBorderWidth),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
     value,
-    sortOptions
+    sortOptions,
+    focusedColumnName,
+    focusedRowKey
   };
 })(EditingLayerInnerComp);

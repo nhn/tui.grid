@@ -88,13 +88,12 @@ class HeaderAreaComp extends Component<Props> {
 
   public render() {
     const { columns, headerHeight, cellBorderWidth, side, complexHeaderColumns } = this.props;
-    const areaStyle = { height: headerHeight + cellBorderWidth };
-    const theadStyle = { height: headerHeight };
+    const headerHeightStyle = { height: headerHeight + cellBorderWidth };
 
     return (
       <div
         class={cls('header-area')}
-        style={areaStyle}
+        style={headerHeightStyle}
         ref={(el) => {
           this.el = el;
         }}
@@ -105,7 +104,7 @@ class HeaderAreaComp extends Component<Props> {
             <ComplexHeader side={side} />
           ) : (
             <tbody>
-              <tr style={theadStyle} onDblClick={this.handleDblClick}>
+              <tr style={headerHeightStyle} onDblClick={this.handleDblClick}>
                 {columns.map(({ name, header, sortable }, index) => (
                   <th
                     key={name}
@@ -133,7 +132,7 @@ class HeaderAreaComp extends Component<Props> {
 
 export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
-    column: { visibleColumnsBySide, complexHeaderColumns },
+    column: { visibleColumnsBySideWithRowHeader, complexHeaderColumns },
     dimension: { headerHeight, cellBorderWidth },
     selection: { rangeBySide },
     viewport,
@@ -143,7 +142,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
   return {
     headerHeight,
     cellBorderWidth,
-    columns: visibleColumnsBySide[side],
+    columns: visibleColumnsBySideWithRowHeader[side],
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
     dataProvider: getDataProvider(id),
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,

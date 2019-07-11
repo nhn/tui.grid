@@ -10,7 +10,8 @@ import {
   PageOptions,
   Validation,
   RowKey,
-  ComplexColumnInfo
+  ComplexColumnInfo,
+  SortingType
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -119,6 +120,7 @@ export interface OptColumn {
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
+  sortingType?: SortingType;
   copyOptions?: ClipboardCopyOptions;
   onBeforeChange?: Function;
   onAfterChange?: Function;

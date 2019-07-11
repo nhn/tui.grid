@@ -132,12 +132,18 @@ export function createColumn(
     renderer,
     relations,
     sortable,
+    sortingType,
     copyOptions,
     validation,
     formatter,
     onBeforeChange,
     onAfterChange,
-    whiteSpace
+    whiteSpace,
+    ellipsis,
+    valign,
+    defaultValue,
+    escapeHTML,
+    ignored
   } = column;
 
   const editorOptions = getEditorOptions(editor);
@@ -145,7 +151,7 @@ export function createColumn(
 
   return observable({
     name,
-    escapeHTML: !!column.escapeHTML,
+    escapeHTML,
     header: header || name,
     hidden: Boolean(hidden),
     resizable: isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable),
@@ -157,12 +163,17 @@ export function createColumn(
     relationMap: getRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,
+    sortingType: sortingType || 'asc',
     validation: validation ? { ...validation } : {},
     renderer: rendererOptions,
     formatter,
     onBeforeChange,
     onAfterChange,
     whiteSpace,
+    ellipsis,
+    valign,
+    defaultValue,
+    ignored,
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name)
   });
@@ -256,15 +267,26 @@ export function create({
     },
 
     get visibleColumns() {
+      return this.allColumns.slice(this.rowHeaderCount).filter(({ hidden }) => !hidden);
+    },
+
+    get visibleColumnsWithRowHeader() {
       return this.allColumns.filter(({ hidden }) => !hidden);
     },
 
     get visibleColumnsBySide() {
-      const frozenLastIndex = this.frozenCount + this.rowHeaderCount;
+      return {
+        L: this.visibleColumns.slice(0, this.frozenCount),
+        R: this.visibleColumns.slice(this.frozenCount)
+      };
+    },
+
+    get visibleColumnsBySideWithRowHeader() {
+      const frozenLastIndex = this.rowHeaderCount + this.frozenCount;
 
       return {
-        L: this.visibleColumns.slice(0, frozenLastIndex),
-        R: this.visibleColumns.slice(frozenLastIndex)
+        L: this.visibleColumnsWithRowHeader.slice(0, frozenLastIndex),
+        R: this.visibleColumnsWithRowHeader.slice(frozenLastIndex)
       };
     },
 
@@ -275,7 +297,7 @@ export function create({
     },
 
     get visibleFrozenCount(this: Column) {
-      return this.visibleColumnsBySide.L.length;
+      return this.visibleColumnsBySideWithRowHeader.L.length;
     },
 
     get validationColumns() {

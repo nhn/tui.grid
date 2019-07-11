@@ -12,6 +12,7 @@ interface OwnProps {
 interface StoreProps {
   sortOptions: SortOptions;
   dataProvider: DataProvider;
+  ascending: boolean;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -27,7 +28,7 @@ class SortingButtonComp extends Component<Props> {
     const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
     const targetColumnName = th!.getAttribute('data-column-name')!;
-    let targetAscending = true;
+    let { ascending: targetAscending } = this.props;
 
     if (sortOptions) {
       const { columnName, ascending } = sortOptions;
@@ -61,11 +62,14 @@ class SortingButtonComp extends Component<Props> {
   }
 }
 
-export const SortingButton = connect<StoreProps, OwnProps>((store) => {
-  const { data, id } = store;
+export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
+  const { data, column, id } = store;
+  const { columnName } = props;
+  const { sortingType } = column.allColumnMap[columnName];
 
   return {
     sortOptions: data.sortOptions,
-    dataProvider: getDataProvider(id)
+    dataProvider: getDataProvider(id),
+    ascending: sortingType === 'asc'
   };
 })(SortingButtonComp);

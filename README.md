@@ -19,6 +19,7 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
 
 * [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 * [Browser Support](#-browser-support)
+* [Documents](#-documents)
 * [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
     * [Data Can Be Displayed in Any Format](#data-can-be-displayed-in-any-format)
     * [Provides a Variety of Editing Elements](#provides-a-variety-of-editing-elements)
@@ -37,7 +38,6 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
     * [Setup](#setup)
     * [Develop](#develop)
     * [Pull Request Steps](#pull-request)
-* [Documents](#-documents)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [Used By](#-used-by)
@@ -47,7 +47,7 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
 
 TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world.
 It also serves as important index to determine the future course of projects.
-`location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
+`location.hostname` (e.g. > "ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
 
 To disable GA, use the following `usageStatistics` option when creating the instance.
 
@@ -66,6 +66,20 @@ const instance = new Grid(options);
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | 9+ | Yes | Yes | Yes |
 
+## 📙 Documents
+
+* Getting Started
+  * [English](https://github.com/nhn/tui.grid/blob/production/docs/en/getting-started.md)
+  * [한국어](https://github.com/nhn/tui.grid/blob/production/docs/ko/getting-started.md)
+* Tutorials
+  * [English](https://github.com/nhn/tui.grid/tree/production/docs)
+  * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/ko)
+* v4.0 Migration Guide
+  * [English](https://github.com/nhn/tui.grid/tree/production/docs/v4.0-migration-guide.md)
+  * [한국어](https://github.com/nhn/tui.grid/tree/production/docs/v4.0-migration-guide-kor.md)
+* [APIs](https://nhn.github.io/tui.grid/latest)
+
+You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
@@ -119,22 +133,22 @@ In addition, a variety of powerful features can be found on the demo page below.
 
 ## 🎨 Features
 
-* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/custom-editor.md)
-* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/keymap.md)
-* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](https://github.com/nhn/tui.grid/blob/master/docs/clipboard.md)
-* [Multi column headers](https://github.com/nhn/tui.grid/blob/master/docs/complex-columns.md)
-* [Picking date](https://github.com/nhn/tui.grid/blob/master/docs/date-picker.md)
-* [Relational Structure Between Columns](https://github.com/nhn/tui.grid/blob/master/docs/relation-between-columns.md)
-* [Data Source](https://github.com/nhn/tui.grid/blob/master/docs/data-source.md)
-* [Summarize all values of each column](https://github.com/nhn/tui.grid/blob/master/docs/summary.md)
-* [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/themes.md)
-* [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/tree.md)
-* [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/custom-renderer.md)
+* [More Diverse Input Types _(checkbox, radio, select, password, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-editor.md)
+* [Full Keyboard Navigation _(move, select, copy, paste, delete, etc.)_](https://github.com/nhn/tui.grid/blob/master/docs/en/keymap.md)
+* [Copy & Paste using clipboard with 3rd party application _(Like MS-Excel or Google-spreadsheet)_](https://github.com/nhn/tui.grid/blob/master/docs/en/clipboard.md)
+* [Multi column headers](https://github.com/nhn/tui.grid/blob/master/docs/en/complex-columns.md)
+* [Picking date](https://github.com/nhn/tui.grid/blob/master/docs/en/date-picker.md)
+* [Relational Structure Between Columns](https://github.com/nhn/tui.grid/blob/master/docs/en/relation-between-columns.md)
+* [Data Source](https://github.com/nhn/tui.grid/blob/master/docs/en/data-source.md)
+* [Summarize all values of each column](https://github.com/nhn/tui.grid/blob/master/docs/en/summary.md)
+* [Customizing styles _(Three basic themes)_](https://github.com/nhn/tui.grid/blob/master/docs/en/themes.md)
+* [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md)
+* [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-renderer.md)
+* [Pagination](https://github.com/nhn/tui.grid/blob/master/docs/en/data-source.md#pagination)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
 * Selection
-* Pagination
 * Sorting
 * Merging cell
 * Frozen(Pinned) columns
@@ -235,7 +249,7 @@ const Grid = require('tui-grid'); /* CommonJS */
 import Grid from 'tui-grid'; /* ES6 */
 ```
 
-You can create an instance with options and call various APIs after creating an instance.
+You can create an instance with options and call various API after creating an instance.
 
 ``` javascript
 const instance = new Grid({
@@ -333,15 +347,6 @@ Before PR, check to test lastly and then check any errors.
 If it has no error, commit and then push it!
 
 For more information on PR's step, please see links of Contributing section.
-
-
-## 📙 Documents
-
-* [Getting Started](https://github.com/nhn/tui.grid/blob/production/docs/getting-started.md)
-* [Tutorials](https://github.com/nhn/tui.grid/tree/production/docs)
-* [APIs](https://nhn.github.io/tui.grid/latest)
-
-You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
 
 
 ## 💬 Contributing
