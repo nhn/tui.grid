@@ -46,6 +46,7 @@ var ViewFactory = snippet.defineClass({
         // view options
         this.summaryOptions = options.summary;
         this.heightResizable = options.heightResizable;
+        this.usageStatistics = options.usageStatistics;
     },
 
     /**
@@ -87,7 +88,8 @@ var ViewFactory = snippet.defineClass({
         return new PaginationView({
             componentHolder: this.componentHolder,
             dimensionModel: this.modelManager.dimensionModel,
-            focusModel: this.modelManager.focusModel
+            focusModel: this.modelManager.focusModel,
+            usageStatistics: this.usageStatistics
         });
     },
 
@@ -302,7 +304,8 @@ var ViewFactory = snippet.defineClass({
             columnModel: this.modelManager.columnModel,
             textPainter: this.painterManager.getInputPainters().text,
             domState: this.domState,
-            domEventBus: this.domEventBus
+            domEventBus: this.domEventBus,
+            usageStatistics: this.usageStatistics
         });
     },
 

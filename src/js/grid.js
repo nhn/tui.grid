@@ -118,6 +118,8 @@ var instanceMap = {};
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
+ *          @param {string} [options.columns.sortingType='asc'] - If set to desc, will execute descending sort initially
+ *              when sort button is clicked.
  *          @param {function} [options.columns.onBeforeChange] - The function that will be
  *              called before changing the value of the cell. If stop() method in event object is called,
  *              the changing will be canceled.
@@ -290,7 +292,7 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'heightResizable', 'summary'
+            'heightResizable', 'summary', 'usageStatistics'
         ]);
         var dependencies = {
             modelManager: this.modelManager,

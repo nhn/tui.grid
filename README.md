@@ -4,12 +4,17 @@
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![npm](https://img.shields.io/npm/v/tui-grid.svg)](https://www.npmjs.com/package/tui-grid) [![bower](https://img.shields.io/bower/v/tui-grid.svg)](https://github.com/nhn/tui.grid/releases/latest) [![GitHub license](https://img.shields.io/github/license/nhn/tui.grid.svg)](https://github.com/nhn/tui.grid/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/pulls) [![code with hearth by NHN ](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
-## Wrappers
-
-* [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) **Vue** wrapper component is implemented by NHN. Thanks to [@sohee-lee7](https://github.com/sohee-lee7).
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
+## The New Grid is Comming!!
+We've been working diligently for the major update of the version 4. The **entire source code is rewritten from scratch without any dependencies**, and it'll be **way lighter than before**. For more information, see the [release note of the alpha.0](https://github.com/nhn/tui.grid/releases/tag/v4.0.0-alpha.0). We are planning to release the official version by the 4th week of the June. Stay tune!!
+
+
+## Wrappers
+
+* [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN. 
+* [toast-ui.react-grid](https://github.com/nhn/toast-ui.react-grid) - **React** wrapper component implemented by NHN.
 
 ## 🚩 Table of Contents
 
@@ -57,7 +62,7 @@ var options = {
 var instance = new Grid(options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.5.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -226,7 +231,7 @@ tui-grid/
 * [backbone](http://backbonejs.org/) >=1.3.3
 * [tui-code-snippet](https://github.com/nhn/tui.code-snippett) >=1.5.0
 * component (optional)
-    * [tui-date-picker](https://github.com/nhn/tui.date-picker) >=3.2.1
+    * [tui-date-picker](https://github.com/nhn/tui.date-picker) >=3.3.4
     * [tui-pagination](https://github.com/nhn/tui.pagination) >=3.3.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
@@ -382,10 +387,15 @@ You can also see the older versions of API page on the [releases page](https://g
 * [TOAST UI Editor](https://github.com/nhn/tui.editor)
 * [TOAST UI Components](https://github.com/nhn)
 
-
 ## 🚀 Used By
 * [NCP - Commerce Platform](https://www.e-ncp.com/)
-
+* [Toast File](https://file.toast.com/)
+* [HANGAME](https://www.hangame.com/)
+* [TOAST Gamebase](https://docs.toast.com/ko/Game/Gamebase/ko/oper-analytics/)
+* [TOAST Dooray - Collaboration Service](https://dooray.com/)
+* [Shop by](https://www.godo.co.kr/shopby/main.gd)
+* [Payco](https://www.payco.com/)
+* [Payco Shopping](https://shopping.payco.com)
 
 ## 📜 License
 

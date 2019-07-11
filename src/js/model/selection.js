@@ -62,6 +62,8 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         }
 
         this.on('change:range', this._triggerSelectionEvent);
+        this.mouseupHandler = $.proxy(this.stopAutoScroll, this);
+        $(document).on('mouseup', this.mouseupHandler);
     },
 
     defaults: {
@@ -1008,6 +1010,14 @@ var Selection = Model.extend(/** @lends module:model/selection.prototype */{
         newSpannedRange.row = [Math.min.apply(null, startIndexList), Math.max.apply(null, endIndexList)];
 
         return newSpannedRange;
+    },
+
+    /**
+     * remove mouseup event
+     * @private
+     */
+    _destroy: function() {
+        $(document).off('mouseup', this.mouseupHandler);
     }
 });
 

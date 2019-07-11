@@ -28,6 +28,8 @@ DatePickerLayer = View.extend(/** @lends module:view/datePickerLayer.prototype *
         this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;
         this.domState = options.domState;
+        this.usageStatistics = options.usageStatistics;
+
         this.datePickerMap = this._createDatePickers();
 
         /**
@@ -70,7 +72,9 @@ DatePickerLayer = View.extend(/** @lends module:view/datePickerLayer.prototype *
             var options;
 
             if (component && component.name === 'datePicker') {
-                options = component.options || {};
+                options = _.extend({
+                    usageStatistics: this.usageStatistics
+                }, component.options);
 
                 datePickerMap[name] = new DatePicker(this.$el, options);
 
