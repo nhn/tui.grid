@@ -2,15 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>16. Frozen Columns</title>
+  <title>17. Dummy rows</title>
   <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
   <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
 </head>
 
 <body>
-<div class="description">
-  You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/en/frozen-columns.md" target="_blank">here</a>
-</div>
 <div class="code-html contents">
   <div id="grid"></div>
 </div>
@@ -20,8 +17,9 @@
 <script type="text/javascript" class="code-js">
   const grid = new tui.Grid({
     el: document.getElementById('grid'),
-    data: gridData,
+    data: gridData.slice(0, 6),
     width: 1200,
+    bodyHeight: 600,
     scrollX: true,
     scrollY: false,
     columns: [
@@ -46,11 +44,7 @@
         name: 'genre'
       }
     ],
-    columnOptions: {
-      frozenCount: 1,
-      frozenBorderWidth: 2,
-      minWidth: 300
-    }
+    showDummyRows: true
   });
 </script>
 </html>
