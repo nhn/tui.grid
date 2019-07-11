@@ -47,7 +47,7 @@ We have **eliminated the unnecessary dependencies**; **enhanced the performance 
 
 TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world.
 It also serves as important index to determine the future course of projects.
-`location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
+`location.hostname` (e.g. > "ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
 
 To disable GA, use the following `usageStatistics` option when creating the instance.
 
