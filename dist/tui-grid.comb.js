@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu May 09 2019 15:25:27 GMT+0900 (KST)"
- * version: 3.8.0
+ * bundle created at "Thu Jul 11 2019 15:24:35 GMT+0900 (GMT+09:00)"
+ * version: 3.9.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -198,6 +198,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *               ignored when setting up the list of modified rows.
 	 *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
 	 *              the right side of the column header, which executes the sort action when clicked.
+	 *          @param {string} [options.columns.sortingType='asc'] - If set to desc, will execute descending sort initially
+	 *              when sort button is clicked.
 	 *          @param {function} [options.columns.onBeforeChange] - The function that will be
 	 *              called before changing the value of the cell. If stop() method in event object is called,
 	 *              the changing will be canceled.
@@ -370,7 +372,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _createViewFactory: function(options) {
 	        var viewOptions = _.pick(options, [
-	            'heightResizable', 'summary'
+	            'heightResizable', 'summary', 'usageStatistics'
 	        ]);
 	        var dependencies = {
 	            modelManager: this.modelManager,
@@ -6197,6 +6199,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    treeState: {
 	        EXPAND: 'EXPAND',
 	        COLLAPSE: 'COLLAPSE'
+	    },
+	    sortingType: {
+	        ASC: 'asc',
+	        DESC: 'desc'
 	    }
 	};
 
@@ -6545,10 +6551,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 
 	    /**
-	     * get top most row keys
+	     * get root's child row keys
 	     * @returns {Array.<number|string>} - row keys
 	     */
-	    getTopMostRowKeys: function() {
+	    getRootChildRowKeys: function() {
 	        return this._rootRow._treeData.childrenRowKeys;
 	    },
 
@@ -6585,10 +6591,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * expand tree row
 	     * @param {number|string} rowKey - row key
 	     * @param {boolean} recursive - true for recursively expand all descendant
-	     * @param {boolean} silent - true to mute event
 	     * @returns {Array.<number|string>} - children or descendant of given row
 	     */
-	    treeExpand: function(rowKey, recursive, silent) {
+	    treeExpand: function(rowKey, recursive) {
 	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
 	        var row = this.get(rowKey);
 	        row.setTreeExpanded(true);
@@ -6606,20 +6611,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }, this);
 	        }
 
-	        if (!silent) {
-	            /**
-	             * Occurs when the row having child rows is expanded
-	             * @event Grid#expanded
-	             * @type {module:event/gridEvent}
-	             * @property {number|string} rowKey - rowKey of the expanded row
-	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-	             * @property {Grid} instance - Current grid instance
-	             */
-	            this.trigger('expanded', {
-	                rowKey: rowKey,
-	                descendantRowKeys: descendantRowKeys.slice(0)
-	            });
-	        }
+	        /**
+	         * Occurs when the row having child rows is expanded
+	         * @event Grid#expanded
+	         * @type {module:event/gridEvent}
+	         * @property {number|string} rowKey - rowKey of the expanded row
+	         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	         * @property {Grid} instance - Current grid instance
+	         */
+	        this.trigger('expanded', {
+	            rowKey: rowKey,
+	            descendantRowKeys: descendantRowKeys.slice(0)
+	        });
 
 	        return descendantRowKeys;
 	    },
@@ -6628,27 +6631,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * expand all rows
 	     */
 	    treeExpandAll: function() {
-	        var topMostRowKeys = this.getTopMostRowKeys();
-
-	        _.each(topMostRowKeys, function(topMostRowKey) {
-	            this.treeExpand(topMostRowKey, true, true);
-	        }, this);
+	        var rootChildRowKeys = this.getRootChildRowKeys();
 
 	        /**
 	         * Occurs when all rows having child rows are expanded
 	         * @event Grid#expandedAll
 	         */
 	        this.trigger('expandedAll');
+
+	        _.each(rootChildRowKeys, function(rootChildRowKey) {
+	            this.treeExpand(rootChildRowKey, true, true);
+	        }, this);
 	    },
 
 	    /**
 	     * collapse tree row
 	     * @param {number|string} rowKey - row key
 	     * @param {boolean} recursive - true for recursively expand all descendant
-	     * @param {boolean} silent - true to mute event
 	     * @returns {Array.<number|string>} - children or descendant of given row
 	     */
-	    treeCollapse: function(rowKey, recursive, silent) {
+	    treeCollapse: function(rowKey, recursive) {
 	        var row = this.get(rowKey);
 
 	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
@@ -6668,20 +6670,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        row.setTreeExpanded(false);
 
-	        if (!silent) {
-	            /**
-	             * Occurs when the row having child rows is collapsed
-	             * @event Grid#collapsed
-	             * @type {module:event/gridEvent}
-	             * @property {number|string} rowKey - rowKey of the collapsed row
-	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-	             * @property {Grid} instance - Current grid instance
-	             */
-	            this.trigger('collapsed', {
-	                rowKey: rowKey,
-	                descendantRowKeys: descendantRowKeys.slice(0)
-	            });
-	        }
+	        /**
+	         * Occurs when the row having child rows is collapsed
+	         * @event Grid#collapsed
+	         * @type {module:event/gridEvent}
+	         * @property {number|string} rowKey - rowKey of the collapsed row
+	         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	         * @property {Grid} instance - Current grid instance
+	         */
+	        this.trigger('collapsed', {
+	            rowKey: rowKey,
+	            descendantRowKeys: descendantRowKeys.slice(0)
+	        });
 
 	        return descendantRowKeys;
 	    },
@@ -6690,17 +6690,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * collapse all rows
 	     */
 	    treeCollapseAll: function() {
-	        var topMostRowKeys = this.getTopMostRowKeys();
-
-	        _.each(topMostRowKeys, function(topMostRowKey) {
-	            this.treeCollapse(topMostRowKey, true, true);
-	        }, this);
+	        var rootChildRowKeys = this.getRootChildRowKeys();
 
 	        /**
 	         * Occurs when all rows having child rows are collapsed
 	         * @event Grid#collapsedAll
 	         */
 	        this.trigger('collapsedAll');
+
+	        _.each(rootChildRowKeys, function(rootChildRowKey) {
+	            this.treeCollapse(rootChildRowKey, true);
+	        }, this);
 	    },
 
 	    /**
@@ -6912,8 +6912,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _ = __webpack_require__(2);
 
 	var Collection = __webpack_require__(14);
+	var constMap = __webpack_require__(11);
 	var Row = __webpack_require__(15);
 	var GridEvent = __webpack_require__(17);
+	var sortingType = constMap.sortingType;
 
 	/**
 	 * Raw 데이터 RowList 콜렉션. (DataSource)
@@ -6992,7 +6994,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _onClickHeaderSort: function(ev) {
-	        this.sortByField(ev.columnName);
+	        var asc;
+
+	        if (ev.sortingType && this.sortOptions.columnName !== ev.columnName) {
+	            asc = ev.sortingType === sortingType.ASC;
+	        }
+
+	        this.sortByField(ev.columnName, asc);
 	    },
 
 	    /**
@@ -14203,6 +14211,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this.on('change:range', this._triggerSelectionEvent);
+	        this.mouseupHandler = $.proxy(this.stopAutoScroll, this);
+	        $(document).on('mouseup', this.mouseupHandler);
 	    },
 
 	    defaults: {
@@ -15149,6 +15159,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        newSpannedRange.row = [Math.min.apply(null, startIndexList), Math.max.apply(null, endIndexList)];
 
 	        return newSpannedRange;
+	    },
+
+	    /**
+	     * remove mouseup event
+	     * @private
+	     */
+	    _destroy: function() {
+	        $(document).off('mouseup', this.mouseupHandler);
 	    }
 	});
 
@@ -15664,6 +15682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // view options
 	        this.summaryOptions = options.summary;
 	        this.heightResizable = options.heightResizable;
+	        this.usageStatistics = options.usageStatistics;
 	    },
 
 	    /**
@@ -15705,7 +15724,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return new PaginationView({
 	            componentHolder: this.componentHolder,
 	            dimensionModel: this.modelManager.dimensionModel,
-	            focusModel: this.modelManager.focusModel
+	            focusModel: this.modelManager.focusModel,
+	            usageStatistics: this.usageStatistics
 	        });
 	    },
 
@@ -15920,7 +15940,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnModel: this.modelManager.columnModel,
 	            textPainter: this.painterManager.getInputPainters().text,
 	            domState: this.domState,
-	            domEventBus: this.domEventBus
+	            domEventBus: this.domEventBus,
+	            usageStatistics: this.usageStatistics
 	        });
 	    },
 
@@ -16359,6 +16380,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.componentHolder = options.componentHolder;
+	        this.usageStatistics = options.usageStatistics;
 
 	        this._stopEventPropagation();
 
@@ -16407,7 +16429,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            customOptions = {};
 	        }
 
-	        return _.assign({}, defaultOptions, customOptions);
+	        return _.assign({
+	            usageStatistics: this.usageStatistics
+	        }, defaultOptions, customOptions);
 	    },
 
 	    /**
@@ -18117,7 +18141,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.domEventBus.trigger('click:headerCheck', eventData);
 	        } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
 	            eventData.setData({
-	                columnName: columnName
+	                columnName: columnName,
+	                sortingType: this._getColumnSortingType(columnName)
 	            });
 	            this.domEventBus.trigger('click:headerSort', eventData);
 	        }
@@ -18139,7 +18164,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._$currentSortBtn = this.$el.find(
 	            'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
 	        );
-
 	        className = sortOptions.ascending ? classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN;
 
 	        this._$currentSortBtn.addClass(className);
@@ -18318,7 +18342,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _getResizeHandleHeights: function() {
 	        var hierarchyList = this._getColumnHierarchyList();
 	        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-	        var rowHeight = util.getRowHeight(maxRowCount, this.headerHeight) - 1;
+	        var rowHeight = util.getRowHeight(maxRowCount, this.dimensionModel.get('headerHeight')) - 1;
 	        var handleHeights = [];
 	        var index = 1;
 	        var coulmnLen = hierarchyList.length;
@@ -18334,6 +18358,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        handleHeights.push(rowHeight * maxRowCount); // last resize handle
 
 	        return handleHeights;
+	    },
+
+	    /**
+	     * Get sorting type of the column
+	     * @param {string} columnName - target column
+	     * @returns {string|undefined} sorting type of the column
+	     * @private
+	     */
+	    _getColumnSortingType: function(columnName) {
+	        var columnData = this._getColumnData();
+	        var column = _.findWhere(columnData.columns, {name: columnName});
+
+	        return column.sortingType;
 	    }
 	});
 
@@ -19964,6 +20001,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.textPainter = options.textPainter;
 	        this.columnModel = options.columnModel;
 	        this.domState = options.domState;
+	        this.usageStatistics = options.usageStatistics;
+
 	        this.datePickerMap = this._createDatePickers();
 
 	        /**
@@ -20006,7 +20045,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var options;
 
 	            if (component && component.name === 'datePicker') {
-	                options = component.options || {};
+	                options = _.extend({
+	                    usageStatistics: this.usageStatistics
+	                }, component.options);
 
 	                datePickerMap[name] = new DatePicker(this.$el, options);
 
@@ -21261,6 +21302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var $ = __webpack_require__(7);
 	var _ = __webpack_require__(2);
 	var snippet = __webpack_require__(4);
 
