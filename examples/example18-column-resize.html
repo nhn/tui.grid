@@ -2,15 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>16. Frozen Columns</title>
+  <title>18. Column resize</title>
   <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
   <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
 </head>
 
 <body>
-<div class="description">
-  You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/en/frozen-columns.md" target="_blank">here</a>
-</div>
 <div class="code-html contents">
   <div id="grid"></div>
 </div>
@@ -21,8 +18,7 @@
   const grid = new tui.Grid({
     el: document.getElementById('grid'),
     data: gridData,
-    width: 1200,
-    scrollX: true,
+    scrollX: false,
     scrollY: false,
     columns: [
       {
@@ -34,8 +30,9 @@
         name: 'artist'
       },
       {
-        header: 'Type',
-        name: 'type'
+        header: 'Type(resizable x)',
+        name: 'type',
+        resizable: false
       },
       {
         header: 'Release',
@@ -47,9 +44,7 @@
       }
     ],
     columnOptions: {
-      frozenCount: 1,
-      frozenBorderWidth: 2,
-      minWidth: 300
+      resizable: true
     }
   });
 </script>
