@@ -7,7 +7,7 @@
     "start": "webpack-dev-server",
     "build": "webpack --mode=production & webpack --mode=production --minify && node tsBannerGenerator.ts",
     "test": "cypress open",
-    "test:ci": "cypress run",
+    "test:ci": "cypress run --spec cypress/integration/attributes.spec.ts",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015",
