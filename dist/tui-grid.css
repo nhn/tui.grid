@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.0.3 | Wed Jul 03 2019
+ * @version 4.1.0 | Thu Jul 11 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -373,7 +373,6 @@
   top: 0;
   left: 0;
   overflow: hidden;
-  z-index: 10;
 }
 .tui-grid-lside-area .tui-grid-body-area {
   margin-right: -17px;

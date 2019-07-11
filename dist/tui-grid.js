@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.0.3 | Wed Jul 03 2019
+ * @version 4.1.0 | Thu Jul 11 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -413,7 +413,8 @@ function findIndexes(predicate, arr) {
 exports.findIndexes = findIndexes;
 function findPrevIndex(arr, predicate) {
     var index = findIndex(predicate, arr);
-    return index >= 0 ? index - 1 : arr.length - 1;
+    var positiveIndex = index <= 0 ? 0 : index - 1;
+    return index >= 0 ? positiveIndex : arr.length - 1;
 }
 exports.findPrevIndex = findPrevIndex;
 function findOffsetIndex(offsets, targetOffset) {
@@ -1709,7 +1710,7 @@ function getRowSpanRange(rowRange, colRange, visibleColumns, data) {
         ? getRowSpanRange([startRowIndex, endRowIndex], colRange, visibleColumns, data)
         : [startRowIndex, endRowIndex];
 }
-function getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, focusRowIndex, data) {
+function getMaxRowSpanRange(rowRange, colRange, visibleColumns, focusRowIndex, data) {
     var sortedColRange = selection_1.getSortedRange(colRange);
     var endRowIndex = rowRange[1];
     var startRowIndex = rowRange[0];
@@ -1722,6 +1723,13 @@ function getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, focusRowInde
     return startRowIndex > endRowIndex
         ? [endRowSpanIndex, startRowSpanIndex]
         : [startRowSpanIndex, endRowSpanIndex];
+}
+exports.getMaxRowSpanRange = getMaxRowSpanRange;
+function getRowRangeWithRowSpan(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data) {
+    if (enableRowSpan(data.sortOptions.columnName)) {
+        return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
+    }
+    return rowRange;
 }
 exports.getRowRangeWithRowSpan = getRowRangeWithRowSpan;
 function getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, data) {
@@ -2220,8 +2228,8 @@ function createSubRowSpan(prevRowSpanMap) {
     var subRowSpanMap = {};
     Object.keys(prevRowSpanMap).forEach(function (columnName) {
         var prevRowSpan = prevRowSpanMap[columnName];
-        if (prevRowSpan.spanCount > -prevRowSpan.count + 1) {
-            var mainRowKey = prevRowSpan.mainRowKey, count = prevRowSpan.count, spanCount = prevRowSpan.spanCount;
+        var mainRowKey = prevRowSpan.mainRowKey, count = prevRowSpan.count, spanCount = prevRowSpan.spanCount;
+        if (spanCount > 1 - count) {
             var subRowCount = count >= 0 ? -1 : count - 1;
             subRowSpanMap[columnName] = rowSpan_1.createRowSpan(false, mainRowKey, subRowCount, spanCount);
         }
@@ -2229,18 +2237,19 @@ function createSubRowSpan(prevRowSpanMap) {
     return subRowSpanMap;
 }
 function createRowSpanMap(row, rowSpan, prevRow) {
-    var rowSpanMap = {};
     var rowKey = row.rowKey;
+    var mainRowSpanMap = {};
+    var subRowSpanMap = {};
     if (!common_1.isEmpty(rowSpan)) {
-        return createMainRowSpanMap(rowSpan, rowKey);
+        mainRowSpanMap = createMainRowSpanMap(rowSpan, rowKey);
     }
     if (prevRow) {
         var prevRowSpanMap = prevRow.rowSpanMap;
         if (!common_1.isEmpty(prevRowSpanMap)) {
-            return createSubRowSpan(prevRowSpanMap);
+            subRowSpanMap = createSubRowSpan(prevRowSpanMap);
         }
     }
-    return rowSpanMap;
+    return tslib_1.__assign({}, mainRowSpanMap, subRowSpanMap);
 }
 function createRawRow(row, index, defaultValues, keyColumnName, prevRow) {
     // this rowSpan variable is attribute option before creating rowSpanDataMap
@@ -2636,19 +2645,15 @@ function changeSelectionRange(selection, inputRange, id) {
 exports.changeSelectionRange = changeSelectionRange;
 function setSelection(store, range) {
     var _a;
-    var selection = store.selection, data = store.data, visibleColumns = store.column.visibleColumns, id = store.id;
-    var viewData = data.viewData, sortOptions = data.sortOptions;
+    var selection = store.selection, data = store.data, _b = store.column, visibleColumnsWithRowHeader = _b.visibleColumnsWithRowHeader, rowHeaderCount = _b.rowHeaderCount, id = store.id;
+    var viewData = data.viewData;
     var rowLength = viewData.length;
-    var columnLength = visibleColumns.length;
+    var columnLength = visibleColumnsWithRowHeader.length;
     var startRowIndex = common_1.clamp(range.start[0], 0, rowLength - 1);
     var endRowIndex = common_1.clamp(range.end[0], 0, rowLength - 1);
-    var startColumnIndex = common_1.clamp(range.start[1], 0, columnLength - 1);
-    var endColumnIndex = common_1.clamp(range.end[1], 0, columnLength - 1);
-    if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
-        var rowRange = [startRowIndex, endRowIndex];
-        var colRange = [startColumnIndex, endColumnIndex];
-        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, null, data), startRowIndex = _a[0], endRowIndex = _a[1];
-    }
+    var startColumnIndex = common_1.clamp(range.start[1] + rowHeaderCount, rowHeaderCount, columnLength - 1);
+    var endColumnIndex = common_1.clamp(range.end[1] + rowHeaderCount, rowHeaderCount, columnLength - 1);
+    _a = rowSpan_1.getRowRangeWithRowSpan([startRowIndex, endRowIndex], [startColumnIndex, endColumnIndex], visibleColumnsWithRowHeader, null, data), startRowIndex = _a[0], endRowIndex = _a[1];
     var inputRange = {
         row: [startRowIndex, endRowIndex],
         column: [startColumnIndex, endColumnIndex]
@@ -2797,11 +2802,15 @@ var ColGroupComp = /** @class */ (function (_super) {
     return ColGroupComp;
 }(preact_1.Component));
 exports.ColGroup = hoc_1.connect(function (_a, _b) {
+    var _c;
     var columnCoords = _a.columnCoords, viewport = _a.viewport, dimension = _a.dimension, column = _a.column;
     var side = _b.side, useViewport = _b.useViewport;
     return ({
-        widths: columnCoords.widths[side],
-        columns: useViewport && side === 'R' ? viewport.columns : column.visibleColumnsBySide[side],
+        widths: useViewport && side === 'R'
+            ? (_c = columnCoords.widths[side]).slice.apply(_c, viewport.colRange) : columnCoords.widths[side],
+        columns: useViewport && side === 'R'
+            ? viewport.columns
+            : column.visibleColumnsBySideWithRowHeader[side],
         borderWidth: dimension.cellBorderWidth
     });
 })(ColGroupComp);
@@ -3091,7 +3100,7 @@ exports.getNextRowIndex = getNextRowIndex;
 Object.defineProperty(exports, "__esModule", { value: true });
 var clipboard_1 = __webpack_require__(14);
 function getRangeToPaste(store, pasteData) {
-    var range = store.selection.range, _a = store.focus, rowIndex = _a.rowIndex, totalColumnIndex = _a.totalColumnIndex, visibleColumns = store.column.visibleColumns, viewData = store.data.viewData;
+    var range = store.selection.range, _a = store.focus, rowIndex = _a.rowIndex, totalColumnIndex = _a.totalColumnIndex, visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, viewData = store.data.viewData;
     var startRowIndex, startColumnIndex;
     if (range) {
         startRowIndex = range.row[0];
@@ -3102,7 +3111,7 @@ function getRangeToPaste(store, pasteData) {
         startColumnIndex = totalColumnIndex;
     }
     var endRowIndex = Math.min(pasteData.length + startRowIndex, viewData.length) - 1;
-    var endColumnIndex = Math.min(pasteData[0].length + startColumnIndex, visibleColumns.length) - 1;
+    var endColumnIndex = Math.min(pasteData[0].length + startColumnIndex, visibleColumnsWithRowHeader.length) - 1;
     return {
         row: [startRowIndex, endRowIndex],
         column: [startColumnIndex, endColumnIndex]
@@ -3132,28 +3141,28 @@ function copyDataToRange(range, pasteData) {
 }
 exports.copyDataToRange = copyDataToRange;
 function getValueToString(store) {
-    var visibleColumns = store.column.visibleColumns, _a = store.focus, rowIndex = _a.rowIndex, columnName = _a.columnName, totalColumnIndex = _a.totalColumnIndex, _b = store.data, viewData = _b.viewData, rawData = _b.rawData;
+    var visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, _a = store.focus, rowIndex = _a.rowIndex, columnName = _a.columnName, totalColumnIndex = _a.totalColumnIndex, _b = store.data, viewData = _b.viewData, rawData = _b.rawData;
     if (rowIndex === null || columnName === null || totalColumnIndex === null) {
         return '';
     }
     var valueMap = viewData[rowIndex].valueMap[columnName];
-    return clipboard_1.getTextWithCopyOptionsApplied(valueMap, rawData, visibleColumns[totalColumnIndex]);
+    return clipboard_1.getTextWithCopyOptionsApplied(valueMap, rawData, visibleColumnsWithRowHeader[totalColumnIndex]);
 }
 function getValuesToString(store) {
-    var range = store.selection.range, visibleColumns = store.column.visibleColumns, _a = store.data, viewData = _a.viewData, rawData = _a.rawData;
+    var range = store.selection.range, visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, _a = store.data, viewData = _a.viewData, rawData = _a.rawData;
     if (!range) {
         return '';
     }
     var row = range.row, column = range.column;
     var rowList = viewData.slice(row[0], row[1] + 1);
-    var columnInRange = visibleColumns.slice(column[0], column[1] + 1);
+    var columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
     return rowList
         .map(function (_a) {
         var valueMap = _a.valueMap;
         return columnInRange
             .map(function (_a, index) {
             var name = _a.name;
-            return clipboard_1.getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumns[index]);
+            return clipboard_1.getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumnsWithRowHeader[index]);
         })
             .join('\t');
     })
@@ -3255,13 +3264,18 @@ function getRelationColumns(relations) {
 }
 exports.getRelationColumns = getRelationColumns;
 function createColumn(column, columnOptions, relationColumns, gridCopyOptions, treeColumnOptions) {
-    var name = column.name, header = column.header, width = column.width, minWidth = column.minWidth, align = column.align, hidden = column.hidden, resizable = column.resizable, editor = column.editor, renderer = column.renderer, relations = column.relations, sortable = column.sortable, copyOptions = column.copyOptions, validation = column.validation, formatter = column.formatter, onBeforeChange = column.onBeforeChange, onAfterChange = column.onAfterChange, whiteSpace = column.whiteSpace;
+    var name = column.name, header = column.header, width = column.width, minWidth = column.minWidth, align = column.align, hidden = column.hidden, resizable = column.resizable, editor = column.editor, renderer = column.renderer, relations = column.relations, sortable = column.sortable, sortingType = column.sortingType, copyOptions = column.copyOptions, validation = column.validation, formatter = column.formatter, onBeforeChange = column.onBeforeChange, onAfterChange = column.onAfterChange, whiteSpace = column.whiteSpace, ellipsis = column.ellipsis, valign = column.valign, defaultValue = column.defaultValue, escapeHTML = column.escapeHTML, ignored = column.ignored;
     var editorOptions = getEditorOptions(editor);
     var rendererOptions = getRendererOptions(renderer);
-    return observable_1.observable(tslib_1.__assign({ name: name, escapeHTML: !!column.escapeHTML, header: header || name, hidden: Boolean(hidden), resizable: common_1.isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable), align: align || 'left', fixedWidth: typeof width === 'number', copyOptions: tslib_1.__assign({}, gridCopyOptions, copyOptions), baseWidth: (width === 'auto' ? 0 : width) || 0, minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, relationMap: getRelationMap(relations || []), related: common_1.includes(relationColumns, name), sortable: sortable, validation: validation ? tslib_1.__assign({}, validation) : {}, renderer: rendererOptions, formatter: formatter,
+    return observable_1.observable(tslib_1.__assign({ name: name,
+        escapeHTML: escapeHTML, header: header || name, hidden: Boolean(hidden), resizable: common_1.isUndefined(resizable) ? Boolean(columnOptions.resizable) : Boolean(resizable), align: align || 'left', fixedWidth: typeof width === 'number', copyOptions: tslib_1.__assign({}, gridCopyOptions, copyOptions), baseWidth: (width === 'auto' ? 0 : width) || 0, minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, relationMap: getRelationMap(relations || []), related: common_1.includes(relationColumns, name), sortable: sortable, sortingType: sortingType || 'asc', validation: validation ? tslib_1.__assign({}, validation) : {}, renderer: rendererOptions, formatter: formatter,
         onBeforeChange: onBeforeChange,
         onAfterChange: onAfterChange,
-        whiteSpace: whiteSpace }, (!!editorOptions && { editor: editorOptions }), getTreeInfo(treeColumnOptions, name)));
+        whiteSpace: whiteSpace,
+        ellipsis: ellipsis,
+        valign: valign,
+        defaultValue: defaultValue,
+        ignored: ignored }, (!!editorOptions && { editor: editorOptions }), getTreeInfo(treeColumnOptions, name)));
 }
 exports.createColumn = createColumn;
 function createRowHeader(data) {
@@ -3315,16 +3329,28 @@ function create(_a) {
             return rowHeaderInfos.length;
         },
         get visibleColumns() {
+            return this.allColumns.slice(this.rowHeaderCount).filter(function (_a) {
+                var hidden = _a.hidden;
+                return !hidden;
+            });
+        },
+        get visibleColumnsWithRowHeader() {
             return this.allColumns.filter(function (_a) {
                 var hidden = _a.hidden;
                 return !hidden;
             });
         },
         get visibleColumnsBySide() {
-            var frozenLastIndex = this.frozenCount + this.rowHeaderCount;
             return {
-                L: this.visibleColumns.slice(0, frozenLastIndex),
-                R: this.visibleColumns.slice(frozenLastIndex)
+                L: this.visibleColumns.slice(0, this.frozenCount),
+                R: this.visibleColumns.slice(this.frozenCount)
+            };
+        },
+        get visibleColumnsBySideWithRowHeader() {
+            var frozenLastIndex = this.rowHeaderCount + this.frozenCount;
+            return {
+                L: this.visibleColumnsWithRowHeader.slice(0, frozenLastIndex),
+                R: this.visibleColumnsWithRowHeader.slice(frozenLastIndex)
             };
         },
         get defaultValues() {
@@ -3339,7 +3365,7 @@ function create(_a) {
             });
         },
         get visibleFrozenCount() {
-            return this.visibleColumnsBySide.L.length;
+            return this.visibleColumnsBySideWithRowHeader.L.length;
         },
         get validationColumns() {
             return this.allColumns.filter(function (_a) {
@@ -3513,15 +3539,14 @@ var HeaderAreaComp = /** @class */ (function (_super) {
     HeaderAreaComp.prototype.render = function () {
         var _this = this;
         var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight, cellBorderWidth = _a.cellBorderWidth, side = _a.side, complexHeaderColumns = _a.complexHeaderColumns;
-        var areaStyle = { height: headerHeight + cellBorderWidth };
-        var theadStyle = { height: headerHeight };
-        return (preact_1.h("div", { class: dom_1.cls('header-area'), style: areaStyle, ref: function (el) {
+        var headerHeightStyle = { height: headerHeight + cellBorderWidth };
+        return (preact_1.h("div", { class: dom_1.cls('header-area'), style: headerHeightStyle, ref: function (el) {
                 _this.el = el;
             } },
             preact_1.h("table", { class: dom_1.cls('table'), onMouseDown: this.handleMouseDown },
                 preact_1.h(colGroup_1.ColGroup, { side: side, useViewport: false }),
                 complexHeaderColumns.length ? (preact_1.h(complexHeader_1.ComplexHeader, { side: side })) : (preact_1.h("tbody", null,
-                    preact_1.h("tr", { style: theadStyle, onDblClick: this.handleDblClick }, columns.map(function (_a, index) {
+                    preact_1.h("tr", { style: headerHeightStyle, onDblClick: this.handleDblClick }, columns.map(function (_a, index) {
                         var name = _a.name, header = _a.header, sortable = _a.sortable;
                         return (preact_1.h("th", { key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && _this.isSelected(index), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']) },
                             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
@@ -3533,11 +3558,11 @@ var HeaderAreaComp = /** @class */ (function (_super) {
 }(preact_1.Component));
 exports.HeaderArea = hoc_1.connect(function (store, _a) {
     var side = _a.side;
-    var _b = store.column, visibleColumnsBySide = _b.visibleColumnsBySide, complexHeaderColumns = _b.complexHeaderColumns, _c = store.dimension, headerHeight = _c.headerHeight, cellBorderWidth = _c.cellBorderWidth, rangeBySide = store.selection.rangeBySide, viewport = store.viewport, id = store.id;
+    var _b = store.column, visibleColumnsBySideWithRowHeader = _b.visibleColumnsBySideWithRowHeader, complexHeaderColumns = _b.complexHeaderColumns, _c = store.dimension, headerHeight = _c.headerHeight, cellBorderWidth = _c.cellBorderWidth, rangeBySide = store.selection.rangeBySide, viewport = store.viewport, id = store.id;
     return {
         headerHeight: headerHeight,
         cellBorderWidth: cellBorderWidth,
-        columns: visibleColumnsBySide[side],
+        columns: visibleColumnsBySideWithRowHeader[side],
         scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
         dataProvider: instance_1.getDataProvider(id),
         columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
@@ -3622,7 +3647,7 @@ var SortingButtonComp = /** @class */ (function (_super) {
             var _a = _this.props, dispatch = _a.dispatch, sortOptions = _a.sortOptions, dataProvider = _a.dataProvider;
             var th = dom_1.findParent(target, 'cell');
             var targetColumnName = th.getAttribute('data-column-name');
-            var targetAscending = true;
+            var targetAscending = _this.props.ascending;
             if (sortOptions) {
                 var columnName = sortOptions.columnName, ascending = sortOptions.ascending;
                 targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
@@ -3651,11 +3676,14 @@ var SortingButtonComp = /** @class */ (function (_super) {
     };
     return SortingButtonComp;
 }(preact_1.Component));
-exports.SortingButton = hoc_1.connect(function (store) {
-    var data = store.data, id = store.id;
+exports.SortingButton = hoc_1.connect(function (store, props) {
+    var data = store.data, column = store.column, id = store.id;
+    var columnName = props.columnName;
+    var sortingType = column.allColumnMap[columnName].sortingType;
     return {
         sortOptions: data.sortOptions,
-        dataProvider: instance_1.getDataProvider(id)
+        dataProvider: instance_1.getDataProvider(id),
+        ascending: sortingType === 'asc'
     };
 })(SortingButtonComp);
 
@@ -3669,9 +3697,9 @@ exports.SortingButton = hoc_1.connect(function (store) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(6);
-function sortByVisibleColumns(visibleColumns, childNames) {
+function sortByVisibleColumns(visibleColumnsWithRowHeader, childNames) {
     var result = [];
-    visibleColumns.forEach(function (column) {
+    visibleColumnsWithRowHeader.forEach(function (column) {
         if (common_1.includes(childNames, column.name)) {
             result.push(column.name);
         }
@@ -3695,11 +3723,11 @@ function getLeafChildColumnNames(complexHeaderColumns, name) {
     return result;
 }
 exports.getLeafChildColumnNames = getLeafChildColumnNames;
-function getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount) {
+function getChildColumnRange(visibleColumnsWithRowHeader, complexHeaderColumns, name) {
     var unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
-    var childNames = sortByVisibleColumns(visibleColumns, unsortedChildNames);
-    var startIndex = common_1.findPropIndex('name', childNames[0], visibleColumns) - rowHeaderCount;
-    var endIndex = common_1.findPropIndex('name', childNames[childNames.length - 1], visibleColumns) - rowHeaderCount;
+    var childNames = sortByVisibleColumns(visibleColumnsWithRowHeader, unsortedChildNames);
+    var startIndex = common_1.findPropIndex('name', childNames[0], visibleColumnsWithRowHeader);
+    var endIndex = common_1.findPropIndex('name', childNames[childNames.length - 1], visibleColumnsWithRowHeader);
     return [startIndex, endIndex];
 }
 exports.getChildColumnRange = getChildColumnRange;
@@ -3757,7 +3785,8 @@ var BodyAreaComp = /** @class */ (function (_super) {
             var scrollTop = el.scrollTop, scrollLeft = el.scrollLeft;
             var _b = _this.props, side = _b.side, dispatch = _b.dispatch;
             var _c = el.getBoundingClientRect(), top = _c.top, left = _c.left;
-            dispatch('mouseDownBody', { top: top, left: left, scrollTop: scrollTop, scrollLeft: scrollLeft, side: side }, { pageX: pageX, pageY: pageY, shiftKey: shiftKey });
+            _this.boundingRect = { top: top, left: left };
+            dispatch('mouseDownBody', tslib_1.__assign({ scrollTop: scrollTop, scrollLeft: scrollLeft, side: side }, _this.boundingRect), { pageX: pageX, pageY: pageY, shiftKey: shiftKey });
             _this.dragStartData = { pageX: pageX, pageY: pageY };
             dom_1.setCursorStyle('default');
             document.addEventListener('mousemove', _this.handleMouseMove);
@@ -3776,7 +3805,10 @@ var BodyAreaComp = /** @class */ (function (_super) {
         _this.handleMouseMove = function (ev) {
             var _a = dom_1.getCoordinateWithOffset(ev.pageX, ev.pageY), pageX = _a[0], pageY = _a[1];
             if (_this.moveEnoughToTriggerDragEvent({ pageX: pageX, pageY: pageY })) {
-                _this.props.dispatch('dragMoveBody', _this.dragStartData, { pageX: pageX, pageY: pageY });
+                var _b = _this, el = _b.el, boundingRect = _b.boundingRect, props = _b.props;
+                var _c = el, scrollTop = _c.scrollTop, scrollLeft = _c.scrollLeft;
+                var side = props.side, dispatch = props.dispatch;
+                dispatch('dragMoveBody', _this.dragStartData, { pageX: pageX, pageY: pageY }, tslib_1.__assign({ scrollTop: scrollTop, scrollLeft: scrollLeft, side: side }, boundingRect));
             }
         };
         _this.clearDocumentEvents = function () {
@@ -3799,7 +3831,7 @@ var BodyAreaComp = /** @class */ (function (_super) {
     };
     BodyAreaComp.prototype.render = function (_a) {
         var _this = this;
-        var side = _a.side, bodyHeight = _a.bodyHeight, totalRowHeight = _a.totalRowHeight, totalColumnWidth = _a.totalColumnWidth, scrollXHeight = _a.scrollXHeight, offsetTop = _a.offsetTop, offsetLeft = _a.offsetLeft, dummyRowCount = _a.dummyRowCount, scrollX = _a.scrollX, scrollY = _a.scrollY;
+        var side = _a.side, bodyHeight = _a.bodyHeight, totalRowHeight = _a.totalRowHeight, totalColumnWidth = _a.totalColumnWidth, scrollXHeight = _a.scrollXHeight, offsetTop = _a.offsetTop, offsetLeft = _a.offsetLeft, dummyRowCount = _a.dummyRowCount, scrollX = _a.scrollX, scrollY = _a.scrollY, cellBorderWidth = _a.cellBorderWidth;
         var overflowX = scrollX ? 'scroll' : 'hidden';
         var overflowY = scrollY ? 'scroll' : 'hidden';
         var areaStyle = { overflowX: overflowX, overflowY: overflowY, height: bodyHeight };
@@ -3811,7 +3843,7 @@ var BodyAreaComp = /** @class */ (function (_super) {
         };
         var containerStyle = {
             width: totalColumnWidth,
-            height: totalRowHeight
+            height: totalRowHeight + cellBorderWidth
         };
         return (preact_1.h("div", { class: dom_1.cls('body-area'), style: areaStyle, onScroll: this.handleScroll, onMouseDown: this.handleMouseDown, ref: function (el) {
                 _this.el = el;
@@ -3832,7 +3864,7 @@ exports.BodyArea = hoc_1.connect(function (store, _a) {
     var columnCoords = store.columnCoords, rowCoords = store.rowCoords, dimension = store.dimension, viewport = store.viewport;
     var totalRowHeight = rowCoords.totalRowHeight;
     var totalColumnWidth = columnCoords.totalColumnWidth;
-    var bodyHeight = dimension.bodyHeight, scrollXHeight = dimension.scrollXHeight, scrollX = dimension.scrollX, scrollY = dimension.scrollY;
+    var bodyHeight = dimension.bodyHeight, scrollXHeight = dimension.scrollXHeight, scrollX = dimension.scrollX, scrollY = dimension.scrollY, cellBorderWidth = dimension.cellBorderWidth;
     var offsetLeft = viewport.offsetLeft, offsetTop = viewport.offsetTop, scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft, dummyRowCount = viewport.dummyRowCount;
     return {
         bodyHeight: bodyHeight,
@@ -3845,7 +3877,8 @@ exports.BodyArea = hoc_1.connect(function (store, _a) {
         scrollXHeight: scrollXHeight,
         dummyRowCount: dummyRowCount,
         scrollX: scrollX,
-        scrollY: scrollY
+        scrollY: scrollY,
+        cellBorderWidth: cellBorderWidth
     };
 })(BodyAreaComp);
 
@@ -3901,7 +3934,7 @@ exports.SummaryArea = hoc_1.connect(function (store, _a) {
     var scrollLeft = viewport.scrollLeft;
     return {
         height: summaryHeight,
-        columns: column.visibleColumnsBySide[side],
+        columns: column.visibleColumnsBySideWithRowHeader[side],
         scrollLeft: scrollLeft
     };
 })(SummaryAreaComp);
@@ -4060,9 +4093,9 @@ function sort(store, columnName, ascending) {
 }
 exports.sort = sort;
 function applyPasteDataToRawData(store, pasteData, indexToPaste) {
-    var _a = store.data, rawData = _a.rawData, viewData = _a.viewData, visibleColumns = store.column.visibleColumns, id = store.id;
+    var _a = store.data, rawData = _a.rawData, viewData = _a.viewData, visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, id = store.id;
     var _b = indexToPaste.row, startRowIndex = _b[0], endRowIndex = _b[1], _c = indexToPaste.column, startColumnIndex = _c[0], endColumnIndex = _c[1];
-    var columnNames = common_1.mapProp('name', visibleColumns);
+    var columnNames = common_1.mapProp('name', visibleColumnsWithRowHeader);
     for (var rowIdx = 0; rowIdx + startRowIndex <= endRowIndex; rowIdx += 1) {
         var pasted = false;
         var rawRowIndex = rowIdx + startRowIndex;
@@ -4880,6 +4913,8 @@ if (false) {}
  *               ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columns.sortable=false] - If set to true, sort button will be shown on
  *              the right side of the column header, which executes the sort action when clicked.
+ *          @param {string} [options.columns.sortingType='asc'] - If set to 'desc', will execute descending sort initially
+ *              when sort button is clicked.
  *          @param {function} [options.columns.onBeforeChange] - The function that will be
  *              called before changing the value of the cell. If stop() method in event object is called,
  *              the changing will be canceled.
@@ -4960,7 +4995,8 @@ var Grid = /** @class */ (function () {
         this.dataProvider = dataProvider;
         this.dataManager = dataManager;
         this.paginationManager = paginationManager;
-        if (usageStatistics) {
+        this.usageStatistics = usageStatistics;
+        if (this.usageStatistics) {
             googleAnalytics_1.sendHostname();
         }
         instance_1.registerDataSources(id, dataProvider, dataManager, paginationManager);
@@ -5271,6 +5307,20 @@ var Grid = /** @class */ (function () {
         this.startEditing(rowKey, columnName, setScroll);
     };
     /**
+     * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
+     * @param {number|string} rowKey - The unique key of the row
+     * @param {string} columnName - The name of the column
+     * @param {string} value - The value of editing result
+     */
+    Grid.prototype.finishEditing = function (rowKey, columnName, value) {
+        var sortOptions = this.store.data.sortOptions;
+        this.dispatch('setValue', rowKey, columnName, value);
+        if (sortOptions.columnName === columnName) {
+            this.dispatch('sort', columnName, sortOptions.ascending);
+        }
+        this.dispatch('finishEditing', rowKey, columnName);
+    };
+    /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
      * @param {number|string} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
@@ -5396,7 +5446,10 @@ var Grid = /** @class */ (function () {
      * @returns {number} - The index of the column
      */
     Grid.prototype.getIndexOfColumn = function (columnName) {
-        return common_1.findPropIndex('name', columnName, this.store.column.allColumns);
+        return common_1.findPropIndex('name', columnName, this.store.column.allColumns.filter(function (_a) {
+            var name = _a.name;
+            return !column_1.isRowHeader(name);
+        }));
     };
     /**
      * Checks the row identified by the specified rowKey.
@@ -6246,15 +6299,16 @@ var DatePickerEditor = /** @class */ (function () {
         this.el = this.createWrapper();
         this.inputEl = this.createInputElement();
         var calendarWrapper = this.createCalendarWrapper();
-        var options = props.columnInfo.editor.options;
+        var usageStatistics = props.grid.usageStatistics, columnInfo = props.columnInfo, value = props.value;
+        var options = columnInfo.editor.options;
         if (options) {
             if (options.format) {
                 format = options.format;
                 delete options.format;
             }
         }
-        if (common_1.isNumber(props.value) || common_1.isString(props.value)) {
-            date = new Date(props.value);
+        if (common_1.isNumber(value) || common_1.isString(value)) {
+            date = new Date(value);
         }
         var defaultOptions = {
             date: date,
@@ -6262,7 +6316,8 @@ var DatePickerEditor = /** @class */ (function () {
             input: {
                 element: this.inputEl,
                 format: format
-            }
+            },
+            usageStatistics: usageStatistics
         };
         this.datePickerEl = new tui_date_picker_1.default(calendarWrapper, common_1.deepMergedCopy(defaultOptions, options || {}));
     }
@@ -6383,12 +6438,12 @@ function create(_a) {
             return this.scrollX ? this.scrollbarWidth : 0;
         },
         get frozenBorderWidth() {
-            var visibleFrozenCount = column.visibleFrozenCount, rowHeaderCount = column.rowHeaderCount;
-            var visibleLeftColumnCount = visibleFrozenCount - rowHeaderCount;
+            var visibleColumnsBySide = column.visibleColumnsBySide;
+            var visibleLeftColumnCount = visibleColumnsBySide.L.length;
             return visibleLeftColumnCount > 0 ? frozenBorderWidth : 0;
         },
         get contentsWidth() {
-            var columnLen = column.visibleColumns.length;
+            var columnLen = column.visibleColumnsWithRowHeader.length;
             var totalBorderWidth = columnLen * this.cellBorderWidth;
             return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
         }
@@ -6466,7 +6521,7 @@ function create(_a) {
         // only for right side columns
         get columns() {
             var _a;
-            return (_a = column.visibleColumnsBySide.R).slice.apply(_a, this.colRange);
+            return (_a = column.visibleColumnsBySideWithRowHeader.R).slice.apply(_a, this.colRange);
         },
         get offsetLeft() {
             return columnCoords.offsets.R[this.colRange[0]];
@@ -6592,8 +6647,8 @@ function create(_a) {
     var column = _a.column, dimension = _a.dimension;
     return observable_1.observable({
         get widths() {
-            var visibleColumns = column.visibleColumns, visibleFrozenCount = column.visibleFrozenCount;
-            var widths = calculateWidths(visibleColumns, dimension.cellBorderWidth, dimension.contentsWidth);
+            var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader, visibleFrozenCount = column.visibleFrozenCount;
+            var widths = calculateWidths(visibleColumnsWithRowHeader, dimension.cellBorderWidth, dimension.contentsWidth);
             return {
                 L: widths.slice(0, visibleFrozenCount),
                 R: widths.slice(visibleFrozenCount)
@@ -6653,22 +6708,24 @@ function create(_a) {
             if (this.columnName === null) {
                 return null;
             }
-            return common_1.someProp('name', this.columnName, column.visibleColumnsBySide.R) ? 'R' : 'L';
+            return common_1.someProp('name', this.columnName, column.visibleColumnsBySideWithRowHeader.R)
+                ? 'R'
+                : 'L';
         },
         get columnIndex() {
             var _a = this, columnName = _a.columnName, side = _a.side;
             if (columnName === null || side === null) {
                 return null;
             }
-            return common_1.findPropIndex('name', columnName, column.visibleColumnsBySide[side]);
+            return common_1.findPropIndex('name', columnName, column.visibleColumnsBySideWithRowHeader[side]);
         },
         get totalColumnIndex() {
-            var visibleColumnsBySide = column.visibleColumnsBySide;
+            var visibleColumnsBySideWithRowHeader = column.visibleColumnsBySideWithRowHeader;
             var _a = this, columnIndex = _a.columnIndex, side = _a.side;
             if (columnIndex === null) {
                 return columnIndex;
             }
-            return side === 'R' ? columnIndex + visibleColumnsBySide.L.length : columnIndex;
+            return side === 'R' ? columnIndex + visibleColumnsBySideWithRowHeader.L.length : columnIndex;
         },
         get rowIndex() {
             var rowKey = this.rowKey;
@@ -6745,8 +6802,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var observable_1 = __webpack_require__(5);
 var selection_1 = __webpack_require__(13);
-function getOwnSideColumnRange(columnRange, side, visibleFrozenCount, rowHeaderCount) {
-    var _a = columnRange.map(function (columnIdx) { return columnIdx + rowHeaderCount; }), start = _a[0], end = _a[1];
+function getOwnSideColumnRange(columnRange, side, visibleFrozenCount) {
+    var _a = columnRange.map(function (columnIdx) { return columnIdx; }), start = _a[0], end = _a[1];
     if (side === 'L' && start < visibleFrozenCount) {
         return [start, Math.min(end, visibleFrozenCount - 1)];
     }
@@ -6804,11 +6861,11 @@ function create(_a) {
             if (!this.range) {
                 return null;
             }
-            var visibleFrozenCount = columnInfo.visibleFrozenCount, rowHeaderCount = columnInfo.rowHeaderCount;
+            var visibleFrozenCount = columnInfo.visibleFrozenCount;
             var _a = this.range, column = _a.column, row = _a.row;
             return {
-                L: { row: row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount, rowHeaderCount) },
-                R: { row: row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount, rowHeaderCount) }
+                L: { row: row, column: getOwnSideColumnRange(column, 'L', visibleFrozenCount) },
+                R: { row: row, column: getOwnSideColumnRange(column, 'R', visibleFrozenCount) }
             };
         },
         get rangeAreaInfo() {
@@ -7207,7 +7264,7 @@ exports.ColumnResizer = hoc_1.connect(function (_a, _b) {
         widths: columnCoords.widths[side],
         offsets: columnCoords.offsets[side],
         cellBorderWidth: dimension.cellBorderWidth,
-        columns: column.visibleColumnsBySide[side]
+        columns: column.visibleColumnsBySideWithRowHeader[side]
     });
 })(ColumnResizerComp);
 
@@ -7258,12 +7315,12 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
         return Math.max.apply(Math, lengths);
     };
     ComplexHeaderComp.prototype.isSelected = function (name) {
-        var _a = this.props, columnSelectionRange = _a.columnSelectionRange, visibleColumns = _a.visibleColumns, rowHeaderCount = _a.rowHeaderCount, complexHeaderColumns = _a.complexHeaderColumns;
+        var _a = this.props, columnSelectionRange = _a.columnSelectionRange, columns = _a.columns, complexHeaderColumns = _a.complexHeaderColumns;
         if (!columnSelectionRange) {
             return false;
         }
         var selectionStart = columnSelectionRange[0], selectionEnd = columnSelectionRange[1];
-        var _b = selection_1.getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount), columnStart = _b[0], columnEnd = _b[1];
+        var _b = selection_1.getChildColumnRange(columns, complexHeaderColumns, name), columnStart = _b[0], columnEnd = _b[1];
         return (columnStart >= selectionStart &&
             columnStart <= selectionEnd &&
             columnEnd >= selectionStart &&
@@ -7271,13 +7328,13 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
     };
     ComplexHeaderComp.prototype.createTableHeaderComponent = function (column, height, colspan, rowspan) {
         var name = column.name, header = column.header, sortable = column.sortable;
-        return (preact_1.h("th", tslib_1.__assign({ key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && this.isSelected(name), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']), height: height }, !!colspan && { colspan: colspan }, !!rowspan && { rowspan: rowspan }),
+        return (preact_1.h("th", tslib_1.__assign({ key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && this.isSelected(name), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']) }, !!colspan && { colspan: colspan }, !!rowspan && { rowspan: rowspan }, { style: { height: height } }),
             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
             !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name })));
     };
     ComplexHeaderComp.prototype.render = function () {
         var _this = this;
-        var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight;
+        var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight, cellBorderWidth = _a.cellBorderWidth;
         var hierarchies = columns.map(function (column) { return _this.getColumnHierarchy(column).reverse(); });
         var maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
         var rows = new Array(maxRowCount);
@@ -7308,7 +7365,7 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
                 }
                 columnNames[j] = columnName;
                 rows[j] = rows[j] || [];
-                rows[j].push(_this.createTableHeaderComponent(column, height, colspans[j], rowspan));
+                rows[j].push(_this.createTableHeaderComponent(column, height + cellBorderWidth, colspans[j], rowspan));
             });
         });
         return (preact_1.h("tbody", null, rows.map(function (row, index) { return (preact_1.h("tr", { key: "complex-header-" + index }, row)); })));
@@ -7317,13 +7374,13 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
 }(preact_1.Component));
 exports.ComplexHeader = hoc_1.connect(function (store, _a) {
     var side = _a.side;
-    var _b = store.column, rowHeaderCount = _b.rowHeaderCount, visibleColumns = _b.visibleColumns, visibleColumnsBySide = _b.visibleColumnsBySide, complexHeaderColumns = _b.complexHeaderColumns, headerHeight = store.dimension.headerHeight, rangeBySide = store.selection.rangeBySide;
+    var _b = store.column, rowHeaderCount = _b.rowHeaderCount, visibleColumnsBySideWithRowHeader = _b.visibleColumnsBySideWithRowHeader, complexHeaderColumns = _b.complexHeaderColumns, _c = store.dimension, headerHeight = _c.headerHeight, cellBorderWidth = _c.cellBorderWidth, rangeBySide = store.selection.rangeBySide;
     return {
         headerHeight: headerHeight,
-        columns: visibleColumnsBySide[side],
+        cellBorderWidth: cellBorderWidth,
+        columns: visibleColumnsBySideWithRowHeader[side],
         complexHeaderColumns: complexHeaderColumns,
         columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
-        visibleColumns: visibleColumns,
         rowHeaderCount: rowHeaderCount
     };
 })(ComplexHeaderComp);
@@ -7371,7 +7428,7 @@ exports.BodyRows = hoc_1.connect(function (_a, _b) {
     return ({
         rowIndexOffset: viewport.rowRange[0],
         rows: viewport.rows,
-        columns: side === 'L' ? column.visibleColumnsBySide.L : viewport.columns,
+        columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
         dummyRowCount: viewport.dummyRowCount
     });
 })(BodyRowsComp);
@@ -8100,13 +8157,6 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
                 // do nothing;
             }
         };
-        _this.handleMouseDownDocument = function (ev) {
-            var target = ev.target;
-            var contentEl = _this.contentEl;
-            if (contentEl && contentEl !== target && !contentEl.contains(target)) {
-                _this.finishEditing(true);
-            }
-        };
         return _this;
     }
     EditingLayerInnerComp.prototype.finishEditing = function (save) {
@@ -8117,9 +8167,6 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
                 if (sortOptions.columnName === columnName) {
                     dispatch('sort', columnName, sortOptions.ascending);
                 }
-            }
-            if (common_1.isFunction(this.editor.beforeDestroy)) {
-                this.editor.beforeDestroy();
             }
             dispatch('finishEditing', rowKey, columnName);
         }
@@ -8141,14 +8188,19 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
             if (common_1.isFunction(cellEditor.mounted)) {
                 cellEditor.mounted();
             }
-            document.addEventListener('mousedown', this.handleMouseDownDocument);
         }
     };
     EditingLayerInnerComp.prototype.componentWillUnmount = function () {
         this.finishEditing(false);
-        document.removeEventListener('mousedown', this.handleMouseDownDocument);
         if (this.editor && this.editor.beforeDestroy) {
             this.editor.beforeDestroy();
+        }
+    };
+    EditingLayerInnerComp.prototype.componentWillReceiveProps = function (nextProps) {
+        var _a = this.props, prevFocusedColumnName = _a.focusedColumnName, prevFocusedRowKey = _a.focusedRowKey;
+        var focusedColumnName = nextProps.focusedColumnName, focusedRowKey = nextProps.focusedRowKey;
+        if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
+            this.finishEditing(true);
         }
     };
     EditingLayerInnerComp.prototype.render = function () {
@@ -8165,13 +8217,13 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
 exports.EditingLayerInnerComp = EditingLayerInnerComp;
 exports.EditingLayerInner = hoc_1.connect(function (store, _a) {
     var rowKey = _a.rowKey, columnName = _a.columnName;
-    var _b = store.focus, cellPosRect = _b.cellPosRect, side = _b.side;
+    var _b = store.focus, cellPosRect = _b.cellPosRect, side = _b.side, focusedColumnName = _b.columnName, focusedRowKey = _b.rowKey;
     var _c = store.dimension, cellBorderWidth = _c.cellBorderWidth, tableBorderWidth = _c.tableBorderWidth, headerHeight = _c.headerHeight, width = _c.width, frozenBorderWidth = _c.frozenBorderWidth;
     var _d = store.viewport, scrollLeft = _d.scrollLeft, scrollTop = _d.scrollTop;
     var areaWidth = store.columnCoords.areaWidth;
     var _e = store.data, viewData = _e.viewData, sortOptions = _e.sortOptions;
-    var _f = store.column, allColumnMap = _f.allColumnMap, frozenCount = _f.frozenCount;
-    var _g = cellPosRect, top = _g.top, left = _g.left, right = _g.right, bottom = _g.bottom;
+    var allColumnMap = store.column.allColumnMap;
+    var _f = cellPosRect, top = _f.top, left = _f.left, right = _f.right, bottom = _f.bottom;
     var cellWidth = right - left + cellBorderWidth;
     var cellHeight = bottom - top + cellBorderWidth;
     var offsetTop = headerHeight - scrollTop + tableBorderWidth;
@@ -8180,14 +8232,16 @@ exports.EditingLayerInner = hoc_1.connect(function (store, _a) {
     var value = targetRow.valueMap[columnName].value;
     return {
         grid: instance_1.getInstance(store.id),
-        left: left + (side === 'L' ? 0 : offsetLeft + frozenCount * frozenBorderWidth),
+        left: left + (side === 'L' ? 0 : offsetLeft + frozenBorderWidth),
         top: top + offsetTop,
         width: cellWidth,
         height: cellHeight,
         contentHeight: cellHeight - 2 * cellBorderWidth,
         columnInfo: allColumnMap[columnName],
         value: value,
-        sortOptions: sortOptions
+        sortOptions: sortOptions,
+        focusedColumnName: focusedColumnName,
+        focusedRowKey: focusedRowKey
     };
 })(EditingLayerInnerComp);
 
@@ -8516,12 +8570,13 @@ var PaginationComp = /** @class */ (function (_super) {
         }
     };
     PaginationComp.prototype.createPagination = function () {
-        var _a = this.props, pageOptions = _a.pageOptions, paginationHolder = _a.paginationHolder;
+        var _a = this.props, pageOptions = _a.pageOptions, paginationHolder = _a.paginationHolder, usageStatistics = _a.grid.usageStatistics;
         var totalCount = pageOptions.totalCount, perPage = pageOptions.perPage, page = pageOptions.page;
         var options = {
             totalItems: totalCount,
             itemsPerPage: perPage,
-            page: page
+            page: page,
+            usageStatistics: usageStatistics
         };
         this.tuiPagination = new tui_pagination_1.default(this.el, options);
         this.addEventListener();
@@ -8551,7 +8606,8 @@ exports.Pagination = hoc_1.connect(function (_a) {
     return ({
         pageOptions: data.pageOptions,
         dataProvider: instance_1.getDataProvider(id),
-        paginationHolder: instance_1.getPaginationManager(id)
+        paginationHolder: instance_1.getPaginationManager(id),
+        grid: instance_1.getInstance(id)
     });
 })(PaginationComp);
 
@@ -8622,10 +8678,10 @@ function getVerticalScrollPosition(height, cellPosRect, scrollTop, tableBorderWi
     }
     return null;
 }
-function getChangedScrollPosition(store, changedCellPosRect) {
-    var _a = store.dimension, bodyHeight = _a.bodyHeight, scrollXHeight = _a.scrollXHeight, scrollYWidth = _a.scrollYWidth, tableBorderWidth = _a.tableBorderWidth, areaWidth = store.columnCoords.areaWidth, _b = store.focus, focusCellPostRect = _b.cellPosRect, side = _b.side, viewport = store.viewport;
+function getChangedScrollPosition(store, side, changedCellPosRect) {
+    var _a = store.dimension, bodyHeight = _a.bodyHeight, scrollXHeight = _a.scrollXHeight, scrollYWidth = _a.scrollYWidth, tableBorderWidth = _a.tableBorderWidth, areaWidth = store.columnCoords.areaWidth, focusedCellPostRect = store.focus.cellPosRect, viewport = store.viewport;
     var scrollLeft = viewport.scrollLeft, scrollTop = viewport.scrollTop;
-    var cellPosRect = changedCellPosRect || focusCellPostRect;
+    var cellPosRect = changedCellPosRect || focusedCellPostRect;
     var changedScrollLeft = side === 'R'
         ? getHorizontalScrollPosition(areaWidth.R - scrollYWidth, cellPosRect, scrollLeft, tableBorderWidth)
         : null;
@@ -8645,7 +8701,7 @@ function setScrollToFocus(store) {
     if (cellPosRect === null || side === null) {
         return;
     }
-    var _b = getChangedScrollPosition(store), changedScrollLeft = _b[0], changedScrollTop = _b[1];
+    var _b = getChangedScrollPosition(store, side), changedScrollLeft = _b[0], changedScrollTop = _b[1];
     setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 exports.setScrollToFocus = setScrollToFocus;
@@ -8657,13 +8713,13 @@ function setScrollToSelection(store) {
     var rowIndex = inputRange.row[1];
     var columnIndex = inputRange.column[1];
     var cellSide = columnIndex > widths.L.length - 1 ? 'R' : 'L';
-    var rightSideColumnIndex = columnIndex - widths.L.length;
+    var rightSideColumnIndex = columnIndex < widths.L.length ? widths.L.length : columnIndex - widths.L.length;
     var left = columnOffsets[cellSide][rightSideColumnIndex];
     var right = left + widths[cellSide][rightSideColumnIndex];
     var top = rowOffsets[rowIndex];
     var bottom = top + heights[rowIndex];
     var cellPosRect = { left: left, right: right, top: top, bottom: bottom };
-    var _c = getChangedScrollPosition(store, cellPosRect), changedScrollLeft = _c[0], changedScrollTop = _c[1];
+    var _c = getChangedScrollPosition(store, cellSide, cellPosRect), changedScrollLeft = _c[0], changedScrollTop = _c[1];
     setScrollPosition(viewport, changedScrollTop, changedScrollLeft);
 }
 exports.setScrollToSelection = setScrollToSelection;
@@ -8815,7 +8871,7 @@ function setFrozenColumnCount(_a, count) {
 exports.setFrozenColumnCount = setFrozenColumnCount;
 function setColumnWidth(_a, side, index, width) {
     var column = _a.column;
-    var columnItem = column.visibleColumnsBySide[side][index];
+    var columnItem = column.visibleColumnsBySideWithRowHeader[side][index];
     columnItem.baseWidth = width;
     columnItem.fixedWidth = true;
 }
@@ -8897,14 +8953,14 @@ function getNextCellIndexWithRowSpan(store, command, currentRowIndex, columnRang
     return [rowIndex, columnIndex];
 }
 function moveFocus(store, command) {
-    var focus = store.focus, data = store.data, visibleColumns = store.column.visibleColumns, id = store.id;
+    var focus = store.focus, data = store.data, visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, id = store.id;
     var viewData = data.viewData;
     var rowIndex = focus.rowIndex, columnIndex = focus.totalColumnIndex;
     if (rowIndex === null || columnIndex === null) {
         return;
     }
     var _a = keyboard_1.getNextCellIndex(store, command, [rowIndex, columnIndex]), nextRowIndex = _a[0], nextColumnIndex = _a[1];
-    var nextColumnName = visibleColumns[nextColumnIndex].name;
+    var nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
     if (!column_1.isRowHeader(nextColumnName)) {
         focus.navigating = true;
         focus_1.changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
@@ -8928,7 +8984,7 @@ function editFocus(_a, command) {
 exports.editFocus = editFocus;
 function changeSelection(store, command) {
     var _a;
-    var selection = store.selection, focus = store.focus, data = store.data, _b = store.column, visibleColumns = _b.visibleColumns, rowHeaderCount = _b.rowHeaderCount, id = store.id;
+    var selection = store.selection, focus = store.focus, data = store.data, _b = store.column, visibleColumnsWithRowHeader = _b.visibleColumnsWithRowHeader, rowHeaderCount = _b.rowHeaderCount, id = store.id;
     var viewData = data.viewData, sortOptions = data.sortOptions;
     var focusRowIndex = focus.rowIndex, totalFocusColumnIndex = focus.totalColumnIndex;
     var currentInputRange = selection.inputRange;
@@ -8938,11 +8994,11 @@ function changeSelection(store, command) {
     if (!currentInputRange) {
         currentInputRange = selection.inputRange = {
             row: [focusRowIndex, focusRowIndex],
-            column: [totalFocusColumnIndex - rowHeaderCount, totalFocusColumnIndex - rowHeaderCount]
+            column: [totalFocusColumnIndex, totalFocusColumnIndex]
         };
     }
     var rowLength = viewData.length;
-    var columnLength = visibleColumns.length;
+    var columnLength = visibleColumnsWithRowHeader.length;
     var rowStartIndex = currentInputRange.row[0];
     var rowIndex = currentInputRange.row[1];
     var columnStartIndex = currentInputRange.column[0];
@@ -8950,7 +9006,7 @@ function changeSelection(store, command) {
     var nextCellIndexes;
     if (command === 'all') {
         rowStartIndex = 0;
-        columnStartIndex = 0;
+        columnStartIndex = rowHeaderCount;
         nextCellIndexes = [rowLength - 1, columnLength - 1];
     }
     else {
@@ -8960,30 +9016,30 @@ function changeSelection(store, command) {
         }
     }
     var nextRowIndex = nextCellIndexes[0], nextColumnIndex = nextCellIndexes[1];
+    var nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
     var startRowIndex = rowStartIndex;
     var endRowIndex = nextRowIndex;
-    if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
-        var rowRange = [startRowIndex, endRowIndex];
-        var colRange = [columnStartIndex, nextColumnIndex];
-        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
+    if (command !== 'all') {
+        _a = rowSpan_1.getRowRangeWithRowSpan([startRowIndex, endRowIndex], [columnStartIndex, nextColumnIndex], visibleColumnsWithRowHeader, focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
     }
-    var inputRange = {
-        row: [startRowIndex, endRowIndex],
-        column: [columnStartIndex, nextColumnIndex]
-    };
-    selection_1.changeSelectionRange(selection, inputRange, id);
+    if (!column_1.isRowHeader(nextColumnName)) {
+        var inputRange = {
+            row: [startRowIndex, endRowIndex],
+            column: [columnStartIndex, nextColumnIndex]
+        };
+        selection_1.changeSelectionRange(selection, inputRange, id);
+    }
 }
 exports.changeSelection = changeSelection;
 function removeContent(store) {
-    var column = store.column, data = store.data;
-    var visibleColumns = column.visibleColumns;
+    var visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, data = store.data;
     var rawData = data.rawData;
     var removeRange = keyboard_1.getRemoveRange(store);
     if (!removeRange) {
         return;
     }
     var _a = removeRange.column, columnStart = _a[0], columnEnd = _a[1], _b = removeRange.row, rowStart = _b[0], rowEnd = _b[1];
-    visibleColumns
+    visibleColumnsWithRowHeader
         .slice(columnStart, columnEnd + 1)
         .filter(function (_a) {
         var editor = _a.editor;
@@ -9017,9 +9073,9 @@ var keyboard_1 = __webpack_require__(20);
 var rowSpan_1 = __webpack_require__(7);
 function getNextCellIndex(store, command, _a) {
     var rowIndex = _a[0], columnIndex = _a[1];
-    var data = store.data, visibleColumns = store.column.visibleColumns, _b = store.dimension, bodyHeight = _b.bodyHeight, cellBorderWidth = _b.cellBorderWidth, _c = store.rowCoords, offsets = _c.offsets, heights = _c.heights;
+    var data = store.data, _b = store.column, visibleColumnsWithRowHeader = _b.visibleColumnsWithRowHeader, rowHeaderCount = _b.rowHeaderCount, heights = store.rowCoords.heights;
     var rawData = data.rawData, viewData = data.viewData, sortOptions = data.sortOptions;
-    var columnName = visibleColumns[columnIndex].name;
+    var columnName = visibleColumnsWithRowHeader[columnIndex].name;
     switch (command) {
         case 'up':
             if (rowSpan_1.enableRowSpan(sortOptions.columnName)) {
@@ -9040,34 +9096,32 @@ function getNextCellIndex(store, command, _a) {
             columnIndex += 1;
             break;
         case 'firstCell':
-            columnIndex = 0;
+            columnIndex = rowHeaderCount;
             rowIndex = 0;
             break;
         case 'lastCell':
-            columnIndex = visibleColumns.length - 1;
+            columnIndex = visibleColumnsWithRowHeader.length - 1;
             rowIndex = viewData.length - 1;
             break;
         case 'pageUp': {
-            var movedPosition = keyboard_1.getPageMovedPosition(rowIndex, offsets, bodyHeight, true);
-            rowIndex = keyboard_1.getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+            rowIndex = 0;
             break;
         }
         case 'pageDown': {
-            var movedPosition = keyboard_1.getPageMovedPosition(rowIndex, offsets, bodyHeight, false);
-            rowIndex = keyboard_1.getPageMovedIndex(offsets, cellBorderWidth, movedPosition);
+            rowIndex = viewData.length - 1;
             break;
         }
         case 'firstColumn':
-            columnIndex = 0;
+            columnIndex = rowHeaderCount;
             break;
         case 'lastColumn':
-            columnIndex = visibleColumns.length - 1;
+            columnIndex = visibleColumnsWithRowHeader.length - 1;
             break;
         default:
             break;
     }
     rowIndex = common_1.clamp(rowIndex, 0, viewData.length - 1);
-    columnIndex = common_1.clamp(columnIndex, 0, visibleColumns.length - 1);
+    columnIndex = common_1.clamp(columnIndex, 0, visibleColumnsWithRowHeader.length - 1);
     return [rowIndex, columnIndex];
 }
 exports.getNextCellIndex = getNextCellIndex;
@@ -9178,7 +9232,7 @@ function adjustScrollLeft(overflowX, viewport) {
         viewport.scrollLeft = Math.max(0, scrollLeft - scrollPixelScale);
     }
     else if (overflowX > 0) {
-        viewport.scrollLeft = Math.max(maxScrollLeft, scrollLeft - scrollPixelScale);
+        viewport.scrollLeft = Math.min(maxScrollLeft, scrollLeft + scrollPixelScale);
     }
 }
 function adjustScrollTop(overflowY, viewport) {
@@ -9224,6 +9278,32 @@ function getFocusCellPos(store) {
         pageY: offsets[rowIndex] + heights[rowIndex] + headerHeight
     };
 }
+function findColumnIndexByPosition(store, viewInfo) {
+    var dimension = store.dimension, columnCoords = store.columnCoords;
+    var widths = columnCoords.widths, areaWidth = columnCoords.areaWidth;
+    var totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
+    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+    return common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x);
+}
+function findRowIndexByPosition(store, viewInfo) {
+    var dimension = store.dimension, columnCoords = store.columnCoords, rowCoords = store.rowCoords;
+    var areaWidth = columnCoords.areaWidth;
+    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
+    return common_1.findOffsetIndex(rowCoords.offsets, scrolledPosition.y);
+}
+function getColumnNameRange(store, dragStartData, dragData, elementInfo) {
+    var allColumns = store.column.allColumns;
+    var scrollTop = elementInfo.scrollTop, scrollLeft = elementInfo.scrollLeft;
+    var startPageX = dragStartData.pageX, startPageY = dragStartData.pageY;
+    var endPageX = dragData.pageX, endPageY = dragData.pageY;
+    var startViewInfo = { pageX: startPageX, pageY: startPageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
+    var endViewInfo = { pageX: endPageX, pageY: endPageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
+    var startColumnIndex = findColumnIndexByPosition(store, startViewInfo);
+    var endColumnIndex = findColumnIndexByPosition(store, endViewInfo);
+    var startColumnName = allColumns[startColumnIndex].name;
+    var endColumnName = allColumns[endColumnIndex].name;
+    return [startColumnName, endColumnName];
+}
 function selectionEnd(_a) {
     var selection = _a.selection;
     selection.inputRange = null;
@@ -9233,20 +9313,15 @@ function selectionEnd(_a) {
 exports.selectionEnd = selectionEnd;
 function selectionUpdate(store, dragStartData, dragData) {
     var _a;
-    var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, rowCoords = store.rowCoords, selection = store.selection, column = store.column, id = store.id, data = store.data;
+    var viewport = store.viewport, selection = store.selection, column = store.column, id = store.id, data = store.data;
     var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
-    var widths = columnCoords.widths, areaWidth = columnCoords.areaWidth;
-    var rowOffsets = rowCoords.offsets;
-    var rowHeaderCount = column.rowHeaderCount;
     var pageX = dragData.pageX, pageY = dragData.pageY;
     var curInputRange = selection.inputRange;
-    var visibleColumns = column.visibleColumns;
+    var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader;
     var startRowIndex, startColumnIndex, endRowIndex;
     var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
-    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-    var totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-    var endColumnIndex = common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
-    endRowIndex = common_1.findOffsetIndex(rowOffsets, scrolledPosition.y);
+    var endColumnIndex = findColumnIndexByPosition(store, viewInfo);
+    endRowIndex = findRowIndexByPosition(store, viewInfo);
     if (curInputRange === null) {
         var startViewInfo = {
             pageX: dragStartData.pageX,
@@ -9254,10 +9329,8 @@ function selectionUpdate(store, dragStartData, dragData) {
             scrollTop: scrollTop,
             scrollLeft: scrollLeft
         };
-        var startScrolledPosition = getScrolledPosition(startViewInfo, dimension, areaWidth.L);
-        startRowIndex = common_1.findOffsetIndex(rowOffsets, startScrolledPosition.y);
-        startColumnIndex =
-            common_1.findOffsetIndex(totalColumnOffsets, startScrolledPosition.x) - rowHeaderCount;
+        startColumnIndex = findColumnIndexByPosition(store, startViewInfo);
+        startRowIndex = findRowIndexByPosition(store, startViewInfo);
     }
     else {
         startRowIndex = curInputRange.row[0];
@@ -9266,11 +9339,7 @@ function selectionUpdate(store, dragStartData, dragData) {
     if (startColumnIndex < 0 || endColumnIndex < 0 || startRowIndex < 0 || endRowIndex < 0) {
         return;
     }
-    if (rowSpan_1.enableRowSpan(data.sortOptions.columnName)) {
-        var rowRange = [startRowIndex, endRowIndex];
-        var colRange = [startColumnIndex, endColumnIndex];
-        _a = rowSpan_1.getRowRangeWithRowSpan(rowRange, colRange, visibleColumns, store.focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
-    }
+    _a = rowSpan_1.getRowRangeWithRowSpan([startRowIndex, endRowIndex], [startColumnIndex, endColumnIndex], visibleColumnsWithRowHeader, store.focus.rowIndex, data), startRowIndex = _a[0], endRowIndex = _a[1];
     var inputRange = {
         row: [startRowIndex, endRowIndex],
         column: [startColumnIndex, endColumnIndex]
@@ -9278,11 +9347,14 @@ function selectionUpdate(store, dragStartData, dragData) {
     selection_1.changeSelectionRange(selection, inputRange, id);
 }
 exports.selectionUpdate = selectionUpdate;
-function dragMoveBody(store, dragStartData, dragData) {
+function dragMoveBody(store, dragStartData, dragData, elementInfo) {
     var dimension = store.dimension, columnCoords = store.columnCoords, selection = store.selection, viewport = store.viewport;
     var areaWidth = columnCoords.areaWidth;
-    selectionUpdate(store, dragStartData, dragData);
-    setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
+    var _a = getColumnNameRange(store, dragStartData, dragData, elementInfo), startColumnName = _a[0], endColumnName = _a[1];
+    if (!column_1.isRowHeader(startColumnName) && !column_1.isRowHeader(endColumnName)) {
+        selectionUpdate(store, dragStartData, dragData);
+        setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
+    }
 }
 exports.dragMoveBody = dragMoveBody;
 function dragEnd(_a) {
@@ -9293,13 +9365,13 @@ exports.dragEnd = dragEnd;
 function mouseDownBody(store, elementInfo, eventInfo) {
     var data = store.data, column = store.column, columnCoords = store.columnCoords, rowCoords = store.rowCoords, focus = store.focus, id = store.id;
     var pageX = eventInfo.pageX, pageY = eventInfo.pageY, shiftKey = eventInfo.shiftKey;
-    var visibleColumnsBySide = column.visibleColumnsBySide;
+    var visibleColumnsBySideWithRowHeader = column.visibleColumnsBySideWithRowHeader;
     var side = elementInfo.side, scrollLeft = elementInfo.scrollLeft, scrollTop = elementInfo.scrollTop, left = elementInfo.left, top = elementInfo.top;
     var offsetLeft = pageX - left + scrollLeft;
     var offsetTop = pageY - top + scrollTop;
     var rowIndex = common_1.findOffsetIndex(rowCoords.offsets, offsetTop);
     var columnIndex = common_1.findOffsetIndex(columnCoords.offsets[side], offsetLeft);
-    var columnName = visibleColumnsBySide[side][columnIndex].name;
+    var columnName = visibleColumnsBySideWithRowHeader[side][columnIndex].name;
     if (!column_1.isRowHeader(columnName)) {
         if (shiftKey) {
             var dragData = { pageX: pageX, pageY: pageY };
@@ -9317,15 +9389,14 @@ exports.mouseDownBody = mouseDownBody;
 function mouseDownHeader(store, name, parentHeader) {
     var _a;
     var data = store.data, selection = store.selection, id = store.id, column = store.column, focus = store.focus;
-    var visibleColumns = column.visibleColumns, rowHeaderCount = column.rowHeaderCount, complexHeaderColumns = column.complexHeaderColumns;
+    var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader, complexHeaderColumns = column.complexHeaderColumns;
     var endRowIndex = data.viewData.length - 1;
     var startColumnIndex, endColumnIndex;
     if (parentHeader) {
-        _a = selection_2.getChildColumnRange(visibleColumns, complexHeaderColumns, name, rowHeaderCount), startColumnIndex = _a[0], endColumnIndex = _a[1];
+        _a = selection_2.getChildColumnRange(visibleColumnsWithRowHeader, complexHeaderColumns, name), startColumnIndex = _a[0], endColumnIndex = _a[1];
     }
     else {
-        startColumnIndex = endColumnIndex =
-            common_1.findPropIndex('name', name, visibleColumns) - rowHeaderCount;
+        startColumnIndex = endColumnIndex = common_1.findPropIndex('name', name, visibleColumnsWithRowHeader);
     }
     var inputRange = {
         row: [0, endRowIndex],
@@ -9338,18 +9409,16 @@ exports.mouseDownHeader = mouseDownHeader;
 function dragMoveHeader(store, dragData, startSelectedName) {
     var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, selection = store.selection, column = store.column, id = store.id;
     var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
-    var areaWidth = columnCoords.areaWidth, widths = columnCoords.widths;
-    var rowHeaderCount = column.rowHeaderCount, visibleColumns = column.visibleColumns, complexHeaderColumns = column.complexHeaderColumns;
+    var areaWidth = columnCoords.areaWidth;
+    var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader, complexHeaderColumns = column.complexHeaderColumns;
     var pageX = dragData.pageX, pageY = dragData.pageY;
     var curInputRange = selection.inputRange;
     if (curInputRange === null) {
         return;
     }
-    var _a = selection_2.getChildColumnRange(visibleColumns, complexHeaderColumns, startSelectedName, rowHeaderCount), startColumnIdx = _a[0], endColumnIdx = _a[1];
+    var _a = selection_2.getChildColumnRange(visibleColumnsWithRowHeader, complexHeaderColumns, startSelectedName), startColumnIdx = _a[0], endColumnIdx = _a[1];
     var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
-    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-    var totalColumnOffsets = getTotalColumnOffsets(widths, dimension.cellBorderWidth);
-    var columnIndex = common_1.findOffsetIndex(totalColumnOffsets, scrolledPosition.x) - rowHeaderCount;
+    var columnIndex = findColumnIndexByPosition(store, viewInfo);
     var rowIndex = curInputRange.row[1];
     if (columnIndex < startColumnIdx) {
         startColumnIdx = columnIndex;
@@ -9369,35 +9438,36 @@ function dragMoveHeader(store, dragData, startSelectedName) {
 exports.dragMoveHeader = dragMoveHeader;
 function mouseDownRowHeader(store, rowKey) {
     var selection = store.selection, id = store.id, column = store.column, data = store.data, focus = store.focus;
-    var visibleColumns = column.visibleColumns, rowHeaderCount = column.rowHeaderCount;
+    var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader, rowHeaderCount = column.rowHeaderCount;
     var rowIndex = common_1.findPropIndex('rowKey', rowKey, data.rawData);
-    var endColumnIndex = visibleColumns.length - 1 - rowHeaderCount;
+    var endColumnIndex = visibleColumnsWithRowHeader.length - 1;
+    var _a = rowSpan_1.getRowRangeWithRowSpan([rowIndex, rowIndex], [rowHeaderCount, endColumnIndex], visibleColumnsWithRowHeader, null, data), startRowIndex = _a[0], endRowIndex = _a[1];
     var inputRange = {
-        row: [rowIndex, rowIndex],
-        column: [0, endColumnIndex]
+        row: [startRowIndex, endRowIndex],
+        column: [rowHeaderCount, endColumnIndex]
     };
-    focus_1.changeFocus(focus, data, data.rawData[rowIndex].rowKey, visibleColumns[rowHeaderCount].name, id);
+    focus_1.changeFocus(focus, data, data.rawData[rowIndex].rowKey, visibleColumnsWithRowHeader[rowHeaderCount].name, id);
     selection_1.changeSelectionRange(selection, inputRange, id);
 }
 exports.mouseDownRowHeader = mouseDownRowHeader;
 function dragMoveRowHeader(store, dragData) {
-    var dimension = store.dimension, viewport = store.viewport, columnCoords = store.columnCoords, rowCoords = store.rowCoords, selection = store.selection, id = store.id;
+    var _a;
+    var viewport = store.viewport, selection = store.selection, id = store.id, data = store.data, column = store.column;
     var scrollTop = viewport.scrollTop, scrollLeft = viewport.scrollLeft;
-    var areaWidth = columnCoords.areaWidth;
-    var rowOffsets = rowCoords.offsets;
+    var visibleColumnsWithRowHeader = column.visibleColumnsWithRowHeader, rowHeaderCount = column.rowHeaderCount;
     var pageX = dragData.pageX, pageY = dragData.pageY;
     var curInputRange = selection.inputRange;
     if (curInputRange === null) {
         return;
     }
     var viewInfo = { pageX: pageX, pageY: pageY, scrollTop: scrollTop, scrollLeft: scrollLeft };
-    var scrolledPosition = getScrolledPosition(viewInfo, dimension, areaWidth.L);
-    var rowIndex = common_1.findOffsetIndex(rowOffsets, scrolledPosition.y);
-    var startRowIndex = curInputRange.row[0];
     var columnIndex = curInputRange.column[1];
+    var startRowIndex = curInputRange.row[0];
+    var endRowIndex = findRowIndexByPosition(store, viewInfo);
+    _a = rowSpan_1.getRowRangeWithRowSpan([startRowIndex, endRowIndex], [rowHeaderCount, columnIndex], visibleColumnsWithRowHeader, null, data), startRowIndex = _a[0], endRowIndex = _a[1];
     var inputRange = {
-        row: [startRowIndex, rowIndex],
-        column: [0, columnIndex]
+        row: [startRowIndex, endRowIndex],
+        column: [rowHeaderCount, columnIndex]
     };
     selection_1.changeSelectionRange(selection, inputRange, id);
 }
