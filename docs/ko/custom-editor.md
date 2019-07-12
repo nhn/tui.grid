@@ -3,6 +3,7 @@
 셀 데이터를 효과적으로 표현하기 위해 `CellEditor` 생성자 함수의 인터페이스를 기반으로 커스텀 에디터를 사용할 수 있다. TOAST UI Grid는 사용자가 등록한 `CellEditor` 생성자 함수를 이용하여 내부적으로 인스턴스를 생성한 후, 반환된 요소를 DOM에 추가한다. 커스텀 에디터는 `class` 키워드를 사용하여 선언하는 것을 권장하지만, 사용할 수 없는 경우 `function`과 `prototype`을 사용해도 무방하다.
 
 `CellEditor` 인터페이스는 아래와 같다.(`CellEditor`의 인터페이스 구조는 [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/editor/types.d.ts)을 참고한다.)
+
 * `constructor` 
   생성자 함수는 셀의 에디팅이 시작될 때 마다 호출된다. 일반적으로 루트 엘리먼트를 인스턴스 멤버로 저장하는 작업을 수행한다. 이렇게 저장된 멤버들은 `getElement()` 와 `getValue()` 메서드를 통해 접근할 수 있다. 생성자의 인자로 편집 UI를 커스터마이징 할 수 있는 유용한 정보들을 담은 객체를 전달받는다. 인자로 전달되는 객체는 아래와 같은 정보를 담고 있다.        
 
