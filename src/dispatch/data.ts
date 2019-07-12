@@ -192,6 +192,19 @@ export function sort(store: Store, columnName: string, ascending: boolean) {
     data.rawData = rawData;
     data.viewData = viewData;
   }
+
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ sortOptions });
+
+  /**
+   * Occurs when sort.
+   * @event Grid#sort
+   * @property {Event} nativeEvent - Event object
+   * @property {string} targetType - Type of event target
+   * @property {number} sortOptions - sort options
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('sort', gridEvent);
 }
 
 function applyPasteDataToRawData(

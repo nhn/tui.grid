@@ -213,3 +213,20 @@ it('off', () => {
       expect(callback2).not.to.be.calledTwice;
     });
 });
+
+it('sort', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'sort', callback);
+
+  cy.gridInstance()
+    .invoke('sort', 'name', false)
+    .then(() => {
+      expect(
+        isSubsetOf(
+          { sortOptions: { columnName: 'rowKey', ascending: true, useClient: true } },
+          callback.args[0][0]
+        )
+      ).to.be.true;
+    });
+});
