@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+      <meta charset="utf-8">
+      <title>14. Tree</title>
+      <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+      <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+    See the "tree-dummy.js" file for tree data.<br />
+    The last row can test the dynamic loading function.
+    See the <a href="https://github.com/nhnent/tui.grid/blob/master/docs/v3.0.0-migration-guide.md" target="_blank">tutorial</a> for more information.
+    </div>
+    <div class="contents">
+      <div style="margin-bottom:10px;">
+          <button id="append">append</button>
+          <button id="remove">remove</button>
+      </div>
+      <div class="code-html">
+        <div id="grid"></div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+  <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/tree-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+  var grid = new tui.Grid({
+      el: $('#grid'),
+      data: gridData,
+      rowHeaders: ['rowNum', 'radio'],
+      bodyHeight: 300,
+      rowHeight: 40,
+      virtualScrolling: true,
+      treeColumnOptions: {
+          name: 'name',
+          useCascadingCheckbox: false
+      },
+      columns: [
+          {
+              title: 'Name',
+              name: 'name',
+              width: 300,
+              editOptions: {
+                  type: 'text',
+                  useViewMode: true
+              }
+          },
+          {
+              title: 'Artist',
+              name: 'artist'
+          },
+          {
+              title: 'Type',
+              name: 'type'
+          },
+          {
+              title: 'Release',
+              name: 'release'
+          },
+          {
+              title: 'Genre',
+              name: 'genre'
+          }
+      ]
+  });
+
+  function appendRows(parentRowKey, isDynamicLoaing) {
+      var childrenRowData = [
+          {
+              id: 502796,
+              name: 'test4',
+              artist: 'test4',
+              release: '2015.05.12',
+              type: 'EP',
+              typeCode: '2',
+              genre: 'Hiphop',
+              genreCode: '5',
+              grade: '5',
+              price: 18000,
+              downloadCount: 1000,
+              listenCount: 5000
+          },
+          {
+              id: 502790,
+              name: 'test5',
+              artist: 'test5',
+              release: '2015.05.12',
+              type: 'EP',
+              typeCode: '2',
+              genre: 'Hiphop',
+              genreCode: '5',
+              grade: '5',
+              price: 18000,
+              downloadCount: 1000,
+              listenCount: 5000
+          }
+      ];
+
+      grid.appendRow([{
+          id: 502795,
+          name: 'test1',
+          artist: 'test1',
+          release: '2015.05.12',
+          type: 'EP',
+          typeCode: '2',
+          genre: 'Hiphop',
+          genreCode: '5',
+          grade: '5',
+          price: 18000,
+          downloadCount: 1000,
+          listenCount: 5000,
+          _extraData: {
+              treeState: 'COLLAPSE'
+          },
+          _children: isDynamicLoaing ? true : childrenRowData
+      },
+      {
+          id: 502793,
+          name: 'test2',
+          artist: 'test2',
+          release: '2015.05.12',
+          type: 'EP',
+          typeCode: '2',
+          genre: 'Hiphop',
+          genreCode: '5',
+          grade: '5',
+          price: 18000,
+          downloadCount: 1000,
+          listenCount: 5000
+      },
+      {
+          id: 502797,
+          name: 'test3',
+          artist: 'test3',
+          release: '2015.05.12',
+          type: 'EP',
+          typeCode: '2',
+          genre: 'Hiphop',
+          genreCode: '5',
+          grade: '5',
+          price: 18000,
+          downloadCount: 1000,
+          listenCount: 5000
+      }], {
+          parentRowKey: parentRowKey
+      });
+  }
+
+  function removeRows(rowKeys) {
+      _.each(rowKeys, function(rowKey) {
+          grid.removeRow(rowKey);
+      });
+  }
+
+  $('#append').on('click', function() {
+      var parentRowKey = grid.getCheckedRowKeys()[0];
+
+      appendRows(parentRowKey);
+  });
+
+  $('#remove').on('click', function() {
+      var rowKeys = grid.getCheckedRowKeys();
+
+      removeRows(rowKeys);
+  });
+
+  grid.on('expanded', function(ev) {
+      var parentRowKey = ev.rowKey;
+      var descendantRowKeys = ev.descendantRowKeys;
+
+      if (!descendantRowKeys.length) {
+          removeRows(descendantRowKeys);
+          appendRows(parentRowKey, true);
+      }
+  });
+  </script>
+</html>
