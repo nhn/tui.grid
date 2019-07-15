@@ -1,10 +1,10 @@
-# Theme 👨‍🎨
+# Themes 👨‍🎨
 
-The TOAST UI Grid provides you an easy way to customize the style of the grid. With `applyTheme()` method, you can easily change entire styles of the grid. 
+TOAST UI Grid uses the `applyTheme()` method to set styles for the entire Grid and easily customize the Grid however the user sees fit. 
 
-### Using Built-in Presets
+### Using Built-In Presets
 
-There are three built-in presets in the TOAST UI Grid - **default**, **striped** and **clean**. To apply one of these presets, you only have to add one line of code to your source code:
+TOAST UI Grid has three built in presets: **default**, **striped**, and **clean.** All of this can be achieved by typing in one simple line of code!
 
 ```js
 import Grid from 'tui-grid';
@@ -12,33 +12,37 @@ import Grid from 'tui-grid';
 Grid.applyTheme('default');
 ```
 
-If you run the code above or don't apply any preset, the **default** preset will be applied. It looks like below.
+If the snippet above is not present in your code, the **default** preset will be applied. 
+
+The **default** theme looks something like this. 
 
 ![theme_default](https://user-images.githubusercontent.com/35371660/59335524-b3c10580-8d37-11e9-9ad6-a74e1f30896e.png)
 
-Using the **striped** preset adds zebra-striping to the table.
+The **striped** preset will add stripes to your table. 
 
 ```js
 Grid.applyTheme('striped');
 ```
 
-The result will looks like this:
+Below is an example of a Grid with **striped** theme.
 
 ![theme_striped](https://user-images.githubusercontent.com/35371660/59335525-b3c10580-8d37-11e9-8d0a-4fc67c58cb6b.png)
 
-If you want more clean and basic style, use the **clean** preset.
+If you are searching for simpler and more basic look, use the **clean** preset.
 
 ```js
 Grid.applyTheme('clean');
 ```
 
-It has a very simple design like below.
+The Grid below is the result of using the **clean** theme. 
 
 ![theme_clean](https://user-images.githubusercontent.com/35371660/59335522-b3c10580-8d37-11e9-83aa-a7cd6e9bbdc6.png)
 
-### Customizing themes
+### Customizing Themes
 
-If you want to apply your own styles to the grid, you can extend the preset theme with your own options. The `applyTheme()` method has a second parameter, which extends the existing theme options. For example, if you want to use **striped** preset with changing the background colors of head-cells and cells in even rows, you can use the code below.
+If you have a unique style that you want to implement, you can customize additional options to extend the preset themes. 
+
+The second argument of the `applyTheme()` method is an object with extensible options for the theme. For example, if you were to implement a **striped** preset with different colors for the header area and even numbered rows, you can do so with the following. 
 
 ```js
 Grid.applyTheme('striped', {
@@ -52,11 +56,14 @@ Grid.applyTheme('striped', {
   }
 });
 ```
-The result will looks like this:
+
+Once your run your code, your Grid should look something like the image below. 
 
 ![theme_custom](https://user-images.githubusercontent.com/35371660/59335763-321da780-8d38-11e9-89db-fbd0620ce9e2.png)
 
-The following example extends the **default** preset with the custom options. The options are the same with the **clean** preset. You can see the result by comparing the **default** and the **clean** preset in the screenshots above.
+The following is an example of a customized **default** preset, and configurable options can be applied to both **default** as well as to **clean.** 
+
+With the code below, you can compare for yourself how the **default** and **clean** presets have changed. 
 
 ```js
 Grid.applyTheme('default', {
@@ -84,9 +91,8 @@ Grid.applyTheme('default', {
 });
 ```
 
-You can see all available options at the `Grid.applyTheme()` section of the [API page](http://nhn.github.io/tui.grid/latest).
+All options are documented in greater detail in [API Documentation](http://nhn.github.io/tui.grid/latest) under section `Grid.applyTheme()`.
 
+## Examples
 
-## Example
-
-You can apply preset themes and customize them with a sample grid [here](http://nhn.github.io/tui.grid/latest/tutorial-example07-themes).
+[Here](http://nhn.github.io/tui.grid/latest/tutorial-example07-themes) is a sandbox where you can try different preset themes and customizable options on an example Grid.
