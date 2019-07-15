@@ -1,6 +1,7 @@
 import { cls } from '../../src/helper/dom';
 import { data } from '../../samples/basic';
 import Grid from '../../src/grid';
+import { isSubsetOf } from '../helper/compare';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -82,5 +83,33 @@ describe('validate changed value using editor', () => {
 
     cy.get(`.${cls('layer-editing')} input`).type('foo{enter}');
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+});
+
+describe('get data that failed validation result by validate api', () => {
+  it('empty', () => {
+    cy.createGrid({
+      data: data.slice(2),
+      columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+    });
+
+    cy.getCell(0, 'name')
+      .trigger('mousedown')
+      .trigger('dblclick');
+
+    cy.get(`.${cls('layer-editing')} input`)
+      .invoke('val', '')
+      .type('{enter}');
+
+    cy.gridInstance()
+      .invoke('validate')
+      .should((result) => {
+        expect(
+          isSubsetOf(
+            [{ errors: [{ columnName: 'name', errorCode: 'REQUIRED' }], rowKey: 0 }],
+            result
+          )
+        ).to.be.true;
+      });
   });
 });
