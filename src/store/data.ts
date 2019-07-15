@@ -359,14 +359,15 @@ export function create(
   data: OptRow[],
   column: Column,
   pageOptions: PageOptions,
-  useClientSort: boolean
+  useClientSort: boolean,
+  disabled: boolean
 ): Observable<Data> {
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: useClientSort };
 
   return observable({
-    disabled: false,
+    disabled,
     rawData,
     viewData,
     sortOptions,
