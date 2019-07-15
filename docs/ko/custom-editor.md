@@ -2,7 +2,7 @@
 
 셀 데이터를 효과적으로 표현하기 위해 `CellEditor` 생성자 함수의 인터페이스를 기반으로 커스텀 에디터를 사용할 수 있다. TOAST UI Grid는 사용자가 등록한 `CellEditor` 생성자 함수를 이용하여 내부적으로 인스턴스를 생성한 후, 반환된 요소를 DOM에 추가한다. 커스텀 에디터는 `class` 키워드를 사용하여 선언하는 것을 권장하지만, 사용할 수 없는 경우 `function`과 `prototype`을 사용해도 무방하다.
 
-`CellEditor` 인터페이스는 아래와 같다.(`CellEditor`의 인터페이스 구조를 보고 싶다면 [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/editor/types.d.ts)을 참고한다.)
+`CellEditor` 인터페이스는 아래와 같다.(`CellEditor`의 인터페이스 구조는 [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/editor/types.d.ts)을 참고한다.)
 * `constructor` 
   생성자 함수는 셀의 에디팅이 시작될 때 마다 호출된다. 일반적으로 루트 엘리먼트를 인스턴스 멤버로 저장하는 작업을 수행한다. 이렇게 저장된 멤버들은 `getElement()` 와 `getValue()` 메서드를 통해 접근할 수 있다. 생성자의 인자로 편집 UI를 커스터마이징 할 수 있는 유용한 정보들을 담은 객체를 전달받는다. 인자로 전달되는 객체는 아래와 같은 정보를 담고 있다.        
 
@@ -11,16 +11,16 @@
   | `grid` | `Grid` | `grid` 속성은 Grid 인스턴스를 참조하고 있다. Grid의 특정 데이터를 얻거나 직접 조작할 때 유용하게 사용할 수 있다. |
   | `rowKey` | `string \| number` | 현재 셀을 포함하고 있는 로우의 `rowKey` 값이다. |
   | `columnInfo` | `ColumnInfo` | `columnInfo` 속성은 타겟 셀이 포함된 컬럼의 모든 정보를 담고 있다. `ColumnInfo`의 인터페이스는 [여기](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts)에 정의되어 있다. |
-  | `value` | `string \| number \| boolean` | 셀의 현재 값. |
+  | `value` | `string \| number \| boolean` | 셀의 현재 값 |
 
 * `getElement` 
-  `getElement` 메서드는 에디터의 루트 DOM 요소를 반환한다. 편집이 시작되면 반환된 요소가 편집 대상 셀 위치에 삽입된다.
+  에디터의 루트 DOM 엘리먼트를 반환한다. 편집이 시작되면 반환된 엘리먼트가 편집 대상 셀 위치에 삽입된다.
 * `getValue`
-  `getValue` 메서드는 셀의 값을 반환한다. 집이 종료되면 반환된 값이 셀의 데이터 값으로 사용된다.
+  셀의 값을 반환한다. 집이 종료되면 반환된 값이 셀의 데이터 값으로 사용된다.
 * `mounted`
-  `mounted` 메서드는 `optional`이며, 인풋 요소를 초기화하는 데 사용한다. 이 메서드는 `getElement()`에서 반환되는 루트 요소가 DOM에 추가된 직후 호출된다.
+  `optional`이며, 인풋 엘리먼트를 초기화하는 데 사용한다. 이 메서드는 `getElement()`에서 반환되는 루트 엘리먼트가 DOM에 추가된 직후 호출된다.
 * `beforeDestory`
-  `beforeDestory` 메서드는 `optional`이며, 인풋 엘리먼트를 삭제할 때 사용할 수 있다. `getElement()` 로 반환된 엘리먼트가 DOM에서 제거되기 직전 실행된다.
+  `optional`이며, 인풋 엘리먼트를 삭제할 때 사용할 수 있다. `getElement()` 로 반환된 엘리먼트가 DOM에서 제거되기 직전 실행된다.
 
 다음은 간단한 텍스트 에디터의 예제 코드이다.
 
