@@ -315,7 +315,7 @@ export function createRawRow(
   let rowSpan: RowSpanAttributeValue;
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
-    // protect to create uneccesary reactive data
+    // protect to create unnecessary reactive data
     delete row._attributes.rowSpan;
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
