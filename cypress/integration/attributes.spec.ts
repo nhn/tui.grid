@@ -185,7 +185,7 @@ describe('row, checkbox disable', () => {
     cy.gridInstance().invoke('enableRow', 1, false);
     cy.get(`[data-row-key=1]`).within(($el) => {
       $el.each((index, elem) => {
-        if (index === 0) {
+        if (!index) {
           // checkbox disabled
           expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
         } else {
