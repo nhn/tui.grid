@@ -194,13 +194,11 @@ export function sort(store: Store, columnName: string, ascending: boolean) {
   }
 
   const eventBus = getEventBus(store.id);
-  const gridEvent = new GridEvent({ sortOptions });
+  const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
 
   /**
-   * Occurs when sort.
+   * Occurs when sorting.
    * @event Grid#sort
-   * @property {Event} nativeEvent - Event object
-   * @property {string} targetType - Type of event target
    * @property {number} sortOptions - sort options
    * @property {Grid} instance - Current grid instance
    */
