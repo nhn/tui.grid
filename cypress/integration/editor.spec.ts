@@ -174,7 +174,7 @@ it('startEditing API', () => {
     .should('be.visible');
 });
 
-it.only('startEditingAt API', () => {
+it('startEditingAt API', () => {
   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
   const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 

@@ -1,16 +1,6 @@
 import { cls } from '../../src/helper/dom';
 import { data } from '../../samples/basic';
-import Grid from '../../src/grid';
 import { isSubsetOf } from '../helper/compare';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
-
-function getGridInst(): Cypress.Chainable<Grid> {
-  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
-}
 
 before(() => {
   cy.visit('/dist');
@@ -29,7 +19,7 @@ describe('validate changed value', () => {
       columns: [{ name: 'name', validation: { required: true } }]
     });
 
-    getGridInst().invoke('setValue', 0, 'name', '');
+    cy.gridInstance().invoke('setValue', 0, 'name', '');
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
@@ -39,7 +29,7 @@ describe('validate changed value', () => {
       columns: [{ name: 'name', validation: { dataType: 'string' } }]
     });
 
-    getGridInst().invoke('setValue', 0, 'name', 123);
+    cy.gridInstance().invoke('setValue', 0, 'name', 123);
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
@@ -49,7 +39,7 @@ describe('validate changed value', () => {
       columns: [{ name: 'price', validation: { dataType: 'number' } }]
     });
 
-    getGridInst().invoke('setValue', 0, 'price', 'test');
+    cy.gridInstance().invoke('setValue', 0, 'price', 'test');
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
 });

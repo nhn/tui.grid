@@ -137,8 +137,6 @@ function createGridWithTheme(options) {
     data,
     columns,
     bodyHeight,
-    scrollX: true,
-    scrollY: true,
     rowHeight: 35
   });
 

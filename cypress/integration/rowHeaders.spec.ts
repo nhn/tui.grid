@@ -1,15 +1,5 @@
 import { data } from '../../samples/basic';
-import Grid from '../../src/grid';
 import { isSubsetOf } from '../helper/compare';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
-
-function getGridInst(): Cypress.Chainable<Grid> {
-  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
-}
 
 before(() => {
   cy.visit('/dist');
@@ -39,21 +29,21 @@ describe('row header API', () => {
   });
 
   it('check, uncheck', () => {
-    getGridInst().invoke('check', 0);
+    cy.gridInstance().invoke('check', 0);
     cy.get(`[data-row-key=0] input`).should('be.checked');
 
-    getGridInst().invoke('uncheck', 0);
+    cy.gridInstance().invoke('uncheck', 0);
     cy.get(`[data-row-key=0] input`).should('not.be.checked');
   });
 
   it('checkAll, uncheckAll', () => {
-    getGridInst().invoke('checkAll');
+    cy.gridInstance().invoke('checkAll');
 
     cy.get('input').each(($el) => {
       expect($el.is(':checked')).to.be.true;
     });
 
-    getGridInst().invoke('uncheckAll');
+    cy.gridInstance().invoke('uncheckAll');
 
     cy.get('input').each(($el) => {
       expect($el.is(':checked')).to.be.false;
@@ -61,10 +51,10 @@ describe('row header API', () => {
   });
 
   it('getCheckedRowKeys', () => {
-    getGridInst().invoke('check', 0);
-    getGridInst().invoke('check', 2);
+    cy.gridInstance().invoke('check', 0);
+    cy.gridInstance().invoke('check', 2);
 
-    getGridInst()
+    cy.gridInstance()
       .invoke('getCheckedRowKeys')
       .should((result) => {
         expect(isSubsetOf([0, 2], result)).to.be.true;
@@ -72,10 +62,10 @@ describe('row header API', () => {
   });
 
   it('getCheckedRows', () => {
-    getGridInst().invoke('check', 0);
-    getGridInst().invoke('check', 2);
+    cy.gridInstance().invoke('check', 0);
+    cy.gridInstance().invoke('check', 2);
 
-    getGridInst()
+    cy.gridInstance()
       .invoke('getCheckedRows')
       .should((result) => {
         expect(

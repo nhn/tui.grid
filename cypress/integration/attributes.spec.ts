@@ -123,19 +123,19 @@ describe('row, checkbox disable', () => {
       .eq(1)
       .should('have.class', cls('cell-disabled'));
 
-    cy.getCell(0, 'name').should('not.to.have.class', cls('cell-disabled'));
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-disabled'));
 
     cy.get(`.${cls('cell-row-header')}`)
       .eq(2)
       .should('have.class', cls('cell-disabled'));
 
-    cy.getCell(1, 'name').should('to.have.class', cls('cell-disabled'));
+    cy.getCell(1, 'name').should('have.class', cls('cell-disabled'));
 
     cy.get(`.${cls('cell-row-header')}`)
       .eq(3)
       .should('not.have.class', cls('cell-disabled'));
 
-    cy.getCell(2, 'name').should('to.have.class', cls('cell-disabled'));
+    cy.getCell(2, 'name').should('have.class', cls('cell-disabled'));
   });
 
   it('enable, disable api', () => {
