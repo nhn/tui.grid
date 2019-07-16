@@ -1,16 +1,6 @@
 import { data } from '../../samples/basic';
 import { isSubsetOf } from '../helper/compare';
 
-before(() => {
-  cy.visit('/dist');
-});
-
-beforeEach(() => {
-  cy.document().then((doc) => {
-    doc.body.innerHTML = '';
-  });
-});
-
 const columns = [
   { name: 'name', minWidth: 150 },
   { name: 'artist', minWidth: 150 },
@@ -19,15 +9,22 @@ const columns = [
   { name: 'genre', minWidth: 150 }
 ];
 
-describe('row header API', () => {
-  beforeEach(() => {
-    cy.createGrid({
-      data: data.slice(0, 3),
-      rowHeaders: ['checkbox'],
-      columns
-    });
-  });
+before(() => {
+  cy.visit('/dist');
+});
 
+beforeEach(() => {
+  cy.document().then((doc) => {
+    doc.body.innerHTML = '';
+  });
+  cy.createGrid({
+    data: data.slice(0, 3),
+    rowHeaders: ['checkbox'],
+    columns
+  });
+});
+
+describe('row header API', () => {
   it('check, uncheck', () => {
     cy.gridInstance().invoke('check', 0);
     cy.get(`[data-row-key=0] input`).should('be.checked');
