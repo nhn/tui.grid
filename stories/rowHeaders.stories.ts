@@ -95,51 +95,17 @@ class SingleCheckRenderer {
   }
 }
 
-stories.add('single use - row number', () => {
+stories.add('row number, checkbox', () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['rowNum']
+    rowHeaders: ['rowNum', 'checkbox']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
 
   return rootEl;
 });
-
-stories.add(
-  'single use - checkbox',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['checkbox']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    (window as any).grid = grid;
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'multi use - checkbox, row number',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['checkbox', 'rowNum']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
 
 stories.add(
   'set object type option',

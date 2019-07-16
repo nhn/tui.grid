@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
@@ -37,14 +37,8 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 stories.add(
   'sort',
   () => {
-    const { el, grid } = createGrid();
+    const { el } = createGrid();
 
-    button('sort(name, true)', () => grid.sort('name', true));
-    button('sort(name, false)', () => grid.sort('name', false));
-    button('sort(artist, true)', () => grid.sort('artist', true));
-    button('sort(artist, false)', () => grid.sort('artist', false));
-    button('unsort()', () => grid.unsort());
-    button('getSortState()', () => alert(JSON.stringify(grid.getSortState())));
     return el;
   },
   { html: { preventForcedRender: true } }

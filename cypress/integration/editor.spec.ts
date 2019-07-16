@@ -130,7 +130,7 @@ it('should destroy the editing layer, when only focus layer is changed.', () => 
       top: 50%;
       position: absolute;
       border: 1px solid #000;
-      z-ndex: 25;
+      z-index: 25;
       text-align: center;
       line-height: 300px;
       background-color: #fff;
