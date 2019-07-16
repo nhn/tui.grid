@@ -71,7 +71,12 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
+    if (
+      (this.props.renderData !== nextProps.renderData ||
+        this.props.disabled !== nextProps.disabled) &&
+      this.renderer &&
+      this.renderer.render
+    ) {
       const {
         grid,
         rowKey,

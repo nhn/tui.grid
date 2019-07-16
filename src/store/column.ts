@@ -25,7 +25,8 @@ import {
   isString,
   isFunction,
   isObject,
-  isUndefined
+  isUndefined,
+  isNumber
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -180,12 +181,11 @@ export function createColumn(
 }
 
 function createRowHeader(data: OptRowHeader): ColumnInfo {
-  const rowHeader: OptColumn =
-    typeof data === 'string'
-      ? { name: ROW_HEADERS_MAP[data] }
-      : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
+  const rowHeader: OptColumn = isString(data)
+    ? { name: ROW_HEADERS_MAP[data] }
+    : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
   const { name, header, align, renderer, width, minWidth } = rowHeader;
-  const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
+  const baseMinWith = isNumber(minWidth) ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
   const rowNumColumn = isRowNumColumn(name);
 

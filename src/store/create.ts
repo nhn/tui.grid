@@ -1,6 +1,6 @@
 import { Store } from './types';
 import { OptGrid } from '../types';
-import { observable, observe } from '..//helper/observable';
+import { observable, observe } from '../helper/observable';
 import { create as createData } from './data';
 import { create as createColumn } from './column';
 import { create as createDimension, setBodyHeight } from './dimension';
@@ -34,7 +34,8 @@ export function createStore(id: number, options: OptGrid): Store {
     useClientSort = true,
     pageOptions = {},
     treeColumnOptions = { name: '' },
-    header = {}
+    header = {},
+    disabled = false
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -52,7 +53,8 @@ export function createStore(id: number, options: OptGrid): Store {
     Array.isArray(options.data) ? options.data : [],
     column,
     pageOptions,
-    useClientSort
+    useClientSort,
+    disabled
   );
   const dimension = createDimension({
     column,

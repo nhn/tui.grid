@@ -42,6 +42,7 @@ export interface OptGrid {
   treeColumnOptions?: OptTree;
   header?: OptHeader;
   usageStatistics?: boolean;
+  disabled?: boolean;
 }
 
 export type CellValue = number | string | boolean | null | undefined;

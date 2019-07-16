@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
@@ -20,10 +20,6 @@ const columns = [
   { name: 'genre', minWidth: 150 }
 ];
 
-function alertObjectToJson(obj: object, useSpace?: boolean) {
-  alert(JSON.stringify(obj, null, useSpace ? '\t' : null));
-}
-
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
@@ -31,22 +27,6 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   const grid = new Grid({ el, ...options });
 
   return { el, grid };
-}
-
-function createButtons(grid) {
-  button('check(1)', () => grid.check(1));
-  button('uncheck(1)', () => grid.uncheck(1));
-
-  button('checkAll()', () => grid.checkAll());
-  button('uncheckAll()', () => grid.uncheckAll());
-
-  button('getCheckedRowKeys()', () => {
-    alertObjectToJson(grid.getCheckedRowKeys());
-  });
-
-  button('getCheckedRows()', () => {
-    alertObjectToJson(grid.getCheckedRows(), true);
-  });
 }
 
 export class RowNumberRenderer {
@@ -115,11 +95,11 @@ class SingleCheckRenderer {
   }
 }
 
-stories.add('single use - row number', () => {
+stories.add('row number, checkbox', () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['rowNum']
+    rowHeaders: ['rowNum', 'checkbox']
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
@@ -128,47 +108,9 @@ stories.add('single use - row number', () => {
 });
 
 stories.add(
-  'single use - checkbox',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['checkbox']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    (window as any).grid = grid;
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'multi use - checkbox, row number',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['checkbox', 'rowNum']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    createButtons(grid);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
   'set object type option',
   () => {
-    const { el, grid } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       rowHeaders: [
@@ -189,8 +131,6 @@ stories.add(
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
 
-    createButtons(grid);
-
     return rootEl;
   },
   { html: { preventForcedRender: true } }
@@ -199,7 +139,7 @@ stories.add(
 stories.add(
   'use custom renderer - row number',
   () => {
-    const { el, grid } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       rowHeaders: [
@@ -214,8 +154,6 @@ stories.add(
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
 
-    createButtons(grid);
-
     return rootEl;
   },
   { html: { preventForcedRender: true } }
@@ -224,7 +162,7 @@ stories.add(
 stories.add(
   'use custom renderer - checkbox',
   () => {
-    const { el, grid } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       rowHeaders: [
@@ -245,8 +183,6 @@ stories.add(
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
 
-    createButtons(grid);
-
     return rootEl;
   },
   { html: { preventForcedRender: true } }
@@ -255,7 +191,7 @@ stories.add(
 stories.add(
   'use frozen columns',
   () => {
-    const { el, grid } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       rowHeaders: ['rowNum', 'checkbox'],
@@ -265,8 +201,6 @@ stories.add(
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
-
-    createButtons(grid);
 
     return rootEl;
   },

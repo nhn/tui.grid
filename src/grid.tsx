@@ -933,7 +933,7 @@ export default class Grid {
   }
 
   /**
-   * Disables the row identified by the spcified rowKey to not be able to check.
+   * Disables the row identified by the specified rowKey to not be able to check.
    * @param {number|string} rowKey - The unique keyof the row.
    */
   public disableRowCheck(rowKey: RowKey) {

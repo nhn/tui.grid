@@ -41,10 +41,6 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   });
 }
 
-function getGridInst(): Cypress.Chainable<Grid> {
-  return (cy.window() as Cypress.Chainable<Window & GridGlobal>).its('grid');
-}
-
 function createSortButonAlias() {
   cy.get(`.${cls('btn-sorting')}`)
     .first()
@@ -138,7 +134,7 @@ describe('sort', () => {
   it('data is sorted after calling sort(name, false)', () => {
     createGrid();
     createSortButonAlias();
-    getGridInst().invoke('sort', 'name', false);
+    cy.gridInstance().invoke('sort', 'name', false);
 
     assertSortedData('name', false);
   });
@@ -146,8 +142,8 @@ describe('sort', () => {
   it('data is sorted after calling unsort()', () => {
     createGrid();
     createSortButonAlias();
-    getGridInst().invoke('sort', 'name', false);
-    getGridInst().invoke('unsort');
+    cy.gridInstance().invoke('sort', 'name', false);
+    cy.gridInstance().invoke('unsort');
 
     const testData = sampleData.map((data) => String(data.name));
     cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
@@ -158,7 +154,7 @@ describe('sort', () => {
   it('get proper sortState after calling getSortState()', () => {
     createGrid();
     createSortButonAlias();
-    getGridInst()
+    cy.gridInstance()
       .invoke('getSortState')
       .should((sortState) => {
         expect(sortState).to.eql({
@@ -170,7 +166,7 @@ describe('sort', () => {
 
     cy.get('@first').click();
 
-    getGridInst()
+    cy.gridInstance()
       .invoke('getSortState')
       .should((sortState) => {
         expect(sortState).to.eql({

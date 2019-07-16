@@ -315,7 +315,7 @@ export function createRawRow(
   let rowSpan: RowSpanAttributeValue;
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
-    // protect to create uneccesary reactive data
+    // protect to create unnecessary reactive data
     delete row._attributes.rowSpan;
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
@@ -359,14 +359,15 @@ export function create(
   data: OptRow[],
   column: Column,
   pageOptions: PageOptions,
-  useClientSort: boolean
+  useClientSort: boolean,
+  disabled: boolean
 ): Observable<Data> {
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
   const sortOptions = { columnName: 'rowKey', ascending: true, useClient: useClientSort };
 
   return observable({
-    disabled: false,
+    disabled,
     rawData,
     viewData,
     sortOptions,

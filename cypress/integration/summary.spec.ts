@@ -270,7 +270,7 @@ describe('summary', () => {
     assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
   });
 
-  it('return prpper values when calls getSummaryValues() method', () => {
+  it('return proper values when calls getSummaryValues() method', () => {
     createGrid();
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
