@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/html';
 import { OptColumn, OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
-import { withKnobs, button } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
@@ -92,9 +92,6 @@ stories.add(
     });
 
     (window as Window & { grid: Grid }).grid = grid;
-
-    button(`startEditing(1, 'artist')`, () => grid.startEditing(1, 'artist'));
-    button(`startEditingAt(2, 1)`, () => grid.startEditingAt(2, 1));
 
     return el;
   },

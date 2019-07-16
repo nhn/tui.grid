@@ -162,3 +162,25 @@ it('should destroy the editing layer, when only focus layer is changed.', () => 
         });
     });
 });
+
+it('startEditing API', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 1, 'name');
+  cy.getCell(1, 'name')
+    .get(`.${cls('content-text')}`)
+    .should('be.visible');
+});
+
+it.only('startEditingAt API', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditingAt', 1, 0);
+  cy.getCell(1, 'name')
+    .get(`.${cls('content-text')}`)
+    .should('be.visible');
+});
