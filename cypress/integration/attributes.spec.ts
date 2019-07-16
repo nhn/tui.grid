@@ -1,3 +1,6 @@
+import { cls } from '@/helper/dom';
+import { OptRow } from '@/types';
+
 before(() => {
   cy.visit('/dist');
 });
@@ -83,5 +86,125 @@ describe('className', () => {
     cy.getCell(1, 'age').should('have.not.class', 'tui-grid-row-test');
     cy.getCell(1, 'location').should('have.not.class', 'tui-grid-row-test');
     cy.getCell(1, 'name').should('have.not.class', 'tui-grid-row-test');
+  });
+});
+
+describe('row, checkbox disable', () => {
+  const data = [
+    {
+      name: 'Kim',
+      age: 30,
+      location: 'seoul'
+    },
+    {
+      name: 'Lee',
+      age: 40,
+      location: 'busan'
+    },
+    {
+      name: 'Han',
+      age: 28,
+      location: 'Bundang'
+    }
+  ] as OptRow[];
+  const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
+
+  it('row disable, checkbox disable by attributes options', () => {
+    data[0]._attributes = { checkDisabled: true };
+    data[1]._attributes = { disabled: true };
+    data[2]._attributes = {
+      checkDisabled: false,
+      disabled: true
+    };
+
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+
+    cy.get(`.${cls('cell-row-header')}`)
+      .eq(1)
+      .should('have.class', cls('cell-disabled'));
+
+    cy.getCell(0, 'name').should('not.to.have.class', cls('cell-disabled'));
+
+    cy.get(`.${cls('cell-row-header')}`)
+      .eq(2)
+      .should('have.class', cls('cell-disabled'));
+
+    cy.getCell(1, 'name').should('to.have.class', cls('cell-disabled'));
+
+    cy.get(`.${cls('cell-row-header')}`)
+      .eq(3)
+      .should('not.have.class', cls('cell-disabled'));
+
+    cy.getCell(2, 'name').should('to.have.class', cls('cell-disabled'));
+  });
+
+  it('enable, disable api', () => {
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('disable');
+
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).within(($el) => {
+      $el.each((index, input) => {
+        const inputWithType = input as HTMLInputElement;
+        expect(inputWithType.disabled).to.be.true;
+      });
+    });
+
+    cy.get(`td.${cls('cell')}`).within(($el) => {
+      $el.each((index, elem) => {
+        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
+      });
+    });
+
+    cy.gridInstance().invoke('enable');
+
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).within(($el) => {
+      $el.each((index, input) => {
+        const inputWithType = input as HTMLInputElement;
+        expect(inputWithType.disabled).to.be.false;
+      });
+    });
+
+    cy.get(`td.${cls('cell')}`).within(($el) => {
+      $el.each((index, elem) => {
+        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.false;
+      });
+    });
+  });
+
+  it('enableRow, disableRow api', () => {
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+    cy.gridInstance().invoke('disableRow', 1);
+
+    cy.get(`[data-row-key=1]`).within(($el) => {
+      $el.each((index, elem) => {
+        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
+      });
+    });
+
+    cy.gridInstance().invoke('enableRow', 1, false);
+    cy.get(`[data-row-key=1]`).within(($el) => {
+      $el.each((index, elem) => {
+        if (index === 0) {
+          // checkbox disabled
+          expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
+        } else {
+          expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.false;
+        }
+      });
+    });
+  });
+
+  it('enableRowCheck, disableRowCheck api', () => {
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+    cy.gridInstance().invoke('disableRow', 1);
+    cy.get(`[data-row-key=1]`)
+      .eq(0)
+      .should('have.class', cls('cell-disabled'));
+
+    cy.gridInstance().invoke('enableRowCheck', 1);
+    cy.get(`[data-row-key=1]`)
+      .eq(0)
+      .should('not.have.class', cls('cell-disabled'));
   });
 });
