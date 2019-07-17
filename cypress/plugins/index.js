@@ -13,8 +13,16 @@
 
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-module.exports = (on) => {
+module.exports = (on, config) => {
+  const tsLoader = {
+    test: /\.tsx?$/,
+    loader: 'ts-loader'
+  }
+  if (config.env.mode !== 'development') {
+    Object.assign(tsLoader, { options: {transpileOnly: true} });
+  }
   const options = {
     webpackOptions: {
       resolve: {
@@ -26,12 +34,7 @@ module.exports = (on) => {
       // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
       devtool: 'cheap-module-eval-source-map',
       module: {
-        rules: [
-          {
-            test: /\.tsx?$/,
-            loader: 'ts-loader'
-          }
-        ]
+        rules: [tsLoader]
       }
     }
   };
