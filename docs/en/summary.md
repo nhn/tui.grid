@@ -1,13 +1,10 @@
-# Summary  ✍️
+# Summary ✍️
 
-The TOAST UI Grid provides the **summary** which is usually used to represent the summaries of each column, the TOAST UI Grid also provides useful options for that purpose.
+TOAST UI Grid provides a **summary** feature that enables users to be able to view summarized information of each column. Furthermore, the feature comes with other utility options so that users may make better use of the feature. 
 
-_* Caveat : 
-The `summary` replaces the existing `footer` option and is the same as the `footer`. And since version 2.5.0, the `footer` and `setFooterColumnContent()` have been deprecated._
+## Summary Option
 
-## Summary options
-
-To enable the summary, you should add `summary` property to the option object which is used when creating an instance of `tui.Grid`.
+In order to use the summary feature, simply add the `summary` property to the `tui.Grid` instance constructor option.
 
 ```javascript
 import Grid from 'tui-grid';
@@ -39,17 +36,17 @@ const grid = new Grid({
 });
 ```
 
-The `summary.position` property sets the position of the summary. The default value is `'bottom'`. If this property is set to `'top'`, the summary is shown below the header. 
+The `summary.position` determines where the summary will be positioned. The default value is `'bottom'`, and when the position is set to `'top'`, the summary will be located just under the header section.
 
-The `summary.height` property sets the height of the summary by pixel unit. If this property is set to `0`, the summary is not shown. 
+The `summary.height` determines the height of the summary section in terms of pixels. If the property is set to `0`, the summary will not be visible. 
 
-The `summary.columnContent` property is the key-value object which configures the content of each column. Each key is a name of column, and each value is an object which contains a `template` function which returns the HTML string. The returning string from a `template` is used to render each column(`&lt;th&gt;` tag).
+The `summary.columnContent` property is an object that is used to configure the content of each column. The object takes the name of the column as its key and the `template` function as the value. The `template` property returns an HTML string, and this string is used to render `<th>` tags in each column. 
 
-The `summary.defaultContent` property is also the key-value object which sets content of all columns except columns set by `summary.columnContent` property. The `template` property is same as `template` function property of `summary.columnContent`.
+The `summary.defaultContent` property is also an object that is used to configure other columns that have not already been configured by the `summary.columnContent` property. The `template` property is identical to the `template` property used in the `summary.columnContent`. 
 
-## Using Automatic Summary
+## Using Auto Summary
 
-If you set an object for a specific column to the `columnContent` property, the Grid automatically calculates the summary of that column. It means that whenever some values in the column are changed, the Grid re-calculate the summary. A result of summary is passed to a `template` function as a paramater so that you can use it for generating HTML string of the summary. In the case of `template` function of the `defaultContent` property, it works the same.
+If you designate an object to be a `columnContent` property of a certain column, the Grid automatically calculates the summary value of the column. To put it differently, every time a value in the column changes, the summary value is recalculated. Because the calculated summary value is passed on to be the argument for the `template` function, the HTML string can be created using these values. The `template` function for `defaultContent` property works identically. 
 
 ```javascript
 const grid = new Grid({
@@ -76,22 +73,25 @@ const grid = new Grid({
 })
 ```
 
-As you can see above, a `template` function takes a `summary` object as a parameter and it contains values like `sum`, `avg`, etc. The available types are listed below.
+As you can see in the example above, the `template` function takes the `summary` object as an input, and the `summary` object consists of values like `sum` and `avg`. 
 
-- `sum`: sum(total) value
-- `avg`: average value
-- `min`: minimum value
-- `max`: maximum value
-- `cnt`: count of the rows
+Here is a list of usable properties. 
 
-Whenever a summary value is changed, a `template` function is called and a content of a column in the summary is refreshed using the returing HTML of a `template` function.
+- `sum`:  Sum
+- `avg`:  Average Value
+- `min`:  Minimum Value
+- `max`: Maximum Value
+- `cnt`: Number of Rows
 
-One important thing is that every value in the column must be a `Number` type. If a value is not a number type, the Grid treat it as a number `0`. 
+Each time the value of the summary changes, the `template` function is called, and the embedded content affects the HTML string, the result of the `template` function. 
 
+One important aspect to keep in mind is that all values in the column must be of `Number` type. The Grid deals with non-numerical values as a `0`. 
 
-## Disabling Automatic Summary
+## Deactivating Auto Summary
 
-There is another property available for a value object of the `columnContent` and `defaultContent`. The name of the property is `useAutoSummary` and this determines whether using the automatic summary or not. As a default value of a `useAutoSummary` is `true`, if you want to use a `template` function without auto-summary, use should set this property to `false` like example below.
+The `useAutoSummary` is another property that can be specified in `columnContent` and `defaultContent`. The `useAutoSummary` determines the whether or not to use the auto summary feature, and the default value is set to `true`. 
+
+If you were to use the `template` function without using auto summary feature, set the `useAutoSummary` to `false` like in the example below. 
 
 ```javascript
 const grid = new Grid({
@@ -116,7 +116,7 @@ const grid = new Grid({
 });
 ```
 
-To return the static content as the result of `columnContent` of each column or `defaultContent`, sets the HTML string as their value. Then, the Grid sets `useAutoSummary: false` internally for preventing unnecessary calculation.
+If the HTML string is assigned as a property to the `columnContent` or `defaultContent`, the Grid internally deactivates the auto summary feature by configuring `useAutoSummary: false`, thereby preventing unnecessary calculations.
 
 ```javascript
 const grid = new Grid({
@@ -132,12 +132,12 @@ const grid = new Grid({
 
 ## setSummaryColumnContent()
 
-A Grid instance also has a public API to change a content of each column in the summary. `setSummaryColumnContent()` sets the HTML string or `template` function to the summary of the given column. 
+The Grid instance provides an API in which to reconfigure the summary content. The `setSummaryColumnContent()` configures HTML string and the `template` function to the column's summary. 
 
 ```javascript
 grid.setSummaryColumnContent('col1', 'content');
 
-// or if you want to set template function, use as below.
+// If you were to configure the template function, observe the following code. 
 grid.setSummaryColumnContent('col1', {
   template(summary) {
     return 'sum: ' + summary.sum + '<br>avg: ' + summary.avg;
@@ -145,8 +145,8 @@ grid.setSummaryColumnContent('col1', {
 });
 ```
 
-This method is useful when you want to set your own value to the column in the summary dynamically.
+This method can be useful when dynamically configuring the summary column values. 
 
-## Example
+## Examples
 
-You can see a Grid using a summary with the auto-summary at the [example page](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary).
+For more examples of Grid using the auto summary feature, check [here](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary).
