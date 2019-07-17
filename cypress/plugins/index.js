@@ -20,7 +20,7 @@ module.exports = (on, config) => {
     loader: 'ts-loader'
   }
   if (config.env.mode !== 'development') {
-    Object.assign(tsLoader, { options: {transpileOnly: true} });
+    Object.assign(tsLoader, { options: { transpileOnly: true } });
   }
   const options = {
     webpackOptions: {
