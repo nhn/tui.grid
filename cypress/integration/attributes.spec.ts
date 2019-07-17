@@ -143,30 +143,30 @@ describe('row, checkbox disable', () => {
 
     cy.gridInstance().invoke('disable');
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).within(($el) => {
-      $el.each((index, input) => {
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should(($el) => {
+      $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
         expect(inputWithType.disabled).to.be.true;
       });
     });
 
-    cy.get(`td.${cls('cell')}`).within(($el) => {
-      $el.each((index, elem) => {
+    cy.get(`td.${cls('cell')}`).should(($el) => {
+      $el.each((_, elem) => {
         expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
       });
     });
 
     cy.gridInstance().invoke('enable');
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).within(($el) => {
-      $el.each((index, input) => {
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should(($el) => {
+      $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
         expect(inputWithType.disabled).to.be.false;
       });
     });
 
-    cy.get(`td.${cls('cell')}`).within(($el) => {
-      $el.each((index, elem) => {
+    cy.get(`td.${cls('cell')}`).should(($el) => {
+      $el.each((_, elem) => {
         expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.false;
       });
     });
@@ -176,14 +176,14 @@ describe('row, checkbox disable', () => {
     cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
     cy.gridInstance().invoke('disableRow', 1);
 
-    cy.get(`[data-row-key=1]`).within(($el) => {
-      $el.each((index, elem) => {
+    cy.get(`[data-row-key=1]`).should(($el) => {
+      $el.each((_, elem) => {
         expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
       });
     });
 
     cy.gridInstance().invoke('enableRow', 1, false);
-    cy.get(`[data-row-key=1]`).within(($el) => {
+    cy.get(`[data-row-key=1]`).should(($el) => {
       $el.each((index, elem) => {
         if (!index) {
           // checkbox disabled

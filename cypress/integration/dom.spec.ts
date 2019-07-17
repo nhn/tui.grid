@@ -61,8 +61,10 @@ describe('refreshLayout()', () => {
     const bodyHeight = 'fitToParent';
 
     createGridInHiddenParent(817, 600, { data, columns, bodyHeight });
+
     cy.gridInstance().invoke('refreshLayout');
 
+    cy.wait(10);
     cy.get(`.${cls('container')}`)
       .invoke('width')
       .should('to.eq', 817);

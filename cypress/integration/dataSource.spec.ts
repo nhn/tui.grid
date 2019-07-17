@@ -42,7 +42,6 @@ function assertIsModified(isModified: boolean) {
 }
 
 function assertModifiedRowsLength(type: string, len: number) {
-  cy.wait(100);
   cy.gridInstance()
     .invoke('getModifiedRows')
     .its(type)
@@ -71,8 +70,10 @@ function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
   const testData = (sortedData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
-    expect($el.text()).to.eql(testData[index]);
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+    $el.each((index, elem) => {
+      expect(elem.textContent).to.eql(testData[index]);
+    });
   });
 }
 
@@ -80,8 +81,10 @@ function assertPagingData(columnName: string, page = 1) {
   const pagingData = page === 1 ? sampleData.slice(0, 10) : sampleData.slice(10);
   const testData = (pagingData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
-    expect($el.text()).to.eql(testData[index]);
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+    $el.each((index, elem) => {
+      expect(elem.textContent).to.eql(testData[index]);
+    });
   });
 }
 
@@ -113,7 +116,6 @@ beforeEach(() => {
     useClientSort: false,
     pageOptions: { perPage: 10 }
   });
-  cy.wait(10);
 });
 
 it('initialize grid with server side data', () => {
@@ -168,6 +170,7 @@ describe('getModifiedRows(), request()', () => {
   it('check deletedRow after calling removeRow method, deleteData request', () => {
     cy.gridInstance().invoke('removeRow', 1);
 
+    cy.wait(10);
     assertModifiedRowsContainsObject('deletedRows', {
       id: 19,
       name: 'The Magic Whip',
@@ -197,6 +200,8 @@ describe('getModifiedRows(), request()', () => {
     cy.gridInstance().invoke('appendRow', targetData);
     cy.gridInstance().invoke('setValue', 2, 'name', 'JS');
     cy.gridInstance().invoke('removeRow', 1);
+
+    cy.wait(10);
     cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
     cy.wait('@modifyData');
 
@@ -217,11 +222,13 @@ describe('getModifiedRows(), request()', () => {
     cy.gridInstance().invoke('setValue', 21, 'name', 'JS test2');
     cy.gridInstance().invoke('removeRow', 10);
 
+    cy.wait(10);
     assertModifiedRowsLength('updatedRows', 0);
     assertModifiedRowsLength('deletedRows', 1);
 
     cy.gridInstance().invoke('removeRow', 8);
 
+    cy.wait(10);
     assertModifiedRowsLength('createdRows', 0);
     assertModifiedRowsLength('deletedRows', 2);
   });
@@ -297,6 +304,8 @@ describe('request()', () => {
     cy.gridInstance().invoke('on', 'response', onResponse);
     cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
     cy.gridInstance().invoke('removeRow', 10);
+
+    cy.wait(10);
     cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
 
     cy.wait('@modifyData').then(() => {
@@ -317,6 +326,8 @@ describe('request()', () => {
     cy.gridInstance().invoke('on', 'response', onResponse);
     cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
     cy.gridInstance().invoke('removeRow', 10);
+
+    cy.wait(10);
     cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
 
     cy.wait('@modifyData').then(() => {
@@ -391,12 +402,14 @@ describe('pagination()', () => {
     cy.gridInstance()
       .invoke('getPagination')
       .then((pagination) => {
-        cy.wait('@readPage1');
         expect(pagination.getCurrentPage()).to.eql(1);
+
+        cy.wait('@readPage1');
         assertPagingData('id', 1);
 
         pagination.movePageTo(2);
         expect(pagination.getCurrentPage()).to.eql(2);
+
         cy.wait('@readPage2');
         assertPagingData('id', 2);
 
@@ -409,15 +422,20 @@ describe('pagination()', () => {
 
 it('reloadData()', () => {
   cy.gridInstance().invoke('removeRow', 1);
+
+  cy.wait(10);
   assertModifiedRowsLength('deletedRows', 1);
 
   cy.gridInstance().invoke('reloadData');
   cy.wait('@readPage1');
-  assertModifiedRowsLength('deletedRows', 0);
+
+  assertIsModified(false);
 });
 
 it('restore()', () => {
   cy.gridInstance().invoke('removeRow', 1);
+
+  cy.wait(10);
   assertModifiedRowsLength('deletedRows', 1);
 
   cy.gridInstance().invoke('restore');
