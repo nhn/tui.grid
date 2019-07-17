@@ -260,8 +260,6 @@ function getColumnNameRange(
 
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
-  // @TODO: minimumColumnRange 고려 필요
-  // selection.minimumColumnRange = null;
 }
 
 export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
@@ -277,14 +275,8 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   endRowIndex = findRowIndexByPosition(store, viewInfo);
 
   if (curInputRange === null) {
-    const startViewInfo = {
-      pageX: dragStartData.pageX,
-      pageY: dragStartData.pageY,
-      scrollTop,
-      scrollLeft
-    };
-    startColumnIndex = findColumnIndexByPosition(store, startViewInfo);
-    startRowIndex = findRowIndexByPosition(store, startViewInfo);
+    startColumnIndex = store.focus.columnIndex!;
+    startRowIndex = store.focus.rowIndex!;
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
