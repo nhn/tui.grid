@@ -6,6 +6,7 @@
 - [🛠 커스텀 에디터](./custom-editor.md)
 - [🔩 커스텀 렌더러](./custom-renderer.md)
 - [🤝 컬럼 관계 설정](./relation-between-columns.md)
+- [✔️ 유효성 검사](./validation.md)
 - [👨‍🎨 테마](./themes.md)
 - [📅 DatePicker](./date-picker.md)
 - [✍️ 써머리(Summary)](./summary.md)
