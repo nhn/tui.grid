@@ -149,6 +149,21 @@ export function create({
         L: leftSideStyles,
         R: rightSideStyles
       };
+    },
+
+    get rangeWithRowHeader(this: Selection) {
+      if (!this.range) {
+        return null;
+      }
+      const { rowHeaderCount } = columnInfo;
+      const {
+        range: { row, column }
+      } = this;
+
+      return {
+        row,
+        column: [column[0] - rowHeaderCount, column[1] - rowHeaderCount] as Range
+      };
     }
   });
 }
