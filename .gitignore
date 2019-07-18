@@ -13,3 +13,6 @@ Desktop.ini
 
 # tui-doc
 tmpdoc
+
+# cypress
+cypress/screenshots

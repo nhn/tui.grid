@@ -370,6 +370,7 @@ export interface Selection {
   readonly range: SelectionRange | null;
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
+  readonly rangeWithRowHeader: SelectionRange | null;
 }
 
 export interface RenderState {

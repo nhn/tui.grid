@@ -185,8 +185,7 @@ it('selection by api', () => {
   cy.gridInstance()
     .invoke('setSelectionRange', { start: [0, 0], end: [1, 1] })
     .then(() => {
-      // @Todo modify the column [0, 1] after fixing the bug.
-      expect(isSubsetOf({ range: { column: [2, 3], row: [0, 1] } }, callback.args[0][0])).to.be
+      expect(isSubsetOf({ range: { column: [0, 1], row: [0, 1] } }, callback.args[0][0])).to.be
         .true;
     });
 });

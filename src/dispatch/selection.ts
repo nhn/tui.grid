@@ -13,7 +13,7 @@ export function changeSelectionRange(
   if (!isSameInputRange(selection.inputRange, inputRange)) {
     selection.inputRange = inputRange;
     const eventBus = getEventBus(id);
-    const gridEvent = new GridEvent({ range: selection.range });
+    const gridEvent = new GridEvent({ range: selection.rangeWithRowHeader });
     /**
      * Occurs when selecting cells
      * @event Grid#selection
