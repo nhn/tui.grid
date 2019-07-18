@@ -90,15 +90,20 @@ export function createManager(): ModifiedDataManager {
 
     push(type: ModificationTypeCode, row: Row) {
       const { rowKey } = row;
-      // filter duplicated row
-      if (type === 'UPDATE') {
-        splice('CREATE', rowKey, row);
-        splice('UPDATE', rowKey, row);
-      }
-      if (type === 'DELETE') {
-        splice('CREATE', rowKey);
+      if (type === 'UPDATE' || type === 'DELETE') {
         splice('UPDATE', rowKey);
+        // if the row was already registered in createdRows,
+        // would update it in createdRows and not add it to updatedRows or deletedRows
+        if (someProp('rowKey', rowKey, dataMap.CREATE)) {
+          if (type === 'UPDATE') {
+            splice('CREATE', rowKey, row);
+          } else {
+            splice('CREATE', rowKey);
+          }
+          return;
+        }
       }
+
       if (!someProp('rowKey', rowKey, dataMap[type])) {
         dataMap[type].push(row);
       }

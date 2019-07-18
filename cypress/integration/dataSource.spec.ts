@@ -4,7 +4,6 @@ import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
 import { isSubsetOf } from '../helper/compare';
 import { Dictionary } from '@/store/types';
-import GridEvent from '@/event/gridEvent';
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true },
