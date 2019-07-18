@@ -36,14 +36,18 @@ describe('row header API', () => {
   it('checkAll, uncheckAll', () => {
     cy.gridInstance().invoke('checkAll');
 
-    cy.get('input').each(($el) => {
-      expect($el.is(':checked')).to.be.true;
+    cy.get('input').should(($el) => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
+      });
     });
 
     cy.gridInstance().invoke('uncheckAll');
 
-    cy.get('input').each(($el) => {
-      expect($el.is(':checked')).to.be.false;
+    cy.get('input').should(($el) => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.false;
+      });
     });
   });
 

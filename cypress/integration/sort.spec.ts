@@ -66,8 +66,10 @@ function assertSortedData(columnName: string, ascending: boolean) {
   const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
   testData.sort((a, b) => comparator(a, b, ascending));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).each(($el, index) => {
-    expect($el.text()).to.eql(testData[index]);
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+    $el.each((index, elem) => {
+      expect(elem.textContent).to.eql(testData[index]);
+    });
   });
 }
 
@@ -146,8 +148,10 @@ describe('sort', () => {
     cy.gridInstance().invoke('unsort');
 
     const testData = sampleData.map((data) => String(data.name));
-    cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
-      expect($el.text()).to.eql(testData[index]);
+    cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).should(($el) => {
+      $el.each((index, elem) => {
+        expect(elem.textContent).to.eql(testData[index]);
+      });
     });
   });
 

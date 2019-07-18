@@ -25,13 +25,13 @@ describe('appendRow()', () => {
     cy.getCellByIdx(2, 1).should('to.have.text', '30');
   });
 
-  it('if at option exist, insert a jrow at the given index', () => {
+  it('if at option exist, insert a row at the given index', () => {
     cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 }, { at: 1 });
 
-    cy.getCellByIdx(1, 0).should('to.have.text', 'Park');
-    cy.getCellByIdx(1, 1).should('to.have.text', '30');
-    cy.getCellByIdx(2, 0).should('to.have.text', 'Lee');
-    cy.getCellByIdx(2, 1).should('to.have.text', '20');
+    cy.getCellByIdx(2, 0).should('have.text', 'Lee');
+    cy.getCellByIdx(2, 1).should('have.text', '20');
+    cy.getCellByIdx(1, 0).should('have.text', 'Park');
+    cy.getCellByIdx(1, 1).should('have.text', '30');
   });
 
   it('if focus option exist, set focus to the first cell of the inserted row', () => {
@@ -57,12 +57,12 @@ describe('prependRow()', () => {
   it('insert a row at the start of the data', () => {
     cy.gridInstance().invoke('prependRow', { name: 'Park', age: 30 });
 
+    cy.getCellByIdx(2, 0).should('to.have.text', 'Lee');
+    cy.getCellByIdx(2, 1).should('to.have.text', '20');
     cy.getCellByIdx(0, 0).should('to.have.text', 'Park');
     cy.getCellByIdx(0, 1).should('to.have.text', '30');
     cy.getCellByIdx(1, 0).should('to.have.text', 'Kim');
     cy.getCellByIdx(1, 1).should('to.have.text', '10');
-    cy.getCellByIdx(2, 0).should('to.have.text', 'Lee');
-    cy.getCellByIdx(2, 1).should('to.have.text', '20');
   });
 
   it('if focus option exist, set focus to the first cell of the inserted row', () => {
@@ -80,6 +80,7 @@ describe('prependRow()', () => {
   it('if first argument is undefined, insert empty object', () => {
     cy.gridInstance().invoke('prependRow');
 
+    cy.wait(10);
     cy.getCellByIdx(0, 0).should('to.have.text', '');
     cy.getCellByIdx(0, 1).should('to.have.text', '');
   });
@@ -89,6 +90,7 @@ describe('removeRow()', () => {
   it('remove a row matching given rowKey', () => {
     cy.gridInstance().invoke('removeRow', 0);
 
+    cy.wait(10);
     cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
     cy.getCellByIdx(0, 1).should('to.have.text', '20');
   });
@@ -97,9 +99,10 @@ describe('removeRow()', () => {
     cy.gridInstance().invoke('focus', 1, 'name', true);
     cy.gridInstance().invoke('removeRow', 0);
 
+    cy.wait(10);
     cy.gridInstance()
       .invoke('getFocusedCell')
-      .then((res) => {
+      .should((res) => {
         expect(res).to.eql({ rowKey: 1, columnName: 'name', value: 'Lee' });
       });
     cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
@@ -110,6 +113,7 @@ describe('removeRow()', () => {
     cy.gridInstance().invoke('startEditing', 1, 'name', true);
     cy.gridInstance().invoke('removeRow', 0);
 
+    cy.wait(10);
     cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
     cy.getCellByIdx(0, 1).should('to.have.text', '20');
     cy.get(`.${cls('layer-editing')}`).should('be.visible');

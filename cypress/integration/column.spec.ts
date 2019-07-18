@@ -17,12 +17,6 @@ beforeEach(() => {
   });
 });
 
-function assertRowText(rowIdx: number, cellTexts: string[]) {
-  cellTexts.forEach((text, columnIdx) => {
-    cy.getCellByIdx(rowIdx, columnIdx).should('to.have.text', text);
-  });
-}
-
 describe('setColumns()', () => {
   it('resets the column data', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
@@ -30,8 +24,12 @@ describe('setColumns()', () => {
 
     cy.gridInstance().invoke('setColumns', [{ name: 'id' }, { name: 'score' }, { name: 'grade' }]);
 
-    assertRowText(0, ['1', '90', 'A']);
-    assertRowText(1, ['2', '80', 'B']);
+    cy.getCellContent(0, 'id').should('have.text', '1');
+    cy.getCellContent(0, 'score').should('have.text', '90');
+    cy.getCellContent(0, 'grade').should('have.text', 'A');
+    cy.getCellContent(1, 'id').should('have.text', '2');
+    cy.getCellContent(1, 'score').should('have.text', '80');
+    cy.getCellContent(1, 'grade').should('have.text', 'B');
   });
 });
 
@@ -58,8 +56,10 @@ describe('setHeader()', () => {
     cy.createGrid({ data, columns });
 
     cy.gridInstance().invoke('setHeader', { height });
-    cy.get(`.${cls('cell-header')}`).each(($header) => {
-      expect($header.height()).to.eq(height - cellBorderWidth * 2);
+    cy.get(`.${cls('cell-header')}`).should(($headers) => {
+      $headers.each((_, $header) => {
+        expect(Cypress.$($header).height()).to.eq(height - cellBorderWidth);
+      });
     });
   });
 
