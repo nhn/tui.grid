@@ -319,6 +319,7 @@ export function createRawRow(
     delete row._attributes.rowSpan;
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
+  row.sortKey = index;
   row._attributes = getAttributes(row, index);
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
@@ -364,7 +365,7 @@ export function create(
 ): Observable<Data> {
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
-  const sortOptions = { columnName: 'rowKey', ascending: true, useClient: useClientSort };
+  const sortOptions = { columnName: 'sortKey', ascending: true, useClient: useClientSort };
 
   return observable({
     disabled,
