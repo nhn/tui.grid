@@ -224,7 +224,7 @@ it('sort', () => {
     .then(() => {
       expect(
         isSubsetOf(
-          { sortOptions: { columnName: 'rowKey', ascending: true, useClient: true } },
+          { sortOptions: { columnName: 'name', ascending: false, useClient: true } },
           callback.args[0][0]
         )
       ).to.be.true;
