@@ -263,7 +263,7 @@ export function selectionEnd({ selection }: Store) {
 }
 
 export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
-  const { viewport, selection, column, id, data } = store;
+  const { viewport, selection, column, id, data, focus } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
@@ -275,8 +275,10 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   endRowIndex = findRowIndexByPosition(store, viewInfo);
 
   if (curInputRange === null) {
-    startColumnIndex = store.focus.columnIndex!;
-    startRowIndex = store.focus.rowIndex!;
+    const { totalColumnIndex, rowIndex } = focus;
+
+    startColumnIndex = totalColumnIndex!;
+    startRowIndex = rowIndex!;
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
@@ -388,7 +390,7 @@ export function dragMoveHeader(store: Store, dragData: DragData, startSelectedNa
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
 
-  if (curInputRange === null) {
+  if (isNull(curInputRange)) {
     return;
   }
 
