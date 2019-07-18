@@ -173,7 +173,7 @@ export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
 }
 
-export function changeSortBtn({ data }: Store, columnName: string, ascending: boolean) {
+export function changeSortOptions({ data }: Store, columnName: string, ascending: boolean) {
   const { sortOptions } = data;
   if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
     data.sortOptions = { ...sortOptions, columnName, ascending };
@@ -186,12 +186,23 @@ export function sort(store: Store, columnName: string, ascending: boolean) {
   if (!sortOptions.useClient) {
     return;
   }
-  changeSortBtn(store, columnName, ascending);
+  changeSortOptions(store, columnName, ascending);
   const { rawData, viewData } = getSortedData(data, columnName, ascending);
   if (!arrayEqual(rawData, data.rawData)) {
     data.rawData = rawData;
     data.viewData = viewData;
   }
+
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
+
+  /**
+   * Occurs when sorting.
+   * @event Grid#sort
+   * @property {number} sortOptions - sort options
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('sort', gridEvent);
 }
 
 function applyPasteDataToRawData(

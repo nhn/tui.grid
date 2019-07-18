@@ -38,7 +38,7 @@ class SortingButtonComp extends Component<Props> {
     if (sortOptions.useClient) {
       dispatch('sort', targetColumnName, targetAscending);
     } else {
-      dispatch('changeSortBtn', targetColumnName, targetAscending);
+      dispatch('changeSortOptions', targetColumnName, targetAscending);
       const data = {
         sortColumn: targetColumnName,
         sortAscending: targetAscending
