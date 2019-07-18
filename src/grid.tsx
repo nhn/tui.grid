@@ -7,6 +7,7 @@ import {
   OptAppendRow,
   OptPrependRow,
   OptRemoveRow,
+  OptAppendTreeRow,
   OptColumn,
   OptHeader
 } from './types';
@@ -956,14 +957,13 @@ export default class Grid {
    * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
    *        has a rowspan data, the new row will extend the existing rowspan data.
    * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
-   * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
-   * @param {number} [options.offset] - Tree offset from first sibling
+   * @param {number|string} [options.parentRowKey] - Deprecated: Tree row key of the parent which appends given rows
    */
   public appendRow(row: OptRow = {}, options: OptAppendRow = {}) {
     const { treeColumnName } = this.store.column;
 
     if (treeColumnName) {
-      this.dispatch('appendTreeRow', row, options);
+      this.dispatch('appendTreeRow', row, { offset: options.at });
     } else {
       this.dispatch('appendRow', row, options);
     }
@@ -995,7 +995,7 @@ export default class Grid {
     const { treeColumnName } = this.store.column;
 
     if (treeColumnName) {
-      this.dispatch('removeTreeRow', rowKey, options);
+      this.removeTreeRow(rowKey);
     } else {
       this.dispatch('removeRow', rowKey, options);
     }
@@ -1193,6 +1193,51 @@ export default class Grid {
    */
   public restore() {
     this.resetData(this.dataManager.getOriginData());
+  }
+
+  /*
+   * Inserts the new tree row with specified data.
+   * @param {Object} [row] - The tree data for the new row
+   * @param {Object} [options] - Options
+   * @param {number|string} [options.parentRowKey] - Tree row key of the parent which appends given rows
+   * @param {number} [options.offset] - The offset value to insert new tree row
+   * @param {boolean} [options.focus] - If set to true, move focus to the new tree row after appending
+   */
+  public appendTreeRow(row: OptRow = {}, options: OptAppendTreeRow = {}) {
+    const { treeColumnName } = this.store.column;
+    const { parentRowKey } = options;
+
+    if (!treeColumnName || isUndefined(parentRowKey)) {
+      return;
+    }
+
+    this.dispatch('appendTreeRow', row, options);
+
+    if (options.focus) {
+      const { offset } = options;
+      const childRows = getChildRows(this.store, parentRowKey!);
+
+      if (childRows.length) {
+        const { rowKey } = isUndefined(offset)
+          ? childRows[childRows.length - 1]
+          : childRows[offset];
+        const rowIdx = this.getIndexOfRow(rowKey);
+
+        this.focusAt(rowIdx, 0);
+      }
+    }
+  }
+
+  /**
+   * Removes the tree row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public removeTreeRow(rowKey: RowKey) {
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('removeTreeRow', rowKey);
+    }
   }
 
   /**

@@ -78,6 +78,12 @@ export interface OptRemoveRow {
   keepRowSpanData?: boolean;
 }
 
+export interface OptAppendTreeRow {
+  parentRowKey?: RowKey;
+  offset?: number;
+  focus?: boolean;
+}
+
 type RowHeaderType = 'rowNum' | 'checkbox';
 
 interface OptRowHeaderColumn extends Partial<OptColumn> {

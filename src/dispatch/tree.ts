@@ -1,8 +1,8 @@
-import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
+import { OptRow, OptAppendTreeRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex, isNull } from '../helper/common';
+import { findProp, findPropIndex, isNull, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
 import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow, getDescendantRows } from '../query/tree';
@@ -199,24 +199,43 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
   }
 }
 
-export function appendTreeRow(store: Store, row: OptRow, options: OptAppendRow) {
+function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number) {
+  const { data } = store;
+  const { rawData } = data;
+  let startIdx;
+
+  if (parentRow) {
+    if (offset) {
+      const childRowKeys = getChildRowKeys(parentRow);
+      const prevChildRowKey = childRowKeys[offset - 1];
+      const prevChildRowIdx = findPropIndex('rowKey', prevChildRowKey, rawData);
+      const descendantRowsCount = getDescendantRows(store, prevChildRowKey).length;
+
+      startIdx = prevChildRowIdx + descendantRowsCount + 1;
+    } else {
+      startIdx = findPropIndex('rowKey', parentRow.rowKey, rawData) + 1;
+
+      if (isUndefined(offset)) {
+        startIdx += getDescendantRows(store, parentRow.rowKey).length;
+      }
+    }
+  } else {
+    startIdx = isUndefined(offset) ? rawData.length : offset;
+  }
+
+  return startIdx;
+}
+
+export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
   const { data, column, rowCoords, dimension } = store;
   const { rawData, viewData } = data;
   const { defaultValues, allColumnMap, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
-  const { parentRowKey = null } = options;
-  let parentRowIdx, parentRow, startIdx;
+  const { parentRowKey, offset } = options;
+  const parentRow = findProp('rowKey', parentRowKey, rawData);
+  const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
 
-  if (!isNull(parentRowKey)) {
-    parentRowIdx = findPropIndex('rowKey', parentRowKey, rawData);
-    parentRow = rawData[parentRowIdx];
-    startIdx = parentRowIdx + getDescendantRows(store, parentRow.rowKey).length + 1;
-  } else {
-    parentRow = null;
-    startIdx = rawData.length;
-  }
-
-  const rawRows = flattenTreeData([row], defaultValues, parentRow, column.keyColumnName);
+  const rawRows = flattenTreeData([row], defaultValues, parentRow!, column.keyColumnName, offset);
   rawData.splice(startIdx, 0, ...rawRows);
 
   const viewRows = rawRows.map((rawRow) =>
@@ -234,7 +253,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendRow) 
   // @todo net 연동
 }
 
-export function removeTreeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
+export function removeTreeRow(store: Store, rowKey: RowKey) {
   const { data, rowCoords } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;

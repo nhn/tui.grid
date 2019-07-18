@@ -14,10 +14,6 @@
     You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md" target="_blank">here</a>.
     </div>
     <div class="contents">
-      <div style="margin-bottom:10px;">
-        <button id="append">append on 'rowKey: 0'</button>
-        <button id="remove">remove at 'rowKey: 0'</button>
-      </div>
       <div class="code-html">
         <div id="grid"></div>
       </div>
@@ -59,62 +55,6 @@
         name: 'genre'
       }
     ]});
-
-    document.getElementById('append').addEventListener('click', () => {
-      const addedData = {
-        id: 502795,
-        name: 'test1',
-        artist: 'test1',
-        release: '2015.05.12',
-        type: 'EP',
-        typeCode: '2',
-        genre: 'Hiphop',
-        genreCode: '5',
-        grade: '5',
-        price: 18000,
-        downloadCount: 1000,
-        listenCount: 5000,
-        _attributes: {
-          expanded: true
-        },
-        _children: [
-          {
-            id: 502793,
-            name: 'test2',
-            artist: 'test2',
-            release: '2015.05.12',
-            type: 'EP',
-            typeCode: '2',
-            genre: 'Hiphop',
-            genreCode: '5',
-            grade: '5',
-            price: 18000,
-            downloadCount: 1000,
-            listenCount: 5000
-          },
-          {
-            id: 502797,
-            name: 'test3',
-            artist: 'test3',
-            release: '2015.05.12',
-            type: 'EP',
-            typeCode: '2',
-            genre: 'Hiphop',
-            genreCode: '5',
-            grade: '5',
-            price: 18000,
-            downloadCount: 1000,
-            listenCount: 5000
-          }
-        ]
-      };
-
-      grid.appendRow(addedData, {parentRowKey: 0});
-    });
-
-    document.getElementById('remove').addEventListener('click', () => {
-      grid.removeRow(0);
-    });
 
     grid.on('expand', (ev) => {
       const {rowKey} = ev;
