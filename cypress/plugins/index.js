@@ -15,13 +15,6 @@ const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
 
 module.exports = (on, config) => {
-  const tsLoader = {
-    test: /\.tsx?$/,
-    loader: 'ts-loader'
-  }
-  if (config.env.mode !== 'development') {
-    Object.assign(tsLoader, { options: { transpileOnly: true } });
-  }
   const options = {
     webpackOptions: {
       resolve: {
@@ -33,7 +26,13 @@ module.exports = (on, config) => {
       // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
       devtool: 'cheap-module-eval-source-map',
       module: {
-        rules: [tsLoader]
+        rules: [{
+          test: /\.tsx?$/,
+          loader: 'awesome-typescript-loader',
+          options: {
+            configFileName: './cypress/tsconfig.json'
+          }
+        }]
       }
     }
   };
