@@ -25,8 +25,8 @@ export function getSortedData(data: Data, sortKey: string, ascending: boolean) {
   rawData.sort((a, b) => comparator(a[sortKey], b[sortKey], ascending));
   viewData.sort((a, b) => {
     const [valueA, valueB] =
-      sortKey === 'rowKey'
-        ? [a.rowKey, b.rowKey]
+      sortKey === 'sortKey'
+        ? [a.sortKey, b.sortKey]
         : [a.valueMap[sortKey].value, b.valueMap[sortKey].value];
     return comparator(valueA, valueB, ascending);
   });

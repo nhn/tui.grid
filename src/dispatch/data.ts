@@ -173,27 +173,15 @@ export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
 }
 
-export function changeSortOptions({ data, column }: Store, columnName: string, ascending: boolean) {
+export function changeSortOptions({ data }: Store, columnName: string, ascending: boolean) {
   const { sortOptions } = data;
-  const { sortingType } = column.allColumnMap[columnName];
-
-  // @TODO: 여기서 sortingType과 sortOptions가 같은지 확인하고 unsort를 해야한다.
-  console.log(ascending, sortingType);
-
   if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-    data.sortOptions = { ...sortOptions, columnName, ascending };
-  }
-
-  if (sortOptions.columnName === columnName) {
-    // console.log(ascending, sortOptions.ascending);
-    // @TODO: unsort가 일어나야 함
-  } else if (sortOptions.ascending !== ascending) {
     data.sortOptions = { ...sortOptions, columnName, ascending };
   }
 }
 
 export function sort(store: Store, columnName: string, ascending: boolean) {
-  const { data } = store;
+  const { data, id } = store;
   const { sortOptions } = data;
   if (!sortOptions.useClient) {
     return;
@@ -205,7 +193,7 @@ export function sort(store: Store, columnName: string, ascending: boolean) {
     data.viewData = viewData;
   }
 
-  const eventBus = getEventBus(store.id);
+  const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
 
   /**

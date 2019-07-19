@@ -190,7 +190,7 @@ export function createViewRow(
   treeColumnName?: string,
   treeIcon?: boolean
 ) {
-  const { rowKey } = row;
+  const { rowKey, sortKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach((name) => {
@@ -223,6 +223,7 @@ export function createViewRow(
 
   return {
     rowKey,
+    sortKey,
     valueMap,
     __unobserveFns__,
     ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon) })

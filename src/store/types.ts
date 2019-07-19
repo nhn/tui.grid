@@ -34,6 +34,7 @@ export interface Dictionary<T> {
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
+  sortKey: number;
   rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
 };
@@ -91,6 +92,7 @@ export interface CellRenderData {
 
 export interface ViewRow {
   rowKey: RowKey;
+  sortKey: number;
   valueMap: Dictionary<CellRenderData>;
   treeInfo?: TreeCellInfo;
   __unobserveFns__: Function[];
