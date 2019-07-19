@@ -2,7 +2,7 @@ import { OptRow, OptAppendTreeRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex, isNull, isUndefined } from '../helper/common';
+import { findProp, findPropIndex, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
 import { isUpdatableRowAttr } from '../dispatch/data';
@@ -19,7 +19,7 @@ import {
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
-function changeExpandedState(row: Row, expanded: boolean) {
+function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
 
   if (tree) {
@@ -27,11 +27,20 @@ function changeExpandedState(row: Row, expanded: boolean) {
   }
 }
 
-function changeHiddenChildState(row: Row, hidden: boolean) {
+function changeHiddenChildAttr(row: Row, hidden: boolean) {
   const { tree } = row._attributes;
 
   if (tree) {
     tree.hiddenChild = hidden;
+  }
+}
+
+function removeExpandedAttr(row: Row) {
+  const { tree } = row._attributes;
+
+  if (tree) {
+    delete tree.expanded;
+    notify(tree, 'expanded');
   }
 }
 
@@ -42,18 +51,18 @@ function expand(store: Store, row: Row, recursive?: boolean, silent?: boolean) {
 
   if (row) {
     if (!isLeaf(row)) {
-      changeExpandedState(row, true);
+      changeExpandedAttr(row, true);
     }
 
     traverseDescendantRows(rawData, row, (childRow: Row) => {
       if (recursive) {
-        changeExpandedState(childRow, true);
+        changeExpandedAttr(childRow, true);
       }
 
       const parentRow = getParentRow(store, childRow.rowKey);
       const hiddenChild = parentRow ? getHiddenChildState(parentRow) : false;
 
-      changeHiddenChildState(childRow, hiddenChild);
+      changeHiddenChildAttr(childRow, hiddenChild);
 
       const index = findPropIndex('rowKey', childRow.rowKey, rawData);
       heights[index] = getRowHeight(childRow, dimension.rowHeight);
@@ -102,18 +111,18 @@ function collapse(store: Store, row: Row, recursive?: boolean, silent?: boolean)
 
   if (row) {
     if (!isLeaf(row)) {
-      changeExpandedState(row, false);
+      changeExpandedAttr(row, false);
     }
 
     traverseDescendantRows(rawData, row, (childRow: Row) => {
       if (recursive) {
-        changeExpandedState(childRow, false);
+        changeExpandedAttr(childRow, false);
       }
 
       const parentRow = getParentRow(store, childRow.rowKey);
       const hiddenChild = parentRow ? getHiddenChildState(parentRow) : true;
 
-      changeHiddenChildState(childRow, hiddenChild);
+      changeHiddenChildAttr(childRow, hiddenChild);
 
       const index = findPropIndex('rowKey', childRow.rowKey, rawData);
       heights[index] = 0;
@@ -260,12 +269,13 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const { data, rowCoords, id } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
+  const parentRow = getParentRow(store, rowKey);
 
-  if (!isNull(rowKey)) {
-    const parentRow = getParentRow(store, rowKey);
+  if (parentRow) {
+    removeChildRowKey(parentRow, parentRow.rowKey);
 
-    if (parentRow) {
-      removeChildRowKey(parentRow, parentRow.rowKey);
+    if (!getChildRowKeys(parentRow).length) {
+      removeExpandedAttr(parentRow);
     }
   }
 

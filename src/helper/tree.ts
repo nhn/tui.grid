@@ -57,7 +57,7 @@ export function getChildRowKeys(row: Row) {
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && !tree.childRowKeys.length;
+  return !!tree && !tree.childRowKeys.length && isUndefined(tree.expanded);
 }
 
 export function isExpanded(row: Row) {
@@ -76,12 +76,6 @@ export function getDepth(rawData: Row[], row: Row) {
   } while (parentRow);
 
   return depth;
-}
-
-function hasChildrenState(row: OptRow) {
-  const { _children } = row;
-
-  return Array.isArray(_children) && _children.length > 0;
 }
 
 function getExpandedState(row: OptRow) {
@@ -130,7 +124,7 @@ function createTreeRawRow(
 
   rawRow._attributes.tree = observable({
     ...defaultAttributes,
-    ...(hasChildrenState(row) && { expanded: getExpandedState(row) }),
+    ...(Array.isArray(row._children) && { expanded: getExpandedState(row) }),
     ...(!!parentRow && { hiddenChild: getHiddenChildState(parentRow) })
   });
 
@@ -151,10 +145,10 @@ export function flattenTreeData(
 
     flattenedRows.push(rawRow);
 
-    if (hasChildrenState(row)) {
-      flattenedRows.push(
-        ...flattenTreeData(row._children || [], defaultValues, rawRow, keyColumnName)
-      );
+    if (Array.isArray(row._children)) {
+      if (row._children.length > 0) {
+        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, keyColumnName));
+      }
       delete rawRow._children;
     }
   });

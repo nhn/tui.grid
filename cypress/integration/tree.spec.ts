@@ -59,6 +59,10 @@ beforeEach(() => {
               _children: [
                 {
                   c1: 'qux'
+                },
+                {
+                  c1: 'quxx',
+                  _children: []
                 }
               ]
             }
@@ -181,18 +185,8 @@ describe('treeColumnOptions', () => {
 });
 
 describe('toggle button', () => {
-  it(`is created when row data has children.`, () => {
+  it(`is created when row data has '_children' property.`, () => {
     cy.gridInstance().invoke('expand', 0, true);
-    cy.getCell(0, 'c1').within(() => {
-      cy.get(`.${cls('btn-tree')}`)
-        .its('length')
-        .should('be.eql', 1);
-    });
-    cy.getCell(1, 'c1').within(() => {
-      cy.get(`.${cls('btn-tree')}`)
-        .its('length')
-        .should('be.eql', 1);
-    });
     cy.getCell(2, 'c1').within(() => {
       cy.get(`.${cls('btn-tree')}`)
         .its('length')
@@ -200,6 +194,11 @@ describe('toggle button', () => {
     });
     cy.getCell(3, 'c1').within(() => {
       cy.get(`.${cls('btn-tree')}`).should('not.exist');
+    });
+    cy.getCell(4, 'c1').within(() => {
+      cy.get(`.${cls('btn-tree')}`)
+        .its('length')
+        .should('be.eql', 1);
     });
   });
 
@@ -334,8 +333,8 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('appendRow', appendedData);
     cy.gridInstance().invoke('expandAll');
 
-    cy.getCell(4, 'c1').should('be.visible');
-    cy.getCell(4, 'c1').should('have.text', 'test');
+    cy.getCell(5, 'c1').should('be.visible');
+    cy.getCell(5, 'c1').should('have.text', 'test');
   });
 
   it('appends internal row on root.', () => {
@@ -376,21 +375,33 @@ describe('appendTreeRow()', () => {
       _children: [{ c1: 'b' }, { c1: 'c' }]
     };
 
+    it('root.', () => {
+      cy.gridInstance().invoke('appendRow', appendedData);
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getCell(5, 'c1').should('be.visible');
+      cy.getCell(6, 'c1').should('be.visible');
+      cy.getCell(7, 'c1').should('be.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(6, 'c1').should('have.text', 'b');
+      cy.getCell(7, 'c1').should('have.text', 'c');
+    });
+
     it('specific parent that internal type.', () => {
       cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
       cy.gridInstance().invoke('expand', 0, true);
 
-      cy.getCell(4, 'c1').should('be.visible');
       cy.getCell(5, 'c1').should('be.visible');
       cy.getCell(6, 'c1').should('be.visible');
-      cy.getCell(4, 'c1').should('have.text', 'a');
-      cy.getCell(5, 'c1').should('have.text', 'b');
-      cy.getCell(6, 'c1').should('have.text', 'c');
+      cy.getCell(7, 'c1').should('be.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(6, 'c1').should('have.text', 'b');
+      cy.getCell(7, 'c1').should('have.text', 'c');
 
       cy.gridInstance().invoke('collapse', 0);
-      cy.getCell(4, 'c1').should('be.not.visible');
       cy.getCell(5, 'c1').should('be.not.visible');
       cy.getCell(6, 'c1').should('be.not.visible');
+      cy.getCell(7, 'c1').should('be.not.visible');
     });
 
     it('specific parent that collapsed.', () => {
@@ -398,10 +409,10 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance().invoke('expand', 2);
 
-      cy.getCell(4, 'c1').should('have.text', 'a');
-      cy.getCell(4, 'c1').should('be.visible');
-      cy.getCell(5, 'c1').should('be.not.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(5, 'c1').should('be.visible');
       cy.getCell(6, 'c1').should('be.not.visible');
+      cy.getCell(7, 'c1').should('be.not.visible');
     });
   });
 
@@ -520,7 +531,7 @@ describe('removeTreeRow()', () => {
   });
 
   context('parent row', () => {
-    it('that has only one child is changed to leaf row.', () => {
+    it('is changed to leaf row when all child rows.', () => {
       cy.gridInstance().invoke('expand', 0, true);
 
       assertInternalRow(2);
@@ -528,7 +539,7 @@ describe('removeTreeRow()', () => {
       assertLeafRow(2);
     });
 
-    it('that has children is not changed to leaf row.', () => {
+    it('is not changed to leaf row when having child rows.', () => {
       cy.gridInstance().invoke('expand', 0, true);
 
       assertInternalRow(1);
@@ -545,7 +556,7 @@ it('attachs tree rows only expanded to DOM element.', () => {
   cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 3);
 
   cy.gridInstance().invoke('expand', 2);
-  cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 4);
+  cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 5);
 });
 
 describe('modified data is added', () => {
@@ -573,6 +584,6 @@ describe('modified data is added', () => {
     cy.gridInstance().invoke('expand', 0, true);
     cy.gridInstance().invoke('removeRow', 0);
 
-    assertModifiedRowsLength('deletedRows', 4);
+    assertModifiedRowsLength('deletedRows', 5);
   });
 });
