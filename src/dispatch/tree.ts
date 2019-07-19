@@ -4,6 +4,7 @@ import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
 import { findProp, findPropIndex, isNull, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
+import { getDataManager } from '../instance';
 import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow, getDescendantRows } from '../query/tree';
 import {
@@ -227,7 +228,7 @@ function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number)
 }
 
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
-  const { data, column, rowCoords, dimension } = store;
+  const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData } = data;
   const { defaultValues, allColumnMap, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
@@ -250,11 +251,13 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
 
-  // @todo net 연동
+  rawRows.forEach((rawRow) => {
+    getDataManager(id).push('CREATE', rawRow);
+  });
 }
 
 export function removeTreeRow(store: Store, rowKey: RowKey) {
-  const { data, rowCoords } = store;
+  const { data, rowCoords, id } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
 
@@ -269,7 +272,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const startIdx = findPropIndex('rowKey', rowKey, rawData);
   const endIdx = getDescendantRows(store, rowKey).length + 1;
 
-  rawData.splice(startIdx, endIdx);
+  const removedRows = rawData.splice(startIdx, endIdx);
   viewData.splice(startIdx, endIdx);
   heights.splice(startIdx, endIdx);
 
@@ -277,5 +280,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
 
-  // @todo net 연동
+  for (let i = removedRows.length - 1; i >= 0; i -= 1) {
+    getDataManager(id).push('DELETE', removedRows[i]);
+  }
 }

@@ -3,6 +3,8 @@ import { OptGrid, OptRow } from '@/types';
 import { Row, RowKey } from '@/store/types';
 import { Omit } from 'utility-types';
 
+type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
+
 const columns = [{ name: 'c1' }, { name: 'c2' }];
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
@@ -15,6 +17,13 @@ function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
     cy.get(`.${cls('tree-extra-content')}`).should('have.class', cls('tree-button-collapse'));
   });
+}
+
+function assertModifiedRowsLength(type: ModifiedType, length: number) {
+  cy.gridInstance()
+    .invoke('getModifiedRows')
+    .its(type)
+    .should('have.length', length);
 }
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -537,4 +546,33 @@ it('attachs tree rows only expanded to DOM element.', () => {
 
   cy.gridInstance().invoke('expand', 2);
   cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 4);
+});
+
+describe('modified data is added', () => {
+  it('when appending rows.', () => {
+    cy.gridInstance().invoke('appendRow', {
+      c1: 'a',
+      _children: [
+        {
+          c1: 'b',
+          _children: [{ c1: 'c' }]
+        }
+      ]
+    });
+
+    assertModifiedRowsLength('createdRows', 3);
+  });
+
+  it('when updating row.', () => {
+    cy.gridInstance().invoke('setValue', 0, 'name', 'a');
+
+    assertModifiedRowsLength('updatedRows', 1);
+  });
+
+  it('when removing rows.', () => {
+    cy.gridInstance().invoke('expand', 0, true);
+    cy.gridInstance().invoke('removeRow', 0);
+
+    assertModifiedRowsLength('deletedRows', 4);
+  });
 });
