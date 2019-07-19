@@ -45,7 +45,7 @@ export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, c
   const { rowKey } = viewRow;
   const { sortOptions, rawData } = data;
   const rowSpan = getRowSpanByRowKey(rowKey, columnInfo.name, rawData as Row[]);
-  const enableRowSpan = sortOptions.columnName === 'rowKey';
+  const enableRowSpan = sortOptions.columnName === 'sortKey';
 
   return { rowSpan, enableRowSpan };
 })(RowSpanCellComp);
