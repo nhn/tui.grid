@@ -166,7 +166,7 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
 }
 
 export function enableRowSpan(columnName: string) {
-  return columnName === 'rowKey';
+  return columnName === 'sortKey';
 }
 
 export function createRowSpan(
