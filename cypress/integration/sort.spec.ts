@@ -105,6 +105,7 @@ describe('sort', () => {
     assertSortClassNames('@first', true, false);
     assertSortClassNames('@first', false, true);
 
+    cy.get('@second').click();
     assertSortClassNames('@second', true, false);
     assertSortClassNames('@second', false, false);
 
@@ -163,7 +164,7 @@ describe('sort', () => {
       .should((sortState) => {
         expect(sortState).to.eql({
           ascending: true,
-          columnName: 'rowKey',
+          columnName: 'sortKey',
           useClient: true
         });
       });
