@@ -35,8 +35,7 @@
       {
         header: 'Name',
         name: 'name',
-        width: 300,
-        editor: 'text'
+        width: 300
       },
       {
         header: 'Artist',
@@ -62,6 +61,21 @@
 
       console.log('rowKey: ' + rowKey);
       console.log('descendantRows: ' + descendantRows);
+
+      if (!descendantRows.length) {
+        grid.appendRow({
+          name: 'dynamic loading data',
+          _children: [
+            {
+              name: 'leaf row'
+            },
+            {
+              name: 'internal row',
+              _children: []
+            }
+          ]
+        }, { parentRowKey: rowKey });
+      }
     });
 
     grid.on('collapse', (ev) => {

@@ -11,10 +11,12 @@ import {
   flattenTreeData,
   traverseAncestorRows,
   traverseDescendantRows,
+  getChildRowKeys,
   removeChildRowKey,
   isLeaf,
-  getHiddenChildState,
-  getChildRowKeys
+  isExpanded,
+  isHiddenRow,
+  isRootChildRow
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -44,124 +46,137 @@ function removeExpandedAttr(row: Row) {
   }
 }
 
-function expand(store: Store, row: Row, recursive?: boolean, silent?: boolean) {
+function expand(store: Store, row: Row, recursive?: boolean) {
+  const { rowKey } = row;
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
+
+  /**
+   * Occurs when the row having child rows is expanded
+   * @event Grid#expand
+   * @type {module:event/gridEvent}
+   * @property {number|string} rowKey - rowKey of the expanded row
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('expand', gridEvent);
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
   const { data, rowCoords, dimension } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
 
-  if (row) {
-    if (!isLeaf(row)) {
-      changeExpandedAttr(row, true);
+  changeExpandedAttr(row, true);
+
+  const hiddenRow = isHiddenRow(row);
+  const childRowKeys = getChildRowKeys(row);
+
+  childRowKeys.forEach((childRowKey) => {
+    const childRow = findProp('rowKey', childRowKey, rawData);
+
+    if (!childRow) {
+      return;
     }
 
-    traverseDescendantRows(rawData, row, (childRow: Row) => {
-      if (recursive) {
-        changeExpandedAttr(childRow, true);
-      }
+    changeHiddenChildAttr(childRow, hiddenRow);
 
-      const parentRow = getParentRow(store, childRow.rowKey);
-      const hiddenChild = parentRow ? getHiddenChildState(parentRow) : false;
-
-      changeHiddenChildAttr(childRow, hiddenChild);
-
-      const index = findPropIndex('rowKey', childRow.rowKey, rawData);
-      heights[index] = getRowHeight(childRow, dimension.rowHeight);
-    });
-
-    if (silent) {
-      notify(rowCoords, 'heights');
+    if (!isLeaf(childRow) && (isExpanded(childRow) || recursive)) {
+      expand(store, childRow, recursive);
     }
-  }
+
+    const index = findPropIndex('rowKey', childRowKey, rawData);
+    heights[index] = getRowHeight(childRow, dimension.rowHeight);
+
+    notify(rowCoords, 'heights');
+  });
 }
 
 export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
-    const eventBus = getEventBus(store.id);
-    const gridEvent = new GridEvent({ rowKey });
-
-    /**
-     * Occurs when the row having child rows is expanded
-     * @event Grid#expand
-     * @type {module:event/gridEvent}
-     * @property {number|string} rowKey - rowKey of the expanded row
-     * @property {Grid} instance - Current grid instance
-     */
-    eventBus.trigger('expand', gridEvent);
-
-    expand(store, row, recursive, true);
+    expand(store, row, recursive);
   }
 }
 
 export function expandAll(store: Store) {
-  const { data, rowCoords } = store;
-
-  data.rawData.forEach((row) => {
-    expand(store, row, true, false);
+  store.data.rawData.forEach((row) => {
+    if (isRootChildRow(row) && !isLeaf(row)) {
+      expand(store, row, true);
+    }
   });
-
-  notify(rowCoords, 'heights');
 }
 
-function collapse(store: Store, row: Row, recursive?: boolean, silent?: boolean) {
+function collapse(store: Store, row: Row, recursive?: boolean) {
+  const { rowKey } = row;
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent({ rowKey });
+
+  /**
+   * Occurs when the row having child rows is collapsed
+   * @event Grid#collapse
+   * @type {module:event/gridEvent}
+   * @property {number|string} rowKey - rowKey of the collapsed row
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('collapse', gridEvent);
+
+  if (gridEvent.isStopped()) {
+    return;
+  }
+
   const { data, rowCoords } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
 
-  if (row) {
-    if (!isLeaf(row)) {
-      changeExpandedAttr(row, false);
+  changeExpandedAttr(row, false);
+
+  const hiddenRow = isHiddenRow(row);
+  const childRowKeys = getChildRowKeys(row);
+
+  childRowKeys.forEach((childRowKey) => {
+    const childRow = findProp('rowKey', childRowKey, rawData);
+
+    if (!childRow) {
+      return;
     }
 
-    traverseDescendantRows(rawData, row, (childRow: Row) => {
+    changeHiddenChildAttr(childRow, hiddenRow);
+
+    if (!isLeaf(childRow)) {
       if (recursive) {
-        changeExpandedAttr(childRow, false);
+        collapse(store, childRow, recursive);
+      } else {
+        getDescendantRows(store, childRowKey).forEach(({ rowKey: descendantRowKey }) => {
+          const index = findPropIndex('rowKey', descendantRowKey, rawData);
+          heights[index] = 0;
+        });
       }
-
-      const parentRow = getParentRow(store, childRow.rowKey);
-      const hiddenChild = parentRow ? getHiddenChildState(parentRow) : true;
-
-      changeHiddenChildAttr(childRow, hiddenChild);
-
-      const index = findPropIndex('rowKey', childRow.rowKey, rawData);
-      heights[index] = 0;
-    });
-
-    if (silent) {
-      notify(rowCoords, 'heights');
     }
-  }
+
+    const index = findPropIndex('rowKey', childRowKey, rawData);
+    heights[index] = 0;
+  });
+
+  notify(rowCoords, 'heights');
 }
 
 export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
   const row = findProp('rowKey', rowKey, store.data.rawData);
 
   if (row) {
-    const eventBus = getEventBus(store.id);
-    const gridEvent = new GridEvent({ rowKey });
-
-    /**
-     * Occurs when the row having child rows is collapsed
-     * @event Grid#collapse
-     * @type {module:event/gridEvent}
-     * @property {number|string} rowKey - rowKey of the collapsed row
-     * @property {Grid} instance - Current grid instance
-     */
-    eventBus.trigger('collapse', gridEvent);
-
-    collapse(store, row, recursive, true);
+    collapse(store, row, recursive);
   }
 }
 
 export function collapseAll(store: Store) {
-  const { data, rowCoords } = store;
-
-  data.rawData.forEach((row) => {
-    collapse(store, row, true, false);
+  store.data.rawData.forEach((row) => {
+    if (isRootChildRow(row) && !isLeaf(row)) {
+      collapse(store, row, true);
+    }
   });
-
-  notify(rowCoords, 'heights');
 }
 
 function setCheckedState(disabled: boolean, row: Row, state: boolean) {

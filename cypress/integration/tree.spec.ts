@@ -1,6 +1,7 @@
 import { cls } from '../../src/helper/dom';
 import { OptGrid, OptRow } from '@/types';
 import { Row, RowKey } from '@/store/types';
+import GridEvent from '@/event/gridEvent';
 import { Omit } from 'utility-types';
 
 type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
@@ -585,5 +586,105 @@ describe('modified data is added', () => {
     cy.gridInstance().invoke('removeRow', 0);
 
     assertModifiedRowsLength('deletedRows', 5);
+  });
+});
+
+describe('events', () => {
+  context(`'expand' event`, () => {
+    let callback: Function;
+
+    beforeEach(() => {
+      callback = cy.stub();
+      cy.gridInstance().invoke('on', 'expand', callback);
+    });
+    
+    it(`is fired by the number of all expanded children when calling 'exapnd' method.`, () => {
+      cy.gridInstance()
+        .invoke('expand', 0)
+        .then(() => {
+          expect(callback).to.be.callCount(2);
+        });
+    });
+
+    it(`is fired by the number of all expanded descendants when calling 'exapndAll' method.`, () => {
+      cy.gridInstance()
+        .invoke('expandAll')
+        .then(() => {
+          expect(callback).to.be.callCount(4);
+        });
+    });
+
+    it(`is fired when clicking toggle button.`, () => {
+      cy.getCell(0, 'c1').within(() => {
+        cy.get(`.${cls('btn-tree')}`)
+          .click()
+          .then(() => {
+            expect(callback).to.be.called;
+          });
+      });
+    });
+
+   it('is stop then toggle button is not exapnaded.', () => {
+      cy.gridInstance().invoke('on', 'expand', (ev: GridEvent) => {
+        ev.stop();
+      });
+
+      cy.gridInstance()
+        .invoke('expand', 0)
+        .then(() => {
+          assertToggleButtonCollapsed(0, 'c1');
+        });
+    });
+  });
+
+  context(`'collapse' event`, () => {
+    let callback: Function;
+
+    beforeEach(() => {
+      callback = cy.stub();
+      cy.gridInstance().invoke('on', 'collapse', callback);
+    });
+    
+    it(`is fired by the number of all expanded children when calling 'collapse' method.`, () => {
+      cy.gridInstance().invoke('expand', 0);
+      cy.gridInstance()
+        .invoke('collapse', 0)
+        .then(() => {
+          expect(callback).to.be.callCount(1);
+        });
+    });
+
+    it(`is fired by the number of all expanded descendants when calling 'collapseAll' method.`, () => {
+      cy.gridInstance().invoke('expandAll');
+      cy.gridInstance()
+        .invoke('collapseAll')
+        .then(() => {
+          expect(callback).to.be.callCount(4);
+        });
+    });
+
+    it(`is fired when clicking toggle button.`, () => {
+      cy.getCell(0, 'c1').within(() => {
+        cy.get(`.${cls('btn-tree')}`).click();
+        cy.get(`.${cls('btn-tree')}`)
+          .click()
+          .then(() => {
+            expect(callback).to.be.called;
+          });
+      });
+    });
+
+   it('is stop then toggle button is not collapsed.', () => {
+      cy.gridInstance().invoke('on', 'collapse', (ev: GridEvent) => {
+        ev.stop();
+      });
+
+      cy.gridInstance().invoke('expand', 0)
+      cy.gridInstance()
+        .invoke('collapse', 0)
+        .then(() => {
+          assertToggleButtonExpanded(0, 'c1');
+        });
+    });
   });
 });

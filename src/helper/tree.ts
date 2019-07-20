@@ -66,29 +66,25 @@ export function isExpanded(row: Row) {
   return !!tree && tree.expanded;
 }
 
-export function getDepth(rawData: Row[], row: Row) {
-  let parentRow: Row | undefined = row;
+export function isRootChildRow(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!tree && isNull(tree.parentRowKey);
+}
+
+export function getDepth(rawData: Row[], row?: Row) {
+  let parentRow = row;
   let depth = 0;
 
   do {
     depth += 1;
-    parentRow = findProp('rowKey', getParentRowKey(parentRow), rawData);
+    parentRow = findProp('rowKey', getParentRowKey(parentRow!), rawData);
   } while (parentRow);
 
   return depth;
 }
 
-function getExpandedState(row: OptRow) {
-  if (row && row._attributes) {
-    const { expanded = false } = row._attributes;
-
-    return expanded;
-  }
-
-  return false;
-}
-
-export function getHiddenChildState(row: Row) {
+export function isHiddenRow(row: Row) {
   if (row) {
     const { tree } = row._attributes;
     const collapsed = !isExpanded(row);
@@ -124,8 +120,8 @@ function createTreeRawRow(
 
   rawRow._attributes.tree = observable({
     ...defaultAttributes,
-    ...(Array.isArray(row._children) && { expanded: getExpandedState(row) }),
-    ...(!!parentRow && { hiddenChild: getHiddenChildState(parentRow) })
+    ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded }),
+    ...(!!parentRow && { hiddenChild: isHiddenRow(parentRow) })
   });
 
   return rawRow;

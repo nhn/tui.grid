@@ -46,8 +46,7 @@ const treeData = [
         listenCount: 5000,
         _attributes: {
           expanded: false
-        },
-        _children: []
+        }
       },
       {
         id: 450720,
