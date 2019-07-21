@@ -949,7 +949,7 @@ export default class Grid {
     this.dispatch('setRowCheckDisabled', false, rowKey);
   }
 
-  /*
+  /**
    * Inserts the new row with specified data to the end of table.
    * @param {Object} [row] - The data for the new row
    * @param {Object} [options] - Options
