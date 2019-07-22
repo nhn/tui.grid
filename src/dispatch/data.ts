@@ -6,7 +6,8 @@ import {
   RowAttributes,
   RowAttributeValue,
   PageOptions,
-  Dictionary
+  Dictionary,
+  Data
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -278,11 +279,22 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-export function appendRow(
-  { data, column, rowCoords, dimension, id, renderState }: Store,
-  row: OptRow,
-  options: OptAppendRow
-) {
+function updateSortKey(data: Data, at: number) {
+  const { rawData, viewData } = data;
+  for (let idx = 0; idx < rawData.length; idx += 1) {
+    if (rawData[idx].sortKey >= at) {
+      rawData[idx].sortKey += 1;
+    }
+    if (viewData[idx].sortKey >= at) {
+      viewData[idx].sortKey += 1;
+    }
+  }
+  rawData[at].sortKey = at;
+  viewData[at].sortKey = at;
+}
+
+export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
+  const { data, column, rowCoords, dimension, id, renderState } = store;
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
@@ -295,6 +307,14 @@ export function appendRow(
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
+
+  if (at !== rawData.length) {
+    updateSortKey(data, at);
+  }
+
+  if (!enableRowSpan(sortOptions.columnName)) {
+    sort(store, sortOptions.columnName, sortOptions.ascending);
+  }
 
   if (prevRow && enableRowSpan(sortOptions.columnName)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
