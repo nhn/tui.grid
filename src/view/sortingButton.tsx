@@ -20,9 +20,18 @@ type Props = StoreProps & OwnProps & DispatchProps;
 class SortingButtonComp extends Component<Props> {
   private handleClick = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
+    const withCtrl = ev.ctrlKey || ev.metaKey;
 
     if (!hasClass(target, 'btn-sorting')) {
       return;
+    }
+
+    if (withCtrl) {
+      console.log('ho!');
+      // @TODO: columnNames 에 추가 될 예정
+      // @TODO: ['name',
+    } else {
+      // @TODO: columnName 초기화
     }
 
     const { dispatch, sortOptions, dataProvider } = this.props;

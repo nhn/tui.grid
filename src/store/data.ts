@@ -367,6 +367,10 @@ export function create(
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
   const sortOptions = { columnName: 'sortKey', ascending: true, useClient: useClientSort };
+  // const sortOptions2 = {
+  //   useClient: useClientSort,
+  //   sort
+  // }
 
   return observable({
     disabled,

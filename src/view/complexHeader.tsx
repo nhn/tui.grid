@@ -7,6 +7,7 @@ import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
+import { SortingOrder } from './sortingOrder';
 import { getChildColumnRange } from '../query/selection';
 
 interface OwnProps {
@@ -101,6 +102,7 @@ class ComplexHeaderComp extends Component<Props> {
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
         {!!sortable && <SortingButton columnName={name} />}
+        {!!sortable && <SortingOrder columnName={name} />}
       </th>
     );
   }
