@@ -842,7 +842,7 @@ export default class Grid {
    */
   public unsort() {
     // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
-    this.dispatch('sort', 'rowKey', true);
+    this.dispatch('sort', 'sortKey', true);
   }
 
   /**

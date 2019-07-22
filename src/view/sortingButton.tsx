@@ -27,12 +27,17 @@ class SortingButtonComp extends Component<Props> {
 
     const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
-    const targetColumnName = th!.getAttribute('data-column-name')!;
+    let targetColumnName = th!.getAttribute('data-column-name')!;
     let { ascending: targetAscending } = this.props;
 
     if (sortOptions) {
       const { columnName, ascending } = sortOptions;
-      targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
+      if (columnName !== 'sortKey' && targetAscending === !ascending) {
+        targetColumnName = 'sortKey';
+        targetAscending = true;
+      } else {
+        targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
+      }
     }
 
     if (sortOptions.useClient) {
