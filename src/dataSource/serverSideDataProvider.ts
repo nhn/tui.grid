@@ -11,7 +11,9 @@ import {
 import { Store, Dictionary, Row, RowKey } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
-import { isUndefined, isObject } from '../helper/common';
+import { removeExpandedAttr } from '../dispatch/tree';
+import { getChildRowKeys } from '../helper/tree';
+import { isUndefined, isObject, findProp } from '../helper/common';
 import GridAjax from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
@@ -98,6 +100,12 @@ class ServerSideDataProvider implements DataProvider {
         parentRowKey
       });
     });
+
+    const row = findProp('rowKey', parentRowKey, this.store.data.rawData);
+
+    if (row && !getChildRowKeys(row).length) {
+      removeExpandedAttr(row);
+    }
   };
 
   public readData(page: number, data = {}, resetData = false) {

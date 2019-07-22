@@ -37,7 +37,7 @@ function changeHiddenChildAttr(row: Row, hidden: boolean) {
   }
 }
 
-function removeExpandedAttr(row: Row) {
+export function removeExpandedAttr(row: Row) {
   const { tree } = row._attributes;
 
   if (tree) {
