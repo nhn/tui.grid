@@ -79,6 +79,11 @@ grid.on('mousedown', function(ev) {
 - `failResponse` : `response` 이벤트 발생 후 `response.result`가 `false`인 경우
 - `errorResponse` : `response` 이벤트 발생 후 응답이 오류인 경우
 
+트리 컬럼을 활성화했을 때 사용할 수 있는 이벤트는 다음과 같다.
+
+- `expand` : 클릭 이벤트 또는 `expand()`, `expandAll` 메서드를 호출하여 펼치기/접기 버튼이 '펼침' 상태로 변경된 경우
+- `collapse` : 클릭 이벤트 또는 `collapse()`, `collapseAll` 메서드를 호출하여 펼치기/접기 버튼이 '접힘' 상태로 변경된 경우
+
 이벤트에 대한 자세한 정보는 [API 문서](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest)에서 살펴볼 수 있다.
 
 ## 예제
