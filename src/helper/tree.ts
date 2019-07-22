@@ -142,7 +142,7 @@ export function flattenTreeData(
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
-      if (row._children.length > 0) {
+      if (row._children.length) {
         flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, keyColumnName));
       }
       delete rawRow._children;
