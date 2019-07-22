@@ -2,7 +2,7 @@ import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
 import { observable, observe, notify } from './observable';
-import { includes, findProp, removeArrayItem, isNull } from './common';
+import { includes, findProp, removeArrayItem, isNull, isUndefined } from './common';
 
 export const DEFAULT_INDENT_WIDTH = 22;
 
@@ -15,11 +15,20 @@ function generateTreeRowKey() {
   return treeRowKey;
 }
 
-export function addChildRowKey(row: Row, rowKey: RowKey) {
+function addChildRowKey(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.push(rowKey);
+    notify(tree, 'childRowKeys');
+  }
+}
+
+function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
+  const { tree } = row._attributes;
+
+  if (tree && !includes(tree.childRowKeys, rowKey)) {
+    tree.childRowKeys.splice(offset, 0, rowKey);
     notify(tree, 'childRowKeys');
   }
 }
@@ -101,7 +110,8 @@ function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string
+  keyColumnName?: string,
+  offset?: number
 ) {
   const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, keyColumnName);
   const { rowKey } = rawRow;
@@ -111,7 +121,11 @@ function createTreeRawRow(
   };
 
   if (parentRow) {
-    addChildRowKey(parentRow, rowKey);
+    if (!isUndefined(offset)) {
+      insertChildRowKey(parentRow, rowKey, offset);
+    } else {
+      addChildRowKey(parentRow, rowKey);
+    }
   }
 
   rawRow._attributes.tree = observable({
@@ -127,12 +141,13 @@ export function flattenTreeData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string
+  keyColumnName?: string,
+  offset?: number
 ) {
   const flattenedRows: Row[] = [];
 
   data.forEach((row) => {
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName, offset);
 
     flattenedRows.push(rawRow);
 
