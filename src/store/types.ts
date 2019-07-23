@@ -197,10 +197,16 @@ export interface ColumnInfo {
   ignored?: boolean;
 }
 
+export interface SortOptionColumn {
+  columnName: string;
+  ascending: boolean;
+}
+
 export interface SortOptions {
   columnName: string;
   ascending: boolean;
   useClient: boolean;
+  columns: SortOptionColumn[];
 }
 
 interface DataForColumnCreation {

@@ -1,36 +1,37 @@
 import { h, Component } from 'preact';
-import { SortOptions } from '../store/types';
 import { connect } from './hoc';
-import { getDataProvider } from '../instance';
 import { DispatchProps } from '../dispatch/create';
-import { DataProvider } from '../dataSource/types';
+import { findPropIndex } from '../helper/common';
 
 interface OwnProps {
   columnName: string;
 }
 interface StoreProps {
-  sortOptions: SortOptions;
-  dataProvider: DataProvider;
-  ascending: boolean;
+  order: number;
+  multiSort: boolean;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
 class SortingOrderComp extends Component<Props> {
   public render() {
-    const { sortOptions } = this.props;
-    return <span style={{ color: '#bbb' }}>1</span>;
+    const { order, multiSort } = this.props;
+    return !!order && multiSort && <span style={{ color: '#bbb' }}>{order}</span>;
   }
 }
 
 export const SortingOrder = connect<StoreProps, OwnProps>((store, props) => {
-  const { data, column, id } = store;
+  const {
+    data: {
+      sortOptions: { columns }
+    }
+  } = store;
   const { columnName } = props;
-  const { sortingType } = column.allColumnMap[columnName];
+  const order = findPropIndex('columnName', columnName, [...columns]) + 1;
+  const multiSort = columns.length > 1;
 
   return {
-    sortOptions: data.sortOptions,
-    dataProvider: getDataProvider(id),
-    ascending: sortingType === 'asc'
+    order,
+    multiSort
   };
 })(SortingOrderComp);

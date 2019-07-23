@@ -280,3 +280,132 @@ export const data = [
     listenCount: 5000
   }
 ];
+
+export const sortData = [
+  {
+    name: 'Used',
+    artist: 'Giriboy',
+    genre: 'hiphop',
+    downloadCount: 1000,
+    listenCount: 5000
+  },
+  {
+    name: 'wewantourmoneyback',
+    artist: 'Giriboy',
+    genre: 'hiphop',
+    downloadCount: 500,
+    listenCount: 1000
+  },
+  {
+    name: '2000/90',
+    artist: 'Giriboy',
+    genre: 'hiphop',
+    downloadCount: 200,
+    listenCount: 300
+  },
+  {
+    name: 'skit',
+    artist: 'Giriboy',
+    genre: 'hiphop',
+    downloadCount: 5000,
+    listenCount: 6000
+  },
+  {
+    name: 'northbutsouth',
+    artist: 'Giriboy',
+    genre: 'hiphop',
+    downloadCount: 1000,
+    listenCount: 3000
+  },
+  {
+    name: 'sanctuary',
+    artist: 'Joji',
+    genre: 'R&B',
+    downloadCount: 1000,
+    listenCount: 3000
+  },
+  {
+    name: 'SLOW DANCING IN THE DARK',
+    artist: 'Joji',
+    genre: 'R&B',
+    downloadCount: 1000,
+    listenCount: 3000
+  },
+  {
+    name: 'Head In The Clouds',
+    artist: 'Joji & 88 rising',
+    genre: 'POP',
+    downloadCount: 1000,
+    listenCount: 4000
+  },
+  {
+    name: 'Boat',
+    artist: 'George',
+    genre: 'R&B',
+    downloadCount: 1000,
+    listenCount: 4000
+  },
+  {
+    name: 'look at me',
+    artist: 'George',
+    genre: 'R&B',
+    downloadCount: 1000,
+    listenCount: 4000
+  },
+  {
+    name: 'BLACKJACK',
+    artist: 'Amine',
+    genre: 'hiphop',
+    downloadCount: 11000,
+    listenCount: 14000
+  },
+  {
+    name: 'Yellow',
+    artist: 'Amine',
+    genre: 'hiphop',
+    downloadCount: 16000,
+    listenCount: 13000
+  },
+  {
+    name: 'SHINE',
+    artist: 'Amine',
+    genre: 'hiphop',
+    downloadCount: 51000,
+    listenCount: 14000
+  },
+  {
+    name: 'Invincible',
+    artist: 'Amine',
+    genre: 'hiphop',
+    downloadCount: 51000,
+    listenCount: 14000
+  },
+  {
+    name: 'Indigo',
+    artist: 'Chris Brown',
+    genre: 'POP',
+    downloadCount: 151000,
+    listenCount: 14000
+  },
+  {
+    name: 'Red',
+    artist: 'Chris Brown',
+    genre: 'POP',
+    downloadCount: 151000,
+    listenCount: 14000
+  },
+  {
+    name: 'Need A Stack',
+    artist: 'Chris Brown',
+    genre: 'POP',
+    downloadCount: 151000,
+    listenCount: 14000
+  },
+  {
+    name: 'Mile High',
+    artist: 'James Blake',
+    genre: 'Electronic R&B',
+    downloadCount: 151000,
+    listenCount: 14000
+  }
+];

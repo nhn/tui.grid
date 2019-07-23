@@ -349,6 +349,10 @@ declare namespace tuiGrid {
     columnName: string;
     ascending: boolean;
     useClient: boolean;
+    columns: {
+      columnName: string;
+      ascending: boolean;
+    }[];
   }
 
   type CustomValue = string | ((value: CellValue, rowAttrs: Row[], column: IColumnInfo) => string);

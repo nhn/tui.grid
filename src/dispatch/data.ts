@@ -7,7 +7,9 @@ import {
   RowAttributeValue,
   PageOptions,
   Dictionary,
-  Data
+  Data,
+  SortOptionColumn,
+  SortOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -181,12 +183,110 @@ export function changeSortOptions({ data }: Store, columnName: string, ascending
   }
 }
 
-export function sort(store: Store, columnName: string, ascending: boolean) {
-  const { data, id } = store;
+function isInitialSortingType(columns: SortOptionColumn[]) {
+  return columns.length === 1 && columns[0].columnName === 'sortKey';
+}
+
+function toggleSortAscending(
+  sortOptions: SortOptions,
+  columnName: string,
+  ascending: boolean,
+  sortingType: 'asc' | 'desc'
+) {
+  const index = findPropIndex('columnName', columnName, sortOptions.columns);
+  const isAscending = sortingType === 'asc';
+
+  if (isAscending === ascending) {
+    sortOptions.columns.splice(index, 1);
+  } else {
+    sortOptions.columns[index].ascending = ascending;
+  }
+
+  if (!sortOptions.columns.length) {
+    sortOptions.columns = [
+      {
+        columnName: 'sortKey',
+        ascending: true
+      }
+    ];
+  }
+}
+
+function singleSort(
+  sortOptions: SortOptions,
+  columnName: string,
+  ascending: boolean,
+  sortingType: 'asc' | 'desc'
+) {
+  const { columns } = sortOptions;
+  const sortOptionColumn = {
+    columnName,
+    ascending
+  };
+
+  if (isInitialSortingType(columns)) {
+    sortOptions.columns = [sortOptionColumn];
+  } else if (columns.length === 1) {
+    const isExist = columns[0].columnName === columnName;
+    if (isExist) {
+      toggleSortAscending(sortOptions, columnName, ascending, sortingType);
+    } else {
+      sortOptions.columns = [sortOptionColumn];
+    }
+  } else {
+    const index = findPropIndex('columnName', columnName, sortOptions.columns);
+    if (index === -1) {
+      sortOptions.columns = [sortOptionColumn];
+    } else {
+      const column = { ...sortOptions.columns[index] };
+      column.ascending = ascending;
+      sortOptions.columns = [column];
+    }
+  }
+  console.log(sortOptions.columns);
+}
+
+function multiSort(
+  sortOptions: SortOptions,
+  columnName: string,
+  ascending: boolean,
+  sortingType: 'asc' | 'desc'
+) {
+  const sortOptionColumn = {
+    columnName,
+    ascending
+  };
+  const { columns } = sortOptions;
+  const index = findPropIndex('columnName', columnName, columns);
+  if (index === -1) {
+    if (columns.length === 1 && columns[0].columnName === 'sortKey') {
+      sortOptions.columns = [sortOptionColumn];
+    } else {
+      sortOptions.columns = [...columns, sortOptionColumn];
+    }
+  } else {
+    toggleSortAscending(sortOptions, columnName, ascending, sortingType);
+  }
+  console.log(sortOptions.columns);
+}
+
+export function sort(store: Store, columnName: string, ascending: boolean, withCtrl?: boolean) {
+  const { column, data, id } = store;
   const { sortOptions } = data;
   if (!sortOptions.useClient) {
     return;
   }
+
+  const { sortingType } = column.allColumnMap[columnName];
+
+  // console.log(ascending);
+
+  if (withCtrl) {
+    multiSort(sortOptions, columnName, ascending, sortingType!);
+  } else {
+    singleSort(sortOptions, columnName, ascending, sortingType!);
+  }
+
   changeSortOptions(store, columnName, ascending);
   const { rawData, viewData } = getSortedData(data, columnName, ascending);
   if (!arrayEqual(rawData, data.rawData)) {
