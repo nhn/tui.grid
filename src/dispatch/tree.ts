@@ -15,7 +15,6 @@ import {
   removeChildRowKey,
   isLeaf,
   isExpanded,
-  isHiddenRow,
   isRootChildRow
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
@@ -29,11 +28,11 @@ function changeExpandedAttr(row: Row, expanded: boolean) {
   }
 }
 
-function changeHiddenChildAttr(row: Row, hidden: boolean) {
+function changeHiddenAttr(row: Row, hidden: boolean) {
   const { tree } = row._attributes;
 
   if (tree) {
-    tree.hiddenChild = hidden;
+    tree.hidden = hidden;
   }
 }
 
@@ -70,7 +69,6 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
   changeExpandedAttr(row, true);
 
-  const hiddenRow = isHiddenRow(row);
   const childRowKeys = getChildRowKeys(row);
 
   childRowKeys.forEach((childRowKey) => {
@@ -80,7 +78,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
       return;
     }
 
-    changeHiddenChildAttr(childRow, hiddenRow);
+    changeHiddenAttr(childRow, false);
 
     if (!isLeaf(childRow) && (isExpanded(childRow) || recursive)) {
       expand(store, childRow, recursive);
@@ -133,7 +131,6 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
 
   changeExpandedAttr(row, false);
 
-  const hiddenRow = isHiddenRow(row);
   const childRowKeys = getChildRowKeys(row);
 
   childRowKeys.forEach((childRowKey) => {
@@ -143,7 +140,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
       return;
     }
 
-    changeHiddenChildAttr(childRow, hiddenRow);
+    changeHiddenAttr(childRow, true);
 
     if (!isLeaf(childRow)) {
       if (recursive) {
