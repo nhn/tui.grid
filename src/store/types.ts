@@ -92,6 +92,7 @@ export interface CellRenderData {
 
 export interface ViewRow {
   rowKey: RowKey;
+  rowSpanMap: RowSpanMap;
   sortKey: number;
   valueMap: Dictionary<CellRenderData>;
   treeInfo?: TreeCellInfo;
