@@ -107,7 +107,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (enableRowSpan(sortOptions.columnName)) {
+    if (enableRowSpan(sortOptions.columns[0].columnName)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,

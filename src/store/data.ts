@@ -367,10 +367,7 @@ export function create(
 ): Observable<Data> {
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
-  // @TODO: sorting Type 남기고 다 지울거야
   const sortOptions: SortOptions = {
-    columnName: 'sortKey',
-    ascending: true,
     useClient: useClientSort,
     columns: [
       {

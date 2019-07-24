@@ -15,16 +15,17 @@ export function getNextCellIndex(
   } = store;
   const { rawData, viewData, sortOptions } = data;
   const columnName = visibleColumnsWithRowHeader[columnIndex].name;
+  const firstColumnSortOption = sortOptions.columns[0];
 
   switch (command) {
     case 'up':
-      if (enableRowSpan(sortOptions.columnName)) {
+      if (enableRowSpan(firstColumnSortOption.columnName)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
       }
       rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
-      if (enableRowSpan(sortOptions.columnName)) {
+      if (enableRowSpan(firstColumnSortOption.columnName)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
       }
       rowIndex = getNextRowIndex(rowIndex, heights);

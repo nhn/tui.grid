@@ -7,7 +7,8 @@ import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction } from '../helper/common';
+import { findPropIndex, isFunction } from '../helper/common';
+import { sort } from '../dispatch/data';
 
 interface StoreProps {
   left: number;
@@ -60,8 +61,9 @@ export class EditingLayerInnerComp extends Component<Props> {
 
       if (save) {
         dispatch('setValue', rowKey, columnName, this.editor.getValue());
-        if (sortOptions.columnName === columnName) {
-          dispatch('sort', columnName, sortOptions.ascending);
+        const index = findPropIndex('columnName', columnName, sortOptions.columns);
+        if (index !== -1) {
+          dispatch('sort', columnName, sortOptions.columns[index].ascending);
         }
       }
       dispatch('finishEditing', rowKey, columnName);

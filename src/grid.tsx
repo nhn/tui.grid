@@ -608,8 +608,10 @@ export default class Grid {
     const sortOptions = this.store.data.sortOptions;
     this.dispatch('setValue', rowKey, columnName, value);
 
-    if (sortOptions.columnName === columnName) {
-      this.dispatch('sort', columnName, sortOptions.ascending);
+    const index = findPropIndex('columnName', columnName, sortOptions.columns);
+
+    if (index !== -1) {
+      this.dispatch('sort', columnName, sortOptions.columns[index].ascending);
     }
 
     this.dispatch('finishEditing', rowKey, columnName);
@@ -839,10 +841,9 @@ export default class Grid {
   }
 
   /**
-   * Unsorts all rows. (Sorts by rowKey).
+   * Unsorts all rows. (Sorts by sortKey(default sorting order)).
    */
   public unsort() {
-    // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
     this.dispatch('sort', 'sortKey', true);
   }
 
@@ -1358,7 +1359,7 @@ export default class Grid {
   }
 
   /**
-   * Refreshs the layout view. Use this method when the view was rendered while hidden.
+   * Refresh the layout view. Use this method when the view was rendered while hidden.
    */
   public refreshLayout() {
     const containerEl = this.el.querySelector(`.${cls('container')}`) as HTMLElement;

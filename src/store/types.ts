@@ -203,8 +203,6 @@ export interface SortOptionColumn {
 }
 
 export interface SortOptions {
-  columnName: string;
-  ascending: boolean;
   useClient: boolean;
   columns: SortOptionColumn[];
 }

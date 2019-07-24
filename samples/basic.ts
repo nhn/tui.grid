@@ -283,129 +283,66 @@ export const data = [
 
 export const sortData = [
   {
-    name: 'Used',
-    artist: 'Giriboy',
-    genre: 'hiphop',
-    downloadCount: 1000,
-    listenCount: 5000
+    alphabetA: 'B',
+    alphabetB: 'B',
+    alphabetC: 'A',
+    numberA: 2,
+    numberB: 3
   },
   {
-    name: 'wewantourmoneyback',
-    artist: 'Giriboy',
-    genre: 'hiphop',
-    downloadCount: 500,
-    listenCount: 1000
+    alphabetA: 'A',
+    alphabetB: 'A',
+    alphabetC: 'A',
+    numberA: 1,
+    numberB: 1
   },
   {
-    name: '2000/90',
-    artist: 'Giriboy',
-    genre: 'hiphop',
-    downloadCount: 200,
-    listenCount: 300
+    alphabetA: 'C',
+    alphabetB: 'A',
+    alphabetC: 'C',
+    numberA: 1,
+    numberB: 3
   },
   {
-    name: 'skit',
-    artist: 'Giriboy',
-    genre: 'hiphop',
-    downloadCount: 5000,
-    listenCount: 6000
+    alphabetA: 'A',
+    alphabetB: 'B',
+    alphabetC: 'C',
+    numberA: 1,
+    numberB: 10
   },
   {
-    name: 'northbutsouth',
-    artist: 'Giriboy',
-    genre: 'hiphop',
-    downloadCount: 1000,
-    listenCount: 3000
+    alphabetA: 'A',
+    alphabetB: 'B',
+    alphabetC: 'C',
+    numberA: 10,
+    numberB: 10
   },
   {
-    name: 'sanctuary',
-    artist: 'Joji',
-    genre: 'R&B',
-    downloadCount: 1000,
-    listenCount: 3000
+    alphabetA: 'D',
+    alphabetB: 'E',
+    alphabetC: 'C',
+    numberA: 1,
+    numberB: 1
   },
   {
-    name: 'SLOW DANCING IN THE DARK',
-    artist: 'Joji',
-    genre: 'R&B',
-    downloadCount: 1000,
-    listenCount: 3000
+    alphabetA: 'B',
+    alphabetB: 'C',
+    alphabetC: 'C',
+    numberA: 20,
+    numberB: 20
   },
   {
-    name: 'Head In The Clouds',
-    artist: 'Joji & 88 rising',
-    genre: 'POP',
-    downloadCount: 1000,
-    listenCount: 4000
+    alphabetA: 'A',
+    alphabetB: 'A',
+    alphabetC: 'A',
+    numberA: 24,
+    numberB: 24
   },
   {
-    name: 'Boat',
-    artist: 'George',
-    genre: 'R&B',
-    downloadCount: 1000,
-    listenCount: 4000
-  },
-  {
-    name: 'look at me',
-    artist: 'George',
-    genre: 'R&B',
-    downloadCount: 1000,
-    listenCount: 4000
-  },
-  {
-    name: 'BLACKJACK',
-    artist: 'Amine',
-    genre: 'hiphop',
-    downloadCount: 11000,
-    listenCount: 14000
-  },
-  {
-    name: 'Yellow',
-    artist: 'Amine',
-    genre: 'hiphop',
-    downloadCount: 16000,
-    listenCount: 13000
-  },
-  {
-    name: 'SHINE',
-    artist: 'Amine',
-    genre: 'hiphop',
-    downloadCount: 51000,
-    listenCount: 14000
-  },
-  {
-    name: 'Invincible',
-    artist: 'Amine',
-    genre: 'hiphop',
-    downloadCount: 51000,
-    listenCount: 14000
-  },
-  {
-    name: 'Indigo',
-    artist: 'Chris Brown',
-    genre: 'POP',
-    downloadCount: 151000,
-    listenCount: 14000
-  },
-  {
-    name: 'Red',
-    artist: 'Chris Brown',
-    genre: 'POP',
-    downloadCount: 151000,
-    listenCount: 14000
-  },
-  {
-    name: 'Need A Stack',
-    artist: 'Chris Brown',
-    genre: 'POP',
-    downloadCount: 151000,
-    listenCount: 14000
-  },
-  {
-    name: 'Mile High',
-    artist: 'James Blake',
-    genre: 'Electronic R&B',
-    downloadCount: 151000,
-    listenCount: 14000
+    alphabetA: 'F',
+    alphabetB: 'F',
+    alphabetC: 'F',
+    numberA: 25,
+    numberB: 25
   }
 ];

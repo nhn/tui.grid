@@ -8,8 +8,7 @@ import {
   PageOptions,
   Dictionary,
   Data,
-  SortOptionColumn,
-  SortOptions
+  SortOptionColumn
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -66,7 +65,11 @@ export function setValue(
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && enableRowSpan(sortOptions.columnName)) {
+    if (
+      !isEmpty(rowSpanMap) &&
+      rowSpanMap[columnName] &&
+      enableRowSpan(sortOptions.columns[0].columnName)
+    ) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -176,11 +179,30 @@ export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
 }
 
-export function changeSortOptions({ data }: Store, columnName: string, ascending: boolean) {
-  const { sortOptions } = data;
-  if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-    data.sortOptions = { ...sortOptions, columnName, ascending };
+export function changeSortOptions(
+  { data, column }: Store,
+  columnName: string,
+  ascending: boolean,
+  withCtrl?: boolean
+) {
+  if (columnName === 'sortKey') {
+    data.sortOptions.columns = [
+      {
+        columnName: 'sortKey',
+        ascending: true
+      }
+    ];
+  } else {
+    const { sortingType } = column.allColumnMap[columnName];
+
+    if (withCtrl) {
+      multiSort(data, columnName, ascending, sortingType!);
+    } else {
+      singleSort(data, columnName, ascending, sortingType!);
+    }
   }
+
+  notify(data, 'sortOptions');
 }
 
 function isInitialSortingType(columns: SortOptionColumn[]) {
@@ -188,22 +210,23 @@ function isInitialSortingType(columns: SortOptionColumn[]) {
 }
 
 function toggleSortAscending(
-  sortOptions: SortOptions,
+  data: Data,
   columnName: string,
   ascending: boolean,
   sortingType: 'asc' | 'desc'
 ) {
+  const { sortOptions } = data;
   const index = findPropIndex('columnName', columnName, sortOptions.columns);
   const isAscending = sortingType === 'asc';
 
   if (isAscending === ascending) {
-    sortOptions.columns.splice(index, 1);
+    data.sortOptions.columns.splice(index, 1);
   } else {
-    sortOptions.columns[index].ascending = ascending;
+    data.sortOptions.columns[index].ascending = ascending;
   }
 
   if (!sortOptions.columns.length) {
-    sortOptions.columns = [
+    data.sortOptions.columns = [
       {
         columnName: 'sortKey',
         ascending: true
@@ -213,11 +236,12 @@ function toggleSortAscending(
 }
 
 function singleSort(
-  sortOptions: SortOptions,
+  data: Data,
   columnName: string,
   ascending: boolean,
   sortingType: 'asc' | 'desc'
 ) {
+  const { sortOptions } = data;
   const { columns } = sortOptions;
   const sortOptionColumn = {
     columnName,
@@ -225,29 +249,28 @@ function singleSort(
   };
 
   if (isInitialSortingType(columns)) {
-    sortOptions.columns = [sortOptionColumn];
+    data.sortOptions.columns = [sortOptionColumn];
   } else if (columns.length === 1) {
     const isExist = columns[0].columnName === columnName;
     if (isExist) {
-      toggleSortAscending(sortOptions, columnName, ascending, sortingType);
+      toggleSortAscending(data, columnName, ascending, sortingType);
     } else {
-      sortOptions.columns = [sortOptionColumn];
+      data.sortOptions.columns = [sortOptionColumn];
     }
   } else {
     const index = findPropIndex('columnName', columnName, sortOptions.columns);
     if (index === -1) {
-      sortOptions.columns = [sortOptionColumn];
+      data.sortOptions.columns = [sortOptionColumn];
     } else {
       const column = { ...sortOptions.columns[index] };
       column.ascending = ascending;
-      sortOptions.columns = [column];
+      data.sortOptions.columns = [column];
     }
   }
-  console.log(sortOptions.columns);
 }
 
 function multiSort(
-  sortOptions: SortOptions,
+  data: Data,
   columnName: string,
   ascending: boolean,
   sortingType: 'asc' | 'desc'
@@ -256,39 +279,29 @@ function multiSort(
     columnName,
     ascending
   };
+  const { sortOptions } = data;
   const { columns } = sortOptions;
   const index = findPropIndex('columnName', columnName, columns);
   if (index === -1) {
     if (columns.length === 1 && columns[0].columnName === 'sortKey') {
-      sortOptions.columns = [sortOptionColumn];
+      data.sortOptions.columns = [sortOptionColumn];
     } else {
-      sortOptions.columns = [...columns, sortOptionColumn];
+      data.sortOptions.columns = [...columns, sortOptionColumn];
     }
   } else {
-    toggleSortAscending(sortOptions, columnName, ascending, sortingType);
+    toggleSortAscending(data, columnName, ascending, sortingType);
   }
-  console.log(sortOptions.columns);
 }
 
 export function sort(store: Store, columnName: string, ascending: boolean, withCtrl?: boolean) {
-  const { column, data, id } = store;
+  const { data, id } = store;
   const { sortOptions } = data;
   if (!sortOptions.useClient) {
     return;
   }
 
-  const { sortingType } = column.allColumnMap[columnName];
-
-  // console.log(ascending);
-
-  if (withCtrl) {
-    multiSort(sortOptions, columnName, ascending, sortingType!);
-  } else {
-    singleSort(sortOptions, columnName, ascending, sortingType!);
-  }
-
-  changeSortOptions(store, columnName, ascending);
-  const { rawData, viewData } = getSortedData(data, columnName, ascending);
+  changeSortOptions(store, columnName, ascending, withCtrl);
+  const { rawData, viewData } = getSortedData(data);
   if (!arrayEqual(rawData, data.rawData)) {
     data.rawData = rawData;
     data.viewData = viewData;
@@ -400,6 +413,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
   const prevRow = rawData[at - 1];
+  const firstSortColumnOption = sortOptions.columns[0];
 
   const rawRow = createRawRow(row, rawData.length, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
@@ -412,11 +426,11 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (!enableRowSpan(sortOptions.columnName)) {
-    sort(store, sortOptions.columnName, sortOptions.ascending);
+  if (!enableRowSpan(firstSortColumnOption.columnName)) {
+    sort(store, firstSortColumnOption.columnName, firstSortColumnOption.ascending);
   }
 
-  if (prevRow && enableRowSpan(sortOptions.columnName)) {
+  if (prevRow && enableRowSpan(firstSortColumnOption.columnName)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -441,7 +455,7 @@ export function removeRow(
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
-  if (nextRow && enableRowSpan(sortOptions.columnName)) {
+  if (nextRow && enableRowSpan(sortOptions.columns[0].columnName)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 

@@ -84,7 +84,7 @@ export function getRowRangeWithRowSpan(
   rowIndex: number | null,
   data: Data
 ): Range {
-  if (enableRowSpan(data.sortOptions.columnName)) {
+  if (enableRowSpan(data.sortOptions.columns[0].columnName)) {
     return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
   }
 

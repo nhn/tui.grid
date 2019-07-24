@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
+import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
@@ -12,11 +12,46 @@ stories.addDecorator(withKnobs);
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const data = sortData.slice();
   const columns: OptColumn[] = [
-    { name: 'name', minWidth: 150, sortable: true, sortingType: 'desc', editor: 'text' },
-    { name: 'artist', minWidth: 150, sortable: true, sortingType: 'asc', editor: 'text' },
-    { name: 'genre', minWidth: 150, sortable: true, sortingType: 'desc', editor: 'text' },
-    { name: 'listenCount', minWidth: 150, sortable: true, sortingType: 'asc', editor: 'text' },
-    { name: 'downloadCount', minWidth: 150, sortable: true, sortingType: 'desc', editor: 'text' }
+    {
+      name: 'alphabetA',
+      header: 'alphabetA(desc)',
+      minWidth: 150,
+      sortable: true,
+      sortingType: 'desc',
+      editor: 'text'
+    },
+    {
+      name: 'alphabetB',
+      header: 'alphabetB(asc)',
+      minWidth: 150,
+      sortable: true,
+      sortingType: 'asc',
+      editor: 'text'
+    },
+    {
+      name: 'alphabetC',
+      header: 'alphabetC(desc)',
+      minWidth: 150,
+      sortable: true,
+      sortingType: 'desc',
+      editor: 'text'
+    },
+    {
+      name: 'numberA',
+      header: 'numberA(asc)',
+      minWidth: 150,
+      sortable: true,
+      sortingType: 'asc',
+      editor: 'text'
+    },
+    {
+      name: 'numberB',
+      header: 'numberB(desc)',
+      minWidth: 150,
+      sortable: true,
+      sortingType: 'desc',
+      editor: 'text'
+    }
   ];
 
   return { data, columns };
@@ -36,7 +71,8 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 stories.add(
   'sort',
   () => {
-    const { el } = createGrid();
+    const { el, grid } = createGrid();
+    button('unsort()', () => grid.unsort());
 
     return el;
   },

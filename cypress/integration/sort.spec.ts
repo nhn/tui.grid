@@ -3,7 +3,7 @@ import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptColumn } from '../../src/types';
-import { comparator } from '@/helper/sort';
+import { defaultComparator } from '@/helper/sort';
 import { Dictionary } from '@/store/types';
 
 interface GridGlobal {
@@ -62,9 +62,9 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
   }
 }
 
-function assertSortedData(columnName: string, ascending: boolean) {
+function assertSortedData(columnName: string) {
   const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
-  testData.sort((a, b) => comparator(a, b, ascending));
+  testData.sort((a, b) => defaultComparator(a, b));
 
   cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
     $el.each((index, elem) => {
@@ -131,7 +131,7 @@ describe('sort', () => {
     createSortButonAlias();
 
     cy.get('@first').click();
-    assertSortedData('name', true);
+    assertSortedData('name');
   });
 
   it('data is sorted after calling sort(name, false)', () => {
@@ -139,7 +139,7 @@ describe('sort', () => {
     createSortButonAlias();
     cy.gridInstance().invoke('sort', 'name', false);
 
-    assertSortedData('name', false);
+    assertSortedData('name');
   });
 
   it('data is sorted after calling unsort()', () => {

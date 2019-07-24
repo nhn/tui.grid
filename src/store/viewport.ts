@@ -32,7 +32,7 @@ function calculateRange(
   const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
   const { rawData, sortOptions } = data;
 
-  if (rawData.length && rowCalculation && enableRowSpan(sortOptions.columnName)) {
+  if (rawData.length && rowCalculation && enableRowSpan(sortOptions.columns[0].columnName)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
     const topRowSpanIndex = start - maxRowSpanCount;
 
