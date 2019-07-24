@@ -1,7 +1,10 @@
 import { cls } from '../../src/helper/dom';
 import { OptGrid, OptRow } from '@/types';
 import { Row, RowKey } from '@/store/types';
+import GridEvent from '@/event/gridEvent';
 import { Omit } from 'utility-types';
+
+type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 
 const columns = [{ name: 'c1' }, { name: 'c2' }];
 
@@ -15,6 +18,13 @@ function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
     cy.get(`.${cls('tree-extra-content')}`).should('have.class', cls('tree-button-collapse'));
   });
+}
+
+function assertModifiedRowsLength(type: ModifiedType, length: number) {
+  cy.gridInstance()
+    .invoke('getModifiedRows')
+    .its(type)
+    .should('have.length', length);
 }
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
@@ -50,6 +60,10 @@ beforeEach(() => {
               _children: [
                 {
                   c1: 'qux'
+                },
+                {
+                  c1: 'quxx',
+                  _children: []
                 }
               ]
             }
@@ -172,18 +186,8 @@ describe('treeColumnOptions', () => {
 });
 
 describe('toggle button', () => {
-  it(`is created when row data has children.`, () => {
+  it(`is created when row data has '_children' property.`, () => {
     cy.gridInstance().invoke('expand', 0, true);
-    cy.getCell(0, 'c1').within(() => {
-      cy.get(`.${cls('btn-tree')}`)
-        .its('length')
-        .should('be.eql', 1);
-    });
-    cy.getCell(1, 'c1').within(() => {
-      cy.get(`.${cls('btn-tree')}`)
-        .its('length')
-        .should('be.eql', 1);
-    });
     cy.getCell(2, 'c1').within(() => {
       cy.get(`.${cls('btn-tree')}`)
         .its('length')
@@ -191,6 +195,11 @@ describe('toggle button', () => {
     });
     cy.getCell(3, 'c1').within(() => {
       cy.get(`.${cls('btn-tree')}`).should('not.exist');
+    });
+    cy.getCell(4, 'c1').within(() => {
+      cy.get(`.${cls('btn-tree')}`)
+        .its('length')
+        .should('be.eql', 1);
     });
   });
 
@@ -325,8 +334,8 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('appendRow', appendedData);
     cy.gridInstance().invoke('expandAll');
 
-    cy.getCell(4, 'c1').should('be.visible');
-    cy.getCell(4, 'c1').should('have.text', 'test');
+    cy.getCell(5, 'c1').should('be.visible');
+    cy.getCell(5, 'c1').should('have.text', 'test');
   });
 
   it('appends internal row on root.', () => {
@@ -338,12 +347,12 @@ describe('appendRow()', () => {
     cy.gridInstance().invoke('appendRow', appendedData);
     cy.gridInstance().invoke('expandAll');
 
-    cy.getCell(4, 'c1').should('be.visible');
     cy.getCell(5, 'c1').should('be.visible');
     cy.getCell(6, 'c1').should('be.visible');
-    cy.getCell(4, 'c1').should('have.text', 'a');
-    cy.getCell(5, 'c1').should('have.text', 'b');
-    cy.getCell(6, 'c1').should('have.text', 'c');
+    cy.getCell(7, 'c1').should('be.visible');
+    cy.getCell(5, 'c1').should('have.text', 'a');
+    cy.getCell(6, 'c1').should('have.text', 'b');
+    cy.getCell(7, 'c1').should('have.text', 'c');
   });
 });
 
@@ -354,11 +363,11 @@ describe('appendTreeRow()', () => {
     cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
     cy.gridInstance().invoke('expandAll');
 
-    cy.getCell(4, 'c1').should('be.visible');
-    cy.getCell(4, 'c1').should('have.text', 'test');
+    cy.getCell(5, 'c1').should('be.visible');
+    cy.getCell(5, 'c1').should('have.text', 'test');
 
     cy.gridInstance().invoke('collapse', 0);
-    cy.getCell(4, 'c1').should('be.not.visible');
+    cy.getCell(5, 'c1').should('be.not.visible');
   });
 
   context('appends internal row to', () => {
@@ -367,21 +376,33 @@ describe('appendTreeRow()', () => {
       _children: [{ c1: 'b' }, { c1: 'c' }]
     };
 
+    it('root.', () => {
+      cy.gridInstance().invoke('appendRow', appendedData);
+      cy.gridInstance().invoke('expandAll');
+
+      cy.getCell(5, 'c1').should('be.visible');
+      cy.getCell(6, 'c1').should('be.visible');
+      cy.getCell(7, 'c1').should('be.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(6, 'c1').should('have.text', 'b');
+      cy.getCell(7, 'c1').should('have.text', 'c');
+    });
+
     it('specific parent that internal type.', () => {
       cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
       cy.gridInstance().invoke('expand', 0, true);
 
-      cy.getCell(4, 'c1').should('be.visible');
       cy.getCell(5, 'c1').should('be.visible');
       cy.getCell(6, 'c1').should('be.visible');
-      cy.getCell(4, 'c1').should('have.text', 'a');
-      cy.getCell(5, 'c1').should('have.text', 'b');
-      cy.getCell(6, 'c1').should('have.text', 'c');
+      cy.getCell(7, 'c1').should('be.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(6, 'c1').should('have.text', 'b');
+      cy.getCell(7, 'c1').should('have.text', 'c');
 
       cy.gridInstance().invoke('collapse', 0);
-      cy.getCell(4, 'c1').should('be.not.visible');
       cy.getCell(5, 'c1').should('be.not.visible');
       cy.getCell(6, 'c1').should('be.not.visible');
+      cy.getCell(7, 'c1').should('be.not.visible');
     });
 
     it('specific parent that collapsed.', () => {
@@ -389,10 +410,10 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance().invoke('expand', 2);
 
-      cy.getCell(4, 'c1').should('have.text', 'a');
-      cy.getCell(4, 'c1').should('be.visible');
-      cy.getCell(5, 'c1').should('be.not.visible');
+      cy.getCell(5, 'c1').should('have.text', 'a');
+      cy.getCell(5, 'c1').should('be.visible');
       cy.getCell(6, 'c1').should('be.not.visible');
+      cy.getCell(7, 'c1').should('be.not.visible');
     });
   });
 
@@ -511,17 +532,14 @@ describe('removeTreeRow()', () => {
   });
 
   context('parent row', () => {
-    it('that has only one child is changed to leaf row.', () => {
-      cy.gridInstance().invoke('expand', 0, true);
-
+    it('is changed to leaf row when all child rows.', () => {
       assertInternalRow(2);
       cy.gridInstance().invoke('removeTreeRow', 3);
+      cy.gridInstance().invoke('removeTreeRow', 4);
       assertLeafRow(2);
     });
 
-    it('that has children is not changed to leaf row.', () => {
-      cy.gridInstance().invoke('expand', 0, true);
-
+    it('is not changed to leaf row when having child rows.', () => {
       assertInternalRow(1);
       cy.gridInstance().invoke('removeTreeRow', 3);
       assertInternalRow(1);
@@ -536,5 +554,134 @@ it('attachs tree rows only expanded to DOM element.', () => {
   cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 3);
 
   cy.gridInstance().invoke('expand', 2);
-  cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 4);
+  cy.get(`.${cls('rside-area')} .${cls('body-area')} tr`).should('have.length', 5);
+});
+
+describe('modified data is added', () => {
+  it('when appending rows.', () => {
+    cy.gridInstance().invoke('appendRow', {
+      c1: 'a',
+      _children: [
+        {
+          c1: 'b',
+          _children: [{ c1: 'c' }]
+        }
+      ]
+    });
+
+    assertModifiedRowsLength('createdRows', 3);
+  });
+
+  it('when updating row.', () => {
+    cy.gridInstance().invoke('setValue', 0, 'name', 'a');
+
+    assertModifiedRowsLength('updatedRows', 1);
+  });
+
+  it('when removing rows.', () => {
+    cy.gridInstance().invoke('expand', 0, true);
+    cy.gridInstance().invoke('removeRow', 0);
+
+    assertModifiedRowsLength('deletedRows', 5);
+  });
+});
+
+describe('events', () => {
+  context(`'expand' event`, () => {
+    let callback: Function;
+
+    beforeEach(() => {
+      callback = cy.stub();
+      cy.gridInstance().invoke('on', 'expand', callback);
+    });
+    
+    it(`is fired by the number of all expanded children when calling 'exapnd' method.`, () => {
+      cy.gridInstance()
+        .invoke('expand', 0)
+        .then(() => {
+          expect(callback).to.be.callCount(2);
+        });
+    });
+
+    it(`is fired by the number of all expanded descendants when calling 'exapndAll' method.`, () => {
+      cy.gridInstance()
+        .invoke('expandAll')
+        .then(() => {
+          expect(callback).to.be.callCount(4);
+        });
+    });
+
+    it(`is fired when clicking toggle button.`, () => {
+      cy.getCell(0, 'c1').within(() => {
+        cy.get(`.${cls('btn-tree')}`)
+          .click()
+          .then(() => {
+            expect(callback).to.be.called;
+          });
+      });
+    });
+
+   it('is stop then toggle button is not exapnaded.', () => {
+      cy.gridInstance().invoke('on', 'expand', (ev: GridEvent) => {
+        ev.stop();
+      });
+
+      cy.gridInstance()
+        .invoke('expand', 0)
+        .then(() => {
+          assertToggleButtonCollapsed(0, 'c1');
+        });
+    });
+  });
+
+  context(`'collapse' event`, () => {
+    let callback: Function;
+
+    beforeEach(() => {
+      callback = cy.stub();
+      cy.gridInstance().invoke('on', 'collapse', callback);
+    });
+    
+    it(`is fired by the number of all expanded children when calling 'collapse' method.`, () => {
+      cy.gridInstance().invoke('expand', 0);
+      cy.gridInstance()
+        .invoke('collapse', 0)
+        .then(() => {
+          expect(callback).to.be.callCount(1);
+        });
+    });
+
+    it(`is fired by the number of all expanded descendants when calling 'collapseAll' method.`, () => {
+      cy.gridInstance().invoke('expandAll');
+      cy.gridInstance()
+        .invoke('collapseAll')
+        .then(() => {
+          expect(callback).to.be.callCount(4);
+        });
+    });
+
+    it(`is fired when clicking toggle button.`, () => {
+      cy.getCell(0, 'c1').within(() => {
+        cy.get(`.${cls('btn-tree')}`).click();
+        cy.get(`.${cls('btn-tree')}`)
+          .click()
+          .then(() => {
+            expect(callback).to.be.called;
+          });
+      });
+    });
+
+   it('is stop then toggle button is not collapsed.', () => {
+      cy.gridInstance().invoke('on', 'collapse', (ev: GridEvent) => {
+        ev.stop();
+      });
+
+      cy.gridInstance().invoke('expand', 0)
+      cy.gridInstance()
+        .invoke('collapse', 0)
+        .then(() => {
+          assertToggleButtonExpanded(0, 'c1');
+        });
+    });
+  });
 });

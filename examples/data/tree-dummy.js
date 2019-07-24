@@ -28,7 +28,8 @@ const treeData = [
         grade: '5',
         price: 12000,
         downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
+        _children: []
       },
       {
         id: 498896,
@@ -45,8 +46,7 @@ const treeData = [
         listenCount: 5000,
         _attributes: {
           expanded: false
-        },
-        _children: []
+        }
       },
       {
         id: 450720,

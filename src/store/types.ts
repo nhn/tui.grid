@@ -132,7 +132,7 @@ export interface TreeRowInfo {
   parentRowKey: RowKey | null;
   childRowKeys: RowKey[];
   expanded?: boolean;
-  hiddenChild?: boolean;
+  hidden: boolean;
 }
 
 export interface TreeCellInfo {
