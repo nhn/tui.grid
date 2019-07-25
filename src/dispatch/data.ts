@@ -182,7 +182,7 @@ export function changeSortOptions(
   columnName: string,
   ascending: boolean,
   withCtrl: boolean,
-  canBeCanceled: boolean
+  canBeCanceled: boolean = true
 ) {
   if (columnName === 'sortKey') {
     initSortOptions(data);

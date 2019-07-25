@@ -60,7 +60,7 @@ export function initSortOptions(data: Data) {
   notify(data, 'sortOptions');
 }
 
-function isInitialSortingType(columns: SortOptionColumn[]) {
+function isInitialSortOptions(columns: SortOptionColumn[]) {
   return columns.length === 1 && columns[0].columnName === 'sortKey';
 }
 
@@ -75,12 +75,8 @@ function toggleSortAscending(
   const index = findPropIndex('columnName', columnName, sortOptions.columns);
   const defaultAscending = sortingType === 'asc';
 
-  if (defaultAscending === ascending) {
-    if (canBeCanceled) {
-      data.sortOptions.columns.splice(index, 1);
-    } else {
-      data.sortOptions.columns[index].ascending = ascending;
-    }
+  if (defaultAscending === ascending && canBeCanceled) {
+    data.sortOptions.columns.splice(index, 1);
   } else {
     data.sortOptions.columns[index].ascending = ascending;
   }
@@ -104,7 +100,7 @@ export function singleSort(
     ascending
   };
 
-  if (isInitialSortingType(columns)) {
+  if (isInitialSortOptions(columns)) {
     data.sortOptions.columns = [sortOptionColumn];
   } else if (columns.length === 1) {
     const isExist = columns[0].columnName === columnName;
@@ -140,7 +136,7 @@ export function multiSort(
   const { columns } = sortOptions;
   const index = findPropIndex('columnName', columnName, columns);
   if (index === -1) {
-    if (columns.length === 1 && columns[0].columnName === 'sortKey') {
+    if (isInitialSortOptions(columns)) {
       data.sortOptions.columns = [sortOptionColumn];
     } else {
       data.sortOptions.columns = [...columns, sortOptionColumn];

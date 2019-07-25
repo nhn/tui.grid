@@ -1,7 +1,7 @@
 import { CellValue, Data, Row, SortOptionColumn, ViewRow } from '../store/types';
 import { isBlank } from './common';
 
-export function defaultComparator(valueA: CellValue, valueB: CellValue) {
+export function comparator(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
   let result = 0;
@@ -22,10 +22,10 @@ export function defaultComparator(valueA: CellValue, valueB: CellValue) {
 function getCmpFunc(ascending: boolean) {
   if (!ascending) {
     return function(valueA: CellValue, valueB: CellValue) {
-      return -defaultComparator(valueA, valueB);
+      return -comparator(valueA, valueB);
     };
   }
-  return defaultComparator;
+  return comparator;
 }
 
 function getComparators(columns: SortOptionColumn[]) {
@@ -41,46 +41,44 @@ function getComparators(columns: SortOptionColumn[]) {
   return comparators;
 }
 
-const sortRawData = function(columns: SortOptionColumn[]) {
+function sortRawData(columns: SortOptionColumn[]) {
   const comparators = getComparators(columns);
 
   return function(rowA: Row, rowB: Row) {
     let result = 0;
     for (let i = 0, columnsLen = columns.length; i < columnsLen; i += 1) {
-      const comparator = comparators[i];
-      const columnName = comparator.name;
+      const { name: columnName, cmp } = comparators[i];
       result = 0;
 
-      result = comparator.cmp(rowA[columnName], rowB[columnName]);
+      result = cmp(rowA[columnName], rowB[columnName]);
       if (result !== 0) {
         break;
       }
     }
     return result;
   };
-};
+}
 
-const sortViewData = function(columns: SortOptionColumn[]) {
+function sortViewData(columns: SortOptionColumn[]) {
   const comparators = getComparators(columns);
 
   return function(rowA: ViewRow, rowB: ViewRow) {
     let result = 0;
     for (let i = 0, columnsLen = columns.length; i < columnsLen; i += 1) {
-      const comparator = comparators[i];
-      const columnName = comparator.name;
+      const { name: columnName, cmp } = comparators[i];
       result = 0;
 
       const valueA = columnName === 'sortKey' ? rowA.sortKey : rowA.valueMap[columnName].value;
       const valueB = columnName === 'sortKey' ? rowB.sortKey : rowB.valueMap[columnName].value;
 
-      result = comparator.cmp(valueA, valueB);
+      result = cmp(valueA, valueB);
       if (result !== 0) {
         break;
       }
     }
     return result;
   };
-};
+}
 
 export function getSortedData(data: Data) {
   const rawData = [...data.rawData];

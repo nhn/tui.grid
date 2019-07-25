@@ -205,7 +205,7 @@ if ((module as any).hot) {
  *              If type is string, the value is used as HTML of summary cell for every columns
  *              without auto-calculation.
  *              @param {boolean} [options.summary.defaultContent.useAutoSummary=true]
- *                  If set to true, the summary value of every column is served as a paramater to the template
+ *                  If set to true, the summary value of every column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -216,7 +216,7 @@ if ((module as any).hot) {
  *              If type of value of this object is string, the value is used as HTML of summary cell for
  *              the column without auto-calculation.
  *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
- *                  If set to true, the summary value of each column is served as a paramater to the template
+ *                  If set to true, the summary value of each column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -452,7 +452,7 @@ export default class Grid {
 
   /**
    * Sets the height of body-area.
-   * @param {number} value - The number of pixel
+   * @param {number} bodyHeight - The number of pixel
    */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
@@ -843,7 +843,7 @@ export default class Grid {
 
   /**
    * If the parameter exists, unsort only column with columnName. If not exist, unsort all rows
-   * @param {string} columnName - The name of the column to be used to compare the rows
+   * @param {string} [columnName] - The name of the column to be used to compare the rows
    */
   public unsort(columnName?: string) {
     this.dispatch('unsort', columnName);

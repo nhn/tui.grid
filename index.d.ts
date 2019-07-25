@@ -623,7 +623,7 @@ declare namespace tuiGrid {
 
     public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>): Row[];
 
-    public sort(columnName: string, ascending: boolean): void;
+    public sort(columnName: string, ascending: boolean, multiple?: boolean): void;
 
     public unsort(columnName?: string): void;
 
