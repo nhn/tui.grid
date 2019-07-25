@@ -147,6 +147,6 @@ grid.setSummaryColumnContent('col1', {
 
 This method can be useful when dynamically configuring the summary column values. 
 
-## Examples
+## Example
 
 For more examples of Grid using the auto summary feature, check [here](https://nhn.github.io/tui.grid/latest/tutorial-example09-summary).

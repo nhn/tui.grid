@@ -120,6 +120,6 @@ When tree columns have been initialized, certain API acts differently.
 
 If you are using tree columns, there are restrictions on using **sorting**, **row merging**, and **pagination.**
 
-## Examples
+## Example
 
 Examples of using tree columns can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree).
