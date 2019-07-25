@@ -346,8 +346,6 @@ declare namespace tuiGrid {
   }
 
   interface SortOptions {
-    columnName: string;
-    ascending: boolean;
     useClient: boolean;
     columns: {
       columnName: string;
@@ -627,7 +625,7 @@ declare namespace tuiGrid {
 
     public sort(columnName: string, ascending: boolean): void;
 
-    public unsort(): void;
+    public unsort(columnName?: string): void;
 
     public getSortState(): SortOptions;
 

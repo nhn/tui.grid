@@ -8,7 +8,6 @@ import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 import { findPropIndex, isFunction } from '../helper/common';
-import { sort } from '../dispatch/data';
 
 interface StoreProps {
   left: number;
@@ -63,7 +62,7 @@ export class EditingLayerInnerComp extends Component<Props> {
         dispatch('setValue', rowKey, columnName, this.editor.getValue());
         const index = findPropIndex('columnName', columnName, sortOptions.columns);
         if (index !== -1) {
-          dispatch('sort', columnName, sortOptions.columns[index].ascending);
+          dispatch('sort', columnName, sortOptions.columns[index].ascending, true, false);
         }
       }
       dispatch('finishEditing', rowKey, columnName);

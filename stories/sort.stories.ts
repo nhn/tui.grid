@@ -72,7 +72,11 @@ stories.add(
   'sort',
   () => {
     const { el, grid } = createGrid();
+    button("sort('alphabetB', false)", () => grid.sort('alphabetB', false));
+    button("sort('alphabetB', true)", () => grid.sort('alphabetB', true));
+    button("sort('alphabetC', true, true)", () => grid.sort('alphabetC', true, true));
     button('unsort()', () => grid.unsort());
+    button(`unsort('numberA')`, () => grid.unsort('numberA'));
 
     return el;
   },

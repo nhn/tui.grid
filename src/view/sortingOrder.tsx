@@ -16,7 +16,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
 class SortingOrderComp extends Component<Props> {
   public render() {
     const { order, multiSort } = this.props;
-    return !!order && multiSort && <span style={{ color: '#bbb' }}>{order}</span>;
+    return !!order && multiSort && <span style={{ color: '#bbb', fontWeight: 100 }}>{order}</span>;
   }
 }
 

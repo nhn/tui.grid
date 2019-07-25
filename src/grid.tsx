@@ -835,16 +835,18 @@ export default class Grid {
    * @param {string} columnName - The name of the column to be used to compare the rows
    * @param {boolean} [ascending] - Whether the sort order is ascending.
    *        If not specified, use the negative value of the current order.
+   * @param {boolean} [multiple] - Whether using multiple sort
    */
-  public sort(columnName: string, ascending: boolean) {
-    this.dispatch('sort', columnName, ascending);
+  public sort(columnName: string, ascending: boolean, multiple?: boolean) {
+    this.dispatch('sort', columnName, ascending, multiple, false);
   }
 
   /**
-   * Unsorts all rows. (Sorts by sortKey(default sorting order)).
+   * If the parameter exists, unsort only column with columnName. If not exist, unsort all rows
+   * @param {string} columnName - The name of the column to be used to compare the rows
    */
-  public unsort() {
-    this.dispatch('sort', 'sortKey', true);
+  public unsort(columnName?: string) {
+    this.dispatch('unsort', columnName);
   }
 
   /**

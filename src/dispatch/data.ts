@@ -7,13 +7,11 @@ import {
   RowAttributeValue,
   PageOptions,
   Dictionary,
-  Data,
-  SortOptionColumn
+  Data
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
-  arrayEqual,
   mapProp,
   findPropIndex,
   isUndefined,
@@ -22,7 +20,6 @@ import {
   isEmpty,
   someProp
 } from '../helper/common';
-import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
@@ -36,6 +33,7 @@ import { changeTreeRowsCheckedState } from './tree';
 import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
+import { initSortOptions, multiSort, singleSort, sortData } from '../query/data';
 
 export function setValue(
   { column, data, id }: Store,
@@ -183,140 +181,60 @@ export function changeSortOptions(
   { data, column }: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl?: boolean
+  withCtrl: boolean,
+  canBeCanceled: boolean
 ) {
   if (columnName === 'sortKey') {
-    data.sortOptions.columns = [
-      {
-        columnName: 'sortKey',
-        ascending: true
-      }
-    ];
+    initSortOptions(data);
   } else {
     const { sortingType } = column.allColumnMap[columnName];
 
     if (withCtrl) {
-      multiSort(data, columnName, ascending, sortingType!);
+      multiSort(data, columnName, ascending, sortingType!, canBeCanceled);
     } else {
-      singleSort(data, columnName, ascending, sortingType!);
+      singleSort(data, columnName, ascending, sortingType!, canBeCanceled);
     }
   }
 
   notify(data, 'sortOptions');
 }
 
-function isInitialSortingType(columns: SortOptionColumn[]) {
-  return columns.length === 1 && columns[0].columnName === 'sortKey';
-}
-
-function toggleSortAscending(
-  data: Data,
+export function sort(
+  store: Store,
   columnName: string,
   ascending: boolean,
-  sortingType: 'asc' | 'desc'
+  withCtrl: boolean = false,
+  canBeCanceled: boolean = true
 ) {
-  const { sortOptions } = data;
-  const index = findPropIndex('columnName', columnName, sortOptions.columns);
-  const isAscending = sortingType === 'asc';
-
-  if (isAscending === ascending) {
-    data.sortOptions.columns.splice(index, 1);
-  } else {
-    data.sortOptions.columns[index].ascending = ascending;
-  }
-
-  if (!sortOptions.columns.length) {
-    data.sortOptions.columns = [
-      {
-        columnName: 'sortKey',
-        ascending: true
-      }
-    ];
-  }
-}
-
-function singleSort(
-  data: Data,
-  columnName: string,
-  ascending: boolean,
-  sortingType: 'asc' | 'desc'
-) {
-  const { sortOptions } = data;
-  const { columns } = sortOptions;
-  const sortOptionColumn = {
-    columnName,
-    ascending
-  };
-
-  if (isInitialSortingType(columns)) {
-    data.sortOptions.columns = [sortOptionColumn];
-  } else if (columns.length === 1) {
-    const isExist = columns[0].columnName === columnName;
-    if (isExist) {
-      toggleSortAscending(data, columnName, ascending, sortingType);
-    } else {
-      data.sortOptions.columns = [sortOptionColumn];
-    }
-  } else {
-    const index = findPropIndex('columnName', columnName, sortOptions.columns);
-    if (index === -1) {
-      data.sortOptions.columns = [sortOptionColumn];
-    } else {
-      const column = { ...sortOptions.columns[index] };
-      column.ascending = ascending;
-      data.sortOptions.columns = [column];
-    }
-  }
-}
-
-function multiSort(
-  data: Data,
-  columnName: string,
-  ascending: boolean,
-  sortingType: 'asc' | 'desc'
-) {
-  const sortOptionColumn = {
-    columnName,
-    ascending
-  };
-  const { sortOptions } = data;
-  const { columns } = sortOptions;
-  const index = findPropIndex('columnName', columnName, columns);
-  if (index === -1) {
-    if (columns.length === 1 && columns[0].columnName === 'sortKey') {
-      data.sortOptions.columns = [sortOptionColumn];
-    } else {
-      data.sortOptions.columns = [...columns, sortOptionColumn];
-    }
-  } else {
-    toggleSortAscending(data, columnName, ascending, sortingType);
-  }
-}
-
-export function sort(store: Store, columnName: string, ascending: boolean, withCtrl?: boolean) {
   const { data, id } = store;
   const { sortOptions } = data;
   if (!sortOptions.useClient) {
     return;
   }
 
-  changeSortOptions(store, columnName, ascending, withCtrl);
-  const { rawData, viewData } = getSortedData(data);
-  if (!arrayEqual(rawData, data.rawData)) {
-    data.rawData = rawData;
-    data.viewData = viewData;
+  changeSortOptions(store, columnName, ascending, withCtrl, canBeCanceled);
+  sortData(data, id);
+}
+
+export function unsort(store: Store, columnName: string = 'sortKey') {
+  const { data, id } = store;
+
+  if (columnName === 'sortKey') {
+    initSortOptions(data);
+  } else {
+    const index = findPropIndex('columnName', columnName, data.sortOptions.columns);
+
+    if (index !== -1) {
+      data.sortOptions.columns.splice(index, 1);
+      if (!data.sortOptions.columns.length) {
+        initSortOptions(data);
+      }
+
+      notify(data, 'sortOptions');
+    }
   }
 
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
-
-  /**
-   * Occurs when sorting.
-   * @event Grid#sort
-   * @property {number} sortOptions - sort options
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('sort', gridEvent);
+  sortData(data, id);
 }
 
 function applyPasteDataToRawData(
