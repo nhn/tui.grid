@@ -54,7 +54,8 @@ export function createStore(id: number, options: OptGrid): Store {
     column,
     pageOptions,
     useClientSort,
-    disabled
+    disabled,
+    true
   );
   const dimension = createDimension({
     column,

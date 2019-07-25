@@ -22,8 +22,8 @@ import {
 } from '../helper/common';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
-import { createRawRow, createViewRow, createData } from '../store/data';
-import { notify } from '../helper/observable';
+import { createRawRow, createViewRow, createData, originData } from '../store/data';
+import { notify, isObservable } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -451,4 +451,20 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
+}
+
+export function makeReactiveData({ viewport, column, data }: Store) {
+  if (data.rawData.length) {
+    column.keyColumnName = 'rowKey';
+  }
+
+  const { rawData, viewData } = createData(originData.slice(...viewport.rowRange), column);
+  for (let i = viewport.rowRange[0]; i < viewport.rowRange[1]; i += 1) {
+    if (data.rawData[i] && !isObservable(data.rawData[i])) {
+      data.rawData.splice(i, 1, rawData[i - viewport.rowRange[0]]);
+      data.viewData.splice(i, 1, viewData[i - viewport.rowRange[0]]);
+    }
+  }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
 }

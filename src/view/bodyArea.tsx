@@ -60,6 +60,7 @@ class BodyAreaComp extends Component<Props> {
       dispatch('setScrollLeft', scrollLeft);
     }
     dispatch('setScrollTop', scrollTop);
+    dispatch('makeReactiveData');
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
@@ -130,6 +131,10 @@ class BodyAreaComp extends Component<Props> {
     const currProps = this.props;
 
     return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
+  }
+
+  public componentWillMount() {
+    this.props.dispatch('makeReactiveData');
   }
 
   public componentWillReceiveProps(nextProps: Props) {

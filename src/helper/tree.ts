@@ -90,12 +90,14 @@ export function getDepth(rawData: Row[], row?: Row) {
   return depth;
 }
 
+/* eslint-disable */
 function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
   keyColumnName?: string,
-  offset?: number
+  offset?: number,
+  lazyReactivity = false
 ) {
   const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, keyColumnName);
   const { rowKey } = rawRow;
@@ -113,31 +115,44 @@ function createTreeRawRow(
     }
   }
 
-  rawRow._attributes.tree = observable({
+  const tree = {
     ...defaultAttributes,
     ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
-  });
+  };
+
+  rawRow._attributes.tree = lazyReactivity ? tree : observable(tree);
 
   return rawRow;
 }
 
+/* eslint-disable */
 export function flattenTreeData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
   keyColumnName?: string,
+  lazyReactivity = false,
   offset?: number
 ) {
   const flattenedRows: Row[] = [];
 
   data.forEach((row) => {
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName, offset);
+    const rawRow = createTreeRawRow(
+      row,
+      defaultValues,
+      parentRow,
+      keyColumnName,
+      offset,
+      lazyReactivity
+    );
 
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
-        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, keyColumnName));
+        flattenedRows.push(
+          ...flattenTreeData(row._children, defaultValues, rawRow, keyColumnName, lazyReactivity)
+        );
       }
       delete rawRow._children;
     }
@@ -149,11 +164,12 @@ export function flattenTreeData(
 export function createTreeRawData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
-  keyColumnName?: string
+  keyColumnName?: string,
+  lazyReactivity = false
 ) {
   treeRowKey = -1;
 
-  return flattenTreeData(data, defaultValues, null, keyColumnName);
+  return flattenTreeData(data, defaultValues, null, keyColumnName, lazyReactivity);
 }
 
 export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
