@@ -93,6 +93,6 @@ Grid.applyTheme('default', {
 
 All options are documented in greater detail in [API Documentation](http://nhn.github.io/tui.grid/latest) under section `Grid.applyTheme()`.
 
-## Examples
+## Example
 
 [Here](http://nhn.github.io/tui.grid/latest/tutorial-example07-themes) is a sandbox where you can try different preset themes and customizable options on an example Grid.
