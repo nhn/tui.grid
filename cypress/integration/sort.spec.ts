@@ -1,9 +1,9 @@
 import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
-import { data as sampleData } from '../../samples/basic';
+import { sortData as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptColumn } from '../../src/types';
-import { defaultComparator } from '@/helper/sort';
+import { comparator } from '@/helper/sort';
 import { Dictionary } from '@/store/types';
 
 interface GridGlobal {
@@ -16,9 +16,9 @@ const CONTENT_WIDTH = 700;
 const SCROLLBAR_WIDTH = 17;
 
 const columns: OptColumn[] = [
-  { name: 'name', minWidth: 150, sortable: true },
-  { name: 'price', minWidth: 150, sortable: true, sortingType: 'asc' },
-  { name: 'downloadCount', minWidth: 150, sortable: true, sortingType: 'desc' }
+  { name: 'alphabetA', minWidth: 150, sortable: true },
+  { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'asc' },
+  { name: 'numberA', minWidth: 150, sortable: true, sortingType: 'desc' }
 ];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
@@ -41,7 +41,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   });
 }
 
-function createSortButonAlias() {
+function createSortButtonAlias() {
   cy.get(`.${cls('btn-sorting')}`)
     .first()
     .as('first');
@@ -64,11 +64,19 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
 
 function assertSortedData(columnName: string) {
   const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
-  testData.sort((a, b) => defaultComparator(a, b));
+  testData.sort((a, b) => comparator(a, b));
 
   cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(testData[index]);
+    });
+  });
+}
+
+function compareColumnData(columnName: string, expectValues: string[] | number[]) {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+    $el.each((index, elem) => {
+      expect(elem.textContent).to.eql(expectValues[index]);
     });
   });
 }
@@ -86,7 +94,7 @@ describe('sort', () => {
 
   it('sort button is rendered with proper class names', () => {
     createGrid();
-    createSortButonAlias();
+    createSortButtonAlias();
     assertSortClassNames('@first', true, false);
     assertSortClassNames('@first', false, false);
     assertSortClassNames('@second', true, false);
@@ -95,7 +103,7 @@ describe('sort', () => {
 
   it("sort button's class names are changed when click the sort button", () => {
     createGrid();
-    createSortButonAlias();
+    createSortButtonAlias();
 
     cy.get('@first').click();
     assertSortClassNames('@first', true, true);
@@ -106,20 +114,21 @@ describe('sort', () => {
     assertSortClassNames('@first', false, true);
 
     cy.get('@second').click();
-    assertSortClassNames('@second', true, false);
-    assertSortClassNames('@second', false, false);
-
-    cy.get('@second').click();
     assertSortClassNames('@second', true, true);
     assertSortClassNames('@second', false, false);
 
     assertSortClassNames('@first', true, false);
     assertSortClassNames('@first', false, false);
+
+    cy.get('@second').click();
+    cy.get('@second').click();
+    assertSortClassNames('@second', true, false);
+    assertSortClassNames('@second', false, false);
   });
 
   it('sort by descending order when the sort button is first clicked.', () => {
     createGrid();
-    createSortButonAlias();
+    createSortButtonAlias();
 
     cy.get('@third').click();
     assertSortClassNames('@third', true, false);
@@ -128,44 +137,74 @@ describe('sort', () => {
 
   it('data is sorted properly', () => {
     createGrid();
-    createSortButonAlias();
+    createSortButtonAlias();
 
     cy.get('@first').click();
-    assertSortedData('name');
+    assertSortedData('alphabetA');
   });
 
-  it('data is sorted after calling sort(name, false)', () => {
+  it('data is sorted after calling sort(alphabetA, false)', () => {
     createGrid();
-    createSortButonAlias();
-    cy.gridInstance().invoke('sort', 'name', false);
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'alphabetA', true);
+    assertSortedData('alphabetA');
+  });
 
-    assertSortedData('name');
+  it('multiple sort', () => {
+    createGrid();
+    cy.gridInstance().invoke('sort', 'numberA', true);
+    cy.gridInstance().invoke('sort', 'alphabetB', true, true);
+
+    cy.get(`th[${dataAttr.COLUMN_NAME}=numberA]`).contains('1');
+    cy.get(`th[${dataAttr.COLUMN_NAME}=alphabetB]`).contains('2');
+
+    compareColumnData('numberA', ['1', '1', '1', '1', '2', '10', '20', '24', '25']);
+    compareColumnData('alphabetB', ['A', 'A', 'B', 'E', 'B', 'B', 'C', 'A', 'F']);
   });
 
   it('data is sorted after calling unsort()', () => {
     createGrid();
-    createSortButonAlias();
-    cy.gridInstance().invoke('sort', 'name', false);
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'alphabetA', false);
     cy.gridInstance().invoke('unsort');
 
-    const testData = sampleData.map((data) => String(data.name));
-    cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).should(($el) => {
+    const testData = sampleData.map((data) => String(data.alphabetA));
+    cy.get(`td[${dataAttr.COLUMN_NAME}=alphabetA]`).should(($el) => {
       $el.each((index, elem) => {
         expect(elem.textContent).to.eql(testData[index]);
       });
     });
   });
 
+  it.only("unsort('numberA') when multiple sorting", () => {
+    createGrid();
+    createSortButtonAlias();
+
+    cy.gridInstance().invoke('sort', 'numberA', true);
+    cy.gridInstance().invoke('sort', 'alphabetA', true, true);
+
+    cy.get(`th[${dataAttr.COLUMN_NAME}=numberA]`).contains('1');
+    cy.get(`th[${dataAttr.COLUMN_NAME}=alphabetA]`).contains('2');
+
+    cy.gridInstance().invoke('unsort', 'numberA');
+
+    assertSortedData('alphabetA');
+  });
+
   it('get proper sortState after calling getSortState()', () => {
     createGrid();
-    createSortButonAlias();
+    createSortButtonAlias();
     cy.gridInstance()
       .invoke('getSortState')
       .should((sortState) => {
         expect(sortState).to.eql({
-          ascending: true,
-          columnName: 'sortKey',
-          useClient: true
+          useClient: true,
+          columns: [
+            {
+              ascending: true,
+              columnName: 'sortKey'
+            }
+          ]
         });
       });
 
@@ -175,9 +214,13 @@ describe('sort', () => {
       .invoke('getSortState')
       .should((sortState) => {
         expect(sortState).to.eql({
-          ascending: true,
-          columnName: 'name',
-          useClient: true
+          useClient: true,
+          columns: [
+            {
+              ascending: true,
+              columnName: 'alphabetA'
+            }
+          ]
         });
       });
   });
