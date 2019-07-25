@@ -25,7 +25,7 @@ const grid = new Grid({
 
 * `width`: 로우 헤더의 너비를 나타낸다. 단위는 px이다. 값을 작성하지 않으면 기본값이 들어간다.
 * `align`: 가로 정렬을 정한다. 기본값은 `left`이며 `left`, `right`, `center`가 가능하다.
-* `valign`: 세로 정렬을 정한다. 기본값은 `middle`이며 `top`, `middle`, `right`가 가능하다.
+* `valign`: 세로 정렬을 정한다. 기본값은 `middle`이며 `top`, `middle`, `bottom`가 가능하다.
 
 ```js
 const grid = new Grid({

@@ -19,7 +19,7 @@ const grid = new Grid({
 
 `dataSource`에는 다음과 같은 속성들이 있다.
 
-- **initialRequest** `{boolean}` : 초기화 후 `readData`를 요청 여부(데이터 조회)를 나타낸다.
+- **initialRequest** `{boolean}` : 초기 데이터 조회를 위한 `readData` API 요청 여부
 - **api**
     - **readData** `{object}` : 데이터 조회 요청을 위한 `URL`과 `method`를 나타낸다.
 

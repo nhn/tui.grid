@@ -1,12 +1,10 @@
 # Complex Columns 🔗
 
-The TOAST UI Grid allows you to group columns under a parent column header. Using the `header.complexColumns` option, you can build a tree-like structure, where one or more columns can be grouped together by a parent header. The parent header can also be a child of another parent header.
+Columns in TOAST UI Grid can be grouped into the parents' column headers. Using the `header.complexColumns` option, you can form a tree stuctured parent header group with multiple columns. The parent header can also become a member of another parent header.
 
-The `header.complexColumns` option is an array, in which each element specifies a parent column. Similar to normal columns, the parent column has the `name` and the `header` properties. But you can specify child columns with the `childNames` property.
+The `header.complexColumns` option uses the array of data objects used to define the parent columns. Like general columns, the parent column has `name` and `header` properties. Additionally, it taked a `childNames` option, and it can be used to configure a list of children to be placed under the parent column. 
 
-Let's see the example below.
-
-```javascript
+```js
 import Grid from 'tui-grid';
 
 const grid = new Grid({
@@ -42,12 +40,13 @@ const grid = new Grid({
 });
 ```
 
-Now, the `parent1` column is the parent of the `col1` and `col2`. And you can see that the `parent1` column is also a child of another column `parent2`, which contains `col3` also.
+Now, the column `parent1` has become the parent column of `col1` and `col2`. Furthermore, `parent1`, along with `col3`, has become a child member of `parent2`. 
 
-The result of the sample code looks like this:
+The following image is the result of a complex column. 
 
-![The result of the sample code](https://user-images.githubusercontent.com/18183560/59605689-49023680-914a-11e9-99f9-25bb26316b04.png)
+![그리드](https://user-images.githubusercontent.com/18183560/59605689-49023680-914a-11e9-99f9-25bb26316b04.png)
 
-## Example
 
-You can see the example that is using more complex column headers [here](http://nhn.github.io/tui.grid/latest/tutorial-example02-complex-columns).
+## Examples
+
+More examples with using complex columns can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example02-complex-columns).
