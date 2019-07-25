@@ -6,6 +6,7 @@ import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
 import { getSortedRange } from '../helper/selection';
+import { isCellDisabled } from '../query/data';
 
 function getNextCellIndexWithRowSpan(
   store: Store,
@@ -53,7 +54,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
+export function editFocus({ column, focus, data }: Store, command: KeyboardEventCommandType) {
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
@@ -63,7 +64,7 @@ export function editFocus({ column, focus }: Store, command: KeyboardEventComman
   if (command === 'currentCell') {
     const columnInfo = column.allColumnMap[columnName];
 
-    if (columnInfo && columnInfo.editor) {
+    if (columnInfo && columnInfo.editor && !isCellDisabled(data, rowKey, columnName)) {
       focus.navigating = false;
       focus.editingAddress = { rowKey, columnName };
     }
