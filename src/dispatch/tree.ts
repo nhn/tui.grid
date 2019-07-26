@@ -257,11 +257,14 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const parentRow = findProp('rowKey', parentRowKey, rawData);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
 
-  const rawRows = flattenTreeData([row], defaultValues, parentRow!, column.keyColumnName, offset);
+  const rawRows = flattenTreeData([row], defaultValues, parentRow!, {
+    keyColumnName: column.keyColumnName,
+    offset
+  });
   rawData.splice(startIdx, 0, ...rawRows);
 
   const viewRows = rawRows.map((rawRow) =>
-    createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon)
+    createViewRow(rawRow, allColumnMap, rawData, { treeColumnName, treeIcon })
   );
   viewData.splice(startIdx, 0, ...viewRows);
 

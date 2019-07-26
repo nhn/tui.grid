@@ -36,6 +36,18 @@ import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
 
+interface RawRowOptions {
+  keyColumnName?: string;
+  prevRow?: Row;
+  lazyReactivity?: boolean;
+}
+
+interface ViewRowOptions {
+  treeColumnName?: string;
+  treeIcon?: boolean;
+  lazyReactivity?: boolean;
+}
+
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
     return '';
@@ -184,17 +196,15 @@ function createRelationViewCell(
   });
 }
 
-/* eslint-disable */
 export function createViewRow(
   row: Row,
   columnMap: Dictionary<ColumnInfo>,
   rawData: Row[],
-  treeColumnName?: string,
-  treeIcon?: boolean,
-  lazyReactivity = false
+  options = { lazyReactivity: false } as ViewRowOptions
 ) {
   const { rowKey, sortKey, rowSpanMap } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
+  const { treeColumnName, treeIcon, lazyReactivity = false } = options;
 
   Object.keys(columnMap).forEach((name) => {
     initValueMap[name] = null;
@@ -320,25 +330,23 @@ function createRowSpanMap(row: OptRow, rowSpan: RowSpanAttributeValue, prevRow?:
   return { ...mainRowSpanMap, ...subRowSpanMap };
 }
 
-/* eslint-disable */
 export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
-  keyColumnName?: string,
-  prevRow?: Row,
-  lazyReactivity = false
+  options = { lazyReactivity: false } as RawRowOptions
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
   let rowSpan: RowSpanAttributeValue;
+  const { keyColumnName, prevRow, lazyReactivity = false } = options;
+
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
-    // protect to create unnecessary reactive data
-    delete row._attributes.rowSpan;
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row.sortKey = index;
   row._attributes = getAttributes(row, index, lazyReactivity);
+  row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   defaultValues.forEach(({ name, value }) => {
@@ -363,17 +371,20 @@ export function createData(data: OptRow[], column: Column, lazyReactivity = fals
     rawData = createTreeRawData(data, defaultValues, keyColumnName, lazyReactivity);
   } else {
     rawData = data.map((row, index, rows) =>
-      createRawRow(row, index, defaultValues, keyColumnName, rows[index - 1] as Row, lazyReactivity)
+      createRawRow(row, index, defaultValues, {
+        keyColumnName,
+        prevRow: rows[index - 1] as Row,
+        lazyReactivity
+      })
     );
   }
 
   const viewData = rawData.map((row: Row) =>
-    createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon, lazyReactivity)
+    createViewRow(row, allColumnMap, rawData, { treeColumnName, treeIcon, lazyReactivity })
   );
 
   return { rawData, viewData };
 }
-export let originData: OptRow[];
 
 /* eslint-disable */
 export function create(
@@ -384,7 +395,6 @@ export function create(
   disabled: boolean,
   lazyReactivity = false
 ): Observable<Data> {
-  originData = data;
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column, lazyReactivity);
   const sortOptions: SortOptions = {
@@ -403,6 +413,7 @@ export function create(
     viewData,
     sortOptions,
     pageOptions,
+    lazyReactivity,
 
     get checkedAllRows() {
       const allRawData = this.rawData;
