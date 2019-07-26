@@ -103,7 +103,10 @@ function createTreeRawRow(
   options = { lazyReactivity: false } as TreeDataOptions
 ) {
   const { keyColumnName, offset, lazyReactivity = false } = options;
-  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, { keyColumnName });
+  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, {
+    keyColumnName,
+    lazyReactivity
+  });
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
@@ -146,7 +149,7 @@ export function flattenTreeData(
       if (row._children.length) {
         flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
       }
-      delete rawRow._children;
+      // delete rawRow._children;
     }
   });
 

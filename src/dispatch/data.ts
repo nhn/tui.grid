@@ -7,7 +7,8 @@ import {
   RowAttributeValue,
   PageOptions,
   Dictionary,
-  Data
+  Data,
+  Row
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -23,7 +24,7 @@ import {
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
-import { notify, isObservable } from '../helper/observable';
+import { notify, isObservable, getOriginObject, Observable } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -453,17 +454,21 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   notify(column, 'allColumns');
 }
 
-export function makeReactiveData({ viewport, column, data, id }: Store) {
+export function makeReactiveData({ viewport, column, data }: Store) {
   if (data.rawData.length) {
     column.keyColumnName = 'rowKey';
   }
-  const originData = getDataManager(id).getOriginData();
+
   const [start, end] = viewport.rowRange;
-  const { rawData, viewData } = createData(originData.slice(start, end), column);
+  const originData = data.rawData
+    .slice(start, end)
+    .map((row) => (isObservable(row) ? getOriginObject(row as Observable<Row>) : row));
+
+  const { rawData, viewData } = createData(originData, column);
 
   for (let index = start; index < end; index += 1) {
-    const cachedRaw = data.rawData[index];
-    if (cachedRaw && !isObservable(cachedRaw)) {
+    const rawRow = data.rawData[index];
+    if (rawRow && !isObservable(rawRow)) {
       data.rawData[index] = rawData[index - start];
       data.viewData[index] = viewData[index - start];
     }
