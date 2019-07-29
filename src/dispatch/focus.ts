@@ -1,14 +1,14 @@
 import { Store, RowKey, Focus, Data } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellDisabled } from '../query/data';
+import { isCellEditable } from '../query/data';
 import { isFocusedCell } from '../query/focus';
 import { getRowSpanByRowKey, enableRowSpan } from '../helper/rowSpan';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
 
-  if (isCellDisabled(data, rowKey, columnName) || !isFocusedCell(focus, rowKey, columnName)) {
+  if (!isCellEditable(data, rowKey, columnName)) {
     return;
   }
 
