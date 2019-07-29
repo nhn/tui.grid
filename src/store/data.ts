@@ -39,13 +39,7 @@ import { createRowSpan } from '../helper/rowSpan';
 interface RawRowOptions {
   keyColumnName?: string;
   prevRow?: Row;
-  lazyReactivity?: boolean;
-}
-
-interface ViewRowOptions {
-  treeColumnName?: string;
-  treeIcon?: boolean;
-  lazyReactivity?: boolean;
+  lazyObservable?: boolean;
 }
 
 export function getCellDisplayValue(value: CellValue) {
@@ -200,19 +194,17 @@ export function createViewRow(
   row: Row,
   columnMap: Dictionary<ColumnInfo>,
   rawData: Row[],
-  options = { lazyReactivity: false } as ViewRowOptions
+  treeColumnName?: string,
+  treeIcon?: boolean
 ) {
   const { rowKey, sortKey, rowSpanMap } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
-  const { treeColumnName, treeIcon, lazyReactivity = false } = options;
 
   Object.keys(columnMap).forEach((name) => {
     initValueMap[name] = null;
   });
 
-  const valueMap = (lazyReactivity ? initValueMap : observable(initValueMap)) as Dictionary<
-    CellRenderData
-  >;
+  const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
   const __unobserveFns__: Function[] = [];
 
   Object.keys(columnMap).forEach((name) => {
@@ -220,27 +212,19 @@ export function createViewRow(
 
     // add condition expression to prevent to call watch function recursively
     if (!related) {
-      if (lazyReactivity) {
-        valueMap[name] = createViewCell(row, columnMap[name]);
-      } else {
-        __unobserveFns__.push(
-          observe(() => {
-            valueMap[name] = createViewCell(row, columnMap[name]);
-          })
-        );
-      }
+      __unobserveFns__.push(
+        observe(() => {
+          valueMap[name] = createViewCell(row, columnMap[name]);
+        })
+      );
     }
 
     if (relationMap && Object.keys(relationMap).length) {
-      if (lazyReactivity) {
-        createRelationViewCell(name, row, columnMap, valueMap);
-      } else {
-        __unobserveFns__.push(
-          observe(() => {
-            createRelationViewCell(name, row, columnMap, valueMap);
-          })
-        );
-      }
+      __unobserveFns__.push(
+        observe(() => {
+          createRelationViewCell(name, row, columnMap, valueMap);
+        })
+      );
     }
   });
 
@@ -254,7 +238,30 @@ export function createViewRow(
   };
 }
 
-function getAttributes(row: OptRow, index: number, lazyReactivity: boolean) {
+export function createPlainViewRow(
+  row: Row,
+  columnMap: Dictionary<ColumnInfo>,
+  rawData: Row[],
+  treeColumnName?: string,
+  treeIcon?: boolean
+) {
+  const { rowKey, sortKey } = row;
+  const valueMap = {} as Dictionary<CellRenderData>;
+
+  Object.keys(columnMap).forEach((name) => {
+    valueMap[name] = {} as CellRenderData;
+  });
+
+  return {
+    rowKey,
+    sortKey,
+    valueMap,
+    __unobserveFns__: [],
+    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon, true) })
+  };
+}
+
+function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   const defaultAttr = {
     rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
     checked: false,
@@ -281,7 +288,7 @@ function getAttributes(row: OptRow, index: number, lazyReactivity: boolean) {
   }
   const attributes = { ...defaultAttr, ...row._attributes };
 
-  return lazyReactivity ? attributes : observable(attributes);
+  return lazyObservable ? attributes : observable(attributes);
 }
 
 function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
@@ -334,18 +341,18 @@ export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
-  options = { lazyReactivity: false } as RawRowOptions
+  options = { lazyObservable: false } as RawRowOptions
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
   let rowSpan: RowSpanAttributeValue;
-  const { keyColumnName, prevRow, lazyReactivity = false } = options;
+  const { keyColumnName, prevRow, lazyObservable = false } = options;
 
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
-  row.sortKey = index;
-  row._attributes = getAttributes(row, index, lazyReactivity);
+  row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
+  row._attributes = getAttributes(row, index, lazyObservable);
   row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
@@ -353,10 +360,15 @@ export function createRawRow(
     setDefaultProp(row, name, value);
   });
 
-  return (lazyReactivity ? row : observable(row)) as Row;
+  return (lazyObservable ? row : observable(row)) as Row;
 }
 
-export function createData(data: OptRow[], column: Column, lazyReactivity = false) {
+export function createData(
+  data: OptRow[],
+  column: Column,
+  lazyObservable = false,
+  prevRows?: Row[]
+) {
   const {
     defaultValues,
     keyColumnName,
@@ -368,35 +380,35 @@ export function createData(data: OptRow[], column: Column, lazyReactivity = fals
   let rawData: Row[];
 
   if (treeColumnName) {
-    rawData = createTreeRawData(data, defaultValues, keyColumnName, lazyReactivity);
+    rawData = createTreeRawData(data, defaultValues, keyColumnName, lazyObservable);
   } else {
     rawData = data.map((row, index, rows) =>
       createRawRow(row, index, defaultValues, {
         keyColumnName,
-        prevRow: rows[index - 1] as Row,
-        lazyReactivity
+        prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
+        lazyObservable
       })
     );
   }
 
   const viewData = rawData.map((row: Row) =>
-    createViewRow(row, allColumnMap, rawData, { treeColumnName, treeIcon, lazyReactivity })
+    lazyObservable
+      ? createPlainViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+      : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
   );
 
   return { rawData, viewData };
 }
 
-/* eslint-disable */
 export function create(
   data: OptRow[],
   column: Column,
   pageOptions: PageOptions,
   useClientSort: boolean,
-  disabled: boolean,
-  lazyReactivity = false
+  disabled: boolean
 ): Observable<Data> {
   // @TODO add client pagination logic
-  const { rawData, viewData } = createData(data, column, lazyReactivity);
+  const { rawData, viewData } = createData(data, column, true);
   const sortOptions: SortOptions = {
     useClient: useClientSort,
     columns: [
@@ -413,7 +425,6 @@ export function create(
     viewData,
     sortOptions,
     pageOptions,
-    lazyReactivity,
 
     get checkedAllRows() {
       const allRawData = this.rawData;

@@ -6,7 +6,7 @@ import { includes, findProp, removeArrayItem, isNull, isUndefined } from './comm
 
 interface TreeDataOptions {
   keyColumnName?: string;
-  lazyReactivity?: boolean;
+  lazyObservable?: boolean;
   offset?: number;
 }
 
@@ -100,12 +100,12 @@ function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  options = { lazyReactivity: false } as TreeDataOptions
+  options = { lazyObservable: false } as TreeDataOptions
 ) {
-  const { keyColumnName, offset, lazyReactivity = false } = options;
+  const { keyColumnName, offset, lazyObservable = false } = options;
   const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, {
     keyColumnName,
-    lazyReactivity
+    lazyObservable
   });
   const { rowKey } = rawRow;
   const defaultAttributes = {
@@ -127,7 +127,7 @@ function createTreeRawRow(
     ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
   };
 
-  rawRow._attributes.tree = lazyReactivity ? tree : observable(tree);
+  rawRow._attributes.tree = lazyObservable ? tree : observable(tree);
 
   return rawRow;
 }
@@ -149,7 +149,6 @@ export function flattenTreeData(
       if (row._children.length) {
         flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
       }
-      // delete rawRow._children;
     }
   });
 
@@ -160,11 +159,11 @@ export function createTreeRawData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   keyColumnName?: string,
-  lazyReactivity = false
+  lazyObservable = false
 ) {
   treeRowKey = -1;
 
-  return flattenTreeData(data, defaultValues, null, { keyColumnName, lazyReactivity });
+  return flattenTreeData(data, defaultValues, null, { keyColumnName, lazyObservable });
 }
 
 export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
@@ -187,12 +186,12 @@ export function createTreeCellInfo(
   rawData: Row[],
   row: Row,
   useIcon?: boolean,
-  lazyReactivity = false
+  lazyObservable = false
 ) {
   const treeCellInfo = getTreeCellInfo(rawData, row, useIcon);
-  const treeInfo = lazyReactivity ? treeCellInfo : observable(treeCellInfo);
+  const treeInfo = lazyObservable ? treeCellInfo : observable(treeCellInfo);
 
-  if (!lazyReactivity) {
+  if (!lazyObservable) {
     observe(() => {
       treeInfo.expanded = isExpanded(row);
       treeInfo.leaf = isLeaf(row);
@@ -229,4 +228,18 @@ export function traverseDescendantRows(rawData: Row[], row: Row, iteratee: Funct
       childRowKeys = childRowKeys.concat(getChildRowKeys(childRow));
     }
   }
+}
+
+export function getRootParentRow(rawData: Row[], row: Row) {
+  let rootParentRow = row;
+
+  do {
+    const parentRow = findProp('rowKey', getParentRowKey(rootParentRow!), rawData);
+    if (!parentRow) {
+      break;
+    }
+    rootParentRow = parentRow;
+  } while (rootParentRow);
+
+  return rootParentRow;
 }

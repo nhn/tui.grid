@@ -264,7 +264,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   rawData.splice(startIdx, 0, ...rawRows);
 
   const viewRows = rawRows.map((rawRow) =>
-    createViewRow(rawRow, allColumnMap, rawData, { treeColumnName, treeIcon })
+    createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon)
   );
   viewData.splice(startIdx, 0, ...viewRows);
 

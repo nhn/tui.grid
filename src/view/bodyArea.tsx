@@ -56,11 +56,11 @@ class BodyAreaComp extends Component<Props> {
     const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
 
+    dispatch('setScrollTop', scrollTop);
     if (this.props.side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
+      dispatch('createObservableData');
     }
-    dispatch('setScrollTop', scrollTop);
-    dispatch('makeReactiveData');
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
@@ -134,12 +134,18 @@ class BodyAreaComp extends Component<Props> {
   }
 
   public componentWillMount() {
-    this.props.dispatch('makeReactiveData');
+    this.props.dispatch('createObservableData');
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    this.el!.scrollTop = nextProps.scrollTop;
-    this.el!.scrollLeft = nextProps.scrollLeft;
+    const { bodyHeight, scrollTop, scrollLeft, side, dispatch } = nextProps;
+
+    this.el!.scrollTop = scrollTop;
+    this.el!.scrollLeft = scrollLeft;
+
+    if (bodyHeight !== this.props.bodyHeight && side === 'R') {
+      dispatch('createObservableData');
+    }
   }
 
   public render({
@@ -168,7 +174,6 @@ class BodyAreaComp extends Component<Props> {
       width: totalColumnWidth,
       height: totalRowHeight + cellBorderWidth
     };
-
     return (
       <div
         class={cls('body-area')}
