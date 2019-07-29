@@ -3,7 +3,7 @@ import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { isCellDisabled } from '../query/data';
 import { isFocusedCell } from '../query/focus';
-import { getRowSpanByRowKey, enableRowSpan } from '../helper/rowSpan';
+import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
@@ -66,7 +66,7 @@ export function changeFocus(
   if (!gridEvent.isStopped()) {
     let focusRowKey = rowKey;
 
-    if (rowKey && columnName && enableRowSpan(sortOptions.columns[0].columnName)) {
+    if (rowKey && columnName && isRowSpanEnabled(sortOptions)) {
       const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
       if (rowSpan) {
         focusRowKey = rowSpan.mainRowKey;

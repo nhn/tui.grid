@@ -30,10 +30,14 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
-import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import {
+  isRowSpanEnabled,
+  updateRowSpanWhenAppend,
+  updateRowSpanWhenRemove
+} from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
-import { initSortOptions, multiSort, singleSort, sortData } from '../query/data';
+import { sort } from './sort';
 
 export function setValue(
   { column, data, id }: Store,
@@ -63,11 +67,7 @@ export function setValue(
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (
-      !isEmpty(rowSpanMap) &&
-      rowSpanMap[columnName] &&
-      enableRowSpan(sortOptions.columns[0].columnName)
-    ) {
+    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -177,66 +177,6 @@ export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
 }
 
-export function changeSortOptions(
-  { data, column }: Store,
-  columnName: string,
-  ascending: boolean,
-  withCtrl: boolean,
-  canBeCanceled: boolean = true
-) {
-  if (columnName === 'sortKey') {
-    initSortOptions(data);
-  } else {
-    const { sortingType } = column.allColumnMap[columnName];
-
-    if (withCtrl) {
-      multiSort(data, columnName, ascending, sortingType!, canBeCanceled);
-    } else {
-      singleSort(data, columnName, ascending, sortingType!, canBeCanceled);
-    }
-  }
-
-  notify(data, 'sortOptions');
-}
-
-export function sort(
-  store: Store,
-  columnName: string,
-  ascending: boolean,
-  withCtrl: boolean = false,
-  canBeCanceled: boolean = true
-) {
-  const { data, id } = store;
-  const { sortOptions } = data;
-  if (!sortOptions.useClient) {
-    return;
-  }
-
-  changeSortOptions(store, columnName, ascending, withCtrl, canBeCanceled);
-  sortData(data, id);
-}
-
-export function unsort(store: Store, columnName: string = 'sortKey') {
-  const { data, id } = store;
-
-  if (columnName === 'sortKey') {
-    initSortOptions(data);
-  } else {
-    const index = findPropIndex('columnName', columnName, data.sortOptions.columns);
-
-    if (index !== -1) {
-      data.sortOptions.columns.splice(index, 1);
-      if (!data.sortOptions.columns.length) {
-        initSortOptions(data);
-      }
-
-      notify(data, 'sortOptions');
-    }
-  }
-
-  sortData(data, id);
-}
-
 function applyPasteDataToRawData(
   store: Store,
   pasteData: string[][],
@@ -331,7 +271,6 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
   const prevRow = rawData[at - 1];
-  const firstSortColumnOption = sortOptions.columns[0];
 
   const rawRow = createRawRow(row, rawData.length, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
@@ -344,11 +283,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (!enableRowSpan(firstSortColumnOption.columnName)) {
-    sort(store, firstSortColumnOption.columnName, firstSortColumnOption.ascending);
+  if (!isRowSpanEnabled(sortOptions)) {
+    const { columnName, ascending } = sortOptions.columns[0];
+
+    sort(store, columnName, ascending);
   }
 
-  if (prevRow && enableRowSpan(firstSortColumnOption.columnName)) {
+  if (prevRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -373,7 +314,7 @@ export function removeRow(
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
-  if (nextRow && enableRowSpan(sortOptions.columns[0].columnName)) {
+  if (nextRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 

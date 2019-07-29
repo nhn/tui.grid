@@ -21,11 +21,7 @@ class SortingOrderComp extends Component<Props> {
 }
 
 export const SortingOrder = connect<StoreProps, OwnProps>((store, props) => {
-  const {
-    data: {
-      sortOptions: { columns }
-    }
-  } = store;
+  const { columns } = store.data.sortOptions;
   const { columnName } = props;
   const order = findPropIndex('columnName', columnName, [...columns]) + 1;
   const showOrder = !!order && columns.length > 1;

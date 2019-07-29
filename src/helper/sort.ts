@@ -1,7 +1,7 @@
-import { CellValue, Data, Row, SortOptionColumn, ViewRow } from '../store/types';
+import { CellValue, Data, Row, SortedColumn, ViewRow } from '../store/types';
 import { isBlank } from './common';
 
-export function comparator(valueA: CellValue, valueB: CellValue) {
+export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
   let result = 0;
@@ -19,71 +19,63 @@ export function comparator(valueA: CellValue, valueB: CellValue) {
   return result;
 }
 
-function getCmpFunc(ascending: boolean) {
-  if (!ascending) {
-    return function(valueA: CellValue, valueB: CellValue) {
-      return -comparator(valueA, valueB);
-    };
-  }
-  return comparator;
-}
-
-function getComparators(columns: SortOptionColumn[]) {
-  const comparators: { name: string; cmp: Function }[] = [];
+function getComparators(columns: SortedColumn[]) {
+  const comparators: { name: string; comparator: Function }[] = [];
 
   columns.forEach((column) => {
+    const { columnName, ascending } = column;
+
     comparators.push({
-      name: column.columnName,
-      cmp: getCmpFunc(column.ascending)
+      name: columnName,
+      comparator: ascending
+        ? compare
+        : (valueA: CellValue, valueB: CellValue) => -compare(valueA, valueB)
     });
   });
 
   return comparators;
 }
 
-function sortRawData(columns: SortOptionColumn[]) {
+function sortRawData(columns: SortedColumn[]) {
   const comparators = getComparators(columns);
 
-  return function(rowA: Row, rowB: Row) {
-    let result = 0;
-    for (let i = 0, columnsLen = columns.length; i < columnsLen; i += 1) {
-      const { name: columnName, cmp } = comparators[i];
-      result = 0;
+  return (rowA: Row, rowB: Row) => {
+    for (const { name: columnName, comparator } of comparators) {
+      let result = 0;
 
-      result = cmp(rowA[columnName], rowB[columnName]);
-      if (result !== 0) {
-        break;
+      result = comparator(rowA[columnName], rowB[columnName]);
+      if (result) {
+        return result;
       }
     }
-    return result;
+
+    return 0;
   };
 }
 
-function sortViewData(columns: SortOptionColumn[]) {
+function sortViewData(columns: SortedColumn[]) {
   const comparators = getComparators(columns);
 
-  return function(rowA: ViewRow, rowB: ViewRow) {
-    let result = 0;
-    for (let i = 0, columnsLen = columns.length; i < columnsLen; i += 1) {
-      const { name: columnName, cmp } = comparators[i];
-      result = 0;
+  return (rowA: ViewRow, rowB: ViewRow) => {
+    for (const { name: columnName, comparator } of comparators) {
+      let result = 0;
 
       const valueA = columnName === 'sortKey' ? rowA.sortKey : rowA.valueMap[columnName].value;
       const valueB = columnName === 'sortKey' ? rowB.sortKey : rowB.valueMap[columnName].value;
 
-      result = cmp(valueA, valueB);
-      if (result !== 0) {
-        break;
+      result = comparator(valueA, valueB);
+      if (result) {
+        return result;
       }
     }
-    return result;
+    return 0;
   };
 }
 
 export function getSortedData(data: Data) {
   const rawData = [...data.rawData];
   const viewData = [...data.viewData];
-  const options: SortOptionColumn[] = [...data.sortOptions.columns];
+  const options: SortedColumn[] = [...data.sortOptions.columns];
 
   if (
     data.sortOptions.columns.length !== 1 ||

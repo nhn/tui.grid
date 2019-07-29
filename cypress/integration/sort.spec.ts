@@ -3,7 +3,7 @@ import { cls, dataAttr } from '../../src/helper/dom';
 import { sortData as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptColumn } from '../../src/types';
-import { comparator } from '@/helper/sort';
+import { compare } from '@/helper/sort';
 import { Dictionary } from '@/store/types';
 
 interface GridGlobal {
@@ -64,7 +64,7 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
 
 function assertSortedData(columnName: string) {
   const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
-  testData.sort((a, b) => comparator(a, b));
+  testData.sort((a, b) => compare(a, b));
 
   cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
     $el.each((index, elem) => {
@@ -176,7 +176,7 @@ describe('sort', () => {
     });
   });
 
-  it.only("unsort('numberA') when multiple sorting", () => {
+  it("unsort('numberA') when multiple sorting", () => {
     createGrid();
     createSortButtonAlias();
 
