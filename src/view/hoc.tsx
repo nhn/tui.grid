@@ -1,5 +1,5 @@
 import { h, AnyComponent, Component } from 'preact';
-import { observe, isObservable } from '../helper/observable';
+import { observe } from '../helper/observable';
 import { Store } from '../store/types';
 import { DeepReadonly } from 'utility-types';
 import { DispatchProps } from '../dispatch/create';
