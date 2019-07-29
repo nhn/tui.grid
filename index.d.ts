@@ -346,9 +346,11 @@ declare namespace tuiGrid {
   }
 
   interface SortOptions {
-    columnName: string;
-    ascending: boolean;
     useClient: boolean;
+    columns: {
+      columnName: string;
+      ascending: boolean;
+    }[];
   }
 
   type CustomValue = string | ((value: CellValue, rowAttrs: Row[], column: IColumnInfo) => string);
@@ -621,9 +623,9 @@ declare namespace tuiGrid {
 
     public findRows(conditions: ((row: Row) => boolean) | Dictionary<any>): Row[];
 
-    public sort(columnName: string, ascending: boolean): void;
+    public sort(columnName: string, ascending: boolean, multiple?: boolean): void;
 
-    public unsort(): void;
+    public unsort(columnName?: string): void;
 
     public getSortState(): SortOptions;
 

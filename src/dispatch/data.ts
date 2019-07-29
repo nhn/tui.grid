@@ -12,7 +12,6 @@ import {
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
-  arrayEqual,
   mapProp,
   findPropIndex,
   isUndefined,
@@ -21,7 +20,6 @@ import {
   isEmpty,
   someProp
 } from '../helper/common';
-import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
@@ -32,9 +30,14 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
-import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import {
+  isRowSpanEnabled,
+  updateRowSpanWhenAppend,
+  updateRowSpanWhenRemove
+} from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
+import { sort } from './sort';
 
 export function setValue(
   { column, data, id }: Store,
@@ -64,7 +67,7 @@ export function setValue(
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && enableRowSpan(sortOptions.columnName)) {
+    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -174,38 +177,6 @@ export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
 }
 
-export function changeSortOptions({ data }: Store, columnName: string, ascending: boolean) {
-  const { sortOptions } = data;
-  if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-    data.sortOptions = { ...sortOptions, columnName, ascending };
-  }
-}
-
-export function sort(store: Store, columnName: string, ascending: boolean) {
-  const { data, id } = store;
-  const { sortOptions } = data;
-  if (!sortOptions.useClient) {
-    return;
-  }
-  changeSortOptions(store, columnName, ascending);
-  const { rawData, viewData } = getSortedData(data, columnName, ascending);
-  if (!arrayEqual(rawData, data.rawData)) {
-    data.rawData = rawData;
-    data.viewData = viewData;
-  }
-
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
-
-  /**
-   * Occurs when sorting.
-   * @event Grid#sort
-   * @property {number} sortOptions - sort options
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('sort', gridEvent);
-}
-
 function applyPasteDataToRawData(
   store: Store,
   pasteData: string[][],
@@ -312,11 +283,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (!enableRowSpan(sortOptions.columnName)) {
-    sort(store, sortOptions.columnName, sortOptions.ascending);
+  if (!isRowSpanEnabled(sortOptions)) {
+    const { columnName, ascending } = sortOptions.columns[0];
+
+    sort(store, columnName, ascending);
   }
 
-  if (prevRow && enableRowSpan(sortOptions.columnName)) {
+  if (prevRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -341,7 +314,7 @@ export function removeRow(
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
-  if (nextRow && enableRowSpan(sortOptions.columnName)) {
+  if (nextRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 

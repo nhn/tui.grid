@@ -155,8 +155,10 @@ describe('sort()', () => {
       .invoke('getSortState')
       .should((sortState) => {
         expect(sortState).to.eql({
-          ascending: true,
-          columnName: 'sortKey',
+          columns: [{
+            columnName: 'sortKey',
+            ascending: true,
+          }],
           useClient: false
         });
       });

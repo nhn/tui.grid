@@ -205,7 +205,7 @@ if ((module as any).hot) {
  *              If type is string, the value is used as HTML of summary cell for every columns
  *              without auto-calculation.
  *              @param {boolean} [options.summary.defaultContent.useAutoSummary=true]
- *                  If set to true, the summary value of every column is served as a paramater to the template
+ *                  If set to true, the summary value of every column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -216,7 +216,7 @@ if ((module as any).hot) {
  *              If type of value of this object is string, the value is used as HTML of summary cell for
  *              the column without auto-calculation.
  *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
- *                  If set to true, the summary value of each column is served as a paramater to the template
+ *                  If set to true, the summary value of each column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -452,7 +452,7 @@ export default class Grid {
 
   /**
    * Sets the height of body-area.
-   * @param {number} value - The number of pixel
+   * @param {number} bodyHeight - The number of pixel
    */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
@@ -605,11 +605,13 @@ export default class Grid {
    * @param {string} value - The value of editing result
    */
   public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const sortOptions = this.store.data.sortOptions;
+    const { columns } = this.store.data.sortOptions;
     this.dispatch('setValue', rowKey, columnName, value);
 
-    if (sortOptions.columnName === columnName) {
-      this.dispatch('sort', columnName, sortOptions.ascending);
+    const index = findPropIndex('columnName', columnName, columns);
+
+    if (index !== -1) {
+      this.dispatch('sort', columnName, columns[index].ascending);
     }
 
     this.dispatch('finishEditing', rowKey, columnName);
@@ -833,22 +835,23 @@ export default class Grid {
    * @param {string} columnName - The name of the column to be used to compare the rows
    * @param {boolean} [ascending] - Whether the sort order is ascending.
    *        If not specified, use the negative value of the current order.
+   * @param {boolean} [multiple] - Whether using multiple sort
    */
-  public sort(columnName: string, ascending: boolean) {
-    this.dispatch('sort', columnName, ascending);
+  public sort(columnName: string, ascending: boolean, multiple?: boolean) {
+    this.dispatch('sort', columnName, ascending, multiple, false);
   }
 
   /**
-   * Unsorts all rows. (Sorts by rowKey).
+   * If the parameter exists, unsort only column with columnName. If not exist, unsort all rows
+   * @param {string} [columnName] - The name of the column to be used to compare the rows
    */
-  public unsort() {
-    // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
-    this.dispatch('sort', 'sortKey', true);
+  public unsort(columnName?: string) {
+    this.dispatch('unsort', columnName);
   }
 
   /**
    * Gets state of the sorted column in rows
-   * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
+   * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
     return this.store.data.sortOptions;
@@ -1358,7 +1361,7 @@ export default class Grid {
   }
 
   /**
-   * Refreshs the layout view. Use this method when the view was rendered while hidden.
+   * Refresh the layout view. Use this method when the view was rendered while hidden.
    */
   public refreshLayout() {
     const containerEl = this.el.querySelector(`.${cls('container')}`) as HTMLElement;

@@ -14,7 +14,8 @@ import {
   PageOptions,
   RowKey,
   RowSpanMap,
-  ListItem
+  ListItem,
+  SortOptions
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -366,7 +367,15 @@ export function create(
 ): Observable<Data> {
   // @TODO add client pagination logic
   const { rawData, viewData } = createData(data, column);
-  const sortOptions = { columnName: 'sortKey', ascending: true, useClient: useClientSort };
+  const sortOptions: SortOptions = {
+    useClient: useClientSort,
+    columns: [
+      {
+        columnName: 'sortKey',
+        ascending: true
+      }
+    ]
+  };
 
   return observable({
     disabled,

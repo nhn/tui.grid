@@ -4,7 +4,7 @@ import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
-import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../helper/rowSpan';
 import { getSortedRange } from '../helper/selection';
 
 function getNextCellIndexWithRowSpan(
@@ -107,7 +107,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (enableRowSpan(sortOptions.columnName)) {
+    if (isRowSpanEnabled(sortOptions)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,
