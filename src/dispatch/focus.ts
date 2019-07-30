@@ -10,14 +10,15 @@ import { isObservable } from '../helper/observable';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
+  const { rawData, viewData } = data;
   const { allColumnMap } = column;
-  const foundIndex = findPropIndex('rowKey', rowKey, data.rawData);
-  const rawRow = data.rawData[foundIndex];
+  const foundIndex = findPropIndex('rowKey', rowKey, rawData);
+  const rawRow = rawData[foundIndex];
 
   // makes the data observable to judge editable, disable of the cell;
   if (!isObservable(rawRow)) {
-    data.rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
-    data.viewData[foundIndex] = createViewRow(data.rawData[foundIndex], allColumnMap, data.rawData);
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
   }
 
   if (!isCellEditable(data, rowKey, columnName)) {

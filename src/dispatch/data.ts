@@ -509,9 +509,8 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map((targetIndex) => data.rawData[targetIndex - 1]);
   const { rawData, viewData } = createData(rows, column, false, prevRows);
-  const [start, end] = [0, rawData.length];
 
-  for (let index = start; index < end; index += 1) {
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
     data.rawData[targetIndex] = rawData[index];
     data.viewData[targetIndex] = viewData[index];
@@ -528,9 +527,8 @@ function changeToObservableTreeData(column: Column, data: Data, originData: Orig
   }
 
   const { rawData, viewData } = createData(rows, column);
-  const [start, end] = [0, rawData.length];
 
-  for (let index = start; index < end; index += 1) {
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
     const foundIndex = findPropIndex('rowKey', rawData[index].rowKey, data.rawData);
     const rawRow = data.rawData[foundIndex];
 
