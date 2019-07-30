@@ -256,7 +256,8 @@ export function createPlainViewRow(
     rowKey,
     sortKey,
     valueMap,
-    __unobserveFns__: [],
+    rowSpanMap: {} as RowSpanMap,
+    __unobserveFns__: [] as Function[],
     ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon, true) })
   };
 }
