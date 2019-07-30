@@ -307,7 +307,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   renderState.state = 'DONE';
-  getDataManager(id).push('CREATE', rawRow);
+  getDataManager(id).push('CREATE', rawRow, at);
 }
 
 export function removeRow(
@@ -319,13 +319,17 @@ export function removeRow(
   const { heights } = rowCoords;
   const rowIdx = findPropIndex('rowKey', rowKey, rawData);
   const nextRow = rawData[rowIdx + 1];
+  const removedRow = rawData.splice(rowIdx, 1)[0];
 
-  const removedRow = rawData.splice(rowIdx, 1);
+  if (!removedRow) {
+    return;
+  }
+
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
   if (nextRow && isRowSpanEnabled(sortOptions)) {
-    updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+    updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -340,7 +344,7 @@ export function removeRow(
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   renderState.state = getRenderState(data.rawData);
-  getDataManager(id).push('DELETE', removedRow[0]);
+  getDataManager(id).push('DELETE', removedRow);
 }
 
 export function clearData({ data, id, renderState }: Store) {
