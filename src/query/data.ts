@@ -1,5 +1,6 @@
 import { Store, RowKey, Data, Row, Dictionary } from '../store/types';
-import { findProp, isFunction } from '../helper/common';
+import { findProp, isFunction, findPropIndex } from '../helper/common';
+import { getDataManager } from '../instance';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -48,4 +49,39 @@ export function getConditionalRows(
   });
 
   return result;
+}
+
+export function findIndexByRowKey({ data, column, id }: Store, rowKey: RowKey) {
+  const { rawData, sortOptions } = data;
+
+  if (sortOptions.columns[0].columnName !== 'sortKey' || column.keyColumnName) {
+    return findPropIndex('rowKey', rowKey, rawData);
+  }
+
+  const foundAppendedRowIndex = getDataManager(id).getAppendedRowIndex(rowKey);
+  if (foundAppendedRowIndex !== -1) {
+    return foundAppendedRowIndex;
+  }
+
+  let start = 0;
+  let end = rawData.length - 1;
+  let result = -1;
+
+  while (start < end) {
+    const index = (start + end) / 2;
+    if (rowKey > index) {
+      start = index;
+    } else if (rowKey < index) {
+      end = index;
+    } else {
+      result = index;
+      break;
+    }
+  }
+
+  return result;
+}
+
+export function findRowByRowKey(store: Store, rowKey: RowKey) {
+  return store.data.rawData[findIndexByRowKey(store, rowKey)];
 }
