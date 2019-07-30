@@ -1,8 +1,7 @@
 import { h, Component } from 'preact';
-import { ViewRow, RowSpan, Row, ColumnInfo } from '../store/types';
+import { ViewRow, RowSpan, ColumnInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { getRowSpanByRowKey } from '../helper/rowSpan';
 import { BodyCell } from './bodyCell';
 
 interface OwnProps {
@@ -42,9 +41,8 @@ export class RowSpanCellComp extends Component<Props> {
 }
 
 export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, columnInfo }) => {
-  const { rowKey } = viewRow;
-  const { sortOptions, rawData } = data;
-  const rowSpan = getRowSpanByRowKey(rowKey, columnInfo.name, rawData as Row[]);
+  const { sortOptions } = data;
+  const rowSpan = viewRow.rowSpanMap[columnInfo.name] || null;
   const enableRowSpan = sortOptions.columns[0].columnName === 'sortKey';
 
   return { rowSpan, enableRowSpan };

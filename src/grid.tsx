@@ -635,7 +635,7 @@ export default class Grid {
    * @returns {number|string} - The value of the cell
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
-    const targetRow = this.store.data.rawData.find((row) => row.rowKey === rowKey);
+    const targetRow = findProp('rowKey', rowKey, this.store.data.rawData);
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
     if (targetRow) {
