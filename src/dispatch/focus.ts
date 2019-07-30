@@ -4,15 +4,27 @@ import { getEventBus } from '../event/eventBus';
 import { isCellEditable } from '../query/data';
 import { isFocusedCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
+import { findPropIndex } from '../helper/common';
+import { createRawRow, createViewRow } from '../store/data';
+import { isObservable } from '../helper/observable';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
+  const { allColumnMap } = column;
+  const foundIndex = findPropIndex('rowKey', rowKey, data.rawData);
+  const rawRow = data.rawData[foundIndex];
+
+  // makes the data observable to judge editable, disable of the cell;
+  if (!isObservable(rawRow)) {
+    data.rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    data.viewData[foundIndex] = createViewRow(data.rawData[foundIndex], allColumnMap, data.rawData);
+  }
 
   if (!isCellEditable(data, rowKey, columnName)) {
     return;
   }
 
-  const columnInfo = column.allColumnMap[columnName];
+  const columnInfo = allColumnMap[columnName];
   if (columnInfo && columnInfo.editor) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };

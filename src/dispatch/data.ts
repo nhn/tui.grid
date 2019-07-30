@@ -10,7 +10,7 @@ import {
   Data,
   Row,
   Column,
-  Viewport
+  Range
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -463,8 +463,8 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   notify(column, 'allColumns');
 }
 
-function createOriginData(data: Data, viewport: Viewport) {
-  const [start, end] = viewport.rowRange;
+function createOriginData(data: Data, rowRange: Range) {
+  const [start, end] = rowRange;
 
   return data.rawData.slice(start, end).reduce(
     (acc: OriginData, row, index) => {
@@ -478,8 +478,9 @@ function createOriginData(data: Data, viewport: Viewport) {
   );
 }
 
-export function createObservableData({ column, data, viewport }: Store) {
-  const originData = createOriginData(data, viewport);
+export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
+  const rowRange = (allRowRange ? [0, data.rawData.length] : viewport.rowRange) as Range;
+  const originData = createOriginData(data, rowRange);
 
   if (!originData.rows.length) {
     return;

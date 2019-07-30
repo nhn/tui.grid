@@ -38,7 +38,7 @@ describe('API test on lazy observable data', () => {
 
   it('startEditing api', () => {
     cy.gridInstance().invoke('focus', 18, 'name');
-    cy.gridInstance().invoke('startEditing', 18, 'name');
+    cy.gridInstance().invoke('startEditing', 18, 'name', 'Lee');
     cy.get(`.${cls('content-text')}`).type('Lee{enter}');
 
     cy.gridInstance()
