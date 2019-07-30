@@ -2,20 +2,21 @@ import { cls } from '../../src/helper/dom';
 import { data, columns } from '../../samples/relations';
 
 function assertRelation() {
-  cy.get(`.${cls('container')}`).as('container');
+  cy.gridInstance().invoke('finishEditing', 0, 'category1', '01');
+  cy.gridInstance().invoke('finishEditing', 0, 'category2', '01_01');
 
-  cy.get('@container')
-    .trigger('mousedown', 10, 60)
-    .trigger('dblclick', 10, 60);
+  cy.getCell(0, 'category2').contains('Balad/Dance/Pop');
+}
 
-  cy.get(`.${cls('layer-editing')} select`).select('01');
-  cy.get('@container')
-    .trigger('mousedown', 250, 60)
-    .trigger('dblclick', 250, 60);
-
-  cy.get(`.${cls('layer-editing')} select`)
-    .select('Balad/Dance/Pop')
-    .should('have.value', '01_01');
+function addEditableRelation() {
+  delete columns[0].relations![0].disabled;
+  delete columns[1].relations![0].disabled;
+  columns[0].relations![0].editable = ({ value }) => {
+    return !!value;
+  };
+  columns[1].relations![0].editable = ({ value }) => {
+    return !!value;
+  };
 }
 
 before(() => {
@@ -29,9 +30,38 @@ beforeEach(() => {
   cy.createGrid({ data, columns });
 });
 
-// @TODO add more test and data
 it('should change state by relations', () => {
   assertRelation();
+});
+
+it('change cell disabled state', () => {
+  cy.gridInstance().invoke('finishEditing', 1, 'category1', '');
+
+  cy.gridInstance().invoke('startEditing', 1, 'category2');
+  cy.getCell(1, 'category2').should('have.class', `${cls('cell-disabled')}`);
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+
+  cy.gridInstance().invoke('startEditing', 1, 'category2');
+  cy.getCell(1, 'category3').should('have.class', `${cls('cell-disabled')}`);
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('change cell editable state', () => {
+  addEditableRelation();
+  cy.document().then((doc) => {
+    doc.body.innerHTML = '';
+  });
+  cy.createGrid({ data, columns });
+
+  cy.gridInstance().invoke('finishEditing', 1, 'category1', '');
+
+  cy.gridInstance().invoke('startEditing', 1, 'category2');
+  cy.getCell(1, 'category2').should('have.not.class', `${cls('cell-editable')}`);
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+
+  cy.gridInstance().invoke('startEditing', 1, 'category2');
+  cy.getCell(1, 'category3').should('have.not.class', `${cls('cell-editable')}`);
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
 });
 
 it('set relation columns through setColumns()', () => {

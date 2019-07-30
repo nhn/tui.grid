@@ -24,12 +24,12 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
 
   const relationColumns = optColumns.reduce(
     (acc: string[], { relations = [] }) =>
-      acc
-        .concat(getRelationColumns(relations))
-        .filter((columnName, idx) => acc.indexOf(columnName) === idx),
+      acc.concat(getRelationColumns(relations)).filter((columnName, index) => {
+        const foundIndex = acc.indexOf(columnName);
+        return foundIndex === -1 || foundIndex === index;
+      }),
     []
   );
-
   const columnInfos = optColumns.map((optColumn) =>
     createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );

@@ -20,6 +20,13 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
   return disabled || rowDisabled;
 }
 
+export function isCellEditable(data: Data, rowKey: RowKey, columnName: string) {
+  const { viewData } = data;
+  const row = findProp('rowKey', rowKey, viewData)!;
+
+  return !isCellDisabled(data, rowKey, columnName) && row.valueMap[columnName].editable;
+}
+
 export function getCheckedRows({ data }: Store) {
   return data.rawData.filter(({ _attributes }) => _attributes.checked);
 }
