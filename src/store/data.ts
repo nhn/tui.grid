@@ -155,7 +155,7 @@ function createRelationViewCell(
   const { editable, disabled, value } = valueMap[name];
   const { relationMap = {} } = columnMap[name];
 
-  Object.keys(relationMap).forEach((targetName) => {
+  Object.keys(relationMap).forEach(targetName => {
     const {
       editable: editableCallback,
       disabled: disabledCallback,
@@ -201,14 +201,14 @@ export function createViewRow(
   const { rowKey, sortKey, rowSpanMap } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
-  Object.keys(columnMap).forEach((name) => {
+  Object.keys(columnMap).forEach(name => {
     initValueMap[name] = null;
   });
 
   const valueMap = observable(initValueMap) as Dictionary<CellRenderData>;
   const __unobserveFns__: Function[] = [];
 
-  Object.keys(columnMap).forEach((name) => {
+  Object.keys(columnMap).forEach(name => {
     const { related, relationMap } = columnMap[name];
 
     // add condition expression to prevent to call watch function recursively
@@ -276,7 +276,7 @@ function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
     return mainRowSpanMap;
   }
 
-  Object.keys(rowSpan).forEach((columnName) => {
+  Object.keys(rowSpan).forEach(columnName => {
     const spanCount = rowSpan[columnName];
     mainRowSpanMap[columnName] = createRowSpan(true, rowKey, spanCount, spanCount);
   });
@@ -286,7 +286,7 @@ function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
 function createSubRowSpan(prevRowSpanMap: RowSpanMap) {
   const subRowSpanMap: RowSpanMap = {};
 
-  Object.keys(prevRowSpanMap).forEach((columnName) => {
+  Object.keys(prevRowSpanMap).forEach(columnName => {
     const prevRowSpan = prevRowSpanMap[columnName];
     const { mainRowKey, count, spanCount } = prevRowSpan;
     if (spanCount > 1 - count) {
@@ -400,7 +400,7 @@ export function create(
 
     get checkedAllRows() {
       const allRawData = this.rawData;
-      const checkedRows = allRawData.filter((row) => row._attributes.checked);
+      const checkedRows = allRawData.filter(row => row._attributes.checked);
       return checkedRows.length === allRawData.length;
     }
   });

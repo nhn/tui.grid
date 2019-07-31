@@ -61,7 +61,7 @@ export function find<T>(predicate: (item: T) => boolean, arr: T[]) {
 }
 
 export function findProp<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
-  return find((item) => item[propName] === value, arr);
+  return find(item => item[propName] === value, arr);
 }
 
 export function some<T>(predicate: (item: T) => boolean, arr: T[]) {
@@ -82,7 +82,7 @@ export function findIndex<T>(predicate: (item: T) => boolean, arr: T[]) {
 }
 
 export function findPropIndex<T>(propName: keyof T, value: T[keyof T], arr: T[]) {
-  return findIndex((item) => item[propName] === value, arr);
+  return findIndex(item => item[propName] === value, arr);
 }
 
 export function findIndexes<T>(predicate: (v: T) => boolean, arr: T[]) {
@@ -97,11 +97,11 @@ export function findPrevIndex<T>(arr: T[], predicate: (_: T) => boolean): number
 }
 
 export function findOffsetIndex(offsets: number[], targetOffset: number) {
-  return findPrevIndex(offsets, (offset) => offset > targetOffset);
+  return findPrevIndex(offsets, offset => offset > targetOffset);
 }
 
 export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
-  return arr.map((item) => item[propName]);
+  return arr.map(item => item[propName]);
 }
 
 export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
@@ -137,7 +137,7 @@ export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {
-  const targetIdx = findIndex((item) => item === targetItem, arr);
+  const targetIdx = findIndex(item => item === targetItem, arr);
   arr.splice(targetIdx, 1);
 
   return arr;
@@ -145,7 +145,7 @@ export function removeArrayItem<T>(targetItem: T, arr: T[]) {
 
 export function createMapFromArray<T>(arr: T[], propName: keyof T) {
   const resultMap: { [key: string]: T } = {};
-  arr.forEach((item) => {
+  arr.forEach(item => {
     const key = String(item[propName]);
     resultMap[key] = item;
   });
@@ -186,7 +186,7 @@ export function encodeHTMLEntity(html: string) {
   };
   type EntityKey = keyof typeof entities;
 
-  return html.replace(/[<>&"']/g, (match) => `&${entities[match as EntityKey]};`);
+  return html.replace(/[<>&"']/g, match => `&${entities[match as EntityKey]};`);
 }
 
 export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {

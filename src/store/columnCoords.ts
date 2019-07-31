@@ -8,7 +8,7 @@ function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], 
   const errorValue = avgValue * targetLen - extraWidth; // to correct total width
   const result = [...widths];
 
-  targetIdxes.forEach((idx) => {
+  targetIdxes.forEach(idx => {
     result[idx] += avgValue;
   });
 
@@ -21,7 +21,7 @@ function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], 
 
 function fillEmptyWidth(contentWidth: number, widths: number[]) {
   const remainTotalWidth = contentWidth - sum(widths);
-  const emptyIndexes = findIndexes((width) => !width, widths);
+  const emptyIndexes = findIndexes(width => !width, widths);
 
   return distributeExtraWidthEqually(remainTotalWidth, emptyIndexes, widths);
 }
@@ -66,7 +66,7 @@ function adjustWidths(
   const columnLength = widths.length;
   const totalExtraWidth = availableWidth - sum(widths);
   const fixedCount = fixedFlags.filter(Boolean).length;
-  const fixedIndexes = findIndexes((v) => !v, fixedFlags);
+  const fixedIndexes = findIndexes(v => !v, fixedFlags);
 
   let result;
 
@@ -74,7 +74,7 @@ function adjustWidths(
     result = distributeExtraWidthEqually(totalExtraWidth, fixedIndexes, widths);
   } else if (fitToReducedTotal && totalExtraWidth < 0) {
     const availableWidthInfos = fixedIndexes.map(
-      (index) => [index, widths[index] - minWidths[index]] as [number, number]
+      index => [index, widths[index] - minWidths[index]] as [number, number]
     );
     result = reduceExcessColumnWidthSub(totalExtraWidth, availableWidthInfos, widths);
   } else {

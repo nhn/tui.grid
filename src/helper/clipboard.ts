@@ -45,7 +45,7 @@ export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) 
   fromArray(rows).forEach((tr, rowIndex) => {
     let columnIndex = 0;
 
-    fromArray(tr.cells).forEach((td) => {
+    fromArray(tr.cells).forEach(td => {
       const text = td.textContent || td.innerText;
 
       while (data[rowIndex][columnIndex]) {
@@ -72,7 +72,7 @@ function removeDoubleQuotes(text: string) {
 }
 
 function replaceNewlineToSubchar(text: string) {
-  return text.replace(/"([^"]|"")*"/g, (value) =>
+  return text.replace(/"([^"]|"")*"/g, value =>
     value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
   );
 }
@@ -83,8 +83,8 @@ export function convertTextToData(text: string) {
   // before spliting the text by newline characters.
   text = replaceNewlineToSubchar(text);
 
-  return text.split(/\r?\n/).map((row) =>
-    row.split('\t').map((column) =>
+  return text.split(/\r?\n/).map(row =>
+    row.split('\t').map(column =>
       removeDoubleQuotes(column)
         .replace(CUSTOM_LF_REGEXP, LF)
         .replace(CUSTOM_CR_REGEXP, CR)
@@ -124,8 +124,8 @@ export function getTextWithCopyOptionsApplied(
         valueList = value.split(',');
       }
 
-      valueList.forEach((val) => {
-        const listItem = find((item) => item.value === val, listItems);
+      valueList.forEach(val => {
+        const listItem = find(item => item.value === val, listItems);
 
         result.push(listItem ? listItem.text : val);
       });

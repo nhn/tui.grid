@@ -88,9 +88,9 @@ function getTreeInfo(treeColumnOptions: OptTree, name: string) {
 
 function getRelationMap(relations: Relations[]) {
   const relationMap: Dictionary<Relations> = {};
-  relations.forEach((relation) => {
+  relations.forEach(relation => {
     const { editable, disabled, listItems, targetNames = [] } = relation;
-    targetNames.forEach((targetName) => {
+    targetNames.forEach(targetName => {
       relationMap[targetName] = {
         editable,
         disabled,
@@ -104,9 +104,9 @@ function getRelationMap(relations: Relations[]) {
 
 export function getRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
-  relations.forEach((relation) => {
+  relations.forEach(relation => {
     const { targetNames = [] } = relation;
-    targetNames.forEach((targetName) => {
+    targetNames.forEach(targetName => {
       relationColumns.push(targetName);
     });
   });
@@ -231,8 +231,8 @@ export function create({
     acc = acc.concat(getRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
-  const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
-  const columnInfos = columns.map((column) =>
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader));
+  const columnInfos = columns.map(column =>
     createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);

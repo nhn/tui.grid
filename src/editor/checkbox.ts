@@ -61,7 +61,7 @@ export class CheckboxEditor implements CellEditor {
   private setValue(value: CellValue) {
     String(value)
       .split(',')
-      .forEach((inputValue) => {
+      .forEach(inputValue => {
         const input = this.el.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
         if (input) {
           input.checked = true;

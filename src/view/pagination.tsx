@@ -94,7 +94,7 @@ class PaginationComp extends Component<Props> {
     return (
       !isEmpty(pageOptions) && (
         <div
-          ref={(el) => {
+          ref={el => {
             this.el = el;
           }}
           class={`tui-pagination ${cls('pagination')}`}

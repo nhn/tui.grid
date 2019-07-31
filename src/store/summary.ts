@@ -25,7 +25,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     column.allColumns.forEach(({ name }) => {
       observe(() => {
         const { rawData } = data;
-        const columnValues = rawData.map((row) => row[name]);
+        const columnValues = rawData.map(row => row[name]);
         const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
         const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 

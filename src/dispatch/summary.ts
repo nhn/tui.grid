@@ -11,7 +11,7 @@ export function setSummaryColumnContent(
   columnContent: string | SummaryColumnContentMap
 ) {
   const { rawData } = data;
-  const columnValues = rawData.map((row) => row[columnName]);
+  const columnValues = rawData.map(row => row[columnName]);
   const castedColumnContent = castToSummaryColumnContent(columnContent);
   const content = extractSummaryColumnContent(castedColumnContent, null);
 

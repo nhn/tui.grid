@@ -7,7 +7,10 @@ declare module '@storybook/html' {
   interface DecoratorParameters {
     [key: string]: any;
   }
-  type StoryDecorator = (story: RenderFunction, context: { kind: string, story: string }) => Renderable | null;
+  type StoryDecorator = (
+    story: RenderFunction,
+    context: { kind: string; story: string }
+  ) => Renderable | null;
 
   interface Story {
     readonly kind: string;

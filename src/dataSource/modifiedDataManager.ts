@@ -24,19 +24,19 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
     rowKeyOnly = false,
     ignoredColumns = []
   } = options;
-  let rows = targetRows.map((row) => getOriginObject(row as Observable<Row>));
+  let rows = targetRows.map(row => getOriginObject(row as Observable<Row>));
 
   if (checkedOnly) {
-    rows = rows.filter((row) => row._attributes.checked);
+    rows = rows.filter(row => row._attributes.checked);
   }
   if (ignoredColumns.length) {
-    rows = rows.map((row) => omit(row, ...ignoredColumns));
+    rows = rows.map(row => omit(row, ...ignoredColumns));
   }
   if (!withRawData) {
-    rows = rows.map((row) => omit(row, '_attributes'));
+    rows = rows.map(row => omit(row, '_attributes'));
   }
   if (rowKeyOnly) {
-    return rows.map((row) => row.rowKey);
+    return rows.map(row => row.rowKey);
   }
   return rows;
 }
@@ -49,7 +49,7 @@ export function createManager(): ModifiedDataManager {
     DELETE: []
   };
   const splice = (type: ModificationTypeCode, rowKey: RowKey, row?: Row) => {
-    const index = findIndex((createdRow) => createdRow.rowKey === rowKey, dataMap[type]);
+    const index = findIndex(createdRow => createdRow.rowKey === rowKey, dataMap[type]);
     if (index !== -1) {
       if (isUndefined(row)) {
         dataMap[type].splice(index, 1);
@@ -67,7 +67,7 @@ export function createManager(): ModifiedDataManager {
   return {
     // only for restore
     setOriginData(data: OptRow[]) {
-      originData = data.map((row) => ({ ...row }));
+      originData = data.map(row => ({ ...row }));
     },
 
     getOriginData() {
@@ -80,7 +80,7 @@ export function createManager(): ModifiedDataManager {
 
     getAllModifiedData(options: ModifiedRowsOptions) {
       return Object.keys(dataMap)
-        .map((key) => this.getModifiedData(key as ModificationTypeCode, options))
+        .map(key => this.getModifiedData(key as ModificationTypeCode, options))
         .reduce((acc, data) => ({ ...acc, ...data }), {} as Dictionary<Row[] | RowKey[]>);
     },
 
@@ -110,7 +110,7 @@ export function createManager(): ModifiedDataManager {
     },
 
     clear(rowsMap: Dictionary<Row[] | RowKey[]>) {
-      Object.keys(rowsMap).forEach((key) => {
+      Object.keys(rowsMap).forEach(key => {
         const rows = rowsMap[key];
         rows.forEach((row: Row | RowKey) => {
           spliceAll(isObject(row) ? row.rowKey : row);

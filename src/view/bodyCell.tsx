@@ -167,7 +167,7 @@ export class BodyCellComp extends Component<Props> {
           <div
             class={cls('tree-wrapper-valign-center')}
             style={{ paddingLeft: treeInfo.indentWidth }}
-            ref={(el) => {
+            ref={el => {
               this.el = el;
             }}
           >
@@ -181,7 +181,7 @@ export class BodyCellComp extends Component<Props> {
         {...rowSpanAttr}
         style={style}
         class={classNames}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
         onMouseDown={() => this.handleMouseDown(name, rowKey)}

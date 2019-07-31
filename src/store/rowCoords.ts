@@ -18,7 +18,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
   const { rowHeight } = dimension;
 
   return observable({
-    heights: data.rawData.map((row) => getRowHeight(row, rowHeight)),
+    heights: data.rawData.map(row => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];

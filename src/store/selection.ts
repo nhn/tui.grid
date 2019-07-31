@@ -27,7 +27,7 @@ function getOwnSideColumnRange(
   side: Side,
   visibleFrozenCount: number
 ): Range | null {
-  const [start, end] = columnRange.map((columnIdx) => columnIdx);
+  const [start, end] = columnRange.map(columnIdx => columnIdx);
 
   if (side === 'L' && start < visibleFrozenCount) {
     return [start, Math.min(end, visibleFrozenCount - 1)];

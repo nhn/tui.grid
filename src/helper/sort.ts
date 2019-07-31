@@ -22,7 +22,7 @@ export function compare(valueA: CellValue, valueB: CellValue) {
 function getComparators(columns: SortedColumn[]) {
   const comparators: { name: string; comparator: Function }[] = [];
 
-  columns.forEach((column) => {
+  columns.forEach(column => {
     const { columnName, ascending } = column;
 
     comparators.push({

@@ -37,11 +37,11 @@ class ComplexHeaderComp extends Component<Props> {
       complexColumns.push(column);
 
       if (complexHeaderColumns) {
-        complexHeaderColumns.forEach((complexHeaderColumn) => {
+        complexHeaderColumns.forEach(complexHeaderColumn => {
           const { childNames } = complexHeaderColumn;
 
           if (childNames) {
-            const index = findIndex((name) => column.name === name, childNames);
+            const index = findIndex(name => column.name === name, childNames);
 
             if (index !== -1) {
               this.getColumnHierarchy(complexHeaderColumn, complexColumns);
@@ -55,7 +55,7 @@ class ComplexHeaderComp extends Component<Props> {
   }
 
   private getHierarchyMaxRowCount(hierarchies: ComplexColumnInfo[][]) {
-    const lengths = [0, ...hierarchies.map((value) => value.length)];
+    const lengths = [0, ...hierarchies.map(value => value.length)];
 
     return Math.max(...lengths);
   }
@@ -109,7 +109,7 @@ class ComplexHeaderComp extends Component<Props> {
 
   public render() {
     const { columns, headerHeight, cellBorderWidth } = this.props;
-    const hierarchies = columns.map((column) => this.getColumnHierarchy(column).reverse());
+    const hierarchies = columns.map(column => this.getColumnHierarchy(column).reverse());
     const maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
     const rows = new Array(maxRowCount);
     const columnNames = new Array(maxRowCount);

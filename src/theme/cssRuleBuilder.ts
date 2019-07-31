@@ -141,7 +141,7 @@ export function createNestedClassRule(
   selector: string,
   classNames: ClassNameType[]
 ): CSSRuleBuilder {
-  return create(`.${classNames.map((className) => cls(className)).join(selector)}`);
+  return create(`.${classNames.map(className => cls(className)).join(selector)}`);
 }
 
 /**

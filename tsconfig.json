@@ -12,22 +12,9 @@
     "jsx": "react",
     "jsxFactory": "h",
     "baseUrl": ".",
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "types"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "types"]
 }

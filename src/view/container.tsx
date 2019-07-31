@@ -218,7 +218,7 @@ export class ContainerComp extends Component<Props> {
         onClick={this.handleClick}
         onMouseOut={this.handleMouseout}
         onMouseOver={this.handleMouseover}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       >

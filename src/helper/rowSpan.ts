@@ -209,7 +209,7 @@ export function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRow
     return;
   }
 
-  Object.keys(prevRowSpanMap).forEach((columnName) => {
+  Object.keys(prevRowSpanMap).forEach(columnName => {
     const prevRowSpan = prevRowSpanMap[columnName];
     if (prevRowSpan) {
       const { count, mainRow: keyRow, mainRowKey } = prevRowSpan;
@@ -240,7 +240,7 @@ export function updateRowSpanWhenRemove(
     return;
   }
 
-  Object.keys(removedRowSpanMap).forEach((columnName) => {
+  Object.keys(removedRowSpanMap).forEach(columnName => {
     const removedRowSpan = removedRowSpanMap[columnName];
     const { count, mainRow: keyRow, mainRowKey } = removedRowSpan;
     let mainRow: Row, spanCount: number;

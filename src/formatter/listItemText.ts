@@ -22,7 +22,7 @@ export function listItemText({ column, value }: FormatterProps, relationListItem
     return String(value)
       .split(',')
       .map(getListItemText.bind(null, listItems))
-      .filter((text) => Boolean(text))
+      .filter(text => Boolean(text))
       .join(',');
   }
   return getListItemText(listItems, value);

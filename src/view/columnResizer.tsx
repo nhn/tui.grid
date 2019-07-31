@@ -84,7 +84,7 @@ class ColumnResizerComp extends Component<Props> {
           width: HANDLE_WIDTH,
           left: offset + width + cellBorderWidth - HANDLE_WIDTH_HALF
         }}
-        onMouseDown={(ev) => this.handleMouseDown(ev, index)}
+        onMouseDown={ev => this.handleMouseDown(ev, index)}
       />
     );
   }

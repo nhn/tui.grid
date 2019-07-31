@@ -43,8 +43,8 @@ export function getConditionalRows(
 
   let result: Row[] = rawData;
 
-  Object.keys(conditions).forEach((key) => {
-    result = result.filter((row) => row[key] === conditions[key]);
+  Object.keys(conditions).forEach(key => {
+    result = result.filter(row => row[key] === conditions[key]);
   });
 
   return result;
