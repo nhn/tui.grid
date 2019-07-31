@@ -59,7 +59,6 @@ class BodyAreaComp extends Component<Props> {
     dispatch('setScrollTop', scrollTop);
     if (this.props.side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
-      dispatch('createObservableData');
     }
   };
 
@@ -133,19 +132,11 @@ class BodyAreaComp extends Component<Props> {
     return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
-  public componentWillMount() {
-    this.props.dispatch('createObservableData');
-  }
-
   public componentWillReceiveProps(nextProps: Props) {
-    const { bodyHeight, scrollTop, scrollLeft, side, dispatch } = nextProps;
+    const { scrollTop, scrollLeft } = nextProps;
 
     this.el!.scrollTop = scrollTop;
     this.el!.scrollLeft = scrollLeft;
-
-    if (bodyHeight !== this.props.bodyHeight && side === 'R') {
-      dispatch('createObservableData');
-    }
   }
 
   public render({

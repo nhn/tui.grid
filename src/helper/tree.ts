@@ -26,7 +26,6 @@ function addChildRowKey(row: Row, rowKey: RowKey) {
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.push(rowKey);
-    notify(tree, 'childRowKeys');
   }
 }
 
@@ -35,7 +34,6 @@ function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.splice(offset, 0, rowKey);
-    notify(tree, 'childRowKeys');
   }
 }
 

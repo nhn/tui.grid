@@ -15,7 +15,8 @@ import {
   RowKey,
   RowSpanMap,
   ListItem,
-  SortOptions
+  SortOptions,
+  ViewRow
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -238,30 +239,6 @@ export function createViewRow(
   };
 }
 
-export function createPlainViewRow(
-  row: Row,
-  columnMap: Dictionary<ColumnInfo>,
-  rawData: Row[],
-  treeColumnName?: string,
-  treeIcon?: boolean
-) {
-  const { rowKey, sortKey } = row;
-  const valueMap = {} as Dictionary<CellRenderData>;
-
-  Object.keys(columnMap).forEach((name) => {
-    valueMap[name] = {} as CellRenderData;
-  });
-
-  return {
-    rowKey,
-    sortKey,
-    valueMap,
-    rowSpanMap: {} as RowSpanMap,
-    __unobserveFns__: [] as Function[],
-    ...(treeColumnName && { treeInfo: createTreeCellInfo(rawData, row, treeIcon, true) })
-  };
-}
-
 function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   const defaultAttr = {
     rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
@@ -370,14 +347,8 @@ export function createData(
   lazyObservable = false,
   prevRows?: Row[]
 ) {
-  const {
-    defaultValues,
-    keyColumnName,
-    allColumnMap,
-    treeColumnName = '',
-    treeIcon = true
-  } = column;
-
+  const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
+  const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
   let rawData: Row[];
 
   if (treeColumnName) {
@@ -394,7 +365,7 @@ export function createData(
 
   const viewData = rawData.map((row: Row) =>
     lazyObservable
-      ? createPlainViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+      ? ({ rowKey: row.rowKey, sortKey: row.sortKey } as ViewRow)
       : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
   );
 

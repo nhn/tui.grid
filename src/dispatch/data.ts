@@ -356,11 +356,11 @@ export function resetData(
   { data, column, dimension, rowCoords, id, renderState }: Store,
   inputData: OptRow[]
 ) {
-  const { rawData, viewData } = createData(inputData, column);
+  const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  data.rawData = rawData;
   data.viewData = viewData;
+  data.rawData = rawData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
   renderState.state = getRenderState(rawData);
 
@@ -486,18 +486,10 @@ export function createObservableData({ column, data, viewport }: Store, allRowRa
     return;
   }
 
-  if (data.rawData.length && isUndefined(column.keyColumnName)) {
-    column.keyColumnName = 'rowKey';
-  }
-
   if (column.treeColumnName) {
     changeToObservableTreeData(column, data, originData);
   } else {
     changeToObservableData(column, data, originData);
-  }
-
-  if (column.keyColumnName === 'rowKey') {
-    delete column.keyColumnName;
   }
 
   notify(data, 'rawData');

@@ -11,6 +11,7 @@ import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
+import { createObservableData } from '../dispatch/data';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -87,12 +88,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
   const renderState = createRenderState(data);
 
-  // manual observe to resolve circular references
-  observe(() => {
-    setBodyHeight(dimension, rowCoords);
-  });
-
-  return observable({
+  const store = observable({
     id,
     data,
     column,
@@ -105,4 +101,14 @@ export function createStore(id: number, options: OptGrid): Store {
     selection,
     renderState
   });
+  // manual observe to resolve circular references
+  observe(() => {
+    setBodyHeight(dimension, rowCoords);
+  });
+  // makes the data observable as changes viewport
+  observe(() => {
+    createObservableData(store);
+  });
+
+  return store;
 }
