@@ -81,9 +81,9 @@ it('mouseout', () => {
     });
 });
 
-it('dblClick', () => {
+it('dblclick', () => {
   const callback = cy.stub();
-  cy.gridInstance().invoke('on', 'dblClick', callback);
+  cy.gridInstance().invoke('on', 'dblclick', callback);
 
   cy.get(`.${cls('container')}`)
     .dblclick()

@@ -148,7 +148,7 @@ export class ContainerComp extends Component<Props> {
      * @property {string} columnName - columnName of the target cell
      * @property {Grid} instance - Current grid instance
      */
-    eventBus.trigger('dblClick', gridEvent);
+    eventBus.trigger('dblclick', gridEvent);
 
     if (!gridEvent.isStopped() && editingEvent === 'dblclick') {
       this.startEditing(event.target as HTMLElement);
