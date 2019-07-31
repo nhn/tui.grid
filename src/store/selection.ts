@@ -160,9 +160,12 @@ export function create({
         range: { row, column }
       } = this;
 
+      const columnStartIndex = column[0] - rowHeaderCount < 0 ? 0 : column[0] - rowHeaderCount;
+      const columnEndIndex = column[1] - rowHeaderCount < 0 ? 0 : column[1] - rowHeaderCount;
+
       return {
         row,
-        column: [column[0] - rowHeaderCount, column[1] - rowHeaderCount] as Range
+        column: [columnStartIndex, columnEndIndex] as Range
       };
     }
   });
