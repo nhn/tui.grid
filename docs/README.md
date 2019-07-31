@@ -15,6 +15,8 @@
 - [📎 Clipboard](./en/clipboard.md)
 - [🛰 Data Source](./en/data-source.md)
 - [🌳 Tree](./en/tree.md)
+- [✅ Row Headers](./en/row-header.md)
+- [❄️ Frozen Columns](./en/frozen-columns.md)
 
 ### Migration Guide
 - [✈️ v4.0 Migration Guide](v4.0-migration-guide.md)
