@@ -161,7 +161,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
-    value,
+    value: value || '',
     sortOptions,
     focusedColumnName,
     focusedRowKey
