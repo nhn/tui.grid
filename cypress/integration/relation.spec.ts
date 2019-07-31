@@ -24,7 +24,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({ data, columns });
@@ -48,7 +48,7 @@ it('change cell disabled state', () => {
 
 it('change cell editable state', () => {
   addEditableRelation();
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({ data, columns });
@@ -65,7 +65,7 @@ it('change cell editable state', () => {
 });
 
 it('set relation columns through setColumns()', () => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({

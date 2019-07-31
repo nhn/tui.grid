@@ -63,10 +63,10 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
 }
 
 function assertSortedData(columnName: string) {
-  const testData = (sampleData as Dictionary<any>[]).map((data) => String(data[columnName]));
+  const testData = (sampleData as Dictionary<any>[]).map(data => String(data[columnName]));
   testData.sort((a, b) => compare(a, b));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(testData[index]);
     });
@@ -74,7 +74,7 @@ function assertSortedData(columnName: string) {
 }
 
 function compareColumnData(columnName: string, expectValues: string[] | number[]) {
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(expectValues[index]);
     });
@@ -87,7 +87,7 @@ before(() => {
 
 describe('sort', () => {
   beforeEach(() => {
-    cy.document().then((doc) => {
+    cy.document().then(doc => {
       doc.body.innerHTML = '';
     });
   });
@@ -168,8 +168,8 @@ describe('sort', () => {
     cy.gridInstance().invoke('sort', 'alphabetA', false);
     cy.gridInstance().invoke('unsort');
 
-    const testData = sampleData.map((data) => String(data.alphabetA));
-    cy.get(`td[${dataAttr.COLUMN_NAME}=alphabetA]`).should(($el) => {
+    const testData = sampleData.map(data => String(data.alphabetA));
+    cy.get(`td[${dataAttr.COLUMN_NAME}=alphabetA]`).should($el => {
       $el.each((index, elem) => {
         expect(elem.textContent).to.eql(testData[index]);
       });
@@ -196,7 +196,7 @@ describe('sort', () => {
     createSortButtonAlias();
     cy.gridInstance()
       .invoke('getSortState')
-      .should((sortState) => {
+      .should(sortState => {
         expect(sortState).to.eql({
           useClient: true,
           columns: [
@@ -212,7 +212,7 @@ describe('sort', () => {
 
     cy.gridInstance()
       .invoke('getSortState')
-      .should((sortState) => {
+      .should(sortState => {
         expect(sortState).to.eql({
           useClient: true,
           columns: [

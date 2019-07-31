@@ -711,7 +711,7 @@ export default class Grid {
   public getColumns() {
     return this.store.column.allColumns
       .filter(({ name }) => !isRowHeader(name))
-      .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+      .map(column => getOriginObject(column as Observable<ColumnInfo>));
   }
 
   /**
@@ -808,7 +808,7 @@ export default class Grid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    return getCheckedRows(this.store).map((row) => getOriginObject(row as Observable<Row>));
+    return getCheckedRows(this.store).map(row => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -1037,7 +1037,7 @@ export default class Grid {
    * @returns {Array} - A list of all rows
    */
   public getData() {
-    return this.store.data.rawData.map((row) => getOriginObject(row as Observable<Row>));
+    return this.store.data.rawData.map(row => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -1350,7 +1350,7 @@ export default class Grid {
     const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
 
     if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
-      rowKeys.forEach((rowKey) => {
+      rowKeys.forEach(rowKey => {
         this.removeRow(rowKey);
       });
 

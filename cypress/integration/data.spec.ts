@@ -10,7 +10,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 
@@ -102,7 +102,7 @@ describe('removeRow()', () => {
     cy.wait(10);
     cy.gridInstance()
       .invoke('getFocusedCell')
-      .should((res) => {
+      .should(res => {
         expect(res).to.eql({ rowKey: 1, columnName: 'name', value: 'Lee' });
       });
     cy.getCellByIdx(0, 0).should('to.have.text', 'Lee');
@@ -124,7 +124,7 @@ describe('removeRow()', () => {
     cy.gridInstance().invoke('removeRow', 0);
     cy.gridInstance()
       .invoke('getFocusedCell')
-      .then((res) => {
+      .then(res => {
         expect(res).to.eql({ rowKey: null, columnName: null, value: null });
       });
   });
@@ -132,7 +132,7 @@ describe('removeRow()', () => {
 
 describe('removeCheckedRows()', () => {
   beforeEach(() => {
-    cy.document().then((doc) => {
+    cy.document().then(doc => {
       doc.body.innerHTML = '';
     });
 
@@ -281,7 +281,7 @@ describe('rows', () => {
   it('findRows() returns rows that meet the conditions.', () => {
     cy.gridInstance()
       .invoke('findRows', { name: 'Kim' })
-      .then((res) => {
+      .then(res => {
         expect(res).to.have.length(1);
         expect(res[0]).to.contain({ name: 'Kim', age: 10 });
       });
@@ -294,7 +294,7 @@ describe('rows', () => {
       .invoke('findRows', function(row: Row) {
         return !!row.age && row.age > 10;
       })
-      .then((res) => {
+      .then(res => {
         expect(res).to.have.length(1);
         expect(res[0]).to.contain({ name: 'Lee', age: 20 });
       });

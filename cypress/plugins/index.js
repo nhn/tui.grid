@@ -26,13 +26,15 @@ module.exports = (on, config) => {
       // https://github.com/bahmutov/cypress-svelte-unit-test/issues/15
       devtool: 'cheap-module-eval-source-map',
       module: {
-        rules: [{
-          test: /\.tsx?$/,
-          loader: 'awesome-typescript-loader',
-          options: {
-            configFileName: './cypress/tsconfig.json'
+        rules: [
+          {
+            test: /\.tsx?$/,
+            loader: 'awesome-typescript-loader',
+            options: {
+              configFileName: './cypress/tsconfig.json'
+            }
           }
-        }]
+        ]
       }
     }
   };

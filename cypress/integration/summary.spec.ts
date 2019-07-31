@@ -68,7 +68,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
-  contents.forEach((content) => {
+  contents.forEach(content => {
     cy.get('@summaryCell').contains(content);
   });
 }
@@ -107,14 +107,14 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
 
 describe('summary', () => {
   beforeEach(() => {
-    cy.document().then((doc) => {
+    cy.document().then(doc => {
       doc.body.innerHTML = '';
     });
   });
@@ -123,7 +123,7 @@ describe('summary', () => {
     const summary = createSummaryOption({ height: 0 });
     createGrid({ summary });
 
-    cy.get(`.${cls('container')}`).should(($container) => {
+    cy.get(`.${cls('container')}`).should($container => {
       expect($container.find(`.${cls('summary-area')}`)).not.to.exist;
     });
   });
@@ -160,7 +160,7 @@ describe('summary', () => {
 
     it('auto calculate summary when column is editable', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map((column) => ({
+      const columns = options.columns.map(column => ({
         ...column,
         editor: 'text'
       }));
@@ -220,7 +220,7 @@ describe('summary', () => {
   context('active scroll-x', () => {
     it('sync scrollLeft with body area', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map((column) => ({ ...column, minWidth: 300 }));
+      const columns = options.columns.map(column => ({ ...column, minWidth: 300 }));
       createGrid({ columns });
 
       assertSyncScrollLeft(1);
@@ -228,7 +228,7 @@ describe('summary', () => {
 
     it('sync scrollLeft with body area if column resizable: true', () => {
       const options = createDefaultOptions();
-      const columns = options.columns.map((column) => ({ ...column, resizable: true }));
+      const columns = options.columns.map(column => ({ ...column, resizable: true }));
       createGrid({ columns });
 
       cy.get(`.${cls('column-resize-handle')}`)
@@ -274,7 +274,7 @@ describe('summary', () => {
     createGrid();
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should((summaryValues) => {
+      .should(summaryValues => {
         expect(summaryValues).to.be.eql({
           avg: 13750,
           cnt: 20,
@@ -295,7 +295,7 @@ describe('summary', () => {
 
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should((summaryValues) => {
+      .should(summaryValues => {
         expect(summaryValues).to.be.eql({
           avg: 3.5,
           cnt: 2,

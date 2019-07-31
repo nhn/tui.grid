@@ -25,7 +25,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 
@@ -35,7 +35,7 @@ beforeEach(() => {
 function assertModifiedRowsLength(lengthMap: ModifiedRowsLengthMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
-    .should((rows) => {
+    .should(rows => {
       Cypress.$.each(rows, (type: keyof ModifiedRowsLengthMap) => {
         expect(rows[type]).to.have.length(lengthMap[type]);
       });
@@ -45,7 +45,7 @@ function assertModifiedRowsLength(lengthMap: ModifiedRowsLengthMap) {
 function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
-    .should((rows) => {
+    .should(rows => {
       Cypress.$.each(modifiedRowsMap, (type: keyof ModifiedRowsMap) => {
         const targetModifiedRows = rows[type];
         modifiedRowsMap[type]!.forEach((row, index) => {

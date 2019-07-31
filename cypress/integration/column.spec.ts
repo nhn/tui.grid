@@ -12,7 +12,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -56,7 +56,7 @@ describe('setHeader()', () => {
     cy.createGrid({ data, columns });
 
     cy.gridInstance().invoke('setHeader', { height });
-    cy.get(`.${cls('cell-header')}`).should(($headers) => {
+    cy.get(`.${cls('cell-header')}`).should($headers => {
       $headers.each((_, $header) => {
         expect(Cypress.$($header).height()).to.eq(height - cellBorderWidth);
       });
