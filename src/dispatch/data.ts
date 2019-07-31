@@ -479,7 +479,7 @@ function createOriginData(data: Data, rowRange: Range) {
 }
 
 export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
-  const rowRange = (allRowRange ? [0, data.rawData.length] : viewport.rowRange) as Range;
+  const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const originData = createOriginData(data, rowRange);
 
   if (!originData.rows.length) {

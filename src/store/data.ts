@@ -342,7 +342,7 @@ export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
-  options = { lazyObservable: false } as RawRowOptions
+  options: RawRowOptions = {}
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
   let rowSpan: RowSpanAttributeValue;
