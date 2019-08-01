@@ -350,8 +350,8 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       const focusData = isNull(focusCellPos) ? dragData : focusCellPos;
       selectionUpdate(store, focusData, dragData);
     } else {
-      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
       selectionEnd(store);
+      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
     }
   }
 }

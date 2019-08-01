@@ -160,9 +160,12 @@ export function create({
         range: { row, column }
       } = this;
 
+      const columnStartIndex = Math.max(column[0] - rowHeaderCount, 0);
+      const columnEndIndex = Math.max(column[1] - rowHeaderCount, 0);
+
       return {
         row,
-        column: [column[0] - rowHeaderCount, column[1] - rowHeaderCount] as Range
+        column: [columnStartIndex, columnEndIndex] as Range
       };
     }
   });
