@@ -133,7 +133,7 @@ export function keyEventGenerate(ev: KeyboardEvent) {
 function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
   position += cellBorderWidth * 2;
 
-  const idx = findIndex((offset) => offset - cellBorderWidth > position, offsets);
+  const idx = findIndex(offset => offset - cellBorderWidth > position, offsets);
 
   return idx >= 0 ? idx - 1 : offsets.length - 1;
 }

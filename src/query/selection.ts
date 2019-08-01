@@ -5,7 +5,7 @@ import { ColumnInfo, ComplexColumnInfo } from '../store/types';
 function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];
 
-  visibleColumnsWithRowHeader.forEach((column) => {
+  visibleColumnsWithRowHeader.forEach(column => {
     if (includes(childNames, column.name)) {
       result.push(column.name);
     }
@@ -21,7 +21,7 @@ export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[
   }
 
   let result: string[] = [];
-  column.childNames!.forEach((childName) => {
+  column.childNames!.forEach(childName => {
     if (isParentColumnHeader(complexHeaderColumns, childName)) {
       result = [...result, ...getLeafChildColumnNames(complexHeaderColumns, childName)];
     } else {

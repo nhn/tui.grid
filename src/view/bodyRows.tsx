@@ -39,7 +39,7 @@ class BodyRowsComp extends Component<Props> {
             columns={columns}
           />
         ))}
-        {range(dummyRowCount).map((index) => (
+        {range(dummyRowCount).map(index => (
           <BodyDummyRow
             key={`dummy-${index}`}
             index={rows.length + index}

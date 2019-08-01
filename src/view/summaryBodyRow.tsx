@@ -24,7 +24,7 @@ export class SummaryBodyRow extends Component<Props> {
     return (
       <tbody>
         <tr>
-          {columnNames.map((name) => (
+          {columnNames.map(name => (
             <SummaryBodyCell key={name} columnName={name} />
           ))}
         </tr>

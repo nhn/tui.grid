@@ -99,7 +99,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -222,7 +222,7 @@ describe('auto calculate column widths (container: 600)', () => {
       cy.get(`.${cls('column-resize-handle')}`)
         .eq(index)
         .trigger('mousedown')
-        .then(($el) => {
+        .then($el => {
           const { left, top } = $el.offset()!;
           const pageX = left + distance + CELL_BORDER_WIDTH + HANDLE_WIDTH_HALF;
           const pageY = top;
@@ -259,7 +259,7 @@ describe('body height', () => {
   const data = [{ c1: 'test' }];
 
   function assertBodyHeight(height: number) {
-    cy.get(`.${cls('body-area')}`).each(($body) => {
+    cy.get(`.${cls('body-area')}`).each($body => {
       expect($body.height()).to.eq(height);
     });
   }
@@ -300,7 +300,7 @@ describe('body height', () => {
 
   context('height resize handle', () => {
     function dragHeightReiszeHandle(distance: number) {
-      cy.get(`.${cls('height-resize-handle')}`).within(($el) => {
+      cy.get(`.${cls('height-resize-handle')}`).within($el => {
         const { top } = $el.offset()!;
 
         cy.root()

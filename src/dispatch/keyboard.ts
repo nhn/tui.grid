@@ -161,7 +161,7 @@ export function removeContent(store: Store) {
     .slice(columnStart, columnEnd + 1)
     .filter(({ editor }) => !!editor)
     .forEach(({ name }) => {
-      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
+      rawData.slice(rowStart, rowEnd + 1).forEach(row => {
         row[name] = '';
       });
     });

@@ -63,7 +63,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 

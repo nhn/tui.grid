@@ -129,7 +129,7 @@ class BodyAreaComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
-    return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
+    return some(propName => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
   public componentWillReceiveProps(nextProps: Props) {
@@ -171,7 +171,7 @@ class BodyAreaComp extends Component<Props> {
         style={areaStyle}
         onScroll={this.handleScroll}
         onMouseDown={this.handleMouseDown}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       >

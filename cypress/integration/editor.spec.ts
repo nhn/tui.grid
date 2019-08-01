@@ -8,7 +8,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -198,11 +198,9 @@ it('cannot edit the value on disabled cell', () => {
 
   cy.getCell(1, 'name')
     .trigger('mousedown')
-    .trigger('mouseup')
-    
-  cy.get(`.${cls('clipboard')}`)
-    .trigger('keydown', { keyCode: 13, which: 13, force: true })
-    
-  cy.get(`.${cls('content-text')}`)
-    .should('be.not.visible');
+    .trigger('mouseup');
+
+  cy.get(`.${cls('clipboard')}`).trigger('keydown', { keyCode: 13, which: 13, force: true });
+
+  cy.get(`.${cls('content-text')}`).should('be.not.visible');
 });

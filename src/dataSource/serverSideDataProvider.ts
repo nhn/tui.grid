@@ -95,7 +95,7 @@ class ServerSideDataProvider implements DataProvider {
 
     const { parentRowKey } = this.lastRequiredData;
 
-    data.contents.forEach((row) => {
+    data.contents.forEach(row => {
       this.dispatch('appendTreeRow', row, {
         parentRowKey
       });

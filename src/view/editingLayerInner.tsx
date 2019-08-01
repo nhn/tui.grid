@@ -123,7 +123,7 @@ export class EditingLayerInnerComp extends Component<Props> {
         style={styles}
         class={cls('layer-editing', 'cell-content', 'cell-content-editor')}
         onKeyDown={this.handleKeyDown}
-        ref={(el) => {
+        ref={el => {
           this.contentEl = el;
         }}
       />

@@ -51,7 +51,7 @@ function assertModifiedRowsContainsObject(type: string, obj: object) {
   cy.gridInstance()
     .invoke('getModifiedRows')
     .its(type)
-    .should((rows) => {
+    .should(rows => {
       expect(rows[0]).to.contain(obj);
     });
 }
@@ -60,16 +60,16 @@ function assertModifiedRowsNotContainsObject(type: string, obj: object) {
   cy.gridInstance()
     .invoke('getModifiedRows')
     .its(type)
-    .should((rows) => {
+    .should(rows => {
       expect(rows[0]).to.not.contain(obj);
     });
 }
 
 function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
-  const testData = (sortedData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
+  const testData = (sortedData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(testData[index]);
     });
@@ -78,9 +78,9 @@ function assertSortedData(columnName: string, ascending = true) {
 
 function assertPagingData(columnName: string, page = 1) {
   const pagingData = page === 1 ? sampleData.slice(0, 10) : sampleData.slice(10);
-  const testData = (pagingData as Dictionary<any>[]).map((sample) => String(sample[columnName]));
+  const testData = (pagingData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should(($el) => {
+  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(testData[index]);
     });
@@ -103,7 +103,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   runMockServer();
@@ -118,14 +118,14 @@ beforeEach(() => {
 });
 
 it('initialize grid with server side data', () => {
-  const testData = sampleData.map((sample) => String(sample.name));
+  const testData = sampleData.map(sample => String(sample.name));
   cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
     expect($el.text()).to.eql(testData[index]);
   });
 });
 
 it('render grid with server side data when calls readData method', () => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({
@@ -134,7 +134,7 @@ it('render grid with server side data when calls readData method', () => {
     useClientSort: false,
     pageOptions: { perPage: 10 }
   });
-  const testData = sampleData.map((sample) => String(sample.name));
+  const testData = sampleData.map(sample => String(sample.name));
 
   assertDataLength(0);
 
@@ -153,12 +153,14 @@ describe('sort()', () => {
   it('check useClient is false', () => {
     cy.gridInstance()
       .invoke('getSortState')
-      .should((sortState) => {
+      .should(sortState => {
         expect(sortState).to.eql({
-          columns: [{
-            columnName: 'sortKey',
-            ascending: true,
-          }],
+          columns: [
+            {
+              columnName: 'sortKey',
+              ascending: true
+            }
+          ],
           useClient: false
         });
       });
@@ -186,7 +188,7 @@ describe('sort()', () => {
   });
 
   it('server side data is sorted properly when moves page', () => {
-    cy.document().then((doc) => {
+    cy.document().then(doc => {
       doc.body.innerHTML = '';
     });
     cy.createGrid({

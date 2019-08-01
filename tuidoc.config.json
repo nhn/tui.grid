@@ -1,28 +1,28 @@
 {
-  "header" : {
-    "logo" : {
-      "src" : "https://uicdn.toast.com/toastui/img/tui-grid-bi-white.png"
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-grid-bi-white.png"
     },
-    "title" : {
-      "text" : "github",
-      "linkUrl" : "https://github.com/nhn/tui.grid"
+    "title": {
+      "text": "github",
+      "linkUrl": "https://github.com/nhn/tui.grid"
     }
   },
-  "footer" : [
+  "footer": [
     {
-      "title" : "NHN",
-      "linkUrl" : "https://github.com/nhn"
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhn"
     },
     {
-      "title" : "FE Development Lab",
-      "linkUrl" : "https://github.com/nhn/fe.javascript"
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhn/fe.javascript"
     }
   ],
-  "main" : {
-    "filePath" : "README.md"
+  "main": {
+    "filePath": "README.md"
   },
-  "api" : {
-    "filePath" : [
+  "api": {
+    "filePath": [
       "tmpdoc/grid.js",
       "tmpdoc/dataSource/gridAjax.js",
       "tmpdoc/event/gridEvent.js",
@@ -32,9 +32,9 @@
     ],
     "fileLink": false
   },
-  "examples" : {
-    "filePath" : "examples",
-    "titles" : {
+  "examples": {
+    "filePath": "examples",
+    "titles": {
       "example01-basic": "1. Basic",
       "example02-complex-columns": "2. Complex columns",
       "example03-custom-editor": "3. Custom Editor",
@@ -57,5 +57,5 @@
       "example20-validation": "20. Validation"
     }
   },
-  "pathPrefix" : "tui.grid"
+  "pathPrefix": "tui.grid"
 }

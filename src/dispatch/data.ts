@@ -120,7 +120,7 @@ export function setAllRowAttribute(
   attrName: keyof RowAttributes,
   value: RowAttributeValue
 ) {
-  data.rawData.forEach((row) => {
+  data.rawData.forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
       row._attributes[attrName] = value;
     }
@@ -134,7 +134,7 @@ export function setColumnValues(
   checkCellState = false
 ) {
   // @TODO Check Cell State
-  store.data.rawData.forEach((targetRow) => {
+  store.data.rawData.forEach(targetRow => {
     targetRow[columnName] = value;
   });
 }
@@ -344,7 +344,7 @@ export function removeRow(
 }
 
 export function clearData({ data, id, renderState }: Store) {
-  data.rawData.forEach((row) => {
+  data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
   data.rawData = [];
@@ -361,7 +361,7 @@ export function resetData(
 
   data.viewData = viewData;
   data.rawData = rawData;
-  rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
+  rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   renderState.state = getRenderState(rawData);
 
   // @TODO need to execute logic by condition
@@ -446,7 +446,7 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
   const { complexHeaderColumns, allColumnMap } = column;
 
-  Object.keys(columnsMap).forEach((columnName) => {
+  Object.keys(columnsMap).forEach(columnName => {
     const col = allColumnMap[columnName];
     if (col) {
       col.header = columnsMap[columnName];
@@ -499,7 +499,7 @@ export function createObservableData({ column, data, viewport }: Store, allRowRa
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
   // prevRows is needed to create rowSpan
-  const prevRows = targetIndexes.map((targetIndex) => data.rawData[targetIndex - 1]);
+  const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
   const { rawData, viewData } = createData(rows, column, false, prevRows);
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
@@ -512,7 +512,7 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
 function changeToObservableTreeData(column: Column, data: Data, originData: OriginData) {
   let { rows } = originData;
   const rootParentRow = getRootParentRow(data.rawData, rows[0]);
-  rows = rows.filter((row) => !row._attributes.tree || isNull(getParentRowKey(row)));
+  rows = rows.filter(row => !row._attributes.tree || isNull(getParentRowKey(row)));
 
   if (rootParentRow !== rows[0]) {
     rows.unshift(rootParentRow);

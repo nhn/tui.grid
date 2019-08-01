@@ -138,7 +138,7 @@ export function flattenTreeData(
 ) {
   const flattenedRows: Row[] = [];
 
-  data.forEach((row) => {
+  data.forEach(row => {
     const rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
 
     flattenedRows.push(rawRow);

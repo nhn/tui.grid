@@ -95,7 +95,7 @@ class HeaderAreaComp extends Component<Props> {
       <div
         class={cls('header-area')}
         style={headerHeightStyle}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       >

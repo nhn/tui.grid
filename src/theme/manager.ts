@@ -63,7 +63,7 @@ function buildCssString(options: OptPreset): string {
   const { area, cell } = options;
   const styles: string[] = [];
 
-  Object.keys(styleGenMethodMap).forEach((key) => {
+  Object.keys(styleGenMethodMap).forEach(key => {
     const keyWithType = key as KeyType;
     const value = options[keyWithType];
 
@@ -74,7 +74,7 @@ function buildCssString(options: OptPreset): string {
   });
 
   if (area) {
-    Object.keys(styleGenAreaMethodMap).forEach((key) => {
+    Object.keys(styleGenAreaMethodMap).forEach(key => {
       const keyWithType = key as AreaKeyType;
       const value = area[keyWithType];
 
@@ -86,7 +86,7 @@ function buildCssString(options: OptPreset): string {
   }
 
   if (cell) {
-    Object.keys(styleGenCellMethodMap).forEach((key) => {
+    Object.keys(styleGenCellMethodMap).forEach(key => {
       const keyWithType = key as CellKeyType;
       const value = cell[keyWithType];
 

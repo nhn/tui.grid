@@ -14,7 +14,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({
@@ -36,7 +36,7 @@ describe('row header API', () => {
   it('checkAll, uncheckAll', () => {
     cy.gridInstance().invoke('checkAll');
 
-    cy.get('input').should(($el) => {
+    cy.get('input').should($el => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.true;
       });
@@ -44,7 +44,7 @@ describe('row header API', () => {
 
     cy.gridInstance().invoke('uncheckAll');
 
-    cy.get('input').should(($el) => {
+    cy.get('input').should($el => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.false;
       });
@@ -57,7 +57,7 @@ describe('row header API', () => {
 
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
-      .should((result) => {
+      .should(result => {
         expect(isSubsetOf([0, 2], result)).to.be.true;
       });
   });
@@ -68,7 +68,7 @@ describe('row header API', () => {
 
     cy.gridInstance()
       .invoke('getCheckedRows')
-      .should((result) => {
+      .should(result => {
         expect(
           isSubsetOf(
             [{ rowKey: 0, name: 'Beautiful Lies' }, { rowKey: 2, name: 'Moves Like Jagger' }],

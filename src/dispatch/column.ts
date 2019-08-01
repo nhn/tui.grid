@@ -30,7 +30,7 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
       }),
     []
   );
-  const columnInfos = optColumns.map((optColumn) =>
+  const columnInfos = optColumns.map(optColumn =>
     createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
 
@@ -38,10 +38,10 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
   const { allColumnMap } = column;
   const { rawData } = data;
 
-  data.viewData.forEach((viewRow) => {
-    viewRow.__unobserveFns__.forEach((fn) => fn());
+  data.viewData.forEach(viewRow => {
+    viewRow.__unobserveFns__.forEach(fn => fn());
   });
-  data.viewData = rawData.map((row) => createViewRow(row, allColumnMap, rawData));
+  data.viewData = rawData.map(row => createViewRow(row, allColumnMap, rawData));
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {

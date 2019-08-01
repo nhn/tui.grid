@@ -84,7 +84,7 @@ class SliderRenderer implements CellRenderer {
     el.min = String(min);
     el.max = String(max);
 
-    el.addEventListener('mousedown', (ev) => {
+    el.addEventListener('mousedown', ev => {
       ev.stopPropagation();
     });
 

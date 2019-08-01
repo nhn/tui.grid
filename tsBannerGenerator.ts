@@ -16,7 +16,7 @@ fs.readFile(declareFilePath, 'utf8', (error, data) => {
   const declareRows = data.toString().split('\n');
   declareRows.splice(0, 2, tsBanner);
 
-  fs.writeFile(declareFilePath, declareRows.join('\n'), 'utf8', (error) => {
+  fs.writeFile(declareFilePath, declareRows.join('\n'), 'utf8', error => {
     if (error) {
       throw error;
     }

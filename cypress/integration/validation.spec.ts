@@ -7,7 +7,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -93,7 +93,7 @@ describe('get data that failed validation result by validate api', () => {
 
     cy.gridInstance()
       .invoke('validate')
-      .should((result) => {
+      .should(result => {
         expect(
           isSubsetOf(
             [{ errors: [{ columnName: 'name', errorCode: 'REQUIRED' }], rowKey: 0 }],

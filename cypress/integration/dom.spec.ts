@@ -5,7 +5,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -30,7 +30,7 @@ describe('getElement()', () => {
 });
 
 function createGridInHiddenParent(parentWidth: number, parentHeight: number, gridOptions: any) {
-  return cy.window().then((win) => {
+  return cy.window().then(win => {
     const window = win as any;
     const { document, tui } = window;
     const parentEl = document.createElement('div');
@@ -45,7 +45,7 @@ function createGridInHiddenParent(parentWidth: number, parentHeight: number, gri
 
     window.grid = new tui.Grid({ el, ...gridOptions });
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         parentEl.style.display = 'block';
         resolve();
@@ -69,7 +69,7 @@ describe('refreshLayout()', () => {
       .invoke('width')
       .should('to.eq', 817);
 
-    cy.get(`.${cls('rside-area')}`).within(($el) => {
+    cy.get(`.${cls('rside-area')}`).within($el => {
       const headerAreaHeight = $el.find(`.${cls('header-area')}`).height()!;
       const bodyAreaHeight = $el.find(`.${cls('body-area')}`).height()!;
 

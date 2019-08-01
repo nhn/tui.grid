@@ -49,7 +49,7 @@ class BodyRowComp extends Component<Props> {
           style={{ height: rowHeight }}
           class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [!rowHeight, 'row-hidden'])}
         >
-          {columns.map((columnInfo) => {
+          {columns.map(columnInfo => {
             // Pass row object directly instead of passing value of it only,
             // so that BodyCell component can watch the change of value using selector function.
             return (

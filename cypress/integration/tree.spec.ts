@@ -28,7 +28,7 @@ function assertModifiedRowsLength(type: ModifiedType, length: number) {
 }
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 
@@ -437,7 +437,7 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance()
         .invoke('getChildRows', 0)
-        .then((rows) => {
+        .then(rows => {
           const { rowKey } = rows[rows.length - 1];
           assertInsertedRow(rowKey);
         });
@@ -451,7 +451,7 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance()
         .invoke('getChildRows', 0)
-        .then((rows) => {
+        .then(rows => {
           const { rowKey } = rows[0];
           assertInsertedRow(rowKey);
         });
@@ -466,7 +466,7 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance()
         .invoke('getChildRows', 0)
-        .then((rows) => {
+        .then(rows => {
           const { rowKey } = rows[1];
           assertInsertedRow(rowKey);
         });
@@ -512,7 +512,7 @@ describe('removeTreeRow()', () => {
   it('removes all descendant rows.', () => {
     cy.gridInstance()
       .invoke('getDescendantRows', 2)
-      .then((rows) => {
+      .then(rows => {
         rows.forEach(({ rowKey }: Row) => {
           cy.getCell(rowKey, 'c1')
             .its('length')
@@ -524,7 +524,7 @@ describe('removeTreeRow()', () => {
 
     cy.gridInstance()
       .invoke('getDescendantRows', 2)
-      .then((rows) => {
+      .then(rows => {
         rows.forEach(({ rowKey }: Row) => {
           cy.getCell(rowKey, 'c1').should('not.exist');
         });

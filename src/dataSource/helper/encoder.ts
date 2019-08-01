@@ -41,7 +41,7 @@ function encodeFormData(key: string, value: any, hasBody: boolean) {
       encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
     }
   } else if (isObject(value)) {
-    Object.keys(value).forEach((subKey) => {
+    Object.keys(value).forEach(subKey => {
       const valueWithType = value as Dictionary<any>;
       const encodedData = getEncodedData(key, subKey, valueWithType, hasBody);
       encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
