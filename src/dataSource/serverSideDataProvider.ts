@@ -11,7 +11,9 @@ import {
 import { Store, Dictionary, Row, RowKey } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
-import { isUndefined, isObject } from '../helper/common';
+import { removeExpandedAttr } from '../dispatch/tree';
+import { getChildRowKeys } from '../helper/tree';
+import { isUndefined, isObject, findProp } from '../helper/common';
 import GridAjax from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
@@ -84,11 +86,34 @@ class ServerSideDataProvider implements DataProvider {
     this.dispatch('setPagination', data.pagination);
   };
 
+  private handleSuccessReadTreeData = (response: Response) => {
+    const { result, data } = response;
+
+    if (!result || isUndefined(data)) {
+      return;
+    }
+
+    const { parentRowKey } = this.lastRequiredData;
+
+    data.contents.forEach(row => {
+      this.dispatch('appendTreeRow', row, {
+        parentRowKey
+      });
+    });
+
+    const row = findProp('rowKey', parentRowKey, this.store.data.rawData);
+
+    if (row && !getChildRowKeys(row).length) {
+      removeExpandedAttr(row);
+    }
+  };
+
   public readData(page: number, data = {}, resetData = false) {
     if (!this.api) {
       return;
     }
     const { api, withCredentials } = this;
+    const { treeColumnName } = this.store.column;
     const { perPage } = this.store.data.pageOptions;
     const { method, url } = api.readData;
     const dataWithType = data as Params;
@@ -96,13 +121,21 @@ class ServerSideDataProvider implements DataProvider {
     const params = resetData
       ? { perPage, ...dataWithType, page }
       : { ...this.lastRequiredData, ...dataWithType, page };
+    let handleSuccessReadData = this.handleSuccessReadData;
+
+    if (treeColumnName && !isUndefined(dataWithType.parentRowKey)) {
+      handleSuccessReadData = this.handleSuccessReadTreeData;
+      delete params.page;
+      delete params.perPage;
+    }
+
     this.lastRequiredData = params;
 
     const request = new GridAjax({
       method,
       url,
       params,
-      callback: this.handleSuccessReadData,
+      callback: handleSuccessReadData,
       callbackWhenever: () => this.dispatch('setRenderState', 'DONE'),
       withCredentials,
       eventBus: getEventBus(this.store.id)

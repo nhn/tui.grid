@@ -35,7 +35,7 @@ function createDataWithRowSpanAttr(): OptRow[] {
 function assertRowSpanData(rowKey: RowKey, columnName: string, rowSpan: RowSpan) {
   cy.gridInstance()
     .invoke('getRowSpanData', rowKey, columnName)
-    .should((rowSpanData) => {
+    .should(rowSpanData => {
       expect(rowSpanData).to.contain(rowSpan);
     });
 }
@@ -45,7 +45,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
   const data = createDataWithRowSpanAttr();

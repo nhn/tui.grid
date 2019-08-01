@@ -9,7 +9,7 @@ interface RowCoordsOption {
 
 export function getRowHeight(row: Row, defaultRowHeight: number) {
   const { height, tree } = row._attributes;
-  const rowHeight = tree && tree.hiddenChild ? 0 : height;
+  const rowHeight = tree && tree.hidden ? 0 : height;
 
   return isNumber(rowHeight) ? rowHeight : defaultRowHeight;
 }
@@ -18,7 +18,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
   const { rowHeight } = dimension;
 
   return observable({
-    heights: data.rawData.map((row) => getRowHeight(row, rowHeight)),
+    heights: data.rawData.map(row => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];

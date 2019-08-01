@@ -9,6 +9,7 @@ import * as summary from './summary';
 import * as selection from './selection';
 import * as renderState from './renderState';
 import * as tree from './tree';
+import * as sort from './sort';
 import { Store } from '../store/types';
 
 const dispatchMap = {
@@ -22,7 +23,8 @@ const dispatchMap = {
   ...summary,
   ...selection,
   ...renderState,
-  ...tree
+  ...tree,
+  ...sort
 };
 
 type DispatchMap = typeof dispatchMap;

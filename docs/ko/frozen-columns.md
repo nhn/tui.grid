@@ -43,7 +43,7 @@ Grid.applyTheme('striped', {
 
 ## setFrozenColumnCount()
 
-`setFrozenColumnCount` 메서드를 통해 Grid의 고정 럼 수를 변경할 수 있다.
+`setFrozenColumnCount` 메서드를 통해 Grid의 고정 컬럼 수를 변경할 수 있다.
 
 ```js
 const grid = new Grid({

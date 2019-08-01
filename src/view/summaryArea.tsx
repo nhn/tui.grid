@@ -43,7 +43,7 @@ class SummaryAreaComp extends Component<Props> {
         <div
           class={cls('summary-area')}
           onScroll={this.handleScroll}
-          ref={(el) => {
+          ref={el => {
             this.el = el;
           }}
         >

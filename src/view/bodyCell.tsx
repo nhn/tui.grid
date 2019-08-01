@@ -71,7 +71,12 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
+    if (
+      (this.props.renderData !== nextProps.renderData ||
+        this.props.disabled !== nextProps.disabled) &&
+      this.renderer &&
+      this.renderer.render
+    ) {
       const {
         grid,
         rowKey,
@@ -162,7 +167,7 @@ export class BodyCellComp extends Component<Props> {
           <div
             class={cls('tree-wrapper-valign-center')}
             style={{ paddingLeft: treeInfo.indentWidth }}
-            ref={(el) => {
+            ref={el => {
               this.el = el;
             }}
           >
@@ -176,7 +181,7 @@ export class BodyCellComp extends Component<Props> {
         {...rowSpanAttr}
         style={style}
         class={classNames}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
         onMouseDown={() => this.handleMouseDown(name, rowKey)}

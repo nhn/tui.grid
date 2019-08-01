@@ -1,6 +1,6 @@
 import { Store } from './types';
 import { OptGrid } from '../types';
-import { observable, observe } from '..//helper/observable';
+import { observable, observe } from '../helper/observable';
 import { create as createData } from './data';
 import { create as createColumn } from './column';
 import { create as createDimension, setBodyHeight } from './dimension';
@@ -11,6 +11,7 @@ import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
+import { createObservableData } from '../dispatch/data';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -34,7 +35,8 @@ export function createStore(id: number, options: OptGrid): Store {
     useClientSort = true,
     pageOptions = {},
     treeColumnOptions = { name: '' },
-    header = {}
+    header = {},
+    disabled = false
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
@@ -52,7 +54,8 @@ export function createStore(id: number, options: OptGrid): Store {
     Array.isArray(options.data) ? options.data : [],
     column,
     pageOptions,
-    useClientSort
+    useClientSort,
+    disabled
   );
   const dimension = createDimension({
     column,
@@ -85,12 +88,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
   const renderState = createRenderState(data);
 
-  // manual observe to resolve circular references
-  observe(() => {
-    setBodyHeight(dimension, rowCoords);
-  });
-
-  return observable({
+  const store = observable({
     id,
     data,
     column,
@@ -103,4 +101,14 @@ export function createStore(id: number, options: OptGrid): Store {
     selection,
     renderState
   });
+  // manual observe to resolve circular references
+  observe(() => {
+    setBodyHeight(dimension, rowCoords);
+  });
+  // makes the data observable as changes viewport
+  observe(() => {
+    createObservableData(store);
+  });
+
+  return store;
 }

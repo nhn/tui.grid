@@ -38,12 +38,12 @@ export function copyDataToRange(range: SelectionRange, pasteData: string[][]) {
   const result = [...pasteData];
 
   for (let i = 0; i < rowDupCount; i += 1) {
-    pasteData.forEach((row) => {
+    pasteData.forEach(row => {
       result.push(row.slice(0));
     });
   }
 
-  result.forEach((row) => {
+  result.forEach(row => {
     const rowData = row.slice(0);
 
     for (let i = 0; i < colDupCount; i += 1) {

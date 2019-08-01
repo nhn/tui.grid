@@ -79,6 +79,15 @@ There are other events that can be used when using `DataSource`.
 - `failResponse` : After the `response` event, if the `response.result` is `false`
 - `errorResponse` : After the `response` event, if the response is Error
 
+<<<<<<< HEAD
+=======
+Also, the following events are available when the tree column is enabled.
+
+- `expand` : When the expand / collapse button is changed to the expanded state by clicking or calling the `expand()` and `expandAll()` methods.
+- `collapse` : When the expand / collapse button is changed to the collapsed state by clicking or calling the `collapse()` and `collapseAll()` methods.
+
+
+>>>>>>> master
 You can see the detail information of these events at the [API page](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest).
 
 ## Example

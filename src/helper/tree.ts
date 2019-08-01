@@ -2,7 +2,13 @@ import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
 import { observable, observe, notify } from './observable';
-import { includes, findProp, removeArrayItem, isNull } from './common';
+import { includes, findProp, removeArrayItem, isNull, isUndefined } from './common';
+
+interface TreeDataOptions {
+  keyColumnName?: string;
+  lazyObservable?: boolean;
+  offset?: number;
+}
 
 export const DEFAULT_INDENT_WIDTH = 22;
 
@@ -15,12 +21,19 @@ function generateTreeRowKey() {
   return treeRowKey;
 }
 
-export function addChildRowKey(row: Row, rowKey: RowKey) {
+function addChildRowKey(row: Row, rowKey: RowKey) {
   const { tree } = row._attributes;
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.push(rowKey);
-    notify(tree, 'childRowKeys');
+  }
+}
+
+function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
+  const { tree } = row._attributes;
+
+  if (tree && !includes(tree.childRowKeys, rowKey)) {
+    tree.childRowKeys.splice(offset, 0, rowKey);
   }
 }
 
@@ -48,77 +61,71 @@ export function getChildRowKeys(row: Row) {
 export function isLeaf(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && !tree.childRowKeys.length;
+  return !!tree && !tree.childRowKeys.length && isUndefined(tree.expanded);
 }
 
 export function isExpanded(row: Row) {
   const { tree } = row._attributes;
 
-  return !!tree && tree.expanded;
+  return !!(tree && tree.expanded);
 }
 
-export function getDepth(rawData: Row[], row: Row) {
-  let parentRow: Row | undefined = row;
+function isHidden(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!(tree && tree.hidden);
+}
+
+export function isRootChildRow(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!tree && isNull(tree.parentRowKey);
+}
+
+export function getDepth(rawData: Row[], row?: Row) {
+  let parentRow = row;
   let depth = 0;
 
   do {
     depth += 1;
-    parentRow = findProp('rowKey', getParentRowKey(parentRow), rawData);
+    parentRow = findProp('rowKey', getParentRowKey(parentRow!), rawData);
   } while (parentRow);
 
   return depth;
-}
-
-function hasChildrenState(row: OptRow) {
-  const { _children } = row;
-
-  return Array.isArray(_children) && _children.length > 0;
-}
-
-function getExpandedState(row: OptRow) {
-  if (row && row._attributes) {
-    const { expanded = false } = row._attributes;
-
-    return expanded;
-  }
-
-  return false;
-}
-
-export function getHiddenChildState(row: Row) {
-  if (row) {
-    const { tree } = row._attributes;
-    const collapsed = !isExpanded(row);
-    const hiddenChild = !!(tree && tree.hiddenChild);
-
-    return collapsed || hiddenChild;
-  }
-
-  return false;
 }
 
 function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string
+  options = { lazyObservable: false } as TreeDataOptions
 ) {
-  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, keyColumnName);
+  const { keyColumnName, offset, lazyObservable = false } = options;
+  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, {
+    keyColumnName,
+    lazyObservable
+  });
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
-    childRowKeys: []
+    childRowKeys: [],
+    hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false
   };
 
   if (parentRow) {
-    addChildRowKey(parentRow, rowKey);
+    if (!isUndefined(offset)) {
+      insertChildRowKey(parentRow, rowKey, offset);
+    } else {
+      addChildRowKey(parentRow, rowKey);
+    }
   }
 
-  rawRow._attributes.tree = observable({
+  const tree = {
     ...defaultAttributes,
-    ...(hasChildrenState(row) && { expanded: getExpandedState(row) }),
-    ...(!!parentRow && { hiddenChild: getHiddenChildState(parentRow) })
-  });
+    ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
+  };
+
+  rawRow._attributes.tree = lazyObservable ? tree : observable(tree);
 
   return rawRow;
 }
@@ -127,20 +134,19 @@ export function flattenTreeData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string
+  options: TreeDataOptions
 ) {
   const flattenedRows: Row[] = [];
 
-  data.forEach((row) => {
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName);
+  data.forEach(row => {
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
 
     flattenedRows.push(rawRow);
 
-    if (hasChildrenState(row)) {
-      flattenedRows.push(
-        ...flattenTreeData(row._children || [], defaultValues, rawRow, keyColumnName)
-      );
-      delete rawRow._children;
+    if (Array.isArray(row._children)) {
+      if (row._children.length) {
+        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
+      }
     }
   });
 
@@ -150,11 +156,12 @@ export function flattenTreeData(
 export function createTreeRawData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
-  keyColumnName?: string
+  keyColumnName?: string,
+  lazyObservable = false
 ) {
   treeRowKey = -1;
 
-  return flattenTreeData(data, defaultValues, null, keyColumnName);
+  return flattenTreeData(data, defaultValues, null, { keyColumnName, lazyObservable });
 }
 
 export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
@@ -173,13 +180,21 @@ export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
   };
 }
 
-export function createTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
-  const treeInfo = observable(getTreeCellInfo(rawData, row, useIcon));
+export function createTreeCellInfo(
+  rawData: Row[],
+  row: Row,
+  useIcon?: boolean,
+  lazyObservable = false
+) {
+  const treeCellInfo = getTreeCellInfo(rawData, row, useIcon);
+  const treeInfo = lazyObservable ? treeCellInfo : observable(treeCellInfo);
 
-  observe(() => {
-    treeInfo.expanded = isExpanded(row);
-    treeInfo.leaf = isLeaf(row);
-  });
+  if (!lazyObservable) {
+    observe(() => {
+      treeInfo.expanded = isExpanded(row);
+      treeInfo.leaf = isLeaf(row);
+    });
+  }
 
   return treeInfo;
 }
@@ -211,4 +226,18 @@ export function traverseDescendantRows(rawData: Row[], row: Row, iteratee: Funct
       childRowKeys = childRowKeys.concat(getChildRowKeys(childRow));
     }
   }
+}
+
+export function getRootParentRow(rawData: Row[], row: Row) {
+  let rootParentRow = row;
+
+  do {
+    const parentRow = findProp('rowKey', getParentRowKey(rootParentRow!), rawData);
+    if (!parentRow) {
+      break;
+    }
+    rootParentRow = parentRow;
+  } while (rootParentRow);
+
+  return rootParentRow;
 }

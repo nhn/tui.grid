@@ -1,7 +1,7 @@
 import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './types';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
-import { enableRowSpan, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
+import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
 
 interface FocusOption {
   data: Data;
@@ -82,7 +82,7 @@ export function create({
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, rawData);
 
-      if (enableRowSpan(sortOptions.columnName) && rowSpan) {
+      if (isRowSpanEnabled(sortOptions) && rowSpan) {
         const verticalPos = getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, rawData);
         return { left, right, top: verticalPos[0], bottom: verticalPos[1] };
       }

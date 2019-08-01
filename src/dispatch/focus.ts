@@ -1,18 +1,31 @@
 import { Store, RowKey, Focus, Data } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellDisabled } from '../query/data';
+import { isCellEditable } from '../query/data';
 import { isFocusedCell } from '../query/focus';
-import { getRowSpanByRowKey, enableRowSpan } from '../helper/rowSpan';
+import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
+import { findPropIndex } from '../helper/common';
+import { createRawRow, createViewRow } from '../store/data';
+import { isObservable } from '../helper/observable';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column } = store;
+  const { rawData, viewData } = data;
+  const { allColumnMap } = column;
+  const foundIndex = findPropIndex('rowKey', rowKey, rawData);
+  const rawRow = rawData[foundIndex];
 
-  if (isCellDisabled(data, rowKey, columnName) || !isFocusedCell(focus, rowKey, columnName)) {
+  // makes the data observable to judge editable, disable of the cell;
+  if (!isObservable(rawRow)) {
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
+  }
+
+  if (!isCellEditable(data, rowKey, columnName)) {
     return;
   }
 
-  const columnInfo = column.allColumnMap[columnName];
+  const columnInfo = allColumnMap[columnName];
   if (columnInfo && columnInfo.editor) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
@@ -66,7 +79,7 @@ export function changeFocus(
   if (!gridEvent.isStopped()) {
     let focusRowKey = rowKey;
 
-    if (rowKey && columnName && enableRowSpan(sortOptions.columnName)) {
+    if (rowKey && columnName && isRowSpanEnabled(sortOptions)) {
       const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
       if (rowSpan) {
         focusRowKey = rowSpan.mainRowKey;

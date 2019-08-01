@@ -137,7 +137,7 @@ const columnsWithCustomValueFunc = [
     name: 'artist',
     editor: 'text',
     copyOptions: {
-      customValue: (value) => `${value}${value}`
+      customValue: value => `${value}${value}`
     }
   },
   {
@@ -156,7 +156,7 @@ const columnsWithCustomValueFunc = [
   {
     name: 'genre',
     copyOptions: {
-      customValue: (value) => `Genre is ${value}.`
+      customValue: value => `Genre is ${value}.`
     }
   },
   { name: 'genreCode', editor: 'text' },

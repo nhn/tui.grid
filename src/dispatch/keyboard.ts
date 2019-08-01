@@ -4,8 +4,9 @@ import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
-import { getRowRangeWithRowSpan, enableRowSpan } from '../helper/rowSpan';
+import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../helper/rowSpan';
 import { getSortedRange } from '../helper/selection';
+import { isCellEditable } from '../query/data';
 
 function getNextCellIndexWithRowSpan(
   store: Store,
@@ -53,20 +54,16 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function editFocus({ column, focus }: Store, command: KeyboardEventCommandType) {
+export function editFocus({ focus, data }: Store, command: KeyboardEventCommandType) {
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
     return;
   }
 
-  if (command === 'currentCell') {
-    const columnInfo = column.allColumnMap[columnName];
-
-    if (columnInfo && columnInfo.editor) {
-      focus.navigating = false;
-      focus.editingAddress = { rowKey, columnName };
-    }
+  if (command === 'currentCell' && isCellEditable(data, rowKey, columnName)) {
+    focus.navigating = false;
+    focus.editingAddress = { rowKey, columnName };
   }
 }
 
@@ -107,7 +104,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (enableRowSpan(sortOptions.columnName)) {
+    if (isRowSpanEnabled(sortOptions)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,
@@ -164,7 +161,7 @@ export function removeContent(store: Store) {
     .slice(columnStart, columnEnd + 1)
     .filter(({ editor }) => !!editor)
     .forEach(({ name }) => {
-      rawData.slice(rowStart, rowEnd + 1).forEach((row) => {
+      rawData.slice(rowStart, rowEnd + 1).forEach(row => {
         row[name] = '';
       });
     });

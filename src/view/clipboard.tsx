@@ -218,7 +218,7 @@ class ClipboardComp extends Component<Props> {
         onCopy={this.onCopy}
         onPaste={this.onPaste}
         contentEditable={true}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       />

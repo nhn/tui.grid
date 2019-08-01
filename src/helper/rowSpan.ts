@@ -1,4 +1,13 @@
-import { Data, ColumnInfo, RowSpan, RowKey, Row, RowCoords, Range } from '../store/types';
+import {
+  Data,
+  ColumnInfo,
+  RowSpan,
+  RowKey,
+  Row,
+  RowCoords,
+  Range,
+  SortOptions
+} from '../store/types';
 import { findPropIndex, isEmpty, findProp, isNull } from './common';
 import { getSortedRange } from './selection';
 
@@ -84,7 +93,7 @@ export function getRowRangeWithRowSpan(
   rowIndex: number | null,
   data: Data
 ): Range {
-  if (enableRowSpan(data.sortOptions.columnName)) {
+  if (isRowSpanEnabled(data.sortOptions)) {
     return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
   }
 
@@ -165,8 +174,8 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
   );
 }
 
-export function enableRowSpan(columnName: string) {
-  return columnName === 'rowKey';
+export function isRowSpanEnabled(sortOptions: SortOptions) {
+  return sortOptions.columns[0].columnName === 'sortKey';
 }
 
 export function createRowSpan(
@@ -200,7 +209,7 @@ export function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRow
     return;
   }
 
-  Object.keys(prevRowSpanMap).forEach((columnName) => {
+  Object.keys(prevRowSpanMap).forEach(columnName => {
     const prevRowSpan = prevRowSpanMap[columnName];
     if (prevRowSpan) {
       const { count, mainRow: keyRow, mainRowKey } = prevRowSpan;
@@ -231,7 +240,7 @@ export function updateRowSpanWhenRemove(
     return;
   }
 
-  Object.keys(removedRowSpanMap).forEach((columnName) => {
+  Object.keys(removedRowSpanMap).forEach(columnName => {
     const removedRowSpan = removedRowSpanMap[columnName];
     const { count, mainRow: keyRow, mainRowKey } = removedRowSpan;
     let mainRow: Row, spanCount: number;

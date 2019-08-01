@@ -14,7 +14,7 @@
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
 
-module.exports = (on) => {
+module.exports = (on, config) => {
   const options = {
     webpackOptions: {
       resolve: {
@@ -29,7 +29,10 @@ module.exports = (on) => {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'ts-loader'
+            loader: 'awesome-typescript-loader',
+            options: {
+              configFileName: './cypress/tsconfig.json'
+            }
           }
         ]
       }

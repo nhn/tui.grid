@@ -34,6 +34,7 @@ export interface Dictionary<T> {
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
+  sortKey: number;
   rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
 };
@@ -91,6 +92,8 @@ export interface CellRenderData {
 
 export interface ViewRow {
   rowKey: RowKey;
+  rowSpanMap: RowSpanMap;
+  sortKey: number;
   valueMap: Dictionary<CellRenderData>;
   treeInfo?: TreeCellInfo;
   __unobserveFns__: Function[];
@@ -130,7 +133,7 @@ export interface TreeRowInfo {
   parentRowKey: RowKey | null;
   childRowKeys: RowKey[];
   expanded?: boolean;
-  hiddenChild?: boolean;
+  hidden: boolean;
 }
 
 export interface TreeCellInfo {
@@ -195,10 +198,14 @@ export interface ColumnInfo {
   ignored?: boolean;
 }
 
-export interface SortOptions {
+export interface SortedColumn {
   columnName: string;
   ascending: boolean;
+}
+
+export interface SortOptions {
   useClient: boolean;
+  columns: SortedColumn[];
 }
 
 interface DataForColumnCreation {
@@ -370,6 +377,7 @@ export interface Selection {
   readonly range: SelectionRange | null;
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
+  readonly rangeWithRowHeader: SelectionRange | null;
 }
 
 export interface RenderState {

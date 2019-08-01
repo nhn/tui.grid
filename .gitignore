@@ -1,6 +1,9 @@
 # npm
 node_modules
 
+# Production
+dist
+
 # Window
 Thumbs.db
 Desktop.ini
@@ -10,3 +13,6 @@ Desktop.ini
 
 # tui-doc
 tmpdoc
+
+# cypress
+cypress/screenshots

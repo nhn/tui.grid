@@ -7,6 +7,7 @@ import {
   OptAppendRow,
   OptPrependRow,
   OptRemoveRow,
+  OptAppendTreeRow,
   OptColumn,
   OptHeader
 } from './types';
@@ -146,11 +147,11 @@ if ((module as any).hot) {
  *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
  *              will be checked to be not empty.
  *          @param {number|string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
- *              Avilable types are 'string' and 'number'.
+ *              Available types are 'string' and 'number'.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
  *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
- *              The retrurn value of the function will be shown as the value of the cell. If set to 'listItemText',
+ *              The return value of the function will be shown as the value of the cell. If set to 'listItemText',
  *              the value will be shown the text.
  *          @param {boolean} [options.columns.useHtmlEntity=true] - If set to true, the value of the cell
  *              will be encoded as HTML entities.
@@ -204,7 +205,7 @@ if ((module as any).hot) {
  *              If type is string, the value is used as HTML of summary cell for every columns
  *              without auto-calculation.
  *              @param {boolean} [options.summary.defaultContent.useAutoSummary=true]
- *                  If set to true, the summary value of every column is served as a paramater to the template
+ *                  If set to true, the summary value of every column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.defaultContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -215,7 +216,7 @@ if ((module as any).hot) {
  *              If type of value of this object is string, the value is used as HTML of summary cell for
  *              the column without auto-calculation.
  *              @param {boolean} [options.summary.columnContent.useAutoSummary=true]
- *                  If set to true, the summary value of each column is served as a paramater to the template
+ *                  If set to true, the summary value of each column is served as a parameter to the template
  *                  function whenever data is changed.
  *              @param {function} [options.summary.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the summary. This function takes an K-V object as a parameter
@@ -451,7 +452,7 @@ export default class Grid {
 
   /**
    * Sets the height of body-area.
-   * @param {number} value - The number of pixel
+   * @param {number} bodyHeight - The number of pixel
    */
   public setBodyHeight(bodyHeight: number) {
     this.dispatch('setBodyHeight', bodyHeight);
@@ -604,11 +605,13 @@ export default class Grid {
    * @param {string} value - The value of editing result
    */
   public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const sortOptions = this.store.data.sortOptions;
+    const { columns } = this.store.data.sortOptions;
     this.dispatch('setValue', rowKey, columnName, value);
 
-    if (sortOptions.columnName === columnName) {
-      this.dispatch('sort', columnName, sortOptions.ascending);
+    const index = findPropIndex('columnName', columnName, columns);
+
+    if (index !== -1) {
+      this.dispatch('sort', columnName, columns[index].ascending);
     }
 
     this.dispatch('finishEditing', rowKey, columnName);
@@ -632,7 +635,7 @@ export default class Grid {
    * @returns {number|string} - The value of the cell
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
-    const targetRow = this.store.data.rawData.find((row) => row.rowKey === rowKey);
+    const targetRow = findProp('rowKey', rowKey, this.store.data.rawData);
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
     if (targetRow) {
@@ -708,7 +711,7 @@ export default class Grid {
   public getColumns() {
     return this.store.column.allColumns
       .filter(({ name }) => !isRowHeader(name))
-      .map((column) => getOriginObject(column as Observable<ColumnInfo>));
+      .map(column => getOriginObject(column as Observable<ColumnInfo>));
   }
 
   /**
@@ -805,7 +808,7 @@ export default class Grid {
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
-    return getCheckedRows(this.store).map((row) => getOriginObject(row as Observable<Row>));
+    return getCheckedRows(this.store).map(row => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -832,22 +835,23 @@ export default class Grid {
    * @param {string} columnName - The name of the column to be used to compare the rows
    * @param {boolean} [ascending] - Whether the sort order is ascending.
    *        If not specified, use the negative value of the current order.
+   * @param {boolean} [multiple] - Whether using multiple sort
    */
-  public sort(columnName: string, ascending: boolean) {
-    this.dispatch('sort', columnName, ascending);
+  public sort(columnName: string, ascending: boolean, multiple?: boolean) {
+    this.dispatch('sort', columnName, ascending, multiple, false);
   }
 
   /**
-   * Unsorts all rows. (Sorts by rowKey).
+   * If the parameter exists, unsort only column with columnName. If not exist, unsort all rows
+   * @param {string} [columnName] - The name of the column to be used to compare the rows
    */
-  public unsort() {
-    // @TODO need to multi sort(rowSpan mainkey, rowKey) for rowSpan
-    this.dispatch('sort', 'rowKey', true);
+  public unsort(columnName?: string) {
+    this.dispatch('unsort', columnName);
   }
 
   /**
    * Gets state of the sorted column in rows
-   * @returns {{columnName: string, ascending: boolean, useClient: boolean}} Sorted column's state
+   * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
     return this.store.data.sortOptions;
@@ -933,7 +937,7 @@ export default class Grid {
   }
 
   /**
-   * Disables the row identified by the spcified rowKey to not be able to check.
+   * Disables the row identified by the specified rowKey to not be able to check.
    * @param {number|string} rowKey - The unique keyof the row.
    */
   public disableRowCheck(rowKey: RowKey) {
@@ -948,7 +952,7 @@ export default class Grid {
     this.dispatch('setRowCheckDisabled', false, rowKey);
   }
 
-  /*
+  /**
    * Inserts the new row with specified data to the end of table.
    * @param {Object} [row] - The data for the new row
    * @param {Object} [options] - Options
@@ -956,14 +960,13 @@ export default class Grid {
    * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
    *        has a rowspan data, the new row will extend the existing rowspan data.
    * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
-   * @param {(Number|String)} [options.parentRowKey] - Tree row key of the parent which appends given rows
-   * @param {number} [options.offset] - Tree offset from first sibling
+   * @param {number|string} [options.parentRowKey] - Deprecated: Tree row key of the parent which appends given rows
    */
   public appendRow(row: OptRow = {}, options: OptAppendRow = {}) {
     const { treeColumnName } = this.store.column;
 
     if (treeColumnName) {
-      this.dispatch('appendTreeRow', row, options);
+      this.dispatch('appendTreeRow', row, { offset: options.at });
     } else {
       this.dispatch('appendRow', row, options);
     }
@@ -995,7 +998,7 @@ export default class Grid {
     const { treeColumnName } = this.store.column;
 
     if (treeColumnName) {
-      this.dispatch('removeTreeRow', rowKey, options);
+      this.removeTreeRow(rowKey);
     } else {
       this.dispatch('removeRow', rowKey, options);
     }
@@ -1034,7 +1037,7 @@ export default class Grid {
    * @returns {Array} - A list of all rows
    */
   public getData() {
-    return this.store.data.rawData.map((row) => getOriginObject(row as Observable<Row>));
+    return this.store.data.rawData.map(row => getOriginObject(row as Observable<Row>));
   }
 
   /**
@@ -1195,6 +1198,51 @@ export default class Grid {
     this.resetData(this.dataManager.getOriginData());
   }
 
+  /*
+   * Inserts the new tree row with specified data.
+   * @param {Object} [row] - The tree data for the new row
+   * @param {Object} [options] - Options
+   * @param {number|string} [options.parentRowKey] - Tree row key of the parent which appends given rows
+   * @param {number} [options.offset] - The offset value to insert new tree row
+   * @param {boolean} [options.focus] - If set to true, move focus to the new tree row after appending
+   */
+  public appendTreeRow(row: OptRow = {}, options: OptAppendTreeRow = {}) {
+    const { treeColumnName } = this.store.column;
+    const { parentRowKey } = options;
+
+    if (!treeColumnName || isUndefined(parentRowKey)) {
+      return;
+    }
+
+    this.dispatch('appendTreeRow', row, options);
+
+    if (options.focus) {
+      const { offset } = options;
+      const childRows = getChildRows(this.store, parentRowKey!);
+
+      if (childRows.length) {
+        const { rowKey } = isUndefined(offset)
+          ? childRows[childRows.length - 1]
+          : childRows[offset];
+        const rowIdx = this.getIndexOfRow(rowKey);
+
+        this.focusAt(rowIdx, 0);
+      }
+    }
+  }
+
+  /**
+   * Removes the tree row identified by the specified rowKey.
+   * @param {number|string} rowKey - The unique key of the row
+   */
+  public removeTreeRow(rowKey: RowKey) {
+    const { treeColumnName } = this.store.column;
+
+    if (treeColumnName) {
+      this.dispatch('removeTreeRow', rowKey);
+    }
+  }
+
   /**
    * Expands tree row.
    * @param {number|string} rowKey - The unique key of the row
@@ -1302,7 +1350,7 @@ export default class Grid {
     const confirmMessage = getConfirmMessage('DELETE', rowKeys.length);
 
     if (rowKeys.length > 0 && (!showConfirm || confirm(confirmMessage))) {
-      rowKeys.forEach((rowKey) => {
+      rowKeys.forEach(rowKey => {
         this.removeRow(rowKey);
       });
 
@@ -1313,7 +1361,7 @@ export default class Grid {
   }
 
   /**
-   * Refreshs the layout view. Use this method when the view was rendered while hidden.
+   * Refresh the layout view. Use this method when the view was rendered while hidden.
    */
   public refreshLayout() {
     const containerEl = this.el.querySelector(`.${cls('container')}`) as HTMLElement;

@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
@@ -39,9 +39,10 @@
     "@types/node": "^12.0.0",
     "@types/webpack-env": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "awesome-typescript-loader": "^5.2.1",
     "core-js": "^3.0.1",
     "css-loader": "^2.1.1",
-    "cypress": "^3.2.0",
+    "cypress": "^3.4.0",
     "cypress-promise": "^1.0.2",
     "eslint": "^5.15.0",
     "eslint-config-prettier": "^4.1.0",
@@ -55,7 +56,6 @@
     "prettier": "^1.16.4",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.3",
-    "ts-loader": "^5.4.5",
     "typescript": "^3.4.5",
     "utility-types": "^3.4.1",
     "webpack": "^4.29.6",

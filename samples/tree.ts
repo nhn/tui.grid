@@ -28,7 +28,8 @@ export const data = [
         grade: '5',
         price: 6000,
         downloadCount: 1000,
-        listenCount: 5000
+        listenCount: 5000,
+        _children: []
       },
       {
         id: 491379,

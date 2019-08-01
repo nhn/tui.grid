@@ -14,5 +14,5 @@ export function isCheckboxColumn(columnName: string) {
 }
 
 export function isParentColumnHeader(complexHeaderColumns: ComplexColumnInfo[], name: string) {
-  return !!complexHeaderColumns.length && some((item) => item.name === name, complexHeaderColumns);
+  return !!complexHeaderColumns.length && some(item => item.name === name, complexHeaderColumns);
 }

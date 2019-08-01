@@ -27,10 +27,6 @@ const observerInfoMap: Dictionary<ObserverInfo> = {};
 // observerId stack for managing recursive observing calls
 const observerIdStack: string[] = [];
 
-function isObservable<T>(resultObj: T): resultObj is Observable<T> {
-  return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
-}
-
 function callObserver(observerId: string) {
   observerIdStack.push(observerId);
   observerInfoMap[observerId].fn();
@@ -45,10 +41,14 @@ function setValue<T, K extends keyof T>(
 ) {
   if (storage[key] !== value) {
     storage[key] = value;
-    Object.keys(observerIdSet).forEach((observerId) => {
+    Object.keys(observerIdSet).forEach(observerId => {
       callObserver(observerId);
     });
   }
+}
+
+export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
+  return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
 export function observe(fn: Function) {
@@ -58,7 +58,7 @@ export function observe(fn: Function) {
 
   // return unobserve function
   return () => {
-    observerInfoMap[observerId].targetObserverIdSets.forEach((idSet) => {
+    observerInfoMap[observerId].targetObserverIdSets.forEach(idSet => {
       delete idSet[observerId];
     });
   };
@@ -82,7 +82,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
     __propObserverIdSetMap__: { value: propObserverIdSetMap }
   });
 
-  Object.keys(obj).forEach((key) => {
+  Object.keys(obj).forEach(key => {
     const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
     const observerIdSet: BooleanSet = (propObserverIdSetMap[key] = {});
 
@@ -118,7 +118,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
-    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach((observerId) => {
+    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
       callObserver(observerId);
     });
   }

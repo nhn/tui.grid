@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
-import { SortOptions } from '../store/types';
+import { SortedColumn, SortOptions } from '../store/types';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
 import { DispatchProps } from '../dispatch/create';
 import { DataProvider } from '../dataSource/types';
+import { findPropIndex } from '../helper/common';
 
 interface OwnProps {
   columnName: string;
@@ -13,6 +14,8 @@ interface StoreProps {
   sortOptions: SortOptions;
   dataProvider: DataProvider;
   ascending: boolean;
+  defaultAscending: boolean;
+  active: boolean;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -20,6 +23,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
 class SortingButtonComp extends Component<Props> {
   private handleClick = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
+    const withCtrl = ev.ctrlKey || ev.metaKey;
 
     if (!hasClass(target, 'btn-sorting')) {
       return;
@@ -28,17 +32,18 @@ class SortingButtonComp extends Component<Props> {
     const { dispatch, sortOptions, dataProvider } = this.props;
     const th = findParent(target, 'cell');
     const targetColumnName = th!.getAttribute('data-column-name')!;
-    let { ascending: targetAscending } = this.props;
+    let { defaultAscending: targetAscending } = this.props;
 
     if (sortOptions) {
-      const { columnName, ascending } = sortOptions;
-      targetAscending = columnName === targetColumnName ? !ascending : targetAscending;
+      const { columns } = sortOptions;
+      const index = findPropIndex('columnName', targetColumnName, columns);
+      targetAscending = index !== -1 ? !columns[index].ascending : targetAscending;
     }
 
     if (sortOptions.useClient) {
-      dispatch('sort', targetColumnName, targetAscending);
+      dispatch('sort', targetColumnName, targetAscending, withCtrl);
     } else {
-      dispatch('changeSortBtn', targetColumnName, targetAscending);
+      dispatch('changeSortOptions', targetColumnName, targetAscending, withCtrl);
       const data = {
         sortColumn: targetColumnName,
         sortAscending: targetAscending
@@ -48,14 +53,11 @@ class SortingButtonComp extends Component<Props> {
   };
 
   public render() {
-    const { columnName, sortOptions } = this.props;
-    const { columnName: sortedColumnName, ascending } = sortOptions;
+    const { active, ascending } = this.props;
+
     return (
       <a
-        class={cls('btn-sorting', [
-          columnName === sortedColumnName,
-          ascending ? 'btn-sorting-up' : 'btn-sorting-down'
-        ])}
+        class={cls('btn-sorting', [active, ascending ? 'btn-sorting-up' : 'btn-sorting-down'])}
         onClick={this.handleClick}
       />
     );
@@ -63,13 +65,24 @@ class SortingButtonComp extends Component<Props> {
 }
 
 export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
-  const { data, column, id } = store;
+  const {
+    data: { sortOptions },
+    column,
+    id
+  } = store;
   const { columnName } = props;
   const { sortingType } = column.allColumnMap[columnName];
+  const { columns } = sortOptions;
+  const sortedColumnsWithType = columns as SortedColumn[];
+
+  const index = findPropIndex('columnName', columnName, sortedColumnsWithType);
+  const ascending = index !== -1 ? columns[index].ascending : true;
 
   return {
-    sortOptions: data.sortOptions,
+    sortOptions,
+    ascending,
     dataProvider: getDataProvider(id),
-    ascending: sortingType === 'asc'
+    defaultAscending: sortingType === 'asc',
+    active: index !== -1
   };
 })(SortingButtonComp);

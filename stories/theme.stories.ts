@@ -1,9 +1,11 @@
 import { storiesOf } from '@storybook/html';
+import { withKnobs, radios } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 import { OptColumn } from '../src/types';
 
-const stories = storiesOf('Basic Usage', module);
+const stories = storiesOf('Theme', module);
+stories.addDecorator(withKnobs);
 
 function createGridWithTheme(options) {
   const { preset, extOptions } = options;
@@ -135,8 +137,6 @@ function createGridWithTheme(options) {
     data,
     columns,
     bodyHeight,
-    scrollX: false,
-    scrollY: false,
     rowHeight: 35
   });
 
@@ -145,26 +145,19 @@ function createGridWithTheme(options) {
   return { el, grid };
 }
 
-stories.add('applyTheme - default', () => {
-  const { el } = createGridWithTheme({ preset: 'default' });
+stories.add('preset', () => {
+  const condition = radios(
+    'theme',
+    { default: 'default', striped: 'striped', clean: 'clean' },
+    'clean'
+  );
+
+  const { el } = createGridWithTheme({ preset: condition });
 
   return el;
 });
 
-stories.add('applyTheme - striped', () => {
-  const { el } = createGridWithTheme({ preset: 'striped' });
-
-  return el;
-});
-
-stories.add('applyTheme - clean', () => {
-  const { el } = createGridWithTheme({ preset: 'clean' });
-
-  return el;
-});
-
-// @TODO: storybook knobs로 버튼별로 테마 보여줄 것
-stories.add('applyTheme - customTheme', () => {
+stories.add('customTheme', () => {
   const customTheme = {
     grid: {
       background: '#fff',

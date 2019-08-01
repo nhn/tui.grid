@@ -56,10 +56,10 @@ class BodyAreaComp extends Component<Props> {
     const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
 
+    dispatch('setScrollTop', scrollTop);
     if (this.props.side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
     }
-    dispatch('setScrollTop', scrollTop);
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
@@ -129,12 +129,14 @@ class BodyAreaComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
     const currProps = this.props;
 
-    return some((propName) => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
+    return some(propName => nextProps[propName] !== currProps[propName], PROPS_FOR_UPDATE);
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    this.el!.scrollTop = nextProps.scrollTop;
-    this.el!.scrollLeft = nextProps.scrollLeft;
+    const { scrollTop, scrollLeft } = nextProps;
+
+    this.el!.scrollTop = scrollTop;
+    this.el!.scrollLeft = scrollLeft;
   }
 
   public render({
@@ -163,14 +165,13 @@ class BodyAreaComp extends Component<Props> {
       width: totalColumnWidth,
       height: totalRowHeight + cellBorderWidth
     };
-
     return (
       <div
         class={cls('body-area')}
         style={areaStyle}
         onScroll={this.handleScroll}
         onMouseDown={this.handleMouseDown}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       >

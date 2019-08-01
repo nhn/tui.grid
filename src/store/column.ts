@@ -25,7 +25,8 @@ import {
   isString,
   isFunction,
   isObject,
-  isUndefined
+  isUndefined,
+  isNumber
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -87,9 +88,9 @@ function getTreeInfo(treeColumnOptions: OptTree, name: string) {
 
 function getRelationMap(relations: Relations[]) {
   const relationMap: Dictionary<Relations> = {};
-  relations.forEach((relation) => {
+  relations.forEach(relation => {
     const { editable, disabled, listItems, targetNames = [] } = relation;
-    targetNames.forEach((targetName) => {
+    targetNames.forEach(targetName => {
       relationMap[targetName] = {
         editable,
         disabled,
@@ -103,9 +104,9 @@ function getRelationMap(relations: Relations[]) {
 
 export function getRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
-  relations.forEach((relation) => {
+  relations.forEach(relation => {
     const { targetNames = [] } = relation;
-    targetNames.forEach((targetName) => {
+    targetNames.forEach(targetName => {
       relationColumns.push(targetName);
     });
   });
@@ -180,12 +181,11 @@ export function createColumn(
 }
 
 function createRowHeader(data: OptRowHeader): ColumnInfo {
-  const rowHeader: OptColumn =
-    typeof data === 'string'
-      ? { name: ROW_HEADERS_MAP[data] }
-      : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
+  const rowHeader: OptColumn = isString(data)
+    ? { name: ROW_HEADERS_MAP[data] }
+    : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
   const { name, header, align, renderer, width, minWidth } = rowHeader;
-  const baseMinWith = typeof minWidth === 'number' ? minWidth : defMinWidth.ROW_HEADER;
+  const baseMinWith = isNumber(minWidth) ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
   const rowNumColumn = isRowNumColumn(name);
 
@@ -231,8 +231,8 @@ export function create({
     acc = acc.concat(getRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
-  const rowHeaderInfos = rowHeaders.map((rowHeader) => createRowHeader(rowHeader));
-  const columnInfos = columns.map((column) =>
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader));
+  const columnInfos = columns.map(column =>
     createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);

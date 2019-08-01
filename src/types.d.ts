@@ -42,6 +42,7 @@ export interface OptGrid {
   treeColumnOptions?: OptTree;
   header?: OptHeader;
   usageStatistics?: boolean;
+  disabled?: boolean;
 }
 
 export type CellValue = number | string | boolean | null | undefined;
@@ -75,6 +76,12 @@ export interface OptPrependRow {
 export interface OptRemoveRow {
   removeOriginalData?: boolean;
   keepRowSpanData?: boolean;
+}
+
+export interface OptAppendTreeRow {
+  parentRowKey?: RowKey;
+  offset?: number;
+  focus?: boolean;
 }
 
 type RowHeaderType = 'rowNum' | 'checkbox';

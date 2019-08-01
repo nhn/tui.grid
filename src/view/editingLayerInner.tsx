@@ -1,13 +1,13 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortOptions } from '../store/types';
+import { CellValue, RowKey, ColumnInfo, SortOptions, ViewRow } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction } from '../helper/common';
+import { isFunction, findProp, findPropIndex } from '../helper/common';
 
 interface StoreProps {
   left: number;
@@ -60,8 +60,9 @@ export class EditingLayerInnerComp extends Component<Props> {
 
       if (save) {
         dispatch('setValue', rowKey, columnName, this.editor.getValue());
-        if (sortOptions.columnName === columnName) {
-          dispatch('sort', columnName, sortOptions.ascending);
+        const index = findPropIndex('columnName', columnName, sortOptions.columns);
+        if (index !== -1) {
+          dispatch('sort', columnName, sortOptions.columns[index].ascending, true, false);
         }
       }
       dispatch('finishEditing', rowKey, columnName);
@@ -122,7 +123,7 @@ export class EditingLayerInnerComp extends Component<Props> {
         style={styles}
         class={cls('layer-editing', 'cell-content', 'cell-content-editor')}
         onKeyDown={this.handleKeyDown}
-        ref={(el) => {
+        ref={el => {
           this.contentEl = el;
         }}
       />
@@ -149,7 +150,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
-  const targetRow = viewData.find((row) => row.rowKey === rowKey)!;
+  const targetRow = findProp('rowKey', rowKey, viewData as ViewRow[])!;
   const { value } = targetRow.valueMap[columnName];
 
   return {

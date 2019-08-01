@@ -11,6 +11,7 @@ import { isParentColumnHeader, isRowHeader, isCheckboxColumn } from '../helper/c
 import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
+import { SortingOrder } from './sortingOrder';
 
 interface OwnProps {
   side: Side;
@@ -94,7 +95,7 @@ class HeaderAreaComp extends Component<Props> {
       <div
         class={cls('header-area')}
         style={headerHeightStyle}
-        ref={(el) => {
+        ref={el => {
           this.el = el;
         }}
       >
@@ -118,6 +119,7 @@ class HeaderAreaComp extends Component<Props> {
                   >
                     {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
                     {!!sortable && <SortingButton columnName={name} />}
+                    {!!sortable && <SortingOrder columnName={name} />}
                   </th>
                 ))}
               </tr>

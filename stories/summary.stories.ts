@@ -64,14 +64,14 @@ stories
   })
   .add('With resizable columns', () => {
     const options = createDefaultOptions();
-    options.columns = options.columns.map((column) => ({ ...column, resizable: true }));
+    options.columns = options.columns.map(column => ({ ...column, resizable: true }));
     const { el } = createGrid(options);
 
     return el;
   })
   .add('With editable columns', () => {
     const options = createDefaultOptions();
-    options.columns = options.columns.map((column) => ({
+    options.columns = options.columns.map(column => ({
       ...column,
       editor: 'text'
     }));

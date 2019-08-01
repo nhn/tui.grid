@@ -49,7 +49,7 @@ stories.add('rowHeight: 70', () => {
 });
 
 stories.add('rowHeight: custom', () => {
-  const myData: OptRow[] = data.map((row) => ({ ...row })).slice(0, 5);
+  const myData: OptRow[] = data.map(row => ({ ...row })).slice(0, 5);
   myData[0]._attributes = {
     height: 100
   };
@@ -88,7 +88,7 @@ stories.add('rowHeight: auto', () => {
 });
 
 stories.add('column resizeable', () => {
-  const myColumns = columns.map((column) => ({ ...column, resizable: true }));
+  const myColumns = columns.map(column => ({ ...column, resizable: true }));
 
   return createGrid({ data, columns: myColumns, bodyHeight: 500 }).el;
 });

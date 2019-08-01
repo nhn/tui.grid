@@ -27,7 +27,7 @@ function getOwnSideColumnRange(
   side: Side,
   visibleFrozenCount: number
 ): Range | null {
-  const [start, end] = columnRange.map((columnIdx) => columnIdx);
+  const [start, end] = columnRange.map(columnIdx => columnIdx);
 
   if (side === 'L' && start < visibleFrozenCount) {
     return [start, Math.min(end, visibleFrozenCount - 1)];
@@ -148,6 +148,24 @@ export function create({
       return {
         L: leftSideStyles,
         R: rightSideStyles
+      };
+    },
+
+    get rangeWithRowHeader(this: Selection) {
+      if (!this.range) {
+        return null;
+      }
+      const { rowHeaderCount } = columnInfo;
+      const {
+        range: { row, column }
+      } = this;
+
+      const columnStartIndex = Math.max(column[0] - rowHeaderCount, 0);
+      const columnEndIndex = Math.max(column[1] - rowHeaderCount, 0);
+
+      return {
+        row,
+        column: [columnStartIndex, columnEndIndex] as Range
       };
     }
   });

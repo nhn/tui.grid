@@ -1,7 +1,7 @@
 import { CellIndex, Store } from '../store/types';
 import { clamp, isNull } from '../helper/common';
 import { getNextRowIndex, getPrevRowIndex, KeyboardEventCommandType } from '../helper/keyboard';
-import { getRowSpanTopIndex, getRowSpanBottomIndex, enableRowSpan } from '../helper/rowSpan';
+import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from '../helper/rowSpan';
 
 export function getNextCellIndex(
   store: Store,
@@ -18,13 +18,13 @@ export function getNextCellIndex(
 
   switch (command) {
     case 'up':
-      if (enableRowSpan(sortOptions.columnName)) {
+      if (isRowSpanEnabled(sortOptions)) {
         rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
       }
       rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
-      if (enableRowSpan(sortOptions.columnName)) {
+      if (isRowSpanEnabled(sortOptions)) {
         rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
       }
       rowIndex = getNextRowIndex(rowIndex, heights);

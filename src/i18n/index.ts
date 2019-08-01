@@ -62,11 +62,11 @@ function flattenMessageMap(data: OptI18nData = {}): MessageMapType {
   const obj: MessageMapType = {};
   let newKey: string;
 
-  Object.keys(data).forEach((key) => {
+  Object.keys(data).forEach(key => {
     const keyWithType = key as KeyType;
     const groupMessages = data[keyWithType] as MessageMapType;
 
-    Object.keys(groupMessages).forEach((subKey) => {
+    Object.keys(groupMessages).forEach(subKey => {
       newKey = `${key}.${subKey}`;
       obj[newKey] = groupMessages[subKey];
     });

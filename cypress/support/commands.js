@@ -18,7 +18,7 @@ Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
 });
 
 Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
-  return cy.window().then((win) => {
+  return cy.window().then(win => {
     const { document, tui } = win;
     const el = document.createElement('div');
     const styles = { width: '800px', ...containerStyle };
@@ -28,7 +28,7 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
 
     win.grid = new tui.Grid({ el, ...gridOptions });
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       requestAnimationFrame(() => {
         resolve(win.grid);
       });
@@ -41,7 +41,7 @@ Cypress.Commands.add('gridInstance', () => {
 });
 
 Cypress.Commands.add('createStyle', (style = '') => {
-  return cy.window().then((win) => {
+  return cy.window().then(win => {
     const { document } = win;
     const styleElement = document.createElement('style');
     styleElement.innerHTML = style;

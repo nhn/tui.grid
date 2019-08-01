@@ -8,7 +8,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 });
@@ -130,7 +130,7 @@ it('should destroy the editing layer, when only focus layer is changed.', () => 
       top: 50%;
       position: absolute;
       border: 1px solid #000;
-      z-ndex: 25;
+      z-index: 25;
       text-align: center;
       line-height: 300px;
       background-color: #fff;
@@ -161,4 +161,46 @@ it('should destroy the editing layer, when only focus layer is changed.', () => 
           expect(stub).to.be.calledTwice;
         });
     });
+});
+
+it('startEditing API', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 1, 'name');
+  cy.getCell(1, 'name')
+    .get(`.${cls('content-text')}`)
+    .should('be.visible');
+});
+
+it('startEditingAt API', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditingAt', 1, 0);
+  cy.getCell(1, 'name')
+    .get(`.${cls('content-text')}`)
+    .should('be.visible');
+});
+
+it('cannot edit the value on disabled cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('disable');
+  cy.gridInstance().invoke('startEditingAt', 1, 0);
+  cy.getCell(1, 'name')
+    .get(`.${cls('content-text')}`)
+    .should('be.not.visible');
+
+  cy.getCell(1, 'name')
+    .trigger('mousedown')
+    .trigger('mouseup');
+
+  cy.get(`.${cls('clipboard')}`).trigger('keydown', { keyCode: 13, which: 13, force: true });
+
+  cy.get(`.${cls('content-text')}`).should('be.not.visible');
 });

@@ -260,12 +260,10 @@ function getColumnNameRange(
 
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
-  // @TODO: minimumColumnRange 고려 필요
-  // selection.minimumColumnRange = null;
 }
 
 export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
-  const { viewport, selection, column, id, data } = store;
+  const { viewport, selection, column, id, data, focus } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
@@ -277,14 +275,10 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
   endRowIndex = findRowIndexByPosition(store, viewInfo);
 
   if (curInputRange === null) {
-    const startViewInfo = {
-      pageX: dragStartData.pageX,
-      pageY: dragStartData.pageY,
-      scrollTop,
-      scrollLeft
-    };
-    startColumnIndex = findColumnIndexByPosition(store, startViewInfo);
-    startRowIndex = findRowIndexByPosition(store, startViewInfo);
+    const { totalColumnIndex, rowIndex } = focus;
+
+    startColumnIndex = totalColumnIndex!;
+    startRowIndex = rowIndex!;
   } else {
     startRowIndex = curInputRange.row[0];
     startColumnIndex = curInputRange.column[0];
@@ -356,8 +350,8 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       const focusData = isNull(focusCellPos) ? dragData : focusCellPos;
       selectionUpdate(store, focusData, dragData);
     } else {
-      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
       selectionEnd(store);
+      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
     }
   }
 }
@@ -396,7 +390,7 @@ export function dragMoveHeader(store: Store, dragData: DragData, startSelectedNa
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
 
-  if (curInputRange === null) {
+  if (isNull(curInputRange)) {
     return;
   }
 

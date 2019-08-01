@@ -1,7 +1,7 @@
 import TuiDatePicker from 'tui-date-picker';
 import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
-import { deepMergedCopy, isNumber, isString } from '../helper/common';
+import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -35,11 +35,9 @@ export class DatePickerEditor implements CellEditor {
   }
 
   public constructor(props: CellEditorProps) {
-    let format = 'yyyy-MM-dd';
-    let date = new Date();
-
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
+
     const calendarWrapper = this.createCalendarWrapper();
     const {
       grid: { usageStatistics },
@@ -47,6 +45,8 @@ export class DatePickerEditor implements CellEditor {
       value
     } = props;
     const { options } = columnInfo.editor!;
+    let date = isUndefined(value) || isNull(value) ? '' : new Date();
+    let format = 'yyyy-MM-dd';
 
     if (options) {
       if (options.format) {

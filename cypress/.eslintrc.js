@@ -13,5 +13,6 @@ module.exports = {
     'no-unused-expressions': 0,
     'dot-notation': 0,
     'max-nested-callbacks': [2, { max: 5 }]
+    'no-var-require': 0
   }
 };

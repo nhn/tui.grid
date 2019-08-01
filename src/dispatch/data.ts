@@ -6,34 +6,48 @@ import {
   RowAttributes,
   RowAttributeValue,
   PageOptions,
-  Dictionary
+  Dictionary,
+  Data,
+  Row,
+  Column,
+  Range
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
-  arrayEqual,
   mapProp,
   findPropIndex,
   isUndefined,
   removeArrayItem,
   includes,
   isEmpty,
-  someProp
+  someProp,
+  isNull
 } from '../helper/common';
-import { getSortedData } from '../helper/sort';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
-import { notify } from '../helper/observable';
+import { notify, isObservable } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
-import { enableRowSpan, updateRowSpanWhenAppend, updateRowSpanWhenRemove } from '../helper/rowSpan';
+import {
+  isRowSpanEnabled,
+  updateRowSpanWhenAppend,
+  updateRowSpanWhenRemove
+} from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
+import { sort } from './sort';
+import { getRootParentRow, getParentRowKey } from '../helper/tree';
+
+interface OriginData {
+  rows: Row[];
+  targetIndexes: number[];
+}
 
 export function setValue(
   { column, data, id }: Store,
@@ -63,7 +77,7 @@ export function setValue(
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && enableRowSpan(sortOptions.columnName)) {
+    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
       // update sub rows value
@@ -106,7 +120,7 @@ export function setAllRowAttribute(
   attrName: keyof RowAttributes,
   value: RowAttributeValue
 ) {
-  data.rawData.forEach((row) => {
+  data.rawData.forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
       row._attributes[attrName] = value;
     }
@@ -120,7 +134,7 @@ export function setColumnValues(
   checkCellState = false
 ) {
   // @TODO Check Cell State
-  store.data.rawData.forEach((targetRow) => {
+  store.data.rawData.forEach(targetRow => {
     targetRow[columnName] = value;
   });
 }
@@ -171,27 +185,6 @@ export function checkAll(store: Store) {
 
 export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
-}
-
-export function changeSortBtn({ data }: Store, columnName: string, ascending: boolean) {
-  const { sortOptions } = data;
-  if (sortOptions.columnName !== columnName || sortOptions.ascending !== ascending) {
-    data.sortOptions = { ...sortOptions, columnName, ascending };
-  }
-}
-
-export function sort(store: Store, columnName: string, ascending: boolean) {
-  const { data } = store;
-  const { sortOptions } = data;
-  if (!sortOptions.useClient) {
-    return;
-  }
-  changeSortBtn(store, columnName, ascending);
-  const { rawData, viewData } = getSortedData(data, columnName, ascending);
-  if (!arrayEqual(rawData, data.rawData)) {
-    data.rawData = rawData;
-    data.viewData = viewData;
-  }
 }
 
 function applyPasteDataToRawData(
@@ -267,11 +260,22 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-export function appendRow(
-  { data, column, rowCoords, dimension, id, renderState }: Store,
-  row: OptRow,
-  options: OptAppendRow
-) {
+function updateSortKey(data: Data, at: number) {
+  const { rawData, viewData } = data;
+  for (let idx = 0; idx < rawData.length; idx += 1) {
+    if (rawData[idx].sortKey >= at) {
+      rawData[idx].sortKey += 1;
+    }
+    if (viewData[idx].sortKey >= at) {
+      viewData[idx].sortKey += 1;
+    }
+  }
+  rawData[at].sortKey = at;
+  viewData[at].sortKey = at;
+}
+
+export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
+  const { data, column, rowCoords, dimension, id, renderState } = store;
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
@@ -285,7 +289,17 @@ export function appendRow(
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
-  if (prevRow && enableRowSpan(sortOptions.columnName)) {
+  if (at !== rawData.length) {
+    updateSortKey(data, at);
+  }
+
+  if (!isRowSpanEnabled(sortOptions)) {
+    const { columnName, ascending } = sortOptions.columns[0];
+
+    sort(store, columnName, ascending);
+  }
+
+  if (prevRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -310,7 +324,7 @@ export function removeRow(
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
-  if (nextRow && enableRowSpan(sortOptions.columnName)) {
+  if (nextRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
   }
 
@@ -330,7 +344,7 @@ export function removeRow(
 }
 
 export function clearData({ data, id, renderState }: Store) {
-  data.rawData.forEach((row) => {
+  data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
   data.rawData = [];
@@ -342,12 +356,12 @@ export function resetData(
   { data, column, dimension, rowCoords, id, renderState }: Store,
   inputData: OptRow[]
 ) {
-  const { rawData, viewData } = createData(inputData, column);
+  const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  data.rawData = rawData;
   data.viewData = viewData;
-  rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
+  data.rawData = rawData;
+  rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   renderState.state = getRenderState(rawData);
 
   // @TODO need to execute logic by condition
@@ -432,7 +446,7 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
   const { complexHeaderColumns, allColumnMap } = column;
 
-  Object.keys(columnsMap).forEach((columnName) => {
+  Object.keys(columnsMap).forEach(columnName => {
     const col = allColumnMap[columnName];
     if (col) {
       col.header = columnsMap[columnName];
@@ -447,4 +461,72 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
+}
+
+function createOriginData(data: Data, rowRange: Range) {
+  const [start, end] = rowRange;
+
+  return data.rawData.slice(start, end).reduce(
+    (acc: OriginData, row, index) => {
+      if (!isObservable(row)) {
+        acc.rows.push(row);
+        acc.targetIndexes.push(index + start);
+      }
+      return acc;
+    },
+    { rows: [], targetIndexes: [] }
+  );
+}
+
+export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
+  const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
+  const originData = createOriginData(data, rowRange);
+
+  if (!originData.rows.length) {
+    return;
+  }
+
+  if (column.treeColumnName) {
+    changeToObservableTreeData(column, data, originData);
+  } else {
+    changeToObservableData(column, data, originData);
+  }
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+}
+
+function changeToObservableData(column: Column, data: Data, originData: OriginData) {
+  const { targetIndexes, rows } = originData;
+  // prevRows is needed to create rowSpan
+  const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
+  const { rawData, viewData } = createData(rows, column, false, prevRows);
+
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
+    const targetIndex = targetIndexes[index];
+    data.rawData[targetIndex] = rawData[index];
+    data.viewData[targetIndex] = viewData[index];
+  }
+}
+
+function changeToObservableTreeData(column: Column, data: Data, originData: OriginData) {
+  let { rows } = originData;
+  const rootParentRow = getRootParentRow(data.rawData, rows[0]);
+  rows = rows.filter(row => !row._attributes.tree || isNull(getParentRowKey(row)));
+
+  if (rootParentRow !== rows[0]) {
+    rows.unshift(rootParentRow);
+  }
+
+  const { rawData, viewData } = createData(rows, column);
+
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
+    const foundIndex = findPropIndex('rowKey', rawData[index].rowKey, data.rawData);
+    const rawRow = data.rawData[foundIndex];
+
+    if (rawRow && !isObservable(rawRow)) {
+      data.rawData[foundIndex] = rawData[index];
+      data.viewData[foundIndex] = viewData[index];
+    }
+  }
 }

@@ -10,7 +10,7 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 
@@ -81,9 +81,9 @@ it('mouseout', () => {
     });
 });
 
-it('dblClick', () => {
+it('dblclick', () => {
   const callback = cy.stub();
-  cy.gridInstance().invoke('on', 'dblClick', callback);
+  cy.gridInstance().invoke('on', 'dblclick', callback);
 
   cy.get(`.${cls('container')}`)
     .dblclick()
@@ -182,9 +182,8 @@ it('selection by api', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'selection', callback);
 
-  // @TODO: rowheader selection 고려 필요
   cy.gridInstance()
-    .invoke('selection', { start: [0, 0], end: [1, 1] })
+    .invoke('setSelectionRange', { start: [0, 0], end: [1, 1] })
     .then(() => {
       expect(isSubsetOf({ range: { column: [0, 1], row: [0, 1] } }, callback.args[0][0])).to.be
         .true;
@@ -211,5 +210,22 @@ it('off', () => {
     .click()
     .then(() => {
       expect(callback2).not.to.be.calledTwice;
+    });
+});
+
+it('sort', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'sort', callback);
+
+  cy.gridInstance()
+    .invoke('sort', 'name', false)
+    .then(() => {
+      expect(
+        isSubsetOf(
+          { sortOptions: { columns: [{ columnName: 'name', ascending: false }], useClient: true } },
+          callback.args[0][0]
+        )
+      ).to.be.true;
     });
 });
