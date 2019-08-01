@@ -4,6 +4,12 @@ import { OptRow } from '../types';
 import { observable, observe, notify } from './observable';
 import { includes, findProp, removeArrayItem, isNull, isUndefined } from './common';
 
+interface TreeDataOptions {
+  keyColumnName?: string;
+  lazyObservable?: boolean;
+  offset?: number;
+}
+
 export const DEFAULT_INDENT_WIDTH = 22;
 
 let treeRowKey = -1;
@@ -20,7 +26,6 @@ function addChildRowKey(row: Row, rowKey: RowKey) {
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.push(rowKey);
-    notify(tree, 'childRowKeys');
   }
 }
 
@@ -29,7 +34,6 @@ function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
 
   if (tree && !includes(tree.childRowKeys, rowKey)) {
     tree.childRowKeys.splice(offset, 0, rowKey);
-    notify(tree, 'childRowKeys');
   }
 }
 
@@ -94,10 +98,13 @@ function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string,
-  offset?: number
+  options = { lazyObservable: false } as TreeDataOptions
 ) {
-  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, keyColumnName);
+  const { keyColumnName, offset, lazyObservable = false } = options;
+  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, {
+    keyColumnName,
+    lazyObservable
+  });
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
@@ -113,10 +120,12 @@ function createTreeRawRow(
     }
   }
 
-  rawRow._attributes.tree = observable({
+  const tree = {
     ...defaultAttributes,
     ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
-  });
+  };
+
+  rawRow._attributes.tree = lazyObservable ? tree : observable(tree);
 
   return rawRow;
 }
@@ -125,21 +134,19 @@ export function flattenTreeData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  keyColumnName?: string,
-  offset?: number
+  options: TreeDataOptions
 ) {
   const flattenedRows: Row[] = [];
 
   data.forEach((row) => {
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow, keyColumnName, offset);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
 
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
-        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, keyColumnName));
+        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
       }
-      delete rawRow._children;
     }
   });
 
@@ -149,11 +156,12 @@ export function flattenTreeData(
 export function createTreeRawData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
-  keyColumnName?: string
+  keyColumnName?: string,
+  lazyObservable = false
 ) {
   treeRowKey = -1;
 
-  return flattenTreeData(data, defaultValues, null, keyColumnName);
+  return flattenTreeData(data, defaultValues, null, { keyColumnName, lazyObservable });
 }
 
 export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
@@ -172,13 +180,21 @@ export function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
   };
 }
 
-export function createTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
-  const treeInfo = observable(getTreeCellInfo(rawData, row, useIcon));
+export function createTreeCellInfo(
+  rawData: Row[],
+  row: Row,
+  useIcon?: boolean,
+  lazyObservable = false
+) {
+  const treeCellInfo = getTreeCellInfo(rawData, row, useIcon);
+  const treeInfo = lazyObservable ? treeCellInfo : observable(treeCellInfo);
 
-  observe(() => {
-    treeInfo.expanded = isExpanded(row);
-    treeInfo.leaf = isLeaf(row);
-  });
+  if (!lazyObservable) {
+    observe(() => {
+      treeInfo.expanded = isExpanded(row);
+      treeInfo.leaf = isLeaf(row);
+    });
+  }
 
   return treeInfo;
 }
@@ -210,4 +226,18 @@ export function traverseDescendantRows(rawData: Row[], row: Row, iteratee: Funct
       childRowKeys = childRowKeys.concat(getChildRowKeys(childRow));
     }
   }
+}
+
+export function getRootParentRow(rawData: Row[], row: Row) {
+  let rootParentRow = row;
+
+  do {
+    const parentRow = findProp('rowKey', getParentRowKey(rootParentRow!), rawData);
+    if (!parentRow) {
+      break;
+    }
+    rootParentRow = parentRow;
+  } while (rootParentRow);
+
+  return rootParentRow;
 }

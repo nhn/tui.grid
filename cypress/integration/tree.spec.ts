@@ -594,7 +594,7 @@ describe('events', () => {
       callback = cy.stub();
       cy.gridInstance().invoke('on', 'expand', callback);
     });
-    
+
     it(`is fired by the number of all expanded children when calling 'exapnd' method.`, () => {
       cy.gridInstance()
         .invoke('expand', 0)
@@ -621,7 +621,7 @@ describe('events', () => {
       });
     });
 
-   it('is stop then toggle button is not exapnaded.', () => {
+    it('is stop then toggle button is not exapnaded.', () => {
       cy.gridInstance().invoke('on', 'expand', (ev: GridEvent) => {
         ev.stop();
       });
@@ -641,7 +641,7 @@ describe('events', () => {
       callback = cy.stub();
       cy.gridInstance().invoke('on', 'collapse', callback);
     });
-    
+
     it(`is fired by the number of all expanded children when calling 'collapse' method.`, () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance()
@@ -671,17 +671,14 @@ describe('events', () => {
       });
     });
 
-   it('is stop then toggle button is not collapsed.', () => {
+    it('is stop then toggle button is not collapsed.', () => {
       cy.gridInstance().invoke('on', 'collapse', (ev: GridEvent) => {
         ev.stop();
       });
 
-      cy.gridInstance().invoke('expand', 0)
-      cy.gridInstance()
-        .invoke('collapse', 0)
-        .then(() => {
-          assertToggleButtonExpanded(0, 'c1');
-        });
+      cy.gridInstance().invoke('expand', 0);
+      cy.gridInstance().invoke('collapse', 0);
+      assertToggleButtonExpanded(0, 'c1');
     });
   });
 });

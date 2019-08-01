@@ -204,7 +204,8 @@ describe('getters', () => {
           row: [],
           column: {}
         },
-        rowNum
+        rowNum,
+        rowSpan: undefined
       }
     };
   }

@@ -4,6 +4,7 @@ import { notify } from '../helper/observable';
 import { getSortedData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { createObservableData } from './data';
 
 type SortingType = 'asc' | 'desc';
 
@@ -36,18 +37,18 @@ export function sort(
   withCtrl: boolean = false,
   cancelable: boolean = true
 ) {
-  const { data, id } = store;
+  const { data } = store;
   const { sortOptions } = data;
   if (!sortOptions.useClient) {
     return;
   }
 
   changeSortOptions(store, columnName, ascending, withCtrl, cancelable);
-  sortData(data, id);
+  sortData(store);
 }
 
 export function unsort(store: Store, columnName: string = 'sortKey') {
-  const { data, id } = store;
+  const { data } = store;
 
   if (columnName === 'sortKey') {
     initSortOptions(data);
@@ -64,7 +65,7 @@ export function unsort(store: Store, columnName: string = 'sortKey') {
     }
   }
 
-  sortData(data, id);
+  sortData(store);
 }
 
 export function initSortOptions(data: Data) {
@@ -162,7 +163,10 @@ function changeMultiSortOptions(
   }
 }
 
-function sortData(data: Data, id: number) {
+function sortData(store: Store) {
+  // makes all data observable to sort the data properly;
+  createObservableData(store, true);
+  const { data, id } = store;
   const { rawData, viewData } = getSortedData(data);
   if (!arrayEqual(rawData, data.rawData)) {
     data.rawData = rawData;

@@ -27,10 +27,6 @@ const observerInfoMap: Dictionary<ObserverInfo> = {};
 // observerId stack for managing recursive observing calls
 const observerIdStack: string[] = [];
 
-function isObservable<T>(resultObj: T): resultObj is Observable<T> {
-  return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
-}
-
 function callObserver(observerId: string) {
   observerIdStack.push(observerId);
   observerInfoMap[observerId].fn();
@@ -49,6 +45,10 @@ function setValue<T, K extends keyof T>(
       callObserver(observerId);
     });
   }
+}
+
+export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
+  return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
 export function observe(fn: Function) {

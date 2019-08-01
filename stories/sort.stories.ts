@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
@@ -63,7 +63,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, ...options });
+  const grid = new Grid({ el, bodyHeight: 170, ...options });
 
   return { el, grid };
 }

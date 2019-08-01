@@ -7,7 +7,10 @@ import {
   RowAttributeValue,
   PageOptions,
   Dictionary,
-  Data
+  Data,
+  Row,
+  Column,
+  Range
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -18,12 +21,13 @@ import {
   removeArrayItem,
   includes,
   isEmpty,
-  someProp
+  someProp,
+  isNull
 } from '../helper/common';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createRawRow, createViewRow, createData } from '../store/data';
-import { notify } from '../helper/observable';
+import { notify, isObservable } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -38,6 +42,12 @@ import {
 import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
 import { sort } from './sort';
+import { getRootParentRow, getParentRowKey } from '../helper/tree';
+
+interface OriginData {
+  rows: Row[];
+  targetIndexes: number[];
+}
 
 export function setValue(
   { column, data, id }: Store,
@@ -346,11 +356,11 @@ export function resetData(
   { data, column, dimension, rowCoords, id, renderState }: Store,
   inputData: OptRow[]
 ) {
-  const { rawData, viewData } = createData(inputData, column);
+  const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  data.rawData = rawData;
   data.viewData = viewData;
+  data.rawData = rawData;
   rowCoords.heights = rawData.map((row) => getRowHeight(row, rowHeight));
   renderState.state = getRenderState(rawData);
 
@@ -451,4 +461,72 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
+}
+
+function createOriginData(data: Data, rowRange: Range) {
+  const [start, end] = rowRange;
+
+  return data.rawData.slice(start, end).reduce(
+    (acc: OriginData, row, index) => {
+      if (!isObservable(row)) {
+        acc.rows.push(row);
+        acc.targetIndexes.push(index + start);
+      }
+      return acc;
+    },
+    { rows: [], targetIndexes: [] }
+  );
+}
+
+export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
+  const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
+  const originData = createOriginData(data, rowRange);
+
+  if (!originData.rows.length) {
+    return;
+  }
+
+  if (column.treeColumnName) {
+    changeToObservableTreeData(column, data, originData);
+  } else {
+    changeToObservableData(column, data, originData);
+  }
+
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+}
+
+function changeToObservableData(column: Column, data: Data, originData: OriginData) {
+  const { targetIndexes, rows } = originData;
+  // prevRows is needed to create rowSpan
+  const prevRows = targetIndexes.map((targetIndex) => data.rawData[targetIndex - 1]);
+  const { rawData, viewData } = createData(rows, column, false, prevRows);
+
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
+    const targetIndex = targetIndexes[index];
+    data.rawData[targetIndex] = rawData[index];
+    data.viewData[targetIndex] = viewData[index];
+  }
+}
+
+function changeToObservableTreeData(column: Column, data: Data, originData: OriginData) {
+  let { rows } = originData;
+  const rootParentRow = getRootParentRow(data.rawData, rows[0]);
+  rows = rows.filter((row) => !row._attributes.tree || isNull(getParentRowKey(row)));
+
+  if (rootParentRow !== rows[0]) {
+    rows.unshift(rootParentRow);
+  }
+
+  const { rawData, viewData } = createData(rows, column);
+
+  for (let index = 0, end = rawData.length; index < end; index += 1) {
+    const foundIndex = findPropIndex('rowKey', rawData[index].rowKey, data.rawData);
+    const rawRow = data.rawData[foundIndex];
+
+    if (rawRow && !isObservable(rawRow)) {
+      data.rawData[foundIndex] = rawData[index];
+      data.viewData[foundIndex] = viewData[index];
+    }
+  }
 }
