@@ -160,8 +160,8 @@ export function create({
         range: { row, column }
       } = this;
 
-      const columnStartIndex = column[0] - rowHeaderCount < 0 ? 0 : column[0] - rowHeaderCount;
-      const columnEndIndex = column[1] - rowHeaderCount < 0 ? 0 : column[1] - rowHeaderCount;
+      const columnStartIndex = Math.max(column[0] - rowHeaderCount, 0);
+      const columnEndIndex = Math.max(column[1] - rowHeaderCount, 0);
 
       return {
         row,

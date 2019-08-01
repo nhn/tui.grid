@@ -147,11 +147,11 @@ if ((module as any).hot) {
  *          @param {boolean} [options.columns.validation.required=false] - If set to true, the data of the column
  *              will be checked to be not empty.
  *          @param {number|string} [options.columns.validation.dataType='string'] - Specifies the type of the cell value.
- *              Avilable types are 'string' and 'number'.
+ *              Available types are 'string' and 'number'.
  *          @param {string} [options.columns.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
  *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
- *              The retrurn value of the function will be shown as the value of the cell. If set to 'listItemText',
+ *              The return value of the function will be shown as the value of the cell. If set to 'listItemText',
  *              the value will be shown the text.
  *          @param {boolean} [options.columns.useHtmlEntity=true] - If set to true, the value of the cell
  *              will be encoded as HTML entities.
