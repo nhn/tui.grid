@@ -14,7 +14,7 @@ export class TextEditor implements CellEditor {
 
     el.className = cls('content-text');
     el.type = options.type;
-    el.value = String(props.value);
+    el.value = String(props.value || '');
 
     this.el = el;
   }
