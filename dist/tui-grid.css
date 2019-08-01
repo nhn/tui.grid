@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.1.0 | Thu Jul 11 2019
+ * @version 4.2.0 | Thu Aug 01 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -158,7 +158,7 @@
 .tui-grid-layer-focus-border {
   position: absolute;
   overflow: hidden;
-  z-index: 20;
+  z-index: 19;
 }
 .tui-grid-layer-selection {
   position: absolute;
