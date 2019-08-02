@@ -16,7 +16,6 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
   mapProp,
-  findPropIndex,
   isUndefined,
   removeArrayItem,
   includes,
@@ -43,6 +42,7 @@ import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
+import { findIndexByRowKey } from '../query/data';
 
 interface OriginData {
   rows: Row[];
@@ -79,7 +79,8 @@ export function setValue(
 
     if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
-      const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
+      const mainRowIndex = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+
       // update sub rows value
       for (let count = 1; count < spanCount; count += 1) {
         rawData[mainRowIndex + count][columnName] = value;
@@ -311,13 +312,15 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 }
 
 export function removeRow(
-  { data, rowCoords, id, renderState, focus }: Store,
+  { data, rowCoords, id, renderState, focus, column }: Store,
   rowKey: RowKey,
   options: OptRemoveRow
 ) {
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
-  const rowIdx = findPropIndex('rowKey', rowKey, rawData);
+  console.log('remove');
+  const rowIdx = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+  console.log('removeend');
   const nextRow = rawData[rowIdx + 1];
   const removedRow = rawData.splice(rowIdx, 1)[0];
 
@@ -482,7 +485,7 @@ function createOriginData(data: Data, rowRange: Range) {
   );
 }
 
-export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
+export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const originData = createOriginData(data, rowRange);
 
@@ -491,7 +494,7 @@ export function createObservableData({ column, data, viewport }: Store, allRowRa
   }
 
   if (column.treeColumnName) {
-    changeToObservableTreeData(column, data, originData);
+    changeToObservableTreeData(column, data, originData, id);
   } else {
     changeToObservableData(column, data, originData);
   }
@@ -513,7 +516,12 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   }
 }
 
-function changeToObservableTreeData(column: Column, data: Data, originData: OriginData) {
+function changeToObservableTreeData(
+  column: Column,
+  data: Data,
+  originData: OriginData,
+  id: number
+) {
   let { rows } = originData;
   const rootParentRow = getRootParentRow(data.rawData, rows[0]);
   rows = rows.filter(row => !row._attributes.tree || isNull(getParentRowKey(row)));
@@ -525,7 +533,7 @@ function changeToObservableTreeData(column: Column, data: Data, originData: Orig
   const { rawData, viewData } = createData(rows, column);
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
-    const foundIndex = findPropIndex('rowKey', rawData[index].rowKey, data.rawData);
+    const foundIndex = findIndexByRowKey(data as Data, column as Column, id, rawData[index].rowKey);
     const rawRow = data.rawData[foundIndex];
 
     if (rawRow && !isObservable(rawRow)) {

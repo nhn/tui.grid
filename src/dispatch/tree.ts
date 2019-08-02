@@ -2,7 +2,7 @@ import { OptRow, OptAppendTreeRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
-import { findProp, findPropIndex, isUndefined } from '../helper/common';
+import { findProp, isUndefined } from '../helper/common';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
 import { isUpdatableRowAttr } from '../dispatch/data';
@@ -19,6 +19,7 @@ import {
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { findIndexByRowKey } from '../query/data';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -64,7 +65,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
-  const { data, rowCoords, dimension } = store;
+  const { data, rowCoords, dimension, column, id } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
 
@@ -85,7 +86,8 @@ function expand(store: Store, row: Row, recursive?: boolean) {
       expand(store, childRow, recursive);
     }
 
-    const index = findPropIndex('rowKey', childRowKey, rawData);
+    // const index = findPropIndex('rowKey', childRowKey, rawData);
+    const index = findIndexByRowKey(data, column, id, childRowKey);
     heights[index] = getRowHeight(childRow, dimension.rowHeight);
 
     notify(rowCoords, 'heights');
@@ -126,7 +128,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
-  const { data, rowCoords } = store;
+  const { data, rowCoords, column, id } = store;
   const { rawData } = data;
   const { heights } = rowCoords;
 
@@ -148,13 +150,15 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
         collapse(store, childRow, recursive);
       } else {
         getDescendantRows(store, childRowKey).forEach(({ rowKey: descendantRowKey }) => {
-          const index = findPropIndex('rowKey', descendantRowKey, rawData);
+          // const index = findPropIndex('rowKey', descendantRowKey, rawData);
+          const index = findIndexByRowKey(data, column, id, descendantRowKey);
           heights[index] = 0;
         });
       }
     }
 
-    const index = findPropIndex('rowKey', childRowKey, rawData);
+    // const index = findPropIndex('rowKey', childRowKey, rawData);
+    const index = findIndexByRowKey(data, column, id, childRowKey);
     heights[index] = 0;
   });
 
@@ -223,7 +227,7 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
 }
 
 function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number) {
-  const { data } = store;
+  const { data, column, id } = store;
   const { rawData } = data;
   let startIdx;
 
@@ -231,12 +235,14 @@ function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number)
     if (offset) {
       const childRowKeys = getChildRowKeys(parentRow);
       const prevChildRowKey = childRowKeys[offset - 1];
-      const prevChildRowIdx = findPropIndex('rowKey', prevChildRowKey, rawData);
+      // const prevChildRowIdx = findPropIndex('rowKey', prevChildRowKey, rawData);
+      const prevChildRowIdx = findIndexByRowKey(data, column, id, prevChildRowKey);
       const descendantRowsCount = getDescendantRows(store, prevChildRowKey).length;
 
       startIdx = prevChildRowIdx + descendantRowsCount + 1;
     } else {
-      startIdx = findPropIndex('rowKey', parentRow.rowKey, rawData) + 1;
+      // startIdx = findPropIndex('rowKey', parentRow.rowKey, rawData) + 1;
+      startIdx = findIndexByRowKey(data, column, id, parentRow.rowKey) + 1;
 
       if (isUndefined(offset)) {
         startIdx += getDescendantRows(store, parentRow.rowKey).length;
@@ -282,7 +288,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
 }
 
 export function removeTreeRow(store: Store, rowKey: RowKey) {
-  const { data, rowCoords, id } = store;
+  const { data, rowCoords, id, column } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
   const parentRow = getParentRow(store, rowKey);
@@ -295,7 +301,8 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
     }
   }
 
-  const startIdx = findPropIndex('rowKey', rowKey, rawData);
+  // const startIdx = findPropIndex('rowKey', rowKey, rawData);
+  const startIdx = findIndexByRowKey(data, column, id, rowKey);
   const endIdx = getDescendantRows(store, rowKey).length + 1;
 
   const removedRows = rawData.splice(startIdx, endIdx);

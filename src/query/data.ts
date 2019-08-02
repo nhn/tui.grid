@@ -1,4 +1,4 @@
-import { Store, RowKey, Data, Row, Dictionary } from '../store/types';
+import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
 import { findProp, isFunction, findPropIndex } from '../helper/common';
 import { getDataManager } from '../instance';
 
@@ -51,28 +51,32 @@ export function getConditionalRows(
   return result;
 }
 
-export function findIndexByRowKey({ data, column, id }: Store, rowKey: RowKey) {
+export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey: RowKey) {
   const { rawData, sortOptions } = data;
+  const dataManager = getDataManager(id);
 
   if (sortOptions.columns[0].columnName !== 'sortKey' || column.keyColumnName) {
     return findPropIndex('rowKey', rowKey, rawData);
   }
 
-  const foundAppendedRowIndex = getDataManager(id).getAppendedRowIndex(rowKey);
-  if (foundAppendedRowIndex !== -1) {
-    return foundAppendedRowIndex;
+  if (dataManager) {
+    const foundAppendedRowIndex = dataManager.getAppendedRowIndex(rowKey);
+
+    if (foundAppendedRowIndex !== -1) {
+      return foundAppendedRowIndex;
+    }
   }
 
   let start = 0;
   let end = rawData.length - 1;
   let result = -1;
 
-  while (start < end) {
-    const index = (start + end) / 2;
+  while (start <= end) {
+    const index = Math.floor((start + end) / 2);
     if (rowKey > index) {
-      start = index;
+      start = index + 1;
     } else if (rowKey < index) {
-      end = index;
+      end = index - 1;
     } else {
       result = index;
       break;
@@ -82,6 +86,6 @@ export function findIndexByRowKey({ data, column, id }: Store, rowKey: RowKey) {
   return result;
 }
 
-export function findRowByRowKey(store: Store, rowKey: RowKey) {
-  return store.data.rawData[findIndexByRowKey(store, rowKey)];
+export function findRowByRowKey(data: Data, column: Column, id: number, rowKey: RowKey) {
+  return data.rawData[findIndexByRowKey(data, column, id, rowKey)];
 }

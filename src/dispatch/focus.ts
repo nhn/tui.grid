@@ -1,18 +1,18 @@
 import { Store, RowKey, Focus, Data } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellEditable } from '../query/data';
+import { isCellEditable, findIndexByRowKey } from '../query/data';
 import { isFocusedCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
-import { findPropIndex } from '../helper/common';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable } from '../helper/observable';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
-  const { data, focus, column } = store;
+  const { data, focus, column, id } = store;
   const { rawData, viewData } = data;
   const { allColumnMap } = column;
-  const foundIndex = findPropIndex('rowKey', rowKey, rawData);
+  // const foundIndex = findPropIndex('rowKey', rowKey, rawData);
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
   const rawRow = rawData[foundIndex];
 
   // makes the data observable to judge editable, disable of the cell;
