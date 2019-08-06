@@ -3,7 +3,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
-import { isEdge } from '../helper/browser';
+import { isEdge, isMobile } from '../helper/browser';
 import {
   convertTableToData,
   convertTextToData,
@@ -203,7 +203,7 @@ class ClipboardComp extends Component<Props> {
   public componentDidUpdate() {
     setTimeout(() => {
       const { navigating, editing } = this.props;
-      if (this.el && navigating && !editing && !this.isClipboardFocused()) {
+      if (this.el && navigating && !editing && !this.isClipboardFocused() && !isMobile()) {
         this.el.focus();
       }
     });
