@@ -1,12 +1,20 @@
 import { data } from '../../samples/basic';
+import { lazyObserbableTestdata as treeData } from '../../samples/tree';
 import { cls } from '@/helper/dom';
+import { RowKey } from '@/store/types';
+
+function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
+  cy.getCell(rowKey, columnName).within(() => {
+    cy.get(`.${cls('tree-extra-content')}`).should('have.class', cls('tree-button-expand'));
+  });
+}
 
 before(() => {
   cy.visit('/dist');
 });
 
 beforeEach(() => {
-  cy.document().then((doc) => {
+  cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
 
@@ -91,10 +99,10 @@ describe('API test on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should(($el) => {
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.true;
+        expect(inputWithType.checked).to.be['true'];
       });
     });
 
@@ -103,10 +111,10 @@ describe('API test on lazy observable data', () => {
       .invoke('getCheckedRowKeys')
       .should('have.length', 0);
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should(($el) => {
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.false;
+        expect(inputWithType.checked).to.be['false'];
       });
     });
   });
@@ -123,16 +131,16 @@ describe('API test on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should(($el) => {
+    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.disabled).to.be.true;
+        expect(inputWithType.disabled).to.be['true'];
       });
     });
 
-    cy.get(`td.${cls('cell')}`).should(($el) => {
+    cy.get(`td.${cls('cell')}`).should($el => {
       $el.each((_, elem) => {
-        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
+        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be['true'];
       });
     });
   });
@@ -184,7 +192,7 @@ describe('API test on lazy observable data', () => {
     cy.gridInstance().invoke('getRowCount', 21);
     cy.gridInstance()
       .invoke('getRow', 20)
-      .should((row) => {
+      .should(row => {
         expect(row).to.contain({ name: 'Lee', artist: 'Lee', type: 'test' });
       });
 
@@ -196,5 +204,34 @@ describe('API test on lazy observable data', () => {
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', artist: 'Lee', type: 'test' }]);
     cy.gridInstance().invoke('getRowCount', 1);
     cy.getCell(0, 'name').contains('Lee');
+  });
+
+  it('expandAll, focusAt api', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+
+    const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
+
+    cy.createGrid({
+      data: treeData,
+      columns,
+      bodyHeight: 400,
+      treeColumnOptions: {
+        name: 'name',
+        useIcon: false
+      }
+    });
+
+    cy.gridInstance().invoke('expandAll');
+    cy.gridInstance().invoke('focusAt', 16, 0, true);
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { rowKey: 16, columnName: 'name', value: 'This Is Acting' });
+    assertToggleButtonExpanded(12, 'name');
+    assertToggleButtonExpanded(13, 'name');
+    assertToggleButtonExpanded(14, 'name');
+    assertToggleButtonExpanded(15, 'name');
   });
 });
