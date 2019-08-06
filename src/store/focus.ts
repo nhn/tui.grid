@@ -2,6 +2,7 @@ import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './ty
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
+import { findIndexByRowKey } from '../query/data';
 
 interface FocusOption {
   data: Data;
@@ -9,6 +10,7 @@ interface FocusOption {
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   editingEvent: EditingEvent;
+  id: number;
 }
 
 export function create({
@@ -16,7 +18,8 @@ export function create({
   data,
   rowCoords,
   columnCoords,
-  editingEvent
+  editingEvent,
+  id
 }: FocusOption): Observable<Focus> {
   return observable({
     rowKey: null,
@@ -64,8 +67,7 @@ export function create({
       if (rowKey === null) {
         return null;
       }
-
-      return findPropIndex('rowKey', rowKey, data.rawData);
+      return findIndexByRowKey(data, column, id, rowKey);
     },
 
     get cellPosRect(this: Focus) {

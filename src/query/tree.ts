@@ -1,6 +1,5 @@
 import { Store, Row, RowKey } from '../store/types';
 import { Observable, getOriginObject } from '../helper/observable';
-import { findProp } from '../helper/common';
 import {
   getParentRowKey,
   getChildRowKeys,
@@ -34,8 +33,7 @@ export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
   if (row) {
     const childRowKeys = getChildRowKeys(row);
 
-    return childRowKeys.map((childRowKey) => {
-      console.log('child', childRowKey);
+    return childRowKeys.map(childRowKey => {
       const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)]!;
       return plainObj ? getOriginObject(childRow as Observable<Row>) : childRow;
     });

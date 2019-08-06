@@ -73,7 +73,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
   const childRowKeys = getChildRowKeys(row);
 
-  childRowKeys.forEach((childRowKey) => {
+  childRowKeys.forEach(childRowKey => {
     const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
 
     if (!childRow) {
@@ -104,7 +104,7 @@ export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean
 }
 
 export function expandAll(store: Store) {
-  store.data.rawData.forEach((row) => {
+  store.data.rawData.forEach(row => {
     if (isRootChildRow(row) && !isLeaf(row)) {
       expand(store, row, true);
     }
@@ -137,7 +137,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
 
   const childRowKeys = getChildRowKeys(row);
 
-  childRowKeys.forEach((childRowKey) => {
+  childRowKeys.forEach(childRowKey => {
     const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
 
     if (!childRow) {
@@ -175,7 +175,7 @@ export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boole
 }
 
 export function collapseAll(store: Store) {
-  store.data.rawData.forEach((row) => {
+  store.data.rawData.forEach(row => {
     if (isRootChildRow(row) && !isLeaf(row)) {
       collapse(store, row, true);
     }
@@ -196,7 +196,7 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
   if (row) {
     traverseAncestorRows(rawData, row, (parentRow: Row) => {
       const childRowKeys = getChildRowKeys(parentRow);
-      const checkedChildRows = childRowKeys.filter((childRowKey) => {
+      const checkedChildRows = childRowKeys.filter(childRowKey => {
         const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
 
         return !!childRow && childRow._attributes.checked;
@@ -271,12 +271,12 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   });
   rawData.splice(startIdx, 0, ...rawRows);
 
-  const viewRows = rawRows.map((rawRow) =>
+  const viewRows = rawRows.map(rawRow =>
     createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon)
   );
   viewData.splice(startIdx, 0, ...viewRows);
 
-  const rowHeights = rawRows.map((rawRow) => getRowHeight(rawRow, dimension.rowHeight));
+  const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);
 
   notify(data, 'rawData');

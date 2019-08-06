@@ -83,7 +83,7 @@ export function createStore(id: number, options: OptGrid): Store {
     columnCoords,
     showDummyRows
   });
-  const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent });
+  const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent, id });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
   const renderState = createRenderState(data);

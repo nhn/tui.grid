@@ -34,7 +34,12 @@ import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
+import {
+  getConditionalRows,
+  getCellAddressByIndex,
+  getCheckedRows,
+  findIndexByRowKey
+} from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -1034,7 +1039,8 @@ export default class Grid {
    * @returns {number} - The index of the row
    */
   public getIndexOfRow(rowKey: RowKey) {
-    return findPropIndex('rowKey', rowKey, this.store.data.rawData);
+    const { data, column, id } = this.store;
+    return findIndexByRowKey(data, column, id, rowKey);
   }
 
   /**
