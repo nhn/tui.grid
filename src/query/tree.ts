@@ -7,14 +7,16 @@ import {
   traverseAncestorRows,
   traverseDescendantRows
 } from '../helper/tree';
+import { findIndexByRowKey } from './data';
 
 export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
 
   if (row) {
     const parentRowKey = getParentRowKey(row);
-    const parentRow = findProp('rowKey', parentRowKey, rawData);
+    const parentRow = rawData[findIndexByRowKey(data, column, id, parentRowKey)];
 
     if (parentRow) {
       return plainObj ? getOriginObject(parentRow as Observable<Row>) : parentRow;
@@ -25,15 +27,16 @@ export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
 }
 
 export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
 
   if (row) {
     const childRowKeys = getChildRowKeys(row);
 
-    return childRowKeys.map(childRowKey => {
-      const childRow = findProp('rowKey', childRowKey, rawData)!;
-
+    return childRowKeys.map((childRowKey) => {
+      console.log('child', childRowKey);
+      const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)]!;
       return plainObj ? getOriginObject(childRow as Observable<Row>) : childRow;
     });
   }
@@ -42,8 +45,9 @@ export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
 }
 
 export function getAncestorRows(store: Store, rowKey: RowKey) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
   const ancestorRows: Row[] = [];
 
   if (row) {
@@ -56,8 +60,9 @@ export function getAncestorRows(store: Store, rowKey: RowKey) {
 }
 
 export function getDescendantRows(store: Store, rowKey: RowKey) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const { rawData } = data;
+  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
   const childRows: Row[] = [];
 
   if (row) {

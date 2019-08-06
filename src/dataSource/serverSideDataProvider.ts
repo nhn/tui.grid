@@ -13,12 +13,13 @@ import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../helper/tree';
-import { isUndefined, isObject, findProp } from '../helper/common';
+import { isUndefined, isObject } from '../helper/common';
 import GridAjax from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
 import { getConfirmMessage, getAlertMessage } from './helper/message';
 import { getDataWithOptions } from './modifiedDataManager';
+import { findIndexByRowKey } from '../query/data';
 
 interface SendOptions {
   url: string;
@@ -94,6 +95,7 @@ class ServerSideDataProvider implements DataProvider {
     }
 
     const { parentRowKey } = this.lastRequiredData;
+    const { data: storeData, column, id } = this.store;
 
     data.contents.forEach(row => {
       this.dispatch('appendTreeRow', row, {
@@ -101,7 +103,7 @@ class ServerSideDataProvider implements DataProvider {
       });
     });
 
-    const row = findProp('rowKey', parentRowKey, this.store.data.rawData);
+    const row = storeData.rawData[findIndexByRowKey(storeData, column, id, parentRowKey)];
 
     if (row && !getChildRowKeys(row).length) {
       removeExpandedAttr(row);

@@ -11,7 +11,6 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
   const { rawData, viewData } = data;
   const { allColumnMap } = column;
-  // const foundIndex = findPropIndex('rowKey', rowKey, rawData);
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
   const rawRow = rawData[foundIndex];
 

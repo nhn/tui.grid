@@ -43,13 +43,11 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
 
 export function createManager(): ModifiedDataManager {
   let originData: OptRow[] = [];
-  let appendedIndexMap: Dictionary<number> = {};
   const dataMap: ModifiedDataMap = {
     CREATE: [],
     UPDATE: [],
     DELETE: []
   };
-
   const splice = (type: ModificationTypeCode, rowKey: RowKey, row?: Row) => {
     const index = findIndex(createdRow => createdRow.rowKey === rowKey, dataMap[type]);
     if (index !== -1) {
@@ -90,7 +88,11 @@ export function createManager(): ModifiedDataManager {
       return !!(dataMap.CREATE.length || dataMap.UPDATE.length || dataMap.DELETE.length);
     },
 
-    push(type: ModificationTypeCode, row: Row, index?: number) {
+    isModifiedByType(type: ModificationTypeCode) {
+      return !!dataMap[type].length;
+    },
+
+    push(type: ModificationTypeCode, row: Row) {
       const { rowKey } = row;
       if (type === 'UPDATE' || type === 'DELETE') {
         splice('UPDATE', rowKey);
@@ -101,7 +103,6 @@ export function createManager(): ModifiedDataManager {
             splice('CREATE', rowKey, row);
           } else {
             splice('CREATE', rowKey);
-            delete appendedIndexMap[rowKey];
           }
           return;
         }
@@ -109,24 +110,14 @@ export function createManager(): ModifiedDataManager {
 
       if (!someProp('rowKey', rowKey, dataMap[type])) {
         dataMap[type].push(row);
-
-        if (type === 'CREATE' && !isUndefined(index)) {
-          appendedIndexMap[rowKey] = index;
-        }
       }
-    },
-
-    getAppendedRowIndex(rowKey: RowKey) {
-      return appendedIndexMap[rowKey] || -1;
     },
 
     clear(rowsMap: Dictionary<Row[] | RowKey[]>) {
       Object.keys(rowsMap).forEach(key => {
         const rows = rowsMap[key];
         rows.forEach((row: Row | RowKey) => {
-          const rowKey = isObject(row) ? row.rowKey : row;
-          spliceAll(rowKey);
-          delete appendedIndexMap[rowKey];
+          spliceAll(isObject(row) ? row.rowKey : row);
         });
       });
     },
@@ -135,7 +126,6 @@ export function createManager(): ModifiedDataManager {
       dataMap.CREATE = [];
       dataMap.UPDATE = [];
       dataMap.DELETE = [];
-      appendedIndexMap = {};
     }
   };
 }
