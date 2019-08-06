@@ -544,7 +544,12 @@ export default class Grid {
     this.dispatch('setFocusInfo', rowKey, columnName, true);
 
     if (setScroll) {
-      this.dispatch('setScrollToFocus');
+      // Use setTimeout to wait until the DOM element is actually mounted or updated.
+      // For example, when expands the tree row at bottom of the grid area with scroll,
+      // grid needs to wait for mounting the expanded tree DOM element to detect the accurate scrolling position.
+      setTimeout(() => {
+        this.dispatch('setScrollToFocus');
+      });
     }
 
     // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기

@@ -24,6 +24,7 @@ function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
 
   if (tree) {
+    row._attributes.expanded = expanded;
     tree.expanded = expanded;
   }
 }
