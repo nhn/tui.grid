@@ -40,10 +40,10 @@ interface StoreProps {
 interface TouchEventInfo {
   start: boolean;
   move: boolean;
-  clickInfo: {
-    x: number;
-    y: number;
-    time: number;
+  eventInfo: {
+    pageX: number;
+    pageY: number;
+    timestamp: number;
   };
 }
 
@@ -55,13 +55,13 @@ const TAP_THRESHOLD = 10;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private touchEventInfo: TouchEventInfo = {
+  private touchEvent: TouchEventInfo = {
     start: false,
     move: false,
-    clickInfo: {
-      x: -1,
-      y: -1,
-      time: 0
+    eventInfo: {
+      pageX: -1,
+      pageY: -1,
+      timestamp: 0
     }
   };
 
@@ -70,15 +70,15 @@ export class ContainerComp extends Component<Props> {
       return;
     }
 
-    this.touchEventInfo.start = true;
+    this.touchEvent.start = true;
   };
 
   private handleTouchMove = () => {
-    if (!this.el || !isMobile() || !this.touchEventInfo.start) {
+    if (!this.el || !isMobile() || !this.touchEvent.start) {
       return;
     }
 
-    this.touchEventInfo.move = true;
+    this.touchEvent.move = true;
   };
 
   private handleTouchEnd = (event: TouchEvent) => {
@@ -88,25 +88,27 @@ export class ContainerComp extends Component<Props> {
 
     const { timeStamp } = event;
     const { pageX, pageY } = event.changedTouches[0];
-    const { clickInfo, start, move } = this.touchEventInfo;
+    const { eventInfo, start, move } = this.touchEvent;
 
     if (start && !move) {
-      if (timeStamp - clickInfo.time <= DOUBLE_TAP_DURATION) {
+      const { pageX: prevPageX, pageY: prevPageY, timestamp: prevTimestamp } = eventInfo;
+
+      if (timeStamp - prevTimestamp <= DOUBLE_TAP_DURATION) {
         if (
-          Math.abs(clickInfo.x - pageX) <= TAP_THRESHOLD &&
-          Math.abs(clickInfo.y - pageY) <= TAP_THRESHOLD
+          Math.abs(prevPageX - pageX) <= TAP_THRESHOLD &&
+          Math.abs(prevPageY - pageY) <= TAP_THRESHOLD
         ) {
           this.startEditing(event.target as HTMLElement);
         }
       } else {
-        clickInfo.x = pageX;
-        clickInfo.y = pageY;
-        clickInfo.time = timeStamp;
+        eventInfo.pageX = pageX;
+        eventInfo.pageY = pageY;
+        eventInfo.timestamp = timeStamp;
       }
     }
 
-    this.touchEventInfo.start = false;
-    this.touchEventInfo.move = false;
+    this.touchEvent.start = false;
+    this.touchEvent.move = false;
   };
 
   private handleMouseover = (event: MouseEvent) => {
