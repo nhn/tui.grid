@@ -31,14 +31,15 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
   getConditionalRows,
   getCellAddressByIndex,
   getCheckedRows,
-  findIndexByRowKey
+  findIndexByRowKey,
+  findRowByRowKey
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -645,7 +646,8 @@ export default class Grid {
    * @returns {number|string} - The value of the cell
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
-    const targetRow = findProp('rowKey', rowKey, this.store.data.rawData);
+    const { data, column, id } = this.store;
+    const targetRow = findRowByRowKey(data, column, id, rowKey);
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
     if (targetRow) {
@@ -1328,8 +1330,9 @@ export default class Grid {
    * @returns {number} - the depth
    */
   public getDepth(rowKey: RowKey) {
-    const { rawData } = this.store.data;
-    const row = findProp('rowKey', rowKey, rawData);
+    const { data, column, id } = this.store;
+    const { rawData } = data;
+    const row = findRowByRowKey(data, column, id, rowKey);
 
     return row ? getDepth(rawData, row) : 0;
   }

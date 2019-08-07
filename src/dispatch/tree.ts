@@ -19,7 +19,7 @@ import {
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { findIndexByRowKey } from '../query/data';
+import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -66,7 +66,6 @@ function expand(store: Store, row: Row, recursive?: boolean) {
   }
 
   const { data, rowCoords, dimension, column, id } = store;
-  const { rawData } = data;
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, true);
@@ -74,7 +73,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
   const childRowKeys = getChildRowKeys(row);
 
   childRowKeys.forEach(childRowKey => {
-    const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
+    const childRow = findRowByRowKey(data, column, id, childRowKey);
 
     if (!childRow) {
       return;
@@ -95,8 +94,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
 export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     expand(store, row, recursive);
@@ -130,7 +128,6 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
   }
 
   const { data, rowCoords, column, id } = store;
-  const { rawData } = data;
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, false);
@@ -138,7 +135,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
   const childRowKeys = getChildRowKeys(row);
 
   childRowKeys.forEach(childRowKey => {
-    const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
+    const childRow = findRowByRowKey(data, column, id, childRowKey);
 
     if (!childRow) {
       return;
@@ -166,8 +163,7 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
 
 export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     collapse(store, row, recursive);
@@ -191,13 +187,13 @@ function setCheckedState(disabled: boolean, row: Row, state: boolean) {
 function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
   const { rawData, disabled } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     traverseAncestorRows(rawData, row, (parentRow: Row) => {
       const childRowKeys = getChildRowKeys(parentRow);
       const checkedChildRows = childRowKeys.filter(childRowKey => {
-        const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)];
+        const childRow = findRowByRowKey(data, column, id, childRowKey);
 
         return !!childRow && childRow._attributes.checked;
       });
@@ -211,7 +207,7 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
 function changeDescendantRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
   const { data, column, id } = store;
   const { rawData, disabled } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     traverseDescendantRows(rawData, row, (childRow: Row) => {
@@ -262,7 +258,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const { defaultValues, allColumnMap, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
   const { parentRowKey, offset } = options;
-  const parentRow = rawData[findIndexByRowKey(data, column, id, parentRowKey)];
+  const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
 
   const rawRows = flattenTreeData([row], defaultValues, parentRow!, {

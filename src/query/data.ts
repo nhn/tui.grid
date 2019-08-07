@@ -52,13 +52,12 @@ export function getConditionalRows(
 }
 
 export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey?: RowKey | null) {
-  const { rawData, sortOptions } = data;
-  const dataManager = getDataManager(id);
-
   if (isUndefined(rowKey) || isNull(rowKey)) {
     return -1;
   }
 
+  const { rawData, sortOptions } = data;
+  const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
   if (sortOptions.columns[0].columnName !== 'sortKey' || column.keyColumnName || hasAppendedData) {
@@ -85,6 +84,12 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
   return result;
 }
 
-export function findRowByRowKey(data: Data, column: Column, id: number, rowKey: RowKey) {
-  return data.rawData[findIndexByRowKey(data, column, id, rowKey)];
+export function findRowByRowKey(
+  data: Data,
+  column: Column,
+  id: number,
+  rowKey?: RowKey | null
+): Row | null {
+  const index = findIndexByRowKey(data, column, id, rowKey);
+  return index === -1 ? null : data.rawData[index];
 }

@@ -42,7 +42,7 @@ import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
-import { findIndexByRowKey } from '../query/data';
+import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 
 interface OriginData {
   rows: Row[];
@@ -56,7 +56,7 @@ export function setValue(
   value: CellValue
 ) {
   const { rawData, sortOptions } = data;
-  const targetRow = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
@@ -109,8 +109,8 @@ export function setRowAttribute(
   attrName: keyof RowAttributes,
   value: RowAttributeValue
 ) {
-  const { disabled, rawData } = data;
-  const targetRow = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const { disabled } = data;
+  const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
     targetRow._attributes[attrName] = value;
   }
@@ -244,8 +244,7 @@ export function setRowDisabled(
   withCheckbox: boolean
 ) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     row._attributes.disabled = disabled;
     if (withCheckbox) {
@@ -256,8 +255,7 @@ export function setRowDisabled(
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     row._attributes.checkDisabled = disabled;
   }
@@ -378,8 +376,7 @@ export function resetData(
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const rowClassMap = row._attributes.className.row;
     const isExist = includes(rowClassMap, className);
@@ -392,8 +389,7 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     removeArrayItem(className, row._attributes.className.row);
     notify(row._attributes, 'className');
@@ -407,8 +403,7 @@ export function addCellClassName(
   className: string
 ) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const columnClassMap = row._attributes.className.column;
     if (isUndefined(columnClassMap[columnName])) {
@@ -430,8 +425,7 @@ export function removeCellClassName(
   className: string
 ) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const columnClassMap = row._attributes.className.column;
     if (isUndefined(columnClassMap[columnName])) {

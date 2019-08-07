@@ -6,16 +6,15 @@ import {
   traverseAncestorRows,
   traverseDescendantRows
 } from '../helper/tree';
-import { findIndexByRowKey } from './data';
+import { findRowByRowKey } from './data';
 
 export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     const parentRowKey = getParentRowKey(row);
-    const parentRow = rawData[findIndexByRowKey(data, column, id, parentRowKey)];
+    const parentRow = findRowByRowKey(data, column, id, parentRowKey);
 
     if (parentRow) {
       return plainObj ? getOriginObject(parentRow as Observable<Row>) : parentRow;
@@ -27,14 +26,13 @@ export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
 
 export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
   const { data, column, id } = store;
-  const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     const childRowKeys = getChildRowKeys(row);
 
     return childRowKeys.map(childRowKey => {
-      const childRow = rawData[findIndexByRowKey(data, column, id, childRowKey)]!;
+      const childRow = findRowByRowKey(data, column, id, childRowKey)!;
       return plainObj ? getOriginObject(childRow as Observable<Row>) : childRow;
     });
   }
@@ -45,7 +43,7 @@ export function getChildRows(store: Store, rowKey: RowKey, plainObj?: boolean) {
 export function getAncestorRows(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
   const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   const ancestorRows: Row[] = [];
 
   if (row) {
@@ -60,7 +58,7 @@ export function getAncestorRows(store: Store, rowKey: RowKey) {
 export function getDescendantRows(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
   const { rawData } = data;
-  const row = rawData[findIndexByRowKey(data, column, id, rowKey)];
+  const row = findRowByRowKey(data, column, id, rowKey);
   const childRows: Row[] = [];
 
   if (row) {
