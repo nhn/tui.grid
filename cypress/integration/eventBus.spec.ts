@@ -240,7 +240,7 @@ it('gridMounted', () => {
   });
 });
 
-it.only('columnResize', () => {
+it('columnResize', () => {
   const callback = cy.stub();
 
   cy.gridInstance().invoke('on', 'columnResize', callback);
