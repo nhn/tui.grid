@@ -308,7 +308,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   renderState.state = 'DONE';
-  getDataManager(id).push('CREATE', rawRow, at);
+  getDataManager(id).push('CREATE', rawRow);
 }
 
 export function removeRow(
@@ -345,7 +345,7 @@ export function removeRow(
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   renderState.state = getRenderState(data.rawData);
-  getDataManager(id).push('DELETE', removedRow, rowIdx);
+  getDataManager(id).push('DELETE', removedRow);
 }
 
 export function clearData({ data, id, renderState }: Store) {

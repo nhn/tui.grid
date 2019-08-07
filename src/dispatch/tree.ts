@@ -279,8 +279,8 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
 
-  rawRows.forEach((rawRow, index) => {
-    getDataManager(id).push('CREATE', rawRow, startIdx + index);
+  rawRows.forEach(rawRow => {
+    getDataManager(id).push('CREATE', rawRow);
   });
 }
 
