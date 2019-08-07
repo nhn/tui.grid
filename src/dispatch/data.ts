@@ -436,7 +436,26 @@ export function removeCellClassName(
   }
 }
 
-export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
+function getHighestHeights(cellHeightMap: Dictionary<number[]>, rowIndex: number) {
+  const cellHeights = Object.keys(cellHeightMap).map(
+    columnName => cellHeightMap[columnName][rowIndex]
+  );
+
+  return Math.max(...cellHeights);
+}
+
+export function setCellHeight(store: Store, columnName: string, rowIndex: number, height: number) {
+  const { rowCoords, dimension } = store;
+  const { rowHeight: defaultRowHeight } = dimension;
+  if (!rowCoords.cellHeightMap[columnName]) {
+    rowCoords.cellHeightMap[columnName] = [];
+  }
+  rowCoords.cellHeightMap[columnName][rowIndex] = Math.max(height, defaultRowHeight);
+}
+
+export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number) {
+  const rowHeight = getHighestHeights(rowCoords.cellHeightMap, rowIndex);
+
   data.rawData[rowIndex]._attributes.height = rowHeight;
   rowCoords.heights[rowIndex] = rowHeight;
 

@@ -30,15 +30,14 @@ class BodyRowComp extends Component<Props> {
     const { dispatch, rowIndex, rowHeight } = this.props;
 
     if (rowHeight !== this.renderedRowHeight) {
-      dispatch('setRowHeight', rowIndex, this.renderedRowHeight);
+      dispatch('refreshRowHeight', rowIndex);
     }
   }, 10);
 
   private refreshRowHeight = (cellHeight: number) => {
-    this.renderedRowHeight = Math.max(
-      cellHeight + this.props.cellBorderWidth,
-      this.renderedRowHeight
-    );
+    const { cellBorderWidth } = this.props;
+
+    this.renderedRowHeight = Math.max(cellHeight + cellBorderWidth, this.renderedRowHeight);
     this.updateRowHeightDebounced();
   };
 

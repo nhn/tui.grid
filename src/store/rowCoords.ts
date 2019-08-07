@@ -19,6 +19,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
 
   return observable({
     heights: data.rawData.map(row => getRowHeight(row, rowHeight)),
+    cellHeightMap: {},
 
     get offsets() {
       const offsets = [0];
