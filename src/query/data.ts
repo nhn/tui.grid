@@ -66,22 +66,21 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
 
   let start = 0;
   let end = rawData.length - 1;
-  let result = -1;
 
   while (start <= end) {
-    const index = Math.floor((start + end) / 2);
-    const comparedRowKey = rawData[index].rowKey;
+    const mid = Math.floor((start + end) / 2);
+    const { rowKey: comparedRowKey } = rawData[mid];
+
     if (rowKey > comparedRowKey) {
-      start = index + 1;
+      start = mid + 1;
     } else if (rowKey < comparedRowKey) {
-      end = index - 1;
+      end = mid - 1;
     } else {
-      result = index;
-      break;
+      return mid;
     }
   }
 
-  return result;
+  return -1;
 }
 
 export function findRowByRowKey(
