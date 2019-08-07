@@ -34,7 +34,12 @@ import { isSupportWindowClipboardData } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
+import {
+  getConditionalRows,
+  getCellAddressByIndex,
+  getCheckedRows,
+  isCellEditable
+} from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -610,7 +615,13 @@ export default class Grid {
    * @param {string} value - The value of editing result
    */
   public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const { columns } = this.store.data.sortOptions;
+    const { data } = this.store;
+    const { columns } = data.sortOptions;
+
+    if (!isCellEditable(data, rowKey, columnName)) {
+      return;
+    }
+
     this.dispatch('setValue', rowKey, columnName, value);
 
     const index = findPropIndex('columnName', columnName, columns);

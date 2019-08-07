@@ -3,7 +3,7 @@ import GridEvent from '@/event/gridEvent';
 import { isSubsetOf } from '../helper/compare';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
-const columns = [{ name: 'name' }, { name: 'age' }];
+const columns = [{ name: 'name', editor: 'text', resizable: true }, { name: 'age' }];
 
 before(() => {
   cy.visit('/dist');
@@ -227,5 +227,56 @@ it('sort', () => {
           callback.args[0][0]
         )
       ).to.be.true;
+    });
+});
+
+it('gridMounted', () => {
+  const callback = cy.stub();
+  cy.gridInstance().then(grid => {
+    grid.on('gridMounted', callback);
+    cy.wait(0).then(() => {
+      expect(isSubsetOf({ instance: grid }, callback.args[0][0])).to.be.true;
+    });
+  });
+});
+
+it.only('columnResize', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'columnResize', callback);
+
+  cy.get(`.${cls('column-resize-handle')}`)
+    .first()
+    .trigger('mousedown')
+    .trigger('mousemove', { pageX: 400 })
+    .trigger('mouseup')
+    .then(() => {
+      expect(isSubsetOf({ columnName: 'name', width: 311 }, callback.args[0][0])).to.be.true;
+    });
+});
+
+it('editingStart', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'editingStart', callback);
+
+  cy.gridInstance()
+    .invoke('startEditing', 0, 'name')
+    .then(() => {
+      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, callback.args[0][0])).to.be
+        .true;
+    });
+});
+
+it('editingFinish', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'editingFinish', callback);
+
+  cy.gridInstance()
+    .invoke('finishEditing', 0, 'name', 'Ryu')
+    .then(() => {
+      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Ryu' }, callback.args[0][0])).to.be
+        .true;
     });
 });

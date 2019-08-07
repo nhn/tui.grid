@@ -18,6 +18,7 @@ interface GridEventProps {
   xhr?: XMLHttpRequest;
   options?: XHROptions;
   sortOptions?: SortOptions;
+  width?: number;
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {
@@ -59,7 +60,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
 export default class GridEvent {
   private stopped = false;
 
-  public constructor({ event, ...props }: GridEventProps) {
+  public constructor({ event, ...props }: GridEventProps = {}) {
     if (event) {
       this.assignData(getTargetInfo(event));
     }
