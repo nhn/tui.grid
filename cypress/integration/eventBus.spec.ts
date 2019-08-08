@@ -232,11 +232,19 @@ it('sort', () => {
 
 it('gridMounted', () => {
   const callback = cy.stub();
-  cy.gridInstance().then(grid => {
-    grid.on('gridMounted', callback);
-    cy.wait(0).then(() => {
-      expect(isSubsetOf({ instance: grid }, callback.args[0][0])).to.be.true;
-    });
+
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+
+  cy.createGrid({
+    data,
+    columns,
+    rowHeaders: ['rowNum', 'checkbox'],
+    onGridMounted: callback
+  });
+  cy.gridInstance().should(grid => {
+    expect(isSubsetOf({ instance: grid }, callback.args[0][0])).to.be.true;
   });
 });
 
@@ -250,7 +258,7 @@ it('columnResize', () => {
     .trigger('mousedown')
     .trigger('mousemove', { pageX: 400 })
     .trigger('mouseup')
-    .then(() => {
+    .should(() => {
       expect(isSubsetOf({ columnName: 'name', width: 311 }, callback.args[0][0])).to.be.true;
     });
 });
@@ -262,7 +270,7 @@ it('editingStart', () => {
 
   cy.gridInstance()
     .invoke('startEditing', 0, 'name')
-    .then(() => {
+    .should(() => {
       expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, callback.args[0][0])).to.be
         .true;
     });
@@ -275,7 +283,7 @@ it('editingFinish', () => {
 
   cy.gridInstance()
     .invoke('finishEditing', 0, 'name', 'Ryu')
-    .then(() => {
+    .should(() => {
       expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Ryu' }, callback.args[0][0])).to.be
         .true;
     });
