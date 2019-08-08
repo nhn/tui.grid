@@ -41,7 +41,7 @@ describe('setColumns()', () => {
 });
 
 describe('header align', () => {
-  it.only('resets the column data', () => {
+  it('resets the column data', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
     cy.createGrid({
       data,
