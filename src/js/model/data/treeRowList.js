@@ -383,13 +383,19 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
     treeExpand: function(rowKey, recursive) {
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
         var row = this.get(rowKey);
+        var isOriginExpanded = row.getTreeExpanded();
+
+        if (!row.hasTreeChildren()) {
+            return descendantRowKeys;
+        }
+
         row.setTreeExpanded(true);
 
         if (recursive) {
             _.each(descendantRowKeys, function(descendantRowKey) {
                 var descendantRow = this.get(descendantRowKey);
                 if (descendantRow.hasTreeChildren()) {
-                    descendantRow.setTreeExpanded(true);
+                    this.treeExpand(descendantRow.get('rowKey'), true);
                 }
             }, this);
         } else {
@@ -398,18 +404,20 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
             }, this);
         }
 
-        /**
-         * Occurs when the row having child rows is expanded
-         * @event Grid#expanded
-         * @type {module:event/gridEvent}
-         * @property {number|string} rowKey - rowKey of the expanded row
-         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-         * @property {Grid} instance - Current grid instance
-         */
-        this.trigger('expanded', {
-            rowKey: rowKey,
-            descendantRowKeys: descendantRowKeys.slice(0)
-        });
+        if (!isOriginExpanded) {
+            /**
+             * Occurs when the row having child rows is expanded
+             * @event Grid#expanded
+             * @type {module:event/gridEvent}
+             * @property {number|string} rowKey - rowKey of the expanded row
+             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+             * @property {Grid} instance - Current grid instance
+             */
+            this.trigger('expanded', {
+                rowKey: rowKey,
+                descendantRowKeys: descendantRowKeys.slice(0)
+            });
+        }
 
         return descendantRowKeys;
     },
@@ -439,14 +447,18 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      */
     treeCollapse: function(rowKey, recursive) {
         var row = this.get(rowKey);
-
+        var isOriginExpanded = row.getTreeExpanded();
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+
+        if (!row.hasTreeChildren()) {
+            return descendantRowKeys;
+        }
 
         if (recursive) {
             _.each(descendantRowKeys, function(descendantRowKey) {
                 var descendantRow = this.get(descendantRowKey);
                 if (descendantRow.hasTreeChildren()) {
-                    descendantRow.setTreeExpanded(false);
+                    this.treeCollapse(descendantRow.get('rowKey'), true);
                 }
             }, this);
         } else {
@@ -457,18 +469,20 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
 
         row.setTreeExpanded(false);
 
-        /**
-         * Occurs when the row having child rows is collapsed
-         * @event Grid#collapsed
-         * @type {module:event/gridEvent}
-         * @property {number|string} rowKey - rowKey of the collapsed row
-         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-         * @property {Grid} instance - Current grid instance
-         */
-        this.trigger('collapsed', {
-            rowKey: rowKey,
-            descendantRowKeys: descendantRowKeys.slice(0)
-        });
+        if (isOriginExpanded) {
+            /**
+             * Occurs when the row having child rows is collapsed
+             * @event Grid#collapsed
+             * @type {module:event/gridEvent}
+             * @property {number|string} rowKey - rowKey of the collapsed row
+             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+             * @property {Grid} instance - Current grid instance
+             */
+            this.trigger('collapsed', {
+                rowKey: rowKey,
+                descendantRowKeys: descendantRowKeys.slice(0)
+            });
+        }
 
         return descendantRowKeys;
     },
