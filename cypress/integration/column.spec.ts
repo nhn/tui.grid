@@ -33,10 +33,6 @@ describe('setColumns()', () => {
     cy.getCellContent(1, 'id').should('have.text', '2');
     cy.getCellContent(1, 'score').should('have.text', '80');
     cy.getCellContent(1, 'grade').should('have.text', 'B');
-
-    cy.get('[data-column-name=grade]')
-      .eq(0)
-      .should('have.css', 'vertical-align', 'bottom');
   });
 });
 
