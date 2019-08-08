@@ -35,8 +35,10 @@ class BodyRowComp extends Component<Props> {
   }, 10);
 
   private refreshRowHeight = (cellHeight: number) => {
-    this.renderedRowHeight =
-      Math.max(cellHeight, this.renderedRowHeight) + this.props.cellBorderWidth;
+    this.renderedRowHeight = Math.max(
+      cellHeight + this.props.cellBorderWidth,
+      this.renderedRowHeight
+    );
     this.updateRowHeightDebounced();
   };
 
