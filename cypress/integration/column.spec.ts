@@ -20,7 +20,10 @@ beforeEach(() => {
 describe('setColumns()', () => {
   it('resets the column data', () => {
     const columns = [{ name: 'id' }, { name: 'name' }];
-    cy.createGrid({ data, columns });
+    cy.createGrid({
+      data,
+      columns
+    });
 
     cy.gridInstance().invoke('setColumns', [{ name: 'id' }, { name: 'score' }, { name: 'grade' }]);
 
@@ -30,6 +33,42 @@ describe('setColumns()', () => {
     cy.getCellContent(1, 'id').should('have.text', '2');
     cy.getCellContent(1, 'score').should('have.text', '80');
     cy.getCellContent(1, 'grade').should('have.text', 'B');
+
+    cy.get('[data-column-name=grade]')
+      .eq(0)
+      .should('have.css', 'vertical-align', 'bottom');
+  });
+});
+
+describe('header align', () => {
+  it.only('resets the column data', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        align: 'left',
+        valign: 'top',
+        columns: [{ name: 'grade', valign: 'bottom' }]
+      }
+    });
+
+    cy.get('[data-column-name=id]')
+      .eq(0)
+      .should('have.css', 'vertical-align', 'top')
+      .and('have.css', 'text-align', 'left');
+
+    cy.get('[data-column-name=name]')
+      .eq(0)
+      .should('have.css', 'vertical-align', 'top')
+      .and('have.css', 'text-align', 'left');
+
+    cy.gridInstance().invoke('setColumns', [{ name: 'id' }, { name: 'score' }, { name: 'grade' }]);
+    cy.get('[data-column-name=grade]')
+      .eq(0)
+      .should('have.css', 'vertical-align', 'bottom')
+      .and('have.css', 'text-align', 'left');
   });
 });
 
@@ -52,13 +91,14 @@ describe('setHeader()', () => {
   it('change height', () => {
     const cellBorderWidth = 1;
     const height = 300;
+    const paddingHorizontal = 8;
     const columns = [{ name: 'id' }, { name: 'name' }, { name: 'age' }];
     cy.createGrid({ data, columns });
 
     cy.gridInstance().invoke('setHeader', { height });
     cy.get(`.${cls('cell-header')}`).should($headers => {
       $headers.each((_, $header) => {
-        expect(Cypress.$($header).height()).to.eq(height - cellBorderWidth);
+        expect(Cypress.$($header).height()).to.eq(height - cellBorderWidth - paddingHorizontal);
       });
     });
   });

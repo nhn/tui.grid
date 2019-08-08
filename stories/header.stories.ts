@@ -34,7 +34,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 stories.add(
   'header',
   () => {
-    const { el, grid } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       bodyHeight: 'fitToParent',

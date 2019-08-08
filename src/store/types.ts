@@ -1,6 +1,6 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
-import { AlignType, OptColumnOptions, OptTree, VAlignType } from '../types';
+import { AlignType, ColumnsAlignInfo, OptColumnOptions, OptTree, VAlignType } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -218,12 +218,19 @@ interface DataForColumnCreation {
   treeColumnOptions: OptTree;
 }
 
+export interface HeaderAlignInfo {
+  align: AlignType;
+  valign: VAlignType;
+  columnsAlign: ColumnsAlignInfo[];
+}
+
 export interface Column {
   frozenCount: number;
   dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
   allColumns: ColumnInfo[];
   complexHeaderColumns: ComplexColumnInfo[];
+  readonly headerAlignInfo: HeaderAlignInfo;
   readonly allColumnMap: Dictionary<ColumnInfo>;
   readonly rowHeaderCount: number;
   readonly visibleColumns: ColumnInfo[];

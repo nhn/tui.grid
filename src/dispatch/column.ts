@@ -48,8 +48,16 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
       }),
     []
   );
+
   const columnInfos = optColumns.map(optColumn =>
-    createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)
+    createColumn(
+      optColumn,
+      columnOptions,
+      relationColumns,
+      copyOptions,
+      treeColumnOptions,
+      column.headerAlignInfo
+    )
   );
 
   column.allColumns = [...rowHeaders, ...columnInfos];
