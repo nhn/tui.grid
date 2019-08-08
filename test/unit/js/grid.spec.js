@@ -272,30 +272,40 @@ describe('grid', function() {
         });
 
         it('expandAll should trigger expandedAll event', function() {
-            var spy = jasmine.createSpy('expandedAll');
-            grid.on('expandedAll', spy);
+            var expandedAllSpy = jasmine.createSpy('expandedAll');
+            var expandedSpy = jasmine.createSpy('expanded');
+
+            grid.on('expandedAll', expandedAllSpy);
+            grid.on('expanded', expandedSpy);
 
             grid.expandAll();
 
-            expect(spy).toHaveBeenCalled();
+            expect(expandedAllSpy).toHaveBeenCalled();
+            expect(expandedSpy).toHaveBeenCalledTimes(3);
         });
 
         it('collapse should trigger collapsed event', function() {
             var spy = jasmine.createSpy('collapsed');
             grid.on('collapsed', spy);
 
+            grid.expandAll();
             grid.collapse(0);
 
             expect(spy).toHaveBeenCalled();
         });
 
         it('collapseAll should trigger collapsedAll event', function() {
-            var spy = jasmine.createSpy('collapsedAll');
-            grid.on('collapsedAll', spy);
+            var collapsedAllSpy = jasmine.createSpy('collapsedAll');
+            var collapsedSpy = jasmine.createSpy('collapsed');
 
+            grid.on('collapsedAll', collapsedAllSpy);
+            grid.on('collapsed', collapsedSpy);
+
+            grid.expandAll();
             grid.collapseAll();
 
-            expect(spy).toHaveBeenCalled();
+            expect(collapsedAllSpy).toHaveBeenCalled();
+            expect(collapsedSpy).toHaveBeenCalledTimes(3);
         });
 
         it('getAncestors should return the ancestor of the row which has the given row key', function() {
@@ -347,7 +357,7 @@ describe('grid', function() {
 
             expect(dimensionModel.get('headerHeight')).toBe(100);
             expect(columnModel.get('complexHeaderColumns').length).toBe(0);
-        })
+        });
 
         it('set complex columns info.', function() {
             var complexColumns = [
@@ -368,6 +378,6 @@ describe('grid', function() {
 
             expect(dimensionModel.get('headerHeight')).toBe(10);
             expect(columnModel.get('complexHeaderColumns')).toEqual(complexColumns);
-        })
-    })
+        });
+    });
 });
