@@ -26,7 +26,6 @@ declare namespace tuiGrid {
         treeState?: TreeStateType;
     }
 
-
     interface IRow {
         [propName: string]: ColumnValueType | ExtraData;
         _extraData?: ExtraData;
