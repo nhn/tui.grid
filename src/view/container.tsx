@@ -243,34 +243,12 @@ export class ContainerComp extends Component<Props> {
       // Use setTimeout to wait until the DOM element is actually mounted
       window.setTimeout(this.syncWithDOMWidth, 0);
     }
-
-    const { eventBus } = this.props;
-    const gridEvent = new GridEvent();
-
-    /**
-     * Occurs when the grid is mounted on DOM
-     * @event Grid#gridMounted
-     * @property {Grid} instance - Current grid instance
-     */
-    setTimeout(() => {
-      eventBus.trigger('gridMounted', gridEvent);
-    });
   }
 
   public componentWillUnmount() {
     if (this.props.autoWidth) {
       window.removeEventListener('resize', this.syncWithDOMWidth);
     }
-
-    const { eventBus } = this.props;
-    const gridEvent = new GridEvent();
-
-    /**
-     * Occurs before the grid is destroyed
-     * @event Grid#gridBeforeDestroyed
-     * @property {Grid} instance - Current grid instance
-     */
-    eventBus.trigger('gridBeforeDestroyed', gridEvent);
   }
 
   private syncWithDOMWidth = () => {
