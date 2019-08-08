@@ -1,6 +1,6 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
-import { OptColumnOptions, OptTree } from '../types';
+import { AlignType, OptColumnOptions, OptTree, VAlignType } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -184,8 +184,8 @@ export interface ColumnInfo {
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
-  align?: 'left' | 'center' | 'right';
-  valign?: 'top' | 'middle' | 'bottom';
+  align?: AlignType;
+  valign?: VAlignType;
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
@@ -196,6 +196,8 @@ export interface ColumnInfo {
   onBeforeChange?: Function;
   onAfterChange?: Function;
   ignored?: boolean;
+  headerAlign: AlignType;
+  headerVAlign: VAlignType;
 }
 
 export interface SortedColumn {
@@ -410,4 +412,6 @@ export interface ComplexColumnInfo {
   childNames?: string[];
   sortable?: boolean;
   sortingType?: SortingType;
+  headerAlign?: AlignType;
+  headerVAlign?: VAlignType;
 }

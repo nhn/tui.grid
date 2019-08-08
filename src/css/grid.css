@@ -202,6 +202,8 @@
 .tui-grid-cell-header {
   padding: 0;
   text-align: center;
+  /* @TODO: box-sizing standardize required */
+  box-sizing: border-box;
 }
 .tui-grid-cell-summary {
   padding: 0 12px;

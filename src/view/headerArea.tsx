@@ -106,22 +106,28 @@ class HeaderAreaComp extends Component<Props> {
           ) : (
             <tbody>
               <tr style={headerHeightStyle} onDblClick={this.handleDblClick}>
-                {columns.map(({ name, header, sortable }, index) => (
-                  <th
-                    key={name}
-                    data-column-name={name}
-                    class={cls(
-                      'cell',
-                      'cell-header',
-                      [!isRowHeader(name) && this.isSelected(index), 'cell-selected'],
-                      [isRowHeader(name), 'cell-row-header']
-                    )}
-                  >
-                    {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-                    {!!sortable && <SortingButton columnName={name} />}
-                    {!!sortable && <SortingOrder columnName={name} />}
-                  </th>
-                ))}
+                {columns.map(
+                  (
+                    { name, header, sortable, headerAlign: textAlign, headerVAlign: verticalAlign },
+                    index
+                  ) => (
+                    <th
+                      key={name}
+                      data-column-name={name}
+                      style={{ textAlign, verticalAlign, padding: '4px 5px' }}
+                      class={cls(
+                        'cell',
+                        'cell-header',
+                        [!isRowHeader(name) && this.isSelected(index), 'cell-selected'],
+                        [isRowHeader(name), 'cell-row-header']
+                      )}
+                    >
+                      {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
+                      {!!sortable && <SortingButton columnName={name} />}
+                      {!!sortable && <SortingOrder columnName={name} />}
+                    </th>
+                  )
+                )}
               </tr>
             </tbody>
           )}

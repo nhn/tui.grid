@@ -6,7 +6,8 @@ import {
   ClipboardCopyOptions,
   ComplexColumnInfo,
   CellEditorOptions,
-  CellRendererOptions
+  CellRendererOptions,
+  SortingType
 } from './types';
 import {
   OptColumn,
@@ -14,7 +15,10 @@ import {
   OptRowHeader,
   OptTree,
   OptCellEditor,
-  OptCellRenderer
+  OptCellRenderer,
+  AlignType,
+  VAlignType,
+  ColumnsAlignInfo
 } from '../types';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
@@ -26,11 +30,18 @@ import {
   isFunction,
   isObject,
   isUndefined,
-  isNumber
+  isNumber,
+  findProp
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
+
+interface AlignInfo {
+  align: AlignType;
+  valign: VAlignType;
+  columnsAlign: ColumnsAlignInfo[];
+}
 
 const ROW_HEADERS_MAP = {
   rowNum: '_number',
@@ -114,12 +125,26 @@ export function getRelationColumns(relations: Relations[]) {
   return relationColumns;
 }
 
+function getHeaderAlignInfo(name: string, alignInfo: AlignInfo) {
+  const { columnsAlign, align: defaultAlign, valign: defaultVAlign } = alignInfo;
+  const columnOption = findProp('name', name, columnsAlign);
+  const headerAlign = columnOption ? columnOption.align! : defaultAlign;
+  const headerVAlign = columnOption ? columnOption.valign! : defaultVAlign;
+
+  return {
+    headerAlign,
+    headerVAlign
+  };
+}
+
+// eslint-disable-next-line max-params
 export function createColumn(
   column: OptColumn,
   columnOptions: OptColumnOptions,
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
-  treeColumnOptions: OptTree
+  treeColumnOptions: OptTree,
+  alignInfo: AlignInfo
 ): ColumnInfo {
   const {
     name,
@@ -149,6 +174,7 @@ export function createColumn(
 
   const editorOptions = getEditorOptions(editor);
   const rendererOptions = getRendererOptions(renderer);
+  const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
 
   return observable({
     name,
@@ -176,11 +202,13 @@ export function createColumn(
     defaultValue,
     ignored,
     ...(!!editorOptions && { editor: editorOptions }),
-    ...getTreeInfo(treeColumnOptions, name)
+    ...getTreeInfo(treeColumnOptions, name),
+    headerAlign,
+    headerVAlign
   });
 }
 
-function createRowHeader(data: OptRowHeader): ColumnInfo {
+function createRowHeader(data: OptRowHeader, alignInfo: AlignInfo): ColumnInfo {
   const rowHeader: OptColumn = isString(data)
     ? { name: ROW_HEADERS_MAP[data] }
     : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
@@ -193,6 +221,7 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
   const rendererOptions = renderer || {
     type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
   };
+  const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
 
   return observable({
     name,
@@ -204,7 +233,24 @@ function createRowHeader(data: OptRowHeader): ColumnInfo {
     fixedWidth: true,
     baseWidth,
     escapeHTML: false,
-    minWidth: baseMinWith
+    minWidth: baseMinWith,
+    headerAlign,
+    headerVAlign
+  });
+}
+
+function createComplexHeaderColumns(column: ComplexColumnInfo, alignInfo: AlignInfo) {
+  const { header, name, childNames, sortable, sortingType } = column;
+  const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
+
+  return observable({
+    header,
+    name,
+    childNames,
+    sortable,
+    sortingType,
+    headerAlign,
+    headerVAlign
   });
 }
 
@@ -216,6 +262,9 @@ interface ColumnOptions {
   keyColumnName?: string;
   treeColumnOptions: OptTree;
   complexColumns: ComplexColumnInfo[];
+  align: AlignType;
+  valign: VAlignType;
+  columnsAlign: ColumnsAlignInfo[];
 }
 
 export function create({
@@ -225,22 +274,38 @@ export function create({
   copyOptions,
   keyColumnName,
   treeColumnOptions,
-  complexColumns
+  complexColumns,
+  align,
+  valign,
+  columnsAlign
 }: ColumnOptions): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(getRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
-  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader));
+
+  columnsAlign.forEach(columnAlign => {
+    columnAlign.align = columnAlign.align || align;
+    columnAlign.valign = columnAlign.valign || valign;
+  });
+  const alignInfo = { columnsAlign, align, valign };
+
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, alignInfo));
+
   const columnInfos = columns.map(column =>
-    createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions)
+    createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions, alignInfo)
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
+
   const {
     name: treeColumnName,
     useIcon: treeIcon = true,
     useCascadingCheckbox: treeCascadingCheckbox = true
   } = treeColumnOptions;
+
+  const complexHeaderColumns = complexColumns.map(column =>
+    createComplexHeaderColumns(column, alignInfo)
+  );
 
   return observable({
     keyColumnName,
@@ -256,7 +321,7 @@ export function create({
     },
 
     allColumns,
-    complexHeaderColumns: complexColumns,
+    complexHeaderColumns,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;

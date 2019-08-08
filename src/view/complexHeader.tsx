@@ -84,7 +84,7 @@ class ComplexHeaderComp extends Component<Props> {
     colspan: number,
     rowspan: number
   ) {
-    const { name, header, sortable } = column;
+    const { name, header, sortable, headerAlign: textAlign, headerVAlign: verticalAlign } = column;
 
     return (
       <th
@@ -98,7 +98,7 @@ class ComplexHeaderComp extends Component<Props> {
         )}
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
-        style={{ height }}
+        style={{ height, textAlign, verticalAlign, padding: '4px 5px' }}
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
         {!!sortable && <SortingButton columnName={name} />}
@@ -115,7 +115,6 @@ class ComplexHeaderComp extends Component<Props> {
     const columnNames = new Array(maxRowCount);
     const colspans: number[] = [];
     const rowHeight = (maxRowCount ? Math.floor((headerHeight - 1) / maxRowCount) : 0) - 1;
-
     let rowspan = 1;
     let height;
 
