@@ -624,13 +624,7 @@ export default class Grid {
    * @param {string} value - The value of editing result
    */
   public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const { data } = this.store;
-    const { columns } = data.sortOptions;
-
-    if (!isCellEditable(data, rowKey, columnName)) {
-      return;
-    }
-
+    const { columns } = this.store.data.sortOptions;
     this.dispatch('setValue', rowKey, columnName, value);
 
     const index = findPropIndex('columnName', columnName, columns);
