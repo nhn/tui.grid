@@ -39,7 +39,8 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
   'bodyHeight',
   'totalRowHeight',
   'offsetLeft',
-  'offsetTop'
+  'offsetTop',
+  'totalColumnWidth'
 ];
 
 class BodyAreaComp extends Component<Props> {

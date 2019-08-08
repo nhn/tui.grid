@@ -4,6 +4,7 @@ import { createColumn, getRelationColumns } from '../store/column';
 import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
+import { initFocus } from './focus';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -32,7 +33,7 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
+export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
   const {
     columnOptions,
     copyOptions,
@@ -64,10 +65,18 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
   const { allColumnMap } = column;
   const { rawData } = data;
 
-  data.viewData.forEach(viewRow => {
-    viewRow.__unobserveFns__.forEach(fn => fn());
+  focus.editingAddress = null;
+
+  setTimeout(() => {
+    initFocus(focus);
+
+    data.viewData.forEach(viewRow => {
+      if (Array.isArray(viewRow.__unobserveFns__)) {
+        viewRow.__unobserveFns__.forEach(fn => fn());
+      }
+    });
+    data.viewData = rawData.map(row => createViewRow(row, allColumnMap, rawData));
   });
-  data.viewData = rawData.map(row => createViewRow(row, allColumnMap, rawData));
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {

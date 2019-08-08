@@ -135,3 +135,11 @@ export function changeFocus(
     focus.rowKey = focusRowKey;
   }
 }
+
+export function initFocus(focus: Focus) {
+  focus.navigating = false;
+  focus.rowKey = null;
+  focus.columnName = null;
+  focus.prevRowKey = null;
+  focus.prevColumnName = null;
+}

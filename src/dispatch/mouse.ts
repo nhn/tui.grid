@@ -333,6 +333,11 @@ export function dragEnd({ selection }: Store) {
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
+
+  if (data.rawData.length === 0) {
+    return;
+  }
+
   const { pageX, pageY, shiftKey } = eventInfo;
   const { visibleColumnsBySideWithRowHeader } = column;
 
@@ -359,8 +364,14 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
   const { data, selection, id, column, focus } = store;
+  const { rawData, viewData } = data;
+
+  if (rawData.length === 0) {
+    return;
+  }
+
   const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
-  const endRowIndex = data.viewData.length - 1;
+  const endRowIndex = viewData.length - 1;
 
   let startColumnIndex, endColumnIndex;
 
@@ -379,7 +390,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     column: [startColumnIndex, endColumnIndex]
   };
 
-  changeFocus(focus, data, data.rawData[0].rowKey, name, id);
+  changeFocus(focus, data, rawData[0].rowKey, name, id);
   changeSelectionRange(selection, inputRange, id);
 }
 
