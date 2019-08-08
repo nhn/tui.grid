@@ -1,6 +1,7 @@
 import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
 import { findProp, isFunction, findPropIndex, isNull, isUndefined } from '../helper/common';
 import { getDataManager } from '../instance';
+import { isRowSpanEnabled } from '../helper/rowSpan';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -60,7 +61,7 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
-  if (sortOptions.columns[0].columnName !== 'sortKey' || column.keyColumnName || hasAppendedData) {
+  if (!isRowSpanEnabled(sortOptions) || column.keyColumnName || hasAppendedData) {
     return findPropIndex('rowKey', rowKey, rawData);
   }
 
@@ -88,7 +89,6 @@ export function findRowByRowKey(
   column: Column,
   id: number,
   rowKey?: RowKey | null
-): Row | null {
-  const index = findIndexByRowKey(data, column, id, rowKey);
-  return index === -1 ? null : data.rawData[index];
+): Row | undefined {
+  return data.rawData[findIndexByRowKey(data, column, id, rowKey)];
 }
