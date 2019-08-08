@@ -79,7 +79,7 @@ export function setValue(
 
     if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
-      const mainRowIndex = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+      const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
 
       // update sub rows value
       for (let count = 1; count < spanCount; count += 1) {
@@ -318,7 +318,7 @@ export function removeRow(
 ) {
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
-  const rowIdx = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
   const removedRow = rawData.splice(rowIdx, 1)[0];
 
@@ -531,7 +531,7 @@ function changeToObservableTreeData(
   const { rawData, viewData } = createData(rows, column);
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
-    const foundIndex = findIndexByRowKey(data as Data, column as Column, id, rawData[index].rowKey);
+    const foundIndex = findIndexByRowKey(data, column, id, rawData[index].rowKey);
     const rawRow = data.rawData[foundIndex];
 
     if (rawRow && !isObservable(rawRow)) {

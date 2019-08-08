@@ -16,7 +16,6 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { findPropIndex } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface OwnProps {
