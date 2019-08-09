@@ -12,6 +12,7 @@ import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { isMobile } from '../helper/browser';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -36,10 +37,79 @@ interface StoreProps {
   scrollY: boolean;
 }
 
+interface TouchEventInfo {
+  start: boolean;
+  move: boolean;
+  eventInfo: {
+    pageX: number;
+    pageY: number;
+    timestamp: number;
+  };
+}
+
 type Props = OwnProps & StoreProps & DispatchProps;
+
+const DOUBLE_TAP_DURATION = 200;
+const TAP_THRESHOLD = 10;
 
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
+
+  private touchEvent: TouchEventInfo = {
+    start: false,
+    move: false,
+    eventInfo: {
+      pageX: -1,
+      pageY: -1,
+      timestamp: 0
+    }
+  };
+
+  private handleTouchStart = () => {
+    if (!this.el || !isMobile()) {
+      return;
+    }
+
+    this.touchEvent.start = true;
+  };
+
+  private handleTouchMove = () => {
+    if (!this.el || !isMobile() || !this.touchEvent.start) {
+      return;
+    }
+
+    this.touchEvent.move = true;
+  };
+
+  private handleTouchEnd = (event: TouchEvent) => {
+    if (!this.el || !isMobile()) {
+      return;
+    }
+
+    const { timeStamp } = event;
+    const { pageX, pageY } = event.changedTouches[0];
+    const { eventInfo, start, move } = this.touchEvent;
+
+    if (start && !move) {
+      const { pageX: prevPageX, pageY: prevPageY, timestamp: prevTimestamp } = eventInfo;
+
+      if (timeStamp - prevTimestamp <= DOUBLE_TAP_DURATION) {
+        if (
+          Math.abs(prevPageX - pageX) <= TAP_THRESHOLD &&
+          Math.abs(prevPageY - pageY) <= TAP_THRESHOLD
+        ) {
+          this.startEditing(event.target as HTMLElement);
+        }
+      } else {
+        eventInfo.pageX = pageX;
+        eventInfo.pageY = pageY;
+        eventInfo.timestamp = timeStamp;
+      }
+    }
+
+    this.touchEvent.start = false;
+    this.touchEvent.move = false;
+  };
 
   private handleMouseover = (event: MouseEvent) => {
     const { eventBus } = this.props;
@@ -131,7 +201,7 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleDblClick = (event: MouseEvent) => {
-    if (!this.el) {
+    if (!this.el || isMobile()) {
       return;
     }
 
@@ -218,6 +288,9 @@ export class ContainerComp extends Component<Props> {
         onClick={this.handleClick}
         onMouseOut={this.handleMouseout}
         onMouseOver={this.handleMouseover}
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        onTouchEnd={this.handleTouchEnd}
         ref={el => {
           this.el = el;
         }}

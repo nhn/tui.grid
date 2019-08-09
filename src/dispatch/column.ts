@@ -2,16 +2,34 @@ import { Store, Side, ComplexColumnInfo } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, getRelationColumns } from '../store/column';
 import { createViewRow } from '../store/data';
+import GridEvent from '../event/gridEvent';
+import { getEventBus } from '../event/eventBus';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
 }
 
-export function setColumnWidth({ column }: Store, side: Side, index: number, width: number) {
+export function setColumnWidth({ column, id }: Store, side: Side, index: number, width: number) {
   const columnItem = column.visibleColumnsBySideWithRowHeader[side][index];
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({
+    columnName: columnItem.name,
+    width
+  });
 
-  columnItem.baseWidth = width;
-  columnItem.fixedWidth = true;
+  /**
+   * Occurs when column is resized
+   * @event Grid#columnResize
+   * @property {number} columnName - columnName of the target cell
+   * @property {number} width - width of the resized column
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('columnResize', gridEvent);
+
+  if (!gridEvent.isStopped()) {
+    columnItem.baseWidth = width;
+    columnItem.fixedWidth = true;
+  }
 }
 
 export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {

@@ -14,6 +14,7 @@ import {
 } from '../store/types';
 import { getRowRangeWithRowSpan } from '../helper/rowSpan';
 import { getChildColumnRange } from '../query/selection';
+import { findIndexByRowKey } from '../query/data';
 
 export function setNavigating({ focus }: Store, navigating: boolean) {
   focus.navigating = navigating;
@@ -427,7 +428,7 @@ export function dragMoveHeader(store: Store, dragData: DragData, startSelectedNa
 export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data, focus } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
-  const rowIndex = findPropIndex('rowKey', rowKey, data.rawData);
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey);
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [rowIndex, rowIndex],

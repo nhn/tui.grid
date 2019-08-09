@@ -93,6 +93,7 @@ export interface ModifiedDataManager {
   ) => Dictionary<Row[] | RowKey[]>;
   getAllModifiedData: (options: ModifiedRowsOptions) => Dictionary<Row[] | RowKey[]>;
   isModified: () => boolean;
+  isModifiedByType: (type: ModificationTypeCode) => boolean;
   push: (type: ModificationTypeCode, row: Row) => void;
   clear: (type: Dictionary<Row[] | RowKey[]>) => void;
   clearAll: () => void;

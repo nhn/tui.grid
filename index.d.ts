@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.2.0
+// Type definitions for TOAST UI Grid v4.3.0
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
@@ -515,6 +515,8 @@ declare namespace tuiGrid {
     treeColumnOptions?: ITree;
     header?: IHeader;
     usageStatistics?: boolean;
+    onGridMounted?: Function;
+    onGridBeforeDestroyed?: Function;
   }
 
   class Pagination {

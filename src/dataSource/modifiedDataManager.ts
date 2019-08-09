@@ -88,6 +88,10 @@ export function createManager(): ModifiedDataManager {
       return !!(dataMap.CREATE.length || dataMap.UPDATE.length || dataMap.DELETE.length);
     },
 
+    isModifiedByType(type: ModificationTypeCode) {
+      return !!dataMap[type].length;
+    },
+
     push(type: ModificationTypeCode, row: Row) {
       const { rowKey } = row;
       if (type === 'UPDATE' || type === 'DELETE') {

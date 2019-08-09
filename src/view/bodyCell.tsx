@@ -1,6 +1,14 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
-import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
+import {
+  ColumnInfo,
+  ViewRow,
+  CellRenderData,
+  RowKey,
+  TreeCellInfo,
+  Data,
+  Column
+} from '../store/types';
 import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
@@ -8,7 +16,7 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { findPropIndex } from '../helper/common';
+import { findIndexByRowKey } from '../query/data';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -194,11 +202,11 @@ export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data, selection }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
-    const { disabled, viewData } = data;
+    const { disabled } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
-    const rowIndex = findPropIndex('rowKey', rowKey, viewData as ViewRow[]);
+    const rowIndex = findIndexByRowKey(data as Data, column as Column, id, rowKey);
 
     return {
       grid,

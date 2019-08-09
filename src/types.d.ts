@@ -43,6 +43,8 @@ export interface OptGrid {
   header?: OptHeader;
   usageStatistics?: boolean;
   disabled?: boolean;
+  onGridMounted?: Function;
+  onGridBeforeDestroyed?: Function;
 }
 
 export type CellValue = number | string | boolean | null | undefined;

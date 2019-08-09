@@ -28,7 +28,8 @@
       "tmpdoc/event/gridEvent.js",
       "tmpdoc/dispatch/data.js",
       "tmpdoc/dispatch/tree.js",
-      "tmpdoc/view/container.js"
+      "tmpdoc/view/container.js",
+      "tmpdoc/view/root.js"
     ],
     "fileLink": false
   },
