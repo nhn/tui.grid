@@ -355,6 +355,7 @@ export function clearData({ data, id, renderState, focus, rowCoords }: Store) {
 
   focus.editingAddress = null;
 
+  // to render the grid with clearing data after destroying editing cell on DOM
   setTimeout(() => {
     initFocus(focus);
 
@@ -372,6 +373,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
   focus.editingAddress = null;
 
+  // to render the grid for new data after destroying editing cell on DOM
   setTimeout(() => {
     initFocus(focus);
 

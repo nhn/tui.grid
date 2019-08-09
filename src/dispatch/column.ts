@@ -64,6 +64,7 @@ export function setColumns({ column, data, focus }: Store, optColumns: OptColumn
 
   focus.editingAddress = null;
 
+  // to render the grid for new data after destroying editing cell on DOM
   setTimeout(() => {
     initFocus(focus);
 
