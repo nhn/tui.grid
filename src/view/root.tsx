@@ -29,6 +29,11 @@ export class Root extends Component<Props> {
 
     if (isFunction(onGridMounted)) {
       setTimeout(() => {
+        /**
+         * Occurs when the grid is mounted on DOM
+         * @event Grid#onGridMounted
+         * @property {Grid} instance - Current grid instance
+         */
         onGridMounted(gridEvent);
       });
     }
@@ -40,6 +45,11 @@ export class Root extends Component<Props> {
     gridEvent.setInstance(getInstance(store.id));
 
     if (isFunction(onGridBeforeDestroyed)) {
+      /**
+       * Occurs before the grid is detached from DOM
+       * @event Grid#onGridBeforeDestroyed
+       * @property {Grid} instance - Current grid instance
+       */
       onGridBeforeDestroyed(gridEvent);
     }
   }
