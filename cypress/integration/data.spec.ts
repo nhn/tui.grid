@@ -179,6 +179,20 @@ describe('clear()', () => {
 
     cy.get(`.${cls('body-area')} .${cls('cell')}`).should('not.exist');
   });
+
+  it.only('focus, editing cell is removed when clears all data', () => {
+    cy.gridInstance().invoke('startEditingAt', 0, 1);
+    cy.gridInstance().invoke('clear');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        rowKey: null,
+        columnName: null,
+        value: null
+      });
+    cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+  });
 });
 
 describe('resetData()', () => {
@@ -189,6 +203,19 @@ describe('resetData()', () => {
     cy.getCellByIdx(0, 1).should('to.have.text', '30');
     cy.getCellByIdx(1, 0).should('to.have.text', 'Han');
     cy.getCellByIdx(1, 1).should('to.have.text', '40');
+  });
+
+  it('focus, editing cell is removed when resets all data', () => {
+    cy.gridInstance().invoke('startEditingAt', 0, 1);
+    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        rowKey: null,
+        columnName: null,
+        value: null
+      });
+    cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
   });
 });
 
@@ -205,6 +232,7 @@ describe('getters', () => {
           column: {}
         },
         rowNum,
+        // eslint-disable-next-line no-undefined
         rowSpan: undefined
       }
     };
@@ -250,30 +278,6 @@ describe('getters', () => {
     cy.gridInstance()
       .invoke('getRowCount')
       .should('eq', 2);
-  });
-});
-
-describe('columns', () => {
-  it('getColumnValues() returns all values in the given column', () => {
-    cy.gridInstance()
-      .invoke('getColumnValues', 'name')
-      .should('eql', ['Kim', 'Lee']);
-
-    cy.gridInstance()
-      .invoke('getColumnValues', 'age')
-      .should('eql', [10, 20]);
-  });
-
-  it('setColumnValues() sets the all values in the given column', () => {
-    cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
-
-    cy.getCellByIdx(0, 0).should('to.have.text', 'Park');
-    cy.getCellByIdx(1, 0).should('to.have.text', 'Park');
-
-    cy.gridInstance().invoke('setColumnValues', 'age', 30);
-
-    cy.getCellByIdx(0, 1).should('to.have.text', '30');
-    cy.getCellByIdx(1, 1).should('to.have.text', '30');
   });
 });
 
