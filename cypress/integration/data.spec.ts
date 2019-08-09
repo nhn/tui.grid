@@ -180,7 +180,7 @@ describe('clear()', () => {
     cy.get(`.${cls('body-area')} .${cls('cell')}`).should('not.exist');
   });
 
-  it.only('focus, editing cell is removed when clears all data', () => {
+  it('focus, editing cell is removed when clears all data', () => {
     cy.gridInstance().invoke('startEditingAt', 0, 1);
     cy.gridInstance().invoke('clear');
 
