@@ -248,7 +248,7 @@ export default class Grid {
   public usageStatistics: boolean;
 
   public constructor(options: OptGrid) {
-    const { el, usageStatistics = true } = options;
+    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroyed } = options;
     const id = register(this);
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
@@ -283,7 +283,16 @@ export default class Grid {
       this.dataManager.setOriginData(options.data);
     }
 
-    render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
+    render(
+      <Root
+        store={store}
+        dispatch={dispatch}
+        rootElement={el}
+        onGridMounted={onGridMounted}
+        onGridBeforeDestroyed={onGridBeforeDestroyed}
+      />,
+      el
+    );
   }
 
   /**
