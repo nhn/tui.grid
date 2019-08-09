@@ -381,10 +381,10 @@ export function resetData(store: Store, inputData: OptRow[]) {
     data.rawData = rawData;
     rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
     renderState.state = getRenderState(rawData);
-    // @TODO need to execute logic by condition
-    getDataManager(id).setOriginData(inputData);
-    getDataManager(id).clearAll();
   });
+  // @TODO need to execute logic by condition
+  getDataManager(id).setOriginData(inputData);
+  getDataManager(id).clearAll();
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
