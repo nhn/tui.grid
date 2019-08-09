@@ -50,10 +50,14 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   }
 }
 
-export function finishEditing({ focus, data, id }: Store, rowKey: RowKey, columnName: string) {
+export function finishEditing(
+  { focus, data, id, column }: Store,
+  rowKey: RowKey,
+  columnName: string
+) {
   const { editingAddress } = focus;
   const { rawData } = data;
-  const foundIndex = findPropIndex('rowKey', rowKey, rawData);
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({
