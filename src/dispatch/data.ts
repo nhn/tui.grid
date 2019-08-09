@@ -16,7 +16,6 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
   mapProp,
-  findPropIndex,
   isUndefined,
   removeArrayItem,
   includes,
@@ -43,6 +42,7 @@ import { getRenderState } from '../helper/renderState';
 import { changeFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
+import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 
 interface OriginData {
   rows: Row[];
@@ -56,7 +56,7 @@ export function setValue(
   value: CellValue
 ) {
   const { rawData, sortOptions } = data;
-  const targetRow = findProp('rowKey', rowKey, rawData);
+  const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
@@ -79,7 +79,8 @@ export function setValue(
 
     if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
       const { spanCount } = rowSpanMap[columnName];
-      const mainRowIndex = findPropIndex('rowKey', rowKey, rawData);
+      const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
+
       // update sub rows value
       for (let count = 1; count < spanCount; count += 1) {
         rawData[mainRowIndex + count][columnName] = value;
@@ -103,13 +104,13 @@ export function isUpdatableRowAttr(
 }
 
 export function setRowAttribute(
-  { data }: Store,
+  { data, column, id }: Store,
   rowKey: RowKey,
   attrName: keyof RowAttributes,
   value: RowAttributeValue
 ) {
-  const { disabled, rawData } = data;
-  const targetRow = findProp('rowKey', rowKey, rawData);
+  const { disabled } = data;
+  const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
     targetRow._attributes[attrName] = value;
   }
@@ -242,8 +243,8 @@ export function setRowDisabled(
   rowKey: RowKey,
   withCheckbox: boolean
 ) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     row._attributes.disabled = disabled;
     if (withCheckbox) {
@@ -253,8 +254,8 @@ export function setRowDisabled(
 }
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     row._attributes.checkDisabled = disabled;
   }
@@ -311,21 +312,25 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 }
 
 export function removeRow(
-  { data, rowCoords, id, renderState, focus }: Store,
+  { data, rowCoords, id, renderState, focus, column }: Store,
   rowKey: RowKey,
   options: OptRemoveRow
 ) {
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
-  const rowIdx = findPropIndex('rowKey', rowKey, rawData);
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
+  const removedRow = rawData.splice(rowIdx, 1)[0];
 
-  const removedRow = rawData.splice(rowIdx, 1);
+  if (!removedRow) {
+    return;
+  }
+
   viewData.splice(rowIdx, 1);
   heights.splice(rowIdx, 1);
 
   if (nextRow && isRowSpanEnabled(sortOptions)) {
-    updateRowSpanWhenRemove(rawData, removedRow[0], nextRow, options.keepRowSpanData || false);
+    updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -340,7 +345,7 @@ export function removeRow(
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   renderState.state = getRenderState(data.rawData);
-  getDataManager(id).push('DELETE', removedRow[0]);
+  getDataManager(id).push('DELETE', removedRow);
 }
 
 export function clearData({ data, id, renderState }: Store) {
@@ -370,8 +375,8 @@ export function resetData(
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const rowClassMap = row._attributes.className.row;
     const isExist = includes(rowClassMap, className);
@@ -383,8 +388,8 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 }
 
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     removeArrayItem(className, row._attributes.className.row);
     notify(row._attributes, 'className');
@@ -397,8 +402,8 @@ export function addCellClassName(
   columnName: string,
   className: string
 ) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const columnClassMap = row._attributes.className.column;
     if (isUndefined(columnClassMap[columnName])) {
@@ -419,8 +424,8 @@ export function removeCellClassName(
   columnName: string,
   className: string
 ) {
-  const { rawData } = store.data;
-  const row = findProp('rowKey', rowKey, rawData);
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
     const columnClassMap = row._attributes.className.column;
     if (isUndefined(columnClassMap[columnName])) {
@@ -478,7 +483,7 @@ function createOriginData(data: Data, rowRange: Range) {
   );
 }
 
-export function createObservableData({ column, data, viewport }: Store, allRowRange = false) {
+export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const originData = createOriginData(data, rowRange);
 
@@ -487,7 +492,7 @@ export function createObservableData({ column, data, viewport }: Store, allRowRa
   }
 
   if (column.treeColumnName) {
-    changeToObservableTreeData(column, data, originData);
+    changeToObservableTreeData(column, data, originData, id);
   } else {
     changeToObservableData(column, data, originData);
   }
@@ -509,7 +514,12 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   }
 }
 
-function changeToObservableTreeData(column: Column, data: Data, originData: OriginData) {
+function changeToObservableTreeData(
+  column: Column,
+  data: Data,
+  originData: OriginData,
+  id: number
+) {
   let { rows } = originData;
   const rootParentRow = getRootParentRow(data.rawData, rows[0]);
   rows = rows.filter(row => !row._attributes.tree || isNull(getParentRowKey(row)));
@@ -521,7 +531,7 @@ function changeToObservableTreeData(column: Column, data: Data, originData: Orig
   const { rawData, viewData } = createData(rows, column);
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
-    const foundIndex = findPropIndex('rowKey', rawData[index].rowKey, data.rawData);
+    const foundIndex = findIndexByRowKey(data, column, id, rawData[index].rowKey);
     const rawRow = data.rawData[foundIndex];
 
     if (rawRow && !isObservable(rawRow)) {

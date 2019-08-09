@@ -31,10 +31,16 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined, mapProp, findProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
-import { getConditionalRows, getCellAddressByIndex, getCheckedRows } from './query/data';
+import {
+  getConditionalRows,
+  getCellAddressByIndex,
+  getCheckedRows,
+  findIndexByRowKey,
+  findRowByRowKey
+} from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/modifiedDataManager';
@@ -153,7 +159,7 @@ if ((module as any).hot) {
  *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
  *              The return value of the function will be shown as the value of the cell. If set to 'listItemText',
  *              the value will be shown the text.
- *          @param {boolean} [options.columns.useHtmlEntity=true] - If set to true, the value of the cell
+ *          @param {boolean} [options.columns.escapeHTML=true] - If set to true, the value of the cell
  *              will be encoded as HTML entities.
  *          @param {boolean} [options.columns.ignored=false] - If set to true, the value of the column will be
  *               ignored when setting up the list of modified rows.
@@ -640,7 +646,8 @@ export default class Grid {
    * @returns {number|string} - The value of the cell
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
-    const targetRow = findProp('rowKey', rowKey, this.store.data.rawData);
+    const { data, column, id } = this.store;
+    const targetRow = findRowByRowKey(data, column, id, rowKey);
 
     // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
     if (targetRow) {
@@ -1034,7 +1041,8 @@ export default class Grid {
    * @returns {number} - The index of the row
    */
   public getIndexOfRow(rowKey: RowKey) {
-    return findPropIndex('rowKey', rowKey, this.store.data.rawData);
+    const { data, column, id } = this.store;
+    return findIndexByRowKey(data, column, id, rowKey);
   }
 
   /**
@@ -1322,8 +1330,9 @@ export default class Grid {
    * @returns {number} - the depth
    */
   public getDepth(rowKey: RowKey) {
-    const { rawData } = this.store.data;
-    const row = findProp('rowKey', rowKey, rawData);
+    const { data, column, id } = this.store;
+    const { rawData } = data;
+    const row = findRowByRowKey(data, column, id, rowKey);
 
     return row ? getDepth(rawData, row) : 0;
   }

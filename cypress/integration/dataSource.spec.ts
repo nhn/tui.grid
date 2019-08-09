@@ -208,6 +208,7 @@ describe('sort()', () => {
 });
 
 it('reloadData()', () => {
+  cy.wait('@readPage1');
   cy.gridInstance().invoke('removeRow', 1);
 
   assertModifiedRowsLength('deletedRows', 1);
@@ -219,12 +220,12 @@ it('reloadData()', () => {
 });
 
 it('restore()', () => {
+  cy.wait('@readPage1');
   cy.gridInstance().invoke('removeRow', 1);
 
   assertModifiedRowsLength('deletedRows', 1);
 
   cy.gridInstance().invoke('restore');
-  cy.wait('@readPage1');
   assertPagingData('id', 1);
   assertModifiedRowsLength('deletedRows', 0);
 });
