@@ -334,7 +334,7 @@ export function dragEnd({ selection }: Store) {
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
 
-  if (data.rawData.length === 0) {
+  if (!data.rawData.length) {
     return;
   }
 
@@ -364,14 +364,14 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
   const { data, selection, id, column, focus } = store;
-  const { rawData, viewData } = data;
+  const { rawData } = data;
 
-  if (rawData.length === 0) {
+  if (!rawData.length) {
     return;
   }
 
   const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
-  const endRowIndex = viewData.length - 1;
+  const endRowIndex = rawData.length - 1;
 
   let startColumnIndex, endColumnIndex;
 
