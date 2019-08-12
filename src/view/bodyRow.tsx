@@ -5,6 +5,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
+import { getHighestHeights } from '../helper/cellHeightMap';
 
 interface OwnProps {
   rowIndex: number;
@@ -28,9 +29,11 @@ class BodyRowComp extends Component<Props> {
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
     const { dispatch, rowIndex, rowHeight } = this.props;
+    const { cellHeightMap } = this.context;
+    const height = getHighestHeights(cellHeightMap, rowIndex);
 
     if (rowHeight !== this.renderedRowHeight) {
-      dispatch('refreshRowHeight', rowIndex);
+      dispatch('refreshRowHeight', rowIndex, height);
     }
   }, 10);
 

@@ -307,7 +307,6 @@ export interface ColumnCoords {
 
 export interface RowCoords {
   heights: number[];
-  cellHeightMap: Dictionary<number[]>;
   readonly offsets: number[];
   readonly totalRowHeight: number;
 }

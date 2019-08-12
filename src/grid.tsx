@@ -59,6 +59,7 @@ import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
+import { cell } from './theme/styleGenerator';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -256,6 +257,7 @@ export default class Grid {
     const dataProvider = createProvider(store, dispatch, options.data);
     const dataManager = createManager();
     const paginationManager = createPaginationManager();
+    const cellHeightMap = {};
 
     this.el = el;
     this.store = store;
@@ -287,6 +289,7 @@ export default class Grid {
       <Root
         store={store}
         dispatch={dispatch}
+        cellHeightMap={cellHeightMap}
         rootElement={el}
         onGridMounted={onGridMounted}
         onGridBeforeDestroyed={onGridBeforeDestroyed}

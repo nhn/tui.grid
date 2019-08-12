@@ -17,6 +17,7 @@ import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
 import { findIndexByRowKey } from '../query/data';
+import { setCellHeight } from '../helper/cellHeightMap';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -29,6 +30,7 @@ interface StoreProps {
   grid: Grid;
   rowKey: RowKey;
   rowIndex: number;
+  defaultRowHeight: number;
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
   disabled: boolean;
@@ -52,7 +54,7 @@ export class BodyCellComp extends Component<Props> {
       columnInfo,
       refreshRowHeight,
       disabled: allDisabled,
-      dispatch
+      defaultRowHeight
     } = this.props;
 
     // eslint-disable-next-line new-cap
@@ -78,8 +80,9 @@ export class BodyCellComp extends Component<Props> {
       //    Container component using setTimeout(fn, 0)
       //  - Delay 16ms for defer the function call later than the Container component.
       window.setTimeout(() => {
+        const { cellHeightMap } = this.context;
         const height = rendererEl.clientHeight;
-        dispatch('setCellHeight', columnInfo.name, rowIndex, height);
+        setCellHeight(cellHeightMap, columnInfo.name, rowIndex, height, defaultRowHeight);
         refreshRowHeight(height);
       }, 16);
     }
@@ -99,8 +102,8 @@ export class BodyCellComp extends Component<Props> {
         renderData,
         columnInfo,
         refreshRowHeight,
-        disabled: allDisabled,
-        dispatch
+        defaultRowHeight,
+        disabled: allDisabled
       } = nextProps;
 
       this.renderer.render({
@@ -112,8 +115,9 @@ export class BodyCellComp extends Component<Props> {
       });
 
       if (refreshRowHeight) {
+        const { cellHeightMap } = this.context;
         const height = this.renderer.getElement().clientHeight;
-        dispatch('setCellHeight', columnInfo.name, rowIndex, height);
+        setCellHeight(cellHeightMap, columnInfo.name, rowIndex, height, defaultRowHeight);
         refreshRowHeight(height);
       }
     }
@@ -210,7 +214,7 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data, selection }, { viewRow, columnInfo }) => {
+  ({ id, column, data, selection, dimension }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
     const { disabled } = data;
@@ -218,6 +222,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const { range } = selection;
     const columnName = columnInfo.name;
     const rowIndex = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+    const { rowHeight: defaultRowHeight } = dimension;
 
     return {
       grid,
@@ -225,6 +230,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       rowIndex,
       disabled,
       columnInfo,
+      defaultRowHeight,
       renderData: valueMap[columnName],
       ...(columnName === treeColumnName ? { treeInfo } : null),
       selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false
