@@ -333,8 +333,9 @@ export function dragEnd({ selection }: Store) {
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
+  const { rawData } = data;
 
-  if (!data.rawData.length) {
+  if (!rawData.length) {
     return;
   }
 
@@ -357,7 +358,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       selectionUpdate(store, focusData, dragData);
     } else {
       selectionEnd(store);
-      changeFocus(focus, data, data.viewData[rowIndex].rowKey, columnName, id);
+      changeFocus(focus, data, rawData[rowIndex].rowKey, columnName, id);
     }
   }
 }
