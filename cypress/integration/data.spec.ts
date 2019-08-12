@@ -196,15 +196,6 @@ describe('clear()', () => {
 });
 
 describe('resetData()', () => {
-  it('reset all data', () => {
-    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
-
-    cy.getCellByIdx(0, 0).should('to.have.text', 'Park');
-    cy.getCellByIdx(0, 1).should('to.have.text', '30');
-    cy.getCellByIdx(1, 0).should('to.have.text', 'Han');
-    cy.getCellByIdx(1, 1).should('to.have.text', '40');
-  });
-
   it('focus, editing cell is removed when resets all data', () => {
     cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
     cy.gridInstance()
