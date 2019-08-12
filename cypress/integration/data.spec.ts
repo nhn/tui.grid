@@ -14,7 +14,7 @@ beforeEach(() => {
     doc.body.innerHTML = '';
   });
 
-  cy.createGrid({ data, columns });
+  cy.createGrid({ data, columns, scrollY: true, bodyHeight: 400 });
 });
 
 describe('appendRow()', () => {
@@ -206,7 +206,6 @@ describe('resetData()', () => {
   });
 
   it('focus, editing cell is removed when resets all data', () => {
-    cy.gridInstance().invoke('startEditingAt', 0, 1);
     cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
     cy.gridInstance()
       .invoke('getFocusedCell')
@@ -216,6 +215,21 @@ describe('resetData()', () => {
         value: null
       });
     cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+  });
+
+  it('sync the position of scroll when resets all data', () => {
+    cy.gridInstance().invoke(
+      'resetData',
+      Array.from({ length: 20 }).map((_, index) => ({ name: `Park${index}`, age: 30 }))
+    );
+
+    cy.get(`.${cls('rside-area')} .${cls('body-area')}`).scrollTo(0, 800);
+
+    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
+
+    cy.get(`.${cls('rside-area')} .${cls('body-container')}`).should($container => {
+      expect($container.height()).to.lessThan(800);
+    });
   });
 });
 
