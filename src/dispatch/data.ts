@@ -359,9 +359,9 @@ export function clearData({ data, id, renderState, focus, rowCoords }: Store) {
   setTimeout(() => {
     initFocus(focus);
 
+    rowCoords.heights = [];
     data.rawData = [];
     data.viewData = [];
-    rowCoords.heights = [];
     renderState.state = 'EMPTY';
   });
 }
@@ -377,9 +377,9 @@ export function resetData(store: Store, inputData: OptRow[]) {
   setTimeout(() => {
     initFocus(focus);
 
+    rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
     data.viewData = viewData;
     data.rawData = rawData;
-    rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
     renderState.state = getRenderState(rawData);
   });
   // @TODO need to execute logic by condition
