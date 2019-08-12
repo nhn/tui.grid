@@ -5,7 +5,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
-import { getHighestHeights } from '../helper/cellHeightMap';
+import { getHighestHeight, removeCellHeight } from '../helper/cellHeightMap';
 
 interface OwnProps {
   rowIndex: number;
@@ -24,13 +24,22 @@ type Props = OwnProps & StoreProps & DispatchProps;
 class BodyRowComp extends Component<Props> {
   private renderedRowHeight = this.props.rowHeight;
 
+  public componentWillUnmount() {
+    const { cellHeightMap } = this.context;
+    const { rowIndex, autoRowHeight } = this.props;
+
+    if (autoRowHeight) {
+      removeCellHeight(cellHeightMap, rowIndex);
+    }
+  }
+
   // This debounced function is aimed to wait until setTimeout(.., 0) calls
   // from the all child BodyCell components is made.
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
     const { dispatch, rowIndex, rowHeight } = this.props;
     const { cellHeightMap } = this.context;
-    const height = getHighestHeights(cellHeightMap, rowIndex);
+    const height = getHighestHeight(cellHeightMap, rowIndex);
 
     if (rowHeight !== this.renderedRowHeight) {
       dispatch('refreshRowHeight', rowIndex, height);

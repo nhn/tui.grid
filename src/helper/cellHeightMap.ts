@@ -1,13 +1,18 @@
 import { Dictionary } from '../store/types';
 
-type CellHeightMap = Dictionary<number[]>;
+type CellHeightMap = Dictionary<Dictionary<number>>;
 
-export function getHighestHeights(cellHeightMap: CellHeightMap, rowIndex: number) {
-  const cellHeights = Object.keys(cellHeightMap).map(
-    columnName => cellHeightMap[columnName][rowIndex]
-  );
+export function getHighestHeight(cellHeightMap: CellHeightMap, rowIndex: number) {
+  const cellHeights = cellHeightMap[rowIndex];
+  let highestHeight = -1;
 
-  return Math.max(...cellHeights);
+  Object.keys(cellHeights).forEach(columnName => {
+    if (highestHeight < cellHeights[columnName]) {
+      highestHeight = cellHeights[columnName];
+    }
+  });
+
+  return highestHeight;
 }
 
 export function setCellHeight(
@@ -17,8 +22,13 @@ export function setCellHeight(
   height: number,
   defaultRowHeight: number
 ) {
-  if (!cellHeightMap[columnName]) {
-    cellHeightMap[columnName] = [];
+  if (!cellHeightMap[rowIndex]) {
+    cellHeightMap[rowIndex] = {};
   }
-  cellHeightMap[columnName][rowIndex] = Math.max(height, defaultRowHeight);
+
+  cellHeightMap[rowIndex][columnName] = Math.max(height, defaultRowHeight);
+}
+
+export function removeCellHeight(cellHeightMap: CellHeightMap, rowIndex: number) {
+  delete cellHeightMap[rowIndex];
 }
