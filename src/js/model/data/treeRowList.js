@@ -381,9 +381,9 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      * @returns {Array.<number|string>} - children or descendant of given row
      */
     treeExpand: function(rowKey, recursive) {
-        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
         var row = this.get(rowKey);
-        var isOriginExpanded = row.getTreeExpanded();
+        var isExpanded = row.getTreeExpanded();
+        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
 
         if (!row.hasTreeChildren()) {
             return descendantRowKeys;
@@ -404,7 +404,7 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
             }, this);
         }
 
-        if (!isOriginExpanded) {
+        if (!isExpanded) {
             /**
              * Occurs when the row having child rows is expanded
              * @event Grid#expanded
@@ -447,7 +447,7 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
      */
     treeCollapse: function(rowKey, recursive) {
         var row = this.get(rowKey);
-        var isOriginExpanded = row.getTreeExpanded();
+        var isExpanded = row.getTreeExpanded();
         var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
 
         if (!row.hasTreeChildren()) {
@@ -469,7 +469,7 @@ TreeRowList = RowList.extend(/** @lends module:model/data/treeRowList.prototype 
 
         row.setTreeExpanded(false);
 
-        if (isOriginExpanded) {
+        if (isExpanded) {
             /**
              * Occurs when the row having child rows is collapsed
              * @event Grid#collapsed
