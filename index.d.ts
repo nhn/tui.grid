@@ -5,7 +5,7 @@
 
 declare namespace tuiGrid {
     type RowKeyType = number | string;
-    type ColumnValueType = number | string | boolean | null | undefined;
+    type ColumnValueType = number | string | object | null | undefined;
     type ColumnNameType = string;
     type RowStateType = 'DISABLED' | 'DISABLED_CHECK' | 'CHECKED';
     type TreeStateType = 'EXPAND' | 'COLLAPSE';
