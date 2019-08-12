@@ -33,7 +33,7 @@ class BodyRowsComp extends Component<Props> {
       <tbody>
         {rows.map((row, index) => (
           <BodyRow
-            key={row.rowKey}
+            key={row.uniqueKey}
             rowIndex={index + rowIndexOffset}
             viewRow={row}
             columns={columns}
