@@ -122,8 +122,8 @@ export function getRelationColumns(relations: Relations[]) {
 function getHeaderAlignInfo(name: string, alignInfo: HeaderAlignInfo) {
   const { columnsAlign, align: defaultAlign, valign: defaultVAlign } = alignInfo;
   const columnOption = findProp('name', name, columnsAlign);
-  const headerAlign = columnOption ? columnOption.align! : defaultAlign;
-  const headerVAlign = columnOption ? columnOption.valign! : defaultVAlign;
+  const headerAlign = columnOption && columnOption.align ? columnOption.align : defaultAlign;
+  const headerVAlign = columnOption && columnOption.valign ? columnOption.valign : defaultVAlign;
 
   return {
     headerAlign,
@@ -279,10 +279,6 @@ export function create({
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
 
-  columnsAlign.forEach(columnAlign => {
-    columnAlign.align = columnAlign.align || align;
-    columnAlign.valign = columnAlign.valign || valign;
-  });
   const headerAlignInfo = { columnsAlign, align, valign };
 
   const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, headerAlignInfo));
