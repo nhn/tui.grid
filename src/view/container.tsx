@@ -13,7 +13,7 @@ import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
-import { isNull } from '../helper/common';
+import { isEmpty, isNull } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -127,15 +127,19 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus, dispatch } = this.props;
+    const { eventBus, dispatch, viewData } = this.props;
     const gridEvent = new GridEvent({ event });
     const elem = event.target as HTMLElement;
     const rowKey = this.getCellRowKey(elem);
 
-    if (!isNull(rowKey) && this.hoverRowKey !== rowKey) {
+    if (!isNull(rowKey)) {
+      const isNotRowSpan = isEmpty(viewData[rowKey].rowSpanMap);
       dispatch('removeRowClassName', this.hoverRowKey!, cls('row-hover'));
-      this.hoverRowKey = rowKey;
-      dispatch('addRowClassName', rowKey, cls('row-hover'));
+
+      if (isNotRowSpan && this.hoverRowKey !== rowKey) {
+        this.hoverRowKey = rowKey;
+        dispatch('addRowClassName', rowKey, cls('row-hover'));
+      }
     }
 
     /**
