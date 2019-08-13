@@ -14,7 +14,6 @@ import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
-import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
   rootElement: HTMLElement;
