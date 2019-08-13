@@ -65,6 +65,7 @@ export type ClassNameType =
   | 'row-odd'
   | 'row-even'
   | 'row-hidden'
+  | 'row-header-checkbox'
   | 'no-scroll-x'
   | 'no-scroll-y'
   | 'pagination'

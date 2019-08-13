@@ -55,7 +55,8 @@
       "example17-dummy-row": "17. Dummy Rows",
       "example18-column-resize": "18. Column resize",
       "example19-sort": "19. Sort",
-      "example20-validation": "20. Validation"
+      "example20-validation": "20. Validation",
+      "example21-header-align": "21. Header Align"
     }
   },
   "pathPrefix": "tui.grid"
