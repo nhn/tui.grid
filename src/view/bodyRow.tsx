@@ -5,6 +5,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
+import { getHighestHeight, removeCellHeight } from '../helper/cellHeightMap';
 
 interface OwnProps {
   rowIndex: number;
@@ -21,26 +22,27 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowComp extends Component<Props> {
-  private renderedRowHeight = this.props.rowHeight;
+  public componentWillUnmount() {
+    const { cellHeightMap } = this.context;
+    const { rowIndex, autoRowHeight } = this.props;
+
+    if (autoRowHeight) {
+      removeCellHeight(cellHeightMap, rowIndex);
+    }
+  }
 
   // This debounced function is aimed to wait until setTimeout(.., 0) calls
   // from the all child BodyCell components is made.
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
     const { dispatch, rowIndex, rowHeight } = this.props;
+    const { cellHeightMap } = this.context;
+    const height = getHighestHeight(cellHeightMap, rowIndex);
 
-    if (rowHeight !== this.renderedRowHeight) {
-      dispatch('setRowHeight', rowIndex, this.renderedRowHeight);
+    if (rowHeight !== height) {
+      dispatch('refreshRowHeight', rowIndex, height);
     }
   }, 10);
-
-  private refreshRowHeight = (cellHeight: number) => {
-    this.renderedRowHeight = Math.max(
-      cellHeight + this.props.cellBorderWidth,
-      this.renderedRowHeight
-    );
-    this.updateRowHeightDebounced();
-  };
 
   public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
     const isOddRow = rowIndex % 2 === 0;
@@ -59,7 +61,7 @@ class BodyRowComp extends Component<Props> {
                 key={columnInfo.name}
                 viewRow={viewRow}
                 columnInfo={columnInfo}
-                refreshRowHeight={autoRowHeight ? this.refreshRowHeight : null}
+                refreshRowHeight={autoRowHeight ? this.updateRowHeightDebounced : null}
               />
             );
           })}

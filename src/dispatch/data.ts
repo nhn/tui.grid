@@ -436,7 +436,7 @@ export function removeCellClassName(
   }
 }
 
-export function setRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
+export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
   data.rawData[rowIndex]._attributes.height = rowHeight;
   rowCoords.heights[rowIndex] = rowHeight;
 
