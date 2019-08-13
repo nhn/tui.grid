@@ -21,7 +21,8 @@ const styleGenMethodMap = {
   scrollbar: styleGen.scrollbar,
   heightResizeHandle: styleGen.heightResizeHandle,
   pagination: styleGen.pagination,
-  selection: styleGen.selection
+  selection: styleGen.selection,
+  rowHover: styleGen.rowHover
 };
 
 const styleGenAreaMethodMap = {

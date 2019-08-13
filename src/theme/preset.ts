@@ -99,6 +99,9 @@ export const presetDefault = {
     evenRow: {},
     oddRow: {},
     currentRow: {}
+  },
+  rowHover: {
+    background: 'none'
   }
 };
 

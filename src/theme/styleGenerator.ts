@@ -20,7 +20,8 @@ import {
   OptTableSummaryStyle,
   OptCellStyle,
   OptBasicCellStyle,
-  OptCellDummyStyle
+  OptCellDummyStyle,
+  OptRowHoverStyle
 } from './../types.d';
 
 /**
@@ -148,6 +149,11 @@ export function pagination(options: OptPaginationStyle): string {
  */
 export function selection(options: OptSelectionLayerStyle): string {
   return bgBorderRuleString('layer-selection', options);
+}
+export function rowHover(options: OptRowHoverStyle): string {
+  return createNestedClassRule('.', ['row-hover', 'cell'])
+    .bg(options.background)
+    .build();
 }
 /**
  * Generates a css string for header area.

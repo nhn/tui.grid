@@ -171,6 +171,10 @@ export interface OptSelectionLayerStyle {
   border?: string;
 }
 
+export interface OptRowHoverStyle {
+  background?: string;
+}
+
 export interface OptScrollbarStyle {
   border?: string;
   background?: string;
@@ -249,6 +253,7 @@ export interface OptPreset {
   cell?: OptTableCellStyle;
   heightResizeHandle?: OptHeightResizeHandleStyle;
   pagination?: OptPaginationStyle;
+  rowHover?: OptRowHoverStyle;
 }
 
 export interface OptHeightResizeHandleStyle {
