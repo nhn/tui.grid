@@ -57,6 +57,6 @@ grid.setFrozenColumnCount(2); // The number of columns to fix
 All options are available in the `Grid.columnOptions` portion of the [API Documentation](https://nhn/github.io/tui.grid/latest). 
 
 
-## Examples
+## Example
 
 More examples with frozen columns can be found [here](http://nhn.github.io/tui.grid/latest/tutorial-example16-frozen-columns).

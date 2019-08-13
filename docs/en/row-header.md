@@ -185,6 +185,6 @@ By running the code above, you will be able to see that the checkbox has been di
 
 All options for rowHeaders can be found on the `Grid.rowHeader` section of the [API Documentation](https://nhn.github.io/tui.grid/latest). 
 
-## Examples
+## Example
 
 More examples with customizing row headers can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example11-row-headers).
