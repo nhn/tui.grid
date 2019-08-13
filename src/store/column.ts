@@ -206,7 +206,7 @@ function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): Column
   const rowHeader: OptColumn = isString(data)
     ? { name: ROW_HEADERS_MAP[data] }
     : { name: ROW_HEADERS_MAP[data.type], ...omit(data, 'type') };
-  const { name, header, align, renderer, width, minWidth } = rowHeader;
+  const { name, header, align, valign, renderer, width, minWidth } = rowHeader;
   const baseMinWith = isNumber(minWidth) ? minWidth : defMinWidth.ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
   const rowNumColumn = isRowNumColumn(name);
@@ -223,6 +223,7 @@ function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): Column
     hidden: false,
     resizable: false,
     align: align || 'center',
+    valign: valign || 'middle',
     renderer: getRendererOptions(rendererOptions),
     fixedWidth: true,
     baseWidth,

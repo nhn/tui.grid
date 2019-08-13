@@ -98,7 +98,7 @@ class ComplexHeaderComp extends Component<Props> {
         )}
         {...!!colspan && { colspan }}
         {...!!rowspan && { rowspan }}
-        style={{ height, textAlign, verticalAlign, padding: '4px 5px' }}
+        style={{ height, textAlign, verticalAlign }}
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
         {!!sortable && <SortingButton columnName={name} />}

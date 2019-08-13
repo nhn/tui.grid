@@ -1,25 +1,33 @@
 import { CellRenderer, CellRendererProps } from './types';
+import { cls } from '../helper/dom';
 
 export class RowHeaderInputRenderer implements CellRenderer {
-  private el: HTMLInputElement;
+  private el: HTMLDivElement;
+
+  private input: HTMLInputElement;
 
   public constructor(props: CellRendererProps) {
-    const el = document.createElement('input');
+    const el = document.createElement('div');
+    const input = document.createElement('input');
     const { grid, rowKey, disabled, allDisabled } = props;
 
-    el.type = 'checkbox';
-    el.name = '_checked';
-    el.disabled = allDisabled || disabled;
+    el.className = cls('row-header-checkbox');
+    input.type = 'checkbox';
+    input.name = '_checked';
+    input.disabled = allDisabled || disabled;
 
-    el.addEventListener('change', () => {
-      if (el.checked) {
+    input.addEventListener('change', () => {
+      if (input.checked) {
         grid.check(rowKey);
       } else {
         grid.uncheck(rowKey);
       }
     });
 
+    el.appendChild(input);
+
     this.el = el;
+    this.input = input;
     this.render(props);
   }
 
@@ -30,7 +38,7 @@ export class RowHeaderInputRenderer implements CellRenderer {
   public render(props: CellRendererProps) {
     const { value, allDisabled, disabled } = props;
 
-    this.el.checked = Boolean(value);
-    this.el.disabled = allDisabled || disabled;
+    this.input.checked = Boolean(value);
+    this.input.disabled = allDisabled || disabled;
   }
 }

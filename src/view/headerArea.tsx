@@ -114,7 +114,7 @@ class HeaderAreaComp extends Component<Props> {
                     <th
                       key={name}
                       data-column-name={name}
-                      style={{ textAlign, verticalAlign, padding: '4px 5px' }}
+                      style={{ textAlign, verticalAlign }}
                       class={cls(
                         'cell',
                         'cell-header',

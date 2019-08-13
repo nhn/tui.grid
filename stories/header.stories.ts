@@ -42,7 +42,18 @@ stories.add(
         frozenCount: 2,
         minWidth: 150
       },
-      rowHeaders: ['checkbox', 'rowNum'],
+      rowHeaders: [
+        {
+          type: 'rowNum',
+          align: 'left',
+          valign: 'bottom'
+        },
+        {
+          type: 'checkbox',
+          align: 'left',
+          valign: 'top'
+        }
+      ],
       header: {
         height: 40,
         align: 'left',
@@ -50,7 +61,7 @@ stories.add(
         columns: [
           {
             name: '_number',
-            valign: 'middle'
+            valign: 'bottom'
           },
           {
             name: 'type',
