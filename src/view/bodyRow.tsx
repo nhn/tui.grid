@@ -22,8 +22,6 @@ interface StoreProps {
 type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowComp extends Component<Props> {
-  private renderedRowHeight = this.props.rowHeight;
-
   public componentWillUnmount() {
     const { cellHeightMap } = this.context;
     const { rowIndex, autoRowHeight } = this.props;
@@ -41,17 +39,10 @@ class BodyRowComp extends Component<Props> {
     const { cellHeightMap } = this.context;
     const height = getHighestHeight(cellHeightMap, rowIndex);
 
-    if (rowHeight !== this.renderedRowHeight) {
+    if (rowHeight !== height) {
       dispatch('refreshRowHeight', rowIndex, height);
     }
   }, 10);
-
-  private refreshRowHeight = (cellHeight: number) => {
-    const { cellBorderWidth } = this.props;
-
-    this.renderedRowHeight = Math.max(cellHeight + cellBorderWidth, this.renderedRowHeight);
-    this.updateRowHeightDebounced();
-  };
 
   public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
     const isOddRow = rowIndex % 2 === 0;
@@ -70,7 +61,7 @@ class BodyRowComp extends Component<Props> {
                 key={columnInfo.name}
                 viewRow={viewRow}
                 columnInfo={columnInfo}
-                refreshRowHeight={autoRowHeight ? this.refreshRowHeight : null}
+                refreshRowHeight={autoRowHeight ? this.updateRowHeightDebounced : null}
               />
             );
           })}

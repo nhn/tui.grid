@@ -4,15 +4,11 @@ type CellHeightMap = Dictionary<Dictionary<number>>;
 
 export function getHighestHeight(cellHeightMap: CellHeightMap, rowIndex: number) {
   const cellHeights = cellHeightMap[rowIndex];
-  let highestHeight = -1;
 
-  Object.keys(cellHeights).forEach(columnName => {
-    if (highestHeight < cellHeights[columnName]) {
-      highestHeight = cellHeights[columnName];
-    }
-  });
-
-  return highestHeight;
+  return Object.keys(cellHeights).reduce(
+    (acc, columnName) => Math.max(acc, cellHeights[columnName]),
+    -1
+  );
 }
 
 export function setCellHeight(

@@ -127,7 +127,7 @@ describe('cell align styles', () => {
   });
 });
 
-describe.only('cell content ellipsis/whitespace', () => {
+describe('cell content ellipsis/whitespace', () => {
   it('ellipsis and whitespace style should be applied to the cell-content', () => {
     const data = [
       {
