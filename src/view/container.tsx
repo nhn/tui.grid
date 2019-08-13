@@ -6,13 +6,15 @@ import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr } from '../helper/dom';
+import { cls, getCellAddress, dataAttr, findParentByTagName } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
+import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
+import { isNull } from '../helper/common';
+import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -55,6 +57,8 @@ const TAP_THRESHOLD = 10;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private hoverRowKey: RowKey | null = null;
+
   private touchEvent: TouchEventInfo = {
     start: false,
     move: false,
@@ -79,6 +83,18 @@ export class ContainerComp extends Component<Props> {
     }
 
     this.touchEvent.move = true;
+  };
+
+  private getCellRowKey = (elem: HTMLElement) => {
+    const cell = findParentByTagName(elem, 'td');
+    if (cell) {
+      const address = getCellAddress(cell);
+      if (address) {
+        return address.rowKey;
+      }
+    }
+
+    return null;
   };
 
   private handleTouchEnd = (event: TouchEvent) => {
@@ -112,8 +128,16 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus } = this.props;
+    const { eventBus, dispatch } = this.props;
     const gridEvent = new GridEvent({ event });
+    const elem = event.target as HTMLElement;
+    const rowKey = this.getCellRowKey(elem);
+
+    if (!isNull(rowKey) && this.hoverRowKey !== rowKey) {
+      dispatch('removeRowClassName', this.hoverRowKey!, cls('row-hover'));
+      this.hoverRowKey = rowKey;
+      dispatch('addRowClassName', rowKey, cls('row-hover'));
+    }
 
     /**
      * Occurs when a mouse pointer is moved onto the Grid.
@@ -150,8 +174,15 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseout = (event: MouseEvent) => {
-    const { eventBus } = this.props;
+    const { eventBus, dispatch } = this.props;
     const gridEvent = new GridEvent({ event });
+    const elem = event.currentTarget as HTMLElement;
+    const rowKey = this.getCellRowKey(elem);
+
+    if (isNull(rowKey)) {
+      dispatch('removeRowClassName', this.hoverRowKey!, cls('row-hover'));
+      this.hoverRowKey = null;
+    }
 
     /**
      * Occurs when a mouse pointer is moved off from the Grid.
