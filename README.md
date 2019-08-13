@@ -214,7 +214,7 @@ tui-grid/
 * [Download all sources for each version](https://github.com/nhn/tui.grid/releases)
 
 
-## 🔩Wrappers
+## 🛍️ Wrappers
 
 The functionality of TOAST UI Grid is available when using the React, Vue Component.
 
