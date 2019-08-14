@@ -9,10 +9,11 @@ import { Pagination } from './pagination';
 import { cls, getCellAddress, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow, EditingEvent } from '../store/types';
+import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
+import { isEmpty, isNull } from '../helper/common';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -55,6 +56,8 @@ const TAP_THRESHOLD = 10;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
+  private hoveredRowKey: RowKey | null = null;
+
   private touchEvent: TouchEventInfo = {
     start: false,
     move: false,
@@ -79,6 +82,15 @@ export class ContainerComp extends Component<Props> {
     }
 
     this.touchEvent.move = true;
+  };
+
+  private getCellRowKey = (elem: HTMLElement) => {
+    const address = getCellAddress(elem);
+    if (address) {
+      return address.rowKey;
+    }
+
+    return null;
   };
 
   private handleTouchEnd = (event: TouchEvent) => {
@@ -112,8 +124,18 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus } = this.props;
+    const { eventBus, dispatch, viewData } = this.props;
     const gridEvent = new GridEvent({ event });
+    const rowKey = this.getCellRowKey(event.target as HTMLElement);
+
+    if (!isNull(rowKey)) {
+      dispatch('removeRowClassName', this.hoveredRowKey!, cls('row-hover'));
+
+      if (isEmpty(viewData[rowKey].rowSpanMap) && this.hoveredRowKey !== rowKey) {
+        this.hoveredRowKey = rowKey;
+        dispatch('addRowClassName', rowKey, cls('row-hover'));
+      }
+    }
 
     /**
      * Occurs when a mouse pointer is moved onto the Grid.
@@ -150,8 +172,13 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseout = (event: MouseEvent) => {
-    const { eventBus } = this.props;
+    const { eventBus, dispatch } = this.props;
     const gridEvent = new GridEvent({ event });
+
+    if (!isNull(this.hoveredRowKey)) {
+      dispatch('removeRowClassName', this.hoveredRowKey, cls('row-hover'));
+      this.hoveredRowKey = null;
+    }
 
     /**
      * Occurs when a mouse pointer is moved off from the Grid.

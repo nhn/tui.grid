@@ -66,6 +66,7 @@ export type ClassNameType =
   | 'row-even'
   | 'row-hidden'
   | 'row-header-checkbox'
+  | 'row-hover'
   | 'no-scroll-x'
   | 'no-scroll-y'
   | 'pagination'

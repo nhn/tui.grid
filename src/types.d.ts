@@ -171,6 +171,10 @@ export interface OptSelectionLayerStyle {
   border?: string;
 }
 
+export interface OptRowHoverStyle {
+  background?: string;
+}
+
 export interface OptScrollbarStyle {
   border?: string;
   background?: string;
@@ -207,6 +211,13 @@ export interface OptCellStyle {
   showHorizontalBorder?: boolean;
 }
 
+export interface OptTableRowStyle {
+  even?: OptBasicCellStyle;
+  odd?: OptBasicCellStyle;
+  dummy?: OptCellDummyStyle;
+  hover?: OptRowHoverStyle;
+}
+
 export interface OptBasicCellStyle {
   background?: string;
   text?: string;
@@ -234,6 +245,7 @@ export interface OptTableCellStyle {
   editable?: OptBasicCellStyle;
   disabled?: OptBasicCellStyle;
   invalid?: OptBasicCellStyle;
+  // deprecated
   currentRow?: OptBasicCellStyle;
   evenRow?: OptBasicCellStyle;
   oddRow?: OptBasicCellStyle;
@@ -351,6 +363,7 @@ export interface OptPreset {
   frozenBorder?: OptFrozenBorderStyle;
   area?: OptTableAreaStyle;
   cell?: OptTableCellStyle;
+  row?: OptTableRowStyle;
   heightResizeHandle?: OptHeightResizeHandleStyle;
   pagination?: OptPaginationStyle;
 }
