@@ -210,22 +210,17 @@ describe('sort()', () => {
 it('reloadData()', () => {
   cy.wait('@readPage1');
   cy.gridInstance().invoke('removeRow', 1);
-
-  assertModifiedRowsLength('deletedRows', 1);
-
   cy.gridInstance().invoke('reloadData');
-  cy.wait('@readPage1');
 
+  cy.wait('@readPage1');
   assertIsModified(false);
 });
 
 it('restore()', () => {
   cy.wait('@readPage1');
   cy.gridInstance().invoke('removeRow', 1);
-
-  assertModifiedRowsLength('deletedRows', 1);
-
   cy.gridInstance().invoke('restore');
+
   assertPagingData('id', 1);
   assertModifiedRowsLength('deletedRows', 0);
 });

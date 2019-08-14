@@ -39,7 +39,7 @@ import {
   updateRowSpanWhenRemove
 } from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
-import { changeFocus } from './focus';
+import { changeFocus, initFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
@@ -348,27 +348,40 @@ export function removeRow(
   getDataManager(id).push('DELETE', removedRow);
 }
 
-export function clearData({ data, id, renderState }: Store) {
+export function clearData({ data, id, renderState, focus, rowCoords }: Store) {
   data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
-  data.rawData = [];
-  data.viewData = [];
-  renderState.state = 'EMPTY';
+
+  focus.editingAddress = null;
+
+  // to render the grid with clearing data after destroying editing cell on DOM
+  setTimeout(() => {
+    initFocus(focus);
+
+    rowCoords.heights = [];
+    data.rawData = [];
+    data.viewData = [];
+    renderState.state = 'EMPTY';
+  });
 }
 
-export function resetData(
-  { data, column, dimension, rowCoords, id, renderState }: Store,
-  inputData: OptRow[]
-) {
+export function resetData(store: Store, inputData: OptRow[]) {
+  const { data, column, dimension, rowCoords, id, renderState, focus } = store;
   const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  data.viewData = viewData;
-  data.rawData = rawData;
-  rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
-  renderState.state = getRenderState(rawData);
+  focus.editingAddress = null;
 
+  // to render the grid for new data after destroying editing cell on DOM
+  setTimeout(() => {
+    initFocus(focus);
+
+    rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
+    data.viewData = viewData;
+    data.rawData = rawData;
+    renderState.state = getRenderState(rawData);
+  });
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
