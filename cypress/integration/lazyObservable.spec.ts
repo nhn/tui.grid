@@ -189,7 +189,9 @@ describe('API test on lazy observable data', () => {
 
   it('appendRow api', () => {
     cy.gridInstance().invoke('appendRow', { name: 'Lee', artist: 'Lee', type: 'test' });
-    cy.gridInstance().invoke('getRowCount', 21);
+    cy.gridInstance()
+      .invoke('getRowCount')
+      .should('eq', 21);
     cy.gridInstance()
       .invoke('getRow', 20)
       .should(row => {
@@ -197,13 +199,19 @@ describe('API test on lazy observable data', () => {
       });
 
     cy.gridInstance().invoke('focus', 20, 'name', true);
-    cy.getCell(20, 'name').contains('Lee');
+    cy.getCell(20, 'name').should($el => {
+      expect($el.text()).to.be.eq('Lee');
+    });
   });
 
   it('resetData api', () => {
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', artist: 'Lee', type: 'test' }]);
-    cy.gridInstance().invoke('getRowCount', 1);
-    cy.getCell(0, 'name').contains('Lee');
+    cy.gridInstance()
+      .invoke('getRowCount')
+      .should('eq', 1);
+    cy.getCell(0, 'name').should($el => {
+      expect($el.text()).to.be.eq('Lee');
+    });
   });
 
   it('expandAll, focusAt api', () => {

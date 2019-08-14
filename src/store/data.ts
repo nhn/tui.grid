@@ -43,6 +43,11 @@ interface RawRowOptions {
   lazyObservable?: boolean;
 }
 
+let dataCreationKey = '';
+function generateDataCreationKey() {
+  dataCreationKey = `@dataKey${Date.now()}`;
+}
+
 export function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
     return '';
@@ -198,7 +203,7 @@ export function createViewRow(
   treeColumnName?: string,
   treeIcon?: boolean
 ) {
-  const { rowKey, sortKey, rowSpanMap } = row;
+  const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach(name => {
@@ -232,6 +237,7 @@ export function createViewRow(
   return {
     rowKey,
     sortKey,
+    uniqueKey,
     rowSpanMap,
     valueMap,
     __unobserveFns__,
@@ -330,6 +336,7 @@ export function createRawRow(
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
+  row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
   row._attributes = getAttributes(row, index, lazyObservable);
   row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
@@ -347,6 +354,7 @@ export function createData(
   lazyObservable = false,
   prevRows?: Row[]
 ) {
+  generateDataCreationKey();
   const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
   const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
   let rawData: Row[];
