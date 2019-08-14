@@ -102,7 +102,7 @@ describe('API test on lazy observable data', () => {
     cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be['true'];
+        expect(inputWithType.checked).to.be.true;
       });
     });
 
@@ -114,7 +114,7 @@ describe('API test on lazy observable data', () => {
     cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be['false'];
+        expect(inputWithType.checked).to.be.false;
       });
     });
   });
@@ -134,13 +134,13 @@ describe('API test on lazy observable data', () => {
     cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
       $el.each((_, input) => {
         const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.disabled).to.be['true'];
+        expect(inputWithType.disabled).to.be.true;
       });
     });
 
     cy.get(`td.${cls('cell')}`).should($el => {
       $el.each((_, elem) => {
-        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be['true'];
+        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
       });
     });
   });
