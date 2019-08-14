@@ -71,7 +71,7 @@ function buildCssString(options: OptPreset): string {
     const value = options[keyWithType];
 
     if (value) {
-      const fn = styleGen[keyWithType] as Function;
+      const fn = styleGen[keyWithType];
       styles.push(fn(value));
     }
   });
@@ -82,7 +82,7 @@ function buildCssString(options: OptPreset): string {
       const value = area[keyWithType];
 
       if (value) {
-        const fn = styleGenAreaMethodMap[keyWithType] as Function;
+        const fn = styleGenAreaMethodMap[keyWithType];
         styles.push(fn(value));
       }
     });
@@ -94,7 +94,7 @@ function buildCssString(options: OptPreset): string {
       const value = cell[keyWithType];
 
       if (value) {
-        const fn = styleGenCellMethodMap[keyWithType] as Function;
+        const fn = styleGenCellMethodMap[keyWithType];
         styles.push(fn(value));
       }
     });
@@ -106,7 +106,7 @@ function buildCssString(options: OptPreset): string {
       const keyWithType = key as RowKeyType;
       const value = row[keyWithType];
       if (value) {
-        const fn = styleGenRowMethodMap[keyWithType] as Function;
+        const fn = styleGenRowMethodMap[keyWithType];
         styles.push(fn(value));
       }
     });

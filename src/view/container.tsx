@@ -6,7 +6,7 @@ import { EditingLayer } from './editingLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr, findParentByTagName } from '../helper/dom';
+import { cls, getCellAddress, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
