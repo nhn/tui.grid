@@ -56,7 +56,7 @@ const TAP_THRESHOLD = 10;
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
 
-  private hoverRowKey: RowKey | null = null;
+  private hoveredRowKey: RowKey | null = null;
 
   private touchEvent: TouchEventInfo = {
     start: false,
@@ -85,12 +85,9 @@ export class ContainerComp extends Component<Props> {
   };
 
   private getCellRowKey = (elem: HTMLElement) => {
-    const cell = findParentByTagName(elem, 'td');
-    if (cell) {
-      const address = getCellAddress(cell);
-      if (address) {
-        return address.rowKey;
-      }
+    const address = getCellAddress(elem);
+    if (address) {
+      return address.rowKey;
     }
 
     return null;
@@ -129,15 +126,13 @@ export class ContainerComp extends Component<Props> {
   private handleMouseover = (event: MouseEvent) => {
     const { eventBus, dispatch, viewData } = this.props;
     const gridEvent = new GridEvent({ event });
-    const elem = event.target as HTMLElement;
-    const rowKey = this.getCellRowKey(elem);
+    const rowKey = this.getCellRowKey(event.target as HTMLElement);
 
     if (!isNull(rowKey)) {
-      const isNotRowSpan = isEmpty(viewData[rowKey].rowSpanMap);
-      dispatch('removeRowClassName', this.hoverRowKey!, cls('row-hover'));
+      dispatch('removeRowClassName', this.hoveredRowKey!, cls('row-hover'));
 
-      if (isNotRowSpan && this.hoverRowKey !== rowKey) {
-        this.hoverRowKey = rowKey;
+      if (isEmpty(viewData[rowKey].rowSpanMap) && this.hoveredRowKey !== rowKey) {
+        this.hoveredRowKey = rowKey;
         dispatch('addRowClassName', rowKey, cls('row-hover'));
       }
     }
@@ -179,12 +174,10 @@ export class ContainerComp extends Component<Props> {
   private handleMouseout = (event: MouseEvent) => {
     const { eventBus, dispatch } = this.props;
     const gridEvent = new GridEvent({ event });
-    const elem = event.currentTarget as HTMLElement;
-    const rowKey = this.getCellRowKey(elem);
 
-    if (isNull(rowKey)) {
-      dispatch('removeRowClassName', this.hoverRowKey!, cls('row-hover'));
-      this.hoverRowKey = null;
+    if (!isNull(this.hoveredRowKey)) {
+      dispatch('removeRowClassName', this.hoveredRowKey, cls('row-hover'));
+      this.hoveredRowKey = null;
     }
 
     /**

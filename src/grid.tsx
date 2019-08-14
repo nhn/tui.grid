@@ -333,6 +333,17 @@ export default class Grid {
    *                 in the table.
    *             @param {string} [extOptions.area.summary.border] - Border color of the summary area
    *                 in the table.
+   *     @param {Object} [extOptions.row] - Styles for the table rows.
+   *         @param {Object} [extOptions.row.even] - Styles for even row.
+   *             @param {string} [extOptions.row.even.background] - background color of even row.
+   *             @param {string} [extOptions.row.even.text] - text color of even row.
+   *         @param {Object} [extOptions.row.odd] - Styles for odd row.
+   *             @param {string} [extOptions.row.odd.background] - background color of cells in odd row.
+   *             @param {string} [extOptions.row.odd.text] - text color of odd row.
+   *         @param {Object} [extOptions.row.dummy] - Styles of dummy row.
+   *             @param {string} [extOptions.row.dummy.background] - background color of dummy row.
+   *         @param {Object} [extOptions.row.hover] - Styles of hovered row.
+   *             @param {string} [extOptions.row.hover.background] - background color of hovered row.
    *     @param {Object} [extOptions.cell] - Styles for the table cells.
    *         @param {Object} [extOptions.cell.normal] - Styles for normal cells.
    *             @param {string} [extOptions.cell.normal.background] - Background color of normal cells.
@@ -387,16 +398,16 @@ export default class Grid {
    *         @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
    *             @param {string} [extOptions.cell.invalid.background] - background color of invalid cells.
    *             @param {string} [extOptions.cell.invalid.text] - text color of invalid cells.
-   *         @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
+   *         @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.(deprecated since version 4.4.0)
    *             @param {string} [extOptions.cell.currentRow.background] - background color of cells in a current row.
    *             @param {string} [extOptions.cell.currentRow.text] - text color of cells in a current row.
-   *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
+   *         @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.(deprecated since version 4.4.0)
    *             @param {string} [extOptions.cell.evenRow.background] - background color of cells in even rows.
    *             @param {string} [extOptions.cell.evenRow.text] - text color of cells in even rows.
-   *         @param {Object} [extOptions.cell.oddRow] - Styles for cells in even rows.
+   *         @param {Object} [extOptions.cell.oddRow] - Styles for cells in even rows.(deprecated since version 4.4.0)
    *             @param {string} [extOptions.cell.oddRow.background] - background color of cells in odd rows.
    *             @param {string} [extOptions.cell.oddRow.text] - text color of cells in odd rows.
-   *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
+   *         @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.(deprecated since version 4.4.0)
    *             @param {string} [extOptions.cell.dummy.background] - background color of dummy cells.
    * @example
    * var Grid = tui.Grid; // or require('tui-grid')

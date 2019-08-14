@@ -216,7 +216,10 @@ stories.add('customTheme', () => {
 stories.add('row hover style', () => {
   const { el } = createGridWithTheme({
     preset: 'clean',
-    extOptions: { rowHover: { background: '#ce93d8' } }
+    extOptions: {
+      row: { hover: { background: '#ce93d8' }, even: { background: 'red' } },
+      cell: { evenRow: { background: 'blue' } }
+    }
   });
 
   return el;
