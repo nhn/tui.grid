@@ -18,3 +18,12 @@ export function setSummaryColumnContent(
   summary.summaryColumnContents[columnName] = content;
   summary.summaryValues[columnName] = createSummaryValue(content, columnValues);
 }
+
+export function recalculateSummaryValues({ summary, data }: Store, columnName: string) {
+  const { rawData } = data;
+  const columnValues = rawData.map(row => row[columnName]);
+  summary.summaryValues[columnName] = createSummaryValue(
+    summary.summaryColumnContents[columnName],
+    columnValues
+  );
+}

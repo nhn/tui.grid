@@ -21,17 +21,17 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     const { columnContent: orgColumnContent, defaultContent: orgDefaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(orgDefaultContent || '');
     const columnContent = orgColumnContent || {};
+    const { rawData } = data;
 
     column.allColumns.forEach(({ name }) => {
-      observe(() => {
-        const { rawData } = data;
-        const columnValues = rawData.map(row => row[name]);
-        const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
-        const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
+      // observe(() => {
+      const columnValues = rawData.map(row => row[name]);
+      const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
+      const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 
-        summaryColumnContents[name] = content;
-        summaryValues[name] = createSummaryValue(content, columnValues);
-      });
+      summaryColumnContents[name] = content;
+      summaryValues[name] = createSummaryValue(content, columnValues);
+      // });
     });
     summaryColumnContents = observable(summaryColumnContents);
     summaryValues = observable(summaryValues);

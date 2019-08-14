@@ -43,18 +43,15 @@ import { changeFocus, initFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { recalculateSummaryValues } from './summary';
 
 interface OriginData {
   rows: Row[];
   targetIndexes: number[];
 }
 
-export function setValue(
-  { column, data, id }: Store,
-  rowKey: RowKey,
-  columnName: string,
-  value: CellValue
-) {
+export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
+  const { column, data, id } = store;
   const { rawData, sortOptions } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
@@ -75,6 +72,7 @@ export function setValue(
   if (targetRow) {
     const { rowSpanMap } = targetRow;
     targetRow[columnName] = value;
+    recalculateSummaryValues(store, columnName);
     getDataManager(id).push('UPDATE', targetRow);
 
     if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
