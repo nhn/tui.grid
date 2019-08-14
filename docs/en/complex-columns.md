@@ -47,6 +47,6 @@ The following image is the result of a complex column.
 ![그리드](https://user-images.githubusercontent.com/18183560/59605689-49023680-914a-11e9-99f9-25bb26316b04.png)
 
 
-## Examples
+## Example
 
 More examples with using complex columns can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example02-complex-columns).

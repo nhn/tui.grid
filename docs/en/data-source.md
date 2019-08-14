@@ -1,6 +1,8 @@
 # Data Source 🛰
 
-In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the `data` option like the example below.
+Generally, the TOAST UI Grid operates with the local data in the Front End environment. However, with the help of a simple object, `dataSource`, TOAST UI Grid can be configured to host remote data as well. 
+
+In order to do so, define the `dataSource` object as shown in the example below and configure the `data` option. 
 
 ```javascript
 import Grid from 'tui-grid';
@@ -17,36 +19,38 @@ const grid = new Grid({
 });
 ```
 
-The `dataSource` has properties below:
+`dataSource` has the following properties. 
 
-- **initialRequest** `{boolean}` : Whether to request `readData` after initialized
+- **initialRequest** `{boolean}` : Represents whether the `readData` API has been requested in order to get the initial data.
 - **api**
-    - **readData** `{object}` : `URL` and `method` to which the request for fetching data are sent
+    - **readData** `{object}`: Represents the `URL` and the `method` required to get data. 
 
-There are also another properties available in this option, which you can find at the `dataSource` section of [the API page](http://nhn.github.io/tui.grid/latest/).
+Other properties for this option are further detailed in the `dataSource` portion of the [API Documentation]. 
 
-This is all thing you need to fetch data from the remote server. Then the `grid` instance sends the request to the `URL` and `method`, parses the response data, and displays them on the screen. The `api.readData` is a required property in the `dataSource` option, that is used when an instance is initialized or when data needs to be refreshed whenever pages change.
+This is all you need in order to bring in data from a remote server. Now, the `grid` instance sends requests through `URL` and `method` and analyzes the response data to display on the screen. `api.readData` is a mandatory property for the `dataSource` option, and is used when the page has to be reloaded due to changes or when the instance has been reset.
 
-## Protocol of `readData`
+## Protocol Used in `readData`
 
-Let's take a look at the protocol of `readData`. When the Grid sends the request to the specified `URL` and `method`. Then, the parameter string would look like this:
+Let's discuss the protocols used in `readData`. The following is the string parameter used when the Grid sends requests through the `URL` and `method`. 
 
 ```
 page=1&perPage=10
 ```
-- **page** `{number}` : Current page number
-- **perPage** `{number}` : Number of rows displayed in a page
 
-If you are using the *sort* feature, the sort options should be added to the parameter string like this:
+- **page** `{number}`: The current page
+- **perPage** `{number}`: The number of rows represented per each page. 
+
+If you are using the *sort* feature, you have to explicitly mention the sorting option in the string parameter. 
 
 ```
 page=1&perPage=10&sortColumn=XXX&sortAscending=true
 ```
 
-- **sortColumn** `{string}` : The name of the column which determines the order of rows
-- **sortAscending** `{boolean}` : `true` if ascending, `false` if descending
+- **sortColumn** `{string}`: The name of the column that determines the order of rows. 
+- **sortAscending** `{boolean}`: If it is set to `true`, it will sort in the ascending order, and when set to false, it will sort in descending order. 
 
-The response data should be a JSON string. If the request is processed successfully, the response data should be like this.
+The response data must be in JSON string format. When the request has been succeessfully made, you should get a response that resembles the following.
+
 
 ```json
 {
@@ -61,14 +65,13 @@ The response data should be a JSON string. If the request is processed successfu
 }
 ```
 
-- **result** `{boolean}` : `true` if the request is processed successfully, `false` if not
+- **result** `{boolean}`: It will return `true` when the request has been successfully made, and `false` otherwise. 
 - **data**
-    - **contents** `{array}` : An array of row data. Same value with the parameter of `grid.resetData()` method.
-    - **pagination**
-        - **page** `{number}` : Current page number
-        - **totalCount** `{number}` : Count of all rows
+    - **content** `{array}`: As an array of row data, it is the same as the `grid.resetData()` method's parameter. 
+        - **page** `{number}`: The current page
+        - **totalCount** `{number}`: The total number of rows. 
 
-If an error occurred when processing the request, `result` should be `false`.
+When an error occurs while processing the request, the `result` is set to `false`. 
 
 ```json
 {
@@ -79,7 +82,7 @@ If an error occurred when processing the request, `result` should be `false`.
 
 ## Pagination
 
-When sends the request to the remote server, usually you need the `Pagination`. The `Pagination` can be defined as `pageOptions` option like below.
+Usually when sending a request to a remote server, `Pagination` is required. `Pagination` can be defined using the `pageOptions` like in the example below.
 
 ```javascript
 const grid = new Grid({
@@ -91,16 +94,14 @@ const grid = new Grid({
 });
 ```
 
-## Saving Changed Data
+## Storing Modified Data
 
-If you want to save changed data to the remote server, you can use the following APIs:
+When you need to store modified data on a remote server, you can use the following API. 
 
-- **createData** : To send newly added data only
-- **updateData** : To send updated data only
-- **deleteData** : To send deleted data only
-- **modifyData** : To send all added/updated/deleted data
-
-To use these APIs, you have to register the `URL` and `method` of each request in advance.
+- **createData**: Used when only sending newly added data
+- **updateData**: Used when only sending updated data
+- **deleteData**: Used when only sending deleted data
+- **modifyData**: Used when sending all data including newly added, updated, and deleted data  
 
 ```javascript
 const dataSource = {
@@ -119,23 +120,25 @@ const grid = new Grid({
 });
 ```
 
-Then you can use the `request()` method to send each request like the example below.
-(This is just a simplified example. See [the API page](http://nhn.github.io/tui.grid/latest/) for more information.)
+Then, you can use the `request()` method to send individual requests. 
+(The example below is a basic use of the `request()` method, and more information is available in the [API documentation](https://nhn.github.io/tui.grid/latest/). 
 
 ```javascript
-grid.request('createData'); // Send a request to '/api/createData' as 'GET' method
-grid.request('updateData'); // Send a request to '/api/updateData' as 'PUT' method
+grid.request('createData'); // Uses the 'GET' method to send a request to '/api/createData'.
+grid.request('updateData'); // Uses the 'POST' method to send a request to '/api/updateData'.
 ```
 
-If you call the `request()` method, the `grid` instance sends the request with a changed data. The data is a JSON string of an array which contains all data of changed rows. For example, if you change two rows in the data and then call `request('updateData')`, data string being sent will be like this:
+When the `request()` method is called, the `grid` instance sends a request using the modified data, and the data is composed of a JSON string of arrays that contain all data from the modified rows. For example, the data string transmitted by calling `request('updateData')` after having changed two rows is as follows. 
+
 ```
 updatedRows=[{"c1":"data1-1","c2":"data1-2,"rowKey":1},{"c1":"data2-1","c2":data2-2,"rowKey":2}]
 ```
-(In the real case, the data will be URL-Encoded)
 
-Another APIs use the same type of the data with a different parameter name. The `craeteData` uses **createdRows**, and the `deleteData` uses **deletedRows** as a name of parameter. In the case of `modifyData`, names of the parameter includes **createdRows**, **updatedRows**, and **deletedRows**.
+(In the real work environment, data is encoded.)
 
-The response data from the remote server, which is also a JSON string, should be like this.
+Other API uses the identical data format with different names for its parameters. The `createData` uses **createRows**; `deleteData` uses **deletedRows**; and `modifyData` uses **createdRows**, **updatedRows**,  and **deletedRows** as its parameter names. 
+
+Furthemore, the response from the remote server is also of JSON string format.
 
 ```json
 {
@@ -144,7 +147,7 @@ The response data from the remote server, which is also a JSON string, should be
 }
 ```
 
-The `data` property is optional. You can use it if you want to send data from the remote server as a result. If an error is occurred, the `result` property should be `false`.
+The `data` property is optional. If there exists a necessary piece of data in the remote server, it can be retrieved using the `data` property. If an error occurs during the process, the `result` is set to `false`. 
 
 ```json
 {
@@ -153,24 +156,25 @@ The `data` property is optional. You can use it if you want to send data from th
 }
 ```
 
-## Using Callback
 
-You can register callback functions for each state of the process using the `on()` method of a grid instance. List of available events is below:
+## Using Callbacks
+
+You can use the Grid instance's `on()` method to register different callback functions for different states of the process. The following is a list of possible events. 
 
 ```javascript
 grid.on('beforeRequest', function(data) {
-  // before sending a request
+  // Before sending the request
 }).on('response', function(data) {
-  // when receiving response regardless of success/fail
+  // When a response has been received regardless of success.
 }).on('successResponse', function(data) {
-  // when the result is true
+  // When the result is set to true
 }).on('failResponse', function(data) {
-  // when the result is false
+  // When the result is set to false
 }).on('errorResponse', function(data) {
-  // when an error occurred
+  // When an error occurs
 });
 ```
 
 ## Example
 
-You can see the example that binding to remote data [here](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source).
+More examples with using remote data can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source).
