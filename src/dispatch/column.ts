@@ -1,11 +1,10 @@
 import { Store, Side, ComplexColumnInfo } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, getRelationColumns } from '../store/column';
+import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
-import { isObservable, getOriginObject } from '../helper/observable';
-import { createObservableData } from './data';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -34,8 +33,7 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns(store: Store, optColumns: OptColumn[]) {
-  const { column, data, focus } = store;
+export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
   const {
     columnOptions,
     copyOptions,
@@ -71,12 +69,13 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     initFocus(focus);
 
     column.allColumns = [...rowHeaders, ...columnInfos];
-    rawData.forEach(row => {
-      if (isObservable(row)) {
-        row = getOriginObject(row);
+
+    data.viewData.forEach(viewRow => {
+      if (Array.isArray(viewRow.__unobserveFns__)) {
+        viewRow.__unobserveFns__.forEach(fn => fn());
       }
     });
-    createObservableData(store, false);
+    data.viewData = rawData.map(row => createViewRow(row, column.allColumnMap, rawData));
   });
 }
 
