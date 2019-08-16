@@ -1,4 +1,4 @@
-import { hasOwnProp, isObject, forEachObject, last } from './common';
+import { hasOwnProp, isObject, forEachObject, last, isEmpty } from './common';
 import { Dictionary } from '../store/types';
 
 type BooleanSet = Dictionary<boolean>;
@@ -126,9 +126,10 @@ export function notify<T, K extends keyof T>(obj: T, key: K) {
 
 export function getOriginObject<T>(obj: Observable<T>) {
   const result = {} as T;
+
   forEachObject((value, key) => {
     result[key] = isObservable(value) ? getOriginObject(value) : value;
   }, obj.__storage__);
 
-  return result;
+  return isEmpty(result) ? obj : result;
 }
