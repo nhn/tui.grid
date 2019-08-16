@@ -1,5 +1,5 @@
 import { Column, Data, Summary, SummaryColumnContents, SummaryValues } from './types';
-import { observable, observe } from '../helper/observable';
+import { observable } from '../helper/observable';
 import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
@@ -24,14 +24,11 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     const { rawData } = data;
 
     column.allColumns.forEach(({ name }) => {
-      // observe(() => {
-      const columnValues = rawData.map(row => row[name]);
       const castedColumnContent = castToSummaryColumnContent(columnContent[name]);
       const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 
       summaryColumnContents[name] = content;
-      summaryValues[name] = createSummaryValue(content, columnValues);
-      // });
+      summaryValues[name] = createSummaryValue(content, name, rawData);
     });
     summaryColumnContents = observable(summaryColumnContents);
     summaryValues = observable(summaryValues);
