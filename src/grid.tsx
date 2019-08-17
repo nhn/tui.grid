@@ -60,6 +60,7 @@ import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { cell } from './theme/styleGenerator';
+import { rerender } from 'preact';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -1031,6 +1032,14 @@ export default class Grid {
    */
   public removeRow(rowKey: RowKey, options: OptRemoveRow = {}) {
     const { treeColumnName } = this.store.column;
+
+    const editingAddr = this.store.focus.editingAddress;
+    if (editingAddr) {
+      const { rowKey, columnName } = editingAddr;
+      const cellVal = this.getValue(rowKey, columnName) || '';
+      this.finishEditing(rowKey, columnName, cellVal.toString());
+      rerender();
+    }
 
     if (treeColumnName) {
       this.removeTreeRow(rowKey);
