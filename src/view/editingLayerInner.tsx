@@ -58,15 +58,15 @@ export class EditingLayerInnerComp extends Component<Props> {
   private finishEditing(save: boolean) {
     if (this.editor) {
       const { dispatch, rowKey, columnName, sortOptions } = this.props;
-
+      const value = this.editor.getValue();
       if (save) {
-        dispatch('setValue', rowKey, columnName, this.editor.getValue());
+        dispatch('setValue', rowKey, columnName, value);
         const index = findPropIndex('columnName', columnName, sortOptions.columns);
         if (index !== -1) {
           dispatch('sort', columnName, sortOptions.columns[index].ascending, true, false);
         }
       }
-      dispatch('finishEditing', rowKey, columnName);
+      dispatch('finishEditing', rowKey, columnName, value);
     }
   }
 

@@ -648,7 +648,7 @@ export default class Grid {
       this.dispatch('sort', columnName, columns[index].ascending);
     }
 
-    this.dispatch('finishEditing', rowKey, columnName);
+    this.dispatch('finishEditing', rowKey, columnName, value);
   }
 
   /**

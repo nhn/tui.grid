@@ -36,6 +36,7 @@ import {
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
+import { cls } from '../helper/dom';
 
 interface RawRowOptions {
   keyColumnName?: string;
@@ -140,10 +141,15 @@ function createViewCell(
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className } = row._attributes;
   const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
+  const classList = [...className.row, ...columnClassName];
+  const classNames = (isEmpty(row.rowSpanMap[name])
+    ? classList
+    : classList.filter(clsName => clsName !== cls('row-hover'))
+  ).join(' ');
 
   return {
     editable: !!editor,
-    className: [...className.row, ...columnClassName].join(' '),
+    className: classNames,
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
