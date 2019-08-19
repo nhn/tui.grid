@@ -1,11 +1,11 @@
-// Type definitions for TOAST UI Grid v3.9.0
+// Type definitions for TOAST UI Grid v3.9.1
 // TypeScript Version: 3.2.2
 
 /// <reference types="jquery" />
 
 declare namespace tuiGrid {
     type RowKeyType = number | string;
-    type ColumnValueType = number | string | object | null;
+    type ColumnValueType = number | string | object | null | undefined;
     type ColumnNameType = string;
     type RowStateType = 'DISABLED' | 'DISABLED_CHECK' | 'CHECKED';
     type TreeStateType = 'EXPAND' | 'COLLAPSE';
@@ -19,20 +19,21 @@ declare namespace tuiGrid {
     type PostPrefixConverterFunc = (cellValue: string, rowAttrs: IRow) => string;
     type RowType = IRow | ITreeRow;
     type Pagination = any;
+    type ExtraData = {
+        rowState?: RowStateType;
+    };
+    type TreeExtraData = ExtraData & {
+        treeState?: TreeStateType;
+    }
 
     interface IRow {
-        [propName: string]: ColumnValueType;
-        _extraData?: {
-            rowState?: RowStateType;
-        };
+        [propName: string]: ColumnValueType | ExtraData;
+        _extraData?: ExtraData;
     }
 
     interface ITreeRow {
-        [propName: string]: ColumnValueType;
-        _extraData?: {
-            rowState?: RowStateType;
-            treeState?: TreeStateType;
-        };
+        [propName: string]: ColumnValueType | TreeExtraData | ITreeRow[];
+        _extraData?: TreeExtraData;
         _children: ITreeRow[];
     }
 
