@@ -69,6 +69,8 @@ grid.on('mousedown', function(ev) {
 - `focusChange` : 테이블 셀 포커스를 선택한 경우
 - `check`: 로우 헤더의 체크 박스를 선택한 경우
 - `uncheck`: 로우 헤더의 체크 박스를 해제한 경우
+- `checkAll`: 헤더의 체크 박스를 선택하여 로우 헤더의 모든 체크 박스가 선택된 경우
+- `uncheckAll`: 헤더의 체크 박스를 해제하여 로우 헤더의 모든 체크 박스가 해제된 경우
 - `selection`: 테이블에서 선택 영역을 변경한 경우
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.

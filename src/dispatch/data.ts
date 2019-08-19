@@ -182,10 +182,28 @@ export function uncheck(store: Store, rowKey: RowKey) {
 
 export function checkAll(store: Store) {
   setAllRowAttribute(store, 'checked', true);
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent();
+
+  /**
+   * Occurs when a checkbox in header is checked(checked all checkbox in row header)
+   * @event Grid#checkAll
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('checkAll', gridEvent);
 }
 
 export function uncheckAll(store: Store) {
   setAllRowAttribute(store, 'checked', false);
+  const eventBus = getEventBus(store.id);
+  const gridEvent = new GridEvent();
+
+  /**
+   * Occurs when a checkbox in header is unchecked(unchecked all checkbox in row header)
+   * @event Grid#uncheckAll
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('uncheckAll', gridEvent);
 }
 
 function applyPasteDataToRawData(
