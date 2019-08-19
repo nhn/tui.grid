@@ -1001,7 +1001,7 @@ export default class Grid {
     const { treeColumnName } = this.store.column;
 
     if (treeColumnName) {
-      this.dispatch('appendTreeRow', row, { offset: options.at });
+      this.dispatch('appendTreeRow', row, { offset: options.at, ...options });
     } else {
       this.dispatch('appendRow', row, options);
     }
