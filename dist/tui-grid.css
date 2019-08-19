@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.3.0 | Fri Aug 09 2019
+ * @version 4.4.0 | Mon Aug 19 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -206,8 +206,10 @@
   vertical-align: middle;
 }
 .tui-grid-cell-header {
-  padding: 0;
+  padding: 4px 5px;
   text-align: center;
+  /* @TODO: box-sizing standardize required */
+  box-sizing: border-box;
 }
 .tui-grid-cell-summary {
   padding: 0 12px;
@@ -595,5 +597,9 @@
 
 .tui-grid-row-hidden .tui-grid-cell {
   display: none;
+}
+
+.tui-grid-row-header-checkbox {
+  padding: 4px 5px;
 }
 
