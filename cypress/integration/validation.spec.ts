@@ -12,7 +12,7 @@ beforeEach(() => {
   });
 });
 
-describe('validate changed value', () => {
+describe.only('validate changed value', () => {
   it('empty', () => {
     cy.createGrid({
       data,
@@ -41,6 +41,84 @@ describe('validate changed value', () => {
 
     cy.gridInstance().invoke('setValue', 0, 'price', 'test');
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+
+  it('value is greater than min value', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }]
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'price', 'test');
+    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+
+  it('value is greater than max value', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }]
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'price', 25);
+    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+
+  it('min and max only work if the value is a number.', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }]
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'price', 'not number');
+    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+
+  it('value is meet regExp', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
+    });
+
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+    cy.gridInstance().invoke('setValue', 0, 'name', '9:9');
+    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+  });
+
+  it('value is meet validatorFn', () => {
+    cy.createGrid({
+      data,
+      columns: [
+        {
+          name: 'name',
+          validation: {
+            validatorFn: (value: number) => value > 20 && value < 30
+          }
+        }
+      ]
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'name', 19);
+    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+  });
+
+  it('value is meet all condition', () => {
+    cy.createGrid({
+      data,
+      columns: [
+        {
+          name: 'price',
+          validation: {
+            min: 10,
+            max: 30,
+            validatorFn: (value: number) => value !== 25
+          }
+        }
+      ]
+    });
+
+    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+    cy.gridInstance().invoke('setValue', 0, 'price', 27);
+    cy.getCell(0, 'price').should('not.have.class', cls('cell-invalid'));
   });
 });
 

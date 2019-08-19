@@ -111,18 +111,42 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
-function getValidationCode(value: CellValue, validation?: Validation): ValidationType | '' {
-  if (validation && validation.required && isBlank(value)) {
-    return 'REQUIRED';
-  }
-  if (validation && validation.dataType === 'string' && !isString(value)) {
-    return 'TYPE_STRING';
-  }
-  if (validation && validation.dataType === 'number' && !isNumber(value)) {
-    return 'TYPE_NUMBER';
+function getValidationCode(value: CellValue, validation?: Validation): ValidationType[] {
+  const invalidStates: ValidationType[] = [];
+
+  if (!validation) {
+    return invalidStates;
   }
 
-  return '';
+  const { required, dataType, min, max, regExp, validatorFn } = validation;
+
+  if (required && isBlank(value)) {
+    invalidStates.push('REQUIRED');
+  }
+  if (dataType === 'string' && !isString(value)) {
+    invalidStates.push('TYPE_STRING');
+  }
+  if (dataType === 'number' && !isNumber(value)) {
+    invalidStates.push('TYPE_NUMBER');
+  }
+
+  if (min && isNumber(value) && value < min) {
+    invalidStates.push('MIN');
+  }
+
+  if (max && isNumber(value) && value > max) {
+    invalidStates.push('MAX');
+  }
+
+  if (regExp && isString(value) && !regExp.test(value!)) {
+    invalidStates.push('REGEXP');
+  }
+
+  if (validatorFn && !validatorFn(value)) {
+    invalidStates.push('VALIDATOR_FN');
+  }
+
+  return invalidStates;
 }
 
 function createViewCell(
@@ -151,7 +175,7 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
-    invalidState: getValidationCode(value, validation),
+    invalidStates: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
   };

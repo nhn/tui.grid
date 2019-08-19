@@ -5,13 +5,13 @@ export function getInvalidRows({ data, column }: Store) {
 
   data.viewData.forEach(({ rowKey, valueMap }) => {
     const invalidColumns = column.validationColumns.filter(
-      ({ name }) => !!valueMap[name].invalidState
+      ({ name }) => !!valueMap[name].invalidStates
     );
 
     if (invalidColumns.length) {
       const errors = invalidColumns.map(({ name }) => ({
         columnName: name,
-        errorCode: valueMap[name].invalidState
+        errorCode: valueMap[name].invalidStates
       }));
 
       invalidRows.push({ rowKey, errors });
