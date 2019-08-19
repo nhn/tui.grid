@@ -32,7 +32,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
     },
 
     get totalRowHeight() {
-      return last(this.offsets) + last(this.heights);
+      return this.heights.length ? last(this.offsets) + last(this.heights) : 0;
     }
   });
 }

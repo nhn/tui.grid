@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Store } from '../store/types';
+import { Dictionary, Store } from '../store/types';
 import { Dispatch } from '../dispatch/create';
 import { Container } from './container';
 import GridEvent from '../event/gridEvent';
@@ -12,13 +12,15 @@ interface Props {
   dispatch: Dispatch;
   onGridMounted?: Function;
   onGridBeforeDestroyed?: Function;
+  cellHeightMap: Dictionary<number>;
 }
 
 export class Root extends Component<Props> {
   public getChildContext() {
     return {
       store: this.props.store,
-      dispatch: this.props.dispatch
+      dispatch: this.props.dispatch,
+      cellHeightMap: this.props.cellHeightMap
     };
   }
 

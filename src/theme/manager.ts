@@ -30,37 +30,40 @@ const styleGenAreaMethodMap = {
   summary: styleGen.summaryArea
 };
 
+const styleGenRowMethodMap = {
+  odd: styleGen.rowOdd,
+  even: styleGen.rowEven,
+  dummy: styleGen.rowDummy,
+  hover: styleGen.rowHover
+};
+
 const styleGenCellMethodMap = {
   normal: styleGen.cell,
-  dummy: styleGen.cellDummy,
   editable: styleGen.cellEditable,
   header: styleGen.cellHeader,
   rowHeader: styleGen.cellRowHeader,
   summary: styleGen.cellSummary,
-  oddRow: styleGen.cellOddRow,
-  evenRow: styleGen.cellEvenRow,
   required: styleGen.cellRequired,
   disabled: styleGen.cellDisabled,
   invalid: styleGen.cellInvalid,
-  currentRow: styleGen.cellCurrentRow,
   selectedHeader: styleGen.cellSelectedHeader,
   selectedRowHeader: styleGen.cellSelectedRowHeader,
   focused: styleGen.cellFocused,
-  focusedInactive: styleGen.cellFocusedInactive
+  focusedInactive: styleGen.cellFocusedInactive,
+  // deprecate
+  oddRow: styleGen.rowOdd,
+  evenRow: styleGen.rowEven,
+  currentRow: styleGen.cellCurrentRow,
+  dummy: styleGen.rowDummy
 };
 
-/**
- * build css string with given options.
- * @param {Object} options - options
- * @returns {String}
- * @ignore
- */
 function buildCssString(options: OptPreset): string {
   type KeyType = keyof (typeof styleGenMethodMap);
   type AreaKeyType = keyof (typeof styleGenAreaMethodMap);
+  type RowKeyType = keyof (typeof styleGenRowMethodMap);
   type CellKeyType = keyof (typeof styleGenCellMethodMap);
 
-  const { area, cell } = options;
+  const { area, cell, row } = options;
   const styles: string[] = [];
 
   Object.keys(styleGenMethodMap).forEach(key => {
@@ -68,7 +71,7 @@ function buildCssString(options: OptPreset): string {
     const value = options[keyWithType];
 
     if (value) {
-      const fn = styleGen[keyWithType] as Function;
+      const fn = styleGen[keyWithType];
       styles.push(fn(value));
     }
   });
@@ -79,7 +82,7 @@ function buildCssString(options: OptPreset): string {
       const value = area[keyWithType];
 
       if (value) {
-        const fn = styleGenAreaMethodMap[keyWithType] as Function;
+        const fn = styleGenAreaMethodMap[keyWithType];
         styles.push(fn(value));
       }
     });
@@ -91,7 +94,19 @@ function buildCssString(options: OptPreset): string {
       const value = cell[keyWithType];
 
       if (value) {
-        const fn = styleGenCellMethodMap[keyWithType] as Function;
+        const fn = styleGenCellMethodMap[keyWithType];
+        styles.push(fn(value));
+      }
+    });
+  }
+
+  if (row) {
+    // Written later to override the row style in cell style
+    Object.keys(styleGenRowMethodMap).forEach(key => {
+      const keyWithType = key as RowKeyType;
+      const value = row[keyWithType];
+      if (value) {
+        const fn = styleGenRowMethodMap[keyWithType];
         styles.push(fn(value));
       }
     });
@@ -100,11 +115,6 @@ function buildCssString(options: OptPreset): string {
   return styles.join('');
 }
 
-/**
- * Set document style with given options.
- * @param {Object} options - options
- * @ignore
- */
 function setDocumentStyle(options: OptPreset) {
   const cssString = buildCssString(options);
   const elem = document.getElementById(STYLE_ELEMENT_ID);

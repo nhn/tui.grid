@@ -65,6 +65,8 @@ export type ClassNameType =
   | 'row-odd'
   | 'row-even'
   | 'row-hidden'
+  | 'row-header-checkbox'
+  | 'row-hover'
   | 'no-scroll-x'
   | 'no-scroll-y'
   | 'pagination'
@@ -141,7 +143,7 @@ export function findParent(el: HTMLElement, className: ClassNameType) {
 }
 
 export function getCellAddress(el: HTMLElement) {
-  const cellElement = findParent(el, 'cell');
+  const cellElement = findParentByTagName(el, 'td');
 
   if (!cellElement) {
     return null;

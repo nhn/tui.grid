@@ -212,3 +212,15 @@ stories.add('customTheme', () => {
 
   return el;
 });
+
+stories.add('row hover style', () => {
+  const { el } = createGridWithTheme({
+    preset: 'clean',
+    extOptions: {
+      row: { hover: { background: '#ce93d8' }, even: { background: 'red' } },
+      cell: { evenRow: { background: 'blue' } }
+    }
+  });
+
+  return el;
+});

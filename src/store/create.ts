@@ -40,7 +40,13 @@ export function createStore(id: number, options: OptGrid): Store {
   } = options;
   const { frozenBorderWidth } = columnOptions;
   const { height: summaryHeight, position: summaryPosition } = summaryOptions;
-  const { height: headerHeight = 40, complexColumns = [] } = header;
+  const {
+    height: headerHeight = 40,
+    complexColumns = [],
+    align = 'center',
+    valign = 'middle',
+    columns: columnsAlign = []
+  } = header;
   const column = createColumn({
     columns: options.columns,
     columnOptions,
@@ -48,7 +54,10 @@ export function createStore(id: number, options: OptGrid): Store {
     copyOptions,
     keyColumnName,
     treeColumnOptions,
-    complexColumns
+    complexColumns,
+    align,
+    valign,
+    columnsAlign
   });
   const data = createData(
     Array.isArray(options.data) ? options.data : [],

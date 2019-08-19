@@ -33,14 +33,7 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
       }
 
       public componentWillReceiveProps(nextProps: OwnProps) {
-        if (selector) {
-          if (this.unobserve) {
-            this.unobserve();
-          }
-          this.unobserve = observe(() => {
-            this.setStateUsingSelector(nextProps);
-          });
-        }
+        this.setStateUsingSelector(nextProps);
       }
 
       public componentWillUnmount() {

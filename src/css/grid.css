@@ -200,8 +200,10 @@
   vertical-align: middle;
 }
 .tui-grid-cell-header {
-  padding: 0;
+  padding: 4px 5px;
   text-align: center;
+  /* @TODO: box-sizing standardize required */
+  box-sizing: border-box;
 }
 .tui-grid-cell-summary {
   padding: 0 12px;
@@ -589,4 +591,8 @@
 
 .tui-grid-row-hidden .tui-grid-cell {
   display: none;
+}
+
+.tui-grid-row-header-checkbox {
+  padding: 4px 5px;
 }

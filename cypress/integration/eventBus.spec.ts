@@ -177,6 +177,29 @@ it('check / uncheck', () => {
     });
 });
 
+it('checkAll / uncheckAll', () => {
+  const checkCallback = cy.stub();
+  const uncheckCallback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'checkAll', checkCallback);
+  cy.gridInstance().invoke('on', 'uncheckAll', uncheckCallback);
+
+  cy.get(`.${cls('cell-row-header')}`)
+    .get('input')
+    .eq(0)
+    .click()
+    .then(() => {
+      expect(checkCallback).to.be.called;
+    });
+  cy.get(`.${cls('cell-row-header')}`)
+    .get('input')
+    .eq(0)
+    .click()
+    .then(() => {
+      expect(uncheckCallback).to.be.called;
+    });
+});
+
 it('selection by api', () => {
   // keyboard, mouse event untestable
   const callback = cy.stub();

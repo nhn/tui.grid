@@ -4,6 +4,7 @@ import { createColumn, getRelationColumns } from '../store/column';
 import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
+import { initFocus } from './focus';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -32,7 +33,7 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
+export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
   const {
     columnOptions,
     copyOptions,
@@ -48,18 +49,34 @@ export function setColumns({ column, data }: Store, optColumns: OptColumn[]) {
       }),
     []
   );
-  const columnInfos = optColumns.map(optColumn =>
-    createColumn(optColumn, columnOptions, relationColumns, copyOptions, treeColumnOptions)
-  );
 
-  column.allColumns = [...rowHeaders, ...columnInfos];
-  const { allColumnMap } = column;
+  const columnInfos = optColumns.map(optColumn =>
+    createColumn(
+      optColumn,
+      columnOptions,
+      relationColumns,
+      copyOptions,
+      treeColumnOptions,
+      column.headerAlignInfo
+    )
+  );
   const { rawData } = data;
 
-  data.viewData.forEach(viewRow => {
-    viewRow.__unobserveFns__.forEach(fn => fn());
+  focus.editingAddress = null;
+
+  // to render the grid for new data after destroying editing cell on DOM
+  setTimeout(() => {
+    initFocus(focus);
+
+    column.allColumns = [...rowHeaders, ...columnInfos];
+
+    data.viewData.forEach(viewRow => {
+      if (Array.isArray(viewRow.__unobserveFns__)) {
+        viewRow.__unobserveFns__.forEach(fn => fn());
+      }
+    });
+    data.viewData = rawData.map(row => createViewRow(row, column.allColumnMap, rawData));
   });
-  data.viewData = rawData.map(row => createViewRow(row, allColumnMap, rawData));
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {

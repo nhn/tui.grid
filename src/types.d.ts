@@ -17,6 +17,9 @@ import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
 
+export type VAlignType = 'top' | 'middle' | 'bottom';
+export type AlignType = 'left' | 'center' | 'right';
+
 export interface OptGrid {
   el: HTMLElement;
   data?: OptRow[] | DataSource;
@@ -124,8 +127,8 @@ export interface OptColumn {
   minWidth?: number;
   escapeHTML?: false;
   relations?: Relations[];
-  align?: 'left' | 'center' | 'right';
-  valign?: 'top' | 'middle' | 'bottom';
+  align?: AlignType;
+  valign?: VAlignType;
   whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
@@ -168,6 +171,10 @@ export interface OptSelectionLayerStyle {
   border?: string;
 }
 
+export interface OptRowHoverStyle {
+  background?: string;
+}
+
 export interface OptScrollbarStyle {
   border?: string;
   background?: string;
@@ -204,6 +211,13 @@ export interface OptCellStyle {
   showHorizontalBorder?: boolean;
 }
 
+export interface OptTableRowStyle {
+  even?: OptBasicCellStyle;
+  odd?: OptBasicCellStyle;
+  dummy?: OptCellDummyStyle;
+  hover?: OptRowHoverStyle;
+}
+
 export interface OptBasicCellStyle {
   background?: string;
   text?: string;
@@ -231,6 +245,7 @@ export interface OptTableCellStyle {
   editable?: OptBasicCellStyle;
   disabled?: OptBasicCellStyle;
   invalid?: OptBasicCellStyle;
+  // deprecated
   currentRow?: OptBasicCellStyle;
   evenRow?: OptBasicCellStyle;
   oddRow?: OptBasicCellStyle;
@@ -348,6 +363,7 @@ export interface OptPreset {
   frozenBorder?: OptFrozenBorderStyle;
   area?: OptTableAreaStyle;
   cell?: OptTableCellStyle;
+  row?: OptTableRowStyle;
   heightResizeHandle?: OptHeightResizeHandleStyle;
   pagination?: OptPaginationStyle;
 }
@@ -397,7 +413,16 @@ export interface OptSummaryValueMap {
   cnt: number;
 }
 
+export interface ColumnsAlignInfo {
+  name: string;
+  align?: AlignType;
+  valign?: VAlignType;
+}
+
 export interface OptHeader {
   height?: number;
   complexColumns?: ComplexColumnInfo[];
+  align?: AlignType;
+  valign?: VAlignType;
+  columns?: ColumnsAlignInfo[];
 }

@@ -145,13 +145,13 @@ In addition, a variety of powerful features can be found on the demo page below.
 * [Tree Data Representation](https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md)
 * [Custom cell renderer](https://github.com/nhn/tui.grid/blob/master/docs/en/custom-renderer.md)
 * [Pagination](https://github.com/nhn/tui.grid/blob/master/docs/en/data-source.md#pagination)
+* [Frozen(Pinned) columns](https://github.com/nhn/tui.grid/blob/master/docs/en/frozen-columns.md)
 * Enhanced Virtual Scroll _(Handling Large Dataset Without Performance Loss)_
 * Column resize & reorder & show & hide
 * Validation
 * Selection
 * Sorting
 * Merging cell
-* Frozen(Pinned) columns
 
 ## 🐾 Examples
 

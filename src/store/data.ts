@@ -36,11 +36,17 @@ import {
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
+import { cls } from '../helper/dom';
 
 interface RawRowOptions {
   keyColumnName?: string;
   prevRow?: Row;
   lazyObservable?: boolean;
+}
+
+let dataCreationKey = '';
+function generateDataCreationKey() {
+  dataCreationKey = `@dataKey${Date.now()}`;
 }
 
 export function getCellDisplayValue(value: CellValue) {
@@ -133,12 +139,17 @@ function createViewCell(
   }
 
   const formatterProps = { row, column, value };
-  const { disabled, checkDisabled, className } = row._attributes;
-  const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
+  const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
+  const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
+  const classList = [...classNameAttr.row, ...columnClassName];
+  const className = (isEmpty(row.rowSpanMap[name])
+    ? classList
+    : classList.filter(clsName => clsName !== cls('row-hover'))
+  ).join(' ');
 
   return {
     editable: !!editor,
-    className: [...className.row, ...columnClassName].join(' '),
+    className,
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
@@ -198,7 +209,7 @@ export function createViewRow(
   treeColumnName?: string,
   treeIcon?: boolean
 ) {
-  const { rowKey, sortKey, rowSpanMap } = row;
+  const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach(name => {
@@ -232,6 +243,7 @@ export function createViewRow(
   return {
     rowKey,
     sortKey,
+    uniqueKey,
     rowSpanMap,
     valueMap,
     __unobserveFns__,
@@ -330,6 +342,7 @@ export function createRawRow(
   }
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
+  row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
   row._attributes = getAttributes(row, index, lazyObservable);
   row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
@@ -347,6 +360,7 @@ export function createData(
   lazyObservable = false,
   prevRows?: Row[]
 ) {
+  generateDataCreationKey();
   const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
   const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
   let rawData: Row[];
