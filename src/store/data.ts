@@ -139,17 +139,17 @@ function createViewCell(
   }
 
   const formatterProps = { row, column, value };
-  const { disabled, checkDisabled, className } = row._attributes;
-  const columnClassName = isUndefined(className.column[name]) ? [] : className.column[name];
-  const classList = [...className.row, ...columnClassName];
-  const classNames = (isEmpty(row.rowSpanMap[name])
+  const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
+  const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
+  const classList = [...classNameAttr.row, ...columnClassName];
+  const className = (isEmpty(row.rowSpanMap[name])
     ? classList
     : classList.filter(clsName => clsName !== cls('row-hover'))
   ).join(' ');
 
   return {
     editable: !!editor,
-    className: classNames,
+    className,
     disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
     invalidState: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
