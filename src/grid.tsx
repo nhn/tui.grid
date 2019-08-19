@@ -31,7 +31,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData } from './helper/clipboard';
-import { findPropIndex, isUndefined, mapProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -59,7 +59,6 @@ import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
-import { cell } from './theme/styleGenerator';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -234,6 +233,8 @@ if ((module as any).hot) {
 export default class Grid {
   private el: HTMLElement;
 
+  private gridEl: Element;
+
   private store: Store;
 
   private dispatch: Dispatch;
@@ -274,10 +275,6 @@ export default class Grid {
 
     registerDataSources(id, dataProvider, dataManager, paginationManager);
 
-    // @TODO: Only for Development env
-    // eslint-disable-next-line
-    (window as any).store = store;
-
     if (!themeManager.isApplied()) {
       themeManager.apply('default');
     }
@@ -285,7 +282,7 @@ export default class Grid {
       this.dataManager.setOriginData(options.data);
     }
 
-    render(
+    this.gridEl = render(
       <Root
         store={store}
         dispatch={dispatch}
@@ -1405,5 +1402,17 @@ export default class Grid {
     const { parentElement } = this.el;
 
     this.dispatch('refreshLayout', containerEl, parentElement!);
+  }
+
+  /**
+   * Destroys the instance.
+   */
+  public destroy() {
+    render('', this.el, this.gridEl);
+    for (const key in this) {
+      if (hasOwnProp(this, key)) {
+        delete this[key];
+      }
+    }
   }
 }
