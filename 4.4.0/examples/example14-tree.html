@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>14. Tree</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+    See the 'tree-dummy.js' file for tree data.<br />
+    You can check for custom events in the console.<br />
+    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/docs/en/tree.md" target="_blank">here</a>.
+    </div>
+    <div class="contents">
+      <div class="code-html">
+        <div id="grid"></div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/tree-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+  const grid = new tui.Grid({
+    el: document.getElementById('grid'),
+    data: treeData,
+    rowHeaders: ['checkbox'],
+    bodyHeight: 500,
+    treeColumnOptions: {
+      name: 'name',
+      useCascadingCheckbox: true
+    },
+    columns: [
+      {
+        header: 'Name',
+        name: 'name',
+        width: 300
+      },
+      {
+        header: 'Artist',
+        name: 'artist'
+      },
+      {
+        header: 'Type',
+        name: 'type'
+      },
+      {
+        header: 'Release',
+        name: 'release'
+      },
+      {
+        header: 'Genre',
+        name: 'genre'
+      }
+    ]});
+  </script>
+</html>
