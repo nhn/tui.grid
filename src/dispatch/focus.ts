@@ -51,20 +51,15 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
 }
 
 export function finishEditing(
-  { focus, data, id, column }: Store,
+  { focus, id }: Store,
   rowKey: RowKey,
-  columnName: string
+  columnName: string,
+  value: string
 ) {
   const { editingAddress } = focus;
-  const { rawData } = data;
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
 
   const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({
-    rowKey,
-    columnName,
-    value: rawData[foundIndex][columnName]
-  });
+  const gridEvent = new GridEvent({ rowKey, columnName, value });
 
   /**
    * Occurs when editing the cell is finished

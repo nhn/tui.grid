@@ -143,7 +143,7 @@ export function findParent(el: HTMLElement, className: ClassNameType) {
 }
 
 export function getCellAddress(el: HTMLElement) {
-  const cellElement = findParent(el, 'cell');
+  const cellElement = findParentByTagName(el, 'td');
 
   if (!cellElement) {
     return null;
