@@ -19,6 +19,7 @@
   gridData[4].name = '';
   gridData[0].artist = 100;
   gridData[5].artist = 100;
+  gridData[0].type = 'a_z';
 
   const grid = new tui.Grid({
     el: document.getElementById('grid'),
@@ -27,28 +28,32 @@
     scrollY: false,
     columns: [
       {
-        header: 'Name(required: true)',
+        header: 'Name',
         name: 'name',
         editor: 'text',
         validation: { required: true }
       },
       {
-        header: 'Artist(dataType: string)',
+        header: 'Artist',
         name: 'artist',
         validation: { dataType: 'string' }
       },
       {
+        header: 'Price',
+        name: 'price',
+        validation: {
+          min: 10000,
+          max: 10500,
+          validatorFn: value => value !== 11000
+        }
+      },
+      {
         header: 'Type',
-        name: 'type'
+        name: 'type',
+        validation: {
+          regExp: /[a-z]+_[a-z]/
+        }
       },
-      {
-        header: 'Release',
-        name: 'release'
-      },
-      {
-        header: 'Genre',
-        name: 'genre',
-      }
     ]
   });
 </script>
