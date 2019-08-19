@@ -101,7 +101,8 @@ function createTreeRawRow(
   options = { lazyObservable: false } as TreeDataOptions
 ) {
   const { keyColumnName, offset, lazyObservable = false } = options;
-  const rawRow = createRawRow(row, generateTreeRowKey(), defaultValues, {
+  const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
+  const rawRow = createRawRow(row, targetTreeRowKey, defaultValues, {
     keyColumnName,
     lazyObservable
   });
@@ -159,7 +160,9 @@ export function createTreeRawData(
   keyColumnName?: string,
   lazyObservable = false
 ) {
-  treeRowKey = -1;
+  if (lazyObservable) {
+    treeRowKey = -1;
+  }
 
   return flattenTreeData(data, defaultValues, null, { keyColumnName, lazyObservable });
 }
