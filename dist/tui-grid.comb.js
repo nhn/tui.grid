@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Jul 11 2019 15:24:35 GMT+0900 (GMT+09:00)"
- * version: 3.9.0
+ * bundle created at "Mon Aug 19 2019 10:47:42 GMT+0900 (GMT+09:00)"
+ * version: 3.9.1
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6594,15 +6594,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {Array.<number|string>} - children or descendant of given row
 	     */
 	    treeExpand: function(rowKey, recursive) {
-	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
 	        var row = this.get(rowKey);
+	        var isExpanded = row.getTreeExpanded();
+	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+
+	        if (!row.hasTreeChildren()) {
+	            return descendantRowKeys;
+	        }
+
 	        row.setTreeExpanded(true);
 
 	        if (recursive) {
 	            _.each(descendantRowKeys, function(descendantRowKey) {
 	                var descendantRow = this.get(descendantRowKey);
 	                if (descendantRow.hasTreeChildren()) {
-	                    descendantRow.setTreeExpanded(true);
+	                    this.treeExpand(descendantRow.get('rowKey'), true);
 	                }
 	            }, this);
 	        } else {
@@ -6611,18 +6617,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }, this);
 	        }
 
-	        /**
-	         * Occurs when the row having child rows is expanded
-	         * @event Grid#expanded
-	         * @type {module:event/gridEvent}
-	         * @property {number|string} rowKey - rowKey of the expanded row
-	         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-	         * @property {Grid} instance - Current grid instance
-	         */
-	        this.trigger('expanded', {
-	            rowKey: rowKey,
-	            descendantRowKeys: descendantRowKeys.slice(0)
-	        });
+	        if (!isExpanded) {
+	            /**
+	             * Occurs when the row having child rows is expanded
+	             * @event Grid#expanded
+	             * @type {module:event/gridEvent}
+	             * @property {number|string} rowKey - rowKey of the expanded row
+	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	             * @property {Grid} instance - Current grid instance
+	             */
+	            this.trigger('expanded', {
+	                rowKey: rowKey,
+	                descendantRowKeys: descendantRowKeys.slice(0)
+	            });
+	        }
 
 	        return descendantRowKeys;
 	    },
@@ -6652,14 +6660,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    treeCollapse: function(rowKey, recursive) {
 	        var row = this.get(rowKey);
-
+	        var isExpanded = row.getTreeExpanded();
 	        var descendantRowKeys = this.getTreeDescendantRowKeys(rowKey);
+
+	        if (!row.hasTreeChildren()) {
+	            return descendantRowKeys;
+	        }
 
 	        if (recursive) {
 	            _.each(descendantRowKeys, function(descendantRowKey) {
 	                var descendantRow = this.get(descendantRowKey);
 	                if (descendantRow.hasTreeChildren()) {
-	                    descendantRow.setTreeExpanded(false);
+	                    this.treeCollapse(descendantRow.get('rowKey'), true);
 	                }
 	            }, this);
 	        } else {
@@ -6670,18 +6682,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        row.setTreeExpanded(false);
 
-	        /**
-	         * Occurs when the row having child rows is collapsed
-	         * @event Grid#collapsed
-	         * @type {module:event/gridEvent}
-	         * @property {number|string} rowKey - rowKey of the collapsed row
-	         * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
-	         * @property {Grid} instance - Current grid instance
-	         */
-	        this.trigger('collapsed', {
-	            rowKey: rowKey,
-	            descendantRowKeys: descendantRowKeys.slice(0)
-	        });
+	        if (isExpanded) {
+	            /**
+	             * Occurs when the row having child rows is collapsed
+	             * @event Grid#collapsed
+	             * @type {module:event/gridEvent}
+	             * @property {number|string} rowKey - rowKey of the collapsed row
+	             * @property {Array.<number|string>} descendantRowKeys - rowKey list of all descendant rows
+	             * @property {Grid} instance - Current grid instance
+	             */
+	            this.trigger('collapsed', {
+	                rowKey: rowKey,
+	                descendantRowKeys: descendantRowKeys.slice(0)
+	            });
+	        }
 
 	        return descendantRowKeys;
 	    },
