@@ -101,6 +101,7 @@ function createTreeRawRow(
   options = { lazyObservable: false } as TreeDataOptions
 ) {
   const { keyColumnName, offset, lazyObservable = false } = options;
+  // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
   const rawRow = createRawRow(row, targetTreeRowKey, defaultValues, {
     keyColumnName,
@@ -160,6 +161,7 @@ export function createTreeRawData(
   keyColumnName?: string,
   lazyObservable = false
 ) {
+  // only reset the rowKey on lazy observable data
   if (lazyObservable) {
     treeRowKey = -1;
   }
