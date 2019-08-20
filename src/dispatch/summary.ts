@@ -5,6 +5,13 @@ import {
   extractSummaryColumnContent
 } from '../helper/summary';
 
+interface Options {
+  prevValue?: CellValue;
+  value?: CellValue;
+  appended?: boolean;
+}
+type UpdateType = 'UPDATE_COLUMN' | 'UPDATE_CELL' | 'UPDATE_ROW';
+
 export function setSummaryColumnContent(
   { summary, data }: Store,
   columnName: string,
@@ -18,13 +25,6 @@ export function setSummaryColumnContent(
   summary.summaryValues[columnName] = createSummaryValue(content, columnName, rawData);
 }
 
-interface Options {
-  prevValue?: CellValue;
-  value?: CellValue;
-  appended?: boolean;
-}
-type UpdateType = 'UPDATE_COLUMN' | 'UPDATE_CELL' | 'UPDATE_ROW';
-
 export function updateSummaryValue(
   { summary }: Store,
   columnName: string,
@@ -35,12 +35,11 @@ export function updateSummaryValue(
 
   if (content && content.useAutoSummary) {
     const summaryValue = summary.summaryValues[columnName];
-    const [numericPrevValue, numericValue] = [Number(options.prevValue), Number(options.value)];
-    const prevValue = isNaN(numericPrevValue) ? 0 : numericPrevValue;
-    const value = isNaN(numericValue) ? 0 : numericValue;
+    const prevValue = Number(options.prevValue) || 0;
+    const value = Number(options.value) || 0;
     const cntVariation = options.appended ? 1 : -1;
 
-    let { sum, avg, min, max, cnt } = summaryValue;
+    let { sum, min, max, cnt } = summaryValue;
 
     if (type === 'UPDATE_COLUMN') {
       sum = value * cnt;
@@ -52,7 +51,7 @@ export function updateSummaryValue(
       cnt += cntVariation;
       sum = sum + cntVariation * value;
     }
-    avg = sum / cnt;
+    const avg = sum / cnt;
     min = Math.min(value, min);
     max = Math.max(value, max);
 
