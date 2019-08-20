@@ -120,6 +120,7 @@ stories.add('Events', () => {
 stories.add('Reactive Props', () => {
   const dataValue = object('data', data.slice(0, 5));
   const columnsValue = object('columns', columns);
+  const columnOptions = object('columnOptions', {frozenCount: 2});
   const bodyHeightValue = number('bodyHeight', 300, {
     range: true,
     min: 100,
@@ -137,6 +138,7 @@ stories.add('Reactive Props', () => {
       columns={columnsValue}
       data={dataValue}
       frozenColumnCount={frozenColumnCountValue}
+      columnOptions={columnOptions}
       pagination={false}
       bodyHeight={bodyHeightValue}
       oneTimeBindingProps={oneTimeBindingProps}

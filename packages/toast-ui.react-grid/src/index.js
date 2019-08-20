@@ -5,7 +5,8 @@ const reactivePropSetterMap = {
   data: 'resetData',
   columns: 'setColumns',
   bodyHeight: 'setBodyHeight',
-  frozenColumnCount: 'setFrozenColumnCount'
+  frozenColumnCount: 'setFrozenColumnCount',
+  columnOptions: 'setFrozenColumnCount'
 };
 
 export default class Grid extends React.Component {
@@ -50,8 +51,15 @@ export default class Grid extends React.Component {
     );
 
     reactiveProps.forEach((propName) => {
-      const currentValue = this.props[propName];
-      const nextValue = nextProps[propName];
+      let currentValue, nextValue;
+      if (propName === 'columnOptions' && this.props.columnOptions) {
+        currentValue = this.props.columnOptions.frozenCount;
+        nextValue = nextProps.columnOptions.frozenCount;
+      } else {
+        currentValue = this.props[propName];
+        nextValue = nextProps[propName];
+      }
+
       if (currentValue !== nextValue) {
         const setterName = reactivePropSetterMap[propName];
         this.gridInst[setterName](nextValue);
