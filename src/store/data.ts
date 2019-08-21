@@ -138,7 +138,7 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
     invalidStates.push('MAX');
   }
 
-  if (regExp && isString(value) && !regExp.test(value!)) {
+  if (regExp && isString(value) && !regExp.test(value)) {
     invalidStates.push('REGEXP');
   }
 

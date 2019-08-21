@@ -12,7 +12,7 @@ beforeEach(() => {
   });
 });
 
-describe.only('validate changed value', () => {
+describe('validate changed value', () => {
   it('empty', () => {
     cy.createGrid({
       data,
