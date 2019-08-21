@@ -80,12 +80,19 @@ export interface ClipboardCopyOptions {
   customValue?: CustomValue;
 }
 
-export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
+export type ValidationType =
+  | 'REQUIRED'
+  | 'TYPE_STRING'
+  | 'TYPE_NUMBER'
+  | 'MIN'
+  | 'MAX'
+  | 'REGEXP'
+  | 'VALIDATOR_FN';
 
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
-  invalidState: '' | ValidationType;
+  invalidStates: ValidationType[];
   formattedValue: string;
   value: CellValue;
   className: string;
@@ -119,11 +126,15 @@ export interface SelectionRange {
 export interface Validation {
   required?: boolean;
   dataType?: 'string' | 'number';
+  min?: number;
+  max?: number;
+  regExp?: RegExp;
+  validatorFn?: (value: CellValue) => boolean;
 }
 
 export interface InvalidColumn {
   columnName: string;
-  errorCode: '' | ValidationType;
+  errorCode: ValidationType[];
 }
 
 export interface InvalidRow {
