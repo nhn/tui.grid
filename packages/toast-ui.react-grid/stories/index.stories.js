@@ -1,25 +1,25 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import XHRMock from 'xhr-mock';
-import {storiesOf} from '@storybook/react';
+import { storiesOf } from '@storybook/react';
 import Grid from '../src/index';
 import TuiGrid from 'tui-grid';
-import {actions} from '@storybook/addon-actions';
-import {withKnobs, number, radios, button, object, array} from '@storybook/addon-knobs';
-import {data} from './dummy-data';
+import { actions } from '@storybook/addon-actions';
+import { withKnobs, number, radios, button, object, array } from '@storybook/addon-knobs';
+import { data } from './dummy-data';
 import 'tui-grid/dist/tui-grid.css';
 import 'tui-pagination/dist/tui-pagination.css';
 
 const columns = [
-  {header: 'Name', name: 'name'},
-  {header: 'Artist', name: 'artist'},
-  {header: 'Type', name: 'type', editor: 'text'},
-  {header: 'Release', name: 'release', editor: 'text'},
-  {header: 'Genre', name: 'genre', editor: 'text'}
+  { header: 'Name', name: 'name' },
+  { header: 'Artist', name: 'artist' },
+  { header: 'Type', name: 'type', editor: 'text' },
+  { header: 'Release', name: 'release', editor: 'text' },
+  { header: 'Genre', name: 'genre', editor: 'text' }
 ];
 
 const stories = storiesOf('Toast UI Grid', module).addDecorator(withKnobs);
 
-stories.add('Normal', () => <Grid columns={columns} data={data} header={{height: 60}} />);
+stories.add('Normal', () => <Grid columns={columns} data={data} header={{ height: 60 }} />);
 
 stories.add('Set Language', () => {
   const options = {
@@ -85,7 +85,7 @@ stories.add('Using Method', () => {
     }
 
     handleClickAppend = () => {
-      this.grid.appendRow({}, {at: 0});
+      this.grid.appendRow({}, { at: 0 });
     };
 
     handleClickSort = () => {
@@ -206,15 +206,17 @@ stories.add('dataSource', () => {
     withCredentials: false,
     initialRequest: true,
     api: {
-      readData: {url: 'api/readData', method: 'GET'}
+      readData: { url: 'api/readData', method: 'GET' }
     }
   };
 
-  return <Grid columns={columns} pagination={true} data={dataSource} pageOptions={{perPage: 3}} />;
+  return (
+    <Grid columns={columns} pagination={true} data={dataSource} pageOptions={{ perPage: 3 }} />
+  );
 });
 
 stories.add('hook', () => {
-  const condition = radios('condition', {true: 'true', false: 'false'}, 'true');
+  const condition = radios('condition', { true: 'true', false: 'false' }, 'true');
   const ReactComponent = () => {
     const onClick = useCallback(() => {
       console.log('condition:', condition);
@@ -227,7 +229,7 @@ stories.add('hook', () => {
 });
 
 stories.add('change event based on condition', () => {
-  const condition = radios('condition', {true: 'true', false: 'false'}, 'true');
+  const condition = radios('condition', { true: 'true', false: 'false' }, 'true');
 
   return (
     <Grid

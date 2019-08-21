@@ -16,11 +16,11 @@ export default class Grid extends React.Component {
 
   bindEventHandlers(props, prevProps) {
     Object.keys(props)
-      .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
-      .forEach((key) => {
+      .filter(key => /on(?!Grid)[A-Z][a-zA-Z]+/.test(key))
+      .forEach(key => {
         const eventName = key[2].toLowerCase() + key.slice(3);
         // For <Grid onFocus={condition ? onFocus1 : onFocus2} />
-        if (prevProps && prevProps[key] === props[key]) {
+        if (prevProps && prevProps[key] !== props[key]) {
           this.gridInst.off(eventName);
         }
         this.gridInst.on(eventName, props[key]);
@@ -36,18 +36,28 @@ export default class Grid extends React.Component {
   }
 
   componentDidMount() {
+    const {
+      frozenColumnCount: frozenCount = 0,
+      columnOptions: columnOptionsProp = {}
+    } = this.props;
+
+    const columnOptions = {
+      ...columnOptionsProp,
+      frozenCount
+    };
+
     this.gridInst = new TuiGrid({
       el: this.rootEl.current,
-      ...this.props
+      ...this.props,
+      columnOptions
     });
-
     this.bindEventHandlers(this.props);
   }
 
   shouldComponentUpdate(nextProps) {
-    const {oneTimeBindingProps = []} = this.props;
+    const { oneTimeBindingProps = [] } = this.props;
     const reactiveProps = Object.keys(reactivePropSetterMap).filter(
-      (propName) => oneTimeBindingProps.indexOf(propName) === -1
+      propName => oneTimeBindingProps.indexOf(propName) === -1
     );
 
     reactiveProps.forEach((propName) => {
