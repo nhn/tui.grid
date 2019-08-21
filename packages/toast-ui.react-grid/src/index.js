@@ -54,13 +54,17 @@ export default class Grid extends React.Component {
     this.bindEventHandlers(this.props);
   }
 
+  componentWillUnmount() {
+    this.gridInst.destroy();
+  }
+
   shouldComponentUpdate(nextProps) {
     const { oneTimeBindingProps = [] } = this.props;
     const reactiveProps = Object.keys(reactivePropSetterMap).filter(
       propName => oneTimeBindingProps.indexOf(propName) === -1
     );
 
-    reactiveProps.forEach((propName) => {
+    reactiveProps.forEach(propName => {
       let currentValue, nextValue;
       if (propName === 'columnOptions' && this.props.columnOptions) {
         currentValue = this.props.columnOptions.frozenCount;
