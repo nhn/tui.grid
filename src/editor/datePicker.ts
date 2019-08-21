@@ -87,4 +87,8 @@ export class DatePickerEditor implements CellEditor {
     this.inputEl.select();
     this.datePickerEl.open();
   }
+
+  public beforeDestroy() {
+    this.datePickerEl.destroy();
+  }
 }

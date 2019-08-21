@@ -29,7 +29,8 @@
       "tmpdoc/dispatch/data.js",
       "tmpdoc/dispatch/tree.js",
       "tmpdoc/view/container.js",
-      "tmpdoc/view/root.js"
+      "tmpdoc/view/root.js",
+      "tmpdoc/dispatch/focus.js"
     ],
     "fileLink": false
   },

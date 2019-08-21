@@ -265,9 +265,10 @@ it('gridMounted', () => {
     columns,
     rowHeaders: ['rowNum', 'checkbox'],
     onGridMounted: callback
-  });
-  cy.gridInstance().should(grid => {
-    expect(isSubsetOf({ instance: grid }, callback.args[0][0])).to.be.true;
+  }).then(() => {
+    setTimeout(() => {
+      expect(callback).to.be.calledOnce;
+    });
   });
 });
 
