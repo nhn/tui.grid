@@ -174,7 +174,7 @@ describe('get data that failed validation result by validate api', () => {
       .should(result => {
         expect(
           isSubsetOf(
-            [{ errors: [{ columnName: 'name', errorCode: 'REQUIRED' }], rowKey: 0 }],
+            [{ errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }],
             result
           )
         ).to.be.true;
