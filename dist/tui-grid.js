@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.4.0 | Mon Aug 19 2019
+ * @version 4.4.1 | Wed Aug 21 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -5576,16 +5576,13 @@ var Grid = /** @class */ (function () {
             googleAnalytics_1.sendHostname();
         }
         instance_1.registerDataSources(id, dataProvider, dataManager, paginationManager);
-        // @TODO: Only for Development env
-        // eslint-disable-next-line
-        window.store = store;
         if (!manager_1.default.isApplied()) {
             manager_1.default.apply('default');
         }
         if (Array.isArray(options.data)) {
             this.dataManager.setOriginData(options.data);
         }
-        preact_1.render(preact_1.h(root_1.Root, { store: store, dispatch: dispatch, cellHeightMap: cellHeightMap, rootElement: el, onGridMounted: onGridMounted, onGridBeforeDestroyed: onGridBeforeDestroyed }), el);
+        this.gridEl = preact_1.render(preact_1.h(root_1.Root, { store: store, dispatch: dispatch, cellHeightMap: cellHeightMap, rootElement: el, onGridMounted: onGridMounted, onGridBeforeDestroyed: onGridBeforeDestroyed }), el);
     }
     /**
      * Apply theme to all grid instances with the preset options of a given name.
@@ -6597,6 +6594,17 @@ var Grid = /** @class */ (function () {
         var parentElement = this.el.parentElement;
         this.dispatch('refreshLayout', containerEl, parentElement);
     };
+    /**
+     * Destroys the instance.
+     */
+    Grid.prototype.destroy = function () {
+        preact_1.render('', this.el, this.gridEl);
+        for (var key in this) {
+            if (common_1.hasOwnProp(this, key)) {
+                delete this[key];
+            }
+        }
+    };
     return Grid;
 }());
 exports.default = Grid;
@@ -6993,6 +7001,9 @@ var DatePickerEditor = /** @class */ (function () {
     DatePickerEditor.prototype.mounted = function () {
         this.inputEl.select();
         this.datePickerEl.open();
+    };
+    DatePickerEditor.prototype.beforeDestroy = function () {
+        this.datePickerEl.destroy();
     };
     return DatePickerEditor;
 }());
