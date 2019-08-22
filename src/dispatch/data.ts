@@ -43,18 +43,20 @@ import { changeFocus, initFocus } from './focus';
 import { sort } from './sort';
 import { getRootParentRow, getParentRowKey } from '../helper/tree';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
+import {
+  updateSummaryValueByCell,
+  updateSummaryValueByColumn,
+  updateSummaryValueByRow,
+  updateAllSummaryValues
+} from './summary';
 
 interface OriginData {
   rows: Row[];
   targetIndexes: number[];
 }
 
-export function setValue(
-  { column, data, id }: Store,
-  rowKey: RowKey,
-  columnName: string,
-  value: CellValue
-) {
+export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
+  const { column, data, id } = store;
   const { rawData, sortOptions } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
@@ -74,6 +76,8 @@ export function setValue(
 
   if (targetRow) {
     const { rowSpanMap } = targetRow;
+    const prevValue = targetRow[columnName];
+    updateSummaryValueByCell(store, columnName, { prevValue, value });
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
@@ -138,6 +142,7 @@ export function setColumnValues(
   store.data.rawData.forEach(targetRow => {
     targetRow[columnName] = value;
   });
+  updateSummaryValueByColumn(store, columnName, { value });
 }
 
 export function check(store: Store, rowKey: RowKey) {
@@ -325,15 +330,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  updateSummaryValueByRow(store, rawRow, true);
   renderState.state = 'DONE';
   getDataManager(id).push('CREATE', rawRow);
 }
 
-export function removeRow(
-  { data, rowCoords, id, renderState, focus, column }: Store,
-  rowKey: RowKey,
-  options: OptRemoveRow
-) {
+export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
+  const { data, rowCoords, id, renderState, focus, column } = store;
   const { rawData, viewData, sortOptions } = data;
   const { heights } = rowCoords;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
@@ -362,11 +365,13 @@ export function removeRow(
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  updateSummaryValueByRow(store, removedRow, false);
   renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow);
 }
 
-export function clearData({ data, id, renderState, focus, rowCoords }: Store) {
+export function clearData(store: Store) {
+  const { data, id, renderState, focus, rowCoords } = store;
   data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
@@ -380,6 +385,7 @@ export function clearData({ data, id, renderState, focus, rowCoords }: Store) {
     rowCoords.heights = [];
     data.rawData = [];
     data.viewData = [];
+    updateAllSummaryValues(store);
     renderState.state = 'EMPTY';
   });
 }
@@ -398,6 +404,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
     rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
     data.viewData = viewData;
     data.rawData = rawData;
+    updateAllSummaryValues(store);
     renderState.state = getRenderState(rawData);
   });
   // @TODO need to execute logic by condition

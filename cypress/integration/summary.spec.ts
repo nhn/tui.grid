@@ -305,4 +305,99 @@ describe('summary', () => {
         });
       });
   });
+
+  context('should change summary value by appendRow / removeRow API', () => {
+    it('appendRow API', () => {
+      const row = { name: 100, price: 5, downloadCount: 10 };
+      createGrid();
+      cy.gridInstance().invoke('appendRow', row);
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'price')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 13095.47619047619,
+            cnt: 21,
+            max: 30000,
+            min: 5,
+            sum: 275005
+          });
+        });
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'downloadCount')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 952.8571428571429,
+            cnt: 21,
+            max: 1000,
+            min: 10,
+            sum: 20010
+          });
+        });
+    });
+
+    it('removeRow API', () => {
+      createGrid();
+      cy.gridInstance().invoke('removeRow', 19);
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'price')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 13842.105263157895,
+            cnt: 19,
+            max: 30000,
+            min: 6000,
+            sum: 263000
+          });
+        });
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'downloadCount')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 1000,
+            cnt: 19,
+            max: 1000,
+            min: 1000,
+            sum: 19000
+          });
+        });
+    });
+  });
+
+  it('should change summary value by setColumnValues API', () => {
+    createGrid();
+    cy.gridInstance().invoke('setColumnValues', 'price', 10);
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should(summaryValues => {
+        expect(summaryValues).to.be.eql({
+          avg: 10,
+          cnt: 20,
+          max: 10,
+          min: 10,
+          sum: 200
+        });
+      });
+  });
+
+  it('should change summary value by clear API', () => {
+    createGrid();
+    cy.gridInstance().invoke('clear');
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should(summaryValues => {
+        expect(summaryValues).to.be.eql({
+          avg: 0,
+          cnt: 0,
+          max: 0,
+          min: 0,
+          sum: 0
+        });
+      });
+  });
 });
