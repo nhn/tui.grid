@@ -298,14 +298,6 @@ function updateSortKey(data: Data, at: number) {
   viewData[at].sortKey = at;
 }
 
-function createMaxRowKey(data: Data) {
-  const { rawData, sortOptions } = data;
-  if (isRowSpanEnabled(sortOptions)) {
-    return Number(rawData[rawData.length - 1].rowKey) + 1;
-  }
-  return rawData.reduce((acc, row) => Math.max(acc, Number(row.rowKey)), -1) + 1;
-}
-
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
   const { rawData, viewData, sortOptions } = data;
@@ -314,7 +306,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const prevRow = rawData[at - 1];
 
-  const rawRow = createRawRow(row, createMaxRowKey(data), defaultValues);
+  const index = rawData.reduce((acc, rawRow) => Math.max(acc, Number(rawRow.rowKey)), -1) + 1;
+  const rawRow = createRawRow(row, index, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
 
   rawData.splice(at, 0, rawRow);
