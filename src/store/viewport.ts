@@ -119,8 +119,22 @@ export function create({
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
+    get paginatedRowRange(this: Observable<Viewport>) {
+      if (data.useClientPagination) {
+        const { page, perPage } = data.pageOptions;
+        let [start, end] = this.rowRange;
+
+        start -= perPage! * (page! - 1);
+        end -= perPage! * (page! - 1);
+
+        return [start, end] as Range;
+      }
+
+      return this.rowRange;
+    },
+
     get rows(this: Viewport) {
-      return data.paginatedViewData.slice(...this.rowRange);
+      return data.paginatedViewData.slice(...this.paginatedRowRange);
     },
 
     get offsetTop(this: Viewport) {

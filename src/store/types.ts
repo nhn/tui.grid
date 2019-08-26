@@ -317,6 +317,7 @@ export interface Viewport {
   readonly offsetLeft: number;
   readonly offsetTop: number;
   readonly rowRange: Range;
+  readonly paginatedRowRange: Range;
   readonly colRange: Range;
   readonly columns: ColumnInfo[];
   readonly rows: ViewRow[];

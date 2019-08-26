@@ -486,11 +486,9 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
   data.pageOptions = { ...pageOptions, perPage };
 }
 
-export function movePage({ data, viewport }: Store, page: number) {
+export function movePage({ data }: Store, page: number) {
   data.pageOptions.page = page;
-
   notify(data, 'pageOptions');
-  notify(viewport, 'rowRange');
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
@@ -530,6 +528,7 @@ function createOriginData(data: Data, rowRange: Range) {
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
+
   const originData = createOriginData(data, rowRange);
 
   if (!originData.rows.length) {

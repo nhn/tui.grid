@@ -460,6 +460,7 @@ export function create({
 
     get paginatedRawData(this: Data) {
       const { perPage, page } = this.pageOptions;
+
       if (this.useClientPagination) {
         return this.rawData.slice((page! - 1) * perPage!, page! * perPage!);
       }
@@ -468,8 +469,9 @@ export function create({
     },
 
     get paginatedViewData(this: Data) {
-      const { perPage, page } = this.pageOptions;
       if (this.useClientPagination) {
+        const { perPage, page } = this.pageOptions;
+
         return this.viewData.slice((page! - 1) * perPage!, page! * perPage!);
       }
 

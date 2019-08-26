@@ -21,14 +21,12 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
-    if (shallowEqual(nextProps, this.props)) {
-      return false;
-    }
-    return true;
+    return !shallowEqual(nextProps, this.props);
   }
 
   public render({ rows, rowIndexOffset, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
+
     return (
       <tbody>
         {rows.map((row, index) => (
@@ -51,8 +49,8 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
-  rowIndexOffset: viewport.rowRange[0],
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column, data }, { side }) => ({
+  rowIndexOffset: data.useClientPagination ? 0 : viewport.rowRange[0],
   rows: viewport.rows,
   columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
   dummyRowCount: viewport.dummyRowCount
