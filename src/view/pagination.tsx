@@ -13,6 +13,7 @@ import { PaginationManager } from '../pagination/paginationManager';
 interface StoreProps {
   pageOptions: PageOptions;
   dataProvider: DataProvider;
+  useClientPagination: boolean;
   paginationHolder: PaginationManager;
   grid: Grid;
 }
@@ -79,10 +80,14 @@ class PaginationComp extends Component<Props> {
   }
 
   private addEventListener() {
-    const { dataProvider } = this.props;
+    const { dataProvider, useClientPagination, dispatch } = this.props;
     this.tuiPagination!.on('beforeMove', (evt: any) => {
       const currentPage = evt.page;
-      dataProvider.readData(currentPage);
+      if (useClientPagination) {
+        dispatch('movePage', currentPage);
+      } else {
+        dataProvider.readData(currentPage);
+      }
     });
   }
 
@@ -105,6 +110,7 @@ class PaginationComp extends Component<Props> {
 }
 export const Pagination = connect<StoreProps>(({ id, data }) => ({
   pageOptions: data.pageOptions,
+  useClientPagination: data.useClientPagination,
   dataProvider: getDataProvider(id),
   paginationHolder: getPaginationManager(id),
   grid: getInstance(id)

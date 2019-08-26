@@ -5,12 +5,12 @@ import {
   SelectionRange,
   RowAttributes,
   RowAttributeValue,
-  PageOptions,
   Dictionary,
   Data,
   Row,
   Column,
-  Range
+  Range,
+  PageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -484,6 +484,13 @@ export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, r
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
   data.pageOptions = { ...pageOptions, perPage };
+}
+
+export function movePage({ data, viewport }: Store, page: number) {
+  data.pageOptions.page = page;
+
+  notify(data, 'pageOptions');
+  notify(viewport, 'rowRange');
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {

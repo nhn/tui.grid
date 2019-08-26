@@ -38,6 +38,15 @@ import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
 import { cls } from '../helper/dom';
 
+interface OptData {
+  data: OptRow[];
+  column: Column;
+  pageOptions: PageOptions;
+  useClientPagination: boolean;
+  useClientSort: boolean;
+  disabled: boolean;
+}
+
 interface RawRowOptions {
   keyColumnName?: string;
   prevRow?: Row;
@@ -410,15 +419,16 @@ export function createData(
   return { rawData, viewData };
 }
 
-export function create(
-  data: OptRow[],
-  column: Column,
-  pageOptions: PageOptions,
-  useClientSort: boolean,
-  disabled: boolean
-): Observable<Data> {
-  // @TODO add client pagination logic
+export function create({
+  data,
+  column,
+  pageOptions,
+  useClientPagination,
+  useClientSort,
+  disabled
+}: OptData): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
+
   const sortOptions: SortOptions = {
     useClient: useClientSort,
     columns: [
@@ -434,7 +444,37 @@ export function create(
     rawData,
     viewData,
     sortOptions,
-    pageOptions,
+    useClientPagination,
+    get pageOptions(this: Data) {
+      if (useClientPagination) {
+        pageOptions = {
+          page: 1,
+          perPage: 20,
+          ...pageOptions,
+          totalCount: this.rawData.length
+        };
+      }
+
+      return pageOptions;
+    },
+
+    get paginatedRawData(this: Data) {
+      const { perPage, page } = this.pageOptions;
+      if (this.useClientPagination) {
+        return this.rawData.slice((page! - 1) * perPage!, page! * perPage!);
+      }
+
+      return this.rawData;
+    },
+
+    get paginatedViewData(this: Data) {
+      const { perPage, page } = this.pageOptions;
+      if (this.useClientPagination) {
+        return this.viewData.slice((page! - 1) * perPage!, page! * perPage!);
+      }
+
+      return this.viewData;
+    },
 
     get checkedAllRows() {
       const allRawData = this.rawData;

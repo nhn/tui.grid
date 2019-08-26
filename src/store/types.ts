@@ -158,10 +158,13 @@ export interface TreeCellInfo {
 
 export interface Data {
   rawData: Row[];
+  paginatedRawData: Row[];
   viewData: ViewRow[];
+  paginatedViewData: ViewRow[];
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
+  useClientPagination: boolean;
   pageOptions: PageOptions;
 }
 

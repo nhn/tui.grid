@@ -34,6 +34,7 @@ export function createStore(id: number, options: OptGrid): Store {
     scrollY,
     useClientSort = true,
     pageOptions = {},
+    useClientPagination = false,
     treeColumnOptions = { name: '' },
     header = {},
     disabled = false
@@ -59,13 +60,14 @@ export function createStore(id: number, options: OptGrid): Store {
     valign,
     columnsAlign
   });
-  const data = createData(
-    Array.isArray(options.data) ? options.data : [],
+  const data = createData({
+    data: Array.isArray(options.data) ? options.data : [],
     column,
+    useClientPagination,
     pageOptions,
     useClientSort,
     disabled
-  );
+  });
   const dimension = createDimension({
     column,
     width,
