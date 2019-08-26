@@ -5,6 +5,7 @@ import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
+import { updateNewColumnSummaryValues } from './summary';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -33,7 +34,8 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
+export function setColumns(store: Store, optColumns: OptColumn[]) {
+  const { column, data, focus } = store;
   const {
     columnOptions,
     copyOptions,
@@ -60,23 +62,18 @@ export function setColumns({ column, data, focus }: Store, optColumns: OptColumn
       column.headerAlignInfo
     )
   );
-  const { rawData } = data;
 
   focus.editingAddress = null;
+  initFocus(focus);
 
-  // to render the grid for new data after destroying editing cell on DOM
-  setTimeout(() => {
-    initFocus(focus);
-
-    column.allColumns = [...rowHeaders, ...columnInfos];
-
-    data.viewData.forEach(viewRow => {
-      if (Array.isArray(viewRow.__unobserveFns__)) {
-        viewRow.__unobserveFns__.forEach(fn => fn());
-      }
-    });
-    data.viewData = rawData.map(row => createViewRow(row, column.allColumnMap, rawData));
+  column.allColumns = [...rowHeaders, ...columnInfos];
+  data.viewData.forEach(viewRow => {
+    if (Array.isArray(viewRow.__unobserveFns__)) {
+      viewRow.__unobserveFns__.forEach(fn => fn());
+    }
   });
+  data.viewData = data.rawData.map(row => createViewRow(row, column.allColumnMap, data.rawData));
+  updateNewColumnSummaryValues(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
