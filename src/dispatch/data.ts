@@ -300,7 +300,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions } = data;
+  const { rawData, viewData, sortOptions, useClientPagination } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -312,6 +312,10 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
+
+  if (useClientPagination) {
+    heights.pop();
+  }
 
   if (at !== rawData.length) {
     updateSortKey(data, at);
@@ -337,7 +341,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, renderState, focus, column } = store;
-  const { rawData, viewData, sortOptions } = data;
+  const { rawData, viewData, sortOptions, useClientPagination } = data;
   const { heights } = rowCoords;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
@@ -348,7 +352,9 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   viewData.splice(rowIdx, 1);
-  heights.splice(rowIdx, 1);
+  if (!useClientPagination) {
+    heights.splice(rowIdx, 1);
+  }
 
   if (nextRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);

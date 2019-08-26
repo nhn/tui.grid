@@ -380,6 +380,8 @@ export function createRawRow(
   row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
+  console.log(row, '여기 안들어와?');
+
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
   });

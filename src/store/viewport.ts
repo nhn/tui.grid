@@ -138,7 +138,7 @@ export function create({
     },
 
     get offsetTop(this: Viewport) {
-      return rowCoords.offsets[this.rowRange[0]];
+      return rowCoords.offsets[this.paginatedRowRange[0]];
     },
 
     get dummyRowCount() {
