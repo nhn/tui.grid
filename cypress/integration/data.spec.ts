@@ -51,6 +51,18 @@ describe('appendRow()', () => {
     cy.getCellByIdx(2, 0).should('to.have.text', '');
     cy.getCellByIdx(2, 1).should('to.have.text', '');
   });
+
+  it('rowKey is created properly as max index', () => {
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
+    cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 20 });
+    cy.gridInstance().invoke('removeRow', 0);
+    cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
+    cy.gridInstance()
+      .invoke('getRowAt', 3)
+      .should(row => {
+        expect(row.rowKey).to.be.eq(4);
+      });
+  });
 });
 
 describe('prependRow()', () => {
