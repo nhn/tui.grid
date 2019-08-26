@@ -34,5 +34,5 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     summaryValues = observable(summaryValues);
   }
 
-  return { summaryColumnContents, summaryValues };
+  return { summaryColumnContents, summaryValues, defaultContent: summary.defaultContent };
 }

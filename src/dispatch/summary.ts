@@ -90,3 +90,19 @@ export function updateAllSummaryValues({ summary, data, column }: Store) {
     );
   });
 }
+
+export function updateNewColumnSummaryValues({ summary, data, column }: Store) {
+  if (Object.keys(summary).length) {
+    const { defaultContent } = summary;
+    const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
+    const { rawData } = data;
+
+    column.allColumns.forEach(({ name }) => {
+      if (!summary.summaryColumnContents[name]) {
+        const content = extractSummaryColumnContent(null, castedDefaultContent);
+        summary.summaryColumnContents[name] = content;
+        summary.summaryValues[name] = createSummaryValue(content, name, rawData);
+      }
+    });
+  }
+}
