@@ -1,7 +1,15 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortOptions, Column, Data } from '../store/types';
+import {
+  CellValue,
+  RowKey,
+  ColumnInfo,
+  SortOptions,
+  Column,
+  Data,
+  EditingAddress
+} from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
@@ -16,7 +24,7 @@ interface StoreProps {
   width: number;
   height: number;
   contentHeight: number;
-  columnInfo: ColumnInfo;
+  columnInfo: ColumnInfo | null;
   grid: Grid;
   value: CellValue;
   sortOptions: SortOptions;
@@ -25,8 +33,7 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  rowKey: RowKey;
-  columnName: string;
+  editingAddress: EditingAddress;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -56,8 +63,9 @@ export class EditingLayerInnerComp extends Component<Props> {
   };
 
   private finishEditing(save: boolean) {
-    if (this.editor) {
-      const { dispatch, rowKey, columnName, sortOptions } = this.props;
+    const { dispatch, editingAddress, sortOptions } = this.props;
+    if (this.editor && editingAddress) {
+      const { rowKey, columnName } = editingAddress;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
@@ -70,27 +78,31 @@ export class EditingLayerInnerComp extends Component<Props> {
     }
   }
 
-  public componentDidMount() {
-    const { grid, rowKey, columnInfo, value, width } = this.props;
+  public componentDidUpdate() {
+    const { editingAddress, grid, value, columnInfo, width } = this.props;
 
-    const EditorClass: CellEditorClass = columnInfo.editor!.type;
-    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
-    const cellEditor: CellEditor = new EditorClass(editorProps);
-    const editorEl = cellEditor.getElement();
+    if (editingAddress && columnInfo) {
+      const { rowKey } = editingAddress;
+      const EditorClass: CellEditorClass = columnInfo.editor!.type;
+      const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
+      const cellEditor: CellEditor = new EditorClass(editorProps);
+      const editorEl = cellEditor.getElement();
 
-    if (editorEl && this.contentEl) {
-      this.contentEl.appendChild(editorEl);
-      this.editor = cellEditor;
+      if (editorEl && this.contentEl) {
+        this.contentEl.innerHTML = '';
+        this.contentEl.appendChild(editorEl);
+        this.editor = cellEditor;
 
-      const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
+        const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
 
-      if (editorWidth > width) {
-        const CELL_PADDING_WIDTH = 10;
-        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
-      }
+        if (editorWidth > width) {
+          const CELL_PADDING_WIDTH = 10;
+          (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
+        }
 
-      if (isFunction(cellEditor.mounted)) {
-        cellEditor.mounted();
+        if (isFunction(cellEditor.mounted)) {
+          cellEditor.mounted();
+        }
       }
     }
   }
@@ -115,30 +127,51 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public render() {
-    const { top, left, width, height, contentHeight } = this.props;
+    const { top, left, width, height, contentHeight, editingAddress } = this.props;
     const lineHeight = `${contentHeight}px`;
     const styles = { top, left, width, height, lineHeight };
 
     return (
-      <div
-        style={styles}
-        class={cls('layer-editing', 'cell-content', 'cell-content-editor')}
-        onKeyDown={this.handleKeyDown}
-        ref={el => {
-          this.contentEl = el;
-        }}
-      />
+      editingAddress && (
+        <div
+          style={styles}
+          class={cls('layer-editing', 'cell-content', 'cell-content-editor')}
+          onKeyDown={this.handleKeyDown}
+          ref={el => {
+            this.contentEl = el;
+          }}
+        />
+      )
     );
   }
 }
 
-export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
+export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { editingAddress }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
   const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
+  const { viewData, sortOptions } = data;
+  const state = {
+    grid: getInstance(store.id),
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    contentHeight: 0,
+    columnInfo: null,
+    value: null,
+    sortOptions,
+    focusedColumnName,
+    focusedRowKey
+  };
+
+  if (editingAddress === null) {
+    return state;
+  }
+
+  const { rowKey, columnName } = editingAddress;
   const { cellBorderWidth, tableBorderWidth, headerHeight, width, frozenBorderWidth } = dimension;
   const { scrollLeft, scrollTop } = viewport;
   const { areaWidth } = columnCoords;
-  const { viewData, sortOptions } = data;
   const { allColumnMap } = column;
 
   const { top, left, right, bottom } = cellPosRect!;
@@ -151,16 +184,13 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const { value } = targetRow.valueMap[columnName];
 
   return {
-    grid: getInstance(store.id),
+    ...state,
     left: left + (side === 'L' ? 0 : offsetLeft + frozenBorderWidth),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
-    value,
-    sortOptions,
-    focusedColumnName,
-    focusedRowKey
+    value
   };
 })(EditingLayerInnerComp);
