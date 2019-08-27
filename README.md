@@ -235,7 +235,7 @@ You can create an instance with options and call various API after creating an i
 
 ``` javascript
 const instance = new Grid({
-  el: document.getElementById('grid), // Container element
+  el: document.getElementById('grid'), // Container element
   columns: [
     {
       header: 'Name',
