@@ -306,7 +306,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const prevRow = rawData[at - 1];
 
-  const index = rawData.reduce((acc, rawRow) => Math.max(acc, Number(rawRow.rowKey)), -1) + 1;
+  const index = Math.max(...(mapProp('rowKey', rawData) as number[])) + 1;
   const rawRow = createRawRow(row, index, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
 

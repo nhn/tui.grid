@@ -53,14 +53,12 @@ describe('appendRow()', () => {
   });
 
   it('rowKey is created properly as max index', () => {
-    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
-    cy.gridInstance().invoke('appendRow', { name: 'Ryu', age: 20 });
     cy.gridInstance().invoke('removeRow', 0);
     cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
     cy.gridInstance()
-      .invoke('getRowAt', 3)
+      .invoke('getRowAt', 1)
       .should(row => {
-        expect(row.rowKey).to.be.eq(4);
+        expect(row.rowKey).to.be.eq(2);
       });
   });
 });
