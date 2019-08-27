@@ -91,7 +91,7 @@ export function updateAllSummaryValues({ summary, data, column }: Store) {
   });
 }
 
-export function updateNewColumnSummaryValues({ summary, data, column }: Store) {
+export function addColumnSummaryValues({ summary, data, column }: Store) {
   if (Object.keys(summary).length) {
     const { defaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');

@@ -16,10 +16,10 @@ interface SummaryOption {
 export function create({ column, data, summary }: SummaryOption): Summary {
   let summaryColumnContents: SummaryColumnContents = {};
   let summaryValues: SummaryValues = {};
+  const { columnContent: orgColumnContent, defaultContent } = summary;
 
   if (Object.keys(summary).length) {
-    const { columnContent: orgColumnContent, defaultContent: orgDefaultContent } = summary;
-    const castedDefaultContent = castToSummaryColumnContent(orgDefaultContent || '');
+    const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const columnContent = orgColumnContent || {};
     const { rawData } = data;
 
@@ -34,5 +34,5 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     summaryValues = observable(summaryValues);
   }
 
-  return { summaryColumnContents, summaryValues, defaultContent: summary.defaultContent };
+  return { summaryColumnContents, summaryValues, defaultContent };
 }

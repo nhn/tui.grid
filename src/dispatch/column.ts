@@ -5,7 +5,7 @@ import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
-import { updateNewColumnSummaryValues } from './summary';
+import { addColumnSummaryValues } from './summary';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -63,9 +63,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     )
   );
 
-  focus.editingAddress = null;
   initFocus(focus);
-
   column.allColumns = [...rowHeaders, ...columnInfos];
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
@@ -73,7 +71,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     }
   });
   data.viewData = data.rawData.map(row => createViewRow(row, column.allColumnMap, data.rawData));
-  updateNewColumnSummaryValues(store);
+  addColumnSummaryValues(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
