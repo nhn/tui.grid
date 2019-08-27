@@ -85,6 +85,7 @@ class PaginationComp extends Component<Props> {
       const currentPage = evt.page;
       if (useClientPagination) {
         dispatch('movePage', currentPage);
+        dispatch('setScrollTop', 0);
       } else {
         dataProvider.readData(currentPage);
       }

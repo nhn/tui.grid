@@ -380,8 +380,6 @@ export function createRawRow(
   row._attributes.rowSpan = rowSpan;
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
-  console.log(row, '여기 안들어와?');
-
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
   });
@@ -461,9 +459,9 @@ export function create({
     },
 
     get paginatedRawData(this: Data) {
-      const { perPage, page } = this.pageOptions;
-
       if (this.useClientPagination) {
+        const { perPage, page } = this.pageOptions;
+
         return this.rawData.slice((page! - 1) * perPage!, page! * perPage!);
       }
 

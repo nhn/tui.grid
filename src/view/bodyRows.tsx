@@ -50,7 +50,7 @@ class BodyRowsComp extends Component<Props> {
 }
 
 export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column, data }, { side }) => ({
-  rowIndexOffset: data.useClientPagination ? 0 : viewport.rowRange[0],
+  rowIndexOffset: viewport.paginatedRowRange[0],
   rows: viewport.rows,
   columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
   dummyRowCount: viewport.dummyRowCount
