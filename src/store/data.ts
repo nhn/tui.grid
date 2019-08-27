@@ -445,19 +445,14 @@ export function create({
     viewData,
     sortOptions,
     useClientPagination,
-    get pageOptions(this: Data) {
-      if (useClientPagination) {
-        pageOptions = {
+    pageOptions: useClientPagination
+      ? {
           page: 1,
           perPage: 20,
           ...pageOptions,
-          totalCount: this.rawData.length
-        };
-      }
-
-      return pageOptions;
-    },
-
+          totalCount: rawData.length
+        }
+      : pageOptions,
     get paginatedRawData(this: Data) {
       if (this.useClientPagination) {
         const { perPage, page } = this.pageOptions;

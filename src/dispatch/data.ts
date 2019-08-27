@@ -492,9 +492,10 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
   data.pageOptions = { ...pageOptions, perPage };
 }
 
-export function movePage({ data }: Store, page: number) {
+export function movePage({ data, rowCoords, dimension }: Store, page: number) {
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
+  rowCoords.heights = data.paginatedRawData.map(row => getRowHeight(row, dimension.rowHeight));
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
