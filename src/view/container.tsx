@@ -3,6 +3,7 @@ import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
+import { FilterLayer } from './filterLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
@@ -342,6 +343,7 @@ export class ContainerComp extends Component<Props> {
         <EditingLayer />
         <Clipboard />
         <Pagination />
+        <FilterLayer />
       </div>
     );
   }

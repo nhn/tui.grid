@@ -163,7 +163,8 @@ export function createColumn(
     valign,
     defaultValue,
     escapeHTML,
-    ignored
+    ignored,
+    filter
   } = column;
 
   const editorOptions = getEditorOptions(editor);

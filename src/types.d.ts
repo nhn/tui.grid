@@ -113,6 +113,16 @@ type TypeObjectOptions<T> =
 export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
 export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
+export type MultipleFilterOptionType = 'text' | 'number' | 'date';
+export type SingleFilterOptionType = MultipleFilterOptionType | 'select';
+
+export interface FilterOpt {
+  type: MultipleFilterOptionType | Function;
+  operator?: 'OR' | 'AND';
+  showApplyBtn?: boolean;
+  showClearBtn?: boolean;
+}
+
 export interface OptColumn {
   name: string;
   header?: string;
@@ -138,6 +148,7 @@ export interface OptColumn {
   onAfterChange?: Function;
   ignored?: boolean;
   validation?: Validation;
+  filter?: SingleFilterOptionType | FilterOpt;
 }
 
 export interface OptColumnOptions {

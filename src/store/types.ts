@@ -6,7 +6,9 @@ import {
   OptColumnOptions,
   OptTree,
   VAlignType,
-  OptSummaryColumnContentMap
+  OptSummaryColumnContentMap,
+  FilterOpt,
+  SingleFilterOptionType
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -212,7 +214,7 @@ export interface ColumnInfo {
   related?: boolean;
   align?: AlignType;
   valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
   defaultValue?: CellValue;
@@ -224,6 +226,7 @@ export interface ColumnInfo {
   ignored?: boolean;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
+  filter?: SingleFilterOptionType | FilterOpt;
 }
 
 export interface SortedColumn {
