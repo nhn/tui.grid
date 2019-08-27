@@ -132,6 +132,7 @@ export function changeFocus(
 }
 
 export function initFocus(focus: Focus) {
+  focus.editingAddress = null;
   focus.navigating = false;
   focus.rowKey = null;
   focus.columnName = null;

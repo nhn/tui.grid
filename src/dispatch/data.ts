@@ -376,9 +376,7 @@ export function clearData(store: Store) {
     getDataManager(id).push('DELETE', row);
   });
 
-  focus.editingAddress = null;
   initFocus(focus);
-
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
@@ -391,9 +389,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
   const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  focus.editingAddress = null;
   initFocus(focus);
-
   rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;
