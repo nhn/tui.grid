@@ -34,8 +34,8 @@ function calculateRange(
 
   if (rowCalculation && pageOptions.useClient) {
     const { page, perPage } = pageOptions;
-    start += perPage! * (page! - 1);
-    end += perPage! * (page! - 1);
+    start += perPage * (page - 1);
+    end += perPage * (page - 1);
   }
 
   if (rawData.length && rowCalculation && isRowSpanEnabled(sortOptions)) {
@@ -124,8 +124,8 @@ export function create({
         const { page, perPage } = data.pageOptions;
         let [start, end] = this.rowRange;
 
-        start -= perPage! * (page! - 1);
-        end -= perPage! * (page! - 1);
+        start -= perPage * (page - 1);
+        end -= perPage * (page - 1);
 
         return [start, end] as Range;
       }

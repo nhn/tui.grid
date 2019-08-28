@@ -47,7 +47,7 @@ class ServerSideDataProvider implements DataProvider {
     this.initialRequest = initialRequest;
     this.api = api;
     this.withCredentials = withCredentials;
-    this.lastRequiredData = { perPage: store.data.pageOptions.perPage! };
+    this.lastRequiredData = { perPage: store.data.pageOptions.perPage };
     this.store = store;
     this.dispatch = dispatch;
 

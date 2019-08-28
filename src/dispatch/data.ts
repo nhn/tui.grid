@@ -10,7 +10,8 @@ import {
   Row,
   Column,
   Range,
-  PageOptions
+  PageOptions,
+  UserPageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -314,7 +315,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
   if (pageOptions.useClient) {
-    heights.pop();
+    const { perPage, page } = pageOptions;
+    const currentPageDataLength = rawData.slice((page - 1) * perPage, page * perPage).length;
+
+    if (currentPageDataLength === perPage) {
+      heights.pop();
+    }
+
     data.pageOptions = {
       ...pageOptions,
       totalCount: pageOptions.totalCount! + 1
@@ -506,9 +513,9 @@ export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, r
   notify(rowCoords, 'heights');
 }
 
-export function setPagination({ data }: Store, pageOptions: PageOptions) {
+export function setPagination({ data }: Store, pageOptions: UserPageOptions) {
   const { perPage } = data.pageOptions;
-  data.pageOptions = { ...pageOptions, perPage };
+  data.pageOptions = { ...pageOptions, perPage } as PageOptions;
 }
 
 export function movePage({ data, rowCoords, dimension }: Store, page: number) {
@@ -517,7 +524,7 @@ export function movePage({ data, rowCoords, dimension }: Store, page: number) {
   const { page: currentPage, perPage } = data.pageOptions;
 
   rowCoords.heights = data.rawData
-    .slice((currentPage - 1) * perPage!, currentPage * perPage!)
+    .slice((currentPage - 1) * perPage, currentPage * perPage)
     .map(row => getRowHeight(row, dimension.rowHeight));
 }
 

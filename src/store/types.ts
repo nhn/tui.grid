@@ -407,11 +407,18 @@ export interface RenderState {
   state: State;
 }
 
-export interface PageOptions {
+export interface UserPageOptions {
   useClient?: boolean;
   perPage?: number;
   page?: number;
   totalCount?: number;
+}
+
+export interface PageOptions {
+  useClient: boolean;
+  perPage: number;
+  page: number;
+  totalCount: number;
 }
 
 export interface Store {

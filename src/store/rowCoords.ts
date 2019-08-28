@@ -21,7 +21,7 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
   return observable({
     heights: useClient
       ? data.rawData
-          .slice((page! - 1) * perPage!, page! * perPage!)
+          .slice((page - 1) * perPage, page * perPage)
           .map(row => getRowHeight(row, rowHeight))
       : data.rawData.map(row => getRowHeight(row, rowHeight)),
 
