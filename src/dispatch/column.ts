@@ -5,6 +5,7 @@ import { createViewRow } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
+import { addColumnSummaryValues } from './summary';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -33,7 +34,8 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
+export function setColumns(store: Store, optColumns: OptColumn[]) {
+  const { column, data, focus } = store;
   const {
     columnOptions,
     copyOptions,
@@ -76,6 +78,7 @@ export function setColumns({ column, data, focus }: Store, optColumns: OptColumn
       }
     });
     data.viewData = rawData.map(row => createViewRow(row, column.allColumnMap, rawData));
+    addColumnSummaryValues(store);
   });
 }
 
