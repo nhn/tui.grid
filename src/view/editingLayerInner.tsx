@@ -7,18 +7,18 @@ import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction, findPropIndex } from '../helper/common';
+import { isFunction, findPropIndex, isNull, isUndefined } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface StoreProps {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-  contentHeight: number;
-  columnInfo: ColumnInfo;
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+  contentHeight?: number;
+  columnInfo?: ColumnInfo;
+  value?: CellValue;
   grid: Grid;
-  value: CellValue;
   sortOptions: SortOptions;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
@@ -72,9 +72,8 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   public componentDidMount() {
     const { grid, rowKey, columnInfo, value, width } = this.props;
-
-    const EditorClass: CellEditorClass = columnInfo.editor!.type;
-    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
+    const EditorClass: CellEditorClass = columnInfo!.editor!.type;
+    const editorProps: CellEditorProps = { grid, rowKey, columnInfo: columnInfo!, value };
     const cellEditor: CellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
 
@@ -84,7 +83,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 
       const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
 
-      if (editorWidth > width) {
+      if (editorWidth > width!) {
         const CELL_PADDING_WIDTH = 10;
         (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
       }
@@ -135,32 +134,38 @@ export class EditingLayerInnerComp extends Component<Props> {
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
   const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
+  const { viewData, sortOptions } = data;
+  const state = {
+    grid: getInstance(id),
+    sortOptions,
+    focusedColumnName,
+    focusedRowKey
+  };
+
+  if (isNull(cellPosRect)) {
+    return state;
+  }
+
   const { cellBorderWidth, tableBorderWidth, headerHeight, width, frozenBorderWidth } = dimension;
   const { scrollLeft, scrollTop } = viewport;
   const { areaWidth } = columnCoords;
-  const { viewData, sortOptions } = data;
   const { allColumnMap } = column;
-
-  const { top, left, right, bottom } = cellPosRect!;
+  const { top, left, right, bottom } = cellPosRect;
   const cellWidth = right - left + cellBorderWidth;
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
   const targetRow = viewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
-
   const { value } = targetRow.valueMap[columnName];
 
   return {
-    grid: getInstance(store.id),
+    ...state,
     left: left + (side === 'L' ? 0 : offsetLeft + frozenBorderWidth),
     top: top + offsetTop,
     width: cellWidth,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
-    value,
-    sortOptions,
-    focusedColumnName,
-    focusedRowKey
+    value
   };
 })(EditingLayerInnerComp);
