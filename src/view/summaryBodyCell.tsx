@@ -4,6 +4,7 @@ import { shallowEqual } from '../helper/common';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { SummaryColumnContentMap, SummaryValue } from '../store/types';
+import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
   columnName: string;
@@ -25,9 +26,9 @@ export class SummaryBodyCellComp extends Component<Props> {
   }
 
   private getTemplate = () => {
-    const { content, summaryValue } = this.props;
+    const { content, summaryValue, columnName } = this.props;
 
-    if (!content) {
+    if (!content || isRowHeader(columnName)) {
       return '';
     }
 
