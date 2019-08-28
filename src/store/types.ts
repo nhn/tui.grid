@@ -163,7 +163,7 @@ export interface Data {
   disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
-  paginatedRowRange: Range;
+  pageRowRange: Range;
 }
 
 export interface FormatterProps {

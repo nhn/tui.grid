@@ -455,14 +455,17 @@ export function create({
     sortOptions,
     pageOptions,
 
-    get paginatedRowRange() {
+    get pageRowRange() {
+      let start = 0;
+      let end = rawData.length;
+
       if (this.pageOptions.useClient) {
         const { page, perPage } = this.pageOptions;
-
-        return [(page - 1) * perPage, page * perPage] as Range;
+        start = (page - 1) * perPage;
+        end = page * perPage < end ? page * perPage : end;
       }
 
-      return [0, rawData.length] as Range;
+      return [start, end] as Range;
     },
 
     get checkedAllRows() {

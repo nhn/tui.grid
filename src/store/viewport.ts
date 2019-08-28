@@ -30,10 +30,10 @@ function calculateRange(
 
   let start = findIndexByPosition(offsets, scrollPos);
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
-  const { rawData, sortOptions, pageOptions, paginatedRowRange } = data;
+  const { rawData, sortOptions, pageOptions, pageRowRange } = data;
 
   if (rowCalculation && pageOptions.useClient) {
-    [start, end] = paginatedRowRange;
+    [start, end] = pageRowRange;
   }
 
   if (rawData.length && rowCalculation && isRowSpanEnabled(sortOptions)) {
@@ -122,7 +122,7 @@ export function create({
     },
 
     get offsetTop(this: Viewport) {
-      return rowCoords.offsets[this.rowRange[0] - data.paginatedRowRange[0]];
+      return rowCoords.offsets[this.rowRange[0] - data.pageRowRange[0]];
     },
 
     get dummyRowCount() {

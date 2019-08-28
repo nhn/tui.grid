@@ -300,7 +300,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions, pageOptions, paginatedRowRange } = data;
+  const { rawData, viewData, sortOptions, pageOptions, pageRowRange } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -314,7 +314,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
   if (pageOptions.useClient) {
-    const currentPageDataLength = rawData.slice(...paginatedRowRange).length;
+    const currentPageDataLength = pageRowRange[1] - pageRowRange[0];
 
     if (currentPageDataLength === pageOptions.perPage) {
       heights.pop();
@@ -521,7 +521,7 @@ export function movePage({ data, rowCoords, dimension }: Store, page: number) {
   notify(data, 'pageOptions');
 
   rowCoords.heights = data.rawData
-    .slice(...data.paginatedRowRange)
+    .slice(...data.pageRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
 }
 

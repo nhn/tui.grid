@@ -16,11 +16,11 @@ export function getRowHeight(row: Row, defaultRowHeight: number) {
 
 export function create({ data, dimension }: RowCoordsOption): RowCoords {
   const { rowHeight } = dimension;
-  const { pageOptions, paginatedRowRange } = data;
+  const { pageOptions, pageRowRange } = data;
 
   return observable({
     heights: pageOptions.useClient
-      ? data.rawData.slice(...paginatedRowRange).map(row => getRowHeight(row, rowHeight))
+      ? data.rawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
       : data.rawData.map(row => getRowHeight(row, rowHeight)),
 
     get offsets() {
