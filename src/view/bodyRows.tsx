@@ -26,7 +26,6 @@ class BodyRowsComp extends Component<Props> {
 
   public render({ rows, rowIndexOffset, columns, dummyRowCount }: Props) {
     const columnNames = columns.map(({ name }) => name);
-
     return (
       <tbody>
         {rows.map((row, index) => (
@@ -49,7 +48,7 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column, data }, { side }) => ({
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
   rowIndexOffset: viewport.paginatedRowRange[0],
   rows: viewport.rows,
   columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
