@@ -50,20 +50,6 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   return { data, columns, summary };
 }
 
-// function createGrid(customOptions: Record<string, unknown> = {}) {
-//   cy.window().then((win: Window & Partial<GridGlobal>) => {
-//     const { document, tui } = win;
-//     const defaultOptions = createDefaultOptions();
-//     const options = { ...defaultOptions, ...customOptions };
-//     const el = document.createElement('div');
-//     el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-//     document.body.appendChild(el);
-
-//     win.grid = new tui!.Grid({ el, ...options });
-//     cy.wait(10);
-//   });
-// }
-
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
   contents.forEach(content => {
