@@ -17,7 +17,7 @@ import {
   ListItem,
   SortOptions,
   ViewRow,
-  UserPageOptions
+  Range
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -42,7 +42,7 @@ import { cls } from '../helper/dom';
 interface OptData {
   data: OptRow[];
   column: Column;
-  pageOptions: UserPageOptions;
+  pageOptions: PageOptions;
   useClientSort: boolean;
   disabled: boolean;
 }
@@ -438,8 +438,8 @@ export function create({
     ]
   };
 
-  const pageOptions: PageOptions = isEmpty(userPageOptions)
-    ? ({} as PageOptions)
+  const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)
+    ? ({} as Required<PageOptions>)
     : {
         useClient: false,
         page: 1,
@@ -454,6 +454,17 @@ export function create({
     viewData,
     sortOptions,
     pageOptions,
+
+    get paginatedRowRange() {
+      if (this.pageOptions.useClient) {
+        const { page, perPage } = this.pageOptions;
+
+        return [(page - 1) * perPage, page * perPage] as Range;
+      }
+
+      return [0, rawData.length] as Range;
+    },
+
     get checkedAllRows() {
       const allRawData = this.rawData;
       const checkedRows = allRawData.filter(row => row._attributes.checked);

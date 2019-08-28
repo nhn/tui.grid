@@ -10,8 +10,7 @@ import {
   Row,
   Column,
   Range,
-  PageOptions,
-  UserPageOptions
+  PageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -301,7 +300,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions, pageOptions } = data;
+  const { rawData, viewData, sortOptions, pageOptions, paginatedRowRange } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -315,10 +314,9 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
   if (pageOptions.useClient) {
-    const { perPage, page } = pageOptions;
-    const currentPageDataLength = rawData.slice((page - 1) * perPage, page * perPage).length;
+    const currentPageDataLength = rawData.slice(...paginatedRowRange).length;
 
-    if (currentPageDataLength === perPage) {
+    if (currentPageDataLength === pageOptions.perPage) {
       heights.pop();
     }
 
@@ -513,18 +511,17 @@ export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, r
   notify(rowCoords, 'heights');
 }
 
-export function setPagination({ data }: Store, pageOptions: UserPageOptions) {
+export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
-  data.pageOptions = { ...pageOptions, perPage } as PageOptions;
+  data.pageOptions = { ...pageOptions, perPage } as Required<PageOptions>;
 }
 
 export function movePage({ data, rowCoords, dimension }: Store, page: number) {
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-  const { page: currentPage, perPage } = data.pageOptions;
 
   rowCoords.heights = data.rawData
-    .slice((currentPage - 1) * perPage, currentPage * perPage)
+    .slice(...data.paginatedRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
 }
 

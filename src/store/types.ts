@@ -162,7 +162,8 @@ export interface Data {
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
-  pageOptions: PageOptions;
+  pageOptions: Required<PageOptions>;
+  paginatedRowRange: Range;
 }
 
 export interface FormatterProps {
@@ -314,7 +315,6 @@ export interface Viewport {
   readonly offsetLeft: number;
   readonly offsetTop: number;
   readonly rowRange: Range;
-  readonly paginatedRowRange: Range;
   readonly colRange: Range;
   readonly columns: ColumnInfo[];
   readonly rows: ViewRow[];
@@ -407,18 +407,11 @@ export interface RenderState {
   state: State;
 }
 
-export interface UserPageOptions {
+export interface PageOptions {
   useClient?: boolean;
   perPage?: number;
   page?: number;
   totalCount?: number;
-}
-
-export interface PageOptions {
-  useClient: boolean;
-  perPage: number;
-  page: number;
-  totalCount: number;
 }
 
 export interface Store {

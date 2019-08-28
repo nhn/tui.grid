@@ -30,12 +30,10 @@ function calculateRange(
 
   let start = findIndexByPosition(offsets, scrollPos);
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
-  const { rawData, sortOptions, pageOptions } = data;
+  const { rawData, sortOptions, pageOptions, paginatedRowRange } = data;
 
   if (rowCalculation && pageOptions.useClient) {
-    const { page, perPage } = pageOptions;
-    start += perPage * (page - 1);
-    end += perPage * (page - 1);
+    [start, end] = paginatedRowRange;
   }
 
   if (rawData.length && rowCalculation && isRowSpanEnabled(sortOptions)) {
@@ -119,26 +117,12 @@ export function create({
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
-    get paginatedRowRange(this: Observable<Viewport>) {
-      if (data.pageOptions.useClient) {
-        const { page, perPage } = data.pageOptions;
-        let [start, end] = this.rowRange;
-
-        start -= perPage * (page - 1);
-        end -= perPage * (page - 1);
-
-        return [start, end] as Range;
-      }
-
-      return this.rowRange;
-    },
-
     get rows(this: Viewport) {
       return data.viewData.slice(...this.rowRange);
     },
 
     get offsetTop(this: Viewport) {
-      return rowCoords.offsets[this.paginatedRowRange[0]];
+      return rowCoords.offsets[this.rowRange[0] - data.paginatedRowRange[0]];
     },
 
     get dummyRowCount() {
