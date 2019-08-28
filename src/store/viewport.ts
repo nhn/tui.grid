@@ -30,9 +30,9 @@ function calculateRange(
 
   let start = findIndexByPosition(offsets, scrollPos);
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
-  const { rawData, sortOptions, useClientPagination, pageOptions } = data;
+  const { rawData, sortOptions, pageOptions } = data;
 
-  if (rowCalculation && useClientPagination) {
+  if (rowCalculation && pageOptions.useClient) {
     const { page, perPage } = pageOptions;
     start += perPage! * (page! - 1);
     end += perPage! * (page! - 1);
@@ -120,7 +120,7 @@ export function create({
     },
 
     get paginatedRowRange(this: Observable<Viewport>) {
-      if (data.useClientPagination) {
+      if (data.pageOptions.useClient) {
         const { page, perPage } = data.pageOptions;
         let [start, end] = this.rowRange;
 
@@ -134,7 +134,7 @@ export function create({
     },
 
     get rows(this: Viewport) {
-      return data.paginatedViewData.slice(...this.paginatedRowRange);
+      return data.viewData.slice(...this.rowRange);
     },
 
     get offsetTop(this: Viewport) {

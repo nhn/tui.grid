@@ -34,7 +34,6 @@ export function createStore(id: number, options: OptGrid): Store {
     scrollY,
     useClientSort = true,
     pageOptions = {},
-    useClientPagination = false,
     treeColumnOptions = { name: '' },
     header = {},
     disabled = false
@@ -63,7 +62,6 @@ export function createStore(id: number, options: OptGrid): Store {
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],
     column,
-    useClientPagination,
     pageOptions,
     useClientSort,
     disabled

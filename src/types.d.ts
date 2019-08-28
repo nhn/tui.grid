@@ -42,7 +42,6 @@ export interface OptGrid {
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
   pageOptions?: PageOptions;
-  useClientPagination?: boolean;
   treeColumnOptions?: OptTree;
   header?: OptHeader;
   usageStatistics?: boolean;

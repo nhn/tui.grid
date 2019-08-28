@@ -64,9 +64,9 @@ stories.add(
         minWidth: 150
       },
       pageOptions: {
+        useClient: true,
         perPage: 10
-      },
-      useClientPagination: true
+      }
     });
     const rootEl = document.createElement('div');
     rootEl.appendChild(el);
@@ -75,10 +75,12 @@ stories.add(
     const appendBtn = document.createElement('button');
     const prependBtn = document.createElement('button');
     const removeBtn = document.createElement('button');
+    const clearAllBtn = document.createElement('button');
 
     appendBtn.textContent = 'appendRow';
     prependBtn.textContent = 'prependRow';
     removeBtn.textContent = 'removeRow';
+    clearAllBtn.textContent = 'clearAllBtn';
 
     appendBtn.addEventListener('click', () => {
       grid.appendRow(appendData, { at: 3 });
@@ -92,9 +94,14 @@ stories.add(
       grid.removeRow(5);
     });
 
+    clearAllBtn.addEventListener('click', () => {
+      grid.clear();
+    });
+
     rootEl.appendChild(appendBtn);
     rootEl.appendChild(prependBtn);
     rootEl.appendChild(removeBtn);
+    rootEl.appendChild(clearAllBtn);
 
     return rootEl;
   },

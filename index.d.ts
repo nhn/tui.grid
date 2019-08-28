@@ -373,6 +373,7 @@ declare namespace tuiGrid {
   }
 
   interface PageOptions {
+    useClient?: boolean;
     perPage?: number;
     page?: number;
     totalCount?: number;

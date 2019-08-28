@@ -42,7 +42,6 @@ interface OptData {
   data: OptRow[];
   column: Column;
   pageOptions: PageOptions;
-  useClientPagination: boolean;
   useClientSort: boolean;
   disabled: boolean;
 }
@@ -423,7 +422,6 @@ export function create({
   data,
   column,
   pageOptions,
-  useClientPagination,
   useClientSort,
   disabled
 }: OptData): Observable<Data> {
@@ -444,8 +442,7 @@ export function create({
     rawData,
     viewData,
     sortOptions,
-    useClientPagination,
-    pageOptions: useClientPagination
+    pageOptions: pageOptions.useClient
       ? {
           page: 1,
           perPage: 20,
@@ -453,26 +450,6 @@ export function create({
           totalCount: rawData.length
         }
       : pageOptions,
-    get paginatedRawData(this: Data) {
-      if (this.useClientPagination) {
-        const { perPage, page } = this.pageOptions;
-
-        return this.rawData.slice((page! - 1) * perPage!, page! * perPage!);
-      }
-
-      return this.rawData;
-    },
-
-    get paginatedViewData(this: Data) {
-      if (this.useClientPagination) {
-        const { perPage, page } = this.pageOptions;
-
-        return this.viewData.slice((page! - 1) * perPage!, page! * perPage!);
-      }
-
-      return this.viewData;
-    },
-
     get checkedAllRows() {
       const allRawData = this.rawData;
       const checkedRows = allRawData.filter(row => row._attributes.checked);

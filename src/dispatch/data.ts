@@ -300,7 +300,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions, useClientPagination } = data;
+  const { rawData, viewData, sortOptions, pageOptions } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -313,8 +313,12 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
 
-  if (useClientPagination) {
+  if (pageOptions.useClient) {
     heights.pop();
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: pageOptions.totalCount! + 1
+    };
   }
 
   if (at !== rawData.length) {
@@ -334,6 +338,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+
   updateSummaryValueByRow(store, rawRow, true);
   renderState.state = 'DONE';
   getDataManager(id).push('CREATE', rawRow);
@@ -341,8 +346,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, renderState, focus, column } = store;
-  const { rawData, viewData, sortOptions, useClientPagination } = data;
-  const { heights } = rowCoords;
+  const { rawData, viewData, sortOptions, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
   const removedRow = rawData.splice(rowIdx, 1)[0];
@@ -352,8 +356,11 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   viewData.splice(rowIdx, 1);
-  if (!useClientPagination) {
-    heights.splice(rowIdx, 1);
+  if (pageOptions.useClient) {
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: pageOptions.totalCount! - 1
+    };
   }
 
   if (nextRow && isRowSpanEnabled(sortOptions)) {
@@ -391,6 +398,12 @@ export function clearData(store: Store) {
     rowCoords.heights = [];
     data.rawData = [];
     data.viewData = [];
+    if (data.pageOptions.useClient) {
+      data.pageOptions = {
+        ...data.pageOptions,
+        totalCount: 0
+      };
+    }
     updateAllSummaryValues(store);
     renderState.state = 'EMPTY';
   });
@@ -412,6 +425,12 @@ export function resetData(store: Store, inputData: OptRow[]) {
     data.rawData = rawData;
     updateAllSummaryValues(store);
     renderState.state = getRenderState(rawData);
+    if (data.pageOptions.useClient) {
+      data.pageOptions = {
+        ...data.pageOptions,
+        totalCount: rawData.length
+      };
+    }
   });
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -495,7 +514,11 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
 export function movePage({ data, rowCoords, dimension }: Store, page: number) {
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-  rowCoords.heights = data.paginatedRawData.map(row => getRowHeight(row, dimension.rowHeight));
+  const { page: currentPage, perPage } = data.pageOptions;
+
+  rowCoords.heights = data.rawData
+    .slice((currentPage - 1) * perPage!, currentPage * perPage!)
+    .map(row => getRowHeight(row, dimension.rowHeight));
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
@@ -550,7 +573,6 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 
   notify(data, 'rawData');
   notify(data, 'viewData');
-  notify(data, 'paginatedViewData');
 }
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
