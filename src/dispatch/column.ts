@@ -33,7 +33,8 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   }
 }
 
-export function setColumns({ column, data, focus }: Store, optColumns: OptColumn[]) {
+export function setColumns(store: Store, optColumns: OptColumn[]) {
+  const { column, data, focus } = store;
   const {
     columnOptions,
     copyOptions,
@@ -66,7 +67,7 @@ export function setColumns({ column, data, focus }: Store, optColumns: OptColumn
 
   // to render the grid for new data after destroying editing cell on DOM
   setTimeout(() => {
-    initFocus(focus);
+    initFocus(store);
 
     column.allColumns = [...rowHeaders, ...columnInfos];
 

@@ -7,7 +7,7 @@ import {
   ClipboardCopyOptions,
   RowAttributes,
   EditingEvent,
-  PageOptions,
+  UserPageOptions,
   Validation,
   RowKey,
   ComplexColumnInfo,
@@ -41,7 +41,7 @@ export interface OptGrid {
   selectionUnit?: SelectionUnit;
   showDummyRows?: boolean;
   copyOptions?: ClipboardCopyOptions;
-  pageOptions?: PageOptions;
+  pageOptions?: UserPageOptions;
   treeColumnOptions?: OptTree;
   header?: OptHeader;
   usageStatistics?: boolean;

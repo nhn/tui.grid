@@ -57,3 +57,7 @@ export function setSelection(store: Store, range: { start: Range; end: Range }) 
 
   changeSelectionRange(selection, inputRange, id);
 }
+
+export function initSelection(store: Store) {
+  store.selection.inputRange = null;
+}

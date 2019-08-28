@@ -86,6 +86,8 @@ class PaginationComp extends Component<Props> {
       if (pageOptions.useClient) {
         dispatch('movePage', currentPage);
         dispatch('setScrollTop', 0);
+        dispatch('initSelection');
+        dispatch('initFocus');
       } else {
         dataProvider.readData(currentPage);
       }
