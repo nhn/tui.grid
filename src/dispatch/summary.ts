@@ -4,7 +4,7 @@ import {
   createSummaryValue,
   extractSummaryColumnContent
 } from '../helper/summary';
-import { isEmpty } from 'src/helper/common';
+import { isEmpty } from '../helper/common';
 
 interface Options {
   prevValue?: CellValue;
