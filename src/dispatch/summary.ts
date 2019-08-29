@@ -4,6 +4,7 @@ import {
   createSummaryValue,
   extractSummaryColumnContent
 } from '../helper/summary';
+import { isEmpty } from 'src/helper/common';
 
 interface Options {
   prevValue?: CellValue;
@@ -92,7 +93,7 @@ export function updateAllSummaryValues({ summary, data, column }: Store) {
 }
 
 export function addColumnSummaryValues({ summary, data, column }: Store) {
-  if (Object.keys(summary).length) {
+  if (!isEmpty(summary)) {
     const { defaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const { rawData } = data;
