@@ -4,25 +4,6 @@
 <script>
 import Grid from 'tui-grid';
 
-const gridEvents = [
-  'beforeRequest',
-  'check',
-  'click',
-  'collapse',
-  'dblclick',
-  'errorResponse',
-  'expand',
-  'failResponse',
-  'focusChange',
-  'mousedown',
-  'mouseout',
-  'mouseover',
-  'response',
-  'selection',
-  'successResponse',
-  'uncheck'
-];
-
 const presetTheme = ['default', 'striped', 'clean'];
 
 const presetLanguage = ['en', 'ko'];
@@ -71,11 +52,6 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      gridInstance: null
-    };
-  },
   mounted() {
     const options = Object.assign({}, this.options, {
       el: this.$refs.tuiGrid,
@@ -87,15 +63,18 @@ export default {
     this.applyTheme();
     this.setLanguage();
   },
-  destroyed() {
-    gridEvents.forEach((eventName) => this.gridInstance.off(eventName));
+  beforeDestroy() {
+    Object.keys(this.$listeners).forEach((eventName) => {
+      this.gridInstance.off(eventName);
+    });
     this.gridInstance.destroy();
+    this.gridInstance = null;
   },
   methods: {
     addEventListeners() {
-      gridEvents.forEach((eventName) => {
+      for (const eventName of Object.keys(this.$listeners)) {
         this.gridInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
-      });
+      }
     },
     applyTheme() {
       if (this.theme) {
@@ -119,19 +98,9 @@ export default {
       return this.$refs.tuiGrid;
     },
     invoke(methodName, ...args) {
-      let result;
-      if (methodName === 'resetData' && args.length > 0) {
-        const clonedData = JSON.parse(JSON.stringify(args[0]));
-        if (args.length > 1) {
-          this.gridInstance[methodName](clonedData, args[1]);
-        } else {
-          this.gridInstance[methodName](clonedData);
-        }
-      } else if (this.gridInstance[methodName]) {
-        result = this.gridInstance[methodName](...args);
-      }
-
-      return result;
+      return typeof this.gridInstance[methodName] === 'function'
+        ? this.gridInstance[methodName](...args)
+        : null;
     }
   }
 };

@@ -125,7 +125,6 @@ export default {
           score: '5'
         }
       ],
-      rowHeaders: ['checkbox'],
       myTheme: {
         name: 'myTheme',
         value: {
@@ -143,6 +142,9 @@ export default {
             }
           }
         }
+      },
+      options: {
+        rowHeaders: ['checkbox']
       }
     };
   },
