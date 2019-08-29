@@ -23,7 +23,6 @@ class FilterButtonComp extends Component<Props> {
     }
 
     this.active = !this.active;
-    console.log(this.active);
   };
 
   public render() {
