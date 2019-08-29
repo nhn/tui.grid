@@ -390,54 +390,43 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 }
 
 export function clearData(store: Store) {
-  const { data, id, renderState, focus, rowCoords } = store;
+  const { data, id, renderState, rowCoords } = store;
   data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
 
-  focus.editingAddress = null;
-
-  // to render the grid with clearing data after destroying editing cell on DOM
-  setTimeout(() => {
-    initFocus(store);
-
-    rowCoords.heights = [];
-    data.rawData = [];
-    data.viewData = [];
-    if (data.pageOptions.useClient) {
-      data.pageOptions = {
-        ...data.pageOptions,
-        totalCount: 0
-      };
-    }
-    updateAllSummaryValues(store);
-    renderState.state = 'EMPTY';
-  });
+  initFocus(store);
+  rowCoords.heights = [];
+  data.rawData = [];
+  data.viewData = [];
+  if (data.pageOptions.useClient) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      totalCount: 0
+    };
+  }
+  updateAllSummaryValues(store);
+  renderState.state = 'EMPTY';
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
-  const { data, column, dimension, rowCoords, id, renderState, focus } = store;
+  const { data, column, dimension, rowCoords, id, renderState } = store;
   const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
-  focus.editingAddress = null;
+  initFocus(store);
+  rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
+  data.viewData = viewData;
+  data.rawData = rawData;
+  updateAllSummaryValues(store);
+  renderState.state = getRenderState(rawData);
+  if (data.pageOptions.useClient) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      totalCount: rawData.length
+    };
+  }
 
-  // to render the grid for new data after destroying editing cell on DOM
-  setTimeout(() => {
-    initFocus(store);
-
-    rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
-    data.viewData = viewData;
-    data.rawData = rawData;
-    updateAllSummaryValues(store);
-    renderState.state = getRenderState(rawData);
-    if (data.pageOptions.useClient) {
-      data.pageOptions = {
-        ...data.pageOptions,
-        totalCount: rawData.length
-      };
-    }
-  });
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();

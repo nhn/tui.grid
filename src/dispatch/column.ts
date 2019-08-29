@@ -35,7 +35,7 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
 }
 
 export function setColumns(store: Store, optColumns: OptColumn[]) {
-  const { column, data, focus } = store;
+  const { column, data } = store;
   const {
     columnOptions,
     copyOptions,
@@ -62,24 +62,16 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       column.headerAlignInfo
     )
   );
-  const { rawData } = data;
 
-  focus.editingAddress = null;
-
-  // to render the grid for new data after destroying editing cell on DOM
-  setTimeout(() => {
-    initFocus(store);
-
-    column.allColumns = [...rowHeaders, ...columnInfos];
-
-    data.viewData.forEach(viewRow => {
-      if (Array.isArray(viewRow.__unobserveFns__)) {
-        viewRow.__unobserveFns__.forEach(fn => fn());
-      }
-    });
-    data.viewData = rawData.map(row => createViewRow(row, column.allColumnMap, rawData));
-    addColumnSummaryValues(store);
+  initFocus(store);
+  column.allColumns = [...rowHeaders, ...columnInfos];
+  data.viewData.forEach(viewRow => {
+    if (Array.isArray(viewRow.__unobserveFns__)) {
+      viewRow.__unobserveFns__.forEach(fn => fn());
+    }
   });
+  data.viewData = data.rawData.map(row => createViewRow(row, column.allColumnMap, data.rawData));
+  addColumnSummaryValues(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
