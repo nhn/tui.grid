@@ -461,8 +461,9 @@ export function create({
 
       if (this.pageOptions.useClient) {
         const { page, perPage } = this.pageOptions;
+        const pageRowLastIndex = page * perPage;
         start = (page - 1) * perPage;
-        end = page * perPage < end ? page * perPage : end;
+        end = pageRowLastIndex < end ? pageRowLastIndex : end;
       }
 
       return [start, end] as Range;
