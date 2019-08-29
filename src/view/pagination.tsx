@@ -41,6 +41,7 @@ class PaginationComp extends Component<Props> {
     }
     const { pageOptions } = nextProps;
     const { totalCount, page, perPage } = pageOptions;
+
     if (isNumber(perPage) && this.props.pageOptions.perPage !== perPage) {
       this.tuiPagination.setItemsPerPage(perPage);
     }
@@ -79,10 +80,17 @@ class PaginationComp extends Component<Props> {
   }
 
   private addEventListener() {
-    const { dataProvider } = this.props;
+    const { dataProvider, pageOptions, dispatch } = this.props;
     this.tuiPagination!.on('beforeMove', (evt: any) => {
       const currentPage = evt.page;
-      dataProvider.readData(currentPage);
+      if (pageOptions.useClient) {
+        dispatch('movePage', currentPage);
+        dispatch('setScrollTop', 0);
+        dispatch('initSelection');
+        dispatch('initFocus');
+      } else {
+        dataProvider.readData(currentPage);
+      }
     });
   }
 

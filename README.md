@@ -6,38 +6,18 @@
 
 ![tui-grid](https://user-images.githubusercontent.com/18183560/42144044-de298b02-7df3-11e8-8bbd-dc824ae0df52.png)
 
-## TOAST UI Grid 4 is released!!
-
-We have **eliminated the unnecessary dependencies**; **enhanced the performance through the virtual DOM**; and **undertaken a massive task of improving the overall API**. Finally, we are proud to present to you the more **powerful** and **lighter** TOAST UI Grid 4.0! Also, we are planning to maintain the existing version(3.8) in the 3.8 branch for only bugfixes.
-
-## Wrappers
-
-* [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN. 
-* [toast-ui.react-grid](https://github.com/nhn/toast-ui.react-grid) - **React** wrapper component implemented by NHN.
-
 ## 🚩 Table of Contents
 
 * [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
-* [Browser Support](#-browser-support)
 * [Documents](#-documents)
 * [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
-    * [Data Can Be Displayed in Any Format](#data-can-be-displayed-in-any-format)
-    * [Provides a Variety of Editing Elements](#provides-a-variety-of-editing-elements)
-    * [Simple, Easy to Use Themes](#simple-easy-to-use-themes)
 * [Features](#-features)
 * [Examples](#-examples)
 * [Install](#-install)
-    * [Via Package Manager](#via-package-manager)
-    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
-    * [Download Source Files](#download-source-files)
+* [Wrappers](#Wrappers)
 * [Usage](#-usage)
-    * [HTML](#html)
-    * [JavaScript](#javascript)
-    * [TypeScript](#TypeScript)
+* [Browser Support](#-browser-support)
 * [Pull Request Steps](#-pull-request-steps)
-    * [Setup](#setup)
-    * [Develop](#develop)
-    * [Pull Request Steps](#pull-request)
 * [Contributing](#-contributing)
 * [TOAST UI Family](#-toast-ui-family)
 * [Used By](#-used-by)
@@ -60,11 +40,6 @@ const options = {
 const instance = new Grid(options);
 ```
 
-## 🌏 Browser Support
-
-| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
-| :---------: | :---------: | :---------: | :---------: | :---------: |
-| Yes | 9+ | Yes | Yes | Yes |
 
 ## 📙 Documents
 
@@ -218,6 +193,13 @@ tui-grid/
 * [Download all sources for each version](https://github.com/nhn/tui.grid/releases)
 
 
+## 🛍️ Wrappers
+
+The functionality of TOAST UI Grid is available when using the React, Vue Component.
+
+* [toast-ui.vue-grid](https://github.com/nhn/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN. 
+* [toast-ui.react-grid](https://github.com/nhn/toast-ui.react-grid) - **React** wrapper component implemented by NHN.
+
 ## 🔨 Usage
 
 ### HTML
@@ -253,7 +235,7 @@ You can create an instance with options and call various API after creating an i
 
 ``` javascript
 const instance = new Grid({
-  el: document.getElementById('grid), // Container element
+  el: document.getElementById('grid'), // Container element
   columns: [
     {
       header: 'Name',
@@ -298,6 +280,12 @@ const instance = new Grid({
     // ...options
 });
 ```
+
+## 🌏 Browser Support
+
+| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
+| :---------: | :---------: | :---------: | :---------: | :---------: |
+| Yes | 9+ | Yes | Yes | Yes |
 
 ## 🔧 Pull Request Steps
 

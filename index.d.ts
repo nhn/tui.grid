@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.4.1
+// Type definitions for TOAST UI Grid v4.5.0
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
@@ -296,16 +296,27 @@ declare namespace tuiGrid {
     row?: Row;
   }
 
-  type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
+  export type ValidationType =
+    | 'REQUIRED'
+    | 'TYPE_STRING'
+    | 'TYPE_NUMBER'
+    | 'MIN'
+    | 'MAX'
+    | 'REGEXP'
+    | 'VALIDATOR_FN';
 
   interface IValidation {
     required?: boolean;
     dataType?: 'string' | 'number';
+    min?: number;
+    max?: number;
+    regExp?: RegExp;
+    validatorFn?: (value: CellValue) => boolean;
   }
 
   interface IInvalidColumn {
     columnName: string;
-    errorCode: '' | ValidationType;
+    errorCode: ValidationType[];
   }
 
   interface IInvalidRow {
@@ -362,6 +373,7 @@ declare namespace tuiGrid {
   }
 
   interface PageOptions {
+    useClient?: boolean;
     perPage?: number;
     page?: number;
     totalCount?: number;
@@ -451,7 +463,7 @@ declare namespace tuiGrid {
   interface ICellRenderData {
     editable: boolean;
     disabled: boolean;
-    invalidState: '' | ValidationType;
+    invalidStates: ValidationType[];
     formattedValue: string;
     value: CellValue;
     className: string;

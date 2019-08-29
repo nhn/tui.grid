@@ -1,6 +1,13 @@
 import { CellRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
-import { AlignType, ColumnsAlignInfo, OptColumnOptions, OptTree, VAlignType } from '../types';
+import {
+  AlignType,
+  ColumnsAlignInfo,
+  OptColumnOptions,
+  OptTree,
+  VAlignType,
+  OptSummaryColumnContentMap
+} from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -27,6 +34,11 @@ export type EditingEvent = 'click' | 'dblclick';
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
 export type SortingType = 'asc' | 'desc';
+
+export type EditingAddress = {
+  rowKey: RowKey;
+  columnName: string;
+} | null;
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -80,12 +92,19 @@ export interface ClipboardCopyOptions {
   customValue?: CustomValue;
 }
 
-export type ValidationType = 'REQUIRED' | 'TYPE_STRING' | 'TYPE_NUMBER';
+export type ValidationType =
+  | 'REQUIRED'
+  | 'TYPE_STRING'
+  | 'TYPE_NUMBER'
+  | 'MIN'
+  | 'MAX'
+  | 'REGEXP'
+  | 'VALIDATOR_FN';
 
 export interface CellRenderData {
   editable: boolean;
   disabled: boolean;
-  invalidState: '' | ValidationType;
+  invalidStates: ValidationType[];
   formattedValue: string;
   value: CellValue;
   className: string;
@@ -119,11 +138,15 @@ export interface SelectionRange {
 export interface Validation {
   required?: boolean;
   dataType?: 'string' | 'number';
+  min?: number;
+  max?: number;
+  regExp?: RegExp;
+  validatorFn?: (value: CellValue) => boolean;
 }
 
 export interface InvalidColumn {
   columnName: string;
-  errorCode: '' | ValidationType;
+  errorCode: ValidationType[];
 }
 
 export interface InvalidRow {
@@ -151,7 +174,8 @@ export interface Data {
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
-  pageOptions: PageOptions;
+  pageOptions: Required<PageOptions>;
+  pageRowRange: Range;
 }
 
 export interface FormatterProps {
@@ -330,10 +354,7 @@ export interface Rect {
 }
 
 export interface Focus {
-  editingAddress: {
-    rowKey: RowKey;
-    columnName: string;
-  } | null;
+  editingAddress: EditingAddress;
   navigating: boolean;
   rowKey: RowKey | null;
   editingEvent: EditingEvent;
@@ -363,6 +384,7 @@ export interface SummaryValue {
 export interface Summary {
   summaryColumnContents: SummaryColumnContents;
   summaryValues: SummaryValues;
+  defaultContent?: string | OptSummaryColumnContentMap;
 }
 
 export interface AreaInfo {
@@ -396,6 +418,7 @@ export interface RenderState {
 }
 
 export interface PageOptions {
+  useClient?: boolean;
   perPage?: number;
   page?: number;
   totalCount?: number;

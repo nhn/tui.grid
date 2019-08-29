@@ -28,9 +28,13 @@ function calculateRange(
   // safari uses negative scroll position for bouncing effect
   scrollPos = Math.max(scrollPos, 0);
 
-  const start = findIndexByPosition(offsets, scrollPos);
-  const end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
-  const { rawData, sortOptions } = data;
+  let start = findIndexByPosition(offsets, scrollPos);
+  let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
+  const { rawData, sortOptions, pageOptions, pageRowRange } = data;
+
+  if (rowCalculation && pageOptions.useClient) {
+    [start, end] = pageRowRange;
+  }
 
   if (rawData.length && rowCalculation && isRowSpanEnabled(sortOptions)) {
     const maxRowSpanCount = getMaxRowSpanCount(start, rawData);
@@ -88,6 +92,7 @@ export function create({
         columnCoords.offsets.R,
         data
       );
+
       return getCachedRange(this.__storage__.colRange, range);
     },
 
@@ -108,6 +113,7 @@ export function create({
         data,
         true
       );
+
       return getCachedRange(this.__storage__.rowRange, range);
     },
 
@@ -116,7 +122,7 @@ export function create({
     },
 
     get offsetTop(this: Viewport) {
-      return rowCoords.offsets[this.rowRange[0]];
+      return rowCoords.offsets[this.rowRange[0] - data.pageRowRange[0]];
     },
 
     get dummyRowCount() {

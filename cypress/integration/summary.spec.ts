@@ -11,8 +11,6 @@ interface GridGlobal {
 }
 
 const CONTENT_WIDTH = 700;
-// @TODO: Retrieve scrollbar-width from real browser
-const SCROLLBAR_WIDTH = 17;
 
 function createSummaryOption(
   customOptions: Record<string, unknown> = {},
@@ -50,20 +48,6 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const summary = createSummaryOption();
 
   return { data, columns, summary };
-}
-
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const defaultOptions = createDefaultOptions();
-    const options = { ...defaultOptions, ...customOptions };
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
 }
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
@@ -120,8 +104,9 @@ describe('summary', () => {
   });
 
   it('no render when height is 0', () => {
+    const defaultOptions = createDefaultOptions();
     const summary = createSummaryOption({ height: 0 });
-    createGrid({ summary });
+    cy.createGrid({ ...defaultOptions, summary });
 
     cy.get(`.${cls('container')}`).should($container => {
       expect($container.find(`.${cls('summary-area')}`)).not.to.exist;
@@ -130,7 +115,9 @@ describe('summary', () => {
 
   context('calculation', () => {
     it('auto calculate summary when position is bottom (default)', () => {
-      createGrid();
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid(defaultOptions);
+
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
       assertSummaryPosition(0, cls('body-area'));
@@ -138,8 +125,10 @@ describe('summary', () => {
     });
 
     it('auto calculate summary when position is top', () => {
+      const defaultOptions = createDefaultOptions();
       const summary = createSummaryOption({ position: 'top' });
-      createGrid({ summary });
+      cy.createGrid({ ...defaultOptions, summary });
+
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
       assertSummaryPosition(0, cls('header-area'));
@@ -154,7 +143,9 @@ describe('summary', () => {
           }
         }
       });
-      createGrid({ summary });
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid({ ...defaultOptions, summary });
+
       assertSummaryContent('name', 'auto calculate: 25');
     });
 
@@ -164,7 +155,7 @@ describe('summary', () => {
         ...column,
         editor: 'text'
       }));
-      createGrid({ columns });
+      cy.createGrid({ ...options, columns });
 
       cy.get(`.${cls('container')}`)
         .trigger('mousedown')
@@ -183,7 +174,9 @@ describe('summary', () => {
           price: 'this is static'
         }
       });
-      createGrid({ summary });
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid({ ...defaultOptions, summary });
+
       assertSummaryContent('price', 'this is static');
     });
 
@@ -191,7 +184,9 @@ describe('summary', () => {
       const summary = createSummaryOption({
         defaultContent: 'this is default'
       });
-      createGrid({ summary });
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid({ ...defaultOptions, summary });
+
       assertSummaryContent('name', 'this is default');
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
@@ -211,7 +206,9 @@ describe('summary', () => {
         },
         true
       );
-      createGrid({ summary });
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid({ ...defaultOptions, summary });
+
       assertSummaryContent('price', 'no auto calculate: 0');
       assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
     });
@@ -221,7 +218,7 @@ describe('summary', () => {
     it('sync scrollLeft with body area', () => {
       const options = createDefaultOptions();
       const columns = options.columns.map(column => ({ ...column, minWidth: 300 }));
-      createGrid({ columns });
+      cy.createGrid({ ...options, columns });
 
       assertSyncScrollLeft(1);
     });
@@ -229,7 +226,7 @@ describe('summary', () => {
     it('sync scrollLeft with body area if column resizable: true', () => {
       const options = createDefaultOptions();
       const columns = options.columns.map(column => ({ ...column, resizable: true }));
-      createGrid({ columns });
+      cy.createGrid({ ...options, columns });
 
       cy.get(`.${cls('column-resize-handle')}`)
         .eq(0)
@@ -242,7 +239,8 @@ describe('summary', () => {
   });
 
   it("change summary's value properly after call setSummaryColumnContent()", () => {
-    createGrid();
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid(defaultOptions);
     cy.gridInstance().invoke('setSummaryColumnContent', 'price', 'static content');
     assertSummaryContent('price', 'static content');
 
@@ -271,7 +269,8 @@ describe('summary', () => {
   });
 
   it('return proper values when calls getSummaryValues() method', () => {
-    createGrid();
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid(defaultOptions);
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
       .should(summaryValues => {
@@ -290,7 +289,8 @@ describe('summary', () => {
       { name: 100, price: 2, downloadCount: 10 },
       { name: 200, price: 5, downloadCount: 20 }
     ];
-    createGrid();
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid(defaultOptions);
     cy.gridInstance().invoke('resetData', data);
 
     cy.gridInstance()
@@ -302,6 +302,126 @@ describe('summary', () => {
           max: 5,
           min: 2,
           sum: 7
+        });
+      });
+  });
+
+  context('should change summary value by appendRow / removeRow API', () => {
+    it('appendRow API', () => {
+      const row = { name: 100, price: 5, downloadCount: 10 };
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid(defaultOptions);
+      cy.gridInstance().invoke('appendRow', row);
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'price')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 13095.47619047619,
+            cnt: 21,
+            max: 30000,
+            min: 5,
+            sum: 275005
+          });
+        });
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'downloadCount')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 952.8571428571429,
+            cnt: 21,
+            max: 1000,
+            min: 10,
+            sum: 20010
+          });
+        });
+    });
+
+    it('removeRow API', () => {
+      const defaultOptions = createDefaultOptions();
+      cy.createGrid(defaultOptions);
+      cy.gridInstance().invoke('removeRow', 19);
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'price')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 13842.105263157895,
+            cnt: 19,
+            max: 30000,
+            min: 6000,
+            sum: 263000
+          });
+        });
+
+      cy.gridInstance()
+        .invoke('getSummaryValues', 'downloadCount')
+        .should(summaryValues => {
+          expect(summaryValues).to.be.eql({
+            avg: 1000,
+            cnt: 19,
+            max: 1000,
+            min: 1000,
+            sum: 19000
+          });
+        });
+    });
+  });
+
+  it('should change summary value by setColumnValues API', () => {
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid(defaultOptions);
+    cy.gridInstance().invoke('setColumnValues', 'price', 10);
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should(summaryValues => {
+        expect(summaryValues).to.be.eql({
+          avg: 10,
+          cnt: 20,
+          max: 10,
+          min: 10,
+          sum: 200
+        });
+      });
+  });
+
+  it('should change summary value by clear API', () => {
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid(defaultOptions);
+    cy.gridInstance().invoke('clear');
+
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should(summaryValues => {
+        expect(summaryValues).to.be.eql({
+          avg: 0,
+          cnt: 0,
+          max: 0,
+          min: 0,
+          sum: 0
+        });
+      });
+  });
+
+  it(`should apply summary option on columns that doesn't exist`, () => {
+    const defaultOptions = createDefaultOptions();
+    const columns = [
+      { name: 'name', minWidth: 150 },
+      { name: 'artist', minWidth: 150 },
+      { name: 'type', minWidth: 150 }
+    ];
+    cy.createGrid({ ...defaultOptions, columns });
+    cy.gridInstance()
+      .invoke('getSummaryValues', 'price')
+      .should(summaryValues => {
+        expect(summaryValues).to.be.eql({
+          avg: 13750,
+          cnt: 20,
+          max: 30000,
+          min: 6000,
+          sum: 275000
         });
       });
   });

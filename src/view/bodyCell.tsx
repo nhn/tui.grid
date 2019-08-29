@@ -156,7 +156,7 @@ export class BodyCellComp extends Component<Props> {
   public render() {
     const {
       rowKey,
-      renderData: { disabled, editable, invalidState, className },
+      renderData: { disabled, editable, invalidStates, className },
       columnInfo: { align, valign, name, validation = {} },
       disabled: allDisabled,
       treeInfo,
@@ -178,7 +178,7 @@ export class BodyCellComp extends Component<Props> {
       [editable, 'cell-editable'],
       [isRowHeader(name), 'cell-row-header'],
       [validation.required || false, 'cell-required'],
-      [!!invalidState, 'cell-invalid'],
+      [!!invalidStates.length, 'cell-invalid'],
       [disabled || allDisabled, 'cell-disabled'],
       [!!treeInfo, 'cell-has-tree'],
       [isRowHeader(name) && selectedRow, 'cell-selected']

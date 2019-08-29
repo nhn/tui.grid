@@ -131,7 +131,8 @@ export function changeFocus(
   }
 }
 
-export function initFocus(focus: Focus) {
+export function initFocus({ focus }: Store) {
+  focus.editingAddress = null;
   focus.navigating = false;
   focus.rowKey = null;
   focus.columnName = null;

@@ -21,10 +21,7 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowsComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
-    if (shallowEqual(nextProps, this.props)) {
-      return false;
-    }
-    return true;
+    return !shallowEqual(nextProps, this.props);
   }
 
   public render({ rows, rowIndexOffset, columns, dummyRowCount }: Props) {
@@ -51,8 +48,8 @@ class BodyRowsComp extends Component<Props> {
   }
 }
 
-export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column }, { side }) => ({
-  rowIndexOffset: viewport.rowRange[0],
+export const BodyRows = connect<StoreProps, OwnProps>(({ viewport, column, data }, { side }) => ({
+  rowIndexOffset: viewport.rowRange[0] - data.pageRowRange[0],
   rows: viewport.rows,
   columns: side === 'L' ? column.visibleColumnsBySideWithRowHeader.L : viewport.columns,
   dummyRowCount: viewport.dummyRowCount
