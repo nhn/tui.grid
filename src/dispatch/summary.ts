@@ -99,10 +99,13 @@ export function addColumnSummaryValues({ summary, data, column }: Store) {
     const { rawData } = data;
 
     column.allColumns.forEach(({ name }) => {
-      if (!summary.summaryColumnContents[name]) {
+      const orgSummaryContent = summary.summaryColumnContents[name];
+      if (!orgSummaryContent) {
         const content = extractSummaryColumnContent(null, castedDefaultContent);
         summary.summaryColumnContents[name] = content;
         summary.summaryValues[name] = createSummaryValue(content, name, rawData);
+      } else {
+        summary.summaryValues[name] = createSummaryValue(orgSummaryContent, name, rawData);
       }
     });
   }
