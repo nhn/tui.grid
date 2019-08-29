@@ -5,12 +5,12 @@ import {
   SelectionRange,
   RowAttributes,
   RowAttributeValue,
-  PageOptions,
   Dictionary,
   Data,
   Row,
   Column,
-  Range
+  Range,
+  PageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -300,7 +300,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions } = data;
+  const { rawData, viewData, sortOptions, pageOptions, pageRowRange } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -313,6 +313,19 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
   heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
+
+  if (pageOptions.useClient) {
+    const currentPageDataLength = pageRowRange[1] - pageRowRange[0];
+
+    if (currentPageDataLength === pageOptions.perPage) {
+      heights.pop();
+    }
+
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: pageOptions.totalCount! + 1
+    };
+  }
 
   if (at !== rawData.length) {
     updateSortKey(data, at);
@@ -331,6 +344,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+
   updateSummaryValueByRow(store, rawRow, true);
   renderState.state = 'DONE';
   getDataManager(id).push('CREATE', rawRow);
@@ -338,8 +352,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, renderState, focus, column } = store;
-  const { rawData, viewData, sortOptions } = data;
-  const { heights } = rowCoords;
+  const { rawData, viewData, sortOptions, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
   const removedRow = rawData.splice(rowIdx, 1)[0];
@@ -349,7 +362,12 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   viewData.splice(rowIdx, 1);
-  heights.splice(rowIdx, 1);
+  if (pageOptions.useClient) {
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: pageOptions.totalCount! - 1
+    };
+  }
 
   if (nextRow && isRowSpanEnabled(sortOptions)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
@@ -381,11 +399,17 @@ export function clearData(store: Store) {
 
   // to render the grid with clearing data after destroying editing cell on DOM
   setTimeout(() => {
-    initFocus(focus);
+    initFocus(store);
 
     rowCoords.heights = [];
     data.rawData = [];
     data.viewData = [];
+    if (data.pageOptions.useClient) {
+      data.pageOptions = {
+        ...data.pageOptions,
+        totalCount: 0
+      };
+    }
     updateAllSummaryValues(store);
     renderState.state = 'EMPTY';
   });
@@ -400,13 +424,19 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
   // to render the grid for new data after destroying editing cell on DOM
   setTimeout(() => {
-    initFocus(focus);
+    initFocus(store);
 
     rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
     data.viewData = viewData;
     data.rawData = rawData;
     updateAllSummaryValues(store);
     renderState.state = getRenderState(rawData);
+    if (data.pageOptions.useClient) {
+      data.pageOptions = {
+        ...data.pageOptions,
+        totalCount: rawData.length
+      };
+    }
   });
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -484,7 +514,16 @@ export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, r
 
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   const { perPage } = data.pageOptions;
-  data.pageOptions = { ...pageOptions, perPage };
+  data.pageOptions = { ...pageOptions, perPage } as Required<PageOptions>;
+}
+
+export function movePage({ data, rowCoords, dimension }: Store, page: number) {
+  data.pageOptions.page = page;
+  notify(data, 'pageOptions');
+
+  rowCoords.heights = data.rawData
+    .slice(...data.pageRowRange)
+    .map(row => getRowHeight(row, dimension.rowHeight));
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
@@ -524,6 +563,7 @@ function createOriginData(data: Data, rowRange: Range) {
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
+
   const originData = createOriginData(data, rowRange);
 
   if (!originData.rows.length) {

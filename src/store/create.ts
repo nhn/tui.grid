@@ -59,13 +59,13 @@ export function createStore(id: number, options: OptGrid): Store {
     valign,
     columnsAlign
   });
-  const data = createData(
-    Array.isArray(options.data) ? options.data : [],
+  const data = createData({
+    data: Array.isArray(options.data) ? options.data : [],
     column,
     pageOptions,
     useClientSort,
     disabled
-  );
+  });
   const dimension = createDimension({
     column,
     width,

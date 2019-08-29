@@ -162,7 +162,8 @@ export interface Data {
   sortOptions: SortOptions;
   disabled: boolean;
   checkedAllRows: boolean;
-  pageOptions: PageOptions;
+  pageOptions: Required<PageOptions>;
+  pageRowRange: Range;
 }
 
 export interface FormatterProps {
@@ -407,6 +408,7 @@ export interface RenderState {
 }
 
 export interface PageOptions {
+  useClient?: boolean;
   perPage?: number;
   page?: number;
   totalCount?: number;

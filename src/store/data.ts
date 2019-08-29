@@ -16,7 +16,8 @@ import {
   RowSpanMap,
   ListItem,
   SortOptions,
-  ViewRow
+  ViewRow,
+  Range
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -37,6 +38,14 @@ import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
 import { cls } from '../helper/dom';
+
+interface OptData {
+  data: OptRow[];
+  column: Column;
+  pageOptions: PageOptions;
+  useClientSort: boolean;
+  disabled: boolean;
+}
 
 interface RawRowOptions {
   keyColumnName?: string;
@@ -410,15 +419,15 @@ export function createData(
   return { rawData, viewData };
 }
 
-export function create(
-  data: OptRow[],
-  column: Column,
-  pageOptions: PageOptions,
-  useClientSort: boolean,
-  disabled: boolean
-): Observable<Data> {
-  // @TODO add client pagination logic
+export function create({
+  data,
+  column,
+  pageOptions: userPageOptions,
+  useClientSort,
+  disabled
+}: OptData): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
+
   const sortOptions: SortOptions = {
     useClient: useClientSort,
     columns: [
@@ -429,12 +438,36 @@ export function create(
     ]
   };
 
+  const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)
+    ? ({} as Required<PageOptions>)
+    : {
+        useClient: false,
+        page: 1,
+        perPage: 20,
+        ...userPageOptions,
+        totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
+      };
+
   return observable({
     disabled,
     rawData,
     viewData,
     sortOptions,
     pageOptions,
+
+    get pageRowRange() {
+      let start = 0;
+      let end = rawData.length;
+
+      if (this.pageOptions.useClient) {
+        const { page, perPage } = this.pageOptions;
+        const pageRowLastIndex = page * perPage;
+        start = (page - 1) * perPage;
+        end = pageRowLastIndex < end ? pageRowLastIndex : end;
+      }
+
+      return [start, end] as Range;
+    },
 
     get checkedAllRows() {
       const allRawData = this.rawData;
