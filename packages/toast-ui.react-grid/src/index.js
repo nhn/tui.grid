@@ -36,15 +36,15 @@ export default class Grid extends React.Component {
   }
 
   componentDidMount() {
-    const {
-      frozenColumnCount: frozenCount = 0,
-      columnOptions: columnOptionsProp = {}
-    } = this.props;
+    const { frozenColumnCount: frozenCount, columnOptions: columnOptionsProp = {} } = this.props;
 
-    const columnOptions = {
-      ...columnOptionsProp,
-      frozenCount
-    };
+    const columnOptions =
+      typeof frozenCount === 'number'
+        ? {
+            ...columnOptionsProp,
+            frozenCount
+          }
+        : { ...columnOptionsProp };
 
     this.gridInst = new TuiGrid({
       el: this.rootEl.current,
