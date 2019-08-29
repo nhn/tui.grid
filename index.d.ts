@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.4.1
+// Type definitions for TOAST UI Grid v4.5.0
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
