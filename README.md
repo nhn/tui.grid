@@ -14,7 +14,7 @@
 * [Features](#-features)
 * [Examples](#-examples)
 * [Install](#-install)
-* [Wrappers](#Wrappers)
+* [Wrappers](#-wrappers)
 * [Usage](#-usage)
 * [Browser Support](#-browser-support)
 * [Pull Request Steps](#-pull-request-steps)
