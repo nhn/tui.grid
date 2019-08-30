@@ -7,7 +7,6 @@ import {
   OptTree,
   VAlignType,
   OptSummaryColumnContentMap,
-  FilterOpt,
   SingleFilterOptionType
 } from '../types';
 
@@ -198,6 +197,26 @@ export interface CellRendererOptions {
   options?: Dictionary<any>;
 }
 
+export type NumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
+export type TextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
+export type DateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
+
+interface FilterCondition {
+  code: NumberFilterCode | TextFilterCode | DateFilterCode | null;
+  value: CellValue;
+}
+
+export interface Filter {
+  type: SingleFilterOptionType | Function;
+  code?: NumberFilterCode | TextFilterCode | DateFilterCode;
+  value?: CellValue;
+  options?: Dictionary<any>;
+  operator?: 'AND' | 'OR';
+  condition?: FilterCondition[];
+  showApplyBtn: boolean;
+  showClearBtn: boolean;
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
@@ -226,7 +245,7 @@ export interface ColumnInfo {
   ignored?: boolean;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
-  filter?: SingleFilterOptionType | FilterOpt;
+  filter?: Filter | null;
 }
 
 export interface SortedColumn {

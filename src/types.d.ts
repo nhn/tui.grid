@@ -118,6 +118,7 @@ export type SingleFilterOptionType = MultipleFilterOptionType | 'select';
 
 export interface FilterOpt {
   type: MultipleFilterOptionType | Function;
+  options?: Dictionary<any>;
   operator?: 'OR' | 'AND';
   showApplyBtn?: boolean;
   showClearBtn?: boolean;
@@ -139,7 +140,7 @@ export interface OptColumn {
   relations?: Relations[];
   align?: AlignType;
   valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
   sortingType?: SortingType;

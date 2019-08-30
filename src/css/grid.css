@@ -772,8 +772,8 @@ input[type='checkbox']:checked + label {
 }
 
 .tui-grid-filter-btn-clear {
-  background-color: #6c757d;
-  border: 1px solid #6c757d;
+  background-color: #777777;
+  border: 1px solid #777777;
 }
 
 .tui-grid-filter-btn-clear:hover {

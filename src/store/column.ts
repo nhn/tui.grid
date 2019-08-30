@@ -7,7 +7,8 @@ import {
   ComplexColumnInfo,
   CellEditorOptions,
   CellRendererOptions,
-  HeaderAlignInfo
+  HeaderAlignInfo,
+  Filter
 } from './types';
 import {
   OptColumn,
@@ -18,7 +19,9 @@ import {
   OptCellRenderer,
   AlignType,
   VAlignType,
-  ColumnsAlignInfo
+  ColumnsAlignInfo,
+  FilterOpt,
+  SingleFilterOptionType
 } from '../types';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
@@ -131,6 +134,52 @@ function getHeaderAlignInfo(name: string, alignInfo: HeaderAlignInfo) {
   };
 }
 
+function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt): Filter | null {
+  if (isString(filter)) {
+    return {
+      type: filter,
+      code: 'eq',
+      value: null,
+      showApplyBtn: false,
+      showClearBtn: false
+    };
+  }
+
+  if (filter) {
+    const { type, options, operator, showApplyBtn = false, showClearBtn = false } = filter;
+
+    if (operator) {
+      return {
+        type,
+        operator,
+        options,
+        condition: [
+          {
+            code: null,
+            value: null
+          },
+          {
+            code: null,
+            value: null
+          }
+        ],
+        showApplyBtn,
+        showClearBtn
+      };
+    }
+    return {
+      type,
+      code: 'eq',
+      value: null,
+      options,
+      showClearBtn,
+      showApplyBtn
+    };
+  }
+
+  return null;
+}
+
 // eslint-disable-next-line max-params
 export function createColumn(
   column: OptColumn,
@@ -199,7 +248,8 @@ export function createColumn(
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name),
     headerAlign,
-    headerVAlign
+    headerVAlign,
+    filter: getFilterOptions(filter)
   });
 }
 
