@@ -108,7 +108,14 @@ class HeaderAreaComp extends Component<Props> {
               <tr style={headerHeightStyle} onDblClick={this.handleDblClick}>
                 {columns.map(
                   (
-                    { name, header, sortable, headerAlign: textAlign, headerVAlign: verticalAlign },
+                    {
+                      name,
+                      header,
+                      sortable,
+                      headerAlign: textAlign,
+                      headerVAlign: verticalAlign,
+                      sortingType
+                    },
                     index
                   ) => (
                     <th
@@ -123,7 +130,7 @@ class HeaderAreaComp extends Component<Props> {
                       )}
                     >
                       {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-                      {!!sortable && <SortingButton columnName={name} />}
+                      {!!sortable && <SortingButton columnName={name} sortingType={sortingType} />}
                       {!!sortable && <SortingOrder columnName={name} />}
                     </th>
                   )

@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { SortedColumn, SortOptions } from '../store/types';
+import { SortedColumn, SortOptions, SortingType } from '../store/types';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
@@ -9,6 +9,7 @@ import { findPropIndex } from '../helper/common';
 
 interface OwnProps {
   columnName: string;
+  sortingType?: SortingType;
 }
 interface StoreProps {
   sortOptions: SortOptions;
@@ -67,11 +68,9 @@ class SortingButtonComp extends Component<Props> {
 export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
   const {
     data: { sortOptions },
-    column,
     id
   } = store;
-  const { columnName } = props;
-  const { sortingType } = column.allColumnMap[columnName];
+  const { columnName, sortingType } = props;
   const { columns } = sortOptions;
   const sortedColumnsWithType = columns as SortedColumn[];
 
