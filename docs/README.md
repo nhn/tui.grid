@@ -17,6 +17,9 @@
 - [🌳 Tree](./en/tree.md)
 - [✅ Row Headers](./en/row-header.md)
 - [❄️ Frozen Columns](./en/frozen-columns.md)
+- [🖖 Row Span](./en/row-span.md)
+- [✔️ Validation](./en/validation.md)
+- [📐 Setting width, height](./en/setting-width-height.md)
 
 ### Migration Guide
 - [✈️ v4.0 Migration Guide](v4.0-migration-guide.md)
