@@ -70,7 +70,7 @@ export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
     data: { sortOptions },
     id
   } = store;
-  const { columnName, sortingType } = props;
+  const { columnName, sortingType = 'asc' } = props;
   const { columns } = sortOptions;
   const sortedColumnsWithType = columns as SortedColumn[];
 
