@@ -48,6 +48,11 @@ The `treeColumnOptions` option is used to configure tree columns, and has three 
 | `useIcon` | Determines whether to display the icon or not. |
 | `useCascadingCheckbox` | Determines whether to change the state of the checkbox or not while maintaining the parent-child relationship. |
 
+The default value for `useIcon` is set to `true`, and the parent and the children row are represented in a folder iceon and in a file icon, respectively. 
+
+The default value for `useCascadingCheckbox` is set to `true`, and if all children rows are selected, the corresponding parent row is selected as well, and vice versa. If it is set to `false`, each row can be checked individually. 
+
+Aforementioned options can be configured using the Grid constructor option. 
 
 ```js
 import Grid from 'tui-grid';
