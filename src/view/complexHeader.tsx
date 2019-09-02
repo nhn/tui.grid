@@ -84,7 +84,14 @@ class ComplexHeaderComp extends Component<Props> {
     colspan: number,
     rowspan: number
   ) {
-    const { name, header, sortable, headerAlign: textAlign, headerVAlign: verticalAlign } = column;
+    const {
+      name,
+      header,
+      sortable,
+      headerAlign: textAlign,
+      headerVAlign: verticalAlign,
+      sortingType
+    } = column;
 
     return (
       <th
@@ -101,7 +108,7 @@ class ComplexHeaderComp extends Component<Props> {
         style={{ height, textAlign, verticalAlign }}
       >
         {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-        {!!sortable && <SortingButton columnName={name} />}
+        {!!sortable && <SortingButton columnName={name} sortingType={sortingType} />}
         {!!sortable && <SortingOrder columnName={name} />}
       </th>
     );

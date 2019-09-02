@@ -1,13 +1,12 @@
 # Documents 📄
 
 ## 튜토리얼(🇰🇷)
+
 - [🚀 시작하기](./getting-started.md)
 - [🔗 복합 컬럼](./complex-columns.md)
 - [🛠 커스텀 에디터](./custom-editor.md)
 - [🔩 커스텀 렌더러](./custom-renderer.md)
 - [🤝 컬럼 관계 설정](./relation-between-columns.md)
-- [✔️ 유효성 검사](./validation.md)
-- [📐 넓이, 높이 설정](./width-height.md)
 - [👨‍🎨 테마](./themes.md)
 - [📅 DatePicker](./date-picker.md)
 - [✍️ 써머리(Summary)](./summary.md)
@@ -19,6 +18,8 @@
 - [✅ 로우 헤더](./row-header.md)
 - [❄️ 고정 컬럼](./frozen-columns.md)
 - [🖖 로우 스팬](./row-span.md)
+- [✔️ Validation](./validation.md)
+- [📐 넓이, 높이 설정](./setting-width-height.md)
 
 ### 마이그레이션 가이드
 - [️️✈️ v4.0 마이그레이션 가이드](../v4.0-migration-guide-kor.md)
