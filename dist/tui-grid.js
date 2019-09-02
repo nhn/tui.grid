@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.5.0 | Thu Aug 29 2019
+ * @version 4.5.1 | Mon Sep 02 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -4886,10 +4886,10 @@ var HeaderAreaComp = /** @class */ (function (_super) {
                 preact_1.h(colGroup_1.ColGroup, { side: side, useViewport: false }),
                 complexHeaderColumns.length ? (preact_1.h(complexHeader_1.ComplexHeader, { side: side })) : (preact_1.h("tbody", null,
                     preact_1.h("tr", { style: headerHeightStyle, onDblClick: this.handleDblClick }, columns.map(function (_a, index) {
-                        var name = _a.name, header = _a.header, sortable = _a.sortable, textAlign = _a.headerAlign, verticalAlign = _a.headerVAlign;
+                        var name = _a.name, header = _a.header, sortable = _a.sortable, textAlign = _a.headerAlign, verticalAlign = _a.headerVAlign, sortingType = _a.sortingType;
                         return (preact_1.h("th", { key: name, "data-column-name": name, style: { textAlign: textAlign, verticalAlign: verticalAlign }, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && _this.isSelected(index), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']) },
                             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
-                            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name }),
+                            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name, sortingType: sortingType }),
                             !!sortable && preact_1.h(sortingOrder_1.SortingOrder, { columnName: name })));
                     }))))),
             preact_1.h(columnResizer_1.ColumnResizer, { side: side })));
@@ -5016,9 +5016,8 @@ var SortingButtonComp = /** @class */ (function (_super) {
     return SortingButtonComp;
 }(preact_1.Component));
 exports.SortingButton = hoc_1.connect(function (store, props) {
-    var sortOptions = store.data.sortOptions, column = store.column, id = store.id;
-    var columnName = props.columnName;
-    var sortingType = column.allColumnMap[columnName].sortingType;
+    var sortOptions = store.data.sortOptions, id = store.id;
+    var columnName = props.columnName, _a = props.sortingType, sortingType = _a === void 0 ? 'asc' : _a;
     var columns = sortOptions.columns;
     var sortedColumnsWithType = columns;
     var index = common_1.findPropIndex('columnName', columnName, sortedColumnsWithType);
@@ -8399,10 +8398,10 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
             columnEnd <= selectionEnd);
     };
     ComplexHeaderComp.prototype.createTableHeaderComponent = function (column, height, colspan, rowspan) {
-        var name = column.name, header = column.header, sortable = column.sortable, textAlign = column.headerAlign, verticalAlign = column.headerVAlign;
+        var name = column.name, header = column.header, sortable = column.sortable, textAlign = column.headerAlign, verticalAlign = column.headerVAlign, sortingType = column.sortingType;
         return (preact_1.h("th", tslib_1.__assign({ key: name, "data-column-name": name, class: dom_1.cls('cell', 'cell-header', [!column_1.isRowHeader(name) && this.isSelected(name), 'cell-selected'], [column_1.isRowHeader(name), 'cell-row-header']) }, !!colspan && { colspan: colspan }, !!rowspan && { rowspan: rowspan }, { style: { height: height, textAlign: textAlign, verticalAlign: verticalAlign } }),
             column_1.isCheckboxColumn(name) ? preact_1.h(headerCheckbox_1.HeaderCheckbox, null) : header,
-            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name }),
+            !!sortable && preact_1.h(sortingButton_1.SortingButton, { columnName: name, sortingType: sortingType }),
             !!sortable && preact_1.h(sortingOrder_1.SortingOrder, { columnName: name })));
     };
     ComplexHeaderComp.prototype.render = function () {
