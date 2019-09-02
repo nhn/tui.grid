@@ -1,31 +1,32 @@
 # Custom Editor 🛠
 
-You can use any `Custom Editor` you want for presenting cell data more effectively in the `CellEditor` format TOAST UI Grid provides. The `CellEditor` should be the constructor function. The TOAST UI Grid will make instances of it using `new` keyword internally. We recommend using class keyword, but in case class keyword is not available, `function` and `prototype` can be used instead.
+In order to effectively represent the cell data, we can make use of the Custom Editor based on the `CellEditor` constructor function interface. TOAST UI Grid internally instantiates a new Custom Editor by using the user-registered `CellEditor` constructor function, and then adds the returned element to the DOM. While it is recommended to use the `class` keyword to declare the Custom Editor, if situation does not allow it, it is permissible to use `function` or `prototype`. 
 
- 
-The `CellEditor` format is as below. 
+`CellEditor`'s interface is as follows. (Refer to [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/editor/types.d.ts) for the structure of `CellEditor`'s interface.)
 * `constructor`
-  The constructor function is invoked whenever editing is started. It's common to store the root element as an instance member, so that it can be used later in other methods such as getElement() and getValue(). It receives props object which contains useful information for customizing editing UI. The interface of the props object is like below.
-
-  | property | type | return type |
+    The constructor function is called every time the cell is being edited. Generally, it saves the root element as the instance member, and such members can be accessed by `getElement()` and `getValue()` methods. As for the parameter of the constructor function, it is an object that encompasses useful information used to edit and customize the UI. 
+    
+    The object contains the following information. 
+    
+  | Property | Type | Return Type |
   |--------|--------|--------|
-  | `grid` | `Grid` | The `grid` property is an instance of TOAST UI Grid itself. This can be useful if you want to get specific data or manipulate the data manually. |
-  | `rowKey` | `string \| number` | The `rowKey` of the row which contains the cell. |
-  | `columnInfo` | `ColumnInfo` | The `columnInfo` property contains the all information of the column in which the target cell is contained. The inerface of the ColumnInfo is defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
-  | `value` | `string \| number \| boolean` | The current `value` of the cell |
+  | `grid` | `Grid` | References the `Grid` instance. It can be used effectively when getting or manipulating a particular piece of data of the Grid. |
+  | `rowKey` | `string \| number` | The rowKey of the row that contains the current cell. |
+  | `columnInfo` | `ColumnInfo` | Contains all necessary information of the column that includes the target cell. The `ColumnInfo` interface is further defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
+  | `value` | `string \| number \| boolean` | The cell's current value
 
 * `getElement`
-   The `getElement` method should return the root DOM element of the editor. When editing is started, the returned element will be appended to the editing layer DOM.
+    Returns the Editor's root DOM element. Once it is being edited on, the returned element is inserted in the place of the target cell.
 * `getValue`
-  The `getValue` method should return the value of the cell. When editing is finished, the returned value will be used to set the cell value.
+    Returns the cell's value. Once the editing is finished, the returned value is used as cell's data. 
 * `mounted`
-  The `mounted` method is an `optional`, and can be used to initialize Input elements. This method is invoked immediately after the root element returned by getElement() is attached to the DOM.
+    This method is `optional`, and is used to initialize the input element. This method is called immediately after the root element returned from `getElement()` has been mounted to the DOM. 
 * `beforeDestroy`
-  The `beforeDestroy` method is an `optional`, and can be used to clean up input elements. This method is invoked immediately before the root element returned by getElement() is detached from the DOM.
+    This method is `optional`, and is used to delete the input element. This method is called immediately before the root element returned from `getElement()` has been removed from the DOM.
+    
+The following is a simple example snippet using the CustomTextEditor.
 
-The following is the source code of the simple text editor.
-
-```javascript
+```js
 class CustomTextEditor {
   constructor(props) {
     const el = document.createElement('input');
@@ -50,9 +51,9 @@ class CustomTextEditor {
 }
 ```
 
-To use your own `Custom Editor`, just specify it with the `editor.type` option of `columns`. If you need the `Custom Options` to be used in your `Custom Editor`, set it to the `editor.options`.
+As the example above demonstrates, the user defined `Custom Editor` can be configured using the `editor.type` option of the information object provided from the `columns` array. If there further user defined options required for the `Custom Editor`, use the `editor.options` to do so. 
 
-```javascript
+```js
 const grid = new Grid({
   // ... another options
   columns: [
@@ -72,8 +73,10 @@ const grid = new Grid({
   ]
 });
 ```
-The `Custom Options` can be used in the constructor function using `props.columnInfo.editor.options` as below.
-```javascript
+
+The configured user defined options can be implemented using `Custom Editor`'s constructor function. As we can see in the example below, we can use the `props` object to access the options by following the `columnInfo.editor.options.customTextEditorOptions` path. 
+
+```js
 class CustomTextEditor {
   constructor(props) {
     const customOptions = props.columnInfo.editor.options.customTextEditorOptions;
@@ -83,11 +86,11 @@ class CustomTextEditor {
 }
 ```
 
-## Built-in Editor 
+## Built-In Editor
 
-In the TOAST UI Grid, various built-in editor can be used to present cell data. You can specify it with the `editor` option of `columns`.
+There are numerous built-in editors ready to be used with TOAST UI Grid, and it can be used by declaring it in the `editor` option provided by the `column` array's information object. 
 
-```javascript
+```js
 import Grid from 'tui-grid';
 
 const grid = new Grid({
@@ -107,7 +110,7 @@ const grid = new Grid({
 });
 ```
 
-Available types are in the following list:
+There are total of five different built-in editors.
 
 - **text** : Text input (`input[type=text]`)
 - **password** : Password input (`input[type=password]`)
@@ -115,12 +118,11 @@ Available types are in the following list:
 - **radio** : Radio button (`input[type=radio]`)
 - **select** : Select box (`select`)
 
+## Using editor.options.listItems
 
-## Using `editor.options.listItems`
+In order to use editors like `checkbox`, `radio`, and `select`, we need to configure the list options. The list option can be configured through `editor.options.listItems` and `formatter` option (for `listItemText` built-in formatter). 
 
-To use the `checkbox`, `radio`, and `select` types, you need to set list options using the `editor.options.listItems` option and the `listItemText` built-in formatter option.
-
-```javascript
+```js
 const columns = [
   {
     header: 'BROWSER',
@@ -147,14 +149,12 @@ const grid = new Grid({
   columns  
 });
 ```
+`editor.options.listItems` is an array, and each element has `text` and `value` properties. If we were to configure `listItemText` built-in formatter, the `text` property and `value` property are used as cell's label and internal value, respectively.
 
-The `editor.options.listItems` is an array, in which each element has the `text` and the `value` property. The `text` property will be shown as a label of the item, and the `value` property will be used as a value of the cell through the `listItemText` built-in formatter.
+## checkbox Type Value
 
-## Value of `checkbox` Type
-
-Unlike other types, the `checkbox` type uses multiple values. When you check multiple checkboxes, the value of the cell will be the concatenated string of all checked values separated with comma. For example, if the model of the 'browser' column is like the sample above and the boxes of 'IE 9', 'Firefox' and 'Chrome' are checked, the value of the cell should be `'1,4,5'`.
-
+Unlike other types, the `checkbox` supports multiple values. If more than one checkboxes are checked, the value of the cell is of a string with checked boxes separated with commas. For example, if the `browser` column is as shown in the snippet above, the cell value with `IE9`, `Firefox`, and `Chrome` selected will be `'1,4,5'`.
 
 ## Example
 
-You can see the example which uses various input types [here](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor).
+More examples with built-in editors and custom editors can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example03-custom-editor).

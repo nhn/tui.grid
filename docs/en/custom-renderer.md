@@ -1,40 +1,35 @@
 # Custom Renderer 🔩
 
-The TOAST UI Grid provides the `Custom Renderer` in the `CellRenderer` format for users to customize the cell UI to meet their own requirements. It's more powerful than `formatter` option to control of cell rendering behavior.
+TOAST UI Grid enables users to customize the cell UI by providing Custom Renderer. The Custom Renderer can be much more useful than the `formatter` when it comes to rendering cells. 
 
-The `CellRenderer` should be the constructor function like the `CellEditor`. The TOAST UI Grid will make instances of it using `new` keyword internally. We recommend using class keyword, but in case class keyword is not available, `function` and `prototype` can be used instead.
+We can apply the Custom Renderer based on the `CellRenderer` constructor function's interface. Internally, TOAST UI Grid uses the `CellRenderer` constructor function registered by the user to instantiate a new Custom Renderer, and adds the returned element to the DOM. While it is recommended to use the Custom Renderer with the `class` keyword, if unplausible, it can be used with `function` and `prototype` as well. 
 
-The `CellRenderer` format is as below. 
+The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer` interface can be found at [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/renderer/types.d.ts).)
 * `constructor`
-  The constructor function is invoked when the cell element (`TD`) is mounted to the DOM. It's common to store the root element as a instance member, so that it can be used later in other methods such as `getElement()` and `render()`. It receives props object which contains useful information for customizing contents of the cell. The interface of the props object is same as `CellEditor` format. The format is like below.
+    The constructor function is called when the cell element (`TD`) is added to the DOM. Generally, it serves the purpose of storing the root element as the instance member, and such members can be accessed using `getElement()` and `getValue()` methods. The object passed ino the constructor function as parameter is identical to that of `CellEditor` interface, and is as follows. 
 
-  | property | type | return type |
-  |--------|--------|--------|
-  | `grid` | `Grid` | The `grid` property is an instance of TOAST UI Grid itself. This can be useful if you want to get specific data or manipulate the data manually. |
-  | `rowKey` | `string \| number` | The `rowKey` of the row which contains the cell. |
-  | `columnInfo` | `ColumnInfo` | The `columnInfo` property contains the all information of the column in which the target cell is contained. The interface of the `ColumnInfo` is defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
-  | `value` | `string \| number \| boolean` | The current `value` of the cell |
+| Property | Type | Return Type |
+|--------|--------|--------|
+| `grid` | `Grid` | References the `Grid` instance. It can be used effectively when getting or manipulating a particular piece of data of the Grid. | 
+| `rowKey` | `string \| number` | The rowKey of the row that contains the current cell. |
+| `columnInfo` | `ColumnInfo` | Contains all necessary information of the column that includes the target cell. The `ColumnInfo` interface is further defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
+| `value` | `string \| number \| boolean` | The cell's current value |
 
 * `getElement`
-  The `getElement` method should return the root DOM element of the cell contents. When the cell (`TD` element) is mounted, the returned element will be appended as a child elemement.
+    Returns the cell's root DOM element. The returned element is automatically inserted as a child when the cell (`TD` element) is newly added.
 * `mounted`
-  The `mounted` method is an `optional`, and can be used to initialize Input elements. This method is invoked immediately after the root element returned by `getElement()` is attached to the DOM.
-* `render`
-  The `render` method is used to synchronize the rendered contents and the value of the cell. This method is invoked whenever the value of the cell is changed.
+    This method is `optional`, and is used to initialize the input element. This method is called immediately after the root element returned from `getElement()` has been mounted to the DOM. 
+* ` render`
+    This method is used to synchronize the cell's value with newly rendered content. This method is called every time the value of the cell has been changed.
 * `focused`
-  The `focused` method is an `optional`, and can be used to add some behavior when the focus is set on the cell. This method is invoked whenever the focus is changed and set on the cell.
-* `beforeDestroy`
-  The `beforeDestroy` method is an `optional`, and can be used to initialize input elements or detach the events. This method is invoked immediately before the root element returned by `getElement()` is detached from the DOM.
+    This method is `optional`, and is used to add particular tasks while the cell has been focused on. This method is called every time the focus has been shifted onto a cell. 
 
-Note that you can define your own `Custom Options` can be used in the constructor function using `props.columnInfo.renderer.options`.
-
-The following is the source code of the simple slider renderer.
+The snippet below is an example of a Custom Renderer that renders Sliders.
 
 ```javascript
 class CustomSliderRenderer {
   constructor(props) {
     const el = document.createElement('input');
-    // you can access the renderer custom options as below.
     const { min, max } = props.columnInfo.renderer.options;
 
     el.type = 'range';
@@ -59,7 +54,7 @@ class CustomSliderRenderer {
 }
 ```
 
-To use your own `Custom Renderer`, just specify it with the `renderer.type` option of `columns`. If you need the `Custom Options` to be used in your `Custom Renderer`, set it to the `renderer.options`.
+As in the example above, the `Custom Renderer` can be configured using the `renderer.type` option from the information object provided by the `columns` array. If you require further user defined options for the `Custom Renderer`, you can make necessary adjustments to `renderer.options`. 
 
 ```javascript
 import Grid from 'tui-grid';
@@ -83,6 +78,20 @@ const grid = new Grid({
 });
 ```
 
-## Example
+Declared user defined options can be used in `Custom Renderer`'s constructor function. As in the example below, we can use the `props` object to access the options by following the `columnInfo.renderer.options.min` path.  
 
-You can see the example which uses the custom renderer [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer).
+```js
+class CustomTextECustomSliderRendererditor {
+  constructor(props) {
+    const el = document.createElement('input');
+    // As you can see, we can access the renderer's custom option as such. 
+    const { min, max } = props.columnInfo.renderer.options;
+    // ...
+  }
+  // ...
+}
+```
+
+## Examples
+
+More examples with Custom Renderer can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer).
