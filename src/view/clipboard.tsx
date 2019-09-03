@@ -82,10 +82,13 @@ class ClipboardComp extends Component<Props> {
           return;
         }
         const { store } = this.context;
+        this.el.innerHTML = getText(store);
+
         if (isSupportWindowClipboardData()) {
-          (window as WindowWithClipboard).clipboardData!.setData('Text', getText(store));
-        } else {
-          this.el.innerHTML = getText(store);
+          const range = document.createRange();
+          const selection = window.getSelection();
+          range.selectNodeContents(this.el.childNodes[0]);
+          selection!.addRange(range);
         }
         break;
       }
