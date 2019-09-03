@@ -144,6 +144,8 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
 
         if (!supportWindowClipboardData) {
             (ev.originalEvent || ev).clipboardData.setData('text/plain', text);
+        } else {
+            window.clipboardData.setData('Text', text);
         }
 
         ev.preventDefault();
@@ -194,11 +196,16 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      */
     _onClipboardTextChange: function() {
         var text = this.clipboardModel.get('text');
+        this.$el.html(text).focus();
 
         if (supportWindowClipboardData) {
-            window.clipboardData.setData('Text', text);
-        } else {
-            this.$el.html(text).focus();
+            /* eslint-disable */
+            var range = document.createRange();
+            var selection = window.getSelection();
+            
+            selection.removeAllRanges();
+            range.selectNodeContents(this.$el[0].childNodes[0]);
+            selection.addRange(range);
         }
     },
 

@@ -78,11 +78,12 @@ var Container = View.extend(/** @lends module:view/container.prototype */{
 
     /**
      * drag 이벤트 발생시 이벤트 핸들러
+     * @param {jQueryEvent} ev - Event object
      * @returns {boolean} false
      * @private
      */
-    _preventDrag: function() {
-        return false;
+    _preventDrag: function(ev) {
+        return ev.target.className.indexOf(classNameConst.CLIPBOARD) !== -1;
     },
 
     /**
