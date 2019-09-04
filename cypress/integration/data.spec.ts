@@ -61,6 +61,16 @@ describe('appendRow()', () => {
         expect(row.rowKey).to.be.eq(2);
       });
   });
+
+  it('rowKey is created properly as max index on empty grid', () => {
+    cy.gridInstance().invoke('resetData', []);
+    cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
+    cy.gridInstance()
+      .invoke('getRowAt', 0)
+      .should(row => {
+        expect(row.rowKey).to.be.eq(0);
+      });
+  });
 });
 
 describe('prependRow()', () => {
