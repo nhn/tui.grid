@@ -132,10 +132,10 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      * - Step 1: When the keys(ctrl+c) are downed on grid, 'key:clipboard' is triggered.
      * - Step 2: To listen 'change:text event on the clipboard model.
      * - Step 3: When 'change:text' event is fired,
-     *           IE browsers set copied data to window.clipboardData in event handler and
-     *           other browsers append copied data and focus to contenteditable element.
-     * - Step 4: Finally, when 'copy' event is fired on browsers except IE,
-     *           setting copied data to ClipboardEvent.clipboardData.
+     *           all browsers append copied data and focus to contenteditable element and
+     *           IE browsers set selection for trggering 'copy' event.
+     * - Step 4: Finally, when 'copy' event is fired on browsers,
+     *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
      * @param {jQueryEvent} ev - Event object
      * @private
      */
