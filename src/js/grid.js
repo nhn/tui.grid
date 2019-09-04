@@ -18,7 +18,6 @@ var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var ComponentHolder = require('./componentHolder');
-var clipboardUtil = require('./common/clipboardUtil');
 
 var util = require('./common/util');
 var i18n = require('./common/i18n');
@@ -1069,10 +1068,6 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     copyToClipboard: function() {
         this.modelManager.clipboardModel.setClipboardText();
-
-        if (window.clipboardData) {
-            clipboardUtil.addClipboardSelection(document.querySelector('.tui-grid-clipboard'));
-        }
         // Accessing the clipboard is a security concern on chrome
         document.execCommand('copy');
     },

@@ -149,15 +149,13 @@ clipboardUtil = {
         var range, selection;
 
         if (document.createRange) {
-            if (!el.childNodes[0]) {
-                return;
+            if (el.childNodes[0]) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                range.selectNodeContents(el.childNodes[0]);
+                selection.addRange(range);
             }
-
-            range = document.createRange();
-            selection = window.getSelection();
-            selection.removeAllRanges();
-            range.selectNodeContents(el.childNodes[0]);
-            selection.addRange(range);
         // for IE8
         } else {
             range = document.selection.createRange();
