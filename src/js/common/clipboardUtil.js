@@ -146,14 +146,15 @@ clipboardUtil = {
     },
 
     addClipboardSelection: function(el) {
-        var range, selection;
+        var range, selection, childNode;
 
         if (document.createRange) {
-            if (el.childNodes[0]) {
+            childNode = el.childNodes[0];
+            if (childNode) {
                 range = document.createRange();
                 selection = window.getSelection();
                 selection.removeAllRanges();
-                range.selectNodeContents(el.childNodes[0]);
+                range.selectNodeContents(childNode);
                 selection.addRange(range);
             }
         // for IE8
