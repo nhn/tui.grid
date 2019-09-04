@@ -153,13 +153,11 @@ export function isSupportWindowClipboardData() {
 }
 
 export function addClipboardSelection(node: ChildNode) {
-  if (!node) {
-    return;
+  if (node) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    selection!.removeAllRanges();
+    range.selectNodeContents(node);
+    selection!.addRange(range);
   }
-
-  const range = document.createRange();
-  const selection = window.getSelection();
-  selection!.removeAllRanges();
-  range.selectNodeContents(node);
-  selection!.addRange(range);
 }
