@@ -72,10 +72,10 @@ class ClipboardComp extends Component<Props> {
        * Call directly because of timing issues
        * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
        * - Step 2: When 'clipboard' event is fired,
-       *           IE browsers set copied data to window.clipboardData in event handler and
-       *           other browsers append copied data and focus to contenteditable element.
-       * - Step 3: Finally, when 'copy' event is fired on browsers except IE,
-       *           setting copied data to ClipboardEvent.clipboardData.
+       *           all browsers append copied data and focus to contenteditable element and
+       *           IE browsers set selection for trggering 'copy' event.
+       * - Step 3: Finally, when 'copy' event is fired on browsers,
+       *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
        */
       case 'clipboard': {
         if (!this.el) {
@@ -87,6 +87,7 @@ class ClipboardComp extends Component<Props> {
         if (isSupportWindowClipboardData()) {
           const range = document.createRange();
           const selection = window.getSelection();
+          selection!.removeAllRanges();
           range.selectNodeContents(this.el.childNodes[0]);
           selection!.addRange(range);
         }
@@ -215,7 +216,7 @@ class ClipboardComp extends Component<Props> {
   public render() {
     return (
       <div
-        class={cls('clipboard')}
+        // class={cls('clipboard')}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         onCopy={this.onCopy}
