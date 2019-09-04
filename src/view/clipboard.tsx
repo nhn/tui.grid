@@ -216,7 +216,7 @@ class ClipboardComp extends Component<Props> {
   public render() {
     return (
       <div
-        // class={cls('clipboard')}
+        class={cls('clipboard')}
         onBlur={this.onBlur}
         onKeyDown={this.onKeyDown}
         onCopy={this.onCopy}
