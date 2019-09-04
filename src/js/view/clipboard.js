@@ -196,16 +196,22 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      */
     _onClipboardTextChange: function() {
         var text = this.clipboardModel.get('text');
+        var range, selection;
         this.$el.html(text).focus();
 
         if (supportWindowClipboardData) {
-            /* eslint-disable */
-            var range = document.createRange();
-            var selection = window.getSelection();
-            
-            selection.removeAllRanges();
-            range.selectNodeContents(this.$el[0].childNodes[0]);
-            selection.addRange(range);
+            if (document.createRange) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                range.selectNodeContents(this.$el[0].childNodes[0]);
+                selection.addRange(range);
+            // for IE8
+            } else {
+                range = document.selection.createRange();
+                range.moveToElementText(this.$el[0]);
+                range.select();
+            }
         }
     },
 
@@ -294,3 +300,4 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
 Clipboard.KEYDOWN_LOCK_TIME = KEYDOWN_LOCK_TIME;
 
 module.exports = Clipboard;
+
