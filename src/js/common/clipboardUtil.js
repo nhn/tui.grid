@@ -143,6 +143,27 @@ clipboardUtil = {
             return value.replace(LF, CUSTOM_LF_SUBCHAR)
                 .replace(CR, CUSTOM_CR_SUBCHAR);
         });
+    },
+
+    addClipboardSelection: function(el) {
+        var range, selection;
+
+        if (document.createRange) {
+            if (!el.childNodes[0]) {
+                return;
+            }
+
+            range = document.createRange();
+            selection = window.getSelection();
+            selection.removeAllRanges();
+            range.selectNodeContents(el.childNodes[0]);
+            selection.addRange(range);
+        // for IE8
+        } else {
+            range = document.selection.createRange();
+            range.moveToElementText(el);
+            range.select();
+        }
     }
 };
 
