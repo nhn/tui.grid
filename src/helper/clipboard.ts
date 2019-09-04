@@ -151,3 +151,15 @@ export function isColumnEditable(viewData: ViewRow[], rowIndex: number, columnNa
 export function isSupportWindowClipboardData() {
   return !!(window as WindowWithClipboard).clipboardData;
 }
+
+export function addClipboardSelection(node: ChildNode) {
+  if (!node) {
+    return;
+  }
+
+  const range = document.createRange();
+  const selection = window.getSelection();
+  selection!.removeAllRanges();
+  range.selectNodeContents(node);
+  selection!.addRange(range);
+}

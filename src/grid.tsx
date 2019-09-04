@@ -30,7 +30,7 @@ import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
-import { isSupportWindowClipboardData } from './helper/clipboard';
+import { isSupportWindowClipboardData, addClipboardSelection } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -893,12 +893,14 @@ export default class Grid {
    * Copy to clipboard
    */
   public copyToClipboard() {
-    document.querySelector('.tui-grid-clipboard')!.innerHTML = getText(this.store);
+    const clipboard = document.querySelector('.tui-grid-clipboard')!;
+    clipboard.innerHTML = getText(this.store);
 
-    if (!isSupportWindowClipboardData()) {
-      // Accessing the clipboard is a security concern on chrome
-      document.execCommand('copy');
+    if (isSupportWindowClipboardData()) {
+      addClipboardSelection(clipboard.childNodes[0]);
     }
+    // Accessing the clipboard is a security concern on chrome
+    document.execCommand('copy');
   }
 
   /*

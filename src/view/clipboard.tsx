@@ -7,7 +7,8 @@ import { isEdge, isMobile } from '../helper/browser';
 import {
   convertTableToData,
   convertTextToData,
-  isSupportWindowClipboardData
+  isSupportWindowClipboardData,
+  addClipboardSelection
 } from '../helper/clipboard';
 import { getText } from '../query/clipboard';
 
@@ -85,11 +86,7 @@ class ClipboardComp extends Component<Props> {
         this.el.innerHTML = getText(store);
 
         if (isSupportWindowClipboardData()) {
-          const range = document.createRange();
-          const selection = window.getSelection();
-          selection!.removeAllRanges();
-          range.selectNodeContents(this.el.childNodes[0]);
-          selection!.addRange(range);
+          addClipboardSelection(this.el[0].childNodes[0]);
         }
         break;
       }
