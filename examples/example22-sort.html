@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>22. Sort</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/sort-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: sortData,
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          name: 'alphabetA',
+          header: 'alphabetA(desc)',
+          minWidth: 150,
+          sortable: true,
+          sortingType: 'desc',
+          editor: 'text'
+        },
+        {
+          name: 'alphabetB',
+          header: 'alphabetB(asc)',
+          minWidth: 150,
+          sortable: true,
+          sortingType: 'asc',
+          editor: 'text'
+        },
+        {
+          name: 'alphabetC',
+          header: 'alphabetC(desc)',
+          minWidth: 150,
+          sortable: true,
+          sortingType: 'desc',
+          editor: 'text'
+        },
+        {
+          name: 'numberA',
+          header: 'numberA(asc)',
+          minWidth: 150,
+          sortable: true,
+          sortingType: 'asc',
+          editor: 'text'
+        },
+        {
+          name: 'numberB',
+          header: 'numberB(desc)',
+          minWidth: 150,
+          sortable: true,
+          sortingType: 'desc',
+          editor: 'text'
+        }
+      ]
+    });
+  </script>
+</html>
