@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.5.1 | Mon Sep 02 2019
+ * @version 4.5.2 | Fri Sep 06 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -258,7 +258,7 @@
 .tui-grid-cell-content label + input {
   margin-left: 10px;
 }
-.tui-grid-cell-content select:not('.tui-time-picker-select') {
+.tui-grid-cell-content select:not(.tui-time-picker-select) {
   box-sizing: border-box;
   width: 100%;
 }

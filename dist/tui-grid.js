@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.5.1 | Mon Sep 02 2019
+ * @version 4.5.2 | Fri Sep 06 2019
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -2873,7 +2873,7 @@ function appendRow(store, row, options) {
     var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap;
     var _a = options.at, at = _a === void 0 ? rawData.length : _a;
     var prevRow = rawData[at - 1];
-    var index = Math.max.apply(Math, common_1.mapProp('rowKey', rawData)) + 1;
+    var index = Math.max.apply(Math, [-1].concat(common_1.mapProp('rowKey', rawData))) + 1;
     var rawRow = data_1.createRawRow(row, index, defaultValues);
     var viewRow = data_1.createViewRow(rawRow, allColumnMap, rawData);
     rawData.splice(at, 0, rawRow);
@@ -3386,6 +3386,16 @@ function isSupportWindowClipboardData() {
     return !!window.clipboardData;
 }
 exports.isSupportWindowClipboardData = isSupportWindowClipboardData;
+function setClipboardSelection(node) {
+    if (node) {
+        var range = document.createRange();
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        range.selectNodeContents(node);
+        selection.addRange(range);
+    }
+}
+exports.setClipboardSelection = setClipboardSelection;
 
 
 /***/ }),
@@ -6305,11 +6315,13 @@ var Grid = /** @class */ (function () {
      * Copy to clipboard
      */
     Grid.prototype.copyToClipboard = function () {
-        document.querySelector('.tui-grid-clipboard').innerHTML = clipboard_1.getText(this.store);
-        if (!clipboard_2.isSupportWindowClipboardData()) {
-            // Accessing the clipboard is a security concern on chrome
-            document.execCommand('copy');
+        var clipboard = document.querySelector('.tui-grid-clipboard');
+        clipboard.innerHTML = clipboard_1.getText(this.store);
+        if (clipboard_2.isSupportWindowClipboardData()) {
+            clipboard_2.setClipboardSelection(clipboard.childNodes[0]);
         }
+        // Accessing the clipboard is a security concern on chrome
+        document.execCommand('copy');
     };
     /*
      * Validates all data and returns the result.
@@ -9271,7 +9283,7 @@ var EditingLayerInnerComp = /** @class */ (function (_super) {
         if (editorEl && this.contentEl) {
             this.contentEl.appendChild(editorEl);
             this.editor = cellEditor;
-            var editorWidth = this.editor.el.getBoundingClientRect().width;
+            var editorWidth = editorEl.getBoundingClientRect().width;
             if (editorWidth > width) {
                 var CELL_PADDING_WIDTH = 10;
                 this.contentEl.style.width = editorWidth + CELL_PADDING_WIDTH + "px";
@@ -9447,21 +9459,19 @@ var ClipboardComp = /** @class */ (function (_super) {
                  * Call directly because of timing issues
                  * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
                  * - Step 2: When 'clipboard' event is fired,
-                 *           IE browsers set copied data to window.clipboardData in event handler and
-                 *           other browsers append copied data and focus to contenteditable element.
-                 * - Step 3: Finally, when 'copy' event is fired on browsers except IE,
-                 *           setting copied data to ClipboardEvent.clipboardData.
+                 *           all browsers append copied data and focus to contenteditable element and
+                 *           IE browsers set selection for triggering 'copy' event.
+                 * - Step 3: Finally, when 'copy' event is fired on browsers,
+                 *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
                  */
                 case 'clipboard': {
                     if (!_this.el) {
                         return;
                     }
                     var store = _this.context.store;
+                    _this.el.innerHTML = clipboard_2.getText(store);
                     if (clipboard_1.isSupportWindowClipboardData()) {
-                        window.clipboardData.setData('Text', clipboard_2.getText(store));
-                    }
-                    else {
-                        _this.el.innerHTML = clipboard_2.getText(store);
+                        clipboard_1.setClipboardSelection(_this.el[0].childNodes[0]);
                     }
                     break;
                 }
