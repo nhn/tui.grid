@@ -18,7 +18,6 @@ import 'tui-pagination/dist/tui-pagination.css';
 const grid = new Grid({
   // options...
   pageOptions: { perPage: 10 }
-  ]
 });
 ```
 
