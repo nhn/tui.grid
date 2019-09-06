@@ -152,7 +152,7 @@ export function isSupportWindowClipboardData() {
   return !!(window as WindowWithClipboard).clipboardData;
 }
 
-export function addClipboardSelection(node: ChildNode) {
+export function setClipboardSelection(node: ChildNode) {
   if (node) {
     const range = document.createRange();
     const selection = window.getSelection();

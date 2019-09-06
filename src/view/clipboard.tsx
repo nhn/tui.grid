@@ -8,7 +8,7 @@ import {
   convertTableToData,
   convertTextToData,
   isSupportWindowClipboardData,
-  addClipboardSelection
+  setClipboardSelection
 } from '../helper/clipboard';
 import { getText } from '../query/clipboard';
 
@@ -86,7 +86,7 @@ class ClipboardComp extends Component<Props> {
         this.el.innerHTML = getText(store);
 
         if (isSupportWindowClipboardData()) {
-          addClipboardSelection(this.el[0].childNodes[0]);
+          setClipboardSelection(this.el[0].childNodes[0]);
         }
         break;
       }

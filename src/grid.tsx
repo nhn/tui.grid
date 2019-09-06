@@ -30,7 +30,7 @@ import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
-import { isSupportWindowClipboardData, addClipboardSelection } from './helper/clipboard';
+import { isSupportWindowClipboardData, setClipboardSelection } from './helper/clipboard';
 import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -897,7 +897,7 @@ export default class Grid {
     clipboard.innerHTML = getText(this.store);
 
     if (isSupportWindowClipboardData()) {
-      addClipboardSelection(clipboard.childNodes[0]);
+      setClipboardSelection(clipboard.childNodes[0]);
     }
     // Accessing the clipboard is a security concern on chrome
     document.execCommand('copy');
