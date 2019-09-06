@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Aug 19 2019 10:47:42 GMT+0900 (GMT+09:00)"
- * version: 3.9.1
+ * bundle created at "Fri Sep 06 2019 11:19:30 GMT+0900 (GMT+09:00)"
+ * version: 3.9.2
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1148,10 +1148,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    copyToClipboard: function() {
 	        this.modelManager.clipboardModel.setClipboardText();
-
-	        if (!window.clipboardData) { // Accessing the clipboard is a security concern on chrome
-	            document.execCommand('copy');
-	        }
+	        // Accessing the clipboard is a security concern on chrome
+	        document.execCommand('copy');
 	    },
 
 	    /**
@@ -20873,6 +20871,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return value.replace(LF, CUSTOM_LF_SUBCHAR)
 	                .replace(CR, CUSTOM_CR_SUBCHAR);
 	        });
+	    },
+
+	    /**
+	     * Set selection to clipboard text for triggering 'copy' event in IE browser.
+	     * @param {HTMLElement} el - selection target element
+	     */
+	    setClipboardSelection: function(el) {
+	        var range, selection, childNode;
+
+	        if (document.createRange) {
+	            childNode = el.childNodes[0];
+	            if (childNode) {
+	                range = document.createRange();
+	                selection = window.getSelection();
+	                selection.removeAllRanges();
+	                range.selectNodeContents(childNode);
+	                selection.addRange(range);
+	            }
+	        } else { // for IE8
+	            range = document.selection.createRange();
+	            range.moveToElementText(el);
+	            range.select();
+	        }
 	    }
 	};
 
@@ -26639,6 +26660,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var focused = this.focusModel.which();
 	        var text;
 
+	        if (focused.rowKey === null || focused.columnName === null) {
+	            return '';
+	        }
+
 	        if (selectionModel.hasSelection()) {
 	            text = selectionModel.getValuesToString();
 	        } else {
@@ -27078,11 +27103,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * drag 이벤트 발생시 이벤트 핸들러
+	     * @param {jQueryEvent} ev - Event object
 	     * @returns {boolean} false
 	     * @private
 	     */
-	    _preventDrag: function() {
-	        return false;
+	    _preventDrag: function(ev) {
+	        return ev.target.className.indexOf(classNameConst.CLIPBOARD) !== -1;
 	    },
 
 	    /**
@@ -27646,7 +27672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Event handler for 'mousemove' event on document
-	     * @param {MouseEvent} ev - MouseEvent
+	     * @param {jQueryEvent} ev - Event object
 	     * @private
 	     */
 	    _onMouseMove: function(ev) {
@@ -27654,7 +27680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        // Prevent 'dragmove' from occuring when mouse button is not pressed.
 	        // This can happen when the alert dialog pops up from the the 'blur/mousedown' event handler.
-	        if (!ev.buttons) {
+	        if (!ev.which) {
 	            this._endDrag();
 
 	            return;
@@ -28101,10 +28127,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * - Step 1: When the keys(ctrl+c) are downed on grid, 'key:clipboard' is triggered.
 	     * - Step 2: To listen 'change:text event on the clipboard model.
 	     * - Step 3: When 'change:text' event is fired,
-	     *           IE browsers set copied data to window.clipboardData in event handler and
-	     *           other browsers append copied data and focus to contenteditable element.
-	     * - Step 4: Finally, when 'copy' event is fired on browsers except IE,
-	     *           setting copied data to ClipboardEvent.clipboardData.
+	     *           all browsers append copied data and focus to contenteditable element and
+	     *           IE browsers set selection for triggering 'copy' event.
+	     * - Step 4: Finally, when 'copy' event is fired on browsers,
+	     *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
 	     * @param {jQueryEvent} ev - Event object
 	     * @private
 	     */
@@ -28113,6 +28139,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (!supportWindowClipboardData) {
 	            (ev.originalEvent || ev).clipboardData.setData('text/plain', text);
+	        } else {
+	            window.clipboardData.setData('Text', text);
 	        }
 
 	        ev.preventDefault();
@@ -28163,11 +28191,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _onClipboardTextChange: function() {
 	        var text = this.clipboardModel.get('text');
+	        this.$el.html(text).focus();
 
 	        if (supportWindowClipboardData) {
-	            window.clipboardData.setData('Text', text);
-	        } else {
-	            this.$el.html(text).focus();
+	            clipboardUtil.setClipboardSelection(this.$el[0]);
 	        }
 	    },
 
@@ -28256,6 +28283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Clipboard.KEYDOWN_LOCK_TIME = KEYDOWN_LOCK_TIME;
 
 	module.exports = Clipboard;
+
 
 
 /***/ }),
