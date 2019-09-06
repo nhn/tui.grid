@@ -81,7 +81,7 @@ export class EditingLayerInnerComp extends Component<Props> {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
 
-      const editorWidth = (this.editor.el as HTMLElement).getBoundingClientRect().width;
+      const editorWidth = editorEl.getBoundingClientRect().width;
 
       if (editorWidth > width!) {
         const CELL_PADDING_WIDTH = 10;
