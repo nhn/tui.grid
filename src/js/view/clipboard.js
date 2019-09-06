@@ -132,10 +132,10 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      * - Step 1: When the keys(ctrl+c) are downed on grid, 'key:clipboard' is triggered.
      * - Step 2: To listen 'change:text event on the clipboard model.
      * - Step 3: When 'change:text' event is fired,
-     *           IE browsers set copied data to window.clipboardData in event handler and
-     *           other browsers append copied data and focus to contenteditable element.
-     * - Step 4: Finally, when 'copy' event is fired on browsers except IE,
-     *           setting copied data to ClipboardEvent.clipboardData.
+     *           all browsers append copied data and focus to contenteditable element and
+     *           IE browsers set selection for triggering 'copy' event.
+     * - Step 4: Finally, when 'copy' event is fired on browsers,
+     *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
      * @param {jQueryEvent} ev - Event object
      * @private
      */
@@ -144,6 +144,8 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
 
         if (!supportWindowClipboardData) {
             (ev.originalEvent || ev).clipboardData.setData('text/plain', text);
+        } else {
+            window.clipboardData.setData('Text', text);
         }
 
         ev.preventDefault();
@@ -194,11 +196,10 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      */
     _onClipboardTextChange: function() {
         var text = this.clipboardModel.get('text');
+        this.$el.html(text).focus();
 
         if (supportWindowClipboardData) {
-            window.clipboardData.setData('Text', text);
-        } else {
-            this.$el.html(text).focus();
+            clipboardUtil.setClipboardSelection(this.$el[0]);
         }
     },
 
@@ -287,3 +288,4 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
 Clipboard.KEYDOWN_LOCK_TIME = KEYDOWN_LOCK_TIME;
 
 module.exports = Clipboard;
+

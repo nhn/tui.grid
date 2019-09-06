@@ -82,7 +82,7 @@ var DragEventEmitter = snippet.defineClass(/** @lends module:event/dragEventEmit
 
     /**
      * Event handler for 'mousemove' event on document
-     * @param {MouseEvent} ev - MouseEvent
+     * @param {jQueryEvent} ev - Event object
      * @private
      */
     _onMouseMove: function(ev) {
@@ -90,7 +90,7 @@ var DragEventEmitter = snippet.defineClass(/** @lends module:event/dragEventEmit
 
         // Prevent 'dragmove' from occuring when mouse button is not pressed.
         // This can happen when the alert dialog pops up from the the 'blur/mousedown' event handler.
-        if (!ev.buttons) {
+        if (!ev.which) {
             this._endDrag();
 
             return;
