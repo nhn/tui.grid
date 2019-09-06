@@ -133,7 +133,7 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
      * - Step 2: To listen 'change:text event on the clipboard model.
      * - Step 3: When 'change:text' event is fired,
      *           all browsers append copied data and focus to contenteditable element and
-     *           IE browsers set selection for trggering 'copy' event.
+     *           IE browsers set selection for triggering 'copy' event.
      * - Step 4: Finally, when 'copy' event is fired on browsers,
      *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
      * @param {jQueryEvent} ev - Event object
@@ -199,7 +199,7 @@ Clipboard = View.extend(/** @lends module:view/clipboard.prototype */{
         this.$el.html(text).focus();
 
         if (supportWindowClipboardData) {
-            clipboardUtil.addClipboardSelection(this.$el[0]);
+            clipboardUtil.setClipboardSelection(this.$el[0]);
         }
     },
 

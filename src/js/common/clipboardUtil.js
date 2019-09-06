@@ -145,7 +145,11 @@ clipboardUtil = {
         });
     },
 
-    addClipboardSelection: function(el) {
+    /**
+     * Set selection to clipboard text for triggering 'copy' event in IE browser.
+     * @param {HTMLElement} el - selection target element
+     */
+    setClipboardSelection: function(el) {
         var range, selection, childNode;
 
         if (document.createRange) {
@@ -157,8 +161,7 @@ clipboardUtil = {
                 range.selectNodeContents(childNode);
                 selection.addRange(range);
             }
-        // for IE8
-        } else {
+        } else { // for IE8
             range = document.selection.createRange();
             range.moveToElementText(el);
             range.select();
