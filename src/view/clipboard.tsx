@@ -74,7 +74,7 @@ class ClipboardComp extends Component<Props> {
        * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
        * - Step 2: When 'clipboard' event is fired,
        *           all browsers append copied data and focus to contenteditable element and
-       *           IE browsers set selection for trggering 'copy' event.
+       *           IE browsers set selection for triggering 'copy' event.
        * - Step 3: Finally, when 'copy' event is fired on browsers,
        *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
        */
