@@ -7,7 +7,8 @@ import { isEdge, isMobile } from '../helper/browser';
 import {
   convertTableToData,
   convertTextToData,
-  isSupportWindowClipboardData
+  isSupportWindowClipboardData,
+  setClipboardSelection
 } from '../helper/clipboard';
 import { getText } from '../query/clipboard';
 
@@ -72,20 +73,20 @@ class ClipboardComp extends Component<Props> {
        * Call directly because of timing issues
        * - Step 1: When the keys(ctrl+c) are downed on grid, 'clipboard' is triggered.
        * - Step 2: When 'clipboard' event is fired,
-       *           IE browsers set copied data to window.clipboardData in event handler and
-       *           other browsers append copied data and focus to contenteditable element.
-       * - Step 3: Finally, when 'copy' event is fired on browsers except IE,
-       *           setting copied data to ClipboardEvent.clipboardData.
+       *           all browsers append copied data and focus to contenteditable element and
+       *           IE browsers set selection for triggering 'copy' event.
+       * - Step 3: Finally, when 'copy' event is fired on browsers,
+       *           setting copied data to ClipboardEvent.clipboardData or window.clipboardData(IE).
        */
       case 'clipboard': {
         if (!this.el) {
           return;
         }
         const { store } = this.context;
+        this.el.innerHTML = getText(store);
+
         if (isSupportWindowClipboardData()) {
-          (window as WindowWithClipboard).clipboardData!.setData('Text', getText(store));
-        } else {
-          this.el.innerHTML = getText(store);
+          setClipboardSelection(this.el[0].childNodes[0]);
         }
         break;
       }
