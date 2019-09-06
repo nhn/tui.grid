@@ -143,6 +143,29 @@ clipboardUtil = {
             return value.replace(LF, CUSTOM_LF_SUBCHAR)
                 .replace(CR, CUSTOM_CR_SUBCHAR);
         });
+    },
+
+    /**
+     * Set selection to clipboard text for triggering 'copy' event in IE browser.
+     * @param {HTMLElement} el - selection target element
+     */
+    setClipboardSelection: function(el) {
+        var range, selection, childNode;
+
+        if (document.createRange) {
+            childNode = el.childNodes[0];
+            if (childNode) {
+                range = document.createRange();
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                range.selectNodeContents(childNode);
+                selection.addRange(range);
+            }
+        } else { // for IE8
+            range = document.selection.createRange();
+            range.moveToElementText(el);
+            range.select();
+        }
     }
 };
 

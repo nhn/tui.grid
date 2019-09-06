@@ -130,6 +130,10 @@ var Clipboard = Model.extend(/** @lends module:model/clipboard.prototype*/{
         var focused = this.focusModel.which();
         var text;
 
+        if (focused.rowKey === null || focused.columnName === null) {
+            return '';
+        }
+
         if (selectionModel.hasSelection()) {
             text = selectionModel.getValuesToString();
         } else {

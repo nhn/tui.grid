@@ -1068,10 +1068,8 @@ var Grid = View.extend(/** @lends Grid.prototype */{
      */
     copyToClipboard: function() {
         this.modelManager.clipboardModel.setClipboardText();
-
-        if (!window.clipboardData) { // Accessing the clipboard is a security concern on chrome
-            document.execCommand('copy');
-        }
+        // Accessing the clipboard is a security concern on chrome
+        document.execCommand('copy');
     },
 
     /**

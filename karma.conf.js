@@ -44,6 +44,7 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
+                platformName: 'windows',
                 version: '11'
             },
             'Edge': {
