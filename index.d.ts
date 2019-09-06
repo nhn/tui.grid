@@ -528,7 +528,7 @@ declare namespace tuiGrid {
     header?: IHeader;
     usageStatistics?: boolean;
     onGridMounted?: Function;
-    onGridBeforeDestroyed?: Function;
+    onGridBeforeDestroy?: Function;
   }
 
   class Pagination {
