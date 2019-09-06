@@ -14,11 +14,12 @@
     "storybook:build": "build-storybook",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015",
     "doc:dev": "npm run ts2js && tuidoc --dev",
-    "doc": "npm run ts2js && tuidoc"
+    "doc": "npm run ts2js && tuidoc",
+    "tuie": "tuie"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhn/tui.grid"
+    "url": "https://github.com/nhn/tui.grid.git"
   },
   "keywords": [
     "nhn",
@@ -59,6 +60,7 @@
     "start-server-and-test": "^1.10.0",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.3",
+    "tui-release-notes": "git+https://github.com/nhnent/tui.release-notes.git",
     "typescript": "^3.4.5",
     "utility-types": "^3.4.1",
     "webpack": "^4.29.6",
