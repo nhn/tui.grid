@@ -1,4 +1,4 @@
-# 정렬 
+# 정렬 🗂
 
 TOAST UI Grid에서는 옵션을 사용하여 컬럼 별로 정렬 기능을 사용할 수 있다. 정렬 옵션을 지정한 컬럼은 헤더 영역에 정렬 버튼이 활성화되며, 버튼을 클릭하여 데이터를 정렬할 수 있다.
 
@@ -70,8 +70,12 @@ const grid = new Grid({
 
 ![image](https://user-images.githubusercontent.com/37766175/64320470-954a6d80-cff9-11e9-977b-9cb1421b0a7c.gif)
 
-## dataSource 연동
-Grid의 `dataSource`를 이용하여 원격 데이터를 사용하는 경우, 정렬 기능을 사용하기 위해 아래와 같이 `useClientSort` 옵션 설정이 필요하다. 
+### 참조
+
+다중 컬럼 정렬은 `v4.2.0` 이상부터 사용할 수 있는 기능이다.
+
+## 데이터 소스 연동
+Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/docs/ko/data-source.md)를 이용하여 원격 데이터를 사용하는 경우, 정렬 기능을 사용하기 위해 아래와 같이 `useClientSort` 옵션 설정이 필요하다. 
 
 ```js
 const grid = new Grid({
@@ -91,18 +95,18 @@ const grid = new Grid({
     }
     // more columns...
   ],
-  useClientSort: true
+  useClientSort: false
 });
 ```
 
 ### 참조
 
-현재 `dataSource`에서는 단일 컬럼 정렬 기준으로만 연동이 가능하다. 다중 컬럼 정렬 연동은 이후 추가 지원될 계획이나, 현재는 지원되지 않는 상태이다.
+현재 `데이터 소스`에서는 단일 컬럼 정렬 기준으로만 연동이 가능하다. 다중 컬럼 정렬 연동은 이후 추가 지원될 계획이나, 현재는 지원되지 않는 상태이다.
 
 
 ## 정렬 API 사용하기
 
-트리 컬럼이 활성화된 경우, 다음과 같이 트리와 관련된 메서드를 호출할 수 있다.
+다음과 같이 정렬과 관련된 메서드를 호출할 수 있다.
 
 | 이름 | 설명 |
 | --- | --- |
