@@ -20,6 +20,8 @@
 - [🖖 로우 스팬](./row-span.md)
 - [✔️ Validation](./validation.md)
 - [📐 넓이, 높이 설정](./setting-width-height.md)
+- [🗂 정렬](./sort.md)
+- [📖 페이지네이션](./pagination.md)
 
 ### 마이그레이션 가이드
 - [️️✈️ v4.0 마이그레이션 가이드](../v4.0-migration-guide-kor.md)
