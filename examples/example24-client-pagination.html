@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>22. Sort</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.css" />
+    <style>
+    .btn-wrapper {
+      margin-bottom: 10px;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="code-html contents">
+      <div class="btn-wrapper">
+        <button id="appendBtn">appendBtn</button>
+        <button id="prependBtn">prependBtn</button>
+      </div>
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+	<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/grid-row-2000.js"></script>
+  <script type="text/javascript" class="code-js">
+    const columns = [
+      { name: 'deliveryType', sortable: true, sortingType: 'desc' },
+      { name: 'productOrderNo', sortable: true, sortingType: 'asc' },
+      { name: 'orderName', editor: 'text' },
+      { name: 'orderId', editor: 'text' },
+      { name: 'addressee' },
+      { name: 'payState' },
+      { name: 'payType' },
+      { name: 'date' },
+      { name: 'productPrice' },
+      { name: 'deliveryState' },
+      { name: 'deliveryCompany' },
+      { name: 'deliveryPeeType' },
+      { name: 'deliveryNo' }
+    ];
+    const data = dummyRowList.slice(0, 100);
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data,
+      columns,
+      rowHeaders: ['rowNum'],
+      columnOptions: {
+        frozenCount: 2,
+        minWidth: 150
+      },
+      pageOptions: {
+        useClient: true,
+        perPage: 10
+      }
+    });
+
+    const appendBtn = document.getElementById('appendBtn');
+    const prependBtn = document.getElementById('prependBtn');
+
+    const appendedData = {
+      deliveryType: '-',
+      productOrderNo: 0,
+      orderName: '조세호',
+      orderId: '-',
+      addressee: '조세호',
+      payState: '-',
+      payType: '-',
+      date: '-',
+      productPrice: 0,
+      deliveryState: '-',
+      deliveryCompany: '-',
+      deliveryPeeType: '-',
+      deliveryNo: 0
+    };
+
+    appendBtn.addEventListener('click', () => {
+      grid.appendRow(appendedData);
+    });
+
+    prependBtn.addEventListener('click', () => {
+      grid.prependRow(appendedData);
+    });
+  </script>
+</html>
