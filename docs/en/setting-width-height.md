@@ -304,4 +304,4 @@ const grid = new Grid({
 
 ## Examples
 
-For more examples of configuring Width and Height, check [here](http://nhn.github.io/tui.grid/latest/tutorial-example23-setting-width-height).
+For more examples of configuring Width and Height, check [here](http://nhn.github.io/tui.grid/latest/tutorial-example22-setting-width-height).
