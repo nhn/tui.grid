@@ -306,7 +306,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const prevRow = rawData[at - 1];
 
-  const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
+  const index = Math.max(...(mapProp('rowKey', rawData) as number[])) + 1;
   const rawRow = createRawRow(row, index, defaultValues);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
 
@@ -552,15 +552,20 @@ function createOriginData(data: Data, rowRange: Range) {
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
-
   const originData = createOriginData(data, rowRange);
 
   if (!originData.rows.length) {
     return;
   }
+  if (column.treeColumnName && originData.rows.every(row => row._attributes.tree!.hidden)) {
+    return;
+  }
 
   if (column.treeColumnName) {
-    changeToObservableTreeData(column, data, originData, id);
+    const result = changeToObservableTreeData(column, data, originData, id);
+    if (!result) {
+      return;
+    }
   } else {
     changeToObservableData(column, data, originData);
   }
@@ -595,7 +600,10 @@ function changeToObservableTreeData(
   if (rootParentRow !== rows[0]) {
     rows.unshift(rootParentRow);
   }
-
+  rows = rows.filter(row => !isObservable(row));
+  if (!rows.length) {
+    return false;
+  }
   const { rawData, viewData } = createData(rows, column);
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
@@ -607,4 +615,6 @@ function changeToObservableTreeData(
       data.viewData[foundIndex] = viewData[index];
     }
   }
+
+  return true;
 }

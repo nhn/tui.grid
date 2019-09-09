@@ -1,8 +1,9 @@
 import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
-import { observable, observe, notify } from './observable';
+import { observable, observe, notify, isObservable } from './observable';
 import { includes, findProp, removeArrayItem, isNull, isUndefined } from './common';
+import { findRowByRowKey } from 'src/query/data';
 
 interface TreeDataOptions {
   keyColumnName?: string;
@@ -94,7 +95,7 @@ export function getDepth(rawData: Row[], row?: Row) {
   return depth;
 }
 
-function createTreeRawRow(
+export function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
@@ -110,9 +111,13 @@ function createTreeRawRow(
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
-    childRowKeys: [],
+    childRowKeys: [] as RowKey[],
     hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false
   };
+
+  if (!lazyObservable && row._children) {
+    defaultAttributes.childRowKeys = row._children.map(child => child.rowKey as RowKey);
+  }
 
   if (parentRow) {
     if (!isUndefined(offset)) {
@@ -142,12 +147,15 @@ export function flattenTreeData(
 
   data.forEach(row => {
     const rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
-
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
-        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
+        const options2 = {
+          ...options,
+          lazyObservable: !(row._attributes && row._attributes.expanded)
+        };
+        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options2));
       }
     }
   });
