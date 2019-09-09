@@ -304,4 +304,4 @@ const grid = new Grid({
 
 ## 예제
 
-넓이, 높이 설정 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example23-setting-width-height)서 확인해 볼 수 있다.
+넓이, 높이 설정 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example22-setting-width-height)서 확인해 볼 수 있다.

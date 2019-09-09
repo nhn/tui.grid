@@ -127,4 +127,4 @@ grid.getSortState();
 
 ## 예제
 
-정렬 기능 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example22-sort)서 확인해 볼 수 있다.
+정렬 기능 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example19-sort)서 확인해 볼 수 있다.

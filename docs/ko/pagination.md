@@ -68,4 +68,4 @@ grid.setPerPage(10);
 
 ## 예제
 
-클라이언트 페이지네이션 기능 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example24-client-pagination)서, 데이터 소스 연동 페이지네이션 기능 예제는 [여기](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source)서 확인해 볼 수 있다.
+클라이언트 페이지네이션 기능 예제는 [여기](http://nhn.github.io/tui.grid/latest/tutorial-example23-client-pagination)서, 데이터 소스 연동 페이지네이션 기능 예제는 [여기](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source)서 확인해 볼 수 있다.
