@@ -229,6 +229,8 @@ if ((module as any).hot) {
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
  *          If you do not want to send the hostname, this option set to false.
+ *      @param {function} [options.onGridMounted] - The function that will be called after rendering the grid.
+ *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
 export default class Grid {
   private el: HTMLElement;
@@ -250,7 +252,7 @@ export default class Grid {
   public usageStatistics: boolean;
 
   public constructor(options: OptGrid) {
-    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroyed } = options;
+    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroy } = options;
     const id = register(this);
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
@@ -289,7 +291,7 @@ export default class Grid {
         cellHeightMap={cellHeightMap}
         rootElement={el}
         onGridMounted={onGridMounted}
-        onGridBeforeDestroyed={onGridBeforeDestroyed}
+        onGridBeforeDestroy={onGridBeforeDestroy}
       />,
       el
     );
