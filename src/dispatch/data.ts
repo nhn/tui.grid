@@ -40,7 +40,7 @@ import {
 import { getRenderState } from '../helper/renderState';
 import { changeFocus, initFocus } from './focus';
 import { sort } from './sort';
-import { getRootParentRow, getParentRowKey, createTreeRawRow } from '../helper/tree';
+import { createTreeRawRow } from '../helper/tree';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -539,10 +539,10 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 
   return data.rawData.slice(start, end).reduce(
     (acc: OriginData, row, index) => {
+      if (treeColumnName && row._attributes.tree!.hidden) {
+        return acc;
+      }
       if (!isObservable(row)) {
-        if (treeColumnName && row._attributes.tree!.hidden) {
-          return acc;
-        }
         acc.rows.push(row);
         acc.targetIndexes.push(index + start);
       }
@@ -554,16 +554,14 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
-  const originData = createOriginData(data, rowRange, column.treeColumnName);
+  const { treeColumnName } = column;
+  const originData = createOriginData(data, rowRange, treeColumnName);
 
   if (!originData.rows.length) {
     return;
   }
-  if (column.treeColumnName && originData.rows.every(row => row._attributes.tree!.hidden)) {
-    return;
-  }
 
-  if (column.treeColumnName) {
+  if (treeColumnName) {
     changeToObservableTreeData(column, data, originData, id);
   } else {
     changeToObservableData(column, data, originData);
@@ -598,27 +596,28 @@ function changeToObservableTreeData(
   if (!rows.length) {
     return;
   }
+
+  // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
-  const gridData = rows.map(row => {
+
+  const { rawData, viewData } = data;
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const observableRows = rows.map(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
     const rawRow = createTreeRawRow(row, column.defaultValues, parentRow || null);
-    const viewRow = createViewRow(
-      row,
-      column.allColumnMap,
-      data.rawData,
-      column.treeColumnName,
-      column.treeIcon
-    );
+    const viewRow = createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
+
     return { rawRow, viewRow };
   });
 
-  for (let index = 0, end = gridData.length; index < end; index += 1) {
-    const foundIndex = findIndexByRowKey(data, column, id, gridData[index].rawRow.rowKey);
-    const rawRow = data.rawData[foundIndex];
+  for (let index = 0, end = observableRows.length; index < end; index += 1) {
+    const { rawRow, viewRow } = observableRows[index];
+    const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
+    const existingRow = rawData[foundIndex];
 
-    if (rawRow && !isObservable(rawRow)) {
-      data.rawData[foundIndex] = gridData[index].rawRow;
-      data.viewData[foundIndex] = gridData[index].viewRow;
+    if (existingRow && !isObservable(existingRow)) {
+      rawData[foundIndex] = rawRow;
+      viewData[foundIndex] = viewRow;
     }
   }
 }
