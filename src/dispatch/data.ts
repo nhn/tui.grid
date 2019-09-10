@@ -20,12 +20,11 @@ import {
   removeArrayItem,
   includes,
   isEmpty,
-  someProp,
-  isNull
+  someProp
 } from '../helper/common';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
-import { createRawRow, createViewRow, createData } from '../store/data';
+import { createRawRow, createViewRow, createData, generateDataCreationKey } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
 import { getRowHeight } from '../store/rowCoords';
 import { changeSelectionRange } from './selection';
@@ -41,7 +40,7 @@ import {
 import { getRenderState } from '../helper/renderState';
 import { changeFocus, initFocus } from './focus';
 import { sort } from './sort';
-import { getRootParentRow, getParentRowKey } from '../helper/tree';
+import { getRootParentRow, getParentRowKey, createTreeRawRow } from '../helper/tree';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -535,12 +534,15 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   notify(column, 'allColumns');
 }
 
-function createOriginData(data: Data, rowRange: Range) {
+function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
   return data.rawData.slice(start, end).reduce(
     (acc: OriginData, row, index) => {
       if (!isObservable(row)) {
+        if (treeColumnName && row._attributes.tree!.hidden) {
+          return acc;
+        }
         acc.rows.push(row);
         acc.targetIndexes.push(index + start);
       }
@@ -552,7 +554,7 @@ function createOriginData(data: Data, rowRange: Range) {
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
-  const originData = createOriginData(data, rowRange);
+  const originData = createOriginData(data, rowRange, column.treeColumnName);
 
   if (!originData.rows.length) {
     return;
@@ -562,10 +564,7 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 
   if (column.treeColumnName) {
-    const result = changeToObservableTreeData(column, data, originData, id);
-    if (!result) {
-      return;
-    }
+    changeToObservableTreeData(column, data, originData, id);
   } else {
     changeToObservableData(column, data, originData);
   }
@@ -594,27 +593,32 @@ function changeToObservableTreeData(
   id: number
 ) {
   let { rows } = originData;
-  const rootParentRow = getRootParentRow(data.rawData, rows[0]);
-  rows = rows.filter(row => !row._attributes.tree || isNull(getParentRowKey(row)));
-
-  if (rootParentRow !== rows[0]) {
-    rows.unshift(rootParentRow);
-  }
   rows = rows.filter(row => !isObservable(row));
-  if (!rows.length) {
-    return false;
-  }
-  const { rawData, viewData } = createData(rows, column);
 
-  for (let index = 0, end = rawData.length; index < end; index += 1) {
-    const foundIndex = findIndexByRowKey(data, column, id, rawData[index].rowKey);
+  if (!rows.length) {
+    return;
+  }
+  generateDataCreationKey();
+  const gridData = rows.map(row => {
+    const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
+    const rawRow = createTreeRawRow(row, column.defaultValues, parentRow || null);
+    const viewRow = createViewRow(
+      row,
+      column.allColumnMap,
+      data.rawData,
+      column.treeColumnName,
+      column.treeIcon
+    );
+    return { rawRow, viewRow };
+  });
+
+  for (let index = 0, end = gridData.length; index < end; index += 1) {
+    const foundIndex = findIndexByRowKey(data, column, id, gridData[index].rawRow.rowKey);
     const rawRow = data.rawData[foundIndex];
 
     if (rawRow && !isObservable(rawRow)) {
-      data.rawData[foundIndex] = rawData[index];
-      data.viewData[foundIndex] = viewData[index];
+      data.rawData[foundIndex] = gridData[index].rawRow;
+      data.viewData[foundIndex] = gridData[index].viewRow;
     }
   }
-
-  return true;
 }

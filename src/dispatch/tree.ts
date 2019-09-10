@@ -3,7 +3,7 @@ import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
 import { getRowHeight } from '../store/rowCoords';
 import { isUndefined } from '../helper/common';
-import { notify, isObservable } from '../helper/observable';
+import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
 import { isUpdatableRowAttr } from '../dispatch/data';
 import { getParentRow, getDescendantRows } from '../query/tree';
@@ -15,8 +15,7 @@ import {
   removeChildRowKey,
   isLeaf,
   isExpanded,
-  isRootChildRow,
-  createTreeRawRow
+  isRootChildRow
 } from '../helper/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -49,25 +48,9 @@ export function removeExpandedAttr(row: Row) {
 }
 
 function expand(store: Store, row: Row, recursive?: boolean) {
-  const [s, e] = store.viewport.rowRange;
   const { rowKey } = row;
   const eventBus = getEventBus(store.id);
   const gridEvent = new GridEvent({ rowKey });
-  const { data, rowCoords, dimension, column, id } = store;
-
-  const index = findIndexByRowKey(data, column, id, rowKey);
-  if (!isObservable(row) && index >= s && index <= e) {
-    row = createTreeRawRow(row, column.defaultValues, row);
-    const viewRow = createViewRow(
-      row,
-      column.allColumnMap,
-      data.rawData,
-      column.treeColumnName,
-      column.treeIcon
-    );
-    data.rawData[index] = row;
-    data.viewData[index] = viewRow;
-  }
 
   /**
    * Occurs when the row having child rows is expanded
@@ -82,30 +65,18 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
+  const { data, rowCoords, dimension, column, id, viewport } = store;
   const { heights } = rowCoords;
+
   changeExpandedAttr(row, true);
 
   const childRowKeys = getChildRowKeys(row);
 
   childRowKeys.forEach(childRowKey => {
-    let childRow = findRowByRowKey(data, column, id, childRowKey);
-    const childRowIndex = findIndexByRowKey(data, column, id, childRowKey);
+    const childRow = findRowByRowKey(data, column, id, childRowKey);
 
     if (!childRow) {
       return;
-    }
-
-    if (!isObservable(childRow) && childRowIndex >= s && childRowIndex <= e) {
-      childRow = createTreeRawRow(childRow, column.defaultValues, row);
-      const viewRow = createViewRow(
-        childRow,
-        column.allColumnMap,
-        data.rawData,
-        column.treeColumnName,
-        column.treeIcon
-      );
-      data.rawData[childRowIndex] = childRow;
-      data.viewData[childRowIndex] = viewRow;
     }
 
     changeHiddenAttr(childRow, false);
@@ -113,12 +84,12 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     if (!isLeaf(childRow) && (isExpanded(childRow) || recursive)) {
       expand(store, childRow, recursive);
     }
-    // const index = findIndexByRowKey(data, column, id, childRowKey);
-    heights[childRowIndex] = getRowHeight(childRow, dimension.rowHeight);
+
+    const index = findIndexByRowKey(data, column, id, childRowKey);
+    heights[index] = getRowHeight(childRow, dimension.rowHeight);
   });
-  notify(data, 'rawData');
-  notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  notify(viewport, 'rowRange');
 }
 
 export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {

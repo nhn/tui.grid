@@ -1,9 +1,8 @@
 import { Row, ColumnDefaultValues, RowKey } from '../store/types';
 import { createRawRow } from '../store/data';
 import { OptRow } from '../types';
-import { observable, observe, notify, isObservable } from './observable';
+import { observable, observe, notify, getOriginObject, Observable } from './observable';
 import { includes, findProp, removeArrayItem, isNull, isUndefined } from './common';
-import { findRowByRowKey } from 'src/query/data';
 
 interface TreeDataOptions {
   keyColumnName?: string;
@@ -22,19 +21,21 @@ function generateTreeRowKey() {
   return treeRowKey;
 }
 
-function addChildRowKey(row: Row, rowKey: RowKey) {
+function addChildRowKey(row: Row, childRow: Row) {
   const { tree } = row._attributes;
+  const { rowKey: childRowKey } = childRow;
 
-  if (tree && !includes(tree.childRowKeys, rowKey)) {
-    tree.childRowKeys.push(rowKey);
+  if (tree && !includes(tree.childRowKeys, childRowKey)) {
+    tree.childRowKeys.push(childRowKey);
   }
 }
 
-function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
+function insertChildRowKey(row: Row, childRow: Row, offset: number) {
   const { tree } = row._attributes;
+  const { rowKey: childRowKey } = childRow;
 
-  if (tree && !includes(tree.childRowKeys, rowKey)) {
-    tree.childRowKeys.splice(offset, 0, rowKey);
+  if (tree && !includes(tree.childRowKeys, childRowKey)) {
+    tree.childRowKeys.splice(offset, 0, childRowKey);
   }
 }
 
@@ -101,6 +102,10 @@ export function createTreeRawRow(
   parentRow: Row | null,
   options = { lazyObservable: false } as TreeDataOptions
 ) {
+  let childRowKeys = [] as RowKey[];
+  if (row._attributes && row._attributes.tree) {
+    childRowKeys = row._attributes.tree.childRowKeys as RowKey[];
+  }
   const { keyColumnName, offset, lazyObservable = false } = options;
   // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
@@ -108,28 +113,26 @@ export function createTreeRawRow(
     keyColumnName,
     lazyObservable
   });
-  const { rowKey } = rawRow;
+
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
-    childRowKeys: [] as RowKey[],
+    childRowKeys,
     hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false
   };
 
-  if (!lazyObservable && row._children) {
-    defaultAttributes.childRowKeys = row._children.map(child => child.rowKey as RowKey);
-  }
-
   if (parentRow) {
     if (!isUndefined(offset)) {
-      insertChildRowKey(parentRow, rowKey, offset);
+      insertChildRowKey(parentRow, rawRow, offset);
     } else {
-      addChildRowKey(parentRow, rowKey);
+      addChildRowKey(parentRow, rawRow);
     }
   }
 
   const tree = {
     ...defaultAttributes,
-    ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
+    ...((Array.isArray(row._children) || childRowKeys.length) && {
+      expanded: !!row._attributes!.expanded
+    })
   };
 
   rawRow._attributes.tree = lazyObservable ? tree : observable(tree);
@@ -147,15 +150,12 @@ export function flattenTreeData(
 
   data.forEach(row => {
     const rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
+
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
-        const options2 = {
-          ...options,
-          lazyObservable: !(row._attributes && row._attributes.expanded)
-        };
-        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options2));
+        flattenedRows.push(...flattenTreeData(row._children, defaultValues, rawRow, options));
       }
     }
   });
