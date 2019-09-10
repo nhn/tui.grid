@@ -457,7 +457,7 @@ describe('appendTreeRow()', () => {
         });
     });
 
-    it('inserts to sepecific position.', () => {
+    it('inserts to specific position.', () => {
       cy.gridInstance().invoke('appendTreeRow', { name: 'qux' }, { parentRowKey: 0 });
       cy.gridInstance().invoke('appendTreeRow', appendedData, {
         parentRowKey: 0,
@@ -466,10 +466,12 @@ describe('appendTreeRow()', () => {
       cy.gridInstance().invoke('expand', 0);
       cy.gridInstance()
         .invoke('getChildRows', 0)
-        .then(rows => {
-          const { rowKey } = rows[1];
-          assertInsertedRow(rowKey);
-        });
+        .then(rows =>
+          setTimeout(() => {
+            const { rowKey } = rows[1];
+            assertInsertedRow(rowKey);
+          })
+        );
     });
   });
 });
