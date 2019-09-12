@@ -1,5 +1,7 @@
 import { cls } from '../helper/dom';
 import { CellValue, Dictionary } from '../store/types';
+import { CheckboxColumn } from './select';
+import { check } from '../dispatch/data';
 
 export function createInput(onKeyUp: EventHandlerNonNull, placeholder?: string) {
   const input = document.createElement('input');
@@ -13,11 +15,12 @@ export function createInput(onKeyUp: EventHandlerNonNull, placeholder?: string) 
   return input;
 }
 
-export function createListItem(text: CellValue) {
-  if (!text) {
-    return null;
-  }
-
+export function createListItem(
+  checkboxColumn: CheckboxColumn,
+  onClickCheckbox: EventHandlerNonNull,
+  isAll: boolean = false
+) {
+  const text = String(checkboxColumn.columnName);
   const li = document.createElement('li');
   const input = document.createElement('input');
   const label = document.createElement('label');
@@ -25,9 +28,16 @@ export function createListItem(text: CellValue) {
 
   //@TODO: li 선택 되었을 때 색칠 해줘야 함, 'filter-list-item-checked'
   li.className = cls('filter-list-item');
-  const inputId = `${text}_checkbox`;
+  const inputId = `${checkboxColumn.columnName}_checkbox`;
   input.type = 'checkbox';
+  input.value = String(text);
   input.id = inputId;
+  if (!isAll) {
+    input.name = 'filter_select';
+  }
+  input.checked = checkboxColumn.checked;
+  input.addEventListener('change', onClickCheckbox);
+
   label.htmlFor = inputId;
   span.textContent = text.toString();
   li.appendChild(input);

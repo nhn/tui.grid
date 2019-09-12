@@ -52,7 +52,7 @@ export function filter(
     const filterOption = findProp('columnName', columnName, filters);
     if (filterOption) {
       // @TODO: filterIndex가 있으면 state
-      console.log(getFilterStateWithIndex(filterOption, state, conditionFn, filterIndex));
+      // console.log(getFilterStateWithIndex(filterOption, state, conditionFn, filterIndex));
 
       filterOption.conditionFn = conditionFn;
       filterOption.state = state;
