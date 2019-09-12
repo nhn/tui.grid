@@ -25,6 +25,7 @@ interface StoreProps {
   width: number;
   autoWidth: boolean;
   editing: boolean;
+  filtering: boolean;
   editingEvent: EditingEvent;
   scrollXHeight: number;
   fitToParentHeight: boolean;
@@ -199,7 +200,7 @@ export class ContainerComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, editing, eventBus } = this.props;
+    const { dispatch, editing, eventBus, filtering } = this.props;
     const { el } = this;
     const gridEvent = new GridEvent({ event });
 
@@ -217,7 +218,7 @@ export class ContainerComp extends Component<Props> {
 
     if (!gridEvent.isStopped()) {
       dispatch('setNavigating', true);
-      if (!editing) {
+      if (!editing && !filtering) {
         event.preventDefault();
       }
 
@@ -355,6 +356,7 @@ export const Container = connect<StoreProps, OwnProps>(
     width: dimension.width,
     autoWidth: dimension.autoWidth,
     editing: !!focus.editingAddress,
+    filtering: !!data.filterInfo.activatedColumnAddress,
     scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,

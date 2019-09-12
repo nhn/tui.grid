@@ -9,6 +9,7 @@ import {
   OptSummaryColumnContentMap,
   SingleFilterOptionType
 } from '../types';
+import { FilterItemClass } from '../filter/types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -169,14 +170,27 @@ export interface TreeCellInfo {
   expanded?: boolean;
 }
 
+export interface ActivatedColumnAddress {
+  name: string;
+  left: number;
+}
+
+export interface FilterInfo {
+  activatedColumnAddress: ActivatedColumnAddress | null;
+  filters: FilterParams[] | null;
+}
+
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortState: SortState;
+  filteredRawData: Row[];
+  filteredViewData: ViewRow[];
   disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
+  filterInfo: FilterInfo;
 }
 
 export interface FormatterProps {
@@ -197,24 +211,30 @@ export interface CellRendererOptions {
   options?: Dictionary<any>;
 }
 
+export interface ColumnFilterOption {
+  filterClass: FilterItemClass;
+  type: SingleFilterOptionType | Function;
+  options?: Dictionary<any>;
+  operator?: 'AND' | 'OR';
+  showApplyBtn: boolean;
+  showClearBtn: boolean;
+}
+
 export type NumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
 export type TextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
 export type DateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
 
-interface FilterCondition {
+export interface FilterState {
   code: NumberFilterCode | TextFilterCode | DateFilterCode | null;
   value: CellValue;
 }
 
-export interface Filter {
+export interface FilterParams {
+  columnName: string;
   type: SingleFilterOptionType | Function;
-  code?: NumberFilterCode | TextFilterCode | DateFilterCode;
-  value?: CellValue;
-  options?: Dictionary<any>;
-  operator?: 'AND' | 'OR';
-  condition?: FilterCondition[];
-  showApplyBtn: boolean;
-  showClearBtn: boolean;
+  operator?: 'OR' | 'AND';
+  conditionFn: Function | null;
+  state: FilterState[] | number[];
 }
 
 export interface ColumnInfo {
@@ -245,7 +265,7 @@ export interface ColumnInfo {
   ignored?: boolean;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
-  filter?: Filter | null;
+  filter?: ColumnFilterOption | null;
 }
 
 export interface SortedColumn {

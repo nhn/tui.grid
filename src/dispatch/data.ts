@@ -580,6 +580,7 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredViewData');
 }
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {

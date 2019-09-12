@@ -118,7 +118,7 @@ export function create({
     },
 
     get rows(this: Viewport) {
-      return data.viewData.slice(...this.rowRange);
+      return data.filteredViewData.slice(...this.rowRange);
     },
 
     get offsetTop(this: Viewport) {

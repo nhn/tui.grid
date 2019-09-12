@@ -121,9 +121,15 @@
   vertical-align: middle;
   cursor: pointer;
 }
-.tui-grid-btn-filter-active {
+.tui-grid-btn-filter-active,
+.tui-grid-filter-icon-active {
   background-position: -47px -84px;
 }
+
+.tui-grid-filter-icon-active {
+  cursor: default;
+}
+
 .tui-grid-layer-state {
   position: absolute;
   background: #fff;
@@ -626,6 +632,11 @@
   padding: 8px;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  background-color: #fff;
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  left: 68px;
 }
 
 .tui-grid-filter-container .tui-grid-btn-filter,
@@ -635,7 +646,7 @@
 
 .tui-grid-filter-dropdown {
   box-sizing: border-box;
-  margin: 2px 0;
+  margin: 2px 7px;
   height: 29px;
   width: 190px;
   border: 1px solid #ddd;
@@ -655,7 +666,7 @@
 }
 
 .tui-grid-filter-container .tui-grid-filter-input {
-  margin: 2px 0;
+  margin: 2px 7px;
   padding: 8px 7px;
   font-size: 13px;
   color: #333;
@@ -664,7 +675,7 @@
   height: 29px;
 }
 
-.tui-grid-filter-input-search::placeholder {
+.tui-grid-filter-input::placeholder {
   color: rgba(51, 51, 51, 0.3);
 }
 
@@ -703,13 +714,18 @@
   display: none;
 }
 
-.tui-grid-filter-container .tui-grid-filter-list {
+.tui-grid-filter-container .tui-grid-filter-list-container {
+}
+
+.tui-grid-filter-list-container .tui-grid-filter-list {
   margin: 4px 0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
+  max-height: 272px;
+  overflow-y: scroll;
 }
 
-.tui-grid-filter-list .tui-grid-filter-list-item {
+.tui-grid-filter-list-container .tui-grid-filter-list-item {
   color: #333;
   padding: 9px 8px;
 }

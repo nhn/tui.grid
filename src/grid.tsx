@@ -9,7 +9,8 @@ import {
   OptRemoveRow,
   OptAppendTreeRow,
   OptColumn,
-  OptHeader
+  OptHeader,
+  FilterOpt
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -23,7 +24,8 @@ import {
   Row,
   InvalidRow,
   ColumnInfo,
-  Dictionary
+  Dictionary,
+  FilterState
 } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
@@ -1411,5 +1413,26 @@ export default class Grid {
         delete this[key];
       }
     }
+  }
+
+  public setFilter(columnName: string, filter: FilterOpt) {
+    console.log(filter, columnName);
+  }
+
+  public getFilterState() {
+    return this.store.data.filterInfo.filters;
+  }
+
+  public filter(
+    columnName: string,
+    conditionFn: Function,
+    state: FilterState[] | number[],
+    filterIndex?: number
+  ) {
+    this.dispatch('filter', columnName, conditionFn, state, filterIndex);
+  }
+
+  public unfilter(columnName: string) {
+    this.dispatch('unfilter', columnName);
   }
 }

@@ -15,6 +15,7 @@ import { getText } from '../query/clipboard';
 interface StoreProps {
   navigating: boolean;
   editing: boolean;
+  filtering: boolean;
 }
 
 export interface WindowWithClipboard extends Window {
@@ -203,8 +204,16 @@ class ClipboardComp extends Component<Props> {
 
   public componentDidUpdate() {
     setTimeout(() => {
-      const { navigating, editing } = this.props;
-      if (this.el && navigating && !editing && !this.isClipboardFocused() && !isMobile()) {
+      const { navigating, editing, filtering } = this.props;
+
+      if (
+        this.el &&
+        navigating &&
+        !filtering &&
+        !editing &&
+        !this.isClipboardFocused() &&
+        !isMobile()
+      ) {
         this.el.focus();
       }
     });
@@ -227,7 +236,8 @@ class ClipboardComp extends Component<Props> {
   }
 }
 
-export const Clipboard = connect<StoreProps>(({ focus }) => ({
+export const Clipboard = connect<StoreProps>(({ focus, data }) => ({
   navigating: focus.navigating,
-  editing: !!focus.editingAddress
+  editing: !!focus.editingAddress,
+  filtering: !!data.filterInfo.activatedColumnAddress
 }))(ClipboardComp);

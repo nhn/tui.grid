@@ -10,8 +10,9 @@ const stories = storiesOf('Filter', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name', filter: 'text' },
-  { name: 'downloadCount', filter: 'number' },
+  { name: 'name', filter: 'text', editor: 'text' },
+  { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
+  { name: 'type', filter: 'select' },
   { name: 'artist', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
   {
     name: 'release',
@@ -36,7 +37,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, bodyHeight: 170, ...options });
+  const grid = new Grid({ el, ...options, bodyHeight: 500 });
 
   return { el, grid };
 }

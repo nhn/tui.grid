@@ -17,7 +17,9 @@ import {
   ListItem,
   SortState,
   ViewRow,
-  Range
+  Range,
+  FilterInfo,
+  Filter
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -420,6 +422,19 @@ export function createData(
   return { rawData, viewData };
 }
 
+function applyFilterToRawData(rawData: Row[], filters: Filter[] | null) {
+  let res = rawData;
+
+  if (filters) {
+    res = filters.reduce((acc: Row[], filter: Filter) => {
+      const { conditionFn, columnName } = filter;
+      return rawData.filter(row => conditionFn!(row[columnName]));
+    }, []);
+  }
+
+  return res;
+}
+
 export function create({
   data,
   column,
@@ -439,6 +454,11 @@ export function create({
     ]
   };
 
+  const filterInfo: FilterInfo = {
+    activatedColumnAddress: null,
+    filters: null
+  };
+
   const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)
     ? ({} as Required<PageOptions>)
     : {
@@ -454,8 +474,30 @@ export function create({
     rawData,
     viewData,
     sortState,
+    filterInfo,
     pageOptions,
     checkedAllRows: !rawData.some(row => !row._attributes.checked),
+
+    get filteredRawData(this: Data) {
+      if (this.filterInfo.filters) {
+        return applyFilterToRawData(this.rawData, this.filterInfo.filters);
+      }
+
+      return rawData;
+    },
+
+    get filteredViewData(this: Data) {
+      if (this.filterInfo.filters) {
+        const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
+
+        //@TODO: 전체 rawData를 observable하게 하면 너무 느리지 않을까?
+        return this.filteredRawData.map((row: Row) =>
+          createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+        );
+      }
+
+      return this.viewData;
+    },
 
     get pageRowRange() {
       let start = 0;

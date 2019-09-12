@@ -8,7 +8,7 @@ import {
   CellEditorOptions,
   CellRendererOptions,
   HeaderAlignInfo,
-  Filter
+  ColumnFilterOption
 } from './types';
 import {
   OptColumn,
@@ -39,6 +39,7 @@ import {
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
+import { filterMap } from '../filter/manager';
 
 const ROW_HEADERS_MAP = {
   rowNum: '_number',
@@ -74,6 +75,51 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
       ? getBuiltInEditorOptions(editor.type, editor.options)
       : (editor as CellEditorOptions);
   }
+  return null;
+}
+
+function getBuiltInFilterOptions(type: string, filterOpt?: FilterOpt): ColumnFilterOption {
+  const filterInfo = filterMap[type];
+
+  if (filterOpt) {
+    const { options, operator, showApplyBtn = false, showClearBtn = false } = filterOpt;
+
+    return operator
+      ? {
+          ...filterInfo,
+          operator,
+          options,
+          showApplyBtn,
+          showClearBtn
+        }
+      : {
+          ...filterInfo,
+          options,
+          showClearBtn,
+          showApplyBtn
+        };
+  }
+
+  return {
+    ...filterInfo,
+    showApplyBtn: false,
+    showClearBtn: false
+  };
+}
+
+function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
+  // if (isFunction(filter)) {
+  //   return getBuiltInFilterOptions('function', filter);
+  // }
+  if (isString(filter)) {
+    return getBuiltInFilterOptions(filter);
+  }
+  if (isObject(filter)) {
+    return isString(filter.type)
+      ? getBuiltInFilterOptions(filter.type, filter)
+      : (filter as ColumnFilterOption);
+  }
+
   return null;
 }
 
@@ -134,52 +180,6 @@ function getHeaderAlignInfo(name: string, alignInfo: HeaderAlignInfo) {
   };
 }
 
-function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt): Filter | null {
-  if (isString(filter)) {
-    return {
-      type: filter,
-      code: 'eq',
-      value: null,
-      showApplyBtn: false,
-      showClearBtn: false
-    };
-  }
-
-  if (filter) {
-    const { type, options, operator, showApplyBtn = false, showClearBtn = false } = filter;
-
-    if (operator) {
-      return {
-        type,
-        operator,
-        options,
-        condition: [
-          {
-            code: null,
-            value: null
-          },
-          {
-            code: null,
-            value: null
-          }
-        ],
-        showApplyBtn,
-        showClearBtn
-      };
-    }
-    return {
-      type,
-      code: 'eq',
-      value: null,
-      options,
-      showClearBtn,
-      showApplyBtn
-    };
-  }
-
-  return null;
-}
-
 // eslint-disable-next-line max-params
 export function createColumn(
   column: OptColumn,
@@ -218,6 +218,8 @@ export function createColumn(
 
   const editorOptions = getEditorOptions(editor);
   const rendererOptions = getRendererOptions(renderer);
+  const filterOptions = getFilterOptions(filter);
+
   const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
 
   return observable({
@@ -249,7 +251,7 @@ export function createColumn(
     ...getTreeInfo(treeColumnOptions, name),
     headerAlign,
     headerVAlign,
-    filter: getFilterOptions(filter)
+    filter: filterOptions
   });
 }
 
@@ -358,9 +360,7 @@ export function create({
 
   return observable({
     keyColumnName,
-
     frozenCount: columnOptions.frozenCount || 0,
-
     dataForColumnCreation: {
       copyOptions,
       columnOptions,
@@ -368,7 +368,6 @@ export function create({
       relationColumns,
       rowHeaders: rowHeaderInfos
     },
-
     allColumns,
     complexHeaderColumns,
     headerAlignInfo,
