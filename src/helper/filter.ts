@@ -80,6 +80,6 @@ export function composeConditionFn(fns: Function[], operator?: 'AND' | 'OR') {
         return acc || fn(value);
       }
       return acc && fn(value);
-    }, true);
+    }, operator !== 'OR');
   };
 }

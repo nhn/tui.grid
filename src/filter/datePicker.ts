@@ -1,27 +1,8 @@
 import { FilterItem, FilterItemProps } from './types';
-import { DateFilterCode } from '../store/types';
 import { createInput, createSelect } from './createElement';
 import TuiDatePicker from 'tui-date-picker';
 import { deepMergedCopy, isNull, isNumber, isString, isUndefined } from '../helper/common';
-
-type DateLabel =
-  | 'Equals'
-  | 'Not equals'
-  | 'After'
-  | 'After or Equal'
-  | 'Before'
-  | 'Before or Equal';
-
-type DateOptions = { [key in DateFilterCode]: DateLabel };
-
-const dateOptions: DateOptions = {
-  eq: 'Equals',
-  ne: 'Not equals',
-  after: 'After',
-  afterEq: 'After or Equal',
-  before: 'Before',
-  beforeEq: 'Before or Equal'
-};
+import { filterSelectOption } from '../helper/filter';
 
 export class DatePickerFilter implements FilterItem {
   public el: HTMLDivElement;
@@ -38,10 +19,14 @@ export class DatePickerFilter implements FilterItem {
     return calendarWrapper;
   }
 
+  private onKeyUpInput = (ev: Event) => {
+    console.log(ev.target);
+  };
+
   public constructor(props: FilterItemProps) {
     this.el = document.createElement('div');
-    this.inputEl = createInput();
-    const selectContainer = createSelect(dateOptions);
+    this.inputEl = createInput(this.onKeyUpInput);
+    const selectContainer = createSelect(filterSelectOption.date);
 
     this.el.appendChild(selectContainer);
     this.el.appendChild(this.inputEl);

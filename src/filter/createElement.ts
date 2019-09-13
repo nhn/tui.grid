@@ -1,7 +1,6 @@
 import { cls } from '../helper/dom';
-import { CellValue, Dictionary } from '../store/types';
+import { Dictionary } from '../store/types';
 import { CheckboxColumn } from './select';
-import { check } from '../dispatch/data';
 
 export function createInput(onKeyUp: EventHandlerNonNull, placeholder?: string) {
   const input = document.createElement('input');
@@ -25,6 +24,7 @@ export function createListItem(
   const input = document.createElement('input');
   const label = document.createElement('label');
   const span = document.createElement('span');
+  const filterName = isAll ? 'filter_select_all' : 'filter_select';
 
   //@TODO: li 선택 되었을 때 색칠 해줘야 함, 'filter-list-item-checked'
   li.className = cls('filter-list-item');
@@ -32,9 +32,7 @@ export function createListItem(
   input.type = 'checkbox';
   input.value = String(text);
   input.id = inputId;
-  if (!isAll) {
-    input.name = 'filter_select';
-  }
+  input.name = filterName;
   input.checked = checkboxColumn.checked;
   input.addEventListener('change', onClickCheckbox);
 

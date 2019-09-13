@@ -1,9 +1,9 @@
 import { FilterItem, FilterItemProps } from './types';
 import { cls } from '../helper/dom';
-import { CellValue, ColumnInfo, FilterState } from '../store/types';
+import { CellValue, ColumnInfo, FilterInfo, FilterState } from '../store/types';
 import Grid from '../grid';
 import { createInput, createListItem } from './createElement';
-import { findProp } from '../helper/common';
+import { findProp, some } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 
 export interface CheckboxColumn {
@@ -49,26 +49,52 @@ export class SelectFilter implements FilterItem {
     column.checked = !column.checked;
   };
 
+  private changeAllCheckboxState = (checked: boolean) => {
+    const allCheckbox = this.el.querySelector('input[name=filter_select_all]');
+    (allCheckbox as HTMLInputElement).checked = checked;
+  };
+
+  private changeAllRowState = (checked: boolean) => {
+    const checkedList = this.el.querySelectorAll('input[name=filter_select]');
+    checkedList.forEach(input => {
+      const inputWithType = input as HTMLInputElement;
+      inputWithType.checked = checked;
+    });
+  };
+
   private handleClickCheckbox = (ev: Event) => {
     const { value } = ev.target as HTMLInputElement;
     this.toggleCheckbox(value);
     if (!this.columnInfo.filter!.showApplyBtn) {
-      //  @TODO: filter
       const checkedValues = this.getSelectedCheckboxValue();
-      const states = checkedValues.map(checkedValue => ({
-        code: 'eq',
-        value: checkedValue
-      })) as FilterState[];
-      const conditionFn = checkedValues.map(checkedValue =>
-        getFilterConditionFn('eq', checkedValue, 'select')
-      ) as Function[];
-      this.grid.filter(this.columnName, composeConditionFn(conditionFn, 'OR'), states);
+
+      if (this.columnData.length === checkedValues.length) {
+        this.grid.unfilter(this.columnName);
+        this.changeAllCheckboxState(true);
+      } else {
+        const states = checkedValues.map(checkedValue => ({
+          code: 'eq',
+          value: checkedValue
+        })) as FilterState[];
+        const conditionFn = checkedValues.map(checkedValue =>
+          getFilterConditionFn('eq', checkedValue, 'select')
+        ) as Function[];
+
+        this.grid.filter(this.columnName, composeConditionFn(conditionFn, 'OR'), states);
+        this.changeAllCheckboxState(false);
+      }
     }
   };
 
   private handleClickAllCheckbox = (ev: Event) => {
-    // this.columnData.forEach((data) => {
-    // });
+    const checked = (ev.target as HTMLInputElement).checked;
+    if (checked) {
+      this.changeAllRowState(true);
+      this.grid.unfilter(this.columnName);
+    } else {
+      this.changeAllRowState(false);
+      this.grid.filter(this.columnName, () => false, []);
+    }
   };
 
   private renderList = (columnData: CheckboxColumn[]) => {
@@ -90,11 +116,12 @@ export class SelectFilter implements FilterItem {
     this.el.appendChild(ul);
   };
 
-  private getFilterElement() {
+  private getFilterElement = (filterInfo: FilterInfo) => {
     const div = document.createElement('div');
     const searchInput = createInput(this.onKeyUpSearchInput, 'Search...');
+
     const selectAllLi = createListItem(
-      { columnName: 'Select All', checked: true },
+      { columnName: 'Select All', checked: !filterInfo.filters },
       this.handleClickAllCheckbox,
       true
     );
@@ -105,24 +132,38 @@ export class SelectFilter implements FilterItem {
     div.appendChild(selectAllLi!);
 
     return div;
-  }
+  };
+
+  private getPreviousColumnData = (filterInfo: FilterInfo, columnData: CellValue[]) => {
+    if (filterInfo.filters) {
+      const filter = findProp('columnName', this.columnName, filterInfo.filters);
+      if (filter) {
+        const { state } = filter;
+        return columnData.map(data => ({
+          columnName: data,
+          checked: some(item => item.value === data, state)
+        }));
+      }
+    }
+
+    return columnData.map(data => ({
+      columnName: data,
+      checked: true
+    }));
+  };
 
   public constructor(props: FilterItemProps) {
     this.grid = props.grid;
     this.columnName = props.columnInfo.name;
-    this.el = this.getFilterElement();
-    this.columnData = props.columnData.map(data => ({
-      columnName: data,
-      checked: true
-    }));
     this.columnInfo = props.columnInfo;
+    this.el = this.getFilterElement(props.filterInfo);
+    this.columnData = this.getPreviousColumnData(props.filterInfo, props.columnData);
 
     this.renderList(this.columnData);
   }
 
   public getFilterState() {
     this.getSelectedCheckboxValue();
-    // return this.filterState.condition;
   }
 
   public setFilterState() {}

@@ -38,7 +38,7 @@ export function filter(
   store: Store,
   columnName: string,
   conditionFn: Function,
-  state: FilterState[] | number[],
+  state: FilterState[],
   filterIndex?: number
 ) {
   const { data, column } = store;

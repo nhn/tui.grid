@@ -234,7 +234,7 @@ export interface FilterParams {
   type: SingleFilterOptionType | Function;
   operator?: 'OR' | 'AND';
   conditionFn: Function | null;
-  state: FilterState[] | number[];
+  state: FilterState[];
 }
 
 export interface ColumnInfo {

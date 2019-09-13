@@ -1,4 +1,4 @@
-import { CellValue, ColumnInfo } from '../store/types';
+import { CellValue, ColumnInfo, FilterInfo } from '../store/types';
 import Grid from '../grid';
 
 export interface FilterItemProps {
@@ -6,6 +6,7 @@ export interface FilterItemProps {
   index?: number;
   columnInfo: ColumnInfo;
   columnData: CellValue[];
+  filterInfo: FilterInfo;
 }
 
 export interface FilterItem {

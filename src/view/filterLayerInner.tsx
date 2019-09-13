@@ -3,7 +3,14 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
-import { ActivatedColumnAddress, CellValue, ColumnInfo, FilterParams, Row } from '../store/types';
+import {
+  ActivatedColumnAddress,
+  CellValue,
+  ColumnInfo,
+  FilterInfo,
+  FilterParams,
+  Row
+} from '../store/types';
 import { cls } from '../helper/dom';
 import { isFunction, pluck, some, uniq } from '../helper/common';
 import { FilterItem, FilterItemClass, FilterItemProps } from '../filter/types';
@@ -11,6 +18,7 @@ import { FilterItem, FilterItemClass, FilterItemProps } from '../filter/types';
 interface StoreProps {
   grid: Grid;
   columnData: CellValue[];
+  filterInfo: FilterInfo;
   columnInfo: ColumnInfo;
   firstFilterHasValue: boolean;
 }
@@ -31,14 +39,15 @@ export class FilterLayerInnerComp extends Component<Props> {
   private secondFilterItem: FilterItem | null = null;
 
   private createFilter = (index: number) => {
-    const { grid, columnInfo, columnData } = this.props;
+    const { grid, columnInfo, columnData, filterInfo } = this.props;
     const filter = columnInfo.filter!;
     const FilterClass: FilterItemClass = filter.filterClass;
     const filterProps: FilterItemProps = {
       grid,
       columnInfo,
       columnData,
-      index
+      index,
+      filterInfo
     };
 
     const filterItem = new FilterClass({ ...filterProps, index });
@@ -145,6 +154,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
     columnData: uniq(pluck(rawData as Row[], columnAddress.name)),
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
+    filterInfo,
     firstFilterHasValue
   };
 })(FilterLayerInnerComp);
