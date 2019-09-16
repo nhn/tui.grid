@@ -3,17 +3,13 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
-import {
-  ActivatedColumnAddress,
-  CellValue,
-  ColumnInfo,
-  FilterInfo,
-  FilterParams,
-  Row
-} from '../store/types';
+import { ActivatedColumnAddress, CellValue, ColumnInfo, FilterInfo, Row } from '../store/types';
 import { cls } from '../helper/dom';
-import { isFunction, pluck, some, uniq } from '../helper/common';
-import { FilterItem, FilterItemClass, FilterItemProps } from '../filter/types';
+import { pluck, uniq } from '../helper/common';
+import { TextFilter } from './textFilter';
+import { DatePickerFilter } from './datePickerFilter';
+import { FilterOperator } from './filterOperator';
+import { SelectFilter } from './selectFilter';
 
 interface StoreProps {
   grid: Grid;
@@ -30,61 +26,14 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
-  private firstFilter?: HTMLDivElement;
+  public componentDidMount() {}
 
-  private firstFilterItem: FilterItem | null = null;
-
-  private secondFilter?: HTMLDivElement;
-
-  private secondFilterItem: FilterItem | null = null;
-
-  private createFilter = (index: number) => {
-    const { grid, columnInfo, columnData, filterInfo } = this.props;
-    const filter = columnInfo.filter!;
-    const FilterClass: FilterItemClass = filter.filterClass;
-    const filterProps: FilterItemProps = {
-      grid,
-      columnInfo,
-      columnData,
-      index,
-      filterInfo
-    };
-
-    const filterItem = new FilterClass({ ...filterProps, index });
-    const filterEl = filterItem.getElement();
-
-    if (filterEl) {
-      if (index === 1 && this.firstFilter) {
-        this.firstFilter.appendChild(filterEl);
-        this.firstFilterItem = filterItem;
-      } else if (index === 2 && this.secondFilter) {
-        this.secondFilter.appendChild(filterEl);
-        this.secondFilterItem = filterItem;
-      }
-
-      if (isFunction(filterItem.mounted)) {
-        filterItem.mounted();
-      }
-    }
+  private handleClickApplyFilterBtn = () => {
+    console.log('click apply btn');
   };
-
-  public componentDidMount() {
-    const { columnInfo } = this.props;
-    // @TODO; operator를 filterInfo에서 갖고 있어야함
-    if (columnInfo.filter!.operator) {
-      //  operator의 위치는....
-    }
-    this.createFilter(1);
-    // this.createFilter(2);
-  }
 
   private closeLayer = () => {
     this.props.dispatch('setActivatedColumnAddress', null);
-  };
-
-  private handleClickApplyFilterBtn = () => {
-    // @ 각 필터의 state 값을 가져온다.
-    // @ 그리고 적용시킨다.
   };
 
   public render() {
@@ -92,38 +41,18 @@ export class FilterLayerInnerComp extends Component<Props> {
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
     const left = columnAddress.left - 17;
     const renderSecondFilter = columnInfo.filter!.operator && firstFilterHasValue;
-    // @TODO: inner 구조 개선 필요, 컴퍼넌트화 필요.는 불가능?
     return (
       <div className={cls('filter-container')} style={{ left }}>
         <div>
           <span className={cls('btn-filter', 'filter-icon-active')} />
           <a className={cls('btn-close')} onClick={this.closeLayer} />
         </div>
-        <div
-          ref={el => {
-            this.firstFilter = el;
-          }}
-        />
-        {/* 여기부터 filter operator */}
-        {/*<div className={cls('filter-comparator-container')}>*/}
-        {/*  <div className={cls('filter-comparator')}>*/}
-        {/*    <input type="radio" name="filterOperator" value="AND" id="AND" checked />*/}
-        {/*    <label for="AND" />*/}
-        {/*    <span>AND</span>*/}
-        {/*  </div>*/}
-        {/*  <div className={cls('filter-comparator')}>*/}
-        {/*    <input type="radio" id="OR" name="filterOperator" value="OR" />*/}
-        {/*    <label for="OR" />*/}
-        {/*    <span>OR</span>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*{renderSecondFilter && (*/}
-        <div
-          ref={el => {
-            this.secondFilter = el;
-          }}
-        />
-        {/*)}*/}
+        {/*<TextFilter columnAddress={columnAddress} filterIndex={0} />*/}
+        {/*{renderSecondFilter && <FilterOperator />}*/}
+        {/*{renderSecondFilter && <TextFilter columnAddress={columnAddress} filterIndex={1} />}*/}
+        {/*<DatePickerFilter columnAddress={columnAddress} filterIndex={0} />*/}
+        <SelectFilter columnAddress={columnAddress} filterIndex={0} />
+
         <div className={cls('filter-btn-container')}>
           {showClearBtn && <button className={cls('filter-btn', 'filter-btn-clear')}>Clear</button>}
           {showApplyBtn && (
@@ -145,9 +74,11 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
   const { filterInfo, rawData } = data;
   const { allColumnMap } = column;
 
+  // @TODO: 조건 다시 살피기
   const firstFilterHasValue =
-    !!filterInfo.filters &&
-    some(filter => filter.columnName === columnAddress.name, filterInfo.filters as FilterParams[]);
+    !!filterInfo.filterLayerState &&
+    filterInfo.filterLayerState.state[0].value &&
+    (filterInfo.filterLayerState.state[0].value as string).length;
 
   return {
     grid: getInstance(id),

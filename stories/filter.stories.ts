@@ -12,8 +12,8 @@ stories.addDecorator(withKnobs);
 const columns = [
   { name: 'name', filter: 'text', editor: 'text' },
   { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
-  { name: 'type', filter: 'select' },
-  { name: 'artist', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
+  { name: 'type', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
+  { name: 'artist', filter: 'select' },
   { name: 'release', filter: 'date' },
   { name: 'genre' }
 ];

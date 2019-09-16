@@ -1,45 +1,61 @@
-import { ActivatedColumnAddress, FilterParams, FilterState, Store } from '../store/types';
+import { ActivatedColumnAddress, FilterState, Store } from '../store/types';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
+import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
+import { SingleFilterOptionType } from '../types';
 
-export function setActivatedColumnAddress({ data }: Store, address: ActivatedColumnAddress | null) {
+export function setActivatedColumnAddress(
+  { data, column }: Store,
+  address: ActivatedColumnAddress | null
+) {
   data.filterInfo.activatedColumnAddress = address;
+  if (address) {
+    const { type, operator } = column.allColumnMap[address.name].filter!;
+    const initialState = operator
+      ? [{ code: null, value: null }, { code: null, value: null }]
+      : [{ code: null, value: null }];
+
+    data.filterInfo.filterLayerState = {
+      columnName: address.name,
+      type,
+      operator,
+      conditionFn: null,
+      state: initialState
+    };
+  } else {
+    data.filterInfo.activatedColumnAddress = null;
+  }
+
   notify(data, 'filterInfo');
 }
 
-function getFilterStateWithIndex(
-  filterOption: FilterParams,
-  state: FilterState[] | number[],
-  conditionFn: Function,
-  filterIndex?: number
-) {
-  if (!filterIndex) {
-    return {
-      conditionFn,
-      state
-    };
+export function setFilterLayerState(store: Store, state: FilterState, filterIndex: number) {
+  const { data, column } = store;
+  data.filterInfo.filterLayerState!.state[filterIndex] = state;
+  notify(data, 'filterInfo');
+
+  const columnName = data.filterInfo.activatedColumnAddress!.name;
+  const columnInfo = column.allColumnMap[columnName];
+  if (!columnInfo.filter!.showApplyBtn) {
+    const filterLayerState = data.filterInfo.filterLayerState!;
+    const fns = filterLayerState.state.map(st =>
+      getFilterConditionFn(st.code!, st.value, filterLayerState.type as SingleFilterOptionType)
+    ) as Function[];
+
+    filter(
+      store,
+      columnName,
+      composeConditionFn(fns, filterLayerState.operator),
+      filterLayerState.state
+    );
   }
-
-  console.log(filterOption);
-
-  if (filterOption.operator) {
-    console.log('operator 있어');
-  }
-
-  return null;
-  // 1. filterIndex가 존재하는가
-  // 2. operator가 존재하는가.
-  // 3. 존재한다면 해당 인덱스거 엎어치기
-  //    존재하지 않는다면 스킵
-  //  이때 conditionFn도 다시 만들어야 한다
 }
 
 export function filter(
   store: Store,
   columnName: string,
   conditionFn: Function,
-  state: FilterState[],
-  filterIndex?: number
+  state: FilterState[]
 ) {
   const { data, column } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
@@ -51,9 +67,6 @@ export function filter(
   if (filters) {
     const filterOption = findProp('columnName', columnName, filters);
     if (filterOption) {
-      // @TODO: filterIndex가 있으면 state
-      // console.log(getFilterStateWithIndex(filterOption, state, conditionFn, filterIndex));
-
       filterOption.conditionFn = conditionFn;
       filterOption.state = state;
     } else {
@@ -65,6 +78,7 @@ export function filter(
       });
     }
   } else {
+    console.log(data.filterInfo.filters, conditionFn, state);
     data.filterInfo.filters = [
       {
         columnName,
@@ -79,13 +93,17 @@ export function filter(
 }
 
 export function unfilter({ data }: Store, columnName: string) {
-  const { filters } = data.filterInfo;
+  const { filterInfo } = data;
+  const { filters } = filterInfo;
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      data.filterInfo.filters!.splice(filterIndex, 1);
-      if (data.filterInfo.filters!.length === 0) {
-        data.filterInfo.filters = null;
+      filterInfo.filterLayerState!.state.forEach((st, idx) => {
+        filterInfo.filterLayerState!.state[idx] = { code: null, value: null };
+      });
+      filterInfo.filters!.splice(filterIndex, 1);
+      if (filterInfo.filters!.length === 0) {
+        filterInfo.filters = null;
       }
     }
   }

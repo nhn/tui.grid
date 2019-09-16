@@ -35,6 +35,7 @@ export const filterSelectOption: FilterSelectOption = {
 };
 
 function getUnixTime(value: CellValue) {
+  console.log(parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10));
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
 }
 

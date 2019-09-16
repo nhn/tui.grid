@@ -177,6 +177,7 @@ export interface ActivatedColumnAddress {
 
 export interface FilterInfo {
   activatedColumnAddress: ActivatedColumnAddress | null;
+  filterLayerState: FilterParams | null;
   filters: FilterParams[] | null;
 }
 
