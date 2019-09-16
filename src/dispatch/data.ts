@@ -590,34 +590,20 @@ function changeToObservableTreeData(
   originData: OriginData,
   id: number
 ) {
-  let { rows } = originData;
-  rows = rows.filter(row => !isObservable(row));
-
-  if (!rows.length) {
-    return;
-  }
+  const { rows } = originData;
+  const { rawData, viewData } = data;
+  const { allColumnMap, treeColumnName, treeIcon } = column;
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
 
-  const { rawData, viewData } = data;
-  const { allColumnMap, treeColumnName, treeIcon } = column;
-  const observableRows = rows.map(row => {
+  rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
     const rawRow = createTreeRawRow(row, column.defaultValues, parentRow || null);
     const viewRow = createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
-
-    return { rawRow, viewRow };
-  });
-
-  for (let index = 0, end = observableRows.length; index < end; index += 1) {
-    const { rawRow, viewRow } = observableRows[index];
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
-    const existingRow = rawData[foundIndex];
 
-    if (existingRow && !isObservable(existingRow)) {
-      rawData[foundIndex] = rawRow;
-      viewData[foundIndex] = viewRow;
-    }
-  }
+    rawData[foundIndex] = rawRow;
+    viewData[foundIndex] = viewRow;
+  });
 }
