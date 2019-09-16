@@ -37,9 +37,10 @@ export function sort(
   withCtrl: boolean = false,
   cancelable: boolean = true
 ) {
-  const { data } = store;
+  const { data, column } = store;
   const { sortOptions } = data;
-  if (!sortOptions.useClient) {
+
+  if (!sortOptions.useClient || !column.allColumnMap[columnName].sortable) {
     return;
   }
 
