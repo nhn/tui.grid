@@ -10,14 +10,14 @@ TOAST UI Grid는 내장 기능 외에도 커스텀 기능을 확장할 수 있�
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // options…
+  // options...
 });
 
-grid.on('click', function() {
+grid.on('click', () => {
   console.log('clicked!!');
 })
 
-grid.on('dblclick', function() {
+grid.on('dblclick', () => {
   console.log('double clicked!!');
 });
 ```
@@ -30,11 +30,40 @@ grid.off('click');
 grid.off('click', onClickHandler);
 ```
 
+## 옵션 설정을 이용한 이벤트 핸들러 등록
+
+Grid 옵션에서 이벤트 핸들러를 직접 넘겨 설정하는 경우도 있다. 해당 이벤트 핸들러는 `on()` 인스턴스 메소드를 이용하여 등록할 수 없으며, `off()`를 사용하여 이벤트 핸들러를 해제할 필요가 없다. 옵션 설정을 사용하여 등록할 수 있는 이벤트 핸들러는 `onBeforeChange()`, `onAfterChange()`, `onGridMounted()`, `onGridBeforeDestroy()` 4가지이며, 설정 방법은 아래 예제와 같다.
+
+```javascript
+const grid = new Grid({
+  // options...
+  columns: [
+    {
+      header: 'Name',
+      name: 'name',
+      onBeforeChange(ev) {
+        console.log('Before change:' + ev);
+      },
+      onAfterChange(ev) {
+        console.log('After change:' + ev);
+      },
+      editor: 'text',
+    }
+  ],
+  onGridMounted(ev) {
+    console.log('mounted' + ev);
+  },
+  onGridBeforeDestroy(ev) {
+    console.log('before destroy' + ev);
+  }
+});
+```
+
 ## GridEvent
 이벤트가 발생한 경우, `GridEvent` 인스턴스는 이벤트에 등록된 핸들러로 넘겨진다. `GridEvent` 인스턴스에는 이벤트 핸들러에서 유용하게 사용할 수 있는 정보가 담겨있다. 예를 들어 `click` 이벤트가 발생한 경우, `rowKey`, `targetType`, `columnName` 값이 `GridEvent` 인스턴스에 저장되고 이를 이용하여 사용자는 타겟 셀의 주소를 알 수 있다.
 
 ```javascript
-grid.on('click', function(ev) {
+grid.on('click', (ev) => {
   if (ev.rowKey === 3 && ev.columnName === 'col1') {
     // do something
   }
@@ -44,7 +73,7 @@ grid.on('click', function(ev) {
 `GridEvent` 인스턴스는 이벤트의 기본 동작을 취소하는 `stop()` 메서드를 제공한다. 예를 들어 특정 로우가 선택되는 것을 막고 싶은 경우, `click` 이벤트에 핸들러를 등록하고 `ev.stop()`을 호출하면 된다.
 
 ```javascript
-grid.on('click', function(ev) {
+grid.on('click', (ev) => {
   if (ev.rowKey === 3) {
     ev.stop();  
   }
@@ -54,7 +83,7 @@ grid.on('click', function(ev) {
 `GridEvent` 인스턴스는 `nativeEvent` 속성을 가질 수 있다. 이는 `click`이나 `mousedown`과 같은 브라우저의 네이티브 이벤트이다.
 
 ```javascript
-grid.on('mousedown', function(ev) {
+grid.on('mousedown', (ev) => {
   console.log(ev.nativeEvent);
 });
 ```
@@ -72,6 +101,9 @@ grid.on('mousedown', function(ev) {
 - `checkAll`: 헤더의 체크 박스를 선택하여 로우 헤더의 모든 체크 박스가 선택된 경우
 - `uncheckAll`: 헤더의 체크 박스를 해제하여 로우 헤더의 모든 체크 박스가 해제된 경우
 - `selection`: 테이블에서 선택 영역을 변경한 경우
+- `editingStart`: 테이블에서 셀 편집을 시작한 경우
+- `editingFinish`: 테이블에서 셀 편집을 종료한 경우
+- `sort` : 데이터를 정렬했을 경우 
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.
 
@@ -85,6 +117,13 @@ grid.on('mousedown', function(ev) {
 
 - `expand` : 클릭 이벤트 또는 `expand()`, `expandAll` 메서드를 호출하여 펼치기/접기 버튼이 '펼침' 상태로 변경된 경우
 - `collapse` : 클릭 이벤트 또는 `collapse()`, `collapseAll` 메서드를 호출하여 펼치기/접기 버튼이 '접힘' 상태로 변경된 경우
+
+옵션 설정을 이용한 사용할 수 있는 이벤트는 다음과 같다.
+
+- `onBeforeChange` : 셀의 값이 변경되기 전
+- `onAfterChange` : 셀의 값이 변경된 후
+- `onGridMounted` : Grid가 DOM에 렌더링된 후
+- `onGridBeforeDestroy` : Grid가 DOM에서 사라지기 전
 
 이벤트에 대한 자세한 정보는 [API 문서](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest)에서 살펴볼 수 있다.
 
