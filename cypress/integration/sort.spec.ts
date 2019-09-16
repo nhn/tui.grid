@@ -224,4 +224,16 @@ describe('sort', () => {
         });
       });
   });
+
+  it('cannot sort the data on non sortable column', () => {
+    const col: OptColumn[] = [
+      { name: 'alphabetA', minWidth: 150, sortable: true },
+      { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'asc' },
+      { name: 'numberA', minWidth: 150 }
+    ];
+    createGrid({ columns: col });
+    cy.gridInstance().invoke('sort', 'numberA', true);
+
+    compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+  });
 });
