@@ -88,8 +88,11 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     const index = findIndexByRowKey(data, column, id, childRowKey);
     heights[index] = getRowHeight(childRow, dimension.rowHeight);
   });
-  notify(rowCoords, 'heights');
-  notify(viewport, 'rowRange');
+
+  if (childRowKeys.length) {
+    notify(rowCoords, 'heights');
+    notify(viewport, 'rowRange');
+  }
 }
 
 export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
