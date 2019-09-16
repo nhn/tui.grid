@@ -117,7 +117,23 @@ const grid = new Grid({
 ```js
 grid.sort('columnName', true, true);
 grid.unsort('columnName');
+
+/* 
+ * @example
+ *   // 데이터를 정렬하지 않은 기본 상태
+ *   {
+ *     columns: [{ columnName: 'sortKey', ascending: true }],
+ *     useClient: true
+ *   } 
+ * 
+ *   // alphabetA, alphabetB 컬럼으로 데이터를 정렬한 상태
+ *   {
+ *     columns: [{ columnName: 'alphabetA', ascending: true }, { columnName: 'alphabetB', ascending: false }],
+ *     useClient: true
+ *   }
+ */
 grid.getSortState();
+
 ```
 또한 커스텀 이벤트가 제공되어 데이터가 정렬될 때 해당 이벤트가 발생한다.
 

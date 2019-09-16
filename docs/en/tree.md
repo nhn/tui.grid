@@ -16,7 +16,7 @@ When the tree column has been enabled, each cell that contains tree data is disp
 
 ### Configuring Tree Data
 
-Like regular row data, tree data (`object`) are configured as arrays. If there are children rows, each child row's data is added to the parent row's `_children` attribute. Expand/Collapse button uses the `_attribute.expanded` attribute to initialize. The default value is `false` (collapsed,) and when the value is set to `true`,  the data are expanded. 
+Like regular row data, tree data (`object`) are configured as arrays. If there are children rows, each child row's data is added to the parent row's `_children` attribute. Expand/Collapse button uses the `_attribute.expanded` attribute to initialize. The default value is `false` (collapsed) and when the value is set to `true`, the data are expanded. 
 
 ```js
 const data = [
