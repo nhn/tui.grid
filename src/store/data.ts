@@ -19,7 +19,7 @@ import {
   ViewRow,
   Range,
   FilterInfo,
-  Filter
+  FilterParams
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -422,11 +422,11 @@ export function createData(
   return { rawData, viewData };
 }
 
-function applyFilterToRawData(rawData: Row[], filters: Filter[] | null) {
+function applyFilterToRawData(rawData: Row[], filters: FilterParams[] | null) {
   let res = rawData;
 
   if (filters) {
-    res = filters.reduce((acc: Row[], filter: Filter) => {
+    res = filters.reduce((acc: Row[], filter: FilterParams) => {
       const { conditionFn, columnName } = filter;
       return rawData.filter(row => conditionFn!(row[columnName]));
     }, []);

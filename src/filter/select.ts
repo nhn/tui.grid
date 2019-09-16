@@ -118,7 +118,10 @@ export class SelectFilter implements FilterItem {
 
   private getFilterElement = (filterInfo: FilterInfo) => {
     const div = document.createElement('div');
-    const searchInput = createInput(this.onKeyUpSearchInput, 'Search...');
+    const searchInput = createInput(
+      [{ type: 'keyup', handler: this.onKeyUpSearchInput }],
+      'Search...'
+    );
 
     const selectAllLi = createListItem(
       { columnName: 'Select All', checked: !filterInfo.filters },

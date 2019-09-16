@@ -1,6 +1,5 @@
 import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../store/types';
-import { isNumber, isString, endsWith, startsWith } from './common';
-import { cell } from '../theme/styleGenerator';
+import { isString, endsWith, startsWith } from './common';
 import { SingleFilterOptionType } from '../types';
 
 interface FilterSelectOption {
@@ -35,6 +34,35 @@ export const filterSelectOption: FilterSelectOption = {
   }
 };
 
+function getUnixTime(value: CellValue) {
+  return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
+}
+
+// eslint-disable-next-line consistent-return
+function getPredicateWithType(
+  code: 'eq' | 'ne',
+  type: SingleFilterOptionType,
+  inputValue: CellValue
+) {
+  switch (type) {
+    case 'number':
+      return code === 'eq'
+        ? (cellValue: CellValue) => Number(cellValue) === Number(inputValue)
+        : (cellValue: CellValue) => Number(cellValue) !== Number(inputValue);
+    case 'text':
+    case 'select':
+      return code === 'eq'
+        ? (cellValue: CellValue) => String(cellValue) === String(inputValue)
+        : (cellValue: CellValue) => String(cellValue) !== String(inputValue);
+    case 'date':
+      return code === 'eq'
+        ? (cellValue: CellValue) => getUnixTime(cellValue) === getUnixTime(inputValue)
+        : (cellValue: CellValue) => getUnixTime(cellValue) !== getUnixTime(inputValue);
+    default:
+    // no-default
+  }
+}
+
 // eslint-disable-next-line consistent-return
 export function getFilterConditionFn(
   code: NumberFilterCode | TextFilterCode | DateFilterCode,
@@ -43,13 +71,8 @@ export function getFilterConditionFn(
 ) {
   switch (code) {
     case 'eq':
-      return type === 'number'
-        ? (cellValue: CellValue) => Number(cellValue) === Number(inputValue)
-        : (cellValue: CellValue) => String(cellValue) === String(inputValue);
     case 'ne':
-      return type === 'number'
-        ? (cellValue: CellValue) => Number(cellValue) !== Number(inputValue)
-        : (cellValue: CellValue) => String(cellValue) !== String(inputValue);
+      return getPredicateWithType(code, type, inputValue);
     case 'lt':
       return (cellValue: CellValue) => Number(cellValue) > Number(inputValue);
     case 'gt':
@@ -67,7 +90,14 @@ export function getFilterConditionFn(
     case 'end':
       return (cellValue: CellValue) =>
         isString(cellValue) && isString(inputValue) && endsWith(inputValue, cellValue);
-    //  @TODO: date 타입 함수 추가 필요
+    case 'after':
+      return (cellValue: CellValue) => getUnixTime(cellValue) > getUnixTime(inputValue);
+    case 'afterEq':
+      return (cellValue: CellValue) => getUnixTime(cellValue) >= getUnixTime(inputValue);
+    case 'before':
+      return (cellValue: CellValue) => getUnixTime(cellValue) < getUnixTime(inputValue);
+    case 'beforeEq':
+      return (cellValue: CellValue) => getUnixTime(cellValue) <= getUnixTime(inputValue);
     default:
     // no default
   }

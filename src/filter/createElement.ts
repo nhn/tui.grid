@@ -2,11 +2,20 @@ import { cls } from '../helper/dom';
 import { Dictionary } from '../store/types';
 import { CheckboxColumn } from './select';
 
-export function createInput(onKeyUp: EventHandlerNonNull, placeholder?: string) {
+interface Handler {
+  type: string;
+  handler: EventHandlerNonNull;
+}
+
+export function createInput(handlerList: Handler[], placeholder?: string) {
   const input = document.createElement('input');
   input.className = cls('filter-input');
   input.type = 'text';
-  input.addEventListener('keyup', onKeyUp);
+  handlerList.forEach(handler => {
+    input.addEventListener(handler.type, handler.handler);
+  });
+
+  // input.addEventListener('keyup', onKeyUp);
   if (placeholder) {
     input.placeholder = placeholder;
   }
@@ -45,12 +54,16 @@ export function createListItem(
   return li;
 }
 
-export function createSelect(item: Dictionary<string>) {
+export function createSelect(item: Dictionary<string>, handlerList: Handler[]) {
   const selectContainer = document.createElement('div');
   const select = document.createElement('select');
 
   selectContainer.className = cls('filter-dropdown');
   selectContainer.appendChild(select);
+
+  // handlerList.forEach(handler => {
+  //   select.addEventListener(handler.type, handler.handler);
+  // });
 
   Object.keys(item).forEach(key => {
     const option = document.createElement('option');

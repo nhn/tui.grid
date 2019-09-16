@@ -6,6 +6,8 @@ import { composeConditionFn, filterSelectOption, getFilterConditionFn } from '..
 import { SingleFilterOptionType } from '../types';
 
 export class TextFilter implements FilterItem {
+  private readonly columnName: string;
+
   private readonly columnInfo: ColumnInfo;
 
   private grid: Grid;
@@ -19,7 +21,7 @@ export class TextFilter implements FilterItem {
   public filterIndex?: number;
 
   private onKeyUpInput = () => {
-    const { name, filter } = this.columnInfo;
+    const { filter } = this.columnInfo;
     if (filter && !filter.showApplyBtn) {
       const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
       const value = this.searchInputEl!.value;
@@ -32,10 +34,10 @@ export class TextFilter implements FilterItem {
           value,
           filter.type as SingleFilterOptionType
         ) as Function;
-        this.grid.filter(name, composeConditionFn([fn]), [state], this.filterIndex);
+        this.grid.filter(this.columnName, composeConditionFn([fn]), [state], this.filterIndex);
       }
     } else {
-      this.grid.unfilter(name);
+      this.grid.unfilter(this.columnName);
     }
   };
 
@@ -47,7 +49,7 @@ export class TextFilter implements FilterItem {
     const el = document.createElement('div');
     const filterType = this.columnInfo.filter!.type as 'number' | 'text';
     const selectContainer = createSelect(filterSelectOption[filterType]);
-    const input = createInput(this.onKeyUpInput);
+    const input = createInput([{ type: 'keyup', handler: this.onKeyUpInput }]);
 
     this.searchInputEl = input;
     this.selectEl = selectContainer.querySelector('select')!;
@@ -66,6 +68,7 @@ export class TextFilter implements FilterItem {
 
     this.grid = grid;
     this.columnInfo = columnInfo;
+    this.columnName = columnInfo.name;
     this.filterIndex = index;
     this.el = this.getFilterElement();
   }
@@ -73,7 +76,7 @@ export class TextFilter implements FilterItem {
   public getFilterState() {
     return {
       select: this.selectEl!.value,
-      searchInput: this.searchInputEl!.value
+      value: this.searchInputEl!.value
     };
   }
 

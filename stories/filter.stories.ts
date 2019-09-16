@@ -14,16 +14,7 @@ const columns = [
   { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
   { name: 'type', filter: 'select' },
   { name: 'artist', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
-  {
-    name: 'release',
-    filter: {
-      type: 'date',
-      options: {
-        format: 'yyyy-mm',
-        type: 'month'
-      }
-    }
-  },
+  { name: 'release', filter: 'date' },
   { name: 'genre' }
 ];
 

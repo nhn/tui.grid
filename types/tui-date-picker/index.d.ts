@@ -1,5 +1,6 @@
 declare module 'tui-date-picker' {
   type CalendarType = 'date' | 'month' | 'year';
+  type DatePickerEventType = 'change' | 'close' | 'draw' | 'open';
 
   interface DatePickerOptions {
     date?: Date;
@@ -19,5 +20,6 @@ declare module 'tui-date-picker' {
 
     public open(): void;
     public destroy(): void;
+    public on(type: DatePickerEventType, handler: Function): void;
   }
 }
