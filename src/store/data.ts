@@ -15,7 +15,7 @@ import {
   RowKey,
   RowSpanMap,
   ListItem,
-  SortOptions,
+  SortState,
   ViewRow,
   Range
 } from './types';
@@ -428,7 +428,7 @@ export function create({
 }: OptData): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
 
-  const sortOptions: SortOptions = {
+  const sortState: SortState = {
     useClient: useClientSort,
     columns: [
       {
@@ -452,7 +452,7 @@ export function create({
     disabled,
     rawData,
     viewData,
-    sortOptions,
+    sortState,
     pageOptions,
     checkedAllRows: !rawData.some(row => !row._attributes.checked),
 

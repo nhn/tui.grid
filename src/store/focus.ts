@@ -72,7 +72,7 @@ export function create({
 
     get cellPosRect(this: Focus) {
       const { columnIndex, rowIndex, side, columnName, rowKey } = this;
-      const { rawData, sortOptions } = data;
+      const { rawData, sortState } = data;
 
       if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
         return null;
@@ -84,7 +84,7 @@ export function create({
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, rawData);
 
-      if (isRowSpanEnabled(sortOptions) && rowSpan) {
+      if (isRowSpanEnabled(sortState) && rowSpan) {
         const verticalPos = getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, rawData);
         return { left, right, top: verticalPos[0], bottom: verticalPos[1] };
       }

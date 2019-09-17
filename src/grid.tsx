@@ -880,7 +880,7 @@ export default class Grid {
    * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
-    return this.store.data.sortOptions;
+    return this.store.data.sortState;
   }
 
   /**
