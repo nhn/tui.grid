@@ -185,11 +185,10 @@ describe('sort', () => {
     cy.gridInstance().invoke('unsort');
 
     const testData = sampleData.map(data => String(data.alphabetA));
-    cy.get(`td[${dataAttr.COLUMN_NAME}=alphabetA]`).should($el => {
-      $el.each((index, elem) => {
-        expect(elem.textContent).to.eql(testData[index]);
-      });
-    });
+
+    cy.get('@first').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@first').should('not.have.class', cls('btn-sorting-down'));
+    compareColumnData('alphabetA', testData);
   });
 
   it("unsort('numberA') when multiple sorting", () => {
@@ -251,5 +250,16 @@ describe('sort', () => {
     cy.gridInstance().invoke('sort', 'numberA', true);
 
     compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+  });
+
+  it('data is unsorted when calls resetData API', () => {
+    createGrid();
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'numberA', false);
+    cy.gridInstance().invoke('resetData', sampleData.slice());
+
+    compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+    cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
 });
