@@ -94,12 +94,16 @@ export function getDepth(rawData: Row[], row?: Row) {
   return depth;
 }
 
-function createTreeRawRow(
+export function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
   options = { lazyObservable: false } as TreeDataOptions
 ) {
+  let childRowKeys = [] as RowKey[];
+  if (row._attributes && row._attributes.tree) {
+    childRowKeys = row._attributes.tree.childRowKeys as RowKey[];
+  }
   const { keyColumnName, offset, lazyObservable = false } = options;
   // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
@@ -110,7 +114,7 @@ function createTreeRawRow(
   const { rowKey } = rawRow;
   const defaultAttributes = {
     parentRowKey: parentRow ? parentRow.rowKey : null,
-    childRowKeys: [],
+    childRowKeys,
     hidden: parentRow ? !isExpanded(parentRow) || isHidden(parentRow) : false
   };
 
@@ -124,7 +128,9 @@ function createTreeRawRow(
 
   const tree = {
     ...defaultAttributes,
-    ...(Array.isArray(row._children) && { expanded: !!row._attributes!.expanded })
+    ...((Array.isArray(row._children) || childRowKeys.length) && {
+      expanded: !!row._attributes!.expanded
+    })
   };
 
   rawRow._attributes.tree = lazyObservable ? tree : observable(tree);

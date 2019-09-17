@@ -231,7 +231,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       disabled,
       columnInfo,
       defaultRowHeight,
-      renderData: valueMap[columnName],
+      renderData: (valueMap && valueMap[columnName]) || { invalidStates: [] },
       ...(columnName === treeColumnName ? { treeInfo } : null),
       selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false
     };

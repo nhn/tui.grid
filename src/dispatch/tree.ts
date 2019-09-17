@@ -65,7 +65,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
-  const { data, rowCoords, dimension, column, id } = store;
+  const { data, rowCoords, dimension, column, id, viewport } = store;
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, true);
@@ -87,9 +87,12 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
     const index = findIndexByRowKey(data, column, id, childRowKey);
     heights[index] = getRowHeight(childRow, dimension.rowHeight);
-
-    notify(rowCoords, 'heights');
   });
+
+  if (childRowKeys.length) {
+    notify(rowCoords, 'heights');
+    notify(viewport, 'rowRange');
+  }
 }
 
 export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {

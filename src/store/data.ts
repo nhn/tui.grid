@@ -54,7 +54,7 @@ interface RawRowOptions {
 }
 
 let dataCreationKey = '';
-function generateDataCreationKey() {
+export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
 }
 
@@ -412,7 +412,7 @@ export function createData(
 
   const viewData = rawData.map((row: Row) =>
     lazyObservable
-      ? ({ rowKey: row.rowKey, sortKey: row.sortKey } as ViewRow)
+      ? ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
       : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
   );
 
