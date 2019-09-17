@@ -9,7 +9,6 @@ import {
   OptSummaryColumnContentMap,
   SingleFilterOptionType
 } from '../types';
-import { FilterItemClass } from '../filter/types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -175,9 +174,11 @@ export interface ActivatedColumnAddress {
   left: number;
 }
 
+export type FilterLayerState = FilterParams & { searchInput: string | null };
+
 export interface FilterInfo {
   activatedColumnAddress: ActivatedColumnAddress | null;
-  filterLayerState: FilterParams | null;
+  filterLayerState: FilterLayerState | null;
   filters: FilterParams[] | null;
 }
 
@@ -213,7 +214,6 @@ export interface CellRendererOptions {
 }
 
 export interface ColumnFilterOption {
-  filterClass: FilterItemClass;
   type: SingleFilterOptionType | Function;
   options?: Dictionary<any>;
   operator?: 'AND' | 'OR';
@@ -234,7 +234,7 @@ export interface FilterParams {
   columnName: string;
   type: SingleFilterOptionType | Function;
   operator?: 'OR' | 'AND';
-  conditionFn: Function | null;
+  conditionFn?: Function;
   state: FilterState[];
 }
 

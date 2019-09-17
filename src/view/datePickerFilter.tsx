@@ -14,16 +14,16 @@ import {
   TextFilterCode
 } from '../store/types';
 import { filterSelectOption } from '../helper/filter';
-import { deepMergedCopy, findProp, isNumber, isString } from '../helper/common';
+import { deepMergedCopy, isNumber, isString } from '../helper/common';
 
 interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
+  columnAddress: ActivatedColumnAddress;
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
   filterIndex: number;
 }
 
@@ -98,18 +98,16 @@ class DatePickerFilterComp extends Component<Props> {
   };
 
   private getPreviousValue = () => {
-    const { columnInfo, filterInfo, filterIndex } = this.props;
+    const { filterInfo, filterIndex } = this.props;
+    const filterState = filterInfo.filterLayerState!.state;
 
     let code = 'eq';
     let value = '';
 
-    if (filterInfo.filters) {
-      const prevFilter = findProp('columnName', columnInfo.name, filterInfo.filters);
-      if (prevFilter) {
-        const state = prevFilter.state[filterIndex];
-        code = state.code ? state.code : code;
-        value = state.code ? String(state.value) : value;
-      }
+    if (filterState.length > 0 && filterState[filterIndex]) {
+      const { code: prevCode, value: prevValue } = filterState[filterIndex];
+      code = prevCode!;
+      value = String(prevValue);
     }
 
     return { value, code };
@@ -156,17 +154,16 @@ class DatePickerFilterComp extends Component<Props> {
   }
 }
 
-export const DatePickerFilter = connect<StoreProps, OwnProps>(
-  (store, { columnAddress, filterIndex }) => {
-    const { column, id, data } = store;
-    const { allColumnMap } = column;
+export const DatePickerFilter = connect<StoreProps, OwnProps>((store, { filterIndex }) => {
+  const { column, id, data } = store;
+  const { allColumnMap } = column;
+  const columnAddress = data.filterInfo.activatedColumnAddress!;
 
-    return {
-      grid: getInstance(id),
-      columnInfo: allColumnMap[columnAddress.name],
-      columnAddress,
-      filterIndex,
-      filterInfo: data.filterInfo
-    };
-  }
-)(DatePickerFilterComp);
+  return {
+    grid: getInstance(id),
+    columnInfo: allColumnMap[columnAddress.name],
+    columnAddress,
+    filterIndex,
+    filterInfo: data.filterInfo
+  };
+})(DatePickerFilterComp);

@@ -39,7 +39,6 @@ import {
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
-import { filterMap } from '../filter/manager';
 
 const ROW_HEADERS_MAP = {
   rowNum: '_number',
@@ -78,22 +77,23 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
   return null;
 }
 
-function getBuiltInFilterOptions(type: string, filterOpt?: FilterOpt): ColumnFilterOption {
-  const filterInfo = filterMap[type];
-
+function getBuiltInFilterOptions(
+  type: SingleFilterOptionType,
+  filterOpt?: FilterOpt
+): ColumnFilterOption {
   if (filterOpt) {
     const { options, operator, showApplyBtn = false, showClearBtn = false } = filterOpt;
 
     return operator
       ? {
-          ...filterInfo,
+          type,
           operator,
           options,
           showApplyBtn,
           showClearBtn
         }
       : {
-          ...filterInfo,
+          type,
           options,
           showClearBtn,
           showApplyBtn
@@ -101,18 +101,19 @@ function getBuiltInFilterOptions(type: string, filterOpt?: FilterOpt): ColumnFil
   }
 
   return {
-    ...filterInfo,
+    type,
     showApplyBtn: false,
     showClearBtn: false
   };
 }
 
 function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
-  // if (isFunction(filter)) {
-  //   return getBuiltInFilterOptions('function', filter);
-  // }
   if (isString(filter)) {
-    return getBuiltInFilterOptions(filter);
+    let filterOpt;
+    if (filter === 'select') {
+      filterOpt = { operator: 'OR' } as FilterOpt;
+    }
+    return getBuiltInFilterOptions(filter, filterOpt);
   }
   if (isObject(filter)) {
     return isString(filter.type)

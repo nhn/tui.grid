@@ -1,8 +1,6 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import Grid from '../grid';
-import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
 import {
   ActivatedColumnAddress,
@@ -12,18 +10,16 @@ import {
   TextFilterCode
 } from '../store/types';
 import { filterSelectOption } from '../helper/filter';
-import { findProp } from '../helper/common';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
 interface StoreProps {
-  grid: Grid;
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
+  columnAddress: ActivatedColumnAddress;
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
   filterIndex: number;
 }
 
@@ -48,23 +44,22 @@ class TextFilterComp extends Component<Props> {
     if (value && code) {
       dispatch('setFilterLayerState', { value, code }, filterIndex);
     } else if (!value.length) {
-      dispatch('unfilter', this.props.columnAddress.name);
+      // @TODO: 해당 state를 지워주는 식으로 해야함
+      // dispatch('unfilter', this.props.columnAddress.name);
     }
   };
 
   private getPreviousValue = () => {
-    const { columnInfo, filterInfo, filterIndex } = this.props;
+    const { filterInfo, filterIndex } = this.props;
+    const filterState = filterInfo.filterLayerState!.state;
 
     let code = 'eq';
     let value = '';
 
-    if (filterInfo.filters) {
-      const prevFilter = findProp('columnName', columnInfo.name, filterInfo.filters);
-      if (prevFilter) {
-        const state = prevFilter.state[filterIndex];
-        code = state.code ? state.code : code;
-        value = state.code ? String(state.value) : value;
-      }
+    if (filterState.length > 0 && filterState[filterIndex]) {
+      const { code: prevCode, value: prevValue } = filterState[filterIndex];
+      code = prevCode!;
+      value = String(prevValue);
     }
 
     return { value, code };
@@ -108,12 +103,12 @@ class TextFilterComp extends Component<Props> {
   }
 }
 
-export const TextFilter = connect<StoreProps, OwnProps>((store, { columnAddress, filterIndex }) => {
-  const { column, id, data } = store;
+export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex }) => {
+  const { column, data } = store;
   const { allColumnMap } = column;
+  const columnAddress = data.filterInfo.activatedColumnAddress!;
 
   return {
-    grid: getInstance(id),
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filterIndex,

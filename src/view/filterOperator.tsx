@@ -1,53 +1,46 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import Grid from '../grid';
-import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import {
-  ActivatedColumnAddress,
-  ColumnInfo,
-  FilterInfo,
-  NumberFilterCode,
-  TextFilterCode
-} from '../store/types';
-import { filterSelectOption } from '../helper/filter';
-import { findProp } from '../helper/common';
-
-type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
 interface StoreProps {
-  grid: Grid;
-  columnInfo: ColumnInfo;
-  filterInfo: FilterInfo;
+  operator: 'AND' | 'OR';
 }
 
 type Props = StoreProps & DispatchProps;
 
 class FilterOperatorComp extends Component<Props> {
-  private selectEl?: HTMLSelectElement;
-
-  public componentDidMount() {}
-
-  private getPreviousValue = () => {
-    // const { columnInfo, filterInfo } = this.props;
+  private handleChangeOperator = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value as 'AND' | 'OR';
+    this.props.dispatch('setFilterLayerOperator', value);
   };
 
   public render() {
-    // const { columnInfo } = this.props;
-    // const selectOption = filterSelectOption[
-    //   columnInfo.filter!.type as 'number' | 'text'
-    // ] as SelectOption;
+    const { operator } = this.props;
 
     return (
       <div className={cls('filter-comparator-container')}>
         <div className={cls('filter-comparator')}>
-          <input type="radio" name="filterOperator" value="AND" id="AND" checked />
+          <input
+            type="radio"
+            name="filterOperator"
+            value="AND"
+            id="AND"
+            checked={operator === 'AND'}
+            onChange={this.handleChangeOperator}
+          />
           <label for="AND" />
           <span>AND</span>
         </div>
         <div className={cls('filter-comparator')}>
-          <input type="radio" id="OR" name="filterOperator" value="OR" />
+          <input
+            type="radio"
+            id="OR"
+            name="filterOperator"
+            value="OR"
+            checked={operator === 'OR'}
+            onChange={this.handleChangeOperator}
+          />
           <label for="OR" />
           <span>OR</span>
         </div>
@@ -57,11 +50,9 @@ class FilterOperatorComp extends Component<Props> {
 }
 
 export const FilterOperator = connect<StoreProps>(store => {
-  const { column, id, data } = store;
-  const { allColumnMap } = column;
+  const { data } = store;
 
   return {
-    grid: getInstance(id),
-    filterInfo: data.filterInfo
+    operator: data.filterInfo.filterLayerState!.operator || 'AND'
   };
 })(FilterOperatorComp);
