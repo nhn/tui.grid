@@ -262,4 +262,15 @@ describe('sort', () => {
     cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
     cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
+
+  it('data is unsorted when calls setColumns API', () => {
+    createGrid();
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'numberA', false);
+    cy.gridInstance().invoke('setColumns', columns);
+
+    compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+    cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
+  });
 });
