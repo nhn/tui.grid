@@ -56,6 +56,7 @@ interface RawRowOptions {
 let dataCreationKey = '';
 export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
+  return dataCreationKey;
 }
 
 export function getCellDisplayValue(value: CellValue) {
