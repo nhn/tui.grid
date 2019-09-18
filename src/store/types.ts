@@ -186,6 +186,7 @@ export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortState: SortState;
+  filteredIndex: number[];
   filteredRawData: Row[];
   filteredViewData: ViewRow[];
   disabled: boolean;
@@ -214,7 +215,7 @@ export interface CellRendererOptions {
 }
 
 export interface ColumnFilterOption {
-  type: SingleFilterOptionType | Function;
+  type: SingleFilterOptionType;
   options?: Dictionary<any>;
   operator?: 'AND' | 'OR';
   showApplyBtn: boolean;
@@ -232,7 +233,7 @@ export interface FilterState {
 
 export interface FilterParams {
   columnName: string;
-  type: SingleFilterOptionType | Function;
+  type: SingleFilterOptionType;
   operator?: 'OR' | 'AND';
   conditionFn?: Function;
   state: FilterState[];

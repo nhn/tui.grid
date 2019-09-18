@@ -52,7 +52,8 @@ class HeaderAreaComp extends Component<Props> {
 
     if (
       findParent(target, 'cell-row-header') ||
-      hasClass(target, 'btn-sorting' || hasClass(target, 'btn-filter'))
+      hasClass(target, 'btn-sorting') ||
+      hasClass(target, 'btn-filter')
     ) {
       return;
     }

@@ -1,13 +1,21 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortState, Column, Data } from '../store/types';
+import {
+  CellValue,
+  RowKey,
+  ColumnInfo,
+  SortState,
+  Column,
+  Data,
+  FilterParams
+} from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction, findPropIndex, isNull } from '../helper/common';
+import { isFunction, findPropIndex, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface StoreProps {
@@ -20,6 +28,7 @@ interface StoreProps {
   value?: CellValue;
   grid: Grid;
   sortState: SortState;
+  filter?: FilterParams;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
 }
@@ -57,13 +66,17 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     if (this.editor) {
-      const { dispatch, rowKey, columnName, sortState } = this.props;
+      const { dispatch, rowKey, columnName, sortState, filter } = this.props;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
-        const index = findPropIndex('columnName', columnName, sortState.columns);
-        if (index !== -1) {
-          dispatch('sort', columnName, sortState.columns[index].ascending, true, false);
+        const sortIndex = findPropIndex('columnName', columnName, sortState.columns);
+        if (sortIndex !== -1) {
+          dispatch('sort', columnName, sortState.columns[sortIndex].ascending, true, false);
+        }
+        if (filter) {
+          const { conditionFn, state } = filter;
+          dispatch('filter', columnName, conditionFn!, state);
         }
       }
       dispatch('finishEditing', rowKey, columnName, value);
@@ -157,6 +170,10 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
   const targetRow = viewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
   const { value } = targetRow.valueMap[columnName];
+  let filter;
+  if (data.filterInfo.filters) {
+    filter = findProp('columnName', columnName, data.filterInfo.filters as FilterParams[]);
+  }
 
   return {
     ...state,
@@ -166,6 +183,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
-    value
+    value,
+    filter
   };
 })(EditingLayerInnerComp);

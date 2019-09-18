@@ -392,6 +392,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  notify(data, 'filteredRawData');
   updateSummaryValueByRow(store, removedRow, false);
   renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow);
@@ -563,10 +564,32 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
   );
 }
 
+function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
+  const [start, end] = rowRange;
+
+  return data.filteredIndex.slice(start, end).reduce(
+    (acc: OriginData, rowIndex) => {
+      const row = data.rawData[rowIndex];
+      if (treeColumnName && row._attributes.tree!.hidden) {
+        return acc;
+      }
+      if (!isObservable(row)) {
+        acc.rows.push(row);
+        acc.targetIndexes.push(rowIndex);
+      }
+      return acc;
+    },
+    { rows: [], targetIndexes: [] }
+  );
+}
+
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const { treeColumnName } = column;
-  const originData = createOriginData(data, rowRange, treeColumnName);
+  let originData = createOriginData(data, rowRange, treeColumnName);
+  if (data.filterInfo.filters) {
+    originData = createFilteredOriginData(data, rowRange, treeColumnName);
+  }
 
   if (!originData.rows.length) {
     return;

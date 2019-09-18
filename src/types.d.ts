@@ -117,7 +117,7 @@ export type MultipleFilterOptionType = 'text' | 'number' | 'date';
 export type SingleFilterOptionType = MultipleFilterOptionType | 'select';
 
 export interface FilterOpt {
-  type: MultipleFilterOptionType | Function;
+  type: MultipleFilterOptionType;
   options?: Dictionary<any>;
   operator?: 'OR' | 'AND';
   showApplyBtn?: boolean;

@@ -26,7 +26,10 @@ import {
   InvalidRow,
   ColumnInfo,
   Dictionary,
-  FilterState
+  FilterState,
+  NumberFilterCode,
+  TextFilterCode,
+  DateFilterCode
 } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
@@ -62,6 +65,7 @@ import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
+import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -1436,12 +1440,22 @@ export default class Grid {
   /**
    * trigger filter
    * @param {string} columnName - column name to filter
-   * @param {Function} conditionFn - filter predicate
    * @param {Array.<FilterState>} state - filter state
    * @example
-   * grid.filter('name', (value) => value === 3 || value === 4, [{code: 'eq', value: 3}, {code: 'eq', value: 4}]);
+   * grid.filter('name', [{code: 'eq', value: 3}, {code: 'eq', value: 4}]);
    */
-  public filter(columnName: string, conditionFn: Function, state: FilterState[]) {
-    this.dispatch('filter', columnName, conditionFn, state);
+  public filter(columnName: string, state: FilterState[]) {
+    const { filter } = this.store.column.allColumnMap[columnName];
+    if (filter) {
+      const { type } = filter;
+      const conditionFn = state.map(({ code, value }) =>
+        getFilterConditionFn(
+          code as NumberFilterCode | TextFilterCode | DateFilterCode,
+          value,
+          type
+        )
+      ) as Function[];
+      this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
+    }
   }
 }

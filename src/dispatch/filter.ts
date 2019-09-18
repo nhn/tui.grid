@@ -5,6 +5,9 @@ import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { FilterOpt, SingleFilterOptionType } from '../types';
 import { getRowHeight } from '../store/rowCoords';
 import { getFilterOptions } from '../store/column';
+import { setScrollTop } from './viewport';
+import { initSelection } from './selection';
+import { initFocus } from './focus';
 
 export function setFilterLayerOperator(store: Store, value: 'AND' | 'OR') {
   const { data, column } = store;
@@ -74,7 +77,7 @@ export function setSelectFilterLayerState(store: Store, value: CellValue, checke
 
 export function setActivatedColumnAddress(store: Store, address: ActivatedColumnAddress | null) {
   const { data, column } = store;
-  const { filterInfo, rawData } = data;
+  const { filterInfo, filteredRawData, rawData } = data;
   filterInfo.activatedColumnAddress = address;
   if (address) {
     const { type, operator } = column.allColumnMap[address.name].filter!;
@@ -89,7 +92,7 @@ export function setActivatedColumnAddress(store: Store, address: ActivatedColumn
 
     if (!initialState) {
       if (type === 'select') {
-        const columnData = uniq(pluck(rawData as Row[], address.name));
+        const columnData = uniq(pluck(filteredRawData as Row[], address.name));
         initialState = columnData.map(value => ({ code: 'eq', value }));
       } else {
         initialState = [];
@@ -202,14 +205,18 @@ export function filter(
     ];
   }
 
-  // @TODO: filtered viewData, raw data
   notify(data, 'filterInfo');
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
   notify(rowCoords, 'heights');
+
+  setScrollTop(store, 0);
+  initSelection(store);
+  initFocus(store);
 }
 
-export function unfilter({ data, rowCoords, dimension }: Store, columnName: string) {
+export function unfilter(store: Store, columnName: string) {
+  const { data, rowCoords, dimension } = store;
   const { filterInfo } = data;
   const { filters } = filterInfo;
   if (filters) {
@@ -227,6 +234,10 @@ export function unfilter({ data, rowCoords, dimension }: Store, columnName: stri
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
   notify(rowCoords, 'heights');
+
+  setScrollTop(store, 0);
+  initSelection(store);
+  initFocus(store);
 }
 
 export function setFilter(

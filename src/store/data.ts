@@ -34,7 +34,8 @@ import {
   isEmpty,
   isString,
   isNumber,
-  isFunction
+  isFunction,
+  findPropIndex
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -484,20 +485,15 @@ export function create({
         return applyFilterToRawData(this.rawData, this.filterInfo.filters);
       }
 
-      return rawData;
+      return this.rawData;
+    },
+
+    get filteredIndex(this: Data) {
+      return this.filteredRawData.map(row => findPropIndex('rowKey', row.rowKey, this.rawData)!);
     },
 
     get filteredViewData(this: Data) {
-      if (this.filterInfo.filters) {
-        const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
-
-        //@TODO: 전체 rawData를 observable하게 하면 너무 느리지 않을까?
-        return this.filteredRawData.map((row: Row) =>
-          createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
-        );
-      }
-
-      return this.viewData;
+      return this.filteredIndex.map(index => this.viewData[index]);
     },
 
     get pageRowRange() {
