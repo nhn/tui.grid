@@ -72,6 +72,11 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   column.allColumns = [...rowHeaders, ...columnInfos];
   const { allColumnMap, treeColumnName, treeIcon } = column;
 
+  data.viewData.forEach(viewRow => {
+    if (Array.isArray(viewRow.__unobserveFns__)) {
+      viewRow.__unobserveFns__.forEach(fn => fn());
+    }
+  });
   data.rawData = data.rawData.map(row => {
     row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
     return row;
