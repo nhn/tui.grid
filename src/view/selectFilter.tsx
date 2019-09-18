@@ -27,10 +27,13 @@ interface StoreProps {
   columnData: ColumnData[];
   isAllSelected: boolean;
   searchInput: string | null;
+}
+
+interface OwnProps {
   columnAddress: ActivatedColumnAddress;
 }
 
-type Props = StoreProps & DispatchProps;
+type Props = StoreProps & OwnProps & DispatchProps;
 
 class SelectFilterComp extends Component<Props> {
   private searchInputEl?: HTMLInputElement;
@@ -108,11 +111,10 @@ class SelectFilterComp extends Component<Props> {
   }
 }
 
-export const SelectFilter = connect<StoreProps>(store => {
+export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
   const { column, id, data } = store;
   const { rawData, filterInfo } = data;
   const { allColumnMap } = column;
-  const columnAddress = data.filterInfo.activatedColumnAddress!;
 
   const searchInput = filterInfo.filterLayerState!.searchInput;
   const filterLayerState: FilterState[] = (filterInfo.filterLayerState! as FilterLayerState).state;

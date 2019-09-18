@@ -20,8 +20,8 @@ export function create({ data, dimension }: RowCoordsOption): RowCoords {
 
   return observable({
     heights: pageOptions.useClient
-      ? data.rawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
-      : data.rawData.map(row => getRowHeight(row, rowHeight)),
+      ? data.filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
+      : data.filteredRawData.map(row => getRowHeight(row, rowHeight)),
 
     get offsets() {
       const offsets = [0];

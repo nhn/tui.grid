@@ -20,10 +20,10 @@ interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
-  columnAddress: ActivatedColumnAddress;
 }
 
 interface OwnProps {
+  columnAddress: ActivatedColumnAddress;
   filterIndex: number;
 }
 
@@ -89,12 +89,7 @@ class DatePickerFilterComp extends Component<Props> {
     const { filterIndex, dispatch } = this.props;
     const value = this.inputEl!.value;
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
-
-    if (value && code) {
-      dispatch('setFilterLayerState', { value, code }, filterIndex);
-    } else if (!value.length) {
-      dispatch('unfilter', this.props.columnAddress.name);
-    }
+    dispatch('setFilterLayerState', { value, code }, filterIndex);
   };
 
   private getPreviousValue = () => {
@@ -154,16 +149,17 @@ class DatePickerFilterComp extends Component<Props> {
   }
 }
 
-export const DatePickerFilter = connect<StoreProps, OwnProps>((store, { filterIndex }) => {
-  const { column, id, data } = store;
-  const { allColumnMap } = column;
-  const columnAddress = data.filterInfo.activatedColumnAddress!;
+export const DatePickerFilter = connect<StoreProps, OwnProps>(
+  (store, { filterIndex, columnAddress }) => {
+    const { column, id, data } = store;
+    const { allColumnMap } = column;
 
-  return {
-    grid: getInstance(id),
-    columnInfo: allColumnMap[columnAddress.name],
-    columnAddress,
-    filterIndex,
-    filterInfo: data.filterInfo
-  };
-})(DatePickerFilterComp);
+    return {
+      grid: getInstance(id),
+      columnInfo: allColumnMap[columnAddress.name],
+      columnAddress,
+      filterIndex,
+      filterInfo: data.filterInfo
+    };
+  }
+)(DatePickerFilterComp);

@@ -2,7 +2,9 @@ import { ActivatedColumnAddress, CellValue, FilterState, Row, Store } from '../s
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex, pluck, uniq } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
-import { SingleFilterOptionType } from '../types';
+import { FilterOpt, SingleFilterOptionType } from '../types';
+import { getRowHeight } from '../store/rowCoords';
+import { getFilterOptions } from '../store/column';
 
 export function setFilterLayerOperator(store: Store, value: 'AND' | 'OR') {
   const { data, column } = store;
@@ -21,7 +23,6 @@ export function setFilterLayerOperator(store: Store, value: 'AND' | 'OR') {
 
 export function updateFilterLayerSearchInput({ data }: Store, value: string) {
   data.filterInfo.filterLayerState!.searchInput = value;
-
   notify(data, 'filterInfo');
 }
 
@@ -73,8 +74,7 @@ export function setSelectFilterLayerState(store: Store, value: CellValue, checke
 
 export function setActivatedColumnAddress(store: Store, address: ActivatedColumnAddress | null) {
   const { data, column } = store;
-  const { filterInfo } = data;
-  const { rawData } = data;
+  const { filterInfo, rawData } = data;
   filterInfo.activatedColumnAddress = address;
   if (address) {
     const { type, operator } = column.allColumnMap[address.name].filter!;
@@ -147,13 +147,18 @@ export function clearFilterLayerState(store: Store) {
 export function setFilterLayerState(store: Store, state: FilterState, filterIndex: number) {
   const { data, column } = store;
   data.filterInfo.filterLayerState!.state[filterIndex] = state as FilterState;
+
   notify(data, 'filterInfo');
 
   const columnName = data.filterInfo.activatedColumnAddress!.name;
   const columnInfo = column.allColumnMap[columnName];
 
   if (!columnInfo.filter!.showApplyBtn) {
-    applyFilterLayerState(store);
+    if (filterIndex === 0 && !String(state.value).length) {
+      unfilter(store, columnName);
+    } else {
+      applyFilterLayerState(store);
+    }
   }
 }
 
@@ -163,7 +168,7 @@ export function filter(
   conditionFn: Function,
   state: FilterState[]
 ) {
-  const { data, column } = store;
+  const { data, column, rowCoords, dimension } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
   if (!columnFilterInfo) {
     return;
@@ -195,17 +200,18 @@ export function filter(
   }
 
   notify(data, 'filterInfo');
+
+  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
+  notify(rowCoords, 'heights');
 }
 
-export function unfilter({ data }: Store, columnName: string) {
+export function unfilter({ data, rowCoords, dimension }: Store, columnName: string) {
   const { filterInfo } = data;
   const { filters } = filterInfo;
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      filterInfo.filterLayerState!.state!.forEach((st, idx) => {
-        filterInfo.filterLayerState!.state![idx] = { code: null, value: null };
-      });
+      filterInfo.filterLayerState!.state = [];
       filterInfo.filters!.splice(filterIndex, 1);
       if (filterInfo.filters!.length === 0) {
         filterInfo.filters = null;
@@ -214,4 +220,17 @@ export function unfilter({ data }: Store, columnName: string) {
   }
 
   notify(data, 'filterInfo');
+
+  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
+  notify(rowCoords, 'heights');
+}
+
+export function setFilter(store: Store, columnName: string, filterOpt: FilterOpt) {
+  const { column } = store;
+  const filterOptions = getFilterOptions(filterOpt);
+  const index = findPropIndex('name', columnName, column.allColumns);
+  if (index !== -1) {
+    column.allColumns[index].filter = filterOptions;
+    notify(column, 'allColumns');
+  }
 }

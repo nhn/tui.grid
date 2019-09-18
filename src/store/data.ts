@@ -428,8 +428,8 @@ function applyFilterToRawData(rawData: Row[], filters: FilterParams[] | null) {
   if (filters) {
     res = filters.reduce((acc: Row[], filter: FilterParams) => {
       const { conditionFn, columnName } = filter;
-      return rawData.filter(row => conditionFn!(row[columnName]));
-    }, []);
+      return acc.filter(row => conditionFn!(row[columnName]));
+    }, rawData);
   }
 
   return res;
@@ -456,7 +456,8 @@ export function create({
 
   const filterInfo: FilterInfo = {
     activatedColumnAddress: null,
-    filters: null
+    filters: null,
+    filterLayerState: null
   };
 
   const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)

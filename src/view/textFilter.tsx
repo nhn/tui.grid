@@ -16,10 +16,10 @@ type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 interface StoreProps {
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
-  columnAddress: ActivatedColumnAddress;
 }
 
 interface OwnProps {
+  columnAddress: ActivatedColumnAddress;
   filterIndex: number;
 }
 
@@ -41,12 +41,7 @@ class TextFilterComp extends Component<Props> {
     const value = this.inputEl!.value;
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
 
-    if (value && code) {
-      dispatch('setFilterLayerState', { value, code }, filterIndex);
-    } else if (!value.length) {
-      // @TODO: 해당 state를 지워주는 식으로 해야함
-      // dispatch('unfilter', this.props.columnAddress.name);
-    }
+    dispatch('setFilterLayerState', { value, code }, filterIndex);
   };
 
   private getPreviousValue = () => {
@@ -103,10 +98,9 @@ class TextFilterComp extends Component<Props> {
   }
 }
 
-export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex }) => {
+export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex, columnAddress }) => {
   const { column, data } = store;
   const { allColumnMap } = column;
-  const columnAddress = data.filterInfo.activatedColumnAddress!;
 
   return {
     columnInfo: allColumnMap[columnAddress.name],

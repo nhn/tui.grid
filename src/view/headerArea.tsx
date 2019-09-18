@@ -50,7 +50,11 @@ class HeaderAreaComp extends Component<Props> {
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
-    if (findParent(target, 'cell-row-header') || hasClass(target, 'btn-sorting')) {
+    if (
+      findParent(target, 'cell-row-header') ||
+      hasClass(target, 'btn-sorting' || hasClass(target, 'btn-filter'))
+    ) {
+      console.log('여기 아냐?');
       return;
     }
 

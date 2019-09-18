@@ -10,11 +10,11 @@ const stories = storiesOf('Filter', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name', filter: 'text', editor: 'text' },
+  { name: 'name', filter: 'text', editor: { type: 'text', operator: 'OR' } },
   { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
   { name: 'type', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
   { name: 'artist', filter: 'select' },
-  { name: 'release', filter: 'date' },
+  { name: 'release', filter: { type: 'date', options: { type: 'month', format: 'yyyy.MM.dd' } } },
   { name: 'genre' }
 ];
 

@@ -107,7 +107,7 @@ function getBuiltInFilterOptions(
   };
 }
 
-function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
+export function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
   if (isString(filter)) {
     let filterOpt;
     if (filter === 'select') {

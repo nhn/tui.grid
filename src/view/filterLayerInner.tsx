@@ -12,14 +12,15 @@ interface StoreProps {
   filterInfo: FilterInfo;
   columnInfo: ColumnInfo;
   renderSecondFilter: boolean;
+}
+
+interface OwnProps {
   columnAddress: ActivatedColumnAddress;
 }
 
-type Props = StoreProps & DispatchProps;
+type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
-  public componentDidMount() {}
-
   private handleClickApplyFilterBtn = () => {
     this.props.dispatch('applyFilterLayerState');
   };
@@ -34,17 +35,17 @@ export class FilterLayerInnerComp extends Component<Props> {
 
   // eslint-disable-next-line consistent-return
   private getFilterComponent = (index: number) => {
-    const { columnInfo } = this.props;
+    const { columnAddress, columnInfo } = this.props;
     const type = columnInfo.filter!.type;
 
     switch (type) {
       case 'text':
       case 'number':
-        return <TextFilter filterIndex={index} />;
+        return <TextFilter columnAddress={columnAddress} filterIndex={index} />;
       case 'date':
-        return <DatePickerFilter filterIndex={index} />;
+        return <DatePickerFilter columnAddress={columnAddress} filterIndex={index} />;
       case 'select':
-        return <SelectFilter />;
+        return <SelectFilter columnAddress={columnAddress} />;
       default:
       //no default
     }
@@ -88,12 +89,11 @@ export class FilterLayerInnerComp extends Component<Props> {
   }
 }
 
-export const FilterLayerInner = connect<StoreProps>(store => {
+export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
   const { data, column } = store;
   const { filterInfo } = data;
   const { allColumnMap } = column;
 
-  const columnAddress = data.filterInfo.activatedColumnAddress!;
   const filterLayerState = filterInfo.filterLayerState!;
 
   const renderSecondFilter = !!(

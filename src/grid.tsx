@@ -1415,24 +1415,15 @@ export default class Grid {
     }
   }
 
-  public setFilter(columnName: string, filter: FilterOpt) {
-    console.log(filter, columnName);
+  public setFilter(columnName: string, filterOpt: FilterOpt) {
+    this.dispatch('setFilter', columnName, filterOpt);
   }
 
   public getFilterState() {
     return this.store.data.filterInfo.filters;
   }
 
-  public filter(
-    columnName: string,
-    conditionFn: Function,
-    state: FilterState[],
-    filterIndex?: number
-  ) {
-    this.dispatch('filter', columnName, conditionFn, state, filterIndex);
-  }
-
-  public unfilter(columnName: string) {
-    this.dispatch('unfilter', columnName);
+  public filter(columnName: string, conditionFn: Function, state: FilterState[]) {
+    this.dispatch('filter', columnName, conditionFn, state);
   }
 }
