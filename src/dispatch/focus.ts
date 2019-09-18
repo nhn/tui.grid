@@ -181,7 +181,7 @@ function makeObservable(store: Store, rowKey: RowKey) {
       viewData[foundIndex] = createViewRow(
         rawData[foundIndex],
         allColumnMap,
-        data.rawData,
+        rawData,
         treeColumnName,
         treeIcon
       );
