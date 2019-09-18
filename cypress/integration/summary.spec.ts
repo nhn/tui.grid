@@ -424,6 +424,12 @@ describe('summary', () => {
           sum: 275000
         });
       });
+    cy.gridInstance().invoke('setColumns', [
+      { name: 'name', minWidth: 150 },
+      { name: 'price', minWidth: 150 },
+      { name: 'downloadCount', minWidth: 150 }
+    ]);
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
   });
 
   it('summaryColumnContent is priority than defaultContent', () => {
