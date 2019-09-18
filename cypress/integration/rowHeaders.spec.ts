@@ -79,17 +79,17 @@ describe('row header API', () => {
   });
 
   it('checkAll, uncheckAll (Dynamic rendering)', () => {
-    const localData = [];
-    for (let i = 0; i < 1000; i ++) {
-      localData.push({
+    const gridData = [];
+    for (let i = 0; i < 1000; i += 1) {
+      gridData.push({
         id: i,
-        name: 'name'+i,
-        artist: 'artist'+i,
-        type: 'type'+i
+        name: `name${i}`,
+        artist: `artist${i}`,
+        type: `type${i}`
       });
     }
     cy.gridInstance().invoke('setBodyHeight', 300);
-    cy.gridInstance().invoke('resetData', localData);
+    cy.gridInstance().invoke('resetData', gridData);
     cy.gridInstance().invoke('checkAll');
 
     cy.get('input').should($el => {
