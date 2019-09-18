@@ -252,7 +252,7 @@ describe('auto calculate column widths (container: 600)', () => {
   });
 });
 
-describe('body height', () => {
+describe('height', () => {
   const DEF_HEADER_HEIGHT = 40;
   const BORER_WIDTH = 1;
   const columns = [{ name: 'c1' }];
@@ -261,6 +261,12 @@ describe('body height', () => {
   function assertBodyHeight(height: number) {
     cy.get(`.${cls('body-area')}`).each($body => {
       expect($body.height()).to.eq(height);
+    });
+  }
+
+  function assertHeaderHeight(height: number) {
+    cy.get(`.${cls('header-area')}`).each($header => {
+      expect($header.height()).to.eq(height);
     });
   }
 
@@ -316,5 +322,25 @@ describe('body height', () => {
       dragHeightReiszeHandle(100);
       assertBodyHeight(300);
     });
+  });
+
+  it('setHeight() changes container height', () => {
+    cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
+    cy.gridInstance().invoke('setHeight', 400);
+    cy.get(`.${cls('header-area')}`).then($header => {
+      assertBodyHeight(400 - $header.height()!);
+    });
+  });
+
+  it('setBodyHeight() changes body height', () => {
+    cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
+    cy.gridInstance().invoke('setBodyHeight', 300);
+    assertBodyHeight(300);
+  });
+
+  it('setHeader() changes header height', () => {
+    cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
+    cy.gridInstance().invoke('setHeader', { height: 50 });
+    assertHeaderHeight(51);
   });
 });
