@@ -204,3 +204,16 @@ it('cannot edit the value on disabled cell', () => {
 
   cy.get(`.${cls('content-text')}`).should('be.not.visible');
 });
+
+it('cannot save the value and finish the editing on non editable cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('finishEditing', 0, 'age', 11);
+  cy.getCell(0, 'age').should('have.text', '20');
+
+  cy.gridInstance().invoke('disable');
+  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
+  cy.getCell(0, 'name').should('have.text', 'Lee');
+});
