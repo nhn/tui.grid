@@ -275,6 +275,26 @@ it('gridMounted', () => {
   });
 });
 
+it('gridBeforeDestroy', () => {
+  const callback = cy.stub();
+
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+
+  cy.createGrid({
+    data,
+    columns,
+    rowHeaders: ['rowNum', 'checkbox'],
+    onGridBeforeDestroy: callback
+  });
+  cy.gridInstance()
+    .invoke('destroy')
+    .should(() => {
+      expect(callback).to.be.calledOnce;
+    });
+});
+
 it('columnResize', () => {
   const callback = cy.stub();
 
