@@ -404,6 +404,7 @@ export function clearData(store: Store) {
   });
 
   initFocus(store);
+  initSortState(data);
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
