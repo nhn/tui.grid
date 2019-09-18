@@ -273,4 +273,14 @@ describe('sort', () => {
     cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
     cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
+
+  it('data is unsorted when calls clearData API', () => {
+    createGrid();
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'numberA', false);
+    cy.gridInstance().invoke('clear');
+
+    cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
+  });
 });
