@@ -264,12 +264,6 @@ describe('height', () => {
     });
   }
 
-  function assertHeaderHeight(height: number) {
-    cy.get(`.${cls('header-area')}`).each($header => {
-      expect($header.height()).to.eq(height);
-    });
-  }
-
   it('fitToParent', () => {
     const PARENT_HEIGHT = 400;
 
