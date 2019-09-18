@@ -10,7 +10,8 @@ import {
   OptAppendTreeRow,
   OptColumn,
   OptHeader,
-  FilterOpt
+  FilterOpt,
+  SingleFilterOptionType
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -1415,14 +1416,31 @@ export default class Grid {
     }
   }
 
-  public setFilter(columnName: string, filterOpt: FilterOpt) {
+  /**
+   * set column filter
+   * @param {string} columnName - columnName
+   * @param {string | FilterOpt} filterOpt - filter type
+   */
+  public setFilter(columnName: string, filterOpt: FilterOpt | SingleFilterOptionType) {
     this.dispatch('setFilter', columnName, filterOpt);
   }
 
+  /**
+   * get filter state
+   * @returns {Array.<FilterState>} - filter state
+   */
   public getFilterState() {
     return this.store.data.filterInfo.filters;
   }
 
+  /**
+   * trigger filter
+   * @param {string} columnName - column name to filter
+   * @param {Function} conditionFn - filter predicate
+   * @param {Array.<FilterState>} state - filter state
+   * @example
+   * grid.filter('name', (value) => value === 3 || value === 4, [{code: 'eq', value: 3}, {code: 'eq', value: 4}]);
+   */
   public filter(columnName: string, conditionFn: Function, state: FilterState[]) {
     this.dispatch('filter', columnName, conditionFn, state);
   }

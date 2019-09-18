@@ -1,5 +1,3 @@
-import { CellValue } from '../store/types';
-
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -340,7 +338,7 @@ export function pluck<T extends object>(arr: T[], propName: string) {
   return result;
 }
 
-export function uniq<T extends CellValue>(arr: T[]) {
+export function uniq<T extends unknown>(arr: T[]) {
   return arr.filter((name, index) => arr.indexOf(name) === index);
 }
 
@@ -351,7 +349,7 @@ function reverse(str: string) {
   return arr.join('');
 }
 
-export function startsWith(str: CellValue, targetStr: CellValue) {
+export function startsWith(str: unknown, targetStr: unknown) {
   if (!isString(str) || !isString(targetStr)) {
     return false;
   }
@@ -359,7 +357,7 @@ export function startsWith(str: CellValue, targetStr: CellValue) {
   return targetStr.slice(0, str.length) === str;
 }
 
-export function endsWith(str: CellValue, targetStr: CellValue) {
+export function endsWith(str: unknown, targetStr: unknown) {
   if (!isString(str) || !isString(targetStr)) {
     return false;
   }

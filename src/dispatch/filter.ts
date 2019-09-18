@@ -124,9 +124,12 @@ export function applyFilterLayerState(store: Store) {
   const { data } = store;
   const columnName = data.filterInfo.activatedColumnAddress!.name;
   const filterLayerState = data.filterInfo.filterLayerState!;
-  const fns = filterLayerState.state.map(st =>
-    getFilterConditionFn(st.code!, st.value, filterLayerState.type as SingleFilterOptionType)
-  ) as Function[];
+
+  const fns = filterLayerState.state
+    .filter(state => String(state.value).length)
+    .map(st =>
+      getFilterConditionFn(st.code!, st.value, filterLayerState.type as SingleFilterOptionType)
+    ) as Function[];
 
   filter(
     store,
@@ -199,6 +202,7 @@ export function filter(
     ];
   }
 
+  // @TODO: filtered viewData, raw data
   notify(data, 'filterInfo');
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
@@ -225,7 +229,11 @@ export function unfilter({ data, rowCoords, dimension }: Store, columnName: stri
   notify(rowCoords, 'heights');
 }
 
-export function setFilter(store: Store, columnName: string, filterOpt: FilterOpt) {
+export function setFilter(
+  store: Store,
+  columnName: string,
+  filterOpt: SingleFilterOptionType | FilterOpt
+) {
   const { column } = store;
   const filterOptions = getFilterOptions(filterOpt);
   const index = findPropIndex('name', columnName, column.allColumns);

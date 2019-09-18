@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
+import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
@@ -10,7 +10,7 @@ const stories = storiesOf('Filter', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name', filter: 'text', editor: { type: 'text', operator: 'OR' } },
+  { name: 'name', filter: 'text', editor: { type: 'text' } },
   { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
   { name: 'type', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
   { name: 'artist', filter: 'select' },
@@ -36,7 +36,17 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 stories.add(
   'filter',
   () => {
-    const { el } = createGrid();
+    const { el, grid } = createGrid();
+
+    // @TODO: need to move to test
+    button('setFilter()', () => grid.setFilter('genre', { type: 'select' }));
+    button('getFilterState()', () => console.log(grid.getFilterState()));
+    button('filter()', () =>
+      grid.filter('name', value => value === 'X' || value === 'Beautiful Lies', [
+        { code: 'eq', value: 'X' },
+        { code: 'eq', value: 'Beautiful Lies' }
+      ])
+    );
 
     return el;
   },

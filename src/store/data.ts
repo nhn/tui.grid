@@ -423,16 +423,16 @@ export function createData(
 }
 
 function applyFilterToRawData(rawData: Row[], filters: FilterParams[] | null) {
-  let res = rawData;
+  let data = rawData;
 
   if (filters) {
-    res = filters.reduce((acc: Row[], filter: FilterParams) => {
+    data = filters.reduce((acc: Row[], filter: FilterParams) => {
       const { conditionFn, columnName } = filter;
       return acc.filter(row => conditionFn!(row[columnName]));
     }, rawData);
   }
 
-  return res;
+  return data;
 }
 
 export function create({

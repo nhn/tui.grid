@@ -54,7 +54,6 @@ class HeaderAreaComp extends Component<Props> {
       findParent(target, 'cell-row-header') ||
       hasClass(target, 'btn-sorting' || hasClass(target, 'btn-filter'))
     ) {
-      console.log('여기 아냐?');
       return;
     }
 

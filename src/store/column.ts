@@ -81,30 +81,18 @@ function getBuiltInFilterOptions(
   type: SingleFilterOptionType,
   filterOpt?: FilterOpt
 ): ColumnFilterOption {
-  if (filterOpt) {
-    const { options, operator, showApplyBtn = false, showClearBtn = false } = filterOpt;
-
-    return operator
-      ? {
-          type,
-          operator,
-          options,
-          showApplyBtn,
-          showClearBtn
-        }
-      : {
-          type,
-          options,
-          showClearBtn,
-          showApplyBtn
-        };
-  }
-
-  return {
+  const filterOptions = {
     type,
     showApplyBtn: false,
     showClearBtn: false
   };
+
+  return filterOpt
+    ? {
+        ...filterOptions,
+        ...filterOpt
+      }
+    : filterOptions;
 }
 
 export function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
@@ -361,7 +349,11 @@ export function create({
 
   return observable({
     keyColumnName,
+    allColumns,
+    complexHeaderColumns,
+    headerAlignInfo,
     frozenCount: columnOptions.frozenCount || 0,
+
     dataForColumnCreation: {
       copyOptions,
       columnOptions,
@@ -369,9 +361,6 @@ export function create({
       relationColumns,
       rowHeaders: rowHeaderInfos
     },
-    allColumns,
-    complexHeaderColumns,
-    headerAlignInfo,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;
