@@ -41,12 +41,7 @@ stories.add(
     // @TODO: need to move to test
     button('setFilter()', () => grid.setFilter('genre', { type: 'select' }));
     button('getFilterState()', () => console.log(grid.getFilterState()));
-    button('filter()', () =>
-      grid.filter('name', value => value === 'X' || value === 'Beautiful Lies', [
-        { code: 'eq', value: 'X' },
-        { code: 'eq', value: 'Beautiful Lies' }
-      ])
-    );
+    button('filter()', () => grid.filter('name', [{ code: 'eq', value: 'X' }]));
 
     return el;
   },

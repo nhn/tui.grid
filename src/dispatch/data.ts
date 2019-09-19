@@ -225,7 +225,7 @@ function applyPasteDataToRawData(
   indexToPaste: SelectionRange
 ) {
   const {
-    data: { rawData, viewData },
+    data: { filteredRawData, filteredViewData },
     column: { visibleColumnsWithRowHeader },
     id
   } = store;
@@ -241,13 +241,13 @@ function applyPasteDataToRawData(
     const rawRowIndex = rowIdx + startRowIndex;
     for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
       const name = columnNames[columnIdx + startColumnIndex];
-      if (isColumnEditable(viewData, rawRowIndex, name)) {
+      if (filteredViewData.length && isColumnEditable(filteredViewData, rawRowIndex, name)) {
         pasted = true;
-        rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+        filteredRawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
       }
     }
     if (pasted) {
-      getDataManager(id).push('UPDATE', rawData[rawRowIndex]);
+      getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
     }
   }
 }

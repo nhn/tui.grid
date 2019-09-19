@@ -39,7 +39,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     column: { visibleColumnsWithRowHeader },
     id
   } = store;
-  const { viewData } = data;
+  const { filteredViewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -50,7 +50,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(focus, data, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
@@ -75,7 +75,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
     id
   } = store;
-  const { viewData, sortState } = data;
+  const { filteredViewData, sortState } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
   let { inputRange: currentInputRange } = selection;
 
@@ -90,7 +90,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     };
   }
 
-  const rowLength = viewData.length;
+  const rowLength = filteredViewData.length;
   const columnLength = visibleColumnsWithRowHeader.length;
   let rowStartIndex = currentInputRange.row[0];
   const rowIndex = currentInputRange.row[1];

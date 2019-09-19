@@ -147,7 +147,7 @@ export class EditingLayerInnerComp extends Component<Props> {
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
   const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
-  const { viewData, sortState } = data;
+  const { filteredViewData, sortState } = data;
   const state = {
     grid: getInstance(id),
     sortState,
@@ -168,9 +168,11 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
-  const targetRow = viewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
-  const { value } = targetRow.valueMap[columnName];
-  let filter;
+  const targetRow = filteredViewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
+  let value, filter;
+  if (targetRow) {
+    value = targetRow.valueMap[columnName].value;
+  }
   if (data.filterInfo.filters) {
     filter = findProp('columnName', columnName, data.filterInfo.filters as FilterParams[]);
   }
