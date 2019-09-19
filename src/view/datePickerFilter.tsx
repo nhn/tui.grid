@@ -63,7 +63,7 @@ class DatePickerFilterComp extends Component<Props> {
       }
     }
 
-    if (isNumber(value) || isString(value)) {
+    if (isString(value) && value.length) {
       date = new Date(value);
     }
 

@@ -283,20 +283,24 @@ export const data = [
 
 export const sortData = [
   {
-    alphabetA: 'B',
+    alphabetA: 'BCA',
     alphabetB: 'B',
-    alphabetC: 'A',
+    alphabetC: 'ACC',
     numberA: 2,
     numberB: 3,
     stringNumberA: '2',
+    date: '2019.09.18',
+    value: 40
   },
   {
     alphabetA: 'A',
     alphabetB: 'A',
-    alphabetC: 'A',
+    alphabetC: 'ACC',
     numberA: 1,
     numberB: 1,
     stringNumberA: '1',
+    date: '2019.09.18',
+    value: 90
   },
   {
     alphabetA: 'C',
@@ -305,14 +309,18 @@ export const sortData = [
     numberA: 1,
     numberB: 3,
     stringNumberA: '100',
+    date: '2019.09.18',
+    value: 80
   },
   {
     alphabetA: 'A',
     alphabetB: 'B',
-    alphabetC: 'C',
+    alphabetC: 'ACA',
     numberA: 1,
     numberB: 10,
     stringNumberA: '101',
+    date: '2019.01.14',
+    value: 30
   },
   {
     alphabetA: 'A',
@@ -320,23 +328,29 @@ export const sortData = [
     alphabetC: 'C',
     numberA: 10,
     numberB: 10,
-    stringNumberA: '11'
+    stringNumberA: '11',
+    date: '2019.01.15',
+    value: 100
   },
   {
     alphabetA: 'D',
     alphabetB: 'E',
-    alphabetC: 'C',
+    alphabetC: 'CDD',
     numberA: 1,
     numberB: 1,
-    stringNumberA: '201'
+    stringNumberA: '201',
+    date: '2019.09.10',
+    value: 90
   },
   {
-    alphabetA: 'B',
+    alphabetA: 'BAA',
     alphabetB: 'C',
     alphabetC: 'C',
     numberA: 20,
     numberB: 20,
-    stringNumberA: '202'
+    stringNumberA: '202',
+    date: '2019.09.29',
+    value: 10
   },
   {
     alphabetA: 'A',
@@ -344,14 +358,18 @@ export const sortData = [
     alphabetC: 'A',
     numberA: 24,
     numberB: 24,
-    stringNumberA: '211'
+    stringNumberA: '211',
+    date: '2019.09.29',
+    value: 34
   },
   {
-    alphabetA: 'F',
+    alphabetA: 'FGA',
     alphabetB: 'F',
-    alphabetC: 'F',
+    alphabetC: 'FGA',
     numberA: 25,
     numberB: 25,
-    stringNumberA: '301'
+    stringNumberA: '301',
+    date: '2019.09.10',
+    value: 90
   }
 ];

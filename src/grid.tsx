@@ -1458,4 +1458,12 @@ export default class Grid {
       this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
     }
   }
+
+  /**
+   * remove filter
+   * @param {string} columnName - column name to unfilter
+   */
+  public unfilter(columnName: string) {
+    this.dispatch('unfilter', columnName);
+  }
 }

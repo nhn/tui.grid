@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
@@ -14,7 +14,10 @@ const columns = [
   { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
   { name: 'type', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
   { name: 'artist', filter: 'select' },
-  { name: 'release', filter: { type: 'date', options: { type: 'month', format: 'yyyy.MM.dd' } } },
+  {
+    name: 'release',
+    filter: { type: 'date', options: { format: 'yyyy.MM.dd', date: new Date(2019, 9, 18) } }
+  },
   { name: 'genre' }
 ];
 
@@ -36,12 +39,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 stories.add(
   'filter',
   () => {
-    const { el, grid } = createGrid();
-
-    // @TODO: need to move to test
-    button('setFilter()', () => grid.setFilter('genre', { type: 'select' }));
-    button('getFilterState()', () => console.log(grid.getFilterState()));
-    button('filter()', () => grid.filter('name', [{ code: 'eq', value: 'X' }]));
+    const { el } = createGrid();
 
     return el;
   },

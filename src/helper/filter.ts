@@ -34,7 +34,7 @@ export const filterSelectOption: FilterSelectOption = {
   }
 };
 
-function getUnixTime(value: CellValue) {
+export function getUnixTime(value: CellValue) {
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
 }
 
@@ -74,9 +74,9 @@ export function getFilterConditionFn(
     case 'ne':
       return getPredicateWithType(code, type, inputValue);
     case 'lt':
-      return (cellValue: CellValue) => Number(cellValue) > Number(inputValue);
-    case 'gt':
       return (cellValue: CellValue) => Number(cellValue) < Number(inputValue);
+    case 'gt':
+      return (cellValue: CellValue) => Number(cellValue) > Number(inputValue);
     case 'lte':
       return (cellValue: CellValue) => Number(cellValue) <= Number(inputValue);
     case 'gte':

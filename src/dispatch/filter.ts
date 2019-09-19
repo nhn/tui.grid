@@ -222,14 +222,15 @@ export function unfilter(store: Store, columnName: string) {
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      filterInfo.filterLayerState!.state = [];
+      if (filterInfo.filterLayerState) {
+        filterInfo.filterLayerState.state = [];
+      }
       filterInfo.filters!.splice(filterIndex, 1);
       if (filterInfo.filters!.length === 0) {
         filterInfo.filters = null;
       }
     }
   }
-
   notify(data, 'filterInfo');
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
