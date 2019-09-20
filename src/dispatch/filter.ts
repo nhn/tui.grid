@@ -8,6 +8,8 @@ import { getFilterOptions } from '../store/column';
 import { setScrollTop } from './viewport';
 import { initSelection } from './selection';
 import { initFocus } from './focus';
+import { getEventBus } from '../event/eventBus';
+import GridEvent from '../event/gridEvent';
 
 export function setFilterLayerOperator(store: Store, value: 'AND' | 'OR') {
   const { data, column } = store;
@@ -174,7 +176,7 @@ export function filter(
   conditionFn: Function,
   state: FilterState[]
 ) {
-  const { data, column, rowCoords, dimension } = store;
+  const { data, column, rowCoords, dimension, id } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
   if (!columnFilterInfo) {
     return;
@@ -206,6 +208,17 @@ export function filter(
   }
 
   notify(data, 'filterInfo');
+
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({ filterState: data.filterInfo.filters });
+
+  /**
+   * Occurs when filtering
+   * @event Grid#filter
+   * @property {Grid} instance - Current grid instance
+   * @property {Object} filterState - filterState
+   */
+  eventBus.trigger('filter', gridEvent);
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
   notify(rowCoords, 'heights');
