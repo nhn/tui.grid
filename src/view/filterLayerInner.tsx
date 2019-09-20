@@ -54,7 +54,7 @@ export class FilterLayerInnerComp extends Component<Props> {
   public render() {
     const { columnAddress, columnInfo, renderSecondFilter } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
-    const left = columnAddress.left - 17;
+    const { left } = columnAddress;
 
     return (
       <div className={cls('filter-container')} style={{ left }}>
@@ -65,7 +65,6 @@ export class FilterLayerInnerComp extends Component<Props> {
         {this.getFilterComponent(0)}
         {renderSecondFilter && <FilterOperator />}
         {renderSecondFilter && this.getFilterComponent(1)}
-
         <div className={cls('filter-btn-container')}>
           {showClearBtn && (
             <button

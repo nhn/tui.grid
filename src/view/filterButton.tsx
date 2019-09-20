@@ -11,6 +11,7 @@ interface OwnProps {
 interface StoreProps {
   filterInfo: FilterInfo;
   activatedColumnAddress: ActivatedColumnAddress | null;
+  offsetLeft: number;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -36,12 +37,13 @@ class FilterButtonComp extends Component<Props> {
       return;
     }
 
-    const { activatedColumnAddress, columnName, dispatch } = this.props;
+    const { activatedColumnAddress, columnName, dispatch, offsetLeft } = this.props;
 
     if (!activatedColumnAddress || activatedColumnAddress.name !== columnName) {
+      const left = target.getBoundingClientRect().left - offsetLeft - 9;
       dispatch('setActivatedColumnAddress', {
         name: columnName,
-        left: target.getBoundingClientRect().left
+        left
       });
     }
   };
@@ -59,5 +61,6 @@ class FilterButtonComp extends Component<Props> {
 export const FilterButton = connect<StoreProps, OwnProps>((store, { columnName }) => ({
   activatedColumnAddress: store.data.filterInfo.activatedColumnAddress,
   filterInfo: store.data.filterInfo,
-  columnName
+  columnName,
+  offsetLeft: store.dimension.offsetLeft
 }))(FilterButtonComp);

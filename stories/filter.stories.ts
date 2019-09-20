@@ -1,8 +1,6 @@
 import { storiesOf } from '@storybook/html';
 import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
-import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
@@ -21,13 +19,8 @@ const columns = [
   { name: 'genre' }
 ];
 
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
-  return { data, columns };
-}
-
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  const defaultOptions = createDefaultOptions();
-  const options = { ...defaultOptions, ...customOptions };
+function createGrid() {
+  const options = { data, columns };
   const el = document.createElement('div');
   el.style.width = '800px';
 
