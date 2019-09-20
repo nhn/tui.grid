@@ -115,11 +115,12 @@ export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
 export type MultipleFilterOptionType = 'text' | 'number' | 'date';
 export type SingleFilterOptionType = MultipleFilterOptionType | 'select';
+export type OperatorType = 'AND' | 'OR';
 
 export interface FilterOpt {
   type: MultipleFilterOptionType;
   options?: Dictionary<any>;
-  operator?: 'OR' | 'AND';
+  operator?: OperatorType;
   showApplyBtn?: boolean;
   showClearBtn?: boolean;
 }

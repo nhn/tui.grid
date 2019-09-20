@@ -7,7 +7,7 @@ import {
   OptTree,
   VAlignType,
   OptSummaryColumnContentMap,
-  SingleFilterOptionType
+  SingleFilterOptionType, OperatorType
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -217,7 +217,7 @@ export interface CellRendererOptions {
 export interface ColumnFilterOption {
   type: SingleFilterOptionType;
   options?: Dictionary<any>;
-  operator?: 'AND' | 'OR';
+  operator?: OperatorType;
   showApplyBtn: boolean;
   showClearBtn: boolean;
 }
@@ -234,7 +234,7 @@ export interface FilterState {
 export interface FilterParams {
   columnName: string;
   type: SingleFilterOptionType;
-  operator?: 'OR' | 'AND';
+  operator?: OperatorType;
   conditionFn?: Function;
   state: FilterState[];
 }

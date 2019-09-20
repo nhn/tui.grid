@@ -2,16 +2,17 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
+import { OperatorType } from '../types';
 
 interface StoreProps {
-  operator: 'AND' | 'OR';
+  operator: OperatorType;
 }
 
 type Props = StoreProps & DispatchProps;
 
 class FilterOperatorComp extends Component<Props> {
   private handleChangeOperator = (ev: Event) => {
-    const value = (ev.target as HTMLInputElement).value as 'AND' | 'OR';
+    const value = (ev.target as HTMLInputElement).value as OperatorType;
     this.props.dispatch('setFilterLayerOperator', value);
   };
 

@@ -1,6 +1,8 @@
 import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../store/types';
 import { isString, endsWith, startsWith } from './common';
-import { SingleFilterOptionType } from '../types';
+import { OperatorType, SingleFilterOptionType } from '../types';
+
+/* eslint-disable consistent-return */
 
 interface FilterSelectOption {
   number: { [key in NumberFilterCode]: string };
@@ -38,7 +40,6 @@ export function getUnixTime(value: CellValue) {
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
 }
 
-// eslint-disable-next-line consistent-return
 function getPredicateWithType(
   code: 'eq' | 'ne',
   type: SingleFilterOptionType,
@@ -63,7 +64,6 @@ function getPredicateWithType(
   }
 }
 
-// eslint-disable-next-line consistent-return
 export function getFilterConditionFn(
   code: NumberFilterCode | TextFilterCode | DateFilterCode,
   inputValue: CellValue,
@@ -103,7 +103,7 @@ export function getFilterConditionFn(
   }
 }
 
-export function composeConditionFn(fns: Function[], operator?: 'AND' | 'OR') {
+export function composeConditionFn(fns: Function[], operator?: OperatorType) {
   return function(value: CellValue) {
     return fns.reduce((acc, fn: Function) => {
       if (operator === 'OR') {

@@ -2,7 +2,7 @@ import { ActivatedColumnAddress, CellValue, FilterState, Row, Store } from '../s
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex, pluck, uniq } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
-import { FilterOpt, SingleFilterOptionType } from '../types';
+import { FilterOpt, OperatorType, SingleFilterOptionType } from '../types';
 import { getRowHeight } from '../store/rowCoords';
 import { getFilterOptions } from '../store/column';
 import { setScrollTop } from './viewport';
@@ -11,13 +11,12 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
-export function setFilterLayerOperator(store: Store, value: 'AND' | 'OR') {
+export function setFilterLayerOperator(store: Store, value: OperatorType) {
   const { data, column } = store;
   const filterLayerState = data.filterInfo.filterLayerState!;
-  filterLayerState.operator = value;
-
   const columnInfo = column.allColumnMap[filterLayerState.columnName];
 
+  filterLayerState.operator = value;
   notify(data, 'filterInfo');
 
   if (!columnInfo.filter!.showApplyBtn) {
@@ -112,7 +111,7 @@ export function setActivatedColumnAddress(store: Store, address: ActivatedColumn
     data.filterInfo.activatedColumnAddress = null;
 
     const { type, state, columnName } = data.filterInfo.filterLayerState!;
-    if (type !== 'select' && state.length === 0) {
+    if (type !== 'select' && !state.length) {
       unfilter(store, columnName);
     } else if (type === 'select') {
       const columnData = uniq(pluck(rawData as Row[], columnName));
@@ -176,7 +175,7 @@ export function filter(
   conditionFn: Function,
   state: FilterState[]
 ) {
-  const { data, column, rowCoords, dimension, id } = store;
+  const { data, column, id } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
   if (!columnFilterInfo) {
     return;
@@ -219,17 +218,11 @@ export function filter(
    * @property {Object} filterState - filterState
    */
   eventBus.trigger('filter', gridEvent);
-
-  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
-  notify(rowCoords, 'heights');
-
-  setScrollTop(store, 0);
-  initSelection(store);
-  initFocus(store);
+  initLayerAndScrollAfterFiltering(store);
 }
 
 export function unfilter(store: Store, columnName: string) {
-  const { data, rowCoords, dimension } = store;
+  const { data } = store;
   const { filterInfo } = data;
   const { filters } = filterInfo;
   if (filters) {
@@ -245,6 +238,11 @@ export function unfilter(store: Store, columnName: string) {
     }
   }
   notify(data, 'filterInfo');
+  initLayerAndScrollAfterFiltering(store);
+}
+
+function initLayerAndScrollAfterFiltering(store: Store) {
+  const { rowCoords, data, dimension } = store;
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
   notify(rowCoords, 'heights');
@@ -262,6 +260,7 @@ export function setFilter(
   const { column } = store;
   const filterOptions = getFilterOptions(filterOpt);
   const index = findPropIndex('name', columnName, column.allColumns);
+
   if (index !== -1) {
     column.allColumns[index].filter = filterOptions;
     notify(column, 'allColumns');
