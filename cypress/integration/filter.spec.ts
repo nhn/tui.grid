@@ -113,22 +113,25 @@ describe('common', () => {
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
     cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
+    compareColumnCellLength(4);
   });
 
   it('After editing, the filtering result is applied immediately.', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-    compareColumnCellLength(4);
 
     cy.getCell(3, 'alphabetA')
       .click()
-      .trigger('dblclick')
+      .trigger('dblclick');
+
+    cy.get(`.${cls('content-text')}`)
+      .type('B')
       .then(() => {
-        cy.get(`.${cls('content-text')}`).type('B');
+        cy.getCell(4, 'alphabetB')
+          .click()
+          .then(() => {
+            compareColumnCellLength(3);
+          });
       });
-
-    cy.getCell(4, 'alphabetB').click();
-
-    compareColumnCellLength(3);
   });
 
   it('If click the clear button, filtering is initialized.', () => {
@@ -153,17 +156,18 @@ describe('common', () => {
   });
 
   it('Duplicate filters are applied correctly.', () => {
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-    compareColumnCellLength(4);
-
-    cy.get('@secondFilter').click();
-    cy.get(`.${cls('filter-list-item')} label`)
+    cy.gridInstance()
+      .invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }])
+      .get('@secondFilter')
+      .click()
+      .get(`.${cls('filter-list-item')} label`)
       .eq(1)
-      .click();
-
-    compareColumnCellLength(2);
-    equalColumnData('alphabetA', 'A');
-    equalColumnData('alphabetB', 'A');
+      .click()
+      .then(() => {
+        compareColumnCellLength(2);
+        equalColumnData('alphabetA', 'A');
+        equalColumnData('alphabetB', 'A');
+      });
   });
 
   it('The operator and the second filter appear when the first condition value exists.', () => {
@@ -199,8 +203,9 @@ describe('filter API', () => {
 
   it('unfilter() remove filter', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-    compareColumnCellLength(4);
+    cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
     cy.gridInstance().invoke('unfilter', 'alphabetA');
+    cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
     compareColumnCellLength(9);
   });
 

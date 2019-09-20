@@ -5,7 +5,7 @@ import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/dat
 import { isFocusedCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
-import { isObservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
 import { findPropIndex } from '../helper/common';
 import { sort } from './sort';
@@ -48,6 +48,8 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
       focus.editingAddress = { rowKey, columnName };
     }
   }
+
+  notify(data, 'viewData');
 }
 
 export function finishEditing(

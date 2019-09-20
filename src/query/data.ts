@@ -9,7 +9,7 @@ export function getCellAddressByIndex(
   columnIndex: number
 ) {
   return {
-    rowKey: data.viewData[rowIndex].rowKey,
+    rowKey: data.filteredViewData[rowIndex].rowKey,
     columnName: column.visibleColumns[columnIndex].name
   };
 }
