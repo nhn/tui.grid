@@ -6,13 +6,16 @@ export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankB = isBlank(valueB);
   let result = 0;
 
+  const _valueA = isNumeric(valueA) ? Number(valueA) : valueA;
+  const _valueB = isNumeric(valueB) ? Number(valueB) : valueB;
+
   if (isBlankA && !isBlankB) {
     result = -1;
   } else if (!isBlankA && isBlankB) {
     result = 1;
-  } else if (valueA! < valueB!) {
+  } else if (_valueA! < _valueB!) {
     result = -1;
-  } else if (valueA! > valueB!) {
+  } else if (_valueA! > _valueB!) {
     result = 1;
   }
 
@@ -70,6 +73,10 @@ function sortViewData(columns: SortedColumn[]) {
     }
     return 0;
   };
+}
+
+function isNumeric(value: any): boolean {
+  return !isNaN(value);
 }
 
 export function getSortedData(data: Data) {
