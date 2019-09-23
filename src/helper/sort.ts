@@ -1,21 +1,22 @@
 import { CellValue, Data, Row, SortedColumn, ViewRow } from '../store/types';
-import { isBlank } from './common';
+import { isBlank, convertToNumber } from './common';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
-  let result = 0;
 
-  const _valueA = isNumeric(valueA) ? Number(valueA) : valueA;
-  const _valueB = isNumeric(valueB) ? Number(valueB) : valueB;
+  const newValueA = convertToNumber(valueA);
+  const newValueB = convertToNumber(valueB);
+
+  let result = 0;
 
   if (isBlankA && !isBlankB) {
     result = -1;
   } else if (!isBlankA && isBlankB) {
     result = 1;
-  } else if (_valueA! < _valueB!) {
+  } else if (newValueA! < newValueB!) {
     result = -1;
-  } else if (_valueA! > _valueB!) {
+  } else if (newValueA! > newValueB!) {
     result = 1;
   }
 
@@ -73,10 +74,6 @@ function sortViewData(columns: SortedColumn[]) {
     }
     return 0;
   };
-}
-
-function isNumeric(value: any): boolean {
-  return !isNaN(value);
 }
 
 export function getSortedData(data: Data) {
