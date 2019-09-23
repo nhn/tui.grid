@@ -287,62 +287,71 @@ export const sortData = [
     alphabetB: 'B',
     alphabetC: 'A',
     numberA: 2,
-    numberB: 3
+    numberB: 3,
+    stringNumberA: '2',
   },
   {
     alphabetA: 'A',
     alphabetB: 'A',
     alphabetC: 'A',
     numberA: 1,
-    numberB: 1
+    numberB: 1,
+    stringNumberA: '1',
   },
   {
     alphabetA: 'C',
     alphabetB: 'A',
     alphabetC: 'C',
     numberA: 1,
-    numberB: 3
+    numberB: 3,
+    stringNumberA: '100',
   },
   {
     alphabetA: 'A',
     alphabetB: 'B',
     alphabetC: 'C',
     numberA: 1,
-    numberB: 10
+    numberB: 10,
+    stringNumberA: '101',
   },
   {
     alphabetA: 'A',
     alphabetB: 'B',
     alphabetC: 'C',
     numberA: 10,
-    numberB: 10
+    numberB: 10,
+    stringNumberA: '11'
   },
   {
     alphabetA: 'D',
     alphabetB: 'E',
     alphabetC: 'C',
     numberA: 1,
-    numberB: 1
+    numberB: 1,
+    stringNumberA: '201'
   },
   {
     alphabetA: 'B',
     alphabetB: 'C',
     alphabetC: 'C',
     numberA: 20,
-    numberB: 20
+    numberB: 20,
+    stringNumberA: '202'
   },
   {
     alphabetA: 'A',
     alphabetB: 'A',
     alphabetC: 'A',
     numberA: 24,
-    numberB: 24
+    numberB: 24,
+    stringNumberA: '211'
   },
   {
     alphabetA: 'F',
     alphabetB: 'F',
     alphabetC: 'F',
     numberA: 25,
-    numberB: 25
+    numberB: 25,
+    stringNumberA: '301'
   }
 ];
