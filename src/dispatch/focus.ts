@@ -174,19 +174,21 @@ function makeObservable(store: Store, rowKey: RowKey) {
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
   const rawRow = rawData[foundIndex];
 
-  if (!isObservable(rawRow)) {
-    if (treeColumnName) {
-      const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-      rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
-      viewData[foundIndex] = createViewRow(
-        rawData[foundIndex],
-        allColumnMap,
-        rawData,
-        treeColumnName,
-        treeIcon
-      );
-      return;
-    }
+  if (isObservable(rawRow)) {
+    return;
+  }
+
+  if (treeColumnName) {
+    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
+    rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
+    viewData[foundIndex] = createViewRow(
+      rawData[foundIndex],
+      allColumnMap,
+      rawData,
+      treeColumnName,
+      treeIcon
+    );
+  } else {
     rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
     viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
   }
