@@ -171,7 +171,6 @@ describe('sort', () => {
     cy.gridInstance().invoke('sort', 'numberA', true);
     cy.gridInstance().invoke('sort', 'alphabetB', true, true);
     
-
     cy.get(`th[${dataAttr.COLUMN_NAME}=numberA]`).contains('1');
     cy.get(`th[${dataAttr.COLUMN_NAME}=alphabetB]`).contains('2');
 
