@@ -5,6 +5,8 @@ import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
+import 'tui-date-picker/dist/tui-date-picker.css';
+import 'tui-time-picker/dist/tui-time-picker.css';
 
 const stories = storiesOf('Cell Editor', module);
 stories.addDecorator(withKnobs);
@@ -136,7 +138,8 @@ stories.add(
           type: 'datePicker',
           options: {
             format: 'yyyy-MM-dd HH:mm A',
-            timepicker: true
+            timepicker: true,
+            showIcon: false
           }
         }
       },

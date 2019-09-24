@@ -34,6 +34,12 @@ export class DatePickerEditor implements CellEditor {
     return calendarWrapper;
   }
 
+  private createIcon() {
+    const icon = document.createElement('i');
+    icon.className = cls('date-icon');
+    this.el.append(icon);
+  }
+
   public constructor(props: CellEditorProps) {
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
@@ -45,6 +51,12 @@ export class DatePickerEditor implements CellEditor {
       value
     } = props;
     const { options } = columnInfo.editor!;
+    const showIcon = !(options && options.showIcon === false);
+    if (showIcon) {
+      this.createIcon();
+      this.inputEl.className = cls('content-datepicker');
+    }
+
     let date = isUndefined(value) || isNull(value) ? '' : new Date();
     let format = 'yyyy-MM-dd';
 
