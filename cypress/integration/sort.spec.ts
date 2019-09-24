@@ -151,26 +151,25 @@ describe('sort', () => {
     assertSortedData('alphabetA');
   });
 
-  it ('sort by ascending order stringNumberA', () => {
+  it('sort by ascending order stringNumberA', () => {
     createGrid();
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'stringNumberA', true);
     compareColumnData('stringNumberA', ['1', '2', '11', '100', '101', '201', '202', '211', '301']);
   });
 
-  it ('sort by descending order stringNumberA', () => {
+  it('sort by descending order stringNumberA', () => {
     createGrid();
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'stringNumberA', false);
     compareColumnData('stringNumberA', ['301', '211', '202', '201', '101', '100', '11', '2', '1']);
   });
 
-
   it('multiple sort', () => {
     createGrid();
     cy.gridInstance().invoke('sort', 'numberA', true);
     cy.gridInstance().invoke('sort', 'alphabetB', true, true);
-    
+
     cy.get(`th[${dataAttr.COLUMN_NAME}=numberA]`).contains('1');
     cy.get(`th[${dataAttr.COLUMN_NAME}=alphabetB]`).contains('2');
 
