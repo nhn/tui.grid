@@ -1154,8 +1154,12 @@ export default class Grid {
   public setPerPage(perPage: number) {
     const pagination = this.getPagination();
     if (pagination) {
-      pagination.setItemsPerPage(perPage);
-      this.readData(1, { perPage });
+      const { pageOptions } = this.store.data;
+      if (pageOptions.useClient) {
+        this.dispatch('setPagination', { ...pageOptions, perPage, page: 1 });
+      } else {
+        this.readData(1, { perPage });
+      }
     }
   }
 
