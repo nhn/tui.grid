@@ -39,8 +39,8 @@ import {
 } from '../helper/rowSpan';
 import { getRenderState } from '../helper/renderState';
 import { changeFocus, initFocus } from './focus';
-import { sort } from './sort';
 import { createTreeRawRow } from '../helper/tree';
+import { sort, initSortState } from './sort';
 import { findIndexByRowKey, findRowByRowKey } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -56,7 +56,7 @@ interface OriginData {
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const { column, data, id } = store;
-  const { rawData, sortOptions } = data;
+  const { rawData, sortState } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
     return;
@@ -80,7 +80,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     targetRow[columnName] = value;
     getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortOptions)) {
+    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
       const { spanCount } = rowSpanMap[columnName];
       const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
 
@@ -308,7 +308,7 @@ function updateSortKey(data: Data, at: number) {
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, column, rowCoords, dimension, id, renderState } = store;
-  const { rawData, viewData, sortOptions, pageOptions, pageRowRange } = data;
+  const { rawData, viewData, sortState, pageOptions, pageRowRange } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
@@ -339,13 +339,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (!isRowSpanEnabled(sortOptions)) {
-    const { columnName, ascending } = sortOptions.columns[0];
+  if (!isRowSpanEnabled(sortState)) {
+    const { columnName, ascending } = sortState.columns[0];
 
     sort(store, columnName, ascending);
   }
 
-  if (prevRow && isRowSpanEnabled(sortOptions)) {
+  if (prevRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
@@ -360,7 +360,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, renderState, focus, column } = store;
-  const { rawData, viewData, sortOptions, pageOptions } = data;
+  const { rawData, viewData, sortState, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
   const nextRow = rawData[rowIdx + 1];
   const removedRow = rawData.splice(rowIdx, 1)[0];
@@ -377,7 +377,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     };
   }
 
-  if (nextRow && isRowSpanEnabled(sortOptions)) {
+  if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
@@ -404,6 +404,7 @@ export function clearData(store: Store) {
   });
 
   initFocus(store);
+  initSortState(data);
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
@@ -423,6 +424,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
   const { rowHeight } = dimension;
 
   initFocus(store);
+  initSortState(data);
   rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;

@@ -181,3 +181,24 @@ describe('get data that failed validation result by validate api', () => {
       });
   });
 });
+
+it('validate changed value using editor by resetData API', () => {
+  cy.createGrid({
+    data: [],
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+  });
+  cy.gridInstance().invoke('resetData', [{ name: '' }]);
+  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+});
+
+it('validate changed value using editor by setColumns API', () => {
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'price', editor: 'text' }];
+  const columnsWithValidation = columns.map(column => ({
+    ...column,
+    validation: { required: true }
+  }));
+
+  cy.createGrid({ data: [{ name: 'name', price: '' }], columns });
+  cy.gridInstance().invoke('setColumns', columnsWithValidation);
+  cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+});

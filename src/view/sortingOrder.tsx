@@ -22,7 +22,7 @@ class SortingOrderComp extends Component<Props> {
 }
 
 export const SortingOrder = connect<StoreProps, OwnProps>((store, props) => {
-  const { columns } = store.data.sortOptions;
+  const { columns } = store.data.sortState;
   const { columnName } = props;
   const sortedColumnsWithType = columns as SortedColumn[];
   const order = findPropIndex('columnName', columnName, sortedColumnsWithType) + 1;

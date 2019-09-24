@@ -171,7 +171,7 @@ export interface TreeCellInfo {
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
-  sortOptions: SortOptions;
+  sortState: SortState;
   disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
@@ -231,7 +231,7 @@ export interface SortedColumn {
   ascending: boolean;
 }
 
-export interface SortOptions {
+export interface SortState {
   useClient: boolean;
   columns: SortedColumn[];
 }

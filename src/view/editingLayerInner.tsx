@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortOptions, Column, Data } from '../store/types';
+import { CellValue, RowKey, ColumnInfo, SortState, Column, Data } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
@@ -19,7 +19,7 @@ interface StoreProps {
   columnInfo?: ColumnInfo;
   value?: CellValue;
   grid: Grid;
-  sortOptions: SortOptions;
+  sortState: SortState;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
 }
@@ -57,13 +57,13 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     if (this.editor) {
-      const { dispatch, rowKey, columnName, sortOptions } = this.props;
+      const { dispatch, rowKey, columnName, sortState } = this.props;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
-        const index = findPropIndex('columnName', columnName, sortOptions.columns);
+        const index = findPropIndex('columnName', columnName, sortState.columns);
         if (index !== -1) {
-          dispatch('sort', columnName, sortOptions.columns[index].ascending, true, false);
+          dispatch('sort', columnName, sortState.columns[index].ascending, true, false);
         }
       }
       dispatch('finishEditing', rowKey, columnName, value);
@@ -134,10 +134,10 @@ export class EditingLayerInnerComp extends Component<Props> {
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
   const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
-  const { viewData, sortOptions } = data;
+  const { viewData, sortState } = data;
   const state = {
     grid: getInstance(id),
-    sortOptions,
+    sortState,
     focusedColumnName,
     focusedRowKey
   };

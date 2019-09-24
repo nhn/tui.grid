@@ -6,7 +6,7 @@ import {
   Row,
   RowCoords,
   Range,
-  SortOptions
+  SortState
 } from '../store/types';
 import { findPropIndex, isEmpty, findProp, isNull } from './common';
 import { getSortedRange } from './selection';
@@ -93,7 +93,7 @@ export function getRowRangeWithRowSpan(
   rowIndex: number | null,
   data: Data
 ): Range {
-  if (isRowSpanEnabled(data.sortOptions)) {
+  if (isRowSpanEnabled(data.sortState)) {
     return getMaxRowSpanRange(rowRange, colRange, visibleColumnsWithRowHeader, rowIndex, data);
   }
 
@@ -174,8 +174,8 @@ export function getMaxRowSpanCount(rowIndex: number, data: Row[]) {
   );
 }
 
-export function isRowSpanEnabled(sortOptions: SortOptions) {
-  return sortOptions.columns[0].columnName === 'sortKey';
+export function isRowSpanEnabled(sortState: SortState) {
+  return sortState.columns[0].columnName === 'sortKey';
 }
 
 export function createRowSpan(

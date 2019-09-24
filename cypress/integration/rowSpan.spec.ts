@@ -236,3 +236,57 @@ describe('removeRow()', () => {
     assertRowSpanData(5, 'name', { mainRow: false, mainRowKey: 4, count: -1, spanCount: 2 });
   });
 });
+
+it('render rowSpan cell properly by calling resetData API', () => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+  const data = [
+    {
+      id: 549731,
+      name: 'Beautiful Lies',
+      artist: 'Birdy',
+      release: '2016.03.26',
+      type: 'Deluxe',
+      typeCode: '1',
+      genre: 'Pop',
+      genreCode: '1',
+      grade: '4',
+      price: 10000,
+      downloadCount: 1000,
+      listenCount: 5000
+    }
+  ];
+  const columns = [
+    { name: 'name', editor: 'text', sortable: true },
+    { name: 'artist', editor: 'text' },
+    { name: 'type', editor: 'text' }
+  ];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('resetData', createDataWithRowSpanAttr());
+
+  cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
+  cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
+  cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
+  cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
+});
+
+it('render rowSpan cell properly by calling setColumns API', () => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+  const columns = [
+    { name: 'name', editor: 'text', sortable: true },
+    { name: 'artist', editor: 'text' },
+    { name: 'type', editor: 'text' }
+  ];
+
+  cy.createGrid({ data: createDataWithRowSpanAttr(), columns: columns.slice(0, 1) });
+  cy.gridInstance().invoke('setColumns', columns);
+
+  cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
+  cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
+  cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
+  cy.getCell(4, 'artist').should('have.attr', 'rowSpan', '3');
+});

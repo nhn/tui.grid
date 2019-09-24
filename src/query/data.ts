@@ -57,11 +57,11 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
     return -1;
   }
 
-  const { rawData, sortOptions } = data;
+  const { rawData, sortState } = data;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
-  if (!isRowSpanEnabled(sortOptions) || column.keyColumnName || hasAppendedData) {
+  if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
     return findPropIndex('rowKey', rowKey, rawData);
   }
 

@@ -249,7 +249,7 @@ it('sort', () => {
     .then(() => {
       expect(
         isSubsetOf(
-          { sortOptions: { columns: [{ columnName: 'name', ascending: false }], useClient: true } },
+          { sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true } },
           callback.args[0][0]
         )
       ).to.be.true;
@@ -273,6 +273,26 @@ it('gridMounted', () => {
       expect(callback).to.be.calledOnce;
     });
   });
+});
+
+it('gridBeforeDestroy', () => {
+  const callback = cy.stub();
+
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+
+  cy.createGrid({
+    data,
+    columns,
+    rowHeaders: ['rowNum', 'checkbox'],
+    onGridBeforeDestroy: callback
+  });
+  cy.gridInstance()
+    .invoke('destroy')
+    .should(() => {
+      expect(callback).to.be.calledOnce;
+    });
 });
 
 it('columnResize', () => {

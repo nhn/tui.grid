@@ -75,7 +75,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
     id
   } = store;
-  const { viewData, sortOptions } = data;
+  const { viewData, sortState } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
   let { inputRange: currentInputRange } = selection;
 
@@ -104,7 +104,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (isRowSpanEnabled(sortOptions)) {
+    if (isRowSpanEnabled(sortState)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,
