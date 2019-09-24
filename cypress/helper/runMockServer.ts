@@ -69,6 +69,21 @@ export function runMockServer() {
   }).as('readDescData');
 
   cy.route({
+    method: 'GET',
+    url: 'api/read?perPage=5&page=1',
+    response: {
+      result: true,
+      data: {
+        contents: data.slice(0, 5),
+        pagination: {
+          page: 1,
+          totalCount: 20
+        }
+      }
+    }
+  }).as('perPage5');
+
+  cy.route({
     method: 'POST',
     url: '/api/create',
     response: successResponse

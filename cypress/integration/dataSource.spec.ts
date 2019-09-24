@@ -76,14 +76,16 @@ function assertSortedData(columnName: string, ascending = true) {
   });
 }
 
-function assertPagingData(columnName: string, page = 1) {
-  const pagingData = page === 1 ? sampleData.slice(0, 10) : sampleData.slice(10);
+function assertPagingData(columnName: string, page = 1, perPage = 10) {
+  const pagingData = page === 1 ? sampleData.slice(0, perPage) : sampleData.slice(perPage);
   const testData = (pagingData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
   cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
-    $el.each((index, elem) => {
-      expect(elem.textContent).to.eql(testData[index]);
-    });
+    $el
+      .filter(index => index < perPage)
+      .each((index, elem) => {
+        expect(elem.textContent).to.eql(testData[index]);
+      });
   });
 }
 
@@ -223,4 +225,18 @@ it('restore()', () => {
 
   assertPagingData('id', 1);
   assertModifiedRowsLength('deletedRows', 0);
+});
+
+it('setPerPage()', () => {
+  cy.wait('@readPage1');
+
+  cy.get(`.tui-page-btn`).should('have.length', 6);
+  assertPagingData('id', 1, 10);
+
+  cy.gridInstance().invoke('setPerPage', 5);
+
+  cy.wait('@perPage5');
+
+  cy.get(`.tui-page-btn`).should('have.length', 8);
+  assertPagingData('id', 1, 5);
 });
