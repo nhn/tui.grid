@@ -99,10 +99,9 @@ describe('API test on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.true;
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
       });
     });
 
@@ -111,10 +110,38 @@ describe('API test on lazy observable data', () => {
       .invoke('getCheckedRowKeys')
       .should('have.length', 0);
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.false;
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.false;
+      });
+    });
+  });
+
+  it('check / uncheck api', () => {
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance()
+      .invoke('getCheckedRowKeys')
+      .should('have.length', 20);
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
+      });
+    });
+
+    cy.gridInstance().invoke('uncheck', 18);
+
+    cy.get('input').should($el => {
+      expect($el[0].checked).to.be.false;
+    });
+
+    cy.gridInstance().invoke('check', 18);
+
+    scrollToBottom();
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
       });
     });
   });

@@ -217,3 +217,36 @@ it('cannot save the value and finish the editing on non editable cell', () => {
   cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
   cy.getCell(0, 'name').should('have.text', 'Lee');
 });
+
+it('should destroy the editing layer, when hide the column', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.gridInstance().invoke('hideColumn', 'name');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('cannot edit the value on hidden cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('hideColumn', 'name');
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('cannot save the value and finish the editing on hidden cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('hideColumn', 'name');
+  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
