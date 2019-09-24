@@ -147,7 +147,7 @@ export function saveAndFinishEditing(
   value: string
 ) {
   const { data } = store;
-  const { columns } = data.sortOptions;
+  const { columns } = data.sortState;
 
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
