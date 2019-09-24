@@ -1,18 +1,22 @@
 import { CellValue, Data, Row, SortedColumn, ViewRow } from '../store/types';
-import { isBlank } from './common';
+import { isBlank, convertToNumber } from './common';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
+
+  const newValueA = convertToNumber(valueA);
+  const newValueB = convertToNumber(valueB);
+
   let result = 0;
 
   if (isBlankA && !isBlankB) {
     result = -1;
   } else if (!isBlankA && isBlankB) {
     result = 1;
-  } else if (valueA! < valueB!) {
+  } else if (newValueA! < newValueB!) {
     result = -1;
-  } else if (valueA! > valueB!) {
+  } else if (newValueA! > newValueB!) {
     result = 1;
   }
 
