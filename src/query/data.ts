@@ -22,11 +22,12 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
   return disabled || rowDisabled;
 }
 
-export function isCellEditable(data: Data, rowKey: RowKey, columnName: string) {
+export function isCellEditable(data: Data, column: Column, rowKey: RowKey, columnName: string) {
   const { viewData } = data;
   const row = findProp('rowKey', rowKey, viewData)!;
+  const { hidden } = column.allColumnMap[columnName];
 
-  return !isCellDisabled(data, rowKey, columnName) && row.valueMap[columnName].editable;
+  return !hidden && !isCellDisabled(data, rowKey, columnName) && row.valueMap[columnName].editable;
 }
 
 export function getCheckedRows({ data }: Store) {

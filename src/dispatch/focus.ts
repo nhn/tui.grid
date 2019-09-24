@@ -20,7 +20,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, rowKey, columnName)) {
+  if (!isCellEditable(data, column, rowKey, columnName)) {
     return;
   }
 
@@ -148,13 +148,13 @@ export function saveAndFinishEditing(
   columnName: string,
   value: string
 ) {
-  const { data } = store;
+  const { data, column } = store;
   const { columns } = data.sortState;
 
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, rowKey, columnName)) {
+  if (!isCellEditable(data, column, rowKey, columnName)) {
     return;
   }
 

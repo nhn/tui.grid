@@ -54,14 +54,14 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function editFocus({ focus, data }: Store, command: KeyboardEventCommandType) {
+export function editFocus({ focus, data, column }: Store, command: KeyboardEventCommandType) {
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
     return;
   }
 
-  if (command === 'currentCell' && isCellEditable(data, rowKey, columnName)) {
+  if (command === 'currentCell' && isCellEditable(data, column, rowKey, columnName)) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
   }
