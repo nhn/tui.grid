@@ -146,7 +146,9 @@ export function setColumnValues(
 
 export function check(store: Store, rowKey: RowKey) {
   const { allColumnMap, treeColumnName = '' } = store.column;
-  const eventBus = getEventBus(store.id);
+  const { data, id } = store;
+  const { rawData } = data;
+  const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
   /**
@@ -158,6 +160,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
+  data.checkedAllRows = !rawData.some(row => !row._attributes.checked);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -165,8 +168,9 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { allColumnMap, treeColumnName = '' } = store.column;
-  const eventBus = getEventBus(store.id);
+  const { data, id, column } = store;
+  const { allColumnMap, treeColumnName = '' } = column;
+  const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
   /**
@@ -178,6 +182,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
+  data.checkedAllRows = false;
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
@@ -185,8 +190,10 @@ export function uncheck(store: Store, rowKey: RowKey) {
 }
 
 export function checkAll(store: Store) {
+  const { data, id } = store;
   setAllRowAttribute(store, 'checked', true);
-  const eventBus = getEventBus(store.id);
+  data.checkedAllRows = true;
+  const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
   /**
@@ -198,8 +205,10 @@ export function checkAll(store: Store) {
 }
 
 export function uncheckAll(store: Store) {
+  const { data, id } = store;
   setAllRowAttribute(store, 'checked', false);
-  const eventBus = getEventBus(store.id);
+  data.checkedAllRows = false;
+  const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
   /**

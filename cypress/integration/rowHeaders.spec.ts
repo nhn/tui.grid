@@ -77,4 +77,33 @@ describe('row header API', () => {
         ).to.be.true;
       });
   });
+
+  it('checkAll, uncheckAll (Dynamic rendering)', () => {
+    const gridData = [];
+    for (let i = 0; i < 1000; i += 1) {
+      gridData.push({
+        id: i,
+        name: `name${i}`,
+        artist: `artist${i}`,
+        type: `type${i}`
+      });
+    }
+    cy.gridInstance().invoke('setBodyHeight', 300);
+    cy.gridInstance().invoke('resetData', gridData);
+    cy.gridInstance().invoke('checkAll');
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.true;
+      });
+    });
+
+    cy.gridInstance().invoke('uncheckAll');
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).to.be.false;
+      });
+    });
+  });
 });

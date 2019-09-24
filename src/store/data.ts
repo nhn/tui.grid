@@ -454,6 +454,7 @@ export function create({
     viewData,
     sortOptions,
     pageOptions,
+    checkedAllRows: !rawData.some(row => !row._attributes.checked),
 
     get pageRowRange() {
       let start = 0;
@@ -467,12 +468,6 @@ export function create({
       }
 
       return [start, end] as Range;
-    },
-
-    get checkedAllRows() {
-      const allRawData = this.rawData;
-      const checkedRows = allRawData.filter(row => row._attributes.checked);
-      return checkedRows.length === allRawData.length;
     }
   });
 }
