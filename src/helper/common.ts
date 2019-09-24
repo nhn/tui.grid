@@ -342,13 +342,6 @@ export function uniq<T extends unknown>(arr: T[]) {
   return arr.filter((name, index) => arr.indexOf(name) === index);
 }
 
-function reverse(str: string) {
-  const arr = str.split('');
-  arr.reverse();
-
-  return arr.join('');
-}
-
 export function startsWith(str: unknown, targetStr: unknown) {
   if (!isString(str) || !isString(targetStr)) {
     return false;
@@ -362,5 +355,6 @@ export function endsWith(str: unknown, targetStr: unknown) {
     return false;
   }
 
-  return startsWith(reverse(str), reverse(targetStr));
+  const index = targetStr.lastIndexOf(str);
+  return index !== -1 && index + str.length === targetStr.length;
 }

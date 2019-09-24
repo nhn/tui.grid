@@ -1,6 +1,6 @@
 import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../store/types';
 import { isString, endsWith, startsWith } from './common';
-import { OperatorType, SingleFilterOptionType } from '../types';
+import { OperatorType, FilterOptionType } from '../types';
 
 /* eslint-disable consistent-return */
 
@@ -40,11 +40,7 @@ export function getUnixTime(value: CellValue) {
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
 }
 
-function getPredicateWithType(
-  code: 'eq' | 'ne',
-  type: SingleFilterOptionType,
-  inputValue: CellValue
-) {
+function getPredicateWithType(code: 'eq' | 'ne', type: FilterOptionType, inputValue: CellValue) {
   switch (type) {
     case 'number':
       return code === 'eq'
@@ -67,7 +63,7 @@ function getPredicateWithType(
 export function getFilterConditionFn(
   code: NumberFilterCode | TextFilterCode | DateFilterCode,
   inputValue: CellValue,
-  type: SingleFilterOptionType
+  type: FilterOptionType
 ) {
   switch (code) {
     case 'eq':
@@ -83,7 +79,7 @@ export function getFilterConditionFn(
       return (cellValue: CellValue) => Number(cellValue) >= Number(inputValue);
     case 'contain':
       return (cellValue: CellValue) =>
-        isString(cellValue) && isString(inputValue) && cellValue.includes(inputValue);
+        isString(cellValue) && isString(inputValue) && cellValue.indexOf(inputValue) !== -1;
     case 'start':
       return (cellValue: CellValue) =>
         isString(cellValue) && isString(inputValue) && startsWith(inputValue, cellValue);
@@ -106,10 +102,7 @@ export function getFilterConditionFn(
 export function composeConditionFn(fns: Function[], operator?: OperatorType) {
   return function(value: CellValue) {
     return fns.reduce((acc, fn: Function) => {
-      if (operator === 'OR') {
-        return acc || fn(value);
-      }
-      return acc && fn(value);
+      return operator === 'OR' ? acc || fn(value) : acc && fn(value);
     }, operator !== 'OR');
   };
 }

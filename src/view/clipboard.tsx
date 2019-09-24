@@ -239,5 +239,5 @@ class ClipboardComp extends Component<Props> {
 export const Clipboard = connect<StoreProps>(({ focus, data }) => ({
   navigating: focus.navigating,
   editing: !!focus.editingAddress,
-  filtering: !!data.filterInfo.activatedColumnAddress
+  filtering: !!data.filterInfo.activeColumnAddress
 }))(ClipboardComp);

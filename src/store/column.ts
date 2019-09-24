@@ -21,7 +21,7 @@ import {
   VAlignType,
   ColumnsAlignInfo,
   FilterOpt,
-  SingleFilterOptionType
+  FilterOptionType
 } from '../types';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
@@ -78,10 +78,10 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
 }
 
 function getBuiltInFilterOptions(
-  type: SingleFilterOptionType,
+  type: FilterOptionType,
   filterOpt?: FilterOpt
 ): ColumnFilterOption {
-  const filterOptions = {
+  const defaultFilterOptions = {
     type,
     showApplyBtn: false,
     showClearBtn: false
@@ -89,13 +89,13 @@ function getBuiltInFilterOptions(
 
   return filterOpt
     ? {
-        ...filterOptions,
+        ...defaultFilterOptions,
         ...filterOpt
       }
-    : filterOptions;
+    : defaultFilterOptions;
 }
 
-export function getFilterOptions(filter?: SingleFilterOptionType | FilterOpt) {
+export function getFilterOptions(filter?: FilterOptionType | FilterOpt) {
   if (isString(filter)) {
     let filterOpt;
     if (filter === 'select') {

@@ -356,7 +356,7 @@ export const Container = connect<StoreProps, OwnProps>(
     width: dimension.width,
     autoWidth: dimension.autoWidth,
     editing: !!focus.editingAddress,
-    filtering: !!data.filterInfo.activatedColumnAddress,
+    filtering: !!data.filterInfo.activeColumnAddress,
     scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,

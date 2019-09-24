@@ -13,7 +13,7 @@ type Props = StoreProps & DispatchProps;
 class FilterOperatorComp extends Component<Props> {
   private handleChangeOperator = (ev: Event) => {
     const value = (ev.target as HTMLInputElement).value as OperatorType;
-    this.props.dispatch('setFilterLayerOperator', value);
+    this.props.dispatch('setActiveFilterOperator', value);
   };
 
   public render() {
@@ -54,6 +54,6 @@ export const FilterOperator = connect<StoreProps>(store => {
   const { data } = store;
 
   return {
-    operator: data.filterInfo.filterLayerState!.operator || 'AND'
+    operator: data.filterInfo.activeFilterState!.operator || 'AND'
   };
 })(FilterOperatorComp);

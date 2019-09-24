@@ -5,15 +5,15 @@ import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
 import {
-  ActivatedColumnAddress,
+  ActiveColumnAddress,
   CellValue,
   ColumnInfo,
   FilterInfo,
-  FilterLayerState,
+  ActiveFilterState,
   FilterState,
   Row
 } from '../store/types';
-import { pluck, some, uniq } from '../helper/common';
+import { pluck, some, uniq, debounce } from '../helper/common';
 
 interface ColumnData {
   value: CellValue;
@@ -30,7 +30,7 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
+  columnAddress: ActiveColumnAddress;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -38,27 +38,27 @@ type Props = StoreProps & OwnProps & DispatchProps;
 class SelectFilterComp extends Component<Props> {
   private searchInputEl?: HTMLInputElement;
 
-  private handleLayerStateChange = (ev: Event) => {
+  private handleChange = debounce((ev: Event) => {
     const { dispatch } = this.props;
     const { id, checked } = ev.target as HTMLInputElement;
 
-    dispatch('setSelectFilterLayerState', id, checked);
-  };
+    dispatch('setActiveSelectFilterState', id, checked);
+  }, 50);
 
-  private toggleAllColumnCheckbox = (ev: Event) => {
+  private toggleAllColumnCheckbox = debounce((ev: Event) => {
     const { checked } = ev.target as HTMLInputElement;
     this.props.dispatch('toggleSelectAllCheckbox', checked);
-  };
+  }, 50);
 
-  private searchColumnData = (ev: KeyboardEvent) => {
+  private searchColumnData = debounce((ev: KeyboardEvent) => {
     const { value } = ev.target as HTMLInputElement;
     this.props.dispatch('updateFilterLayerSearchInput', value);
-  };
+  }, 50);
 
   public render() {
     const { columnData, isAllSelected, searchInput } = this.props;
     const data = searchInput
-      ? columnData.filter(item => String(item.value).includes(searchInput))
+      ? columnData.filter(item => String(item.value).indexOf(searchInput) !== -1)
       : columnData;
 
     return (
@@ -94,12 +94,7 @@ class SelectFilterComp extends Component<Props> {
                 className={cls('filter-list-item', [checked, 'filter-list-item-checked'])}
                 key={text}
               >
-                <input
-                  type="checkbox"
-                  id={text}
-                  checked={checked}
-                  onChange={this.handleLayerStateChange}
-                />
+                <input type="checkbox" id={text} checked={checked} onChange={this.handleChange} />
                 <label for={text} />
                 <span>{value}</span>
               </li>
@@ -116,12 +111,13 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
   const { rawData, filterInfo } = data;
   const { allColumnMap } = column;
 
-  const searchInput = filterInfo.filterLayerState!.searchInput;
-  const filterLayerState: FilterState[] = (filterInfo.filterLayerState! as FilterLayerState).state;
+  const searchInput = filterInfo.activeFilterState!.searchInput;
+  const activeFilterState: FilterState[] = (filterInfo.activeFilterState! as ActiveFilterState)
+    .state;
   const uniqueColumnData = uniq(pluck(rawData as Row[], columnAddress.name));
   const columnData = uniqueColumnData.map(value => ({
     value,
-    checked: some(item => value === item.value, filterLayerState)
+    checked: some(item => value === item.value, activeFilterState)
   }));
 
   return {
@@ -130,7 +126,7 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filterInfo,
-    isAllSelected: filterLayerState.length === uniqueColumnData.length,
+    isAllSelected: activeFilterState.length === uniqueColumnData.length,
     searchInput
   };
 })(SelectFilterComp);

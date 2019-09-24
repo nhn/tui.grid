@@ -11,8 +11,8 @@ interface StoreProps {
 type Props = StoreProps & DispatchProps;
 
 export class FilterLayerComp extends Component<Props> {
-  public render({ filterInfo: { activatedColumnAddress } }: Props) {
-    return activatedColumnAddress && <FilterLayerInner columnAddress={activatedColumnAddress} />;
+  public render({ filterInfo: { activeColumnAddress } }: Props) {
+    return activeColumnAddress && <FilterLayerInner columnAddress={activeColumnAddress} />;
   }
 }
 

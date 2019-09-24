@@ -546,50 +546,52 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   notify(column, 'allColumns');
 }
 
+function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
+  if (treeColumnName && row._attributes.tree!.hidden) {
+    return acc;
+  }
+
+  if (!isObservable(row)) {
+    acc.rows.push(row);
+    acc.targetIndexes.push(index);
+  }
+
+  return acc;
+}
+
 function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
-  return data.rawData.slice(start, end).reduce(
-    (acc: OriginData, row, index) => {
-      if (treeColumnName && row._attributes.tree!.hidden) {
-        return acc;
+  return data.rawData
+    .slice(start, end)
+    .reduce(
+      (acc: OriginData, row, index) =>
+        getDataToBeObservable(acc, row, index + start, treeColumnName),
+      {
+        rows: [],
+        targetIndexes: []
       }
-      if (!isObservable(row)) {
-        acc.rows.push(row);
-        acc.targetIndexes.push(index + start);
-      }
-      return acc;
-    },
-    { rows: [], targetIndexes: [] }
-  );
+    );
 }
 
 function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
-  return data.filteredIndex.slice(start, end).reduce(
-    (acc: OriginData, rowIndex) => {
-      const row = data.rawData[rowIndex];
-      if (treeColumnName && row._attributes.tree!.hidden) {
-        return acc;
-      }
-      if (!isObservable(row)) {
-        acc.rows.push(row);
-        acc.targetIndexes.push(rowIndex);
-      }
-      return acc;
-    },
-    { rows: [], targetIndexes: [] }
-  );
+  return data.filteredIndex
+    .slice(start, end)
+    .reduce(
+      (acc: OriginData, rowIndex) =>
+        getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),
+      { rows: [], targetIndexes: [] }
+    );
 }
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const { treeColumnName } = column;
-  let originData = createOriginData(data, rowRange, treeColumnName);
-  if (data.filterInfo.filters) {
-    originData = createFilteredOriginData(data, rowRange, treeColumnName);
-  }
+  const originData = data.filterInfo.filters
+    ? createFilteredOriginData(data, rowRange, treeColumnName)
+    : createOriginData(data, rowRange, treeColumnName);
 
   if (!originData.rows.length) {
     return;

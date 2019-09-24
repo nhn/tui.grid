@@ -6,7 +6,7 @@ import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
 import {
-  ActivatedColumnAddress,
+  ActiveColumnAddress,
   ColumnInfo,
   DateFilterCode,
   FilterInfo,
@@ -14,7 +14,7 @@ import {
   TextFilterCode
 } from '../store/types';
 import { filterSelectOption } from '../helper/filter';
-import { deepMergedCopy, isNumber, isString } from '../helper/common';
+import { debounce, deepMergedCopy, isString } from '../helper/common';
 
 interface StoreProps {
   grid: Grid;
@@ -23,7 +23,7 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
+  columnAddress: ActiveColumnAddress;
   filterIndex: number;
 }
 
@@ -50,8 +50,7 @@ class DatePickerFilterComp extends Component<Props> {
     const { columnInfo, grid } = this.props;
     const { options } = columnInfo.filter!;
     const { usageStatistics } = grid;
-    const { code, value } = this.getPreviousValue();
-    this.selectEl!.value = code;
+    const { value } = this.getPreviousValue();
 
     let date;
     let format = 'yyyy/MM/dd';
@@ -82,19 +81,19 @@ class DatePickerFilterComp extends Component<Props> {
       deepMergedCopy(defaultOptions, options || {})
     );
 
-    this.datePickerEl.on('change', this.handleLayerStateChange);
+    this.datePickerEl.on('change', this.handleChange);
   };
 
-  private handleLayerStateChange = () => {
+  private handleChange = debounce(() => {
     const { filterIndex, dispatch } = this.props;
     const value = this.inputEl!.value;
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
-    dispatch('setFilterLayerState', { value, code }, filterIndex);
-  };
+    dispatch('setActiveFilterState', { value, code }, filterIndex);
+  }, 50);
 
   private getPreviousValue = () => {
     const { filterInfo, filterIndex } = this.props;
-    const filterState = filterInfo.filterLayerState!.state;
+    const filterState = filterInfo.activeFilterState!.state;
 
     let code = 'eq';
     let value = '';
@@ -110,6 +109,7 @@ class DatePickerFilterComp extends Component<Props> {
 
   public render() {
     const selectOption = filterSelectOption.date;
+    const { value, code } = this.getPreviousValue();
 
     return (
       <div>
@@ -118,13 +118,12 @@ class DatePickerFilterComp extends Component<Props> {
             ref={ref => {
               this.selectEl = ref;
             }}
-            onChange={this.handleLayerStateChange}
+            onChange={this.handleChange}
           >
             {Object.keys(selectOption).map(key => {
-              const keyWithType = key as DateFilterCode;
               return (
-                <option value={key} key={key}>
-                  {selectOption[keyWithType]}
+                <option value={key} key={key} selected={code === key}>
+                  {selectOption[key as DateFilterCode]}
                 </option>
               );
             })}
@@ -136,7 +135,8 @@ class DatePickerFilterComp extends Component<Props> {
           }}
           type="text"
           className={cls('filter-input')}
-          onKeyUp={this.handleLayerStateChange}
+          onKeyUp={this.handleChange}
+          value={value}
         />
         <div
           ref={ref => {

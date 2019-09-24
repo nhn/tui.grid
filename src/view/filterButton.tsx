@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { cls, hasClass } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActivatedColumnAddress, FilterInfo } from '../store/types';
+import { ActiveColumnAddress, FilterInfo } from '../store/types';
 import { someProp } from '../helper/common';
 
 interface OwnProps {
@@ -10,11 +10,13 @@ interface OwnProps {
 }
 interface StoreProps {
   filterInfo: FilterInfo;
-  activatedColumnAddress: ActivatedColumnAddress | null;
+  activeColumnAddress: ActiveColumnAddress | null;
   offsetLeft: number;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
+
+const DISTANCE_FROM_ICON_TO_LAYER = 9;
 
 class FilterButtonComp extends Component<Props> {
   private isActiveFilter = () => {
@@ -23,11 +25,7 @@ class FilterButtonComp extends Component<Props> {
       columnName
     } = this.props;
 
-    if (!filters) {
-      return false;
-    }
-
-    return someProp('columnName', columnName, filters);
+    return filters ? someProp('columnName', columnName, filters) : false;
   };
 
   private handleClick = (ev: MouseEvent) => {
@@ -37,14 +35,11 @@ class FilterButtonComp extends Component<Props> {
       return;
     }
 
-    const { activatedColumnAddress, columnName, dispatch, offsetLeft } = this.props;
+    const { activeColumnAddress, columnName, dispatch, offsetLeft } = this.props;
 
-    if (!activatedColumnAddress || activatedColumnAddress.name !== columnName) {
-      const left = target.getBoundingClientRect().left - offsetLeft - 9;
-      dispatch('setActivatedColumnAddress', {
-        name: columnName,
-        left
-      });
+    if (!activeColumnAddress || activeColumnAddress.name !== columnName) {
+      const left = target.getBoundingClientRect().left - offsetLeft - DISTANCE_FROM_ICON_TO_LAYER;
+      dispatch('setActiveColumnAddress', { name: columnName, left });
     }
   };
 
@@ -59,7 +54,7 @@ class FilterButtonComp extends Component<Props> {
 }
 
 export const FilterButton = connect<StoreProps, OwnProps>((store, { columnName }) => ({
-  activatedColumnAddress: store.data.filterInfo.activatedColumnAddress,
+  activeColumnAddress: store.data.filterInfo.activeColumnAddress,
   filterInfo: store.data.filterInfo,
   columnName,
   offsetLeft: store.dimension.offsetLeft

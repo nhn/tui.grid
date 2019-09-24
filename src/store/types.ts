@@ -7,7 +7,8 @@ import {
   OptTree,
   VAlignType,
   OptSummaryColumnContentMap,
-  SingleFilterOptionType, OperatorType
+  FilterOptionType,
+  OperatorType
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -169,17 +170,17 @@ export interface TreeCellInfo {
   expanded?: boolean;
 }
 
-export interface ActivatedColumnAddress {
+export interface ActiveColumnAddress {
   name: string;
   left: number;
 }
 
-export type FilterLayerState = FilterParams & { searchInput: string | null };
+export type ActiveFilterState = Filter & { searchInput: string | null };
 
 export interface FilterInfo {
-  activatedColumnAddress: ActivatedColumnAddress | null;
-  filterLayerState: FilterLayerState | null;
-  filters: FilterParams[] | null;
+  activeColumnAddress: ActiveColumnAddress | null;
+  activeFilterState: ActiveFilterState | null;
+  filters: Filter[] | null;
 }
 
 export interface Data {
@@ -215,7 +216,7 @@ export interface CellRendererOptions {
 }
 
 export interface ColumnFilterOption {
-  type: SingleFilterOptionType;
+  type: FilterOptionType;
   options?: Dictionary<any>;
   operator?: OperatorType;
   showApplyBtn: boolean;
@@ -231,9 +232,9 @@ export interface FilterState {
   value: CellValue;
 }
 
-export interface FilterParams {
+export interface Filter {
   columnName: string;
-  type: SingleFilterOptionType;
+  type: FilterOptionType;
   operator?: OperatorType;
   conditionFn?: Function;
   state: FilterState[];

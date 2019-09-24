@@ -1,15 +1,7 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import {
-  CellValue,
-  RowKey,
-  ColumnInfo,
-  SortState,
-  Column,
-  Data,
-  FilterParams
-} from '../store/types';
+import { CellValue, RowKey, ColumnInfo, SortState, Column, Data, Filter } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
@@ -28,7 +20,7 @@ interface StoreProps {
   value?: CellValue;
   grid: Grid;
   sortState: SortState;
-  filter?: FilterParams;
+  filter?: Filter;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
 }
@@ -174,7 +166,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     value = targetRow.valueMap[columnName].value;
   }
   if (data.filterInfo.filters) {
-    filter = findProp('columnName', columnName, data.filterInfo.filters as FilterParams[]);
+    filter = findProp('columnName', columnName, data.filterInfo.filters as Filter[]);
   }
 
   return {

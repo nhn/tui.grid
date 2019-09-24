@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActivatedColumnAddress, ColumnInfo, FilterInfo } from '../store/types';
+import { ActiveColumnAddress, ColumnInfo, FilterInfo } from '../store/types';
 import { cls } from '../helper/dom';
 import { TextFilter } from './textFilter';
 import { DatePickerFilter } from './datePickerFilter';
@@ -15,22 +15,22 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
+  columnAddress: ActiveColumnAddress;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
   private handleClickApplyFilterBtn = () => {
-    this.props.dispatch('applyFilterLayerState');
+    this.props.dispatch('applyActiveFilterState');
   };
 
   private handleClickClearFilterBtn = () => {
-    this.props.dispatch('clearFilterLayerState');
+    this.props.dispatch('clearActiveFilterState');
   };
 
   private closeLayer = () => {
-    this.props.dispatch('setActivatedColumnAddress', null);
+    this.props.dispatch('setActiveColumnAddress', null);
   };
 
   // eslint-disable-next-line consistent-return
@@ -93,13 +93,13 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
   const { filterInfo } = data;
   const { allColumnMap } = column;
 
-  const filterLayerState = filterInfo.filterLayerState!;
+  const activeFilterState = filterInfo.activeFilterState!;
 
   const renderSecondFilter = !!(
-    filterLayerState.type !== 'select' &&
-    filterLayerState.operator &&
-    filterLayerState.state[0] &&
-    (filterLayerState.state[0].value as string).length
+    activeFilterState.type !== 'select' &&
+    activeFilterState.operator &&
+    activeFilterState.state[0] &&
+    (activeFilterState.state[0].value as string).length
   );
 
   return {

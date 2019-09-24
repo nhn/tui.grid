@@ -4,7 +4,7 @@ TOAST UI Grid에서는 옵션을 사용하여 컬럼 별로 필터 기능을 사
 
 ## 필터 지정하기
 
-필터는 컬럼별로 지정이 가능하며 `text`, `number`, `select`, `date` 총 4가지 타입을 제공한다. 사용하고 싶은 filter의 타입을 'string' 형태로 명시해 지정하거나 다른 옵션과 사용하고 싶다면 객체로 옵션을 만들어 지정한다.
+필터는 컬럼별로 지정이 가능하며 `text`, `number`, `select`, `date` 총 4가지 빌트인 필터를 제공한다. 사용하고 싶은 필터를 column 옵션의 filter 속성에 'string' 형태로 지정하거나 다른 옵션과 사용하고 싶다면 객체로 옵션을 만들어 지정한다.
 
 ```js
 const grid = new tui.Grid({
@@ -58,9 +58,11 @@ const grid = new tui.Grid({
 
 ![simple1](https://user-images.githubusercontent.com/35371660/65324092-274f9a00-dbe6-11e9-828a-c60a27e35a6d.gif)
 
+`date` 타입을 사용하기 위해서는 [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) 의존을 갖고 있어야 하며 자세한 내용은 [다음 가이드](./date-picker.md)를 참고한다.
+
 ### select
 
-`select`는 위 세 타입과 다르게 list로 제공되어 값을 체크박스로 선택하는 방식이다.
+`select`는 위 세 타입과 다르게 리스트로 제공되어 값을 체크박스로 선택하는 방식이다.
 
 ![simple2](https://user-images.githubusercontent.com/35371660/65324226-94fbc600-dbe6-11e9-8084-ea5dc3826e34.gif)
 
@@ -128,6 +130,11 @@ const grid = new tui.Grid({
 컬럼의 필터를 `state`에 맞춰 활성화 한다.
 
 ```js
+const state = {
+  code: 'eq',
+  value: 30
+};
+
 grid.filter(columnName, state);
 ```
 
@@ -144,7 +151,18 @@ grid.unfilter(columnName);
 컬럼의 필터 상태를 반환한다.
 
 ```js
-grid.getFilterState(columnName);
+grid.getFilterState(columnName); 
+// {
+//   columnName: 'columnName',
+//   conditionFn: Function,
+//   type: 'type'
+//   state: [
+//     {
+//       code: 'code',
+//       value: 'value'
+//     }
+//   ]
+// }
 ```
 
 ### setFilter
@@ -152,6 +170,14 @@ grid.getFilterState(columnName);
 컬럼에 필터 옵션을 지정할 수 있다. filterOpt는 처음 column에 필터를 설정하는 것처럼 'string' 혹은 객체로 컬럼을 지정할 수 있다.
 
 ```js
+// const filterOpt = 'text'; // 혹은
+const filterOpt = {
+  type: 'text',
+  showApplyBtn: true,
+  showClearBtn: false,
+  operator: 'OR'
+};
+
 grid.setFilter(columnName, filterOpt);
 ```
 

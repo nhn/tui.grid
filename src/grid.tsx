@@ -11,7 +11,7 @@ import {
   OptColumn,
   OptHeader,
   FilterOpt,
-  SingleFilterOptionType
+  FilterOptionType
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -1425,7 +1425,7 @@ export default class Grid {
    * @param {string} columnName - columnName
    * @param {string | FilterOpt} filterOpt - filter type
    */
-  public setFilter(columnName: string, filterOpt: FilterOpt | SingleFilterOptionType) {
+  public setFilter(columnName: string, filterOpt: FilterOpt | FilterOptionType) {
     this.dispatch('setFilter', columnName, filterOpt);
   }
 
@@ -1449,11 +1449,7 @@ export default class Grid {
     if (filter) {
       const { type } = filter;
       const conditionFn = state.map(({ code, value }) =>
-        getFilterConditionFn(
-          code as NumberFilterCode | TextFilterCode | DateFilterCode,
-          value,
-          type
-        )
+        getFilterConditionFn(code!, value, type)
       ) as Function[];
       this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
     }

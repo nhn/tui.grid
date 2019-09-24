@@ -1,8 +1,8 @@
-import { ActivatedColumnAddress, CellValue, FilterState, Row, Store } from '../store/types';
+import { ActiveColumnAddress, CellValue, FilterState, Row, Store } from '../store/types';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex, pluck, uniq } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
-import { FilterOpt, OperatorType, SingleFilterOptionType } from '../types';
+import { FilterOpt, OperatorType, FilterOptionType } from '../types';
 import { getRowHeight } from '../store/rowCoords';
 import { getFilterOptions } from '../store/column';
 import { setScrollTop } from './viewport';
@@ -11,78 +11,77 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
-export function setFilterLayerOperator(store: Store, value: OperatorType) {
+export function setActiveFilterOperator(store: Store, operator: OperatorType) {
   const { data, column } = store;
-  const filterLayerState = data.filterInfo.filterLayerState!;
-  const columnInfo = column.allColumnMap[filterLayerState.columnName];
+  const activeFilterState = data.filterInfo.activeFilterState!;
+  const columnInfo = column.allColumnMap[activeFilterState.columnName];
 
-  filterLayerState.operator = value;
+  activeFilterState.operator = operator;
   notify(data, 'filterInfo');
 
   if (!columnInfo.filter!.showApplyBtn) {
-    columnInfo.filter!.operator = value;
-    applyFilterLayerState(store);
+    columnInfo.filter!.operator = operator;
+    applyActiveFilterState(store);
   }
 }
 
 export function updateFilterLayerSearchInput({ data }: Store, value: string) {
-  data.filterInfo.filterLayerState!.searchInput = value;
+  data.filterInfo.activeFilterState!.searchInput = value;
   notify(data, 'filterInfo');
 }
 
 export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
   const { data, column } = store;
   const { filterInfo, rawData } = data;
-  const { filterLayerState } = filterInfo;
-  const { columnName } = filterLayerState!;
+  const { activeFilterState } = filterInfo;
+  const { columnName } = activeFilterState!;
 
   const columnInfo = column.allColumnMap[columnName];
 
   if (checked) {
     const columnData = uniq(pluck(rawData as Row[], columnName));
-    filterLayerState!.state = columnData.map(value => ({ code: 'eq', value }));
+    activeFilterState!.state = columnData.map(value => ({ code: 'eq', value }));
     notify(data, 'filterInfo');
   } else {
-    filterLayerState!.state = [];
+    activeFilterState!.state = [];
     notify(data, 'filterInfo');
     unfilter(store, columnName);
   }
 
   if (!columnInfo.filter!.showApplyBtn) {
-    applyFilterLayerState(store);
+    applyActiveFilterState(store);
   }
 }
 
-export function setSelectFilterLayerState(store: Store, value: CellValue, checked: boolean) {
+export function setActiveSelectFilterState(store: Store, value: CellValue, checked: boolean) {
   const { data, column } = store;
   const {
-    filterInfo: { filterLayerState }
+    filterInfo: { activeFilterState }
   } = data;
+  const columnName = data.filterInfo.activeColumnAddress!.name;
+  const columnInfo = column.allColumnMap[columnName];
 
   if (checked) {
-    filterLayerState!.state.push({ value, code: 'eq' });
+    activeFilterState!.state.push({ value, code: 'eq' });
   } else {
-    const index = findPropIndex('value', value, filterLayerState!.state!);
-    filterLayerState!.state!.splice(index, 1);
+    const index = findPropIndex('value', value, activeFilterState!.state!);
+    activeFilterState!.state!.splice(index, 1);
   }
 
   notify(data, 'filterInfo');
 
-  const columnName = data.filterInfo.activatedColumnAddress!.name;
-  const columnInfo = column.allColumnMap[columnName];
-
   if (!columnInfo.filter!.showApplyBtn) {
-    applyFilterLayerState(store);
+    applyActiveFilterState(store);
   }
 }
 
-export function setActivatedColumnAddress(store: Store, address: ActivatedColumnAddress | null) {
+export function setActiveColumnAddress(store: Store, address: ActiveColumnAddress | null) {
   const { data, column } = store;
   const { filterInfo, filteredRawData, rawData } = data;
-  filterInfo.activatedColumnAddress = address;
+  filterInfo.activeColumnAddress = address;
   if (address) {
     const { type, operator } = column.allColumnMap[address.name].filter!;
-    let initialState: FilterState[] | null = null;
+    let initialState: FilterState[] = [];
 
     if (filterInfo.filters) {
       const prevFilter = findProp('columnName', address.name, filterInfo.filters);
@@ -91,16 +90,12 @@ export function setActivatedColumnAddress(store: Store, address: ActivatedColumn
       }
     }
 
-    if (!initialState) {
-      if (type === 'select') {
-        const columnData = uniq(pluck(filteredRawData as Row[], address.name));
-        initialState = columnData.map(value => ({ code: 'eq', value }));
-      } else {
-        initialState = [];
-      }
+    if (type === 'select' && !initialState) {
+      const columnData = uniq(pluck(filteredRawData as Row[], address.name));
+      initialState = columnData.map(value => ({ code: 'eq', value }));
     }
 
-    data.filterInfo.filterLayerState = {
+    data.filterInfo.activeFilterState = {
       columnName: address.name,
       type,
       operator,
@@ -108,9 +103,9 @@ export function setActivatedColumnAddress(store: Store, address: ActivatedColumn
       searchInput: null
     };
   } else {
-    data.filterInfo.activatedColumnAddress = null;
+    data.filterInfo.activeColumnAddress = null;
 
-    const { type, state, columnName } = data.filterInfo.filterLayerState!;
+    const { type, state, columnName } = data.filterInfo.activeFilterState!;
     if (type !== 'select' && !state.length) {
       unfilter(store, columnName);
     } else if (type === 'select') {
@@ -124,47 +119,41 @@ export function setActivatedColumnAddress(store: Store, address: ActivatedColumn
   notify(data, 'filterInfo');
 }
 
-export function applyFilterLayerState(store: Store) {
+export function applyActiveFilterState(store: Store) {
   const { data } = store;
-  const columnName = data.filterInfo.activatedColumnAddress!.name;
-  const filterLayerState = data.filterInfo.filterLayerState!;
+  const columnName = data.filterInfo.activeColumnAddress!.name;
+  const { state, type, operator } = data.filterInfo.activeFilterState!;
 
-  const fns = filterLayerState.state
-    .filter(state => String(state.value).length)
-    .map(st =>
-      getFilterConditionFn(st.code!, st.value, filterLayerState.type as SingleFilterOptionType)
-    ) as Function[];
+  const fns = state
+    .filter(item => String(item.value).length)
+    .map(st => getFilterConditionFn(st.code!, st.value, type as FilterOptionType)) as Function[];
 
-  filter(
-    store,
-    columnName,
-    composeConditionFn(fns, filterLayerState.operator),
-    filterLayerState.state!
-  );
+  filter(store, columnName, composeConditionFn(fns, operator), state);
 }
 
-export function clearFilterLayerState(store: Store) {
+export function clearActiveFilterState(store: Store) {
   const { data } = store;
-  const filterLayerState = data.filterInfo.filterLayerState!;
-  filterLayerState.state = [];
-  unfilter(store, filterLayerState.columnName);
+  const activeFilterState = data.filterInfo.activeFilterState!;
+  activeFilterState.state = [];
+  unfilter(store, activeFilterState.columnName);
   notify(data, 'filterInfo');
 }
 
-export function setFilterLayerState(store: Store, state: FilterState, filterIndex: number) {
+export function setActiveFilterState(store: Store, state: FilterState, filterIndex: number) {
   const { data, column } = store;
-  data.filterInfo.filterLayerState!.state[filterIndex] = state as FilterState;
-
-  notify(data, 'filterInfo');
-
-  const columnName = data.filterInfo.activatedColumnAddress!.name;
+  const columnName = data.filterInfo.activeColumnAddress!.name;
   const columnInfo = column.allColumnMap[columnName];
 
+  data.filterInfo.activeFilterState!.state[filterIndex] = state as FilterState;
+
+  notify(data, 'filterInfo');
+
   if (!columnInfo.filter!.showApplyBtn) {
+    // If first filter has no value, turn off the filtering.
     if (filterIndex === 0 && !String(state.value).length) {
       unfilter(store, columnName);
     } else {
-      applyFilterLayerState(store);
+      applyActiveFilterState(store);
     }
   }
 }
@@ -181,29 +170,14 @@ export function filter(
     return;
   }
 
-  const filters = data.filterInfo.filters;
-  if (filters) {
-    const filterOption = findProp('columnName', columnName, filters);
-    if (filterOption) {
-      filterOption.conditionFn = conditionFn;
-      filterOption.state = state;
-    } else {
-      filters.push({
-        columnName,
-        type: columnFilterInfo.type,
-        conditionFn,
-        state
-      });
-    }
+  const filters = data.filterInfo.filters || [];
+  const { type } = columnFilterInfo;
+  const filterOption = findProp('columnName', columnName, filters);
+  if (filterOption) {
+    filterOption.conditionFn = conditionFn;
+    filterOption.state = state;
   } else {
-    data.filterInfo.filters = [
-      {
-        columnName,
-        type: columnFilterInfo.type,
-        conditionFn,
-        state
-      }
-    ];
+    data.filterInfo.filters = filters.concat({ columnName, type, conditionFn, state });
   }
 
   notify(data, 'filterInfo');
@@ -228,10 +202,12 @@ export function unfilter(store: Store, columnName: string) {
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      if (filterInfo.filterLayerState) {
-        filterInfo.filterLayerState.state = [];
+      if (filterInfo.activeFilterState) {
+        filterInfo.activeFilterState.state = [];
       }
+
       filterInfo.filters!.splice(filterIndex, 1);
+
       if (filterInfo.filters!.length === 0) {
         filterInfo.filters = null;
       }
@@ -255,13 +231,17 @@ function initLayerAndScrollAfterFiltering(store: Store) {
 export function setFilter(
   store: Store,
   columnName: string,
-  filterOpt: SingleFilterOptionType | FilterOpt
+  filterOpt: FilterOptionType | FilterOpt
 ) {
   const { column } = store;
   const filterOptions = getFilterOptions(filterOpt);
   const index = findPropIndex('name', columnName, column.allColumns);
 
   if (index !== -1) {
+    if (column.allColumns[index].filter) {
+      unfilter(store, columnName);
+    }
+
     column.allColumns[index].filter = filterOptions;
     notify(column, 'allColumns');
   }

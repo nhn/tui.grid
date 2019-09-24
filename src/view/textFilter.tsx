@@ -3,13 +3,14 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import {
-  ActivatedColumnAddress,
+  ActiveColumnAddress,
   ColumnInfo,
   FilterInfo,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
 import { filterSelectOption } from '../helper/filter';
+import { debounce } from '../helper/common';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
@@ -19,7 +20,7 @@ interface StoreProps {
 }
 
 interface OwnProps {
-  columnAddress: ActivatedColumnAddress;
+  columnAddress: ActiveColumnAddress;
   filterIndex: number;
 }
 
@@ -36,17 +37,17 @@ class TextFilterComp extends Component<Props> {
     this.inputEl!.value = value;
   }
 
-  private handleLayerStateChange = () => {
+  private handleChange = debounce(() => {
     const { filterIndex, dispatch } = this.props;
     const value = this.inputEl!.value;
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
 
-    dispatch('setFilterLayerState', { value, code }, filterIndex);
-  };
+    dispatch('setActiveFilterState', { value, code }, filterIndex);
+  }, 50);
 
   private getPreviousValue = () => {
     const { filterInfo, filterIndex } = this.props;
-    const filterState = filterInfo.filterLayerState!.state;
+    const filterState = filterInfo.activeFilterState!.state;
 
     let code = 'eq';
     let value = '';
@@ -73,13 +74,12 @@ class TextFilterComp extends Component<Props> {
             ref={ref => {
               this.selectEl = ref;
             }}
-            onChange={this.handleLayerStateChange}
+            onChange={this.handleChange}
           >
             {Object.keys(selectOption).map(key => {
-              const keyWithType = key as NumberFilterCode | TextFilterCode;
               return (
                 <option value={key} key={key}>
-                  {selectOption[keyWithType]}
+                  {selectOption[key as NumberFilterCode | TextFilterCode]}
                 </option>
               );
             })}
@@ -91,7 +91,7 @@ class TextFilterComp extends Component<Props> {
           }}
           type="text"
           className={cls('filter-input')}
-          onKeyUp={this.handleLayerStateChange}
+          onKeyUp={this.handleChange}
         />
       </div>
     );
