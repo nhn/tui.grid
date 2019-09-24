@@ -3,7 +3,10 @@ import GridEvent from '@/event/gridEvent';
 import { isSubsetOf } from '../helper/compare';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
-const columns = [{ name: 'name', editor: 'text', resizable: true }, { name: 'age' }];
+const columns = [
+  { name: 'name', editor: 'text', resizable: true, sortable: true },
+  { name: 'age' }
+];
 
 before(() => {
   cy.visit('/dist');

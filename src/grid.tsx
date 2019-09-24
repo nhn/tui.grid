@@ -638,16 +638,8 @@ export default class Grid {
    * @param {string} value - The value of editing result
    */
   public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const { columns } = this.store.data.sortOptions;
-    this.dispatch('setValue', rowKey, columnName, value);
-
-    const index = findPropIndex('columnName', columnName, columns);
-
-    if (index !== -1) {
-      this.dispatch('sort', columnName, columns[index].ascending);
-    }
-
-    this.dispatch('finishEditing', rowKey, columnName, value);
+    // @TODO: change grid API name(finishEditing -> saveAndFinishEditing)
+    this.dispatch('saveAndFinishEditing', rowKey, columnName, value);
   }
 
   /**

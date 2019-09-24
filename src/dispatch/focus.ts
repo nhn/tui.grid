@@ -1,24 +1,24 @@
 import { Store, RowKey, Focus, Data } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellEditable, findIndexByRowKey } from '../query/data';
+import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { isFocusedCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable } from '../helper/observable';
+import { setValue } from './data';
+import { findPropIndex } from '../helper/common';
+import { sort } from './sort';
+import { createTreeRawRow } from '../helper/tree';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
-  const { rawData, viewData } = data;
+  const { rawData } = data;
   const { allColumnMap } = column;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rawRow = rawData[foundIndex];
 
   // makes the data observable to judge editable, disable of the cell;
-  if (!isObservable(rawRow)) {
-    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
-  }
+  makeObservable(store, rowKey);
 
   if (!isCellEditable(data, rowKey, columnName)) {
     return;
@@ -138,4 +138,58 @@ export function initFocus({ focus }: Store) {
   focus.columnName = null;
   focus.prevRowKey = null;
   focus.prevColumnName = null;
+}
+
+export function saveAndFinishEditing(
+  store: Store,
+  rowKey: RowKey,
+  columnName: string,
+  value: string
+) {
+  const { data } = store;
+  const { columns } = data.sortOptions;
+
+  // makes the data observable to judge editable, disable of the cell;
+  makeObservable(store, rowKey);
+
+  if (!isCellEditable(data, rowKey, columnName)) {
+    return;
+  }
+
+  setValue(store, rowKey, columnName, value);
+
+  const index = findPropIndex('columnName', columnName, columns);
+
+  if (index !== -1) {
+    sort(store, columnName, columns[index].ascending);
+  }
+
+  finishEditing(store, rowKey, columnName, value);
+}
+
+function makeObservable(store: Store, rowKey: RowKey) {
+  const { data, column, id } = store;
+  const { rawData, viewData } = data;
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
+  const rawRow = rawData[foundIndex];
+
+  if (isObservable(rawRow)) {
+    return;
+  }
+
+  if (treeColumnName) {
+    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
+    rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
+    viewData[foundIndex] = createViewRow(
+      rawData[foundIndex],
+      allColumnMap,
+      rawData,
+      treeColumnName,
+      treeIcon
+    );
+  } else {
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
+  }
 }
