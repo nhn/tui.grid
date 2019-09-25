@@ -7,7 +7,7 @@ import { FilterLayer } from './filterLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr } from '../helper/dom';
+import { cls, getCellAddress, dataAttr, findParent } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
@@ -154,6 +154,7 @@ export class ContainerComp extends Component<Props> {
 
   private handleClick = (event: MouseEvent) => {
     const { eventBus, editingEvent } = this.props;
+
     const gridEvent = new GridEvent({ event });
 
     /**
@@ -201,6 +202,14 @@ export class ContainerComp extends Component<Props> {
     }
 
     const { dispatch, editing, eventBus, filtering } = this.props;
+
+    if (filtering) {
+      const target = event.target as HTMLElement;
+      if (!findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
+        dispatch('setActiveColumnAddress', null);
+      }
+    }
+
     const { el } = this;
     const gridEvent = new GridEvent({ event });
 

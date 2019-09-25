@@ -202,9 +202,9 @@ export function unfilter(store: Store, columnName: string) {
         filterInfo.filters = null;
       }
     }
+    notify(data, 'filterInfo');
+    initLayerAndScrollAfterFiltering(store);
   }
-  notify(data, 'filterInfo');
-  initLayerAndScrollAfterFiltering(store);
 }
 
 function initLayerAndScrollAfterFiltering(store: Store) {
