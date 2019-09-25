@@ -126,11 +126,8 @@ describe('common', () => {
     cy.get(`.${cls('content-text')}`)
       .type('B')
       .then(() => {
-        cy.getCell(4, 'alphabetB')
-          .click()
-          .then(() => {
-            compareColumnCellLength(3);
-          });
+        cy.getCell(4, 'alphabetB').click();
+        compareColumnCellLength(3);
       });
   });
 
@@ -162,13 +159,11 @@ describe('common', () => {
       .click()
       .get(`.${cls('filter-list-item')} label`)
       .eq(1)
-      .click()
-      .then(() => {
-        cy.wait(150);
-        compareColumnCellLength(2);
-        equalColumnData('alphabetA', 'A');
-        equalColumnData('alphabetB', 'A');
-      });
+      .click();
+    cy.wait(150);
+    compareColumnCellLength(2);
+    equalColumnData('alphabetA', 'A');
+    equalColumnData('alphabetB', 'A');
   });
 
   it('The operator and the second filter appear when the first condition value exists.', () => {
@@ -202,23 +197,20 @@ describe('filter API', () => {
     createGrid();
   });
 
-  it('unfilter() remove filter', () => {
+  it('filter(), unfilter()', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
     cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
+    equalColumnData('alphabetA', 'A');
+
     cy.gridInstance().invoke('unfilter', 'alphabetA');
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
     compareColumnCellLength(9);
   });
 
-  it('filter() trigger filter', () => {
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-    equalColumnData('alphabetA', 'A');
-  });
-
   it('getFilterState() return current filter state', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
     cy.gridInstance()
-      .invoke('getFilterState', 'alphabetA')
+      .invoke('getFilterState')
       .should(filterState => {
         expect(
           isSubsetOf(
@@ -227,6 +219,27 @@ describe('filter API', () => {
                 columnName: 'alphabetA',
                 state: [{ code: 'eq', value: 'A' }],
                 type: 'text'
+              }
+            ],
+            filterState
+          )
+        ).to.be.true;
+      });
+    cy.gridInstance().invoke('filter', 'alphabetA', [
+      { code: 'eq', value: 'A' },
+      { code: 'ne', value: 'B' }
+    ]);
+    cy.gridInstance()
+      .invoke('getFilterState')
+      .should(filterState => {
+        expect(
+          isSubsetOf(
+            [
+              {
+                columnName: 'alphabetA',
+                state: [{ code: 'eq', value: 'A' }, { code: 'ne', value: 'B' }],
+                type: 'text',
+                operator: 'AND'
               }
             ],
             filterState

@@ -4,7 +4,9 @@ TOAST UI Grid에서는 옵션을 사용하여 컬럼 별로 필터 기능을 사
 
 ## 필터 지정하기
 
-필터는 컬럼별로 지정이 가능하며 `text`, `number`, `select`, `date` 총 4가지 빌트인 필터를 제공한다. 사용하고 싶은 필터를 column 옵션의 filter 속성에 'string' 형태로 지정하거나 다른 옵션과 사용하고 싶다면 객체로 옵션을 만들어 지정한다.
+필터는 컬럼별로 지정이 가능하며 `text`, `number`, `select`, `date` 총 4가지 빌트인 필터를 제공한다.
+* 문자열 타입 : 옵션이 없는 경우 사용
+* 객체 타입 : 옵션이 필요한 경우 사용
 
 ```js
 const grid = new tui.Grid({
@@ -15,7 +17,7 @@ const grid = new tui.Grid({
     {
       header: 'Name',
       name: 'name',
-      filter: 'text' // 타입을 명시하여 필터 지정하기
+      filter: 'text'
     },
     {
       header: 'Name',
@@ -24,7 +26,7 @@ const grid = new tui.Grid({
         type: 'text',
         showApplyBtn: true,
         showClearBtn: true
-      } // 다른 옵션과 함께 필터 지정하여 사용하기
+      }
     }
   ]
 });
@@ -54,11 +56,11 @@ const grid = new tui.Grid({
 
 ### text, number, date
 
-`text`, `number`, `date`, 이 세 타입은 select와 input이 기본으로 주어진다. select는 위 표에 나타나는 option이 나타나며 그에 대한 값을 입력해 찾는 방식이다.
+`text`, `number`, `date` 세 타입은 select와 input이 기본으로 주어진다. select는 위 표에 나타나는 option이 나타나며 그에 대한 값을 입력해 찾는 방식이다.
 
 ![simple1](https://user-images.githubusercontent.com/35371660/65324092-274f9a00-dbe6-11e9-828a-c60a27e35a6d.gif)
 
-`date` 타입을 사용하기 위해서는 [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) 의존을 갖고 있어야 하며 자세한 내용은 [다음 가이드](./date-picker.md)를 참고한다.
+`date` 타입을 사용하기 위해서는 [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) 의존을 갖고 있어야 하며 자세한 내용은 [DatePicker 사용 가이드](./date-picker.md)를 참고한다.
 
 ### select
 

@@ -26,7 +26,6 @@ interface StoreProps {
   filterInfo: FilterInfo;
   columnData: ColumnData[];
   isAllSelected: boolean;
-  searchInput: string | null;
 }
 
 interface OwnProps {
@@ -36,7 +35,9 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 class SelectFilterComp extends Component<Props> {
-  private searchInputEl?: HTMLInputElement;
+  public state = {
+    searchInput: ''
+  };
 
   private handleChange = debounce((ev: Event) => {
     const { dispatch } = this.props;
@@ -52,21 +53,19 @@ class SelectFilterComp extends Component<Props> {
 
   private searchColumnData = debounce((ev: KeyboardEvent) => {
     const { value } = ev.target as HTMLInputElement;
-    this.props.dispatch('updateFilterLayerSearchInput', value);
+    this.setState({ searchInput: value });
   }, 50);
 
   public render() {
-    const { columnData, isAllSelected, searchInput } = this.props;
-    const data = searchInput
+    const { columnData, isAllSelected } = this.props;
+    const { searchInput } = this.state;
+    const data = searchInput.length
       ? columnData.filter(item => String(item.value).indexOf(searchInput) !== -1)
       : columnData;
 
     return (
       <div className={cls('filter-list-container')}>
         <input
-          ref={el => {
-            this.searchInputEl = el;
-          }}
           type="text"
           className={cls('filter-input')}
           placeholder="Search..."
@@ -111,7 +110,6 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
   const { rawData, filterInfo } = data;
   const { allColumnMap } = column;
 
-  const searchInput = filterInfo.activeFilterState!.searchInput;
   const activeFilterState: FilterState[] = (filterInfo.activeFilterState! as ActiveFilterState)
     .state;
   const uniqueColumnData = uniq(pluck(rawData as Row[], columnAddress.name));
@@ -126,7 +124,6 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filterInfo,
-    isAllSelected: activeFilterState.length === uniqueColumnData.length,
-    searchInput
+    isAllSelected: activeFilterState.length === uniqueColumnData.length
   };
 })(SelectFilterComp);

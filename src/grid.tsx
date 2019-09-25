@@ -1434,7 +1434,25 @@ export default class Grid {
    * @returns {Array.<FilterState>} - filter state
    */
   public getFilterState() {
-    return this.store.data.filterInfo.filters;
+    const { data, column } = this.store;
+    const { allColumnMap } = column;
+    let { filters } = data.filterInfo;
+    if (filters) {
+      filters = filters.map(filter => {
+        if (filter.state.length > 1) {
+          const { columnName } = filter;
+          const operator = allColumnMap[columnName].filter!.operator;
+          return {
+            ...filter,
+            operator
+          };
+        }
+
+        return filter;
+      });
+    }
+
+    return filters;
   }
 
   /**

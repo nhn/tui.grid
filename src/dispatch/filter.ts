@@ -25,11 +25,6 @@ export function setActiveFilterOperator(store: Store, operator: OperatorType) {
   }
 }
 
-export function updateFilterLayerSearchInput({ data }: Store, value: string) {
-  data.filterInfo.activeFilterState!.searchInput = value;
-  notify(data, 'filterInfo');
-}
-
 export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
   const { data, column } = store;
   const { filterInfo, rawData } = data;
@@ -103,8 +98,6 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
       searchInput: null
     };
   } else {
-    data.filterInfo.activeColumnAddress = null;
-
     const { type, state, columnName } = data.filterInfo.activeFilterState!;
     if (type !== 'select' && !state.length) {
       unfilter(store, columnName);
