@@ -329,3 +329,30 @@ describe('rows', () => {
       });
   });
 });
+
+describe('focus', () => {
+  it('should destroy the focusing layer, when hide the column', () => {
+    cy.gridInstance().invoke('focus', 1, 'name', true);
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        columnName: null,
+        rowKey: null,
+        value: null
+      });
+  });
+
+  it('cannot focus the cell on hidden cell', () => {
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance().invoke('focus', 1, 'name');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        columnName: null,
+        rowKey: null,
+        value: null
+      });
+  });
+});
