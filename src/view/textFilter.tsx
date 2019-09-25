@@ -6,6 +6,7 @@ import {
   ActiveColumnAddress,
   ColumnInfo,
   FilterInfo,
+  FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
@@ -17,6 +18,7 @@ type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 interface StoreProps {
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
+  filterLayerState: FilterLayerState;
 }
 
 interface OwnProps {
@@ -46,8 +48,8 @@ class TextFilterComp extends Component<Props> {
   }, 50);
 
   private getPreviousValue = () => {
-    const { filterInfo, filterIndex } = this.props;
-    const filterState = filterInfo.activeFilterState!.state;
+    const { filterIndex, filterLayerState } = this.props;
+    const filterState = filterLayerState.activeFilterState!.state;
 
     let code = 'eq';
     let value = '';
@@ -99,13 +101,14 @@ class TextFilterComp extends Component<Props> {
 }
 
 export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex, columnAddress }) => {
-  const { column, data } = store;
+  const { column, data, filterLayerState } = store;
   const { allColumnMap } = column;
 
   return {
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filterIndex,
-    filterInfo: data.filterInfo
+    filterInfo: data.filterInfo,
+    filterLayerState
   };
 })(TextFilterComp);

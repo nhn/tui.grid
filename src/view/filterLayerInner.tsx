@@ -21,20 +21,7 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
-  private handleClickApplyFilterBtn = () => {
-    this.props.dispatch('applyActiveFilterState');
-  };
-
-  private handleClickClearFilterBtn = () => {
-    this.props.dispatch('clearActiveFilterState');
-  };
-
-  private closeLayer = () => {
-    this.props.dispatch('setActiveColumnAddress', null);
-  };
-
-  // eslint-disable-next-line consistent-return
-  private getFilterComponent = (index: number) => {
+  private renderFilter = (index: number) => {
     const { columnAddress, columnInfo } = this.props;
     const type = columnInfo.filter!.type;
 
@@ -47,12 +34,12 @@ export class FilterLayerInnerComp extends Component<Props> {
       case 'select':
         return <SelectFilter columnAddress={columnAddress} />;
       default:
-      //no default
+        return null;
     }
   };
 
   public render() {
-    const { columnAddress, columnInfo, renderSecondFilter } = this.props;
+    const { columnAddress, columnInfo, renderSecondFilter, dispatch } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
     const { left } = columnAddress;
 
@@ -60,16 +47,23 @@ export class FilterLayerInnerComp extends Component<Props> {
       <div className={cls('filter-container')} style={{ left }}>
         <div>
           <span className={cls('btn-filter', 'filter-icon-active')} />
-          <a className={cls('btn-close')} onClick={this.closeLayer} />
+          <a
+            className={cls('btn-close')}
+            onClick={() => {
+              dispatch('setActiveColumnAddress', null);
+            }}
+          />
         </div>
-        {this.getFilterComponent(0)}
+        {this.renderFilter(0)}
         {renderSecondFilter && <FilterOperator />}
-        {renderSecondFilter && this.getFilterComponent(1)}
+        {renderSecondFilter && this.renderFilter(1)}
         <div className={cls('filter-btn-container')}>
           {showClearBtn && (
             <button
               className={cls('filter-btn', 'filter-btn-clear')}
-              onClick={this.handleClickClearFilterBtn}
+              onClick={() => {
+                dispatch('clearActiveFilterState');
+              }}
             >
               Clear
             </button>
@@ -77,7 +71,9 @@ export class FilterLayerInnerComp extends Component<Props> {
           {showApplyBtn && (
             <button
               className={cls('filter-btn', 'filter-btn-apply')}
-              onClick={this.handleClickApplyFilterBtn}
+              onClick={() => {
+                dispatch('applyActiveFilterState');
+              }}
             >
               Apply
             </button>
@@ -89,17 +85,17 @@ export class FilterLayerInnerComp extends Component<Props> {
 }
 
 export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
-  const { data, column } = store;
+  const { data, column, filterLayerState } = store;
   const { filterInfo } = data;
   const { allColumnMap } = column;
 
-  const activeFilterState = filterInfo.activeFilterState!;
+  const activeFilterState = filterLayerState.activeFilterState!;
 
   const renderSecondFilter = !!(
     activeFilterState.type !== 'select' &&
     activeFilterState.operator &&
     activeFilterState.state[0] &&
-    (activeFilterState.state[0].value as string).length
+    activeFilterState.state[0].value.length
   );
 
   return {

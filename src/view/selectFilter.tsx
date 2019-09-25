@@ -106,11 +106,11 @@ class SelectFilterComp extends Component<Props> {
 }
 
 export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
-  const { column, id, data } = store;
+  const { column, id, data, filterLayerState } = store;
   const { rawData, filterInfo } = data;
   const { allColumnMap } = column;
 
-  const activeFilterState: FilterState[] = (filterInfo.activeFilterState! as ActiveFilterState)
+  const activeFilterState: FilterState[] = (filterLayerState.activeFilterState as ActiveFilterState)
     .state;
   const uniqueColumnData = uniq(pluck(rawData as Row[], columnAddress.name));
   const columnData = uniqueColumnData.map(value => ({

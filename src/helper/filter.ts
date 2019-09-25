@@ -2,8 +2,6 @@ import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../
 import { isString, endsWith, startsWith } from './common';
 import { OperatorType, FilterOptionType } from '../types';
 
-/* eslint-disable consistent-return */
-
 interface FilterSelectOption {
   number: { [key in NumberFilterCode]: string };
   text: { [key in TextFilterCode]: string };
@@ -13,10 +11,10 @@ interface FilterSelectOption {
 export const filterSelectOption: FilterSelectOption = {
   number: {
     eq: '=',
-    lt: '>',
-    gt: '<',
-    lte: '>=',
-    gte: '<=',
+    lt: '<',
+    gt: '>',
+    lte: '<=',
+    gte: '>=',
     ne: '!='
   },
   text: {
@@ -40,62 +38,66 @@ export function getUnixTime(value: CellValue) {
   return parseInt((new Date(String(value)).getTime() / 1000).toFixed(0), 10);
 }
 
-function getPredicateWithType(code: 'eq' | 'ne', type: FilterOptionType, inputValue: CellValue) {
+function getPredicateWithType(
+  code: 'eq' | 'ne',
+  type: FilterOptionType,
+  inputValue: CellValue
+): (cellValue: CellValue) => boolean {
   switch (type) {
     case 'number':
       return code === 'eq'
-        ? (cellValue: CellValue) => Number(cellValue) === Number(inputValue)
-        : (cellValue: CellValue) => Number(cellValue) !== Number(inputValue);
+        ? cellValue => Number(cellValue) === Number(inputValue)
+        : cellValue => Number(cellValue) !== Number(inputValue);
     case 'text':
     case 'select':
       return code === 'eq'
-        ? (cellValue: CellValue) => String(cellValue) === String(inputValue)
-        : (cellValue: CellValue) => String(cellValue) !== String(inputValue);
+        ? cellValue => String(cellValue) === String(inputValue)
+        : cellValue => String(cellValue) !== String(inputValue);
     case 'date':
       return code === 'eq'
-        ? (cellValue: CellValue) => getUnixTime(cellValue) === getUnixTime(inputValue)
-        : (cellValue: CellValue) => getUnixTime(cellValue) !== getUnixTime(inputValue);
+        ? cellValue => getUnixTime(cellValue) === getUnixTime(inputValue)
+        : cellValue => getUnixTime(cellValue) !== getUnixTime(inputValue);
     default:
-    // no-default
+      throw new Error('type not available.');
   }
 }
 
 export function getFilterConditionFn(
   code: NumberFilterCode | TextFilterCode | DateFilterCode,
-  inputValue: CellValue,
+  inputValue: string,
   type: FilterOptionType
-) {
+): (cellValue: CellValue) => boolean {
   switch (code) {
     case 'eq':
     case 'ne':
       return getPredicateWithType(code, type, inputValue);
     case 'lt':
-      return (cellValue: CellValue) => Number(cellValue) < Number(inputValue);
+      return cellValue => Number(cellValue) < Number(inputValue);
     case 'gt':
-      return (cellValue: CellValue) => Number(cellValue) > Number(inputValue);
+      return cellValue => Number(cellValue) > Number(inputValue);
     case 'lte':
-      return (cellValue: CellValue) => Number(cellValue) <= Number(inputValue);
+      return cellValue => Number(cellValue) <= Number(inputValue);
     case 'gte':
-      return (cellValue: CellValue) => Number(cellValue) >= Number(inputValue);
+      return cellValue => Number(cellValue) >= Number(inputValue);
     case 'contain':
-      return (cellValue: CellValue) =>
+      return cellValue =>
         isString(cellValue) && isString(inputValue) && cellValue.indexOf(inputValue) !== -1;
     case 'start':
-      return (cellValue: CellValue) =>
+      return cellValue =>
         isString(cellValue) && isString(inputValue) && startsWith(inputValue, cellValue);
     case 'end':
-      return (cellValue: CellValue) =>
+      return cellValue =>
         isString(cellValue) && isString(inputValue) && endsWith(inputValue, cellValue);
     case 'after':
-      return (cellValue: CellValue) => getUnixTime(cellValue) > getUnixTime(inputValue);
+      return cellValue => getUnixTime(cellValue) > getUnixTime(inputValue);
     case 'afterEq':
-      return (cellValue: CellValue) => getUnixTime(cellValue) >= getUnixTime(inputValue);
+      return cellValue => getUnixTime(cellValue) >= getUnixTime(inputValue);
     case 'before':
-      return (cellValue: CellValue) => getUnixTime(cellValue) < getUnixTime(inputValue);
+      return cellValue => getUnixTime(cellValue) < getUnixTime(inputValue);
     case 'beforeEq':
-      return (cellValue: CellValue) => getUnixTime(cellValue) <= getUnixTime(inputValue);
+      return cellValue => getUnixTime(cellValue) <= getUnixTime(inputValue);
     default:
-    // no default
+      throw new Error('code not available.');
   }
 }
 

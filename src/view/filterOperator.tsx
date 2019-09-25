@@ -51,9 +51,9 @@ class FilterOperatorComp extends Component<Props> {
 }
 
 export const FilterOperator = connect<StoreProps>(store => {
-  const { data } = store;
+  const { filterLayerState } = store;
 
   return {
-    operator: data.filterInfo.activeFilterState!.operator || 'AND'
+    operator: filterLayerState.activeFilterState!.operator || 'AND'
   };
 })(FilterOperatorComp);

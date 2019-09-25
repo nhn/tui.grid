@@ -178,8 +178,6 @@ export interface ActiveColumnAddress {
 export type ActiveFilterState = Filter & { searchInput: string | null };
 
 export interface FilterInfo {
-  activeColumnAddress: ActiveColumnAddress | null;
-  activeFilterState: ActiveFilterState | null;
   filters: Filter[] | null;
 }
 
@@ -229,7 +227,7 @@ export type DateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'bef
 
 export interface FilterState {
   code: NumberFilterCode | TextFilterCode | DateFilterCode | null;
-  value: CellValue;
+  value: string;
 }
 
 export interface Filter {
@@ -462,6 +460,11 @@ export interface RenderState {
   state: State;
 }
 
+export interface FilterLayerState {
+  activeColumnAddress: ActiveColumnAddress | null;
+  activeFilterState: ActiveFilterState | null;
+}
+
 export interface PageOptions {
   useClient?: boolean;
   perPage?: number;
@@ -481,6 +484,7 @@ export interface Store {
   readonly selection: Selection;
   readonly summary: Summary;
   readonly renderState: RenderState;
+  readonly filterLayerState: FilterLayerState;
 }
 
 export interface ComplexColumnInfo {

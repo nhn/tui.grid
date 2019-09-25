@@ -1,4 +1,4 @@
-import { ActiveColumnAddress, CellValue, FilterState, Row, Store } from '../store/types';
+import { ActiveColumnAddress, FilterState, Row, Store } from '../store/types';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex, pluck, uniq } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
@@ -12,8 +12,8 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
 export function setActiveFilterOperator(store: Store, operator: OperatorType) {
-  const { data, column } = store;
-  const activeFilterState = data.filterInfo.activeFilterState!;
+  const { data, column, filterLayerState } = store;
+  const activeFilterState = filterLayerState.activeFilterState!;
   const columnInfo = column.allColumnMap[activeFilterState.columnName];
 
   activeFilterState.operator = operator;
@@ -26,16 +26,16 @@ export function setActiveFilterOperator(store: Store, operator: OperatorType) {
 }
 
 export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
-  const { data, column } = store;
-  const { filterInfo, rawData } = data;
-  const { activeFilterState } = filterInfo;
+  const { data, column, filterLayerState } = store;
+  const { rawData } = data;
+  const { activeFilterState } = filterLayerState;
   const { columnName } = activeFilterState!;
 
   const columnInfo = column.allColumnMap[columnName];
 
   if (checked) {
     const columnData = uniq(pluck(rawData as Row[], columnName));
-    activeFilterState!.state = columnData.map(value => ({ code: 'eq', value }));
+    activeFilterState!.state = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
   } else {
     activeFilterState!.state = [];
     unfilter(store, columnName);
@@ -48,12 +48,10 @@ export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
   }
 }
 
-export function setActiveSelectFilterState(store: Store, value: CellValue, checked: boolean) {
-  const { data, column } = store;
-  const {
-    filterInfo: { activeFilterState }
-  } = data;
-  const columnName = data.filterInfo.activeColumnAddress!.name;
+export function setActiveSelectFilterState(store: Store, value: string, checked: boolean) {
+  const { data, column, filterLayerState } = store;
+  const { activeFilterState } = filterLayerState;
+  const columnName = filterLayerState.activeColumnAddress!.name;
   const columnInfo = column.allColumnMap[columnName];
 
   if (checked) {
@@ -71,9 +69,9 @@ export function setActiveSelectFilterState(store: Store, value: CellValue, check
 }
 
 export function setActiveColumnAddress(store: Store, address: ActiveColumnAddress | null) {
-  const { data, column } = store;
+  const { data, column, filterLayerState } = store;
   const { filterInfo, filteredRawData, rawData } = data;
-  filterInfo.activeColumnAddress = address;
+  filterLayerState.activeColumnAddress = address;
   if (address) {
     const { type, operator } = column.allColumnMap[address.name].filter!;
     let initialState: FilterState[] = [];
@@ -87,10 +85,10 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
 
     if (type === 'select' && !initialState.length) {
       const columnData = uniq(pluck(filteredRawData as Row[], address.name));
-      initialState = columnData.map(value => ({ code: 'eq', value }));
+      initialState = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
     }
 
-    data.filterInfo.activeFilterState = {
+    filterLayerState.activeFilterState = {
       columnName: address.name,
       type,
       operator,
@@ -98,7 +96,7 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
       searchInput: null
     };
   } else {
-    const { type, state, columnName } = data.filterInfo.activeFilterState!;
+    const { type, state, columnName } = filterLayerState.activeFilterState!;
     if (type !== 'select' && !state.length) {
       unfilter(store, columnName);
     } else if (type === 'select') {
@@ -113,9 +111,9 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
 }
 
 export function applyActiveFilterState(store: Store) {
-  const { data } = store;
-  const columnName = data.filterInfo.activeColumnAddress!.name;
-  const { state, type, operator } = data.filterInfo.activeFilterState!;
+  const { filterLayerState } = store;
+  const columnName = filterLayerState.activeColumnAddress!.name;
+  const { state, type, operator } = filterLayerState.activeFilterState!;
 
   const fns = state
     .filter(item => String(item.value).length)
@@ -125,18 +123,18 @@ export function applyActiveFilterState(store: Store) {
 }
 
 export function clearActiveFilterState(store: Store) {
-  const { data } = store;
-  const activeFilterState = data.filterInfo.activeFilterState!;
+  const { filterLayerState } = store;
+  const activeFilterState = filterLayerState.activeFilterState!;
   activeFilterState.state = [];
   unfilter(store, activeFilterState.columnName);
 }
 
 export function setActiveFilterState(store: Store, state: FilterState, filterIndex: number) {
-  const { data, column } = store;
-  const columnName = data.filterInfo.activeColumnAddress!.name;
+  const { column, filterLayerState } = store;
+  const columnName = filterLayerState.activeColumnAddress!.name;
   const columnInfo = column.allColumnMap[columnName];
 
-  data.filterInfo.activeFilterState!.state[filterIndex] = state as FilterState;
+  filterLayerState.activeFilterState!.state[filterIndex] = state as FilterState;
 
   if (!columnInfo.filter!.showApplyBtn) {
     // If first filter has no value, turn off the filtering.
@@ -186,14 +184,14 @@ export function filter(
 }
 
 export function unfilter(store: Store, columnName: string) {
-  const { data } = store;
+  const { data, filterLayerState } = store;
   const { filterInfo } = data;
   const { filters } = filterInfo;
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      if (filterInfo.activeFilterState) {
-        filterInfo.activeFilterState.state = [];
+      if (filterLayerState.activeFilterState) {
+        filterLayerState.activeFilterState.state = [];
       }
 
       filterInfo.filters!.splice(filterIndex, 1);

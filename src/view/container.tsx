@@ -360,12 +360,12 @@ export class ContainerComp extends Component<Props> {
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords, data }) => ({
+  ({ id, dimension, focus, columnCoords, data, filterLayerState }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
     editing: !!focus.editingAddress,
-    filtering: !!data.filterInfo.activeColumnAddress,
+    filtering: !!filterLayerState.activeColumnAddress,
     scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,

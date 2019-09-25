@@ -1,21 +1,22 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { FilterInfo } from '../store/types';
+import { ActiveColumnAddress } from '../store/types';
 import { FilterLayerInner } from './filterLayerInner';
 
 interface StoreProps {
-  filterInfo: FilterInfo;
+  activeColumnAddress: ActiveColumnAddress | null;
 }
 
 type Props = StoreProps & DispatchProps;
 
 export class FilterLayerComp extends Component<Props> {
-  public render({ filterInfo: { activeColumnAddress } }: Props) {
+  public render({ activeColumnAddress }: Props) {
     return activeColumnAddress && <FilterLayerInner columnAddress={activeColumnAddress} />;
   }
 }
 
-export const FilterLayer = connect<StoreProps>(({ data: { filterInfo } }) => ({ filterInfo }))(
-  FilterLayerComp
-);
+export const FilterLayer = connect<StoreProps>(({ filterLayerState }) => {
+  const { activeColumnAddress } = filterLayerState;
+  return { activeColumnAddress };
+})(FilterLayerComp);

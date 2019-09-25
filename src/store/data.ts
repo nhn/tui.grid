@@ -456,9 +456,7 @@ export function create({
   };
 
   const filterInfo: FilterInfo = {
-    activeColumnAddress: null,
-    filters: null,
-    activeFilterState: null
+    filters: null
   };
 
   const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)

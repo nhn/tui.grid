@@ -26,10 +26,7 @@ import {
   InvalidRow,
   ColumnInfo,
   Dictionary,
-  FilterState,
-  NumberFilterCode,
-  TextFilterCode,
-  DateFilterCode
+  FilterState
 } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
@@ -1466,9 +1463,7 @@ export default class Grid {
     const { filter } = this.store.column.allColumnMap[columnName];
     if (filter) {
       const { type } = filter;
-      const conditionFn = state.map(({ code, value }) =>
-        getFilterConditionFn(code!, value, type)
-      ) as Function[];
+      const conditionFn = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
       this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
     }
   }

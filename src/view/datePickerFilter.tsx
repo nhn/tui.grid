@@ -10,6 +10,7 @@ import {
   ColumnInfo,
   DateFilterCode,
   FilterInfo,
+  FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
@@ -20,6 +21,7 @@ interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
   filterInfo: FilterInfo;
+  filterLayerState: FilterLayerState;
 }
 
 interface OwnProps {
@@ -92,8 +94,8 @@ class DatePickerFilterComp extends Component<Props> {
   }, 50);
 
   private getPreviousValue = () => {
-    const { filterInfo, filterIndex } = this.props;
-    const filterState = filterInfo.activeFilterState!.state;
+    const { filterIndex, filterLayerState } = this.props;
+    const filterState = filterLayerState.activeFilterState!.state;
 
     let code = 'eq';
     let value = '';
@@ -151,7 +153,7 @@ class DatePickerFilterComp extends Component<Props> {
 
 export const DatePickerFilter = connect<StoreProps, OwnProps>(
   (store, { filterIndex, columnAddress }) => {
-    const { column, id, data } = store;
+    const { column, id, data, filterLayerState } = store;
     const { allColumnMap } = column;
 
     return {
@@ -159,7 +161,8 @@ export const DatePickerFilter = connect<StoreProps, OwnProps>(
       columnInfo: allColumnMap[columnAddress.name],
       columnAddress,
       filterIndex,
-      filterInfo: data.filterInfo
+      filterInfo: data.filterInfo,
+      filterLayerState
     };
   }
 )(DatePickerFilterComp);
