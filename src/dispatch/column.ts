@@ -86,6 +86,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       ? createViewRow(row, allColumnMap, data.rawData, treeColumnName, treeIcon)
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
+  // @TODO: filter 초기화
   unsort(store);
   addColumnSummaryValues(store);
 }

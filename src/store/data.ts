@@ -18,7 +18,6 @@ import {
   SortState,
   ViewRow,
   Range,
-  FilterInfo,
   Filter
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
@@ -455,10 +454,6 @@ export function create({
     ]
   };
 
-  const filterInfo: FilterInfo = {
-    filters: null
-  };
-
   const pageOptions: Required<PageOptions> = isEmpty(userPageOptions)
     ? ({} as Required<PageOptions>)
     : {
@@ -474,13 +469,13 @@ export function create({
     rawData,
     viewData,
     sortState,
-    filterInfo,
     pageOptions,
     checkedAllRows: !rawData.some(row => !row._attributes.checked),
+    filters: null,
 
     get filteredRawData(this: Data) {
-      if (this.filterInfo.filters) {
-        return applyFilterToRawData(this.rawData, this.filterInfo.filters);
+      if (this.filters) {
+        return applyFilterToRawData(this.rawData, this.filters);
       }
 
       return this.rawData;

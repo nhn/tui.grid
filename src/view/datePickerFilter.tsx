@@ -9,18 +9,18 @@ import {
   ActiveColumnAddress,
   ColumnInfo,
   DateFilterCode,
-  FilterInfo,
+  Filter,
   FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
-import { filterSelectOption } from '../helper/filter';
+import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
 
 interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
   filterLayerState: FilterLayerState;
 }
 
@@ -91,7 +91,7 @@ class DatePickerFilterComp extends Component<Props> {
     const value = this.inputEl!.value;
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
     dispatch('setActiveFilterState', { value, code }, filterIndex);
-  }, 50);
+  }, FILTER_DEBOUNCE_TIME);
 
   private getPreviousValue = () => {
     const { filterIndex, filterLayerState } = this.props;
@@ -155,13 +155,14 @@ export const DatePickerFilter = connect<StoreProps, OwnProps>(
   (store, { filterIndex, columnAddress }) => {
     const { column, id, data, filterLayerState } = store;
     const { allColumnMap } = column;
+    const { filters } = data;
 
     return {
       grid: getInstance(id),
       columnInfo: allColumnMap[columnAddress.name],
       columnAddress,
       filterIndex,
-      filterInfo: data.filterInfo,
+      filters,
       filterLayerState
     };
   }

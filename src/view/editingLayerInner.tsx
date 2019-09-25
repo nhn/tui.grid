@@ -165,8 +165,8 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   if (targetRow) {
     value = targetRow.valueMap[columnName].value;
   }
-  if (data.filterInfo.filters) {
-    filter = findProp('columnName', columnName, data.filterInfo.filters as Filter[]);
+  if (data.filters) {
+    filter = findProp('columnName', columnName, data.filters as Filter[]);
   }
 
   return {

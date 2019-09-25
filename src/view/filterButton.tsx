@@ -2,14 +2,14 @@ import { h, Component } from 'preact';
 import { cls, hasClass } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActiveColumnAddress, FilterInfo } from '../store/types';
+import { ActiveColumnAddress, Filter } from '../store/types';
 import { someProp } from '../helper/common';
 
 interface OwnProps {
   columnName: string;
 }
 interface StoreProps {
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
   activeColumnAddress: ActiveColumnAddress | null;
   offsetLeft: number;
 }
@@ -20,10 +20,7 @@ const DISTANCE_FROM_ICON_TO_LAYER = 9;
 
 class FilterButtonComp extends Component<Props> {
   private isActiveFilter = () => {
-    const {
-      filterInfo: { filters },
-      columnName
-    } = this.props;
+    const { filters, columnName } = this.props;
 
     return filters ? someProp('columnName', columnName, filters) : false;
   };
@@ -55,7 +52,7 @@ class FilterButtonComp extends Component<Props> {
 
 export const FilterButton = connect<StoreProps, OwnProps>((store, { columnName }) => ({
   activeColumnAddress: store.filterLayerState.activeColumnAddress,
-  filterInfo: store.data.filterInfo,
+  filters: store.data.filters,
   columnName,
   offsetLeft: store.dimension.offsetLeft
 }))(FilterButtonComp);

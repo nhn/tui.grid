@@ -42,7 +42,8 @@ import {
   getCellAddressByIndex,
   getCheckedRows,
   findIndexByRowKey,
-  findRowByRowKey
+  findRowByRowKey,
+  getFilterStateWithOperator
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -1432,24 +1433,7 @@ export default class Grid {
    */
   public getFilterState() {
     const { data, column } = this.store;
-    const { allColumnMap } = column;
-    let { filters } = data.filterInfo;
-    if (filters) {
-      filters = filters.map(filter => {
-        if (filter.state.length > 1) {
-          const { columnName } = filter;
-          const operator = allColumnMap[columnName].filter!.operator;
-          return {
-            ...filter,
-            operator
-          };
-        }
-
-        return filter;
-      });
-    }
-
-    return filters;
+    return getFilterStateWithOperator(data, column);
   }
 
   /**

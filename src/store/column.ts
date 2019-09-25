@@ -81,18 +81,12 @@ function getBuiltInFilterOptions(
   type: FilterOptionType,
   filterOpt?: FilterOpt
 ): ColumnFilterOption {
-  const defaultFilterOptions = {
+  return {
     type,
     showApplyBtn: false,
-    showClearBtn: false
+    showClearBtn: false,
+    ...filterOpt
   };
-
-  return filterOpt
-    ? {
-        ...defaultFilterOptions,
-        ...filterOpt
-      }
-    : defaultFilterOptions;
 }
 
 export function getFilterOptions(filter?: FilterOptionType | FilterOpt) {

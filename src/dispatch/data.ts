@@ -415,6 +415,7 @@ export function clearData(store: Store) {
       totalCount: 0
     };
   }
+  // @TODO: filter 초기화
   updateAllSummaryValues(store);
   renderState.state = 'EMPTY';
 }
@@ -437,6 +438,8 @@ export function resetData(store: Store, inputData: OptRow[]) {
       totalCount: rawData.length
     };
   }
+
+  // @TODO: filter 초기화
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -589,7 +592,7 @@ function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const { treeColumnName } = column;
-  const originData = data.filterInfo.filters
+  const originData = data.filters
     ? createFilteredOriginData(data, rowRange, treeColumnName)
     : createOriginData(data, rowRange, treeColumnName);
 

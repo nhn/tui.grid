@@ -5,19 +5,19 @@ import { cls } from '../helper/dom';
 import {
   ActiveColumnAddress,
   ColumnInfo,
-  FilterInfo,
+  Filter,
   FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
-import { filterSelectOption } from '../helper/filter';
+import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
 interface StoreProps {
   columnInfo: ColumnInfo;
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
   filterLayerState: FilterLayerState;
 }
 
@@ -45,7 +45,7 @@ class TextFilterComp extends Component<Props> {
     const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
 
     dispatch('setActiveFilterState', { value, code }, filterIndex);
-  }, 50);
+  }, FILTER_DEBOUNCE_TIME);
 
   private getPreviousValue = () => {
     const { filterIndex, filterLayerState } = this.props;
@@ -103,12 +103,13 @@ class TextFilterComp extends Component<Props> {
 export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex, columnAddress }) => {
   const { column, data, filterLayerState } = store;
   const { allColumnMap } = column;
+  const { filters } = data;
 
   return {
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filterIndex,
-    filterInfo: data.filterInfo,
+    filters,
     filterLayerState
   };
 })(TextFilterComp);

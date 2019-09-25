@@ -255,7 +255,7 @@ describe('filter API', () => {
   });
 });
 
-describe.only('number', () => {
+describe('number', () => {
   beforeEach(() => {
     cy.document().then(doc => {
       doc.body.innerHTML = '';

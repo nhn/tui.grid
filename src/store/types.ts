@@ -8,8 +8,10 @@ import {
   VAlignType,
   OptSummaryColumnContentMap,
   FilterOptionType,
-  OperatorType
+  OperatorType,
+  FilterOpt
 } from '../types';
+import { Omit } from 'utility-types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -175,12 +177,6 @@ export interface ActiveColumnAddress {
   left: number;
 }
 
-export type ActiveFilterState = Filter & { searchInput: string | null };
-
-export interface FilterInfo {
-  filters: Filter[] | null;
-}
-
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
@@ -192,7 +188,7 @@ export interface Data {
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
 }
 
 export interface FormatterProps {
@@ -462,7 +458,7 @@ export interface RenderState {
 
 export interface FilterLayerState {
   activeColumnAddress: ActiveColumnAddress | null;
-  activeFilterState: ActiveFilterState | null;
+  activeFilterState: Filter | null;
 }
 
 export interface PageOptions {

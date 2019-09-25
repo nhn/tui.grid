@@ -2,6 +2,8 @@ import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../
 import { isString, endsWith, startsWith } from './common';
 import { OperatorType, FilterOptionType } from '../types';
 
+export const FILTER_DEBOUNCE_TIME = 50;
+
 interface FilterSelectOption {
   number: { [key in NumberFilterCode]: string };
   text: { [key in TextFilterCode]: string };
@@ -43,23 +45,16 @@ function getPredicateWithType(
   type: FilterOptionType,
   inputValue: CellValue
 ): (cellValue: CellValue) => boolean {
-  switch (type) {
-    case 'number':
-      return code === 'eq'
-        ? cellValue => Number(cellValue) === Number(inputValue)
-        : cellValue => Number(cellValue) !== Number(inputValue);
-    case 'text':
-    case 'select':
-      return code === 'eq'
-        ? cellValue => String(cellValue) === String(inputValue)
-        : cellValue => String(cellValue) !== String(inputValue);
-    case 'date':
-      return code === 'eq'
-        ? cellValue => getUnixTime(cellValue) === getUnixTime(inputValue)
-        : cellValue => getUnixTime(cellValue) !== getUnixTime(inputValue);
-    default:
-      throw new Error('type not available.');
-  }
+  const convertFn = {
+    number: Number,
+    text: String,
+    select: String,
+    date: getUnixTime
+  }[type];
+
+  return code === 'eq'
+    ? cellValue => convertFn(cellValue) === convertFn(inputValue)
+    : cellValue => convertFn(cellValue) !== convertFn(inputValue);
 }
 
 export function getFilterConditionFn(

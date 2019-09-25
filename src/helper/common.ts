@@ -327,34 +327,15 @@ export function omit<T extends object>(obj: T, ...propNames: string[]) {
   return resultMap;
 }
 
-export function pluck<T extends object>(arr: T[], propName: string) {
-  const result = [];
-  for (const obj of arr) {
-    if (hasOwnProp(obj, propName)) {
-      result.push(obj[propName]);
-    }
-  }
-
-  return result;
-}
-
 export function uniq<T extends unknown>(arr: T[]) {
   return arr.filter((name, index) => arr.indexOf(name) === index);
 }
 
-export function startsWith(str: unknown, targetStr: unknown) {
-  if (!isString(str) || !isString(targetStr)) {
-    return false;
-  }
-
+export function startsWith(str: string, targetStr: string) {
   return targetStr.slice(0, str.length) === str;
 }
 
-export function endsWith(str: unknown, targetStr: unknown) {
-  if (!isString(str) || !isString(targetStr)) {
-    return false;
-  }
-
+export function endsWith(str: string, targetStr: string) {
   const index = targetStr.lastIndexOf(str);
   return index !== -1 && index + str.length === targetStr.length;
 }

@@ -8,12 +8,12 @@ import {
   ActiveColumnAddress,
   CellValue,
   ColumnInfo,
-  FilterInfo,
-  ActiveFilterState,
   FilterState,
-  Row
+  Row,
+  Filter
 } from '../store/types';
-import { pluck, some, uniq, debounce } from '../helper/common';
+import { some, uniq, debounce, mapProp } from '../helper/common';
+import { FILTER_DEBOUNCE_TIME } from '../helper/filter';
 
 interface ColumnData {
   value: CellValue;
@@ -23,7 +23,7 @@ interface ColumnData {
 interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
   columnData: ColumnData[];
   isAllSelected: boolean;
 }
@@ -44,17 +44,17 @@ class SelectFilterComp extends Component<Props> {
     const { id, checked } = ev.target as HTMLInputElement;
 
     dispatch('setActiveSelectFilterState', id, checked);
-  }, 50);
+  }, FILTER_DEBOUNCE_TIME);
 
   private toggleAllColumnCheckbox = debounce((ev: Event) => {
     const { checked } = ev.target as HTMLInputElement;
     this.props.dispatch('toggleSelectAllCheckbox', checked);
-  }, 50);
+  }, FILTER_DEBOUNCE_TIME);
 
   private searchColumnData = debounce((ev: KeyboardEvent) => {
     const { value } = ev.target as HTMLInputElement;
     this.setState({ searchInput: value });
-  }, 50);
+  }, FILTER_DEBOUNCE_TIME);
 
   public render() {
     const { columnData, isAllSelected } = this.props;
@@ -107,12 +107,11 @@ class SelectFilterComp extends Component<Props> {
 
 export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
   const { column, id, data, filterLayerState } = store;
-  const { rawData, filterInfo } = data;
+  const { rawData, filters } = data;
   const { allColumnMap } = column;
 
-  const activeFilterState: FilterState[] = (filterLayerState.activeFilterState as ActiveFilterState)
-    .state;
-  const uniqueColumnData = uniq(pluck(rawData as Row[], columnAddress.name));
+  const activeFilterState: FilterState[] = (filterLayerState.activeFilterState as Filter).state;
+  const uniqueColumnData = uniq(mapProp(columnAddress.name, rawData as Row[]));
   const columnData = uniqueColumnData.map(value => ({
     value,
     checked: some(item => value === item.value, activeFilterState)
@@ -123,7 +122,7 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
     columnData,
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
-    filterInfo,
+    filters,
     isAllSelected: activeFilterState.length === uniqueColumnData.length
   };
 })(SelectFilterComp);

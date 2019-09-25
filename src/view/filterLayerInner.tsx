@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActiveColumnAddress, ColumnInfo, FilterInfo } from '../store/types';
+import { ActiveColumnAddress, ColumnInfo, Filter } from '../store/types';
 import { cls } from '../helper/dom';
 import { TextFilter } from './textFilter';
 import { DatePickerFilter } from './datePickerFilter';
@@ -9,7 +9,7 @@ import { FilterOperator } from './filterOperator';
 import { SelectFilter } from './selectFilter';
 
 interface StoreProps {
-  filterInfo: FilterInfo;
+  filters: Filter[] | null;
   columnInfo: ColumnInfo;
   renderSecondFilter: boolean;
 }
@@ -86,7 +86,7 @@ export class FilterLayerInnerComp extends Component<Props> {
 
 export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
   const { data, column, filterLayerState } = store;
-  const { filterInfo } = data;
+  const { filters } = data;
   const { allColumnMap } = column;
 
   const activeFilterState = filterLayerState.activeFilterState!;
@@ -101,7 +101,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
   return {
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
-    filterInfo,
+    filters,
     renderSecondFilter
   };
 })(FilterLayerInnerComp);
