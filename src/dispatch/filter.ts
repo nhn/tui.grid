@@ -41,15 +41,15 @@ export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
   if (checked) {
     const columnData = uniq(pluck(rawData as Row[], columnName));
     activeFilterState!.state = columnData.map(value => ({ code: 'eq', value }));
-    notify(data, 'filterInfo');
   } else {
     activeFilterState!.state = [];
-    notify(data, 'filterInfo');
     unfilter(store, columnName);
   }
 
   if (!columnInfo.filter!.showApplyBtn) {
     applyActiveFilterState(store);
+  } else {
+    notify(data, 'filterInfo');
   }
 }
 
@@ -68,10 +68,10 @@ export function setActiveSelectFilterState(store: Store, value: CellValue, check
     activeFilterState!.state!.splice(index, 1);
   }
 
-  notify(data, 'filterInfo');
-
   if (!columnInfo.filter!.showApplyBtn) {
     applyActiveFilterState(store);
+  } else {
+    notify(data, 'filterInfo');
   }
 }
 
@@ -90,7 +90,7 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
       }
     }
 
-    if (type === 'select' && !initialState) {
+    if (type === 'select' && !initialState.length) {
       const columnData = uniq(pluck(filteredRawData as Row[], address.name));
       initialState = columnData.map(value => ({ code: 'eq', value }));
     }
@@ -136,7 +136,6 @@ export function clearActiveFilterState(store: Store) {
   const activeFilterState = data.filterInfo.activeFilterState!;
   activeFilterState.state = [];
   unfilter(store, activeFilterState.columnName);
-  notify(data, 'filterInfo');
 }
 
 export function setActiveFilterState(store: Store, state: FilterState, filterIndex: number) {
@@ -145,8 +144,6 @@ export function setActiveFilterState(store: Store, state: FilterState, filterInd
   const columnInfo = column.allColumnMap[columnName];
 
   data.filterInfo.activeFilterState!.state[filterIndex] = state as FilterState;
-
-  notify(data, 'filterInfo');
 
   if (!columnInfo.filter!.showApplyBtn) {
     // If first filter has no value, turn off the filtering.
@@ -221,7 +218,6 @@ function initLayerAndScrollAfterFiltering(store: Store) {
   const { rowCoords, data, dimension } = store;
 
   rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
-  notify(rowCoords, 'heights');
 
   setScrollTop(store, 0);
   initSelection(store);

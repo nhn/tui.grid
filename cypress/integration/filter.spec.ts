@@ -164,6 +164,7 @@ describe('common', () => {
       .eq(1)
       .click()
       .then(() => {
+        cy.wait(150);
         compareColumnCellLength(2);
         equalColumnData('alphabetA', 'A');
         equalColumnData('alphabetB', 'A');
@@ -385,6 +386,7 @@ describe('select', () => {
     cy.get(`.${cls('filter-list-item')} label`)
       .eq(0)
       .click();
+
     compareColumnCellLength(9);
   });
 });
