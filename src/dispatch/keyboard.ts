@@ -50,7 +50,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, data, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(store, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
@@ -173,8 +173,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  const { focus, id, data } = store;
+  const { focus, id } = store;
   focus.navigating = navigating;
 
-  changeFocus(focus, data, rowKey, columnName, id);
+  changeFocus(store, rowKey, columnName, id);
 }

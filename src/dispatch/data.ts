@@ -384,7 +384,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     focus.navigating = false;
-    changeFocus(focus, data, null, null, id);
+    changeFocus(store, null, null, id);
     if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
       focus.editingAddress = null;
     }

@@ -10,6 +10,7 @@ import { setValue } from './data';
 import { findPropIndex } from '../helper/common';
 import { sort } from './sort';
 import { createTreeRawRow } from '../helper/tree';
+import { isHiddenColumn } from '../helper/column';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
@@ -86,13 +87,17 @@ export function finishEditing(
 }
 
 export function changeFocus(
-  focus: Focus,
-  data: Data,
+  store: Store,
   rowKey: RowKey | null,
   columnName: string | null,
   id: number
 ) {
-  if (isFocusedCell(focus, rowKey, columnName)) {
+  const { data, focus, column } = store;
+
+  if (
+    isFocusedCell(focus, rowKey, columnName) ||
+    (columnName && isHiddenColumn(column, columnName))
+  ) {
     return;
   }
 

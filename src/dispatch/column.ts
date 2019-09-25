@@ -100,9 +100,9 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
 
 export function hideColumn(store: Store, columnName: string) {
   const columnItem = store.column.allColumnMap[columnName];
-  const { editingAddress } = store.focus;
+  const { columnName: focusedColumnName } = store.focus;
 
-  if (editingAddress && editingAddress.columnName === columnName) {
+  if (focusedColumnName === columnName) {
     initFocus(store);
   }
 

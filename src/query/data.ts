@@ -2,6 +2,7 @@ import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
 import { findProp, isFunction, findPropIndex, isNull, isUndefined } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from '../helper/rowSpan';
+import { isHiddenColumn } from '../helper/column';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -25,9 +26,11 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
 export function isCellEditable(data: Data, column: Column, rowKey: RowKey, columnName: string) {
   const { viewData } = data;
   const row = findProp('rowKey', rowKey, viewData)!;
-  const { hidden } = column.allColumnMap[columnName];
+  const { editable } = row.valueMap[columnName];
 
-  return !hidden && !isCellDisabled(data, rowKey, columnName) && row.valueMap[columnName].editable;
+  return (
+    !isHiddenColumn(column, columnName) && !isCellDisabled(data, rowKey, columnName) && editable
+  );
 }
 
 export function getCheckedRows({ data }: Store) {
