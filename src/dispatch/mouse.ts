@@ -333,9 +333,9 @@ export function dragEnd({ selection }: Store) {
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
   const { data, column, columnCoords, rowCoords, focus, id } = store;
-  const { rawData } = data;
+  const { filteredRawData } = data;
 
-  if (!rawData.length) {
+  if (!filteredRawData.length) {
     return;
   }
 
@@ -358,21 +358,21 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       selectionUpdate(store, focusData, dragData);
     } else {
       selectionEnd(store);
-      changeFocus(focus, data, rawData[rowIndex].rowKey, columnName, id);
+      changeFocus(focus, data, filteredRawData[rowIndex].rowKey, columnName, id);
     }
   }
 }
 
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
   const { data, selection, id, column, focus } = store;
-  const { rawData } = data;
+  const { filteredRawData } = data;
 
-  if (!rawData.length) {
+  if (!filteredRawData.length) {
     return;
   }
 
   const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
-  const endRowIndex = rawData.length - 1;
+  const endRowIndex = filteredRawData.length - 1;
 
   let startColumnIndex, endColumnIndex;
 
@@ -391,7 +391,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     column: [startColumnIndex, endColumnIndex]
   };
 
-  changeFocus(focus, data, rawData[0].rowKey, name, id);
+  changeFocus(focus, data, filteredRawData[0].rowKey, name, id);
   changeSelectionRange(selection, inputRange, id);
 }
 

@@ -9,7 +9,9 @@ import {
   OptRemoveRow,
   OptAppendTreeRow,
   OptColumn,
-  OptHeader
+  OptHeader,
+  FilterOpt,
+  FilterOptionType
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -23,7 +25,8 @@ import {
   Row,
   InvalidRow,
   ColumnInfo,
-  Dictionary
+  Dictionary,
+  FilterState
 } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
@@ -39,7 +42,8 @@ import {
   getCellAddressByIndex,
   getCheckedRows,
   findIndexByRowKey,
-  findRowByRowKey
+  findRowByRowKey,
+  getFilterStateWithOperator
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -59,6 +63,7 @@ import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
+import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -1411,5 +1416,47 @@ export default class Grid {
         delete this[key];
       }
     }
+  }
+
+  /**
+   * set column filter
+   * @param {string} columnName - columnName
+   * @param {string | FilterOpt} filterOpt - filter type
+   */
+  public setFilter(columnName: string, filterOpt: FilterOpt | FilterOptionType) {
+    this.dispatch('setFilter', columnName, filterOpt);
+  }
+
+  /**
+   * get filter state
+   * @returns {Array.<FilterState>} - filter state
+   */
+  public getFilterState() {
+    const { data, column } = this.store;
+    return getFilterStateWithOperator(data, column);
+  }
+
+  /**
+   * trigger filter
+   * @param {string} columnName - column name to filter
+   * @param {Array.<FilterState>} state - filter state
+   * @example
+   * grid.filter('name', [{code: 'eq', value: 3}, {code: 'eq', value: 4}]);
+   */
+  public filter(columnName: string, state: FilterState[]) {
+    const { filter } = this.store.column.allColumnMap[columnName];
+    if (filter) {
+      const { type } = filter;
+      const conditionFn = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
+      this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
+    }
+  }
+
+  /**
+   * remove filter
+   * @param {string} columnName - column name to unfilter
+   */
+  public unfilter(columnName: string) {
+    this.dispatch('unfilter', columnName);
   }
 }

@@ -22,7 +22,6 @@ export class DatePickerEditor implements CellEditor {
     const inputEl = document.createElement('input');
     inputEl.className = cls('content-text');
     inputEl.type = 'text';
-    this.el.appendChild(inputEl);
 
     return inputEl;
   }
@@ -38,12 +37,17 @@ export class DatePickerEditor implements CellEditor {
   private createIcon() {
     const icon = document.createElement('i');
     icon.className = cls('date-icon');
-    this.el.appendChild(icon);
+
+    return icon;
   }
 
   public constructor(props: CellEditorProps) {
     this.el = this.createWrapper();
     this.inputEl = this.createInputElement();
+    const datepickerInputContainer = document.createElement('div');
+    datepickerInputContainer.className = cls('datepicker-input-container');
+    datepickerInputContainer.appendChild(this.inputEl);
+    this.el.appendChild(datepickerInputContainer);
 
     const calendarWrapper = this.createCalendarWrapper();
     const {
@@ -58,8 +62,9 @@ export class DatePickerEditor implements CellEditor {
     };
 
     if (options.showIcon) {
-      this.createIcon();
-      this.inputEl.className = cls('content-datepicker');
+      const icon = this.createIcon();
+      this.inputEl.className = cls('datepicker-input');
+      datepickerInputContainer.appendChild(icon);
     }
 
     let date = isUndefined(value) || isNull(value) ? '' : new Date();

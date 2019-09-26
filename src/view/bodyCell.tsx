@@ -1,14 +1,6 @@
 import { h, Component } from 'preact';
 import { TreeCellContents } from './treeCellContents';
-import {
-  ColumnInfo,
-  ViewRow,
-  CellRenderData,
-  RowKey,
-  TreeCellInfo,
-  Data,
-  Column
-} from '../store/types';
+import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
 import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
@@ -221,7 +213,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
-    const rowIndex = findIndexByRowKey(data as Data, column as Column, id, rowKey);
+    const rowIndex = findIndexByRowKey(data, column, id, rowKey);
     const { rowHeight: defaultRowHeight } = dimension;
 
     return {

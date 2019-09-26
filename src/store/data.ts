@@ -17,7 +17,8 @@ import {
   ListItem,
   SortState,
   ViewRow,
-  Range
+  Range,
+  Filter
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -32,7 +33,8 @@ import {
   isEmpty,
   isString,
   isNumber,
-  isFunction
+  isFunction,
+  findPropIndex
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -420,6 +422,19 @@ export function createData(
   return { rawData, viewData };
 }
 
+function applyFilterToRawData(rawData: Row[], filters: Filter[] | null) {
+  let data = rawData;
+
+  if (filters) {
+    data = filters.reduce((acc: Row[], filter: Filter) => {
+      const { conditionFn, columnName } = filter;
+      return acc.filter(row => conditionFn!(row[columnName]));
+    }, rawData);
+  }
+
+  return data;
+}
+
 export function create({
   data,
   column,
@@ -456,6 +471,23 @@ export function create({
     sortState,
     pageOptions,
     checkedAllRows: !rawData.some(row => !row._attributes.checked),
+    filters: null,
+
+    get filteredRawData(this: Data) {
+      if (this.filters) {
+        return applyFilterToRawData(this.rawData, this.filters);
+      }
+
+      return this.rawData;
+    },
+
+    get filteredIndex(this: Data) {
+      return this.filteredRawData.map(row => findPropIndex('rowKey', row.rowKey, this.rawData)!);
+    },
+
+    get filteredViewData(this: Data) {
+      return this.filteredIndex.map(index => this.viewData[index]);
+    },
 
     get pageRowRange() {
       let start = 0;

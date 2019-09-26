@@ -16,9 +16,14 @@ import {
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
+import { keyNameMap } from './helper/keyboard';
 
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
+
+export type KeyNameMap = typeof keyNameMap & {
+  [keyCode: number]: string | undefined;
+};
 
 export interface OptGrid {
   el: HTMLElement;
@@ -113,6 +118,17 @@ type TypeObjectOptions<T> =
 export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
 export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
+export type FilterOptionType = 'text' | 'number' | 'date' | 'select';
+export type OperatorType = 'AND' | 'OR';
+
+export interface FilterOpt {
+  type: Exclude<FilterOptionType, 'select'>;
+  options?: Dictionary<any>;
+  operator?: OperatorType;
+  showApplyBtn?: boolean;
+  showClearBtn?: boolean;
+}
+
 export interface OptColumn {
   name: string;
   header?: string;
@@ -129,7 +145,7 @@ export interface OptColumn {
   relations?: Relations[];
   align?: AlignType;
   valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
   sortingType?: SortingType;
@@ -138,6 +154,7 @@ export interface OptColumn {
   onAfterChange?: Function;
   ignored?: boolean;
   validation?: Validation;
+  filter?: FilterOptionType | FilterOpt;
 }
 
 export interface OptColumnOptions {

@@ -5,7 +5,7 @@ import { isSubsetOf } from '../helper/compare';
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [
   { name: 'name', editor: 'text', resizable: true, sortable: true },
-  { name: 'age' }
+  { name: 'age', filter: 'number' }
 ];
 
 before(() => {
@@ -333,5 +333,24 @@ it('editingFinish', () => {
     .should(() => {
       expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Ryu' }, callback.args[0][0])).to.be
         .true;
+    });
+});
+
+it('filter', () => {
+  const callback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'filter', callback);
+
+  cy.gridInstance()
+    .invoke('filter', 'age', [{ code: 'eq', value: 20 }])
+    .should(() => {
+      expect(
+        isSubsetOf(
+          {
+            filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
+          },
+          callback.args[0][0]
+        )
+      ).to.be.true;
     });
 });

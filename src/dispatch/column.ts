@@ -8,6 +8,7 @@ import { initFocus } from './focus';
 import { addColumnSummaryValues } from './summary';
 import { isObservable } from '../helper/observable';
 import { unsort } from './sort';
+import { initFilter } from './filter';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -86,6 +87,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       ? createViewRow(row, allColumnMap, data.rawData, treeColumnName, treeIcon)
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
+  initFilter(store);
   unsort(store);
   addColumnSummaryValues(store);
 }

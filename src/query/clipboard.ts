@@ -58,17 +58,17 @@ function getValueToString(store: Store) {
   const {
     column: { visibleColumnsWithRowHeader },
     focus: { rowIndex, columnName, totalColumnIndex },
-    data: { viewData, rawData }
+    data: { filteredViewData, filteredRawData }
   } = store;
 
   if (rowIndex === null || columnName === null || totalColumnIndex === null) {
     return '';
   }
-  const valueMap = viewData[rowIndex].valueMap[columnName];
+  const valueMap = filteredViewData[rowIndex].valueMap[columnName];
 
   return getTextWithCopyOptionsApplied(
     valueMap,
-    rawData,
+    filteredRawData,
     visibleColumnsWithRowHeader[totalColumnIndex]
   );
 }
@@ -77,7 +77,7 @@ function getValuesToString(store: Store) {
   const {
     selection: { range },
     column: { visibleColumnsWithRowHeader },
-    data: { viewData, rawData }
+    data: { filteredViewData, filteredRawData }
   } = store;
 
   if (!range) {
@@ -85,14 +85,18 @@ function getValuesToString(store: Store) {
   }
 
   const { row, column } = range;
-  const rowList = viewData.slice(row[0], row[1] + 1);
+  const rowList = filteredViewData.slice(row[0], row[1] + 1);
   const columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
 
   return rowList
     .map(({ valueMap }) =>
       columnInRange
         .map(({ name }, index) =>
-          getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumnsWithRowHeader[index])
+          getTextWithCopyOptionsApplied(
+            valueMap[name],
+            filteredRawData,
+            visibleColumnsWithRowHeader[index]
+          )
         )
         .join('\t')
     )

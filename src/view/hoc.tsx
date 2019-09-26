@@ -1,14 +1,10 @@
 import { h, AnyComponent, Component } from 'preact';
 import { observe } from '../helper/observable';
 import { Store } from '../store/types';
-import { DeepReadonly } from 'utility-types';
 import { DispatchProps } from '../dispatch/create';
 
 export function connect<SelectedProps = {}, OwnProps = {}>(
-  selector?: (
-    store: DeepReadonly<Store>,
-    props: DeepReadonly<OwnProps>
-  ) => DeepReadonly<SelectedProps>
+  selector?: (store: Store, props: OwnProps) => SelectedProps
 ) {
   type Props = OwnProps & SelectedProps & DispatchProps;
 
@@ -20,7 +16,7 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
 
       private setStateUsingSelector(ownProps: OwnProps) {
         if (selector) {
-          this.setState(selector(this.context.store, ownProps as DeepReadonly<OwnProps>));
+          this.setState(selector(this.context.store, ownProps as OwnProps));
         }
       }
 

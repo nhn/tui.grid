@@ -6,8 +6,12 @@ import {
   OptColumnOptions,
   OptTree,
   VAlignType,
-  OptSummaryColumnContentMap
+  OptSummaryColumnContentMap,
+  FilterOptionType,
+  OperatorType,
+  FilterOpt
 } from '../types';
+import { Omit } from 'utility-types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -168,14 +172,23 @@ export interface TreeCellInfo {
   expanded?: boolean;
 }
 
+export interface ActiveColumnAddress {
+  name: string;
+  left: number;
+}
+
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortState: SortState;
+  filteredIndex: number[];
+  filteredRawData: Row[];
+  filteredViewData: ViewRow[];
   disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
+  filters: Filter[] | null;
 }
 
 export interface FormatterProps {
@@ -196,6 +209,31 @@ export interface CellRendererOptions {
   options?: Dictionary<any>;
 }
 
+export interface ColumnFilterOption {
+  type: FilterOptionType;
+  options?: Dictionary<any>;
+  operator?: OperatorType;
+  showApplyBtn: boolean;
+  showClearBtn: boolean;
+}
+
+export type NumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
+export type TextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
+export type DateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
+
+export interface FilterState {
+  code: NumberFilterCode | TextFilterCode | DateFilterCode | null;
+  value: string;
+}
+
+export interface Filter {
+  columnName: string;
+  type: FilterOptionType;
+  operator?: OperatorType;
+  conditionFn?: Function;
+  state: FilterState[];
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
@@ -212,7 +250,7 @@ export interface ColumnInfo {
   related?: boolean;
   align?: AlignType;
   valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
   defaultValue?: CellValue;
@@ -224,6 +262,7 @@ export interface ColumnInfo {
   ignored?: boolean;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
+  filter?: ColumnFilterOption | null;
 }
 
 export interface SortedColumn {
@@ -417,6 +456,11 @@ export interface RenderState {
   state: State;
 }
 
+export interface FilterLayerState {
+  activeColumnAddress: ActiveColumnAddress | null;
+  activeFilterState: Filter | null;
+}
+
 export interface PageOptions {
   useClient?: boolean;
   perPage?: number;
@@ -436,6 +480,7 @@ export interface Store {
   readonly selection: Selection;
   readonly summary: Summary;
   readonly renderState: RenderState;
+  readonly filterLayerState: FilterLayerState;
 }
 
 export interface ComplexColumnInfo {

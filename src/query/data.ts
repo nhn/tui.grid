@@ -9,7 +9,7 @@ export function getCellAddressByIndex(
   columnIndex: number
 ) {
   return {
-    rowKey: data.viewData[rowIndex].rowKey,
+    rowKey: data.filteredViewData[rowIndex].rowKey,
     columnName: column.visibleColumns[columnIndex].name
   };
 }
@@ -57,20 +57,20 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
     return -1;
   }
 
-  const { rawData, sortState } = data;
+  const { filteredRawData, sortState } = data;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
   if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
-    return findPropIndex('rowKey', rowKey, rawData);
+    return findPropIndex('rowKey', rowKey, filteredRawData);
   }
 
   let start = 0;
-  let end = rawData.length - 1;
+  let end = filteredRawData.length - 1;
 
   while (start <= end) {
     const mid = Math.floor((start + end) / 2);
-    const { rowKey: comparedRowKey } = rawData[mid];
+    const { rowKey: comparedRowKey } = filteredRawData[mid];
 
     if (rowKey > comparedRowKey) {
       start = mid + 1;
@@ -90,5 +90,26 @@ export function findRowByRowKey(
   id: number,
   rowKey?: RowKey | null
 ): Row | undefined {
-  return data.rawData[findIndexByRowKey(data, column, id, rowKey)];
+  return data.filteredRawData[findIndexByRowKey(data, column, id, rowKey)];
+}
+
+export function getFilterStateWithOperator(data: Data, column: Column) {
+  const { allColumnMap } = column;
+  let { filters } = data;
+  if (filters) {
+    filters = filters.map(filter => {
+      if (filter.state.length > 1) {
+        const { columnName } = filter;
+        const operator = allColumnMap[columnName].filter!.operator!;
+        return {
+          ...filter,
+          operator
+        };
+      }
+
+      return filter;
+    });
+  }
+
+  return filters;
 }

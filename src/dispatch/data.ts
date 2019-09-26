@@ -48,6 +48,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
+import { initFilter } from './filter';
 
 interface OriginData {
   rows: Row[];
@@ -225,7 +226,7 @@ function applyPasteDataToRawData(
   indexToPaste: SelectionRange
 ) {
   const {
-    data: { rawData, viewData },
+    data: { filteredRawData, filteredViewData },
     column: { visibleColumnsWithRowHeader },
     id
   } = store;
@@ -241,13 +242,13 @@ function applyPasteDataToRawData(
     const rawRowIndex = rowIdx + startRowIndex;
     for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
       const name = columnNames[columnIdx + startColumnIndex];
-      if (isColumnEditable(viewData, rawRowIndex, name)) {
+      if (filteredViewData.length && isColumnEditable(filteredViewData, rawRowIndex, name)) {
         pasted = true;
-        rawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
+        filteredRawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
       }
     }
     if (pasted) {
-      getDataManager(id).push('UPDATE', rawData[rawRowIndex]);
+      getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
     }
   }
 }
@@ -392,6 +393,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
+  notify(data, 'filteredRawData');
   updateSummaryValueByRow(store, removedRow, false);
   renderState.state = getRenderState(data.rawData);
   getDataManager(id).push('DELETE', removedRow);
@@ -405,6 +407,7 @@ export function clearData(store: Store) {
 
   initFocus(store);
   initSortState(data);
+  initFilter(store);
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
@@ -425,6 +428,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
   initFocus(store);
   initSortState(data);
+  initFilter(store);
   rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;
@@ -545,28 +549,52 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   notify(column, 'allColumns');
 }
 
+function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
+  if (treeColumnName && row._attributes.tree!.hidden) {
+    return acc;
+  }
+
+  if (!isObservable(row)) {
+    acc.rows.push(row);
+    acc.targetIndexes.push(index);
+  }
+
+  return acc;
+}
+
 function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
-  return data.rawData.slice(start, end).reduce(
-    (acc: OriginData, row, index) => {
-      if (treeColumnName && row._attributes.tree!.hidden) {
-        return acc;
+  return data.rawData
+    .slice(start, end)
+    .reduce(
+      (acc: OriginData, row, index) =>
+        getDataToBeObservable(acc, row, index + start, treeColumnName),
+      {
+        rows: [],
+        targetIndexes: []
       }
-      if (!isObservable(row)) {
-        acc.rows.push(row);
-        acc.targetIndexes.push(index + start);
-      }
-      return acc;
-    },
-    { rows: [], targetIndexes: [] }
-  );
+    );
+}
+
+function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
+  const [start, end] = rowRange;
+
+  return data.filteredIndex
+    .slice(start, end)
+    .reduce(
+      (acc: OriginData, rowIndex) =>
+        getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),
+      { rows: [], targetIndexes: [] }
+    );
 }
 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const { treeColumnName } = column;
-  const originData = createOriginData(data, rowRange, treeColumnName);
+  const originData = data.filters
+    ? createFilteredOriginData(data, rowRange, treeColumnName)
+    : createOriginData(data, rowRange, treeColumnName);
 
   if (!originData.rows.length) {
     return;
@@ -580,6 +608,7 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredViewData');
 }
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
