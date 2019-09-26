@@ -35,12 +35,6 @@ class TextFilterComp extends Component<Props> {
 
   private selectEl?: HTMLSelectElement;
 
-  public componentDidMount() {
-    const { code, value } = this.getPreviousValue();
-    this.selectEl!.value = code;
-    this.inputEl!.value = value;
-  }
-
   private getPreviousValue = () => {
     const { filterIndex, filterLayerState } = this.props;
     const filterState = filterLayerState.activeFilterState!.state;
@@ -73,6 +67,7 @@ class TextFilterComp extends Component<Props> {
 
   public render() {
     const { columnInfo } = this.props;
+    const { code, value } = this.getPreviousValue();
     const selectOption = filterSelectOption[
       columnInfo.filter!.type as 'number' | 'text'
     ] as SelectOption;
@@ -88,7 +83,7 @@ class TextFilterComp extends Component<Props> {
           >
             {Object.keys(selectOption).map(key => {
               return (
-                <option value={key} key={key}>
+                <option value={key} key={key} selected={code === key}>
                   {selectOption[key as NumberFilterCode | TextFilterCode]}
                 </option>
               );
@@ -102,6 +97,7 @@ class TextFilterComp extends Component<Props> {
           type="text"
           className={cls('filter-input')}
           onKeyUp={this.handleChange}
+          value={value}
         />
       </div>
     );
