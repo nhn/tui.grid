@@ -67,7 +67,7 @@ export function setActiveSelectFilterState(store: Store, value: string, checked:
 
 export function setActiveColumnAddress(store: Store, address: ActiveColumnAddress | null) {
   const { data, column, filterLayerState } = store;
-  const { filters, filteredRawData, rawData } = data;
+  const { filters, filteredRawData } = data;
   filterLayerState.activeColumnAddress = address;
   if (address) {
     const { type, operator } = column.allColumnMap[address.name].filter!;
@@ -92,14 +92,20 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
       state: initialState
     };
   } else {
-    const { type, state, columnName } = filterLayerState.activeFilterState!;
-    if (type !== 'select' && !state.length) {
+    resetActiveColumnAddress(store);
+  }
+}
+
+function resetActiveColumnAddress(store: Store) {
+  const { data, filterLayerState } = store;
+  const { rawData } = data;
+  const { type, state, columnName } = filterLayerState.activeFilterState!;
+  if (type !== 'select' && !state.length) {
+    unfilter(store, columnName);
+  } else if (type === 'select') {
+    const columnData = uniq(mapProp(columnName, rawData));
+    if (columnData.length === state.length) {
       unfilter(store, columnName);
-    } else if (type === 'select') {
-      const columnData = uniq(mapProp(columnName, rawData));
-      if (columnData.length === state.length) {
-        unfilter(store, columnName);
-      }
     }
   }
 }
