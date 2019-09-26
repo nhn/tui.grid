@@ -16,9 +16,14 @@ import {
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
+import { keyNameMap } from './helper/keyboard';
 
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
+
+export type KeyNameMap = typeof keyNameMap & {
+  [keyCode: number]: string | undefined;
+};
 
 export interface OptGrid {
   el: HTMLElement;

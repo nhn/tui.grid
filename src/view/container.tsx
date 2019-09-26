@@ -15,6 +15,8 @@ import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
+import { keyNameMap } from '../helper/keyboard';
+import { KeyNameMap } from '../types';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -203,13 +205,6 @@ export class ContainerComp extends Component<Props> {
 
     const { dispatch, editing, eventBus, filtering } = this.props;
 
-    if (filtering) {
-      const target = event.target as HTMLElement;
-      if (!findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
-        dispatch('setActiveColumnAddress', null);
-      }
-    }
-
     const { el } = this;
     const gridEvent = new GridEvent({ event });
 
@@ -281,7 +276,27 @@ export class ContainerComp extends Component<Props> {
       // Use setTimeout to wait until the DOM element is actually mounted
       window.setTimeout(this.syncWithDOMWidth, 0);
     }
+
+    document.addEventListener('mousedown', this.handleDocumentMouseDown);
+    document.addEventListener('keydown', this.handleDocumentKeyDown);
   }
+
+  private handleDocumentKeyDown = (ev: KeyboardEvent) => {
+    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    if (keyName === 'esc') {
+      this.props.dispatch('setActiveColumnAddress', null);
+    }
+  };
+
+  private handleDocumentMouseDown = (ev: Event) => {
+    const { dispatch, filtering } = this.props;
+    if (filtering) {
+      const target = ev.target as HTMLElement;
+      if (!findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
+        dispatch('setActiveColumnAddress', null);
+      }
+    }
+  };
 
   public componentWillUnmount() {
     if (this.props.autoWidth) {

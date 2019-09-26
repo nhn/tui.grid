@@ -12,6 +12,8 @@ import {
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
+import { keyNameMap } from '../helper/keyboard';
+import { KeyNameMap } from '../types';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
@@ -39,14 +41,6 @@ class TextFilterComp extends Component<Props> {
     this.inputEl!.value = value;
   }
 
-  private handleChange = debounce(() => {
-    const { filterIndex, dispatch } = this.props;
-    const value = this.inputEl!.value;
-    const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
-
-    dispatch('setActiveFilterState', { value, code }, filterIndex);
-  }, FILTER_DEBOUNCE_TIME);
-
   private getPreviousValue = () => {
     const { filterIndex, filterLayerState } = this.props;
     const filterState = filterLayerState.activeFilterState!.state;
@@ -62,6 +56,20 @@ class TextFilterComp extends Component<Props> {
 
     return { value, code };
   };
+
+  private handleChange = debounce((ev: KeyboardEvent) => {
+    const { dispatch } = this.props;
+    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    if (keyName === 'enter') {
+      dispatch('applyActiveFilterState');
+    } else {
+      const { filterIndex } = this.props;
+      const value = this.inputEl!.value;
+      const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
+
+      dispatch('setActiveFilterState', { value, code }, filterIndex);
+    }
+  }, FILTER_DEBOUNCE_TIME);
 
   public render() {
     const { columnInfo } = this.props;

@@ -16,6 +16,8 @@ import {
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
+import { keyNameMap } from '../helper/keyboard';
+import { KeyNameMap } from '../types';
 
 interface StoreProps {
   grid: Grid;
@@ -86,11 +88,17 @@ class DatePickerFilterComp extends Component<Props> {
     this.datePickerEl.on('change', this.handleChange);
   };
 
-  private handleChange = debounce(() => {
-    const { filterIndex, dispatch } = this.props;
-    const value = this.inputEl!.value;
-    const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
-    dispatch('setActiveFilterState', { value, code }, filterIndex);
+  private handleChange = debounce((ev: KeyboardEvent) => {
+    const { dispatch } = this.props;
+    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    if (keyName === 'enter') {
+      dispatch('applyActiveFilterState');
+    } else {
+      const { filterIndex } = this.props;
+      const value = this.inputEl!.value;
+      const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
+      dispatch('setActiveFilterState', { value, code }, filterIndex);
+    }
   }, FILTER_DEBOUNCE_TIME);
 
   private getPreviousValue = () => {

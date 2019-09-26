@@ -108,10 +108,12 @@ export function applyActiveFilterState(store: Store) {
   const { filterLayerState } = store;
   const columnName = filterLayerState.activeColumnAddress!.name;
   const { state, type, operator } = filterLayerState.activeFilterState!;
+  const validState = state.filter(item => String(item.value).length);
+  filterLayerState.activeFilterState!.state = validState;
 
-  const fns = state
-    .filter(item => String(item.value).length)
-    .map(st => getFilterConditionFn(st.code!, st.value, type as FilterOptionType)) as Function[];
+  const fns = validState.map(st =>
+    getFilterConditionFn(st.code!, st.value, type as FilterOptionType)
+  ) as Function[];
 
   filter(store, columnName, composeConditionFn(fns, operator), state);
 }

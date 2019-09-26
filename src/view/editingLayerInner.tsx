@@ -9,6 +9,7 @@ import { getInstance } from '../instance';
 import Grid from '../grid';
 import { isFunction, findPropIndex, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
+import { KeyNameMap } from '../types';
 
 interface StoreProps {
   left?: number;
@@ -31,10 +32,6 @@ interface OwnProps {
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
-
-type KeyNameMap = typeof keyNameMap & {
-  [keyCode: number]: string | undefined;
-};
 
 export class EditingLayerInnerComp extends Component<Props> {
   private editor?: CellEditor;
