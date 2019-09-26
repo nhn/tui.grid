@@ -4,14 +4,7 @@ import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import {
-  ActiveColumnAddress,
-  CellValue,
-  ColumnInfo,
-  FilterState,
-  Row,
-  Filter
-} from '../store/types';
+import { ActiveColumnAddress, CellValue, ColumnInfo, FilterState, Filter } from '../store/types';
 import { some, uniq, debounce, mapProp } from '../helper/common';
 import { FILTER_DEBOUNCE_TIME } from '../helper/filter';
 
@@ -111,7 +104,7 @@ export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddres
   const { allColumnMap } = column;
 
   const activeFilterState: FilterState[] = (filterLayerState.activeFilterState as Filter).state;
-  const uniqueColumnData = uniq(mapProp(columnAddress.name, rawData as Row[]));
+  const uniqueColumnData = uniq(mapProp(columnAddress.name, rawData));
   const columnData = uniqueColumnData.map(value => ({
     value,
     checked: some(item => value === item.value, activeFilterState)
