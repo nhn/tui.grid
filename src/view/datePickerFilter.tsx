@@ -88,18 +88,24 @@ class DatePickerFilterComp extends Component<Props> {
     this.datePickerEl.on('change', this.handleChange);
   };
 
-  private handleChange = debounce((ev: KeyboardEvent) => {
-    const { dispatch } = this.props;
+  private handleKeyUp = debounce((ev: KeyboardEvent) => {
     const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const { dispatch } = this.props;
     if (keyName === 'enter') {
       dispatch('applyActiveFilterState');
     } else {
-      const { filterIndex } = this.props;
-      const value = this.inputEl!.value;
-      const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
-      dispatch('setActiveFilterState', { value, code }, filterIndex);
+      this.handleChange();
     }
   }, FILTER_DEBOUNCE_TIME);
+
+  private handleChange = () => {
+    const { dispatch } = this.props;
+
+    const { filterIndex } = this.props;
+    const value = this.inputEl!.value;
+    const code = this.selectEl!.value as NumberFilterCode | TextFilterCode;
+    dispatch('setActiveFilterState', { value, code }, filterIndex);
+  };
 
   private getPreviousValue = () => {
     const { filterIndex, filterLayerState } = this.props;
@@ -145,7 +151,7 @@ class DatePickerFilterComp extends Component<Props> {
           }}
           type="text"
           className={cls('filter-input')}
-          onKeyUp={this.handleChange}
+          onKeyUp={this.handleKeyUp}
           value={value}
         />
         <div
