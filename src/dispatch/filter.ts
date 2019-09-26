@@ -234,3 +234,10 @@ export function setFilter(
     notify(column, 'allColumns');
   }
 }
+
+export function initFilter(store: Store) {
+  const { filterLayerState, data } = store;
+  filterLayerState.activeFilterState = null;
+  filterLayerState.activeColumnAddress = null;
+  data.filters = null;
+}

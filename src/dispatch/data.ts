@@ -48,6 +48,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
+import { initFilter } from './filter';
 
 interface OriginData {
   rows: Row[];
@@ -406,6 +407,7 @@ export function clearData(store: Store) {
 
   initFocus(store);
   initSortState(data);
+  initFilter(store);
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
@@ -415,7 +417,6 @@ export function clearData(store: Store) {
       totalCount: 0
     };
   }
-  // @TODO: filter 초기화
   updateAllSummaryValues(store);
   renderState.state = 'EMPTY';
 }
@@ -427,6 +428,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
   initFocus(store);
   initSortState(data);
+  initFilter(store);
   rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;
@@ -438,8 +440,6 @@ export function resetData(store: Store, inputData: OptRow[]) {
       totalCount: rawData.length
     };
   }
-
-  // @TODO: filter 초기화
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);

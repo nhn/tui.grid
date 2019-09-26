@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortState, Column, Data, Filter } from '../store/types';
+import { CellValue, RowKey, ColumnInfo, SortState, Filter } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { keyNameMap } from '../helper/keyboard';
@@ -157,13 +157,13 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
-  const targetRow = filteredViewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
+  const targetRow = filteredViewData[findIndexByRowKey(data, column, id, rowKey)];
   let value, filter;
   if (targetRow) {
     value = targetRow.valueMap[columnName].value;
   }
   if (data.filters) {
-    filter = findProp('columnName', columnName, data.filters as Filter[]);
+    filter = findProp('columnName', columnName, data.filters);
   }
 
   return {
