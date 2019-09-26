@@ -2,6 +2,7 @@ import TuiDatePicker from 'tui-date-picker';
 import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
+import { Dictionary } from '../store/types';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -37,7 +38,7 @@ export class DatePickerEditor implements CellEditor {
   private createIcon() {
     const icon = document.createElement('i');
     icon.className = cls('date-icon');
-    this.el.append(icon);
+    this.el.appendChild(icon);
   }
 
   public constructor(props: CellEditorProps) {
@@ -50,9 +51,13 @@ export class DatePickerEditor implements CellEditor {
       columnInfo,
       value
     } = props;
-    const { options } = columnInfo.editor!;
-    const showIcon = !(options && options.showIcon === false);
-    if (showIcon) {
+
+    const options: Dictionary<any> = {
+      showIcon: true,
+      ...columnInfo.editor!.options
+    };
+
+    if (options.showIcon) {
       this.createIcon();
       this.inputEl.className = cls('content-datepicker');
     }
@@ -60,11 +65,9 @@ export class DatePickerEditor implements CellEditor {
     let date = isUndefined(value) || isNull(value) ? '' : new Date();
     let format = 'yyyy-MM-dd';
 
-    if (options) {
-      if (options.format) {
-        format = options.format;
-        delete options.format;
-      }
+    if (options.format) {
+      format = options.format;
+      delete options.format;
     }
 
     if (isNumber(value) || isString(value)) {
@@ -81,10 +84,7 @@ export class DatePickerEditor implements CellEditor {
       usageStatistics
     };
 
-    this.datePickerEl = new TuiDatePicker(
-      calendarWrapper,
-      deepMergedCopy(defaultOptions, options || {})
-    );
+    this.datePickerEl = new TuiDatePicker(calendarWrapper, deepMergedCopy(defaultOptions, options));
   }
 
   public getElement() {
