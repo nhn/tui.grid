@@ -77,33 +77,30 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
   return null;
 }
 
-function getBuiltInFilterOptions(
-  type: FilterOptionType,
-  filterOpt?: FilterOpt
-): ColumnFilterOption {
-  return {
-    type,
+export function getFilterOptions(filter: FilterOptionType | FilterOpt): ColumnFilterOption {
+  const defaultOption = {
+    type: isObject(filter) ? filter.type : filter!,
     showApplyBtn: false,
-    showClearBtn: false,
-    ...filterOpt
+    showClearBtn: false
   };
-}
 
-export function getFilterOptions(filter?: FilterOptionType | FilterOpt) {
   if (isString(filter)) {
-    let filterOpt;
     if (filter === 'select') {
-      filterOpt = { operator: 'OR' } as FilterOpt;
+      return {
+        ...defaultOption,
+        operator: 'OR'
+      };
     }
-    return getBuiltInFilterOptions(filter, filterOpt);
-  }
-  if (isObject(filter)) {
-    return isString(filter.type)
-      ? getBuiltInFilterOptions(filter.type, filter)
-      : (filter as ColumnFilterOption);
   }
 
-  return null;
+  if (isObject(filter)) {
+    return {
+      ...defaultOption,
+      ...filter
+    };
+  }
+
+  return defaultOption;
 }
 
 function getRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
@@ -201,7 +198,7 @@ export function createColumn(
 
   const editorOptions = getEditorOptions(editor);
   const rendererOptions = getRendererOptions(renderer);
-  const filterOptions = getFilterOptions(filter);
+  const filterOptions = filter ? getFilterOptions(filter) : null;
 
   const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
 
