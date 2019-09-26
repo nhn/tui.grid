@@ -16,6 +16,11 @@ export function getNextCellIndex(
 
   const { viewData, sortState, filteredRawData, filteredViewData } = data;
   const columnName = visibleColumnsWithRowHeader[columnIndex].name;
+  // @TODO: change rawData to filteredRawData after rebase
+  const lastRow = rawData.length - 1 === rowIndex;
+  const lastColumn = visibleColumnsWithRowHeader.length - 1 === columnIndex;
+  const firstRow = rowIndex === 0;
+  const firstColumn = columnIndex === rowHeaderCount;
 
   switch (command) {
     case 'up':
@@ -57,6 +62,34 @@ export function getNextCellIndex(
       break;
     case 'lastColumn':
       columnIndex = visibleColumnsWithRowHeader.length - 1;
+      break;
+    case 'nextCell':
+      if (lastRow && lastColumn) {
+        break;
+      }
+      if (lastColumn) {
+        if (isRowSpanEnabled(sortState)) {
+          rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
+        }
+        rowIndex = getNextRowIndex(rowIndex, heights);
+        columnIndex = rowHeaderCount;
+      } else {
+        columnIndex += 1;
+      }
+      break;
+    case 'prevCell':
+      if (firstRow && firstColumn) {
+        break;
+      }
+      if (firstColumn) {
+        if (isRowSpanEnabled(sortState)) {
+          rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
+        }
+        rowIndex = getPrevRowIndex(rowIndex, heights);
+        columnIndex = visibleColumnsWithRowHeader.length - 1;
+      } else {
+        columnIndex -= 1;
+      }
       break;
     default:
       break;

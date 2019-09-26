@@ -54,16 +54,36 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function editFocus({ focus, data, column }: Store, command: KeyboardEventCommandType) {
-  const { rowKey, columnName } = focus;
+export function editFocus(store: Store, command: KeyboardEventCommandType) {
+  const { focus, data, column, id } = store;
+  const { visibleColumnsWithRowHeader } = column;
+  const { rowKey, columnName, rowIndex, totalColumnIndex: columnIndex } = focus;
 
-  if (rowKey === null || columnName === null) {
+  if (rowKey === null || columnName === null || rowIndex === null || columnIndex === null) {
     return;
   }
 
   if (command === 'currentCell' && isCellEditable(data, column, rowKey, columnName)) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
+  } else {
+    // get prevCell or nextCell
+    const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [
+      rowIndex,
+      columnIndex
+    ]);
+    // @TODO: change rawData to filteredRawData after rebase
+    const nextRowKey = data.rawData[nextRowIndex].rowKey;
+    const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
+
+    if (!isRowHeader(nextColumnName)) {
+      focus.navigating = true;
+      changeFocus(store, nextRowKey, nextColumnName, id);
+      if (focus.editingAddress) {
+        focus.navigating = false;
+        focus.editingAddress = { rowKey: nextRowKey, columnName: nextColumnName };
+      }
+    }
   }
 }
 
