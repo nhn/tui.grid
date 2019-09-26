@@ -9,6 +9,14 @@ function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   });
 }
 
+function assertCheckedState(checked: boolean) {
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.checked).eq(checked);
+    });
+  });
+}
+
 before(() => {
   cy.visit('/dist');
 });
@@ -99,6 +107,8 @@ describe('API test on lazy observable data', () => {
 
     scrollToBottom();
 
+    assertCheckedState(true);
+
     cy.get('input').should($el => {
       $el.each((_, elem) => {
         expect(elem.checked).to.be.true;
@@ -110,11 +120,7 @@ describe('API test on lazy observable data', () => {
       .invoke('getCheckedRowKeys')
       .should('have.length', 0);
 
-    cy.get('input').should($el => {
-      $el.each((_, elem) => {
-        expect(elem.checked).to.be.false;
-      });
-    });
+    assertCheckedState(false);
   });
 
   it('check / uncheck api', () => {
