@@ -230,13 +230,13 @@ it('restore()', () => {
 it('setPerPage()', () => {
   cy.wait('@readPage1');
 
-  cy.get(`.tui-page-btn`).should('have.length', 6);
+  cy.get('.tui-page-btn').should('have.length', 6);
   assertPagingData('id', 1, 10);
 
   cy.gridInstance().invoke('setPerPage', 5);
 
   cy.wait('@perPage5');
 
-  cy.get(`.tui-page-btn`).should('have.length', 8);
+  cy.get('.tui-page-btn').should('have.length', 8);
   assertPagingData('id', 1, 5);
 });
