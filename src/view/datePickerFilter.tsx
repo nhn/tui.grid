@@ -124,6 +124,9 @@ class DatePickerFilterComp extends Component<Props> {
   };
 
   public render() {
+    const { columnInfo } = this.props;
+    const { options } = columnInfo.filter!;
+    const showIcon = !(options && options.showIcon === false);
     const selectOption = filterSelectOption.date;
     const { value, code } = this.getPreviousValue();
 
@@ -145,15 +148,18 @@ class DatePickerFilterComp extends Component<Props> {
             })}
           </select>
         </div>
-        <input
-          ref={ref => {
-            this.inputEl = ref;
-          }}
-          type="text"
-          className={cls('filter-input')}
-          onKeyUp={this.handleKeyUp}
-          value={value}
-        />
+        <div className={cls('datepicker-input-container')}>
+          <input
+            ref={ref => {
+              this.inputEl = ref;
+            }}
+            type="text"
+            className={cls('filter-input', [showIcon, 'datepicker-input'])}
+            onKeyUp={this.handleKeyUp}
+            value={value}
+          />
+          {showIcon && <i className={cls('date-icon')} />}
+        </div>
         <div
           ref={ref => {
             this.calendarWrapper = ref;

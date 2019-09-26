@@ -178,7 +178,7 @@ describe('show icon', () => {
       .trigger('dblclick');
 
     cy.get(`.${cls('date-icon')}`).should('visible');
-    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('content-datepicker'));
+    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('datepicker-input'));
 
     cy.getCell(0, 'monthPicker')
       .click()
