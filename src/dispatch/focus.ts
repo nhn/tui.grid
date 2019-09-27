@@ -7,11 +7,12 @@ import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
-import { findPropIndex, isUndefined } from '../helper/common';
+import { findPropIndex, isUndefined, findProp } from '../helper/common';
 import { sort } from './sort';
 import { createTreeRawRow } from '../helper/tree';
 import { isHiddenColumn } from '../helper/column';
 import { occurSyncRendering } from '../helper/render';
+import { filter } from './filter';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
@@ -150,7 +151,8 @@ export function saveAndFinishEditing(
   value?: string
 ) {
   const { data, column, focus } = store;
-  const { columns } = data.sortState;
+  const { filters, sortState } = data;
+  const { columns } = sortState;
 
   if (!isEditingCell(focus, rowKey, columnName)) {
     return;
@@ -177,6 +179,14 @@ export function saveAndFinishEditing(
 
   if (index !== -1) {
     sort(store, columnName, columns[index].ascending);
+  }
+
+  if (filters) {
+    const columnFilter = findProp('columnName', columnName, filters);
+    if (columnFilter) {
+      const { conditionFn, state } = columnFilter;
+      filter(store, columnName, conditionFn!, state);
+    }
   }
 
   finishEditing(store, rowKey, columnName, value);
