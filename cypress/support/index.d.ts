@@ -1,11 +1,9 @@
 /// <reference path="../../node_modules/cypress/types/sinon/index.d.ts" />
+/// <reference path="../../node_modules/cypress-plugin-tab/src/index.d.ts" />
 /// <reference path="../../types/tui-pagination/index.d.ts" />
 /// <reference path="../../types/tui-date-picker/index.d.ts" />
 /// <reference types="cypress" />
 
-interface Option {
-  shift: boolean;
-}
 declare namespace Cypress {
   interface Chainable<Subject> {
     getCell(rowKey: number | string, column: string): Chainable<any>;
@@ -21,7 +19,5 @@ declare namespace Cypress {
     gridInstance(): Chainable<any>;
 
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
-
-    tab(options?: Option): Chainable<any>;
   }
 }
