@@ -64,7 +64,7 @@ const grid = new Grid({
 | 이름 | 설명 |
 | --- | --- |
 | `getPagination` | Grid에서 사용하고 있는 `tui-pagination`의 인스턴스를 반환한다. <br>(*페이지네이션 기능을 사용하지 않는 경우는 `null`을 반환한다.*) | 
-| `setPerPage` | 한 페이지에 보여줄 데이터 수를 변경한다. <br>(*현재 클라이언트 페이지네이션에서 해당 API는 지원되지 않는 상태이며, 이후 추가 지원될 계획이다.*) | 
+| `setPerPage` | 한 페이지에 보여줄 데이터 수를 변경한다. | 
 
 ```js
 const pagination = grid.getPagination();

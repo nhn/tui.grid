@@ -516,8 +516,7 @@ export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, r
 }
 
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
-  const { perPage } = data.pageOptions;
-  data.pageOptions = { ...pageOptions, perPage } as Required<PageOptions>;
+  data.pageOptions = pageOptions as Required<PageOptions>;
 }
 
 export function movePage({ data, rowCoords, dimension }: Store, page: number) {

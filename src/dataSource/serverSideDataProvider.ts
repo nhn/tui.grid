@@ -84,7 +84,7 @@ class ServerSideDataProvider implements DataProvider {
       return;
     }
     this.dispatch('resetData', data.contents);
-    this.dispatch('setPagination', data.pagination);
+    this.dispatch('setPagination', { ...data.pagination, perPage: this.lastRequiredData.perPage });
   };
 
   private handleSuccessReadTreeData = (response: Response) => {
