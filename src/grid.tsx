@@ -642,7 +642,7 @@ export default class Grid {
    * @param {string} columnName - The name of the column
    * @param {string} value - The value of editing result
    */
-  public finishEditing(rowKey: RowKey, columnName: string, value: string) {
+  public finishEditing(rowKey: RowKey, columnName: string, value?: string) {
     // @TODO: change grid API name(finishEditing -> saveAndFinishEditing)
     this.dispatch('saveAndFinishEditing', rowKey, columnName, value);
   }
