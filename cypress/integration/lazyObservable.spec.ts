@@ -109,12 +109,6 @@ describe('API test on lazy observable data', () => {
 
     assertCheckedState(true);
 
-    cy.get('input').should($el => {
-      $el.each((_, elem) => {
-        expect(elem.checked).to.be.true;
-      });
-    });
-
     cy.gridInstance().invoke('uncheckAll');
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
@@ -137,19 +131,13 @@ describe('API test on lazy observable data', () => {
 
     cy.gridInstance().invoke('uncheck', 18);
 
-    cy.get('input').should($el => {
-      expect($el[0].checked).to.be.false;
-    });
+    assertCheckedState(false);
 
     cy.gridInstance().invoke('check', 18);
 
     scrollToBottom();
 
-    cy.get('input').should($el => {
-      $el.each((_, elem) => {
-        expect(elem.checked).to.be.true;
-      });
-    });
+    assertCheckedState(true);
   });
 
   it('findRow api', () => {
