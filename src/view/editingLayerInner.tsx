@@ -59,6 +59,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
  * - Step 5: the layer is unmounted.
  *
  * 4. In case of controlling by finishEditing grid API with 'undefined' value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName');)
  * - Step 1: dispath the saveAndFinishEditing.
  * - Step 2: editingAdress will be 'null'.
  * - Step 3: call the componentWillUnmount lifecycle method.
