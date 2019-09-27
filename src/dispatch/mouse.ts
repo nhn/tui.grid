@@ -332,7 +332,7 @@ export function dragEnd({ selection }: Store) {
 }
 
 export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo: EventInfo) {
-  const { data, column, columnCoords, rowCoords, focus, id } = store;
+  const { data, column, columnCoords, rowCoords, id } = store;
   const { filteredRawData } = data;
 
   if (!filteredRawData.length) {
@@ -358,13 +358,13 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
       selectionUpdate(store, focusData, dragData);
     } else {
       selectionEnd(store);
-      changeFocus(focus, data, filteredRawData[rowIndex].rowKey, columnName, id);
+      changeFocus(store, filteredRawData[rowIndex].rowKey, columnName, id);
     }
   }
 }
 
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
-  const { data, selection, id, column, focus } = store;
+  const { data, selection, id, column } = store;
   const { filteredRawData } = data;
 
   if (!filteredRawData.length) {
@@ -391,7 +391,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     column: [startColumnIndex, endColumnIndex]
   };
 
-  changeFocus(focus, data, filteredRawData[0].rowKey, name, id);
+  changeFocus(store, filteredRawData[0].rowKey, name, id);
   changeSelectionRange(selection, inputRange, id);
 }
 
@@ -438,7 +438,7 @@ export function dragMoveHeader(store: Store, dragData: DragData, startSelectedNa
 }
 
 export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
-  const { selection, id, column, data, focus } = store;
+  const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey);
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
@@ -456,8 +456,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   };
 
   changeFocus(
-    focus,
-    data,
+    store,
     data.rawData[rowIndex].rowKey,
     visibleColumnsWithRowHeader[rowHeaderCount].name,
     id

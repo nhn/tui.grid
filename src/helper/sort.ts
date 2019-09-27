@@ -1,4 +1,4 @@
-import { CellValue, Data, Row, SortedColumn, ViewRow } from '../store/types';
+import { CellValue, Data, Row, SortedColumn, ViewRow, Column, SortState } from '../store/types';
 import { isBlank, convertToNumber } from './common';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
@@ -94,4 +94,12 @@ export function getSortedData(data: Data) {
 
 export function isInitialSortState(columns: SortedColumn[]) {
   return columns.length === 1 && columns[0].columnName === 'sortKey';
+}
+
+export function isSortable(sortState: SortState, column: Column, columnName: string) {
+  if (columnName === 'sortKey') {
+    return true;
+  }
+  const { sortable, hidden } = column.allColumnMap[columnName];
+  return sortState.useClient && !hidden && sortable;
 }

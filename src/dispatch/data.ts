@@ -148,7 +148,7 @@ export function setColumnValues(
 export function check(store: Store, rowKey: RowKey) {
   const { allColumnMap, treeColumnName = '' } = store.column;
   const { data, id } = store;
-  const { rawData } = data;
+  const { filteredRawData } = data;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -161,7 +161,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  data.checkedAllRows = !rawData.some(row => !row._attributes.checked);
+  data.checkedAllRows = !filteredRawData.some(row => !row._attributes.checked);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -384,7 +384,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     focus.navigating = false;
-    changeFocus(focus, data, null, null, id);
+    changeFocus(store, null, null, id);
     if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
       focus.editingAddress = null;
     }

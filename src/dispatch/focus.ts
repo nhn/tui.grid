@@ -1,4 +1,4 @@
-import { Store, RowKey, Focus, Data } from '../store/types';
+import { Store, RowKey } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
@@ -10,6 +10,7 @@ import { setValue } from './data';
 import { findPropIndex } from '../helper/common';
 import { sort } from './sort';
 import { createTreeRawRow } from '../helper/tree';
+import { isHiddenColumn } from '../helper/column';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
@@ -20,7 +21,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, rowKey, columnName)) {
+  if (!isCellEditable(data, column, rowKey, columnName)) {
     return;
   }
 
@@ -86,13 +87,17 @@ export function finishEditing(
 }
 
 export function changeFocus(
-  focus: Focus,
-  data: Data,
+  store: Store,
   rowKey: RowKey | null,
   columnName: string | null,
   id: number
 ) {
-  if (isFocusedCell(focus, rowKey, columnName)) {
+  const { data, focus, column } = store;
+
+  if (
+    isFocusedCell(focus, rowKey, columnName) ||
+    (columnName && isHiddenColumn(column, columnName))
+  ) {
     return;
   }
 
@@ -148,13 +153,13 @@ export function saveAndFinishEditing(
   columnName: string,
   value: string
 ) {
-  const { data } = store;
+  const { data, column } = store;
   const { columns } = data.sortState;
 
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, rowKey, columnName)) {
+  if (!isCellEditable(data, column, rowKey, columnName)) {
     return;
   }
 

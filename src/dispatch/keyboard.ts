@@ -50,18 +50,18 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, data, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(store, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
-export function editFocus({ focus, data }: Store, command: KeyboardEventCommandType) {
+export function editFocus({ focus, data, column }: Store, command: KeyboardEventCommandType) {
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
     return;
   }
 
-  if (command === 'currentCell' && isCellEditable(data, rowKey, columnName)) {
+  if (command === 'currentCell' && isCellEditable(data, column, rowKey, columnName)) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
   }
@@ -173,8 +173,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  const { focus, id, data } = store;
+  const { focus, id } = store;
   focus.navigating = navigating;
 
-  changeFocus(focus, data, rowKey, columnName, id);
+  changeFocus(store, rowKey, columnName, id);
 }

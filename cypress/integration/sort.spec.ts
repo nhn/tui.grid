@@ -282,4 +282,26 @@ describe('sort', () => {
     cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
     cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
+
+  it('data is unsorted when hide column', () => {
+    createGrid();
+    createSortButtonAlias();
+    cy.gridInstance().invoke('sort', 'numberA', false);
+    cy.gridInstance().invoke('hideColumn', 'numberA');
+
+    compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+    cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
+  });
+
+  it('cannot sort the data on hidden column', () => {
+    createGrid();
+    createSortButtonAlias();
+    cy.gridInstance().invoke('hideColumn', 'numberA');
+    cy.gridInstance().invoke('sort', 'numberA', false);
+
+    compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
+    cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
+    cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
+  });
 });

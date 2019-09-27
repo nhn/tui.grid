@@ -9,6 +9,14 @@ function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   });
 }
 
+function assertCheckedState(checked: boolean) {
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.checked).eq(checked);
+    });
+  });
+}
+
 before(() => {
   cy.visit('/dist');
 });
@@ -69,28 +77,6 @@ describe('API test on lazy observable data', () => {
     cy.getCell(18, 'name').contains('Kim');
   });
 
-  it('check / uncheck api', () => {
-    cy.gridInstance().invoke('check', 18);
-    cy.gridInstance()
-      .invoke('getCheckedRowKeys')
-      .should('eql', [18]);
-
-    scrollToBottom();
-
-    cy.getCell(18, '_checked').within(() => {
-      cy.get('input').should('be.checked');
-    });
-
-    cy.gridInstance().invoke('uncheck', 18);
-    cy.gridInstance()
-      .invoke('getCheckedRowKeys')
-      .should('eql', []);
-
-    cy.getCell(18, '_checked').within(() => {
-      cy.get('input').should('be.not.checked');
-    });
-  });
-
   it('checkAll / uncheckAll api', () => {
     cy.gridInstance().invoke('checkAll');
     cy.gridInstance()
@@ -99,24 +85,35 @@ describe('API test on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.true;
-      });
-    });
+    assertCheckedState(true);
 
     cy.gridInstance().invoke('uncheckAll');
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
       .should('have.length', 0);
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.checked).to.be.false;
-      });
+    assertCheckedState(false);
+  });
+
+  it('check / uncheck api', () => {
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance()
+      .invoke('getCheckedRowKeys')
+      .should('have.length', 20);
+
+    assertCheckedState(true);
+
+    cy.gridInstance().invoke('uncheck', 18);
+
+    scrollToBottom();
+
+    cy.getCell(18, '_checked').within(() => {
+      cy.get('input').should('be.not.checked');
     });
+
+    cy.gridInstance().invoke('check', 18);
+
+    assertCheckedState(true);
   });
 
   it('findRow api', () => {

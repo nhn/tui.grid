@@ -98,8 +98,15 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
-export function hideColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumnMap[columnName];
+export function hideColumn(store: Store, columnName: string) {
+  const columnItem = store.column.allColumnMap[columnName];
+  const { columnName: focusedColumnName } = store.focus;
+
+  if (focusedColumnName === columnName) {
+    initFocus(store);
+  }
+
+  unsort(store, columnName);
 
   if (columnItem) {
     columnItem.hidden = true;
