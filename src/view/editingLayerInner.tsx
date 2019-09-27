@@ -4,7 +4,7 @@ import { connect } from './hoc';
 import { CellValue, RowKey, ColumnInfo, SortState, Filter } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
-import { keyNameMap } from '../helper/keyboard';
+import { getKeyStrokeString } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 import { isFunction, findPropIndex, isNull, findProp } from '../helper/common';
@@ -73,7 +73,7 @@ export class EditingLayerInnerComp extends Component<Props> {
   private contentEl?: HTMLElement;
 
   private handleKeyDown = (ev: KeyboardEvent) => {
-    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const keyName = getKeyStrokeString(ev);
 
     switch (keyName) {
       case 'enter':
@@ -81,6 +81,12 @@ export class EditingLayerInnerComp extends Component<Props> {
         break;
       case 'esc':
         this.finishEditing(false);
+        break;
+      case 'shift-tab':
+        // focus the clipboard for moving to prev cell
+        setTimeout(() => {
+          (document.querySelector(`.${cls('clipboard')}`) as HTMLDivElement).focus();
+        });
         break;
       default:
       // do nothing;

@@ -892,7 +892,7 @@ export default class Grid {
    * Copy to clipboard
    */
   public copyToClipboard() {
-    const clipboard = document.querySelector('.tui-grid-clipboard')!;
+    const clipboard = document.querySelector(`.${cls('clipboard')}`)!;
     clipboard.innerHTML = getText(this.store);
 
     if (isSupportWindowClipboardData()) {
