@@ -148,7 +148,7 @@ export function setColumnValues(
 export function check(store: Store, rowKey: RowKey) {
   const { allColumnMap, treeColumnName = '' } = store.column;
   const { data, id } = store;
-  const { rawData } = data;
+  const { filteredRawData } = data;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -161,7 +161,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  data.checkedAllRows = !rawData.some(row => !row._attributes.checked);
+  data.checkedAllRows = !filteredRawData.some(row => !row._attributes.checked);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
