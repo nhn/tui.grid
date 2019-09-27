@@ -34,6 +34,38 @@ interface OwnProps {
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
+/**
+ * Process of unmounting the Editing layer
+ * 1. In case of controlling by the keyMap
+ * - Step 1: call the handleKeyDown method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 2. In case of controlling by clicking another cell
+ * - Step 1: call the componentWillReceiveProps lifecycle method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 3. In case of controlling by finishEditing grid API with value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName', 'someValue');)
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: call the finishEditing function in dispatch/focus.ts
+ * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 4. In case of controlling by finishEditing grid API with 'undefined' value parameter.
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: editingAdress will be 'null'.
+ * - Step 3: call the componentWillUnmount lifecycle method.
+ * - Step 4: dispath the finishEditing(due to forcedDestroyEditing prop is 'true').
+ * - Step 5: occur the editingFinish event(editingAddress is already 'null').
+ * - Step 6: the layer is unmounted.
+ */
 export class EditingLayerInnerComp extends Component<Props> {
   private editor?: CellEditor;
 
