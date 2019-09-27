@@ -46,7 +46,7 @@ type Props = StoreProps & OwnProps & DispatchProps;
  * 2. In case of controlling by clicking another cell
  * - Step 1: call the componentWillReceiveProps lifecycle method.
  * - Step 2: dispath the finishEditing.
- * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
  * - Step 4: call the componentWillUnmount lifecycle method.
  * - Step 5: the layer is unmounted.
  *
@@ -54,14 +54,14 @@ type Props = StoreProps & OwnProps & DispatchProps;
  *    (ex. grid.finishEditing(0, 'columnName', 'someValue');)
  * - Step 1: dispath the saveAndFinishEditing.
  * - Step 2: call the finishEditing function in dispatch/focus.ts
- * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
  * - Step 4: call the componentWillUnmount lifecycle method.
  * - Step 5: the layer is unmounted.
  *
  * 4. In case of controlling by finishEditing grid API with 'undefined' value parameter.
  *    (ex. grid.finishEditing(0, 'columnName');)
  * - Step 1: dispath the saveAndFinishEditing.
- * - Step 2: editingAdress will be 'null'.
+ * - Step 2: editingAddress will be 'null'.
  * - Step 3: call the componentWillUnmount lifecycle method.
  * - Step 4: dispath the finishEditing(due to forcedDestroyEditing prop is 'true').
  * - Step 5: occur the editingFinish event(editingAddress is already 'null').
