@@ -1,4 +1,4 @@
-import { Store, RowKey, Focus, Data } from '../store/types';
+import { Store, RowKey } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
