@@ -279,7 +279,7 @@ it('should renering of the editing cell is syncronous', () => {
     });
 });
 
-// @TODO: cannt pass the test in headless mode, need to ask this issue
+// @TODO: cannot pass the test in headless mode, need to ask this issue
 // it('should not copy prev value as moving the editing cell by tab keyMap', () => {
 //   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
 //   const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
