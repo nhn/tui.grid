@@ -1,6 +1,6 @@
 import { ActiveColumnAddress, FilterState, Store } from '../store/types';
 import { notify } from '../helper/observable';
-import { findProp, findPropIndex, mapProp, uniq } from '../helper/common';
+import { findProp, findPropIndex, mapProp, uniq, isNull } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { FilterOpt, OperatorType, FilterOptionType } from '../types';
 import { getRowHeight } from '../store/rowCoords';
@@ -99,7 +99,13 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
 function resetActiveColumnAddress(store: Store) {
   const { data, filterLayerState } = store;
   const { rawData } = data;
-  const { type, state, columnName } = filterLayerState.activeFilterState!;
+  const { activeFilterState } = filterLayerState;
+
+  if (isNull(activeFilterState)) {
+    return;
+  }
+
+  const { type, state, columnName } = activeFilterState!;
   if (type !== 'select' && !state.length) {
     unfilter(store, columnName);
   } else if (type === 'select') {
