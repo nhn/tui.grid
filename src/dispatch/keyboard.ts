@@ -72,8 +72,7 @@ export function editFocus(store: Store, command: KeyboardEventCommandType) {
       rowIndex,
       columnIndex
     ]);
-    // @TODO: change rawData to filteredRawData after rebase
-    const nextRowKey = data.rawData[nextRowIndex].rowKey;
+    const nextRowKey = data.filteredRawData[nextRowIndex].rowKey;
     const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
 
     if (!isRowHeader(nextColumnName)) {

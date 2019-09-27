@@ -16,8 +16,7 @@ export function getNextCellIndex(
 
   const { viewData, sortState, filteredRawData, filteredViewData } = data;
   const columnName = visibleColumnsWithRowHeader[columnIndex].name;
-  // @TODO: change rawData to filteredRawData after rebase
-  const lastRow = rawData.length - 1 === rowIndex;
+  const lastRow = filteredRawData.length - 1 === rowIndex;
   const lastColumn = visibleColumnsWithRowHeader.length - 1 === columnIndex;
   const firstRow = rowIndex === 0;
   const firstColumn = columnIndex === rowHeaderCount;
@@ -69,7 +68,7 @@ export function getNextCellIndex(
       }
       if (lastColumn) {
         if (isRowSpanEnabled(sortState)) {
-          rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
+          rowIndex = getRowSpanBottomIndex(rowIndex, columnName, filteredRawData);
         }
         rowIndex = getNextRowIndex(rowIndex, heights);
         columnIndex = rowHeaderCount;
@@ -83,7 +82,7 @@ export function getNextCellIndex(
       }
       if (firstColumn) {
         if (isRowSpanEnabled(sortState)) {
-          rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
+          rowIndex = getRowSpanTopIndex(rowIndex, columnName, filteredRawData);
         }
         rowIndex = getPrevRowIndex(rowIndex, heights);
         columnIndex = visibleColumnsWithRowHeader.length - 1;
