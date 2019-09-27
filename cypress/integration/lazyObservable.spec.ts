@@ -53,7 +53,6 @@ describe('API test on lazy observable data', () => {
   });
 
   it('startEditing api', () => {
-    cy.gridInstance().invoke('focus', 18, 'name');
     cy.gridInstance().invoke('startEditing', 18, 'name', 'Lee');
     cy.get(`.${cls('content-text')}`).type('Lee{enter}');
 
@@ -67,6 +66,7 @@ describe('API test on lazy observable data', () => {
   });
 
   it('finishEditing api', () => {
+    cy.gridInstance().invoke('startEditing', 18, 'name');
     cy.gridInstance().invoke('finishEditing', 18, 'name', 'Kim');
     cy.gridInstance()
       .invoke('getValue', 18, 'name')
@@ -117,6 +117,7 @@ describe('API test on lazy observable data', () => {
   });
 
   it('findRow api', () => {
+    cy.gridInstance().invoke('startEditing', 18, 'name');
     cy.gridInstance().invoke('finishEditing', 18, 'name', 'Lee');
     cy.gridInstance()
       .invoke('findRows', { name: 'Lee' })

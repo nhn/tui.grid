@@ -2,7 +2,9 @@ import { cls } from '../../src/helper/dom';
 import { data, columns } from '../../samples/relations';
 
 function assertRelation() {
+  cy.gridInstance().invoke('startEditing', 0, 'category1');
   cy.gridInstance().invoke('finishEditing', 0, 'category1', '01');
+  cy.gridInstance().invoke('startEditing', 0, 'category2');
   cy.gridInstance().invoke('finishEditing', 0, 'category2', '01_01');
 
   cy.getCell(0, 'category2').contains('Balad/Dance/Pop');
@@ -35,6 +37,7 @@ it('should change state by relations', () => {
 });
 
 it('change cell disabled state', () => {
+  cy.gridInstance().invoke('startEditing', 1, 'category1');
   cy.gridInstance().invoke('finishEditing', 1, 'category1', '');
 
   cy.gridInstance().invoke('startEditing', 1, 'category2');
@@ -53,6 +56,7 @@ it('change cell editable state', () => {
   });
   cy.createGrid({ data, columns });
 
+  cy.gridInstance().invoke('startEditing', 1, 'category1');
   cy.gridInstance().invoke('finishEditing', 1, 'category1', '');
 
   cy.gridInstance().invoke('startEditing', 1, 'category2');

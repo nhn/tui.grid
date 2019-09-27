@@ -328,6 +328,7 @@ it('editingFinish', () => {
 
   cy.gridInstance().invoke('on', 'editingFinish', callback);
 
+  cy.gridInstance().invoke('startEditing', 0, 'name');
   cy.gridInstance()
     .invoke('finishEditing', 0, 'name', 'Ryu')
     .should(() => {
