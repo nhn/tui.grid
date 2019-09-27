@@ -34,7 +34,8 @@ import {
   isString,
   isNumber,
   isFunction,
-  findPropIndex
+  findPropIndex,
+  convertToNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -138,15 +139,16 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   if (dataType === 'string' && !isString(value)) {
     invalidStates.push('TYPE_STRING');
   }
-  if (dataType === 'number' && !isNumber(value)) {
+
+  if (dataType === 'number' && !isNumber(convertToNumber(value))) {
     invalidStates.push('TYPE_NUMBER');
   }
 
-  if (min && isNumber(value) && value < min) {
+  if (min && convertToNumber(value) < min) {
     invalidStates.push('MIN');
   }
 
-  if (max && isNumber(value) && value > max) {
+  if (max && convertToNumber(value) > max) {
     invalidStates.push('MAX');
   }
 

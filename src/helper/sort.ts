@@ -4,9 +4,8 @@ import { isBlank, convertToNumber } from './common';
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
-
-  const newValueA = convertToNumber(valueA);
-  const newValueB = convertToNumber(valueB);
+  const numberA = convertToNumber(valueA);
+  const numberB = convertToNumber(valueB);
 
   let result = 0;
 
@@ -14,9 +13,9 @@ export function compare(valueA: CellValue, valueB: CellValue) {
     result = -1;
   } else if (!isBlankA && isBlankB) {
     result = 1;
-  } else if (newValueA! < newValueB!) {
+  } else if (numberA < numberB) {
     result = -1;
-  } else if (newValueA! > newValueB!) {
+  } else if (numberA > numberB) {
     result = 1;
   }
 

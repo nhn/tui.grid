@@ -274,10 +274,6 @@ export function fromArray<T>(value: ArrayLike<T>): T[] {
 }
 
 export function convertToNumber(value: any) {
-  if (typeof value === 'string') {
-    value = value.replace(/,/g, '');
-  }
-
   if (typeof value === 'number' || isNaN(value) || isBlank(value)) {
     return value;
   }
