@@ -49,6 +49,9 @@ import {
   updateAllSummaryValues
 } from './summary';
 import { initFilter } from './filter';
+import { cls } from '../helper/dom';
+import { setHoveredRowKey } from './renderState';
+import { findRowIndexByPosition } from '../query/mouse';
 
 interface OriginData {
   rows: Row[];
@@ -465,6 +468,25 @@ export function removeRowClassName(store: Store, rowKey: RowKey, className: stri
   if (row) {
     removeArrayItem(className, row._attributes.className.row);
     notify(row._attributes, 'className');
+  }
+}
+
+export function addRowHoverClassByPosition(
+  store: Store,
+  viewInfo: { pageX: number; pageY: number }
+) {
+  const {
+    renderState: { hoveredRowKey },
+    data: { filteredRawData },
+    viewport: { scrollLeft, scrollTop }
+  } = store;
+  const rowIndex = findRowIndexByPosition(store, { ...viewInfo, scrollLeft, scrollTop });
+  const rowKey = filteredRawData[rowIndex].rowKey;
+
+  if (hoveredRowKey !== rowKey) {
+    removeRowClassName(store, hoveredRowKey!, cls('row-hover'));
+    setHoveredRowKey(store, rowKey);
+    addRowClassName(store, rowKey, cls('row-hover'));
   }
 }
 

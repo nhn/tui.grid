@@ -454,6 +454,7 @@ export interface Selection {
 
 export interface RenderState {
   state: State;
+  hoveredRowKey: RowKey | null;
 }
 
 export interface FilterLayerState {
