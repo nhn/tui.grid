@@ -2,7 +2,7 @@ import { Store, RowKey } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
-import { isFocusedCell } from '../query/focus';
+import { isFocusedCell, isEditingCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
@@ -58,8 +58,6 @@ export function finishEditing(
   columnName: string,
   value: string
 ) {
-  const { editingAddress } = focus;
-
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey, columnName, value });
 
@@ -74,11 +72,7 @@ export function finishEditing(
   eventBus.trigger('editingFinish', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    if (
-      editingAddress &&
-      editingAddress.rowKey === rowKey &&
-      editingAddress.columnName === columnName
-    ) {
+    if (isEditingCell(focus, rowKey, columnName)) {
       occurSyncRendering(() => {
         focus.forcedDestroyEditing = false;
         focus.editingAddress = null;
@@ -157,13 +151,8 @@ export function saveAndFinishEditing(
 ) {
   const { data, column, focus } = store;
   const { columns } = data.sortState;
-  const { editingAddress } = focus;
 
-  if (
-    editingAddress === null ||
-    editingAddress.rowKey !== rowKey ||
-    editingAddress.columnName !== columnName
-  ) {
+  if (!isEditingCell(focus, rowKey, columnName)) {
     return;
   }
   // makes the data observable to judge editable, disable of the cell;
