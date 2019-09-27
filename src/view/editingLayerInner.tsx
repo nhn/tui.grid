@@ -24,6 +24,7 @@ interface StoreProps {
   filter?: Filter;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
+  forcedDestroyEditing: boolean;
 }
 
 interface OwnProps {
@@ -97,7 +98,9 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentWillUnmount() {
-    this.finishEditing(false);
+    if (this.props.forcedDestroyEditing) {
+      this.finishEditing(true);
+    }
     if (this.editor && this.editor.beforeDestroy) {
       this.editor.beforeDestroy();
     }
@@ -135,13 +138,20 @@ export class EditingLayerInnerComp extends Component<Props> {
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
-  const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
+  const {
+    cellPosRect,
+    side,
+    columnName: focusedColumnName,
+    rowKey: focusedRowKey,
+    forcedDestroyEditing
+  } = focus;
   const { filteredViewData, sortState } = data;
   const state = {
     grid: getInstance(id),
     sortState,
     focusedColumnName,
-    focusedRowKey
+    focusedRowKey,
+    forcedDestroyEditing
   };
 
   if (isNull(cellPosRect)) {

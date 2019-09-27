@@ -7,15 +7,15 @@ import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
-import { findPropIndex } from '../helper/common';
+import { findPropIndex, isUndefined } from '../helper/common';
 import { sort } from './sort';
 import { createTreeRawRow } from '../helper/tree';
 import { isHiddenColumn } from '../helper/column';
+import { occurSyncRendering } from '../helper/render';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
   const { rawData } = data;
-  const { allColumnMap } = column;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
 
   // makes the data observable to judge editable, disable of the cell;
@@ -43,11 +43,10 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   eventBus.trigger('editingStart', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    const columnInfo = allColumnMap[columnName];
-    if (columnInfo && columnInfo.editor) {
+    occurSyncRendering(() => {
       focus.navigating = false;
       focus.editingAddress = { rowKey, columnName };
-    }
+    });
   }
 
   notify(data, 'viewData');
@@ -80,8 +79,11 @@ export function finishEditing(
       editingAddress.rowKey === rowKey &&
       editingAddress.columnName === columnName
     ) {
-      focus.editingAddress = null;
-      focus.navigating = true;
+      occurSyncRendering(() => {
+        focus.forcedDestroyEditing = false;
+        focus.editingAddress = null;
+        focus.navigating = true;
+      });
     }
   }
 }
@@ -151,15 +153,32 @@ export function saveAndFinishEditing(
   store: Store,
   rowKey: RowKey,
   columnName: string,
-  value: string
+  value?: string
 ) {
-  const { data, column } = store;
+  const { data, column, focus } = store;
   const { columns } = data.sortState;
+  const { editingAddress } = focus;
 
+  if (
+    editingAddress === null ||
+    editingAddress.rowKey !== rowKey ||
+    editingAddress.columnName !== columnName
+  ) {
+    return;
+  }
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
   if (!isCellEditable(data, column, rowKey, columnName)) {
+    return;
+  }
+
+  if (isUndefined(value)) {
+    occurSyncRendering(() => {
+      focus.forcedDestroyEditing = true;
+      focus.editingAddress = null;
+      focus.navigating = true;
+    });
     return;
   }
 
