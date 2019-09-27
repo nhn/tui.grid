@@ -44,6 +44,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
 
   if (!gridEvent.isStopped()) {
     occurSyncRendering(() => {
+      focus.forcedDestroyEditing = false;
       focus.navigating = false;
       focus.editingAddress = { rowKey, columnName };
     });
@@ -74,7 +75,6 @@ export function finishEditing(
   if (!gridEvent.isStopped()) {
     if (isEditingCell(focus, rowKey, columnName)) {
       occurSyncRendering(() => {
-        focus.forcedDestroyEditing = false;
         focus.editingAddress = null;
         focus.navigating = true;
       });
