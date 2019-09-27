@@ -79,7 +79,8 @@ export function editFocus(store: Store, command: KeyboardEventCommandType) {
     if (!isRowHeader(nextColumnName)) {
       focus.navigating = true;
       changeFocus(store, nextRowKey, nextColumnName, id);
-      if (focus.editingAddress) {
+
+      if (focus.editingAddress && isCellEditable(data, column, nextRowKey, nextColumnName)) {
         setTimeout(() => {
           focus.navigating = false;
           focus.editingAddress = { rowKey: nextRowKey, columnName: nextColumnName };
