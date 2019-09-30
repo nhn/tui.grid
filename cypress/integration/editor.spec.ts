@@ -286,17 +286,13 @@ it('should renering of the editing cell is syncronous', () => {
 
 //   cy.createGrid({ data, columns });
 //   cy.gridInstance().invoke('startEditing', 0, 'name');
-//   cy.get(`.${cls('content-text')}`)
-//     .tab()
-//     .tab();
+//   cy.get(`.${cls('content-text')}`).tab();
 
 //   cy.get(`.${cls('content-text')}`)
 //     .invoke('val')
 //     .should('eq', '20');
 
-//   cy.get(`.${cls('content-text')}`)
-//     .tab({ shift: true })
-//     .tab({ shift: true });
+//   cy.get(`.${cls('content-text')}`).tab({ shift: true });
 
 //   cy.get(`.${cls('content-text')}`)
 //     .invoke('val')
@@ -309,9 +305,7 @@ it('should renering of the editing cell is syncronous', () => {
 
 //   cy.createGrid({ data, columns });
 //   cy.gridInstance().invoke('startEditing', 0, 'name');
-//   cy.get(`.${cls('content-text')}`)
-//     .tab()
-//     .tab();
+//   cy.get(`.${cls('content-text')}`).tab();
 
 //   cy.get(`.${cls('content-text')}`).should('be.not.visible');
 // });
