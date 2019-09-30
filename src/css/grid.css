@@ -123,8 +123,7 @@
   vertical-align: middle;
   cursor: pointer;
 }
-.tui-grid-btn-filter-active,
-.tui-grid-filter-icon-active {
+.tui-grid-btn-filter-active{
   background-position: -47px -84px;
 }
 
@@ -768,7 +767,7 @@ input[type='checkbox']:checked + label {
 }
 
 .tui-grid-filter-btn-container {
-  margin: 4px 0;
+  margin: 4px 5px;
   text-align: right;
 }
 
