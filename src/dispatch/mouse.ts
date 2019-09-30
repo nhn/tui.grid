@@ -146,33 +146,11 @@ function setScrolling(
   }
 }
 
-function getFocusCellPos(store: Store) {
-  const { columnCoords, rowCoords, focus, dimension, viewport } = store;
-  const { columnIndex, rowIndex, side, cellPosRect } = focus;
-
-  if (isNull(columnIndex) || isNull(rowIndex) || isNull(side) || isNull(cellPosRect)) {
-    return null;
-  }
-
-  const { left, right } = cellPosRect;
-  const { offsets, heights } = rowCoords;
-  const { areaWidth, widths } = columnCoords;
-  const { headerHeight, tableBorderWidth, width } = dimension;
-  const { scrollLeft } = viewport;
-  const offsetLeft = Math.min(areaWidth.L - scrollLeft + tableBorderWidth, width - right);
-  const focusCellWidth = widths[side][columnIndex];
-
-  return {
-    pageX: left + focusCellWidth + (side === 'L' ? 0 : offsetLeft),
-    pageY: offsets[rowIndex] + heights[rowIndex] + headerHeight
-  };
-}
-
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
 }
 
-export function selectionUpdate(store: Store, dragStartData: PagePosition, dragData: PagePosition) {
+export function selectionUpdate(store: Store, dragData: PagePosition) {
   const { viewport, selection, column, id, data, focus } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
@@ -231,7 +209,7 @@ export function dragMoveBody(
   );
 
   if (!isRowHeader(startColumnName) && !isRowHeader(endColumnName)) {
-    selectionUpdate(store, dragStartData, dragData);
+    selectionUpdate(store, dragData);
     setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
   }
 }
@@ -262,9 +240,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
       const dragData = { pageX, pageY };
-      const focusCellPos = getFocusCellPos(store);
-      const focusData = isNull(focusCellPos) ? dragData : focusCellPos;
-      selectionUpdate(store, focusData, dragData);
+      selectionUpdate(store, dragData);
     } else {
       selectionEnd(store);
       changeFocus(store, filteredRawData[rowIndex].rowKey, columnName, id);
