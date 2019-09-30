@@ -194,15 +194,11 @@ export function filter(
 }
 
 export function unfilter(store: Store, columnName: string) {
-  const { data, filterLayerState } = store;
+  const { data } = store;
   const { filters } = data;
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      if (filterLayerState.activeFilterState) {
-        filterLayerState.activeFilterState.state = [];
-      }
-
       data.filters!.splice(filterIndex, 1);
 
       if (data.filters!.length === 0) {
