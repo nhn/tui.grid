@@ -10,7 +10,8 @@ import {
   Row,
   Column,
   Range,
-  PageOptions
+  PageOptions,
+  PagePosition
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -471,16 +472,17 @@ export function removeRowClassName(store: Store, rowKey: RowKey, className: stri
   }
 }
 
-export function addRowHoverClassByPosition(
-  store: Store,
-  viewInfo: { pageX: number; pageY: number }
-) {
+export function addRowHoverClassByPosition(store: Store, viewInfo: PagePosition) {
   const {
     renderState: { hoveredRowKey },
     data: { filteredRawData },
     viewport: { scrollLeft, scrollTop }
   } = store;
-  const rowIndex = findRowIndexByPosition(store, { ...viewInfo, scrollLeft, scrollTop });
+  const rowIndex = findRowIndexByPosition(store, {
+    ...viewInfo,
+    scrollLeft,
+    scrollTop
+  });
   const rowKey = filteredRawData[rowIndex].rowKey;
 
   if (hoveredRowKey !== rowKey) {

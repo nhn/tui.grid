@@ -1,8 +1,8 @@
-import { Dimension, DragData, Side, Store } from '../store/types';
+import { Dimension, PagePosition, Side, Store } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
 import { ScrollData } from '../dispatch/mouse';
 
-type ViewInfo = DragData & ScrollData;
+type ViewInfo = PagePosition & ScrollData;
 
 export type ElementInfo = {
   side: Side;
@@ -58,8 +58,8 @@ function getScrolledPosition(
 
 export function getColumnNameRange(
   store: Store,
-  dragStartData: DragData,
-  dragData: DragData,
+  dragStartData: PagePosition,
+  dragData: PagePosition,
   elementInfo: ElementInfo
 ) {
   const {

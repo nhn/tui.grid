@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, DragData, DragStartData } from '../store/types';
+import { Side, PagePosition, DragStartData } from '../store/types';
 import { cls, getCoordinateWithOffset, setCursorStyle } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -89,7 +89,7 @@ class BodyAreaComp extends Component<Props> {
     document.addEventListener('selectstart', this.handleSelectStart);
   };
 
-  private moveEnoughToTriggerDragEvent = (current: DragData) => {
+  private moveEnoughToTriggerDragEvent = (current: PagePosition) => {
     const dx = Math.abs(this.dragStartData.pageX! - current.pageX!);
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
     const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
@@ -110,7 +110,7 @@ class BodyAreaComp extends Component<Props> {
 
       dispatch(
         'dragMoveBody',
-        this.dragStartData as DragData,
+        this.dragStartData as PagePosition,
         { pageX, pageY },
         { scrollTop, scrollLeft, side, ...boundingRect! }
       );

@@ -129,7 +129,7 @@ export interface DragStartData {
   pageY: number | null;
 }
 
-export interface DragData {
+export interface PagePosition {
   pageX: number;
   pageY: number;
 }

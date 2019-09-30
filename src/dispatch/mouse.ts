@@ -8,7 +8,7 @@ import {
   Selection,
   Viewport,
   SelectionRange,
-  DragData,
+  PagePosition,
   RowKey
 } from '../store/types';
 import { getRowRangeWithRowSpan } from '../helper/rowSpan';
@@ -48,7 +48,7 @@ interface ContainerPosition {
   y: number;
 }
 
-type EventInfo = DragData & {
+type EventInfo = PagePosition & {
   shiftKey: boolean;
 };
 
@@ -133,7 +133,7 @@ function adjustScroll(viewport: Viewport, overflow: OverflowInfo) {
 }
 
 function setScrolling(
-  { pageX, pageY }: DragData,
+  { pageX, pageY }: PagePosition,
   bodyWidth: number,
   selection: Selection,
   dimension: Dimension,
@@ -172,7 +172,7 @@ export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
 }
 
-export function selectionUpdate(store: Store, dragStartData: DragData, dragData: DragData) {
+export function selectionUpdate(store: Store, dragStartData: PagePosition, dragData: PagePosition) {
   const { viewport, selection, column, id, data, focus } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
@@ -216,8 +216,8 @@ export function selectionUpdate(store: Store, dragStartData: DragData, dragData:
 
 export function dragMoveBody(
   store: Store,
-  dragStartData: DragData,
-  dragData: DragData,
+  dragStartData: PagePosition,
+  dragData: PagePosition,
   elementInfo: ElementInfo
 ) {
   const { dimension, columnCoords, selection, viewport } = store;
@@ -304,7 +304,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function dragMoveHeader(store: Store, dragData: DragData, startSelectedName: string) {
+export function dragMoveHeader(store: Store, dragData: PagePosition, startSelectedName: string) {
   const { dimension, viewport, columnCoords, selection, column, id } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { areaWidth } = columnCoords;
@@ -374,7 +374,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   changeSelectionRange(selection, inputRange, id);
 }
 
-export function dragMoveRowHeader(store: Store, dragData: DragData) {
+export function dragMoveRowHeader(store: Store, dragData: PagePosition) {
   const { viewport, selection, id, data, column } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
