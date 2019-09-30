@@ -89,18 +89,10 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     if (this.editor) {
-      const { dispatch, rowKey, columnName, sortState, filter } = this.props;
+      const { dispatch, rowKey, columnName } = this.props;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
-        const sortIndex = findPropIndex('columnName', columnName, sortState.columns);
-        if (sortIndex !== -1) {
-          dispatch('sort', columnName, sortState.columns[sortIndex].ascending, true, false);
-        }
-        if (filter) {
-          const { conditionFn, state } = filter;
-          dispatch('filter', columnName, conditionFn!, state);
-        }
       }
       dispatch('finishEditing', rowKey, columnName, value);
     }

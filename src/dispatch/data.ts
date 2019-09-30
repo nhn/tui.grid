@@ -21,7 +21,8 @@ import {
   removeArrayItem,
   includes,
   isEmpty,
-  someProp
+  someProp,
+  findPropIndex
 } from '../helper/common';
 import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
@@ -49,7 +50,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter } from './filter';
+import { initFilter, filter } from './filter';
 import { cls } from '../helper/dom';
 import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
@@ -61,7 +62,7 @@ interface OriginData {
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const { column, data, id } = store;
-  const { rawData, sortState } = data;
+  const { rawData, sortState, filters } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
   if (!targetRow || targetRow[columnName] === value) {
     return;
@@ -77,12 +78,27 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   if (gridEvent.isStopped()) {
     return;
   }
-
   if (targetRow) {
     const { rowSpanMap } = targetRow;
+    const { columns } = sortState;
     const prevValue = targetRow[columnName];
-    updateSummaryValueByCell(store, columnName, { prevValue, value });
+    const index = findPropIndex('columnName', columnName, columns);
+
     targetRow[columnName] = value;
+
+    if (index !== -1) {
+      sort(store, columnName, columns[index].ascending, true, false);
+    }
+
+    if (filters) {
+      const columnFilter = findProp('columnName', columnName, filters);
+      if (columnFilter) {
+        const { conditionFn, state } = columnFilter;
+        filter(store, columnName, conditionFn!, state);
+      }
+    }
+
+    updateSummaryValueByCell(store, columnName, { prevValue, value });
     getDataManager(id).push('UPDATE', targetRow);
 
     if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
