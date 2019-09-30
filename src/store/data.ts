@@ -136,28 +136,33 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   if (required && isBlank(value)) {
     invalidStates.push('REQUIRED');
   }
-  if (dataType === 'string' && !isString(value)) {
-    invalidStates.push('TYPE_STRING');
-  }
-
-  if (dataType === 'number' && !isNumber(convertToNumber(value))) {
-    invalidStates.push('TYPE_NUMBER');
-  }
-
-  if (min && convertToNumber(value) < min) {
-    invalidStates.push('MIN');
-  }
-
-  if (max && convertToNumber(value) > max) {
-    invalidStates.push('MAX');
-  }
-
-  if (regExp && isString(value) && !regExp.test(value)) {
-    invalidStates.push('REGEXP');
-  }
 
   if (validatorFn && !validatorFn(value)) {
     invalidStates.push('VALIDATOR_FN');
+  }
+
+  if (dataType === 'string') {
+    if (!isString(value)) {
+      invalidStates.push('TYPE_STRING');
+    }
+
+    if (regExp && isString(value) && !regExp.test(value)) {
+      invalidStates.push('REGEXP');
+    }
+  } else if (dataType === 'number') {
+    const numberValue = convertToNumber(value);
+
+    if (!isNumber(numberValue)) {
+      invalidStates.push('TYPE_NUMBER');
+    }
+
+    if (min && numberValue < min) {
+      invalidStates.push('MIN');
+    }
+
+    if (max && numberValue > max) {
+      invalidStates.push('MAX');
+    }
   }
 
   return invalidStates;
