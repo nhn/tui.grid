@@ -105,7 +105,7 @@ function resetActiveColumnAddress(store: Store) {
     return;
   }
 
-  const { type, state, columnName } = activeFilterState!;
+  const { type, state, columnName } = activeFilterState;
   if (type !== 'select' && !state.length) {
     unfilter(store, columnName);
   } else if (type === 'select') {

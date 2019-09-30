@@ -7,12 +7,10 @@ import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
-import { findPropIndex, isUndefined, findProp } from '../helper/common';
-import { sort } from './sort';
+import { isUndefined } from '../helper/common';
 import { createTreeRawRow } from '../helper/tree';
 import { isHiddenColumn } from '../helper/column';
-import { occurSyncRendering } from '../helper/render';
-import { filter } from './filter';
+import { forceSyncRendering } from '../helper/render';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
@@ -44,7 +42,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   eventBus.trigger('editingStart', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    occurSyncRendering(() => {
+    forceSyncRendering(() => {
       focus.forcedDestroyEditing = false;
       focus.navigating = false;
       focus.editingAddress = { rowKey, columnName };
@@ -75,7 +73,7 @@ export function finishEditing(
 
   if (!gridEvent.isStopped()) {
     if (isEditingCell(focus, rowKey, columnName)) {
-      occurSyncRendering(() => {
+      forceSyncRendering(() => {
         focus.editingAddress = null;
         focus.navigating = true;
       });
@@ -151,8 +149,6 @@ export function saveAndFinishEditing(
   value?: string
 ) {
   const { data, column, focus } = store;
-  const { filters, sortState } = data;
-  const { columns } = sortState;
 
   if (!isEditingCell(focus, rowKey, columnName)) {
     return;
@@ -165,7 +161,7 @@ export function saveAndFinishEditing(
   }
 
   if (isUndefined(value)) {
-    occurSyncRendering(() => {
+    forceSyncRendering(() => {
       focus.forcedDestroyEditing = true;
       focus.editingAddress = null;
       focus.navigating = true;
@@ -174,21 +170,6 @@ export function saveAndFinishEditing(
   }
 
   setValue(store, rowKey, columnName, value);
-
-  const index = findPropIndex('columnName', columnName, columns);
-
-  if (index !== -1) {
-    sort(store, columnName, columns[index].ascending);
-  }
-
-  if (filters) {
-    const columnFilter = findProp('columnName', columnName, filters);
-    if (columnFilter) {
-      const { conditionFn, state } = columnFilter;
-      filter(store, columnName, conditionFn!, state);
-    }
-  }
-
   finishEditing(store, rowKey, columnName, value);
 }
 

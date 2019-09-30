@@ -1,6 +1,6 @@
 import { options } from 'preact';
 
-export function occurSyncRendering(fn: Function) {
+export function forceSyncRendering(fn: Function) {
   options.debounceRendering = f => f();
   fn();
   delete options.debounceRendering;
