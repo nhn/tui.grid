@@ -8,10 +8,8 @@ import {
   VAlignType,
   OptSummaryColumnContentMap,
   FilterOptionType,
-  OperatorType,
-  FilterOpt
+  OperatorType
 } from '../types';
-import { Omit } from 'utility-types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
