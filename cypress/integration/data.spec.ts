@@ -148,6 +148,21 @@ describe('removeRow()', () => {
         expect(res).to.eql({ rowKey: null, columnName: null, value: null });
       });
   });
+
+  it('should reduce the height after removing the row', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+    cy.createGrid({ data, columns, bodyHeight: 50, minBodyHeight: 50 });
+    cy.get(`.${cls('body-container')}`)
+      .invoke('height')
+      .then(prevHeight => {
+        cy.gridInstance().invoke('removeRow', 1);
+        cy.get('.tui-grid-body-area')
+          .invoke('height')
+          .should('be.lt', prevHeight);
+      });
+  });
 });
 
 describe('removeCheckedRows()', () => {
