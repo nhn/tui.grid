@@ -35,6 +35,8 @@ export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
 
+export type MovingTabMode = 'editing' | 'view';
+
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
 export type SortingType = 'asc' | 'desc';
@@ -397,6 +399,7 @@ export interface Focus {
   navigating: boolean;
   rowKey: RowKey | null;
   editingEvent: EditingEvent;
+  movingTabMode: MovingTabMode;
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;

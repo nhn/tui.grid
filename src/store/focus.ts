@@ -1,4 +1,4 @@
-import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './types';
+import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent, MovingTabMode } from './types';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
@@ -10,6 +10,7 @@ interface FocusOption {
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   editingEvent: EditingEvent;
+  movingTabMode: MovingTabMode;
   id: number;
 }
 
@@ -19,6 +20,7 @@ export function create({
   rowCoords,
   columnCoords,
   editingEvent,
+  movingTabMode,
   id
 }: FocusOption): Observable<Focus> {
   return observable({
@@ -30,6 +32,7 @@ export function create({
     editingEvent,
     navigating: false,
     forcedDestroyEditing: false,
+    movingTabMode,
 
     get side(this: Focus) {
       if (this.columnName === null) {

@@ -31,6 +31,7 @@ export function createStore(id: number, options: OptGrid): Store {
     selectionUnit = 'cell',
     showDummyRows = false,
     editingEvent = 'dblclick',
+    movingTabMode = 'editing',
     scrollX,
     scrollY,
     useClientSort = true,
@@ -93,7 +94,15 @@ export function createStore(id: number, options: OptGrid): Store {
     columnCoords,
     showDummyRows
   });
-  const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent, id });
+  const focus = createFocus({
+    data,
+    column,
+    columnCoords,
+    rowCoords,
+    editingEvent,
+    movingTabMode,
+    id
+  });
   const summary = createSummary({ column, data, summary: summaryOptions });
   const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
   const renderState = createRenderState(data);
