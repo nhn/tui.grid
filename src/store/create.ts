@@ -31,7 +31,7 @@ export function createStore(id: number, options: OptGrid): Store {
     selectionUnit = 'cell',
     showDummyRows = false,
     editingEvent = 'dblclick',
-    movingTabMode = 'editing',
+    tabMode = 'moveAndEdit',
     scrollX,
     scrollY,
     useClientSort = true,
@@ -100,7 +100,7 @@ export function createStore(id: number, options: OptGrid): Store {
     columnCoords,
     rowCoords,
     editingEvent,
-    movingTabMode,
+    tabMode,
     id
   });
   const summary = createSummary({ column, data, summary: summaryOptions });

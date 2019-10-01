@@ -33,7 +33,7 @@ export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
 
-export type MovingTabMode = 'editing' | 'view';
+export type TabMode = 'move' | 'moveAndEdit';
 
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
@@ -397,7 +397,7 @@ export interface Focus {
   navigating: boolean;
   rowKey: RowKey | null;
   editingEvent: EditingEvent;
-  movingTabMode: MovingTabMode;
+  tabMode: TabMode;
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;

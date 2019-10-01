@@ -501,7 +501,7 @@ declare namespace tuiGrid {
 
   type SelectionUnit = 'cell' | 'row';
   type EditingEvent = 'click' | 'dblclick';
-  type MovingTabMode = 'editing' | 'view';
+  type TabMode = 'move' | 'moveAndEdit';
 
   interface IGridOptions {
     el: HTMLElement;
@@ -530,7 +530,7 @@ declare namespace tuiGrid {
     usageStatistics?: boolean;
     onGridMounted?: Function;
     onGridBeforeDestroy?: Function;
-    movingTabMode?: MovingTabMode;
+    tabMode?: TabMode;
   }
 
   class Pagination {

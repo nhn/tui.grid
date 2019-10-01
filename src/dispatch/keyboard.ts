@@ -89,7 +89,7 @@ export function moveTabFocus(store: Store, command: TabCommandType) {
     changeFocus(store, nextRowKey, nextColumnName, id);
 
     if (
-      focus.movingTabMode === 'editing' &&
+      focus.tabMode === 'moveAndEdit' &&
       isCellEditable(data, column, nextRowKey, nextColumnName)
     ) {
       setTimeout(() => {
