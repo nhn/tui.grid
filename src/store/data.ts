@@ -489,7 +489,9 @@ export function create({
     },
 
     get filteredIndex(this: Data) {
-      return this.filteredRawData.map(row => findIndexByRowKey(this, column, id, row.rowKey));
+      return this.filteredRawData.map(row =>
+        findIndexByRowKey(this, column, id, row.rowKey, false)
+      );
     },
 
     get filteredViewData(this: Data) {
