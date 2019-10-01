@@ -106,7 +106,7 @@ function resetActiveColumnAddress(store: Store) {
   }
 
   const { type, state, columnName } = activeFilterState;
-  if (type !== 'select' && state.length) {
+  if (type !== 'select' && !state.length) {
     unfilter(store, columnName);
   } else if (type === 'select') {
     const columnData = uniq(mapProp(columnName, rawData));
