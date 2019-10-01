@@ -11,7 +11,8 @@ import {
   Validation,
   RowKey,
   ComplexColumnInfo,
-  SortingType
+  SortingType,
+  TabMode
 } from './store/types';
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
@@ -40,6 +41,7 @@ export interface OptGrid {
   scrollX?: boolean;
   scrollY?: boolean;
   editingEvent?: EditingEvent;
+  tabMode?: TabMode;
   rowHeaders?: OptRowHeader[];
   summary?: OptSummaryData;
   useClientSort?: boolean;

@@ -4,12 +4,11 @@ import { connect } from './hoc';
 import { CellValue, RowKey, ColumnInfo, SortState, Filter } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
-import { keyNameMap } from '../helper/keyboard';
+import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
 import { isFunction, findPropIndex, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
-import { KeyNameMap } from '../types';
 
 interface StoreProps {
   left?: number;
@@ -72,8 +71,16 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private contentEl?: HTMLElement;
 
+  private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
+    const { dispatch } = this.props;
+
+    ev.preventDefault();
+    dispatch('moveTabFocus', command);
+    dispatch('setScrollToFocus');
+  }
+
   private handleKeyDown = (ev: KeyboardEvent) => {
-    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const keyName = getKeyStrokeString(ev);
 
     switch (keyName) {
       case 'enter':
@@ -81,6 +88,12 @@ export class EditingLayerInnerComp extends Component<Props> {
         break;
       case 'esc':
         this.finishEditing(false);
+        break;
+      case 'tab':
+        this.moveTabFocus(ev, 'nextCell');
+        break;
+      case 'shift-tab':
+        this.moveTabFocus(ev, 'prevCell');
         break;
       default:
       // do nothing;

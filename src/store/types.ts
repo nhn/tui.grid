@@ -8,10 +8,8 @@ import {
   VAlignType,
   OptSummaryColumnContentMap,
   FilterOptionType,
-  OperatorType,
-  FilterOpt
+  OperatorType
 } from '../types';
-import { Omit } from 'utility-types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
 
@@ -34,6 +32,8 @@ export type CellIndex = [number, number];
 export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
+
+export type TabMode = 'move' | 'moveAndEdit';
 
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
@@ -397,6 +397,7 @@ export interface Focus {
   navigating: boolean;
   rowKey: RowKey | null;
   editingEvent: EditingEvent;
+  tabMode: TabMode;
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;

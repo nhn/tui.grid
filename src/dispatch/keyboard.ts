@@ -1,5 +1,5 @@
 import { Store, RowKey, SelectionRange, Range } from '../store/types';
-import { KeyboardEventCommandType } from '../helper/keyboard';
+import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
@@ -54,7 +54,8 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   }
 }
 
-export function editFocus({ focus, data, column }: Store, command: KeyboardEventCommandType) {
+export function editFocus(store: Store, command: KeyboardEventCommandType) {
+  const { focus, data, column } = store;
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
@@ -64,6 +65,38 @@ export function editFocus({ focus, data, column }: Store, command: KeyboardEvent
   if (command === 'currentCell' && isCellEditable(data, column, rowKey, columnName)) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
+  } else if (command === 'nextCell' || command === 'prevCell') {
+    // move prevCell or nextCell by tab keyMap
+    moveTabFocus(store, command);
+  }
+}
+
+export function moveTabFocus(store: Store, command: TabCommandType) {
+  const { focus, data, column, id } = store;
+  const { visibleColumnsWithRowHeader } = column;
+  const { rowKey, columnName, rowIndex, totalColumnIndex: columnIndex } = focus;
+
+  if (rowKey === null || columnName === null || rowIndex === null || columnIndex === null) {
+    return;
+  }
+
+  const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
+  const nextRowKey = data.filteredRawData[nextRowIndex].rowKey;
+  const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
+
+  if (!isRowHeader(nextColumnName)) {
+    focus.navigating = true;
+    changeFocus(store, nextRowKey, nextColumnName, id);
+
+    if (
+      focus.tabMode === 'moveAndEdit' &&
+      isCellEditable(data, column, nextRowKey, nextColumnName)
+    ) {
+      setTimeout(() => {
+        focus.navigating = false;
+        focus.editingAddress = { rowKey: nextRowKey, columnName: nextColumnName };
+      });
+    }
   }
 }
 

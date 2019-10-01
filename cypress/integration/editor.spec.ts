@@ -278,3 +278,34 @@ it('should renering of the editing cell is syncronous', () => {
         .true;
     });
 });
+
+// @TODO: cannot pass the test in headless mode, need to ask this issue
+// it('should not copy prev value as moving the editing cell by tab keyMap', () => {
+//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+//   cy.createGrid({ data, columns });
+//   cy.gridInstance().invoke('startEditing', 0, 'name');
+//   cy.get(`.${cls('content-text')}`).tab();
+
+//   cy.get(`.${cls('content-text')}`)
+//     .invoke('val')
+//     .should('eq', '20');
+
+//   cy.get(`.${cls('content-text')}`).tab({ shift: true });
+
+//   cy.get(`.${cls('content-text')}`)
+//     .invoke('val')
+//     .should('eq', 'Lee');
+// });
+
+// it('should destroy the editing cell as next cell is not editable cell on moving by tab keyMap', () => {
+//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+//   cy.createGrid({ data, columns });
+//   cy.gridInstance().invoke('startEditing', 0, 'name');
+//   cy.get(`.${cls('content-text')}`).tab();
+
+//   cy.get(`.${cls('content-text')}`).should('be.not.visible');
+// });
