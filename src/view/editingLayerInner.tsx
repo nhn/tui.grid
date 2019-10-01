@@ -24,6 +24,7 @@ interface StoreProps {
   filter?: Filter;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
+  forcedDestroyEditing: boolean;
 }
 
 interface OwnProps {
@@ -33,6 +34,39 @@ interface OwnProps {
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
+/**
+ * Process of unmounting the Editing layer
+ * 1. In case of controlling by the keyMap
+ * - Step 1: call the handleKeyDown method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 2. In case of controlling by clicking another cell
+ * - Step 1: call the componentWillReceiveProps lifecycle method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 3. In case of controlling by finishEditing grid API with value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName', 'someValue');)
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: call the finishEditing function in dispatch/focus.ts
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 4. In case of controlling by finishEditing grid API with 'undefined' value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName');)
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: editingAddress will be 'null'.
+ * - Step 3: call the componentWillUnmount lifecycle method.
+ * - Step 4: dispath the finishEditing(due to forcedDestroyEditing prop is 'true').
+ * - Step 5: occur the editingFinish event(editingAddress is already 'null').
+ * - Step 6: the layer is unmounted.
+ */
 export class EditingLayerInnerComp extends Component<Props> {
   private editor?: CellEditor;
 
@@ -55,18 +89,10 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     if (this.editor) {
-      const { dispatch, rowKey, columnName, sortState, filter } = this.props;
+      const { dispatch, rowKey, columnName } = this.props;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
-        const sortIndex = findPropIndex('columnName', columnName, sortState.columns);
-        if (sortIndex !== -1) {
-          dispatch('sort', columnName, sortState.columns[sortIndex].ascending, true, false);
-        }
-        if (filter) {
-          const { conditionFn, state } = filter;
-          dispatch('filter', columnName, conditionFn!, state);
-        }
       }
       dispatch('finishEditing', rowKey, columnName, value);
     }
@@ -97,7 +123,9 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentWillUnmount() {
-    this.finishEditing(false);
+    if (this.props.forcedDestroyEditing) {
+      this.finishEditing(true);
+    }
     if (this.editor && this.editor.beforeDestroy) {
       this.editor.beforeDestroy();
     }
@@ -135,13 +163,20 @@ export class EditingLayerInnerComp extends Component<Props> {
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
-  const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
+  const {
+    cellPosRect,
+    side,
+    columnName: focusedColumnName,
+    rowKey: focusedRowKey,
+    forcedDestroyEditing
+  } = focus;
   const { filteredViewData, sortState } = data;
   const state = {
     grid: getInstance(id),
     sortState,
     focusedColumnName,
-    focusedRowKey
+    focusedRowKey,
+    forcedDestroyEditing
   };
 
   if (isNull(cellPosRect)) {

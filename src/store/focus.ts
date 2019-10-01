@@ -29,6 +29,7 @@ export function create({
     editingAddress: null,
     editingEvent,
     navigating: false,
+    forcedDestroyEditing: false,
 
     get side(this: Focus) {
       if (this.columnName === null) {

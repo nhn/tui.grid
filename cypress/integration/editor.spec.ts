@@ -250,3 +250,31 @@ it('cannot save the value and finish the editing on hidden cell', () => {
 
   cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
 });
+
+it('should renering of the editing cell is syncronous', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+  const stub = cy.stub();
+
+  cy.createGrid({ data, columns });
+
+  cy.gridInstance().invoke('on', 'editingFinish', stub);
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.get(`.${cls('content-text')}`).type('Kim');
+  cy.gridInstance().invoke('finishEditing', 0, 'name');
+
+  cy.gridInstance()
+    .invoke('getValue', 0, 'name')
+    .should('eq', 'Kim');
+
+  cy.gridInstance().invoke('startEditing', 1, 'name');
+  cy.get(`.${cls('content-text')}`)
+    .invoke('val')
+    .should('eq', 'Han')
+    .and(() => {
+      expect(stub).to.be.calledOnce;
+      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, stub.args[0][0])).to.be
+        .true;
+    });
+});
