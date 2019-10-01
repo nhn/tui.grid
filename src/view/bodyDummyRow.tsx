@@ -15,7 +15,7 @@ interface StoreProps {
 type Props = OwnProps & StoreProps;
 
 const BodyDummyRowComp = ({ columnNames, rowHeight, index }: Props) => {
-  const isOddRow = !!(index % 2);
+  const isOddRow = index % 2 === 0;
 
   return (
     <tr style={{ height: rowHeight }} class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'])}>
