@@ -40,6 +40,7 @@ interface StoreProps {
   eventBus: EventBus;
   scrollX: boolean;
   scrollY: boolean;
+  hoveredRowKey: RowKey | null;
 }
 
 interface TouchEventInfo {
@@ -59,8 +60,6 @@ const TAP_THRESHOLD = 10;
 
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
-
-  private hoveredRowKey: RowKey | null = null;
 
   private touchEvent: TouchEventInfo = {
     start: false,
@@ -128,15 +127,15 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus, dispatch } = this.props;
+    const { eventBus, dispatch, hoveredRowKey } = this.props;
     const gridEvent = new GridEvent({ event });
     const rowKey = this.getCellRowKey(event.target as HTMLElement);
 
     if (!isNull(rowKey)) {
-      dispatch('removeRowClassName', this.hoveredRowKey!, cls('row-hover'));
+      dispatch('removeRowClassName', hoveredRowKey!, cls('row-hover'));
 
-      if (this.hoveredRowKey !== rowKey) {
-        this.hoveredRowKey = rowKey;
+      if (hoveredRowKey !== rowKey) {
+        dispatch('setHoveredRowKey', rowKey);
         dispatch('addRowClassName', rowKey, cls('row-hover'));
       }
     }
@@ -177,12 +176,12 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseout = (event: MouseEvent) => {
-    const { eventBus, dispatch } = this.props;
+    const { eventBus, dispatch, hoveredRowKey } = this.props;
     const gridEvent = new GridEvent({ event });
 
-    if (!isNull(this.hoveredRowKey)) {
-      dispatch('removeRowClassName', this.hoveredRowKey, cls('row-hover'));
-      this.hoveredRowKey = null;
+    if (!isNull(hoveredRowKey)) {
+      dispatch('removeRowClassName', hoveredRowKey, cls('row-hover'));
+      dispatch('setHoveredRowKey', null);
     }
 
     /**
@@ -375,7 +374,7 @@ export class ContainerComp extends Component<Props> {
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords, data, filterLayerState }) => ({
+  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
@@ -392,6 +391,7 @@ export const Container = connect<StoreProps, OwnProps>(
     viewData: data.viewData,
     eventBus: getEventBus(id),
     scrollX: dimension.scrollX,
-    scrollY: dimension.scrollY
+    scrollY: dimension.scrollY,
+    hoveredRowKey: renderState.hoveredRowKey
   })
 )(ContainerComp);
