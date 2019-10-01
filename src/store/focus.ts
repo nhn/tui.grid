@@ -1,6 +1,6 @@
 import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './types';
 import { Observable, observable } from '../helper/observable';
-import { someProp, findPropIndex } from '../helper/common';
+import { someProp, findPropIndex, isEmpty } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
 import { findIndexByRowKey } from '../query/data';
 
@@ -69,6 +69,23 @@ export function create({
         return null;
       }
       return findIndexByRowKey(data, column, id, rowKey);
+    },
+
+    get originalRowIndex(this: Focus) {
+      const { rowIndex } = this;
+      const { pageOptions } = data;
+
+      if (rowIndex === null) {
+        return null;
+      }
+
+      if (!isEmpty(pageOptions)) {
+        const { perPage, page } = pageOptions;
+
+        return rowIndex + (page - 1) * perPage;
+      }
+
+      return rowIndex;
     },
 
     get cellPosRect(this: Focus) {
