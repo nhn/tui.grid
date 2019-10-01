@@ -418,7 +418,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     equalColumnData('date', '2019.09.18');
     compareColumnCellLength(3);
   });
@@ -430,7 +430,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     notEqualColumnData('date', '2019.09.18');
     compareColumnCellLength(6);
   });
@@ -442,7 +442,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) > getUnixTime('2019/09/18')).to.be.true;
@@ -458,7 +458,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) >= getUnixTime('2019/09/18')).to.be.true;
@@ -474,7 +474,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) < getUnixTime('2019/09/18')).to.be.true;
@@ -490,7 +490,7 @@ describe('date', () => {
       .focus()
       .click();
     // 2019.09.18 timestamp
-    cy.get(`[data-timestamp=1568732400000]`).click();
+    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) <= getUnixTime('2019/09/18')).to.be.true;
