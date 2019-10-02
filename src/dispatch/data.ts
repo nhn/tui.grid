@@ -273,7 +273,7 @@ function applyPasteDataToRawData(
   }
 }
 
-function getSelectionRange(range: SelectionRange, pageOptions: PageOptions) {
+function getSelectionRange(range: SelectionRange, pageOptions: PageOptions): SelectionRange {
   if (!isEmpty(pageOptions)) {
     const { row, column } = range;
     const { perPage, page } = pageOptions;
@@ -282,7 +282,7 @@ function getSelectionRange(range: SelectionRange, pageOptions: PageOptions) {
     return {
       row: [row[0] - prevPageRowCount, row[1] - prevPageRowCount],
       column
-    } as SelectionRange;
+    };
   }
 
   return range;
@@ -291,9 +291,10 @@ function getSelectionRange(range: SelectionRange, pageOptions: PageOptions) {
 export function paste(store: Store, pasteData: string[][]) {
   const { selection, id, data } = store;
   const { pageOptions } = data;
+  const { originalRange } = selection;
 
-  if (selection.originalRange) {
-    pasteData = copyDataToRange(selection.originalRange, pasteData);
+  if (originalRange) {
+    pasteData = copyDataToRange(originalRange, pasteData);
   }
 
   const rangeToPaste = getRangeToPaste(store, pasteData);

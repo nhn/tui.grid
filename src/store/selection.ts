@@ -174,14 +174,12 @@ export function create({
       };
     },
 
-    get originalRange(this: Selection) {
+    get originalRange(this: Selection): SelectionRange | null {
       if (!this.range) {
         return null;
       }
       const { pageOptions } = data;
-      const {
-        range: { row, column }
-      } = this;
+      const { row, column } = this.range;
 
       if (!isEmpty(pageOptions)) {
         const { perPage, page } = pageOptions;
@@ -189,7 +187,7 @@ export function create({
         return {
           row: [row[0] + prevPageRowCount, row[1] + prevPageRowCount],
           column
-        } as SelectionRange;
+        };
       }
 
       return this.range;

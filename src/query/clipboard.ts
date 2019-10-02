@@ -3,16 +3,16 @@ import { getTextWithCopyOptionsApplied } from '../helper/clipboard';
 
 export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionRange {
   const {
-    selection: { range, originalRange },
+    selection: { originalRange },
     focus: { totalColumnIndex, originalRowIndex },
     column: { visibleColumnsWithRowHeader },
     data: { viewData }
   } = store;
   let startRowIndex, startColumnIndex;
 
-  if (range) {
-    startRowIndex = originalRange!.row[0];
-    startColumnIndex = range.column[0];
+  if (originalRange) {
+    startRowIndex = originalRange.row[0];
+    startColumnIndex = originalRange.column[0];
   } else {
     startRowIndex = originalRowIndex!;
     startColumnIndex = totalColumnIndex!;
@@ -75,12 +75,12 @@ function getValueToString(store: Store) {
 
 function getValuesToString(store: Store) {
   const {
-    selection: { range, originalRange },
+    selection: { originalRange },
     column: { visibleColumnsWithRowHeader },
     data: { filteredViewData, filteredRawData }
   } = store;
 
-  if (!range) {
+  if (!originalRange) {
     return '';
   }
 
