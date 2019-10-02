@@ -34,7 +34,8 @@ import {
   isString,
   isNumber,
   isFunction,
-  findPropIndex
+  findPropIndex,
+  convertToNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
@@ -135,27 +136,31 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   if (required && isBlank(value)) {
     invalidStates.push('REQUIRED');
   }
+
+  if (validatorFn && !validatorFn(value)) {
+    invalidStates.push('VALIDATOR_FN');
+  }
+
   if (dataType === 'string' && !isString(value)) {
     invalidStates.push('TYPE_STRING');
-  }
-  if (dataType === 'number' && !isNumber(value)) {
-    invalidStates.push('TYPE_NUMBER');
-  }
-
-  if (min && isNumber(value) && value < min) {
-    invalidStates.push('MIN');
-  }
-
-  if (max && isNumber(value) && value > max) {
-    invalidStates.push('MAX');
   }
 
   if (regExp && isString(value) && !regExp.test(value)) {
     invalidStates.push('REGEXP');
   }
 
-  if (validatorFn && !validatorFn(value)) {
-    invalidStates.push('VALIDATOR_FN');
+  const numberValue = convertToNumber(value);
+
+  if (dataType === 'number' && !isNumber(numberValue)) {
+    invalidStates.push('TYPE_NUMBER');
+  }
+
+  if (min && isNumber(numberValue) && numberValue < min) {
+    invalidStates.push('MIN');
+  }
+
+  if (max && isNumber(numberValue) && numberValue > max) {
+    invalidStates.push('MAX');
   }
 
   return invalidStates;

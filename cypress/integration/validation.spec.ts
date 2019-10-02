@@ -49,7 +49,7 @@ describe('validate changed value', () => {
       columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }]
     });
 
-    cy.gridInstance().invoke('setValue', 0, 'price', 'test');
+    cy.gridInstance().invoke('setValue', 0, 'price', 0);
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
 
