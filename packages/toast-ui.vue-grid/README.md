@@ -136,7 +136,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Ex
 
     | Type | Required |
     | --- | --- |
-    | Array | O |
+    | Array or Object | O |
 
     These props are row and colume data of the grid. If you change `rowData` or `columnData`, the grid is rendered to change data.
 
@@ -215,6 +215,16 @@ After then you can use methods through `this.$refs`. We provide `getRootElement`
     const info = this.$refs.tuiGrid.invoke('getFocusedCell');
     this.$refs.tuiGrid.invoke('setWidth', 500);
     ```
+
+## Static Methods
+The wrapper component does not provide a way to call [static methods of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#applyTheme). If you want to use static methods such as `applyTheme` or `setLanguage` you should use it via importing tui-grid directly.
+
+```js
+import TuiGrid from 'tui-grid';
+
+TuiGrid.setLanguage('ko');
+TuiGrid.applyTheme('striped');
+```
 
 ## 🔧 Pull Request Steps
 

@@ -111,7 +111,7 @@ You can use `rowData`, `columnData`, `options`, `theme` and `language` props.
 
     | Type | Required |
     | --- | --- |
-    | Array | O |
+    | Array | Object | O |
 
     These props are row and colume data of the grid. If you change `rowData` or `columnData`, the grid is rendered to change data.
 

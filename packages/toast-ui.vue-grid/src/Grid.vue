@@ -25,6 +25,7 @@ export default {
         return {};
       }
     },
+    // @deprecated. You should use it via importing tui-grid directly.
     theme: {
       type: [String, Object],
       validator(value) {
@@ -38,6 +39,7 @@ export default {
         return result;
       }
     },
+    // @deprecated. You should use it via importing tui-grid directly.
     language: {
       type: [String, Object],
       validator(value) {
@@ -53,11 +55,12 @@ export default {
     }
   },
   mounted() {
-    const options = Object.assign({}, this.options, {
+    const options = Object.assign(this.options, this.$attrs, {
       el: this.$refs.tuiGrid,
       data: this.data,
       columns: this.columns
     });
+
     this.gridInstance = new Grid(options);
     this.addEventListeners();
     this.applyTheme();
@@ -76,6 +79,7 @@ export default {
         this.gridInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
       }
     },
+    // @deprecated. You should use it via importing tui-grid directly.
     applyTheme() {
       if (this.theme) {
         if (typeof this.theme === 'string') {
@@ -85,6 +89,7 @@ export default {
         }
       }
     },
+    // @deprecated. You should use it via importing tui-grid directly.
     setLanguage() {
       if (this.language) {
         if (typeof this.language === 'string') {
