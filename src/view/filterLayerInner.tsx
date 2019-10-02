@@ -7,11 +7,13 @@ import { TextFilter } from './textFilter';
 import { DatePickerFilter } from './datePickerFilter';
 import { FilterOperator } from './filterOperator';
 import { SelectFilter } from './selectFilter';
+import { some } from '../helper/common';
 
 interface StoreProps {
   filters: Filter[] | null;
   columnInfo: ColumnInfo;
   renderSecondFilter: boolean;
+  currentColumnActive: boolean;
 }
 
 interface OwnProps {
@@ -39,14 +41,22 @@ export class FilterLayerInnerComp extends Component<Props> {
   };
 
   public render() {
-    const { columnAddress, columnInfo, renderSecondFilter, dispatch } = this.props;
+    const {
+      columnAddress,
+      columnInfo,
+      renderSecondFilter,
+      dispatch,
+      currentColumnActive
+    } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
     const { left } = columnAddress;
 
     return (
       <div className={cls('filter-container')} style={{ left }}>
         <div>
-          <span className={cls('btn-filter', 'filter-icon-active')} />
+          <span
+            className={cls('btn-filter', [currentColumnActive, 'btn-filter-active'], 'filter-icon')}
+          />
           <a
             className={cls('btn-close')}
             onClick={() => {
@@ -90,6 +100,8 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
   const { allColumnMap } = column;
 
   const activeFilterState = filterLayerState.activeFilterState!;
+  const currentColumnActive =
+    filters && some(item => item.columnName === columnAddress.name, filters);
 
   const renderSecondFilter = !!(
     activeFilterState.type !== 'select' &&
@@ -102,6 +114,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
     columnInfo: allColumnMap[columnAddress.name],
     columnAddress,
     filters,
-    renderSecondFilter
+    renderSecondFilter,
+    currentColumnActive
   };
 })(FilterLayerInnerComp);
