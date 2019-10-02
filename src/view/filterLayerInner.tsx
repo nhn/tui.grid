@@ -101,7 +101,7 @@ export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAd
 
   const activeFilterState = filterLayerState.activeFilterState!;
   const currentColumnActive =
-    filters && some(item => item.columnName === columnAddress.name, filters);
+    !!filters && some(item => item.columnName === columnAddress.name, filters);
 
   const renderSecondFilter = !!(
     activeFilterState.type !== 'select' &&
