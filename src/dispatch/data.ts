@@ -404,14 +404,17 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, renderState, focus, column } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
-  const nextRow = rawData[rowIdx + 1];
-  const removedRow = rawData.splice(rowIdx, 1)[0];
 
-  if (!removedRow) {
+  if (rowIdx === -1) {
     return;
   }
 
+  const nextRow = rawData[rowIdx + 1];
+  const removedRow = rawData.splice(rowIdx, 1)[0];
+
   viewData.splice(rowIdx, 1);
+  rowCoords.heights.splice(rowIdx, 1);
+
   if (pageOptions.useClient) {
     data.pageOptions = {
       ...pageOptions,
