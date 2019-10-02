@@ -3,7 +3,6 @@ import { cls } from '../../src/helper/dom';
 import { sortData as sampleData } from '../../samples/basic';
 import Grid from '../../src/grid';
 import { OptGrid, OptColumn, CellValue } from '../../src/types';
-import { isSubsetOf } from '../helper/compare';
 import { getUnixTime } from '@/helper/filter';
 
 interface GridGlobal {
@@ -212,18 +211,13 @@ describe('filter API', () => {
     cy.gridInstance()
       .invoke('getFilterState')
       .should(filterState => {
-        expect(
-          isSubsetOf(
-            [
-              {
-                columnName: 'alphabetA',
-                state: [{ code: 'eq', value: 'A' }],
-                type: 'text'
-              }
-            ],
-            filterState
-          )
-        ).to.be.true;
+        expect(filterState).to.contain.subset([
+          {
+            columnName: 'alphabetA',
+            state: [{ code: 'eq', value: 'A' }],
+            type: 'text'
+          }
+        ]);
       });
     cy.gridInstance().invoke('filter', 'alphabetA', [
       { code: 'eq', value: 'A' },
@@ -232,19 +226,14 @@ describe('filter API', () => {
     cy.gridInstance()
       .invoke('getFilterState')
       .should(filterState => {
-        expect(
-          isSubsetOf(
-            [
-              {
-                columnName: 'alphabetA',
-                state: [{ code: 'eq', value: 'A' }, { code: 'ne', value: 'B' }],
-                type: 'text',
-                operator: 'AND'
-              }
-            ],
-            filterState
-          )
-        ).to.be.true;
+        expect(filterState).to.contain.subset([
+          {
+            columnName: 'alphabetA',
+            state: [{ code: 'eq', value: 'A' }, { code: 'ne', value: 'B' }],
+            type: 'text',
+            operator: 'AND'
+          }
+        ]);
       });
   });
 

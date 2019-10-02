@@ -71,6 +71,17 @@ describe('appendRow()', () => {
         expect(row.rowKey).to.be.eq(0);
       });
   });
+
+  it('should insert empty value for each column as append the empty row', () => {
+    cy.gridInstance().invoke('appendRow', {});
+
+    cy.gridInstance()
+      .invoke('getModifiedRows')
+      .should(res => {
+        const appendedRow = res.createdRows[0];
+        expect(appendedRow).to.contain({ name: '', age: '' });
+      });
+  });
 });
 
 describe('prependRow()', () => {

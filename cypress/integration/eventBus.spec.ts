@@ -1,6 +1,5 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
-import { isSubsetOf } from '../helper/compare';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [
@@ -31,8 +30,11 @@ it('click', () => {
   cy.getCell(1, 'name')
     .click()
     .then(() => {
-      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
-        .to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'name',
+        targetType: 'cell'
+      });
     });
 });
 
@@ -43,8 +45,11 @@ it('mouseover', () => {
   cy.getCell(1, 'name')
     .trigger('mouseover')
     .then(() => {
-      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
-        .to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'name',
+        targetType: 'cell'
+      });
     });
 });
 
@@ -55,8 +60,11 @@ it('mousedown', () => {
   cy.getCell(1, 'name')
     .trigger('mousedown')
     .then(() => {
-      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
-        .to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'name',
+        targetType: 'cell'
+      });
     });
 });
 
@@ -79,8 +87,11 @@ it('mouseout', () => {
   cy.getCell(1, 'name')
     .trigger('mouseout')
     .then(() => {
-      expect(isSubsetOf({ rowKey: 1, columnName: 'name', targetType: 'cell' }, callback.args[0][0]))
-        .to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'name',
+        targetType: 'cell'
+      });
     });
 });
 
@@ -91,7 +102,7 @@ it('dblclick', () => {
   cy.get(`.${cls('container')}`)
     .dblclick()
     .then(() => {
-      expect(isSubsetOf({ targetType: 'etc' }, callback.args[0][0])).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({ targetType: 'etc' });
     });
 });
 
@@ -102,22 +113,22 @@ it('focus change', () => {
   cy.getCell(0, 'name')
     .click()
     .then(() => {
-      expect(
-        isSubsetOf(
-          { rowKey: 0, columnName: 'name', prevRowKey: null, prevColumnName: null },
-          callback.args[0][0]
-        )
-      ).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 0,
+        columnName: 'name',
+        prevRowKey: null,
+        prevColumnName: null
+      });
     });
   cy.getCell(1, 'age')
     .click()
     .then(() => {
-      expect(
-        isSubsetOf(
-          { rowKey: 1, columnName: 'age', prevRowKey: 0, prevColumnName: 'name' },
-          callback.args[1][0]
-        )
-      ).to.be.true;
+      expect(callback.args[1][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'age',
+        prevRowKey: 0,
+        prevColumnName: 'name'
+      });
     });
 });
 
@@ -128,23 +139,23 @@ it('focus change by api', () => {
   cy.gridInstance()
     .invoke('focus', 0, 'name')
     .then(() => {
-      expect(
-        isSubsetOf(
-          { rowKey: 0, columnName: 'name', prevRowKey: null, prevColumnName: null },
-          callback.args[0][0]
-        )
-      ).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 0,
+        columnName: 'name',
+        prevRowKey: null,
+        prevColumnName: null
+      });
     });
 
   cy.gridInstance()
     .invoke('blur')
     .then(() => {
-      expect(
-        isSubsetOf(
-          { rowKey: null, columnName: null, prevRowKey: 0, prevColumnName: 'name' },
-          callback.args[1][0]
-        )
-      ).to.be.true;
+      expect(callback.args[1][0]).to.contain.subset({
+        rowKey: null,
+        columnName: null,
+        prevRowKey: 0,
+        prevColumnName: 'name'
+      });
     });
 });
 
@@ -172,11 +183,11 @@ it('check / uncheck', () => {
     .eq(1)
     .click()
     .then(() => {
-      expect(isSubsetOf({ rowKey: 0 }, checkCallback.args[0][0])).to.be.true;
+      expect(checkCallback.args[0][0]).to.contain.subset({ rowKey: 0 });
     })
     .click()
     .then(() => {
-      expect(isSubsetOf({ rowKey: 0 }, uncheckCallback.args[0][0])).to.be.true;
+      expect(uncheckCallback.args[0][0]).to.contain.subset({ rowKey: 0 });
     });
 });
 
@@ -211,8 +222,7 @@ it('selection by api', () => {
   cy.gridInstance()
     .invoke('setSelectionRange', { start: [0, 0], end: [1, 1] })
     .then(() => {
-      expect(isSubsetOf({ range: { column: [0, 1], row: [0, 1] } }, callback.args[0][0])).to.be
-        .true;
+      expect(callback.args[0][0]).to.contain.subset({ range: { column: [0, 1], row: [0, 1] } });
     });
 });
 
@@ -247,12 +257,9 @@ it('sort', () => {
   cy.gridInstance()
     .invoke('sort', 'name', false)
     .then(() => {
-      expect(
-        isSubsetOf(
-          { sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true } },
-          callback.args[0][0]
-        )
-      ).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true }
+      });
     });
 });
 
@@ -306,7 +313,7 @@ it('columnResize', () => {
     .trigger('mousemove', { pageX: 400 })
     .trigger('mouseup')
     .should(() => {
-      expect(isSubsetOf({ columnName: 'name', width: 311 }, callback.args[0][0])).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({ columnName: 'name', width: 311 });
     });
 });
 
@@ -318,8 +325,11 @@ it('editingStart', () => {
   cy.gridInstance()
     .invoke('startEditing', 0, 'name')
     .should(() => {
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, callback.args[0][0])).to.be
-        .true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 0,
+        columnName: 'name',
+        value: 'Kim'
+      });
     });
 });
 
@@ -332,8 +342,11 @@ it('editingFinish', () => {
   cy.gridInstance()
     .invoke('finishEditing', 0, 'name', 'Ryu')
     .should(() => {
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Ryu' }, callback.args[0][0])).to.be
-        .true;
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 0,
+        columnName: 'name',
+        value: 'Ryu'
+      });
     });
 });
 
@@ -345,13 +358,8 @@ it('filter', () => {
   cy.gridInstance()
     .invoke('filter', 'age', [{ code: 'eq', value: 20 }])
     .should(() => {
-      expect(
-        isSubsetOf(
-          {
-            filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
-          },
-          callback.args[0][0]
-        )
-      ).to.be.true;
+      expect(callback.args[0][0]).to.contain.subset({
+        filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
+      });
     });
 });

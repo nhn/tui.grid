@@ -1,5 +1,4 @@
 import { FormatterProps } from '@/store/types';
-import { isSubsetOf } from '../helper/compare';
 import { cls } from '@/helper/dom';
 
 before(() => {
@@ -28,8 +27,8 @@ describe('formatter', () => {
   };
 
   function assertAgeFormatterCallProps(formatterStub: any) {
-    expect(isSubsetOf(ageFormatterProps1, formatterStub.args[0][0])).to.be.true;
-    expect(isSubsetOf(ageFormatterProps2, formatterStub.args[1][0])).to.be.true;
+    expect(formatterStub.args[0][0]).to.contain.subset(ageFormatterProps1);
+    expect(formatterStub.args[1][0]).to.contain.subset(ageFormatterProps2);
   }
 
   it('formatter should be applied to the value', () => {

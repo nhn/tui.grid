@@ -1,6 +1,5 @@
 import { cls } from '../../src/helper/dom';
 import { data } from '../../samples/basic';
-import { isSubsetOf } from '../helper/compare';
 
 before(() => {
   cy.visit('/dist');
@@ -172,12 +171,9 @@ describe('get data that failed validation result by validate api', () => {
     cy.gridInstance()
       .invoke('validate')
       .should(result => {
-        expect(
-          isSubsetOf(
-            [{ errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }],
-            result
-          )
-        ).to.be.true;
+        expect(result).to.include.deep.members([
+          { errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }
+        ]);
       });
   });
 });

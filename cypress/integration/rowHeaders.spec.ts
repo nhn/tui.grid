@@ -1,5 +1,4 @@
 import { data } from '../../samples/basic';
-import { isSubsetOf } from '../helper/compare';
 
 const columns = [
   { name: 'name', minWidth: 150 },
@@ -58,7 +57,7 @@ describe('row header API', () => {
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
       .should(result => {
-        expect(isSubsetOf([0, 2], result)).to.be.true;
+        expect(result).to.include.members([0, 2]);
       });
   });
 
@@ -69,12 +68,10 @@ describe('row header API', () => {
     cy.gridInstance()
       .invoke('getCheckedRows')
       .should(result => {
-        expect(
-          isSubsetOf(
-            [{ rowKey: 0, name: 'Beautiful Lies' }, { rowKey: 2, name: 'Moves Like Jagger' }],
-            result
-          )
-        ).to.be.true;
+        expect(result).to.contain.subset([
+          { rowKey: 0, name: 'Beautiful Lies' },
+          { rowKey: 2, name: 'Moves Like Jagger' }
+        ]);
       });
   });
 
