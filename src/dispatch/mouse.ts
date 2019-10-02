@@ -273,7 +273,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
 }
 
 export function mouseDownHeader(store: Store, name: string, parentHeader: boolean) {
-  const { data, selection, id, column } = store;
+  const { data, selection, id, column, rowCoords } = store;
   const { filteredRawData } = data;
 
   if (!filteredRawData.length) {
@@ -281,7 +281,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
   }
 
   const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
-  const endRowIndex = filteredRawData.length - 1;
+  const endRowIndex = rowCoords.heights.length - 1;
 
   let startColumnIndex, endColumnIndex;
 

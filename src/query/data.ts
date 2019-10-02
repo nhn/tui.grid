@@ -1,5 +1,12 @@
 import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
-import { findProp, isFunction, findPropIndex, isNull, isUndefined } from '../helper/common';
+import {
+  findProp,
+  isFunction,
+  findPropIndex,
+  isNull,
+  isUndefined,
+  isEmpty
+} from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from '../helper/rowSpan';
 import { isHiddenColumn } from '../helper/column';
@@ -61,12 +68,13 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
     return -1;
   }
 
-  const { filteredRawData, sortState } = data;
+  const { filteredRawData, sortState, pageOptions } = data;
+  const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
   if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
-    return findPropIndex('rowKey', rowKey, filteredRawData);
+    return findPropIndex('rowKey', rowKey, filteredRawData) % perPage;
   }
 
   let start = 0;
@@ -81,7 +89,7 @@ export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey
     } else if (rowKey < comparedRowKey) {
       end = mid - 1;
     } else {
-      return mid;
+      return mid % perPage;
     }
   }
 

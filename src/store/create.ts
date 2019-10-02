@@ -104,7 +104,14 @@ export function createStore(id: number, options: OptGrid): Store {
     id
   });
   const summary = createSummary({ column, data, summary: summaryOptions });
-  const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+  const selection = createSelection({
+    selectionUnit,
+    columnCoords,
+    column,
+    dimension,
+    rowCoords,
+    data
+  });
   const renderState = createRenderState(data);
   const filterLayerState = createFilterLayerState();
 

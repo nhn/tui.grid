@@ -1,16 +1,19 @@
 import {
   Column,
   ColumnCoords,
+  Data,
   Dimension,
   Range,
   RowCoords,
   Selection,
+  SelectionRange,
   SelectionType,
   SelectionUnit,
   Side
 } from './types';
 import { Observable, observable } from '../helper/observable';
 import { getSortedRange } from '../helper/selection';
+import { isEmpty } from '../helper/common';
 
 type ColumnWidths = { [key in Side]: number[] };
 
@@ -20,6 +23,7 @@ interface SelectionOptions {
   column: Column;
   dimension: Dimension;
   rowCoords: RowCoords;
+  data: Data;
 }
 
 function getOwnSideColumnRange(
@@ -81,7 +85,8 @@ export function create({
   rowCoords,
   columnCoords,
   column: columnInfo,
-  dimension
+  dimension,
+  data
 }: SelectionOptions): Observable<Selection> {
   return observable({
     inputRange: null,
@@ -167,6 +172,25 @@ export function create({
         row,
         column: [columnStartIndex, columnEndIndex] as Range
       };
+    },
+
+    get originalRange(this: Selection): SelectionRange | null {
+      if (!this.range) {
+        return null;
+      }
+      const { pageOptions } = data;
+      const { row, column } = this.range;
+
+      if (!isEmpty(pageOptions)) {
+        const { perPage, page } = pageOptions;
+        const prevPageRowCount = perPage * (page - 1);
+        return {
+          row: [row[0] + prevPageRowCount, row[1] + prevPageRowCount],
+          column
+        };
+      }
+
+      return this.range;
     }
   });
 }

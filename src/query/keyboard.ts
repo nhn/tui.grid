@@ -102,16 +102,16 @@ export function getNextCellIndex(
 
 export function getRemoveRange(store: Store) {
   const { focus, selection } = store;
-  const { totalColumnIndex, rowIndex } = focus;
-  const { range } = selection;
+  const { totalColumnIndex, originalRowIndex } = focus;
+  const { originalRange } = selection;
 
-  if (range) {
-    return range;
+  if (originalRange) {
+    return originalRange;
   }
-  if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
+  if (!isNull(totalColumnIndex) && !isNull(originalRowIndex)) {
     return {
       column: [totalColumnIndex, totalColumnIndex],
-      row: [rowIndex, rowIndex]
+      row: [originalRowIndex, originalRowIndex]
     };
   }
   return null;

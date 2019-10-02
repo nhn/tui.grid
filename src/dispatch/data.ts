@@ -273,16 +273,33 @@ function applyPasteDataToRawData(
   }
 }
 
-export function paste(store: Store, pasteData: string[][]) {
-  const { selection, id } = store;
+function getSelectionRange(range: SelectionRange, pageOptions: PageOptions): SelectionRange {
+  if (!isEmpty(pageOptions)) {
+    const { row, column } = range;
+    const { perPage, page } = pageOptions;
+    const prevPageRowCount = (page! - 1) * perPage!;
 
-  if (selection.range) {
-    pasteData = copyDataToRange(selection.range, pasteData);
+    return {
+      row: [row[0] - prevPageRowCount, row[1] - prevPageRowCount],
+      column
+    };
+  }
+
+  return range;
+}
+
+export function paste(store: Store, pasteData: string[][]) {
+  const { selection, id, data } = store;
+  const { pageOptions } = data;
+  const { originalRange } = selection;
+
+  if (originalRange) {
+    pasteData = copyDataToRange(originalRange, pasteData);
   }
 
   const rangeToPaste = getRangeToPaste(store, pasteData);
   applyPasteDataToRawData(store, pasteData, rangeToPaste);
-  changeSelectionRange(selection, rangeToPaste, id);
+  changeSelectionRange(selection, getSelectionRange(rangeToPaste, pageOptions), id);
 }
 
 export function setDisabled(store: Store, disabled: boolean) {

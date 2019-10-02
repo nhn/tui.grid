@@ -406,6 +406,7 @@ export interface Focus {
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
+  readonly originalRowIndex: number | null;
   readonly cellPosRect: Rect | null;
 }
 
@@ -452,6 +453,7 @@ export interface Selection {
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
   readonly rangeWithRowHeader: SelectionRange | null;
+  readonly originalRange: SelectionRange | null;
 }
 
 export interface RenderState {
