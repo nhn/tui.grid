@@ -12,7 +12,7 @@ export default {
   name: 'TuiGrid',
   props: {
     data: {
-      type: Array,
+      type: [Array, Object],
       required: true
     },
     columns: {
