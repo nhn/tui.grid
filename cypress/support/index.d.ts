@@ -6,6 +6,9 @@
 
 declare namespace Cypress {
   interface Chainable<Subject> {
+    (chainer: 'be.subset'): Chainable<Subject>;
+    (chainer: 'be.foo'): Chainable<Subject>;
+
     getCell(rowKey: number | string, column: string): Chainable<any>;
 
     getCellByIdx(rowIdx: number, columnIdx: number): Chainable<any>;
@@ -19,5 +22,11 @@ declare namespace Cypress {
     gridInstance(): Chainable<any>;
 
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
+  }
+}
+
+declare namespace Chai {
+  interface Include {
+    subset(subset: any): Assertion;
   }
 }

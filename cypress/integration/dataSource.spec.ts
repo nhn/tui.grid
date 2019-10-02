@@ -2,7 +2,6 @@ import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
-import { isSubsetOf } from '../helper/compare';
 import { Dictionary } from '@/store/types';
 
 const columns = [
@@ -97,7 +96,7 @@ function assertRequestCallArgs(requestStub: any, args?: any) {
       status: 200
     }
   };
-  expect(isSubsetOf(args || defaultArgs, requestStub.args[0][0])).to.be.true;
+  expect(requestStub.args[0][0]).to.contain.subset(args || defaultArgs);
 }
 
 before(() => {

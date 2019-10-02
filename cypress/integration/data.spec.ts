@@ -1,7 +1,6 @@
 import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
 import { Row } from '@/store/types';
-import { isSubsetOf } from '../helper/compare';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
@@ -73,14 +72,14 @@ describe('appendRow()', () => {
       });
   });
 
-  it.only('should insert empty value for each column as append the empty row', () => {
+  it('should insert empty value for each column as append the empty row', () => {
     cy.gridInstance().invoke('appendRow', {});
 
     cy.gridInstance()
       .invoke('getModifiedRows')
       .should(res => {
         const appendedRow = res.createdRows[0];
-        expect(isSubsetOf({ name: '', age: '' }, appendedRow)).to.be.true;
+        expect(appendedRow).to.contain({ name: '', age: '' });
       });
   });
 });

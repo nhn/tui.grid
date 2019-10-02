@@ -5,7 +5,8 @@ module.exports = {
   globals: {
     cy: 'readonly',
     Cypress: 'readonly',
-    expect: 'readonly'
+    expect: 'readonly',
+    chai: 'readonly'
   },
   rules: {
     'newline-before-return': 0,

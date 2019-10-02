@@ -1,4 +1,3 @@
-import { isSubsetOf } from '../helper/compare';
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
@@ -67,10 +66,8 @@ it('onBeforeChange / onAfterChange must be called with gridEvent object', () => 
   cy.getCell(1, 'age')
     .click()
     .then(() => {
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, beforeCallback.args[0][0]))
-        .to.be.true;
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, afterCallback.args[0][0]))
-        .to.be.true;
+      expect(beforeCallback.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
+      expect(afterCallback.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
     });
 });
 
@@ -274,8 +271,7 @@ it('should renering of the editing cell is syncronous', () => {
     .should('eq', 'Han')
     .and(() => {
       expect(stub).to.be.calledOnce;
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, stub.args[0][0])).to.be
-        .true;
+      expect(stub.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
     });
 });
 
