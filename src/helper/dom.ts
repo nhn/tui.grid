@@ -68,7 +68,7 @@ export type ClassNameType =
   | 'filter-list'
   | 'filter-list-item'
   | 'filter-list-item-checked'
-  | 'filter-icon-active'
+  | 'filter-icon'
   | 'header-area'
   | 'height-resize-handle'
   | 'layer-focus'
