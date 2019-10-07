@@ -67,7 +67,7 @@ If you are adding new commands or features, they must include tests.
 If you are changing functionality, update the tests if you need to.
 
 #### Commit
-Follow our [commit message conventions](./docs/COMMIT_MESSAGE_CONVENTION.md).
+Follow our [commit message conventions](docs/COMMIT_MESSAGE_CONVENTION.md).
 
 ### Yes! Pull request
 Make your pull request, then describe your changes.
@@ -83,7 +83,7 @@ Follow other PR title format on below.
 
 #### Description
 If it has related to issues, add links to the issues(like `#123`) in the description.
-Fill in the [Pull Request Template](./docs/PULL_REQUEST_TEMPLATE.md) by check your case.
+Fill in the [Pull Request Template](docs/PULL_REQUEST_TEMPLATE.md) by check your case.
 
 ## Code of Conduct
 This project and everyone participating in it is governed by the [Code of Conducting](CODE_OF_CONDUCTING.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@nhn.com.
