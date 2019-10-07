@@ -18,23 +18,32 @@ interface StoreProps {
 
 interface OwnProps {
   columnAddress: ActiveColumnAddress;
+  filterState: Filter;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
   private renderFilter = (index: number) => {
-    const { columnAddress, columnInfo } = this.props;
+    const { columnAddress, filterState, columnInfo } = this.props;
     const type = columnInfo.filter!.type;
 
     switch (type) {
       case 'text':
       case 'number':
-        return <TextFilter columnAddress={columnAddress} filterIndex={index} />;
+        return (
+          <TextFilter columnAddress={columnAddress} filterState={filterState} filterIndex={index} />
+        );
       case 'date':
-        return <DatePickerFilter columnAddress={columnAddress} filterIndex={index} />;
+        return (
+          <DatePickerFilter
+            columnAddress={columnAddress}
+            filterState={filterState}
+            filterIndex={index}
+          />
+        );
       case 'select':
-        return <SelectFilter columnAddress={columnAddress} />;
+        return <SelectFilter columnAddress={columnAddress} filterState={filterState} />;
       default:
         return null;
     }
@@ -94,27 +103,28 @@ export class FilterLayerInnerComp extends Component<Props> {
   }
 }
 
-export const FilterLayerInner = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
-  const { data, column, filterLayerState } = store;
-  const { filters } = data;
-  const { allColumnMap } = column;
+export const FilterLayerInner = connect<StoreProps, OwnProps>(
+  (store, { columnAddress, filterState }) => {
+    const { data, column } = store;
+    const { filters } = data;
+    const { allColumnMap } = column;
 
-  const activeFilterState = filterLayerState.activeFilterState!;
-  const currentColumnActive =
-    !!filters && some(item => item.columnName === columnAddress.name, filters);
+    const currentColumnActive =
+      !!filters && some(item => item.columnName === columnAddress.name, filters);
 
-  const renderSecondFilter = !!(
-    activeFilterState.type !== 'select' &&
-    activeFilterState.operator &&
-    activeFilterState.state[0] &&
-    activeFilterState.state[0].value.length
-  );
+    const renderSecondFilter = !!(
+      filterState.type !== 'select' &&
+      filterState.operator &&
+      filterState.state[0] &&
+      filterState.state[0].value.length
+    );
 
-  return {
-    columnInfo: allColumnMap[columnAddress.name],
-    columnAddress,
-    filters,
-    renderSecondFilter,
-    currentColumnActive
-  };
-})(FilterLayerInnerComp);
+    return {
+      columnInfo: allColumnMap[columnAddress.name],
+      columnAddress,
+      filters,
+      renderSecondFilter,
+      currentColumnActive
+    };
+  }
+)(FilterLayerInnerComp);

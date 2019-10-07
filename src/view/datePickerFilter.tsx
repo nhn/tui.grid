@@ -10,24 +10,23 @@ import {
   ColumnInfo,
   DateFilterCode,
   Filter,
-  FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
-import { keyNameMap } from '../helper/keyboard';
+import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
 
 interface StoreProps {
   grid: Grid;
   columnInfo: ColumnInfo;
   filters: Filter[] | null;
-  filterLayerState: FilterLayerState;
 }
 
 interface OwnProps {
   columnAddress: ActiveColumnAddress;
+  filterState: Filter;
   filterIndex: number;
 }
 
@@ -89,8 +88,14 @@ class DatePickerFilterComp extends Component<Props> {
   };
 
   private handleKeyUp = debounce((ev: KeyboardEvent) => {
-    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const { keyCode } = ev;
+    const keyName = (keyNameMap as KeyNameMap)[keyCode];
     const { dispatch } = this.props;
+
+    if (isNonPrintableKey(keyCode)) {
+      return;
+    }
+
     if (keyName === 'enter') {
       dispatch('applyActiveFilterState');
     } else {
@@ -108,14 +113,14 @@ class DatePickerFilterComp extends Component<Props> {
   };
 
   private getPreviousValue = () => {
-    const { filterIndex, filterLayerState } = this.props;
-    const filterState = filterLayerState.activeFilterState!.state;
+    const { filterIndex, filterState } = this.props;
+    const { state } = filterState;
 
     let code = 'eq';
     let value = '';
 
-    if (filterState.length > 0 && filterState[filterIndex]) {
-      const { code: prevCode, value: prevValue } = filterState[filterIndex];
+    if (state.length && state[filterIndex]) {
+      const { code: prevCode, value: prevValue } = state[filterIndex];
       code = prevCode!;
       value = String(prevValue);
     }
@@ -172,8 +177,8 @@ class DatePickerFilterComp extends Component<Props> {
 }
 
 export const DatePickerFilter = connect<StoreProps, OwnProps>(
-  (store, { filterIndex, columnAddress }) => {
-    const { column, id, data, filterLayerState } = store;
+  (store, { filterIndex, columnAddress, filterState }) => {
+    const { column, id, data } = store;
     const { allColumnMap } = column;
     const { filters } = data;
 
@@ -183,7 +188,7 @@ export const DatePickerFilter = connect<StoreProps, OwnProps>(
       columnAddress,
       filterIndex,
       filters,
-      filterLayerState
+      filterState
     };
   }
 )(DatePickerFilterComp);

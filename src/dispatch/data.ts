@@ -391,13 +391,13 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
   }
 
+  getDataManager(id).push('CREATE', rawRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
 
   updateSummaryValueByRow(store, rawRow, true);
   renderState.state = 'DONE';
-  getDataManager(id).push('CREATE', rawRow);
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -434,13 +434,13 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     }
   }
 
+  getDataManager(id).push('DELETE', removedRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(rowCoords, 'heights');
   notify(data, 'filteredRawData');
   updateSummaryValueByRow(store, removedRow, false);
   renderState.state = getRenderState(data.rawData);
-  getDataManager(id).push('DELETE', removedRow);
 }
 
 export function clearData(store: Store) {
@@ -643,8 +643,8 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
-  return data.filteredIndex
-    .slice(start, end)
+  return data
+    .filteredIndex!.slice(start, end)
     .reduce(
       (acc: OriginData, rowIndex) =>
         getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),

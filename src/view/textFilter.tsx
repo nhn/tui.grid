@@ -6,13 +6,12 @@ import {
   ActiveColumnAddress,
   ColumnInfo,
   Filter,
-  FilterLayerState,
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
-import { keyNameMap } from '../helper/keyboard';
+import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
@@ -20,11 +19,11 @@ type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 interface StoreProps {
   columnInfo: ColumnInfo;
   filters: Filter[] | null;
-  filterLayerState: FilterLayerState;
 }
 
 interface OwnProps {
   columnAddress: ActiveColumnAddress;
+  filterState: Filter;
   filterIndex: number;
 }
 
@@ -36,14 +35,14 @@ class TextFilterComp extends Component<Props> {
   private selectEl?: HTMLSelectElement;
 
   private getPreviousValue = () => {
-    const { filterIndex, filterLayerState } = this.props;
-    const filterState = filterLayerState.activeFilterState!.state;
+    const { filterIndex, filterState } = this.props;
+    const { state } = filterState;
 
     let code = 'eq';
     let value = '';
 
-    if (filterState.length > 0 && filterState[filterIndex]) {
-      const { code: prevCode, value: prevValue } = filterState[filterIndex];
+    if (state.length && state[filterIndex]) {
+      const { code: prevCode, value: prevValue } = state[filterIndex];
       code = prevCode!;
       value = String(prevValue);
     }
@@ -53,7 +52,14 @@ class TextFilterComp extends Component<Props> {
 
   private handleChange = debounce((ev: KeyboardEvent) => {
     const { dispatch } = this.props;
-    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const { keyCode } = ev;
+
+    if (isNonPrintableKey(keyCode)) {
+      return;
+    }
+
+    const keyName = (keyNameMap as KeyNameMap)[keyCode];
+
     if (keyName === 'enter') {
       dispatch('applyActiveFilterState');
     } else {
@@ -104,16 +110,18 @@ class TextFilterComp extends Component<Props> {
   }
 }
 
-export const TextFilter = connect<StoreProps, OwnProps>((store, { filterIndex, columnAddress }) => {
-  const { column, data, filterLayerState } = store;
-  const { allColumnMap } = column;
-  const { filters } = data;
+export const TextFilter = connect<StoreProps, OwnProps>(
+  (store, { filterIndex, columnAddress, filterState }) => {
+    const { column, data } = store;
+    const { allColumnMap } = column;
+    const { filters } = data;
 
-  return {
-    columnInfo: allColumnMap[columnAddress.name],
-    columnAddress,
-    filterIndex,
-    filters,
-    filterLayerState
-  };
-})(TextFilterComp);
+    return {
+      columnInfo: allColumnMap[columnAddress.name],
+      columnAddress,
+      filterIndex,
+      filters,
+      filterState
+    };
+  }
+)(TextFilterComp);

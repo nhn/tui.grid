@@ -278,13 +278,12 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);
 
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(rowCoords, 'heights');
-
   rawRows.forEach(rawRow => {
     getDataManager(id).push('CREATE', rawRow);
   });
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(rowCoords, 'heights');
 }
 
 export function removeTreeRow(store: Store, rowKey: RowKey) {
@@ -308,11 +307,10 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   viewData.splice(startIdx, endIdx);
   heights.splice(startIdx, endIdx);
 
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(rowCoords, 'heights');
-
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
     getDataManager(id).push('DELETE', removedRows[i]);
   }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(rowCoords, 'heights');
 }

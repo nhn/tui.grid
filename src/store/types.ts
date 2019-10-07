@@ -181,7 +181,7 @@ export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
   sortState: SortState;
-  filteredIndex: number[];
+  filteredIndex: number[] | null;
   filteredRawData: Row[];
   filteredViewData: ViewRow[];
   disabled: boolean;

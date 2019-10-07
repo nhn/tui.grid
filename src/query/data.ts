@@ -63,26 +63,33 @@ export function getConditionalRows(
   return result;
 }
 
-export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey?: RowKey | null) {
+export function findIndexByRowKey(
+  data: Data,
+  column: Column,
+  id: number,
+  rowKey?: RowKey | null,
+  filtered = true
+) {
   if (isUndefined(rowKey) || isNull(rowKey)) {
     return -1;
   }
 
-  const { filteredRawData, sortState, pageOptions } = data;
+  const { filteredRawData, rawData, sortState, pageOptions } = data;
   const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
+  const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
   if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
-    return findPropIndex('rowKey', rowKey, filteredRawData) % perPage;
+    return findPropIndex('rowKey', rowKey, targetData) % perPage;
   }
 
   let start = 0;
-  let end = filteredRawData.length - 1;
+  let end = targetData.length - 1;
 
   while (start <= end) {
     const mid = Math.floor((start + end) / 2);
-    const { rowKey: comparedRowKey } = filteredRawData[mid];
+    const { rowKey: comparedRowKey } = targetData[mid];
 
     if (rowKey > comparedRowKey) {
       start = mid + 1;

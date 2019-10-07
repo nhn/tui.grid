@@ -34,13 +34,13 @@ import {
   isString,
   isNumber,
   isFunction,
-  findPropIndex,
   convertToNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
 import { cls } from '../helper/dom';
+import { findIndexByRowKey } from '../query/data';
 
 interface OptData {
   data: OptRow[];
@@ -48,6 +48,7 @@ interface OptData {
   pageOptions: PageOptions;
   useClientSort: boolean;
   disabled: boolean;
+  id: number;
 }
 
 interface RawRowOptions {
@@ -445,7 +446,8 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  disabled
+  disabled,
+  id
 }: OptData): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
 
@@ -479,19 +481,20 @@ export function create({
     filters: null,
 
     get filteredRawData(this: Data) {
-      if (this.filters) {
-        return applyFilterToRawData(this.rawData, this.filters);
-      }
-
-      return this.rawData;
+      return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
     },
 
     get filteredIndex(this: Data) {
-      return this.filteredRawData.map(row => findPropIndex('rowKey', row.rowKey, this.rawData)!);
+      if (this.filters) {
+        return this.filteredRawData.map(row =>
+          findIndexByRowKey(this, column, id, row.rowKey, false)
+        );
+      }
+      return null;
     },
 
     get filteredViewData(this: Data) {
-      return this.filteredIndex.map(index => this.viewData[index]);
+      return this.filters ? this.filteredIndex!.map(index => this.viewData[index]) : this.viewData;
     },
 
     get pageRowRange() {
