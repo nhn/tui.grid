@@ -35,7 +35,7 @@ export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
     const columnData = getUniqColumnData(data.rawData, columnName);
     activeFilterState!.state = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
   } else {
-    activeFilterState!.state = []; // unfilter(store, columnName);
+    activeFilterState!.state = [];
   }
 
   if (!columnInfo.filter!.showApplyBtn) {
@@ -172,13 +172,13 @@ export function filter(
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ filterState: data.filters });
+
   /**
    * Occurs when filtering
    * @event Grid#filter
    * @property {Grid} instance - Current grid instance
    * @property {Object} filterState - filterState
    */
-
   eventBus.trigger('filter', gridEvent);
   initLayerAndScrollAfterFiltering(store);
 }
@@ -191,7 +191,7 @@ export function unfilter(store: Store, columnName: string) {
     if (filterIndex >= 0) {
       filters.splice(filterIndex, 1);
 
-      if (filters.length === 0) {
+      if (!filters.length) {
         data.filters = null;
       }
     }

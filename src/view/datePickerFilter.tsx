@@ -15,7 +15,7 @@ import {
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
-import { keyNameMap, isNotFilterKey } from '../helper/keyboard';
+import { keyNameMap, isNotCharacterKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
 
 interface StoreProps {
@@ -92,7 +92,7 @@ class DatePickerFilterComp extends Component<Props> {
     const keyName = (keyNameMap as KeyNameMap)[keyCode];
     const { dispatch } = this.props;
 
-    if (isNotFilterKey(keyCode)) {
+    if (isNotCharacterKey(keyCode)) {
       return;
     }
 
@@ -119,7 +119,7 @@ class DatePickerFilterComp extends Component<Props> {
     let code = 'eq';
     let value = '';
 
-    if (state.length > 0 && state[filterIndex]) {
+    if (state.length && state[filterIndex]) {
       const { code: prevCode, value: prevValue } = state[filterIndex];
       code = prevCode!;
       value = String(prevValue);

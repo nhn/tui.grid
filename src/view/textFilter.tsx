@@ -11,7 +11,7 @@ import {
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
-import { keyNameMap, isNotFilterKey } from '../helper/keyboard';
+import { keyNameMap, isNotCharacterKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
@@ -41,7 +41,7 @@ class TextFilterComp extends Component<Props> {
     let code = 'eq';
     let value = '';
 
-    if (state.length > 0 && state[filterIndex]) {
+    if (state.length && state[filterIndex]) {
       const { code: prevCode, value: prevValue } = state[filterIndex];
       code = prevCode!;
       value = String(prevValue);
@@ -54,7 +54,7 @@ class TextFilterComp extends Component<Props> {
     const { dispatch } = this.props;
     const { keyCode } = ev;
 
-    if (isNotFilterKey(keyCode)) {
+    if (isNotCharacterKey(keyCode)) {
       return;
     }
 
