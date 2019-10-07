@@ -490,6 +490,7 @@ export function create({
           findIndexByRowKey(this, column, id, row.rowKey, false)
         );
       }
+      // return the sparse array for filled empty as length.
       return Array(this.rawData.length);
     },
 

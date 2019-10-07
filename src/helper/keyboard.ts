@@ -187,6 +187,7 @@ export function getNextRowIndex(rowIndex: number, heights: number[]) {
 }
 
 export function isNotFilterKey(keyCode: number) {
+  // shift, ctrl, esc, left, up, right, down, pageUp, pageDown, end, home
   const fnKeys = [16, 17, 27, 37, 38, 39, 40, 33, 34, 35, 36];
   return includes(fnKeys, keyCode);
 }
