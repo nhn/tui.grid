@@ -161,15 +161,3 @@ instance.resetData(newData); // Call API of instance's public method
 
 Grid.applyTheme('striped'); // Call API of static method
 ```
-
-### TypeScript
-
-If you are using TypeScript, you must use `import module = require('module')` to import the Grid module. See ["export = " and "import = require()"](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require).
-
-```typescript
-import Grid = require('tui-grid');
-
-const instance = new Grid({
-  // ...options
-});
-```
