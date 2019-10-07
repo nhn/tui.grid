@@ -490,12 +490,11 @@ export function create({
           findIndexByRowKey(this, column, id, row.rowKey, false)
         );
       }
-      // return the sparse array for filled empty as length.
-      return Array(this.rawData.length);
+      return null;
     },
 
     get filteredViewData(this: Data) {
-      return this.filters ? this.filteredIndex.map(index => this.viewData[index]) : this.viewData;
+      return this.filters ? this.filteredIndex!.map(index => this.viewData[index]) : this.viewData;
     },
 
     get pageRowRange() {

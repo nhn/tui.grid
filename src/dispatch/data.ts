@@ -643,8 +643,8 @@ function createOriginData(data: Data, rowRange: Range, treeColumnName?: string) 
 function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: string) {
   const [start, end] = rowRange;
 
-  return data.filteredIndex
-    .slice(start, end)
+  return data
+    .filteredIndex!.slice(start, end)
     .reduce(
       (acc: OriginData, rowIndex) =>
         getDataToBeObservable(acc, data.rawData[rowIndex], rowIndex, treeColumnName),

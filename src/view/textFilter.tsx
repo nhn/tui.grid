@@ -11,7 +11,7 @@ import {
 } from '../store/types';
 import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
-import { keyNameMap, isNotCharacterKey } from '../helper/keyboard';
+import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
@@ -54,7 +54,7 @@ class TextFilterComp extends Component<Props> {
     const { dispatch } = this.props;
     const { keyCode } = ev;
 
-    if (isNotCharacterKey(keyCode)) {
+    if (isNonPrintableKey(keyCode)) {
       return;
     }
 
