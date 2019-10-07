@@ -42,7 +42,6 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "jquery-mockjax": "^2.5.0",
-    "prettier": "^1.16.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "storybook": "^1.0.0",
@@ -53,6 +52,6 @@
     "xhr-mock": "^2.4.1"
   },
   "dependencies": {
-    "tui-grid": "^4.4.1"
+    "tui-grid": "4.7.0"
   }
 }
