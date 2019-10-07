@@ -481,21 +481,20 @@ export function create({
     filters: null,
 
     get filteredRawData(this: Data) {
-      if (this.filters) {
-        return applyFilterToRawData(this.rawData, this.filters);
-      }
-
-      return this.rawData;
+      return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
     },
 
     get filteredIndex(this: Data) {
-      return this.filteredRawData.map(row =>
-        findIndexByRowKey(this, column, id, row.rowKey, false)
-      );
+      if (this.filters) {
+        return this.filteredRawData.map(row =>
+          findIndexByRowKey(this, column, id, row.rowKey, false)
+        );
+      }
+      return Array(this.rawData.length);
     },
 
     get filteredViewData(this: Data) {
-      return this.filteredIndex.map(index => this.viewData[index]);
+      return this.filters ? this.filteredIndex.map(index => this.viewData[index]) : this.viewData;
     },
 
     get pageRowRange() {
