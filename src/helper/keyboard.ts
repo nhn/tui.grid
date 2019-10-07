@@ -201,7 +201,7 @@ export function isNonPrintableKey(keyCode: number) {
     'end',
     'home'
   ];
-  const key = (keyNameMap as GridKeyNameMap)[keyCode];
+  const key = keyNameMap[keyCode];
 
   return includes(keys, key);
 }
