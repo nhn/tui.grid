@@ -4,9 +4,9 @@ import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import { ActiveColumnAddress, CellValue, ColumnInfo, FilterState, Filter } from '../store/types';
-import { some, uniq, debounce, mapProp } from '../helper/common';
-import { FILTER_DEBOUNCE_TIME } from '../helper/filter';
+import { ActiveColumnAddress, CellValue, ColumnInfo, Filter } from '../store/types';
+import { some, debounce } from '../helper/common';
+import { FILTER_DEBOUNCE_TIME, getUniqColumnData } from '../helper/filter';
 
 interface ColumnData {
   value: CellValue;
@@ -23,6 +23,7 @@ interface StoreProps {
 
 interface OwnProps {
   columnAddress: ActiveColumnAddress;
+  filterState: Filter;
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
@@ -98,24 +99,27 @@ class SelectFilterComp extends Component<Props> {
   }
 }
 
-export const SelectFilter = connect<StoreProps, OwnProps>((store, { columnAddress }) => {
-  const { column, id, data, filterLayerState } = store;
-  const { rawData, filters } = data;
-  const { allColumnMap } = column;
+export const SelectFilter = connect<StoreProps, OwnProps>(
+  (store, { columnAddress, filterState }) => {
+    const { column, id, data } = store;
+    const { filters, rawData } = data;
+    const { allColumnMap } = column;
+    const { state } = filterState;
+    const { name: columnName } = columnAddress;
 
-  const activeFilterState: FilterState[] = (filterLayerState.activeFilterState as Filter).state;
-  const uniqueColumnData = uniq(mapProp(columnAddress.name, rawData));
-  const columnData = uniqueColumnData.map(value => ({
-    value,
-    checked: some(item => value === item.value, activeFilterState)
-  }));
+    const uniqueColumnData = getUniqColumnData(rawData, columnName);
+    const columnData = uniqueColumnData.map(value => ({
+      value,
+      checked: some(item => value === item.value, state)
+    })) as ColumnData[];
 
-  return {
-    grid: getInstance(id),
-    columnData,
-    columnInfo: allColumnMap[columnAddress.name],
-    columnAddress,
-    filters,
-    isAllSelected: activeFilterState.length === uniqueColumnData.length
-  };
-})(SelectFilterComp);
+    return {
+      grid: getInstance(id),
+      columnData,
+      columnInfo: allColumnMap[columnName],
+      columnAddress,
+      filters,
+      isAllSelected: state.length === uniqueColumnData.length
+    };
+  }
+)(SelectFilterComp);

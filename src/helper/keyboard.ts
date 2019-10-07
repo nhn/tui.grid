@@ -1,4 +1,4 @@
-import { clamp, findIndex } from './common';
+import { clamp, findIndex, includes } from './common';
 
 export const keyNameMap = {
   8: 'backspace',
@@ -184,4 +184,9 @@ export function getNextRowIndex(rowIndex: number, heights: number[]) {
   }
 
   return index;
+}
+
+export function isNotFilterKey(keyCode: number) {
+  const fnKeys = [16, 17, 27, 37, 38, 39, 40, 33, 34, 35, 36];
+  return includes(fnKeys, keyCode);
 }
