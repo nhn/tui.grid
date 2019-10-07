@@ -1,7 +1,8 @@
+import { $Values } from 'utility-types';
 import { clamp, findIndex, includes } from './common';
-import { GridKeyNameMap, KeyName } from '../types';
+import { KeyNameMap } from '../types';
 
-export const keyNameMap: GridKeyNameMap = {
+export const keyNameMap = {
   8: 'backspace',
   9: 'tab',
   13: 'enter',
@@ -21,7 +22,7 @@ export const keyNameMap: GridKeyNameMap = {
   36: 'home',
   35: 'end',
   46: 'del'
-};
+} as const;
 
 export const keyboardEventTypeMap = {
   move: 'move',
@@ -91,6 +92,7 @@ export const keyStrokeCommandMap: {
   'ctrl-shift-end': ['select', 'lastCell']
 };
 export type KeyCodeType = keyof typeof keyNameMap;
+export type KeyNameType = $Values<typeof keyNameMap>;
 export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
 export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
@@ -188,7 +190,7 @@ export function getNextRowIndex(rowIndex: number, heights: number[]) {
 }
 
 export function isNonPrintableKey(keyCode: number) {
-  const keys: KeyName[] = [
+  const keys: KeyNameType[] = [
     'shift',
     'ctrl',
     'esc',
@@ -201,7 +203,7 @@ export function isNonPrintableKey(keyCode: number) {
     'end',
     'home'
   ];
-  const key = keyNameMap[keyCode];
+  const key = (keyNameMap as KeyNameMap)[keyCode];
 
   return includes(keys, key);
 }
