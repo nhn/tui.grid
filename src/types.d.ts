@@ -17,35 +17,12 @@ import {
 import { CellRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
+import { keyNameMap } from './helper/keyboard';
 
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
 
-export type KeyName =
-  | 'backspace'
-  | 'tab'
-  | 'enter'
-  | 'shift'
-  | 'ctrl'
-  | 'esc'
-  | 'left'
-  | 'up'
-  | 'right'
-  | 'down'
-  | 'a'
-  | 'c'
-  | 'v'
-  | 'space'
-  | 'pageUp'
-  | 'pageDown'
-  | 'home'
-  | 'end'
-  | 'del';
-export interface GridKeyNameMap {
-  [keyCode: number]: KeyName;
-}
-
-export type KeyNameMap = GridKeyNameMap & {
+export type KeyNameMap = typeof keyNameMap & {
   [keyCode: number]: string | undefined;
 };
 
