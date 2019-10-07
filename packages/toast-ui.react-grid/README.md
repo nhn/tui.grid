@@ -2,43 +2,48 @@
 
 > This is a React component wrapping [TOAST UI Grid](https://github.com/nhn/tui.grid).
 
-[![github version](https://img.shields.io/github/release/nhn/toast-ui.react-grid.svg)](https://github.com/nhn/toast-ui.react-grid/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-grid.svg)](https://www.npmjs.com/package/@toast-ui/react-grid)
-[![license](https://img.shields.io/github/license/nhn/toast-ui.react-grid.svg)](https://github.com/nhn/toast-ui.react-grid/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.react-grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.react-grid.svg)](https://github.com/nhn/tui.grid/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.grid/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
-* [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
-* [Install](#-install)
-    * [Using npm](#using-npm)
-* [Usage](#-usage)
-    * [Import](#import)
-    * [Props](#props)
-    * [Reactive props](#reactive-props)
-    * [Instance Methods](#instance-methods)
-    * [Getting the root element](#getting-the-root-element)
-    * [Static Methods](#static-methods)
-    * [Events](#events)
-    * [Addons](#addons)
-* [Pull Request Steps](#-pull-request-steps)
-* [Documents](#-documents)
-* [Contributing](#-contributing)
-* [License](#-license)
+
+- [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
+- [Install](#-install)
+  - [Using npm](#using-npm)
+- [Usage](#-usage)
+  - [Import](#import)
+  - [Props](#props)
+  - [Reactive props](#reactive-props)
+  - [Instance Methods](#instance-methods)
+  - [Getting the root element](#getting-the-root-element)
+  - [Static Methods](#static-methods)
+  - [Events](#events)
+  - [Addons](#addons)
 
 ## Collect statistics on the use of open source
 
 React Wrapper of TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
 
 ```js
-<Grid 
-  data={[/* ... */]} 
-  columns={[/* ... */]} 
-  usageStatistics={false} 
+<Grid
+  data={
+    [
+      /* ... */
+    ]
+  }
+  columns={
+    [
+      /* ... */
+    ]
+  }
+  usageStatistics={false}
 />
 ```
 
 Or, import `tui-code-snippet.js` (**v1.4.0** or **later**) and then immediately write the options as follows:
+
 ```js
 tui.usageStatistics = false;
 ```
@@ -57,14 +62,14 @@ npm install --save @toast-ui/react-grid
 
 You can use Toast UI Grid for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-grid.css` from `tui-grid` manually.
 
-* Using ECMAScript module
+- Using ECMAScript module
 
 ```js
-import 'tui-grid/dist/tui-grid.css'
-import Grid from '@toast-ui/react-grid'
+import 'tui-grid/dist/tui-grid.css';
+import Grid from '@toast-ui/react-grid';
 ```
 
-* Using CommonJS module
+- Using CommonJS module
 
 ```js
 require('tui-grid/dist/tui-grid.css');
@@ -89,8 +94,8 @@ const columns = [
 
 const MyComponent = () => (
   <Grid
-    data={data} 
-    columns={columns} 
+    data={data}
+    columns={columns}
     rowHeight={25}
     bodyHeight={100}
     virtualScrolling={true}
@@ -110,14 +115,14 @@ Normally, React components are re-rendered whenever the props received from a pa
 - `bodyHeight` (using `setBodyHeight`)
 - `frozenColumnCount` (using `setFrozenColumnCount`)
 
-If you don't want some props to be reactive, you can disable reactivity of specific props using `oneTimeBindingProps`. For example, if you don't want to re-render whenever `data` and `columns` props are changed, you can use `oneTimeBindingProps` like the example below. 
+If you don't want some props to be reactive, you can disable reactivity of specific props using `oneTimeBindingProps`. For example, if you don't want to re-render whenever `data` and `columns` props are changed, you can use `oneTimeBindingProps` like the example below.
 
 ```js
 const MyComponent = () => (
-  <Grid 
-    data={data} 
-    columns={columns} 
-    bodyHeight={100} 
+  <Grid
+    data={data}
+    columns={columns}
+    bodyHeight={100}
     frozenColumnCount={2}
     oneTimeBindingProps={['data', 'columns']}
   />
@@ -131,19 +136,15 @@ For using [instance methods of TOAST UI Grid](http://nhn.github.io/tui.grid/late
 ```js
 class MyComponent extends React.Component {
   gridRef = React.createRef();
-  
+
   handleAppendRow = () => {
     this.gridRef.current.getInstance().appendRow({});
-  }
+  };
 
   render() {
     return (
       <>
-        <Grid 
-          ref={this.gridRef}
-          data={data} 
-          columns={columns} 
-        />
+        <Grid ref={this.gridRef} data={data} columns={columns} />
         <button onClick={this.handleAppendRow}>Append Row</button>
       </>
     );
@@ -158,19 +159,15 @@ An instance of the wrapper component also provides a handy method for getting th
 ```js
 class MyComponent extends React.Component {
   gridRef = React.createRef();
-  
+
   handleClickButton = () => {
     this.gridRef.current.getRootElement().classList.add('my-grid-root');
-  }
+  };
 
   render() {
     return (
       <>
-        <Grid 
-          ref={this.gridRef}
-          data={data} 
-          columns={columns} 
-        />
+        <Grid ref={this.gridRef} data={data} columns={columns} />
         <button onClick={this.handleClickButton}>Click!</button>
       </>
     );
@@ -190,45 +187,43 @@ TuiGrid.applyTheme('striped');
 ```
 
 ### Events
+
 [All the events of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
   handleClick = () => {
     console.log('click!!');
-  }
+  };
 
   render() {
-    return (
-      <Grid 
-        data={data} 
-        columns={columns} 
-        onClick={this.handleClick}
-      />
-    );
+    return <Grid data={data} columns={columns} onClick={this.handleClick} />;
   }
 }
 ```
 
 ### DataSource
+
 In general, the TOAST UI Grid runs on the front-end environment using local data. However, you can also bind remote data using a plain object called `dataSource`. To use this, define the `dataSource` object and set it to the data option like the example below.
 
 ```js
-const columns = [/* ... */];
+const columns = [
+  /* ... */
+];
 const dataSource = {
   withCredentials: false,
   initialRequest: true,
   api: {
-    readData: {url: 'api/readData', method: 'GET'}
+    readData: { url: 'api/readData', method: 'GET' }
   }
 };
 
 const MyComponent = () => (
-  <Grid 
-    columns={columns} 
-    data={dataSource} 
-    pageOptions={{perPage: 3}}
-    onSuccessResponse={(data) => {
+  <Grid
+    columns={columns}
+    data={dataSource}
+    pageOptions={{ perPage: 3 }}
+    onSuccessResponse={data => {
       console.log(data);
     }}
   />
@@ -240,7 +235,7 @@ const MyComponent = () => (
 React Hooks can be used together.
 
 ```js
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 
 const MyComponentWithHooks = () => {
   const onClick = useCallback(() => {
@@ -250,40 +245,3 @@ const MyComponentWithHooks = () => {
   return <Grid columns={columns} data={data} onClick={onClick} />;
 };
 ```
-
-
-## 🔧 Pull Request Steps
-
-TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
-Run npm scripts and develop yourself with the following process.
-
-### Setup
-
-Fork `master` branch into your personal repository.
-Clone it to local computer. Install node modules.
-Before starting development, you should check to have any errors.
-
-``` sh
-$ git clone https://github.com/{your-personal-repo}/[[repo name]].git
-$ cd [[repo name]]
-$ npm install
-```
-
-### Develop
-
-Let's start development!
-
-### Pull Request
-
-Before PR, check to test lastly and then check any errors.
-If it has no error, commit and then push it!
-
-For more information on PR's step, please see links of Contributing section.
-
-## 💬 Contributing
-* [Code of Conduct](https://github.com/nhn/toast-ui.react-grid/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhn/toast-ui.react-grid/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhn/toast-ui.react-grid/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
-
-## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)

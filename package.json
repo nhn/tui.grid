@@ -4,5 +4,10 @@
   "devDependencies": {
     "lerna": "^3.16.4",
     "prettier": "^1.16.0"
+  },
+  "scripts": {
+    "build": "lerna run build --scope tui-grid",
+    "build:react": "lerna run build --scope @toast-ui/react-grid",
+    "build:vue": "lerna run build --scope @toast-ui/vue-grid"
   }
 }
