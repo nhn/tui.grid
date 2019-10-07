@@ -1,5 +1,5 @@
-import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../store/types';
-import { isString, endsWith, startsWith } from './common';
+import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode, Row } from '../store/types';
+import { isString, endsWith, startsWith, uniq, mapProp } from './common';
 import { OperatorType, FilterOptionType } from '../types';
 
 export const FILTER_DEBOUNCE_TIME = 50;
@@ -102,4 +102,8 @@ export function composeConditionFn(fns: Function[], operator?: OperatorType) {
       return operator === 'OR' ? acc || fn(value) : acc && fn(value);
     }, operator !== 'OR');
   };
+}
+
+export function getUniqColumnData(targetData: Row[], columnName: string) {
+  return uniq(mapProp(columnName, targetData));
 }
