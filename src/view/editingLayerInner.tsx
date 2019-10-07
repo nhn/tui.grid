@@ -7,7 +7,7 @@ import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction, findPropIndex, isNull, findProp } from '../helper/common';
+import { isFunction, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface StoreProps {
