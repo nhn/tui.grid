@@ -64,7 +64,7 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
-    if (!this.el) {
+    if (!this.el || ev.target === this.el) {
       return;
     }
 
