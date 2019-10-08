@@ -283,6 +283,8 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   });
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 }
 
@@ -312,5 +314,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   }
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 }

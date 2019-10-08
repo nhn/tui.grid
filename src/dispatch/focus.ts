@@ -48,8 +48,6 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
       focus.editingAddress = { rowKey, columnName };
     });
   }
-
-  notify(data, 'viewData');
 }
 
 export function finishEditing(
