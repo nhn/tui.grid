@@ -1,5 +1,5 @@
 import { Store, RowKey, SelectionRange, Range } from '../store/types';
-import { KeyboardEventCommandType } from '../helper/keyboard';
+import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange } from '../query/keyboard';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
@@ -39,7 +39,7 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
     column: { visibleColumnsWithRowHeader },
     id
   } = store;
-  const { viewData } = data;
+  const { filteredViewData } = data;
   const { rowIndex, totalColumnIndex: columnIndex } = focus;
 
   if (rowIndex === null || columnIndex === null) {
@@ -50,20 +50,53 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
   if (!isRowHeader(nextColumnName)) {
     focus.navigating = true;
-    changeFocus(focus, data, viewData[nextRowIndex].rowKey, nextColumnName, id);
+    changeFocus(store, filteredViewData[nextRowIndex].rowKey, nextColumnName, id);
   }
 }
 
-export function editFocus({ focus, data }: Store, command: KeyboardEventCommandType) {
+export function editFocus(store: Store, command: KeyboardEventCommandType) {
+  const { focus, data, column } = store;
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
     return;
   }
 
-  if (command === 'currentCell' && isCellEditable(data, rowKey, columnName)) {
+  if (command === 'currentCell' && isCellEditable(data, column, rowKey, columnName)) {
     focus.navigating = false;
     focus.editingAddress = { rowKey, columnName };
+  } else if (command === 'nextCell' || command === 'prevCell') {
+    // move prevCell or nextCell by tab keyMap
+    moveTabFocus(store, command);
+  }
+}
+
+export function moveTabFocus(store: Store, command: TabCommandType) {
+  const { focus, data, column, id } = store;
+  const { visibleColumnsWithRowHeader } = column;
+  const { rowKey, columnName, rowIndex, totalColumnIndex: columnIndex } = focus;
+
+  if (rowKey === null || columnName === null || rowIndex === null || columnIndex === null) {
+    return;
+  }
+
+  const [nextRowIndex, nextColumnIndex] = getNextCellIndex(store, command, [rowIndex, columnIndex]);
+  const nextRowKey = data.filteredRawData[nextRowIndex].rowKey;
+  const nextColumnName = visibleColumnsWithRowHeader[nextColumnIndex].name;
+
+  if (!isRowHeader(nextColumnName)) {
+    focus.navigating = true;
+    changeFocus(store, nextRowKey, nextColumnName, id);
+
+    if (
+      focus.tabMode === 'moveAndEdit' &&
+      isCellEditable(data, column, nextRowKey, nextColumnName)
+    ) {
+      setTimeout(() => {
+        focus.navigating = false;
+        focus.editingAddress = { rowKey: nextRowKey, columnName: nextColumnName };
+      });
+    }
   }
 }
 
@@ -75,7 +108,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
     id
   } = store;
-  const { viewData, sortOptions } = data;
+  const { filteredViewData, sortState } = data;
   const { rowIndex: focusRowIndex, totalColumnIndex: totalFocusColumnIndex } = focus;
   let { inputRange: currentInputRange } = selection;
 
@@ -90,7 +123,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     };
   }
 
-  const rowLength = viewData.length;
+  const rowLength = filteredViewData.length;
   const columnLength = visibleColumnsWithRowHeader.length;
   let rowStartIndex = currentInputRange.row[0];
   const rowIndex = currentInputRange.row[1];
@@ -104,7 +137,7 @@ export function changeSelection(store: Store, command: KeyboardEventCommandType)
     nextCellIndexes = [rowLength - 1, columnLength - 1];
   } else {
     nextCellIndexes = getNextCellIndex(store, command, [rowIndex, columnIndex]);
-    if (isRowSpanEnabled(sortOptions)) {
+    if (isRowSpanEnabled(sortState)) {
       nextCellIndexes = getNextCellIndexWithRowSpan(
         store,
         command,
@@ -173,8 +206,8 @@ export function setFocusInfo(
   columnName: string | null,
   navigating: boolean
 ) {
-  const { focus, id, data } = store;
+  const { focus, id } = store;
   focus.navigating = navigating;
 
-  changeFocus(focus, data, rowKey, columnName, id);
+  changeFocus(store, rowKey, columnName, id);
 }

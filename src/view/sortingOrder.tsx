@@ -2,7 +2,6 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { findPropIndex } from '../helper/common';
-import { SortedColumn } from '../store/types';
 
 interface OwnProps {
   columnName: string;
@@ -22,10 +21,9 @@ class SortingOrderComp extends Component<Props> {
 }
 
 export const SortingOrder = connect<StoreProps, OwnProps>((store, props) => {
-  const { columns } = store.data.sortOptions;
+  const { columns } = store.data.sortState;
   const { columnName } = props;
-  const sortedColumnsWithType = columns as SortedColumn[];
-  const order = findPropIndex('columnName', columnName, sortedColumnsWithType) + 1;
+  const order = findPropIndex('columnName', columnName, columns) + 1;
   const showOrder = !!order && columns.length > 1;
 
   return {

@@ -1,6 +1,5 @@
 import { cls } from '../../src/helper/dom';
 import { data } from '../../samples/basic';
-import { isSubsetOf } from '../helper/compare';
 
 before(() => {
   cy.visit('/dist');
@@ -49,7 +48,7 @@ describe('validate changed value', () => {
       columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }]
     });
 
-    cy.gridInstance().invoke('setValue', 0, 'price', 'test');
+    cy.gridInstance().invoke('setValue', 0, 'price', 0);
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
 
@@ -172,12 +171,30 @@ describe('get data that failed validation result by validate api', () => {
     cy.gridInstance()
       .invoke('validate')
       .should(result => {
-        expect(
-          isSubsetOf(
-            [{ errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }],
-            result
-          )
-        ).to.be.true;
+        expect(result).to.include.deep.members([
+          { errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }
+        ]);
       });
   });
+});
+
+it('validate changed value using editor by resetData API', () => {
+  cy.createGrid({
+    data: [],
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+  });
+  cy.gridInstance().invoke('resetData', [{ name: '' }]);
+  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+});
+
+it('validate changed value using editor by setColumns API', () => {
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'price', editor: 'text' }];
+  const columnsWithValidation = columns.map(column => ({
+    ...column,
+    validation: { required: true }
+  }));
+
+  cy.createGrid({ data: [{ name: 'name', price: '' }], columns });
+  cy.gridInstance().invoke('setColumns', columnsWithValidation);
+  cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
 });

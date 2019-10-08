@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.5.2
+// Type definitions for TOAST UI Grid v4.6.0
 // TypeScript Version: 3.4.5
 
 declare namespace tuiGrid {
@@ -356,7 +356,7 @@ declare namespace tuiGrid {
     };
   }
 
-  interface SortOptions {
+  interface SortState {
     useClient: boolean;
     columns: {
       columnName: string;
@@ -501,6 +501,7 @@ declare namespace tuiGrid {
 
   type SelectionUnit = 'cell' | 'row';
   type EditingEvent = 'click' | 'dblclick';
+  type TabMode = 'move' | 'moveAndEdit';
 
   interface IGridOptions {
     el: HTMLElement;
@@ -528,7 +529,8 @@ declare namespace tuiGrid {
     header?: IHeader;
     usageStatistics?: boolean;
     onGridMounted?: Function;
-    onGridBeforeDestroyed?: Function;
+    onGridBeforeDestroy?: Function;
+    tabMode?: TabMode;
   }
 
   class Pagination {
@@ -641,7 +643,7 @@ declare namespace tuiGrid {
 
     public unsort(columnName?: string): void;
 
-    public getSortState(): SortOptions;
+    public getSortState(): SortState;
 
     public copyToClipboard(): void;
 

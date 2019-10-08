@@ -11,7 +11,7 @@ interface Props {
   store: Store;
   dispatch: Dispatch;
   onGridMounted?: Function;
-  onGridBeforeDestroyed?: Function;
+  onGridBeforeDestroy?: Function;
   cellHeightMap: Dictionary<number>;
 }
 
@@ -42,17 +42,17 @@ export class Root extends Component<Props> {
   }
 
   public componentWillUnmount() {
-    const { onGridBeforeDestroyed, store } = this.props;
+    const { onGridBeforeDestroy, store } = this.props;
     const gridEvent = new GridEvent();
     gridEvent.setInstance(getInstance(store.id));
 
-    if (isFunction(onGridBeforeDestroyed)) {
+    if (isFunction(onGridBeforeDestroy)) {
       /**
        * Occurs before the grid is detached from DOM
-       * @event Grid#onGridBeforeDestroyed
+       * @event Grid#onGridBeforeDestroy
        * @property {Grid} instance - Current grid instance
        */
-      onGridBeforeDestroyed(gridEvent);
+      onGridBeforeDestroy(gridEvent);
     }
   }
 

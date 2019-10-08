@@ -15,9 +15,10 @@ import {
   RowKey,
   RowSpanMap,
   ListItem,
-  SortOptions,
+  SortState,
   ViewRow,
-  Range
+  Range,
+  Filter
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -32,12 +33,14 @@ import {
   isEmpty,
   isString,
   isNumber,
-  isFunction
+  isFunction,
+  convertToNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
 import { createRowSpan } from '../helper/rowSpan';
 import { cls } from '../helper/dom';
+import { findIndexByRowKey } from '../query/data';
 
 interface OptData {
   data: OptRow[];
@@ -45,6 +48,7 @@ interface OptData {
   pageOptions: PageOptions;
   useClientSort: boolean;
   disabled: boolean;
+  id: number;
 }
 
 interface RawRowOptions {
@@ -54,8 +58,9 @@ interface RawRowOptions {
 }
 
 let dataCreationKey = '';
-function generateDataCreationKey() {
+export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
+  return dataCreationKey;
 }
 
 export function getCellDisplayValue(value: CellValue) {
@@ -132,27 +137,31 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   if (required && isBlank(value)) {
     invalidStates.push('REQUIRED');
   }
+
+  if (validatorFn && !validatorFn(value)) {
+    invalidStates.push('VALIDATOR_FN');
+  }
+
   if (dataType === 'string' && !isString(value)) {
     invalidStates.push('TYPE_STRING');
-  }
-  if (dataType === 'number' && !isNumber(value)) {
-    invalidStates.push('TYPE_NUMBER');
-  }
-
-  if (min && isNumber(value) && value < min) {
-    invalidStates.push('MIN');
-  }
-
-  if (max && isNumber(value) && value > max) {
-    invalidStates.push('MAX');
   }
 
   if (regExp && isString(value) && !regExp.test(value)) {
     invalidStates.push('REGEXP');
   }
 
-  if (validatorFn && !validatorFn(value)) {
-    invalidStates.push('VALIDATOR_FN');
+  const numberValue = convertToNumber(value);
+
+  if (dataType === 'number' && !isNumber(numberValue)) {
+    invalidStates.push('TYPE_NUMBER');
+  }
+
+  if (min && isNumber(numberValue) && numberValue < min) {
+    invalidStates.push('MIN');
+  }
+
+  if (max && isNumber(numberValue) && numberValue > max) {
+    invalidStates.push('MAX');
   }
 
   return invalidStates;
@@ -412,11 +421,24 @@ export function createData(
 
   const viewData = rawData.map((row: Row) =>
     lazyObservable
-      ? ({ rowKey: row.rowKey, sortKey: row.sortKey } as ViewRow)
+      ? ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
       : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
   );
 
   return { rawData, viewData };
+}
+
+function applyFilterToRawData(rawData: Row[], filters: Filter[] | null) {
+  let data = rawData;
+
+  if (filters) {
+    data = filters.reduce((acc: Row[], filter: Filter) => {
+      const { conditionFn, columnName } = filter;
+      return acc.filter(row => conditionFn!(row[columnName]));
+    }, rawData);
+  }
+
+  return data;
 }
 
 export function create({
@@ -424,11 +446,12 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  disabled
+  disabled,
+  id
 }: OptData): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
 
-  const sortOptions: SortOptions = {
+  const sortState: SortState = {
     useClient: useClientSort,
     columns: [
       {
@@ -452,8 +475,27 @@ export function create({
     disabled,
     rawData,
     viewData,
-    sortOptions,
+    sortState,
     pageOptions,
+    checkedAllRows: !rawData.some(row => !row._attributes.checked),
+    filters: null,
+
+    get filteredRawData(this: Data) {
+      return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
+    },
+
+    get filteredIndex(this: Data) {
+      if (this.filters) {
+        return this.filteredRawData.map(row =>
+          findIndexByRowKey(this, column, id, row.rowKey, false)
+        );
+      }
+      return null;
+    },
+
+    get filteredViewData(this: Data) {
+      return this.filters ? this.filteredIndex!.map(index => this.viewData[index]) : this.viewData;
+    },
 
     get pageRowRange() {
       let start = 0;
@@ -467,12 +509,6 @@ export function create({
       }
 
       return [start, end] as Range;
-    },
-
-    get checkedAllRows() {
-      const allRawData = this.rawData;
-      const checkedRows = allRawData.filter(row => row._attributes.checked);
-      return checkedRows.length === allRawData.length;
     }
   });
 }

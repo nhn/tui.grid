@@ -1,4 +1,4 @@
-import { ComplexColumnInfo } from '../store/types';
+import { ComplexColumnInfo, Column } from '../store/types';
 import { some } from './common';
 
 export function isRowHeader(columnName: string) {
@@ -15,4 +15,8 @@ export function isCheckboxColumn(columnName: string) {
 
 export function isParentColumnHeader(complexHeaderColumns: ComplexColumnInfo[], name: string) {
   return !!complexHeaderColumns.length && some(item => item.name === name, complexHeaderColumns);
+}
+
+export function isHiddenColumn(column: Column, columnName: string) {
+  return column.allColumnMap[columnName].hidden;
 }

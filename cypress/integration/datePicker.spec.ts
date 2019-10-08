@@ -1,3 +1,5 @@
+import { cls } from '@/helper/dom';
+
 const columns = [
   {
     name: 'default',
@@ -32,7 +34,8 @@ const columns = [
       type: 'datePicker',
       options: {
         format: 'yyyy-MM',
-        type: 'month'
+        type: 'month',
+        showIcon: false
       }
     }
   },
@@ -165,5 +168,23 @@ describe('year picker', () => {
     cy.getCell(0, 'default').click();
 
     cy.getCellContent(0, 'yearPicker').should('have.text', '2020');
+  });
+});
+
+describe('show icon', () => {
+  it("can't see the icon, when showIcon field false.", () => {
+    cy.getCell(0, 'default')
+      .click()
+      .trigger('dblclick');
+
+    cy.get(`.${cls('date-icon')}`).should('visible');
+    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('datepicker-input'));
+
+    cy.getCell(0, 'monthPicker')
+      .click()
+      .trigger('dblclick');
+
+    cy.get(`.${cls('date-icon')}`).should('not.visible');
+    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('content-text'));
   });
 });

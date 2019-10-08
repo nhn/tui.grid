@@ -1,11 +1,14 @@
-import { Store, Side, ComplexColumnInfo } from '../store/types';
+import { Store, Side, ComplexColumnInfo, ViewRow } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, getRelationColumns } from '../store/column';
-import { createViewRow } from '../store/data';
+import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
 import { addColumnSummaryValues } from './summary';
+import { isObservable } from '../helper/observable';
+import { unsort } from './sort';
+import { initFilter } from './filter';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -64,13 +67,28 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   );
 
   initFocus(store);
+
+  const dataCreationKey = generateDataCreationKey();
+
   column.allColumns = [...rowHeaders, ...columnInfos];
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
       viewRow.__unobserveFns__.forEach(fn => fn());
     }
   });
-  data.viewData = data.rawData.map(row => createViewRow(row, column.allColumnMap, data.rawData));
+  data.rawData = data.rawData.map(row => {
+    row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
+    return row;
+  });
+  data.viewData = data.rawData.map(row =>
+    isObservable(row)
+      ? createViewRow(row, allColumnMap, data.rawData, treeColumnName, treeIcon)
+      : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
+  );
+  initFilter(store);
+  unsort(store);
   addColumnSummaryValues(store);
 }
 
@@ -80,8 +98,15 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
-export function hideColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumnMap[columnName];
+export function hideColumn(store: Store, columnName: string) {
+  const columnItem = store.column.allColumnMap[columnName];
+  const { columnName: focusedColumnName } = store.focus;
+
+  if (focusedColumnName === columnName) {
+    initFocus(store);
+  }
+
+  unsort(store, columnName);
 
   if (columnItem) {
     columnItem.hidden = true;

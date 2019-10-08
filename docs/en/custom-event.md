@@ -71,7 +71,10 @@ grid.on('mousedown', function(ev) {
 - `uncheck`: When a row header checkbox is cleared
 - `checkAll`: When a header checkbox is filled, all the checkboxes in the row headers are filled
 - `uncheckAll`: When a header checkbox is cleared, all the checkboxes in the row headers are cleared
-- `selection`: When the selection area of the table is changed.
+- `selection`: When the selection area of the table is changed
+- `editingStart`: When the editing of cell is started
+- `editingFinish`: When the editing of cell is finished
+- `sort` : when the data is sorted
 
 There are other events that can be used when using `DataSource`.
 

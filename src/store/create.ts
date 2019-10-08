@@ -11,6 +11,7 @@ import { create as createFocus } from './focus';
 import { create as createSummary } from './summary';
 import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
+import { create as createFilterLayerState } from './filterLayerState';
 import { createObservableData } from '../dispatch/data';
 
 export function createStore(id: number, options: OptGrid): Store {
@@ -30,6 +31,7 @@ export function createStore(id: number, options: OptGrid): Store {
     selectionUnit = 'cell',
     showDummyRows = false,
     editingEvent = 'dblclick',
+    tabMode = 'moveAndEdit',
     scrollX,
     scrollY,
     useClientSort = true,
@@ -64,7 +66,8 @@ export function createStore(id: number, options: OptGrid): Store {
     column,
     pageOptions,
     useClientSort,
-    disabled
+    disabled,
+    id
   });
   const dimension = createDimension({
     column,
@@ -92,10 +95,26 @@ export function createStore(id: number, options: OptGrid): Store {
     columnCoords,
     showDummyRows
   });
-  const focus = createFocus({ data, column, columnCoords, rowCoords, editingEvent, id });
+  const focus = createFocus({
+    data,
+    column,
+    columnCoords,
+    rowCoords,
+    editingEvent,
+    tabMode,
+    id
+  });
   const summary = createSummary({ column, data, summary: summaryOptions });
-  const selection = createSelection({ selectionUnit, columnCoords, column, dimension, rowCoords });
+  const selection = createSelection({
+    selectionUnit,
+    columnCoords,
+    column,
+    dimension,
+    rowCoords,
+    data
+  });
   const renderState = createRenderState(data);
+  const filterLayerState = createFilterLayerState();
 
   const store = observable({
     id,
@@ -108,7 +127,8 @@ export function createStore(id: number, options: OptGrid): Store {
     focus,
     summary,
     selection,
-    renderState
+    renderState,
+    filterLayerState
   });
   // manual observe to resolve circular references
   observe(() => {

@@ -1,5 +1,5 @@
 import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
-import { CellValue, RowKey, SelectionRange, SortOptions } from '../store/types';
+import { CellValue, Filter, RowKey, SelectionRange, SortState } from '../store/types';
 import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
@@ -17,7 +17,8 @@ interface GridEventProps {
   range?: SelectionRange | null;
   xhr?: XMLHttpRequest;
   options?: XHROptions;
-  sortOptions?: SortOptions;
+  sortState?: SortState;
+  filterState?: Filter[] | null;
   width?: number;
 }
 

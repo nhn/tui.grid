@@ -3,10 +3,11 @@ import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
 import { EditingLayer } from './editingLayer';
+import { FilterLayer } from './filterLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
 import { Pagination } from './pagination';
-import { cls, getCellAddress, dataAttr } from '../helper/dom';
+import { cls, getCellAddress, dataAttr, findParent } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
@@ -14,6 +15,8 @@ import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
+import { keyNameMap } from '../helper/keyboard';
+import { KeyNameMap } from '../types';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -24,6 +27,7 @@ interface StoreProps {
   width: number;
   autoWidth: boolean;
   editing: boolean;
+  filtering: boolean;
   editingEvent: EditingEvent;
   scrollXHeight: number;
   fitToParentHeight: boolean;
@@ -36,6 +40,7 @@ interface StoreProps {
   eventBus: EventBus;
   scrollX: boolean;
   scrollY: boolean;
+  hoveredRowKey: RowKey | null;
 }
 
 interface TouchEventInfo {
@@ -55,8 +60,6 @@ const TAP_THRESHOLD = 10;
 
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
-
-  private hoveredRowKey: RowKey | null = null;
 
   private touchEvent: TouchEventInfo = {
     start: false,
@@ -124,15 +127,15 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus, dispatch } = this.props;
+    const { eventBus, dispatch, hoveredRowKey } = this.props;
     const gridEvent = new GridEvent({ event });
     const rowKey = this.getCellRowKey(event.target as HTMLElement);
 
     if (!isNull(rowKey)) {
-      dispatch('removeRowClassName', this.hoveredRowKey!, cls('row-hover'));
+      dispatch('removeRowClassName', hoveredRowKey!, cls('row-hover'));
 
-      if (this.hoveredRowKey !== rowKey) {
-        this.hoveredRowKey = rowKey;
+      if (hoveredRowKey !== rowKey) {
+        dispatch('setHoveredRowKey', rowKey);
         dispatch('addRowClassName', rowKey, cls('row-hover'));
       }
     }
@@ -152,6 +155,7 @@ export class ContainerComp extends Component<Props> {
 
   private handleClick = (event: MouseEvent) => {
     const { eventBus, editingEvent } = this.props;
+
     const gridEvent = new GridEvent({ event });
 
     /**
@@ -172,12 +176,12 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseout = (event: MouseEvent) => {
-    const { eventBus, dispatch } = this.props;
+    const { eventBus, dispatch, hoveredRowKey } = this.props;
     const gridEvent = new GridEvent({ event });
 
-    if (!isNull(this.hoveredRowKey)) {
-      dispatch('removeRowClassName', this.hoveredRowKey, cls('row-hover'));
-      this.hoveredRowKey = null;
+    if (!isNull(hoveredRowKey)) {
+      dispatch('removeRowClassName', hoveredRowKey, cls('row-hover'));
+      dispatch('setHoveredRowKey', null);
     }
 
     /**
@@ -198,7 +202,8 @@ export class ContainerComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, editing, eventBus } = this.props;
+    const { dispatch, editing, eventBus, filtering } = this.props;
+
     const { el } = this;
     const gridEvent = new GridEvent({ event });
 
@@ -216,7 +221,7 @@ export class ContainerComp extends Component<Props> {
 
     if (!gridEvent.isStopped()) {
       dispatch('setNavigating', true);
-      if (!editing) {
+      if (!editing && !filtering) {
         event.preventDefault();
       }
 
@@ -270,7 +275,27 @@ export class ContainerComp extends Component<Props> {
       // Use setTimeout to wait until the DOM element is actually mounted
       window.setTimeout(this.syncWithDOMWidth, 0);
     }
+
+    document.addEventListener('mousedown', this.handleDocumentMouseDown);
+    document.addEventListener('keydown', this.handleDocumentKeyDown);
   }
+
+  private handleDocumentKeyDown = (ev: KeyboardEvent) => {
+    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    if (keyName === 'esc') {
+      this.props.dispatch('setActiveColumnAddress', null);
+    }
+  };
+
+  private handleDocumentMouseDown = (ev: Event) => {
+    const { dispatch, filtering } = this.props;
+    if (filtering) {
+      const target = ev.target as HTMLElement;
+      if (!findParent(target, 'btn-filter') && !findParent(target, 'filter-container')) {
+        dispatch('setActiveColumnAddress', null);
+      }
+    }
+  };
 
   public componentWillUnmount() {
     if (this.props.autoWidth) {
@@ -342,17 +367,19 @@ export class ContainerComp extends Component<Props> {
         <EditingLayer />
         <Clipboard />
         <Pagination />
+        <FilterLayer />
       </div>
     );
   }
 }
 
 export const Container = connect<StoreProps, OwnProps>(
-  ({ id, dimension, focus, columnCoords, data }) => ({
+  ({ id, dimension, focus, columnCoords, data, filterLayerState, renderState }) => ({
     gridId: id,
     width: dimension.width,
     autoWidth: dimension.autoWidth,
     editing: !!focus.editingAddress,
+    filtering: !!filterLayerState.activeColumnAddress,
     scrollXHeight: dimension.scrollX ? dimension.scrollbarWidth : 0,
     fitToParentHeight: dimension.fitToParentHeight,
     summaryHeight: dimension.summaryHeight,
@@ -364,6 +391,7 @@ export const Container = connect<StoreProps, OwnProps>(
     viewData: data.viewData,
     eventBus: getEventBus(id),
     scrollX: dimension.scrollX,
-    scrollY: dimension.scrollY
+    scrollY: dimension.scrollY,
+    hoveredRowKey: renderState.hoveredRowKey
   })
 )(ContainerComp);

@@ -1,14 +1,14 @@
-import { Data, SortedColumn, Store } from '../store/types';
+import { Data, Store } from '../store/types';
 import { arrayEqual, findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
-import { getSortedData } from '../helper/sort';
+import { getSortedData, isInitialSortState, isSortable } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { createObservableData } from './data';
 
 type SortingType = 'asc' | 'desc';
 
-export function changeSortOptions(
+export function changeSortState(
   { data, column }: Store,
   columnName: string,
   ascending: boolean,
@@ -16,18 +16,16 @@ export function changeSortOptions(
   cancelable: boolean = true
 ) {
   if (columnName === 'sortKey') {
-    initSortOptions(data);
+    initSortState(data);
   } else {
     const { sortingType } = column.allColumnMap[columnName];
 
     if (withCtrl) {
-      changeMultiSortOptions(data, columnName, ascending, sortingType!, cancelable);
+      changeMultiSortState(data, columnName, ascending, sortingType!, cancelable);
     } else {
-      changeSingleSortOptions(data, columnName, ascending, sortingType!, cancelable);
+      changeSingleSortState(data, columnName, ascending, sortingType!, cancelable);
     }
   }
-
-  notify(data, 'sortOptions');
 }
 
 export function sort(
@@ -37,48 +35,50 @@ export function sort(
   withCtrl: boolean = false,
   cancelable: boolean = true
 ) {
-  const { data } = store;
-  const { sortOptions } = data;
-  if (!sortOptions.useClient) {
+  const { data, column } = store;
+  const { sortState } = data;
+
+  if (!isSortable(sortState, column, columnName)) {
     return;
   }
 
-  changeSortOptions(store, columnName, ascending, withCtrl, cancelable);
+  changeSortState(store, columnName, ascending, withCtrl, cancelable);
   sortData(store);
 }
 
 export function unsort(store: Store, columnName: string = 'sortKey') {
-  const { data } = store;
+  const { data, column } = store;
+  const { sortState } = data;
+
+  if (!isSortable(sortState, column, columnName)) {
+    return;
+  }
 
   if (columnName === 'sortKey') {
-    initSortOptions(data);
+    initSortState(data);
   } else {
-    const index = findPropIndex('columnName', columnName, data.sortOptions.columns);
+    const index = findPropIndex('columnName', columnName, data.sortState.columns);
 
     if (index !== -1) {
-      data.sortOptions.columns.splice(index, 1);
-      if (!data.sortOptions.columns.length) {
-        initSortOptions(data);
-      }
-
-      notify(data, 'sortOptions');
+      data.sortState.columns.splice(index, 1);
+      notifySortState(data);
     }
   }
 
   sortData(store);
 }
 
-export function initSortOptions(data: Data) {
-  data.sortOptions.columns = [
-    {
-      columnName: 'sortKey',
-      ascending: true
-    }
-  ];
+export function initSortState(data: Data) {
+  data.sortState.columns = [{ columnName: 'sortKey', ascending: true }];
+  notify(data, 'sortState');
 }
 
-function isInitialSortOptions(columns: SortedColumn[]) {
-  return columns.length === 1 && columns[0].columnName === 'sortKey';
+function notifySortState(data: Data) {
+  if (!data.sortState.columns.length) {
+    initSortState(data);
+    return;
+  }
+  notify(data, 'sortState');
 }
 
 function toggleSortAscending(
@@ -88,79 +88,56 @@ function toggleSortAscending(
   sortingType: SortingType,
   cancelable: boolean
 ) {
-  const { sortOptions } = data;
-  const index = findPropIndex('columnName', columnName, sortOptions.columns);
+  const { sortState } = data;
+  const index = findPropIndex('columnName', columnName, sortState.columns);
   const defaultAscending = sortingType === 'asc';
 
   if (defaultAscending === ascending && cancelable) {
-    data.sortOptions.columns.splice(index, 1);
+    data.sortState.columns.splice(index, 1);
   } else {
-    data.sortOptions.columns[index].ascending = ascending;
-  }
-
-  if (!sortOptions.columns.length) {
-    initSortOptions(data);
+    data.sortState.columns[index].ascending = ascending;
   }
 }
 
-function changeSingleSortOptions(
+function changeSingleSortState(
   data: Data,
   columnName: string,
   ascending: boolean,
   sortingType: SortingType,
   cancelable: boolean
 ) {
-  const { sortOptions } = data;
-  const { columns } = sortOptions;
-  const sortedColumn = {
-    columnName,
-    ascending
-  };
+  const { sortState } = data;
+  const { columns } = sortState;
+  const sortedColumn = { columnName, ascending };
 
-  if (isInitialSortOptions(columns)) {
-    data.sortOptions.columns = [sortedColumn];
-  } else if (columns.length === 1) {
-    const isExist = columns[0].columnName === columnName;
-    if (isExist) {
-      toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
-    } else {
-      data.sortOptions.columns = [sortedColumn];
-    }
+  if (columns.length === 1 && columns[0].columnName === columnName) {
+    toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
   } else {
-    const index = findPropIndex('columnName', columnName, sortOptions.columns);
-    if (index === -1) {
-      data.sortOptions.columns = [sortedColumn];
-    } else {
-      const column = { ...sortOptions.columns[index] };
-      column.ascending = ascending;
-      data.sortOptions.columns = [column];
-    }
+    data.sortState.columns = [sortedColumn];
   }
+  notifySortState(data);
 }
 
-function changeMultiSortOptions(
+function changeMultiSortState(
   data: Data,
   columnName: string,
   ascending: boolean,
   sortingType: SortingType,
   cancelable: boolean
 ) {
-  const sortedColumn = {
-    columnName,
-    ascending
-  };
-  const { sortOptions } = data;
-  const { columns } = sortOptions;
+  const sortedColumn = { columnName, ascending };
+  const { sortState } = data;
+  const { columns } = sortState;
   const index = findPropIndex('columnName', columnName, columns);
+
   if (index === -1) {
-    if (isInitialSortOptions(columns)) {
-      data.sortOptions.columns = [sortedColumn];
-    } else {
-      data.sortOptions.columns = [...columns, sortedColumn];
-    }
+    data.sortState.columns = isInitialSortState(columns)
+      ? [sortedColumn]
+      : [...columns, sortedColumn];
   } else {
     toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
   }
+  notifySortState(data);
 }
 
 function sortData(store: Store) {
@@ -174,12 +151,12 @@ function sortData(store: Store) {
   }
 
   const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ sortOptions: data.sortOptions });
+  const gridEvent = new GridEvent({ sortState: data.sortState });
 
   /**
    * Occurs when sorting.
    * @event Grid#sort
-   * @property {number} sortOptions - sort options
+   * @property {number} sortState - sort state
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('sort', gridEvent);

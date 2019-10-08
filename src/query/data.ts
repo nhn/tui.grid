@@ -1,7 +1,15 @@
 import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
-import { findProp, isFunction, findPropIndex, isNull, isUndefined } from '../helper/common';
+import {
+  findProp,
+  isFunction,
+  findPropIndex,
+  isNull,
+  isUndefined,
+  isEmpty
+} from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from '../helper/rowSpan';
+import { isHiddenColumn } from '../helper/column';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -9,7 +17,7 @@ export function getCellAddressByIndex(
   columnIndex: number
 ) {
   return {
-    rowKey: data.viewData[rowIndex].rowKey,
+    rowKey: data.filteredViewData[rowIndex].rowKey,
     columnName: column.visibleColumns[columnIndex].name
   };
 }
@@ -22,11 +30,14 @@ export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
   return disabled || rowDisabled;
 }
 
-export function isCellEditable(data: Data, rowKey: RowKey, columnName: string) {
+export function isCellEditable(data: Data, column: Column, rowKey: RowKey, columnName: string) {
   const { viewData } = data;
   const row = findProp('rowKey', rowKey, viewData)!;
+  const { editable } = row.valueMap[columnName];
 
-  return !isCellDisabled(data, rowKey, columnName) && row.valueMap[columnName].editable;
+  return (
+    !isHiddenColumn(column, columnName) && !isCellDisabled(data, rowKey, columnName) && editable
+  );
 }
 
 export function getCheckedRows({ data }: Store) {
@@ -52,32 +63,40 @@ export function getConditionalRows(
   return result;
 }
 
-export function findIndexByRowKey(data: Data, column: Column, id: number, rowKey?: RowKey | null) {
+export function findIndexByRowKey(
+  data: Data,
+  column: Column,
+  id: number,
+  rowKey?: RowKey | null,
+  filtered = true
+) {
   if (isUndefined(rowKey) || isNull(rowKey)) {
     return -1;
   }
 
-  const { rawData, sortOptions } = data;
+  const { filteredRawData, rawData, sortState, pageOptions } = data;
+  const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
+  const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
-  if (!isRowSpanEnabled(sortOptions) || column.keyColumnName || hasAppendedData) {
-    return findPropIndex('rowKey', rowKey, rawData);
+  if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
+    return findPropIndex('rowKey', rowKey, targetData) % perPage;
   }
 
   let start = 0;
-  let end = rawData.length - 1;
+  let end = targetData.length - 1;
 
   while (start <= end) {
     const mid = Math.floor((start + end) / 2);
-    const { rowKey: comparedRowKey } = rawData[mid];
+    const { rowKey: comparedRowKey } = targetData[mid];
 
     if (rowKey > comparedRowKey) {
       start = mid + 1;
     } else if (rowKey < comparedRowKey) {
       end = mid - 1;
     } else {
-      return mid;
+      return mid % perPage;
     }
   }
 
@@ -90,5 +109,26 @@ export function findRowByRowKey(
   id: number,
   rowKey?: RowKey | null
 ): Row | undefined {
-  return data.rawData[findIndexByRowKey(data, column, id, rowKey)];
+  return data.filteredRawData[findIndexByRowKey(data, column, id, rowKey)];
+}
+
+export function getFilterStateWithOperator(data: Data, column: Column) {
+  const { allColumnMap } = column;
+  let { filters } = data;
+  if (filters) {
+    filters = filters.map(filter => {
+      if (filter.state.length > 1) {
+        const { columnName } = filter;
+        const operator = allColumnMap[columnName].filter!.operator!;
+        return {
+          ...filter,
+          operator
+        };
+      }
+
+      return filter;
+    });
+  }
+
+  return filters;
 }

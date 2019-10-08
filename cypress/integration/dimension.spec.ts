@@ -252,7 +252,7 @@ describe('auto calculate column widths (container: 600)', () => {
   });
 });
 
-describe('body height', () => {
+describe('height', () => {
   const DEF_HEADER_HEIGHT = 40;
   const BORER_WIDTH = 1;
   const columns = [{ name: 'c1' }];
@@ -316,5 +316,11 @@ describe('body height', () => {
       dragHeightReiszeHandle(100);
       assertBodyHeight(300);
     });
+  });
+
+  it('setBodyHeight() changes body height', () => {
+    cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
+    cy.gridInstance().invoke('setBodyHeight', 300);
+    assertBodyHeight(300);
   });
 });

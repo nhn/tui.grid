@@ -3,18 +3,18 @@ import { getTextWithCopyOptionsApplied } from '../helper/clipboard';
 
 export function getRangeToPaste(store: Store, pasteData: string[][]): SelectionRange {
   const {
-    selection: { range },
-    focus: { rowIndex, totalColumnIndex },
+    selection: { originalRange },
+    focus: { totalColumnIndex, originalRowIndex },
     column: { visibleColumnsWithRowHeader },
     data: { viewData }
   } = store;
   let startRowIndex, startColumnIndex;
 
-  if (range) {
-    startRowIndex = range.row[0];
-    startColumnIndex = range.column[0];
+  if (originalRange) {
+    startRowIndex = originalRange.row[0];
+    startColumnIndex = originalRange.column[0];
   } else {
-    startRowIndex = rowIndex!;
+    startRowIndex = originalRowIndex!;
     startColumnIndex = totalColumnIndex!;
   }
 
@@ -58,41 +58,46 @@ function getValueToString(store: Store) {
   const {
     column: { visibleColumnsWithRowHeader },
     focus: { rowIndex, columnName, totalColumnIndex },
-    data: { viewData, rawData }
+    data: { filteredViewData, filteredRawData }
   } = store;
 
   if (rowIndex === null || columnName === null || totalColumnIndex === null) {
     return '';
   }
-  const valueMap = viewData[rowIndex].valueMap[columnName];
+  const valueMap = filteredViewData[rowIndex].valueMap[columnName];
 
   return getTextWithCopyOptionsApplied(
     valueMap,
-    rawData,
+    filteredRawData,
     visibleColumnsWithRowHeader[totalColumnIndex]
   );
 }
 
 function getValuesToString(store: Store) {
   const {
-    selection: { range },
+    selection: { originalRange },
     column: { visibleColumnsWithRowHeader },
-    data: { viewData, rawData }
+    data: { filteredViewData, filteredRawData }
   } = store;
 
-  if (!range) {
+  if (!originalRange) {
     return '';
   }
 
-  const { row, column } = range;
-  const rowList = viewData.slice(row[0], row[1] + 1);
+  const { row, column } = originalRange!;
+
+  const rowList = filteredViewData.slice(row[0], row[1] + 1);
   const columnInRange = visibleColumnsWithRowHeader.slice(column[0], column[1] + 1);
 
   return rowList
     .map(({ valueMap }) =>
       columnInRange
         .map(({ name }, index) =>
-          getTextWithCopyOptionsApplied(valueMap[name], rawData, visibleColumnsWithRowHeader[index])
+          getTextWithCopyOptionsApplied(
+            valueMap[name],
+            filteredRawData,
+            visibleColumnsWithRowHeader[index]
+          )
         )
         .join('\t')
     )

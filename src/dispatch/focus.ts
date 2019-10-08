@@ -1,26 +1,26 @@
-import { Store, RowKey, Focus, Data } from '../store/types';
+import { Store, RowKey } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellEditable, findIndexByRowKey } from '../query/data';
-import { isFocusedCell } from '../query/focus';
+import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { isFocusedCell, isEditingCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
-import { isObservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
+import { setValue } from './data';
+import { isUndefined } from '../helper/common';
+import { createTreeRawRow } from '../helper/tree';
+import { isHiddenColumn } from '../helper/column';
+import { forceSyncRendering } from '../helper/render';
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
-  const { rawData, viewData } = data;
-  const { allColumnMap } = column;
+  const { rawData } = data;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rawRow = rawData[foundIndex];
 
   // makes the data observable to judge editable, disable of the cell;
-  if (!isObservable(rawRow)) {
-    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
-  }
+  makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, rowKey, columnName)) {
+  if (!isCellEditable(data, column, rowKey, columnName)) {
     return;
   }
 
@@ -42,12 +42,14 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   eventBus.trigger('editingStart', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    const columnInfo = allColumnMap[columnName];
-    if (columnInfo && columnInfo.editor) {
+    forceSyncRendering(() => {
+      focus.forcedDestroyEditing = false;
       focus.navigating = false;
       focus.editingAddress = { rowKey, columnName };
-    }
+    });
   }
+
+  notify(data, 'viewData');
 }
 
 export function finishEditing(
@@ -56,8 +58,6 @@ export function finishEditing(
   columnName: string,
   value: string
 ) {
-  const { editingAddress } = focus;
-
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey, columnName, value });
 
@@ -72,29 +72,31 @@ export function finishEditing(
   eventBus.trigger('editingFinish', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    if (
-      editingAddress &&
-      editingAddress.rowKey === rowKey &&
-      editingAddress.columnName === columnName
-    ) {
-      focus.editingAddress = null;
-      focus.navigating = true;
+    if (isEditingCell(focus, rowKey, columnName)) {
+      forceSyncRendering(() => {
+        focus.editingAddress = null;
+        focus.navigating = true;
+      });
     }
   }
 }
 
 export function changeFocus(
-  focus: Focus,
-  data: Data,
+  store: Store,
   rowKey: RowKey | null,
   columnName: string | null,
   id: number
 ) {
-  if (isFocusedCell(focus, rowKey, columnName)) {
+  const { data, focus, column } = store;
+
+  if (
+    isFocusedCell(focus, rowKey, columnName) ||
+    (columnName && isHiddenColumn(column, columnName))
+  ) {
     return;
   }
 
-  const { rawData, sortOptions } = data;
+  const { rawData, sortState } = data;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({
     rowKey,
@@ -117,7 +119,7 @@ export function changeFocus(
   if (!gridEvent.isStopped()) {
     let focusRowKey = rowKey;
 
-    if (rowKey && columnName && isRowSpanEnabled(sortOptions)) {
+    if (rowKey && columnName && isRowSpanEnabled(sortState)) {
       const rowSpan = getRowSpanByRowKey(rowKey, columnName, rawData);
       if (rowSpan) {
         focusRowKey = rowSpan.mainRowKey;
@@ -138,4 +140,62 @@ export function initFocus({ focus }: Store) {
   focus.columnName = null;
   focus.prevRowKey = null;
   focus.prevColumnName = null;
+}
+
+export function saveAndFinishEditing(
+  store: Store,
+  rowKey: RowKey,
+  columnName: string,
+  value?: string
+) {
+  const { data, column, focus } = store;
+
+  if (!isEditingCell(focus, rowKey, columnName)) {
+    return;
+  }
+  // makes the data observable to judge editable, disable of the cell;
+  makeObservable(store, rowKey);
+
+  if (!isCellEditable(data, column, rowKey, columnName)) {
+    return;
+  }
+
+  if (isUndefined(value)) {
+    forceSyncRendering(() => {
+      focus.forcedDestroyEditing = true;
+      focus.editingAddress = null;
+      focus.navigating = true;
+    });
+    return;
+  }
+
+  setValue(store, rowKey, columnName, value);
+  finishEditing(store, rowKey, columnName, value);
+}
+
+function makeObservable(store: Store, rowKey: RowKey) {
+  const { data, column, id } = store;
+  const { rawData, viewData } = data;
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
+  const rawRow = rawData[foundIndex];
+
+  if (isObservable(rawRow)) {
+    return;
+  }
+
+  if (treeColumnName) {
+    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
+    rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
+    viewData[foundIndex] = createViewRow(
+      rawData[foundIndex],
+      allColumnMap,
+      rawData,
+      treeColumnName,
+      treeIcon
+    );
+  } else {
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
+  }
 }

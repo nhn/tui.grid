@@ -1,6 +1,6 @@
-import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent } from './types';
+import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent, TabMode } from './types';
 import { Observable, observable } from '../helper/observable';
-import { someProp, findPropIndex } from '../helper/common';
+import { someProp, findPropIndex, isEmpty } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../helper/rowSpan';
 import { findIndexByRowKey } from '../query/data';
 
@@ -10,6 +10,7 @@ interface FocusOption {
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   editingEvent: EditingEvent;
+  tabMode: TabMode;
   id: number;
 }
 
@@ -19,6 +20,7 @@ export function create({
   rowCoords,
   columnCoords,
   editingEvent,
+  tabMode,
   id
 }: FocusOption): Observable<Focus> {
   return observable({
@@ -29,6 +31,8 @@ export function create({
     editingAddress: null,
     editingEvent,
     navigating: false,
+    forcedDestroyEditing: false,
+    tabMode,
 
     get side(this: Focus) {
       if (this.columnName === null) {
@@ -70,9 +74,26 @@ export function create({
       return findIndexByRowKey(data, column, id, rowKey);
     },
 
+    get originalRowIndex(this: Focus) {
+      const { rowIndex } = this;
+      const { pageOptions } = data;
+
+      if (rowIndex === null) {
+        return null;
+      }
+
+      if (!isEmpty(pageOptions)) {
+        const { perPage, page } = pageOptions;
+
+        return rowIndex + (page - 1) * perPage;
+      }
+
+      return rowIndex;
+    },
+
     get cellPosRect(this: Focus) {
       const { columnIndex, rowIndex, side, columnName, rowKey } = this;
-      const { rawData, sortOptions } = data;
+      const { filteredRawData, sortState } = data;
 
       if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
         return null;
@@ -82,10 +103,15 @@ export function create({
       const right = left + columnCoords.widths[side][columnIndex];
       const top = rowCoords.offsets[rowIndex];
       const bottom = top + rowCoords.heights[rowIndex];
-      const rowSpan = getRowSpanByRowKey(rowKey!, columnName, rawData);
+      const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);
 
-      if (isRowSpanEnabled(sortOptions) && rowSpan) {
-        const verticalPos = getVerticalPosWithRowSpan(columnName, rowSpan, rowCoords, rawData);
+      if (isRowSpanEnabled(sortState) && rowSpan) {
+        const verticalPos = getVerticalPosWithRowSpan(
+          columnName,
+          rowSpan,
+          rowCoords,
+          filteredRawData
+        );
         return { left, right, top: verticalPos[0], bottom: verticalPos[1] };
       }
 

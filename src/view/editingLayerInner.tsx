@@ -1,13 +1,13 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { CellValue, RowKey, ColumnInfo, SortOptions, Column, Data } from '../store/types';
+import { CellValue, RowKey, ColumnInfo, SortState, Filter } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
-import { keyNameMap } from '../helper/keyboard';
+import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction, findPropIndex, isNull } from '../helper/common';
+import { isFunction, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface StoreProps {
@@ -19,9 +19,11 @@ interface StoreProps {
   columnInfo?: ColumnInfo;
   value?: CellValue;
   grid: Grid;
-  sortOptions: SortOptions;
+  sortState: SortState;
+  filter?: Filter;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
+  forcedDestroyEditing: boolean;
 }
 
 interface OwnProps {
@@ -31,17 +33,54 @@ interface OwnProps {
 
 type Props = StoreProps & OwnProps & DispatchProps;
 
-type KeyNameMap = typeof keyNameMap & {
-  [keyCode: number]: string | undefined;
-};
-
+/**
+ * Process of unmounting the Editing layer
+ * 1. In case of controlling by the keyMap
+ * - Step 1: call the handleKeyDown method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAdress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 2. In case of controlling by clicking another cell
+ * - Step 1: call the componentWillReceiveProps lifecycle method.
+ * - Step 2: dispath the finishEditing.
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 3. In case of controlling by finishEditing grid API with value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName', 'someValue');)
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: call the finishEditing function in dispatch/focus.ts
+ * - Step 3: occur the editingFinish event and editingAddress will be 'null'.
+ * - Step 4: call the componentWillUnmount lifecycle method.
+ * - Step 5: the layer is unmounted.
+ *
+ * 4. In case of controlling by finishEditing grid API with 'undefined' value parameter.
+ *    (ex. grid.finishEditing(0, 'columnName');)
+ * - Step 1: dispath the saveAndFinishEditing.
+ * - Step 2: editingAddress will be 'null'.
+ * - Step 3: call the componentWillUnmount lifecycle method.
+ * - Step 4: dispath the finishEditing(due to forcedDestroyEditing prop is 'true').
+ * - Step 5: occur the editingFinish event(editingAddress is already 'null').
+ * - Step 6: the layer is unmounted.
+ */
 export class EditingLayerInnerComp extends Component<Props> {
   private editor?: CellEditor;
 
   private contentEl?: HTMLElement;
 
+  private moveTabFocus(ev: KeyboardEvent, command: TabCommandType) {
+    const { dispatch } = this.props;
+
+    ev.preventDefault();
+    dispatch('moveTabFocus', command);
+    dispatch('setScrollToFocus');
+  }
+
   private handleKeyDown = (ev: KeyboardEvent) => {
-    const keyName = (keyNameMap as KeyNameMap)[ev.keyCode];
+    const keyName = getKeyStrokeString(ev);
 
     switch (keyName) {
       case 'enter':
@@ -50,6 +89,12 @@ export class EditingLayerInnerComp extends Component<Props> {
       case 'esc':
         this.finishEditing(false);
         break;
+      case 'tab':
+        this.moveTabFocus(ev, 'nextCell');
+        break;
+      case 'shift-tab':
+        this.moveTabFocus(ev, 'prevCell');
+        break;
       default:
       // do nothing;
     }
@@ -57,14 +102,10 @@ export class EditingLayerInnerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     if (this.editor) {
-      const { dispatch, rowKey, columnName, sortOptions } = this.props;
+      const { dispatch, rowKey, columnName } = this.props;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
-        const index = findPropIndex('columnName', columnName, sortOptions.columns);
-        if (index !== -1) {
-          dispatch('sort', columnName, sortOptions.columns[index].ascending, true, false);
-        }
       }
       dispatch('finishEditing', rowKey, columnName, value);
     }
@@ -95,7 +136,9 @@ export class EditingLayerInnerComp extends Component<Props> {
   }
 
   public componentWillUnmount() {
-    this.finishEditing(false);
+    if (this.props.forcedDestroyEditing) {
+      this.finishEditing(true);
+    }
     if (this.editor && this.editor.beforeDestroy) {
       this.editor.beforeDestroy();
     }
@@ -133,13 +176,20 @@ export class EditingLayerInnerComp extends Component<Props> {
 
 export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey, columnName }) => {
   const { data, column, id, focus, viewport, dimension, columnCoords } = store;
-  const { cellPosRect, side, columnName: focusedColumnName, rowKey: focusedRowKey } = focus;
-  const { viewData, sortOptions } = data;
+  const {
+    cellPosRect,
+    side,
+    columnName: focusedColumnName,
+    rowKey: focusedRowKey,
+    forcedDestroyEditing
+  } = focus;
+  const { filteredViewData, sortState } = data;
   const state = {
     grid: getInstance(id),
-    sortOptions,
+    sortState,
     focusedColumnName,
-    focusedRowKey
+    focusedRowKey,
+    forcedDestroyEditing
   };
 
   if (isNull(cellPosRect)) {
@@ -155,8 +205,14 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const cellHeight = bottom - top + cellBorderWidth;
   const offsetTop = headerHeight - scrollTop + tableBorderWidth;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
-  const targetRow = viewData[findIndexByRowKey(data as Data, column as Column, id, rowKey)];
-  const { value } = targetRow.valueMap[columnName];
+  const targetRow = filteredViewData[findIndexByRowKey(data, column, id, rowKey)];
+  let value, filter;
+  if (targetRow) {
+    value = targetRow.valueMap[columnName].value;
+  }
+  if (data.filters) {
+    filter = findProp('columnName', columnName, data.filters);
+  }
 
   return {
     ...state,
@@ -166,6 +222,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     height: cellHeight,
     contentHeight: cellHeight - 2 * cellBorderWidth,
     columnInfo: allColumnMap[columnName],
-    value
+    value,
+    filter
   };
 })(EditingLayerInnerComp);

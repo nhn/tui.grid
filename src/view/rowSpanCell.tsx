@@ -41,9 +41,9 @@ export class RowSpanCellComp extends Component<Props> {
 }
 
 export const RowSpanCell = connect<StoreProps, OwnProps>(({ data }, { viewRow, columnInfo }) => {
-  const { sortOptions } = data;
-  const rowSpan = viewRow.rowSpanMap[columnInfo.name] || null;
-  const enableRowSpan = sortOptions.columns[0].columnName === 'sortKey';
+  const { sortState } = data;
+  const rowSpan = (viewRow.rowSpanMap && viewRow.rowSpanMap[columnInfo.name]) || null;
+  const enableRowSpan = sortState.columns[0].columnName === 'sortKey';
 
   return { rowSpan, enableRowSpan };
 })(RowSpanCellComp);

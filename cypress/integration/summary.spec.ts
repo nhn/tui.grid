@@ -424,5 +424,30 @@ describe('summary', () => {
           sum: 275000
         });
       });
+    cy.gridInstance().invoke('setColumns', [
+      { name: 'name', minWidth: 150 },
+      { name: 'price', minWidth: 150 },
+      { name: 'downloadCount', minWidth: 150 }
+    ]);
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+  });
+
+  it('summaryColumnContent is priority than defaultContent', () => {
+    const summary = {
+      height: 40,
+      defaultContent: {
+        template(valueMap: OptSummaryValueMap) {
+          return `DEFAULT_MAX: ${valueMap.max}<br>DEFAULT_MIN: ${valueMap.min}`;
+        }
+      }
+    };
+    const defaultOptions = createDefaultOptions();
+    cy.createGrid({ ...defaultOptions, summary });
+    cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
+      template(valueMap: OptSummaryValueMap) {
+        return `auto calculate: ${valueMap.max}`;
+      }
+    });
+    assertSummaryContent('price', 'auto calculate: 30000');
   });
 });

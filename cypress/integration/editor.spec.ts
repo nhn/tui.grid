@@ -1,4 +1,3 @@
-import { isSubsetOf } from '../helper/compare';
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
@@ -67,10 +66,8 @@ it('onBeforeChange / onAfterChange must be called with gridEvent object', () => 
   cy.getCell(1, 'age')
     .click()
     .then(() => {
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, beforeCallback.args[0][0]))
-        .to.be.true;
-      expect(isSubsetOf({ rowKey: 0, columnName: 'name', value: 'Kim' }, afterCallback.args[0][0]))
-        .to.be.true;
+      expect(beforeCallback.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
+      expect(afterCallback.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
     });
 });
 
@@ -204,3 +201,107 @@ it('cannot edit the value on disabled cell', () => {
 
   cy.get(`.${cls('content-text')}`).should('be.not.visible');
 });
+
+it('cannot save the value and finish the editing on non editable cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('finishEditing', 0, 'age', 11);
+  cy.getCell(0, 'age').should('have.text', '20');
+
+  cy.gridInstance().invoke('disable');
+  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
+  cy.getCell(0, 'name').should('have.text', 'Lee');
+});
+
+it('should destroy the editing layer, when hide the column', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.gridInstance().invoke('hideColumn', 'name');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('cannot edit the value on hidden cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('hideColumn', 'name');
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('cannot save the value and finish the editing on hidden cell', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('hideColumn', 'name');
+  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
+
+  cy.get(`.${cls('layer-editing')}`).should('not.be.visible');
+});
+
+it('should renering of the editing cell is syncronous', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+  const stub = cy.stub();
+
+  cy.createGrid({ data, columns });
+
+  cy.gridInstance().invoke('on', 'editingFinish', stub);
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.get(`.${cls('content-text')}`).type('Kim');
+  cy.gridInstance().invoke('finishEditing', 0, 'name');
+
+  cy.gridInstance()
+    .invoke('getValue', 0, 'name')
+    .should('eq', 'Kim');
+
+  cy.gridInstance().invoke('startEditing', 1, 'name');
+  cy.get(`.${cls('content-text')}`)
+    .invoke('val')
+    .should('eq', 'Han')
+    .and(() => {
+      expect(stub).to.be.calledOnce;
+      expect(stub.args[0][0]).to.contain({ rowKey: 0, columnName: 'name', value: 'Kim' });
+    });
+});
+
+// @TODO: cannot pass the test in headless mode, need to ask this issue
+// it('should not copy prev value as moving the editing cell by tab keyMap', () => {
+//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+//   cy.createGrid({ data, columns });
+//   cy.gridInstance().invoke('startEditing', 0, 'name');
+//   cy.get(`.${cls('content-text')}`).tab();
+
+//   cy.get(`.${cls('content-text')}`)
+//     .invoke('val')
+//     .should('eq', '20');
+
+//   cy.get(`.${cls('content-text')}`).tab({ shift: true });
+
+//   cy.get(`.${cls('content-text')}`)
+//     .invoke('val')
+//     .should('eq', 'Lee');
+// });
+
+// it('should destroy the editing cell as next cell is not editable cell on moving by tab keyMap', () => {
+//   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+//   const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
+
+//   cy.createGrid({ data, columns });
+//   cy.gridInstance().invoke('startEditing', 0, 'name');
+//   cy.get(`.${cls('content-text')}`).tab();
+
+//   cy.get(`.${cls('content-text')}`).should('be.not.visible');
+// });

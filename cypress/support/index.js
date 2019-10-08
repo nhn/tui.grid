@@ -14,7 +14,15 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import 'cypress-plugin-tab';
 import './commands';
+import { isSubsetOf } from '../helper/compare';
+
+chai.use(_chai => {
+  _chai.Assertion.addMethod('subset', function(options) {
+    new _chai.Assertion(isSubsetOf(options, this._obj)).to.be.true;
+  });
+});
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

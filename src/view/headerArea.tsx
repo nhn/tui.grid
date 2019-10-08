@@ -12,6 +12,7 @@ import { ComplexHeader } from './complexHeader';
 import { HeaderCheckbox } from './headerCheckbox';
 import { SortingButton } from './sortingButton';
 import { SortingOrder } from './sortingOrder';
+import { FilterButton } from './filterButton';
 
 interface OwnProps {
   side: Side;
@@ -49,7 +50,11 @@ class HeaderAreaComp extends Component<Props> {
     const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
-    if (findParent(target, 'cell-row-header') || hasClass(target, 'btn-sorting')) {
+    if (
+      findParent(target, 'cell-row-header') ||
+      hasClass(target, 'btn-sorting') ||
+      hasClass(target, 'btn-filter')
+    ) {
       return;
     }
 
@@ -114,7 +119,8 @@ class HeaderAreaComp extends Component<Props> {
                       sortable,
                       headerAlign: textAlign,
                       headerVAlign: verticalAlign,
-                      sortingType
+                      sortingType,
+                      filter
                     },
                     index
                   ) => (
@@ -132,6 +138,7 @@ class HeaderAreaComp extends Component<Props> {
                       {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
                       {!!sortable && <SortingButton columnName={name} sortingType={sortingType} />}
                       {!!sortable && <SortingOrder columnName={name} />}
+                      {!!filter && <FilterButton columnName={name} />}
                     </th>
                   )
                 )}

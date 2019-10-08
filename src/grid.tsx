@@ -9,7 +9,9 @@ import {
   OptRemoveRow,
   OptAppendTreeRow,
   OptColumn,
-  OptHeader
+  OptHeader,
+  FilterOpt,
+  FilterOptionType
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -23,7 +25,8 @@ import {
   Row,
   InvalidRow,
   ColumnInfo,
-  Dictionary
+  Dictionary,
+  FilterState
 } from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
@@ -39,7 +42,8 @@ import {
   getCellAddressByIndex,
   getCheckedRows,
   findIndexByRowKey,
-  findRowByRowKey
+  findRowByRowKey,
+  getFilterStateWithOperator
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -59,6 +63,7 @@ import { getDepth } from './helper/tree';
 import { cls, dataAttr } from './helper/dom';
 import { getRowSpanByRowKey } from './helper/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
+import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 
 /* eslint-disable */
 if ((module as any).hot) {
@@ -229,6 +234,8 @@ if ((module as any).hot) {
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
  *          If you do not want to send the hostname, this option set to false.
+ *      @param {function} [options.onGridMounted] - The function that will be called after rendering the grid.
+ *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
 export default class Grid {
   private el: HTMLElement;
@@ -250,7 +257,7 @@ export default class Grid {
   public usageStatistics: boolean;
 
   public constructor(options: OptGrid) {
-    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroyed } = options;
+    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroy } = options;
     const id = register(this);
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
@@ -289,7 +296,7 @@ export default class Grid {
         cellHeightMap={cellHeightMap}
         rootElement={el}
         onGridMounted={onGridMounted}
-        onGridBeforeDestroyed={onGridBeforeDestroyed}
+        onGridBeforeDestroy={onGridBeforeDestroy}
       />,
       el
     );
@@ -635,17 +642,9 @@ export default class Grid {
    * @param {string} columnName - The name of the column
    * @param {string} value - The value of editing result
    */
-  public finishEditing(rowKey: RowKey, columnName: string, value: string) {
-    const { columns } = this.store.data.sortOptions;
-    this.dispatch('setValue', rowKey, columnName, value);
-
-    const index = findPropIndex('columnName', columnName, columns);
-
-    if (index !== -1) {
-      this.dispatch('sort', columnName, columns[index].ascending);
-    }
-
-    this.dispatch('finishEditing', rowKey, columnName, value);
+  public finishEditing(rowKey: RowKey, columnName: string, value?: string) {
+    // @TODO: change grid API name(finishEditing -> saveAndFinishEditing)
+    this.dispatch('saveAndFinishEditing', rowKey, columnName, value);
   }
 
   /**
@@ -886,14 +885,14 @@ export default class Grid {
    * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
-    return this.store.data.sortOptions;
+    return this.store.data.sortState;
   }
 
   /**
    * Copy to clipboard
    */
   public copyToClipboard() {
-    const clipboard = document.querySelector('.tui-grid-clipboard')!;
+    const clipboard = document.querySelector(`.${cls('clipboard')}`)!;
     clipboard.innerHTML = getText(this.store);
 
     if (isSupportWindowClipboardData()) {
@@ -1160,8 +1159,12 @@ export default class Grid {
   public setPerPage(perPage: number) {
     const pagination = this.getPagination();
     if (pagination) {
-      pagination.setItemsPerPage(perPage);
-      this.readData(1, { perPage });
+      const { pageOptions } = this.store.data;
+      if (pageOptions.useClient) {
+        this.dispatch('setPagination', { ...pageOptions, perPage, page: 1 });
+      } else {
+        this.readData(1, { perPage });
+      }
     }
   }
 
@@ -1417,5 +1420,47 @@ export default class Grid {
         delete this[key];
       }
     }
+  }
+
+  /**
+   * set column filter
+   * @param {string} columnName - columnName
+   * @param {string | FilterOpt} filterOpt - filter type
+   */
+  public setFilter(columnName: string, filterOpt: FilterOpt | FilterOptionType) {
+    this.dispatch('setFilter', columnName, filterOpt);
+  }
+
+  /**
+   * get filter state
+   * @returns {Array.<FilterState>} - filter state
+   */
+  public getFilterState() {
+    const { data, column } = this.store;
+    return getFilterStateWithOperator(data, column);
+  }
+
+  /**
+   * trigger filter
+   * @param {string} columnName - column name to filter
+   * @param {Array.<FilterState>} state - filter state
+   * @example
+   * grid.filter('name', [{code: 'eq', value: 3}, {code: 'eq', value: 4}]);
+   */
+  public filter(columnName: string, state: FilterState[]) {
+    const { filter } = this.store.column.allColumnMap[columnName];
+    if (filter) {
+      const { type } = filter;
+      const conditionFn = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
+      this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
+    }
+  }
+
+  /**
+   * remove filter
+   * @param {string} columnName - column name to unfilter
+   */
+  public unfilter(columnName: string) {
+    this.dispatch('unfilter', columnName);
   }
 }

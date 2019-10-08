@@ -7,7 +7,8 @@ import {
   ComplexColumnInfo,
   CellEditorOptions,
   CellRendererOptions,
-  HeaderAlignInfo
+  HeaderAlignInfo,
+  ColumnFilterOption
 } from './types';
 import {
   OptColumn,
@@ -18,7 +19,9 @@ import {
   OptCellRenderer,
   AlignType,
   VAlignType,
-  ColumnsAlignInfo
+  ColumnsAlignInfo,
+  FilterOpt,
+  FilterOptionType
 } from '../types';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
@@ -72,6 +75,32 @@ function getEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
       : (editor as CellEditorOptions);
   }
   return null;
+}
+
+export function getFilterOptions(filter: FilterOptionType | FilterOpt): ColumnFilterOption {
+  const defaultOption = {
+    type: isObject(filter) ? filter.type : filter!,
+    showApplyBtn: false,
+    showClearBtn: false
+  };
+
+  if (isString(filter)) {
+    if (filter === 'select') {
+      return {
+        ...defaultOption,
+        operator: 'OR'
+      };
+    }
+  }
+
+  if (isObject(filter)) {
+    return {
+      ...defaultOption,
+      ...filter
+    };
+  }
+
+  return defaultOption;
 }
 
 function getRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
@@ -163,11 +192,14 @@ export function createColumn(
     valign,
     defaultValue,
     escapeHTML,
-    ignored
+    ignored,
+    filter
   } = column;
 
   const editorOptions = getEditorOptions(editor);
   const rendererOptions = getRendererOptions(renderer);
+  const filterOptions = filter ? getFilterOptions(filter) : null;
+
   const { headerAlign, headerVAlign } = getHeaderAlignInfo(name, alignInfo);
 
   return observable({
@@ -198,7 +230,8 @@ export function createColumn(
     ...(!!editorOptions && { editor: editorOptions }),
     ...getTreeInfo(treeColumnOptions, name),
     headerAlign,
-    headerVAlign
+    headerVAlign,
+    filter: filterOptions
   });
 }
 
@@ -307,7 +340,9 @@ export function create({
 
   return observable({
     keyColumnName,
-
+    allColumns,
+    complexHeaderColumns,
+    headerAlignInfo,
     frozenCount: columnOptions.frozenCount || 0,
 
     dataForColumnCreation: {
@@ -317,10 +352,6 @@ export function create({
       relationColumns,
       rowHeaders: rowHeaderInfos
     },
-
-    allColumns,
-    complexHeaderColumns,
-    headerAlignInfo,
 
     get allColumnMap() {
       return createMapFromArray(this.allColumns, 'name') as Dictionary<ColumnInfo>;

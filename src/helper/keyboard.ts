@@ -1,9 +1,12 @@
-import { clamp, findIndex } from './common';
+import { $Values } from 'utility-types';
+import { clamp, findIndex, includes } from './common';
+import { KeyNameMap } from '../types';
 
 export const keyNameMap = {
   8: 'backspace',
   9: 'tab',
   13: 'enter',
+  16: 'shift',
   17: 'ctrl',
   27: 'esc',
   37: 'left',
@@ -19,7 +22,7 @@ export const keyNameMap = {
   36: 'home',
   35: 'end',
   46: 'del'
-};
+} as const;
 
 export const keyboardEventTypeMap = {
   move: 'move',
@@ -88,11 +91,12 @@ export const keyStrokeCommandMap: {
   'ctrl-shift-home': ['select', 'firstCell'],
   'ctrl-shift-end': ['select', 'lastCell']
 };
-
 export type KeyCodeType = keyof typeof keyNameMap;
+export type KeyNameType = $Values<typeof keyNameMap>;
 export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
 export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
+export type TabCommandType = 'nextCell' | 'prevCell';
 
 /**
  * Returns the keyStroke string
@@ -183,4 +187,23 @@ export function getNextRowIndex(rowIndex: number, heights: number[]) {
   }
 
   return index;
+}
+
+export function isNonPrintableKey(keyCode: number) {
+  const keys: KeyNameType[] = [
+    'shift',
+    'ctrl',
+    'esc',
+    'left',
+    'up',
+    'right',
+    'down',
+    'pageUp',
+    'pageDown',
+    'end',
+    'home'
+  ];
+  const key = (keyNameMap as KeyNameMap)[keyCode];
+
+  return includes(keys, key);
 }

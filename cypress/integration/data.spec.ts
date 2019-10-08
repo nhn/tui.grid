@@ -71,6 +71,17 @@ describe('appendRow()', () => {
         expect(row.rowKey).to.be.eq(0);
       });
   });
+
+  it('should insert empty value for each column as append the empty row', () => {
+    cy.gridInstance().invoke('appendRow', {});
+
+    cy.gridInstance()
+      .invoke('getModifiedRows')
+      .should(res => {
+        const appendedRow = res.createdRows[0];
+        expect(appendedRow).to.contain({ name: '', age: '' });
+      });
+  });
 });
 
 describe('prependRow()', () => {
@@ -146,6 +157,21 @@ describe('removeRow()', () => {
       .invoke('getFocusedCell')
       .then(res => {
         expect(res).to.eql({ rowKey: null, columnName: null, value: null });
+      });
+  });
+
+  it('should reduce the height after removing the row', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+    cy.createGrid({ data, columns, bodyHeight: 50, minBodyHeight: 50 });
+    cy.get(`.${cls('body-container')}`)
+      .invoke('height')
+      .then(prevHeight => {
+        cy.gridInstance().invoke('removeRow', 1);
+        cy.get('.tui-grid-body-area')
+          .invoke('height')
+          .should('be.lt', prevHeight);
       });
   });
 });
@@ -326,6 +352,33 @@ describe('rows', () => {
       .then(res => {
         expect(res).to.have.length(1);
         expect(res[0]).to.contain({ name: 'Lee', age: 20 });
+      });
+  });
+});
+
+describe('focus', () => {
+  it('should destroy the focusing layer, when hide the column', () => {
+    cy.gridInstance().invoke('focus', 1, 'name', true);
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        columnName: null,
+        rowKey: null,
+        value: null
+      });
+  });
+
+  it('cannot focus the cell on hidden cell', () => {
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance().invoke('focus', 1, 'name');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', {
+        columnName: null,
+        rowKey: null,
+        value: null
       });
   });
 });

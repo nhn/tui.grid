@@ -6,7 +6,9 @@ import {
   OptColumnOptions,
   OptTree,
   VAlignType,
-  OptSummaryColumnContentMap
+  OptSummaryColumnContentMap,
+  FilterOptionType,
+  OperatorType
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -30,6 +32,8 @@ export type CellIndex = [number, number];
 export type GridId = number;
 
 export type EditingEvent = 'click' | 'dblclick';
+
+export type TabMode = 'move' | 'moveAndEdit';
 
 export type State = 'DONE' | 'EMPTY' | 'LOADING';
 
@@ -125,7 +129,7 @@ export interface DragStartData {
   pageY: number | null;
 }
 
-export interface DragData {
+export interface PagePosition {
   pageX: number;
   pageY: number;
 }
@@ -168,14 +172,23 @@ export interface TreeCellInfo {
   expanded?: boolean;
 }
 
+export interface ActiveColumnAddress {
+  name: string;
+  left: number;
+}
+
 export interface Data {
   rawData: Row[];
   viewData: ViewRow[];
-  sortOptions: SortOptions;
+  sortState: SortState;
+  filteredIndex: number[] | null;
+  filteredRawData: Row[];
+  filteredViewData: ViewRow[];
   disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
+  filters: Filter[] | null;
 }
 
 export interface FormatterProps {
@@ -196,6 +209,31 @@ export interface CellRendererOptions {
   options?: Dictionary<any>;
 }
 
+export interface ColumnFilterOption {
+  type: FilterOptionType;
+  options?: Dictionary<any>;
+  operator?: OperatorType;
+  showApplyBtn: boolean;
+  showClearBtn: boolean;
+}
+
+export type NumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
+export type TextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
+export type DateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
+
+export interface FilterState {
+  code: NumberFilterCode | TextFilterCode | DateFilterCode | null;
+  value: string;
+}
+
+export interface Filter {
+  columnName: string;
+  type: FilterOptionType;
+  operator?: OperatorType;
+  conditionFn?: Function;
+  state: FilterState[];
+}
+
 export interface ColumnInfo {
   readonly name: string;
   header: string;
@@ -212,7 +250,7 @@ export interface ColumnInfo {
   related?: boolean;
   align?: AlignType;
   valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
+  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
   defaultValue?: CellValue;
@@ -224,6 +262,7 @@ export interface ColumnInfo {
   ignored?: boolean;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
+  filter?: ColumnFilterOption | null;
 }
 
 export interface SortedColumn {
@@ -231,7 +270,7 @@ export interface SortedColumn {
   ascending: boolean;
 }
 
-export interface SortOptions {
+export interface SortState {
   useClient: boolean;
   columns: SortedColumn[];
 }
@@ -358,13 +397,16 @@ export interface Focus {
   navigating: boolean;
   rowKey: RowKey | null;
   editingEvent: EditingEvent;
+  tabMode: TabMode;
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;
+  forcedDestroyEditing: boolean;
   readonly side: Side | null;
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;
   readonly rowIndex: number | null;
+  readonly originalRowIndex: number | null;
   readonly cellPosRect: Rect | null;
 }
 
@@ -411,10 +453,17 @@ export interface Selection {
   readonly rangeBySide: RangeBySide | null;
   readonly rangeAreaInfo: RangeAreaInfo | null;
   readonly rangeWithRowHeader: SelectionRange | null;
+  readonly originalRange: SelectionRange | null;
 }
 
 export interface RenderState {
   state: State;
+  hoveredRowKey: RowKey | null;
+}
+
+export interface FilterLayerState {
+  activeColumnAddress: ActiveColumnAddress | null;
+  activeFilterState: Filter | null;
 }
 
 export interface PageOptions {
@@ -436,6 +485,7 @@ export interface Store {
   readonly selection: Selection;
   readonly summary: Summary;
   readonly renderState: RenderState;
+  readonly filterLayerState: FilterLayerState;
 }
 
 export interface ComplexColumnInfo {

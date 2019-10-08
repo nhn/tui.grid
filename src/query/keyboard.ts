@@ -13,19 +13,24 @@ export function getNextCellIndex(
     column: { visibleColumnsWithRowHeader, rowHeaderCount },
     rowCoords: { heights }
   } = store;
-  const { rawData, viewData, sortOptions } = data;
+
+  const { viewData, sortState, filteredRawData, filteredViewData } = data;
   const columnName = visibleColumnsWithRowHeader[columnIndex].name;
+  const lastRow = filteredRawData.length - 1 === rowIndex;
+  const lastColumn = visibleColumnsWithRowHeader.length - 1 === columnIndex;
+  const firstRow = rowIndex === 0;
+  const firstColumn = columnIndex === rowHeaderCount;
 
   switch (command) {
     case 'up':
-      if (isRowSpanEnabled(sortOptions)) {
-        rowIndex = getRowSpanTopIndex(rowIndex, columnName, rawData);
+      if (isRowSpanEnabled(sortState)) {
+        rowIndex = getRowSpanTopIndex(rowIndex, columnName, filteredRawData);
       }
       rowIndex = getPrevRowIndex(rowIndex, heights);
       break;
     case 'down':
-      if (isRowSpanEnabled(sortOptions)) {
-        rowIndex = getRowSpanBottomIndex(rowIndex, columnName, rawData);
+      if (isRowSpanEnabled(sortState)) {
+        rowIndex = getRowSpanBottomIndex(rowIndex, columnName, filteredRawData);
       }
       rowIndex = getNextRowIndex(rowIndex, heights);
       break;
@@ -57,11 +62,39 @@ export function getNextCellIndex(
     case 'lastColumn':
       columnIndex = visibleColumnsWithRowHeader.length - 1;
       break;
+    case 'nextCell':
+      if (lastRow && lastColumn) {
+        break;
+      }
+      if (lastColumn) {
+        if (isRowSpanEnabled(sortState)) {
+          rowIndex = getRowSpanBottomIndex(rowIndex, columnName, filteredRawData);
+        }
+        rowIndex = getNextRowIndex(rowIndex, heights);
+        columnIndex = rowHeaderCount;
+      } else {
+        columnIndex += 1;
+      }
+      break;
+    case 'prevCell':
+      if (firstRow && firstColumn) {
+        break;
+      }
+      if (firstColumn) {
+        if (isRowSpanEnabled(sortState)) {
+          rowIndex = getRowSpanTopIndex(rowIndex, columnName, filteredRawData);
+        }
+        rowIndex = getPrevRowIndex(rowIndex, heights);
+        columnIndex = visibleColumnsWithRowHeader.length - 1;
+      } else {
+        columnIndex -= 1;
+      }
+      break;
     default:
       break;
   }
 
-  rowIndex = clamp(rowIndex, 0, viewData.length - 1);
+  rowIndex = clamp(rowIndex, 0, filteredViewData.length - 1);
   columnIndex = clamp(columnIndex, 0, visibleColumnsWithRowHeader.length - 1);
 
   return [rowIndex, columnIndex];
@@ -69,16 +102,16 @@ export function getNextCellIndex(
 
 export function getRemoveRange(store: Store) {
   const { focus, selection } = store;
-  const { totalColumnIndex, rowIndex } = focus;
-  const { range } = selection;
+  const { totalColumnIndex, originalRowIndex } = focus;
+  const { originalRange } = selection;
 
-  if (range) {
-    return range;
+  if (originalRange) {
+    return originalRange;
   }
-  if (!isNull(totalColumnIndex) && !isNull(rowIndex)) {
+  if (!isNull(totalColumnIndex) && !isNull(originalRowIndex)) {
     return {
       column: [totalColumnIndex, totalColumnIndex],
-      row: [rowIndex, rowIndex]
+      row: [originalRowIndex, originalRowIndex]
     };
   }
   return null;

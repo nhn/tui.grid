@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { SortedColumn, SortOptions, SortingType } from '../store/types';
+import { SortState, SortingType } from '../store/types';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
@@ -12,7 +12,7 @@ interface OwnProps {
   sortingType?: SortingType;
 }
 interface StoreProps {
-  sortOptions: SortOptions;
+  sortState: SortState;
   dataProvider: DataProvider;
   ascending: boolean;
   defaultAscending: boolean;
@@ -30,21 +30,21 @@ class SortingButtonComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, sortOptions, dataProvider } = this.props;
+    const { dispatch, sortState, dataProvider } = this.props;
     const th = findParent(target, 'cell');
     const targetColumnName = th!.getAttribute('data-column-name')!;
     let { defaultAscending: targetAscending } = this.props;
 
-    if (sortOptions) {
-      const { columns } = sortOptions;
+    if (sortState) {
+      const { columns } = sortState;
       const index = findPropIndex('columnName', targetColumnName, columns);
       targetAscending = index !== -1 ? !columns[index].ascending : targetAscending;
     }
 
-    if (sortOptions.useClient) {
+    if (sortState.useClient) {
       dispatch('sort', targetColumnName, targetAscending, withCtrl);
     } else {
-      dispatch('changeSortOptions', targetColumnName, targetAscending, withCtrl);
+      dispatch('changeSortState', targetColumnName, targetAscending, withCtrl);
       const data = {
         sortColumn: targetColumnName,
         sortAscending: targetAscending
@@ -67,18 +67,17 @@ class SortingButtonComp extends Component<Props> {
 
 export const SortingButton = connect<StoreProps, OwnProps>((store, props) => {
   const {
-    data: { sortOptions },
+    data: { sortState },
     id
   } = store;
   const { columnName, sortingType = 'asc' } = props;
-  const { columns } = sortOptions;
-  const sortedColumnsWithType = columns as SortedColumn[];
+  const { columns } = sortState;
 
-  const index = findPropIndex('columnName', columnName, sortedColumnsWithType);
+  const index = findPropIndex('columnName', columnName, columns);
   const ascending = index !== -1 ? columns[index].ascending : true;
 
   return {
-    sortOptions,
+    sortState,
     ascending,
     dataProvider: getDataProvider(id),
     defaultAscending: sortingType === 'asc',

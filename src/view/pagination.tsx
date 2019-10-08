@@ -42,13 +42,18 @@ class PaginationComp extends Component<Props> {
     const { pageOptions } = nextProps;
     const { totalCount, page, perPage } = pageOptions;
 
-    if (isNumber(perPage) && this.props.pageOptions.perPage !== perPage) {
-      this.tuiPagination.setItemsPerPage(perPage);
+    if (!isNumber(totalCount) || !isNumber(page) || !isNumber(perPage)) {
+      return;
     }
-    if (isNumber(totalCount) && this.props.pageOptions.totalCount !== totalCount) {
+
+    if (
+      this.props.pageOptions.perPage !== perPage ||
+      this.props.pageOptions.totalCount !== totalCount
+    ) {
+      this.tuiPagination.setItemsPerPage(perPage);
       this.tuiPagination.reset(totalCount);
     }
-    if (isNumber(page) && this.tuiPagination.getCurrentPage() !== page) {
+    if (this.tuiPagination.getCurrentPage() !== page) {
       this.removeEventListener();
       this.tuiPagination.movePageTo(page);
       this.addEventListener();
