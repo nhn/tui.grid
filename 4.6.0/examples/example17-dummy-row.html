@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>17. Dummy rows</title>
+  <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+  <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+</head>
+
+<body>
+<div class="code-html contents">
+  <div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="../dist/tui-grid.js"></script>
+<script type="text/javascript" src="./data/basic-dummy.js"></script>
+<script type="text/javascript" class="code-js">
+  const grid = new tui.Grid({
+    el: document.getElementById('grid'),
+    data: gridData.slice(0, 6),
+    width: 1200,
+    bodyHeight: 600,
+    scrollX: true,
+    scrollY: false,
+    columns: [
+      {
+        header: 'Name',
+        name: 'name'
+      },
+      {
+        header: 'Artist',
+        name: 'artist'
+      },
+      {
+        header: 'Type',
+        name: 'type'
+      },
+      {
+        header: 'Release',
+        name: 'release'
+      },
+      {
+        header: 'Genre',
+        name: 'genre'
+      }
+    ],
+    showDummyRows: true
+  });
+</script>
+</html>
