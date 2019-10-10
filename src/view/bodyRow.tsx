@@ -5,7 +5,7 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
-import { getHighestHeight, removeCellHeight } from '../helper/cellHeightMap';
+import { time } from '../helper/constant';
 
 interface OwnProps {
   rowIndex: number;
@@ -23,11 +23,10 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 class BodyRowComp extends Component<Props> {
   public componentWillUnmount() {
-    const { cellHeightMap } = this.context;
-    const { rowIndex, autoRowHeight } = this.props;
+    const { rowIndex, autoRowHeight, dispatch } = this.props;
 
     if (autoRowHeight) {
-      removeCellHeight(cellHeightMap, rowIndex);
+      dispatch('removeCellHeight', rowIndex);
     }
   }
 
@@ -36,13 +35,9 @@ class BodyRowComp extends Component<Props> {
   // 10ms is just an approximate number. (smaller than 10ms might be safe enough)
   private updateRowHeightDebounced = debounce(() => {
     const { dispatch, rowIndex, rowHeight } = this.props;
-    const { cellHeightMap } = this.context;
-    const height = getHighestHeight(cellHeightMap, rowIndex);
 
-    if (rowHeight !== height) {
-      dispatch('refreshRowHeight', rowIndex, height);
-    }
-  }, 10);
+    dispatch('refreshRowHeight', rowIndex, rowHeight);
+  }, time.ROW_HEIGHT_DEBOUNCE_TIME);
 
   public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
     const isOddRow = rowIndex % 2 === 0;
