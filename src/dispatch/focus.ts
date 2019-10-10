@@ -1,26 +1,59 @@
 import { Store, RowKey } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isCellEditable, findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { isEditableCell, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { isFocusedCell, isEditingCell } from '../query/focus';
-import { getRowSpanByRowKey, isRowSpanEnabled } from '../helper/rowSpan';
+import { getRowSpanByRowKey, isRowSpanEnabled } from '../query/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
 import { isUndefined } from '../helper/common';
-import { createTreeRawRow } from '../helper/tree';
-import { isHiddenColumn } from '../helper/column';
+import { createTreeRawRow } from '../store/helper/tree';
+import { isHiddenColumn } from '../query/column';
 import { forceSyncRendering } from '../helper/render';
+
+function makeObservable(store: Store, rowKey: RowKey) {
+  const { data, column, id } = store;
+  const { rawData, viewData } = data;
+  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const rawRow = rawData[foundIndex];
+
+  if (isObservable(rawRow)) {
+    return;
+  }
+
+  if (treeColumnName) {
+    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
+    rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
+    viewData[foundIndex] = createViewRow(
+      rawData[foundIndex],
+      allColumnMap,
+      rawData,
+      treeColumnName,
+      treeIcon
+    );
+  } else {
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
+  }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+}
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;
-  const { rawData } = data;
+  const { filteredRawData } = data;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
+
+  if (foundIndex === -1) {
+    return;
+  }
 
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, column, rowKey, columnName)) {
+  if (!isEditableCell(data, column, foundIndex, columnName)) {
     return;
   }
 
@@ -28,7 +61,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const gridEvent = new GridEvent({
     rowKey,
     columnName,
-    value: rawData[foundIndex][columnName]
+    value: filteredRawData[foundIndex][columnName]
   });
 
   /**
@@ -146,15 +179,16 @@ export function saveAndFinishEditing(
   columnName: string,
   value?: string
 ) {
-  const { data, column, focus } = store;
+  const { data, column, focus, id } = store;
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
 
-  if (!isEditingCell(focus, rowKey, columnName)) {
+  if (!isEditingCell(focus, rowKey, columnName) || foundIndex === -1) {
     return;
   }
   // makes the data observable to judge editable, disable of the cell;
   makeObservable(store, rowKey);
 
-  if (!isCellEditable(data, column, rowKey, columnName)) {
+  if (!isEditableCell(data, column, foundIndex, columnName)) {
     return;
   }
 
@@ -171,31 +205,14 @@ export function saveAndFinishEditing(
   finishEditing(store, rowKey, columnName, value);
 }
 
-function makeObservable(store: Store, rowKey: RowKey) {
-  const { data, column, id } = store;
-  const { rawData, viewData } = data;
-  const { allColumnMap, treeColumnName, treeIcon } = column;
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rawRow = rawData[foundIndex];
+export function setFocusInfo(
+  store: Store,
+  rowKey: RowKey | null,
+  columnName: string | null,
+  navigating: boolean
+) {
+  const { focus, id } = store;
+  focus.navigating = navigating;
 
-  if (isObservable(rawRow)) {
-    return;
-  }
-
-  if (treeColumnName) {
-    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
-    viewData[foundIndex] = createViewRow(
-      rawData[foundIndex],
-      allColumnMap,
-      rawData,
-      treeColumnName,
-      treeIcon
-    );
-  } else {
-    rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
-  }
-  notify(data, 'rawData');
-  notify(data, 'viewData');
+  changeFocus(store, rowKey, columnName, id);
 }
