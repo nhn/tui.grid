@@ -68,20 +68,18 @@ function adjustWidths(
   const fixedCount = fixedFlags.filter(Boolean).length;
   const fixedIndexes = findIndexes(v => !v, fixedFlags);
 
-  let result;
-
   if (totalExtraWidth > 0 && columnLength > fixedCount) {
-    result = distributeExtraWidthEqually(totalExtraWidth, fixedIndexes, widths);
-  } else if (fitToReducedTotal && totalExtraWidth < 0) {
+    return distributeExtraWidthEqually(totalExtraWidth, fixedIndexes, widths);
+  }
+
+  if (fitToReducedTotal && totalExtraWidth < 0) {
     const availableWidthInfos = fixedIndexes.map(
       index => [index, widths[index] - minWidths[index]] as [number, number]
     );
-    result = reduceExcessColumnWidthSub(totalExtraWidth, availableWidthInfos, widths);
-  } else {
-    result = widths;
+    return reduceExcessColumnWidthSub(totalExtraWidth, availableWidthInfos, widths);
   }
 
-  return result;
+  return widths;
 }
 
 function calculateWidths(columns: ColumnInfo[], cellBorderWidth: number, contentsWidth: number) {
@@ -106,12 +104,12 @@ function calculateOffsets(widths: number[], borderWidth: number) {
   return offsets;
 }
 
-interface ColumnCoordsOptions {
+interface ColumnCoordsOption {
   column: Column;
   dimension: Dimension;
 }
 
-export function create({ column, dimension }: ColumnCoordsOptions): ColumnCoords {
+export function create({ column, dimension }: ColumnCoordsOption): ColumnCoords {
   return observable<ColumnCoords>({
     get widths(this: ColumnCoords) {
       const { visibleColumnsWithRowHeader, visibleFrozenCount } = column;
