@@ -1,17 +1,8 @@
-import { Store, SummaryColumnContentMap, CellValue, Row } from '../store/types';
-import {
-  castToSummaryColumnContent,
-  createSummaryValue,
-  extractSummaryColumnContent
-} from '../helper/summary';
+import { Store, SummaryColumnContentMap, Row } from '../store/types';
+import { castToSummaryColumnContent, extractSummaryColumnContent } from '../helper/summary';
 import { isEmpty } from '../helper/common';
-
-interface Options {
-  prevValue?: CellValue;
-  value?: CellValue;
-  appended?: boolean;
-}
-type UpdateType = 'UPDATE_COLUMN' | 'UPDATE_CELL' | 'UPDATE_ROW';
+import { createSummaryValue } from '../store/summary';
+import { Options, UpdateType } from './types';
 
 export function setSummaryColumnContent(
   { summary, data }: Store,
