@@ -1,9 +1,9 @@
 import { OptGrid } from '../types';
-import { Dimension, Column, SummaryPosition, RowCoords } from './types';
+import { Dimension, Column, SummaryPosition } from './types';
 import { observable } from '../helper/observable';
 import { isNumber } from '../helper/common';
 
-type OptDimension = {
+type DimensionOption = {
   column: Column;
   frozenBorderWidth?: number;
   summaryHeight?: number;
@@ -37,7 +37,7 @@ export function create({
   summaryHeight = 0,
   summaryPosition = 'bottom',
   headerHeight = 40
-}: OptDimension): Dimension {
+}: DimensionOption): Dimension {
   const bodyHeightVal = typeof bodyHeight === 'number' ? bodyHeight : 0;
 
   return observable<Dimension>({
@@ -84,13 +84,4 @@ export function create({
       return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
     }
   });
-}
-
-export function setBodyHeight(dimension: Dimension, rowCoords: RowCoords) {
-  const { totalRowHeight } = rowCoords;
-  const { autoHeight, scrollXHeight, minBodyHeight } = dimension;
-
-  if (autoHeight) {
-    dimension.bodyHeight = Math.max(totalRowHeight + scrollXHeight, minBodyHeight);
-  }
 }
