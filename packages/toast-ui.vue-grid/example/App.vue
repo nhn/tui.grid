@@ -8,6 +8,8 @@
       :theme="gridProps.myTheme"
       @check="onCheck"
       @uncheck="onUnCheck"
+      :rowHeaders="gridProps.rowHeaders"
+      :columnOptions="gridProps.columnOptions"
     ></grid>
   </div>
 </template>
@@ -21,6 +23,11 @@ export default {
   },
   created() {
     this.gridProps = {
+      rowHeaders: ['checkbox', 'rowNum'],
+      columnOptions: {
+        resizable: true,
+        frozenCount: 1
+      },
       columns: [
         {
           header: 'Name',
