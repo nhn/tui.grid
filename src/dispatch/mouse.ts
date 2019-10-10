@@ -259,7 +259,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
   const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
   const endRowIndex = rowCoords.heights.length - 1;
 
-  let startColumnIndex, endColumnIndex;
+  let startColumnIndex, endColumnIndex, columnName;
 
   if (parentHeader) {
     [startColumnIndex, endColumnIndex] = getChildColumnRange(
@@ -267,8 +267,10 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
       complexHeaderColumns,
       name
     );
+    columnName = visibleColumnsWithRowHeader[startColumnIndex].name;
   } else {
     startColumnIndex = endColumnIndex = findPropIndex('name', name, visibleColumnsWithRowHeader);
+    columnName = name;
   }
 
   const inputRange: SelectionRange = {
@@ -276,7 +278,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     column: [startColumnIndex, endColumnIndex]
   };
 
-  changeFocus(store, filteredRawData[0].rowKey, name, id);
+  changeFocus(store, filteredRawData[0].rowKey, columnName, id);
   changeSelectionRange(selection, inputRange, id);
 }
 
