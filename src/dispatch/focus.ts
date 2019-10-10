@@ -196,4 +196,6 @@ function makeObservable(store: Store, rowKey: RowKey) {
     rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
     viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
   }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
 }
