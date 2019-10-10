@@ -9,7 +9,8 @@ export interface Options {
   withCredentials: boolean;
   params?: Params;
   callback?: Function;
-  callbackWhenever: Function;
+  preCallback?: Function;
+  postCallback?: Function;
   eventBus: EventBus;
 }
 
@@ -22,7 +23,9 @@ export default class GridAjax {
 
   private callback: Function;
 
-  private callbackWhenever: Function;
+  private preCallback: Function;
+
+  private postCallback: Function;
 
   private eventBus: EventBus;
 
@@ -35,7 +38,8 @@ export default class GridAjax {
       withCredentials,
       params = {},
       callback = () => {},
-      callbackWhenever,
+      preCallback = () => {},
+      postCallback = () => {},
       eventBus
     } = options;
 
@@ -43,7 +47,8 @@ export default class GridAjax {
     this.url = url;
     this.params = params;
     this.callback = callback;
-    this.callbackWhenever = callbackWhenever;
+    this.preCallback = preCallback;
+    this.postCallback = postCallback;
     this.eventBus = eventBus;
     this.xhr = new XMLHttpRequest();
     this.xhr.withCredentials = withCredentials;
@@ -54,11 +59,11 @@ export default class GridAjax {
   };
 
   private handleReadyStateChange = () => {
-    const { xhr, callback, eventBus, callbackWhenever } = this;
+    const { xhr, callback, eventBus, preCallback, postCallback } = this;
     if (xhr.readyState !== XMLHttpRequest.DONE) {
       return;
     }
-    callbackWhenever();
+    preCallback();
     const gridEvent = new GridEvent({ xhr });
     /**
      * Occurs when the response is received from the server
@@ -108,6 +113,7 @@ export default class GridAjax {
        */
       eventBus.trigger('errorResponse', gridEvent);
     }
+    postCallback();
   };
 
   public open() {
@@ -123,7 +129,7 @@ export default class GridAjax {
   }
 
   public send() {
-    const { url, method, xhr, shouldEncode, eventBus, callbackWhenever } = this;
+    const { url, method, xhr, shouldEncode, eventBus, preCallback } = this;
     const options = {
       url,
       method,
@@ -139,7 +145,7 @@ export default class GridAjax {
      */
     eventBus.trigger('beforeRequest', gridEvent);
     if (gridEvent.isStopped()) {
-      callbackWhenever();
+      preCallback();
       return;
     }
     const params = shouldEncode() ? null : encodeParams(this.params, true);
