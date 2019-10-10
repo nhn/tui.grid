@@ -1,4 +1,10 @@
-const CLS_PREFIX = 'tui-grid-';
+import { fromArray } from './common';
+import { Range } from '../store/types';
+import { CLS_PREFIX } from './constant';
+
+export interface WindowWithClipboard extends Window {
+  clipboardData: DataTransfer | null;
+}
 
 export type ClassNameType =
   | 'body-area'
@@ -198,4 +204,63 @@ export function getCoordinateWithOffset(pageX: number, pageY: number) {
   const pageYWithOffset = pageY - window.pageYOffset;
 
   return [pageXWithOffset, pageYWithOffset];
+}
+
+function setDataInSpanRange(
+  value: string,
+  data: string[][],
+  colspanRange: Range,
+  rowspanRange: Range
+) {
+  const [startColspan, endColspan] = colspanRange;
+  const [startRowspan, endRowspan] = rowspanRange;
+
+  for (let rowIdx = startRowspan; rowIdx < endRowspan; rowIdx += 1) {
+    for (let columnIdx = startColspan; columnIdx < endColspan; columnIdx += 1) {
+      data[rowIdx][columnIdx] = startRowspan === rowIdx && startColspan === columnIdx ? value : ' ';
+    }
+  }
+}
+
+export function convertTableToData(rows: HTMLCollectionOf<HTMLTableRowElement>) {
+  const data: string[][] = [];
+  let colspanRange: Range, rowspanRange: Range;
+
+  for (let index = 0; index < rows.length; index += 1) {
+    data[index] = [];
+  }
+
+  fromArray(rows).forEach((tr, rowIndex) => {
+    let columnIndex = 0;
+
+    fromArray(tr.cells).forEach(td => {
+      const text = td.textContent || td.innerText;
+
+      while (data[rowIndex][columnIndex]) {
+        columnIndex += 1;
+      }
+
+      colspanRange = [columnIndex, columnIndex + (td.colSpan || 1)];
+      rowspanRange = [rowIndex, rowIndex + (td.rowSpan || 1)];
+
+      setDataInSpanRange(text, data, colspanRange, rowspanRange);
+      columnIndex = colspanRange[1];
+    });
+  });
+
+  return data;
+}
+
+export function isSupportWindowClipboardData() {
+  return !!(window as WindowWithClipboard).clipboardData;
+}
+
+export function setClipboardSelection(node: ChildNode) {
+  if (node) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    selection!.removeAllRanges();
+    range.selectNodeContents(node);
+    selection!.addRange(range);
+  }
 }
