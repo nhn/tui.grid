@@ -12,12 +12,12 @@ import {
   Side
 } from './types';
 import { Observable, observable } from '../helper/observable';
-import { getSortedRange } from '../helper/selection';
+import { getSortedRange } from '../query/selection';
 import { isEmpty } from '../helper/common';
 
 type ColumnWidths = { [key in Side]: number[] };
 
-interface SelectionOptions {
+interface SelectionOption {
   selectionUnit: SelectionUnit;
   columnCoords: ColumnCoords;
   column: Column;
@@ -87,7 +87,7 @@ export function create({
   column: columnInfo,
   dimension,
   data
-}: SelectionOptions): Observable<Selection> {
+}: SelectionOption): Observable<Selection> {
   return observable({
     inputRange: null,
     unit: selectionUnit,
