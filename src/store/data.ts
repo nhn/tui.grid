@@ -486,7 +486,7 @@ export function create({
     viewData,
     sortState,
     pageOptions,
-    checkedAllRows: !rawData.some(row => !row._attributes.checked),
+    checkedAllRows: rawData.length ? !rawData.some(row => !row._attributes.checked) : false,
     filters: null,
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
