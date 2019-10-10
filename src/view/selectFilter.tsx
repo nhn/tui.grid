@@ -6,7 +6,8 @@ import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
 import { ActiveColumnAddress, CellValue, ColumnInfo, Filter } from '../store/types';
 import { some, debounce } from '../helper/common';
-import { FILTER_DEBOUNCE_TIME, getUniqColumnData } from '../helper/filter';
+import { getUniqColumnData } from '../query/data';
+import { time } from '../helper/constant';
 
 interface ColumnData {
   value: CellValue;
@@ -38,17 +39,17 @@ class SelectFilterComp extends Component<Props> {
     const { id, checked } = ev.target as HTMLInputElement;
 
     dispatch('setActiveSelectFilterState', id, checked);
-  }, FILTER_DEBOUNCE_TIME);
+  }, time.FILTER_DEBOUNCE_TIME);
 
   private toggleAllColumnCheckbox = debounce((ev: Event) => {
     const { checked } = ev.target as HTMLInputElement;
     this.props.dispatch('toggleSelectAllCheckbox', checked);
-  }, FILTER_DEBOUNCE_TIME);
+  }, time.FILTER_DEBOUNCE_TIME);
 
   private searchColumnData = debounce((ev: KeyboardEvent) => {
     const { value } = ev.target as HTMLInputElement;
     this.setState({ searchInput: value });
-  }, FILTER_DEBOUNCE_TIME);
+  }, time.FILTER_DEBOUNCE_TIME);
 
   public render() {
     const { columnData, isAllSelected } = this.props;

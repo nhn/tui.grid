@@ -3,11 +3,11 @@ import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import i18n from '../i18n';
-import { State } from '../store/types';
+import { LoadingState } from '../store/types';
 import { shallowEqual } from '../helper/common';
 
 interface StoreProps {
-  state: State;
+  loadingState: LoadingState;
   top: number;
   height: number;
   left: number;
@@ -21,13 +21,13 @@ class StateLayerComp extends Component<Props> {
     return !shallowEqual(nextProps, this.props);
   }
 
-  public render({ state, top, height, left, right }: Props) {
-    const display = state === 'DONE' ? 'none' : 'block';
+  public render({ loadingState, top, height, left, right }: Props) {
+    const display = loadingState === 'DONE' ? 'none' : 'block';
     const layerStyle = { display, top, height, left, right };
     let message = null;
-    if (state === 'EMPTY') {
+    if (loadingState === 'EMPTY') {
       message = i18n.get('display.noData');
-    } else if (state === 'LOADING') {
+    } else if (loadingState === 'LOADING') {
       message = i18n.get('display.loadingData');
     }
 
@@ -35,13 +35,13 @@ class StateLayerComp extends Component<Props> {
       <div class={cls('layer-state')} style={layerStyle}>
         <div class={cls('layer-state-content')}>
           <p>{message}</p>
-          {state === 'LOADING' && <div class={cls('layer-state-loading')} />}
+          {loadingState === 'LOADING' && <div class={cls('layer-state-loading')} />}
         </div>
       </div>
     );
   }
 }
-export const StateLayer = connect(({ data, renderState, dimension }) => {
+export const StateLayer = connect(({ data, dimension }) => {
   const {
     headerHeight,
     bodyHeight,
@@ -50,9 +50,8 @@ export const StateLayer = connect(({ data, renderState, dimension }) => {
     scrollXHeight,
     scrollYWidth
   } = dimension;
-  const { state } = renderState;
   return {
-    state: state === 'DONE' && data.rawData.length === 0 ? 'EMPTY' : state,
+    loadingState: data.loadingState,
     top: headerHeight + cellBorderWidth + 1,
     height: bodyHeight - scrollXHeight - tableBorderWidth,
     left: 0,

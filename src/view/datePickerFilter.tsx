@@ -13,10 +13,11 @@ import {
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
-import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
+import { filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
 import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
+import { time } from '../helper/constant';
 
 interface StoreProps {
   grid: Grid;
@@ -101,7 +102,7 @@ class DatePickerFilterComp extends Component<Props> {
     } else {
       this.handleChange();
     }
-  }, FILTER_DEBOUNCE_TIME);
+  }, time.FILTER_DEBOUNCE_TIME);
 
   private handleChange = () => {
     const { dispatch } = this.props;

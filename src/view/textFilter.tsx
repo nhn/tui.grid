@@ -9,10 +9,11 @@ import {
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
-import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
+import { filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
 import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
+import { time } from '../helper/constant';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
@@ -69,7 +70,7 @@ class TextFilterComp extends Component<Props> {
 
       dispatch('setActiveFilterState', { value, code }, filterIndex);
     }
-  }, FILTER_DEBOUNCE_TIME);
+  }, time.FILTER_DEBOUNCE_TIME);
 
   public render() {
     const { columnInfo } = this.props;

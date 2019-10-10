@@ -4,6 +4,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { ActiveColumnAddress, Filter } from '../store/types';
 import { someProp } from '../helper/common';
+import { distance } from '../helper/constant';
 
 interface OwnProps {
   columnName: string;
@@ -15,8 +16,6 @@ interface StoreProps {
 }
 
 type Props = StoreProps & OwnProps & DispatchProps;
-
-const DISTANCE_FROM_ICON_TO_LAYER = 9;
 
 class FilterButtonComp extends Component<Props> {
   private isActiveFilter = () => {
@@ -35,7 +34,8 @@ class FilterButtonComp extends Component<Props> {
     const { activeColumnAddress, columnName, dispatch, offsetLeft } = this.props;
 
     if (!activeColumnAddress || activeColumnAddress.name !== columnName) {
-      const left = target.getBoundingClientRect().left - offsetLeft - DISTANCE_FROM_ICON_TO_LAYER;
+      const left =
+        target.getBoundingClientRect().left - offsetLeft - distance.DISTANCE_FROM_ICON_TO_LAYER;
       dispatch('setActiveColumnAddress', { name: columnName, left });
     }
   };

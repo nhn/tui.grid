@@ -3,9 +3,7 @@ import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';
-
-export const HANDLE_WIDTH = 7;
-export const HANDLE_WIDTH_HALF = 3;
+import { resizeHandle } from '../helper/constant';
 
 interface OwnProps {
   side: Side;
@@ -81,8 +79,8 @@ class ColumnResizerComp extends Component<Props> {
         {...attrs}
         style={{
           height: 33,
-          width: HANDLE_WIDTH,
-          left: offset + width + cellBorderWidth - HANDLE_WIDTH_HALF
+          width: resizeHandle.WIDTH,
+          left: offset + width + cellBorderWidth - resizeHandle.HALF_WIDTH
         }}
         onMouseDown={ev => this.handleMouseDown(ev, index)}
       />
