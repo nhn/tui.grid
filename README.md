@@ -8,31 +8,23 @@
 
 ## 🚩 Table of Contents
 
-- [Documents](#-documents)
+- [Packages](#-packages)
 - [The Toast UI Grid Is an Ultimate Transformer](#-the-toast-ui-grid-is-an-ultimate-transformer)
 - [Features](#-features)
 - [Examples](#-examples)
-- [Wrappers](#-wrappers)
 - [Browser Support](#-browser-support)
 - [Contributing](#-contributing)
 - [TOAST UI Family](#-toast-ui-family)
 - [Used By](#-used-by)
 - [License](#-license)
 
-## 📙 Documents
+## 📦 Packages
 
-- Getting Started
-  - [English](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/en/getting-started.md)
-  - [한국어](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/ko/getting-started.md)
-- Tutorials
-  - [English](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs)
-  - [한국어](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs/ko)
-- v4.0 Migration Guide
-  - [English](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs/v4.0-migration-guide.md)
-  - [한국어](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs/v4.0-migration-guide-kor.md)
-- [APIs](https://nhn.github.io/tui.grid/latest)
+The functionality of TOAST UI Grid is available when using the Plain javaScript, React, Vue Component.
 
-You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
+- [toast-ui.grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid) - Plain JavaScript component implemented by NHN.
+- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **Vue** wrapper component implemented by NHN.
+- [toast-ui.react-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **React** wrapper component implemented by NHN.
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 
@@ -115,13 +107,6 @@ In addition, a variety of powerful features can be found on the demo page below.
 - [Tree](https://nhn.github.io/tui.grid/latest/tutorial-example14-tree)
 
 Here are more [examples](https://nhn.github.io/tui.grid/latest/tutorial-example01-basic) and play with TOAST UI Grid!
-
-## 🛍 Wrappers
-
-The functionality of TOAST UI Grid is available when using the React, Vue Component.
-
-- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **Vue** wrapper component implemented by NHN.
-- [toast-ui.react-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **React** wrapper component implemented by NHN.
 
 ### TypeScript
 
