@@ -394,6 +394,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   getDataManager(id).push('CREATE', rawRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
   updateSummaryValueByRow(store, rawRow, true);
@@ -437,8 +439,9 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   getDataManager(id).push('DELETE', removedRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
-  notify(rowCoords, 'heights');
   notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
+  notify(rowCoords, 'heights');
   updateSummaryValueByRow(store, removedRow, false);
   renderState.state = getRenderState(data.rawData);
 }
@@ -671,6 +674,7 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
 }
 

@@ -48,8 +48,6 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
       focus.editingAddress = { rowKey, columnName };
     });
   }
-
-  notify(data, 'viewData');
 }
 
 export function finishEditing(
@@ -198,4 +196,6 @@ function makeObservable(store: Store, rowKey: RowKey) {
     rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
     viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
   }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
 }
