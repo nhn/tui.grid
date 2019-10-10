@@ -1,3 +1,5 @@
+import { crlf, crlfRegexp } from './constant';
+
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -334,4 +336,36 @@ export function startsWith(str: string, targetStr: string) {
 export function endsWith(str: string, targetStr: string) {
   const index = targetStr.lastIndexOf(str);
   return index !== -1 && index + str.length === targetStr.length;
+}
+
+function removeDoubleQuotes(text: string) {
+  if (text.match(crlfRegexp.CUSTOM_LF_REGEXP)) {
+    return text.substring(1, text.length - 1).replace(/""/g, '"');
+  }
+
+  return text;
+}
+
+function replaceNewlineToSubchar(text: string) {
+  const { CR, LF, CUSTOM_CR_SUBCHAR, CUSTOM_LF_SUBCHAR } = crlf;
+  return text.replace(/"([^"]|"")*"/g, value =>
+    value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
+  );
+}
+
+export function convertTextToData(text: string) {
+  const { CR, LF } = crlf;
+  const { CUSTOM_CR_REGEXP, CUSTOM_LF_REGEXP } = crlfRegexp;
+  // Each newline cell data is wrapping double quotes in the text and
+  // newline characters should be replaced with substitution characters temporarily
+  // before spliting the text by newline characters.
+  text = replaceNewlineToSubchar(text);
+
+  return text.split(/\r?\n/).map(row =>
+    row.split('\t').map(column =>
+      removeDoubleQuotes(column)
+        .replace(CUSTOM_LF_REGEXP, LF)
+        .replace(CUSTOM_CR_REGEXP, CR)
+    )
+  );
 }
