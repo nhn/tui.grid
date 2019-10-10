@@ -7,7 +7,9 @@ export function isFocusedCell(focus: Focus, rowKey: RowKey | null, columnName: s
 export function isEditingCell(focus: Focus, rowKey: RowKey, columnName: string) {
   const { editingAddress } = focus;
 
-  return (
-    editingAddress && editingAddress.rowKey === rowKey && editingAddress.columnName === columnName
+  return !!(
+    editingAddress &&
+    editingAddress.rowKey === rowKey &&
+    editingAddress.columnName === columnName
   );
 }
