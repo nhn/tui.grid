@@ -139,14 +139,14 @@ class ServerSideDataProvider implements DataProvider {
 
     this.lastRequiredData = params;
 
+    const callback = () => this.dispatch('setLoadingState', getLoadingState(store.data.rawData));
     const request = new GridAjax({
       method,
       url,
       params,
       callback: handleSuccessReadData,
-      preCallback: () => this.dispatch('setLoadingState', 'DONE'),
-      postCallback: () =>
-        this.dispatch('setLoadingState', getLoadingState(this.store.data.rawData)),
+      preCallback: callback,
+      postCallback: callback,
       withCredentials,
       eventBus: getEventBus(this.store.id)
     });
@@ -198,13 +198,14 @@ class ServerSideDataProvider implements DataProvider {
 
     if (!options.showConfirm || this.confirm(requestTypeCode, this.getCount(params))) {
       const { withCredentials } = options;
+      const callback = () => this.dispatch('setLoadingState', getLoadingState(data.rawData));
       const request = new GridAjax({
         method,
         url,
         params,
         callback: () => manager.clear(params),
-        preCallback: () => this.dispatch('setLoadingState', 'DONE'),
-        postCallback: () => this.dispatch('setLoadingState', getLoadingState(data.rawData)),
+        preCallback: callback,
+        postCallback: callback,
         withCredentials: isUndefined(withCredentials) ? this.withCredentials : withCredentials,
         eventBus: getEventBus(id)
       });
