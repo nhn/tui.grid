@@ -13,7 +13,7 @@ import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
-import { isUndefined, isObject } from '../helper/common';
+import { isUndefined, isObject, isEmpty } from '../helper/common';
 import GridAjax from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
@@ -84,7 +84,12 @@ class ServerSideDataProvider implements DataProvider {
       return;
     }
     this.dispatch('resetData', data.contents);
-    this.dispatch('setPagination', { ...data.pagination, perPage: this.lastRequiredData.perPage });
+    if (data.pagination && !isEmpty(this.store.data.pageOptions)) {
+      this.dispatch('setPagination', {
+        ...data.pagination,
+        perPage: this.lastRequiredData.perPage
+      });
+    }
   };
 
   private handleSuccessReadTreeData = (response: Response) => {
@@ -114,9 +119,9 @@ class ServerSideDataProvider implements DataProvider {
     if (!this.api) {
       return;
     }
-    const { api, withCredentials } = this;
-    const { treeColumnName } = this.store.column;
-    const { rawData, pageOptions } = this.store.data;
+    const { api, withCredentials, store } = this;
+    const { treeColumnName } = store.column;
+    const { pageOptions } = store.data;
     const { perPage } = pageOptions;
     const { method, url } = api.readData;
     const dataWithType = data as Params;
@@ -140,7 +145,8 @@ class ServerSideDataProvider implements DataProvider {
       params,
       callback: handleSuccessReadData,
       preCallback: () => this.dispatch('setLoadingState', 'DONE'),
-      postCallback: () => this.dispatch('setLoadingState', getLoadingState(rawData)),
+      postCallback: () =>
+        this.dispatch('setLoadingState', getLoadingState(this.store.data.rawData)),
       withCredentials,
       eventBus: getEventBus(this.store.id)
     });
