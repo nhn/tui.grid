@@ -13,7 +13,7 @@ import { filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
 import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
-import { time } from '../helper/constant';
+import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 
@@ -70,7 +70,7 @@ class TextFilterComp extends Component<Props> {
 
       dispatch('setActiveFilterState', { value, code }, filterIndex);
     }
-  }, time.FILTER_DEBOUNCE_TIME);
+  }, FILTER_DEBOUNCE_TIME);
 
   public render() {
     const { columnInfo } = this.props;

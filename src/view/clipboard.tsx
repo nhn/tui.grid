@@ -12,7 +12,6 @@ import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '.
 import { isEdge, isMobile } from '../helper/browser';
 import { getText } from '../query/clipboard';
 import { convertTextToData } from '../helper/common';
-import { time } from '../helper/constant';
 
 interface StoreProps {
   navigating: boolean;
@@ -22,6 +21,8 @@ interface StoreProps {
 
 type Props = StoreProps & DispatchProps;
 
+const KEYDOWN_LOCK_TIME = 10;
+
 class ClipboardComp extends Component<Props> {
   private el?: HTMLFormElement;
 
@@ -29,7 +30,7 @@ class ClipboardComp extends Component<Props> {
 
   private lock = () => {
     this.isLocked = true;
-    setTimeout(this.unlock.bind(this), time.KEYDOWN_LOCK_TIME);
+    setTimeout(this.unlock.bind(this), KEYDOWN_LOCK_TIME);
   };
 
   /**

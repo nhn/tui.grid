@@ -1,8 +1,13 @@
-import { crlf, crlfRegexp } from './constant';
-
 interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
+
+const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
+const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
+const LF = '\n';
+const CR = '\r';
+const CUSTOM_LF_REGEXP = new RegExp(CUSTOM_LF_SUBCHAR, 'g');
+const CUSTOM_CR_REGEXP = new RegExp(CUSTOM_CR_SUBCHAR, 'g');
 
 export function shallowEqual(o1: Obj, o2: Obj) {
   for (const key in o1) {
@@ -339,7 +344,7 @@ export function endsWith(str: string, targetStr: string) {
 }
 
 function removeDoubleQuotes(text: string) {
-  if (text.match(crlfRegexp.CUSTOM_LF_REGEXP)) {
+  if (text.match(CUSTOM_LF_REGEXP)) {
     return text.substring(1, text.length - 1).replace(/""/g, '"');
   }
 
@@ -347,15 +352,12 @@ function removeDoubleQuotes(text: string) {
 }
 
 function replaceNewlineToSubchar(text: string) {
-  const { CR, LF, CUSTOM_CR_SUBCHAR, CUSTOM_LF_SUBCHAR } = crlf;
   return text.replace(/"([^"]|"")*"/g, value =>
     value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
   );
 }
 
 export function convertTextToData(text: string) {
-  const { CR, LF } = crlf;
-  const { CUSTOM_CR_REGEXP, CUSTOM_LF_REGEXP } = crlfRegexp;
   // Each newline cell data is wrapping double quotes in the text and
   // newline characters should be replaced with substitution characters temporarily
   // before spliting the text by newline characters.

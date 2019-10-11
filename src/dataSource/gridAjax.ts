@@ -3,14 +3,15 @@ import { encodeParams } from './helper/encoder';
 import { EventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 
+type CallbackFunction = (...args: any[]) => void;
 export interface Options {
   method: string;
   url: string;
   withCredentials: boolean;
   params?: Params;
-  callback?: Function;
-  preCallback?: Function;
-  postCallback?: Function;
+  callback?: CallbackFunction;
+  preCallback?: CallbackFunction;
+  postCallback?: CallbackFunction;
   eventBus: EventBus;
 }
 

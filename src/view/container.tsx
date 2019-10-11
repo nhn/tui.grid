@@ -17,7 +17,6 @@ import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
 import { keyNameMap } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
-import { touch } from '../helper/constant';
 
 interface OwnProps {
   rootElement: HTMLElement;
@@ -55,6 +54,9 @@ interface TouchEventInfo {
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
+
+const DOUBLE_TAP_DURATION = 200;
+const TAP_THRESHOLD = 10;
 
 export class ContainerComp extends Component<Props> {
   private el?: HTMLElement;
@@ -102,7 +104,6 @@ export class ContainerComp extends Component<Props> {
     const { timeStamp } = event;
     const { pageX, pageY } = event.changedTouches[0];
     const { eventInfo, start, move } = this.touchEvent;
-    const { DOUBLE_TAP_DURATION, TAP_THRESHOLD } = touch;
 
     if (start && !move) {
       const { pageX: prevPageX, pageY: prevPageY, timestamp: prevTimestamp } = eventInfo;

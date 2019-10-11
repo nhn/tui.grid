@@ -1,5 +1,4 @@
 import { cls } from '@/helper/dom';
-import { resizeHandle } from '@/helper/constant';
 import Grid from '@/grid';
 import { OptRow } from '@/types';
 import { data as sampleData } from '../../samples/basic';
@@ -14,6 +13,8 @@ const CONTENT_WIDTH = 600;
 const SCROLLBAR_WIDTH = 17;
 const CELL_BORDER_WIDTH = 1;
 const containerStyle = { width: `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px` };
+const WIDTH = 7;
+const HALF_WIDTH = 3;
 
 function assertContainerWidth(width: number) {
   cy.get(`.${cls('container')}`)
@@ -85,7 +86,7 @@ function assertHandleOffset(index: number, offsetLeft: number) {
     .invoke('position')
     // @ts-ignore
     .its('left')
-    .should('be.eq', offsetLeft - resizeHandle.HALF_WIDTH);
+    .should('be.eq', offsetLeft - HALF_WIDTH);
 }
 
 function assertHandleLength(length: number) {
@@ -224,7 +225,7 @@ describe('auto calculate column widths (container: 600)', () => {
         .trigger('mousedown')
         .then($el => {
           const { left, top } = $el.offset()!;
-          const pageX = left + distance + CELL_BORDER_WIDTH + resizeHandle.HALF_WIDTH;
+          const pageX = left + distance + CELL_BORDER_WIDTH + HALF_WIDTH;
           const pageY = top;
 
           cy.root().trigger('mousemove', { pageX, pageY });

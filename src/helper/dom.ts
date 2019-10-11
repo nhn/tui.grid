@@ -1,6 +1,5 @@
 import { fromArray } from './common';
 import { Range } from '../store/types';
-import { CLS_PREFIX } from './constant';
 
 export interface WindowWithClipboard extends Window {
   clipboardData: DataTransfer | null;
@@ -119,6 +118,8 @@ export type ClassNameType =
   | 'tree-button-expand'
   | 'tree-button-collapse'
   | 'tree-icon';
+
+const CLS_PREFIX = 'tui-grid-';
 
 export const dataAttr = {
   ROW_KEY: 'data-row-key',

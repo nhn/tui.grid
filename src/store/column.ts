@@ -39,8 +39,10 @@ import {
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
 import { RowHeaderInputRenderer } from '../renderer/rowHeaderInput';
-import { defMinWidth, DEF_ROW_HEADER_INPUT } from '../helper/constant';
 
+const DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
+const ROW_HEADER = 40;
+const COLUMN = 50;
 const rowHeadersMap = {
   rowNum: '_number',
   checkbox: '_checked'
@@ -206,7 +208,7 @@ export function createColumn(
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
     baseWidth: (width === 'auto' ? 0 : width) || 0,
-    minWidth: minWidth || columnOptions.minWidth || defMinWidth.COLUMN, // @TODO meta tag 체크 여부
+    minWidth: minWidth || columnOptions.minWidth || COLUMN, // @TODO meta tag 체크 여부
     relationMap: createRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,
@@ -234,7 +236,7 @@ function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): Column
     ? { name: rowHeadersMap[data] }
     : { name: rowHeadersMap[data.type], ...omit(data, 'type') };
   const { name, header, align, valign, renderer, width, minWidth } = rowHeader;
-  const baseMinWith = isNumber(minWidth) ? minWidth : defMinWidth.ROW_HEADER;
+  const baseMinWith = isNumber(minWidth) ? minWidth : ROW_HEADER;
   const baseWidth = (width === 'auto' ? baseMinWith : width) || baseMinWith;
   const rowNumColumn = isRowNumColumn(name);
 

@@ -5,7 +5,6 @@ import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { debounce } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
-import { time } from '../helper/constant';
 
 interface OwnProps {
   rowIndex: number;
@@ -20,6 +19,8 @@ interface StoreProps {
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
+
+const ROW_HEIGHT_DEBOUNCE_TIME = 10;
 
 class BodyRowComp extends Component<Props> {
   public componentWillUnmount() {
@@ -37,7 +38,7 @@ class BodyRowComp extends Component<Props> {
     const { dispatch, rowIndex, rowHeight } = this.props;
 
     dispatch('refreshRowHeight', rowIndex, rowHeight);
-  }, time.ROW_HEIGHT_DEBOUNCE_TIME);
+  }, ROW_HEIGHT_DEBOUNCE_TIME);
 
   public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
     const isOddRow = rowIndex % 2 === 0;
