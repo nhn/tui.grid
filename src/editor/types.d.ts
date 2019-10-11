@@ -1,6 +1,10 @@
 import { CellValue, RowKey, ColumnInfo, ListItem, Dictionary } from '../store/types';
 import Grid from '../grid';
 
+export type CheckboxOptions = ListItemOptions & {
+  type: 'checkbox' | 'radio';
+};
+
 export interface CellEditorProps {
   grid: Grid;
   rowKey: RowKey;

@@ -11,83 +11,16 @@ import {
   PagePosition,
   RowKey
 } from '../store/types';
-import { getRowRangeWithRowSpan } from '../helper/rowSpan';
+import { getRowRangeWithRowSpan } from '../query/rowSpan';
 import { getChildColumnRange } from '../query/selection';
 import { findIndexByRowKey } from '../query/data';
 import {
   findColumnIndexByPosition,
   findRowIndexByPosition,
   getColumnNameRange,
-  getPositionFromBodyArea,
-  ElementInfo
+  getOverflowFromMousePosition
 } from '../query/mouse';
-
-export function setNavigating({ focus }: Store, navigating: boolean) {
-  focus.navigating = navigating;
-}
-
-type OverflowType = -1 | 0 | 1;
-
-export interface ScrollData {
-  scrollLeft: number;
-  scrollTop: number;
-}
-
-interface OverflowInfo {
-  x: OverflowType;
-  y: OverflowType;
-}
-
-interface BodySize {
-  bodyWidth: number;
-  bodyHeight: number;
-}
-
-interface ContainerPosition {
-  x: number;
-  y: number;
-}
-
-type EventInfo = PagePosition & {
-  shiftKey: boolean;
-};
-
-function judgeOverflow(
-  { x: containerX, y: containerY }: ContainerPosition,
-  { bodyHeight, bodyWidth }: BodySize
-): OverflowInfo {
-  let overflowY: OverflowType = 0;
-  let overflowX: OverflowType = 0;
-
-  if (containerY < 0) {
-    overflowY = -1;
-  } else if (containerY > bodyHeight) {
-    overflowY = 1;
-  }
-
-  if (containerX < 0) {
-    overflowX = -1;
-  } else if (containerX > bodyWidth) {
-    overflowX = 1;
-  }
-
-  return {
-    x: overflowX,
-    y: overflowY
-  };
-}
-
-function getOverflowFromMousePosition(
-  pageX: number,
-  pageY: number,
-  bodyWidth: number,
-  dimension: Dimension
-) {
-  const { bodyHeight } = dimension;
-  const { x, y } = getPositionFromBodyArea(pageX, pageY, dimension);
-
-  return judgeOverflow({ x, y }, { bodyWidth, bodyHeight });
-}
+import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from './types';
 
 function stopAutoScroll(selection: Selection) {
   const { intervalIdForAutoScroll } = selection;
@@ -146,11 +79,15 @@ function setScrolling(
   }
 }
 
+export function setNavigating({ focus }: Store, navigating: boolean) {
+  focus.navigating = navigating;
+}
+
 export function selectionEnd({ selection }: Store) {
   selection.inputRange = null;
 }
 
-export function selectionUpdate(store: Store, dragData: PagePosition) {
+function updateSelection(store: Store, dragData: PagePosition) {
   const { viewport, selection, column, id, data, focus } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { pageX, pageY } = dragData;
@@ -209,7 +146,7 @@ export function dragMoveBody(
   );
 
   if (!isRowHeader(startColumnName) && !isRowHeader(endColumnName)) {
-    selectionUpdate(store, dragData);
+    updateSelection(store, dragData);
     setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
   }
 }
@@ -240,7 +177,7 @@ export function mouseDownBody(store: Store, elementInfo: ElementInfo, eventInfo:
   if (!isRowHeader(columnName)) {
     if (shiftKey) {
       const dragData = { pageX, pageY };
-      selectionUpdate(store, dragData);
+      updateSelection(store, dragData);
     } else {
       selectionEnd(store);
       changeFocus(store, filteredRawData[rowIndex].rowKey, columnName, id);

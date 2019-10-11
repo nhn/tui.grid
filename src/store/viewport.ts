@@ -1,9 +1,9 @@
 import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
-import { getMaxRowSpanCount, isRowSpanEnabled } from '../helper/rowSpan';
+import { getMaxRowSpanCount, isRowSpanEnabled } from '../query/rowSpan';
 
-interface ViewPortOption {
+interface ViewportOption {
   data: Data;
   column: Column;
   dimension: Dimension;
@@ -60,7 +60,7 @@ export function create({
   rowCoords,
   columnCoords,
   showDummyRows
-}: ViewPortOption): Observable<Viewport> {
+}: ViewportOption): Observable<Viewport> {
   return observable({
     scrollLeft: 0,
     scrollTop: 0,

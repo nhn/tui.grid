@@ -33,7 +33,7 @@ import { register, registerDataSources } from './instance';
 import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
-import { isSupportWindowClipboardData, setClipboardSelection } from './helper/clipboard';
+import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
 import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
@@ -58,10 +58,14 @@ import {
   Params,
   ModifiedDataManager
 } from './dataSource/types';
-import { getParentRow, getChildRows, getAncestorRows, getDescendantRows } from './query/tree';
-import { getDepth } from './helper/tree';
-import { cls, dataAttr } from './helper/dom';
-import { getRowSpanByRowKey } from './helper/rowSpan';
+import {
+  getParentRow,
+  getChildRows,
+  getAncestorRows,
+  getDescendantRows,
+  getDepth
+} from './query/tree';
+import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 
@@ -265,7 +269,6 @@ export default class Grid {
     const dataProvider = createProvider(store, dispatch, options.data);
     const dataManager = createManager();
     const paginationManager = createPaginationManager();
-    const cellHeightMap = {};
 
     this.el = el;
     this.store = store;
@@ -293,7 +296,6 @@ export default class Grid {
       <Root
         store={store}
         dispatch={dispatch}
-        cellHeightMap={cellHeightMap}
         rootElement={el}
         onGridMounted={onGridMounted}
         onGridBeforeDestroy={onGridBeforeDestroy}

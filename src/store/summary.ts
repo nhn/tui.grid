@@ -1,10 +1,18 @@
-import { Column, Data, Summary, SummaryColumnContents, SummaryValues } from './types';
+import {
+  Column,
+  Data,
+  Summary,
+  SummaryColumnContents,
+  SummaryValues,
+  SummaryColumnContentMap,
+  Row
+} from './types';
 import { observable } from '../helper/observable';
 import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
-  createSummaryValue,
-  extractSummaryColumnContent
+  extractSummaryColumnContent,
+  calculate
 } from '../helper/summary';
 import { someProp } from '../helper/common';
 
@@ -12,6 +20,18 @@ interface SummaryOption {
   column: Column;
   data: Data;
   summary: OptSummaryData;
+}
+
+export function createSummaryValue(
+  content: SummaryColumnContentMap | null,
+  columnName: string,
+  rawData: Row[]
+) {
+  if (content && content.useAutoSummary) {
+    const columnValues = rawData.map(row => row[columnName]);
+    return calculate(columnValues);
+  }
+  return { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
 }
 
 export function create({ column, data, summary }: SummaryOption): Summary {

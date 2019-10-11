@@ -1,6 +1,6 @@
-import { findProp, findPropIndex, includes } from '../helper/common';
-import { isParentColumnHeader } from '../helper/column';
-import { ColumnInfo, ComplexColumnInfo } from '../store/types';
+import { findProp, findPropIndex, includes, isNull, isEmpty } from '../helper/common';
+import { isParentColumnHeader } from './column';
+import { ColumnInfo, ComplexColumnInfo, Range, SelectionRange, PageOptions } from '../store/types';
 
 function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];
@@ -48,4 +48,36 @@ export function getChildColumnRange(
   );
 
   return [startIndex, endIndex];
+}
+
+export function getSortedRange(range: Range): Range {
+  return range[0] > range[1] ? [range[1], range[0]] : range;
+}
+
+export function isSameInputRange(inp1: SelectionRange | null, inp2: SelectionRange | null) {
+  if (isNull(inp1) || isNull(inp2)) {
+    return inp1 === inp2;
+  }
+
+  return (
+    inp1.column[0] === inp2.column[0] &&
+    inp1.column[1] === inp2.column[1] &&
+    inp1.row[0] === inp2.row[0] &&
+    inp1.row[1] === inp2.row[1]
+  );
+}
+
+export function getSelectionRange(range: SelectionRange, pageOptions: PageOptions): SelectionRange {
+  if (!isEmpty(pageOptions)) {
+    const { row, column } = range;
+    const { perPage, page } = pageOptions;
+    const prevPageRowCount = (page! - 1) * perPage!;
+
+    return {
+      row: [row[0] - prevPageRowCount, row[1] - prevPageRowCount],
+      column
+    };
+  }
+
+  return range;
 }

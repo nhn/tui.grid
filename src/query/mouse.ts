@@ -1,34 +1,13 @@
 import { Dimension, PagePosition, Side, Store } from '../store/types';
 import { findOffsetIndex } from '../helper/common';
-import { ScrollData } from '../dispatch/mouse';
-
-type ViewInfo = PagePosition & ScrollData;
-
-export type ElementInfo = {
-  side: Side;
-  top: number;
-  left: number;
-} & ScrollData;
-
-export function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimension) {
-  const {
-    offsetLeft,
-    offsetTop,
-    tableBorderWidth,
-    cellBorderWidth,
-    headerHeight,
-    summaryHeight,
-    summaryPosition
-  } = dimension;
-  const adjustedSummaryHeight = summaryPosition === 'top' ? summaryHeight : 0;
-
-  return {
-    x: pageX - offsetLeft,
-    y:
-      pageY -
-      (offsetTop + headerHeight + adjustedSummaryHeight + cellBorderWidth + tableBorderWidth)
-  };
-}
+import {
+  ViewInfo,
+  ContainerPosition,
+  BodySize,
+  OverflowInfo,
+  OverflowType,
+  ElementInfo
+} from '../dispatch/types';
 
 function getTotalColumnOffsets(widths: { [key in Side]: number[] }, cellBorderWidth: number) {
   const totalWidths = [...widths.L, ...widths.R];
@@ -54,6 +33,63 @@ function getScrolledPosition(
     x: scrolledPositionX,
     y: scrolledPositionY
   };
+}
+
+function judgeOverflow(
+  { x: containerX, y: containerY }: ContainerPosition,
+  { bodyHeight, bodyWidth }: BodySize
+): OverflowInfo {
+  let overflowY: OverflowType = 0;
+  let overflowX: OverflowType = 0;
+
+  if (containerY < 0) {
+    overflowY = -1;
+  } else if (containerY > bodyHeight) {
+    overflowY = 1;
+  }
+
+  if (containerX < 0) {
+    overflowX = -1;
+  } else if (containerX > bodyWidth) {
+    overflowX = 1;
+  }
+
+  return {
+    x: overflowX,
+    y: overflowY
+  };
+}
+
+function getPositionFromBodyArea(pageX: number, pageY: number, dimension: Dimension) {
+  const {
+    offsetLeft,
+    offsetTop,
+    tableBorderWidth,
+    cellBorderWidth,
+    headerHeight,
+    summaryHeight,
+    summaryPosition
+  } = dimension;
+  const adjustedSummaryHeight = summaryPosition === 'top' ? summaryHeight : 0;
+
+  return {
+    x: pageX - offsetLeft,
+    y:
+      pageY -
+      (offsetTop + headerHeight + adjustedSummaryHeight + cellBorderWidth + tableBorderWidth)
+  };
+}
+
+export function getOverflowFromMousePosition(
+  pageX: number,
+  pageY: number,
+  bodyWidth: number,
+  dimension: Dimension
+) {
+  const { bodyHeight } = dimension;
+  const { x, y } = getPositionFromBodyArea(pageX, pageY, dimension);
+
+  return judgeOverflow({ x, y }, { bodyWidth, bodyHeight });
 }
 
 export function getColumnNameRange(

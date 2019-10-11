@@ -9,9 +9,6 @@ import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
 
-// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-const MIN_DISTANCE_FOR_DRAG = 10;
-
 interface OwnProps {
   side: Side;
 }
@@ -42,6 +39,8 @@ const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
   'offsetTop',
   'totalColumnWidth'
 ];
+// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+const MIN_DISTANCE_FOR_DRAG = 10;
 
 class BodyAreaComp extends Component<Props> {
   private el?: HTMLElement;
@@ -92,9 +91,9 @@ class BodyAreaComp extends Component<Props> {
   private moveEnoughToTriggerDragEvent = (current: PagePosition) => {
     const dx = Math.abs(this.dragStartData.pageX! - current.pageX!);
     const dy = Math.abs(this.dragStartData.pageY! - current.pageY!);
-    const distance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
+    const movedDistance = Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
 
-    return distance >= MIN_DISTANCE_FOR_DRAG;
+    return movedDistance >= MIN_DISTANCE_FOR_DRAG;
   };
 
   private handleSelectStart = (ev: Event) => {

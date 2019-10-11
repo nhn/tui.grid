@@ -1,5 +1,5 @@
 import { $Values } from 'utility-types';
-import { clamp, findIndex, includes } from './common';
+import { includes } from './common';
 import { KeyNameMap } from '../types';
 
 export const keyNameMap = {
@@ -132,61 +132,6 @@ export function keyEventGenerate(ev: KeyboardEvent) {
         command: commandInfo[1]
       }
     : {};
-}
-
-function findOffsetIndex(offsets: number[], cellBorderWidth: number, position: number) {
-  position += cellBorderWidth * 2;
-
-  const idx = findIndex(offset => offset - cellBorderWidth > position, offsets);
-
-  return idx >= 0 ? idx - 1 : offsets.length - 1;
-}
-
-export function getPageMovedPosition(
-  rowIndex: number,
-  offsets: number[],
-  bodyHeight: number,
-  isPrevDir: boolean
-) {
-  const distance = isPrevDir ? -bodyHeight : bodyHeight;
-
-  return offsets[rowIndex] + distance;
-}
-
-export function getPageMovedIndex(
-  offsets: number[],
-  cellBorderWidth: number,
-  movedPosition: number
-) {
-  const movedIndex = findOffsetIndex(offsets, cellBorderWidth, movedPosition);
-
-  return clamp(movedIndex, 0, offsets.length - 1);
-}
-
-export function getPrevRowIndex(rowIndex: number, heights: number[]) {
-  let index = rowIndex;
-
-  while (index > 0) {
-    index -= 1;
-    if (heights[index]) {
-      break;
-    }
-  }
-
-  return index;
-}
-
-export function getNextRowIndex(rowIndex: number, heights: number[]) {
-  let index = rowIndex;
-
-  while (index < heights.length - 1) {
-    index += 1;
-    if (heights[index]) {
-      break;
-    }
-  }
-
-  return index;
 }
 
 export function isNonPrintableKey(keyCode: number) {

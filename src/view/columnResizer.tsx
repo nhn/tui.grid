@@ -4,9 +4,6 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo } from '../store/types';
 
-export const HANDLE_WIDTH = 7;
-export const HANDLE_WIDTH_HALF = 3;
-
 interface OwnProps {
   side: Side;
 }
@@ -19,6 +16,9 @@ interface StoreProps {
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
+
+const WIDTH = 7;
+const HALF_WIDTH = 3;
 
 class ColumnResizerComp extends Component<Props> {
   private dragStartX = -1;
@@ -81,8 +81,8 @@ class ColumnResizerComp extends Component<Props> {
         {...attrs}
         style={{
           height: 33,
-          width: HANDLE_WIDTH,
-          left: offset + width + cellBorderWidth - HANDLE_WIDTH_HALF
+          width: WIDTH,
+          left: offset + width + cellBorderWidth - HALF_WIDTH
         }}
         onMouseDown={ev => this.handleMouseDown(ev, index)}
       />

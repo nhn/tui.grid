@@ -1,8 +1,7 @@
-import { cls } from '../../src/helper/dom';
+import { cls } from '@/helper/dom';
+import Grid from '@/grid';
+import { OptRow } from '@/types';
 import { data as sampleData } from '../../samples/basic';
-import { HANDLE_WIDTH_HALF } from '../../src/view/columnResizer';
-import Grid from '../../src/grid';
-import { OptRow } from '../../src/types';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -14,6 +13,8 @@ const CONTENT_WIDTH = 600;
 const SCROLLBAR_WIDTH = 17;
 const CELL_BORDER_WIDTH = 1;
 const containerStyle = { width: `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px` };
+const WIDTH = 7;
+const HALF_WIDTH = 3;
 
 function assertContainerWidth(width: number) {
   cy.get(`.${cls('container')}`)
@@ -85,7 +86,7 @@ function assertHandleOffset(index: number, offsetLeft: number) {
     .invoke('position')
     // @ts-ignore
     .its('left')
-    .should('be.eq', offsetLeft - HANDLE_WIDTH_HALF);
+    .should('be.eq', offsetLeft - HALF_WIDTH);
 }
 
 function assertHandleLength(length: number) {
@@ -224,7 +225,7 @@ describe('auto calculate column widths (container: 600)', () => {
         .trigger('mousedown')
         .then($el => {
           const { left, top } = $el.offset()!;
-          const pageX = left + distance + CELL_BORDER_WIDTH + HANDLE_WIDTH_HALF;
+          const pageX = left + distance + CELL_BORDER_WIDTH + HALF_WIDTH;
           const pageY = top;
 
           cy.root().trigger('mousemove', { pageX, pageY });

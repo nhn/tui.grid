@@ -35,14 +35,14 @@ export type EditingEvent = 'click' | 'dblclick';
 
 export type TabMode = 'move' | 'moveAndEdit';
 
-export type State = 'DONE' | 'EMPTY' | 'LOADING';
-
 export type SortingType = 'asc' | 'desc';
 
 export type EditingAddress = {
   rowKey: RowKey;
   columnName: string;
 } | null;
+
+export type CellHeightMap = Dictionary<Dictionary<number>>;
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -89,6 +89,8 @@ export type SummaryValues = Dictionary<SummaryValue>;
 export type CustomValue =
   | string
   | ((value: CellValue, rowAttrs: Row[], column: ColumnInfo) => string);
+
+export type LoadingState = 'DONE' | 'EMPTY' | 'LOADING';
 
 export interface ClipboardCopyOptions {
   useFormattedValue?: boolean;
@@ -189,6 +191,7 @@ export interface Data {
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
   filters: Filter[] | null;
+  loadingState: LoadingState;
 }
 
 export interface FormatterProps {
@@ -457,8 +460,8 @@ export interface Selection {
 }
 
 export interface RenderState {
-  state: State;
   hoveredRowKey: RowKey | null;
+  cellHeightMap: CellHeightMap;
 }
 
 export interface FilterLayerState {

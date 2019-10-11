@@ -1,25 +1,22 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { cls } from '../helper/dom';
+import {
+  cls,
+  convertTableToData,
+  isSupportWindowClipboardData,
+  setClipboardSelection,
+  WindowWithClipboard
+} from '../helper/dom';
 import { KeyboardEventCommandType, KeyboardEventType, keyEventGenerate } from '../helper/keyboard';
 import { isEdge, isMobile } from '../helper/browser';
-import {
-  convertTableToData,
-  convertTextToData,
-  isSupportWindowClipboardData,
-  setClipboardSelection
-} from '../helper/clipboard';
 import { getText } from '../query/clipboard';
+import { convertTextToData } from '../helper/common';
 
 interface StoreProps {
   navigating: boolean;
   editing: boolean;
   filtering: boolean;
-}
-
-export interface WindowWithClipboard extends Window {
-  clipboardData: DataTransfer | null;
 }
 
 type Props = StoreProps & DispatchProps;
@@ -65,7 +62,7 @@ class ClipboardComp extends Component<Props> {
         dispatch('setScrollToFocus');
         break;
       case 'select':
-        dispatch('changeSelection', command!);
+        dispatch('moveSelection', command!);
         dispatch('setScrollToSelection');
         break;
       case 'remove':

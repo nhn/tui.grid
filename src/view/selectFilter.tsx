@@ -6,7 +6,8 @@ import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
 import { ActiveColumnAddress, CellValue, ColumnInfo, Filter } from '../store/types';
 import { some, debounce } from '../helper/common';
-import { FILTER_DEBOUNCE_TIME, getUniqColumnData } from '../helper/filter';
+import { getUniqColumnData } from '../query/data';
+import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 
 interface ColumnData {
   value: CellValue;

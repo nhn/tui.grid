@@ -3,7 +3,7 @@ import { OptGrid } from '../types';
 import { observable, observe } from '../helper/observable';
 import { create as createData } from './data';
 import { create as createColumn } from './column';
-import { create as createDimension, setBodyHeight } from './dimension';
+import { create as createDimension } from './dimension';
 import { create as createViewport } from './viewport';
 import { create as createColumnCoords } from './columnCoords';
 import { create as createRowCoords } from './rowCoords';
@@ -13,6 +13,7 @@ import { create as createSelection } from './selection';
 import { create as createRenderState } from './renderState';
 import { create as createFilterLayerState } from './filterLayerState';
 import { createObservableData } from '../dispatch/data';
+import { setAutoBodyHeight } from '../dispatch/dimension';
 
 export function createStore(id: number, options: OptGrid): Store {
   const {
@@ -113,8 +114,8 @@ export function createStore(id: number, options: OptGrid): Store {
     rowCoords,
     data
   });
-  const renderState = createRenderState(data);
   const filterLayerState = createFilterLayerState();
+  const renderState = createRenderState();
 
   const store = observable({
     id,
@@ -132,7 +133,7 @@ export function createStore(id: number, options: OptGrid): Store {
   });
   // manual observe to resolve circular references
   observe(() => {
-    setBodyHeight(dimension, rowCoords);
+    setAutoBodyHeight(store);
   });
   // makes the data observable as changes viewport
   observe(() => {

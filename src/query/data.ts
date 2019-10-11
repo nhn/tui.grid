@@ -1,15 +1,17 @@
-import { Store, RowKey, Data, Row, Dictionary, Column } from '../store/types';
+import { Store, RowKey, Data, Row, Dictionary, Column, SortState } from '../store/types';
 import {
-  findProp,
   isFunction,
   findPropIndex,
   isNull,
   isUndefined,
-  isEmpty
+  isEmpty,
+  uniq,
+  mapProp,
+  isNumber
 } from '../helper/common';
 import { getDataManager } from '../instance';
-import { isRowSpanEnabled } from '../helper/rowSpan';
-import { isHiddenColumn } from '../helper/column';
+import { isRowSpanEnabled } from './rowSpan';
+import { isHiddenColumn } from './column';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -22,22 +24,10 @@ export function getCellAddressByIndex(
   };
 }
 
-export function isCellDisabled(data: Data, rowKey: RowKey, columnName: string) {
-  const { viewData, disabled } = data;
-  const row = findProp('rowKey', rowKey, viewData)!;
-  const rowDisabled = row.valueMap[columnName].disabled;
-
-  return disabled || rowDisabled;
-}
-
-export function isCellEditable(data: Data, column: Column, rowKey: RowKey, columnName: string) {
-  const { viewData } = data;
-  const row = findProp('rowKey', rowKey, viewData)!;
-  const { editable } = row.valueMap[columnName];
-
-  return (
-    !isHiddenColumn(column, columnName) && !isCellDisabled(data, rowKey, columnName) && editable
-  );
+export function isEditableCell(data: Data, column: Column, rowIndex: number, columnName: string) {
+  const { disabled, filteredViewData } = data;
+  const { disabled: rowDisabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+  return !isHiddenColumn(column, columnName) && editable && !disabled && !rowDisabled;
 }
 
 export function getCheckedRows({ data }: Store) {
@@ -131,4 +121,31 @@ export function getFilterStateWithOperator(data: Data, column: Column) {
   }
 
   return filters;
+}
+
+export function getUniqColumnData(targetData: Row[], columnName: string) {
+  return uniq(mapProp(columnName, targetData));
+}
+
+export function isSortable(sortState: SortState, column: Column, columnName: string) {
+  if (columnName === 'sortKey') {
+    return true;
+  }
+  const { sortable, hidden } = column.allColumnMap[columnName];
+  return sortState.useClient && !hidden && sortable;
+}
+
+export function isInitialSortState({ columns }: SortState) {
+  return columns.length === 1 && columns[0].columnName === 'sortKey';
+}
+
+export function getRowHeight(row: Row, defaultRowHeight: number) {
+  const { height, tree } = row._attributes;
+  const rowHeight = tree && tree.hidden ? 0 : height;
+
+  return isNumber(rowHeight) ? rowHeight : defaultRowHeight;
+}
+
+export function getLoadingState(rawData: Row[]) {
+  return rawData.length ? 'DONE' : 'EMPTY';
 }

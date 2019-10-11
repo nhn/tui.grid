@@ -1,10 +1,6 @@
-import { CellEditor, CellEditorProps, ListItemOptions } from './types';
+import { CellEditor, CellEditorProps, CheckboxOptions } from './types';
 import { CellValue } from '../store/types';
 import { getListItems } from '../helper/editor';
-
-type CheckboxOptions = ListItemOptions & {
-  type: 'checkbox' | 'radio';
-};
 
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;

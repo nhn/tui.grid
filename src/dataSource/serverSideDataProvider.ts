@@ -12,14 +12,14 @@ import { Store, Dictionary, Row, RowKey } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
 import { removeExpandedAttr } from '../dispatch/tree';
-import { getChildRowKeys } from '../helper/tree';
+import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isObject } from '../helper/common';
 import GridAjax from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
 import { getConfirmMessage, getAlertMessage } from './helper/message';
 import { getDataWithOptions } from './modifiedDataManager';
-import { findRowByRowKey } from '../query/data';
+import { findRowByRowKey, getLoadingState } from '../query/data';
 
 interface SendOptions {
   url: string;
@@ -116,7 +116,8 @@ class ServerSideDataProvider implements DataProvider {
     }
     const { api, withCredentials } = this;
     const { treeColumnName } = this.store.column;
-    const { perPage } = this.store.data.pageOptions;
+    const { rawData, pageOptions } = this.store.data;
+    const { perPage } = pageOptions;
     const { method, url } = api.readData;
     const dataWithType = data as Params;
     // assign request params
@@ -138,12 +139,13 @@ class ServerSideDataProvider implements DataProvider {
       url,
       params,
       callback: handleSuccessReadData,
-      callbackWhenever: () => this.dispatch('setRenderState', 'DONE'),
+      preCallback: () => this.dispatch('setLoadingState', 'DONE'),
+      postCallback: () => this.dispatch('setLoadingState', getLoadingState(rawData)),
       withCredentials,
       eventBus: getEventBus(this.store.id)
     });
 
-    this.dispatch('setRenderState', 'LOADING');
+    this.dispatch('setLoadingState', 'LOADING');
     request.open();
     request.send();
   }
@@ -184,7 +186,8 @@ class ServerSideDataProvider implements DataProvider {
 
   private send(sendOptions: SendOptions) {
     const { url, method, options, requestTypeCode } = sendOptions;
-    const manager = getDataManager(this.store.id);
+    const { id, data } = this.store;
+    const manager = getDataManager(id);
     const params = this.createRequestParams(requestTypeCode, options);
 
     if (!options.showConfirm || this.confirm(requestTypeCode, this.getCount(params))) {
@@ -194,11 +197,12 @@ class ServerSideDataProvider implements DataProvider {
         url,
         params,
         callback: () => manager.clear(params),
-        callbackWhenever: () => this.dispatch('setRenderState', 'DONE'),
+        preCallback: () => this.dispatch('setLoadingState', 'DONE'),
+        postCallback: () => this.dispatch('setLoadingState', getLoadingState(data.rawData)),
         withCredentials: isUndefined(withCredentials) ? this.withCredentials : withCredentials,
-        eventBus: getEventBus(this.store.id)
+        eventBus: getEventBus(id)
       });
-      this.dispatch('setRenderState', 'LOADING');
+      this.dispatch('setLoadingState', 'LOADING');
       request.open();
       request.send();
     }

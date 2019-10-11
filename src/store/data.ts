@@ -18,7 +18,8 @@ import {
   SortState,
   ViewRow,
   Range,
-  Filter
+  Filter,
+  RowSpan
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -37,12 +38,11 @@ import {
   convertToNumber
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
-import { createTreeRawData, createTreeCellInfo } from '../helper/tree';
-import { createRowSpan } from '../helper/rowSpan';
+import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { cls } from '../helper/dom';
 import { findIndexByRowKey } from '../query/data';
 
-interface OptData {
+interface DataOption {
   data: OptRow[];
   column: Column;
   pageOptions: PageOptions;
@@ -63,7 +63,7 @@ export function generateDataCreationKey() {
   return dataCreationKey;
 }
 
-export function getCellDisplayValue(value: CellValue) {
+function getCellDisplayValue(value: CellValue) {
   if (typeof value === 'undefined' || value === null) {
     return '';
   }
@@ -165,6 +165,15 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
   }
 
   return invalidStates;
+}
+
+export function createRowSpan(
+  mainRow: boolean,
+  rowKey: RowKey,
+  count: number,
+  spanCount: number
+): RowSpan {
+  return { mainRow, mainRowKey: rowKey, count, spanCount };
 }
 
 function createViewCell(
@@ -448,7 +457,7 @@ export function create({
   useClientSort,
   disabled,
   id
-}: OptData): Observable<Data> {
+}: DataOption): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
 
   const sortState: SortState = {
@@ -479,6 +488,7 @@ export function create({
     pageOptions,
     checkedAllRows: !rawData.some(row => !row._attributes.checked),
     filters: null,
+    loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
     get filteredRawData(this: Data) {
       return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
