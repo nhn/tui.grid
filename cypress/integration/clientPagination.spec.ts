@@ -8,6 +8,13 @@ const columns = [
   { name: 'orderId' }
 ];
 
+const appendedData = {
+  deliveryType: '택배',
+  productOrderNo: 100,
+  orderName: 'hanjung',
+  orderId: 'jj'
+};
+
 before(() => {
   cy.visit('/dist');
 });
@@ -43,17 +50,31 @@ it('소팅 후 페이지를 이동하여도 소팅은 계속 유지된다.', () 
     .should('have.class', cls('btn-sorting-down'));
 });
 
-it.only('filter의 결과가 pagination에 즉시 반영된다.', () => {
+it('filter의 결과가 pagination에 즉시 반영된다.', () => {
   cy.get(`.${cls('btn-filter')}`)
     .click()
     .then(() => {
       cy.get(`.${cls('filter-input')}`).type('택배');
     });
+
+  cy.get(`.tui-page-btn.tui-last-child`).contains('3');
 });
 
-it('appendRow시 pagination에 반영된다.', () => {});
+it('appendRow시 pagination에 반영된다.', () => {
+  cy.gridInstance()
+    .invoke('appendRow', appendedData)
+    .then(() => {
+      cy.get(`.tui-page-btn.tui-last-child`).contains('9');
+    });
+});
 
-it('prependRow시 pagination에 반영된다.', () => {});
+it.only('prependRow시 pagination에 반영된다.', () => {
+  cy.gridInstance()
+    .invoke('prependRow', appendedData)
+    .then(() => {
+      cy.get(`.tui-page-btn.tui-last-child`).contains('9');
+    });
+});
 
 it('removeRow시 pagination에 반영된다.', () => {});
 
