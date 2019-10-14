@@ -216,8 +216,6 @@ export function isUpdatableRowAttr(
   return !(name === 'checked' && (checkDisabled || allDisabled));
 }
 
-type T1 = 'a' & 'b';
-
 export function setRowAttribute(
   { data, column, id }: Store,
   rowKey: RowKey,
