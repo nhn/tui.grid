@@ -226,7 +226,7 @@ export function setRowAttribute(
   const targetRow = findRowByRowKey(data, column, id, rowKey);
 
   // add type assertion for typescript bug reduced the 'never' type
-  // https://github.com/microsoft/TypeScript/pull/31838
+  // https://github.com/microsoft/TypeScript/issues/34293
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
     (targetRow._attributes[attrName] as RowAttributeValue) = value;
   }
@@ -240,7 +240,7 @@ export function setAllRowAttribute(
   data.rawData.forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
       // add type assertion for typescript bug reduced the 'never' type
-      // https://github.com/microsoft/TypeScript/pull/31838
+      // https://github.com/microsoft/TypeScript/issues/34293
       (row._attributes[attrName] as RowAttributeValue) = value;
     }
   });
