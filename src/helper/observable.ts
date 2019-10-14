@@ -104,7 +104,12 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
         setValue(storage, observerIdSet, key, value);
       });
     } else {
-      storage[key] = obj[key];
+      // has to add 'as' type assertion and refer the below typescript issue
+      // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
+      // it merely ensures that the properties of the argument are assignable to type XXX.
+      // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
+      // https://github.com/microsoft/TypeScript/issues/31661
+      (storage[key] as T) = obj[key];
       Object.defineProperty(resultObj, key, {
         set(value) {
           setValue(storage, observerIdSet, key, value);

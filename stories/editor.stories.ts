@@ -86,14 +86,12 @@ let columns: OptColumn[] = [
 stories.add(
   'Text / Checkbox',
   () => {
-    const { grid, el } = createGrid({
+    const { el } = createGrid({
       data,
       columns,
       columnOptions: { frozenCount: 1 },
       bodyHeight: 400
     });
-
-    (window as Window & { grid: Grid }).grid = grid;
 
     return el;
   },
@@ -101,15 +99,13 @@ stories.add(
 );
 
 stories.add('with editingEvent:click options', () => {
-  const { grid, el } = createGrid({
+  const { el } = createGrid({
     data,
     columns,
     columnOptions: { frozenCount: 1 },
     bodyHeight: 400,
     editingEvent: 'click'
   });
-
-  (window as Window & { grid: Grid }).grid = grid;
 
   return el;
 });

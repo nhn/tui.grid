@@ -216,6 +216,8 @@ export function isUpdatableRowAttr(
   return !(name === 'checked' && (checkDisabled || allDisabled));
 }
 
+type T1 = 'a' & 'b';
+
 export function setRowAttribute(
   { data, column, id }: Store,
   rowKey: RowKey,
@@ -224,8 +226,11 @@ export function setRowAttribute(
 ) {
   const { disabled } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
+
+  // add type assertion for typescript bug reduced the 'never' type
+  // https://github.com/microsoft/TypeScript/pull/31838
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
-    targetRow._attributes[attrName] = value;
+    (targetRow._attributes[attrName] as RowAttributeValue) = value;
   }
 }
 
@@ -236,7 +241,9 @@ export function setAllRowAttribute(
 ) {
   data.rawData.forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
-      row._attributes[attrName] = value;
+      // add type assertion for typescript bug reduced the 'never' type
+      // https://github.com/microsoft/TypeScript/pull/31838
+      (row._attributes[attrName] as RowAttributeValue) = value;
     }
   });
 }

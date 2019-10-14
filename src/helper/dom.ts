@@ -2,7 +2,7 @@ import { fromArray } from './common';
 import { Range } from '../store/types';
 
 export interface WindowWithClipboard extends Window {
-  clipboardData: DataTransfer | null;
+  clipboardData?: DataTransfer | null;
 }
 
 export type ClassNameType =

@@ -114,33 +114,43 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
 export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
   const resultObj = { ...(targetObj as T1 & T2) };
 
-  for (const prop of Object.keys(obj)) {
+  Object.keys(obj).forEach(prop => {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
-        resultObj[prop] = obj[prop];
+        // has to add type assertion and refer the below typescript issue
+        // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
+        // it merely ensures that the properties of the argument are assignable to type XXX.
+        // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
+        // https://github.com/microsoft/TypeScript/issues/31661
+        (resultObj[prop] as T1 & T2) = obj[prop];
       } else {
-        resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+        (resultObj[prop] as T1 & T2) = deepMergedCopy(resultObj[prop], obj[prop]);
       }
     } else {
-      resultObj[prop] = obj[prop];
+      (resultObj[prop] as T1 & T2) = obj[prop];
     }
-  }
+  });
 
   return resultObj;
 }
 
 export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
-  for (const prop of Object.keys(obj)) {
+  Object.keys(obj).forEach(prop => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
-        targetObj[prop] = obj[prop];
+        // has to add type assertion and refer the below typescript issue
+        // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
+        // it merely ensures that the properties of the argument are assignable to type XXX.
+        // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
+        // https://github.com/microsoft/TypeScript/issues/31661
+        (targetObj[prop] as T1 & T2) = obj[prop];
       } else {
         assign(targetObj[prop], obj[prop]);
       }
     } else {
-      targetObj[prop] = obj[prop];
+      (targetObj[prop] as T1 & T2) = obj[prop];
     }
-  }
+  });
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {
@@ -168,15 +178,15 @@ export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
 
-export function forEachObject<T, K extends Extract<keyof T, string>, V extends T[K]>(
+export function forEachObject<T extends Obj, K extends keyof T, V extends T[K]>(
   fn: (value: V, key: K, obj: T) => void,
   obj: T
 ) {
-  for (const key in obj) {
+  Object.keys(obj).forEach(key => {
     if (obj.hasOwnProperty(key)) {
       fn(obj[key as K] as V, key as K, obj);
     }
-  }
+  });
 }
 
 export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
