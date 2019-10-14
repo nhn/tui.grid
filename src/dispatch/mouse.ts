@@ -1,4 +1,4 @@
-import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
+import { findOffsetIndex, findPropIndex, isEmpty, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus } from './focus';
 import { changeSelectionRange } from './selection';
@@ -264,7 +264,9 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
 export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
-  const rowIndex = findIndexByRowKey(data, column, id, rowKey);
+  const { pageOptions } = data;
+  const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey) % perPage;
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
     [rowIndex, rowIndex],

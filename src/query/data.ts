@@ -64,14 +64,13 @@ export function findIndexByRowKey(
     return -1;
   }
 
-  const { filteredRawData, rawData, sortState, pageOptions } = data;
-  const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
+  const { filteredRawData, rawData, sortState } = data;
   const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
   const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
 
   if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
-    return findPropIndex('rowKey', rowKey, targetData) % perPage;
+    return findPropIndex('rowKey', rowKey, targetData);
   }
 
   let start = 0;
@@ -86,7 +85,7 @@ export function findIndexByRowKey(
     } else if (rowKey < comparedRowKey) {
       end = mid - 1;
     } else {
-      return mid % perPage;
+      return mid;
     }
   }
 

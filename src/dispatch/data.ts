@@ -664,7 +664,7 @@ export function movePage(store: Store, page: number) {
 
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-  rowCoords.heights = data.rawData
+  rowCoords.heights = data.filteredRawData
     .slice(...data.pageRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
   initSelection(store);
