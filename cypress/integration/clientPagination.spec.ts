@@ -53,7 +53,7 @@ beforeEach(() => {
 });
 
 it('should displayed page according to the number of data.', () => {
-  cy.get(`.tui-page-btn.tui-last-child`).contains('8');
+  cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '8');
 });
 
 it('should maintain sorting even if move the page.', () => {
@@ -71,42 +71,40 @@ it('should maintain sorting even if move the page.', () => {
 it('should reflected total page after filtering.', () => {
   cy.get(`.${cls('btn-filter')}`).click();
   cy.get(`.${cls('filter-input')}`).type('택배');
-  cy.get(`.tui-page-btn.tui-last-child`).contains('3');
+  cy.get('.tui-page-btn.tui-last-child').should('to.have.text', '3');
 });
 
 it('should reflected total page after appendRow API.', () => {
   cy.gridInstance().invoke('appendRow', appendedData);
-  cy.get(`.tui-page-btn.tui-last-child`).contains('9');
+  cy.get('.tui-page-btn.tui-last-child').should('to.have.text', '9');
 });
 
 it('should reflected total page after prependRow API.', () => {
   cy.gridInstance().invoke('prependRow', appendedData);
-  cy.get('[data-column-name=orderName]')
-    .eq(1)
-    .contains('hanjung');
-  cy.get(`.tui-page-btn.tui-last-child`).contains('9');
+  cy.wait(10);
+  cy.getCellByIdx(0, 3).should('to.have.text', 'hanjung');
+  cy.get('.tui-page-btn.tui-last-child').should('to.have.text', '9');
   compareColumnCellLength(10);
 });
 
 it('should reflected total page after resetData API.', () => {
   cy.gridInstance().invoke('resetData', [appendedData]);
-  cy.get('[data-column-name=orderName]')
-    .eq(1)
-    .contains('hanjung');
-  cy.get(`.tui-page-btn.tui-last-child`).contains('1');
+  cy.wait(10);
+  cy.getCellByIdx(0, 3).should('to.have.text', 'hanjung');
+  cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '1');
   compareColumnCellLength(1);
 });
 
 it('should reflected total page after clear API.', () => {
   cy.gridInstance().invoke('clear');
-  cy.get(`.tui-page-btn.tui-last-child`).contains('1');
+  cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '1');
   compareColumnCellLength(0);
 });
 
 it('should reflected total page after removeRow API.', () => {
   createGrid(data.slice(0, 61));
   cy.gridInstance().invoke('removeRow', 0);
-  cy.get(`.tui-page-btn.tui-last-child`).contains('6');
+  cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '6');
   compareColumnCellLength(10);
 });
 
@@ -114,7 +112,7 @@ it('should go to the previous page, If the page disappeared as a result of remov
   createGrid(data.slice(0, 61));
   cy.get(`.tui-page-btn.tui-last-child`).click();
   cy.gridInstance().invoke('removeRow', 60);
-  cy.get(`.tui-page-btn.tui-last-child`).contains('6');
-  cy.get('.tui-page-btn.tui-is-selected').contains('6');
+  cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '6');
+  cy.get('.tui-page-btn.tui-is-selected').should('to.have.text', '6');
   compareColumnCellLength(10);
 });
