@@ -62,6 +62,7 @@ import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
 import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
+import { setScrollTop } from './viewport';
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -270,7 +271,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  data.checkedAllRows = !filteredRawData.some(row => !row._attributes.checked);
+  setCheckedAllRows(store, !filteredRawData.some(row => !row._attributes.checked));
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -278,7 +279,7 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { data, id, column } = store;
+  const { id, column } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
@@ -292,7 +293,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
-  data.checkedAllRows = false;
+  setCheckedAllRows(store, false);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
@@ -300,9 +301,9 @@ export function uncheck(store: Store, rowKey: RowKey) {
 }
 
 export function checkAll(store: Store) {
-  const { data, id } = store;
+  const { id } = store;
   setAllRowAttribute(store, 'checked', true);
-  data.checkedAllRows = true;
+  setCheckedAllRows(store, true);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -315,9 +316,9 @@ export function checkAll(store: Store) {
 }
 
 export function uncheckAll(store: Store) {
-  const { data, id } = store;
+  const { id } = store;
   setAllRowAttribute(store, 'checked', false);
-  data.checkedAllRows = false;
+  setCheckedAllRows(store, false);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -538,6 +539,7 @@ export function clearData(store: Store) {
   }
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
+  setCheckedAllRows(store, false);
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
@@ -560,6 +562,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
       totalCount: rawData.length
     };
   }
+  setCheckedAllRows(store, false);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -652,13 +655,18 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
   data.pageOptions = pageOptions as Required<PageOptions>;
 }
 
-export function movePage({ data, rowCoords, dimension }: Store, page: number) {
+export function movePage(store: Store, page: number) {
+  const { data, rowCoords, dimension } = store;
+
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-
   rowCoords.heights = data.rawData
     .slice(...data.pageRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
+  initSelection(store);
+  initFocus(store);
+  setScrollTop(store, 0);
+  setCheckedAllRows(store, false);
 }
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
@@ -763,4 +771,8 @@ function changeToObservableTreeData(
 
 export function setLoadingState({ data }: Store, state: LoadingState) {
   data.loadingState = state;
+}
+
+export function setCheckedAllRows({ data }: Store, checked: boolean) {
+  data.checkedAllRows = checked;
 }
