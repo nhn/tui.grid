@@ -178,15 +178,15 @@ export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
 
-export function forEachObject<T extends Obj, K extends keyof T, V extends T[K]>(
+export function forEachObject<T extends Obj, K extends Extract<keyof T, string>, V extends T[K]>(
   fn: (value: V, key: K, obj: T) => void,
   obj: T
 ) {
-  Object.keys(obj).forEach(key => {
+  for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       fn(obj[key as K] as V, key as K, obj);
     }
-  });
+  }
 }
 
 export function hasOwnProp<T extends object, K extends keyof T>(obj: T, key: string | K): key is K {
