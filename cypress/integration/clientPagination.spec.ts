@@ -1,5 +1,6 @@
 import { data } from '../../samples/pagination';
 import { cls } from '@/helper/dom';
+import { OptRow } from '@/types';
 
 const columns = [
   { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
@@ -15,30 +16,47 @@ const appendedData = {
   orderId: 'jj'
 };
 
+function createGrid(newData?: OptRow[]) {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+
+  cy.createGrid({
+    data: newData || data.slice(0, 80),
+    pageOptions: {
+      useClient: true,
+      perPage: 10
+    },
+    rowHeaders: ['rowNum'],
+    columns
+  });
+}
+
+function compareColumnCellLength(length: number) {
+  if (length) {
+    // rowHeader cell length
+    const columnLength = columns.length + 1;
+    cy.get(`td.${cls('cell')}`)
+      .its('length')
+      .should('be.eq', length * columnLength);
+  } else {
+    cy.get(`td.${cls('cell')}`).should('not.exist');
+  }
+}
+
 before(() => {
   cy.visit('/dist');
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-  cy.createGrid({
-    data: data.slice(0, 80),
-    columns,
-    pageOptions: {
-      useClient: true,
-      perPage: 10
-    },
-    rowHeaders: ['rowNum']
-  });
+  createGrid();
 });
 
-it('데이터의 갯수에 맞게 페이지가 표시된다.', () => {
+it('should displayed page according to the number of data.', () => {
   cy.get(`.tui-page-btn.tui-last-child`).contains('8');
 });
 
-it('소팅 후 페이지를 이동하여도 소팅은 계속 유지된다.', () => {
+it('should maintain sorting even if move the page.', () => {
   cy.get(`.${cls('btn-sorting')}`).click();
 
   cy.get(`a.tui-page-btn`)
@@ -50,36 +68,53 @@ it('소팅 후 페이지를 이동하여도 소팅은 계속 유지된다.', () 
     .should('have.class', cls('btn-sorting-down'));
 });
 
-it('filter의 결과가 pagination에 즉시 반영된다.', () => {
-  cy.get(`.${cls('btn-filter')}`)
-    .click()
-    .then(() => {
-      cy.get(`.${cls('filter-input')}`).type('택배');
-    });
-
+it('should reflected total page after filtering.', () => {
+  cy.get(`.${cls('btn-filter')}`).click();
+  cy.get(`.${cls('filter-input')}`).type('택배');
   cy.get(`.tui-page-btn.tui-last-child`).contains('3');
 });
 
-it('appendRow시 pagination에 반영된다.', () => {
-  cy.gridInstance()
-    .invoke('appendRow', appendedData)
-    .then(() => {
-      cy.get(`.tui-page-btn.tui-last-child`).contains('9');
-    });
+it('should reflected total page after appendRow API.', () => {
+  cy.gridInstance().invoke('appendRow', appendedData);
+  cy.get(`.tui-page-btn.tui-last-child`).contains('9');
 });
 
-it.only('prependRow시 pagination에 반영된다.', () => {
-  cy.gridInstance()
-    .invoke('prependRow', appendedData)
-    .then(() => {
-      cy.get(`.tui-page-btn.tui-last-child`).contains('9');
-    });
+it('should reflected total page after prependRow API.', () => {
+  cy.gridInstance().invoke('prependRow', appendedData);
+  cy.get('[data-column-name=orderName]')
+    .eq(1)
+    .contains('hanjung');
+  cy.get(`.tui-page-btn.tui-last-child`).contains('9');
+  compareColumnCellLength(10);
 });
 
-it('removeRow시 pagination에 반영된다.', () => {});
+it('should reflected total page after resetData API.', () => {
+  cy.gridInstance().invoke('resetData', [appendedData]);
+  cy.get('[data-column-name=orderName]')
+    .eq(1)
+    .contains('hanjung');
+  cy.get(`.tui-page-btn.tui-last-child`).contains('1');
+  compareColumnCellLength(1);
+});
 
-it('resetData시 pagination에 반영된다.', () => {});
+it('should reflected total page after clear API.', () => {
+  cy.gridInstance().invoke('clear');
+  cy.get(`.tui-page-btn.tui-last-child`).contains('1');
+  compareColumnCellLength(0);
+});
 
-it('clearAll시 pagination에 반영된다.', () => {});
+it('should reflected total page after removeRow API.', () => {
+  createGrid(data.slice(0, 61));
+  cy.gridInstance().invoke('removeRow', 0);
+  cy.get(`.tui-page-btn.tui-last-child`).contains('6');
+  compareColumnCellLength(10);
+});
 
-it('page 이동 시 row number는 계속해서 이어져서 증가한다.', () => {});
+it('should go to the previous page, If the page disappeared as a result of removeRow', () => {
+  createGrid(data.slice(0, 61));
+  cy.get(`.tui-page-btn.tui-last-child`).click();
+  cy.gridInstance().invoke('removeRow', 60);
+  cy.get(`.tui-page-btn.tui-last-child`).contains('6');
+  cy.get('.tui-page-btn.tui-is-selected').contains('6');
+  compareColumnCellLength(10);
+});

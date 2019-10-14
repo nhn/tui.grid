@@ -478,8 +478,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
-  const { data, rowCoords, id, focus, column } = store;
-  const { rawData, viewData, sortState, pageOptions } = data;
+  const { data, rowCoords, id, focus, column, dimension } = store;
+  const { rawData, viewData, sortState, pageOptions, filteredRawData, pageRowRange } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
 
   if (rowIdx === -1) {
@@ -492,13 +492,6 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   viewData.splice(rowIdx, 1);
   rowCoords.heights.splice(rowIdx, 1);
 
-  if (pageOptions.useClient) {
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: pageOptions.totalCount! - 1
-    };
-  }
-
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
@@ -508,6 +501,26 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     changeFocus(store, null, null, id);
     if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
       focus.editingAddress = null;
+    }
+  }
+
+  if (pageOptions.useClient) {
+    const { perPage, totalCount, page } = pageOptions;
+    const modifiedLastPage = (totalCount - 1) / perPage + Number((totalCount - 1) % perPage);
+
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: totalCount - 1,
+      page: modifiedLastPage < page ? modifiedLastPage : page
+    };
+
+    const pageLastIndex = data.pageOptions.page * perPage - 1;
+    const hasNextData = pageLastIndex < rawData.length;
+
+    if (rowCoords.heights.length < perPage && hasNextData) {
+      rowCoords.heights = filteredRawData
+        .slice(...data.pageRowRange)
+        .map(row => getRowHeight(row, dimension.rowHeight));
     }
   }
 
