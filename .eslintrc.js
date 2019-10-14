@@ -26,6 +26,7 @@ module.exports = {
     '@typescript-eslint/no-triple-slash-reference': 0,
     '@typescript-eslint/no-object-literal-type-assertion': 0,
     '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/triple-slash-reference': 0,
     'react/no-unknown-property': 0,
     'accessor-pairs': 0,
     'require-jsdoc': 0,
