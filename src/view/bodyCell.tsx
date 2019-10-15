@@ -215,8 +215,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const columnName = columnInfo.name;
     const rowIndex = findIndexByRowKey(data, column, id, rowKey);
     const { rowHeight: defaultRowHeight } = dimension;
-    const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
-    const rowIndexWithPage = rowIndex % perPage;
+    const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
 
     return {
       grid,

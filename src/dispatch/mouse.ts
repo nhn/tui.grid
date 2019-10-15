@@ -265,11 +265,12 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
   const { pageOptions } = data;
-  const perPage = isEmpty(pageOptions) ? Number.MAX_SAFE_INTEGER : pageOptions.perPage;
-  const rowIndex = findIndexByRowKey(data, column, id, rowKey) % perPage;
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey);
+  const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
+
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
-    [rowIndex, rowIndex],
+    [rowIndexWithPage, rowIndexWithPage],
     [rowHeaderCount, endColumnIndex],
     visibleColumnsWithRowHeader,
     null,

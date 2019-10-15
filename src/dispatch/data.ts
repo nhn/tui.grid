@@ -479,7 +479,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, focus, column, dimension } = store;
-  const { rawData, viewData, sortState, pageOptions, filteredRawData, pageRowRange } = data;
+  const { rawData, viewData, sortState, pageOptions, filteredRawData } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
 
   if (rowIdx === -1) {
@@ -506,7 +506,10 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   if (pageOptions.useClient) {
     const { perPage, totalCount, page } = pageOptions;
-    const modifiedLastPage = (totalCount - 1) / perPage + Number((totalCount - 1) % perPage);
+    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+    if ((totalCount - 1) % perPage) {
+      modifiedLastPage += 1;
+    }
 
     data.pageOptions = {
       ...pageOptions,
@@ -514,14 +517,18 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
       page: modifiedLastPage < page ? modifiedLastPage : page
     };
 
-    const pageLastIndex = data.pageOptions.page * perPage - 1;
-    const hasNextData = pageLastIndex < rawData.length;
+    const lastDataIndex = data.pageOptions.page * perPage - 1;
+    const hasNextData = lastDataIndex < rawData.length;
 
     if (rowCoords.heights.length < perPage && hasNextData) {
       rowCoords.heights = filteredRawData
         .slice(...data.pageRowRange)
         .map(row => getRowHeight(row, dimension.rowHeight));
+    } else {
+      notify(rowCoords, 'heights');
     }
+  } else {
+    notify(rowCoords, 'heights');
   }
 
   getDataManager(id).push('DELETE', removedRow);
@@ -529,7 +536,6 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  notify(rowCoords, 'heights');
   updateSummaryValueByRow(store, removedRow, false);
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
