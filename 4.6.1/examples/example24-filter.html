@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>24. Filter</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.css"
+    />
+  </head>
+
+  <body>
+    <div class="code-html contents">
+      <div id="grid" style="width: 800px"></div>
+    </div>
+  </body>
+  <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.js"
+  ></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      bodyHeight: 500,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+          filter: 'select'
+        },
+        {
+          header: 'Price',
+          name: 'price',
+          filter: 'number'
+        },
+        {
+          header: 'Release',
+          name: 'release',
+          filter: {
+            type: 'date',
+            format: 'yyyy.MM.dd'
+          }
+        },
+        {
+          header: 'Genre',
+          name: 'genre',
+          filter: {
+            type: 'text',
+            operator: 'OR'
+          }
+        }
+      ]
+    });
+  </script>
+</html>
