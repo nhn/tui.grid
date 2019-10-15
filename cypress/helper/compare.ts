@@ -1,6 +1,6 @@
 import { Dictionary } from '@/store/types';
 
-export function isSubsetOf<T>(obj: Dictionary<any>, target: any) {
+export function isSubsetOf(obj: Dictionary<any>, target: any) {
   for (const key in obj) {
     if (!obj.hasOwnProperty(key)) {
       continue;

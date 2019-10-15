@@ -958,7 +958,7 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the target row
    * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
-  public disableRow(rowKey: RowKey, withCheckbox: boolean = true) {
+  public disableRow(rowKey: RowKey, withCheckbox = true) {
     this.dispatch('setRowDisabled', true, rowKey, withCheckbox);
   }
 
@@ -967,7 +967,7 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the target row
    * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
-  public enableRow(rowKey: RowKey, withCheckbox: boolean = true) {
+  public enableRow(rowKey: RowKey, withCheckbox = true) {
     this.dispatch('setRowDisabled', false, rowKey, withCheckbox);
   }
 
