@@ -1,15 +1,25 @@
 import { ActiveColumnAddress, FilterState, Store } from '../store/types';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
-import { composeConditionFn, getFilterConditionFn, getUniqColumnData } from '../helper/filter';
+import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
+import { getUniqColumnData, getRowHeight } from '../query/data';
 import { FilterOpt, OperatorType, FilterOptionType } from '../types';
-import { getRowHeight } from '../store/rowCoords';
-import { getFilterOptions } from '../store/column';
+import { createColumnFilterOption } from '../store/column';
 import { setScrollTop } from './viewport';
 import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+
+function initLayerAndScrollAfterFiltering(store: Store) {
+  const { rowCoords, data, dimension } = store;
+
+  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
+
+  setScrollTop(store, 0);
+  initSelection(store);
+  initFocus(store);
+}
 
 export function setActiveFilterOperator(store: Store, operator: OperatorType) {
   const { column, filterLayerState } = store;
@@ -200,23 +210,13 @@ export function unfilter(store: Store, columnName: string) {
   }
 }
 
-function initLayerAndScrollAfterFiltering(store: Store) {
-  const { rowCoords, data, dimension } = store;
-
-  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
-
-  setScrollTop(store, 0);
-  initSelection(store);
-  initFocus(store);
-}
-
 export function setFilter(
   store: Store,
   columnName: string,
   filterOpt: FilterOptionType | FilterOpt
 ) {
   const { column } = store;
-  const filterOptions = getFilterOptions(filterOpt);
+  const filterOptions = createColumnFilterOption(filterOpt);
   const index = findPropIndex('name', columnName, column.allColumns);
 
   if (index !== -1) {

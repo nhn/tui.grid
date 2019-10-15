@@ -42,3 +42,12 @@ export function refreshLayout(store: Store, containerEl: HTMLElement, parentEl: 
     setHeight(store, parentEl.clientHeight);
   }
 }
+
+export function setAutoBodyHeight({ dimension, rowCoords }: Store) {
+  const { totalRowHeight } = rowCoords;
+  const { autoHeight, scrollXHeight, minBodyHeight } = dimension;
+
+  if (autoHeight) {
+    dimension.bodyHeight = Math.max(totalRowHeight + scrollXHeight, minBodyHeight);
+  }
+}

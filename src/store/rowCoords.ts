@@ -1,17 +1,11 @@
-import { Data, Dimension, RowCoords, Row } from './types';
+import { Data, Dimension, RowCoords } from './types';
 import { observable } from '../helper/observable';
-import { isNumber, last } from '../helper/common';
+import { last } from '../helper/common';
+import { getRowHeight } from '../query/data';
 
 interface RowCoordsOption {
   data: Data;
   dimension: Dimension;
-}
-
-export function getRowHeight(row: Row, defaultRowHeight: number) {
-  const { height, tree } = row._attributes;
-  const rowHeight = tree && tree.hidden ? 0 : height;
-
-  return isNumber(rowHeight) ? rowHeight : defaultRowHeight;
 }
 
 export function create({ data, dimension }: RowCoordsOption): RowCoords {

@@ -3,12 +3,17 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { OperatorType } from '../types';
+import { Filter } from 'src/store/types';
 
 interface StoreProps {
   operator: OperatorType;
 }
 
-type Props = StoreProps & DispatchProps;
+interface OwnProps {
+  filterState: Filter;
+}
+
+type Props = StoreProps & OwnProps & DispatchProps;
 
 class FilterOperatorComp extends Component<Props> {
   private handleChangeOperator = (ev: Event) => {
@@ -50,10 +55,6 @@ class FilterOperatorComp extends Component<Props> {
   }
 }
 
-export const FilterOperator = connect<StoreProps>(store => {
-  const { filterLayerState } = store;
-
-  return {
-    operator: filterLayerState.activeFilterState!.operator || 'AND'
-  };
-})(FilterOperatorComp);
+export const FilterOperator = connect<StoreProps, OwnProps>((_, { filterState }) => ({
+  operator: filterState!.operator || 'AND'
+}))(FilterOperatorComp);

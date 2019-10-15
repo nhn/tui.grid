@@ -3,7 +3,7 @@ import { cls, findParent } from '../helper/dom';
 import { RowKey, TreeCellInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { DEFAULT_INDENT_WIDTH } from '../helper/tree';
+import { TREE_INDENT_WIDTH } from '../helper/constant';
 
 interface OwnProps {
   rowKey: RowKey;
@@ -44,7 +44,7 @@ export class TreeCellContentsComp extends Component<Props> {
           {i === len - 1 && !leaf && (
             <button
               class={cls('btn-tree')}
-              style={{ left: i * DEFAULT_INDENT_WIDTH }}
+              style={{ left: i * TREE_INDENT_WIDTH }}
               onClick={this.handleClick}
             >
               <i />
@@ -70,7 +70,7 @@ export class TreeCellContentsComp extends Component<Props> {
       >
         {this.getIndentComponent(depth, leaf)}
         {useIcon && (
-          <span class={cls('tree-icon')} style={{ left: indentWidth - DEFAULT_INDENT_WIDTH }}>
+          <span class={cls('tree-icon')} style={{ left: indentWidth - TREE_INDENT_WIDTH }}>
             <i />
           </span>
         )}

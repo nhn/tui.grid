@@ -1,25 +1,25 @@
 import { OptRow, OptAppendTreeRow } from '../types';
 import { Store, Row, RowKey } from '../store/types';
 import { createViewRow } from '../store/data';
-import { getRowHeight } from '../store/rowCoords';
-import { isUndefined } from '../helper/common';
+import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
 import { isUpdatableRowAttr } from '../dispatch/data';
-import { getParentRow, getDescendantRows } from '../query/tree';
 import {
-  flattenTreeData,
+  getParentRow,
+  getDescendantRows,
+  getStartIndexToAppendRow,
   traverseAncestorRows,
   traverseDescendantRows,
   getChildRowKeys,
-  removeChildRowKey,
   isLeaf,
   isExpanded,
   isRootChildRow
-} from '../helper/tree';
+} from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { flattenTreeData } from '../store/helper/tree';
+import { removeArrayItem } from '../helper/common';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -35,15 +35,6 @@ function changeHiddenAttr(row: Row, hidden: boolean) {
 
   if (tree) {
     tree.hidden = hidden;
-  }
-}
-
-export function removeExpandedAttr(row: Row) {
-  const { tree } = row._attributes;
-
-  if (tree) {
-    delete tree.expanded;
-    notify(tree, 'expanded');
   }
 }
 
@@ -93,23 +84,6 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     notify(rowCoords, 'heights');
     notify(viewport, 'rowRange');
   }
-}
-
-export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
-  const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
-
-  if (row) {
-    expand(store, row, recursive);
-  }
-}
-
-export function expandAll(store: Store) {
-  store.data.rawData.forEach(row => {
-    if (isRootChildRow(row) && !isLeaf(row)) {
-      expand(store, row, true);
-    }
-  });
 }
 
 function collapse(store: Store, row: Row, recursive?: boolean) {
@@ -164,23 +138,6 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
   notify(rowCoords, 'heights');
 }
 
-export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
-  const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
-
-  if (row) {
-    collapse(store, row, recursive);
-  }
-}
-
-export function collapseAll(store: Store) {
-  store.data.rawData.forEach(row => {
-    if (isRootChildRow(row) && !isLeaf(row)) {
-      collapse(store, row, true);
-    }
-  });
-}
-
 function setCheckedState(disabled: boolean, row: Row, state: boolean) {
   if (row && isUpdatableRowAttr('checked', row._attributes.checkDisabled, disabled)) {
     row._attributes.checked = state;
@@ -219,6 +176,58 @@ function changeDescendantRowsCheckedState(store: Store, rowKey: RowKey, state: b
   }
 }
 
+function removeChildRowKey(row: Row, rowKey: RowKey) {
+  const { tree } = row._attributes;
+
+  if (tree) {
+    removeArrayItem(rowKey, tree.childRowKeys);
+    notify(tree, 'childRowKeys');
+  }
+}
+
+export function removeExpandedAttr(row: Row) {
+  const { tree } = row._attributes;
+
+  if (tree) {
+    delete tree.expanded;
+    notify(tree, 'expanded');
+  }
+}
+
+export function expandByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
+
+  if (row) {
+    expand(store, row, recursive);
+  }
+}
+
+export function expandAll(store: Store) {
+  store.data.rawData.forEach(row => {
+    if (isRootChildRow(row) && !isLeaf(row)) {
+      expand(store, row, true);
+    }
+  });
+}
+
+export function collapseByRowKey(store: Store, rowKey: RowKey, recursive?: boolean) {
+  const { data, column, id } = store;
+  const row = findRowByRowKey(data, column, id, rowKey);
+
+  if (row) {
+    collapse(store, row, recursive);
+  }
+}
+
+export function collapseAll(store: Store) {
+  store.data.rawData.forEach(row => {
+    if (isRootChildRow(row) && !isLeaf(row)) {
+      collapse(store, row, true);
+    }
+  });
+}
+
 export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
   const { treeColumnName, treeCascadingCheckbox } = store.column;
 
@@ -226,33 +235,6 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
     changeDescendantRowsCheckedState(store, rowKey, state);
     changeAncestorRowsCheckedState(store, rowKey);
   }
-}
-
-function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number) {
-  const { data, column, id } = store;
-  const { rawData } = data;
-  let startIdx;
-
-  if (parentRow) {
-    if (offset) {
-      const childRowKeys = getChildRowKeys(parentRow);
-      const prevChildRowKey = childRowKeys[offset - 1];
-      const prevChildRowIdx = findIndexByRowKey(data, column, id, prevChildRowKey);
-      const descendantRowsCount = getDescendantRows(store, prevChildRowKey).length;
-
-      startIdx = prevChildRowIdx + descendantRowsCount + 1;
-    } else {
-      startIdx = findIndexByRowKey(data, column, id, parentRow.rowKey) + 1;
-
-      if (isUndefined(offset)) {
-        startIdx += getDescendantRows(store, parentRow.rowKey).length;
-      }
-    }
-  } else {
-    startIdx = isUndefined(offset) ? rawData.length : offset;
-  }
-
-  return startIdx;
 }
 
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
@@ -283,6 +265,8 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   });
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 }
 
@@ -312,5 +296,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   }
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 }

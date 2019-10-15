@@ -1,7 +1,34 @@
-import { CellIndex, Store } from '../store/types';
+import { CellIndex, Store, Range } from '../store/types';
 import { clamp, isNull } from '../helper/common';
-import { getNextRowIndex, getPrevRowIndex, KeyboardEventCommandType } from '../helper/keyboard';
-import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from '../helper/rowSpan';
+import { KeyboardEventCommandType } from '../helper/keyboard';
+import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from './rowSpan';
+import { getSortedRange } from './selection';
+
+function getPrevRowIndex(rowIndex: number, heights: number[]) {
+  let index = rowIndex;
+
+  while (index > 0) {
+    index -= 1;
+    if (heights[index]) {
+      break;
+    }
+  }
+
+  return index;
+}
+
+function getNextRowIndex(rowIndex: number, heights: number[]) {
+  let index = rowIndex;
+
+  while (index < heights.length - 1) {
+    index += 1;
+    if (heights[index]) {
+      break;
+    }
+  }
+
+  return index;
+}
 
 export function getNextCellIndex(
   store: Store,
@@ -115,4 +142,28 @@ export function getRemoveRange(store: Store) {
     };
   }
   return null;
+}
+
+export function getNextCellIndexWithRowSpan(
+  store: Store,
+  command: KeyboardEventCommandType,
+  currentRowIndex: number,
+  columnRange: Range,
+  cellIndexes: Range
+) {
+  let rowIndex = cellIndexes[0];
+  const columnIndex = cellIndexes[1];
+  const [startColumnIndex, endColumnIndex] = getSortedRange(columnRange);
+
+  for (let index = startColumnIndex; index <= endColumnIndex; index += 1) {
+    const nextRowIndex = getNextCellIndex(store, command, [currentRowIndex, index])[0];
+
+    if (
+      (command === 'up' && nextRowIndex < rowIndex) ||
+      (command === 'down' && nextRowIndex > rowIndex)
+    ) {
+      rowIndex = nextRowIndex;
+    }
+  }
+  return [rowIndex, columnIndex];
 }

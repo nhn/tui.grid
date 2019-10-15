@@ -2,6 +2,13 @@ interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
+const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
+const LF = '\n';
+const CR = '\r';
+const CUSTOM_LF_REGEXP = new RegExp(CUSTOM_LF_SUBCHAR, 'g');
+const CUSTOM_CR_REGEXP = new RegExp(CUSTOM_CR_SUBCHAR, 'g');
+
 export function shallowEqual(o1: Obj, o2: Obj) {
   for (const key in o1) {
     if (o1[key] !== o2[key]) {
@@ -334,4 +341,33 @@ export function startsWith(str: string, targetStr: string) {
 export function endsWith(str: string, targetStr: string) {
   const index = targetStr.lastIndexOf(str);
   return index !== -1 && index + str.length === targetStr.length;
+}
+
+function removeDoubleQuotes(text: string) {
+  if (text.match(CUSTOM_LF_REGEXP)) {
+    return text.substring(1, text.length - 1).replace(/""/g, '"');
+  }
+
+  return text;
+}
+
+function replaceNewlineToSubchar(text: string) {
+  return text.replace(/"([^"]|"")*"/g, value =>
+    value.replace(LF, CUSTOM_LF_SUBCHAR).replace(CR, CUSTOM_CR_SUBCHAR)
+  );
+}
+
+export function convertTextToData(text: string) {
+  // Each newline cell data is wrapping double quotes in the text and
+  // newline characters should be replaced with substitution characters temporarily
+  // before spliting the text by newline characters.
+  text = replaceNewlineToSubchar(text);
+
+  return text.split(/\r?\n/).map(row =>
+    row.split('\t').map(column =>
+      removeDoubleQuotes(column)
+        .replace(CUSTOM_LF_REGEXP, LF)
+        .replace(CUSTOM_CR_REGEXP, CR)
+    )
+  );
 }

@@ -2,8 +2,7 @@ import {
   CellValue,
   SummaryColumnContent,
   SummaryColumnContentMap,
-  SummaryValue,
-  Row
+  SummaryValue
 } from '../store/types';
 
 type ColumnContentType = string | SummaryColumnContentMap;
@@ -51,18 +50,6 @@ export function castToSummaryColumnContent(content?: ColumnContentType): Summary
         useAutoSummary:
           typeof content.useAutoSummary === 'undefined' ? true : content.useAutoSummary
       };
-}
-
-export function createSummaryValue(
-  content: SummaryColumnContentMap | null,
-  columnName: string,
-  rawData: Row[]
-) {
-  if (content && content.useAutoSummary) {
-    const columnValues = rawData.map(row => row[columnName]);
-    return calculate(columnValues);
-  }
-  return { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
 }
 
 export function extractSummaryColumnContent(

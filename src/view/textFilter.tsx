@@ -9,10 +9,11 @@ import {
   NumberFilterCode,
   TextFilterCode
 } from '../store/types';
-import { FILTER_DEBOUNCE_TIME, filterSelectOption } from '../helper/filter';
+import { filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
 import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
 import { KeyNameMap } from '../types';
+import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };
 

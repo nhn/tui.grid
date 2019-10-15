@@ -1,12 +1,7 @@
 import { Store, Row, RowKey } from '../store/types';
 import { Observable, getOriginObject } from '../helper/observable';
-import {
-  getParentRowKey,
-  getChildRowKeys,
-  traverseAncestorRows,
-  traverseDescendantRows
-} from '../helper/tree';
-import { findRowByRowKey } from './data';
+import { findRowByRowKey, findIndexByRowKey } from './data';
+import { isUndefined, isNull, findProp } from '../helper/common';
 
 export function getParentRow(store: Store, rowKey: RowKey, plainObj?: boolean) {
   const { data, column, id } = store;
@@ -68,4 +63,122 @@ export function getDescendantRows(store: Store, rowKey: RowKey) {
   }
 
   return childRows;
+}
+
+export function getStartIndexToAppendRow(store: Store, parentRow: Row, offset?: number) {
+  const { data, column, id } = store;
+  const { rawData } = data;
+  let startIdx;
+
+  if (parentRow) {
+    if (offset) {
+      const childRowKeys = getChildRowKeys(parentRow);
+      const prevChildRowKey = childRowKeys[offset - 1];
+      const prevChildRowIdx = findIndexByRowKey(data, column, id, prevChildRowKey);
+      const descendantRowsCount = getDescendantRows(store, prevChildRowKey).length;
+
+      startIdx = prevChildRowIdx + descendantRowsCount + 1;
+    } else {
+      startIdx = findIndexByRowKey(data, column, id, parentRow.rowKey) + 1;
+
+      if (isUndefined(offset)) {
+        startIdx += getDescendantRows(store, parentRow.rowKey).length;
+      }
+    }
+  } else {
+    startIdx = isUndefined(offset) ? rawData.length : offset;
+  }
+
+  return startIdx;
+}
+
+export function getParentRowKey(row: Row) {
+  const { tree } = row._attributes;
+
+  return tree && tree.parentRowKey !== row.rowKey ? tree.parentRowKey : null;
+}
+
+export function getChildRowKeys(row: Row) {
+  const { tree } = row._attributes;
+
+  return tree ? tree.childRowKeys.slice() : [];
+}
+
+export function isHidden(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!(tree && tree.hidden);
+}
+
+export function isLeaf(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!tree && !tree.childRowKeys.length && isUndefined(tree.expanded);
+}
+
+export function isExpanded(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!(tree && tree.expanded);
+}
+
+export function isRootChildRow(row: Row) {
+  const { tree } = row._attributes;
+
+  return !!tree && isNull(tree.parentRowKey);
+}
+
+export function getDepth(rawData: Row[], row?: Row) {
+  let parentRow = row;
+  let depth = 0;
+
+  do {
+    depth += 1;
+    parentRow = findProp('rowKey', getParentRowKey(parentRow!), rawData);
+  } while (parentRow);
+
+  return depth;
+}
+
+export function traverseAncestorRows(rawData: Row[], row: Row, iteratee: Function) {
+  let parentRowKey = getParentRowKey(row);
+  let parentRow;
+
+  while (!isNull(parentRowKey)) {
+    parentRow = findProp('rowKey', parentRowKey, rawData);
+
+    iteratee(parentRow);
+
+    parentRowKey = parentRow ? getParentRowKey(parentRow) : null;
+  }
+}
+
+export function traverseDescendantRows(rawData: Row[], row: Row, iteratee: Function) {
+  let childRowKeys = getChildRowKeys(row);
+  let rowKey, childRow;
+
+  while (childRowKeys.length) {
+    rowKey = childRowKeys.shift();
+    childRow = findProp('rowKey', rowKey, rawData);
+
+    iteratee(childRow);
+
+    if (childRow) {
+      childRowKeys = childRowKeys.concat(getChildRowKeys(childRow));
+    }
+  }
+}
+
+export function getRootParentRow(rawData: Row[], row: Row) {
+  let rootParentRow = row;
+
+  do {
+    const parentRow = findProp('rowKey', getParentRowKey(rootParentRow!), rawData);
+    if (!parentRow) {
+      break;
+    }
+    rootParentRow = parentRow;
+  } while (rootParentRow);
+
+  return rootParentRow;
 }

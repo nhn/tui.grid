@@ -5,13 +5,13 @@ import {
   SelectionRange,
   RowAttributes,
   RowAttributeValue,
-  Dictionary,
   Data,
   Row,
   Column,
   Range,
   PageOptions,
-  PagePosition
+  PagePosition,
+  LoadingState
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -24,26 +24,31 @@ import {
   someProp,
   findPropIndex
 } from '../helper/common';
-import { isColumnEditable } from '../helper/clipboard';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
-import { createRawRow, createViewRow, createData, generateDataCreationKey } from '../store/data';
+import {
+  createRawRow,
+  createViewRow,
+  createData,
+  generateDataCreationKey,
+  createRowSpan
+} from '../store/data';
 import { notify, isObservable } from '../helper/observable';
-import { getRowHeight } from '../store/rowCoords';
-import { changeSelectionRange } from './selection';
+import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
-import {
-  isRowSpanEnabled,
-  updateRowSpanWhenAppend,
-  updateRowSpanWhenRemove
-} from '../helper/rowSpan';
-import { getRenderState } from '../helper/renderState';
+import { isRowSpanEnabled } from '../query/rowSpan';
 import { changeFocus, initFocus } from './focus';
-import { createTreeRawRow } from '../helper/tree';
+import { createTreeRawRow } from '../store/helper/tree';
 import { sort, initSortState } from './sort';
-import { findIndexByRowKey, findRowByRowKey } from '../query/data';
+import {
+  findIndexByRowKey,
+  findRowByRowKey,
+  isEditableCell,
+  getRowHeight,
+  getLoadingState
+} from '../query/data';
 import {
   updateSummaryValueByCell,
   updateSummaryValueByColumn,
@@ -55,10 +60,94 @@ import { isRowHeader } from '../helper/column';
 import { cls } from '../helper/dom';
 import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
+import { OriginData } from './types';
+import { getSelectionRange } from '../query/selection';
+import { setScrollTop } from './viewport';
 
-interface OriginData {
-  rows: Row[];
-  targetIndexes: number[];
+function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
+  const { rowSpanMap: prevRowSpanMap } = prevRow;
+
+  if (isEmpty(prevRowSpanMap)) {
+    return;
+  }
+
+  Object.keys(prevRowSpanMap).forEach(columnName => {
+    const prevRowSpan = prevRowSpanMap[columnName];
+    if (prevRowSpan) {
+      const { count, mainRow: keyRow, mainRowKey } = prevRowSpan;
+      const mainRow = keyRow ? prevRow : findProp('rowKey', mainRowKey, data)!;
+      const mainRowSpan = mainRow.rowSpanMap[columnName];
+      const startOffset = keyRow || extendPrevRowSpan ? 1 : -count + 1;
+
+      // keep rowSpan state when appends row in the middle of rowSpan
+      if (mainRowSpan.spanCount > startOffset) {
+        mainRowSpan.count += 1;
+        mainRowSpan.spanCount += 1;
+
+        updateSubRowSpan(data, mainRow, columnName, 1, mainRowSpan.spanCount);
+      }
+    }
+  });
+}
+
+function updateRowSpanWhenRemove(
+  data: Row[],
+  removedRow: Row,
+  nextRow: Row,
+  keepRowSpanData: boolean
+) {
+  const { rowSpanMap: removedRowSpanMap } = removedRow;
+
+  if (isEmpty(removedRowSpanMap)) {
+    return;
+  }
+
+  Object.keys(removedRowSpanMap).forEach(columnName => {
+    const removedRowSpan = removedRowSpanMap[columnName];
+    const { count, mainRow: keyRow, mainRowKey } = removedRowSpan;
+    let mainRow: Row, spanCount: number;
+
+    if (keyRow) {
+      mainRow = nextRow;
+      spanCount = count - 1;
+
+      if (spanCount > 1) {
+        const mainRowSpan = mainRow.rowSpanMap[columnName];
+        mainRowSpan.mainRowKey = mainRow.rowKey;
+        mainRowSpan.mainRow = true;
+      }
+      if (keepRowSpanData) {
+        mainRow[columnName] = removedRow[columnName];
+      }
+    } else {
+      mainRow = findProp('rowKey', mainRowKey, data)!;
+      spanCount = mainRow.rowSpanMap[columnName].spanCount - 1;
+    }
+
+    if (spanCount > 1) {
+      const mainRowSpan = mainRow.rowSpanMap[columnName];
+      mainRowSpan.count = spanCount;
+      mainRowSpan.spanCount = spanCount;
+      updateSubRowSpan(data, mainRow, columnName, 1, spanCount);
+    } else {
+      delete mainRow.rowSpanMap[columnName];
+    }
+  });
+}
+
+function updateSubRowSpan(
+  data: Row[],
+  mainRow: Row,
+  columnName: string,
+  startOffset: number,
+  spanCount: number
+) {
+  const mainRowIndex = findPropIndex('rowKey', mainRow.rowKey, data);
+
+  for (let offset = startOffset; offset < spanCount; offset += 1) {
+    const row = data[mainRowIndex + offset];
+    row.rowSpanMap[columnName] = createRowSpan(false, mainRow.rowKey, -offset, spanCount);
+  }
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
@@ -182,7 +271,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  data.checkedAllRows = !filteredRawData.some(row => !row._attributes.checked);
+  setCheckedAllRows(store, !filteredRawData.some(row => !row._attributes.checked));
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -190,7 +279,7 @@ export function check(store: Store, rowKey: RowKey) {
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
-  const { data, id, column } = store;
+  const { id, column } = store;
   const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
@@ -204,7 +293,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
-  data.checkedAllRows = false;
+  setCheckedAllRows(store, false);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
@@ -212,9 +301,9 @@ export function uncheck(store: Store, rowKey: RowKey) {
 }
 
 export function checkAll(store: Store) {
-  const { data, id } = store;
+  const { id } = store;
   setAllRowAttribute(store, 'checked', true);
-  data.checkedAllRows = true;
+  setCheckedAllRows(store, true);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -227,9 +316,9 @@ export function checkAll(store: Store) {
 }
 
 export function uncheckAll(store: Store) {
-  const { data, id } = store;
+  const { id } = store;
   setAllRowAttribute(store, 'checked', false);
-  data.checkedAllRows = false;
+  setCheckedAllRows(store, false);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -246,11 +335,9 @@ function applyPasteDataToRawData(
   pasteData: string[][],
   indexToPaste: SelectionRange
 ) {
-  const {
-    data: { filteredRawData, filteredViewData },
-    column: { visibleColumnsWithRowHeader },
-    id
-  } = store;
+  const { data, column, id } = store;
+  const { filteredRawData, filteredViewData } = data;
+  const { visibleColumnsWithRowHeader } = column;
   const {
     row: [startRowIndex, endRowIndex],
     column: [startColumnIndex, endColumnIndex]
@@ -263,7 +350,7 @@ function applyPasteDataToRawData(
     const rawRowIndex = rowIdx + startRowIndex;
     for (let columnIdx = 0; columnIdx + startColumnIndex <= endColumnIndex; columnIdx += 1) {
       const name = columnNames[columnIdx + startColumnIndex];
-      if (filteredViewData.length && isColumnEditable(filteredViewData, rawRowIndex, name)) {
+      if (filteredViewData.length && isEditableCell(data, column, rawRowIndex, name)) {
         pasted = true;
         filteredRawData[rawRowIndex][name] = pasteData[rowIdx][columnIdx];
       }
@@ -272,21 +359,6 @@ function applyPasteDataToRawData(
       getDataManager(id).push('UPDATE', filteredRawData[rawRowIndex]);
     }
   }
-}
-
-function getSelectionRange(range: SelectionRange, pageOptions: PageOptions): SelectionRange {
-  if (!isEmpty(pageOptions)) {
-    const { row, column } = range;
-    const { perPage, page } = pageOptions;
-    const prevPageRowCount = (page! - 1) * perPage!;
-
-    return {
-      row: [row[0] - prevPageRowCount, row[1] - prevPageRowCount],
-      column
-    };
-  }
-
-  return range;
 }
 
 export function paste(store: Store, pasteData: string[][]) {
@@ -346,7 +418,7 @@ function updateSortKey(data: Data, at: number) {
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
-  const { data, column, rowCoords, dimension, id, renderState } = store;
+  const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData, sortState, pageOptions, pageRowRange } = data;
   const { heights } = rowCoords;
   const { defaultValues, allColumnMap } = column;
@@ -394,14 +466,16 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   getDataManager(id).push('CREATE', rawRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
   updateSummaryValueByRow(store, rawRow, true);
-  renderState.state = 'DONE';
+  setLoadingState(store, 'DONE');
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
-  const { data, rowCoords, id, renderState, focus, column } = store;
+  const { data, rowCoords, id, focus, column } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
 
@@ -437,19 +511,21 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   getDataManager(id).push('DELETE', removedRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
-  notify(rowCoords, 'heights');
   notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
+  notify(rowCoords, 'heights');
   updateSummaryValueByRow(store, removedRow, false);
-  renderState.state = getRenderState(data.rawData);
+  setLoadingState(store, getLoadingState(rawData));
 }
 
 export function clearData(store: Store) {
-  const { data, id, renderState, rowCoords } = store;
+  const { data, id, rowCoords } = store;
   data.rawData.forEach(row => {
     getDataManager(id).push('DELETE', row);
   });
 
   initFocus(store);
+  initSelection(store);
   initSortState(data);
   initFilter(store);
   rowCoords.heights = [];
@@ -462,28 +538,31 @@ export function clearData(store: Store) {
     };
   }
   updateAllSummaryValues(store);
-  renderState.state = 'EMPTY';
+  setLoadingState(store, 'EMPTY');
+  setCheckedAllRows(store, false);
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
-  const { data, column, dimension, rowCoords, id, renderState } = store;
+  const { data, column, dimension, rowCoords, id } = store;
   const { rawData, viewData } = createData(inputData, column, true);
   const { rowHeight } = dimension;
 
   initFocus(store);
+  initSelection(store);
   initSortState(data);
   initFilter(store);
   rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;
   updateAllSummaryValues(store);
-  renderState.state = getRenderState(rawData);
+  setLoadingState(store, getLoadingState(rawData));
   if (data.pageOptions.useClient) {
     data.pageOptions = {
       ...data.pageOptions,
       totalCount: rawData.length
     };
   }
+  setCheckedAllRows(store, false);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -572,44 +651,22 @@ export function removeCellClassName(
   }
 }
 
-export function refreshRowHeight({ data, rowCoords }: Store, rowIndex: number, rowHeight: number) {
-  data.rawData[rowIndex]._attributes.height = rowHeight;
-  rowCoords.heights[rowIndex] = rowHeight;
-
-  notify(rowCoords, 'heights');
-}
-
 export function setPagination({ data }: Store, pageOptions: PageOptions) {
   data.pageOptions = pageOptions as Required<PageOptions>;
 }
 
-export function movePage({ data, rowCoords, dimension }: Store, page: number) {
+export function movePage(store: Store, page: number) {
+  const { data, rowCoords, dimension } = store;
+
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-
   rowCoords.heights = data.rawData
     .slice(...data.pageRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
-}
-
-export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
-  const { complexHeaderColumns, allColumnMap } = column;
-
-  Object.keys(columnsMap).forEach(columnName => {
-    const col = allColumnMap[columnName];
-    if (col) {
-      col.header = columnsMap[columnName];
-    }
-
-    if (complexHeaderColumns.length) {
-      const complexCol = findProp('name', columnName, complexHeaderColumns);
-      if (complexCol) {
-        complexCol.header = columnsMap[columnName];
-      }
-    }
-  });
-
-  notify(column, 'allColumns');
+  initSelection(store);
+  initFocus(store);
+  setScrollTop(store, 0);
+  setCheckedAllRows(store, false);
 }
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
@@ -671,6 +728,7 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 
   notify(data, 'rawData');
   notify(data, 'viewData');
+  notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
 }
 
@@ -709,4 +767,12 @@ function changeToObservableTreeData(
     rawData[foundIndex] = rawRow;
     viewData[foundIndex] = viewRow;
   });
+}
+
+export function setLoadingState({ data }: Store, state: LoadingState) {
+  data.loadingState = state;
+}
+
+export function setCheckedAllRows({ data }: Store, checked: boolean) {
+  data.checkedAllRows = checked;
 }

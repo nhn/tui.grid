@@ -1,9 +1,9 @@
 import { clamp } from '../helper/common';
 import { getEventBus } from '../event/eventBus';
-import { isSameInputRange } from '../helper/selection';
+import { isSameInputRange } from '../query/selection';
 import GridEvent from '../event/gridEvent';
 import { Store, Range, SelectionRange, Selection } from '../store/types';
-import { getRowRangeWithRowSpan } from '../helper/rowSpan';
+import { getRowRangeWithRowSpan } from '../query/rowSpan';
 
 export function changeSelectionRange(
   selection: Selection,

@@ -104,3 +104,41 @@ describe('row header API', () => {
     });
   });
 });
+
+it('checkedAllRows initial value has to be set properly', () => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+  cy.createGrid({
+    data: [
+      {
+        name: 'Beautiful Lies',
+        artist: 'Birdy',
+        release: '2016.03.26',
+        type: 'Deluxe',
+        genre: 'Pop',
+        _attributes: {
+          checked: true
+        }
+      },
+      {
+        name: 'X',
+        artist: 'Ed Sheeran',
+        release: '2014.06.24',
+        type: 'Deluxe',
+        genre: 'Pop',
+        _attributes: {
+          checked: true
+        }
+      }
+    ],
+    rowHeaders: ['checkbox'],
+    columns
+  });
+
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.checked).to.be.true;
+    });
+  });
+});
