@@ -505,4 +505,13 @@ describe('summary with pagination', () => {
     cy.getCell(0, 'name').click();
     assertSummaryContent('downloadCount', 'TOTAL: 47840', 'AVG: 5315.56');
   });
+
+  it.only('should change summary based on the filtering and sorting result.', () => {
+    assertSummaryContent('downloadCount', 'TOTAL: 44240', 'AVG: 4424.00');
+    cy.get(`.${cls('btn-sorting')}`).click();
+    cy.get(`.${cls('btn-filter')}`).click();
+    cy.get(`.${cls('filter-dropdown')} select`).select('lt', { force: true });
+    cy.get(`.${cls('filter-input')}`).type('3000', { force: true });
+    assertSummaryContent('downloadCount', 'TOTAL: 12240', 'AVG: 1224.00');
+  });
 });
