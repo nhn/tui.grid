@@ -693,6 +693,7 @@ export function movePage(store: Store, page: number) {
   initFocus(store);
   setScrollTop(store, 0);
   setCheckedAllRows(store);
+  updateAllSummaryValues(store);
 }
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {

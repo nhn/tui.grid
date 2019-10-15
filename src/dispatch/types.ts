@@ -10,7 +10,6 @@ export type EventInfo = PagePosition & {
   shiftKey: boolean;
 };
 export type ViewInfo = PagePosition & ScrollData;
-export type SortingType = 'asc' | 'desc';
 export type UpdateType = 'UPDATE_COLUMN' | 'UPDATE_CELL' | 'UPDATE_ROW';
 
 export interface ScrollData {

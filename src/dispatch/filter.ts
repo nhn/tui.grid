@@ -12,6 +12,7 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isHiddenColumn } from '../query/column';
 import { updateRowNumber, setCheckedAllRows } from './data';
+import { updateAllSummaryValues } from './summary';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { rowCoords, data, dimension } = store;
@@ -214,6 +215,7 @@ export function filter(
    */
   eventBus.trigger('filter', gridEvent);
   initLayerAndScrollAfterFiltering(store);
+  updateAllSummaryValues(store);
 }
 
 export function unfilter(store: Store, columnName: string) {
@@ -235,6 +237,7 @@ export function unfilter(store: Store, columnName: string) {
     }
     notify(data, 'filters');
     initLayerAndScrollAfterFiltering(store);
+    updateAllSummaryValues(store);
   }
 }
 

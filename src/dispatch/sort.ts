@@ -1,11 +1,12 @@
 import { Data, Store, SortingType, SortedColumn } from '../store/types';
-import { arrayEqual, findPropIndex } from '../helper/common';
+import { arrayEqual, findPropIndex, isEmpty } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState } from '../query/data';
+import { updateAllSummaryValues } from './summary';
 
 function sortData(store: Store) {
   // makes all data observable to sort the data properly;
@@ -140,7 +141,7 @@ export function sort(
   cancelable = true
 ) {
   const { data, column } = store;
-  const { sortState } = data;
+  const { sortState, pageOptions } = data;
 
   if (!isSortable(sortState, column, columnName)) {
     return;
@@ -150,11 +151,14 @@ export function sort(
   sortData(store);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
+  if (!isEmpty(pageOptions)) {
+    updateAllSummaryValues(store);
+  }
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
   const { data, column } = store;
-  const { sortState } = data;
+  const { sortState, pageOptions } = data;
 
   if (!isSortable(sortState, column, columnName)) {
     return;
@@ -174,6 +178,9 @@ export function unsort(store: Store, columnName = 'sortKey') {
   sortData(store);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
+  if (!isEmpty(pageOptions)) {
+    updateAllSummaryValues(store);
+  }
 }
 
 export function initSortState(data: Data) {

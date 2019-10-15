@@ -9,12 +9,17 @@ export function setSummaryColumnContent(
   columnName: string,
   columnContent: string | SummaryColumnContentMap
 ) {
-  const { rawData } = data;
+  const { filteredRawData, pageRowRange } = data;
   const castedColumnContent = castToSummaryColumnContent(columnContent);
   const content = extractSummaryColumnContent(castedColumnContent, null);
 
   summary.summaryColumnContents[columnName] = content;
-  summary.summaryValues[columnName] = createSummaryValue(content, columnName, rawData);
+  summary.summaryValues[columnName] = createSummaryValue(
+    content,
+    columnName,
+    filteredRawData,
+    pageRowRange
+  );
 }
 
 export function updateSummaryValue(
@@ -70,7 +75,7 @@ export function updateSummaryValueByRow(store: Store, row: Row, appended: boolea
 }
 
 export function updateAllSummaryValues({ summary, data, column }: Store) {
-  const { rawData } = data;
+  const { filteredRawData, pageRowRange } = data;
   const summaryColumns = column.allColumns.filter(
     ({ name }) => !!summary.summaryColumnContents[name]
   );
@@ -78,7 +83,8 @@ export function updateAllSummaryValues({ summary, data, column }: Store) {
     summary.summaryValues[name] = createSummaryValue(
       summary.summaryColumnContents[name],
       name,
-      rawData
+      filteredRawData,
+      pageRowRange
     );
   });
 }
@@ -87,16 +93,26 @@ export function addColumnSummaryValues({ summary, data, column }: Store) {
   if (!isEmpty(summary)) {
     const { defaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
-    const { rawData } = data;
+    const { filteredRawData, pageRowRange } = data;
 
     column.allColumns.forEach(({ name }) => {
       const orgSummaryContent = summary.summaryColumnContents[name];
       if (!orgSummaryContent) {
         const content = extractSummaryColumnContent(null, castedDefaultContent);
         summary.summaryColumnContents[name] = content;
-        summary.summaryValues[name] = createSummaryValue(content, name, rawData);
+        summary.summaryValues[name] = createSummaryValue(
+          content,
+          name,
+          filteredRawData,
+          pageRowRange
+        );
       } else {
-        summary.summaryValues[name] = createSummaryValue(orgSummaryContent, name, rawData);
+        summary.summaryValues[name] = createSummaryValue(
+          orgSummaryContent,
+          name,
+          filteredRawData,
+          pageRowRange
+        );
       }
     });
   }
