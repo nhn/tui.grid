@@ -2,6 +2,8 @@ import { data } from '../../samples/pagination';
 import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
 
+const PER_PAGE_COUNT = 10;
+
 const columns = [
   { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
   { name: 'productOrderNo' },
@@ -25,9 +27,9 @@ function createGrid(newData?: OptRow[]) {
     data: newData || data.slice(0, 80),
     pageOptions: {
       useClient: true,
-      perPage: 10
+      perPage: PER_PAGE_COUNT
     },
-    rowHeaders: ['rowNum'],
+    rowHeaders: ['checkbox'],
     columns
   });
 }
@@ -84,7 +86,7 @@ it('should reflected total page after prependRow API.', () => {
   cy.wait(10);
   cy.getCellByIdx(0, 3).should('to.have.text', 'hanjung');
   cy.get('.tui-page-btn.tui-last-child').should('to.have.text', '9');
-  compareColumnCellLength(10);
+  compareColumnCellLength(PER_PAGE_COUNT);
 });
 
 it('should reflected total page after resetData API.', () => {
@@ -105,7 +107,7 @@ it('should reflected total page after removeRow API.', () => {
   createGrid(data.slice(0, 61));
   cy.gridInstance().invoke('removeRow', 0);
   cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '6');
-  compareColumnCellLength(10);
+  compareColumnCellLength(PER_PAGE_COUNT);
 });
 
 it('should go to the previous page, If the page disappeared as a result of removeRow', () => {
@@ -114,5 +116,19 @@ it('should go to the previous page, If the page disappeared as a result of remov
   cy.gridInstance().invoke('removeRow', 60);
   cy.get(`.tui-page-btn.tui-last-child`).should('to.have.text', '6');
   cy.get('.tui-page-btn.tui-is-selected').should('to.have.text', '6');
-  compareColumnCellLength(10);
+  compareColumnCellLength(PER_PAGE_COUNT);
+});
+
+it('should check only the rows of that page when clicking the checkAll button.', () => {
+  createGrid();
+  expect(1).to.be.eql(Number('1'));
+  cy.get('th input[type=checkbox]').click();
+  cy.get('td input[type=checkbox]:checked')
+    .its('length')
+    .should('be.eq', PER_PAGE_COUNT);
+  for (let i = 0; i < 7; i += 1) {
+    cy.get(`.tui-page-btn.tui-next`).click();
+    cy.get('input[type=checkbox]:checked').should('not.exist');
+    cy.wait(10);
+  }
 });

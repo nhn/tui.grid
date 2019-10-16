@@ -211,6 +211,21 @@ describe('common', () => {
       cy.wrap($el).should('to.have.text', `${idx + 1}`);
     });
   });
+
+  it('should check only filtered rows when clicking the checkAll button.', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+    cy.get('th input[type=checkbox]').click();
+
+    cy.get('th input[type=checkbox]').should('be.checked');
+
+    cy.gridInstance().invoke('unfilter', 'alphabetA');
+
+    cy.get('td input[type=checkbox]:checked')
+      .its('length')
+      .should('be.eq', 4);
+    cy.get('th input[type=checkbox]').should('not.be.checked');
+  });
 });
 
 describe('filter API', () => {
@@ -268,9 +283,6 @@ describe('filter API', () => {
 
 describe('number', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 
@@ -374,9 +386,6 @@ describe('text', () => {
 
 describe('select', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 
