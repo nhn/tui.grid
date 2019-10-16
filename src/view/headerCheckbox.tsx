@@ -18,9 +18,9 @@ class HeaderCheckboxComp extends Component<Props> {
     const { dispatch } = this.props;
 
     if (target.checked) {
-      dispatch('checkAll');
+      dispatch('checkAll', false);
     } else {
-      dispatch('uncheckAll');
+      dispatch('uncheckAll', false);
     }
   };
 

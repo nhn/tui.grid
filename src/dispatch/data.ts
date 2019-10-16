@@ -234,9 +234,13 @@ export function setRowAttribute<K extends keyof RowAttributes>(
 export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
-  value: RowAttributes[K]
+  value: RowAttributes[K],
+  allPage: boolean
 ) {
-  data.rawData.forEach(row => {
+  const { filteredRawData } = data;
+  const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
+
+  filteredRawData.slice(...range).forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
       // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
@@ -258,9 +262,8 @@ export function setColumnValues(
 }
 
 export function check(store: Store, rowKey: RowKey) {
-  const { allColumnMap, treeColumnName = '' } = store.column;
-  const { data, id } = store;
-  const { filteredRawData } = data;
+  const { id, column } = store;
+  const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -273,7 +276,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  setCheckedAllRows(store, !filteredRawData.some(row => !row._attributes.checked));
+  setCheckedAllRows(store);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -295,17 +298,17 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
   }
 }
 
-export function checkAll(store: Store) {
+export function checkAll(store: Store, allPage = true) {
   const { id } = store;
-  setAllRowAttribute(store, 'checked', true);
-  setCheckedAllRows(store, true);
+  setAllRowAttribute(store, 'checked', true, allPage);
+  setCheckedAllRows(store);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -317,10 +320,10 @@ export function checkAll(store: Store) {
   eventBus.trigger('checkAll', gridEvent);
 }
 
-export function uncheckAll(store: Store) {
+export function uncheckAll(store: Store, allPage = true) {
   const { id } = store;
-  setAllRowAttribute(store, 'checked', false);
-  setCheckedAllRows(store, false);
+  setAllRowAttribute(store, 'checked', false, allPage);
+  setCheckedAllRows(store);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -562,7 +565,7 @@ export function clearData(store: Store) {
   }
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
@@ -585,7 +588,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
       totalCount: rawData.length
     };
   }
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -689,7 +692,7 @@ export function movePage(store: Store, page: number) {
   initSelection(store);
   initFocus(store);
   setScrollTop(store, 0);
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 }
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
@@ -796,8 +799,12 @@ export function setLoadingState({ data }: Store, state: LoadingState) {
   data.loadingState = state;
 }
 
-export function setCheckedAllRows({ data }: Store, checked: boolean) {
-  data.checkedAllRows = checked;
+export function setCheckedAllRows({ data }: Store) {
+  const { filteredRawData, pageRowRange } = data;
+
+  data.checkedAllRows =
+    !!filteredRawData.length &&
+    filteredRawData.slice(...pageRowRange).every(row => row._attributes.checked);
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {
