@@ -4,7 +4,7 @@ import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { createObservableData } from './data';
+import { createObservableData, updateRowNumber } from './data';
 import { isSortable, isInitialSortState } from '../query/data';
 
 function sortData(store: Store) {
@@ -148,6 +148,7 @@ export function sort(
 
   changeSortState(store, columnName, ascending, withCtrl, cancelable);
   sortData(store);
+  updateRowNumber(store, 0);
 }
 
 export function unsort(store: Store, columnName: string = 'sortKey') {
@@ -170,6 +171,7 @@ export function unsort(store: Store, columnName: string = 'sortKey') {
   }
 
   sortData(store);
+  updateRowNumber(store, 0);
 }
 
 export function initSortState(data: Data) {

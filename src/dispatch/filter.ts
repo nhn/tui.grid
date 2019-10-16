@@ -11,6 +11,7 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isHiddenColumn } from '../query/column';
+import { updateRowNumber } from './data';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { rowCoords, data, dimension } = store;
@@ -20,6 +21,7 @@ function initLayerAndScrollAfterFiltering(store: Store) {
   setScrollTop(store, 0);
   initSelection(store);
   initFocus(store);
+  updateRowNumber(store, 0);
 }
 
 export function setActiveFilterOperator(store: Store, operator: OperatorType) {

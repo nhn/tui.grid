@@ -472,6 +472,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   updateSummaryValueByRow(store, rawRow, true);
   setLoadingState(store, 'DONE');
+  updateRowNumber(store, at);
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -516,6 +517,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(rowCoords, 'heights');
   updateSummaryValueByRow(store, removedRow, false);
   setLoadingState(store, getLoadingState(rawData));
+  updateRowNumber(store, rowIdx);
 }
 
 export function clearData(store: Store) {
@@ -775,4 +777,12 @@ export function setLoadingState({ data }: Store, state: LoadingState) {
 
 export function setCheckedAllRows({ data }: Store, checked: boolean) {
   data.checkedAllRows = checked;
+}
+
+export function updateRowNumber({ data }: Store, startIndex: number) {
+  const { filteredRawData } = data;
+
+  for (let idx = startIndex; idx < filteredRawData.length; idx += 1) {
+    filteredRawData[idx]._attributes.rowNum = idx + 1;
+  }
 }
