@@ -10,7 +10,7 @@ import { Pagination } from './pagination';
 import { cls, getCellAddress, dataAttr, findParent } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow, EditingEvent, RowKey } from '../store/types';
+import { SummaryPosition, ViewRow, EditingEvent, RenderState } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
@@ -40,7 +40,7 @@ interface StoreProps {
   eventBus: EventBus;
   scrollX: boolean;
   scrollY: boolean;
-  hoveredRowKey: RowKey | null;
+  renderState: RenderState;
 }
 
 interface TouchEventInfo {
@@ -127,7 +127,8 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseover = (event: MouseEvent) => {
-    const { eventBus, dispatch, hoveredRowKey } = this.props;
+    const { eventBus, dispatch, renderState } = this.props;
+    const { hoveredRowKey } = renderState;
     const gridEvent = new GridEvent({ event });
     const rowKey = this.getCellRowKey(event.target as HTMLElement);
 
@@ -176,7 +177,9 @@ export class ContainerComp extends Component<Props> {
   };
 
   private handleMouseout = (event: MouseEvent) => {
-    const { eventBus, dispatch, hoveredRowKey } = this.props;
+    const { eventBus, dispatch, renderState } = this.props;
+    const { hoveredRowKey } = renderState;
+
     const gridEvent = new GridEvent({ event });
 
     if (!isNull(hoveredRowKey)) {
@@ -392,6 +395,6 @@ export const Container = connect<StoreProps, OwnProps>(
     eventBus: getEventBus(id),
     scrollX: dimension.scrollX,
     scrollY: dimension.scrollY,
-    hoveredRowKey: renderState.hoveredRowKey
+    renderState
   })
 )(ContainerComp);
