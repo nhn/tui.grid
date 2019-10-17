@@ -304,4 +304,13 @@ describe('sort', () => {
     cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
     cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
+
+  it('should update row number after sorting', () => {
+    createGrid({ rowHeaders: ['rowNum'] });
+    createSortButtonAlias();
+    cy.get('@first').click();
+    cy.get('td[data-column-name=_number]').each(($el, idx) => {
+      cy.wrap($el).should('to.have.text', `${idx + 1}`);
+    });
+  });
 });

@@ -3,7 +3,19 @@ import { OptRow } from '@/types';
 import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
+const largeData = [
+  { name: 'Kim', age: 10 },
+  { name: 'Lee', age: 20 },
+  { name: 'Ryu', age: 30 },
+  { name: 'Han', age: 40 }
+];
 const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+
+function checkGridHasRightRowNumber() {
+  cy.get('td[data-column-name=_number]').each(($el, idx) => {
+    cy.wrap($el).should('to.have.text', `${idx + 1}`);
+  });
+}
 
 before(() => {
   cy.visit('/dist');
@@ -82,6 +94,17 @@ describe('appendRow()', () => {
         expect(appendedRow).to.contain({ name: '', age: '' });
       });
   });
+
+  it('should update row number when calling appendRow()', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
+    checkGridHasRightRowNumber();
+  });
 });
 
 describe('prependRow()', () => {
@@ -114,6 +137,16 @@ describe('prependRow()', () => {
     cy.wait(10);
     cy.getCellByIdx(0, 0).should('to.have.text', '');
     cy.getCellByIdx(0, 1).should('to.have.text', '');
+  });
+
+  it('should update row number when calling prependRow()', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('prependRow', { name: 'Yoo', age: 50 });
+    checkGridHasRightRowNumber();
   });
 });
 
@@ -173,6 +206,17 @@ describe('removeRow()', () => {
           .invoke('height')
           .should('be.lt', prevHeight);
       });
+  });
+
+  it('should update row number when calling removeRow()', () => {
+    cy.document().then(doc => {
+      doc.body.innerHTML = '';
+    });
+
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('removeRow', 2);
+    checkGridHasRightRowNumber();
   });
 });
 
