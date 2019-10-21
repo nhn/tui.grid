@@ -310,7 +310,7 @@ describe('sort', () => {
     createSortButtonAlias();
     cy.get('@first').click();
     cy.get('td[data-column-name=_number]').each(($el, idx) => {
-      cy.wrap($el).should('to.have.text', `${idx + 1}`);
+      expect($el.text).to.contain(`${idx + 1}`);
     });
   });
 });
