@@ -1,4 +1,4 @@
-import { fromArray } from './common';
+import { fromArray, isNull } from './common';
 import { Range } from '../store/types';
 
 export interface WindowWithClipboard extends Window {
@@ -175,10 +175,17 @@ export function getCellAddress(el: HTMLElement) {
   if (!cellElement) {
     return null;
   }
-  const rowKey = Number(cellElement.getAttribute(dataAttr.ROW_KEY));
+  const rowKey = cellElement.getAttribute(dataAttr.ROW_KEY);
   const columnName = cellElement.getAttribute(dataAttr.COLUMN_NAME) as string;
 
-  return { rowKey, columnName };
+  if (isNull(rowKey)) {
+    return null;
+  }
+
+  return {
+    rowKey: Number(rowKey),
+    columnName
+  };
 }
 
 /**

@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import { Side, PagePosition, DragStartData } from '../store/types';
-import { cls, getCoordinateWithOffset, setCursorStyle } from '../helper/dom';
+import { cls, getCoordinateWithOffset, setCursorStyle, hasClass } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
@@ -67,11 +67,18 @@ class BodyAreaComp extends Component<Props> {
       return;
     }
 
+    const { side, dispatch } = this.props;
+
+    if (hasClass(ev.target as HTMLElement, 'cell-dummy')) {
+      dispatch('initFocus');
+      dispatch('initSelection');
+      return;
+    }
+
     const { el } = this;
     const { shiftKey } = ev;
     const [pageX, pageY] = getCoordinateWithOffset(ev.pageX, ev.pageY);
     const { scrollTop, scrollLeft } = el;
-    const { side, dispatch } = this.props;
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
