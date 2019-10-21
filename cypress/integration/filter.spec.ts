@@ -41,6 +41,10 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
 }
 
 function createGrid(customOptions: Record<string, unknown> = {}) {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+
   cy.window().then((win: Window & Partial<GridGlobal>) => {
     const { document, tui } = win;
     const defaultOptions = createDefaultOptions();
@@ -102,9 +106,6 @@ before(() => {
 
 describe('common', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 
@@ -190,17 +191,30 @@ describe('common', () => {
   it('should not work filter for hidden column.', () => {
     cy.gridInstance().invoke('hideColumn', 'alphabetA');
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+
     cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+
     cy.gridInstance().invoke('unfilter', 'alphabetA');
+
     cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+  });
+
+  it('should update row number after filtering', () => {
+    createGrid({ rowHeaders: ['rowNum'] });
+    cy.get('@fourthFilter').click();
+
+    cy.get(`.${cls('filter-input')}`).type('1');
+
+    cy.get(`.${cls('filter-btn-apply')}`).click();
+
+    cy.get('td[data-column-name=_number]').each(($el, idx) => {
+      cy.wrap($el).should('to.have.text', `${idx + 1}`);
+    });
   });
 });
 
 describe('filter API', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 
@@ -312,9 +326,6 @@ describe('number', () => {
 
 describe('text', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 
@@ -403,9 +414,6 @@ describe('select', () => {
 
 describe('date', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     createGrid();
   });
 

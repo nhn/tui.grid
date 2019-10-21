@@ -3,7 +3,20 @@ import { OptRow } from '@/types';
 import { Row } from '@/store/types';
 
 const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
+const largeData = [
+  { name: 'Kim', age: 10 },
+  { name: 'Lee', age: 20 },
+  { name: 'Ryu', age: 30 },
+  { name: 'Han', age: 40 }
+];
 const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+const defaultGridOptions = { data, columns, scrollY: true, bodyHeight: 400 };
+
+function checkGridHasRightRowNumber() {
+  cy.get('td[data-column-name=_number]').each(($el, idx) => {
+    expect($el.text()).to.contain(`${idx + 1}`);
+  });
+}
 
 before(() => {
   cy.visit('/dist');
@@ -13,12 +26,11 @@ beforeEach(() => {
   cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
-
-  cy.createGrid({ data, columns, scrollY: true, bodyHeight: 400 });
 });
 
 describe('appendRow()', () => {
   it('append a row at the end of the data', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
 
     cy.getCellByIdx(2, 0).should('to.have.text', 'Park');
@@ -26,6 +38,7 @@ describe('appendRow()', () => {
   });
 
   it('if at option exist, insert a row at the given index', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 }, { at: 1 });
 
     cy.getCellByIdx(2, 0).should('have.text', 'Lee');
@@ -35,6 +48,7 @@ describe('appendRow()', () => {
   });
 
   it('if focus option exist, set focus to the first cell of the inserted row', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 }, { focus: true });
 
     cy.gridInstance()
@@ -47,12 +61,14 @@ describe('appendRow()', () => {
   });
 
   it('if first argument is undefined, insert empty object', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('appendRow');
     cy.getCellByIdx(2, 0).should('to.have.text', '');
     cy.getCellByIdx(2, 1).should('to.have.text', '');
   });
 
   it('rowKey is created properly as max index', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('removeRow', 0);
     cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
     cy.gridInstance()
@@ -63,6 +79,7 @@ describe('appendRow()', () => {
   });
 
   it('rowKey is created properly as max index on empty grid', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('resetData', []);
     cy.gridInstance().invoke('appendRow', { name: 'Kim', age: 40 });
     cy.gridInstance()
@@ -73,6 +90,7 @@ describe('appendRow()', () => {
   });
 
   it('should insert empty value for each column as append the empty row', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('appendRow', {});
 
     cy.gridInstance()
@@ -82,10 +100,18 @@ describe('appendRow()', () => {
         expect(appendedRow).to.contain({ name: '', age: '' });
       });
   });
+
+  it('should update row number when calling appendRow()', () => {
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
+    checkGridHasRightRowNumber();
+  });
 });
 
 describe('prependRow()', () => {
   it('insert a row at the start of the data', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('prependRow', { name: 'Park', age: 30 });
 
     cy.getCellByIdx(2, 0).should('to.have.text', 'Lee');
@@ -97,6 +123,7 @@ describe('prependRow()', () => {
   });
 
   it('if focus option exist, set focus to the first cell of the inserted row', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('prependRow', { name: 'Park', age: 30 }, { focus: true });
 
     cy.gridInstance()
@@ -109,16 +136,25 @@ describe('prependRow()', () => {
   });
 
   it('if first argument is undefined, insert empty object', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('prependRow');
 
     cy.wait(10);
     cy.getCellByIdx(0, 0).should('to.have.text', '');
     cy.getCellByIdx(0, 1).should('to.have.text', '');
   });
+
+  it('should update row number when calling prependRow()', () => {
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('prependRow', { name: 'Yoo', age: 50 });
+    checkGridHasRightRowNumber();
+  });
 });
 
 describe('removeRow()', () => {
   it('remove a row matching given rowKey', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('removeRow', 0);
 
     cy.wait(10);
@@ -127,6 +163,7 @@ describe('removeRow()', () => {
   });
 
   it('remove a row when focus layer is active', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('focus', 1, 'name', true);
     cy.gridInstance().invoke('removeRow', 0);
 
@@ -141,6 +178,7 @@ describe('removeRow()', () => {
   });
 
   it('remove a row when editing layer is active', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('startEditing', 1, 'name', true);
     cy.gridInstance().invoke('removeRow', 0);
 
@@ -151,6 +189,7 @@ describe('removeRow()', () => {
   });
 
   it('remove a row included focus cell', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('focus', 0, 'name', true);
     cy.gridInstance().invoke('removeRow', 0);
     cy.gridInstance()
@@ -161,9 +200,6 @@ describe('removeRow()', () => {
   });
 
   it('should reduce the height after removing the row', () => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
     cy.createGrid({ data, columns, bodyHeight: 50, minBodyHeight: 50 });
     cy.get(`.${cls('body-container')}`)
       .invoke('height')
@@ -174,14 +210,17 @@ describe('removeRow()', () => {
           .should('be.lt', prevHeight);
       });
   });
+
+  it('should update row number when calling removeRow()', () => {
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('removeRow', 2);
+    checkGridHasRightRowNumber();
+  });
 });
 
 describe('removeCheckedRows()', () => {
   beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-
     cy.createGrid({
       data,
       columns,
@@ -221,12 +260,14 @@ describe('removeCheckedRows()', () => {
 
 describe('clear()', () => {
   it('remove all rows', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('clear');
 
     cy.get(`.${cls('body-area')} .${cls('cell')}`).should('not.exist');
   });
 
   it('focus, editing cell is removed when clears all data', () => {
+    cy.createGrid(defaultGridOptions);
     cy.gridInstance().invoke('startEditingAt', 0, 1);
     cy.gridInstance().invoke('clear');
 
@@ -242,6 +283,10 @@ describe('clear()', () => {
 });
 
 describe('resetData()', () => {
+  beforeEach(() => {
+    cy.createGrid(defaultGridOptions);
+  });
+
   it('focus, editing cell is removed when resets all data', () => {
     cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
     cy.gridInstance()
@@ -271,6 +316,10 @@ describe('resetData()', () => {
 });
 
 describe('getters', () => {
+  beforeEach(() => {
+    cy.createGrid(defaultGridOptions);
+  });
+
   function getRowDataWithAttrs(row: OptRow, rowNum: number) {
     return {
       ...row,
@@ -334,6 +383,8 @@ describe('getters', () => {
 
 describe('rows', () => {
   it('findRows() returns rows that meet the conditions.', () => {
+    cy.createGrid(defaultGridOptions);
+
     cy.gridInstance()
       .invoke('findRows', { name: 'Kim' })
       .then(res => {
@@ -357,6 +408,10 @@ describe('rows', () => {
 });
 
 describe('focus', () => {
+  beforeEach(() => {
+    cy.createGrid(defaultGridOptions);
+  });
+
   it('should destroy the focusing layer, when hide the column', () => {
     cy.gridInstance().invoke('focus', 1, 'name', true);
     cy.gridInstance().invoke('hideColumn', 'name');
