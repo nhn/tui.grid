@@ -190,13 +190,11 @@ describe('common', () => {
   it('should not work filter for hidden column.', () => {
     cy.gridInstance().invoke('hideColumn', 'alphabetA');
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-    cy.get('td[data-column-name=alphabetB]')
-      .its('length')
-      .should('be.eql', 9);
+    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
     cy.gridInstance().invoke('unfilter', 'alphabetA');
     cy.get('td[data-column-name=alphabetB]')
       .its('length')
-      .should('be.eql', 9);
+      .should('have.length', 9);
   });
 });
 
