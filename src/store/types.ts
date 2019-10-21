@@ -76,8 +76,6 @@ export interface RowAttributes {
   expanded?: boolean;
 }
 
-export type RowAttributeValue = RowAttributes[keyof RowAttributes];
-
 export type SummaryPosition = 'top' | 'bottom';
 
 export type SummaryColumnContent = SummaryColumnContentMap | null;

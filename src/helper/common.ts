@@ -111,44 +111,36 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map(item => item[propName]);
 }
 
-export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
-  const resultObj = { ...(targetObj as T1 & T2) };
+export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+  const resultObj: Obj = { ...targetObj };
 
   Object.keys(obj).forEach(prop => {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
-        // has to add type assertion and refer the below typescript issue
-        // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
-        // it merely ensures that the properties of the argument are assignable to type XXX.
-        // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
         // https://github.com/microsoft/TypeScript/issues/31661
-        (resultObj[prop] as T1 & T2) = obj[prop];
+        resultObj[prop] = obj[prop];
       } else {
-        (resultObj[prop] as T1 & T2) = deepMergedCopy(resultObj[prop], obj[prop]);
+        resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
       }
     } else {
-      (resultObj[prop] as T1 & T2) = obj[prop];
+      resultObj[prop] = obj[prop];
     }
   });
 
-  return resultObj;
+  return resultObj as (T1 & T2);
 }
 
-export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+export function assign(targetObj: Obj, obj: Obj) {
   Object.keys(obj).forEach(prop => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
-        // has to add type assertion and refer the below typescript issue
-        // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
-        // it merely ensures that the properties of the argument are assignable to type XXX.
-        // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
         // https://github.com/microsoft/TypeScript/issues/31661
-        (targetObj[prop] as T1 & T2) = obj[prop];
+        targetObj[prop] = obj[prop];
       } else {
         assign(targetObj[prop], obj[prop]);
       }
     } else {
-      (targetObj[prop] as T1 & T2) = obj[prop];
+      targetObj[prop] = obj[prop];
     }
   });
 }
