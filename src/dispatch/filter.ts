@@ -10,6 +10,7 @@ import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { isHiddenColumn } from '../query/column';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { rowCoords, data, dimension } = store;
@@ -163,7 +164,8 @@ export function filter(
 ) {
   const { data, column, id } = store;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
-  if (!columnFilterInfo) {
+
+  if (!columnFilterInfo || isHiddenColumn(column, columnName)) {
     return;
   }
 
@@ -194,8 +196,13 @@ export function filter(
 }
 
 export function unfilter(store: Store, columnName: string) {
-  const { data } = store;
+  const { data, column } = store;
   const { filters } = data;
+
+  if (isHiddenColumn(column, columnName)) {
+    return;
+  }
+
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {

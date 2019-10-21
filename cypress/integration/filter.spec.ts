@@ -186,6 +186,14 @@ describe('common', () => {
       .type('CA');
     equalColumnData('alphabetA', 'BCA');
   });
+
+  it('should not work filter for hidden column.', () => {
+    cy.gridInstance().invoke('hideColumn', 'alphabetA');
+    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+    cy.gridInstance().invoke('unfilter', 'alphabetA');
+    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+  });
 });
 
 describe('filter API', () => {
