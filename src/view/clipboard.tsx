@@ -26,7 +26,7 @@ const KEYDOWN_LOCK_TIME = 10;
 class ClipboardComp extends Component<Props> {
   private el?: HTMLFormElement;
 
-  private isLocked: boolean = false;
+  private isLocked = false;
 
   private lock = () => {
     this.isLocked = true;

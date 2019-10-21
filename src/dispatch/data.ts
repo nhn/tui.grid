@@ -4,7 +4,6 @@ import {
   RowKey,
   SelectionRange,
   RowAttributes,
-  RowAttributeValue,
   Data,
   Row,
   Column,
@@ -217,26 +216,29 @@ export function isUpdatableRowAttr(
   return !(name === 'checked' && (checkDisabled || allDisabled));
 }
 
-export function setRowAttribute(
+export function setRowAttribute<K extends keyof RowAttributes>(
   { data, column, id }: Store,
   rowKey: RowKey,
-  attrName: keyof RowAttributes,
-  value: RowAttributeValue
+  attrName: K,
+  value: RowAttributes[K]
 ) {
   const { disabled } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey);
+
+  // https://github.com/microsoft/TypeScript/issues/34293
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
     targetRow._attributes[attrName] = value;
   }
 }
 
-export function setAllRowAttribute(
+export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
-  attrName: keyof RowAttributes,
-  value: RowAttributeValue
+  attrName: K,
+  value: RowAttributes[K]
 ) {
   data.rawData.forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
+      // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
     }
   });

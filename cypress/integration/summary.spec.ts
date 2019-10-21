@@ -14,7 +14,7 @@ const CONTENT_WIDTH = 700;
 
 function createSummaryOption(
   customOptions: Record<string, unknown> = {},
-  needDeepMergedCopy: boolean = false
+  needDeepMergedCopy = false
 ) {
   const summary = {
     height: 40,

@@ -15,7 +15,7 @@ class CSSRuleBuilder {
     this.init(selector);
   }
 
-  private selector: string = '';
+  private selector = '';
 
   private propValues: string[] = [];
 

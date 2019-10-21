@@ -117,7 +117,7 @@ export function changeSortState(
   columnName: string,
   ascending: boolean,
   withCtrl: boolean,
-  cancelable: boolean = true
+  cancelable = true
 ) {
   if (columnName === 'sortKey') {
     initSortState(data);
@@ -136,8 +136,8 @@ export function sort(
   store: Store,
   columnName: string,
   ascending: boolean,
-  withCtrl: boolean = false,
-  cancelable: boolean = true
+  withCtrl = false,
+  cancelable = true
 ) {
   const { data, column } = store;
   const { sortState } = data;
@@ -151,7 +151,7 @@ export function sort(
   updateRowNumber(store, 0);
 }
 
-export function unsort(store: Store, columnName: string = 'sortKey') {
+export function unsort(store: Store, columnName = 'sortKey') {
   const { data, column } = store;
   const { sortState } = data;
 

@@ -167,13 +167,11 @@ const data = [
 ];
 
 stories.add('Simple Check Renderer', () => {
-  const { grid, el } = createGrid({
+  const { el } = createGrid({
     data,
     columns,
     bodyHeight: 400
   });
-
-  (window as Window & { grid: Grid }).grid = grid;
 
   return el;
 });

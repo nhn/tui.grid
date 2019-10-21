@@ -111,12 +111,13 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
   return arr.map(item => item[propName]);
 }
 
-export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2): T1 & T2 {
-  const resultObj = { ...(targetObj as T1 & T2) };
+export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+  const resultObj: Obj = { ...targetObj };
 
-  for (const prop of Object.keys(obj)) {
+  Object.keys(obj).forEach(prop => {
     if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
+        // https://github.com/microsoft/TypeScript/issues/31661
         resultObj[prop] = obj[prop];
       } else {
         resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
@@ -124,15 +125,16 @@ export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, ob
     } else {
       resultObj[prop] = obj[prop];
     }
-  }
+  });
 
-  return resultObj;
+  return resultObj as (T1 & T2);
 }
 
-export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
-  for (const prop of Object.keys(obj)) {
+export function assign(targetObj: Obj, obj: Obj) {
+  Object.keys(obj).forEach(prop => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
+        // https://github.com/microsoft/TypeScript/issues/31661
         targetObj[prop] = obj[prop];
       } else {
         assign(targetObj[prop], obj[prop]);
@@ -140,7 +142,7 @@ export function assign<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
     } else {
       targetObj[prop] = obj[prop];
     }
-  }
+  });
 }
 
 export function removeArrayItem<T>(targetItem: T, arr: T[]) {
@@ -168,7 +170,7 @@ export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
 
-export function forEachObject<T, K extends Extract<keyof T, string>, V extends T[K]>(
+export function forEachObject<T extends Obj, K extends Extract<keyof T, string>, V extends T[K]>(
   fn: (value: V, key: K, obj: T) => void,
   obj: T
 ) {
