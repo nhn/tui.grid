@@ -33,11 +33,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
     if (address) {
       rowKey = address.rowKey;
       columnName = address.columnName;
-      if (rowKey) {
-        targetType = isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
-      } else {
-        targetType = 'dummy';
-      }
+      targetType = isRowHeader(address.columnName) ? 'rowHeader' : 'cell';
     } else {
       targetType = 'dummy';
     }
