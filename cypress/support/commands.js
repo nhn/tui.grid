@@ -48,3 +48,7 @@ Cypress.Commands.add('createStyle', (style = '') => {
     document.head.appendChild(styleElement);
   });
 });
+
+Cypress.Commands.add('getByCls', className => {
+  return cy.get(`.${cls(className)}`);
+});

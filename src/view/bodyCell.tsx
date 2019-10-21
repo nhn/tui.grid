@@ -9,6 +9,7 @@ import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
 import { findIndexByRowKey } from '../query/data';
+import { isEmpty } from '../helper/common';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -208,12 +209,13 @@ export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data, selection, dimension }, { viewRow, columnInfo }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
-    const { disabled } = data;
+    const { disabled, pageOptions } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
     const rowIndex = findIndexByRowKey(data, column, id, rowKey);
     const { rowHeight: defaultRowHeight } = dimension;
+    const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
 
     return {
       grid,
@@ -224,7 +226,9 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       defaultRowHeight,
       renderData: (valueMap && valueMap[columnName]) || { invalidStates: [] },
       ...(columnName === treeColumnName ? { treeInfo } : null),
-      selectedRow: range ? rowIndex >= range.row[0] && rowIndex <= range.row[1] : false
+      selectedRow: range
+        ? rowIndexWithPage >= range.row[0] && rowIndexWithPage <= range.row[1]
+        : false
     };
   }
 )(BodyCellComp);

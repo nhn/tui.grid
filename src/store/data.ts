@@ -509,7 +509,7 @@ export function create({
 
     get pageRowRange() {
       let start = 0;
-      let end = rawData.length;
+      let end = this.filteredRawData.length;
 
       if (this.pageOptions.useClient) {
         const { page, perPage } = this.pageOptions;

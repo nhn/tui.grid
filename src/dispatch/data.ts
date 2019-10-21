@@ -234,9 +234,13 @@ export function setRowAttribute<K extends keyof RowAttributes>(
 export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
-  value: RowAttributes[K]
+  value: RowAttributes[K],
+  allPage: boolean
 ) {
-  data.rawData.forEach(row => {
+  const { filteredRawData } = data;
+  const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
+
+  filteredRawData.slice(...range).forEach(row => {
     if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
       // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
@@ -258,9 +262,8 @@ export function setColumnValues(
 }
 
 export function check(store: Store, rowKey: RowKey) {
-  const { allColumnMap, treeColumnName = '' } = store.column;
-  const { data, id } = store;
-  const { filteredRawData } = data;
+  const { id, column } = store;
+  const { allColumnMap, treeColumnName = '' } = column;
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
@@ -273,7 +276,7 @@ export function check(store: Store, rowKey: RowKey) {
   eventBus.trigger('check', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', true);
-  setCheckedAllRows(store, !filteredRawData.some(row => !row._attributes.checked));
+  setCheckedAllRows(store);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, true);
@@ -295,17 +298,17 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 
   setRowAttribute(store, rowKey, 'checked', false);
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 
   if (allColumnMap[treeColumnName]) {
     changeTreeRowsCheckedState(store, rowKey, false);
   }
 }
 
-export function checkAll(store: Store) {
+export function checkAll(store: Store, allPage = true) {
   const { id } = store;
-  setAllRowAttribute(store, 'checked', true);
-  setCheckedAllRows(store, true);
+  setAllRowAttribute(store, 'checked', true, allPage);
+  setCheckedAllRows(store);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -317,10 +320,10 @@ export function checkAll(store: Store) {
   eventBus.trigger('checkAll', gridEvent);
 }
 
-export function uncheckAll(store: Store) {
+export function uncheckAll(store: Store, allPage = true) {
   const { id } = store;
-  setAllRowAttribute(store, 'checked', false);
-  setCheckedAllRows(store, false);
+  setAllRowAttribute(store, 'checked', false, allPage);
+  setCheckedAllRows(store);
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -478,8 +481,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
-  const { data, rowCoords, id, focus, column } = store;
-  const { rawData, viewData, sortState, pageOptions } = data;
+  const { data, rowCoords, id, focus, column, dimension } = store;
+  const { rawData, viewData, sortState, pageOptions, filteredRawData } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey);
 
   if (rowIdx === -1) {
@@ -491,13 +494,6 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   viewData.splice(rowIdx, 1);
   rowCoords.heights.splice(rowIdx, 1);
-
-  if (pageOptions.useClient) {
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: pageOptions.totalCount! - 1
-    };
-  }
 
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
@@ -511,12 +507,38 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     }
   }
 
+  if (pageOptions.useClient) {
+    const { perPage, totalCount, page } = pageOptions;
+    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+    if ((totalCount - 1) % perPage) {
+      modifiedLastPage += 1;
+    }
+
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: totalCount - 1,
+      page: modifiedLastPage < page ? modifiedLastPage : page
+    };
+
+    const lastDataIndex = data.pageOptions.page * perPage - 1;
+    const hasNextData = lastDataIndex < rawData.length;
+
+    if (rowCoords.heights.length < perPage && hasNextData) {
+      rowCoords.heights = filteredRawData
+        .slice(...data.pageRowRange)
+        .map(row => getRowHeight(row, dimension.rowHeight));
+    } else {
+      notify(rowCoords, 'heights');
+    }
+  } else {
+    notify(rowCoords, 'heights');
+  }
+
   getDataManager(id).push('DELETE', removedRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  notify(rowCoords, 'heights');
   updateSummaryValueByRow(store, removedRow, false);
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
@@ -543,7 +565,7 @@ export function clearData(store: Store) {
   }
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
@@ -566,7 +588,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
       totalCount: rawData.length
     };
   }
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
@@ -664,13 +686,13 @@ export function movePage(store: Store, page: number) {
 
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-  rowCoords.heights = data.rawData
+  rowCoords.heights = data.filteredRawData
     .slice(...data.pageRowRange)
     .map(row => getRowHeight(row, dimension.rowHeight));
   initSelection(store);
   initFocus(store);
   setScrollTop(store, 0);
-  setCheckedAllRows(store, false);
+  setCheckedAllRows(store);
 }
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
@@ -777,8 +799,12 @@ export function setLoadingState({ data }: Store, state: LoadingState) {
   data.loadingState = state;
 }
 
-export function setCheckedAllRows({ data }: Store, checked: boolean) {
-  data.checkedAllRows = checked;
+export function setCheckedAllRows({ data }: Store) {
+  const { filteredRawData, pageRowRange } = data;
+
+  data.checkedAllRows =
+    !!filteredRawData.length &&
+    filteredRawData.slice(...pageRowRange).every(row => row._attributes.checked);
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {

@@ -11,17 +11,28 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isHiddenColumn } from '../query/column';
-import { updateRowNumber } from './data';
+import { updateRowNumber, setCheckedAllRows } from './data';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { rowCoords, data, dimension } = store;
+  const { pageOptions, pageRowRange, filteredRawData } = data;
 
-  rowCoords.heights = data.filteredRawData.map(row => getRowHeight(row, dimension.rowHeight));
+  rowCoords.heights = filteredRawData
+    .slice(...pageRowRange)
+    .map(row => getRowHeight(row, dimension.rowHeight));
+
+  if (pageOptions.useClient) {
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: filteredRawData.length
+    };
+  }
 
   setScrollTop(store, 0);
   initSelection(store);
   initFocus(store);
   updateRowNumber(store, 0);
+  setCheckedAllRows(store);
 }
 
 export function setActiveFilterOperator(store: Store, operator: OperatorType) {
@@ -165,6 +176,7 @@ export function filter(
   state: FilterState[]
 ) {
   const { data, column, id } = store;
+  const { pageOptions, filteredRawData } = data;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
 
   if (!columnFilterInfo || isHiddenColumn(column, columnName)) {
@@ -186,6 +198,13 @@ export function filter(
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ filterState: data.filters });
+
+  if (pageOptions.useClient) {
+    data.pageOptions = {
+      ...pageOptions,
+      totalCount: filteredRawData.length
+    };
+  }
 
   /**
    * Occurs when filtering

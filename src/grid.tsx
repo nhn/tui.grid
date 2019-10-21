@@ -807,7 +807,7 @@ export default class Grid {
   }
 
   /**
-   * Unchecks the row identified by the specified rowKey.
+   * Uncheck the row identified by the specified rowKey.
    * @param {number|string} rowKey - The unique key of the row
    */
   public uncheck(rowKey: RowKey) {
@@ -816,16 +816,18 @@ export default class Grid {
 
   /**
    * Checks all rows.
+   * @param {boolean} [allPage] - check all rows when using pagination. The default value is 'true'.
    */
-  public checkAll() {
-    this.dispatch('checkAll');
+  public checkAll(allPage?: boolean) {
+    this.dispatch('checkAll', allPage);
   }
 
   /**
-   * Unchecks all rows.
+   * Uncheck all rows.
+   * @param {boolean} [allPage] - Uncheck all rows when using pagination. The default value is 'true'.
    */
-  public uncheckAll() {
-    this.dispatch('uncheckAll');
+  public uncheckAll(allPage?: boolean) {
+    this.dispatch('uncheckAll', allPage);
   }
 
   /**
