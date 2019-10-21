@@ -175,10 +175,13 @@ export function getCellAddress(el: HTMLElement) {
   if (!cellElement) {
     return null;
   }
-  const rowKey = Number(cellElement.getAttribute(dataAttr.ROW_KEY));
+  const rowKey = cellElement.getAttribute(dataAttr.ROW_KEY);
   const columnName = cellElement.getAttribute(dataAttr.COLUMN_NAME) as string;
 
-  return { rowKey, columnName };
+  return {
+    rowKey: rowKey === null ? null : Number(rowKey),
+    columnName
+  };
 }
 
 /**
