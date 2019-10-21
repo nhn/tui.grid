@@ -17,6 +17,8 @@ declare namespace Cypress {
 
     getCellContent(rowKey: number | string, column: string): Chainable<any>;
 
+    getByCls(className: string): Chainable<any>;
+
     createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
 
     createStyle(style: string): Chainable<any>;

@@ -111,8 +111,11 @@ describe('common', () => {
 
   it('If the filter is not active, it has a gray button. In the filter active case, it has a blue button.', () => {
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
+
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+
     cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
+
     compareColumnCellLength(4);
   });
 
@@ -136,14 +139,18 @@ describe('common', () => {
     cy.get('@fourthFilter').click();
     cy.get(`.${cls('filter-input')}`).type('20');
     cy.get(`.${cls('filter-btn-apply')}`).click();
+
     compareColumnCellLength(1);
+
     cy.get(`.${cls('filter-btn-clear')}`).click();
+
     compareColumnCellLength(9);
   });
 
   it('If apply button exists, the condition is not immediately applied. But It is applied when click the button.', () => {
     cy.get('@fourthFilter').click();
     cy.get(`.${cls('filter-input')}`).type('20');
+
     compareColumnCellLength(9);
 
     cy.get(`.${cls('filter-btn-apply')}`).click();
@@ -161,6 +168,7 @@ describe('common', () => {
       .eq(1)
       .click();
     cy.wait(150);
+
     compareColumnCellLength(2);
     equalColumnData('alphabetA', 'A');
     equalColumnData('alphabetB', 'A');
@@ -169,10 +177,9 @@ describe('common', () => {
   it('The operator and the second filter appear when the first condition value exists.', () => {
     cy.get('@firstFilter').click();
     cy.get(`.${cls('filter-input')}`).type('B');
+
     cy.get(`.${cls('filter-comparator-container')}`).should('exist');
-    cy.get(`.${cls('filter-input')}`)
-      .its('length')
-      .should('to.eq', 2);
+    cy.get(`.${cls('filter-input')}`).should('have.length', 2);
   });
 
   it('If an operator exists, it combines the values of the two filters and outputs them accordingly.', () => {
@@ -185,6 +192,7 @@ describe('common', () => {
     cy.get(`.${cls('filter-input')}`)
       .eq(1)
       .type('CA');
+
     equalColumnData('alphabetA', 'BCA');
   });
 
@@ -215,15 +223,14 @@ describe('common', () => {
   it('should check only filtered rows when clicking the checkAll button.', () => {
     createGrid({ rowHeaders: ['checkbox'] });
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+
     cy.get('th input[type=checkbox]').click();
 
     cy.get('th input[type=checkbox]').should('be.checked');
 
     cy.gridInstance().invoke('unfilter', 'alphabetA');
 
-    cy.get('td input[type=checkbox]:checked')
-      .its('length')
-      .should('be.eq', 4);
+    cy.get('td input[type=checkbox]:checked').should('have.length', 4);
     cy.get('th input[type=checkbox]').should('not.be.checked');
   });
 });
@@ -235,11 +242,15 @@ describe('filter API', () => {
 
   it('filter(), unfilter()', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+
     cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
+
     equalColumnData('alphabetA', 'A');
 
     cy.gridInstance().invoke('unfilter', 'alphabetA');
+
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
+
     compareColumnCellLength(9);
   });
 
@@ -276,7 +287,9 @@ describe('filter API', () => {
 
   it('setFilter() set filter to column', () => {
     cy.get(`[data-column-name=value] .${cls('btn-filter')}`).should('not.exist');
+
     cy.gridInstance().invoke('setFilter', 'value', { type: 'number' });
+
     cy.get(`[data-column-name=value] .${cls('btn-filter')}`).should('exist');
   });
 });
@@ -288,50 +301,60 @@ describe('number', () => {
 
   it('Equal', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'eq', value: 1 }]);
+
     equalColumnData('numberA', '1');
     compareColumnCellLength(4);
   });
 
   it('Not Equal', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'ne', value: 1 }]);
+
     notEqualColumnData('numberA', '1');
     compareColumnCellLength(5);
   });
 
   it('Less than', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'lt', value: 10 }]);
+
     cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(Number(elem.textContent) < 10).to.be.true;
       });
     });
+
     compareColumnCellLength(5);
   });
   it('Less than Equal', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'lte', value: 10 }]);
+
     cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(Number(elem.textContent) <= 10).to.be.true;
       });
     });
+
     compareColumnCellLength(6);
   });
   it('Greater than', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'gt', value: 10 }]);
+
     cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(Number(elem.textContent) > 10).to.be.true;
       });
     });
+
     compareColumnCellLength(3);
   });
   it('Greater than Equal', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'gte', value: 10 }]);
+
     cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(Number(elem.textContent) >= 10).to.be.true;
       });
     });
+
     compareColumnCellLength(4);
   });
 });
@@ -343,43 +366,51 @@ describe('text', () => {
 
   it('Equal', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'eq', value: 'ACC' }]);
+
     equalColumnData('alphabetC', 'ACC');
     compareColumnCellLength(2);
   });
 
   it('Not Equal', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'ne', value: 'ACC' }]);
+
     notEqualColumnData('alphabetC', 'ACC');
     compareColumnCellLength(7);
   });
 
   it('Contain', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'contain', value: 'A' }]);
+
     cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(elem.textContent!.includes('A')).to.be.true;
       });
     });
+
     compareColumnCellLength(5);
   });
 
   it('start', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'start', value: 'A' }]);
+
     cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(elem.textContent!.startsWith('A')).to.be.true;
       });
     });
+
     compareColumnCellLength(4);
   });
 
   it('end', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'end', value: 'A' }]);
+
     cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(elem.textContent!.endsWith('A')).to.be.true;
       });
     });
+
     compareColumnCellLength(3);
   });
 });
@@ -394,6 +425,7 @@ describe('select', () => {
     cy.get(`.${cls('filter-list-item')} label`)
       .eq(1)
       .click();
+
     notEqualColumnData('alphabetB', 'B');
     compareColumnCellLength(6);
   });
@@ -433,6 +465,7 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     equalColumnData('date', '2019.09.18');
     compareColumnCellLength(3);
   });
@@ -445,6 +478,7 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     notEqualColumnData('date', '2019.09.18');
     compareColumnCellLength(6);
   });
@@ -457,11 +491,13 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) > getUnixTime('2019/09/18')).to.be.true;
       });
     });
+
     compareColumnCellLength(2);
   });
 
@@ -473,11 +509,13 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) >= getUnixTime('2019/09/18')).to.be.true;
       });
     });
+
     compareColumnCellLength(5);
   });
 
@@ -489,11 +527,13 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) < getUnixTime('2019/09/18')).to.be.true;
       });
     });
+
     compareColumnCellLength(4);
   });
 
@@ -505,11 +545,13 @@ describe('date', () => {
       .click();
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+
     cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
       $el.each((index, elem) => {
         expect(getUnixTime(elem.textContent) <= getUnixTime('2019/09/18')).to.be.true;
       });
     });
+
     compareColumnCellLength(7);
   });
 });
