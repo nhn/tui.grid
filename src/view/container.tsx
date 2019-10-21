@@ -263,9 +263,7 @@ export class ContainerComp extends Component<Props> {
 
     if (address) {
       const { rowKey, columnName } = address;
-      if (rowKey) {
-        dispatch('startEditing', rowKey, columnName);
-      }
+      dispatch('startEditing', rowKey, columnName);
     }
   }
 
