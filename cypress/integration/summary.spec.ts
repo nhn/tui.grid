@@ -441,6 +441,7 @@ describe('summary', () => {
       { name: 'price', minWidth: 150 },
       { name: 'downloadCount', minWidth: 150 }
     ]);
+
     assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
   });
 
@@ -460,6 +461,7 @@ describe('summary', () => {
         return `auto calculate: ${valueMap.max}`;
       }
     });
+
     assertSummaryContent('price', 'auto calculate: 30000');
   });
 });
@@ -472,9 +474,11 @@ describe('summary with filter', () => {
 
   it('should change summary based on the filtering result.', () => {
     assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
+
     cy.get(`.${cls('btn-filter')}`).click();
     cy.get(`.${cls('filter-input')}`).type('1000', { force: true });
     cy.getCell(0, 'name').click();
+
     assertSummaryContent('downloadCount', 'TOTAL: 10000', 'AVG: 1000.00');
   });
 });
@@ -487,31 +491,38 @@ describe('summary with pagination', () => {
 
   it('should change summary when moving page', () => {
     assertSummaryContent('price', 'MAX: 30000', 'MIN: 7000');
+
     cy.get(`.tui-page-btn.tui-last-child`).click();
+
     assertSummaryContent('price', 'MAX: 20000', 'MIN: 6000');
   });
 
   it('should change summary based on the sorting result.', () => {
     assertSummaryContent('price', 'MAX: 30000', 'MIN: 7000');
+
     cy.get(`.${cls('btn-sorting')}`).click();
+
     assertSummaryContent('price', 'MAX: 12000', 'MIN: 6000');
   });
 
   it('should change summary based on the filtering result.', () => {
     assertSummaryContent('downloadCount', 'TOTAL: 42440', 'AVG: 4244.00');
+
     cy.get(`.${cls('btn-filter')}`).click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('gt', { force: true });
-    cy.get(`.${cls('filter-input')}`).type('1000', { force: true });
-    cy.getCell(0, 'name').click();
-    assertSummaryContent('downloadCount', 'TOTAL: 47840', 'AVG: 5315.56');
+    cy.get(`.${cls('filter-dropdown')} select`).select('lt', { force: true });
+    cy.get(`.${cls('filter-input')}`).type('3000', { force: true });
+
+    assertSummaryContent('downloadCount', 'TOTAL: 10440', 'AVG: 1044.00');
   });
 
-  it.only('should change summary based on the filtering and sorting result.', () => {
-    assertSummaryContent('downloadCount', 'TOTAL: 44240', 'AVG: 4424.00');
+  it('should change summary based on the filtering and sorting result.', () => {
+    assertSummaryContent('downloadCount', 'TOTAL: 42440', 'AVG: 4244.00');
+
     cy.get(`.${cls('btn-sorting')}`).click();
     cy.get(`.${cls('btn-filter')}`).click();
     cy.get(`.${cls('filter-dropdown')} select`).select('lt', { force: true });
     cy.get(`.${cls('filter-input')}`).type('3000', { force: true });
+
     assertSummaryContent('downloadCount', 'TOTAL: 12240', 'AVG: 1224.00');
   });
 });
