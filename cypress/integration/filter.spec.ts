@@ -192,9 +192,7 @@ describe('common', () => {
     cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
     cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
     cy.gridInstance().invoke('unfilter', 'alphabetA');
-    cy.get('td[data-column-name=alphabetB]')
-      .its('length')
-      .should('have.length', 9);
+    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
   });
 });
 
