@@ -74,7 +74,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 }
 
 function equalColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(expectValues);
     });
@@ -82,7 +82,7 @@ function equalColumnData(columnName: string, expectValues: CellValue) {
 }
 
 function includeColumnData(columnName: string, expectValues: CellValue[]) {
-  cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
       expect(expectValues.includes(elem.textContent)).to.be.true;
     });
@@ -90,7 +90,7 @@ function includeColumnData(columnName: string, expectValues: CellValue[]) {
 }
 
 function notEqualColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).not.to.eql(expectValues);
     });
