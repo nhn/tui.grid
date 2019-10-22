@@ -1,14 +1,9 @@
 import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
-import Grid from '../../src/grid';
-import { OptColumn, OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
+import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
 import { deepMergedCopy } from '../../src/helper/common';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
+import { Dictionary } from '@/store/types';
 
 const CONTENT_WIDTH = 700;
 
@@ -38,7 +33,7 @@ function createSummaryOption(
   return summaryOptions as OptSummaryData;
 }
 
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
+function createDefaultOptions(customOptions?: Dictionary<any>): Omit<OptGrid, 'el'> {
   const data = sampleData.slice();
   const columns = [
     { name: 'name', minWidth: 150 },
@@ -47,19 +42,7 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   ];
   const summary = createSummaryOption();
 
-  return { data, columns, summary };
-}
-
-function createComplexOptions(): Omit<OptGrid, 'el'> {
-  const data = sampleData.slice();
-  const columns = [
-    { name: 'name', minWidth: 150 },
-    { name: 'price', minWidth: 150, sortable: true },
-    { name: 'downloadCount', minWidth: 150, filter: 'number' }
-  ] as OptColumn[];
-  const summary = createSummaryOption();
-
-  return { data, columns, summary };
+  return { data, columns, summary, ...customOptions };
 }
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
@@ -468,7 +451,13 @@ describe('summary', () => {
 
 describe('summary with filter', () => {
   beforeEach(() => {
-    const defaultOptions = createComplexOptions();
+    const defaultOptions = createDefaultOptions({
+      columns: [
+        { name: 'name', minWidth: 150 },
+        { name: 'price', minWidth: 150, sortable: true },
+        { name: 'downloadCount', minWidth: 150, filter: 'number' }
+      ]
+    });
     cy.createGrid({ ...defaultOptions });
   });
 
@@ -485,7 +474,13 @@ describe('summary with filter', () => {
 
 describe('summary with pagination', () => {
   beforeEach(() => {
-    const defaultOptions = createComplexOptions();
+    const defaultOptions = createDefaultOptions({
+      columns: [
+        { name: 'name', minWidth: 150 },
+        { name: 'price', minWidth: 150, sortable: true },
+        { name: 'downloadCount', minWidth: 150, filter: 'number' }
+      ]
+    });
     cy.createGrid({ ...defaultOptions, pageOptions: { useClient: true, perPage: 10 } });
   });
 
@@ -503,16 +498,6 @@ describe('summary with pagination', () => {
     cy.get(`.${cls('btn-sorting')}`).click();
 
     assertSummaryContent('price', 'MAX: 12000', 'MIN: 6000');
-  });
-
-  it('should change summary based on the filtering result.', () => {
-    assertSummaryContent('downloadCount', 'TOTAL: 42440', 'AVG: 4244.00');
-
-    cy.get(`.${cls('btn-filter')}`).click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('lt', { force: true });
-    cy.get(`.${cls('filter-input')}`).type('3000', { force: true });
-
-    assertSummaryContent('downloadCount', 'TOTAL: 10440', 'AVG: 1044.00');
   });
 
   it('should change summary based on the filtering and sorting result.', () => {

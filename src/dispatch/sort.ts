@@ -133,21 +133,9 @@ export function changeSortState(
   }
 }
 
-export function sort(
-  store: Store,
-  columnName: string,
-  ascending: boolean,
-  withCtrl = false,
-  cancelable = true
-) {
-  const { data, column } = store;
-  const { sortState, pageOptions } = data;
+function updateRowInfoAfterSorting(store: Store) {
+  const { pageOptions } = store.data;
 
-  if (!isSortable(sortState, column, columnName)) {
-    return;
-  }
-
-  changeSortState(store, columnName, ascending, withCtrl, cancelable);
   sortData(store);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
@@ -156,9 +144,27 @@ export function sort(
   }
 }
 
+export function sort(
+  store: Store,
+  columnName: string,
+  ascending: boolean,
+  withCtrl = false,
+  cancelable = true
+) {
+  const { data, column } = store;
+  const { sortState } = data;
+
+  if (!isSortable(sortState, column, columnName)) {
+    return;
+  }
+
+  changeSortState(store, columnName, ascending, withCtrl, cancelable);
+  updateRowInfoAfterSorting(store);
+}
+
 export function unsort(store: Store, columnName = 'sortKey') {
   const { data, column } = store;
-  const { sortState, pageOptions } = data;
+  const { sortState } = data;
 
   if (!isSortable(sortState, column, columnName)) {
     return;
@@ -175,12 +181,7 @@ export function unsort(store: Store, columnName = 'sortKey') {
     }
   }
 
-  sortData(store);
-  updateRowNumber(store, 0);
-  setCheckedAllRows(store);
-  if (!isEmpty(pageOptions)) {
-    updateAllSummaryValues(store);
-  }
+  updateRowInfoAfterSorting(store);
 }
 
 export function initSortState(data: Data) {
