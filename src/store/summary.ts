@@ -5,8 +5,7 @@ import {
   SummaryColumnContents,
   SummaryValues,
   SummaryColumnContentMap,
-  Row,
-  Range
+  Row
 } from './types';
 import { observable } from '../helper/observable';
 import { OptSummaryData } from '../types';
@@ -26,11 +25,10 @@ interface SummaryOption {
 export function createSummaryValue(
   content: SummaryColumnContentMap | null,
   columnName: string,
-  rawData: Row[],
-  pageRowRange: Range
+  rawData: Row[]
 ) {
   if (content && content.useAutoSummary) {
-    const columnValues = rawData.slice(...pageRowRange).map(row => row[columnName]);
+    const columnValues = rawData.map(row => row[columnName]);
     return calculate(columnValues);
   }
   return { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
@@ -44,7 +42,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
   if (Object.keys(summary).length) {
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const columnContent = orgColumnContent || {};
-    const { rawData, pageRowRange } = data;
+    const { rawData } = data;
     const summaryColumns = Object.keys(columnContent).filter(
       columnName => !someProp('name', columnName, column.allColumns)
     );
@@ -55,7 +53,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
       const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 
       summaryColumnContents[columnName] = content;
-      summaryValues[columnName] = createSummaryValue(content, columnName, rawData, pageRowRange);
+      summaryValues[columnName] = createSummaryValue(content, columnName, rawData);
     });
 
     summaryColumnContents = observable(summaryColumnContents);

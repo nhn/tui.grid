@@ -484,30 +484,13 @@ describe('summary with pagination', () => {
     cy.createGrid({ ...defaultOptions, pageOptions: { useClient: true, perPage: 10 } });
   });
 
-  it('should change summary when moving page', () => {
-    assertSummaryContent('price', 'MAX: 30000', 'MIN: 7000');
+  it('should not change summary when moving page', () => {
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
 
     cy.get(`.tui-page-btn.tui-last-child`).click();
 
-    assertSummaryContent('price', 'MAX: 20000', 'MIN: 6000');
-  });
-
-  it('should change summary based on the sorting result.', () => {
-    assertSummaryContent('price', 'MAX: 30000', 'MIN: 7000');
-
-    cy.get(`.${cls('btn-sorting')}`).click();
-
-    assertSummaryContent('price', 'MAX: 12000', 'MIN: 6000');
-  });
-
-  it('should change summary based on the filtering and sorting result.', () => {
-    assertSummaryContent('downloadCount', 'TOTAL: 42440', 'AVG: 4244.00');
-
-    cy.get(`.${cls('btn-sorting')}`).click();
-    cy.get(`.${cls('btn-filter')}`).click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('lt', { force: true });
-    cy.get(`.${cls('filter-input')}`).type('3000', { force: true });
-
-    assertSummaryContent('downloadCount', 'TOTAL: 12240', 'AVG: 1224.00');
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
   });
 });

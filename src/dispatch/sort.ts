@@ -1,12 +1,11 @@
 import { Data, Store, SortingType, SortedColumn } from '../store/types';
-import { arrayEqual, findPropIndex, isEmpty } from '../helper/common';
+import { arrayEqual, findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState } from '../query/data';
-import { updateAllSummaryValues } from './summary';
 
 function sortData(store: Store) {
   // makes all data observable to sort the data properly;
@@ -134,14 +133,9 @@ export function changeSortState(
 }
 
 function updateRowInfoAfterSorting(store: Store) {
-  const { pageOptions } = store.data;
-
   sortData(store);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
-  if (!isEmpty(pageOptions)) {
-    updateAllSummaryValues(store);
-  }
 }
 
 export function sort(
