@@ -84,7 +84,7 @@ function equalColumnData(columnName: string, expectValues: CellValue) {
 function includeColumnData(columnName: string, expectValues: CellValue[]) {
   cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
-      expect(expectValues.includes(elem.textContent)).to.eql(expectValues);
+      expect(expectValues.includes(elem.textContent)).to.be.true;
     });
   });
 }
