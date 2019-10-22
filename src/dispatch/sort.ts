@@ -132,6 +132,12 @@ export function changeSortState(
   }
 }
 
+function updateRowInfoAfterSorting(store: Store) {
+  sortData(store);
+  updateRowNumber(store, 0);
+  setCheckedAllRows(store);
+}
+
 export function sort(
   store: Store,
   columnName: string,
@@ -147,9 +153,7 @@ export function sort(
   }
 
   changeSortState(store, columnName, ascending, withCtrl, cancelable);
-  sortData(store);
-  updateRowNumber(store, 0);
-  setCheckedAllRows(store);
+  updateRowInfoAfterSorting(store);
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
@@ -171,9 +175,7 @@ export function unsort(store: Store, columnName = 'sortKey') {
     }
   }
 
-  sortData(store);
-  updateRowNumber(store, 0);
-  setCheckedAllRows(store);
+  updateRowInfoAfterSorting(store);
 }
 
 export function initSortState(data: Data) {

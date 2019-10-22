@@ -52,7 +52,7 @@ export const data = [
     genreCode: '2',
     grade: '3',
     price: 25000,
-    downloadCount: 1000,
+    downloadCount: 200,
     listenCount: 5000
   },
   {
@@ -80,7 +80,7 @@ export const data = [
     genreCode: '3,4',
     grade: '4',
     price: 11000,
-    downloadCount: 1000,
+    downloadCount: 34000,
     listenCount: 5000
   },
   {
@@ -108,7 +108,7 @@ export const data = [
     genreCode: '4',
     grade: '2',
     price: 12000,
-    downloadCount: 1000,
+    downloadCount: 1200,
     listenCount: 5000
   },
   {
@@ -136,7 +136,7 @@ export const data = [
     genreCode: '2',
     grade: '5',
     price: 10000,
-    downloadCount: 1000,
+    downloadCount: 1040,
     listenCount: 5000
   },
   {
@@ -150,7 +150,7 @@ export const data = [
     genreCode: '5',
     grade: '5',
     price: 18000,
-    downloadCount: 1000,
+    downloadCount: 2000,
     listenCount: 5000
   },
   {
@@ -206,7 +206,7 @@ export const data = [
     genreCode: '1,2',
     grade: '5',
     price: 6000,
-    downloadCount: 1000,
+    downloadCount: 2000,
     listenCount: 5000
   },
   {
@@ -220,7 +220,7 @@ export const data = [
     genreCode: '1',
     grade: '3',
     price: 20000,
-    downloadCount: 1000,
+    downloadCount: 1400,
     listenCount: 5000
   },
   {
@@ -234,7 +234,7 @@ export const data = [
     genreCode: '2',
     grade: '1',
     price: 13000,
-    downloadCount: 1000,
+    downloadCount: 3000,
     listenCount: 5000
   },
   {
@@ -248,7 +248,7 @@ export const data = [
     genreCode: '1,3',
     grade: '4',
     price: 8000,
-    downloadCount: 1000,
+    downloadCount: 2000,
     listenCount: 5000
   },
   {
@@ -262,7 +262,7 @@ export const data = [
     genreCode: '2',
     grade: '3',
     price: 15000,
-    downloadCount: 1000,
+    downloadCount: 1200,
     listenCount: 5000
   },
   {
@@ -277,7 +277,7 @@ export const data = [
     grade: '5',
     price: 12000,
     downloadCount: 1000,
-    listenCount: 5000
+    listenCount: 5100
   }
 ];
 

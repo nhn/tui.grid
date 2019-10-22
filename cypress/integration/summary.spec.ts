@@ -1,14 +1,9 @@
 import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/basic';
-import Grid from '../../src/grid';
 import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
 import { deepMergedCopy } from '../../src/helper/common';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
+import { Dictionary } from '@/store/types';
 
 const CONTENT_WIDTH = 700;
 
@@ -38,7 +33,7 @@ function createSummaryOption(
   return summaryOptions as OptSummaryData;
 }
 
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
+function createDefaultOptions(customOptions?: Dictionary<any>): Omit<OptGrid, 'el'> {
   const data = sampleData.slice();
   const columns = [
     { name: 'name', minWidth: 150 },
@@ -47,7 +42,7 @@ function createDefaultOptions(): Omit<OptGrid, 'el'> {
   ];
   const summary = createSummaryOption();
 
-  return { data, columns, summary };
+  return { data, columns, summary, ...customOptions };
 }
 
 function assertSummaryContent(columnName: string, ...contents: string[]) {
@@ -119,7 +114,7 @@ describe('summary', () => {
       cy.createGrid(defaultOptions);
 
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
-      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
       assertSummaryPosition(0, cls('body-area'));
       assertSummaryPosition(1, cls('body-area'));
     });
@@ -130,7 +125,7 @@ describe('summary', () => {
       cy.createGrid({ ...defaultOptions, summary });
 
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
-      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
       assertSummaryPosition(0, cls('header-area'));
       assertSummaryPosition(1, cls('header-area'));
     });
@@ -189,7 +184,7 @@ describe('summary', () => {
 
       assertSummaryContent('name', 'this is default');
       assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
-      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
     });
 
     it('should display static columnContent properly when useAutoSummary: false', () => {
@@ -210,7 +205,7 @@ describe('summary', () => {
       cy.createGrid({ ...defaultOptions, summary });
 
       assertSummaryContent('price', 'no auto calculate: 0');
-      assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+      assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
     });
   });
 
@@ -265,7 +260,7 @@ describe('summary', () => {
       }
     });
     assertSummaryContent('name', 'auto calculate: 25');
-    assertSummaryContent('downloadCount', 'TOTAL: 20000', 'AVG: 1000.00');
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
   });
 
   it('return proper values when calls getSummaryValues() method', () => {
@@ -329,11 +324,11 @@ describe('summary', () => {
         .invoke('getSummaryValues', 'downloadCount')
         .should(summaryValues => {
           expect(summaryValues).to.be.eql({
-            avg: 952.8571428571429,
+            avg: 2764.285714285714,
             cnt: 21,
-            max: 1000,
+            max: 34000,
             min: 10,
-            sum: 20010
+            sum: 58050
           });
         });
     });
@@ -359,11 +354,11 @@ describe('summary', () => {
         .invoke('getSummaryValues', 'downloadCount')
         .should(summaryValues => {
           expect(summaryValues).to.be.eql({
-            avg: 1000,
+            avg: 3002.1052631578946,
             cnt: 19,
-            max: 1000,
-            min: 1000,
-            sum: 19000
+            max: 34000,
+            min: 200,
+            sum: 57040
           });
         });
     });
@@ -429,6 +424,7 @@ describe('summary', () => {
       { name: 'price', minWidth: 150 },
       { name: 'downloadCount', minWidth: 150 }
     ]);
+
     assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
   });
 
@@ -448,6 +444,53 @@ describe('summary', () => {
         return `auto calculate: ${valueMap.max}`;
       }
     });
+
     assertSummaryContent('price', 'auto calculate: 30000');
+  });
+});
+
+describe('summary with filter', () => {
+  beforeEach(() => {
+    const defaultOptions = createDefaultOptions({
+      columns: [
+        { name: 'name', minWidth: 150 },
+        { name: 'price', minWidth: 150, sortable: true },
+        { name: 'downloadCount', minWidth: 150, filter: 'number' }
+      ]
+    });
+    cy.createGrid({ ...defaultOptions });
+  });
+
+  it('should change summary based on the filtering result.', () => {
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
+
+    cy.get(`.${cls('btn-filter')}`).click();
+    cy.get(`.${cls('filter-input')}`).type('1000', { force: true });
+    cy.getCell(0, 'name').click();
+
+    assertSummaryContent('downloadCount', 'TOTAL: 10000', 'AVG: 1000.00');
+  });
+});
+
+describe('summary with pagination', () => {
+  beforeEach(() => {
+    const defaultOptions = createDefaultOptions({
+      columns: [
+        { name: 'name', minWidth: 150 },
+        { name: 'price', minWidth: 150, sortable: true },
+        { name: 'downloadCount', minWidth: 150, filter: 'number' }
+      ]
+    });
+    cy.createGrid({ ...defaultOptions, pageOptions: { useClient: true, perPage: 10 } });
+  });
+
+  it('should not change summary when moving page', () => {
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
+
+    cy.get(`.tui-page-btn.tui-last-child`).click();
+
+    assertSummaryContent('price', 'MAX: 30000', 'MIN: 6000');
+    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
   });
 });
