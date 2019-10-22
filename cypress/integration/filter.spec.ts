@@ -73,10 +73,10 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
     .as('fourthFilter');
 }
 
-function equalColumnData(columnName: string, expectValues: CellValue) {
+function equalColumnData(columnName: string, expectValues: CellValue[]) {
   cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
-      expect(elem.textContent).to.eql(expectValues);
+      expect(expectValues.includes(elem.textContent)).to.be.true;
     });
   });
 }
@@ -156,7 +156,7 @@ describe('common', () => {
     cy.get(`.${cls('filter-btn-apply')}`).click();
 
     compareColumnCellLength(1);
-    equalColumnData('numberA', '20');
+    equalColumnData('numberA', ['20']);
   });
 
   it('Duplicate filters are applied correctly.', () => {
@@ -170,8 +170,8 @@ describe('common', () => {
     cy.wait(150);
 
     compareColumnCellLength(2);
-    equalColumnData('alphabetA', 'A');
-    equalColumnData('alphabetB', 'A');
+    equalColumnData('alphabetA', ['A']);
+    equalColumnData('alphabetB', ['A']);
   });
 
   it('The operator and the second filter appear when the first condition value exists.', () => {
@@ -193,7 +193,7 @@ describe('common', () => {
       .eq(1)
       .type('CA');
 
-    equalColumnData('alphabetA', 'BCA');
+    equalColumnData('alphabetA', ['BCA']);
   });
 
   it('should not work filter for hidden column.', () => {
@@ -245,13 +245,22 @@ describe('filter API', () => {
 
     cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
 
-    equalColumnData('alphabetA', 'A');
+    equalColumnData('alphabetA', ['A']);
 
     cy.gridInstance().invoke('unfilter', 'alphabetA');
 
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
 
     compareColumnCellLength(9);
+  });
+
+  it('filter() with select type filter', () => {
+    cy.gridInstance().invoke('filter', 'alphabetB', [
+      { code: 'eq', value: 'A' },
+      { code: 'eq', value: 'E' }
+    ]);
+
+    equalColumnData('alphabetB', ['A', 'E']);
   });
 
   it('getFilterState() return current filter state', () => {
@@ -302,7 +311,7 @@ describe('number', () => {
   it('Equal', () => {
     cy.gridInstance().invoke('filter', 'numberA', [{ code: 'eq', value: 1 }]);
 
-    equalColumnData('numberA', '1');
+    equalColumnData('numberA', ['1']);
     compareColumnCellLength(4);
   });
 
@@ -367,7 +376,7 @@ describe('text', () => {
   it('Equal', () => {
     cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'eq', value: 'ACC' }]);
 
-    equalColumnData('alphabetC', 'ACC');
+    equalColumnData('alphabetC', ['ACC']);
     compareColumnCellLength(2);
   });
 
@@ -466,7 +475,7 @@ describe('date', () => {
     // 2019.09.18 timestamp
     cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
 
-    equalColumnData('date', '2019.09.18');
+    equalColumnData('date', ['2019.09.18']);
     compareColumnCellLength(3);
   });
 
