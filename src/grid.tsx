@@ -1454,9 +1454,9 @@ export default class Grid {
   public filter(columnName: string, state: FilterState[]) {
     const { filter } = this.store.column.allColumnMap[columnName];
     if (filter) {
-      const { type } = filter;
+      const { type, operator } = filter;
       const conditionFn = state.map(({ code, value }) => getFilterConditionFn(code!, value, type));
-      this.dispatch('filter', columnName, composeConditionFn(conditionFn), state);
+      this.dispatch('filter', columnName, composeConditionFn(conditionFn, operator), state);
     }
   }
 

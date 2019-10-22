@@ -74,15 +74,23 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
 }
 
 function equalColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).to.eql(expectValues);
     });
   });
 }
 
+function includeColumnData(columnName: string, expectValues: CellValue[]) {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
+    $el.each((index, elem) => {
+      expect(expectValues.includes(elem.textContent)).to.be.true;
+    });
+  });
+}
+
 function notEqualColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`[data-column-name=${columnName}]td.${cls('cell')}`).should($el => {
+  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
     $el.each((index, elem) => {
       expect(elem.textContent).not.to.eql(expectValues);
     });
@@ -252,6 +260,15 @@ describe('filter API', () => {
     cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
 
     compareColumnCellLength(9);
+  });
+
+  it('filter() with select type filter', () => {
+    cy.gridInstance().invoke('filter', 'alphabetB', [
+      { code: 'eq', value: 'A' },
+      { code: 'eq', value: 'E' }
+    ]);
+
+    includeColumnData('alphabetB', ['A', 'E']);
   });
 
   it('getFilterState() return current filter state', () => {
