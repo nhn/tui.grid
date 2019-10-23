@@ -15,7 +15,7 @@
 </template>
 <script>
 import 'tui-grid/dist/tui-grid.css';
-import {Grid} from '../src/index.js';
+import { Grid } from '../src/index.js';
 
 export default {
   components: {

@@ -67,7 +67,7 @@ export default {
     this.setLanguage();
   },
   beforeDestroy() {
-    Object.keys(this.$listeners).forEach((eventName) => {
+    Object.keys(this.$listeners).forEach(eventName => {
       this.gridInstance.off(eventName);
     });
     this.gridInstance.destroy();
