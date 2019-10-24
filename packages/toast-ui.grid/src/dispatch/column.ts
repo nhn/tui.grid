@@ -61,11 +61,14 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      column.headerAlignInfo
+      column.headerColumnInfo
     )
   );
 
   const dataCreationKey = generateDataCreationKey();
+
+  initFocus(store);
+  initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
   const { allColumnMap, treeColumnName, treeIcon } = column;
@@ -85,8 +88,6 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
 
-  initFocus(store);
-  initSelection(store);
   initFilter(store);
   unsort(store);
   addColumnSummaryValues(store);
