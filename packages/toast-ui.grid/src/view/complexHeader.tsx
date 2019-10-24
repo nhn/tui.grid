@@ -1,17 +1,15 @@
 import { h, Component } from 'preact';
 import { ComplexColumnInfo, ColumnInfo, Side, Range } from '../store/types';
-import { cls } from '../helper/dom';
-import { isCheckboxColumn, isRowHeader } from '../helper/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
-import { HeaderCheckbox } from './headerCheckbox';
-import { SortingButton } from './sortingButton';
-import { SortingOrder } from './sortingOrder';
 import { getChildColumnRange } from '../query/selection';
+import { HeaderColumn } from './headerColumn';
+import Grid from '../grid';
 
 interface OwnProps {
   side: Side;
+  grid: Grid;
 }
 
 interface StoreProps {
@@ -84,33 +82,18 @@ class ComplexHeaderComp extends Component<Props> {
     colspan: number,
     rowspan: number
   ) {
-    const {
-      name,
-      header,
-      sortable,
-      headerAlign: textAlign,
-      headerVAlign: verticalAlign,
-      sortingType
-    } = column;
+    const { name } = column;
 
     return (
-      <th
+      <HeaderColumn
         key={name}
-        data-column-name={name}
-        class={cls(
-          'cell',
-          'cell-header',
-          [!isRowHeader(name) && this.isSelected(name), 'cell-selected'],
-          [isRowHeader(name), 'cell-row-header']
-        )}
-        {...!!colspan && { colspan }}
-        {...!!rowspan && { rowspan }}
-        style={{ height, textAlign, verticalAlign }}
-      >
-        {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-        {!!sortable && <SortingButton columnName={name} sortingType={sortingType} />}
-        {!!sortable && <SortingOrder columnName={name} />}
-      </th>
+        height={height}
+        colspan={colspan}
+        rowspan={rowspan}
+        columnInfo={column}
+        selected={this.isSelected(name)}
+        grid={this.props.grid}
+      />
     );
   }
 

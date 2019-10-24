@@ -5,15 +5,11 @@ import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParent } fr
 import { connect } from './hoc';
 import { ColumnResizer } from './columnResizer';
 import { DispatchProps } from '../dispatch/create';
-import { getDataProvider } from '../instance';
-import { DataProvider } from '../dataSource/types';
-import { isRowHeader, isCheckboxColumn } from '../helper/column';
+import { getInstance } from '../instance';
 import { isParentColumnHeader } from '../query/column';
 import { ComplexHeader } from './complexHeader';
-import { HeaderCheckbox } from './headerCheckbox';
-import { SortingButton } from './sortingButton';
-import { SortingOrder } from './sortingOrder';
-import { FilterButton } from './filterButton';
+import { HeaderColumn } from './headerColumn';
+import Grid from '../grid';
 
 interface OwnProps {
   side: Side;
@@ -24,7 +20,7 @@ interface StoreProps {
   cellBorderWidth: number;
   columns: ColumnInfo[];
   scrollLeft: number;
-  dataProvider: DataProvider;
+  grid: Grid;
   columnSelectionRange: Range | null;
   complexHeaderColumns: ComplexColumnInfo[];
 }
@@ -47,8 +43,6 @@ class HeaderAreaComp extends Component<Props> {
 
   private handleMouseDown = (ev: MouseEvent) => {
     const { dispatch, complexHeaderColumns } = this.props;
-    const name = (ev.target as HTMLElement).getAttribute('data-column-name')!;
-    const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
     const target = ev.target as HTMLElement;
 
     if (
@@ -58,6 +52,17 @@ class HeaderAreaComp extends Component<Props> {
     ) {
       return;
     }
+
+    let name = target.getAttribute('data-column-name')!;
+
+    if (!name) {
+      const parent = findParent(target, 'cell-header');
+      if (parent) {
+        name = parent.getAttribute('data-column-name')!;
+      }
+    }
+
+    const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
 
     this.startSelectedName = name;
     dispatch('mouseDownHeader', name, parentHeader);
@@ -94,7 +99,7 @@ class HeaderAreaComp extends Component<Props> {
   }
 
   public render() {
-    const { columns, headerHeight, cellBorderWidth, side, complexHeaderColumns } = this.props;
+    const { columns, headerHeight, cellBorderWidth, side, complexHeaderColumns, grid } = this.props;
     const headerHeightStyle = { height: headerHeight + cellBorderWidth };
 
     return (
@@ -108,41 +113,18 @@ class HeaderAreaComp extends Component<Props> {
         <table class={cls('table')} onMouseDown={this.handleMouseDown}>
           <ColGroup side={side} useViewport={false} />
           {complexHeaderColumns.length ? (
-            <ComplexHeader side={side} />
+            <ComplexHeader side={side} grid={grid} />
           ) : (
             <tbody>
               <tr style={headerHeightStyle} onDblClick={this.handleDblClick}>
-                {columns.map(
-                  (
-                    {
-                      name,
-                      header,
-                      sortable,
-                      headerAlign: textAlign,
-                      headerVAlign: verticalAlign,
-                      sortingType,
-                      filter
-                    },
-                    index
-                  ) => (
-                    <th
-                      key={name}
-                      data-column-name={name}
-                      style={{ textAlign, verticalAlign }}
-                      class={cls(
-                        'cell',
-                        'cell-header',
-                        [!isRowHeader(name) && this.isSelected(index), 'cell-selected'],
-                        [isRowHeader(name), 'cell-row-header']
-                      )}
-                    >
-                      {isCheckboxColumn(name) ? <HeaderCheckbox /> : header}
-                      {!!sortable && <SortingButton columnName={name} sortingType={sortingType} />}
-                      {!!sortable && <SortingOrder columnName={name} />}
-                      {!!filter && <FilterButton columnName={name} />}
-                    </th>
-                  )
-                )}
+                {columns.map((columnInfo, index) => (
+                  <HeaderColumn
+                    key={columnInfo.name}
+                    columnInfo={columnInfo}
+                    selected={this.isSelected(index)}
+                    grid={grid}
+                  />
+                ))}
               </tr>
             </tbody>
           )}
@@ -167,7 +149,7 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     cellBorderWidth,
     columns: visibleColumnsBySideWithRowHeader[side],
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
-    dataProvider: getDataProvider(id),
+    grid: getInstance(id),
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
     complexHeaderColumns
   };
