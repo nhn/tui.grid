@@ -131,7 +131,7 @@ export default {
 ></grid>
 ```
 
-* `theme` and `language` props have been deprecated since `v2.1.0`. Use [#static methods](#static-methods).
+* `theme` and `language` props have been deprecated since `v2.1.0`. Use [static methods](#static-methods).
 
 ### Event
 
