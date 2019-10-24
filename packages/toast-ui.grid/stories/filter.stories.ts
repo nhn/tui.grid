@@ -1,40 +1,155 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { data } from '../samples/basic';
 import '../src/css/grid.css';
+import 'tui-date-picker/dist/tui-date-picker.css';
+import { OptColumn, OptRow } from '../src/types';
 
-const stories = storiesOf('Filter', module);
-stories.addDecorator(withKnobs);
-
-const columns = [
-  { name: 'name', filter: 'text', editor: { type: 'text' } },
-  { name: 'downloadCount', filter: { type: 'number', operator: 'AND' } },
-  { name: 'type', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
-  { name: 'artist', filter: 'select' },
-  {
-    name: 'release',
-    filter: { type: 'date', options: { format: 'yyyy.MM.dd', date: new Date(2019, 9, 18) } }
-  },
-  { name: 'genre' }
-];
-
-function createGrid() {
+function createGrid(columns: OptColumn[], data: OptRow[] = []) {
   const options = { data, columns };
   const el = document.createElement('div');
-  el.style.width = '800px';
+  el.style.width = '500px';
 
-  const grid = new Grid({ el, ...options, bodyHeight: 500 });
+  const grid = new Grid({ el, ...options, bodyHeight: 100 });
 
   return { el, grid };
 }
 
-stories.add(
-  'filter',
-  () => {
-    const { el } = createGrid();
+function clickFilterBtnAsync(el: HTMLElement, callback?: () => void) {
+  setTimeout(() => {
+    const filterBtn: HTMLElement = el.querySelector('.tui-grid-btn-filter');
+    filterBtn.click();
+    if (callback) {
+      callback();
+    }
+  });
+}
 
-    return el;
-  },
-  { html: { preventForcedRender: true } }
-);
+function clickLayerInputAsync(el: HTMLElement) {
+  setTimeout(() => {
+    const input: HTMLElement = el.querySelector('.tui-grid-filter-input');
+    input.click();
+  });
+}
+
+export default {
+  title: 'Filter',
+  parameters: { options: { panelPosition: 'right' } }
+};
+
+export const buttons = () => {
+  const columns: OptColumn[] = [
+    { name: 'name', filter: 'text' },
+    { name: 'age', filter: 'number' },
+    { name: 'score' }
+  ];
+
+  const { grid, el } = createGrid(columns, []);
+  grid.filter('name', [
+    {
+      code: 'eq',
+      value: 'Kim'
+    }
+  ]);
+
+  return el;
+};
+
+const iconNote = `
+## Filter Buttons
+- name (Blue Icon) : Filter is activated
+- age (Black Icon) : Filter is not activated
+- score (No Icon) : No Filter
+
+### Design Guide
+- https://zpl.io/blLWxde
+`;
+
+buttons.story = { parameters: { notes: iconNote } };
+
+export const layerBasic = () => {
+  const columns: OptColumn[] = [{ name: 'age', filter: 'number' }];
+
+  const { el } = createGrid(columns);
+  clickFilterBtnAsync(el);
+
+  return el;
+};
+
+const layerBasicNote = `
+## Filter Layer
+- Basic UI for \`number\` and \`string\` type
+- Using native select-box (will be replaced with toast-ui component)
+`;
+
+layerBasic.story = { parameters: { notes: layerBasicNote } };
+
+export const layerWithButtons = () => {
+  const columns: OptColumn[] = [
+    { name: 'age', filter: { type: 'number', showApplyBtn: true, showClearBtn: true } }
+  ];
+
+  const { el } = createGrid(columns);
+  clickFilterBtnAsync(el);
+
+  return el;
+};
+
+export const layerWithOperator = () => {
+  const columns: OptColumn[] = [{ name: 'age', filter: { type: 'number', operator: 'AND' } }];
+
+  const { el, grid } = createGrid(columns);
+  grid.filter('age', [
+    {
+      code: 'eq',
+      value: '30'
+    }
+  ]);
+  clickFilterBtnAsync(el);
+
+  return el;
+};
+
+export const layerSelect = () => {
+  const columns: OptColumn[] = [{ name: 'type', filter: 'select' }];
+  const data = [
+    { type: '1000' },
+    { type: '1001' },
+    { type: '1002' },
+    { type: '1003' },
+    { type: '1004' },
+    { type: '1005' },
+    { type: '1006' },
+    { type: '1007' },
+    { type: '1008' },
+    { type: '1009' }
+  ];
+
+  const { el, grid } = createGrid(columns, data);
+  grid.filter('type', [
+    {
+      code: 'eq',
+      value: '1001'
+    },
+    {
+      code: 'eq',
+      value: '1003'
+    },
+    {
+      code: 'eq',
+      value: '1004'
+    }
+  ]);
+
+  clickFilterBtnAsync(el);
+
+  return el;
+};
+
+export const layerDatePicker = () => {
+  const columns: OptColumn[] = [{ name: 'date', filter: 'date' }];
+  const { el } = createGrid(columns);
+  clickFilterBtnAsync(el, () => {
+    clickLayerInputAsync(el);
+  });
+
+  return el;
+};
