@@ -23,9 +23,9 @@
 
 The functionality of TOAST UI Grid is available when using the Plain javaScript, React, Vue Component.
 
-- [toast-ui.grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid) - Plain JavaScript component implemented by NHN.
-- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **Vue** wrapper component implemented by NHN.
-- [toast-ui.react-grid](https://github.com/nhn/tui.grid/packages/toast-ui.grid-vue) - **React** wrapper component implemented by NHN.
+- [toast-ui.grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid) - Plain JavaScript component implemented by NHN.
+- [toast-ui.vue-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.vue-grid) - **Vue** wrapper component implemented by NHN.
+- [toast-ui.react-grid](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.react-grid) - **React** wrapper component implemented by NHN.
 
 ## 🤖 The Toast UI Grid Is an Ultimate Transformer
 

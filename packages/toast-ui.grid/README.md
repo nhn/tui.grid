@@ -33,7 +33,7 @@ const instance = new Grid(options);
   - [한국어](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/getting-started.md)
 - Tutorials
   - [English](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs)
-  - [한국어](https://github.com/nhn/tui.grid/tree/master/docs/packages/toast-ui.grid/ko)
+  - [한국어](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs/ko)
 - v4.0 Migration Guide
   - [English](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs/v4.0-migration-guide.md)
   - [한국어](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs/v4.0-migration-guide-kor.md)
