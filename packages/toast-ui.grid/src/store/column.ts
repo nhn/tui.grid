@@ -4,11 +4,10 @@ import {
   Dictionary,
   Relations,
   ClipboardCopyOptions,
-  ComplexColumnInfo,
   CellEditorOptions,
   CellRendererOptions,
-  HeaderAlignInfo,
-  ColumnFilterOption
+  ColumnFilterOption,
+  HeaderColumnInfo
 } from './types';
 import {
   OptColumn,
@@ -19,9 +18,10 @@ import {
   OptCellRenderer,
   AlignType,
   VAlignType,
-  ColumnsAlignInfo,
   FilterOpt,
-  FilterOptionType
+  FilterOptionType,
+  OptHeaderColumnInfo,
+  OptComplexColumnInfo
 } from '../types';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
@@ -107,15 +107,17 @@ function createRelationMap(relations: Relations[]) {
   return relationMap;
 }
 
-function createHeaderAlignInfo(name: string, alignInfo: HeaderAlignInfo) {
-  const { columnsAlign, align: defaultAlign, valign: defaultVAlign } = alignInfo;
-  const columnOption = findProp('name', name, columnsAlign);
+function createHeaderColumnInfo(name: string, headerColumnInfo: HeaderColumnInfo) {
+  const { headerColumns, align: defaultAlign, valign: defaultVAlign } = headerColumnInfo;
+  const columnOption = findProp('name', name, headerColumns);
   const headerAlign = columnOption && columnOption.align ? columnOption.align : defaultAlign;
   const headerVAlign = columnOption && columnOption.valign ? columnOption.valign : defaultVAlign;
+  const headerRenderer = columnOption && columnOption.renderer ? columnOption.renderer : null;
 
   return {
     headerAlign,
-    headerVAlign
+    headerVAlign,
+    headerRenderer
   };
 }
 
@@ -164,7 +166,7 @@ export function createColumn(
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
-  alignInfo: HeaderAlignInfo
+  headerColumnInfo: HeaderColumnInfo
 ): ColumnInfo {
   const {
     name,
@@ -196,7 +198,10 @@ export function createColumn(
   const editorOptions = createEditorOptions(editor);
   const rendererOptions = createRendererOptions(renderer);
   const filterOptions = filter ? createColumnFilterOption(filter) : null;
-  const { headerAlign, headerVAlign } = createHeaderAlignInfo(name, alignInfo);
+  const { headerAlign, headerVAlign, headerRenderer } = createHeaderColumnInfo(
+    name,
+    headerColumnInfo
+  );
 
   return observable({
     name,
@@ -227,11 +232,12 @@ export function createColumn(
     ...createTreeInfo(treeColumnOptions, name),
     headerAlign,
     headerVAlign,
-    filter: filterOptions
+    filter: filterOptions,
+    headerRenderer
   });
 }
 
-function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): ColumnInfo {
+function createRowHeader(data: OptRowHeader, headerColumnInfo: HeaderColumnInfo): ColumnInfo {
   const rowHeader: OptColumn = isString(data)
     ? { name: rowHeadersMap[data] }
     : { name: rowHeadersMap[data.type], ...omit(data, 'type') };
@@ -244,7 +250,11 @@ function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): Column
   const rendererOptions = renderer || {
     type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
   };
-  const { headerAlign, headerVAlign } = createHeaderAlignInfo(name, alignInfo);
+
+  const { headerAlign, headerVAlign, headerRenderer } = createHeaderColumnInfo(
+    name,
+    headerColumnInfo
+  );
 
   return observable({
     name,
@@ -259,13 +269,18 @@ function createRowHeader(data: OptRowHeader, alignInfo: HeaderAlignInfo): Column
     escapeHTML: false,
     minWidth: baseMinWith,
     headerAlign,
-    headerVAlign
+    headerVAlign,
+    headerRenderer
   });
 }
 
-function createComplexHeaderColumns(column: ComplexColumnInfo, alignInfo: HeaderAlignInfo) {
-  const { header, name, childNames, sortable, sortingType } = column;
-  const { headerAlign, headerVAlign } = createHeaderAlignInfo(name, alignInfo);
+function createComplexHeaderColumns(
+  column: OptComplexColumnInfo,
+  headerColumnInfo: HeaderColumnInfo
+) {
+  const { header, name, childNames, sortable, sortingType, renderer } = column;
+  const headerAlign = column.headerAlign || headerColumnInfo.align;
+  const headerVAlign = column.headerVAlign || headerColumnInfo.valign;
 
   return observable({
     header,
@@ -274,7 +289,8 @@ function createComplexHeaderColumns(column: ComplexColumnInfo, alignInfo: Header
     sortable,
     sortingType,
     headerAlign,
-    headerVAlign
+    headerVAlign,
+    headerRenderer: renderer || null
   });
 }
 
@@ -285,10 +301,10 @@ interface ColumnOption {
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;
   treeColumnOptions: OptTree;
-  complexColumns: ComplexColumnInfo[];
+  complexColumns: OptComplexColumnInfo[];
   align: AlignType;
   valign: VAlignType;
-  columnsAlign: ColumnsAlignInfo[];
+  headerColumns: OptHeaderColumnInfo[];
 }
 
 export function create({
@@ -301,16 +317,15 @@ export function create({
   complexColumns,
   align,
   valign,
-  columnsAlign
+  headerColumns
 }: ColumnOption): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
 
-  const headerAlignInfo = { columnsAlign, align, valign };
-
-  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, headerAlignInfo));
+  const headerColumnInfo = { headerColumns, align, valign };
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, headerColumnInfo));
 
   const columnInfos = columns.map(column =>
     createColumn(
@@ -319,7 +334,7 @@ export function create({
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      headerAlignInfo
+      headerColumnInfo
     )
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
@@ -331,14 +346,14 @@ export function create({
   } = treeColumnOptions;
 
   const complexHeaderColumns = complexColumns.map(column =>
-    createComplexHeaderColumns(column, headerAlignInfo)
+    createComplexHeaderColumns(column, headerColumnInfo)
   );
 
   return observable({
     keyColumnName,
     allColumns,
     complexHeaderColumns,
-    headerAlignInfo,
+    headerColumnInfo,
     frozenCount: columnOptions.frozenCount || 0,
 
     dataForColumnCreation: {

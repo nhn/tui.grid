@@ -48,7 +48,7 @@ export function createStore(id: number, options: OptGrid): Store {
     complexColumns = [],
     align = 'center',
     valign = 'middle',
-    columns: columnsAlign = []
+    columns: headerColumns = []
   } = header;
   const column = createColumn({
     columns: options.columns,
@@ -60,7 +60,7 @@ export function createStore(id: number, options: OptGrid): Store {
     complexColumns,
     align,
     valign,
-    columnsAlign
+    headerColumns
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],
