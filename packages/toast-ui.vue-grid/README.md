@@ -10,17 +10,11 @@
 - [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 - [Documents](#-documents)
 - [Install](#-install)
-  - [Using npm](#using-npm)
 - [Usage](#-usage)
-  - [Load](#load)
-  - [Implement](#implement)
-  - [Props](#props)
-  - [Event](#event)
-  - [Method](#method)
 
 ## Collect statistics on the use of open source
 
-Vue Wrapper of TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when declare Vue Wrapper compoent.
+Vue Wrapper of TOAST UI Grid applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Grid is used throughout the world. It also serves as important index to determine the future course of projects. `location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when declare Vue Wrapper compoent.
 
 ```js
 var options = {
@@ -47,7 +41,7 @@ npm install --save @toast-ui/vue-grid
 
 You can use Toast UI Grid for Vue as moudule format or namespace. Also you can use Single File Component (SFC of Vue). When using module format and SFC, you should load `tui-grid.css` in the script.
 
-- Using Ecmascript module
+- Using EcmaScript module
 
   ```js
   import 'tui-grid/dist/tui-grid.css';
@@ -126,64 +120,49 @@ export default {
 
 ### Props
 
-You can use `rowData`, `columnData`, `options`, `theme` and `language` props. Example of each props is in the [Getting Started](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.vue-grid/docs/getting-started.md).
+[All the options of the TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid) are supported in the form of props. Note that `data` and `columns` props are required and other props are optional.
 
-- `rowData`, `columnData`
+```html
+<grid
+  :data="gridProps.data"
+  :columns="gridProps.columns"
+  :rowHeaders="gridProps.rowHeaders"
+  :columnOptions="gridProps.columnOptions"
+></grid>
+```
 
-  | Type            | Required |
-  | --------------- | -------- |
-  | Array or Object | O        |
-
-  These props are row and colume data of the grid. If you change `rowData` or `columnData`, the grid is rendered to change data.
-
-- `options`
-
-  | Type   | Required |
-  | ------ | -------- |
-  | Object | X        |
-
-  You can configurate your grid using `options` prop. For more information which properties can be set in `options`, see [options of tui.grid](https://nhn.github.io/tui.grid/latest/Grid).
-
-- `theme`
-
-  | Type             | Required |
-  | ---------------- | -------- |
-  | String or Object | X        |
-
-  This prop can change theme of the grid. We support `default`, `striped` and `clean` themes. So in case you just set `String` of these themes.
-
-  If you want to use other theme, you set `Object` that is required `name` and `value`. For more information which properties of `value` are available, see `extOptions` of [applyTheme of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#applyTheme).
-
-- `language`
-
-  | Type             | Required |
-  | ---------------- | -------- |
-  | String or Object | X        |
-
-  This prop can change language of the grid. We support `en` and `ko`. So in case you just set `String` of these languages.
-
-  If you want to use other languages, you set `Object` that is required `name` and `value`. For more infomation which properties of `value` are available, see `data` of [setLanguage of tui.grid](https://nhn.github.io/tui.grid/latest/Grid#setLanguage).
+* `theme` and `language` props have been deprecated since `v2.1.0`. Use [#static methods](#static-methods).
 
 ### Event
 
-- click : Occurs when a mouse button is clicked on the Grid.
-- check : Occurs when a checkbox in row header is checked.
-- uncheck : Occurs when a checkbox in row header is unchecked.
-- dblclick : Occurs when a mouse button is double clicked on the Grid.
-- mouseover : Occurs when a mouse pointer is moved onto the Grid.
-- mouseout : Occurs when a mouse pointer is moved off from the Grid.
-- mousedown : Occurs when a mouse button is downed on the Grid.
-- focusChange : Occurs when focused cell is about to change.
-- expand : Occurs when the row having child rows is expanded.
-- collapse : Occurs when the row having child rows is collapsed.
-- beforeRequest : Occurs before the http request is sent.
-- response : Occurs when the response is received from the server.
-- successResponse : Occurs after the response event, if the result is true.
-- failResponse : Occurs after the response event, if the result is false.
-- errorResponse : Occurs after the response event, if the response is Error.
-- selection : Occurs when selecting cells.
+[All the events of TOAST UI Grid](http://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
 
-For more information such as the parameters of each event, see [event of tui.grid](https://nhn.github.io/tui.grid/latest/Grid). Example of event is in the [Getting Started](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.vue-grid/docs/getting-started.md).
+```html
+<template>
+  <div class="container">
+    <grid
+      :data="gridProps.data"
+      :columns="gridProps.columns"
+      @click="onClick"
+    ></grid>
+  </div>
+</template>
+<script>
+import 'tui-grid/dist/tui-grid.css';
+import { Grid } from '../src/index.js';
+
+export default {
+  components: {
+    grid: Grid
+  },
+  methods: {
+    onClick(ev) {
+      console.log('click event: ', ev);
+    }
+  }
+};
+</script>
+```
 
 ### Method
 

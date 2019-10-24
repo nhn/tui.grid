@@ -13,6 +13,7 @@
 - [Features](#-features)
 - [Examples](#-examples)
 - [Browser Support](#-browser-support)
+- [Pull Request Steps](#-pull-request-steps)
 - [Contributing](#-contributing)
 - [TOAST UI Family](#-toast-ui-family)
 - [Used By](#-used-by)
@@ -177,10 +178,10 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 💬 Contributing
 
-- [Code of Conduct](https://github.com/nhn/tui.grid/blob/production/CODE_OF_CONDUCT.md)
-- [Contributing guideline](https://github.com/nhn/tui.grid/blob/production/CONTRIBUTING.md)
-- [Issue guideline](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/ISSUE_TEMPLATE.md)
-- [Commit convention](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/COMMIT_MESSAGE_CONVENTION.md)
+- [Code of Conduct](https://github.com/nhn/tui.grid/blob/master/CODE_OF_CONDUCT.md)
+- [Contributing guideline](https://github.com/nhn/tui.grid/blob/master/CONTRIBUTING.md)
+- [Issue guideline](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ISSUE_TEMPLATE.md)
+- [Commit convention](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
 
@@ -204,4 +205,4 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhn/tui.grid/blob/production/LICENSE) © [NHN](https://github.com/nhn).
+This software is licensed under the [MIT](https://github.com/nhn/tui.grid/blob/master/LICENSE) © [NHN](https://github.com/nhn).

@@ -29,14 +29,14 @@ const instance = new Grid(options);
 ## 📙 Documents
 
 - Getting Started
-  - [English](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/en/getting-started.md)
-  - [한국어](https://github.com/nhn/tui.grid/blob/production/packages/toast-ui.grid/docs/ko/getting-started.md)
+  - [English](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/getting-started.md)
+  - [한국어](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/getting-started.md)
 - Tutorials
-  - [English](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs)
-  - [한국어](https://github.com/nhn/tui.grid/tree/production/docs/packages/toast-ui.grid/ko)
+  - [English](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs)
+  - [한국어](https://github.com/nhn/tui.grid/tree/master/docs/packages/toast-ui.grid/ko)
 - v4.0 Migration Guide
-  - [English](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs/v4.0-migration-guide.md)
-  - [한국어](https://github.com/nhn/tui.grid/tree/production/packages/toast-ui.grid/docs/v4.0-migration-guide-kor.md)
+  - [English](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs/v4.0-migration-guide.md)
+  - [한국어](https://github.com/nhn/tui.grid/tree/master/packages/toast-ui.grid/docs/v4.0-migration-guide-kor.md)
 - [APIs](https://nhn.github.io/tui.grid/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.grid/releases).
@@ -88,7 +88,7 @@ tui-grid/
 
 ### Download Source Files
 
-- [Download bundle files](https://github.com/nhn/tui.grid/tree/production/dist)
+- [Download bundle files](https://github.com/nhn/tui.grid/tree/master/dist)
 - [Download all sources for each version](https://github.com/nhn/tui.grid/releases)
 
 ## 🔨 Usage

@@ -8,16 +8,7 @@
 
 - [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 - [Install](#-install)
-  - [Using npm](#using-npm)
 - [Usage](#-usage)
-  - [Import](#import)
-  - [Props](#props)
-  - [Reactive props](#reactive-props)
-  - [Instance Methods](#instance-methods)
-  - [Getting the root element](#getting-the-root-element)
-  - [Static Methods](#static-methods)
-  - [Events](#events)
-  - [Addons](#addons)
 
 ## Collect statistics on the use of open source
 
