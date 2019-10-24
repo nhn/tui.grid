@@ -28,6 +28,8 @@ declare namespace Cypress {
     gridInstance(): Chainable<any>;
 
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
+
+    getHeaderCell(column: string): Chainable<any>;
   }
 }
 
