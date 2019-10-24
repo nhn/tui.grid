@@ -56,7 +56,7 @@ export class HeaderColumn extends Component<Props> {
     }
 
     const HeaderRendererClass = headerRenderer;
-    const renderer: HeaderRenderer = new HeaderRendererClass({ grid, columnInfo });
+    const renderer = new HeaderRendererClass({ grid, columnInfo });
     const rendererEl = renderer.getElement();
 
     this.el.appendChild(rendererEl);
