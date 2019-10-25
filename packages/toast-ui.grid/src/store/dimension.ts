@@ -79,7 +79,8 @@ export function create({
 
     get contentsWidth(this: Dimension) {
       const columnLen = column.visibleColumnsWithRowHeader.length;
-      const totalBorderWidth = columnLen * this.cellBorderWidth;
+      const borderCount = columnLen + 1 + (column.visibleFrozenCount ? 1 : 0);
+      const totalBorderWidth = borderCount * this.cellBorderWidth;
 
       return this.width - this.scrollYWidth - this.frozenBorderWidth - totalBorderWidth;
     }

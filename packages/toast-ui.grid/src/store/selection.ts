@@ -44,11 +44,16 @@ function getOwnSideColumnRange(
   return null;
 }
 
-function getVerticalStyles(rowRange: Range, rowOffsets: number[], rowHeights: number[]) {
+function getVerticalStyles(
+  rowRange: Range,
+  rowOffsets: number[],
+  rowHeights: number[],
+  cellBorderWidth: number
+) {
   const top = rowOffsets[rowRange[0]];
   const bottom = rowOffsets[rowRange[1]] + rowHeights[rowRange[1]];
 
-  return { top, height: bottom - top };
+  return { top, height: bottom - top - cellBorderWidth };
 }
 
 function getHorizontalStyles(
@@ -138,14 +143,14 @@ export function create({
 
       if (leftRange.column) {
         leftSideStyles = {
-          ...getVerticalStyles(leftRange.row, rowOffsets, rowHeights),
+          ...getVerticalStyles(leftRange.row, rowOffsets, rowHeights, cellBorderWidth),
           ...getHorizontalStyles(leftRange.column, columnWidths, 'L', cellBorderWidth)
         };
       }
 
       if (rightRange.column) {
         rightSideStyles = {
-          ...getVerticalStyles(rightRange.row, rowOffsets, rowHeights),
+          ...getVerticalStyles(rightRange.row, rowOffsets, rowHeights, cellBorderWidth),
           ...getHorizontalStyles(rightRange.column, columnWidths, 'R', cellBorderWidth)
         };
       }
