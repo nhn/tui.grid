@@ -183,7 +183,7 @@
 .tui-grid-layer-focus-border {
   position: absolute;
   overflow: hidden;
-  z-index: 19;
+  z-index: 20;
 }
 .tui-grid-layer-selection {
   position: absolute;
