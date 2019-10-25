@@ -1,4 +1,13 @@
-import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent, TabMode } from './types';
+import {
+  Focus,
+  ColumnCoords,
+  RowCoords,
+  Column,
+  Data,
+  EditingEvent,
+  TabMode,
+  Dimension
+} from './types';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex, isEmpty } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
@@ -7,6 +16,7 @@ import { findIndexByRowKey } from '../query/data';
 interface FocusOption {
   data: Data;
   column: Column;
+  dimension: Dimension;
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   editingEvent: EditingEvent;
@@ -17,6 +27,7 @@ interface FocusOption {
 export function create({
   column,
   data,
+  dimension,
   rowCoords,
   columnCoords,
   editingEvent,
@@ -95,7 +106,7 @@ export function create({
       }
 
       const left = columnCoords.offsets[side][columnIndex];
-      const right = left + columnCoords.widths[side][columnIndex];
+      const right = left + columnCoords.widths[side][columnIndex] + dimension.cellBorderWidth;
       const top = rowCoords.offsets[rowIndex];
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);
