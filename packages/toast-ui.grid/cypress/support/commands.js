@@ -17,6 +17,14 @@ Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
   return cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`);
 });
 
+Cypress.Commands.add('getByCls', (...names) => {
+  return cy.get(names.map(name => `.${cls(name)}`).join(' '));
+});
+
+Cypress.Commands.add('getByTestId', testId => {
+  return cy.get(`[data-testid="${testId}"]`);
+});
+
 Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
   return cy.window().then(win => {
     const { document, tui } = win;
@@ -47,8 +55,4 @@ Cypress.Commands.add('createStyle', (style = '') => {
     styleElement.innerHTML = style;
     document.head.appendChild(styleElement);
   });
-});
-
-Cypress.Commands.add('getByCls', className => {
-  return cy.get(`.${cls(className)}`);
 });
