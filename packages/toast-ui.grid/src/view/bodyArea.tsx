@@ -150,6 +150,7 @@ class BodyAreaComp extends Component<Props> {
     side,
     bodyHeight,
     totalRowHeight,
+    totalColumnWidth,
     scrollXHeight,
     offsetTop,
     offsetLeft,
@@ -167,7 +168,10 @@ class BodyAreaComp extends Component<Props> {
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible'
     };
-    const containerStyle = { height: totalRowHeight + cellBorderWidth };
+    const containerStyle = {
+      width: totalColumnWidth,
+      height: totalRowHeight + cellBorderWidth
+    };
 
     return (
       <div
