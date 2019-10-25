@@ -32,6 +32,10 @@ const defaultOptions = {
 
 type Address = [number, number];
 
+function getRsideBody() {
+  return cy.getByCls('rside-area', 'body-area');
+}
+
 function setSelectionByAPI(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
 }
@@ -62,7 +66,7 @@ function pressDeleteKey() {
 
     pressDeleteKey();
 
-    cy.getCellData().should('eql', [
+    getRsideBody().should('have.cellData', [
       ['c1', 'c2', 'c3'],
       ['c1', '', ''],
       ['c1', '', ''],
@@ -70,3 +74,5 @@ function pressDeleteKey() {
     ]);
   });
 });
+
+export {}
