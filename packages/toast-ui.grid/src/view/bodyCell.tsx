@@ -28,6 +28,7 @@ interface StoreProps {
   disabled: boolean;
   treeInfo?: TreeCellInfo;
   selectedRow: boolean;
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -47,7 +48,8 @@ export class BodyCellComp extends Component<Props> {
       refreshRowHeight,
       disabled: allDisabled,
       defaultRowHeight,
-      dispatch
+      dispatch,
+      cellBorderWidth
     } = this.props;
 
     // eslint-disable-next-line new-cap
@@ -73,7 +75,7 @@ export class BodyCellComp extends Component<Props> {
       //    Container component using setTimeout(fn, 0)
       //  - Delay 16ms for defer the function call later than the Container component.
       window.setTimeout(() => {
-        const height = rendererEl.clientHeight;
+        const height = rendererEl.clientHeight + cellBorderWidth;
         dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
         refreshRowHeight(height);
       }, 16);
@@ -96,7 +98,8 @@ export class BodyCellComp extends Component<Props> {
         refreshRowHeight,
         defaultRowHeight,
         disabled: allDisabled,
-        dispatch
+        dispatch,
+        cellBorderWidth
       } = nextProps;
 
       this.renderer.render({
@@ -108,9 +111,11 @@ export class BodyCellComp extends Component<Props> {
       });
 
       if (refreshRowHeight) {
-        const height = this.renderer.getElement().clientHeight;
-        dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
-        refreshRowHeight(height);
+        window.setTimeout(() => {
+          const height = this.renderer.getElement().clientHeight + cellBorderWidth;
+          dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
+          refreshRowHeight(height);
+        }, 16);
       }
     }
   }
@@ -214,7 +219,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const { range } = selection;
     const columnName = columnInfo.name;
     const rowIndex = findIndexByRowKey(data, column, id, rowKey);
-    const { rowHeight: defaultRowHeight } = dimension;
+    const { rowHeight: defaultRowHeight, cellBorderWidth } = dimension;
     const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
 
     return {
@@ -228,7 +233,8 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       ...(columnName === treeColumnName ? { treeInfo } : null),
       selectedRow: range
         ? rowIndexWithPage >= range.row[0] && rowIndexWithPage <= range.row[1]
-        : false
+        : false,
+      cellBorderWidth
     };
   }
 )(BodyCellComp);
