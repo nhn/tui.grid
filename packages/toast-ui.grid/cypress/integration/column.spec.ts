@@ -1,12 +1,12 @@
 import { cls } from '@/helper/dom';
-import { HeaderRenderer, HeaderColumnInfo, HeaderRendererProps } from '@/renderer/types';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '@/renderer/types';
 
 export {};
 
 class CustomRenderer implements HeaderRenderer {
   private el: HTMLElement;
 
-  private columnInfo: HeaderColumnInfo;
+  private columnInfo: ColumnHeaderInfo;
 
   public constructor(props: HeaderRendererProps) {
     this.columnInfo = props.columnInfo;
@@ -163,17 +163,17 @@ describe('header align', () => {
       }
     });
 
-    cy.get('[data-column-name=id]')
+    cy.getHeaderCell('id')
       .should('have.css', 'vertical-align', 'top')
       .and('have.css', 'text-align', 'left');
 
-    cy.get('[data-column-name=name]')
+    cy.getHeaderCell('name')
       .should('have.css', 'vertical-align', 'top')
       .and('have.css', 'text-align', 'left');
 
     cy.gridInstance().invoke('setColumns', [{ name: 'id' }, { name: 'score' }, { name: 'grade' }]);
 
-    cy.get('[data-column-name=grade]')
+    cy.getHeaderCell('grade')
       .should('have.css', 'vertical-align', 'bottom')
       .and('have.css', 'text-align', 'left');
   });
@@ -311,6 +311,7 @@ describe('customize header ui', () => {
       cy.root()
         .get('.custom')
         .click();
+
       cy.gridInstance()
         .invoke('getFocusedCell')
         .should('eql', {

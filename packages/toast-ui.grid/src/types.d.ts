@@ -431,7 +431,7 @@ export interface OptSummaryValueMap {
   cnt: number;
 }
 
-export interface OptHeaderColumnInfo {
+export interface OptColumnHeaderInfo {
   name: string;
   align?: AlignType;
   valign?: VAlignType;
@@ -443,7 +443,7 @@ export interface OptHeader {
   complexColumns?: OptComplexColumnInfo[];
   align?: AlignType;
   valign?: VAlignType;
-  columns?: OptHeaderColumnInfo[];
+  columns?: OptColumnHeaderInfo[];
 }
 
 export interface OptComplexColumnInfo {

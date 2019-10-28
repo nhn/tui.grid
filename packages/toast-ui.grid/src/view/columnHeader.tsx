@@ -5,12 +5,12 @@ import { SortingButton } from './sortingButton';
 import { SortingOrder } from './sortingOrder';
 import { FilterButton } from './filterButton';
 import { isRowHeader, isCheckboxColumn } from '../helper/column';
-import { HeaderRenderer, HeaderColumnInfo } from '../renderer/types';
+import { HeaderRenderer, ColumnHeaderInfo } from '../renderer/types';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
 
 interface OwnProps {
-  columnInfo: HeaderColumnInfo;
+  columnInfo: ColumnHeaderInfo;
   selected: boolean;
   grid: Grid;
   colspan?: number;
@@ -20,7 +20,7 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-export class HeaderColumn extends Component<Props> {
+export class ColumnHeader extends Component<Props> {
   private el?: HTMLElement;
 
   private renderer?: HeaderRenderer;

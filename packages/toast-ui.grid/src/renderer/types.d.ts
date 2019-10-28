@@ -27,7 +27,7 @@ export interface CellRendererClass {
   new (params: CellRendererProps, options?: any): CellRenderer;
 }
 
-export interface HeaderColumnInfo {
+export interface ColumnHeaderInfo {
   name: string;
   header: string;
   headerAlign?: AlignType;
@@ -40,7 +40,7 @@ export interface HeaderColumnInfo {
 
 export type HeaderRendererProps = {
   grid: Grid;
-  columnInfo: HeaderColumnInfo;
+  columnInfo: ColumnHeaderInfo;
 };
 
 export interface HeaderRenderer {

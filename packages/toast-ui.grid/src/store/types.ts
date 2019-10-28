@@ -8,7 +8,7 @@ import {
   OptSummaryColumnContentMap,
   FilterOptionType,
   OperatorType,
-  OptHeaderColumnInfo
+  OptColumnHeaderInfo
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -285,8 +285,8 @@ interface DataForColumnCreation {
   treeColumnOptions: OptTree;
 }
 
-export interface HeaderColumnInfo {
-  headerColumns: OptHeaderColumnInfo[];
+export interface ColumnHeaderInfo {
+  columnHeaders: OptColumnHeaderInfo[];
   align: AlignType;
   valign: VAlignType;
 }
@@ -296,8 +296,8 @@ export interface Column {
   dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
   allColumns: ColumnInfo[];
-  complexHeaderColumns: ComplexColumnInfo[];
-  readonly headerColumnInfo: HeaderColumnInfo;
+  complexColumnHeaders: ComplexColumnInfo[];
+  readonly columnHeaderInfo: ColumnHeaderInfo;
   readonly allColumnMap: Dictionary<ColumnInfo>;
   readonly rowHeaderCount: number;
   readonly visibleColumns: ColumnInfo[];

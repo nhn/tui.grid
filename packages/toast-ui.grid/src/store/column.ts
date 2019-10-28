@@ -7,7 +7,7 @@ import {
   CellEditorOptions,
   CellRendererOptions,
   ColumnFilterOption,
-  HeaderColumnInfo
+  ColumnHeaderInfo
 } from './types';
 import {
   OptColumn,
@@ -20,7 +20,7 @@ import {
   VAlignType,
   FilterOpt,
   FilterOptionType,
-  OptHeaderColumnInfo,
+  OptColumnHeaderInfo,
   OptComplexColumnInfo
 } from '../types';
 import { observable } from '../helper/observable';
@@ -107,9 +107,9 @@ function createRelationMap(relations: Relations[]) {
   return relationMap;
 }
 
-function createHeaderColumnInfo(name: string, headerColumnInfo: HeaderColumnInfo) {
-  const { headerColumns, align: defaultAlign, valign: defaultVAlign } = headerColumnInfo;
-  const columnOption = findProp('name', name, headerColumns);
+function createColumnHeaderInfo(name: string, columnHeaderInfo: ColumnHeaderInfo) {
+  const { columnHeaders, align: defaultAlign, valign: defaultVAlign } = columnHeaderInfo;
+  const columnOption = findProp('name', name, columnHeaders);
   const headerAlign = columnOption && columnOption.align ? columnOption.align : defaultAlign;
   const headerVAlign = columnOption && columnOption.valign ? columnOption.valign : defaultVAlign;
   const headerRenderer = columnOption && columnOption.renderer ? columnOption.renderer : null;
@@ -166,7 +166,7 @@ export function createColumn(
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
-  headerColumnInfo: HeaderColumnInfo
+  columnHeaderInfo: ColumnHeaderInfo
 ): ColumnInfo {
   const {
     name,
@@ -198,9 +198,9 @@ export function createColumn(
   const editorOptions = createEditorOptions(editor);
   const rendererOptions = createRendererOptions(renderer);
   const filterOptions = filter ? createColumnFilterOption(filter) : null;
-  const { headerAlign, headerVAlign, headerRenderer } = createHeaderColumnInfo(
+  const { headerAlign, headerVAlign, headerRenderer } = createColumnHeaderInfo(
     name,
-    headerColumnInfo
+    columnHeaderInfo
   );
 
   return observable({
@@ -237,7 +237,7 @@ export function createColumn(
   });
 }
 
-function createRowHeader(data: OptRowHeader, headerColumnInfo: HeaderColumnInfo): ColumnInfo {
+function createRowHeader(data: OptRowHeader, columnHeaderInfo: ColumnHeaderInfo): ColumnInfo {
   const rowHeader: OptColumn = isString(data)
     ? { name: rowHeadersMap[data] }
     : { name: rowHeadersMap[data.type], ...omit(data, 'type') };
@@ -251,9 +251,9 @@ function createRowHeader(data: OptRowHeader, headerColumnInfo: HeaderColumnInfo)
     type: rowNumColumn ? DefaultRenderer : RowHeaderInputRenderer
   };
 
-  const { headerAlign, headerVAlign, headerRenderer } = createHeaderColumnInfo(
+  const { headerAlign, headerVAlign, headerRenderer } = createColumnHeaderInfo(
     name,
-    headerColumnInfo
+    columnHeaderInfo
   );
 
   return observable({
@@ -274,13 +274,13 @@ function createRowHeader(data: OptRowHeader, headerColumnInfo: HeaderColumnInfo)
   });
 }
 
-function createComplexHeaderColumns(
+function createComplexColumnHeaders(
   column: OptComplexColumnInfo,
-  headerColumnInfo: HeaderColumnInfo
+  columnHeaderInfo: ColumnHeaderInfo
 ) {
   const { header, name, childNames, sortable, sortingType, renderer } = column;
-  const headerAlign = column.headerAlign || headerColumnInfo.align;
-  const headerVAlign = column.headerVAlign || headerColumnInfo.valign;
+  const headerAlign = column.headerAlign || columnHeaderInfo.align;
+  const headerVAlign = column.headerVAlign || columnHeaderInfo.valign;
 
   return observable({
     header,
@@ -304,7 +304,7 @@ interface ColumnOption {
   complexColumns: OptComplexColumnInfo[];
   align: AlignType;
   valign: VAlignType;
-  headerColumns: OptHeaderColumnInfo[];
+  columnHeaders: OptColumnHeaderInfo[];
 }
 
 export function create({
@@ -317,15 +317,15 @@ export function create({
   complexColumns,
   align,
   valign,
-  headerColumns
+  columnHeaders
 }: ColumnOption): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
 
-  const headerColumnInfo = { headerColumns, align, valign };
-  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, headerColumnInfo));
+  const columnHeaderInfo = { columnHeaders, align, valign };
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, columnHeaderInfo));
 
   const columnInfos = columns.map(column =>
     createColumn(
@@ -334,7 +334,7 @@ export function create({
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      headerColumnInfo
+      columnHeaderInfo
     )
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
@@ -345,15 +345,15 @@ export function create({
     useCascadingCheckbox: treeCascadingCheckbox = true
   } = treeColumnOptions;
 
-  const complexHeaderColumns = complexColumns.map(column =>
-    createComplexHeaderColumns(column, headerColumnInfo)
+  const complexColumnHeaders = complexColumns.map(column =>
+    createComplexColumnHeaders(column, columnHeaderInfo)
   );
 
   return observable({
     keyColumnName,
     allColumns,
-    complexHeaderColumns,
-    headerColumnInfo,
+    complexColumnHeaders,
+    columnHeaderInfo,
     frozenCount: columnOptions.frozenCount || 0,
 
     dataForColumnCreation: {

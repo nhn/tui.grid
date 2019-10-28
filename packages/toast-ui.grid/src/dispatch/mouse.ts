@@ -193,7 +193,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     return;
   }
 
-  const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
+  const { visibleColumnsWithRowHeader, complexColumnHeaders } = column;
   const endRowIndex = rowCoords.heights.length - 1;
 
   let startColumnIndex, endColumnIndex, columnName;
@@ -201,7 +201,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
   if (parentHeader) {
     [startColumnIndex, endColumnIndex] = getChildColumnRange(
       visibleColumnsWithRowHeader,
-      complexHeaderColumns,
+      complexColumnHeaders,
       name
     );
     columnName = visibleColumnsWithRowHeader[startColumnIndex].name;
@@ -223,7 +223,7 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
   const { dimension, viewport, columnCoords, selection, column, id } = store;
   const { scrollTop, scrollLeft } = viewport;
   const { areaWidth } = columnCoords;
-  const { visibleColumnsWithRowHeader, complexHeaderColumns } = column;
+  const { visibleColumnsWithRowHeader, complexColumnHeaders } = column;
   const { pageX, pageY } = dragData;
   const { inputRange: curInputRange } = selection;
 
@@ -233,7 +233,7 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
 
   let [startColumnIdx, endColumnIdx] = getChildColumnRange(
     visibleColumnsWithRowHeader,
-    complexHeaderColumns,
+    complexColumnHeaders,
     startSelectedName
   );
 

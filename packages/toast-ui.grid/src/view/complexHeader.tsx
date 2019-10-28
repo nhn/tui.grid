@@ -4,7 +4,7 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { findIndex } from '../helper/common';
 import { getChildColumnRange } from '../query/selection';
-import { HeaderColumn } from './headerColumn';
+import { ColumnHeader } from './columnHeader';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -16,7 +16,7 @@ interface StoreProps {
   headerHeight: number;
   cellBorderWidth: number;
   columns: ColumnInfo[];
-  complexHeaderColumns: ComplexColumnInfo[];
+  complexColumnHeaders: ComplexColumnInfo[];
   columnSelectionRange: Range | null;
   rowHeaderCount: number;
 }
@@ -28,21 +28,21 @@ class ComplexHeaderComp extends Component<Props> {
     column: ComplexColumnInfo,
     mergedComplexColumns?: ComplexColumnInfo[]
   ) {
-    const { complexHeaderColumns } = this.props;
+    const { complexColumnHeaders } = this.props;
     const complexColumns: ComplexColumnInfo[] = mergedComplexColumns || [];
 
     if (column) {
       complexColumns.push(column);
 
-      if (complexHeaderColumns) {
-        complexHeaderColumns.forEach(complexHeaderColumn => {
-          const { childNames } = complexHeaderColumn;
+      if (complexColumnHeaders) {
+        complexColumnHeaders.forEach(complexColumnHeader => {
+          const { childNames } = complexColumnHeader;
 
           if (childNames) {
             const index = findIndex(name => column.name === name, childNames);
 
             if (index !== -1) {
-              this.getColumnHierarchy(complexHeaderColumn, complexColumns);
+              this.getColumnHierarchy(complexColumnHeader, complexColumns);
             }
           }
         });
@@ -59,14 +59,14 @@ class ComplexHeaderComp extends Component<Props> {
   }
 
   private isSelected(name: string) {
-    const { columnSelectionRange, columns, complexHeaderColumns } = this.props;
+    const { columnSelectionRange, columns, complexColumnHeaders } = this.props;
 
     if (!columnSelectionRange) {
       return false;
     }
 
     const [selectionStart, selectionEnd] = columnSelectionRange;
-    const [columnStart, columnEnd] = getChildColumnRange(columns, complexHeaderColumns, name);
+    const [columnStart, columnEnd] = getChildColumnRange(columns, complexColumnHeaders, name);
 
     return (
       columnStart >= selectionStart &&
@@ -85,7 +85,7 @@ class ComplexHeaderComp extends Component<Props> {
     const { name } = column;
 
     return (
-      <HeaderColumn
+      <ColumnHeader
         key={name}
         height={height}
         colspan={colspan}
@@ -152,7 +152,7 @@ class ComplexHeaderComp extends Component<Props> {
 
 export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
-    column: { rowHeaderCount, visibleColumnsBySideWithRowHeader, complexHeaderColumns },
+    column: { rowHeaderCount, visibleColumnsBySideWithRowHeader, complexColumnHeaders },
     dimension: { headerHeight, cellBorderWidth },
     selection: { rangeBySide }
   } = store;
@@ -161,7 +161,7 @@ export const ComplexHeader = connect<StoreProps, OwnProps>((store, { side }) => 
     headerHeight,
     cellBorderWidth,
     columns: visibleColumnsBySideWithRowHeader[side],
-    complexHeaderColumns,
+    complexColumnHeaders,
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
     rowHeaderCount
   };

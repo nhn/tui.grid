@@ -8,7 +8,7 @@ import { DispatchProps } from '../dispatch/create';
 import { getInstance } from '../instance';
 import { isParentColumnHeader } from '../query/column';
 import { ComplexHeader } from './complexHeader';
-import { HeaderColumn } from './headerColumn';
+import { ColumnHeader } from './columnHeader';
 import Grid from '../grid';
 
 interface OwnProps {
@@ -22,7 +22,7 @@ interface StoreProps {
   scrollLeft: number;
   grid: Grid;
   columnSelectionRange: Range | null;
-  complexHeaderColumns: ComplexColumnInfo[];
+  complexColumnHeaders: ComplexColumnInfo[];
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -42,7 +42,7 @@ class HeaderAreaComp extends Component<Props> {
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
-    const { dispatch, complexHeaderColumns } = this.props;
+    const { dispatch, complexColumnHeaders } = this.props;
     const target = ev.target as HTMLElement;
 
     if (
@@ -62,7 +62,7 @@ class HeaderAreaComp extends Component<Props> {
       }
     }
 
-    const parentHeader = isParentColumnHeader(complexHeaderColumns, name);
+    const parentHeader = isParentColumnHeader(complexColumnHeaders, name);
 
     this.startSelectedName = name;
     dispatch('mouseDownHeader', name, parentHeader);
@@ -99,7 +99,7 @@ class HeaderAreaComp extends Component<Props> {
   }
 
   public render() {
-    const { columns, headerHeight, cellBorderWidth, side, complexHeaderColumns, grid } = this.props;
+    const { columns, headerHeight, cellBorderWidth, side, complexColumnHeaders, grid } = this.props;
     const headerHeightStyle = { height: headerHeight + cellBorderWidth };
 
     return (
@@ -112,13 +112,13 @@ class HeaderAreaComp extends Component<Props> {
       >
         <table class={cls('table')} onMouseDown={this.handleMouseDown}>
           <ColGroup side={side} useViewport={false} />
-          {complexHeaderColumns.length ? (
+          {complexColumnHeaders.length ? (
             <ComplexHeader side={side} grid={grid} />
           ) : (
             <tbody>
               <tr style={headerHeightStyle} onDblClick={this.handleDblClick}>
                 {columns.map((columnInfo, index) => (
-                  <HeaderColumn
+                  <ColumnHeader
                     key={columnInfo.name}
                     columnInfo={columnInfo}
                     selected={this.isSelected(index)}
@@ -137,7 +137,7 @@ class HeaderAreaComp extends Component<Props> {
 
 export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
   const {
-    column: { visibleColumnsBySideWithRowHeader, complexHeaderColumns },
+    column: { visibleColumnsBySideWithRowHeader, complexColumnHeaders },
     dimension: { headerHeight, cellBorderWidth },
     selection: { rangeBySide },
     viewport,
@@ -151,6 +151,6 @@ export const HeaderArea = connect<StoreProps, OwnProps>((store, { side }) => {
     scrollLeft: side === 'L' ? 0 : viewport.scrollLeft,
     grid: getInstance(id),
     columnSelectionRange: rangeBySide && rangeBySide[side].column ? rangeBySide[side].column : null,
-    complexHeaderColumns
+    complexColumnHeaders
   };
 })(HeaderAreaComp);
