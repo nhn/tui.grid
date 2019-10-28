@@ -1,6 +1,6 @@
 import { findOffsetIndex, findPropIndex, isEmpty, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
-import { changeFocus } from './focus';
+import { changeFocus, finishEditing, saveAndFinishEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import {
   Store,
@@ -129,6 +129,17 @@ function updateSelection(store: Store, dragData: PagePosition) {
   changeSelectionRange(selection, inputRange, id);
 }
 
+function finishEditingByHeaderSelection(store: Store) {
+  const {
+    focus: { editingAddress }
+  } = store;
+
+  if (editingAddress) {
+    const { rowKey: editingRowKey, columnName: editingColumnName } = editingAddress;
+    saveAndFinishEditing(store, editingRowKey, editingColumnName);
+  }
+}
+
 export function dragMoveBody(
   store: Store,
   dragStartData: PagePosition,
@@ -215,6 +226,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     column: [startColumnIndex, endColumnIndex]
   };
 
+  finishEditingByHeaderSelection(store);
   changeFocus(store, filteredRawData[0].rowKey, columnName, id);
   changeSelectionRange(selection, inputRange, id);
 }
@@ -282,6 +294,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
     column: [rowHeaderCount, endColumnIndex]
   };
 
+  finishEditingByHeaderSelection(store);
   changeFocus(
     store,
     data.rawData[rowIndex].rowKey,
