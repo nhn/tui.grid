@@ -100,13 +100,16 @@ export function create({
     get cellPosRect(this: Focus) {
       const { columnIndex, rowIndex, side, columnName, rowKey } = this;
       const { filteredRawData, sortState } = data;
+      const { cellBorderWidth } = dimension;
 
       if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
         return null;
       }
 
-      const left = columnCoords.offsets[side][columnIndex];
-      const right = left + columnCoords.widths[side][columnIndex] + dimension.cellBorderWidth;
+      const { widths, offsets } = columnCoords;
+      const borderWidth = widths[side].length - 1 === columnIndex ? 0 : cellBorderWidth;
+      const left = offsets[side][columnIndex];
+      const right = left + widths[side][columnIndex] + borderWidth;
       const top = rowCoords.offsets[rowIndex];
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);

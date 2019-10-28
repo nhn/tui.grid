@@ -81,6 +81,9 @@ function getHorizontalStyles(
   }
 
   width -= cellBorderWidth;
+  if (side === 'R' && endIndex === widths.length - 1) {
+    width -= cellBorderWidth;
+  }
 
   return { left, width };
 }
