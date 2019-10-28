@@ -19,7 +19,9 @@ declare module 'tui-date-picker' {
     constructor(container: string | HTMLElement, options?: DatePickerOptions);
 
     public open(): void;
+
     public destroy(): void;
+
     public on(type: DatePickerEventType, handler: Function): void;
   }
 }

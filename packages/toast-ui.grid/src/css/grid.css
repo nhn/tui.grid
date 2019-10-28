@@ -196,6 +196,7 @@
   filter: alpha(opacity=10);
 }
 .tui-grid-layer-datepicker {
+  width: calc(100% - 10px);
   position: absolute;
   z-index: 100;
   box-sizing: border-box;
@@ -285,7 +286,6 @@
 }
 .tui-grid-cell-content select:not(.tui-time-picker-select) {
   box-sizing: border-box;
-  width: 100%;
 }
 .tui-grid-column-resize-container {
   display: none;
@@ -819,4 +819,5 @@
   top: 45%;
   right: 10px;
   margin: -6px 0 0 0;
+  cursor: pointer;
 }
