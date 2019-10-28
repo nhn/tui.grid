@@ -1,11 +1,10 @@
 import { Store, SelectionRange } from '../store/types';
 import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange, getNextCellIndexWithRowSpan } from '../query/keyboard';
-import { changeFocus } from './focus';
+import { changeFocus, startEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../query/rowSpan';
-import { isEditableCell, findIndexByRowKey } from '../query/data';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -30,18 +29,15 @@ export function moveFocus(store: Store, command: KeyboardEventCommandType) {
 }
 
 export function editFocus(store: Store, command: KeyboardEventCommandType) {
-  const { focus, data, column, id } = store;
+  const { focus } = store;
   const { rowKey, columnName } = focus;
 
   if (rowKey === null || columnName === null) {
     return;
   }
 
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
-
-  if (command === 'currentCell' && isEditableCell(data, column, foundIndex, columnName)) {
-    focus.navigating = false;
-    focus.editingAddress = { rowKey, columnName };
+  if (command === 'currentCell') {
+    startEditing(store, rowKey, columnName);
   } else if (command === 'nextCell' || command === 'prevCell') {
     // move prevCell or nextCell by tab keyMap
     moveTabFocus(store, command);
@@ -65,13 +61,9 @@ export function moveTabFocus(store: Store, command: TabCommandType) {
     focus.navigating = true;
     changeFocus(store, nextRowKey, nextColumnName, id);
 
-    if (
-      focus.tabMode === 'moveAndEdit' &&
-      isEditableCell(data, column, nextRowIndex, nextColumnName)
-    ) {
+    if (focus.tabMode === 'moveAndEdit') {
       setTimeout(() => {
-        focus.navigating = false;
-        focus.editingAddress = { rowKey: nextRowKey, columnName: nextColumnName };
+        startEditing(store, nextRowKey, nextColumnName);
       });
     }
   }
