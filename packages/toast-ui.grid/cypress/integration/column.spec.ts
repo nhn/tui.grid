@@ -1,6 +1,29 @@
 import { cls } from '@/helper/dom';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '@/renderer/types';
 
 export {};
+
+class CustomRenderer implements HeaderRenderer {
+  private el: HTMLElement;
+
+  private columnInfo: ColumnHeaderInfo;
+
+  public constructor(props: HeaderRendererProps) {
+    this.columnInfo = props.columnInfo;
+    const el = document.createElement('div');
+
+    el.className = 'custom';
+    el.textContent = `custom_${this.columnInfo.name}`;
+    el.style.fontSize = '18px';
+    el.style.fontStyle = 'italic';
+
+    this.el = el;
+  }
+
+  public getElement() {
+    return this.el;
+  }
+}
 
 const data = [
   { id: 1, name: 'Kim', score: 90, grade: 'A' },
@@ -140,19 +163,17 @@ describe('header align', () => {
       }
     });
 
-    cy.get('[data-column-name=id]')
-      .eq(0)
+    cy.getHeaderCell('id')
       .should('have.css', 'vertical-align', 'top')
       .and('have.css', 'text-align', 'left');
 
-    cy.get('[data-column-name=name]')
-      .eq(0)
+    cy.getHeaderCell('name')
       .should('have.css', 'vertical-align', 'top')
       .and('have.css', 'text-align', 'left');
 
     cy.gridInstance().invoke('setColumns', [{ name: 'id' }, { name: 'score' }, { name: 'grade' }]);
-    cy.get('[data-column-name=grade]')
-      .eq(0)
+
+    cy.getHeaderCell('grade')
       .should('have.css', 'vertical-align', 'bottom')
       .and('have.css', 'text-align', 'left');
   });
@@ -218,7 +239,7 @@ describe('setHeader()', () => {
       ]
     });
 
-    cy.get('[data-column-name=mergeColumn1]').should('have.text', 'information');
+    cy.getHeaderCell('mergeColumn1').should('have.text', 'information');
   });
 });
 
@@ -247,14 +268,57 @@ describe('setColumnHeaders()', () => {
       mergeColumn1: '_info'
     });
 
-    cy.get('[data-column-name=id]')
-      .eq(0)
-      .should('have.text', '_id');
+    cy.getHeaderCell('id').should('have.text', '_id');
+    cy.getHeaderCell('name').should('have.text', '_name');
+    cy.getHeaderCell('mergeColumn1').should('have.text', '_info');
+  });
+});
 
-    cy.get('[data-column-name=name]')
-      .eq(0)
-      .should('have.text', '_name');
+describe('customize header ui', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
 
-    cy.get('[data-column-name=mergeColumn1]').should('have.text', '_info');
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        complexColumns: [
+          {
+            header: 'info',
+            name: 'mergeColumn1',
+            childNames: ['id', 'name'],
+            renderer: CustomRenderer
+          }
+        ],
+        columns: [
+          {
+            name: 'id',
+            renderer: CustomRenderer
+          }
+        ]
+      }
+    });
+  });
+
+  it('render custom header renderer properly', () => {
+    cy.getHeaderCell('mergeColumn1').should('have.text', 'custom_mergeColumn1');
+    cy.getHeaderCell('id').should('have.text', 'custom_id');
+  });
+
+  it('header selection is operated properly', () => {
+    cy.getHeaderCell('mergeColumn1').within(() => {
+      cy.root()
+        .get('.custom')
+        .click();
+
+      cy.gridInstance()
+        .invoke('getFocusedCell')
+        .should('eql', {
+          rowKey: 0,
+          columnName: 'id',
+          value: 1
+        });
+    });
   });
 });

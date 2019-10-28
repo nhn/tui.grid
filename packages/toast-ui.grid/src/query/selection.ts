@@ -14,16 +14,16 @@ function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNa
   return result;
 }
 
-export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[], name: string) {
-  const column = findProp('name', name, complexHeaderColumns);
+export function getLeafChildColumnNames(complexColumnHeaders: ComplexColumnInfo[], name: string) {
+  const column = findProp('name', name, complexColumnHeaders);
   if (!column) {
     return [name];
   }
 
   let result: string[] = [];
   column.childNames!.forEach(childName => {
-    if (isParentColumnHeader(complexHeaderColumns, childName)) {
-      result = [...result, ...getLeafChildColumnNames(complexHeaderColumns, childName)];
+    if (isParentColumnHeader(complexColumnHeaders, childName)) {
+      result = [...result, ...getLeafChildColumnNames(complexColumnHeaders, childName)];
     } else {
       result = [...result, childName];
     }
@@ -34,10 +34,10 @@ export function getLeafChildColumnNames(complexHeaderColumns: ComplexColumnInfo[
 
 export function getChildColumnRange(
   visibleColumnsWithRowHeader: ColumnInfo[],
-  complexHeaderColumns: ComplexColumnInfo[],
+  complexColumnHeaders: ComplexColumnInfo[],
   name: string
 ) {
-  const unsortedChildNames = getLeafChildColumnNames(complexHeaderColumns, name);
+  const unsortedChildNames = getLeafChildColumnNames(complexColumnHeaders, name);
   const childNames = sortByVisibleColumns(visibleColumnsWithRowHeader, unsortedChildNames);
 
   const startIndex = findPropIndex('name', childNames[0], visibleColumnsWithRowHeader);

@@ -56,3 +56,7 @@ Cypress.Commands.add('createStyle', (style = '') => {
     document.head.appendChild(styleElement);
   });
 });
+
+Cypress.Commands.add('getHeaderCell', columnName => {
+  return cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`);
+});

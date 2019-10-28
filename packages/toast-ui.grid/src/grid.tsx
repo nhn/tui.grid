@@ -505,7 +505,7 @@ export default class Grid {
     }
 
     if (complexColumns) {
-      this.dispatch('setComplexHeaderColumns', complexColumns);
+      this.dispatch('setComplexColumnHeaders', complexColumns);
     }
   }
 

@@ -1,14 +1,14 @@
-import { CellRendererClass } from '../renderer/types';
+import { CellRendererClass, HeaderRendererClass } from '../renderer/types';
 import { CellEditorClass } from '../editor/types';
 import {
   AlignType,
-  ColumnsAlignInfo,
   OptColumnOptions,
   OptTree,
   VAlignType,
   OptSummaryColumnContentMap,
   FilterOptionType,
-  OperatorType
+  OperatorType,
+  OptColumnHeaderInfo
 } from '../types';
 
 export type ColumnDefaultValues = { name: string; value: CellValue }[];
@@ -264,6 +264,7 @@ export interface ColumnInfo {
   headerAlign: AlignType;
   headerVAlign: VAlignType;
   filter?: ColumnFilterOption | null;
+  headerRenderer?: HeaderRendererClass | null;
 }
 
 export interface SortedColumn {
@@ -284,10 +285,10 @@ interface DataForColumnCreation {
   treeColumnOptions: OptTree;
 }
 
-export interface HeaderAlignInfo {
+export interface ColumnHeaderInfo {
+  columnHeaders: OptColumnHeaderInfo[];
   align: AlignType;
   valign: VAlignType;
-  columnsAlign: ColumnsAlignInfo[];
 }
 
 export interface Column {
@@ -295,8 +296,8 @@ export interface Column {
   dataForColumnCreation: DataForColumnCreation;
   keyColumnName?: string;
   allColumns: ColumnInfo[];
-  complexHeaderColumns: ComplexColumnInfo[];
-  readonly headerAlignInfo: HeaderAlignInfo;
+  complexColumnHeaders: ComplexColumnInfo[];
+  readonly columnHeaderInfo: ColumnHeaderInfo;
   readonly allColumnMap: Dictionary<ColumnInfo>;
   readonly rowHeaderCount: number;
   readonly visibleColumns: ColumnInfo[];
@@ -497,4 +498,5 @@ export interface ComplexColumnInfo {
   sortingType?: SortingType;
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
+  headerRenderer?: HeaderRendererClass | null;
 }

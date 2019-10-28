@@ -61,11 +61,14 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      column.headerAlignInfo
+      column.columnHeaderInfo
     )
   );
 
   const dataCreationKey = generateDataCreationKey();
+
+  initFocus(store);
+  initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
   const { allColumnMap, treeColumnName, treeIcon } = column;
@@ -85,8 +88,6 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
 
-  initFocus(store);
-  initSelection(store);
   initFilter(store);
   unsort(store);
   addColumnSummaryValues(store);
@@ -123,12 +124,12 @@ export function showColumn({ column }: Store, columnName: string) {
   }
 }
 
-export function setComplexHeaderColumns(store: Store, complexHeaderColumns: ComplexColumnInfo[]) {
-  store.column.complexHeaderColumns = complexHeaderColumns;
+export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {
+  store.column.complexColumnHeaders = complexColumnHeaders;
 }
 
 export function changeColumnHeadersByName({ column }: Store, columnsMap: Dictionary<string>) {
-  const { complexHeaderColumns, allColumnMap } = column;
+  const { complexColumnHeaders, allColumnMap } = column;
 
   Object.keys(columnsMap).forEach(columnName => {
     const col = allColumnMap[columnName];
@@ -136,8 +137,8 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
       col.header = columnsMap[columnName];
     }
 
-    if (complexHeaderColumns.length) {
-      const complexCol = findProp('name', columnName, complexHeaderColumns);
+    if (complexColumnHeaders.length) {
+      const complexCol = findProp('name', columnName, complexColumnHeaders);
       if (complexCol) {
         complexCol.header = columnsMap[columnName];
       }

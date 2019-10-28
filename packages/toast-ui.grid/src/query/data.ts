@@ -4,7 +4,6 @@ import {
   findPropIndex,
   isNull,
   isUndefined,
-  isEmpty,
   uniq,
   mapProp,
   isNumber

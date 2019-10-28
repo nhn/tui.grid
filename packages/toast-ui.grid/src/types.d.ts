@@ -10,11 +10,10 @@ import {
   PageOptions,
   Validation,
   RowKey,
-  ComplexColumnInfo,
   SortingType,
   TabMode
 } from './store/types';
-import { CellRendererClass } from './renderer/types';
+import { CellRendererClass, HeaderRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
 import { keyNameMap } from './helper/keyboard';
@@ -432,16 +431,28 @@ export interface OptSummaryValueMap {
   cnt: number;
 }
 
-export interface ColumnsAlignInfo {
+export interface OptColumnHeaderInfo {
   name: string;
   align?: AlignType;
   valign?: VAlignType;
+  renderer?: HeaderRendererClass;
 }
 
 export interface OptHeader {
   height?: number;
-  complexColumns?: ComplexColumnInfo[];
+  complexColumns?: OptComplexColumnInfo[];
   align?: AlignType;
   valign?: VAlignType;
-  columns?: ColumnsAlignInfo[];
+  columns?: OptColumnHeaderInfo[];
+}
+
+export interface OptComplexColumnInfo {
+  header: string;
+  name: string;
+  childNames?: string[];
+  sortable?: boolean;
+  sortingType?: SortingType;
+  headerAlign?: AlignType;
+  headerVAlign?: VAlignType;
+  renderer?: HeaderRendererClass;
 }
