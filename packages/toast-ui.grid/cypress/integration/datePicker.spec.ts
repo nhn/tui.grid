@@ -188,3 +188,16 @@ describe('show icon', () => {
     cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('content-text'));
   });
 });
+
+it('focus the editing cell when datepicker layer is closed', () => {
+  cy.getCell(0, 'default')
+    .click()
+    .trigger('dblclick');
+
+  cy.get('.tui-calendar-date')
+    .contains('14')
+    .click();
+  cy.focused().type('{Enter}');
+
+  cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
+});
