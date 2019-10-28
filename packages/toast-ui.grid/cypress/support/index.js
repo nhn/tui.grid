@@ -17,10 +17,23 @@
 import 'cypress-plugin-tab';
 import './commands';
 import { isSubsetOf } from '../helper/compare';
+import { cls } from '@/helper/dom';
 
 chai.use(_chai => {
   _chai.Assertion.addMethod('subset', function(options) {
     new _chai.Assertion(isSubsetOf(options, this._obj)).to.be.true;
+  });
+
+  _chai.Assertion.addMethod('cellData', function(cellData) {
+    const table = this._obj[0];
+
+    new _chai.Assertion(table).to.be.exist;
+
+    const actual = [...table.querySelectorAll('tr')].map(row =>
+      [...row.getElementsByClassName(cls('cell-content'))].map(cell => cell.textContent)
+    );
+
+    new _chai.Assertion(actual).to.be.eql(cellData);
   });
 });
 

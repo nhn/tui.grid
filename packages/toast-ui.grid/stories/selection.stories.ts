@@ -1,121 +1,85 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
-import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
 import '../src/css/grid.css';
-
-const stories = storiesOf('Selection', module);
-stories.addDecorator(withKnobs);
-
-const columns = [
-  { name: 'name' },
-  { name: 'artist' },
-  { name: 'type' },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode' },
-  { name: 'grade' },
-  { name: 'price' },
-  { name: 'downloadCount' },
-  { name: 'listenCount' }
-];
+import 'tui-date-picker/dist/tui-date-picker.css';
+import { data } from '../samples/basic';
+import { OptGrid } from '../src/types';
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
-  el.style.width = '800px';
+  el.style.width = '600px';
 
   const grid = new Grid({ el, ...options });
 
   return { el, grid };
 }
 
-stories.add(
-  'Selection Activation',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      bodyHeight: 'fitToParent',
-      columnOptions: {
-        frozenCount: 2,
-        minWidth: 150
-      }
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+function getByTestId(el, testId) {
+  return el.querySelector(`[data-testid="${testId}"]`);
+}
 
-    button('setSelectionRange({ start: 1, 2, end: 3, 4 })', () =>
-      grid.setSelectionRange({ start: [1, 2], end: [3, 4] })
-    );
+const columns = [
+  { name: 'name' },
+  { name: 'artist' },
+  { name: 'type' },
+  { name: 'release' },
+  { name: 'genre' }
+];
 
-    button('setSelectionRange({ start: 3, 5, end: 1, 2 })', () =>
-      grid.setSelectionRange({ start: [3, 5], end: [1, 2] })
-    );
+export default {
+  title: 'Selection'
+};
 
-    button('setSelectionRange({ start: -1, -1, end: 20, 20 })', () =>
-      grid.setSelectionRange({ start: [-1, -1], end: [20, 20] })
-    );
+export const normal = () => {
+  const { grid, el } = createGrid({
+    columns,
+    data: data.slice(0, 10),
+    rowHeaders: ['rowNum'],
+    bodyHeight: 300,
+    columnOptions: {
+      frozenCount: 2,
+      minWidth: 150
+    }
+  });
+  grid.setSelectionRange({ start: [1, 1], end: [5, 3] });
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  return el;
+};
 
-stories.add(
-  'Selection with rowheader',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      bodyHeight: 'fitToParent',
-      columnOptions: {
-        frozenCount: 2,
-        minWidth: 150
-      },
-      rowHeaders: ['checkbox', 'rowNum']
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+const normalNote = `
+## Selection
 
-    button('setSelectionRange({ start: 1, 2, end: 3, 4 })', () =>
-      grid.setSelectionRange({ start: [1, 2], end: [3, 4] })
-    );
+### Following areas should be highlighed
+- Selected cells
+- Row-header of selected cells
+- Column-header of selected cells
+`;
+normal.story = { parameters: { notes: normalNote } };
 
-    button('setSelectionRange({ start: 3, 5, end: 1, 2 })', () =>
-      grid.setSelectionRange({ start: [3, 5], end: [1, 2] })
-    );
+export const scrolled = () => {
+  const { grid, el } = createGrid({
+    columns,
+    data: data.slice(0, 10),
+    rowHeaders: ['rowNum'],
+    bodyHeight: 300,
+    columnOptions: {
+      frozenCount: 2,
+      minWidth: 150
+    }
+  });
 
-    button('setSelectionRange({ start: -1, -1, end: 20, 20 })', () =>
-      grid.setSelectionRange({ start: [-1, -1], end: [20, 20] })
-    );
+  grid.setSelectionRange({ start: [1, 1], end: [5, 3] });
+  setTimeout(() => {
+    const rsideBody = getByTestId(el, 'rside-body');
+    rsideBody.scrollTop = 70;
+    rsideBody.scrollLeft = 100;
+  });
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  return el;
+};
 
-stories.add(
-  'Row Selection',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      bodyHeight: 'fitToParent',
-      columnOptions: {
-        frozenCount: 2,
-        minWidth: 150
-      },
-      selectionUnit: 'row'
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+const scrolledNote = `
+## Selection (Scrolled)
+- Selection layer should follow the scroll position
+`;
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+scrolled.story = { parameters: { notes: scrolledNote } };
