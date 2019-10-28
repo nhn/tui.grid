@@ -84,6 +84,7 @@ if ((module as any).hot) {
  *      @param {number} [options.header.height=40] - The height of the header area.
  *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
  *          which includes the headers of spcified columns, and sets up the hierarchy.
+ *      @param {object} [options.header.colspan] - The colspan defines the number of columns a header cell should span
  *      @param {string|number} [options.width='auto'] - Options for grid width.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
