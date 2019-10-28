@@ -275,6 +275,30 @@ it('should renering of the editing cell is syncronous', () => {
     });
 });
 
+['rowHeader', 'columnHeader'].forEach(type => {
+  it(`finish editing when ${type} is clicked`, () => {
+    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+    const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+    const stub = cy.stub();
+
+    cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
+
+    cy.gridInstance().invoke('on', 'editingFinish', stub);
+    cy.gridInstance().invoke('startEditing', 1, 'name');
+
+    if (type === 'columnHeader') {
+      cy.getHeaderCell('name').click();
+    } else {
+      cy.getRowNumCell(1).click();
+    }
+
+    cy.should(() => {
+      expect(stub).to.be.calledOnce;
+      expect(stub.args[0][0]).to.contain({ rowKey: 1, columnName: 'name' });
+    });
+  });
+});
+
 // @TODO: cannot pass the test in headless mode, need to ask this issue
 // it('should not copy prev value as moving the editing cell by tab keyMap', () => {
 //   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];

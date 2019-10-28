@@ -30,6 +30,8 @@ declare namespace Cypress {
     stub(): Agent<sinon.SinonStub> & sinon.SinonStub;
 
     getHeaderCell(column: string): Chainable<any>;
+
+    getRowNumCell(rowKey: number | string): Chainable<any>;
   }
 }
 

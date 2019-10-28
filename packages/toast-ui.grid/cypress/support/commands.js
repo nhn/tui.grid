@@ -60,3 +60,7 @@ Cypress.Commands.add('createStyle', (style = '') => {
 Cypress.Commands.add('getHeaderCell', columnName => {
   return cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`);
 });
+
+Cypress.Commands.add('getRowNumCell', rowKey => {
+  return cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"]`);
+});
