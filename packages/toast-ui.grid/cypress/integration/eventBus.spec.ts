@@ -325,7 +325,6 @@ it('columnResize', () => {
     if (method === 'API') {
       cy.gridInstance().invoke('startEditing', 0, 'name');
     } else {
-      // cy.getByCls('clipboard').type('{Enter}');
       cy.gridInstance().invoke('focus', 0, 'name');
       cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
     }
