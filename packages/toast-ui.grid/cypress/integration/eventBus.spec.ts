@@ -317,20 +317,27 @@ it('columnResize', () => {
     });
 });
 
-it('editingStart', () => {
-  const callback = cy.stub();
+['API', 'UI'].forEach(method => {
+  it(`editingStart by ${method}`, () => {
+    const callback = cy.stub();
+    cy.gridInstance().invoke('on', 'editingStart', callback);
 
-  cy.gridInstance().invoke('on', 'editingStart', callback);
+    if (method === 'API') {
+      cy.gridInstance().invoke('startEditing', 0, 'name');
+    } else {
+      // cy.getByCls('clipboard').type('{Enter}');
+      cy.gridInstance().invoke('focus', 0, 'name');
+      cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
+    }
 
-  cy.gridInstance()
-    .invoke('startEditing', 0, 'name')
-    .should(() => {
+    cy.should(() => {
       expect(callback.args[0][0]).to.contain.subset({
         rowKey: 0,
         columnName: 'name',
         value: 'Kim'
       });
     });
+  });
 });
 
 it('editingFinish', () => {
