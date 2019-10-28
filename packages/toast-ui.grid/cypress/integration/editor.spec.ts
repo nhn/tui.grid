@@ -287,15 +287,17 @@ it('should renering of the editing cell is syncronous', () => {
     cy.gridInstance().invoke('startEditing', 1, 'name');
 
     if (type === 'columnHeader') {
-      cy.getHeaderCell('name').click();
+      cy.getHeaderCell('name').as('targetCell');
     } else {
-      cy.getRowNumCell(1).click();
+      cy.getRowNumCell(1).as('targetCell');
     }
 
-    cy.should(() => {
-      expect(stub).to.be.calledOnce;
-      expect(stub.args[0][0]).to.contain({ rowKey: 1, columnName: 'name' });
-    });
+    cy.get('@targetCell')
+      .click()
+      .should(() => {
+        expect(stub).to.be.calledOnce;
+        expect(stub.args[0][0]).to.contain({ rowKey: 1, columnName: 'name' });
+      });
   });
 });
 
