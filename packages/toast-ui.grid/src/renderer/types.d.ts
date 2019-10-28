@@ -3,7 +3,8 @@ import {
   ColumnInfo,
   RowKey,
   ColumnFilterOption,
-  SortingType
+  SortingType,
+  HeaderColSpan
 } from '../store/types';
 import Grid from '../grid';
 import { AlignType, VAlignType } from '../types';
@@ -36,6 +37,7 @@ export interface ColumnHeaderInfo {
   sortingType?: SortingType;
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
+  headerColSpan?: HeaderColSpan;
 }
 
 export type HeaderRendererProps = {

@@ -21,6 +21,7 @@ import {
   getOverflowFromMousePosition
 } from '../query/mouse';
 import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from './types';
+import { getSelectionRangeWithColSpan } from '../query/colSpan';
 
 function stopAutoScroll(selection: Selection) {
   const { intervalIdForAutoScroll } = selection;
@@ -203,7 +204,6 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
 
   const { visibleColumnsWithRowHeader, complexColumnHeaders } = column;
   const endRowIndex = rowCoords.heights.length - 1;
-
   let startColumnIndex, endColumnIndex, columnName;
 
   if (parentHeader) {
@@ -218,10 +218,13 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     columnName = name;
   }
 
-  const inputRange: SelectionRange = {
-    row: [0, endRowIndex],
-    column: [startColumnIndex, endColumnIndex]
-  };
+  const inputRange = getSelectionRangeWithColSpan(
+    {
+      row: [0, endRowIndex],
+      column: [startColumnIndex, endColumnIndex]
+    },
+    visibleColumnsWithRowHeader
+  );
 
   finishEditingByHeaderSelection(store);
   changeFocus(store, filteredRawData[0].rowKey, columnName, id);
@@ -260,10 +263,13 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
   }
 
   if (columnIndex >= 0) {
-    const inputRange: SelectionRange = {
-      row: [0, rowIndex],
-      column: [startColumnIdx, endColumnIdx]
-    };
+    const inputRange = getSelectionRangeWithColSpan(
+      {
+        row: [0, rowIndex],
+        column: [startColumnIdx, endColumnIdx]
+      },
+      visibleColumnsWithRowHeader
+    );
 
     changeSelectionRange(selection, inputRange, id);
     setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);

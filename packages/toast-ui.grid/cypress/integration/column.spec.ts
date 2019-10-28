@@ -322,3 +322,47 @@ describe('customize header ui', () => {
     });
   });
 });
+
+describe('hideColumn(), showColumn()', () => {
+  it('should hide column when calling hideColumn() and show Column when calling showColumn()', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100
+      }
+    });
+
+    cy.get('[data-column-name=name]').should('exist');
+
+    cy.gridInstance().invoke('hideColumn', 'name');
+
+    cy.get('[data-column-name=name]').should('not.exist');
+
+    cy.gridInstance().invoke('showColumn', 'name');
+
+    cy.get('[data-column-name=name]').should('exist');
+  });
+
+  it('hideColumn(), showColumn() with merged  header', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
+
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        colspan: {
+          name: 2
+        }
+      }
+    });
+
+    cy.get('[data-column-name=name]').should('exist');
+
+    cy.gridInstance().invoke('hideColumn', 'name');
+
+    cy.get('[data-column-name=name]').should('not.exist');
+  });
+});

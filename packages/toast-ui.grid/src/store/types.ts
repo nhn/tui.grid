@@ -56,6 +56,15 @@ export type Row = Dictionary<CellValue> & {
   _attributes: RowAttributes;
 };
 
+export type HeaderColSpanMap = Dictionary<HeaderColSpan>;
+
+export interface HeaderColSpan {
+  mainColumn: boolean;
+  count: number;
+  spanCount: number;
+  columnName: string;
+}
+
 export type RowSpanMap = Dictionary<RowSpan>;
 
 export interface RowSpan {
@@ -265,6 +274,7 @@ export interface ColumnInfo {
   headerVAlign: VAlignType;
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
+  headerColSpan?: HeaderColSpan;
 }
 
 export interface SortedColumn {
@@ -499,4 +509,5 @@ export interface ComplexColumnInfo {
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
+  headerColSpan?: HeaderColSpan;
 }

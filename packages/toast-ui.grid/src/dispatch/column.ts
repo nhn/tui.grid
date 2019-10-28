@@ -1,4 +1,12 @@
-import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary } from '../store/types';
+import {
+  Store,
+  Side,
+  ComplexColumnInfo,
+  ViewRow,
+  Dictionary,
+  ColumnInfo,
+  Column
+} from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -99,8 +107,38 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
+function getColSpanColumnNames(columnName: string, allColumnMap: Dictionary<ColumnInfo>) {
+  const subColumnNames: string[] = [];
+  Object.keys(allColumnMap).forEach(name => {
+    const colSpan = allColumnMap[name].headerColSpan;
+    if (colSpan && colSpan.columnName === columnName) {
+      subColumnNames.push(name);
+    }
+  });
+
+  return subColumnNames;
+}
+
+function setColumnHiddenValue(
+  columnName: string,
+  allColumnMap: Dictionary<ColumnInfo>,
+  hidden: boolean
+) {
+  const columnItem = allColumnMap[columnName];
+
+  if (columnItem) {
+    if (columnItem.headerColSpan) {
+      getColSpanColumnNames(columnName, allColumnMap).forEach(name => {
+        allColumnMap[name].hidden = hidden;
+      });
+    } else {
+      columnItem.hidden = hidden;
+    }
+  }
+}
+
 export function hideColumn(store: Store, columnName: string) {
-  const columnItem = store.column.allColumnMap[columnName];
+  const { allColumnMap } = store.column;
   const { columnName: focusedColumnName } = store.focus;
 
   if (focusedColumnName === columnName) {
@@ -111,17 +149,13 @@ export function hideColumn(store: Store, columnName: string) {
   unfilter(store, columnName);
   unsort(store, columnName);
 
-  if (columnItem) {
-    columnItem.hidden = true;
-  }
+  setColumnHiddenValue(columnName, allColumnMap, true);
 }
 
 export function showColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumnMap[columnName];
+  const { allColumnMap } = column;
 
-  if (columnItem) {
-    columnItem.hidden = false;
-  }
+  setColumnHiddenValue(columnName, allColumnMap, false);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

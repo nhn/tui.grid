@@ -8,6 +8,7 @@ import { isRowHeader, isCheckboxColumn } from '../helper/column';
 import { HeaderRenderer, ColumnHeaderInfo } from '../renderer/types';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
+import { HeaderColSpan } from '../store/types';
 
 interface OwnProps {
   columnInfo: ColumnHeaderInfo;
@@ -47,6 +48,10 @@ export class ColumnHeader extends Component<Props> {
     }
   }
 
+  private isRenderHeader(headerColSpan?: HeaderColSpan) {
+    return !headerColSpan || (headerColSpan && headerColSpan.mainColumn);
+  }
+
   public componentDidMount() {
     const { columnInfo, grid } = this.props;
     const { headerRenderer } = columnInfo;
@@ -74,14 +79,20 @@ export class ColumnHeader extends Component<Props> {
   }
 
   public render() {
-    const { columnInfo, colspan, rowspan, selected, height } = this.props;
+    const { columnInfo, colspan: colspanCount, rowspan, selected, height } = this.props;
     const {
       name,
       headerAlign: textAlign,
       headerVAlign: verticalAlign,
-      headerRenderer
+      headerRenderer,
+      headerColSpan
     } = columnInfo;
 
+    if (!this.isRenderHeader(headerColSpan)) {
+      return null;
+    }
+
+    const colspan = (headerColSpan && headerColSpan.spanCount) || colspanCount;
     return (
       <th
         ref={el => {

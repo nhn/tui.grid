@@ -85,13 +85,20 @@ class HeaderAreaComp extends Component<Props> {
     ev.preventDefault();
   };
 
+  private getHeaderRangeWithColSpan(index: number) {
+    const { columns } = this.props;
+    const colSpan = columns[index].headerColSpan;
+    return colSpan ? [index, index + colSpan.spanCount - 1] : [index, index];
+  }
+
   private isSelected(index: number) {
     const { columnSelectionRange } = this.props;
     if (!columnSelectionRange) {
       return false;
     }
     const [start, end] = columnSelectionRange;
-    return index >= start && index <= end;
+    const [startIdx, endIdx] = this.getHeaderRangeWithColSpan(index);
+    return startIdx >= start && endIdx <= end;
   }
 
   public componentDidUpdate() {

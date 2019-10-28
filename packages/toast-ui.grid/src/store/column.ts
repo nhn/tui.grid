@@ -7,7 +7,9 @@ import {
   CellEditorOptions,
   CellRendererOptions,
   ColumnFilterOption,
-  ColumnHeaderInfo
+  ColumnHeaderInfo,
+  HeaderColSpan,
+  HeaderColSpanMap
 } from './types';
 import {
   OptColumn,
@@ -34,7 +36,8 @@ import {
   isObject,
   isUndefined,
   isNumber,
-  findProp
+  findProp,
+  findPropIndex
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -166,7 +169,8 @@ export function createColumn(
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
-  columnHeaderInfo: ColumnHeaderInfo
+  columnHeaderInfo: ColumnHeaderInfo,
+  headerColSpan?: HeaderColSpan
 ): ColumnInfo {
   const {
     name,
@@ -194,7 +198,6 @@ export function createColumn(
     ignored,
     filter
   } = column;
-
   const editorOptions = createEditorOptions(editor);
   const rendererOptions = createRendererOptions(renderer);
   const filterOptions = filter ? createColumnFilterOption(filter) : null;
@@ -233,7 +236,8 @@ export function createColumn(
     headerAlign,
     headerVAlign,
     filter: filterOptions,
-    headerRenderer
+    headerRenderer,
+    headerColSpan
   });
 }
 
@@ -305,6 +309,27 @@ interface ColumnOption {
   align: AlignType;
   valign: VAlignType;
   columnHeaders: OptColumnHeaderInfo[];
+  colspan: Dictionary<number>;
+}
+
+function createColSpan(columnName: string, spanCount: number, count: number, mainColumn: boolean) {
+  return { columnName, spanCount, count, mainColumn };
+}
+
+function createColSpanMap(column: OptColumn[], colspan: Dictionary<number>) {
+  const colSpanMap: HeaderColSpanMap = {};
+  Object.keys(colspan).forEach(columnName => {
+    const mainColumnStartIdx = findPropIndex('name', columnName, column);
+    const spanCount = Math.min(colspan[columnName], column.length - mainColumnStartIdx);
+    colSpanMap[columnName] = createColSpan(columnName, spanCount, spanCount, true);
+    for (let idx = 0; idx < spanCount - 1; idx += 1) {
+      const offset = mainColumnStartIdx + idx + 1;
+      const { name } = column[offset];
+      colSpanMap[name] = createColSpan(columnName, spanCount, -1 - idx, false);
+    }
+  });
+
+  return colSpanMap;
 }
 
 export function create({
@@ -317,15 +342,16 @@ export function create({
   complexColumns,
   align,
   valign,
-  columnHeaders
+  columnHeaders,
+  colspan
 }: ColumnOption): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
-
   const columnHeaderInfo = { columnHeaders, align, valign };
   const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, columnHeaderInfo));
+  const colSpanMap = createColSpanMap(columns, colspan);
 
   const columnInfos = columns.map(column =>
     createColumn(
@@ -334,7 +360,8 @@ export function create({
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      columnHeaderInfo
+      columnHeaderInfo,
+      colSpanMap[column.name]
     )
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
