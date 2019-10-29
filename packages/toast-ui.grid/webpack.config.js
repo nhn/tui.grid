@@ -28,7 +28,7 @@ const commonConfig = {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
     filename: package.name + (minify ? '.min' : '') + '.js',
-    publicPath: '/',
+    publicPath: '/dist',
     path: path.resolve(__dirname, 'dist')
   }
 };
