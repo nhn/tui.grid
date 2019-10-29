@@ -69,11 +69,10 @@ import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
 
-/* eslint-disable */
+/* eslint-disable global-require */
 if ((module as any).hot) {
   require('preact/devtools');
 }
-/* eslint-enable */
 
 /**
  * Grid public API
