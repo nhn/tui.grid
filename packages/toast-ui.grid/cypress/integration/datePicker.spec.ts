@@ -80,24 +80,20 @@ describe('default datePicker', () => {
   it('Cell value is applied correctly in the datePicker.', () => {
     cy.getCellContent(0, 'default').should('have.text', '2019-11-11');
 
-    cy.getCell(0, 'default')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'default');
 
     cy.get('.tui-calendar-title').should('have.text', 'November 2019');
     cy.get('.tui-is-selected').should('have.text', '11');
   });
 
   it('select the date, the selected date is applied in the cell.', () => {
-    cy.getCell(0, 'default')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'default');
 
     cy.get('.tui-calendar-date')
       .contains('14')
       .click();
-
     cy.getCell(0, 'timePicker').click();
+
     cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
   });
 });
@@ -106,25 +102,21 @@ describe('timepicker', () => {
   it('use time picker to pick a time.', () => {
     cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 AM');
 
-    cy.getCell(0, 'timePicker')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'timePicker');
 
     cy.get('.tui-timepicker-hour')
       .get('select')
       .eq(2)
       .select('PM');
-
     cy.getCell(0, 'default').click();
+
     cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
   });
 
   it('use time picker tab', () => {
     cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:11 AM');
 
-    cy.getCell(0, 'timePickerWithTab')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'timePickerWithTab');
     cy.get('.tui-datepicker-selector-button')
       .eq(1)
       .click();
@@ -142,9 +134,7 @@ describe('month picker', () => {
   it('You can choose the month, year excluding date.', () => {
     cy.getCellContent(0, 'monthPicker').should('have.text', '2019-11');
 
-    cy.getCell(0, 'monthPicker')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
     cy.get('.tui-calendar-month')
       .contains('Mar')
@@ -159,9 +149,7 @@ describe('year picker', () => {
   it('You can only choose the year.', () => {
     cy.getCellContent(0, 'yearPicker').should('have.text', '2019');
 
-    cy.getCell(0, 'yearPicker')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'yearPicker');
     cy.get('.tui-calendar-year')
       .contains('2020')
       .click();
@@ -173,16 +161,13 @@ describe('year picker', () => {
 
 describe('show icon', () => {
   it("can't see the icon, when showIcon field false.", () => {
-    cy.getCell(0, 'default')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'default');
 
     cy.get(`.${cls('date-icon')}`).should('visible');
     cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('datepicker-input'));
 
-    cy.getCell(0, 'monthPicker')
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('finishEditing', 0, 'default');
+    cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
     cy.get(`.${cls('date-icon')}`).should('not.visible');
     cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('content-text'));
@@ -190,14 +175,11 @@ describe('show icon', () => {
 });
 
 it('focus the editing cell when datepicker layer is closed', () => {
-  cy.getCell(0, 'default')
-    .click()
-    .trigger('dblclick');
-
+  cy.gridInstance().invoke('startEditing', 0, 'default');
+  cy.focused().as('editingInput');
   cy.get('.tui-calendar-date')
     .contains('14')
     .click();
-  cy.focused().type('{Enter}');
 
-  cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
+  cy.get('@editingInput').should('be.focused');
 });
