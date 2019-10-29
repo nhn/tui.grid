@@ -82,11 +82,9 @@ export class DatePickerEditor implements CellEditor {
     }
 
     let date = isUndefined(value) || isNull(value) ? '' : new Date();
-    let format = 'yyyy-MM-dd';
 
-    if (options.format) {
-      format = options.format;
-      delete options.format;
+    if (!options.format) {
+      options.format = 'yyyy-MM-dd';
     }
 
     if (isNumber(value) || isString(value)) {
@@ -98,7 +96,7 @@ export class DatePickerEditor implements CellEditor {
       type: 'date',
       input: {
         element: this.inputEl,
-        format
+        format: options.format
       },
       usageStatistics
     };
