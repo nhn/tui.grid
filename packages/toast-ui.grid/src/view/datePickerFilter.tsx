@@ -52,18 +52,14 @@ class DatePickerFilterComp extends Component<Props> {
 
   private createDatePicker = () => {
     const { columnInfo, grid } = this.props;
-    const { options } = columnInfo.filter!;
+    const { options = {} } = columnInfo.filter!;
     const { usageStatistics } = grid;
     const { value } = this.getPreviousValue();
 
     let date;
-    let format = 'yyyy/MM/dd';
 
-    if (options) {
-      if (options.format) {
-        format = options.format;
-        delete options.format;
-      }
+    if (!options.format) {
+      options.format = 'yyyy/MM/dd';
     }
 
     if (isString(value) && value.length) {
@@ -75,7 +71,7 @@ class DatePickerFilterComp extends Component<Props> {
       type: 'date',
       input: {
         element: this.inputEl,
-        format
+        format: options.format
       },
       usageStatistics
     };
