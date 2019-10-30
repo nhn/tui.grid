@@ -11,10 +11,11 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
+/* eslint-disable @typescript-eslint/no-var-requires */
 const wp = require('@cypress/webpack-preprocessor');
 const path = require('path');
 
-module.exports = (on, config) => {
+module.exports = on => {
   const options = {
     webpackOptions: {
       resolve: {

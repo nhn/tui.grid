@@ -11,6 +11,8 @@ export class DatePickerEditor implements CellEditor {
 
   private datePickerEl: TuiDatePicker;
 
+  private iconEl?: HTMLElement;
+
   private createWrapper() {
     const el = document.createElement('div');
     el.className = cls('layer-datepicker');
@@ -34,11 +36,22 @@ export class DatePickerEditor implements CellEditor {
     return calendarWrapper;
   }
 
+  private openDatePicker() {
+    this.datePickerEl.open();
+  }
+
   private createIcon() {
     const icon = document.createElement('i');
     icon.className = cls('date-icon');
+    icon.addEventListener('click', () => {
+      this.openDatePicker();
+    });
 
     return icon;
+  }
+
+  private focus() {
+    this.inputEl.focus();
   }
 
   public constructor(props: CellEditorProps) {
@@ -63,16 +76,15 @@ export class DatePickerEditor implements CellEditor {
 
     if (options.showIcon) {
       const icon = this.createIcon();
+      this.iconEl = icon;
       this.inputEl.className = cls('datepicker-input');
       datepickerInputContainer.appendChild(icon);
     }
 
     let date = isUndefined(value) || isNull(value) ? '' : new Date();
-    let format = 'yyyy-MM-dd';
 
-    if (options.format) {
-      format = options.format;
-      delete options.format;
+    if (!options.format) {
+      options.format = 'yyyy-MM-dd';
     }
 
     if (isNumber(value) || isString(value)) {
@@ -84,12 +96,15 @@ export class DatePickerEditor implements CellEditor {
       type: 'date',
       input: {
         element: this.inputEl,
-        format
+        format: options.format
       },
       usageStatistics
     };
 
     this.datePickerEl = new TuiDatePicker(calendarWrapper, deepMergedCopy(defaultOptions, options));
+    this.datePickerEl.on('close', () => {
+      this.focus();
+    });
   }
 
   public getElement() {
@@ -106,6 +121,9 @@ export class DatePickerEditor implements CellEditor {
   }
 
   public beforeDestroy() {
+    if (this.iconEl) {
+      this.iconEl.removeEventListener('click', this.openDatePicker);
+    }
     this.datePickerEl.destroy();
   }
 }

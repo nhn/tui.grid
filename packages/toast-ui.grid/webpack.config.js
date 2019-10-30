@@ -28,7 +28,7 @@ const commonConfig = {
     library: ['tui', 'Grid'],
     libraryTarget: 'umd',
     filename: package.name + (minify ? '.min' : '') + '.js',
-    publicPath: '/',
+    publicPath: '/dist',
     path: path.resolve(__dirname, 'dist')
   }
 };
@@ -112,7 +112,8 @@ module.exports = (env, { mode = 'development' }) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        filename: 'dist/index.html'
+        filename: 'dist/index.html',
+        template: 'index.html'
       })
     ],
     devServer: {

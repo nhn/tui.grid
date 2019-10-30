@@ -125,6 +125,10 @@ class DatePickerFilterComp extends Component<Props> {
     return { value, code };
   };
 
+  private openDatePicker = () => {
+    this.datePickerEl!.open();
+  };
+
   public render() {
     const { columnInfo } = this.props;
     const { options } = columnInfo.filter!;
@@ -160,7 +164,7 @@ class DatePickerFilterComp extends Component<Props> {
             onKeyUp={this.handleKeyUp}
             value={value}
           />
-          {showIcon && <i className={cls('date-icon')} />}
+          {showIcon && <i className={cls('date-icon')} onClick={this.openDatePicker} />}
         </div>
         <div
           ref={ref => {
