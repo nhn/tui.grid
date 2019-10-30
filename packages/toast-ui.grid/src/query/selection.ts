@@ -41,11 +41,16 @@ export function getChildColumnRange(
   const childNames = sortByVisibleColumns(visibleColumnsWithRowHeader, unsortedChildNames);
 
   const startIndex = findPropIndex('name', childNames[0], visibleColumnsWithRowHeader);
-  const endIndex = findPropIndex(
+  let endIndex = findPropIndex(
     'name',
     childNames[childNames.length - 1],
     visibleColumnsWithRowHeader
   );
+
+  const endChildColSpan = visibleColumnsWithRowHeader[endIndex].headerColSpan;
+  if (endChildColSpan) {
+    endIndex += endChildColSpan.spanCount - 1;
+  }
 
   return [startIndex, endIndex];
 }

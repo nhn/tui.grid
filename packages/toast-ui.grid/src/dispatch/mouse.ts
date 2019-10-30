@@ -204,6 +204,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
 
   const { visibleColumnsWithRowHeader, complexColumnHeaders } = column;
   const endRowIndex = rowCoords.heights.length - 1;
+
   let startColumnIndex, endColumnIndex, columnName;
 
   if (parentHeader) {
@@ -218,17 +219,19 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     columnName = name;
   }
 
-  const inputRange = getSelectionRangeWithColSpan(
-    {
-      row: [0, endRowIndex],
-      column: [startColumnIndex, endColumnIndex]
-    },
+  const inputRange: SelectionRange = {
+    row: [0, endRowIndex],
+    column: [startColumnIndex, endColumnIndex]
+  };
+
+  const inputRangeWithColSpan = getSelectionRangeWithColSpan(
+    inputRange,
     visibleColumnsWithRowHeader
   );
 
   finishEditingByHeaderSelection(store);
   changeFocus(store, filteredRawData[0].rowKey, columnName, id);
-  changeSelectionRange(selection, inputRange, id);
+  changeSelectionRange(selection, inputRangeWithColSpan, id);
 }
 
 export function dragMoveHeader(store: Store, dragData: PagePosition, startSelectedName: string) {
@@ -263,15 +266,16 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
   }
 
   if (columnIndex >= 0) {
-    const inputRange = getSelectionRangeWithColSpan(
-      {
-        row: [0, rowIndex],
-        column: [startColumnIdx, endColumnIdx]
-      },
+    const inputRange: SelectionRange = {
+      row: [0, rowIndex],
+      column: [startColumnIdx, endColumnIdx]
+    };
+    const inputRangeWithColSpan = getSelectionRangeWithColSpan(
+      inputRange,
       visibleColumnsWithRowHeader
     );
 
-    changeSelectionRange(selection, inputRange, id);
+    changeSelectionRange(selection, inputRangeWithColSpan, id);
     setScrolling(dragData, areaWidth.L + areaWidth.R, selection, dimension, viewport);
   }
 }

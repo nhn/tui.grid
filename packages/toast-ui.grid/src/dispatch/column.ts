@@ -1,12 +1,4 @@
-import {
-  Store,
-  Side,
-  ComplexColumnInfo,
-  ViewRow,
-  Dictionary,
-  ColumnInfo,
-  Column
-} from '../store/types';
+import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary, ColumnInfo } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -107,39 +99,40 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
-function getColSpanColumnNames(columnName: string, allColumnMap: Dictionary<ColumnInfo>) {
-  const subColumnNames: string[] = [];
+function getAllColumnNamesWithColSpan(columnName: string, allColumnMap: Dictionary<ColumnInfo>) {
+  const columnNames: string[] = [];
   Object.keys(allColumnMap).forEach(name => {
     const colSpan = allColumnMap[name].headerColSpan;
     if (colSpan && colSpan.columnName === columnName) {
-      subColumnNames.push(name);
+      columnNames.push(name);
     }
   });
 
-  return subColumnNames;
+  return columnNames;
 }
 
-function setColumnHiddenValue(
+function setColumnsHiddenValue(
   columnName: string,
   allColumnMap: Dictionary<ColumnInfo>,
   hidden: boolean
 ) {
-  const columnItem = allColumnMap[columnName];
+  const column = allColumnMap[columnName];
 
-  if (columnItem) {
-    if (columnItem.headerColSpan) {
-      getColSpanColumnNames(columnName, allColumnMap).forEach(name => {
+  if (column) {
+    if (column.headerColSpan) {
+      getAllColumnNamesWithColSpan(columnName, allColumnMap).forEach(name => {
         allColumnMap[name].hidden = hidden;
       });
     } else {
-      columnItem.hidden = hidden;
+      column.hidden = hidden;
     }
   }
 }
 
 export function hideColumn(store: Store, columnName: string) {
-  const { allColumnMap } = store.column;
-  const { columnName: focusedColumnName } = store.focus;
+  const { column, focus } = store;
+  const { allColumnMap } = column;
+  const { columnName: focusedColumnName } = focus;
 
   if (focusedColumnName === columnName) {
     initFocus(store);
@@ -149,13 +142,13 @@ export function hideColumn(store: Store, columnName: string) {
   unfilter(store, columnName);
   unsort(store, columnName);
 
-  setColumnHiddenValue(columnName, allColumnMap, true);
+  setColumnsHiddenValue(columnName, allColumnMap, true);
 }
 
 export function showColumn({ column }: Store, columnName: string) {
   const { allColumnMap } = column;
 
-  setColumnHiddenValue(columnName, allColumnMap, false);
+  setColumnsHiddenValue(columnName, allColumnMap, false);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

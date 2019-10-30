@@ -98,6 +98,7 @@ class HeaderAreaComp extends Component<Props> {
     }
     const [start, end] = columnSelectionRange;
     const [startIdx, endIdx] = this.getHeaderRangeWithColSpan(index);
+
     return startIdx >= start && endIdx <= end;
   }
 

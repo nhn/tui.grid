@@ -37,7 +37,9 @@ import {
   isUndefined,
   isNumber,
   findProp,
-  findPropIndex
+  findPropIndex,
+  forEachObject,
+  isNull
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -316,18 +318,21 @@ function createColSpan(columnName: string, spanCount: number, count: number, mai
   return { columnName, spanCount, count, mainColumn };
 }
 
-function createColSpanMap(column: OptColumn[], colspan: Dictionary<number>) {
+function createHeaderColSpanMap(column: OptColumn[], colspan: Dictionary<number>) {
   const colSpanMap: HeaderColSpanMap = {};
-  Object.keys(colspan).forEach(columnName => {
+  forEachObject((value, columnName) => {
     const mainColumnStartIdx = findPropIndex('name', columnName, column);
     const spanCount = Math.min(colspan[columnName], column.length - mainColumnStartIdx);
+
     colSpanMap[columnName] = createColSpan(columnName, spanCount, spanCount, true);
+
     for (let idx = 0; idx < spanCount - 1; idx += 1) {
-      const offset = mainColumnStartIdx + idx + 1;
-      const { name } = column[offset];
+      const columnIdx = mainColumnStartIdx + idx + 1;
+      const { name } = column[columnIdx];
+
       colSpanMap[name] = createColSpan(columnName, spanCount, -1 - idx, false);
     }
-  });
+  }, colspan);
 
   return colSpanMap;
 }
@@ -351,7 +356,7 @@ export function create({
   }, []);
   const columnHeaderInfo = { columnHeaders, align, valign };
   const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, columnHeaderInfo));
-  const colSpanMap = createColSpanMap(columns, colspan);
+  const headerColSpanMap = createHeaderColSpanMap(columns, colspan);
 
   const columnInfos = columns.map(column =>
     createColumn(
@@ -361,7 +366,7 @@ export function create({
       copyOptions,
       treeColumnOptions,
       columnHeaderInfo,
-      colSpanMap[column.name]
+      headerColSpanMap[column.name]
     )
   );
   const allColumns = rowHeaderInfos.concat(columnInfos);
