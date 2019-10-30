@@ -10,7 +10,7 @@ const stories = storiesOf('Columns', module);
 stories.addDecorator(withKnobs);
 
 const columns = [
-  { name: 'name', minWidth: 150 },
+  { name: 'name', minWidth: 150, className: ['test1', 'test2'] },
   { name: 'artist', minWidth: 150 },
   { name: 'type', minWidth: 300 },
   { name: 'release', minWidth: 300 },
@@ -100,6 +100,28 @@ stories.add(
     button(`showColumn('type')`, () => grid.showColumn('type'));
     button(`hideColumn('artist')`, () => grid.hideColumn('artist'));
     button(`showColumn('artist')`, () => grid.showColumn('artist'));
+
+    return el;
+  },
+  { html: { preventForcedRender: true } }
+);
+
+stories.add(
+  'column className',
+  () => {
+    const { el } = createGrid({
+      data,
+      columns: [
+        {
+          name: 'name',
+          className: 'test-class'
+        },
+        {
+          name: 'artist',
+          className: 'test-class test-class2'
+        }
+      ]
+    });
 
     return el;
   },
