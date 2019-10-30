@@ -172,6 +172,7 @@ class BodyAreaComp extends Component<Props> {
       width: totalColumnWidth,
       height: totalRowHeight + cellBorderWidth
     };
+
     return (
       <div
         class={cls('body-area')}

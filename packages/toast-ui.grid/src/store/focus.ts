@@ -1,4 +1,13 @@
-import { Focus, ColumnCoords, RowCoords, Column, Data, EditingEvent, TabMode } from './types';
+import {
+  Focus,
+  ColumnCoords,
+  RowCoords,
+  Column,
+  Data,
+  EditingEvent,
+  TabMode,
+  Dimension
+} from './types';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex, isEmpty } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
@@ -7,6 +16,7 @@ import { findIndexByRowKey } from '../query/data';
 interface FocusOption {
   data: Data;
   column: Column;
+  dimension: Dimension;
   rowCoords: RowCoords;
   columnCoords: ColumnCoords;
   editingEvent: EditingEvent;
@@ -17,6 +27,7 @@ interface FocusOption {
 export function create({
   column,
   data,
+  dimension,
   rowCoords,
   columnCoords,
   editingEvent,
@@ -89,13 +100,16 @@ export function create({
     get cellPosRect(this: Focus) {
       const { columnIndex, rowIndex, side, columnName, rowKey } = this;
       const { filteredRawData, sortState } = data;
+      const { cellBorderWidth } = dimension;
 
       if (columnIndex === null || rowIndex === null || side === null || columnName === null) {
         return null;
       }
 
-      const left = columnCoords.offsets[side][columnIndex];
-      const right = left + columnCoords.widths[side][columnIndex];
+      const { widths, offsets } = columnCoords;
+      const borderWidth = widths[side].length - 1 === columnIndex ? 0 : cellBorderWidth;
+      const left = offsets[side][columnIndex];
+      const right = left + widths[side][columnIndex] + borderWidth;
       const top = rowCoords.offsets[rowIndex];
       const bottom = top + rowCoords.heights[rowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);

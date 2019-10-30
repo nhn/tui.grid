@@ -123,7 +123,7 @@
   vertical-align: middle;
   cursor: pointer;
 }
-.tui-grid-btn-filter-active{
+.tui-grid-btn-filter-active {
   background-position: -47px -84px;
 }
 
@@ -135,7 +135,7 @@
   position: absolute;
   background: #fff;
   text-align: center;
-  z-index: 18;
+  z-index: 15;
 }
 .tui-grid-layer-state p {
   position: absolute;
@@ -166,7 +166,6 @@
   border-width: 1px;
   white-space: nowrap;
   box-sizing: border-box;
-  z-index: 20;
 }
 .tui-grid-layer-editing textarea {
   position: absolute;
@@ -183,7 +182,7 @@
 .tui-grid-layer-focus-border {
   position: absolute;
   overflow: hidden;
-  z-index: 19;
+  z-index: 15;
 }
 .tui-grid-layer-selection {
   position: absolute;
@@ -308,7 +307,7 @@
 }
 .tui-grid-border-line {
   position: absolute;
-  z-index: 16;
+  z-index: 15;
 }
 .tui-grid-border-line-top {
   top: 0;
@@ -333,6 +332,7 @@
   left: 0;
   right: 17px;
   height: 1px;
+  z-index: 10;
 }
 .tui-grid-no-scroll-x .tui-grid-border-line-left {
   bottom: 0;
@@ -446,7 +446,7 @@
   width: 16px;
   border-style: solid;
   border-width: 1px;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-scrollbar-left-bottom {
   position: absolute;
@@ -456,7 +456,7 @@
   height: 17px;
   border-style: solid;
   border-width: 0 1px;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-scrollbar-right-bottom {
   position: absolute;
@@ -465,7 +465,7 @@
   width: 16px;
   border-style: solid;
   border-width: 1px 1px 0 1px;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-no-scroll-x .tui-grid-scrollbar-right-bottom {
   height: 0;
@@ -483,7 +483,7 @@
   position: absolute;
   right: 17px;
   width: 1px;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-scrollbar-y-outer-border {
   display: block;
@@ -492,7 +492,7 @@
   bottom: 0;
   right: 0;
   width: 1px;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-scrollbar-frozen-border {
   position: absolute;
@@ -501,13 +501,13 @@
   height: 17px;
   border-style: solid;
   border-width: 0 1px 0 0;
-  z-index: 19;
+  z-index: 10;
 }
 .tui-grid-frozen-border {
   position: absolute;
   top: 0;
   bottom: 0;
-  z-index: 17;
+  z-index: 5;
 }
 .tui-grid-height-resize-handle {
   overflow: hidden;
@@ -716,9 +716,6 @@
 
 .tui-grid-filter-comparator input[type='radio'] {
   display: none;
-}
-
-.tui-grid-filter-container .tui-grid-filter-list-container {
 }
 
 .tui-grid-filter-list-container .tui-grid-filter-list {

@@ -99,6 +99,7 @@ export function createStore(id: number, options: OptGrid): Store {
   const focus = createFocus({
     data,
     column,
+    dimension,
     columnCoords,
     rowCoords,
     editingEvent,
