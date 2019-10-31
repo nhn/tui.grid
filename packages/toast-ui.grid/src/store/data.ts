@@ -192,7 +192,7 @@ function createViewCell(
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
-  const classList = [...classNameAttr.row, columnClassName];
+  const classList = [...classNameAttr.row, ...columnClassName];
   const className = (isEmpty(row.rowSpanMap[name])
     ? classList
     : classList.filter(clsName => clsName !== cls('row-hover'))
