@@ -456,6 +456,5 @@ export interface OptComplexColumnInfo {
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   renderer?: HeaderRendererClass;
-  columns?: ColumnsAlignInfo[];
   colspan?: Dictionary<number>;
 }

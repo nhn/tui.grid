@@ -509,5 +509,4 @@ export interface ComplexColumnInfo {
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
-  headerColSpan?: HeaderColSpan;
 }

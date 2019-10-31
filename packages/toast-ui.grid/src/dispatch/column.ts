@@ -11,6 +11,7 @@ import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
 import { findProp } from '../helper/common';
+import { getAllColumnNamesWithColSpan } from '../query/colSpan';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -97,18 +98,6 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   column.visibleColumns.forEach((columnInfo, idx) => {
     columnInfo.baseWidth = widths[idx];
   });
-}
-
-function getAllColumnNamesWithColSpan(columnName: string, allColumnMap: Dictionary<ColumnInfo>) {
-  const columnNames: string[] = [];
-  Object.keys(allColumnMap).forEach(name => {
-    const colSpan = allColumnMap[name].headerColSpan;
-    if (colSpan && colSpan.columnName === columnName) {
-      columnNames.push(name);
-    }
-  });
-
-  return columnNames;
 }
 
 function setColumnsHiddenValue(

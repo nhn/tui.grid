@@ -335,18 +335,18 @@ describe('hideColumn(), showColumn()', () => {
       }
     });
 
-    cy.get('[data-column-name=name]').should('exist');
+    cy.getHeaderCell('name').should('exist');
 
     cy.gridInstance().invoke('hideColumn', 'name');
 
-    cy.get('[data-column-name=name]').should('not.exist');
+    cy.getHeaderCell('name').should('not.exist');
 
     cy.gridInstance().invoke('showColumn', 'name');
 
-    cy.get('[data-column-name=name]').should('exist');
+    cy.getHeaderCell('name').should('exist');
   });
 
-  it('hideColumn(), showColumn() with merged  header', () => {
+  it('hideColumn(), showColumn() with merged header', () => {
     const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
 
     cy.createGrid({
@@ -359,10 +359,30 @@ describe('hideColumn(), showColumn()', () => {
       }
     });
 
-    cy.get('[data-column-name=name]').should('exist');
+    cy.getHeaderCell('name').should('exist');
 
     cy.gridInstance().invoke('hideColumn', 'name');
 
-    cy.get('[data-column-name=name]').should('not.exist');
+    cy.getHeaderCell('name').should('not.exist');
+  });
+});
+
+describe('header merge', () => {
+  it('should merged when give the colspan option.', () => {
+    const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
+
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        colspan: {
+          name: 2
+        }
+      }
+    });
+
+    cy.getHeaderCell('name').should('exist');
+    cy.getHeaderCell('score').should('not.exist');
+    cy.getHeaderCell('name').should('have.attr', 'colspan', '2');
   });
 });

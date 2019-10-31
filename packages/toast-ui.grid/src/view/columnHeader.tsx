@@ -8,7 +8,6 @@ import { isRowHeader, isCheckboxColumn } from '../helper/column';
 import { HeaderRenderer, ColumnHeaderInfo } from '../renderer/types';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
-import { HeaderColSpan } from '../store/types';
 
 interface OwnProps {
   columnInfo: ColumnHeaderInfo;
@@ -28,7 +27,15 @@ export class ColumnHeader extends Component<Props> {
 
   private getElement(type: string) {
     const { columnInfo } = this.props;
-    const { name, sortable, sortingType, filter, headerRenderer, header } = columnInfo;
+    const {
+      name,
+      sortable,
+      sortingType,
+      filter,
+      headerRenderer,
+      header,
+      headerColSpan
+    } = columnInfo;
 
     if (headerRenderer) {
       return null;
@@ -38,29 +45,27 @@ export class ColumnHeader extends Component<Props> {
       case 'checkbox':
         return isCheckboxColumn(name) ? <HeaderCheckbox /> : header;
       case 'sortingBtn':
-        return sortable && <SortingButton columnName={name} sortingType={sortingType} />;
+        return (
+          !headerColSpan &&
+          sortable && <SortingButton columnName={name} sortingType={sortingType} />
+        );
       case 'sortingOrder':
-        return sortable && <SortingOrder columnName={name} />;
+        return !headerColSpan && sortable && <SortingOrder columnName={name} />;
       case 'filter':
-        return filter && <FilterButton columnName={name} />;
+        return !headerColSpan && filter && <FilterButton columnName={name} />;
       default:
         return null;
     }
   }
 
-  private isRenderHeader(headerColSpan?: HeaderColSpan) {
-    return !headerColSpan || (headerColSpan && headerColSpan.mainColumn);
-  }
-
   public componentDidMount() {
     const { columnInfo, grid } = this.props;
-    const { headerRenderer } = columnInfo;
+    const { headerRenderer: HeaderRendererClass } = columnInfo;
 
-    if (!headerRenderer || !this.el) {
+    if (!HeaderRendererClass || !this.el) {
       return;
     }
 
-    const HeaderRendererClass = headerRenderer;
     const renderer = new HeaderRendererClass({ grid, columnInfo });
     const rendererEl = renderer.getElement();
 
@@ -88,11 +93,12 @@ export class ColumnHeader extends Component<Props> {
       headerColSpan
     } = columnInfo;
 
-    if (!this.isRenderHeader(headerColSpan)) {
+    if (headerColSpan && !headerColSpan.mainColumn) {
       return null;
     }
 
     const colspan = (headerColSpan && headerColSpan.spanCount) || colspanCount;
+
     return (
       <th
         ref={el => {

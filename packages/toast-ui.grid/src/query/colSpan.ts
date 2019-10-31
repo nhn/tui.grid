@@ -1,9 +1,9 @@
-import { ColumnInfo, SelectionRange } from '../store/types';
+import { ColumnInfo, Dictionary, SelectionRange } from '../store/types';
 import { findPropIndex } from '../helper/common';
 
 function getColSpanRange(name: string, visibleColumnsWithRowHeader: ColumnInfo[]) {
   const startIdx = findPropIndex('name', name, visibleColumnsWithRowHeader);
-  const spanCount = visibleColumnsWithRowHeader[startIdx].headerColSpan!.spanCount;
+  const { spanCount } = visibleColumnsWithRowHeader[startIdx].headerColSpan!;
 
   return [startIdx, startIdx + spanCount - 1];
 }
@@ -28,4 +28,19 @@ export function getSelectionRangeWithColSpan(
     row: selectionRange.row,
     column: [startColumnIdx, endColumnIdx]
   };
+}
+
+export function getAllColumnNamesWithColSpan(
+  columnName: string,
+  allColumnMap: Dictionary<ColumnInfo>
+) {
+  const columnNames: string[] = [];
+  Object.keys(allColumnMap).forEach(name => {
+    const colSpan = allColumnMap[name].headerColSpan;
+    if (colSpan && colSpan.columnName === columnName) {
+      columnNames.push(name);
+    }
+  });
+
+  return columnNames;
 }

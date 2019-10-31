@@ -320,9 +320,9 @@ function createColSpan(columnName: string, spanCount: number, count: number, mai
 
 function createHeaderColSpanMap(column: OptColumn[], colspan: Dictionary<number>) {
   const colSpanMap: HeaderColSpanMap = {};
-  forEachObject((value, columnName) => {
+  forEachObject((colSpanCount, columnName) => {
     const mainColumnStartIdx = findPropIndex('name', columnName, column);
-    const spanCount = Math.min(colspan[columnName], column.length - mainColumnStartIdx);
+    const spanCount = Math.min(colSpanCount, column.length - mainColumnStartIdx);
 
     colSpanMap[columnName] = createColSpan(columnName, spanCount, spanCount, true);
 
