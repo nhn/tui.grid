@@ -42,7 +42,11 @@ describe('className', () => {
         }
       }
     ];
-    const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
+    const columns = [
+      { name: 'name', className: 'column-test-c' },
+      { name: 'age' },
+      { name: 'location' }
+    ];
 
     cy.createGrid({ data, columns });
     cy.createStyle(`
@@ -64,6 +68,12 @@ describe('className', () => {
         background-color: #666666;
       }
     `);
+  });
+
+  it('add class by column options', () => {
+    cy.get('td[data-column-name=name]').within($el => {
+      expect($el.hasClass('column-test-c')).to.be.true;
+    });
   });
 
   it('add class by _attributes prop', () => {
