@@ -22,15 +22,49 @@ const generateObserverId = (() => {
 })();
 
 // store all observer info
-const observerInfoMap: Dictionary<ObserverInfo> = {};
+export const observerInfoMap: Dictionary<ObserverInfo> = {};
 
 // observerId stack for managing recursive observing calls
 const observerIdStack: string[] = [];
+
+let queue: string[] = [];
+
+let observerIdMapForQueue: { [key: string]: boolean } = {};
+
+let pending = false;
+
+function batchUpdate(observerId: string) {
+  if (!observerIdMapForQueue[observerId]) {
+    observerIdMapForQueue[observerId] = true;
+    queue.push(observerId);
+  }
+  if (!pending) {
+    flush();
+  }
+}
+
+function clearQueue() {
+  queue = [];
+  observerIdMapForQueue = {};
+  pending = false;
+}
 
 function callObserver(observerId: string) {
   observerIdStack.push(observerId);
   observerInfoMap[observerId].fn();
   observerIdStack.pop();
+}
+
+function flush() {
+  pending = true;
+
+  for (let index = 0; index < queue.length; index += 1) {
+    const observerId = queue[index];
+    observerIdMapForQueue[observerId] = false;
+    callObserver(observerId);
+  }
+
+  clearQueue();
 }
 
 function setValue<T, K extends keyof T>(
@@ -42,7 +76,7 @@ function setValue<T, K extends keyof T>(
   if (storage[key] !== value) {
     storage[key] = value;
     Object.keys(observerIdSet).forEach(observerId => {
-      callObserver(observerId);
+      batchUpdate(observerId);
     });
   }
 }
@@ -54,13 +88,13 @@ export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
 export function observe(fn: Function) {
   const observerId = generateObserverId();
   observerInfoMap[observerId] = { fn, targetObserverIdSets: [] };
-  callObserver(observerId);
-
+  batchUpdate(observerId);
   // return unobserve function
   return () => {
     observerInfoMap[observerId].targetObserverIdSets.forEach(idSet => {
       delete idSet[observerId];
     });
+    delete observerInfoMap[observerId];
   };
 }
 
@@ -124,7 +158,7 @@ export function observable<T extends Dictionary<any>>(obj: T): Observable<T> {
 export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
     Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
-      callObserver(observerId);
+      batchUpdate(observerId);
     });
   }
 }
