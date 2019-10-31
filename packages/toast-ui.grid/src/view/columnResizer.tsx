@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, ColumnInfo } from '../store/types';
+import { Side, ColumnInfo, Range } from '../store/types';
 
 interface OwnProps {
   side: Side;
@@ -25,11 +25,23 @@ class ColumnResizerComp extends Component<Props> {
 
   private draggingWidth = -1;
 
-  private draggingIndex = -1;
+  private draggingRange: Range = [-1, -1];
 
-  private handleMouseDown = (ev: MouseEvent, index: number) => {
-    this.draggingIndex = index;
-    this.draggingWidth = this.props.widths[index];
+  private getWidthInRange = (range: Range) => {
+    const { widths } = this.props;
+    let width = 0;
+    const [startIdx, endIdx] = range;
+
+    for (let idx = startIdx; idx <= endIdx; idx += 1) {
+      width += widths[idx];
+    }
+
+    return width;
+  };
+
+  private handleMouseDown = (ev: MouseEvent, range: Range) => {
+    this.draggingRange = range;
+    this.draggingWidth = this.getWidthInRange(range);
     this.dragStartX = ev.pageX;
 
     setCursorStyle('col-resize');
@@ -46,7 +58,7 @@ class ColumnResizerComp extends Component<Props> {
     const width = this.draggingWidth + ev.pageX - this.dragStartX;
     const { side } = this.props;
 
-    this.props.dispatch('setColumnWidth', side, this.draggingIndex, width);
+    this.props.dispatch('setColumnWidth', side, this.draggingRange, width);
   };
 
   private clearDocumentEvents = () => {
@@ -60,19 +72,24 @@ class ColumnResizerComp extends Component<Props> {
     this.clearDocumentEvents();
   }
 
-  private renderHandle(index: number) {
+  private renderHandle(startIdx: number) {
     const { columns, offsets, cellBorderWidth, widths } = this.props;
-    const { name, resizable } = columns[index];
-    if (!resizable) {
+    const { name, resizable, headerColSpan } = columns[startIdx];
+    if (!resizable || (headerColSpan && !headerColSpan.mainColumn)) {
       return null;
     }
+    const endIdx = headerColSpan ? startIdx + headerColSpan.spanCount - 1 : startIdx;
+    const totalCellBorderWidth = headerColSpan
+      ? cellBorderWidth * headerColSpan.spanCount
+      : cellBorderWidth;
 
-    const offset = offsets[index];
-    const width = widths[index];
+    const offset = offsets[endIdx];
+    const width = widths[endIdx];
     const attrs = {
-      [dataAttr.COLUMN_INDEX]: index,
+      [dataAttr.COLUMN_INDEX]: startIdx,
       [dataAttr.COLUMN_NAME]: name
     };
+    const range: Range = [startIdx, endIdx];
 
     return (
       <div
@@ -82,9 +99,9 @@ class ColumnResizerComp extends Component<Props> {
         style={{
           height: 33,
           width: WIDTH,
-          left: offset + width + cellBorderWidth - HALF_WIDTH
+          left: offset + width + totalCellBorderWidth - HALF_WIDTH
         }}
-        onMouseDown={ev => this.handleMouseDown(ev, index)}
+        onMouseDown={ev => this.handleMouseDown(ev, range)}
       />
     );
   }

@@ -38,8 +38,7 @@ import {
   isNumber,
   findProp,
   findPropIndex,
-  forEachObject,
-  isNull
+  forEachObject
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';

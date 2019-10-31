@@ -84,8 +84,8 @@ export const merge = () => {
     data,
     columns: [
       { name: 'name', resizable: true },
-      { name: 'artist', resizable: true },
-      { name: 'type' },
+      { name: 'artist', minWidth: 230 },
+      { name: 'type', resizable: true },
       { name: 'release' },
       { name: 'genre' },
       { name: 'genreCode' },
