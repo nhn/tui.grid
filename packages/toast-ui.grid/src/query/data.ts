@@ -129,8 +129,8 @@ export function isSortable(sortState: SortState, column: Column, columnName: str
   if (columnName === 'sortKey') {
     return true;
   }
-  const { sortable, hidden } = column.allColumnMap[columnName];
-  return sortState.useClient && !hidden && sortable;
+  const { sortable, hidden, headerColSpan } = column.allColumnMap[columnName];
+  return !headerColSpan && sortState.useClient && !hidden && sortable;
 }
 
 export function isInitialSortState({ columns }: SortState) {

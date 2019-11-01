@@ -27,30 +27,30 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
 
 function getEachCellWidthInRange(columns: ColumnInfo[], range: Range, totalWidth: number) {
   const widths = [];
-  const restIndexes = [];
+  const unsetWidthIndexes = [];
   const [startIdx, endIdx] = range;
   const rangeLength = endIdx - startIdx + 1;
   let restWidth = totalWidth;
-  let commonWidth = totalWidth / rangeLength;
-  let underMinWidthCount = 0;
+  let columnWidth = totalWidth / rangeLength;
+  let countSetWidth = 0;
 
   for (let idx = 0; idx < rangeLength; idx += 1) {
     const columnIdx = startIdx + idx;
     const { minWidth } = columns[columnIdx];
-    if (minWidth > commonWidth) {
+    if (minWidth > columnWidth) {
       widths[idx] = minWidth;
-      underMinWidthCount += 1;
+      countSetWidth += 1;
       restWidth -= minWidth;
     } else {
-      restIndexes.push(columnIdx);
+      unsetWidthIndexes.push(columnIdx);
     }
   }
 
-  if (rangeLength - underMinWidthCount) {
-    commonWidth = restWidth / (rangeLength - underMinWidthCount);
-    restIndexes.forEach(columnIdx => {
+  if (rangeLength - countSetWidth) {
+    columnWidth = restWidth / (rangeLength - countSetWidth);
+    unsetWidthIndexes.forEach(columnIdx => {
       const { minWidth } = columns[columnIdx];
-      widths[columnIdx - startIdx] = commonWidth > minWidth ? commonWidth : minWidth;
+      widths[columnIdx - startIdx] = columnWidth > minWidth ? columnWidth : minWidth;
     });
   }
 
@@ -68,9 +68,13 @@ export function setColumnWidth(
   const columns = visibleColumnsBySideWithRowHeader[side];
 
   const columnItem = columns[startIdx];
-  const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ columnName: columnItem.name, width: totalWidth });
   const widths = getEachCellWidthInRange(columns, range, totalWidth);
+
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({
+    columnName: columnItem.name,
+    width: widths.reduce((width, acc) => acc + width, 0)
+  });
 
   /**
    * Occurs when column is resized

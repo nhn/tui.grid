@@ -178,9 +178,9 @@ export function filter(
 ) {
   const { data, column, id } = store;
   const { pageOptions, filteredRawData } = data;
-  const columnFilterInfo = column.allColumnMap[columnName].filter;
+  const { filter: columnFilterInfo, headerColSpan } = column.allColumnMap[columnName];
 
-  if (!columnFilterInfo || isHiddenColumn(column, columnName)) {
+  if (!columnFilterInfo || isHiddenColumn(column, columnName) || headerColSpan) {
     return;
   }
 
@@ -222,7 +222,7 @@ export function unfilter(store: Store, columnName: string) {
   const { data, column } = store;
   const { filters } = data;
 
-  if (isHiddenColumn(column, columnName)) {
+  if (isHiddenColumn(column, columnName) || column.allColumnMap[columnName].headerColSpan) {
     return;
   }
 
