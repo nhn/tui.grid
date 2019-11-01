@@ -71,7 +71,7 @@ describe('className', () => {
   });
 
   it('add class by column options', () => {
-    cy.get('td[data-column-name=name]').within($el => {
+    cy.getColumnCells('name').each($el => {
       expect($el.hasClass('column-test-c')).to.be.true;
     });
   });

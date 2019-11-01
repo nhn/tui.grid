@@ -60,6 +60,7 @@ export const frozenBorderStyle = () => {
   return el;
 };
 
+// @TODO: TEST MOVE TO CYPRESS
 export const keyColumnName = () => {
   const myData = data.map((row, idx) => ({
     ...row,
@@ -78,6 +79,7 @@ export const keyColumnName = () => {
   return el;
 };
 
+// @TODO: TEST MOVE TO CYPRESS
 export const showAndHideColumn = () => {
   const { grid, el } = createGrid({
     data,
