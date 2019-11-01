@@ -1,6 +1,6 @@
 import { findOffsetIndex, findPropIndex, isEmpty, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
-import { changeFocus, finishEditing, saveAndFinishEditing } from './focus';
+import { changeFocus, saveAndFinishEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import {
   Store,
@@ -130,9 +130,7 @@ function updateSelection(store: Store, dragData: PagePosition) {
 }
 
 function finishEditingByHeaderSelection(store: Store) {
-  const {
-    focus: { editingAddress }
-  } = store;
+  const { editingAddress } = store.focus;
 
   if (editingAddress) {
     const { rowKey: editingRowKey, columnName: editingColumnName } = editingAddress;

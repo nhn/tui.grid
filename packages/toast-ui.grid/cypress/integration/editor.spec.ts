@@ -292,12 +292,10 @@ it('should renering of the editing cell is syncronous', () => {
       cy.getRowNumCell(1).as('targetCell');
     }
 
-    cy.get('@targetCell')
-      .click()
-      .should(() => {
-        expect(stub).to.be.calledOnce;
-        expect(stub.args[0][0]).to.contain({ rowKey: 1, columnName: 'name' });
-      });
+    cy.get('@targetCell').click();
+    cy.wrap(stub)
+      .should('be.calledOnce')
+      .and('calledWithMatch', { rowKey: 1, columnName: 'name' });
   });
 });
 
