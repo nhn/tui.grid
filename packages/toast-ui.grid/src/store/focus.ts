@@ -42,7 +42,6 @@ export function create({
     editingAddress: null,
     editingEvent,
     navigating: false,
-    forcedDestroyEditing: false,
     tabMode,
 
     get side(this: Focus) {
