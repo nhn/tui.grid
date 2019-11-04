@@ -69,7 +69,7 @@ function flush() {
 }
 
 function run(observerId: string) {
-  const sync = observerInfoMap[observerId].sync;
+  const { sync } = observerInfoMap[observerId];
 
   if (sync) {
     callObserver(observerId);
