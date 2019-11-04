@@ -94,7 +94,7 @@ export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
   return isObject(resultObj) && hasOwnProp(resultObj, '__storage__');
 }
 
-export function observe(fn: Function, sync: boolean) {
+export function observe(fn: Function, sync = false) {
   const observerId = generateObserverId();
   observerInfoMap[observerId] = { fn, targetObserverIdSets: [] };
   run(observerId, sync);
