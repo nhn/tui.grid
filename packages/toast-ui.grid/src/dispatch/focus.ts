@@ -45,38 +45,38 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { filteredRawData } = data;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey);
 
-  // if (foundIndex === -1) {
-  //   return;
-  // }
+  if (foundIndex === -1) {
+    return;
+  }
 
-  // // makes the data observable to judge editable, disable of the cell;
-  // makeObservable(store, rowKey);
+  // makes the data observable to judge editable, disable of the cell;
+  makeObservable(store, rowKey);
 
-  // if (!isEditableCell(data, column, foundIndex, columnName)) {
-  //   return;
-  // }
+  if (!isEditableCell(data, column, foundIndex, columnName)) {
+    return;
+  }
 
-  // const eventBus = getEventBus(id);
-  // const gridEvent = new GridEvent({
-  //   rowKey,
-  //   columnName,
-  //   value: filteredRawData[foundIndex][columnName]
-  // });
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent({
+    rowKey,
+    columnName,
+    value: filteredRawData[foundIndex][columnName]
+  });
 
-  // /**
-  //  * Occurs when editing the cell is started
-  //  * @event Grid#editingStart
-  //  * @property {number} rowKey - rowKey of the target cell
-  //  * @property {number} columnName - columnName of the target cell
-  //  * @property {number | string | boolean | null | undefined} value - value of the editing cell
-  //  * @property {Grid} instance - Current grid instance
-  //  */
-  // eventBus.trigger('editingStart', gridEvent);
+  /**
+   * Occurs when editing the cell is started
+   * @event Grid#editingStart
+   * @property {number} rowKey - rowKey of the target cell
+   * @property {number} columnName - columnName of the target cell
+   * @property {number | string | boolean | null | undefined} value - value of the editing cell
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('editingStart', gridEvent);
 
-  // if (!gridEvent.isStopped()) {
-  //   focus.navigating = false;
-  //   focus.editingAddress = { rowKey, columnName };
-  // }
+  if (!gridEvent.isStopped()) {
+    focus.navigating = false;
+    focus.editingAddress = { rowKey, columnName };
+  }
 }
 
 export function finishEditing(
