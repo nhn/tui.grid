@@ -10,7 +10,6 @@ import { setValue } from './data';
 import { isUndefined } from '../helper/common';
 import { createTreeRawRow } from '../store/helper/tree';
 import { isHiddenColumn } from '../query/column';
-import { forceSyncRendering } from '../helper/render';
 
 function makeObservable(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
@@ -75,11 +74,9 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   eventBus.trigger('editingStart', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    forceSyncRendering(() => {
-      focus.forcedDestroyEditing = false;
-      focus.navigating = false;
-      focus.editingAddress = { rowKey, columnName };
-    });
+    focus.forcedDestroyEditing = false;
+    focus.navigating = false;
+    focus.editingAddress = { rowKey, columnName };
   }
 }
 
@@ -104,10 +101,8 @@ export function finishEditing(
 
   if (!gridEvent.isStopped()) {
     if (isEditingCell(focus, rowKey, columnName)) {
-      forceSyncRendering(() => {
-        focus.editingAddress = null;
-        focus.navigating = true;
-      });
+      focus.editingAddress = null;
+      focus.navigating = true;
     }
   }
 }
@@ -191,11 +186,9 @@ export function saveAndFinishEditing(store: Store, value?: string) {
 
   // if value is 'undefined', editing result is saved and finished.
   if (isUndefined(value)) {
-    forceSyncRendering(() => {
-      focus.forcedDestroyEditing = true;
-      focus.editingAddress = null;
-      focus.navigating = true;
-    });
+    focus.editingAddress = null;
+    focus.forcedDestroyEditing = true;
+    focus.navigating = true;
     return;
   }
 
