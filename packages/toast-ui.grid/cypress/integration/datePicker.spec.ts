@@ -161,12 +161,6 @@ describe('year picker', () => {
 
 describe('show icon', () => {
   it("can't see the icon, when showIcon field false.", () => {
-    cy.gridInstance().invoke('startEditing', 0, 'default');
-
-    cy.get(`.${cls('date-icon')}`).should('visible');
-    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('datepicker-input'));
-
-    cy.gridInstance().invoke('finishEditing', 0, 'default');
     cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
     cy.get(`.${cls('date-icon')}`).should('not.visible');
