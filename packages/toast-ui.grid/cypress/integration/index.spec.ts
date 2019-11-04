@@ -193,25 +193,38 @@ it('recursive observe should work properly with dynamic observe', () => {
   expect(callback3).to.be.calledWith(10);
 });
 
-it('duplicated update is not caused in batch update', () => {
-  const callback1 = cy.stub();
-  const callback2 = cy.stub();
-
-  const obj1 = observable({ num: 0 });
-  const obj2 = observable({ num: 0 });
+it('duplicated update is not executed in batch update', () => {
+  const callback = cy.stub();
+  const obj = observable({ num: 0 });
 
   observe(() => {
-    callback1(obj1.num);
+    callback(obj.num);
   });
 
   observe(() => {
-    obj1.num = 20;
-    obj1.num = 10;
-    callback2(obj2.num);
+    obj.num = 20;
+    obj.num = 10;
   });
 
-  obj2.num = 10;
+  expect(callback).to.be.calledTwice;
+  expect(callback).to.not.be.calledWith(20);
+  expect(callback).to.be.calledWith(10);
+});
 
-  expect(callback1).to.not.be.calledWith(20);
-  expect(callback1).to.be.calledWith(10);
+it('duplicated update is executed in sync batch update', () => {
+  const callback = cy.stub();
+  const obj = observable({ num: 0 }, true);
+
+  observe(() => {
+    callback(obj.num);
+  });
+
+  observe(() => {
+    obj.num = 20;
+    obj.num = 10;
+  });
+
+  expect(callback).to.be.calledThrice;
+  expect(callback).to.be.calledWith(20);
+  expect(callback).to.be.calledWith(10);
 });
