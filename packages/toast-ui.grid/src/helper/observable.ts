@@ -6,6 +6,7 @@ type BooleanSet = Dictionary<boolean>;
 interface ObserverInfo {
   fn: Function;
   targetObserverIdSets: BooleanSet[];
+  sync: boolean;
 }
 
 export type Observable<T extends Dictionary<any>> = T & {
@@ -67,7 +68,9 @@ function flush() {
   clearQueue();
 }
 
-function run(observerId: string, sync: boolean) {
+function run(observerId: string) {
+  const sync = observerInfoMap[observerId].sync;
+
   if (sync) {
     callObserver(observerId);
   } else {
@@ -85,7 +88,8 @@ function setValue<T, K extends keyof T>(
   if (storage[key] !== value) {
     storage[key] = value;
     Object.keys(observerIdSet).forEach(observerId => {
-      run(observerId, sync);
+      observerInfoMap[observerId].sync = sync;
+      run(observerId);
     });
   }
 }
@@ -96,8 +100,8 @@ export function isObservable<T>(resultObj: T): resultObj is Observable<T> {
 
 export function observe(fn: Function, sync = false) {
   const observerId = generateObserverId();
-  observerInfoMap[observerId] = { fn, targetObserverIdSets: [] };
-  run(observerId, sync);
+  observerInfoMap[observerId] = { fn, targetObserverIdSets: [], sync };
+  run(observerId);
 
   // return unobserve function
   return () => {
@@ -165,10 +169,10 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
   return resultObj as Observable<T>;
 }
 
-export function notify<T, K extends keyof T>(obj: T, key: K, sync = false) {
+export function notify<T, K extends keyof T>(obj: T, key: K) {
   if (isObservable(obj)) {
     Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
-      run(observerId, sync);
+      run(observerId);
     });
   }
 }
