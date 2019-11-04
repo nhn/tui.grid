@@ -28,6 +28,7 @@ interface StoreProps {
   disabled: boolean;
   treeInfo?: TreeCellInfo;
   selectedRow: boolean;
+  cellBorderWidth: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -38,17 +39,7 @@ export class BodyCellComp extends Component<Props> {
   private el!: HTMLElement;
 
   public componentDidMount() {
-    const {
-      grid,
-      rowKey,
-      rowIndex,
-      renderData,
-      columnInfo,
-      refreshRowHeight,
-      disabled: allDisabled,
-      defaultRowHeight,
-      dispatch
-    } = this.props;
+    const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = this.props;
 
     // eslint-disable-next-line new-cap
     this.renderer = new columnInfo.renderer.type({
@@ -64,20 +55,7 @@ export class BodyCellComp extends Component<Props> {
     if (this.renderer.mounted) {
       this.renderer.mounted(this.el);
     }
-
-    if (refreshRowHeight) {
-      // In Preact, the componentDidMount is called before the DOM elements are actually mounted.
-      // https://github.com/preactjs/preact/issues/648
-      // Use setTimeout to wait until the DOM element is actually mounted
-      //  - If the width of grid is 'auto' actual width of grid is calculated from the
-      //    Container component using setTimeout(fn, 0)
-      //  - Delay 16ms for defer the function call later than the Container component.
-      window.setTimeout(() => {
-        const height = rendererEl.clientHeight;
-        dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
-        refreshRowHeight(height);
-      }, 16);
-    }
+    this.calculateRowHeight(this.props);
   }
 
   public componentWillReceiveProps(nextProps: Props) {
@@ -87,17 +65,7 @@ export class BodyCellComp extends Component<Props> {
       this.renderer &&
       this.renderer.render
     ) {
-      const {
-        grid,
-        rowKey,
-        rowIndex,
-        renderData,
-        columnInfo,
-        refreshRowHeight,
-        defaultRowHeight,
-        disabled: allDisabled,
-        dispatch
-      } = nextProps;
+      const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = nextProps;
 
       this.renderer.render({
         grid,
@@ -106,12 +74,7 @@ export class BodyCellComp extends Component<Props> {
         ...renderData,
         allDisabled
       });
-
-      if (refreshRowHeight) {
-        const height = this.renderer.getElement().clientHeight;
-        dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
-        refreshRowHeight(height);
-      }
+      this.calculateRowHeight(nextProps);
     }
   }
 
@@ -144,6 +107,31 @@ export class BodyCellComp extends Component<Props> {
   private handleSelectStart = (ev: Event) => {
     ev.preventDefault();
   };
+
+  private calculateRowHeight(props: Props) {
+    const {
+      rowIndex,
+      columnInfo,
+      refreshRowHeight,
+      defaultRowHeight,
+      dispatch,
+      cellBorderWidth
+    } = props;
+
+    if (refreshRowHeight) {
+      // In Preact, the componentDidMount is called before the DOM elements are actually mounted.
+      // https://github.com/preactjs/preact/issues/648
+      // Use setTimeout to wait until the DOM element is actually mounted
+      //  - If the width of grid is 'auto' actual width of grid is calculated from the
+      //    Container component using setTimeout(fn, 0)
+      //  - Delay 16ms for defer the function call later than the Container component.
+      window.setTimeout(() => {
+        const height = this.renderer.getElement().clientHeight + cellBorderWidth;
+        dispatch('setCellHeight', columnInfo.name, rowIndex, height, defaultRowHeight);
+        refreshRowHeight(height);
+      }, 16);
+    }
+  }
 
   public render() {
     const {
@@ -214,7 +202,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     const { range } = selection;
     const columnName = columnInfo.name;
     const rowIndex = findIndexByRowKey(data, column, id, rowKey);
-    const { rowHeight: defaultRowHeight } = dimension;
+    const { rowHeight: defaultRowHeight, cellBorderWidth } = dimension;
     const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
 
     return {
@@ -228,7 +216,8 @@ export const BodyCell = connect<StoreProps, OwnProps>(
       ...(columnName === treeColumnName ? { treeInfo } : null),
       selectedRow: range
         ? rowIndexWithPage >= range.row[0] && rowIndexWithPage <= range.row[1]
-        : false
+        : false,
+      cellBorderWidth
     };
   }
 )(BodyCellComp);

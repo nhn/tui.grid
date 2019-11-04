@@ -183,7 +183,7 @@ describe('cell content ellipsis/whitespace', () => {
       }
     });
 
-    cy.get('.tui-grid-row-odd').should('have.css', 'height', '68px');
+    cy.get('.tui-grid-row-odd').should('have.css', 'height', '69px');
     cy.get('.tui-grid-cell-has-input')
       .eq(2)
       .click()
