@@ -403,6 +403,7 @@ export interface Focus {
   columnName: string | null;
   prevRowKey: RowKey | null;
   prevColumnName: string | null;
+  forcedDestroyEditing: boolean;
   readonly side: Side | null;
   readonly columnIndex: number | null;
   readonly totalColumnIndex: number | null;
