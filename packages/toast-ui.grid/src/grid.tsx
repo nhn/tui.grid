@@ -638,10 +638,8 @@ export default class Grid {
   }
 
   /**
-   * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
-   * @param {number|string} rowKey - The unique key of the row
-   * @param {string} columnName - The name of the column
-   * @param {string} value - The value of editing result
+   * Saves the editing or cancels editing.
+   * @param {cancel} boolean - Whether the editing is canceled
    */
   public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
     // @TODO: should change the function signature as removing all current paramaters and adding a 'cancel' paramter.
