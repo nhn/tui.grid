@@ -648,12 +648,8 @@ export default class Grid {
 
     // if type of rowKey is 'false', editing result is saved and finished. Otherwise('true' case) editing is canceled.
     if (isBoolean(rowKey)) {
-      this.dispatch('saveAndFinishEditing', rowKey);
-      return;
-    }
-    // if all paramters are 'undefined', editing result is saved and finished.
-    if (isUndefined(rowKey) && isUndefined(columnName) && isUndefined(value)) {
-      this.dispatch('saveAndFinishEditing');
+      const cancel = rowKey;
+      this.dispatch('saveAndFinishEditing', cancel);
       return;
     }
     // if only rowKey paramter has specific value, editing is saved with value and finished.
