@@ -34,7 +34,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, isBoolean } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -643,9 +643,26 @@ export default class Grid {
    * @param {string} columnName - The name of the column
    * @param {string} value - The value of editing result
    */
-  public finishEditing(rowKey: RowKey, columnName: string, value?: string) {
-    // @TODO: change grid API name(finishEditing -> saveAndFinishEditing)
-    this.dispatch('saveAndFinishEditing', rowKey, columnName, value);
+  public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
+    // @TODO: should change the function signature as removing all current paramaters and adding a 'cancel' paramter.
+    // The signature will be as below.
+    // ex) finishEditing(cancel: boolean)
+
+    // if type of rowKey is 'false', editing result is saved and finished. Otherwise('true' case) editing is canceled.
+    if (isBoolean(rowKey)) {
+      this.dispatch('saveAndFinishEditing', rowKey);
+      return;
+    }
+    // if all paramters are 'undefined', editing result is saved and finished.
+    if (isUndefined(rowKey) && isUndefined(columnName) && isUndefined(value)) {
+      this.dispatch('saveAndFinishEditing');
+      return;
+    }
+    // if only rowKey paramter has specific value, editing is saved with value and finished.
+    if (!isUndefined(rowKey) && isUndefined(columnName) && isUndefined(value)) {
+      value = rowKey as string;
+    }
+    this.dispatch('saveAndFinishEditing', value);
   }
 
   /**
