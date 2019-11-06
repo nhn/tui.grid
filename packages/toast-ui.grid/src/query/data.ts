@@ -6,7 +6,8 @@ import {
   isUndefined,
   uniq,
   mapProp,
-  isNumber
+  isNumber,
+  removeArrayItem
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -146,4 +147,22 @@ export function getRowHeight(row: Row, defaultRowHeight: number) {
 
 export function getLoadingState(rawData: Row[]) {
   return rawData.length ? 'DONE' : 'EMPTY';
+}
+
+export function getAddedClassName(className: string, prevClassNames?: string[]) {
+  const classNames = className.split(' ');
+  const columnClassNames = prevClassNames ? prevClassNames : [];
+
+  return uniq([...classNames, ...columnClassNames]);
+}
+
+export function getRemovedClassName(className: string, prevClassNames: string[]) {
+  const classNames = className.split(' ');
+  const removedClassNames = prevClassNames;
+
+  classNames.forEach(clsName => {
+    removeArrayItem(clsName, removedClassNames);
+  });
+
+  return removedClassNames;
 }

@@ -81,20 +81,35 @@ describe('className', () => {
     cy.getCell(2, 'name').should('have.class', 'row-test-a');
   });
 
-  it('add and remove class by api', () => {
+  it('add and remove column class by addColumnClassName, removeColumnClassName', () => {
     cy.gridInstance().invoke('addColumnClassName', 'age', 'column-test-d');
+
     cy.getColumnCells('age').should('have.class', 'column-test-d');
+
     cy.gridInstance().invoke('removeColumnClassName', 'age', 'column-test-d');
+
     cy.getColumnCells('age').should('have.not.class', 'column-test-d');
+  });
+
+  it('add and remove cell class by addCellClassName, removeCellClassName', () => {
     cy.gridInstance().invoke('addCellClassName', 0, 'age', 'tui-grid-cell-test');
+
     cy.getCell(0, 'age').should('have.class', 'tui-grid-cell-test');
+
     cy.gridInstance().invoke('removeCellClassName', 0, 'age', 'tui-grid-cell-test');
+
     cy.getCell(0, 'age').should('have.not.class', 'tui-grid-cell-test');
+  });
+
+  it('add and remove cell class by addRowClassName, removeRowClassName', () => {
     cy.gridInstance().invoke('addRowClassName', 1, 'tui-grid-row-test');
+
     cy.getCell(1, 'age').should('have.class', 'tui-grid-row-test');
     cy.getCell(1, 'location').should('have.class', 'tui-grid-row-test');
     cy.getCell(1, 'name').should('have.class', 'tui-grid-row-test');
+
     cy.gridInstance().invoke('removeRowClassName', 1, 'tui-grid-row-test');
+
     cy.getCell(1, 'age').should('have.not.class', 'tui-grid-row-test');
     cy.getCell(1, 'location').should('have.not.class', 'tui-grid-row-test');
     cy.getCell(1, 'name').should('have.not.class', 'tui-grid-row-test');

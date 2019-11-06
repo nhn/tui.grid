@@ -16,7 +16,6 @@ import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
   mapProp,
-  isUndefined,
   removeArrayItem,
   includes,
   isEmpty,
@@ -46,7 +45,9 @@ import {
   findRowByRowKey,
   isEditableCell,
   getRowHeight,
-  getLoadingState
+  getLoadingState,
+  getAddedClassName,
+  getRemovedClassName
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -637,6 +638,25 @@ export function addRowHoverClassByPosition(store: Store, viewInfo: PagePosition)
   }
 }
 
+function addClassNameToAttribute(row: Row, columnName: string, className: string) {
+  const columnClassNames = row._attributes.className.column[columnName];
+  row._attributes.className.column[columnName] = getAddedClassName(className, columnClassNames);
+
+  notify(row._attributes, 'className');
+}
+
+function removeClassNameToAttribute(row: Row, columnName: string, className: string) {
+  const columnClassNames = row._attributes.className.column[columnName];
+  if (columnClassNames) {
+    row._attributes.className.column[columnName] = getRemovedClassName(
+      className,
+      columnClassNames
+    );
+  }
+
+  notify(row._attributes, 'className');
+}
+
 export function addCellClassName(
   store: Store,
   rowKey: RowKey,
@@ -646,16 +666,7 @@ export function addCellClassName(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
-    const columnClassMap = row._attributes.className.column;
-    if (isUndefined(columnClassMap[columnName])) {
-      columnClassMap[columnName] = [className];
-    } else {
-      const isExist = includes(columnClassMap[columnName], className);
-      if (!isExist) {
-        columnClassMap[columnName].push(className);
-      }
-    }
-    notify(row._attributes, 'className');
+    addClassNameToAttribute(row, columnName, className);
   }
 }
 
@@ -668,13 +679,24 @@ export function removeCellClassName(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey);
   if (row) {
-    const columnClassMap = row._attributes.className.column;
-    if (isUndefined(columnClassMap[columnName])) {
-      return;
-    }
-    removeArrayItem(className, columnClassMap[columnName]);
-    notify(row._attributes, 'className');
+    removeClassNameToAttribute(row, columnName, className);
   }
+}
+
+export function addColumnClassName({ data }: Store, columnName: string, className: string) {
+  const { rawData } = data;
+
+  rawData.forEach(row => {
+    addClassNameToAttribute(row, columnName, className);
+  });
+}
+
+export function removeColumnClassName({ data }: Store, columnName: string, className: string) {
+  const { rawData } = data;
+
+  rawData.forEach(row => {
+    removeClassNameToAttribute(row, columnName, className);
+  });
 }
 
 export function setPagination({ data }: Store, pageOptions: PageOptions) {

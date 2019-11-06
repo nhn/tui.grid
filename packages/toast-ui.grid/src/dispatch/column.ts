@@ -10,8 +10,7 @@ import { isObservable, notify } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
-import { findProp, uniq } from '../helper/common';
-import { addClassName, removeClassName } from '../query/column';
+import { findProp } from '../helper/common';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -147,28 +146,4 @@ export function changeColumnHeadersByName({ column }: Store, columnsMap: Diction
   });
 
   notify(column, 'allColumns');
-}
-
-export function addColumnClassName({ data }: Store, columnName: string, className: string) {
-  const { rawData } = data;
-
-  rawData.forEach(row => {
-    const columnClassNames = row._attributes.className.column[columnName];
-    row._attributes.className.column[columnName] = addClassName(className, columnClassNames);
-
-    notify(row._attributes, 'className');
-  });
-}
-
-export function removeColumnClassName({ data }: Store, columnName: string, className: string) {
-  const { rawData } = data;
-
-  rawData.forEach(row => {
-    const columnClassNames = row._attributes.className.column[columnName];
-    if (columnClassNames) {
-      row._attributes.className.column[columnName] = removeClassName(className, columnClassNames);
-    }
-
-    notify(row._attributes, 'className');
-  });
 }
