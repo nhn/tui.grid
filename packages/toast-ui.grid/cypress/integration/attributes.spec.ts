@@ -71,7 +71,9 @@ describe('className', () => {
   });
 
   it('add class by column options', () => {
-    cy.getColumnCells('name').should('have.class', 'column-test-c');
+    cy.getColumnCells('name').each($el => {
+      expect($el).to.have.class('column-test-c');
+    });
   });
 
   it('add class by _attributes prop', () => {
