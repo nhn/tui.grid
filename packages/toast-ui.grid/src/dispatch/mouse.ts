@@ -224,7 +224,7 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     row: [0, endRowIndex],
     column: [startColumnIndex, endColumnIndex]
   };
-  const rowKey = filteredRawData[0].rowKey;
+  const { rowKey } = filteredRawData[0];
 
   finishEditingByHeaderSelection(store, rowKey, columnName);
   changeFocus(store, rowKey, columnName, id);
@@ -293,11 +293,11 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
     row: [startRowIndex, endRowIndex],
     column: [rowHeaderCount, endColumnIndex]
   };
-  const editingRowkey = data.rawData[rowIndex].rowKey;
+  const editingRowKey = data.rawData[rowIndex].rowKey;
   const editingColumnName = visibleColumnsWithRowHeader[rowHeaderCount].name;
 
-  finishEditingByHeaderSelection(store, editingRowkey, editingColumnName);
-  changeFocus(store, editingRowkey, editingColumnName, id);
+  finishEditingByHeaderSelection(store, editingRowKey, editingColumnName);
+  changeFocus(store, editingRowKey, editingColumnName, id);
   changeSelectionRange(selection, inputRange, id);
 }
 

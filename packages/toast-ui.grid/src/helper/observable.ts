@@ -30,13 +30,13 @@ const observerIdStack: string[] = [];
 
 let queue: string[] = [];
 
-let observerIdMapForQueue: { [key: string]: boolean } = {};
+let observerIdMap: Dictionary<boolean> = {};
 
 let pending = false;
 
 function batchUpdate(observerId: string) {
-  if (!observerIdMapForQueue[observerId]) {
-    observerIdMapForQueue[observerId] = true;
+  if (!observerIdMap[observerId]) {
+    observerIdMap[observerId] = true;
     queue.push(observerId);
   }
   if (!pending) {
@@ -46,7 +46,7 @@ function batchUpdate(observerId: string) {
 
 function clearQueue() {
   queue = [];
-  observerIdMapForQueue = {};
+  observerIdMap = {};
   pending = false;
 }
 
@@ -61,7 +61,7 @@ function flush() {
 
   for (let index = 0; index < queue.length; index += 1) {
     const observerId = queue[index];
-    observerIdMapForQueue[observerId] = false;
+    observerIdMap[observerId] = false;
     callObserver(observerId);
   }
 
@@ -82,13 +82,11 @@ function setValue<T, K extends keyof T>(
   storage: T,
   observerIdSet: BooleanSet,
   key: keyof T,
-  value: T[K],
-  sync: boolean
+  value: T[K]
 ) {
   if (storage[key] !== value) {
     storage[key] = value;
     Object.keys(observerIdSet).forEach(observerId => {
-      observerInfoMap[observerId].sync = sync;
       run(observerId);
     });
   }
@@ -149,7 +147,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
     if (typeof getter === 'function') {
       observe(() => {
         const value = getter.call(resultObj);
-        setValue(storage, observerIdSet, key, value, sync);
+        setValue(storage, observerIdSet, key, value);
       }, sync);
     } else {
       // has to add 'as' type assertion and refer the below typescript issue
@@ -160,7 +158,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       (storage[key] as T) = obj[key];
       Object.defineProperty(resultObj, key, {
         set(value) {
-          setValue(storage, observerIdSet, key, value, sync);
+          setValue(storage, observerIdSet, key, value);
         }
       });
     }
