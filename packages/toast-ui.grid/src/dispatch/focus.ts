@@ -7,7 +7,7 @@ import { getRowSpanByRowKey, isRowSpanEnabled } from '../query/rowSpan';
 import { createRawRow, createViewRow } from '../store/data';
 import { isObservable, notify } from '../helper/observable';
 import { setValue } from './data';
-import { isUndefined, isBoolean } from '../helper/common';
+import { isUndefined } from '../helper/common';
 import { createTreeRawRow } from '../store/helper/tree';
 import { isHiddenColumn } from '../query/column';
 import { forceSyncRendering } from '../helper/render';
@@ -173,11 +173,11 @@ export function initFocus({ focus }: Store) {
   focus.prevColumnName = null;
 }
 
-export function saveAndFinishEditing(store: Store, value?: string | boolean) {
-  // @TODO: replace 'value' paramter to 'cancel' parameter
-  // saveAndFinishEditing(store: Store, cancel = false)
+export function saveAndFinishEditing(store: Store, value?: string) {
+  // @TODO: remove 'value' paramter
+  // saveAndFinishEditing(store: Store)
 
-  const { focus, data, column, id } = store;
+  const { focus } = store;
   const { editingAddress } = focus;
 
   if (!editingAddress) {
@@ -189,17 +189,8 @@ export function saveAndFinishEditing(store: Store, value?: string | boolean) {
   // makes the data observable to judge editable, disable of the cell.
   makeObservable(store, rowKey);
 
-  if (isBoolean(value) && value) {
-    // if value is 'true', editing is canceled.
-    const targetRow = findRowByRowKey(data, column, id, rowKey);
-    if (targetRow) {
-      finishEditing(store, rowKey, columnName, targetRow[columnName] as string);
-    }
-    return;
-  }
-
-  // if value is 'false' or 'undefined', editing result is saved and finished.
-  if (isUndefined(value) || isBoolean(value)) {
+  // if value is 'undefined', editing result is saved and finished.
+  if (isUndefined(value)) {
     forceSyncRendering(() => {
       focus.forcedDestroyEditing = true;
       focus.editingAddress = null;

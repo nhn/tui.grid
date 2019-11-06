@@ -182,7 +182,14 @@ it('startEditingAt API', () => {
     .should('be.visible');
 });
 
-describe('finishEditing API', () => {
+describe('finishEditing, cancelEditing API', () => {
+  beforeEach(() => {
+    const data = [{ name: 'Han', age: 20 }];
+    const columns = [{ name: 'name', editor: 'text' }];
+
+    cy.createGrid({ data, columns });
+  });
+
   const listForFinishEditingTest = [
     {
       type: 'finishEditing(rowKey, columnName, value)',
@@ -201,41 +208,26 @@ describe('finishEditing API', () => {
       params: [],
       editedValue: 'Kim',
       result: 'Kim'
-    },
-    {
-      type: 'finishEditing(cancel: true)',
-      params: [true],
-      editedValue: 'Kim',
-      result: 'Han'
-    },
-    {
-      type: 'finishEditing(cancel: false)',
-      params: [false],
-      editedValue: 'Kim',
-      result: 'Kim'
-    },
-    {
-      type: 'finishEditing(value)',
-      params: ['Choi'],
-      editedValue: 'Kim',
-      result: 'Choi'
     }
   ];
 
   listForFinishEditingTest.forEach(obj => {
     const { type, params, editedValue, result } = obj;
-
     it(type, () => {
-      const data = [{ name: 'Han', age: 20 }];
-      const columns = [{ name: 'name', editor: 'text' }];
-
-      cy.createGrid({ data, columns });
       cy.gridInstance().invoke('startEditing', 0, 'name');
       cy.get(`.${cls('content-text')}`).type(editedValue);
       cy.gridInstance().invoke('finishEditing', ...params);
 
       cy.getCell(0, 'name').should('have.text', result);
     });
+  });
+
+  it('cancelEditing', () => {
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+    cy.get(`.${cls('content-text')}`).type('Kim');
+    cy.gridInstance().invoke('cancelEditing');
+
+    cy.getCell(0, 'name').should('have.text', 'Han');
   });
 });
 

@@ -638,25 +638,25 @@ export default class Grid {
   }
 
   /**
-   * Saves the editing or cancels editing.
-   * @param {cancel} boolean - Whether the editing is canceled
+   * Saves editing value and finish the editing.
    */
   public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
-    // @TODO: should change the function signature as removing all current paramaters and adding a 'cancel' paramter.
+    // @TODO: should change the function signature as removing all current paramaters.
     // The signature will be as below.
-    // ex) finishEditing(cancel: boolean)
-
-    // if type of rowKey is 'false', editing result is saved and finished. Otherwise('true' case) editing is canceled.
-    if (isBoolean(rowKey)) {
-      const cancel = rowKey;
-      this.dispatch('saveAndFinishEditing', cancel);
-      return;
-    }
-    // if only rowKey paramter has specific value, editing is saved with value and finished.
-    if (!isUndefined(rowKey) && isUndefined(columnName) && isUndefined(value)) {
-      value = rowKey as string;
-    }
+    // ex) finishEditing()
     this.dispatch('saveAndFinishEditing', value);
+  }
+
+  /**
+   * Cancels the editing.
+   */
+  public cancelEditing() {
+    const { editingAddress } = this.store.focus;
+    if (editingAddress) {
+      const { rowKey, columnName } = editingAddress;
+      const value = this.getValue(rowKey, columnName) as string;
+      this.dispatch('finishEditing', rowKey, columnName, value);
+    }
   }
 
   /**
