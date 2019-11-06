@@ -1477,4 +1477,22 @@ export default class Grid {
   public unfilter(columnName: string) {
     this.dispatch('unfilter', columnName);
   }
+
+  /**
+   * add class name to column
+   * @param {string} columnName - column name to add className
+   * @param {string} className - class name
+   */
+  public addColumnClassName(columnName: string, className: string) {
+    this.dispatch('addColumnClassName', columnName, className);
+  }
+
+  /**
+   * remove class name to column
+   * @param {string} columnName - column name to add className
+   * @param {string} className - class name
+   */
+  public removeColumnClassName(columnName: string, className: string) {
+    this.dispatch('removeColumnClassName', columnName, className);
+  }
 }

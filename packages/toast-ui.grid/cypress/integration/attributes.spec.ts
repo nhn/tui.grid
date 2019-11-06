@@ -71,9 +71,7 @@ describe('className', () => {
   });
 
   it('add class by column options', () => {
-    cy.getColumnCells('name').each($el => {
-      expect($el.hasClass('column-test-c')).to.be.true;
-    });
+    cy.getColumnCells('name').should('have.class', 'column-test-c');
   });
 
   it('add class by _attributes prop', () => {
@@ -84,6 +82,10 @@ describe('className', () => {
   });
 
   it('add and remove class by api', () => {
+    cy.gridInstance().invoke('addColumnClassName', 'age', 'column-test-d');
+    cy.getColumnCells('age').should('have.class', 'column-test-d');
+    cy.gridInstance().invoke('removeColumnClassName', 'age', 'column-test-d');
+    cy.getColumnCells('age').should('have.not.class', 'column-test-d');
     cy.gridInstance().invoke('addCellClassName', 0, 'age', 'tui-grid-cell-test');
     cy.getCell(0, 'age').should('have.class', 'tui-grid-cell-test');
     cy.gridInstance().invoke('removeCellClassName', 0, 'age', 'tui-grid-cell-test');
