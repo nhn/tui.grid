@@ -133,7 +133,7 @@ function finishEditingByHeaderSelection(store: Store) {
   const { editingAddress } = store.focus;
 
   if (editingAddress) {
-    saveAndFinishEditing(store, editingAddress.rowKey, editingAddress.columnName);
+    saveAndFinishEditing(store);
   }
 }
 

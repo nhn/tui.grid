@@ -34,7 +34,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, isBoolean } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -638,14 +638,25 @@ export default class Grid {
   }
 
   /**
-   * Sets the value of the cell identified by the specified rowKey and columnName and finish editing the cell.
-   * @param {number|string} rowKey - The unique key of the row
-   * @param {string} columnName - The name of the column
-   * @param {string} value - The value of editing result
+   * Saves editing value and finishes to edit.
    */
-  public finishEditing(rowKey: RowKey, columnName: string, value?: string) {
-    // @TODO: change grid API name(finishEditing -> saveAndFinishEditing)
-    this.dispatch('saveAndFinishEditing', rowKey, columnName, value);
+  public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
+    // @TODO: should change the function signature as removing all current paramaters.
+    // The signature will be as below.
+    // ex) finishEditing()
+    this.dispatch('saveAndFinishEditing', value);
+  }
+
+  /**
+   * Cancels the editing.
+   */
+  public cancelEditing() {
+    const { editingAddress } = this.store.focus;
+    if (editingAddress) {
+      const { rowKey, columnName } = editingAddress;
+      const value = this.getValue(rowKey, columnName) as string;
+      this.dispatch('finishEditing', rowKey, columnName, value);
+    }
   }
 
   /**

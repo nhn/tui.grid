@@ -173,25 +173,23 @@ export function initFocus({ focus }: Store) {
   focus.prevColumnName = null;
 }
 
-export function saveAndFinishEditing(
-  store: Store,
-  rowKey: RowKey,
-  columnName: string,
-  value?: string
-) {
-  const { data, column, focus, id } = store;
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey);
+export function saveAndFinishEditing(store: Store, value?: string) {
+  // @TODO: remove 'value' paramter
+  // saveAndFinishEditing(store: Store)
 
-  if (!isEditingCell(focus, rowKey, columnName) || foundIndex === -1) {
+  const { focus } = store;
+  const { editingAddress } = focus;
+
+  if (!editingAddress) {
     return;
   }
-  // makes the data observable to judge editable, disable of the cell;
+
+  const { rowKey, columnName } = editingAddress;
+
+  // makes the data observable to judge editable, disable of the cell.
   makeObservable(store, rowKey);
 
-  if (!isEditableCell(data, column, foundIndex, columnName)) {
-    return;
-  }
-
+  // if value is 'undefined', editing result is saved and finished.
   if (isUndefined(value)) {
     forceSyncRendering(() => {
       focus.forcedDestroyEditing = true;

@@ -182,6 +182,55 @@ it('startEditingAt API', () => {
     .should('be.visible');
 });
 
+describe('finishEditing, cancelEditing API', () => {
+  beforeEach(() => {
+    const data = [{ name: 'Han', age: 20 }];
+    const columns = [{ name: 'name', editor: 'text' }];
+
+    cy.createGrid({ data, columns });
+  });
+
+  const listForFinishEditingTest = [
+    {
+      type: 'finishEditing(rowKey, columnName, value)',
+      params: [1, 'name', 'Choi'],
+      editedValue: 'Kim',
+      result: 'Choi'
+    },
+    {
+      type: 'finishEditing(rowKey, columnName)',
+      params: [1, 'name'],
+      editedValue: 'Kim',
+      result: 'Kim'
+    },
+    {
+      type: 'finishEditing()',
+      params: [],
+      editedValue: 'Kim',
+      result: 'Kim'
+    }
+  ];
+
+  listForFinishEditingTest.forEach(obj => {
+    const { type, params, editedValue, result } = obj;
+    it(type, () => {
+      cy.gridInstance().invoke('startEditing', 0, 'name');
+      cy.get(`.${cls('content-text')}`).type(editedValue);
+      cy.gridInstance().invoke('finishEditing', ...params);
+
+      cy.getCell(0, 'name').should('have.text', result);
+    });
+  });
+
+  it('cancelEditing', () => {
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+    cy.get(`.${cls('content-text')}`).type('Kim');
+    cy.gridInstance().invoke('cancelEditing');
+
+    cy.getCell(0, 'name').should('have.text', 'Han');
+  });
+});
+
 it('cannot edit the value on disabled cell', () => {
   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
   const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
