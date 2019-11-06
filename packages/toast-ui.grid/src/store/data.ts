@@ -261,6 +261,7 @@ export function createViewRow(
   treeIcon?: boolean
 ) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
+
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach(name => {
@@ -271,7 +272,10 @@ export function createViewRow(
   const __unobserveFns__: Function[] = [];
 
   Object.keys(columnMap).forEach(name => {
-    const { related, relationMap } = columnMap[name];
+    const { related, relationMap, className } = columnMap[name];
+    if (className) {
+      row._attributes.className.column[name] = className.split(' ');
+    }
 
     // add condition expression to prevent to call watch function recursively
     if (!related) {

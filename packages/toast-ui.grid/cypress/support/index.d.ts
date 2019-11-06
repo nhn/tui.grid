@@ -32,6 +32,8 @@ declare namespace Cypress {
     getHeaderCell(column: string): Chainable<any>;
 
     getRowNumCell(rowKey: number | string): Chainable<any>;
+
+    getColumnCells(columnName: string): Chainable<any>;
   }
 }
 

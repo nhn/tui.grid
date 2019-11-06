@@ -192,7 +192,8 @@ export function createColumn(
     defaultValue,
     escapeHTML,
     ignored,
-    filter
+    filter,
+    className
   } = column;
 
   const editorOptions = createEditorOptions(editor);
@@ -233,7 +234,8 @@ export function createColumn(
     headerAlign,
     headerVAlign,
     filter: filterOptions,
-    headerRenderer
+    headerRenderer,
+    className
   });
 }
 

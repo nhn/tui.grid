@@ -265,6 +265,7 @@ export interface ColumnInfo {
   headerVAlign: VAlignType;
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
+  className?: string;
 }
 
 export interface SortedColumn {

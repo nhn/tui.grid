@@ -156,6 +156,7 @@ export interface OptColumn {
   ignored?: boolean;
   validation?: Validation;
   filter?: FilterOptionType | FilterOpt;
+  className?: string;
 }
 
 export interface OptColumnOptions {
