@@ -277,7 +277,7 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const parentRow = getParentRow(store, rowKey);
 
   if (parentRow) {
-    removeChildRowKey(parentRow, parentRow.rowKey);
+    removeChildRowKey(parentRow, rowKey);
 
     if (!getChildRowKeys(parentRow).length) {
       removeExpandedAttr(parentRow);
