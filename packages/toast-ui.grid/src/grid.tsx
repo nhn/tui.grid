@@ -638,7 +638,7 @@ export default class Grid {
   }
 
   /**
-   * Saves editing value and finish the editing.
+   * Saves editing value and finishes to edit.
    */
   public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
     // @TODO: should change the function signature as removing all current paramaters.
