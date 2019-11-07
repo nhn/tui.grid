@@ -34,7 +34,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, isBoolean } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -1437,7 +1437,7 @@ export default class Grid {
   }
 
   /**
-   * set column filter
+   * Sets the option of column filter.
    * @param {string} columnName - columnName
    * @param {string | FilterOpt} filterOpt - filter type
    */
@@ -1446,7 +1446,7 @@ export default class Grid {
   }
 
   /**
-   * get filter state
+   * Gets filter state.
    * @returns {Array.<FilterState>} - filter state
    */
   public getFilterState() {
@@ -1455,7 +1455,7 @@ export default class Grid {
   }
 
   /**
-   * trigger filter
+   * filters the data.
    * @param {string} columnName - column name to filter
    * @param {Array.<FilterState>} state - filter state
    * @example
@@ -1471,7 +1471,7 @@ export default class Grid {
   }
 
   /**
-   * remove filter
+   * Removes filter state of specific column.
    * @param {string} columnName - column name to unfilter
    */
   public unfilter(columnName: string) {
@@ -1479,7 +1479,7 @@ export default class Grid {
   }
 
   /**
-   * add class name to column
+   * Adds class name to all cell data of specific column.
    * @param {string} columnName - column name to add className
    * @param {string} className - class name
    */
@@ -1488,11 +1488,22 @@ export default class Grid {
   }
 
   /**
-   * remove class name to column
+   * Removes class name to all cell data of specific column.
    * @param {string} columnName - column name to add className
    * @param {string} className - class name
    */
   public removeColumnClassName(columnName: string, className: string) {
     this.dispatch('removeColumnClassName', columnName, className);
+  }
+
+  /**
+   * Sets new data to the row identified by the specified rowKey.
+   * @param {string} columnName - column name to add className
+   * @param {string} className - class name
+   */
+  public setRow(rowKey: RowKey, row: OptRow) {
+    const { data, column, id } = this.store;
+    const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
+    this.dispatch('setRow', rowIndex, row);
   }
 }
