@@ -9,7 +9,10 @@ const largeData = [
   { name: 'Ryu', age: 30 },
   { name: 'Han', age: 40 }
 ];
-const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+const columns = [
+  { name: 'name', editor: 'text', sortable: true },
+  { name: 'age', editor: 'text', sortable: true }
+];
 const defaultGridOptions = { data, columns, scrollY: true, bodyHeight: 400 };
 
 function checkGridHasRightRowNumber() {
@@ -106,6 +109,17 @@ describe('appendRow()', () => {
 
     cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
     checkGridHasRightRowNumber();
+  });
+
+  it('should maintain the sort state when calling appendRow()', () => {
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400 });
+
+    cy.gridInstance().invoke('sort', 'name', true);
+    cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 });
+
+    cy.gridInstance()
+      .invoke('getSortState')
+      .should('have.subset', { columns: [{ columnName: 'name', ascending: true }] });
   });
 });
 
@@ -435,5 +449,45 @@ describe('focus', () => {
         rowKey: null,
         value: null
       });
+  });
+});
+
+describe('setRow', () => {
+  it('should not replace the row when target rowKey does not exist in grid', () => {
+    cy.createGrid(defaultGridOptions);
+
+    cy.gridInstance().invoke('setRow', 2, { name: 'Han', age: 30 });
+
+    cy.getCellByIdx(1, 0).should('have.text', 'Lee');
+    cy.getCellByIdx(1, 1).should('have.text', '20');
+  });
+
+  it('should replace the row to option row data', () => {
+    cy.createGrid(defaultGridOptions);
+
+    cy.gridInstance().invoke('setRow', 1, { name: 'Han', age: 30 });
+
+    cy.getCellByIdx(1, 0).should('have.text', 'Han');
+    cy.getCellByIdx(1, 1).should('have.text', '30');
+  });
+
+  it('should replaced row is ordered properly even if sorted the data', () => {
+    cy.createGrid(defaultGridOptions);
+
+    cy.gridInstance().invoke('sort', 'name', false);
+    cy.gridInstance().invoke('setRow', 1, {
+      name: 'Ryu',
+      age: '20'
+    });
+
+    // check the position based on sorted data
+    cy.getCellByIdx(0, 0).should('have.text', 'Ryu');
+    cy.getCellByIdx(0, 1).should('have.text', '20');
+
+    cy.gridInstance().invoke('unsort');
+
+    // check the position based on origin data
+    cy.getCellByIdx(1, 0).should('have.text', 'Ryu');
+    cy.getCellByIdx(1, 1).should('have.text', '20');
   });
 });

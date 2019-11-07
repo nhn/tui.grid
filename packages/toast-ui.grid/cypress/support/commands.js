@@ -7,10 +7,7 @@ Cypress.Commands.add('getCell', (rowKey, columnName) => {
 });
 
 Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx) => {
-  return cy
-    .get(`.${cls('body-area')} tr:nth-child(${rowIdx + 1})`)
-    .find(`.${cls('cell')}`)
-    .eq(columnIdx);
+  return cy.get(`.${cls('body-area')} tr:nth-child(${rowIdx + 1}) td:nth-child(${columnIdx + 1})`);
 });
 
 Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
