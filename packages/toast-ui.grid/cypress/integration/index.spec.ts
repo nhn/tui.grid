@@ -192,3 +192,110 @@ it('recursive observe should work properly with dynamic observe', () => {
 
   expect(callback3).to.be.calledWith(10);
 });
+
+describe('batch update', () => {
+  it('duplicated update is not executed in batch update', () => {
+    const callback = cy.stub();
+    const obj = observable({ num: 0 });
+
+    observe(() => {
+      callback(obj.num);
+    });
+
+    observe(() => {
+      obj.num = 20;
+      obj.num = 10;
+    });
+
+    expect(callback).to.be.calledTwice;
+    expect(callback).to.not.be.calledWith(20);
+    expect(callback).to.be.calledWith(10);
+  });
+
+  it('duplicated update is executed in sync batch update', () => {
+    const callback = cy.stub();
+    const obj = observable({ num: 0 });
+
+    observe(() => {
+      callback(obj.num);
+    });
+
+    observe(() => {
+      obj.num = 20;
+      obj.num = 10;
+    }, true);
+
+    expect(callback).to.be.calledThrice;
+    expect(callback).to.be.calledWith(20);
+    expect(callback).to.be.calledWith(10);
+  });
+
+  it('`sync` of computed observer is set by creating observable object', () => {
+    const callback1 = cy.stub();
+    const callback2 = cy.stub();
+
+    const obj1 = observable(
+      {
+        start: 0,
+        end: 0,
+        get sum() {
+          callback1();
+          return this.start + this.end;
+        }
+      },
+      true
+    );
+
+    const obj2 = observable({
+      start: 0,
+      end: 0,
+      get sum() {
+        callback2();
+        return this.start + this.end;
+      }
+    });
+
+    observe(() => {
+      obj1.start = 20;
+      obj1.end = 10;
+    });
+
+    observe(() => {
+      obj2.start = 20;
+      obj2.end = 10;
+    });
+
+    expect(callback1).to.be.calledThrice;
+    expect(callback2).to.be.calledTwice;
+  });
+
+  it('should excute update independently based `sync` type of each observe function', () => {
+    const callback1 = cy.stub();
+    const callback2 = cy.stub();
+
+    const obj = observable(
+      {
+        start: 0,
+        end: 0,
+        get sum() {
+          callback1();
+          return this.start + this.end;
+        }
+      },
+      true
+    );
+
+    observe(() => {
+      callback2(obj.start, obj.end);
+    });
+
+    observe(() => {
+      obj.start = 20;
+      obj.start = 10;
+      obj.end = 10;
+    });
+
+    expect(callback1).to.be.callCount(4);
+    expect(callback2).to.be.calledTwice;
+  });
+});

@@ -129,11 +129,13 @@ function updateSelection(store: Store, dragData: PagePosition) {
   changeSelectionRange(selection, inputRange, id);
 }
 
-function finishEditingByHeaderSelection(store: Store) {
+function finishEditingByHeaderSelection(store: Store, rowKey: RowKey, columnName: string) {
   const { editingAddress } = store.focus;
 
   if (editingAddress) {
-    saveAndFinishEditing(store);
+    if (editingAddress.rowKey === rowKey && editingAddress.columnName === columnName) {
+      saveAndFinishEditing(store);
+    }
   }
 }
 
@@ -222,9 +224,10 @@ export function mouseDownHeader(store: Store, name: string, parentHeader: boolea
     row: [0, endRowIndex],
     column: [startColumnIndex, endColumnIndex]
   };
+  const { rowKey } = filteredRawData[0];
 
-  finishEditingByHeaderSelection(store);
-  changeFocus(store, filteredRawData[0].rowKey, columnName, id);
+  finishEditingByHeaderSelection(store, rowKey, columnName);
+  changeFocus(store, rowKey, columnName, id);
   changeSelectionRange(selection, inputRange, id);
 }
 
@@ -290,14 +293,11 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
     row: [startRowIndex, endRowIndex],
     column: [rowHeaderCount, endColumnIndex]
   };
+  const editingRowKey = data.rawData[rowIndex].rowKey;
+  const editingColumnName = visibleColumnsWithRowHeader[rowHeaderCount].name;
 
-  finishEditingByHeaderSelection(store);
-  changeFocus(
-    store,
-    data.rawData[rowIndex].rowKey,
-    visibleColumnsWithRowHeader[rowHeaderCount].name,
-    id
-  );
+  finishEditingByHeaderSelection(store, editingRowKey, editingColumnName);
+  changeFocus(store, editingRowKey, editingColumnName, id);
   changeSelectionRange(selection, inputRange, id);
 }
 
