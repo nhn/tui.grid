@@ -533,6 +533,33 @@ declare namespace tuiGrid {
     tabMode?: TabMode;
   }
 
+  type IFilterOptionType = 'text' | 'number' | 'date' | 'select';
+  type IOperatorType = 'AND' | 'OR';
+  type INumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
+  type ITextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
+  type IDateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
+
+  interface IFilterOpt {
+    type: Exclude<IFilterOptionType, 'select'>;
+    options?: Dictionary<any>;
+    operator?: IOperatorType;
+    showApplyBtn?: boolean;
+    showClearBtn?: boolean;
+  }
+
+  export interface IFilterState {
+    code: INumberFilterCode | ITextFilterCode | IDateFilterCode | null;
+    value: string;
+  }
+
+  export interface IFilter {
+    columnName: string;
+    type: IFilterOptionType;
+    operator?: IOperatorType;
+    conditionFn?: Function;
+    state: IFilterState[];
+  }
+
   class Pagination {
     constructor(element: string | HTMLElement, options?: object);
 
@@ -734,6 +761,22 @@ declare namespace tuiGrid {
     public removeCheckedRows(showConfirm?: boolean): boolean;
 
     public refreshLayout(): void;
+
+    public destroy(): void;
+
+    public setFilter(columnName: string, filterOpt: IFilterOpt | IFilterOptionType): void;
+
+    public getFilterState(): IFilter[] | null;
+
+    public filter(columnName: string, state: IFilterState[]): void;
+
+    public unfilter(columnName: string): void;
+
+    public addColumnClassName(columnName: string, className: string): void;
+
+    public removeColumnClassName(columnName: string, className: string): void;
+
+    public setRow(rowKey: RowKey, row: IRow): void;
   }
 }
 
