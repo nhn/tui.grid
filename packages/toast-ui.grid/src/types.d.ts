@@ -139,7 +139,6 @@ export interface OptColumn {
   editor?: OptCellEditor;
   formatter?: Formatter;
   defaultValue?: CellValue;
-  viewer?: string | boolean;
   resizable?: boolean;
   minWidth?: number;
   escapeHTML?: false;
