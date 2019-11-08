@@ -873,21 +873,26 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   const { data, column, id } = store;
-  const { sortState, filters } = data;
+  const { sortState, filters, rawData, viewData } = data;
 
   if (sortState.columns[0].columnName !== 'sortKey' || filters) {
     return;
   }
 
   const currentIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rawRow = data.rawData[currentIndex];
-  const viewRow = data.viewData[currentIndex];
 
-  data.rawData.splice(currentIndex, 1);
-  data.viewData.splice(currentIndex, 1);
+  if (currentIndex === -1 || targetIndex >= rawData.length) {
+    return;
+  }
 
-  data.rawData.splice(targetIndex, 0, rawRow);
-  data.viewData.splice(targetIndex, 0, viewRow);
+  const rawRow = rawData[currentIndex];
+  const viewRow = viewData[currentIndex];
+
+  rawData.splice(currentIndex, 1);
+  viewData.splice(currentIndex, 1);
+
+  rawData.splice(targetIndex, 0, rawRow);
+  viewData.splice(targetIndex, 0, viewRow);
 
   resetSortKey(data);
   notify(data, 'rawData');
