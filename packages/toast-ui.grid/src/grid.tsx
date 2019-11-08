@@ -469,7 +469,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the width of the dimension.
+   * Set the width of the dimension.
    * @param {number} width - The width of the dimension
    */
   public setWidth(width: number) {
@@ -477,7 +477,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the height of the dimension.
+   * Set the height of the dimension.
    * @param {number} height - The height of the dimension
    */
   public setHeight(height: number) {
@@ -485,7 +485,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the height of body-area.
+   * Set the height of body-area.
    * @param {number} bodyHeight - The number of pixel
    */
   public setBodyHeight(bodyHeight: number) {
@@ -493,7 +493,7 @@ export default class Grid {
   }
 
   /**
-   * Sets options for header.
+   * Set options for header.
    * @param {Object} options - Options for header
    * @param {number} [options.height] -  The height value
    * @param {Array} [options.complexColumns] - The complex columns info
@@ -509,7 +509,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the count of frozen columns.
+   * Set the count of frozen columns.
    * @param {number} count - The count of columns to be frozen
    */
   public setFrozenColumnCount(count: number) {
@@ -517,7 +517,7 @@ export default class Grid {
   }
 
   /**
-   * Hides columns
+   * Hide columns
    * @param {...string} arguments - Column names to hide
    */
   public hideColumn(columnName: string) {
@@ -525,7 +525,7 @@ export default class Grid {
   }
 
   /**
-   * Shows columns
+   * Show columns
    * @param {...string} arguments - Column names to show
    */
   public showColumn(columnName: string) {
@@ -533,7 +533,7 @@ export default class Grid {
   }
 
   /**
-   * Selects cells or rows by range
+   * Select cells or rows by range
    * @param {Object} range - Selection range
    *     @param {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
    *     @param {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
@@ -543,7 +543,7 @@ export default class Grid {
   }
 
   /**
-   * Returns data of currently focused cell
+   * Return data of currently focused cell
    * @returns {number|string} rowKey - The unique key of the row
    * @returns {string} columnName - The name of the column
    * @returns {string} value - The value of the cell
@@ -560,7 +560,7 @@ export default class Grid {
   }
 
   /**
-   * Removes focus from the focused cell.
+   * Remove focus from the focused cell.
    */
   public blur() {
     // @TODO: save previous 이후 추가 필요.
@@ -607,14 +607,14 @@ export default class Grid {
   }
 
   /**
-   * Makes view ready to get keyboard input.
+   * Make view ready to get keyboard input.
    */
   public activateFocus() {
     this.dispatch('setNavigating', true);
   }
 
   /**
-   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * Set focus on the cell at the specified index of row and column and starts to edit.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
@@ -626,7 +626,7 @@ export default class Grid {
   }
 
   /**
-   * Sets focus on the cell at the specified index of row and column and starts to edit.
+   * Set focus on the cell at the specified index of row and column and starts to edit.
    * @param {number|string} rowIndex - The index of the row
    * @param {string} columnIndex - The index of the column
    * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
@@ -638,7 +638,7 @@ export default class Grid {
   }
 
   /**
-   * Saves editing value and finishes to edit.
+   * Save editing value and finishes to edit.
    */
   public finishEditing(rowKey?: RowKey | boolean, columnName?: string, value?: string) {
     // @TODO: should change the function signature as removing all current paramaters.
@@ -648,7 +648,7 @@ export default class Grid {
   }
 
   /**
-   * Cancels the editing.
+   * Cancel the editing.
    */
   public cancelEditing() {
     const { editingAddress } = this.store.focus;
@@ -660,7 +660,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the value of the cell identified by the specified rowKey and columnName.
+   * Set the value of the cell identified by the specified rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @param {number|string} value - The value to be set
@@ -670,7 +670,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the value of the cell identified by the rowKey and columnName.
+   * Return the value of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the target row.
    * @param {string} columnName - The name of the column
    * @param {boolean} [isOriginal] - It set to true, the original value will be return.
@@ -689,7 +689,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the all values in the specified column.
+   * Set the all values in the specified column.
    * @param {string} columnName - The name of the column
    * @param {number|string} columnValue - The value to be set
    * @param {boolean} [checkCellState=true] - If set to true, only editable and not disabled cells will be affected.
@@ -699,7 +699,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the HTMLElement of the cell identified by the rowKey and columnName.
+   * Return the HTMLElement of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @returns {HTMLElement} - The HTMLElement of the cell element
@@ -711,7 +711,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the HTML string of given column summary.
+   * Set the HTML string of given column summary.
    * The type of content is the same as the options.summary.columnContent of the constructor.
    * @param {string} columnName - column name
    * @param {string|object} columnContent - HTML string or options object.
@@ -724,7 +724,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the values of given column summary.
+   * Return the values of given column summary.
    * If the column name is not specified, all values of available columns are returned.
    * The shape of returning object looks like the example below.
    * @param {string} [columnName] - column name
@@ -748,7 +748,7 @@ export default class Grid {
   }
 
   /**
-   * Returns a list of the column model.
+   * Return a list of the column model.
    * @returns {Array} - A list of the column model.
    */
   public getColumns() {
@@ -758,7 +758,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the list of column model.
+   * Set the list of column model.
    * @param {Array} columns - A new list of column model
    */
   public setColumns(columns: OptColumn[]) {
@@ -780,14 +780,14 @@ export default class Grid {
   }
 
   /**
-   * Resets the width of each column by using initial setting of column models.
+   * Reset the width of each column by using initial setting of column models.
    */
   public resetColumnWidths(widths: number[]) {
     this.dispatch('resetColumnWidths', widths);
   }
 
   /**
-   * Returns a list of all values in the specified column.
+   * Return a list of all values in the specified column.
    * @param {string} columnName - The name of the column
    * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
    */
@@ -796,7 +796,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the index of the column indentified by the column name.
+   * Return the index of the column indentified by the column name.
    * @param {string} columnName - The unique key of the column
    * @returns {number} - The index of the column
    */
@@ -809,7 +809,7 @@ export default class Grid {
   }
 
   /**
-   * Checks the row identified by the specified rowKey.
+   * Check the row identified by the specified rowKey.
    * @param {number|string} rowKey - The unique key of the row
    */
   public check(rowKey: RowKey) {
@@ -825,7 +825,7 @@ export default class Grid {
   }
 
   /**
-   * Checks all rows.
+   * Check all rows.
    * @param {boolean} [allPage] - check all rows when using pagination. The default value is 'true'.
    */
   public checkAll(allPage?: boolean) {
@@ -841,7 +841,7 @@ export default class Grid {
   }
 
   /**
-   * Returns a list of the rowKey of checked rows.
+   * Return a list of the rowKey of checked rows.
    * @returns {Array.<string|number>} - A list of the rowKey.
    */
   public getCheckedRowKeys(): RowKey[] {
@@ -849,7 +849,7 @@ export default class Grid {
   }
 
   /**
-   * Returns a list of the checked rows.
+   * Return a list of the checked rows.
    * @returns {Array.<object>} - A list of the checked rows.
    */
   public getCheckedRows(): Row[] {
@@ -857,7 +857,7 @@ export default class Grid {
   }
 
   /**
-   * Finds rows by conditions
+   * Find rows by conditions
    * @param {Object|Function} conditions - object (key: column name, value: column value) or
    *     function that check the value and returns true/false result to find rows
    * @returns {Array} Row list
@@ -876,7 +876,7 @@ export default class Grid {
   }
 
   /**
-   * Sorts all rows by the specified column.
+   * Sort all rows by the specified column.
    * @param {string} columnName - The name of the column to be used to compare the rows
    * @param {boolean} [ascending] - Whether the sort order is ascending.
    *        If not specified, use the negative value of the current order.
@@ -895,7 +895,7 @@ export default class Grid {
   }
 
   /**
-   * Gets state of the sorted column in rows
+   * Get state of the sorted column in rows
    * @returns {{columns: [{columnName: string, ascending: boolean}], useClient: boolean}} Sorted column's state
    */
   public getSortState() {
@@ -917,7 +917,7 @@ export default class Grid {
   }
 
   /*
-   * Validates all data and returns the result.
+   * Validate all data and returns the result.
    * Return value is an array which contains only rows which have invalid cell data.
    * @returns {Array.<Object>} An array of error object
    * @example
@@ -952,21 +952,21 @@ export default class Grid {
   }
 
   /**
-   * Enables all rows.
+   * Enable all rows.
    */
   public enable() {
     this.dispatch('setDisabled', false);
   }
 
   /**
-   * Disables all rows.
+   * Disable all rows.
    */
   public disable() {
     this.dispatch('setDisabled', true);
   }
 
   /**
-   * Disables the row identified by the rowkey.
+   * Disable the row identified by the rowkey.
    * @param {number|string} rowKey - The unique key of the target row
    * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
@@ -975,7 +975,7 @@ export default class Grid {
   }
 
   /**
-   * Enables the row identified by the rowKey.
+   * Enable the row identified by the rowKey.
    * @param {number|string} rowKey - The unique key of the target row
    * @param {boolean} [withCheckbox] - change including checkbox. The default value is 'true'
    */
@@ -984,7 +984,7 @@ export default class Grid {
   }
 
   /**
-   * Disables the row identified by the specified rowKey to not be able to check.
+   * Disable the row identified by the specified rowKey to not be able to check.
    * @param {number|string} rowKey - The unique keyof the row.
    */
   public disableRowCheck(rowKey: RowKey) {
@@ -992,7 +992,7 @@ export default class Grid {
   }
 
   /**
-   * Enables the row identified by the rowKey to be able to check.
+   * Enable the row identified by the rowKey to be able to check.
    * @param {number|string} rowKey - The unique key of the row
    */
   public enableRowCheck(rowKey: RowKey) {
@@ -1000,7 +1000,7 @@ export default class Grid {
   }
 
   /**
-   * Inserts the new row with specified data to the end of table.
+   * Insert the new row with specified data to the end of table.
    * @param {Object} [row] - The data for the new row
    * @param {Object} [options] - Options
    * @param {number} [options.at] - The index at which new row will be inserted
@@ -1026,7 +1026,7 @@ export default class Grid {
   }
 
   /**
-   * Inserts the new row with specified data to the beginning of table.
+   * Insert the new row with specified data to the beginning of table.
    * @param {Object} [row] - The data for the new row
    * @param {Object} [options] - Options
    * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
@@ -1036,7 +1036,7 @@ export default class Grid {
   }
 
   /**
-   * Removes the row identified by the specified rowKey.
+   * Remove the row identified by the specified rowKey.
    * @param {number|string} rowKey - The unique key of the row
    * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
    * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
@@ -1053,7 +1053,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the object that contains all values in the specified row.
+   * Return the object that contains all values in the specified row.
    * @param {number|string} rowKey - The unique key of the target row
    * @returns {Object} - The object that contains all values in the row.
    */
@@ -1062,7 +1062,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the object that contains all values in the row at specified index.
+   * Return the object that contains all values in the row at specified index.
    * @param {number} rowIdx - The index of the row
    * @returns {Object} - The object that contains all values in the row.
    */
@@ -1072,7 +1072,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the index of the row indentified by the rowKey.
+   * Return the index of the row indentified by the rowKey.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {number} - The index of the row
    */
@@ -1082,7 +1082,7 @@ export default class Grid {
   }
 
   /**
-   * Returns a list of all rows.
+   * Return a list of all rows.
    * @returns {Array} - A list of all rows
    */
   public getData() {
@@ -1090,7 +1090,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the total number of the rows.
+   * Return the total number of the rows.
    * @returns {number} - The total number of the rows
    */
   public getRowCount() {
@@ -1098,14 +1098,14 @@ export default class Grid {
   }
 
   /**
-   * Removes all rows.
+   * Remove all rows.
    */
   public clear() {
     this.dispatch('clearData');
   }
 
   /**
-   * Replaces all rows with the specified list. This will not change the original data.
+   * Replace all rows with the specified list. This will not change the original data.
    * @param {Array} data - A list of new rows
    */
   public resetData(data: OptRow[]) {
@@ -1113,7 +1113,7 @@ export default class Grid {
   }
 
   /**
-   * Adds the specified css class to cell element identified by the rowKey and className
+   * Add the specified css class to cell element identified by the rowKey and className
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @param {string} className - The css class name to add
@@ -1123,7 +1123,7 @@ export default class Grid {
   }
 
   /**
-   * Adds the specified css class to all cell elements in the row identified by the rowKey
+   * Add the specified css class to all cell elements in the row identified by the rowKey
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} className - The css class name to add
    */
@@ -1132,7 +1132,7 @@ export default class Grid {
   }
 
   /**
-   * Removes the specified css class from the cell element indentified by the rowKey and columnName.
+   * Remove the specified css class from the cell element indentified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @param {string} className - The css class name to be removed
@@ -1142,7 +1142,7 @@ export default class Grid {
   }
 
   /**
-   * Removes the specified css class from all cell elements in the row identified by the rowKey.
+   * Remove the specified css class from all cell elements in the row identified by the rowKey.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} className - The css class name to be removed
    */
@@ -1150,16 +1150,26 @@ export default class Grid {
     this.dispatch('removeRowClassName', rowKey, className);
   }
 
+  /**
+   * Add custom event to grid.
+   * @param {string} eventName - custom event name
+   * @param {Function} fn - event handler
+   */
   public on(eventName: string, fn: Function) {
     this.eventBus.on(eventName, fn);
   }
 
+  /**
+   * Remove custom event to grid.
+   * @param {string} eventName - custom event name
+   * @param {Function} fn - event handler
+   */
   public off(eventName: string, fn?: Function) {
     this.eventBus.off(eventName, fn);
   }
 
   /**
-   * Returns an instance of tui.Pagination.
+   * Return an instance of tui.Pagination.
    * @returns {tui.Pagination}
    */
   public getPagination() {
@@ -1183,7 +1193,7 @@ export default class Grid {
   }
 
   /**
-   * Returns true if there are at least one row modified.
+   * Return true if there are at least one row modified.
    * @returns {boolean} - True if there are at least one row modified.
    */
   public isModified() {
@@ -1191,7 +1201,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the object that contains the lists of changed data compared to the original data.
+   * Return the object that contains the lists of changed data compared to the original data.
    * The object has properties 'createdRows', 'updatedRows', 'deletedRows'.
    * @param {Object} [options] Options
    *     @param {boolean} [options.checkedOnly=false] - If set to true, only checked rows will be considered.
@@ -1212,7 +1222,7 @@ export default class Grid {
   }
 
   /**
-   * Requests 'readData' to the server. The last requested data will be extended with new data.
+   * Request 'readData' to the server. The last requested data will be extended with new data.
    * @param {Number} page - Page number
    * @param {Object} data - Data(parameters) to send to the server
    * @param {Boolean} resetData - If set to true, last requested data will be ignored.
@@ -1237,14 +1247,14 @@ export default class Grid {
   }
 
   /**
-   * Requests 'readData' with last requested data.
+   * Request 'readData' with last requested data.
    */
   public reloadData() {
     this.dataProvider.reloadData();
   }
 
   /**
-   * Restores the data to the original data.
+   * Restore the data to the original data.
    * (Original data is set by {@link Grid#resetData|resetData}
    */
   public restore() {
@@ -1252,7 +1262,7 @@ export default class Grid {
   }
 
   /*
-   * Inserts the new tree row with specified data.
+   * Insert the new tree row with specified data.
    * @param {Object} [row] - The tree data for the new row
    * @param {Object} [options] - Options
    * @param {number|string} [options.parentRowKey] - Tree row key of the parent which appends given rows
@@ -1285,7 +1295,7 @@ export default class Grid {
   }
 
   /**
-   * Removes the tree row identified by the specified rowKey.
+   * Remove the tree row identified by the specified rowKey.
    * @param {number|string} rowKey - The unique key of the row
    */
   public removeTreeRow(rowKey: RowKey) {
@@ -1297,7 +1307,7 @@ export default class Grid {
   }
 
   /**
-   * Expands tree row.
+   * Expand tree row.
    * @param {number|string} rowKey - The unique key of the row
    * @param {boolean} recursive - true for recursively expand all descendant
    */
@@ -1306,14 +1316,14 @@ export default class Grid {
   }
 
   /**
-   * Expands all tree row.
+   * Expand all tree row.
    */
   public expandAll() {
     this.dispatch('expandAll');
   }
 
   /**
-   * Expands tree row.
+   * Expand tree row.
    * @param {number|string} rowKey - The unique key of the row
    * @param {boolean} recursive - true for recursively expand all descendant
    */
@@ -1322,14 +1332,14 @@ export default class Grid {
   }
 
   /**
-   * Collapses all tree row.
+   * Collapse all tree row.
    */
   public collapseAll() {
     this.dispatch('collapseAll');
   }
 
   /**
-   * Gets the parent of the row which has the given row key.
+   * Get the parent of the row which has the given row key.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Object} - the parent row
    */
@@ -1338,7 +1348,7 @@ export default class Grid {
   }
 
   /**
-   * Gets the children of the row which has the given row key.
+   * Get the children of the row which has the given row key.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Array.<Object>} - the children rows
    */
@@ -1347,7 +1357,7 @@ export default class Grid {
   }
 
   /**
-   * Gets the ancestors of the row which has the given row key.
+   * Get the ancestors of the row which has the given row key.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Array.<TreeRow>} - the ancestor rows
    */
@@ -1356,7 +1366,7 @@ export default class Grid {
   }
 
   /**
-   * Gets the descendants of the row which has the given row key.
+   * Get the descendants of the row which has the given row key.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {Array.<Object>} - the descendant rows
    */
@@ -1365,7 +1375,7 @@ export default class Grid {
   }
 
   /**
-   * Gets the depth of the row which has the given row key.
+   * Get the depth of the row which has the given row key.
    * @param {number|string} rowKey - The unique key of the row
    * @returns {number} - the depth
    */
@@ -1378,7 +1388,7 @@ export default class Grid {
   }
 
   /**
-   * Returns the rowspan data of the cell identified by the rowKey and columnName.
+   * Return the rowspan data of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @returns {Object} - Row span data
@@ -1395,7 +1405,7 @@ export default class Grid {
     this.dataManager.setOriginData(this.getData());
   }
 
-  /** Removes all checked rows.
+  /** Remove all checked rows.
    * @param {boolean} [showConfirm] - If set to true, confirm message will be shown before remove.
    * @returns {boolean} - True if there's at least one row removed.
    */
@@ -1425,7 +1435,7 @@ export default class Grid {
   }
 
   /**
-   * Destroys the instance.
+   * Destroy the instance.
    */
   public destroy() {
     render('', this.el, this.gridEl);
@@ -1437,7 +1447,7 @@ export default class Grid {
   }
 
   /**
-   * Sets the option of column filter.
+   * Set the option of column filter.
    * @param {string} columnName - columnName
    * @param {string | FilterOpt} filterOpt - filter type
    */
@@ -1446,7 +1456,7 @@ export default class Grid {
   }
 
   /**
-   * Gets filter state.
+   * Get filter state.
    * @returns {Array.<FilterState>} - filter state
    */
   public getFilterState() {
@@ -1455,7 +1465,7 @@ export default class Grid {
   }
 
   /**
-   * filters the data.
+   * Filter the data.
    * @param {string} columnName - column name to filter
    * @param {Array.<FilterState>} state - filter state
    * @example
@@ -1471,7 +1481,7 @@ export default class Grid {
   }
 
   /**
-   * Removes filter state of specific column.
+   * Remove filter state of specific column.
    * @param {string} columnName - column name to unfilter
    */
   public unfilter(columnName: string) {
@@ -1479,7 +1489,7 @@ export default class Grid {
   }
 
   /**
-   * Adds class name to all cell data of specific column.
+   * Add class name to all cell data of specific column.
    * @param {string} columnName - column name to add className
    * @param {string} className - class name
    */
@@ -1488,7 +1498,7 @@ export default class Grid {
   }
 
   /**
-   * Removes class name to all cell data of specific column.
+   * Remove class name to all cell data of specific column.
    * @param {string} columnName - column name to add className
    * @param {string} className - class name
    */
@@ -1497,7 +1507,7 @@ export default class Grid {
   }
 
   /**
-   * Sets new data to the row identified by the specified rowKey.
+   * Set new data to the row identified by the specified rowKey.
    * @param {string} columnName - column name to add className
    * @param {string} className - class name
    */
