@@ -404,16 +404,19 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
 }
 
 function updateSortKey(data: Data, sortKey: number, type = 'inc') {
-  const value = type === 'inc' ? 1 : -1;
+  const incremental = type === 'inc' ? 1 : -1;
   const { rawData, viewData } = data;
   for (let idx = 0; idx < rawData.length; idx += 1) {
     if (rawData[idx].sortKey >= sortKey) {
-      rawData[idx].sortKey += value;
-      viewData[idx].sortKey += value;
+      rawData[idx].sortKey += incremental;
+      viewData[idx].sortKey += incremental;
     }
   }
-  data.rawData[sortKey].sortKey = sortKey;
-  data.viewData[sortKey].sortKey = sortKey;
+
+  if (type === 'inc') {
+    data.rawData[sortKey].sortKey = sortKey;
+    data.viewData[sortKey].sortKey = sortKey;
+  }
 }
 
 function resetSortKey(data: Data) {
