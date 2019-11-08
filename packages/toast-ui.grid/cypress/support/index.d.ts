@@ -8,9 +8,6 @@
 // related issue: https://github.com/cypress-io/cypress/issues/5065
 declare namespace Cypress {
   interface Chainable<Subject> {
-    (chainer: 'be.subset'): Chainable<Subject>;
-    (chainer: 'be.foo'): Chainable<Subject>;
-
     getCell(rowKey: number | string, column: string): Chainable<any>;
 
     getCellByIdx(rowIdx: number, columnIdx: number): Chainable<any>;

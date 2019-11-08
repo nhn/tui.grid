@@ -19,6 +19,10 @@ declare namespace tuiGrid {
 
   type SortingType = 'asc' | 'desc';
 
+  type VAlignType = 'top' | 'middle' | 'bottom';
+
+  type AlignType = 'left' | 'center' | 'right';
+
   interface ICellStyle {
     background?: string;
     border?: string;
@@ -184,6 +188,33 @@ declare namespace tuiGrid {
     keepRowSpanData?: boolean;
   }
 
+  type IFilterOptionType = 'text' | 'number' | 'date' | 'select';
+  type IOperatorType = 'AND' | 'OR';
+  type INumberFilterCode = 'eq' | 'lt' | 'gt' | 'lte' | 'gte' | 'ne';
+  type ITextFilterCode = 'eq' | 'ne' | 'contain' | 'start' | 'end';
+  type IDateFilterCode = 'eq' | 'ne' | 'after' | 'afterEq' | 'before' | 'beforeEq';
+
+  interface IFilterOpt {
+    type: Exclude<IFilterOptionType, 'select'>;
+    options?: Dictionary<any>;
+    operator?: IOperatorType;
+    showApplyBtn?: boolean;
+    showClearBtn?: boolean;
+  }
+
+  interface IFilterState {
+    code: INumberFilterCode | ITextFilterCode | IDateFilterCode | null;
+    value: string;
+  }
+
+  interface IFilter {
+    columnName: string;
+    type: IFilterOptionType;
+    operator?: IOperatorType;
+    conditionFn?: Function;
+    state: IFilterState[];
+  }
+
   interface IColumn {
     name: string;
     header?: string;
@@ -197,8 +228,8 @@ declare namespace tuiGrid {
     minWidth?: number;
     escapeHTML?: boolean;
     relations?: IRelations[];
-    align?: 'left' | 'center' | 'right';
-    valign?: 'top' | 'middle' | 'bottom';
+    align?: AlignType;
+    valign?: VAlignType;
     whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
     ellipsis?: boolean;
     sortable?: boolean;
@@ -208,6 +239,8 @@ declare namespace tuiGrid {
     onAfterChange?: Function;
     ignored?: boolean;
     validation?: IValidation;
+    filter?: IFilterOptionType | IFilterOpt;
+    className?: string;
   }
 
   interface IColumnInfo {
@@ -224,8 +257,8 @@ declare namespace tuiGrid {
     fixedWidth: boolean;
     relationMap?: Dictionary<IRelations>;
     related?: boolean;
-    align?: 'left' | 'center' | 'right';
-    valign?: 'top' | 'middle' | 'bottom';
+    align?: AlignType;
+    valign?: VAlignType;
     whiteSpace?: 'pre' | 'normal' | 'norwap' | 'pre-wrap' | 'pre-line';
     ellipsis?: boolean;
     escapeHTML?: boolean;
@@ -244,6 +277,9 @@ declare namespace tuiGrid {
     childNames?: string[];
     sortable?: boolean;
     sortingType?: SortingType;
+    headerAlign?: AlignType;
+    headerVAlign?: VAlignType;
+    renderer?: HeaderRendererClass;
   }
 
   interface IColumnOptions {
@@ -486,6 +522,32 @@ declare namespace tuiGrid {
     beforeDestroy?(): void;
   }
 
+  interface ColumnHeaderInfo {
+    name: string;
+    header: string;
+    headerAlign?: AlignType;
+    headerVAlign?: VAlignType;
+    sortable?: boolean;
+    sortingType?: SortingType;
+    filter?: IFilterOpt | null;
+    headerRenderer?: HeaderRendererClass | null;
+  }
+
+  type HeaderRendererProps = {
+    grid: Grid;
+    columnInfo: ColumnHeaderInfo;
+  };
+
+  interface HeaderRenderer {
+    getElement(): HTMLElement;
+    mounted?(parent: HTMLElement): void;
+    beforeDestroy?(): void;
+  }
+
+  interface HeaderRendererClass {
+    new (params: HeaderRendererProps, options?: any): HeaderRenderer;
+  }
+
   type Formatter = ((props: IFormatterProps) => string) | string;
 
   interface IFormatterProps {
@@ -494,9 +556,19 @@ declare namespace tuiGrid {
     value: CellValue;
   }
 
+  interface ColumnHeaderOption {
+    name: string;
+    align?: AlignType;
+    valign?: VAlignType;
+    renderer?: HeaderRendererClass;
+  }
+
   interface IHeader {
     height?: number;
     complexColumns?: ComplexColumnInfo[];
+    align?: AlignType;
+    valign?: VAlignType;
+    columns?: ColumnHeaderOption[];
   }
 
   type SelectionUnit = 'cell' | 'row';
@@ -531,6 +603,7 @@ declare namespace tuiGrid {
     onGridMounted?: Function;
     onGridBeforeDestroy?: Function;
     tabMode?: TabMode;
+    disabled?: boolean;
   }
 
   class Pagination {
@@ -592,7 +665,7 @@ declare namespace tuiGrid {
 
     public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean): void;
 
-    public finishEditing(rowKey: RowKey, columnName: string, value: string): void;
+    public finishEditing(rowKey?: RowKey, columnName?: string, value?: string): void;
 
     public setValue(rowKey: RowKey, columnName: string, value: CellValue): void;
 
@@ -734,6 +807,22 @@ declare namespace tuiGrid {
     public removeCheckedRows(showConfirm?: boolean): boolean;
 
     public refreshLayout(): void;
+
+    public destroy(): void;
+
+    public setFilter(columnName: string, filterOpt: IFilterOpt | IFilterOptionType): void;
+
+    public getFilterState(): IFilter[] | null;
+
+    public filter(columnName: string, state: IFilterState[]): void;
+
+    public unfilter(columnName: string): void;
+
+    public addColumnClassName(columnName: string, className: string): void;
+
+    public removeColumnClassName(columnName: string, className: string): void;
+
+    public setRow(rowKey: RowKey, row: IRow): void;
   }
 }
 

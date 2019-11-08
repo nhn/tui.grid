@@ -23,13 +23,7 @@ import {
   findPropIndex
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
-import {
-  createRawRow,
-  createViewRow,
-  createData,
-  generateDataCreationKey,
-  createRowSpan
-} from '../store/data';
+import { createViewRow, createData, generateDataCreationKey, createRowSpan } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -37,7 +31,7 @@ import GridEvent from '../event/gridEvent';
 import { getDataManager } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { isRowSpanEnabled } from '../query/rowSpan';
-import { changeFocus, initFocus } from './focus';
+import { initFocus } from './focus';
 import { createTreeRawRow } from '../store/helper/tree';
 import { sort, initSortState } from './sort';
 import {
@@ -47,7 +41,8 @@ import {
   getRowHeight,
   getLoadingState,
   getAddedClassName,
-  getRemovedClassName
+  getRemovedClassName,
+  getCreatedRowInfo
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -56,7 +51,6 @@ import {
   updateAllSummaryValues
 } from './summary';
 import { initFilter, filter } from './filter';
-import { isRowHeader } from '../helper/column';
 import { cls } from '../helper/dom';
 import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
@@ -424,19 +418,11 @@ function updateSortKey(data: Data, at: number) {
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
-  const { data, column, rowCoords, dimension, id } = store;
+  const { data, rowCoords, dimension, id } = store;
   const { rawData, viewData, sortState, pageOptions, pageRowRange } = data;
   const { heights } = rowCoords;
-  const { defaultValues, allColumnMap } = column;
   const { at = rawData.length } = options;
-  const prevRow = rawData[at - 1];
-
-  const emptyData = column.allColumns
-    .filter(({ name }) => !isRowHeader(name))
-    .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
-  const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
-  const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues);
-  const viewRow = createViewRow(rawRow, allColumnMap, rawData);
+  const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
 
   rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
@@ -461,8 +447,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   if (!isRowSpanEnabled(sortState)) {
     const { columnName, ascending } = sortState.columns[0];
-
-    sort(store, columnName, ascending);
+    sort(store, columnName, ascending, false, false);
   }
 
   if (prevRow && isRowSpanEnabled(sortState)) {
@@ -501,11 +486,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
-    focus.navigating = false;
-    changeFocus(store, null, null, id);
-    if (focus.editingAddress && focus.editingAddress.rowKey === rowKey) {
-      focus.editingAddress = null;
-    }
+    initFocus(store);
   }
 
   if (pageOptions.useClient) {
@@ -648,10 +629,7 @@ function addClassNameToAttribute(row: Row, columnName: string, className: string
 function removeClassNameToAttribute(row: Row, columnName: string, className: string) {
   const columnClassNames = row._attributes.className.column[columnName];
   if (columnClassNames) {
-    row._attributes.className.column[columnName] = getRemovedClassName(
-      className,
-      columnClassNames
-    );
+    row._attributes.className.column[columnName] = getRemovedClassName(className, columnClassNames);
   }
 
   notify(row._attributes, 'className');
@@ -836,4 +814,45 @@ export function updateRowNumber({ data }: Store, startIndex: number) {
   for (let idx = startIndex; idx < filteredRawData.length; idx += 1) {
     filteredRawData[idx]._attributes.rowNum = idx + 1;
   }
+}
+
+export function setRow(store: Store, rowIndex: number, row: OptRow) {
+  const { data, rowCoords, dimension, id, focus } = store;
+  const { rawData, viewData, sortState } = data;
+  const orgRow = rawData[rowIndex];
+
+  if (!orgRow) {
+    return;
+  }
+
+  row.sortKey = orgRow.sortKey;
+  const { heights } = rowCoords;
+  const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row);
+
+  if (someProp('rowKey', focus.rowKey, rawData)) {
+    initFocus(store);
+  }
+
+  rawData.splice(rowIndex, 1, rawRow);
+  viewData.splice(rowIndex, 1, viewRow);
+  heights.splice(rowIndex, 1, getRowHeight(rawRow, dimension.rowHeight));
+
+  if (!isRowSpanEnabled(sortState)) {
+    const { columnName, ascending } = sortState.columns[0];
+    sort(store, columnName, ascending, false, false);
+  }
+
+  if (prevRow && isRowSpanEnabled(sortState)) {
+    updateRowSpanWhenAppend(rawData, prevRow, false);
+  }
+
+  getDataManager(id).push('UPDATE', rawRow);
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
+  notify(rowCoords, 'heights');
+
+  updateSummaryValueByRow(store, rawRow, true);
+  updateRowNumber(store, rowIndex);
 }

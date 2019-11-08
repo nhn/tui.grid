@@ -12,6 +12,9 @@ import {
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
+import { isRowHeader } from '../helper/column';
+import { createRawRow, createViewRow } from '../store/data';
+import { OptRow } from '../types';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -67,9 +70,11 @@ export function findIndexByRowKey(
   const { filteredRawData, rawData, sortState } = data;
   const targetData = filtered ? filteredRawData : rawData;
   const dataManager = getDataManager(id);
-  const hasAppendedData = dataManager ? dataManager.isModifiedByType('CREATE') : false;
+  const modified = dataManager
+    ? dataManager.isModifiedByType('CREATE') || dataManager.isModifiedByType('UPDATE')
+    : false;
 
-  if (!isRowSpanEnabled(sortState) || column.keyColumnName || hasAppendedData) {
+  if (!isRowSpanEnabled(sortState) || column.keyColumnName || modified) {
     return findPropIndex('rowKey', rowKey, targetData);
   }
 
@@ -165,4 +170,20 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
   });
 
   return removedClassNames;
+}
+
+export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow) {
+  const { data, column } = store;
+  const { rawData } = data;
+  const { defaultValues, allColumnMap } = column;
+  const prevRow = rawData[rowIndex - 1];
+
+  const emptyData = column.allColumns
+    .filter(({ name }) => !isRowHeader(name))
+    .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
+  const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
+  const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues);
+  const viewRow = createViewRow(rawRow, allColumnMap, rawData);
+
+  return { rawRow, viewRow, prevRow };
 }

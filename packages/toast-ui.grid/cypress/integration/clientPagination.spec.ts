@@ -111,10 +111,10 @@ it('should reflect actual page data after appendRow API.', () => {
 
 it('should reflect actual page data after prependRow API.', () => {
   createGrid();
-  cy.gridInstance().invoke('prependRow', appendedData);
-  cy.wait(10);
 
-  cy.getCellByIdx(0, 3).should('to.have.text', 'hanjung');
+  cy.gridInstance().invoke('prependRow', appendedData);
+
+  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
 
   checkLastPage('9');
   compareColumnCellLength(PER_PAGE_COUNT);
@@ -123,9 +123,8 @@ it('should reflect actual page data after prependRow API.', () => {
 it('should reflect actual page data after resetData API.', () => {
   createGrid();
   cy.gridInstance().invoke('resetData', [appendedData]);
-  cy.wait(10);
 
-  cy.getCellByIdx(0, 3).should('to.have.text', 'hanjung');
+  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
 
   checkLastPage('1');
   compareColumnCellLength(1);
