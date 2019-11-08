@@ -1516,4 +1516,14 @@ export default class Grid {
     const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
     this.dispatch('setRow', rowIndex, row);
   }
+
+  /*
+   * Move the row identified by the specified rowKey to target index.
+   * If data is sorted or filtered, this couldn't be used.
+   * @param {number} rowKey - The unique key of the row
+   * @param {number} targetIndex - target index for moving
+   */
+  public moveRow(rowKey: RowKey, targetIndex: number) {
+    this.dispatch('moveRow', rowKey, targetIndex);
+  }
 }

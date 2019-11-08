@@ -101,9 +101,11 @@ export function findRowByRowKey(
   data: Data,
   column: Column,
   id: number,
-  rowKey?: RowKey | null
+  rowKey?: RowKey | null,
+  filtered = true
 ): Row | undefined {
-  return data.filteredRawData[findIndexByRowKey(data, column, id, rowKey)];
+  const targetData = filtered ? data.filteredRawData : data.rawData;
+  return targetData[findIndexByRowKey(data, column, id, rowKey, filtered)];
 }
 
 export function getFilterStateWithOperator(data: Data, column: Column) {

@@ -403,18 +403,25 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-function updateSortKey(data: Data, at: number) {
+function updateSortKey(data: Data, sortKey: number, type = 'inc') {
+  const value = type === 'inc' ? 1 : -1;
   const { rawData, viewData } = data;
   for (let idx = 0; idx < rawData.length; idx += 1) {
-    if (rawData[idx].sortKey >= at) {
-      rawData[idx].sortKey += 1;
-    }
-    if (viewData[idx].sortKey >= at) {
-      viewData[idx].sortKey += 1;
+    if (rawData[idx].sortKey >= sortKey) {
+      rawData[idx].sortKey += value;
+      viewData[idx].sortKey += value;
     }
   }
-  rawData[at].sortKey = at;
-  viewData[at].sortKey = at;
+  data.rawData[sortKey].sortKey = sortKey;
+  data.viewData[sortKey].sortKey = sortKey;
+}
+
+function resetSortKey(data: Data) {
+  const { rawData, viewData } = data;
+  for (let idx = 0; idx < rawData.length; idx += 1) {
+    rawData[idx].sortKey = idx;
+    viewData[idx].sortKey = idx;
+  }
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
@@ -483,6 +490,10 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
+  }
+
+  if (rowIdx !== rawData.length) {
+    updateSortKey(data, removedRow.sortKey + 1, 'dec');
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -855,4 +866,31 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   updateSummaryValueByRow(store, rawRow, true);
   updateRowNumber(store, rowIndex);
+}
+
+export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
+  const { data, column, id } = store;
+  const { sortState, filters } = data;
+
+  if (sortState.columns[0].columnName !== 'sortKey' || filters) {
+    return;
+  }
+
+  const currentIndex = findIndexByRowKey(data, column, id, rowKey);
+  const rawRow = data.rawData[currentIndex];
+  const viewRow = data.viewData[currentIndex];
+
+  data.rawData.splice(currentIndex, 1);
+  data.viewData.splice(currentIndex, 1);
+
+  data.rawData.splice(targetIndex, 0, rawRow);
+  data.viewData.splice(targetIndex, 0, viewRow);
+
+  resetSortKey(data);
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+  notify(data, 'filteredRawData');
+  notify(data, 'filteredViewData');
+  updateRowNumber(store, Math.min(currentIndex, targetIndex));
+  getDataManager(id).push('UPDATE', rawRow);
 }

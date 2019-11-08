@@ -823,6 +823,8 @@ declare namespace tuiGrid {
     public removeColumnClassName(columnName: string, className: string): void;
 
     public setRow(rowKey: RowKey, row: IRow): void;
+
+    public moveRow(rowKey: RowKey, targetIndex: number): void;
   }
 }
 
