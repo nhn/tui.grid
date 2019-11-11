@@ -105,7 +105,7 @@ describe('appendRow()', () => {
   });
 
   it('should update row number when calling appendRow()', () => {
-    cy.createGrid({ data: [...largeData], columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
 
     cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
     checkGridHasRightRowNumber();
@@ -159,7 +159,7 @@ describe('prependRow()', () => {
   });
 
   it('should update row number when calling prependRow()', () => {
-    cy.createGrid({ data: [...largeData], columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
 
     cy.gridInstance().invoke('prependRow', { name: 'Yoo', age: 50 });
     checkGridHasRightRowNumber();
@@ -226,7 +226,7 @@ describe('removeRow()', () => {
   });
 
   it('should update row number when calling removeRow()', () => {
-    cy.createGrid({ data: [...largeData], columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
+    cy.createGrid({ data: largeData, columns, bodyHeight: 400, rowHeaders: ['rowNum'] });
 
     cy.gridInstance().invoke('removeRow', 2);
     checkGridHasRightRowNumber();
@@ -494,7 +494,7 @@ describe('setRow', () => {
 
 describe('moveRow', () => {
   beforeEach(() => {
-    cy.createGrid({ data: [...largeData], columns });
+    cy.createGrid({ data: largeData, columns });
   });
 
   ['sort', 'filter'].forEach(type => {
