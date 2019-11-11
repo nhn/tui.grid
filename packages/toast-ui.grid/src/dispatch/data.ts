@@ -161,41 +161,47 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     targetColumn.onBeforeChange(gridEvent);
   }
 
-  if (gridEvent.isStopped()) {
+  if (!targetRow || gridEvent.isStopped()) {
     return;
   }
-  if (targetRow) {
-    const { rowSpanMap } = targetRow;
-    const { columns } = sortState;
-    const prevValue = targetRow[columnName];
-    const index = findPropIndex('columnName', columnName, columns);
 
-    targetRow[columnName] = value;
+  const { rowSpanMap } = targetRow;
+  const { columns } = sortState;
+  const orgValue = targetRow[columnName];
+  const index = findPropIndex('columnName', columnName, columns);
+  let calculated = false;
 
-    if (index !== -1) {
-      sort(store, columnName, columns[index].ascending, true, false);
+  targetRow[columnName] = value;
+
+  if (index !== -1) {
+    sort(store, columnName, columns[index].ascending, true, false);
+  }
+
+  if (filters) {
+    const columnFilter = findProp('columnName', columnName, filters);
+    if (columnFilter) {
+      calculated = true;
+      const { conditionFn, state } = columnFilter;
+      filter(store, columnName, conditionFn!, state);
     }
+  }
 
-    if (filters) {
-      const columnFilter = findProp('columnName', columnName, filters);
-      if (columnFilter) {
-        const { conditionFn, state } = columnFilter;
-        filter(store, columnName, conditionFn!, state);
+  if (!calculated) {
+    updateSummaryValueByCell(store, columnName, { orgValue, value });
+  }
+  getDataManager(id).push('UPDATE', targetRow);
+
+  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
+    const { spanCount } = rowSpanMap[columnName];
+    const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
+
+    // update sub rows value
+    for (let count = 1; count < spanCount; count += 1) {
+      rawData[mainRowIndex + count][columnName] = value;
+      if (!calculated) {
+        updateSummaryValueByCell(store, columnName, { orgValue, value });
       }
-    }
-
-    updateSummaryValueByCell(store, columnName, { prevValue, value });
-    getDataManager(id).push('UPDATE', targetRow);
-
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
-      const { spanCount } = rowSpanMap[columnName];
-      const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
-
-      // update sub rows value
-      for (let count = 1; count < spanCount; count += 1) {
-        rawData[mainRowIndex + count][columnName] = value;
-        getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
-      }
+      getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
     }
   }
 
@@ -473,7 +479,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
-  updateSummaryValueByRow(store, rawRow, true);
+  updateSummaryValueByRow(store, rawRow, { type: 'A' });
   setLoadingState(store, 'DONE');
   updateRowNumber(store, at);
 }
@@ -537,7 +543,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  updateSummaryValueByRow(store, removedRow, false);
+  updateSummaryValueByRow(store, removedRow, { type: 'R' });
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
 }
@@ -869,7 +875,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
-  updateSummaryValueByRow(store, rawRow, true);
+  updateSummaryValueByRow(store, rawRow, { type: 'S', orgRow });
   updateRowNumber(store, rowIndex);
 }
 

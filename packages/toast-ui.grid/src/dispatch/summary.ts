@@ -1,6 +1,6 @@
 import { Store, SummaryColumnContentMap, Row } from '../store/types';
 import { castToSummaryColumnContent, extractSummaryColumnContent } from '../helper/summary';
-import { isEmpty } from '../helper/common';
+import { isEmpty, findProp, isFunction } from '../helper/common';
 import { createSummaryValue } from '../store/summary';
 import { Options, UpdateType } from './types';
 
@@ -9,46 +9,84 @@ export function setSummaryColumnContent(
   columnName: string,
   columnContent: string | SummaryColumnContentMap
 ) {
-  const { filteredRawData } = data;
   const castedColumnContent = castToSummaryColumnContent(columnContent);
   const content = extractSummaryColumnContent(castedColumnContent, null);
 
   summary.summaryColumnContents[columnName] = content;
-  summary.summaryValues[columnName] = createSummaryValue(content, columnName, filteredRawData);
+  summary.summaryValues[columnName] = createSummaryValue(content, columnName, data);
 }
 
-export function updateSummaryValue(
-  { summary }: Store,
+function updateSummaryValue(
+  { summary, data }: Store,
   columnName: string,
   type: UpdateType,
   options: Options
 ) {
-  const content = summary.summaryColumnContents[columnName];
+  const summaryValue = summary.summaryValues[columnName];
+  const orgValue = Number(options.orgValue) || 0;
+  const value = Number(options.value) || 0;
+  const cntVariation = options.type === 'A' ? 1 : -1;
 
-  if (content && content.useAutoSummary) {
-    const summaryValue = summary.summaryValues[columnName];
-    const prevValue = Number(options.prevValue) || 0;
-    const value = Number(options.value) || 0;
-    const cntVariation = options.appended ? 1 : -1;
+  const columnFilter = findProp('columnName', columnName, data.filters || []);
+  const hasColumnFilter = !!(columnFilter && isFunction(columnFilter.conditionFn));
+  const included = hasColumnFilter && columnFilter!.conditionFn!(value);
+  let { sum, min, max, cnt, filteredSum, filteredMin, filteredMax, filteredCnt } = summaryValue;
 
-    let { sum, min, max, cnt } = summaryValue;
+  if (type === 'UPDATE_COLUMN') {
+    sum = value * cnt;
+    min = value;
+    max = value;
 
-    if (type === 'UPDATE_COLUMN') {
-      sum = value * cnt;
-      min = value;
-      max = value;
-    } else if (type === 'UPDATE_CELL') {
-      sum = sum - prevValue + value;
-    } else {
-      cnt += cntVariation;
-      sum = sum + cntVariation * value;
+    if (hasColumnFilter) {
+      filteredCnt = included ? filteredCnt : 0;
+      filteredSum = included ? value * filteredCnt : 0;
+      filteredMin = included ? value : 0;
+      filteredMax = included ? value : 0;
     }
-    const avg = sum / cnt;
-    min = Math.min(value, min);
-    max = Math.max(value, max);
+  } else if (type === 'UPDATE_CELL') {
+    sum = sum - orgValue + value;
 
-    summary.summaryValues[columnName] = { sum, avg, min, max, cnt };
+    if (hasColumnFilter) {
+      const orgIncluded = columnFilter!.conditionFn!(orgValue);
+      if (!orgIncluded && included) {
+        filteredSum = filteredSum + value;
+        filteredCnt += 1;
+      } else if (orgIncluded && !included) {
+        filteredSum = filteredSum - orgValue;
+        filteredCnt -= 1;
+      }
+    }
+  } else {
+    cnt += cntVariation;
+    sum = sum + cntVariation * value;
+
+    if (hasColumnFilter) {
+      if (included) {
+        filteredSum = filteredSum + cntVariation * value;
+        filteredCnt += cntVariation;
+      }
+    }
   }
+  const avg = sum / cnt;
+  const filteredAvg = filteredSum / filteredCnt;
+
+  min = Math.min(value, min);
+  max = Math.max(value, max);
+  filteredMin = Math.min(value, filteredMin);
+  filteredMax = Math.max(value, filteredMax);
+
+  summary.summaryValues[columnName] = {
+    sum,
+    min,
+    max,
+    avg,
+    cnt,
+    filteredSum,
+    filteredMin,
+    filteredMax,
+    filteredAvg,
+    filteredCnt
+  };
 }
 
 export function updateSummaryValueByCell(store: Store, columnName: string, options: Options) {
@@ -59,27 +97,32 @@ export function updateSummaryValueByColumn(store: Store, columnName: string, opt
   updateSummaryValue(store, columnName, 'UPDATE_COLUMN', options);
 }
 
-export function updateSummaryValueByRow(store: Store, row: Row, appended: boolean) {
+export function updateSummaryValueByRow(
+  store: Store,
+  row: Row,
+  options: Options & { orgRow?: Row }
+) {
   const { summary, column } = store;
+  const { type, orgRow } = options;
   const summaryColumns = column.allColumns.filter(
     ({ name }) => !!summary.summaryColumnContents[name]
   );
   summaryColumns.forEach(({ name }) => {
-    updateSummaryValue(store, name, 'UPDATE_ROW', { value: row[name], appended });
+    if (type === 'S') {
+      updateSummaryValue(store, name, 'UPDATE_CELL', { orgValue: orgRow![name], value: row[name] });
+    } else {
+      updateSummaryValue(store, name, 'UPDATE_ROW', { value: row[name], type });
+    }
   });
 }
 
 export function updateAllSummaryValues({ summary, data, column }: Store) {
-  const { filteredRawData } = data;
   const summaryColumns = column.allColumns.filter(
     ({ name }) => !!summary.summaryColumnContents[name]
   );
   summaryColumns.forEach(({ name }) => {
-    summary.summaryValues[name] = createSummaryValue(
-      summary.summaryColumnContents[name],
-      name,
-      filteredRawData
-    );
+    const content = summary.summaryColumnContents[name];
+    summary.summaryValues[name] = createSummaryValue(content, name, data);
   });
 }
 
@@ -87,17 +130,15 @@ export function addColumnSummaryValues({ summary, data, column }: Store) {
   if (!isEmpty(summary)) {
     const { defaultContent } = summary;
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
-    const { filteredRawData } = data;
 
     column.allColumns.forEach(({ name }) => {
       const orgSummaryContent = summary.summaryColumnContents[name];
+      let content = orgSummaryContent;
       if (!orgSummaryContent) {
-        const content = extractSummaryColumnContent(null, castedDefaultContent);
+        content = extractSummaryColumnContent(null, castedDefaultContent);
         summary.summaryColumnContents[name] = content;
-        summary.summaryValues[name] = createSummaryValue(content, name, filteredRawData);
-      } else {
-        summary.summaryValues[name] = createSummaryValue(orgSummaryContent, name, filteredRawData);
       }
+      summary.summaryValues[name] = createSummaryValue(content, name, data);
     });
   }
 }
