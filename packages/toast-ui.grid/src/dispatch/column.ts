@@ -1,4 +1,4 @@
-import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary } from '../store/types';
+import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary, Column } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
