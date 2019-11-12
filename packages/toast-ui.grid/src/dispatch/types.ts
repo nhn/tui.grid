@@ -35,7 +35,7 @@ export interface ContainerPosition {
 export interface Options {
   orgValue?: CellValue;
   value?: CellValue;
-  type?: 'A' | 'R' | 'S';
+  type?: 'APPEND' | 'REMOVE' | 'SET';
 }
 
 export interface OriginData {

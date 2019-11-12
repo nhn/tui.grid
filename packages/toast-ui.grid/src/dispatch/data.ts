@@ -479,7 +479,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
-  updateSummaryValueByRow(store, rawRow, { type: 'A' });
+  updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   setLoadingState(store, 'DONE');
   updateRowNumber(store, at);
 }
@@ -543,7 +543,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  updateSummaryValueByRow(store, removedRow, { type: 'R' });
+  updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
 }
@@ -874,7 +874,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   notify(data, 'filteredViewData');
   updateHeightsWithFilteredData(store);
 
-  updateSummaryValueByRow(store, rawRow, { type: 'S', orgRow });
+  updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   updateRowNumber(store, rowIndex);
 }
 

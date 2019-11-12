@@ -31,7 +31,7 @@ function updateSummaryValue(
   const summaryValue = summary.summaryValues[columnName];
   const orgValue = Number(options.orgValue) || 0;
   const value = Number(options.value) || 0;
-  const cntVariation = options.type === 'A' ? 1 : -1;
+  const cntVariation = options.type === 'APPEND' ? 1 : -1;
 
   const columnFilter = findProp('columnName', columnName, data.filters || []);
   const hasColumnFilter = !!(columnFilter && isFunction(columnFilter.conditionFn));
@@ -121,7 +121,7 @@ export function updateSummaryValueByRow(
     ({ name }) => !!summary.summaryColumnContents[name]
   );
   summaryColumns.forEach(({ name }) => {
-    if (type === 'S') {
+    if (type === 'SET') {
       updateSummaryValue(store, name, 'UPDATE_CELL', { orgValue: orgRow![name], value: row[name] });
     } else {
       updateSummaryValue(store, name, 'UPDATE_ROW', { type, value: row[name] });
