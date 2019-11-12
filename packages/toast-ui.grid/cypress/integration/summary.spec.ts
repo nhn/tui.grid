@@ -16,12 +16,16 @@ function createSummaryOption(
     columnContent: {
       price: {
         template(valueMap: OptSummaryValueMap) {
-          return `MAX: ${valueMap.max}<br>MIN: ${valueMap.min}`;
+          return `MAX: ${valueMap.max} FilteredMax: ${valueMap.filteredMax}<br>MIN: ${
+            valueMap.min
+          } FilteredMin: ${valueMap.filteredMin}`;
         }
       },
       downloadCount: {
         template(valueMap: OptSummaryValueMap) {
-          return `TOTAL: ${valueMap.sum}<br>AVG: ${valueMap.avg.toFixed(2)}`;
+          return `TOTAL: ${valueMap.sum} FilteredSum: ${
+            valueMap.filteredSum
+          }<br>AVG: ${valueMap.avg.toFixed(2)} FilteredAvg: ${valueMap.filteredAvg.toFixed(2)}`;
         }
       }
     }
@@ -48,7 +52,7 @@ function createDefaultOptions(customOptions?: Dictionary<any>): Omit<OptGrid, 'e
 function assertSummaryContent(columnName: string, ...contents: string[]) {
   cy.get(`.${cls('cell-summary')}[${dataAttr.COLUMN_NAME}=${columnName}]`).as('summaryCell');
   contents.forEach(content => {
-    cy.get('@summaryCell').contains(content);
+    cy.get('@summaryCell').should('contain.text', content);
   });
 }
 
@@ -268,14 +272,12 @@ describe('summary', () => {
     cy.createGrid(defaultOptions);
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should(summaryValues => {
-        expect(summaryValues).to.be.eql({
-          avg: 13750,
-          cnt: 20,
-          max: 30000,
-          min: 6000,
-          sum: 275000
-        });
+      .should('have.subset', {
+        avg: 13750,
+        cnt: 20,
+        max: 30000,
+        min: 6000,
+        sum: 275000
       });
   });
 
@@ -290,14 +292,12 @@ describe('summary', () => {
 
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should(summaryValues => {
-        expect(summaryValues).to.be.eql({
-          avg: 3.5,
-          cnt: 2,
-          max: 5,
-          min: 2,
-          sum: 7
-        });
+      .should('have.subset', {
+        avg: 3.5,
+        cnt: 2,
+        max: 5,
+        min: 2,
+        sum: 7
       });
   });
 
@@ -310,26 +310,22 @@ describe('summary', () => {
 
       cy.gridInstance()
         .invoke('getSummaryValues', 'price')
-        .should(summaryValues => {
-          expect(summaryValues).to.be.eql({
-            avg: 13095.47619047619,
-            cnt: 21,
-            max: 30000,
-            min: 5,
-            sum: 275005
-          });
+        .should('have.subset', {
+          avg: 13095.47619047619,
+          cnt: 21,
+          max: 30000,
+          min: 5,
+          sum: 275005
         });
 
       cy.gridInstance()
         .invoke('getSummaryValues', 'downloadCount')
-        .should(summaryValues => {
-          expect(summaryValues).to.be.eql({
-            avg: 2764.285714285714,
-            cnt: 21,
-            max: 34000,
-            min: 10,
-            sum: 58050
-          });
+        .should('have.subset', {
+          avg: 2764.285714285714,
+          cnt: 21,
+          max: 34000,
+          min: 10,
+          sum: 58050
         });
     });
 
@@ -340,26 +336,22 @@ describe('summary', () => {
 
       cy.gridInstance()
         .invoke('getSummaryValues', 'price')
-        .should(summaryValues => {
-          expect(summaryValues).to.be.eql({
-            avg: 13842.105263157895,
-            cnt: 19,
-            max: 30000,
-            min: 6000,
-            sum: 263000
-          });
+        .should('have.subset', {
+          avg: 13842.105263157895,
+          cnt: 19,
+          max: 30000,
+          min: 6000,
+          sum: 263000
         });
 
       cy.gridInstance()
         .invoke('getSummaryValues', 'downloadCount')
-        .should(summaryValues => {
-          expect(summaryValues).to.be.eql({
-            avg: 3002.1052631578946,
-            cnt: 19,
-            max: 34000,
-            min: 200,
-            sum: 57040
-          });
+        .should('have.subset', {
+          avg: 3002.1052631578946,
+          cnt: 19,
+          max: 34000,
+          min: 200,
+          sum: 57040
         });
     });
   });
@@ -371,14 +363,12 @@ describe('summary', () => {
 
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should(summaryValues => {
-        expect(summaryValues).to.be.eql({
-          avg: 10,
-          cnt: 20,
-          max: 10,
-          min: 10,
-          sum: 200
-        });
+      .should('have.subset', {
+        avg: 10,
+        cnt: 20,
+        max: 10,
+        min: 10,
+        sum: 200
       });
   });
 
@@ -389,14 +379,12 @@ describe('summary', () => {
 
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should(summaryValues => {
-        expect(summaryValues).to.be.eql({
-          avg: 0,
-          cnt: 0,
-          max: 0,
-          min: 0,
-          sum: 0
-        });
+      .should('have.subset', {
+        avg: 0,
+        cnt: 0,
+        max: 0,
+        min: 0,
+        sum: 0
       });
   });
 
@@ -410,14 +398,12 @@ describe('summary', () => {
     cy.createGrid({ ...defaultOptions, columns });
     cy.gridInstance()
       .invoke('getSummaryValues', 'price')
-      .should(summaryValues => {
-        expect(summaryValues).to.be.eql({
-          avg: 13750,
-          cnt: 20,
-          max: 30000,
-          min: 6000,
-          sum: 275000
-        });
+      .should('have.subset', {
+        avg: 13750,
+        cnt: 20,
+        max: 30000,
+        min: 6000,
+        sum: 275000
       });
     cy.gridInstance().invoke('setColumns', [
       { name: 'name', minWidth: 150 },
@@ -453,22 +439,106 @@ describe('summary with filter', () => {
   beforeEach(() => {
     const defaultOptions = createDefaultOptions({
       columns: [
-        { name: 'name', minWidth: 150 },
-        { name: 'price', minWidth: 150, sortable: true },
-        { name: 'downloadCount', minWidth: 150, filter: 'number' }
+        { name: 'name', minWidth: 150, editor: 'text' },
+        { name: 'price', minWidth: 150, sortable: true, editor: 'text' },
+        { name: 'downloadCount', minWidth: 150, filter: 'number', editor: 'text' }
       ]
     });
     cy.createGrid({ ...defaultOptions });
+    cy.gridInstance().invoke('filter', 'downloadCount', [{ code: 'eq', value: 1000 }]);
   });
 
   it('should change summary based on the filtering result.', () => {
-    assertSummaryContent('downloadCount', 'TOTAL: 58040', 'AVG: 2902.00');
+    assertSummaryContent(
+      'downloadCount',
+      'TOTAL: 58040',
+      'AVG: 2902.00',
+      'FilteredSum: 10000',
+      'FilteredAvg: 1000.00'
+    );
+  });
 
-    cy.get(`.${cls('btn-filter')}`).click();
-    cy.get(`.${cls('filter-input')}`).type('1000', { force: true });
-    cy.getCell(0, 'name').click();
+  it('should change summary when changes value', () => {
+    cy.gridInstance().invoke('setValue', 0, 'downloadCount', 1);
+    assertSummaryContent(
+      'downloadCount',
+      'TOTAL: 57041',
+      'AVG: 2852.05',
+      'FilteredSum: 9000',
+      'FilteredAvg: 1000.00'
+    );
+  });
 
-    assertSummaryContent('downloadCount', 'TOTAL: 10000', 'AVG: 1000.00');
+  context('setRow', () => {
+    it('should not change filtered summary when replaces the row(not having filtered value)', () => {
+      cy.gridInstance().invoke('setRow', 0, { name: 'test', price: 1000, downloadCount: 2000 });
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 59040',
+        'AVG: 2952.00',
+        'FilteredSum: 9000',
+        'FilteredAvg: 1000.00'
+      );
+    });
+
+    it('should change filtered summary when replaces the row(having filtered value)', () => {
+      cy.gridInstance().invoke('setRow', 0, { name: 'test', price: 1000, downloadCount: 1000 });
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 58040',
+        'AVG: 2902.00',
+        'FilteredSum: 10000',
+        'FilteredAvg: 1000.00'
+      );
+    });
+  });
+
+  context('appendRow', () => {
+    it('should not change filtered summary when appends row(not having filtered value)', () => {
+      cy.gridInstance().invoke('appendRow', { name: 'test', price: 1000, downloadCount: 2000 });
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 60040',
+        'AVG: 2859.05',
+        'FilteredSum: 10000',
+        'FilteredAvg: 1000.00'
+      );
+    });
+
+    it('should not change filtered summary when appends row(having filtered value)', () => {
+      cy.gridInstance().invoke('appendRow', { name: 'test', price: 1000, downloadCount: 1000 });
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 59040',
+        'AVG: 2811.43',
+        'FilteredSum: 11000',
+        'FilteredAvg: 1000.00'
+      );
+    });
+  });
+
+  context('removeRow', () => {
+    it('should not change summary when removes row(not having filtered value)', () => {
+      cy.gridInstance().invoke('removeRow', 3);
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 57840',
+        'AVG: 3044.21',
+        'FilteredSum: 10000',
+        'FilteredAvg: 1000.00'
+      );
+    });
+
+    it('should change summary when removes row(having filtered value)', () => {
+      cy.gridInstance().invoke('removeRow', 0);
+      assertSummaryContent(
+        'downloadCount',
+        'TOTAL: 57040',
+        'AVG: 3002.11',
+        'FilteredSum: 9000',
+        'FilteredAvg: 1000.00'
+      );
+    });
   });
 });
 
