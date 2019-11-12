@@ -11,7 +11,7 @@ import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
   extractSummaryColumnContent,
-  getSummaryValue
+  getCalculated
 } from '../helper/summary';
 import { someProp } from '../helper/common';
 
@@ -27,7 +27,7 @@ export function createSummaryValue(
   data: Data
 ) {
   if (content && content.useAutoSummary) {
-    return getSummaryValue(columnName, data.rawData, data.filteredRawData);
+    return getCalculated(columnName, data.rawData, data.filteredRawData);
   }
   return {
     sum: 0,

@@ -38,41 +38,48 @@ function updateSummaryValue(
   const included = hasColumnFilter && columnFilter!.conditionFn!(value);
   let { sum, min, max, cnt, filteredSum, filteredMin, filteredMax, filteredCnt } = summaryValue;
 
-  if (type === 'UPDATE_COLUMN') {
-    sum = value * cnt;
-    min = value;
-    max = value;
+  switch (type) {
+    case 'UPDATE_COLUMN':
+      sum = value * cnt;
+      min = value;
+      max = value;
 
-    if (hasColumnFilter) {
-      filteredCnt = included ? filteredCnt : 0;
-      filteredSum = included ? value * filteredCnt : 0;
-      filteredMin = included ? value : 0;
-      filteredMax = included ? value : 0;
-    }
-  } else if (type === 'UPDATE_CELL') {
-    sum = sum - orgValue + value;
-
-    if (hasColumnFilter) {
-      const orgIncluded = columnFilter!.conditionFn!(orgValue);
-      if (!orgIncluded && included) {
-        filteredSum = filteredSum + value;
-        filteredCnt += 1;
-      } else if (orgIncluded && !included) {
-        filteredSum = filteredSum - orgValue;
-        filteredCnt -= 1;
+      if (hasColumnFilter) {
+        filteredCnt = included ? filteredCnt : 0;
+        filteredSum = included ? value * filteredCnt : 0;
+        filteredMin = included ? value : 0;
+        filteredMax = included ? value : 0;
       }
-    }
-  } else {
-    cnt += cntVariation;
-    sum = sum + cntVariation * value;
+      break;
+    case 'UPDATE_CELL':
+      sum = sum - orgValue + value;
 
-    if (hasColumnFilter) {
-      if (included) {
+      if (hasColumnFilter) {
+        const orgIncluded = columnFilter!.conditionFn!(orgValue);
+        if (!orgIncluded && included) {
+          filteredSum = filteredSum + value;
+          filteredCnt += 1;
+        } else if (orgIncluded && !included) {
+          filteredSum = filteredSum - orgValue;
+          filteredCnt -= 1;
+        } else if (orgIncluded && included) {
+          filteredSum = filteredSum - orgValue + value;
+        }
+      }
+      break;
+    case 'UPDATE_ROW':
+      cnt += cntVariation;
+      sum = sum + cntVariation * value;
+
+      if (hasColumnFilter && included) {
         filteredSum = filteredSum + cntVariation * value;
         filteredCnt += cntVariation;
       }
-    }
+      break;
+    default:
+    // do nothing;
   }
+
   const avg = sum / cnt;
   const filteredAvg = filteredSum / filteredCnt;
 
@@ -117,7 +124,7 @@ export function updateSummaryValueByRow(
     if (type === 'S') {
       updateSummaryValue(store, name, 'UPDATE_CELL', { orgValue: orgRow![name], value: row[name] });
     } else {
-      updateSummaryValue(store, name, 'UPDATE_ROW', { value: row[name], type });
+      updateSummaryValue(store, name, 'UPDATE_ROW', { type, value: row[name] });
     }
   });
 }

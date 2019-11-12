@@ -82,7 +82,7 @@ export type SummaryColumnContent = SummaryColumnContentMap | null;
 
 export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
 
-export type SummaryValues = Dictionary<SummaryValue> & Dictionary<FilteredSummaryValue>;
+export type SummaryValues = Dictionary<SummaryValueMap>;
 
 export type CustomValue =
   | string
@@ -413,9 +413,11 @@ export interface Focus {
   readonly cellPosRect: Rect | null;
 }
 
+export type SummaryValueMap = SummaryValue & FilteredSummaryValue;
+
 export interface SummaryColumnContentMap {
   useAutoSummary?: boolean;
-  template?: string | ((valueMap: SummaryValue & FilteredSummaryValue) => string);
+  template?: string | ((valueMap: SummaryValueMap) => string);
 }
 
 export interface SummaryValue {

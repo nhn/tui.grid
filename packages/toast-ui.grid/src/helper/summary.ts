@@ -8,7 +8,7 @@ import {
 
 type ColumnContentType = string | SummaryColumnContentMap;
 
-function convertFilteredSummaryValue(summaryValue: SummaryValue) {
+function assignFilteredSummaryValue(summaryValue: SummaryValue) {
   const { sum, min, max, avg, cnt } = summaryValue;
   return {
     filteredSum: sum,
@@ -19,16 +19,16 @@ function convertFilteredSummaryValue(summaryValue: SummaryValue) {
   };
 }
 
-export function getSummaryValue(columnName: string, rawData: Row[], filteredRawData: Row[]) {
+export function getCalculated(columnName: string, rawData: Row[], filteredRawData: Row[]) {
   const columnValues = rawData.map(row => row[columnName]);
   const summaryValue = calculate(columnValues);
 
   if (rawData.length === filteredRawData.length) {
-    return { ...summaryValue, ...convertFilteredSummaryValue(summaryValue) };
+    return { ...summaryValue, ...assignFilteredSummaryValue(summaryValue) };
   }
 
   const filteredColumnValues = filteredRawData.map(row => row[columnName]);
-  return { ...summaryValue, ...convertFilteredSummaryValue(calculate(filteredColumnValues)) };
+  return { ...summaryValue, ...assignFilteredSummaryValue(calculate(filteredColumnValues)) };
 }
 
 export function calculate(values: CellValue[]) {
