@@ -99,29 +99,38 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
+function setColumnsHiddenValue(column: Column, columnName: string, hidden: boolean) {
+  const { allColumnMap, complexColumnHeaders } = column;
+
+  if (complexColumnHeaders.length) {
+    const complexColumn = findProp('name', columnName, complexColumnHeaders);
+    if (complexColumn) {
+      complexColumn.childNames!.forEach(childName => {
+        allColumnMap[childName].hidden = hidden;
+      });
+    }
+  } else if (allColumnMap[columnName]) {
+    allColumnMap[columnName].hidden = hidden;
+  }
+}
+
 export function hideColumn(store: Store, columnName: string) {
-  const columnItem = store.column.allColumnMap[columnName];
-  const { columnName: focusedColumnName } = store.focus;
+  const { column, focus } = store;
+  const { columnName: focusedColumnName } = focus;
 
   if (focusedColumnName === columnName) {
     initFocus(store);
   }
-  initSelection(store);
 
+  initSelection(store);
   unfilter(store, columnName);
   unsort(store, columnName);
 
-  if (columnItem) {
-    columnItem.hidden = true;
-  }
+  setColumnsHiddenValue(column, columnName, true);
 }
 
 export function showColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumnMap[columnName];
-
-  if (columnItem) {
-    columnItem.hidden = false;
-  }
+  setColumnsHiddenValue(column, columnName, false);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

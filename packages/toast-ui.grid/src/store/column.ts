@@ -280,7 +280,7 @@ function createComplexColumnHeaders(
   column: OptComplexColumnInfo,
   columnHeaderInfo: ColumnHeaderInfo
 ) {
-  const { header, name, childNames, sortable, sortingType, renderer } = column;
+  const { header, name, childNames, sortable, sortingType, renderer, hideChildColumns } = column;
   const headerAlign = column.headerAlign || columnHeaderInfo.align;
   const headerVAlign = column.headerVAlign || columnHeaderInfo.valign;
 
@@ -292,7 +292,8 @@ function createComplexColumnHeaders(
     sortingType,
     headerAlign,
     headerVAlign,
-    headerRenderer: renderer || null
+    headerRenderer: renderer || null,
+    hideChildColumns
   });
 }
 

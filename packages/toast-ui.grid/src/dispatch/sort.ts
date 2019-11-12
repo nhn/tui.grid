@@ -6,6 +6,7 @@ import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState } from '../query/data';
+import { isComplexHeader } from '../query/column';
 
 function sortData(store: Store) {
   // makes all data observable to sort the data properly;
@@ -148,7 +149,7 @@ export function sort(
   const { data, column } = store;
   const { sortState } = data;
 
-  if (!isSortable(sortState, column, columnName)) {
+  if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
 
@@ -160,7 +161,7 @@ export function unsort(store: Store, columnName = 'sortKey') {
   const { data, column } = store;
   const { sortState } = data;
 
-  if (!isSortable(sortState, column, columnName)) {
+  if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
 

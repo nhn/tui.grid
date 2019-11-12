@@ -52,6 +52,20 @@ class ComplexHeaderComp extends Component<Props> {
     return complexColumns;
   }
 
+  private getRemovedHiddenChildColumns(hierarchies: ComplexColumnInfo[][]) {
+    return hierarchies.map(columns => {
+      if (columns.length > 1) {
+        // The hideChildColumns option always exists in the second column to last.
+        const { hideChildColumns } = columns[columns.length - 2];
+        if (hideChildColumns) {
+          columns.pop();
+        }
+      }
+
+      return columns;
+    });
+  }
+
   private getHierarchyMaxRowCount(hierarchies: ComplexColumnInfo[][]) {
     const lengths = [0, ...hierarchies.map(value => value.length)];
 
@@ -99,7 +113,9 @@ class ComplexHeaderComp extends Component<Props> {
 
   public render() {
     const { columns, headerHeight, cellBorderWidth } = this.props;
-    const hierarchies = columns.map(column => this.getColumnHierarchy(column).reverse());
+    const hierarchies = this.getRemovedHiddenChildColumns(
+      columns.map(column => this.getColumnHierarchy(column).reverse())
+    );
     const maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
     const rows = new Array(maxRowCount);
     const columnNames = new Array(maxRowCount);

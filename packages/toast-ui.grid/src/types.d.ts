@@ -455,4 +455,5 @@ export interface OptComplexColumnInfo {
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   renderer?: HeaderRendererClass;
+  hideChildColumns?: boolean;
 }
