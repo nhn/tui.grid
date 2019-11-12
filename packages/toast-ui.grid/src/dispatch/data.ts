@@ -10,7 +10,9 @@ import {
   Range,
   PageOptions,
   PagePosition,
-  LoadingState
+  LoadingState,
+  Filter,
+  RowCoords
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -20,7 +22,8 @@ import {
   includes,
   isEmpty,
   someProp,
-  findPropIndex
+  findPropIndex,
+  isFunction
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import { createViewRow, createData, generateDataCreationKey, createRowSpan } from '../store/data';
@@ -52,13 +55,35 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter, filter } from './filter';
+import { initFilter } from './filter';
 import { cls } from '../helper/dom';
 import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
 import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
 import { setScrollTop } from './viewport';
+
+function updateHeightsWithFilter(
+  filters: Filter[] | null,
+  rowCoords: RowCoords,
+  index: number,
+  row: Row
+) {
+  if (filters) {
+    let spliced = false;
+    for (let idx = 0; idx < filters.length; idx += 1) {
+      const { conditionFn, columnName } = filters[idx];
+      if (isFunction(conditionFn) && !conditionFn(row[columnName])) {
+        spliced = true;
+        rowCoords.heights.splice(index, 1);
+        break;
+      }
+    }
+    if (spliced) {
+      notify(rowCoords, 'heights');
+    }
+  }
+}
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -147,9 +172,10 @@ function updateSubRowSpan(
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
-  const { column, data, id } = store;
+  const { column, data, id, rowCoords } = store;
   const { rawData, sortState, filters } = data;
-  const targetRow = findRowByRowKey(data, column, id, rowKey);
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey);
+  const targetRow = rawData[rowIdx];
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
@@ -169,7 +195,6 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   const { columns } = sortState;
   const orgValue = targetRow[columnName];
   const index = findPropIndex('columnName', columnName, columns);
-  let calculated = false;
 
   targetRow[columnName] = value;
 
@@ -177,18 +202,8 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     sort(store, columnName, columns[index].ascending, true, false);
   }
 
-  if (filters) {
-    const columnFilter = findProp('columnName', columnName, filters);
-    if (columnFilter) {
-      calculated = true;
-      const { conditionFn, state } = columnFilter;
-      filter(store, columnName, conditionFn!, state);
-    }
-  }
-
-  if (!calculated) {
-    updateSummaryValueByCell(store, columnName, { orgValue, value });
-  }
+  updateHeightsWithFilter(filters, rowCoords, rowIdx, targetRow);
+  updateSummaryValueByCell(store, columnName, { orgValue, value });
   getDataManager(id).push('UPDATE', targetRow);
 
   if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
@@ -198,9 +213,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     // update sub rows value
     for (let count = 1; count < spanCount; count += 1) {
       rawData[mainRowIndex + count][columnName] = value;
-      if (!calculated) {
-        updateSummaryValueByCell(store, columnName, { orgValue, value });
-      }
+      updateSummaryValueByCell(store, columnName, { orgValue, value });
       getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
     }
   }
@@ -487,7 +500,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, focus, column, dimension } = store;
   const { rawData, viewData, sortState, pageOptions, filteredRawData } = data;
-  const rowIdx = findIndexByRowKey(data, column, id, rowKey);
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
 
   if (rowIdx === -1) {
     return;
@@ -840,7 +853,7 @@ export function updateRowNumber({ data }: Store, startIndex: number) {
 
 export function setRow(store: Store, rowIndex: number, row: OptRow) {
   const { data, rowCoords, dimension, id, focus } = store;
-  const { rawData, viewData, sortState } = data;
+  const { rawData, viewData, sortState, filters } = data;
   const orgRow = rawData[rowIndex];
 
   if (!orgRow) {
@@ -858,6 +871,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   rawData.splice(rowIndex, 1, rawRow);
   viewData.splice(rowIndex, 1, viewRow);
   heights.splice(rowIndex, 1, getRowHeight(rawRow, dimension.rowHeight));
+
+  updateHeightsWithFilter(filters, rowCoords, rowIndex, rawRow);
 
   if (isSorted(data)) {
     const { columnName, ascending } = sortState.columns[0];

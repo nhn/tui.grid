@@ -22,6 +22,12 @@ function updateSummaryValue(
   type: UpdateType,
   options: Options
 ) {
+  const content = summary.summaryColumnContents[columnName];
+
+  if (!content || !content.useAutoSummary) {
+    return;
+  }
+
   const summaryValue = summary.summaryValues[columnName];
   const orgValue = Number(options.orgValue) || 0;
   const value = Number(options.value) || 0;
