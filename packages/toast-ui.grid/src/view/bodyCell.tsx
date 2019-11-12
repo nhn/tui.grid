@@ -8,7 +8,6 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { findIndexByRowKey } from '../query/data';
 import { isEmpty } from '../helper/common';
 
 interface OwnProps {
@@ -16,12 +15,12 @@ interface OwnProps {
   columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
   rowSpanAttr: { rowSpan: number } | null;
+  rowIndex: number;
 }
 
 interface StoreProps {
   grid: Grid;
   rowKey: RowKey;
-  rowIndex: number;
   defaultRowHeight: number;
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
@@ -194,21 +193,19 @@ export class BodyCellComp extends Component<Props> {
 }
 
 export const BodyCell = connect<StoreProps, OwnProps>(
-  ({ id, column, data, selection, dimension }, { viewRow, columnInfo }) => {
+  ({ id, column, data, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
     const { disabled, pageOptions } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
-    const rowIndex = findIndexByRowKey(data, column, id, rowKey);
     const { rowHeight: defaultRowHeight, cellBorderWidth } = dimension;
     const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
 
     return {
       grid,
       rowKey,
-      rowIndex,
       disabled,
       columnInfo,
       defaultRowHeight,

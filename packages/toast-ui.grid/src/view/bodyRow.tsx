@@ -58,6 +58,7 @@ class BodyRowComp extends Component<Props> {
                 viewRow={viewRow}
                 columnInfo={columnInfo}
                 refreshRowHeight={autoRowHeight ? this.updateRowHeightDebounced : null}
+                rowIndex={rowIndex}
               />
             );
           })}
