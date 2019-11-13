@@ -31,7 +31,9 @@
         return this.el;
       }
 
-      render(props) {}
+      render(props) {
+        el.innerHTML = `No.${props.formattedValue}`;
+      }
     }
 
     class CheckboxRenderer {
