@@ -8,6 +8,7 @@ interface OwnProps {
   viewRow: ViewRow;
   columnInfo: ColumnInfo;
   refreshRowHeight: Function | null;
+  rowIndex: number;
 }
 
 interface StoreProps {
@@ -19,7 +20,7 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 export class RowSpanCellComp extends Component<Props> {
   public render() {
-    const { columnInfo, refreshRowHeight, rowSpan, enableRowSpan, viewRow } = this.props;
+    const { columnInfo, refreshRowHeight, rowSpan, enableRowSpan, viewRow, rowIndex } = this.props;
     let rowSpanAttr = null;
 
     if (enableRowSpan && rowSpan) {
@@ -35,6 +36,7 @@ export class RowSpanCellComp extends Component<Props> {
         columnInfo={columnInfo}
         refreshRowHeight={refreshRowHeight}
         rowSpanAttr={rowSpanAttr}
+        rowIndex={rowIndex}
       />
     );
   }
