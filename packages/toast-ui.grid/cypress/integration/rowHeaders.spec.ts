@@ -1,12 +1,4 @@
-import { data } from '../../samples/basic';
-
-const columns = [
-  { name: 'name', minWidth: 150 },
-  { name: 'artist', minWidth: 150 },
-  { name: 'type', minWidth: 150 },
-  { name: 'release', minWidth: 150 },
-  { name: 'genre', minWidth: 150 }
-];
+const columns = [{ name: 'name', minWidth: 150 }];
 
 before(() => {
   cy.visit('/dist');
@@ -17,7 +9,7 @@ beforeEach(() => {
     doc.body.innerHTML = '';
   });
   cy.createGrid({
-    data: data.slice(0, 3),
+    data: [{ name: 'A' }, { name: 'B' }, { name: 'C' }],
     rowHeaders: ['checkbox'],
     columns
   });
@@ -68,10 +60,7 @@ describe('row header API', () => {
     cy.gridInstance()
       .invoke('getCheckedRows')
       .should(result => {
-        expect(result).to.contain.subset([
-          { rowKey: 0, name: 'Beautiful Lies' },
-          { rowKey: 2, name: 'Moves Like Jagger' }
-        ]);
+        expect(result).to.contain.subset([{ rowKey: 0, name: 'A' }, { rowKey: 2, name: 'C' }]);
       });
   });
 
@@ -112,21 +101,13 @@ it('checkedAllRows initial value has to be set properly', () => {
   cy.createGrid({
     data: [
       {
-        name: 'Beautiful Lies',
-        artist: 'Birdy',
-        release: '2016.03.26',
-        type: 'Deluxe',
-        genre: 'Pop',
+        name: 'A',
         _attributes: {
           checked: true
         }
       },
       {
         name: 'X',
-        artist: 'Ed Sheeran',
-        release: '2014.06.24',
-        type: 'Deluxe',
-        genre: 'Pop',
         _attributes: {
           checked: true
         }
@@ -142,3 +123,29 @@ it('checkedAllRows initial value has to be set properly', () => {
     });
   });
 });
+
+it('rowHeader with custom options.', () => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+  cy.createGrid({
+    data: [{ name: 'A' }],
+    rowHeaders: [
+      {
+        type: 'rowNum',
+        header: 'row number',
+        width: 100,
+        align: 'right'
+      }
+    ],
+    columns
+  });
+
+  cy.get('td[data-column-name=_number]').within($el => {
+    cy.wrap($el)
+      .should('have.css', 'width', '100px')
+      .and('have.css', 'text-align', 'right');
+  });
+});
+
+// @TODO: rowheader click -> selection range test
