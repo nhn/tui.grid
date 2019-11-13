@@ -503,17 +503,13 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   const nextRow = rawData[rowIdx + 1];
-  const removedRow = rawData.splice(rowIdx, 1)[0];
+  const [removedRow] = rawData.splice(rowIdx, 1);
 
   viewData.splice(rowIdx, 1);
   rowCoords.heights.splice(rowIdx, 1);
 
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
-  }
-
-  if (rowIdx !== rawData.length) {
-    updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -545,6 +541,10 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     }
   } else {
     notify(rowCoords, 'heights');
+  }
+
+  if (rowIdx !== rawData.length) {
+    updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
   getDataManager(id).push('DELETE', removedRow);

@@ -36,7 +36,13 @@ function updateSummaryValue(
   const columnFilter = findProp('columnName', columnName, data.filters || []);
   const hasColumnFilter = !!(columnFilter && isFunction(columnFilter.conditionFn));
   const included = hasColumnFilter && columnFilter!.conditionFn!(value);
-  let { sum, min, max, cnt, filteredSum, filteredMin, filteredMax, filteredCnt } = summaryValue;
+  let { sum, min, max, cnt } = summaryValue;
+  let {
+    sum: filteredSum,
+    min: filteredMin,
+    max: filteredMax,
+    cnt: filteredCnt
+  } = summaryValue.filtered;
 
   switch (type) {
     case 'UPDATE_COLUMN':
@@ -94,11 +100,13 @@ function updateSummaryValue(
     max,
     avg,
     cnt,
-    filteredSum,
-    filteredMin,
-    filteredMax,
-    filteredAvg,
-    filteredCnt
+    filtered: {
+      sum: filteredSum,
+      min: filteredMin,
+      max: filteredMax,
+      avg: filteredAvg,
+      cnt: filteredCnt
+    }
   };
 }
 

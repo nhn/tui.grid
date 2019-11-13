@@ -735,7 +735,14 @@ export default class Grid {
    *     avg: 200,
    *     max: 300,
    *     min: 50,
-   *     cnt: 5
+   *     cnt: 5,
+   *     filtered: {
+   *       sum: 1000,
+   *       avg: 200,
+   *       max: 300,
+   *       min: 50,
+   *       cnt: 5
+   *     }
    * }
    */
   public getSummaryValues(columnName: string) {

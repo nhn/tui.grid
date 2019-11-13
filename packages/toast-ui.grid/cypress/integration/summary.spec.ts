@@ -16,16 +16,18 @@ function createSummaryOption(
     columnContent: {
       price: {
         template(valueMap: OptSummaryValueMap) {
-          return `MAX: ${valueMap.max} FilteredMax: ${valueMap.filteredMax}<br>MIN: ${
-            valueMap.min
-          } FilteredMin: ${valueMap.filteredMin}`;
+          const { filtered, max, min } = valueMap;
+          return `MAX: ${max} FilteredMax: ${filtered.max}<br>MIN: ${min} FilteredMin: ${
+            filtered.min
+          }`;
         }
       },
       downloadCount: {
         template(valueMap: OptSummaryValueMap) {
-          return `TOTAL: ${valueMap.sum} FilteredSum: ${
-            valueMap.filteredSum
-          }<br>AVG: ${valueMap.avg.toFixed(2)} FilteredAvg: ${valueMap.filteredAvg.toFixed(2)}`;
+          const { filtered, sum, avg } = valueMap;
+          return `TOTAL: ${sum} FilteredSum: ${filtered.sum}<br>AVG: ${avg.toFixed(
+            2
+          )} FilteredAvg: ${filtered.avg.toFixed(2)}`;
         }
       }
     }

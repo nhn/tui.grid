@@ -311,11 +311,13 @@ declare namespace tuiGrid {
     min: number;
     max: number;
     cnt: number;
-    filteredSum: number;
-    filteredAvg: number;
-    filteredMin: number;
-    filteredMax: number;
-    filteredCnt: number;
+    filtered: {
+      sum: number;
+      avg: number;
+      min: number;
+      max: number;
+      cnt: number;
+    };
   }
 
   interface IRelations {

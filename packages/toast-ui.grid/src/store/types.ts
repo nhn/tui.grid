@@ -429,11 +429,7 @@ export interface SummaryValue {
 }
 
 export interface FilteredSummaryValue {
-  filteredSum: number;
-  filteredAvg: number;
-  filteredMin: number;
-  filteredMax: number;
-  filteredCnt: number;
+  filtered: SummaryValue;
 }
 
 export interface Summary {

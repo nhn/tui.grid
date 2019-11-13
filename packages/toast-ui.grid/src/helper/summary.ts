@@ -11,15 +11,17 @@ type ColumnContentType = string | SummaryColumnContentMap;
 function assignFilteredSummaryValue(summaryValue: SummaryValue) {
   const { sum, min, max, avg, cnt } = summaryValue;
   return {
-    filteredSum: sum,
-    filteredMin: min,
-    filteredMax: max,
-    filteredAvg: avg,
-    filteredCnt: cnt
+    filtered: {
+      sum,
+      min,
+      max,
+      avg,
+      cnt
+    }
   };
 }
 
-export function getCalculated(columnName: string, rawData: Row[], filteredRawData: Row[]) {
+export function getSummaryValue(columnName: string, rawData: Row[], filteredRawData: Row[]) {
   const columnValues = rawData.map(row => row[columnName]);
   const summaryValue = calculate(columnValues);
 
