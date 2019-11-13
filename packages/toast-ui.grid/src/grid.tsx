@@ -82,8 +82,21 @@ if ((module as any).hot) {
  *      @param {Object} [options.pageOptions={}] The object for the pagination options with the data source.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=40] - The height of the header area.
+ *      @param {number} [options.header.align=center] - Horizontal alignment of the header content.
+ *              Available values are 'left', 'center', 'right'.
+ *      @param {number} [options.header.valign=middle] - Vertical alignment of the row header content.
+ *              Available values are 'top', 'middle', 'bottom'.
  *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
- *          which includes the headers of spcified columns, and sets up the hierarchy.
+ *          which includes the headers of specified columns, and sets up the hierarchy.
+ *          @param {string} [options.header.complexColumns.header] - The header of the complex column to be shown on the header.
+ *          @param {string} [options.header.complexColumns.name] - The name of column that makes tree column.
+ *          @param {Array} [options.header.complexColumns.childNames] - The name of the child header(subheader).
+ *          @param {function} [options.header.complexColumns.renderer] - Sets the custom renderer to customize the header content.
+ *          @param {string} [options.header.complexColumns.headerAlign=center] - Horizontal alignment of the header content.
+ *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.header.complexColumns.headerVAlign=middle] - Vertical alignment of the row header content.
+ *              Available values are 'top', 'middle', 'bottom'.
+ *          @param {boolean} [options.header.complexColumns.hideChildHeaders=false] - If set to true, the child columns header are hidden.
  *      @param {string|number} [options.width='auto'] - Options for grid width.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.

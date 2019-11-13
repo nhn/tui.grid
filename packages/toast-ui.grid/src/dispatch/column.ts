@@ -105,7 +105,7 @@ function setColumnsHiddenValue(column: Column, columnName: string, hidden: boole
   if (complexColumnHeaders.length) {
     const complexColumn = findProp('name', columnName, complexColumnHeaders);
     if (complexColumn) {
-      complexColumn.childNames!.forEach(childName => {
+      complexColumn.childNames.forEach(childName => {
         allColumnMap[childName].hidden = hidden;
       });
     }
@@ -116,9 +116,8 @@ function setColumnsHiddenValue(column: Column, columnName: string, hidden: boole
 
 export function hideColumn(store: Store, columnName: string) {
   const { column, focus } = store;
-  const { columnName: focusedColumnName } = focus;
 
-  if (focusedColumnName === columnName) {
+  if (focus.columnName === columnName) {
     initFocus(store);
   }
 

@@ -10,14 +10,9 @@ export function isHiddenColumn(column: Column, columnName: string) {
 }
 
 export function isComplexHeader(column: Column, columnName: string) {
-  const { complexColumnHeaders } = column;
-
-  for (let idx = 0; idx < complexColumnHeaders.length; idx += 1) {
-    const { name, hideChildHeaders, childNames } = complexColumnHeaders[idx];
-    if (name === columnName || (hideChildHeaders && includes(childNames!, columnName))) {
-      return true;
-    }
-  }
-
-  return false;
+  return some(
+    ({ name, hideChildHeaders, childNames }) =>
+      !!(name === columnName || (hideChildHeaders && includes(childNames, columnName))),
+    column.complexColumnHeaders
+  );
 }
