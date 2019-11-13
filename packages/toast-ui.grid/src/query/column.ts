@@ -13,8 +13,8 @@ export function isComplexHeader(column: Column, columnName: string) {
   const { complexColumnHeaders } = column;
 
   for (let idx = 0; idx < complexColumnHeaders.length; idx += 1) {
-    const { name, hideChildColumns, childNames } = complexColumnHeaders[idx];
-    if (name === columnName || (hideChildColumns && includes(childNames!, columnName))) {
+    const { name, hideChildHeaders, childNames } = complexColumnHeaders[idx];
+    if (name === columnName || (hideChildHeaders && includes(childNames!, columnName))) {
       return true;
     }
   }

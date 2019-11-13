@@ -97,7 +97,7 @@ export const complexColumns = () => {
           header: 'name',
           name: 'mergeColumn6',
           childNames: ['name', 'artist'],
-          hideChildColumns: true
+          hideChildHeaders: true
         }
       ]
     }

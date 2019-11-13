@@ -359,7 +359,7 @@ describe('hideColumn(), showColumn()', () => {
             header: 'name',
             name: 'nameHeader',
             childNames: ['name', 'score'],
-            hideChildColumns: true
+            hideChildHeaders: true
           }
         ]
       }

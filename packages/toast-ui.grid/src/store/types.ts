@@ -500,5 +500,5 @@ export interface ComplexColumnInfo {
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
-  hideChildColumns?: boolean;
+  hideChildHeaders?: boolean;
 }

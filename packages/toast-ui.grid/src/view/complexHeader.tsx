@@ -55,9 +55,9 @@ class ComplexHeaderComp extends Component<Props> {
   private getRemovedHiddenChildColumns(hierarchies: ComplexColumnInfo[][]) {
     return hierarchies.map(columns => {
       if (columns.length > 1) {
-        // The hideChildColumns option always exists in the second column to last.
-        const { hideChildColumns } = columns[columns.length - 2];
-        if (hideChildColumns) {
+        // The hideChildHeaders option always exists in the second column to last.
+        const { hideChildHeaders } = columns[columns.length - 2];
+        if (hideChildHeaders) {
           columns.pop();
         }
       }
