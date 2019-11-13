@@ -160,6 +160,15 @@ function updateHeightsWithFilteredData(store: Store) {
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
 }
 
+function updatePageOptions(data: Data, totalCount: number) {
+  if (data.pageOptions.useClient) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      totalCount
+    };
+  }
+}
+
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const { column, data, id } = store;
   const { rawData, sortState } = data;
@@ -561,12 +570,7 @@ export function clearData(store: Store) {
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
-  if (data.pageOptions.useClient) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      totalCount: 0
-    };
-  }
+  updatePageOptions(data, 0);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
@@ -582,15 +586,10 @@ export function resetData(store: Store, inputData: OptRow[]) {
   initFilter(store);
   data.viewData = viewData;
   data.rawData = rawData;
+  updatePageOptions(data, rawData.length);
   updateHeightsWithFilteredData(store);
   updateAllSummaryValues(store);
   setLoadingState(store, getLoadingState(rawData));
-  if (data.pageOptions.useClient) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      totalCount: rawData.length
-    };
-  }
   setCheckedAllRows(store);
 
   // @TODO need to execute logic by condition
