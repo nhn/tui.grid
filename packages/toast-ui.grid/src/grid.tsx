@@ -1508,8 +1508,8 @@ export default class Grid {
 
   /**
    * Set new data to the row identified by the specified rowKey.
-   * @param {string} columnName - column name to add className
-   * @param {string} className - class name
+   * @param {number|string} rowKey - The unique key of the row
+   * @param {object} row - The object that contains all values in the row.
    */
   public setRow(rowKey: RowKey, row: OptRow) {
     const { data, column, id } = this.store;
@@ -1520,7 +1520,7 @@ export default class Grid {
   /*
    * Move the row identified by the specified rowKey to target index.
    * If data is sorted or filtered, this couldn't be used.
-   * @param {number} rowKey - The unique key of the row
+   * @param {number|string} rowKey - The unique key of the row
    * @param {number} targetIndex - target index for moving
    */
   public moveRow(rowKey: RowKey, targetIndex: number) {
