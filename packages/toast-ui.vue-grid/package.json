@@ -42,6 +42,6 @@
     "vue": "^2.5.0"
   },
   "dependencies": {
-    "tui-grid": "^4.6.1"
+    "tui-grid": "^4.7.0"
   }
 }
