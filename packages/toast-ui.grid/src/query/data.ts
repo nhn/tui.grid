@@ -189,3 +189,11 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow) {
 
   return { rawRow, viewRow, prevRow };
 }
+
+export function isSorted(data: Data) {
+  return data.sortState.columns[0].columnName !== 'sortKey';
+}
+
+export function isFiltered(data: Data) {
+  return !isNull(data.filters);
+}

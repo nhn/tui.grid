@@ -42,7 +42,9 @@ import {
   getLoadingState,
   getAddedClassName,
   getRemovedClassName,
-  getCreatedRowInfo
+  getCreatedRowInfo,
+  isSorted,
+  isFiltered
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -403,25 +405,25 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   }
 }
 
-function updateSortKey(data: Data, sortKey: number, type = 'inc') {
-  const incremental = type === 'inc' ? 1 : -1;
+function updateSortKey(data: Data, sortKey: number, appended = true) {
+  const incremental = appended ? 1 : -1;
   const { rawData, viewData } = data;
+
   for (let idx = 0; idx < rawData.length; idx += 1) {
     if (rawData[idx].sortKey >= sortKey) {
       rawData[idx].sortKey += incremental;
       viewData[idx].sortKey += incremental;
     }
   }
-
-  if (type === 'inc') {
-    data.rawData[sortKey].sortKey = sortKey;
-    data.viewData[sortKey].sortKey = sortKey;
+  if (appended) {
+    rawData[sortKey].sortKey = sortKey;
+    viewData[sortKey].sortKey = sortKey;
   }
 }
 
-function resetSortKey(data: Data) {
+function resetSortKey(data: Data, start: number) {
   const { rawData, viewData } = data;
-  for (let idx = 0; idx < rawData.length; idx += 1) {
+  for (let idx = start; idx < rawData.length; idx += 1) {
     rawData[idx].sortKey = idx;
     viewData[idx].sortKey = idx;
   }
@@ -455,7 +457,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (!isRowSpanEnabled(sortState)) {
+  if (isSorted(data)) {
     const { columnName, ascending } = sortState.columns[0];
     sort(store, columnName, ascending, false, false);
   }
@@ -496,7 +498,7 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   if (rowIdx !== rawData.length) {
-    updateSortKey(data, removedRow.sortKey + 1, 'dec');
+    updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -851,7 +853,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   viewData.splice(rowIndex, 1, viewRow);
   heights.splice(rowIndex, 1, getRowHeight(rawRow, dimension.rowHeight));
 
-  if (!isRowSpanEnabled(sortState)) {
+  if (isSorted(data)) {
     const { columnName, ascending } = sortState.columns[0];
     sort(store, columnName, ascending, false, false);
   }
@@ -873,20 +875,21 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   const { data, column, id } = store;
-  const { sortState, filters, rawData, viewData } = data;
+  const { rawData, viewData } = data;
 
-  if (sortState.columns[0].columnName !== 'sortKey' || filters) {
+  if (!rawData[targetIndex] || isSorted(data) || isFiltered(data)) {
     return;
   }
 
-  const currentIndex = findIndexByRowKey(data, column, id, rowKey);
+  const currentIndex = findIndexByRowKey(data, column, id, rowKey, false);
 
-  if (currentIndex === -1 || targetIndex >= rawData.length) {
+  if (currentIndex === -1) {
     return;
   }
 
   const rawRow = rawData[currentIndex];
   const viewRow = viewData[currentIndex];
+  const minIndex = Math.min(currentIndex, targetIndex);
 
   rawData.splice(currentIndex, 1);
   viewData.splice(currentIndex, 1);
@@ -894,11 +897,11 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   rawData.splice(targetIndex, 0, rawRow);
   viewData.splice(targetIndex, 0, viewRow);
 
-  resetSortKey(data);
+  resetSortKey(data, minIndex);
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  updateRowNumber(store, Math.min(currentIndex, targetIndex));
+  updateRowNumber(store, minIndex);
   getDataManager(id).push('UPDATE', rawRow);
 }
