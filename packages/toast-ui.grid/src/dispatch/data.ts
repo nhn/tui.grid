@@ -52,7 +52,7 @@ import {
   updateSummaryValueByRow,
   updateAllSummaryValues
 } from './summary';
-import { initFilter, filter } from './filter';
+import { initFilter } from './filter';
 import { cls } from '../helper/dom';
 import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
@@ -146,10 +146,34 @@ function updateSubRowSpan(
   }
 }
 
+function updateHeightsWithFilteredData(store: Store) {
+  const { data, rowCoords, dimension } = store;
+  const { pageOptions, pageRowRange, filteredRawData, filters } = data;
+  const { rowHeight } = dimension;
+
+  if (filters) {
+    initFocus(store);
+  }
+
+  rowCoords.heights = pageOptions.useClient
+    ? filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
+    : filteredRawData.map(row => getRowHeight(row, rowHeight));
+}
+
+function updatePageOptions(data: Data, totalCount: number) {
+  if (data.pageOptions.useClient) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      totalCount
+    };
+  }
+}
+
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const { column, data, id } = store;
-  const { rawData, sortState, filters } = data;
-  const targetRow = findRowByRowKey(data, column, id, rowKey);
+  const { rawData, sortState } = data;
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
+  const targetRow = rawData[rowIdx];
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
@@ -161,41 +185,32 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     targetColumn.onBeforeChange(gridEvent);
   }
 
-  if (gridEvent.isStopped()) {
+  if (!targetRow || gridEvent.isStopped()) {
     return;
   }
-  if (targetRow) {
-    const { rowSpanMap } = targetRow;
-    const { columns } = sortState;
-    const prevValue = targetRow[columnName];
-    const index = findPropIndex('columnName', columnName, columns);
 
-    targetRow[columnName] = value;
+  const { rowSpanMap } = targetRow;
+  const { columns } = sortState;
+  const orgValue = targetRow[columnName];
+  const index = findPropIndex('columnName', columnName, columns);
 
-    if (index !== -1) {
-      sort(store, columnName, columns[index].ascending, true, false);
-    }
+  targetRow[columnName] = value;
 
-    if (filters) {
-      const columnFilter = findProp('columnName', columnName, filters);
-      if (columnFilter) {
-        const { conditionFn, state } = columnFilter;
-        filter(store, columnName, conditionFn!, state);
-      }
-    }
+  if (index !== -1) {
+    sort(store, columnName, columns[index].ascending, true, false);
+  }
 
-    updateSummaryValueByCell(store, columnName, { prevValue, value });
-    getDataManager(id).push('UPDATE', targetRow);
+  updateHeightsWithFilteredData(store);
+  updateSummaryValueByCell(store, columnName, { orgValue, value });
+  getDataManager(id).push('UPDATE', targetRow);
 
-    if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
-      const { spanCount } = rowSpanMap[columnName];
-      const mainRowIndex = findIndexByRowKey(data, column, id, rowKey);
-
-      // update sub rows value
-      for (let count = 1; count < spanCount; count += 1) {
-        rawData[mainRowIndex + count][columnName] = value;
-        getDataManager(id).push('UPDATE', rawData[mainRowIndex + count]);
-      }
+  if (!isEmpty(rowSpanMap) && rowSpanMap[columnName] && isRowSpanEnabled(sortState)) {
+    const { spanCount } = rowSpanMap[columnName];
+    // update sub rows value
+    for (let count = 1; count < spanCount; count += 1) {
+      rawData[rowIdx + count][columnName] = value;
+      updateSummaryValueByCell(store, columnName, { orgValue, value });
+      getDataManager(id).push('UPDATE', rawData[rowIdx + count]);
     }
   }
 
@@ -220,7 +235,7 @@ export function setRowAttribute<K extends keyof RowAttributes>(
   value: RowAttributes[K]
 ) {
   const { disabled } = data;
-  const targetRow = findRowByRowKey(data, column, id, rowKey);
+  const targetRow = findRowByRowKey(data, column, id, rowKey, false);
 
   // https://github.com/microsoft/TypeScript/issues/34293
   if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
@@ -388,7 +403,7 @@ export function setRowDisabled(
   withCheckbox: boolean
 ) {
   const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
+  const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     row._attributes.disabled = disabled;
     if (withCheckbox) {
@@ -399,7 +414,7 @@ export function setRowDisabled(
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
   const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
+  const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     row._attributes.checkDisabled = disabled;
   }
@@ -473,7 +488,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   notify(data, 'filteredViewData');
   notify(rowCoords, 'heights');
 
-  updateSummaryValueByRow(store, rawRow, true);
+  updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   setLoadingState(store, 'DONE');
   updateRowNumber(store, at);
 }
@@ -481,24 +496,20 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   const { data, rowCoords, id, focus, column, dimension } = store;
   const { rawData, viewData, sortState, pageOptions, filteredRawData } = data;
-  const rowIdx = findIndexByRowKey(data, column, id, rowKey);
+  const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
 
   if (rowIdx === -1) {
     return;
   }
 
   const nextRow = rawData[rowIdx + 1];
-  const removedRow = rawData.splice(rowIdx, 1)[0];
+  const [removedRow] = rawData.splice(rowIdx, 1);
 
   viewData.splice(rowIdx, 1);
   rowCoords.heights.splice(rowIdx, 1);
 
   if (nextRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
-  }
-
-  if (rowIdx !== rawData.length) {
-    updateSortKey(data, removedRow.sortKey + 1, false);
   }
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -532,12 +543,16 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     notify(rowCoords, 'heights');
   }
 
+  if (rowIdx !== rawData.length) {
+    updateSortKey(data, removedRow.sortKey + 1, false);
+  }
+
   getDataManager(id).push('DELETE', removedRow);
   notify(data, 'rawData');
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  updateSummaryValueByRow(store, removedRow, false);
+  updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
 }
@@ -555,37 +570,26 @@ export function clearData(store: Store) {
   rowCoords.heights = [];
   data.rawData = [];
   data.viewData = [];
-  if (data.pageOptions.useClient) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      totalCount: 0
-    };
-  }
+  updatePageOptions(data, 0);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
-  const { data, column, dimension, rowCoords, id } = store;
+  const { data, column, id } = store;
   const { rawData, viewData } = createData(inputData, column, true);
-  const { rowHeight } = dimension;
 
   initFocus(store);
   initSelection(store);
   initSortState(data);
   initFilter(store);
-  rowCoords.heights = rawData.map(row => getRowHeight(row, rowHeight));
   data.viewData = viewData;
   data.rawData = rawData;
+  updatePageOptions(data, rawData.length);
+  updateHeightsWithFilteredData(store);
   updateAllSummaryValues(store);
   setLoadingState(store, getLoadingState(rawData));
-  if (data.pageOptions.useClient) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      totalCount: rawData.length
-    };
-  }
   setCheckedAllRows(store);
 
   // @TODO need to execute logic by condition
@@ -595,7 +599,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
+  const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     const rowClassMap = row._attributes.className.row;
     const isExist = includes(rowClassMap, className);
@@ -608,7 +612,7 @@ export function addRowClassName(store: Store, rowKey: RowKey, className: string)
 
 export function removeRowClassName(store: Store, rowKey: RowKey, className: string) {
   const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
+  const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     removeArrayItem(className, row._attributes.className.row);
     notify(row._attributes, 'className');
@@ -658,7 +662,7 @@ export function addCellClassName(
   className: string
 ) {
   const { data, column, id } = store;
-  const row = findRowByRowKey(data, column, id, rowKey);
+  const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     addClassNameToAttribute(row, columnName, className);
   }
@@ -867,9 +871,9 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   notify(data, 'viewData');
   notify(data, 'filteredRawData');
   notify(data, 'filteredViewData');
-  notify(rowCoords, 'heights');
+  updateHeightsWithFilteredData(store);
 
-  updateSummaryValueByRow(store, rawRow, true);
+  updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   updateRowNumber(store, rowIndex);
 }
 

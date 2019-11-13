@@ -3,7 +3,7 @@ import { cls, dataAttr } from '../helper/dom';
 import { shallowEqual } from '../helper/common';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { SummaryColumnContentMap, SummaryValue } from '../store/types';
+import { SummaryColumnContentMap, SummaryValueMap } from '../store/types';
 import { isRowHeader } from '../helper/column';
 
 interface OwnProps {
@@ -12,7 +12,7 @@ interface OwnProps {
 
 interface StoreProps {
   content: SummaryColumnContentMap | null;
-  summaryValue: SummaryValue;
+  summaryValue: SummaryValueMap;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;

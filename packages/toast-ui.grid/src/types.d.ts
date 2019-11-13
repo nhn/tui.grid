@@ -429,6 +429,13 @@ export interface OptSummaryValueMap {
   min: number;
   max: number;
   cnt: number;
+  filtered: {
+    sum: number;
+    avg: number;
+    min: number;
+    max: number;
+    cnt: number;
+  };
 }
 
 export interface OptColumnHeaderInfo {

@@ -4,15 +4,14 @@ import {
   Summary,
   SummaryColumnContents,
   SummaryValues,
-  SummaryColumnContentMap,
-  Row
+  SummaryColumnContentMap
 } from './types';
 import { observable } from '../helper/observable';
 import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
   extractSummaryColumnContent,
-  calculate
+  getSummaryValue
 } from '../helper/summary';
 import { someProp } from '../helper/common';
 
@@ -25,13 +24,25 @@ interface SummaryOption {
 export function createSummaryValue(
   content: SummaryColumnContentMap | null,
   columnName: string,
-  rawData: Row[]
+  data: Data
 ) {
   if (content && content.useAutoSummary) {
-    const columnValues = rawData.map(row => row[columnName]);
-    return calculate(columnValues);
+    return getSummaryValue(columnName, data.rawData, data.filteredRawData);
   }
-  return { sum: 0, min: 0, max: 0, avg: 0, cnt: 0 };
+  return {
+    sum: 0,
+    min: 0,
+    max: 0,
+    avg: 0,
+    cnt: 0,
+    filtered: {
+      sum: 0,
+      min: 0,
+      max: 0,
+      avg: 0,
+      cnt: 0
+    }
+  };
 }
 
 export function create({ column, data, summary }: SummaryOption): Summary {
@@ -42,7 +53,6 @@ export function create({ column, data, summary }: SummaryOption): Summary {
   if (Object.keys(summary).length) {
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const columnContent = orgColumnContent || {};
-    const { rawData } = data;
     const summaryColumns = Object.keys(columnContent).filter(
       columnName => !someProp('name', columnName, column.allColumns)
     );
@@ -53,7 +63,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
       const content = extractSummaryColumnContent(castedColumnContent, castedDefaultContent);
 
       summaryColumnContents[columnName] = content;
-      summaryValues[columnName] = createSummaryValue(content, columnName, rawData);
+      summaryValues[columnName] = createSummaryValue(content, columnName, data);
     });
 
     summaryColumnContents = observable(summaryColumnContents);
