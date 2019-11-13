@@ -1,4 +1,4 @@
-import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary } from '../store/types';
+import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary, Column } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -99,29 +99,37 @@ export function resetColumnWidths({ column }: Store, widths: number[]) {
   });
 }
 
-export function hideColumn(store: Store, columnName: string) {
-  const columnItem = store.column.allColumnMap[columnName];
-  const { columnName: focusedColumnName } = store.focus;
+function setColumnsHiddenValue(column: Column, columnName: string, hidden: boolean) {
+  const { allColumnMap, complexColumnHeaders } = column;
 
-  if (focusedColumnName === columnName) {
-    initFocus(store);
-  }
-  initSelection(store);
-
-  unfilter(store, columnName);
-  unsort(store, columnName);
-
-  if (columnItem) {
-    columnItem.hidden = true;
+  if (complexColumnHeaders.length) {
+    const complexColumn = findProp('name', columnName, complexColumnHeaders);
+    if (complexColumn) {
+      complexColumn.childNames.forEach(childName => {
+        allColumnMap[childName].hidden = hidden;
+      });
+    }
+  } else if (allColumnMap[columnName]) {
+    allColumnMap[columnName].hidden = hidden;
   }
 }
 
-export function showColumn({ column }: Store, columnName: string) {
-  const columnItem = column.allColumnMap[columnName];
+export function hideColumn(store: Store, columnName: string) {
+  const { column, focus } = store;
 
-  if (columnItem) {
-    columnItem.hidden = false;
+  if (focus.columnName === columnName) {
+    initFocus(store);
   }
+
+  initSelection(store);
+  unfilter(store, columnName);
+  unsort(store, columnName);
+
+  setColumnsHiddenValue(column, columnName, true);
+}
+
+export function showColumn({ column }: Store, columnName: string) {
+  setColumnsHiddenValue(column, columnName, false);
 }
 
 export function setComplexColumnHeaders(store: Store, complexColumnHeaders: ComplexColumnInfo[]) {

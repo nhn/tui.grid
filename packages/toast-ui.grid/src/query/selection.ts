@@ -21,7 +21,7 @@ export function getLeafChildColumnNames(complexColumnHeaders: ComplexColumnInfo[
   }
 
   let result: string[] = [];
-  column.childNames!.forEach(childName => {
+  column.childNames.forEach(childName => {
     if (isParentColumnHeader(complexColumnHeaders, childName)) {
       result = [...result, ...getLeafChildColumnNames(complexColumnHeaders, childName)];
     } else {

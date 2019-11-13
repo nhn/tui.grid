@@ -305,7 +305,7 @@ describe('sort', () => {
     cy.get('@third').should('not.have.class', cls('btn-sorting-down'));
   });
 
-  it.only('should update row number after sorting', () => {
+  it('should update row number after sorting', () => {
     createGrid({ rowHeaders: ['rowNum'] });
     createSortButtonAlias();
     cy.get('@first').click();

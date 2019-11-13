@@ -10,7 +10,7 @@ import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { isHiddenColumn } from '../query/column';
+import { isHiddenColumn, isComplexHeader } from '../query/column';
 import { updateRowNumber, setCheckedAllRows } from './data';
 import { updateAllSummaryValues } from './summary';
 
@@ -180,7 +180,11 @@ export function filter(
   const { pageOptions, filteredRawData } = data;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
 
-  if (!columnFilterInfo || isHiddenColumn(column, columnName)) {
+  if (
+    isComplexHeader(column, columnName) ||
+    !columnFilterInfo ||
+    isHiddenColumn(column, columnName)
+  ) {
     return;
   }
 
@@ -222,7 +226,7 @@ export function unfilter(store: Store, columnName: string) {
   const { data, column } = store;
   const { filters } = data;
 
-  if (isHiddenColumn(column, columnName)) {
+  if (isComplexHeader(column, columnName) || isHiddenColumn(column, columnName)) {
     return;
   }
 

@@ -500,10 +500,9 @@ export interface Store {
 export interface ComplexColumnInfo {
   header: string;
   name: string;
-  childNames?: string[];
-  sortable?: boolean;
-  sortingType?: SortingType;
+  childNames: string[];
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
+  hideChildHeaders?: boolean;
 }

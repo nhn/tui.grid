@@ -274,12 +274,11 @@ declare namespace tuiGrid {
   interface ComplexColumnInfo {
     header: string;
     name: string;
-    childNames?: string[];
-    sortable?: boolean;
-    sortingType?: SortingType;
+    childNames: string[];
     headerAlign?: AlignType;
     headerVAlign?: VAlignType;
     renderer?: HeaderRendererClass;
+    hideChildHeaders?: boolean;
   }
 
   interface IColumnOptions {

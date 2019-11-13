@@ -23,27 +23,25 @@ interface StoreProps {
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
+type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
+
 class ComplexHeaderComp extends Component<Props> {
   private getColumnHierarchy(
-    column: ComplexColumnInfo,
-    mergedComplexColumns?: ComplexColumnInfo[]
+    column: ColumnInfo | ComplexColumnInfo,
+    mergedComplexColumns?: MergedComplexColumns
   ) {
     const { complexColumnHeaders } = this.props;
-    const complexColumns: ComplexColumnInfo[] = mergedComplexColumns || [];
+    const complexColumns: MergedComplexColumns = mergedComplexColumns || [];
 
     if (column) {
       complexColumns.push(column);
 
       if (complexColumnHeaders) {
         complexColumnHeaders.forEach(complexColumnHeader => {
-          const { childNames } = complexColumnHeader;
+          const index = findIndex(name => column.name === name, complexColumnHeader.childNames);
 
-          if (childNames) {
-            const index = findIndex(name => column.name === name, childNames);
-
-            if (index !== -1) {
-              this.getColumnHierarchy(complexColumnHeader, complexColumns);
-            }
+          if (index !== -1) {
+            this.getColumnHierarchy(complexColumnHeader, complexColumns);
           }
         });
       }
@@ -52,7 +50,21 @@ class ComplexHeaderComp extends Component<Props> {
     return complexColumns;
   }
 
-  private getHierarchyMaxRowCount(hierarchies: ComplexColumnInfo[][]) {
+  private getRemovedHiddenChildColumns(hierarchies: MergedComplexColumns[]) {
+    return hierarchies.map(columns => {
+      if (columns.length > 1) {
+        // The hideChildHeaders option always exists in the second column to last.
+        const { hideChildHeaders } = columns[columns.length - 2] as ComplexColumnInfo;
+        if (hideChildHeaders) {
+          columns.pop();
+        }
+      }
+
+      return columns;
+    });
+  }
+
+  private getHierarchyMaxRowCount(hierarchies: MergedComplexColumns[]) {
     const lengths = [0, ...hierarchies.map(value => value.length)];
 
     return Math.max(...lengths);
@@ -77,7 +89,7 @@ class ComplexHeaderComp extends Component<Props> {
   }
 
   private createTableHeaderComponent(
-    column: ComplexColumnInfo,
+    column: ComplexColumnInfo | ColumnInfo,
     height: number,
     colspan: number,
     rowspan: number
@@ -99,7 +111,9 @@ class ComplexHeaderComp extends Component<Props> {
 
   public render() {
     const { columns, headerHeight, cellBorderWidth } = this.props;
-    const hierarchies = columns.map(column => this.getColumnHierarchy(column).reverse());
+    const hierarchies = this.getRemovedHiddenChildColumns(
+      columns.map(column => this.getColumnHierarchy(column).reverse())
+    );
     const maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
     const rows = new Array(maxRowCount);
     const columnNames = new Array(maxRowCount);

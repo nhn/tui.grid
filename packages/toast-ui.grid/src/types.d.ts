@@ -456,10 +456,11 @@ export interface OptHeader {
 export interface OptComplexColumnInfo {
   header: string;
   name: string;
-  childNames?: string[];
+  childNames: string[];
   sortable?: boolean;
   sortingType?: SortingType;
   headerAlign?: AlignType;
   headerVAlign?: VAlignType;
   renderer?: HeaderRendererClass;
+  hideChildHeaders?: boolean;
 }
