@@ -1803,7 +1803,7 @@ var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
 var instance_1 = __webpack_require__(7);
 var rowSpan_1 = __webpack_require__(9);
-var column_1 = __webpack_require__(17);
+var column_1 = __webpack_require__(15);
 var column_2 = __webpack_require__(8);
 var data_1 = __webpack_require__(12);
 function getCellAddressByIndex(_a, rowIndex, columnIndex) {
@@ -2665,7 +2665,7 @@ exports.create = create;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
-var column_1 = __webpack_require__(17);
+var column_1 = __webpack_require__(15);
 function sortByVisibleColumns(visibleColumnsWithRowHeader, childNames) {
     var result = [];
     visibleColumnsWithRowHeader.forEach(function (column) {
@@ -2741,13 +2741,13 @@ var clipboard_1 = __webpack_require__(25);
 var common_1 = __webpack_require__(1);
 var data_1 = __webpack_require__(12);
 var observable_1 = __webpack_require__(5);
-var selection_1 = __webpack_require__(15);
+var selection_1 = __webpack_require__(16);
 var eventBus_1 = __webpack_require__(10);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var instance_1 = __webpack_require__(7);
 var tree_1 = __webpack_require__(26);
 var rowSpan_1 = __webpack_require__(9);
-var focus_1 = __webpack_require__(16);
+var focus_1 = __webpack_require__(17);
 var tree_2 = __webpack_require__(20);
 var sort_1 = __webpack_require__(27);
 var data_2 = __webpack_require__(6);
@@ -3446,6 +3446,31 @@ exports.moveRow = moveRow;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+function isParentColumnHeader(complexColumnHeaders, name) {
+    return !!complexColumnHeaders.length && common_1.some(function (item) { return item.name === name; }, complexColumnHeaders);
+}
+exports.isParentColumnHeader = isParentColumnHeader;
+function isHiddenColumn(column, columnName) {
+    return column.allColumnMap[columnName].hidden;
+}
+exports.isHiddenColumn = isHiddenColumn;
+function isComplexHeader(column, columnName) {
+    return common_1.some(function (_a) {
+        var name = _a.name, hideChildHeaders = _a.hideChildHeaders, childNames = _a.childNames;
+        return !!(name === columnName || (hideChildHeaders && common_1.includes(childNames, columnName)));
+    }, column.complexColumnHeaders);
+}
+exports.isComplexHeader = isComplexHeader;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
 var eventBus_1 = __webpack_require__(10);
@@ -3494,7 +3519,7 @@ exports.initSelection = initSelection;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3511,7 +3536,7 @@ var observable_1 = __webpack_require__(5);
 var data_3 = __webpack_require__(14);
 var common_1 = __webpack_require__(1);
 var tree_1 = __webpack_require__(20);
-var column_1 = __webpack_require__(17);
+var column_1 = __webpack_require__(15);
 function makeObservable(store, rowKey) {
     var data = store.data, column = store.column, id = store.id;
     var rawData = data.rawData, viewData = data.viewData;
@@ -3665,24 +3690,6 @@ function setFocusInfo(store, rowKey, columnName, navigating) {
     changeFocus(store, rowKey, columnName, id);
 }
 exports.setFocusInfo = setFocusInfo;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var common_1 = __webpack_require__(1);
-function isParentColumnHeader(complexColumnHeaders, name) {
-    return !!complexColumnHeaders.length && common_1.some(function (item) { return item.name === name; }, complexColumnHeaders);
-}
-exports.isParentColumnHeader = isParentColumnHeader;
-function isHiddenColumn(column, columnName) {
-    return column.allColumnMap[columnName].hidden;
-}
-exports.isHiddenColumn = isHiddenColumn;
 
 
 /***/ }),
@@ -4530,7 +4537,7 @@ function createRowHeader(data, columnHeaderInfo) {
     });
 }
 function createComplexColumnHeaders(column, columnHeaderInfo) {
-    var header = column.header, name = column.name, childNames = column.childNames, sortable = column.sortable, sortingType = column.sortingType, renderer = column.renderer;
+    var header = column.header, name = column.name, childNames = column.childNames, sortable = column.sortable, sortingType = column.sortingType, renderer = column.renderer, hideChildHeaders = column.hideChildHeaders;
     var headerAlign = column.headerAlign || columnHeaderInfo.align;
     var headerVAlign = column.headerVAlign || columnHeaderInfo.valign;
     return observable_1.observable({
@@ -4541,7 +4548,8 @@ function createComplexColumnHeaders(column, columnHeaderInfo) {
         sortingType: sortingType,
         headerAlign: headerAlign,
         headerVAlign: headerVAlign,
-        headerRenderer: renderer || null
+        headerRenderer: renderer || null,
+        hideChildHeaders: hideChildHeaders
     });
 }
 function create(_a) {
@@ -5027,6 +5035,7 @@ var eventBus_1 = __webpack_require__(10);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var data_1 = __webpack_require__(14);
 var data_2 = __webpack_require__(6);
+var column_1 = __webpack_require__(15);
 function sortData(store) {
     // makes all data observable to sort the data properly;
     data_1.createObservableData(store, true);
@@ -5127,7 +5136,7 @@ function sort(store, columnName, ascending, withCtrl, cancelable) {
     if (cancelable === void 0) { cancelable = true; }
     var data = store.data, column = store.column;
     var sortState = data.sortState;
-    if (!data_2.isSortable(sortState, column, columnName)) {
+    if (column_1.isComplexHeader(column, columnName) || !data_2.isSortable(sortState, column, columnName)) {
         return;
     }
     changeSortState(store, columnName, ascending, withCtrl, cancelable);
@@ -5138,7 +5147,7 @@ function unsort(store, columnName) {
     if (columnName === void 0) { columnName = 'sortKey'; }
     var data = store.data, column = store.column;
     var sortState = data.sortState;
-    if (!data_2.isSortable(sortState, column, columnName)) {
+    if (column_1.isComplexHeader(column, columnName) || !data_2.isSortable(sortState, column, columnName)) {
         return;
     }
     if (columnName === 'sortKey') {
@@ -5175,11 +5184,11 @@ var filter_1 = __webpack_require__(23);
 var data_1 = __webpack_require__(6);
 var column_1 = __webpack_require__(24);
 var viewport_1 = __webpack_require__(29);
-var selection_1 = __webpack_require__(15);
-var focus_1 = __webpack_require__(16);
+var selection_1 = __webpack_require__(16);
+var focus_1 = __webpack_require__(17);
 var eventBus_1 = __webpack_require__(10);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var column_2 = __webpack_require__(17);
+var column_2 = __webpack_require__(15);
 var data_2 = __webpack_require__(14);
 var summary_1 = __webpack_require__(22);
 function initLayerAndScrollAfterFiltering(store) {
@@ -5322,7 +5331,9 @@ function filter(store, columnName, conditionFn, state) {
     var data = store.data, column = store.column, id = store.id;
     var pageOptions = data.pageOptions, filteredRawData = data.filteredRawData;
     var columnFilterInfo = column.allColumnMap[columnName].filter;
-    if (!columnFilterInfo || column_2.isHiddenColumn(column, columnName)) {
+    if (column_2.isComplexHeader(column, columnName) ||
+        !columnFilterInfo ||
+        column_2.isHiddenColumn(column, columnName)) {
         return;
     }
     var filters = data.filters || [];
@@ -5355,7 +5366,7 @@ exports.filter = filter;
 function unfilter(store, columnName) {
     var data = store.data, column = store.column;
     var filters = data.filters;
-    if (column_2.isHiddenColumn(column, columnName)) {
+    if (column_2.isComplexHeader(column, columnName) || column_2.isHiddenColumn(column, columnName)) {
         return;
     }
     if (filters) {
@@ -5978,7 +5989,7 @@ var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var columnResizer_1 = __webpack_require__(75);
 var instance_1 = __webpack_require__(7);
-var column_1 = __webpack_require__(17);
+var column_1 = __webpack_require__(15);
 var complexHeader_1 = __webpack_require__(76);
 var columnHeader_1 = __webpack_require__(40);
 var HeaderAreaComp = /** @class */ (function (_super) {
@@ -6577,8 +6588,21 @@ if (false) {}
  *      @param {Object} [options.pageOptions={}] The object for the pagination options with the data source.
  *      @param {Object} [options.header] - Options object for header.
  *      @param {number} [options.header.height=40] - The height of the header area.
+ *      @param {number} [options.header.align=center] - Horizontal alignment of the header content.
+ *              Available values are 'left', 'center', 'right'.
+ *      @param {number} [options.header.valign=middle] - Vertical alignment of the row header content.
+ *              Available values are 'top', 'middle', 'bottom'.
  *      @param {Array} [options.header.complexColumns] - This options creates new parent headers of the multiple columns
- *          which includes the headers of spcified columns, and sets up the hierarchy.
+ *          which includes the headers of specified columns, and sets up the hierarchy.
+ *          @param {string} [options.header.complexColumns.header] - The header of the complex column to be shown on the header.
+ *          @param {string} [options.header.complexColumns.name] - The name of column that makes tree column.
+ *          @param {Array} [options.header.complexColumns.childNames] - The name of the child header(subheader).
+ *          @param {function} [options.header.complexColumns.renderer] - Sets the custom renderer to customize the header content.
+ *          @param {string} [options.header.complexColumns.headerAlign=center] - Horizontal alignment of the header content.
+ *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.header.complexColumns.headerVAlign=middle] - Vertical alignment of the row header content.
+ *              Available values are 'top', 'middle', 'bottom'.
+ *          @param {boolean} [options.header.complexColumns.hideChildHeaders=false] - If set to true, the child columns header are hidden.
  *      @param {string|number} [options.width='auto'] - Options for grid width.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
@@ -7335,7 +7359,7 @@ var Grid = /** @class */ (function () {
         // Accessing the clipboard is a security concern on chrome
         document.execCommand('copy');
     };
-    /*
+    /**
      * Validate all data and returns the result.
      * Return value is an array which contains only rows which have invalid cell data.
      * @returns {Array.<Object>} An array of error object
@@ -7657,7 +7681,7 @@ var Grid = /** @class */ (function () {
     Grid.prototype.restore = function () {
         this.resetData(this.dataManager.getOriginData());
     };
-    /*
+    /**
      * Insert the new tree row with specified data.
      * @param {Object} [row] - The tree data for the new row
      * @param {Object} [options] - Options
@@ -7885,7 +7909,7 @@ var Grid = /** @class */ (function () {
         var rowIndex = data_1.findIndexByRowKey(data, column, id, rowKey, false);
         this.dispatch('setRow', rowIndex, row);
     };
-    /*
+    /**
      * Move the row identified by the specified rowKey to target index.
      * If data is sorted or filtered, this couldn't be used.
      * @param {number|string} rowKey - The unique key of the row
@@ -10543,17 +10567,26 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
             complexColumns.push(column);
             if (complexColumnHeaders) {
                 complexColumnHeaders.forEach(function (complexColumnHeader) {
-                    var childNames = complexColumnHeader.childNames;
-                    if (childNames) {
-                        var index = common_1.findIndex(function (name) { return column.name === name; }, childNames);
-                        if (index !== -1) {
-                            _this.getColumnHierarchy(complexColumnHeader, complexColumns);
-                        }
+                    var index = common_1.findIndex(function (name) { return column.name === name; }, complexColumnHeader.childNames);
+                    if (index !== -1) {
+                        _this.getColumnHierarchy(complexColumnHeader, complexColumns);
                     }
                 });
             }
         }
         return complexColumns;
+    };
+    ComplexHeaderComp.prototype.getRemovedHiddenChildColumns = function (hierarchies) {
+        return hierarchies.map(function (columns) {
+            if (columns.length > 1) {
+                // The hideChildHeaders option always exists in the second column to last.
+                var hideChildHeaders = columns[columns.length - 2].hideChildHeaders;
+                if (hideChildHeaders) {
+                    columns.pop();
+                }
+            }
+            return columns;
+        });
     };
     ComplexHeaderComp.prototype.getHierarchyMaxRowCount = function (hierarchies) {
         var lengths = tslib_1.__spreadArrays([0], hierarchies.map(function (value) { return value.length; }));
@@ -10578,7 +10611,7 @@ var ComplexHeaderComp = /** @class */ (function (_super) {
     ComplexHeaderComp.prototype.render = function () {
         var _this = this;
         var _a = this.props, columns = _a.columns, headerHeight = _a.headerHeight, cellBorderWidth = _a.cellBorderWidth;
-        var hierarchies = columns.map(function (column) { return _this.getColumnHierarchy(column).reverse(); });
+        var hierarchies = this.getRemovedHiddenChildColumns(columns.map(function (column) { return _this.getColumnHierarchy(column).reverse(); }));
         var maxRowCount = this.getHierarchyMaxRowCount(hierarchies);
         var rows = new Array(maxRowCount);
         var columnNames = new Array(maxRowCount);
@@ -12605,9 +12638,9 @@ var data = tslib_1.__importStar(__webpack_require__(14));
 var column = tslib_1.__importStar(__webpack_require__(106));
 var keyboard = tslib_1.__importStar(__webpack_require__(107));
 var mouse = tslib_1.__importStar(__webpack_require__(109));
-var focus = tslib_1.__importStar(__webpack_require__(16));
+var focus = tslib_1.__importStar(__webpack_require__(17));
 var summary = tslib_1.__importStar(__webpack_require__(22));
-var selection = tslib_1.__importStar(__webpack_require__(15));
+var selection = tslib_1.__importStar(__webpack_require__(16));
 var renderState = tslib_1.__importStar(__webpack_require__(36));
 var tree = tslib_1.__importStar(__webpack_require__(26));
 var sort = tslib_1.__importStar(__webpack_require__(27));
@@ -12638,12 +12671,12 @@ var column_1 = __webpack_require__(24);
 var data_1 = __webpack_require__(12);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var eventBus_1 = __webpack_require__(10);
-var focus_1 = __webpack_require__(16);
+var focus_1 = __webpack_require__(17);
 var summary_1 = __webpack_require__(22);
 var observable_1 = __webpack_require__(5);
 var sort_1 = __webpack_require__(27);
 var filter_1 = __webpack_require__(28);
-var selection_1 = __webpack_require__(15);
+var selection_1 = __webpack_require__(16);
 var common_1 = __webpack_require__(1);
 function setFrozenColumnCount(_a, count) {
     var column = _a.column;
@@ -12713,26 +12746,34 @@ function resetColumnWidths(_a, widths) {
     });
 }
 exports.resetColumnWidths = resetColumnWidths;
+function setColumnsHiddenValue(column, columnName, hidden) {
+    var allColumnMap = column.allColumnMap, complexColumnHeaders = column.complexColumnHeaders;
+    if (complexColumnHeaders.length) {
+        var complexColumn = common_1.findProp('name', columnName, complexColumnHeaders);
+        if (complexColumn) {
+            complexColumn.childNames.forEach(function (childName) {
+                allColumnMap[childName].hidden = hidden;
+            });
+        }
+    }
+    else if (allColumnMap[columnName]) {
+        allColumnMap[columnName].hidden = hidden;
+    }
+}
 function hideColumn(store, columnName) {
-    var columnItem = store.column.allColumnMap[columnName];
-    var focusedColumnName = store.focus.columnName;
-    if (focusedColumnName === columnName) {
+    var column = store.column, focus = store.focus;
+    if (focus.columnName === columnName) {
         focus_1.initFocus(store);
     }
     selection_1.initSelection(store);
     filter_1.unfilter(store, columnName);
     sort_1.unsort(store, columnName);
-    if (columnItem) {
-        columnItem.hidden = true;
-    }
+    setColumnsHiddenValue(column, columnName, true);
 }
 exports.hideColumn = hideColumn;
 function showColumn(_a, columnName) {
     var column = _a.column;
-    var columnItem = column.allColumnMap[columnName];
-    if (columnItem) {
-        columnItem.hidden = false;
-    }
+    setColumnsHiddenValue(column, columnName, false);
 }
 exports.showColumn = showColumn;
 function setComplexColumnHeaders(store, complexColumnHeaders) {
@@ -12767,8 +12808,8 @@ exports.changeColumnHeadersByName = changeColumnHeadersByName;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var keyboard_1 = __webpack_require__(108);
-var focus_1 = __webpack_require__(16);
-var selection_1 = __webpack_require__(15);
+var focus_1 = __webpack_require__(17);
+var selection_1 = __webpack_require__(16);
 var column_1 = __webpack_require__(8);
 var rowSpan_1 = __webpack_require__(9);
 function moveFocus(store, command) {
@@ -13054,8 +13095,8 @@ exports.getNextCellIndexWithRowSpan = getNextCellIndexWithRowSpan;
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(8);
-var focus_1 = __webpack_require__(16);
-var selection_1 = __webpack_require__(15);
+var focus_1 = __webpack_require__(17);
+var selection_1 = __webpack_require__(16);
 var rowSpan_1 = __webpack_require__(9);
 var selection_2 = __webpack_require__(13);
 var data_1 = __webpack_require__(6);
