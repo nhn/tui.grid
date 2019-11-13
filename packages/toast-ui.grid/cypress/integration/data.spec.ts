@@ -518,11 +518,16 @@ describe('moveRow', () => {
     });
   });
 
-  it('should move row to target index', () => {
+  it.only('should move row to target index', () => {
     cy.gridInstance().invoke('moveRow', 3, 1);
     cy.gridInstance().invoke('unsort');
 
     cy.getCellByIdx(1, 0).should('have.text', 'Han');
+    cy.getCellByIdx(2, 0).should('have.text', 'Lee');
+    cy.getCellByIdx(3, 0).should('have.text', 'Ryu');
+
     cy.getCellByIdx(1, 1).should('have.text', '40');
+    cy.getCellByIdx(2, 1).should('have.text', '20');
+    cy.getCellByIdx(3, 1).should('have.text', '30');
   });
 });
