@@ -1,8 +1,9 @@
-import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 
-const stories = storiesOf('Virtual Scrolling', module);
+export default {
+  title: 'Virtual Scrolling'
+};
 
 const ROW_COUNT = 10000;
 const COL_COUNT = 10;
@@ -11,7 +12,7 @@ interface AnyIndex {
   [propName: string]: unknown;
 }
 
-stories.add('Sample', () => {
+export const sample = () => {
   const data = [];
   const columns = [];
 
@@ -35,4 +36,4 @@ stories.add('Sample', () => {
   new Grid({ el, data, columns, width, bodyHeight });
 
   return el;
-});
+};

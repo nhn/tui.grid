@@ -10,7 +10,7 @@ export default {
 };
 
 const columns = [
-  { name: 'name', minWidth: 150, className: ['test1', 'test2'] },
+  { name: 'name', minWidth: 150, className: 'test1 test2' },
   { name: 'artist', minWidth: 150 },
   { name: 'type', minWidth: 300 },
   { name: 'release', minWidth: 300 },

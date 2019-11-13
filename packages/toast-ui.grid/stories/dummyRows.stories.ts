@@ -1,5 +1,3 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
@@ -7,16 +5,11 @@ import { data } from '../samples/basic';
 
 import '../src/css/grid.css';
 
-const stories = storiesOf('Dummy Rows', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Dummy Rows'
+};
 
-const columns = [
-  { name: 'name', minWidth: 150 },
-  { name: 'artist', minWidth: 150 },
-  { name: 'type', minWidth: 150 },
-  { name: 'release', minWidth: 150 },
-  { name: 'genre', minWidth: 150 }
-];
+const columns = [{ name: 'name', minWidth: 150 }, { name: 'artist', minWidth: 150 }];
 
 const slicedData = data.slice(0, 5);
 
@@ -29,7 +22,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-stories.add('show dummy rows', () => {
+export const showDummyRows = () => {
   const { el } = createGrid({
     data: slicedData,
     columns,
@@ -40,9 +33,9 @@ stories.add('show dummy rows', () => {
   rootEl.appendChild(el);
 
   return rootEl;
-});
+};
 
-stories.add('use row headers', () => {
+export const useRowHeaders = () => {
   const { el } = createGrid({
     data: slicedData,
     columns,
@@ -54,20 +47,4 @@ stories.add('use row headers', () => {
   rootEl.appendChild(el);
 
   return rootEl;
-});
-
-stories.add('apply striped theme', () => {
-  const { el } = createGrid({
-    data: slicedData,
-    columns,
-    showDummyRows: true,
-    bodyHeight: 400,
-    rowHeaders: ['rowNum', 'checkbox']
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  Grid.applyTheme('striped');
-
-  return rootEl;
-});
+};

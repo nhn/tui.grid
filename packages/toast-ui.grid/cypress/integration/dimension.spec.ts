@@ -13,7 +13,6 @@ const CONTENT_WIDTH = 600;
 const SCROLLBAR_WIDTH = 17;
 const CELL_BORDER_WIDTH = 1;
 const containerStyle = { width: `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px` };
-const WIDTH = 7;
 const HALF_WIDTH = 3;
 
 function assertContainerWidth(width: number) {
@@ -323,5 +322,21 @@ describe('height', () => {
     cy.createGrid({ data, columns, minBodyHeight: 300, bodyHeight: 200 }, containerStyle);
     cy.gridInstance().invoke('setBodyHeight', 300);
     assertBodyHeight(300);
+  });
+});
+
+describe('rowHeight', () => {
+  it('rowHeight: 70', () => {
+    const columns = [{ name: 'c1' }];
+    const data = [{ c1: 'test' }];
+    cy.createGrid({ data, columns, bodyHeight: 300, rowHeight: 70 });
+    cy.get('.tui-grid-row-odd').should('have.css', 'height', '70px');
+  });
+
+  it('rowHeight: custom', () => {
+    const columns = [{ name: 'c1' }];
+    const data = [{ c1: 'test', _attributes: { height: 70 } }];
+    cy.createGrid({ data, columns, bodyHeight: 300 });
+    cy.get('.tui-grid-row-odd').should('have.css', 'height', '70px');
   });
 });
