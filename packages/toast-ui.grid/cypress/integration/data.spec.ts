@@ -10,7 +10,7 @@ const largeData = [
   { name: 'Han', age: 40 }
 ];
 const columns = [
-  { name: 'name', editor: 'text', sortable: true },
+  { name: 'name', editor: 'text', sortable: true, filter: 'text' },
   { name: 'age', editor: 'text', sortable: true }
 ];
 const defaultGridOptions = { data, columns, scrollY: true, bodyHeight: 400 };
@@ -489,5 +489,45 @@ describe('setRow', () => {
     // check the position based on origin data
     cy.getCellByIdx(1, 0).should('have.text', 'Ryu');
     cy.getCellByIdx(1, 1).should('have.text', '20');
+  });
+});
+
+describe('moveRow', () => {
+  beforeEach(() => {
+    cy.createGrid({ data: largeData, columns });
+  });
+
+  ['sort', 'filter'].forEach(type => {
+    it(`if ${type} data, moving should not be excuted`, () => {
+      if (type === 'sort') {
+        cy.gridInstance().invoke('sort', 'name', true);
+      } else {
+        cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+      }
+
+      cy.gridInstance().invoke('moveRow', 1, 3);
+
+      if (type === 'sort') {
+        cy.gridInstance().invoke('unsort');
+      } else {
+        cy.gridInstance().invoke('unfilter', 'name');
+      }
+
+      cy.getCellByIdx(3, 0).should('have.text', 'Han');
+      cy.getCellByIdx(3, 1).should('have.text', '40');
+    });
+  });
+
+  it.only('should move row to target index', () => {
+    cy.gridInstance().invoke('moveRow', 3, 1);
+    cy.gridInstance().invoke('unsort');
+
+    cy.getCellByIdx(1, 0).should('have.text', 'Han');
+    cy.getCellByIdx(2, 0).should('have.text', 'Lee');
+    cy.getCellByIdx(3, 0).should('have.text', 'Ryu');
+
+    cy.getCellByIdx(1, 1).should('have.text', '40');
+    cy.getCellByIdx(2, 1).should('have.text', '20');
+    cy.getCellByIdx(3, 1).should('have.text', '30');
   });
 });
