@@ -1,6 +1,5 @@
-import { Omit } from 'utility-types';
 import Grid from '../../src/grid';
-import { OptGrid, OptColumn } from '../../src/types';
+import { OptColumn } from '../../src/types';
 
 interface GridGlobal {
   tui: { Grid: typeof Grid };
@@ -67,6 +66,17 @@ describe('getSelectionRange', () => {
     });
   });
 
+  it('select column by clicking header', () => {
+    createGrid();
+    cy.get('th[data-column-name=A]')
+      .eq(0)
+      .click();
+
+    cy.gridInstance()
+      .invoke('getSelectionRange')
+      .should('eql', { start: [0, 0], end: [2, 0] });
+  });
+
   it('select row by clicking row header', () => {
     createGrid({ rowHeaders: ['rowNum'] });
 
@@ -77,5 +87,19 @@ describe('getSelectionRange', () => {
     cy.gridInstance()
       .invoke('getSelectionRange')
       .should('eql', { start: [0, 0], end: [0, 1] });
+  });
+
+  it('select column by clicking complex header', () => {
+    createGrid({
+      header: { height: 60, complexColumns: [{ header: 'C', name: 'C', childNames: ['A', 'B'] }] }
+    });
+
+    cy.get('th[data-column-name=C]')
+      .eq(0)
+      .click();
+
+    cy.gridInstance()
+      .invoke('getSelectionRange')
+      .should('eql', { start: [0, 0], end: [2, 1] });
   });
 });
