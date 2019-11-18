@@ -1,19 +1,8 @@
-import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
-import { sortData as sampleData } from '../../samples/basic';
-import Grid from '../../src/grid';
-import { OptGrid, OptColumn } from '../../src/types';
+import { sortData as data } from '../../samples/basic';
+import { OptColumn } from '../../src/types';
 import { compare } from '@/helper/sort';
 import { Dictionary } from '@/store/types';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
-
-const CONTENT_WIDTH = 700;
-// @TODO: Retrieve scrollbar-width from real browser
-const SCROLLBAR_WIDTH = 17;
 
 const columns: OptColumn[] = [
   { name: 'alphabetA', minWidth: 150, sortable: true },
@@ -21,26 +10,6 @@ const columns: OptColumn[] = [
   { name: 'numberA', minWidth: 150, sortable: true, sortingType: 'desc' },
   { name: 'stringNumberA', minWidth: 150, sortable: true, sortingType: 'asc' }
 ];
-
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
-  const data = sampleData.slice();
-
-  return { data, columns };
-}
-
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const defaultOptions = createDefaultOptions();
-    const options = { ...defaultOptions, ...customOptions };
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
-}
 
 function createSortButtonAlias() {
   cy.get(`.${cls('btn-sorting')}`)
@@ -64,7 +33,7 @@ function assertSortClassNames(target: string, ascending: boolean, hasClass: bool
 }
 
 function assertSortedData(columnName: string) {
-  const testData = (sampleData as Dictionary<any>[]).map(data => String(data[columnName]));
+  const testData = (data as Dictionary<any>[]).map(col => String(col[columnName]));
   testData.sort((a, b) => compare(a, b));
 
   cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
@@ -94,7 +63,7 @@ describe('sort', () => {
   });
 
   it('sort button is rendered with proper class names', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     assertSortClassNames('@first', true, false);
     assertSortClassNames('@first', false, false);
@@ -103,7 +72,7 @@ describe('sort', () => {
   });
 
   it("sort button's class names are changed when click the sort button", () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
 
     cy.get('@first').click();
@@ -128,7 +97,7 @@ describe('sort', () => {
   });
 
   it('sort by descending order when the sort button is first clicked.', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
 
     cy.get('@third').click();
@@ -137,7 +106,7 @@ describe('sort', () => {
   });
 
   it('data is sorted properly', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
 
     cy.get('@first').click();
@@ -145,28 +114,28 @@ describe('sort', () => {
   });
 
   it('data is sorted after calling sort(alphabetA, false)', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'alphabetA', true);
     assertSortedData('alphabetA');
   });
 
   it('sort by ascending order stringNumberA', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'stringNumberA', true);
     compareColumnData('stringNumberA', ['1', '2', '11', '100', '101', '201', '202', '211', '301']);
   });
 
   it('sort by descending order stringNumberA', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'stringNumberA', false);
     compareColumnData('stringNumberA', ['301', '211', '202', '201', '101', '100', '11', '2', '1']);
   });
 
   it('multiple sort', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     cy.gridInstance().invoke('sort', 'numberA', true);
     cy.gridInstance().invoke('sort', 'alphabetB', true, true);
 
@@ -178,12 +147,12 @@ describe('sort', () => {
   });
 
   it('data is sorted after calling unsort()', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'alphabetA', false);
     cy.gridInstance().invoke('unsort');
 
-    const testData = sampleData.map(data => String(data.alphabetA));
+    const testData = data.map(col => String(col.alphabetA));
 
     cy.get('@first').should('not.have.class', cls('btn-sorting-up'));
     cy.get('@first').should('not.have.class', cls('btn-sorting-down'));
@@ -191,7 +160,7 @@ describe('sort', () => {
   });
 
   it("unsort('numberA') when multiple sorting", () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
 
     cy.gridInstance().invoke('sort', 'numberA', true);
@@ -206,7 +175,7 @@ describe('sort', () => {
   });
 
   it('get proper sortState after calling getSortState()', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance()
       .invoke('getSortState')
@@ -245,17 +214,17 @@ describe('sort', () => {
       { name: 'alphabetB', minWidth: 150, sortable: true, sortingType: 'asc' },
       { name: 'numberA', minWidth: 150 }
     ];
-    createGrid({ columns: col });
+    cy.createGrid({ data, columns: col });
     cy.gridInstance().invoke('sort', 'numberA', true);
 
     compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
   });
 
   it('data is unsorted when calls resetData API', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'numberA', false);
-    cy.gridInstance().invoke('resetData', sampleData.slice());
+    cy.gridInstance().invoke('resetData', data.slice());
 
     compareColumnData('numberA', ['2', '1', '1', '1', '10', '1', '20', '24', '25']);
     cy.get('@third').should('not.have.class', cls('btn-sorting-up'));
@@ -263,7 +232,7 @@ describe('sort', () => {
   });
 
   it('data is unsorted when calls setColumns API', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'numberA', false);
     cy.gridInstance().invoke('setColumns', columns);
@@ -274,7 +243,7 @@ describe('sort', () => {
   });
 
   it('data is unsorted when calls clearData API', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'numberA', false);
     cy.gridInstance().invoke('clear');
@@ -284,7 +253,7 @@ describe('sort', () => {
   });
 
   it('data is unsorted when hide column', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('sort', 'numberA', false);
     cy.gridInstance().invoke('hideColumn', 'numberA');
@@ -295,7 +264,7 @@ describe('sort', () => {
   });
 
   it('cannot sort the data on hidden column', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     createSortButtonAlias();
     cy.gridInstance().invoke('hideColumn', 'numberA');
     cy.gridInstance().invoke('sort', 'numberA', false);
@@ -306,7 +275,7 @@ describe('sort', () => {
   });
 
   it('should update row number after sorting', () => {
-    createGrid({ rowHeaders: ['rowNum'] });
+    cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
     createSortButtonAlias();
     cy.get('@first').click();
     cy.get('td[data-column-name=_number]').each(($el, idx) => {
