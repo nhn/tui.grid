@@ -147,5 +147,3 @@ it('rowHeader with custom options.', () => {
       .and('have.css', 'text-align', 'right');
   });
 });
-
-// @TODO: rowheader click -> selection range test
