@@ -1,5 +1,3 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
@@ -7,10 +5,11 @@ import { data } from '../samples/tree';
 
 import '../src/css/grid.css';
 
-const stories = storiesOf('Tree', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'tree'
+};
 
-const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
+const columns = [{ name: 'name' }, { name: 'artist' }];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -21,22 +20,20 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-stories.add(
-  'tree column',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['rowNum', 'checkbox'],
-      treeColumnOptions: {
-        name: 'name',
-        useCascadingCheckbox: true
-      }
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
+export const cascadingCheckbox = () => {
+  const { el } = createGrid({
+    data,
+    columns,
+    rowHeaders: ['rowNum', 'checkbox'],
+    treeColumnOptions: {
+      name: 'name',
+      useCascadingCheckbox: true
+    }
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  // 체크박스 선택 해 놓음
+
+  return rootEl;
+};

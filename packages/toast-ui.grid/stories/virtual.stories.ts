@@ -5,7 +5,7 @@ export default {
   title: 'Virtual Scrolling'
 };
 
-const ROW_COUNT = 10000;
+const ROW_COUNT = 100000;
 const COL_COUNT = 10;
 
 interface AnyIndex {
