@@ -1,5 +1,6 @@
-import { hasOwnProp, isObject, forEachObject, last, isEmpty } from './common';
+import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction } from './common';
 import { Dictionary } from '../store/types';
+import { patchArrayMethods } from './array';
 
 type BooleanSet = Dictionary<boolean>;
 
@@ -144,9 +145,12 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       }
     });
 
-    if (typeof getter === 'function') {
+    if (isFunction(getter)) {
       observe(() => {
         const value = getter.call(resultObj);
+        if (Array.isArray(value)) {
+          patchArrayMethods(value, resultObj, key);
+        }
         setValue(storage, observerIdSet, key, value);
       }, sync);
     } else {
@@ -158,20 +162,31 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       (storage[key] as T) = obj[key];
       Object.defineProperty(resultObj, key, {
         set(value) {
+          if (Array.isArray(value)) {
+            patchArrayMethods(value, resultObj, key);
+          }
           setValue(storage, observerIdSet, key, value);
         }
       });
+
+      if (Array.isArray(resultObj[key])) {
+        patchArrayMethods(resultObj[key], resultObj, key);
+      }
     }
   });
 
   return resultObj as Observable<T>;
 }
 
-export function notify<T, K extends keyof T>(obj: T, key: K) {
+function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K | K[]) {
+  Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
+    run(observerId);
+  });
+}
+
+export function notify<T, K extends keyof T>(obj: T, ...keys: K[]) {
   if (isObservable(obj)) {
-    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
-      run(observerId);
-    });
+    keys.forEach(key => notifyUnit(obj, key));
   }
 }
 
