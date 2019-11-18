@@ -518,7 +518,7 @@ describe('moveRow', () => {
     });
   });
 
-  it.only('should move row to target index', () => {
+  it('should move row to target index', () => {
     cy.gridInstance().invoke('moveRow', 3, 1);
     cy.gridInstance().invoke('unsort');
 
