@@ -556,6 +556,27 @@ export default class Grid {
   }
 
   /**
+   * get Selection range
+   * @returns {Object | null} range - Selection range
+   *     @returns {Array} [range.start] - Index info of start selection (ex: [rowIndex, columnIndex])
+   *     @returns {Array} [range.end] - Index info of end selection (ex: [rowIndex, columnIndex])
+   */
+  public getSelectionRange() {
+    const { rangeWithRowHeader } = this.store.selection;
+
+    if (rangeWithRowHeader) {
+      const { column, row } = rangeWithRowHeader;
+
+      return {
+        start: [row[0], column[0]],
+        end: [row[1], column[1]]
+      };
+    }
+
+    return null;
+  }
+
+  /**
    * Return data of currently focused cell
    * @returns {number|string} rowKey - The unique key of the row
    * @returns {string} columnName - The name of the column
