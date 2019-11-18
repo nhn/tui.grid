@@ -1,7 +1,7 @@
 import i18n from '@/i18n';
 
 describe('i18n', () => {
-  it('when setting the locale code that the grid has aleady, the locale messages are set and changed.', () => {
+  it('when setting the locale code that the grid has already, the locale messages are set and changed.', () => {
     i18n.setLanguage('en');
     expect(i18n.get('display.noData')).to.eql('No data.');
 
