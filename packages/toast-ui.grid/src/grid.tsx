@@ -957,7 +957,7 @@ export default class Grid {
     document.execCommand('copy');
   }
 
-  /*
+  /**
    * Validate all data and returns the result.
    * Return value is an array which contains only rows which have invalid cell data.
    * @returns {Array.<Object>} An array of error object
@@ -1302,7 +1302,7 @@ export default class Grid {
     this.resetData(this.dataManager.getOriginData());
   }
 
-  /*
+  /**
    * Insert the new tree row with specified data.
    * @param {Object} [row] - The tree data for the new row
    * @param {Object} [options] - Options
@@ -1558,7 +1558,7 @@ export default class Grid {
     this.dispatch('setRow', rowIndex, row);
   }
 
-  /*
+  /**
    * Move the row identified by the specified rowKey to target index.
    * If data is sorted or filtered, this couldn't be used.
    * @param {number|string} rowKey - The unique key of the row
