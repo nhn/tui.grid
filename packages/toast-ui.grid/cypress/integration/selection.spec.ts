@@ -1,14 +1,4 @@
-import Grid from '../../src/grid';
 import { OptColumn } from '../../src/types';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
-
-const CONTENT_WIDTH = 700;
-// @TODO: Retrieve scrollbar-width from real browser
-const SCROLLBAR_WIDTH = 17;
 
 const columns: OptColumn[] = [{ name: 'A', minWidth: 150 }, { name: 'B', minWidth: 150 }];
 const data = [{ A: 1, B: 2 }, { A: 3, B: 2 }, { A: 4, B: 2 }];
@@ -26,19 +16,6 @@ function setSelectionByUI(start: Address, end: Address) {
     });
 }
 
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const options = { data, columns, ...customOptions };
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
-}
-
 before(() => {
   cy.visit('/dist');
 });
@@ -52,7 +29,7 @@ describe('getSelectionRange', () => {
 
   ['API', 'UI'].forEach(type => {
     it(`selection by ${type}`, () => {
-      createGrid();
+      cy.createGrid({ data, columns });
       const range = { start: [0, 0], end: [1, 1] };
       if (type === 'API') {
         cy.gridInstance().invoke('setSelectionRange', range);
@@ -67,7 +44,7 @@ describe('getSelectionRange', () => {
   });
 
   it('select column by clicking header', () => {
-    createGrid();
+    cy.createGrid({ data, columns });
     cy.get('th[data-column-name=A]')
       .eq(0)
       .click();
@@ -78,7 +55,7 @@ describe('getSelectionRange', () => {
   });
 
   it('select row by clicking row header', () => {
-    createGrid({ rowHeaders: ['rowNum'] });
+    cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
 
     cy.get('td[data-column-name=_number]')
       .eq(0)
@@ -90,7 +67,9 @@ describe('getSelectionRange', () => {
   });
 
   it('select column by clicking complex header', () => {
-    createGrid({
+    cy.createGrid({
+      data,
+      columns,
       header: { height: 60, complexColumns: [{ header: 'C', name: 'C', childNames: ['A', 'B'] }] }
     });
 

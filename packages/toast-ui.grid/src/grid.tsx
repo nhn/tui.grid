@@ -566,7 +566,7 @@ export default class Grid {
 
     if (rangeWithRowHeader) {
       const { column, row } = rangeWithRowHeader;
-      console.log(rangeWithRowHeader);
+
       return {
         start: [row[0], column[0]],
         end: [row[1], column[1]]
