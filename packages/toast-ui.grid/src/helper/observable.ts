@@ -176,7 +176,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
   return resultObj as Observable<T>;
 }
 
-function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K | K[]) {
+function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K) {
   Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
     run(observerId);
   });
