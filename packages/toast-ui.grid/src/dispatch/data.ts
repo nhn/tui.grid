@@ -511,6 +511,10 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
     updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
+  if (rowIdx !== rawData.length) {
+    updateSortKey(data, removedRow.sortKey + 1, false);
+  }
+
   getDataManager(id).push('DELETE', removedRow);
   updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   setLoadingState(store, getLoadingState(rawData));
