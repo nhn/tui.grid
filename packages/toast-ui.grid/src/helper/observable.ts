@@ -148,9 +148,6 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
     if (isFunction(getter)) {
       observe(() => {
         const value = getter.call(resultObj);
-        if (Array.isArray(value)) {
-          patchArrayMethods(value, resultObj, key);
-        }
         setValue(storage, observerIdSet, key, value);
       }, sync);
     } else {
@@ -160,6 +157,11 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
       // https://github.com/microsoft/TypeScript/issues/31661
       (storage[key] as T) = obj[key];
+
+      if (Array.isArray(storage[key])) {
+        patchArrayMethods(storage[key], resultObj, key);
+      }
+
       Object.defineProperty(resultObj, key, {
         set(value) {
           if (Array.isArray(value)) {
@@ -168,10 +170,6 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
           setValue(storage, observerIdSet, key, value);
         }
       });
-
-      if (Array.isArray(resultObj[key])) {
-        patchArrayMethods(resultObj[key], resultObj, key);
-      }
     }
   });
 
