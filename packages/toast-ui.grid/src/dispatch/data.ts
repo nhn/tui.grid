@@ -793,7 +793,6 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   const { data, id, focus } = store;
   const { rawData, viewData, sortState } = data;
   const orgRow = rawData[rowIndex];
-  console.log('setRow', orgRow);
 
   if (!orgRow) {
     return;
@@ -801,6 +800,9 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row);
+  // @TODO: should change to create rowKey
+  rawRow.rowKey = orgRow.rowKey;
+  viewRow.rowKey = orgRow.rowKey;
 
   if (someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
