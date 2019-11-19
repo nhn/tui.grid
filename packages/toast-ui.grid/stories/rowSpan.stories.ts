@@ -68,3 +68,10 @@ export const basic = () => {
 
   return rootEl;
 };
+
+const basicNote = `
+## Row Span
+
+- For Cells with rowspan, selection is applied as one cell shown in the example.
+`;
+basic.story = { parameters: { notes: basicNote } };

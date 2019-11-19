@@ -44,3 +44,11 @@ export const basic = () => {
 
   return rootEl;
 };
+
+const basicNote = `
+## Tree
+
+- If child tree exists, row has a \`folder\` icon, otherwise it has a \`file\` icon.
+- If the folder tree is open, the icon looks like an open folder. 
+`;
+basic.story = { parameters: { notes: basicNote } };

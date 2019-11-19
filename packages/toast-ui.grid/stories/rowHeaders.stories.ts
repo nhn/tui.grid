@@ -99,7 +99,14 @@ export const basic = () => {
   return rootEl;
 };
 
-export const customRowNumber = () => {
+const basicNote = `
+## Row Header
+
+- Basic UI for \`rowNum\` and \`checkbox\` type
+`;
+basic.story = { parameters: { notes: basicNote } };
+
+export const customRowHeader = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -109,20 +116,7 @@ export const customRowNumber = () => {
         renderer: {
           type: RowNumberRenderer
         }
-      }
-    ]
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  return rootEl;
-};
-
-export const customCheckbox = () => {
-  const { el } = createGrid({
-    data,
-    columns,
-    rowHeaders: [
+      },
       {
         type: 'checkbox',
         header: `
@@ -142,3 +136,10 @@ export const customCheckbox = () => {
 
   return rootEl;
 };
+
+const customRowHeaderNote = `
+## Custom Row Header
+
+Customizing Row Headers with header and renderer.
+`;
+customRowHeader.story = { parameters: { notes: customRowHeaderNote } };

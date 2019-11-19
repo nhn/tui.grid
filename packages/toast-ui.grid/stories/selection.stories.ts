@@ -48,7 +48,7 @@ export const normal = () => {
 const normalNote = `
 ## Selection
 
-### Following areas should be highlighed
+### Following areas should be highlighted
 - Selected cells
 - Row-header of selected cells
 - Column-header of selected cells

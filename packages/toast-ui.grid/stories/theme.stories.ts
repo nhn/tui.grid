@@ -72,6 +72,16 @@ export const defaultTheme = () => {
   return el;
 };
 
+const defaultThemeNote = `
+## Theme
+
+### Built in theme
+- \`default\`
+- \`striped\`
+- \`clean\`
+`;
+defaultTheme.story = { parameters: { notes: defaultThemeNote } };
+
 export const stripedTheme = () => {
   const { el } = createGridWithTheme({ preset: 'striped' });
 
@@ -84,7 +94,7 @@ export const cleanTheme = () => {
   return el;
 };
 
-export const rowHover = () => {
+export const rowHoverWithCustomTheme = () => {
   const { el } = createGridWithTheme({
     preset: 'clean',
     extOptions: {
@@ -95,3 +105,10 @@ export const rowHover = () => {
 
   return el;
 };
+
+const rowHoverWithCustomThemeNote = `
+## Custom Theme
+
+- You can customize the theme or specify a row hover style by \`extOptions\`.
+`;
+rowHoverWithCustomTheme.story = { parameters: { notes: rowHoverWithCustomThemeNote } };

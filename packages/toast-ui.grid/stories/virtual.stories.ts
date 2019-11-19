@@ -37,3 +37,10 @@ export const basic = () => {
 
   return el;
 };
+
+const basicNote = `
+## Virtual Scrolling
+
+- Grid with \`1,000,000\` Cells, \`100,000\` Rows.
+`;
+basic.story = { parameters: { notes: basicNote } };

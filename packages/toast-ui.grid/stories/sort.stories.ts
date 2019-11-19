@@ -53,3 +53,14 @@ export const basic = () => {
 
   return el;
 };
+
+const basicNote = `
+## Sort Buttons
+- Basic (Both Sides Arrow Icon) : Sort is not Activated
+- Ascending (Up Arrow Icon) : Ascending Sort is Activated 
+- Descending (Down Arrow Icon) : Descending Sort is Activated
+
+## Sort Number
+The number next to the sort button indicates the order in which the multi sort is applied.
+`;
+basic.story = { parameters: { notes: basicNote } };

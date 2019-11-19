@@ -54,6 +54,15 @@ export const positionTop = () => {
   return el;
 };
 
+const positionTopNote = `
+## Summary Position
+
+- Summary can be positioned \`top\` or \`bottom\`.
+- Default value is \`bottom\`. 
+
+`;
+positionTop.story = { parameters: { notes: positionTopNote } };
+
 export const positionBottom = () => {
   const summary = createDefaultSummaryOption();
   summary.position = 'bottom';
