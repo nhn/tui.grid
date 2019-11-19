@@ -1,6 +1,6 @@
 import { arrayEqual } from './common';
 import { notify } from './observable';
-import { Dictionary } from 'src/store/types';
+import { Dictionary } from '../store/types';
 
 type ArrayProtoProps = keyof typeof Array.prototype;
 type Methods = ArrayProtoProps[];
