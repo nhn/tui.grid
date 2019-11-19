@@ -20,7 +20,14 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-export const cascadingCheckbox = () => {
+function clickCheckbox() {
+  setTimeout(() => {
+    const input = document.querySelectorAll('[data-column-name=_checked] input')[3] as HTMLElement;
+    input.click();
+  });
+}
+
+export const basic = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -33,7 +40,7 @@ export const cascadingCheckbox = () => {
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
 
-  // 체크박스 선택 해 놓음
+  clickCheckbox();
 
   return rootEl;
 };

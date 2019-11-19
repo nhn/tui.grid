@@ -45,7 +45,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   return { el, grid };
 }
 
-export const sortButton = () => {
+export const basic = () => {
   const { el, grid } = createGrid();
 
   grid.sort('B', true);

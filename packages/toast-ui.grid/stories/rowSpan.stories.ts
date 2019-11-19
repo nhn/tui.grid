@@ -1,16 +1,15 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid, OptRow } from '../src/types';
 import { Omit } from 'utility-types';
 import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('RowSpan', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'RowSpan'
+};
 
 const columns = [
-  { name: 'name', editor: 'text', sortable: true },
+  { name: 'name', editor: 'text' },
   { name: 'artist', editor: 'text' },
   { name: 'type', editor: 'text' }
 ];
@@ -33,6 +32,12 @@ function createDataWithRowSpanAttr(): OptRow[] {
     }
   };
 
+  optRows[2]._attributes = {
+    rowSpan: {
+      type: 2
+    }
+  };
+
   optRows[3]._attributes = {
     rowSpan: {
       name: 3
@@ -45,33 +50,21 @@ function createDataWithRowSpanAttr(): OptRow[] {
     }
   };
 
-  optRows[10]._attributes = {
-    rowSpan: {
-      type: 2
-    }
-  };
-
   return optRows;
 }
 
-stories.add(
-  'rowSpan',
-  () => {
-    const { el, grid } = createGrid({
-      data: createDataWithRowSpanAttr(),
-      columns,
-      bodyHeight: 'fitToParent'
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+export const basic = () => {
+  const { el, grid } = createGrid({
+    data: createDataWithRowSpanAttr(),
+    columns,
+    bodyHeight: 'fitToParent'
+  });
 
-    button('unsort()', () => grid.unsort());
-    button('setSelectionRange({ start: 0, 0, end: 1, 1 })', () =>
-      grid.setSelectionRange({ start: [0, 0], end: [1, 1] })
-    );
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+  rootEl.style.height = '400px';
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  grid.setSelectionRange({ start: [3, 0], end: [3, 1] });
+
+  return rootEl;
+};

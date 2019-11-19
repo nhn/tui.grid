@@ -87,7 +87,7 @@ class SingleCheckRenderer {
   }
 }
 
-export const defaultRowHeader = () => {
+export const basic = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -99,7 +99,7 @@ export const defaultRowHeader = () => {
   return rootEl;
 };
 
-export const useCustomRowNumberRender = () => {
+export const customRowNumber = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -118,7 +118,7 @@ export const useCustomRowNumberRender = () => {
   return rootEl;
 };
 
-export const useCustomCheckboxRenderer = () => {
+export const customCheckbox = () => {
   const { el } = createGrid({
     data,
     columns,

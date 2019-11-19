@@ -12,7 +12,7 @@ interface AnyIndex {
   [propName: string]: unknown;
 }
 
-export const sample = () => {
+export const basic = () => {
   const data = [];
   const columns = [];
 
