@@ -77,6 +77,73 @@ grid.setValue(3, 'artsit', '');
 ```
 ![02-validation-required](https://user-images.githubusercontent.com/18183560/61283084-81ec0480-a7f7-11e9-9e82-715f8da22ecd.png)
 
+## min, max Options
+
+This option can be implemented in `v4.5.0` and above. If you set a numerical value to the `min` and `max` options, you can validate whether the cell data is within the designated range. If the cell data is *not* in range, smaller than the `min` value or larger than the `max` value, the data is displayed in red.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        min: 10000,
+        max: 20000
+      }
+    }
+  ]
+});
+```
+
+![image](https://user-images.githubusercontent.com/35371660/63257029-dc272c00-c2b3-11e9-8e2e-fa878577cd15.png)
+
+## regExp Option
+
+This option can be implemented in `v4.5.0` and above. You can validate whether the cell data adheres to the specified pattern by defining the regular expression in the `regExp` option. If the cell data *does not* adhere to the designated pattern, the data is displayed in red. 
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...
+  columns: [
+    {
+      name: 'name',
+      validation: {
+        regExp: /[a-zA-Z]+_[a-zA-Z]/
+      }
+    }
+  ]
+});
+```
+
+![image](https://user-images.githubusercontent.com/35371660/63257294-67082680-c2b4-11e9-8e76-6a5b80e10d2b.png)
+
+## validatorFn Option
+
+This option can be implemented in `v4.5.0` and above. You can validate the cell data with respect to the result of the function defined in the `validatorFn` option with the data as its parameter. If the result of the function is *not* `truthy`, the data is displayed in red.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        validatorFn: value => value !== 10000
+      }
+    }
+  ]
+});
+```
+
+![image](https://user-images.githubusercontent.com/35371660/63257621-26f57380-c2b5-11e9-9237-ea927cfa014e.png)
+
 ## validate() Method
 
 We can retrieve the column's validation information in row units by configuring the `validation` option and calling the `validate()` method. 
