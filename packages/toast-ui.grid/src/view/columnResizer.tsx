@@ -2,7 +2,8 @@ import { h, Component } from 'preact';
 import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, ColumnInfo } from '../store/types';
+import { Side, ColumnInfo, ComplexColumnInfo } from '../store/types';
+import { includes, some } from '../helper/common';
 
 interface OwnProps {
   side: Side;
@@ -13,6 +14,8 @@ interface StoreProps {
   widths: number[];
   columns: ColumnInfo[];
   cellBorderWidth: number;
+  complexColumns: ComplexColumnInfo[];
+  headerHeight: number;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -89,13 +92,31 @@ class ColumnResizerComp extends Component<Props> {
     );
   }
 
-  public render({ columns }: Props) {
+  private isHideChildColumns(name: string) {
+    const { complexColumns } = this.props;
+
+    return some(item => {
+      return includes(item.childNames, name) && !!item.hideChildHeaders;
+    }, complexColumns);
+  }
+
+  private getResizableColumns() {
+    return this.props.columns.filter(column => {
+      const { resizable, name } = column;
+
+      return resizable && !this.isHideChildColumns(name);
+    });
+  }
+
+  public render({ headerHeight }: Props) {
+    console.log(headerHeight);
+    // @TODO: border 제거. 테스트용
     return (
       <div
         class={cls('column-resize-container')}
-        style="display: block; margin-top: -35px; height: 35px;"
+        style={`display: block; margin-top: -35px; height: ${headerHeight}px; border: 1px solid #ccc;`}
       >
-        {columns.map((_, index) => this.renderHandle(index))}
+        {this.getResizableColumns().map((_, index) => this.renderHandle(index))}
       </div>
     );
   }
@@ -105,7 +126,9 @@ export const ColumnResizer = connect<StoreProps, OwnProps>(
   ({ column, columnCoords, dimension }, { side }) => ({
     widths: columnCoords.widths[side],
     offsets: columnCoords.offsets[side],
+    headerHeight: dimension.headerHeight,
     cellBorderWidth: dimension.cellBorderWidth,
-    columns: column.visibleColumnsBySideWithRowHeader[side]
+    columns: column.visibleColumnsBySideWithRowHeader[side],
+    complexColumns: column.complexColumnHeaders
   })
 )(ColumnResizerComp);

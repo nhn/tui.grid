@@ -97,6 +97,7 @@ if ((module as any).hot) {
  *          @param {string} [options.header.complexColumns.headerVAlign=middle] - Vertical alignment of the row header content.
  *              Available values are 'top', 'middle', 'bottom'.
  *          @param {boolean} [options.header.complexColumns.hideChildHeaders=false] - If set to true, the child columns header are hidden.
+ *          @param {boolean} [options.header.complexColumns.resizable=false] - If set to true, resize-handles of each complex columns will be shown.
  *      @param {string|number} [options.width='auto'] - Options for grid width.
  *      @param {string|number} [options.rowHeight] - The height of each rows. The default value is 'auto',
  *          the height of each rows expands to dom's height. If set to number, the height is fixed.
