@@ -81,11 +81,15 @@ function run(observerId: string) {
 
 function setValue<T, K extends keyof T>(
   storage: T,
+  resultObj: T,
   observerIdSet: BooleanSet,
   key: keyof T,
   value: T[K]
 ) {
   if (storage[key] !== value) {
+    if (Array.isArray(value)) {
+      patchArrayMethods(value, resultObj, key as string);
+    }
     storage[key] = value;
     Object.keys(observerIdSet).forEach(observerId => {
       run(observerId);
@@ -148,7 +152,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
     if (isFunction(getter)) {
       observe(() => {
         const value = getter.call(resultObj);
-        setValue(storage, observerIdSet, key, value);
+        setValue(storage, resultObj, observerIdSet, key, value);
       }, sync);
     } else {
       // has to add 'as' type assertion and refer the below typescript issue
@@ -164,10 +168,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 
       Object.defineProperty(resultObj, key, {
         set(value) {
-          if (Array.isArray(value)) {
-            patchArrayMethods(value, resultObj, key);
-          }
-          setValue(storage, observerIdSet, key, value);
+          setValue(storage, resultObj, observerIdSet, key, value);
         }
       });
     }

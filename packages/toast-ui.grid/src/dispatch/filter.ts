@@ -179,16 +179,14 @@ export function filter(
 
   const filters = data.filters || [];
   const { type } = columnFilterInfo;
-  const columnFilter = findProp('columnName', columnName, filters);
+  const filterIndex = findPropIndex('columnName', columnName, filters);
 
-  if (columnFilter) {
-    columnFilter.conditionFn = conditionFn;
-    columnFilter.state = state;
+  if (filterIndex >= 0) {
+    const columnFilter = filters[filterIndex];
+    filters.splice(filterIndex, 1, { ...columnFilter, conditionFn, state });
   } else {
     data.filters = filters.concat({ columnName, type, conditionFn, state });
   }
-
-  notify(data, 'filters');
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ filterState: data.filters });
@@ -215,13 +213,12 @@ export function unfilter(store: Store, columnName: string) {
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      filters.splice(filterIndex, 1);
-
-      if (!filters.length) {
+      if (filters.length === 1) {
         data.filters = null;
+      } else {
+        filters.splice(filterIndex, 1);
       }
     }
-    notify(data, 'filters');
     initLayerAndScrollAfterFiltering(store);
     updateAllSummaryValues(store);
   }
