@@ -17,30 +17,19 @@
   <script type="text/javascript" class="code-js">
 	class CustomColumnHeader {
     constructor(props) {
-      this.columnInfo = props.columnInfo;
-      this.el = this.createElement();
-    }
-
-    createElement() {
+      const columnInfo = props.columnInfo;
       const el = document.createElement('div');
-      const { header, name } = this.columnInfo;
-      
-      el.textContent = `🔩custom-header ${header}`;
-      el.className = `custom-header`;
-
-      return el;
+      el.className = 'custom';
+      el.textContent = `🔩custom_${columnInfo.header}`;
+      this.el = el;
     }
 
     getElement() {
       return this.el;
     }
 
-    beforeDestroy() {
-      clearInterval(this.interval);
-    }
-
-    render() {
-      this.el.innerHTML = createElement();
+    render(props) {
+      el.textContent = `🔩custom_${props.columnInfo.header}`;
     }
   }
 

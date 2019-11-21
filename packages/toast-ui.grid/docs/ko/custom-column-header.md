@@ -27,24 +27,19 @@ TOAST UI Grid는 컬럼 헤더의 UI를 커스터마이징할 수 있는 기능�
 ```javascript
 class CustomColumnHeader {
   constructor(props) {
-    this.columnInfo = props.columnInfo;
-    this.el = this.createElement();
-  }
-
-  createElement() {
+    const columnInfo = props.columnInfo;
     const el = document.createElement('div');
     el.className = 'custom';
-    el.textContent = `custom_${this.columnInfo.header}`;
-
-    return el;
+    el.textContent = `custom_${columnInfo.header}`;
+    this.el = el;
   }
 
   getElement() {
     return this.el;
   }
 
-  render() {
-    this.el.innerHTML = createElement();
+  render(props) {
+     el.textContent = `custom_${props.columnInfo.header}`;
   }
 }
 ```
