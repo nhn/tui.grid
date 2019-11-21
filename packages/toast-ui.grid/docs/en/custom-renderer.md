@@ -4,7 +4,7 @@ TOAST UI Grid enables users to customize the cell UI by providing Custom Rendere
 
 We can apply the Custom Renderer based on the `CellRenderer` constructor function's interface. Internally, TOAST UI Grid uses the `CellRenderer` constructor function registered by the user to instantiate a new Custom Renderer, and adds the returned element to the DOM. While it is recommended to use the Custom Renderer with the `class` keyword, if unplausible, it can be used with `function` and `prototype` as well. 
 
-The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer` interface can be found at [types.d.ts](https://github.com/nhn/tui.grid/blob/master/src/renderer/types.d.ts).)
+The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer` interface can be found at [types.d.ts](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/src/renderer/types.d.ts).)
 * `constructor`
     The constructor function is called when the cell element (`TD`) is added to the DOM. Generally, it serves the purpose of storing the root element as the instance member, and such members can be accessed using `getElement()` and `getValue()` methods. The object passed ino the constructor function as parameter is identical to that of `CellEditor` interface, and is as follows. 
 
@@ -12,7 +12,7 @@ The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer
 |--------|--------|--------|
 | `grid` | `Grid` | References the `Grid` instance. It can be used effectively when getting or manipulating a particular piece of data of the Grid. | 
 | `rowKey` | `string \| number` | The rowKey of the row that contains the current cell. |
-| `columnInfo` | `ColumnInfo` | Contains all necessary information of the column that includes the target cell. The `ColumnInfo` interface is further defined [here](https://github.com/nhn/tui.grid/blob/master/src/store/types.ts). |
+| `columnInfo` | `ColumnInfo` | Contains all necessary information of the column that includes the target cell. The `ColumnInfo` interface is further defined [here](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/src/store/types.ts). |
 | `value` | `string \| number \| boolean` | The cell's current value |
 
 * `getElement`
