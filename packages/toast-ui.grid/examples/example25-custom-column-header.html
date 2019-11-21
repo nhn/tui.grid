@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>25. Custom Column Header</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="code-html contents">
+      <div id="grid"></div>
+  </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/javascript" class="code-js">
+	class CustomColumnHeader {
+    constructor(props) {
+      this.columnInfo = props.columnInfo;
+      this.el = this.createElement();
+    }
+
+    createElement() {
+      const el = document.createElement('div');
+      const { header, name } = this.columnInfo;
+      
+      el.textContent = `🔩custom-header ${header}`;
+      el.className = `custom-header`;
+
+      return el;
+    }
+
+    getElement() {
+      return this.el;
+    }
+
+    beforeDestroy() {
+      clearInterval(this.interval);
+    }
+
+    render() {
+      this.el.innerHTML = createElement();
+    }
+  }
+
+  const grid = new tui.Grid({
+		el: document.getElementById('grid'),
+		scrollX: false,
+		scrollY: false,
+		columns: [
+			{
+				header: 'Name',
+				name: 'name'
+			},
+			{
+				header: 'Artist',
+				name: 'artist'
+			},
+			{
+				header: 'Type',
+        name: 'type'
+			}
+    ],
+    header: {
+      columns: [
+        {
+          name: 'name',
+          renderer: CustomColumnHeader
+        }
+      ]
+    }
+  });
+
+  grid.resetData(gridData);
+  </script>
+</html>
