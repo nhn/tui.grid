@@ -152,6 +152,9 @@ export const columns = [
         listItems({ value }: { value: string }) {
           return twoDepthData[value];
         },
+        editable({ value }: { value: string }) {
+          return value !== '01';
+        },
         disabled({ value }: { value: string }) {
           return !value;
         }
@@ -173,6 +176,9 @@ export const columns = [
         targetNames: ['category3'],
         listItems({ value }: { value: string }) {
           return threeDepthData[value];
+        },
+        editable({ value }: { value: string }) {
+          return value !== '01_02';
         },
         disabled({ value }: { value: string }) {
           return !value;
