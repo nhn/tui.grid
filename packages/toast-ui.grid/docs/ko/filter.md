@@ -129,7 +129,7 @@ const grid = new tui.Grid({
 
 ### filter
 
-컬럼의 필터를 `state`에 맞춰 활성화 한다.
+특정 컬럼의 필터 조건을 변경하고 데이터를 필터링한다.
 
 ```js
 const state = {
@@ -142,7 +142,7 @@ grid.filter(columnName, state);
 
 ### unfilter
 
-컬럼의 필터를 해제한다.
+컬럼에 적용된 필터 조건을 제거한다.
 
 ```js
 grid.unfilter(columnName);
