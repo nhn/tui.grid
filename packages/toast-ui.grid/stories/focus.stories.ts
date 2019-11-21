@@ -1,67 +1,55 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
-import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('Focus', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Focus'
+};
 
-const columns = [
-  { name: 'name' },
-  { name: 'artist' },
-  { name: 'type' },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode' },
-  { name: 'grade' },
-  { name: 'price' },
-  { name: 'downloadCount' },
-  { name: 'listenCount' }
+function blur(el: HTMLElement) {
+  setTimeout(() => {
+    (el.querySelector('.tui-grid-clipboard') as HTMLElement).focus();
+    (el.querySelector('.tui-grid-clipboard') as HTMLElement).blur();
+  });
+}
+
+const data = [
+  { name: 'Beautiful Lies', artist: 'Birdy', type: 'Deluxe' },
+  { name: 'X', artist: 'Ed Sheeran', type: 'Deluxe' },
+  {
+    name: 'Moves Like Jagger',
+    artist: 'Maroon5',
+    type: 'Single'
+  }
 ];
+const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
 
-function createGrid(options: Omit<OptGrid, 'el'>) {
+function createGrid() {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, ...options });
+  const grid = new Grid({ el, data, columns });
 
   return { el, grid };
 }
 
-stories.add(
-  'Focus Activation',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      bodyHeight: 'fitToParent',
-      columnOptions: {
-        frozenCount: 2,
-        minWidth: 150
-      }
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+export const activeFocus = () => {
+  const { el, grid } = createGrid();
+  grid.focusAt(2, 2);
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+  rootEl.style.height = '400px';
 
-    button('getFocusedCell()', () => {
-      alert(`
-        ${grid.getFocusedCell().columnName}, 
-        ${grid.getFocusedCell().rowKey},
-        ${grid.getFocusedCell().value}
-        `);
-    });
-    button('activateFocus()', () => grid.activateFocus());
-    button('blur()', () => grid.blur());
-    button(`focus(1, 'type')`, () => grid.focus(1, 'type'));
-    button(`focus(2, 'release')`, () => grid.focus(2, 'release'));
-    button(`focusAt(0, 0)`, () => grid.focusAt(0, 0));
-    button(`focusAt(1, 1)`, () => grid.focusAt(1, 1));
+  return rootEl;
+};
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+export const inactiveFocus = () => {
+  const { el, grid } = createGrid();
+  const rootEl = document.createElement('div');
+
+  rootEl.appendChild(el);
+
+  grid.focusAt(2, 2);
+  blur(el);
+
+  return rootEl;
+};
