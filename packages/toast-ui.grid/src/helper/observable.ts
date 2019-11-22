@@ -1,5 +1,6 @@
-import { hasOwnProp, isObject, forEachObject, last, isEmpty } from './common';
+import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction } from './common';
 import { Dictionary } from '../store/types';
+import { patchArrayMethods } from './array';
 
 type BooleanSet = Dictionary<boolean>;
 
@@ -80,11 +81,15 @@ function run(observerId: string) {
 
 function setValue<T, K extends keyof T>(
   storage: T,
+  resultObj: T,
   observerIdSet: BooleanSet,
   key: keyof T,
   value: T[K]
 ) {
   if (storage[key] !== value) {
+    if (Array.isArray(value)) {
+      patchArrayMethods(value, resultObj, key as string);
+    }
     storage[key] = value;
     Object.keys(observerIdSet).forEach(observerId => {
       run(observerId);
@@ -144,10 +149,10 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       }
     });
 
-    if (typeof getter === 'function') {
+    if (isFunction(getter)) {
       observe(() => {
         const value = getter.call(resultObj);
-        setValue(storage, observerIdSet, key, value);
+        setValue(storage, resultObj, observerIdSet, key, value);
       }, sync);
     } else {
       // has to add 'as' type assertion and refer the below typescript issue
@@ -156,9 +161,14 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
       // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
       // https://github.com/microsoft/TypeScript/issues/31661
       (storage[key] as T) = obj[key];
+
+      if (Array.isArray(storage[key])) {
+        patchArrayMethods(storage[key], resultObj, key);
+      }
+
       Object.defineProperty(resultObj, key, {
         set(value) {
-          setValue(storage, observerIdSet, key, value);
+          setValue(storage, resultObj, observerIdSet, key, value);
         }
       });
     }
@@ -167,11 +177,15 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
   return resultObj as Observable<T>;
 }
 
-export function notify<T, K extends keyof T>(obj: T, key: K) {
+function notifyUnit<T, K extends keyof T>(obj: Observable<T>, key: K) {
+  Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
+    run(observerId);
+  });
+}
+
+export function notify<T, K extends keyof T>(obj: T, ...keys: K[]) {
   if (isObservable(obj)) {
-    Object.keys(obj.__propObserverIdSetMap__[key as string]).forEach(observerId => {
-      run(observerId);
-    });
+    keys.forEach(key => notifyUnit(obj, key));
   }
 }
 

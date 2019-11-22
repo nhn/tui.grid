@@ -147,24 +147,28 @@ function updateSubRowSpan(
 }
 
 function updateHeightsWithFilteredData(store: Store) {
-  const { data, rowCoords, dimension } = store;
-  const { pageOptions, pageRowRange, filteredRawData, filters } = data;
-  const { rowHeight } = dimension;
-
-  if (filters) {
+  if (store.data.filters) {
     initFocus(store);
   }
+  updateHeights(store);
+}
+
+export function updateHeights(store: Store) {
+  const { data, rowCoords, dimension } = store;
+  const { pageOptions, pageRowRange, filteredRawData } = data;
+  const { rowHeight } = dimension;
 
   rowCoords.heights = pageOptions.useClient
     ? filteredRawData.slice(...pageRowRange).map(row => getRowHeight(row, rowHeight))
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
 }
 
-function updatePageOptions(data: Data, totalCount: number) {
+export function updatePageOptions(data: Data, totalCount: number, page?: number) {
   if (data.pageOptions.useClient) {
     data.pageOptions = {
       ...data.pageOptions,
-      totalCount
+      totalCount,
+      page: page || data.pageOptions.page
     };
   }
 }
@@ -445,28 +449,15 @@ function resetSortKey(data: Data, start: number) {
 }
 
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
-  const { data, rowCoords, dimension, id } = store;
-  const { rawData, viewData, sortState, pageOptions, pageRowRange } = data;
-  const { heights } = rowCoords;
+  const { data, id } = store;
+  const { rawData, viewData, sortState, pageOptions } = data;
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
 
-  rawData.splice(at, 0, rawRow);
   viewData.splice(at, 0, viewRow);
-  heights.splice(at, 0, getRowHeight(rawRow, dimension.rowHeight));
-
-  if (pageOptions.useClient) {
-    const currentPageDataLength = pageRowRange[1] - pageRowRange[0];
-
-    if (currentPageDataLength === pageOptions.perPage) {
-      heights.pop();
-    }
-
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: pageOptions.totalCount! + 1
-    };
-  }
+  rawData.splice(at, 0, rawRow);
+  updatePageOptions(data, pageOptions.useClient ? pageOptions.totalCount! + 1 : 0);
+  updateHeights(store);
 
   if (at !== rawData.length) {
     updateSortKey(data, at);
@@ -482,20 +473,14 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   }
 
   getDataManager(id).push('CREATE', rawRow);
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(data, 'filteredRawData');
-  notify(data, 'filteredViewData');
-  notify(rowCoords, 'heights');
-
   updateSummaryValueByRow(store, rawRow, { type: 'APPEND' });
   setLoadingState(store, 'DONE');
   updateRowNumber(store, at);
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
-  const { data, rowCoords, id, focus, column, dimension } = store;
-  const { rawData, viewData, sortState, pageOptions, filteredRawData } = data;
+  const { data, id, focus, column } = store;
+  const { rawData, viewData, sortState, pageOptions } = data;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
 
   if (rowIdx === -1) {
@@ -503,44 +488,27 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   const nextRow = rawData[rowIdx + 1];
-  const [removedRow] = rawData.splice(rowIdx, 1);
+
+  if (pageOptions.useClient) {
+    const { perPage, totalCount, page } = pageOptions;
+    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+
+    if ((totalCount - 1) % perPage) {
+      modifiedLastPage += 1;
+    }
+    updatePageOptions(data, totalCount - 1, modifiedLastPage < page ? modifiedLastPage : page);
+  }
 
   viewData.splice(rowIdx, 1);
-  rowCoords.heights.splice(rowIdx, 1);
-
-  if (nextRow && isRowSpanEnabled(sortState)) {
-    updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
-  }
+  const [removedRow] = rawData.splice(rowIdx, 1);
+  updateHeights(store);
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
   }
 
-  if (pageOptions.useClient) {
-    const { perPage, totalCount, page } = pageOptions;
-    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
-    if ((totalCount - 1) % perPage) {
-      modifiedLastPage += 1;
-    }
-
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: totalCount - 1,
-      page: modifiedLastPage < page ? modifiedLastPage : page
-    };
-
-    const lastDataIndex = data.pageOptions.page * perPage - 1;
-    const hasNextData = lastDataIndex < rawData.length;
-
-    if (rowCoords.heights.length < perPage && hasNextData) {
-      rowCoords.heights = filteredRawData
-        .slice(...data.pageRowRange)
-        .map(row => getRowHeight(row, dimension.rowHeight));
-    } else {
-      notify(rowCoords, 'heights');
-    }
-  } else {
-    notify(rowCoords, 'heights');
+  if (nextRow && isRowSpanEnabled(sortState)) {
+    updateRowSpanWhenRemove(rawData, removedRow, nextRow, options.keepRowSpanData || false);
   }
 
   if (rowIdx !== rawData.length) {
@@ -548,10 +516,6 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   getDataManager(id).push('DELETE', removedRow);
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(data, 'filteredRawData');
-  notify(data, 'filteredViewData');
   updateSummaryValueByRow(store, removedRow, { type: 'REMOVE' });
   setLoadingState(store, getLoadingState(rawData));
   updateRowNumber(store, rowIdx);
@@ -568,8 +532,8 @@ export function clearData(store: Store) {
   initSortState(data);
   initFilter(store);
   rowCoords.heights = [];
-  data.rawData = [];
   data.viewData = [];
+  data.rawData = [];
   updatePageOptions(data, 0);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
@@ -702,13 +666,11 @@ export function setPagination({ data }: Store, pageOptions: PageOptions) {
 }
 
 export function movePage(store: Store, page: number) {
-  const { data, rowCoords, dimension } = store;
+  const { data } = store;
 
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
-  rowCoords.heights = data.filteredRawData
-    .slice(...data.pageRowRange)
-    .map(row => getRowHeight(row, dimension.rowHeight));
+  updateHeights(store);
   initSelection(store);
   initFocus(store);
   setScrollTop(store, 0);
@@ -772,11 +734,6 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   } else {
     changeToObservableData(column, data, originData);
   }
-
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(data, 'filteredRawData');
-  notify(data, 'filteredViewData');
 }
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
@@ -787,8 +744,8 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
-    data.rawData[targetIndex] = rawData[index];
-    data.viewData[targetIndex] = viewData[index];
+    data.viewData.splice(targetIndex, 1, viewData[index]);
+    data.rawData.splice(targetIndex, 1, rawData[index]);
   }
 }
 
@@ -811,8 +768,8 @@ function changeToObservableTreeData(
     const viewRow = createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
-    rawData[foundIndex] = rawRow;
-    viewData[foundIndex] = viewRow;
+    viewData.splice(foundIndex, 1, viewRow);
+    rawData.splice(foundIndex, 1, rawRow);
   });
 }
 
@@ -837,7 +794,7 @@ export function updateRowNumber({ data }: Store, startIndex: number) {
 }
 
 export function setRow(store: Store, rowIndex: number, row: OptRow) {
-  const { data, rowCoords, dimension, id, focus } = store;
+  const { data, id, focus } = store;
   const { rawData, viewData, sortState } = data;
   const orgRow = rawData[rowIndex];
 
@@ -846,16 +803,17 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   }
 
   row.sortKey = orgRow.sortKey;
-  const { heights } = rowCoords;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row);
+  // @TODO: should change to create rowKey
+  rawRow.rowKey = orgRow.rowKey;
+  viewRow.rowKey = orgRow.rowKey;
 
   if (someProp('rowKey', focus.rowKey, rawData)) {
     initFocus(store);
   }
 
-  rawData.splice(rowIndex, 1, rawRow);
   viewData.splice(rowIndex, 1, viewRow);
-  heights.splice(rowIndex, 1, getRowHeight(rawRow, dimension.rowHeight));
+  rawData.splice(rowIndex, 1, rawRow);
 
   if (isSorted(data)) {
     const { columnName, ascending } = sortState.columns[0];
@@ -867,12 +825,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   }
 
   getDataManager(id).push('UPDATE', rawRow);
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(data, 'filteredRawData');
-  notify(data, 'filteredViewData');
-  updateHeightsWithFilteredData(store);
 
+  updateHeightsWithFilteredData(store);
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   updateRowNumber(store, rowIndex);
 }
@@ -899,10 +853,6 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   viewData.splice(targetIndex, 0, viewRow);
 
   resetSortKey(data, minIndex);
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-  notify(data, 'filteredRawData');
-  notify(data, 'filteredViewData');
   updateRowNumber(store, minIndex);
   getDataManager(id).push('UPDATE', rawRow);
 }

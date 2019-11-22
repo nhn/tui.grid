@@ -2,7 +2,7 @@ import { ActiveColumnAddress, FilterState, Store } from '../store/types';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
-import { getUniqColumnData, getRowHeight } from '../query/data';
+import { getUniqColumnData } from '../query/data';
 import { FilterOpt, OperatorType, FilterOptionType } from '../types';
 import { createColumnFilterOption } from '../store/column';
 import { setScrollTop } from './viewport';
@@ -11,24 +11,14 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isHiddenColumn, isComplexHeader } from '../query/column';
-import { updateRowNumber, setCheckedAllRows } from './data';
+import { updateRowNumber, setCheckedAllRows, updateHeights, updatePageOptions } from './data';
 import { updateAllSummaryValues } from './summary';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
-  const { rowCoords, data, dimension } = store;
-  const { pageOptions, pageRowRange, filteredRawData } = data;
+  const { data } = store;
 
-  rowCoords.heights = filteredRawData
-    .slice(...pageRowRange)
-    .map(row => getRowHeight(row, dimension.rowHeight));
-
-  if (pageOptions.useClient) {
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: filteredRawData.length
-    };
-  }
-
+  updatePageOptions(data, data.filteredRawData.length);
+  updateHeights(store);
   setScrollTop(store, 0);
   initSelection(store);
   initFocus(store);
@@ -177,7 +167,6 @@ export function filter(
   state: FilterState[]
 ) {
   const { data, column, id } = store;
-  const { pageOptions, filteredRawData } = data;
   const columnFilterInfo = column.allColumnMap[columnName].filter;
 
   if (
@@ -190,26 +179,17 @@ export function filter(
 
   const filters = data.filters || [];
   const { type } = columnFilterInfo;
-  const columnFilter = findProp('columnName', columnName, filters);
+  const filterIndex = findPropIndex('columnName', columnName, filters);
 
-  if (columnFilter) {
-    columnFilter.conditionFn = conditionFn;
-    columnFilter.state = state;
+  if (filterIndex >= 0) {
+    const columnFilter = filters[filterIndex];
+    filters.splice(filterIndex, 1, { ...columnFilter, conditionFn, state });
   } else {
     data.filters = filters.concat({ columnName, type, conditionFn, state });
   }
 
-  notify(data, 'filters');
-
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ filterState: data.filters });
-
-  if (pageOptions.useClient) {
-    data.pageOptions = {
-      ...pageOptions,
-      totalCount: filteredRawData.length
-    };
-  }
 
   /**
    * Occurs when filtering
@@ -233,13 +213,12 @@ export function unfilter(store: Store, columnName: string) {
   if (filters) {
     const filterIndex = findPropIndex('columnName', columnName, filters);
     if (filterIndex >= 0) {
-      filters.splice(filterIndex, 1);
-
-      if (!filters.length) {
+      if (filters.length === 1) {
         data.filters = null;
+      } else {
+        filters.splice(filterIndex, 1);
       }
     }
-    notify(data, 'filters');
     initLayerAndScrollAfterFiltering(store);
     updateAllSummaryValues(store);
   }

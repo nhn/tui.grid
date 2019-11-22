@@ -1,5 +1,5 @@
 import { Data, Store, SortingType, SortedColumn } from '../store/types';
-import { arrayEqual, findPropIndex } from '../helper/common';
+import { findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
@@ -12,13 +12,8 @@ function sortData(store: Store) {
   // makes all data observable to sort the data properly;
   createObservableData(store, true);
   const { data, id } = store;
-  const {
-    sortState: { columns },
-    rawData: orgRawData,
-    viewData: orgViewData
-  } = data;
-  const rawData = [...orgRawData];
-  const viewData = [...orgViewData];
+  const { sortState, rawData, viewData } = data;
+  const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
 
   if (columns.length !== 1 || columns[0].columnName !== 'sortKey') {
@@ -28,11 +23,6 @@ function sortData(store: Store) {
 
   rawData.sort(sortRawData(options));
   viewData.sort(sortViewData(options));
-
-  if (!arrayEqual(rawData, orgRawData)) {
-    data.rawData = rawData;
-    data.viewData = viewData;
-  }
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ sortState: data.sortState });
