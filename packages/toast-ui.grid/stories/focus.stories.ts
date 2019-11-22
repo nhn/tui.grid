@@ -1,8 +1,14 @@
 import Grid from '../src/grid';
 import '../src/css/grid.css';
+import { OptColumn, OptRow } from '../src/types';
 
 export default {
   title: 'Focus'
+};
+
+type Options = {
+  data?: OptRow[];
+  rowHeight?: number | 'auto';
 };
 
 function blur(el: HTMLElement) {
@@ -21,13 +27,17 @@ const data = [
     type: 'Single'
   }
 ];
-const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
+const columns: OptColumn[] = [
+  { name: 'name' },
+  { name: 'artist' },
+  { name: 'type', whiteSpace: 'pre' }
+];
 
-function createGrid() {
+function createGrid(options?: Options) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, data, columns });
+  const grid = new Grid({ el, data, columns, ...options });
 
   return { el, grid };
 }
@@ -50,6 +60,30 @@ export const inactiveFocus = () => {
 
   grid.focusAt(2, 2);
   blur(el);
+
+  return rootEl;
+};
+
+export const focusWithWhitespace = () => {
+  const options = {
+    data: [
+      { name: 'Beautiful Lies', artist: 'Birdy', type: 'Deluxe' },
+      { name: 'X', artist: 'Ed Sheeran', type: 'Deluxe' },
+      {
+        name: 'Moves Like Jagger',
+        artist: 'Maroon5',
+        type: 'grid         example\ngrid newline and clipboard example\n\ngrid example'
+      }
+    ],
+    rowHeight: 'auto'
+  };
+  // @ts-ignore
+  const { el, grid } = createGrid(options);
+  const rootEl = document.createElement('div');
+
+  rootEl.appendChild(el);
+
+  grid.focusAt(2, 2);
 
   return rootEl;
 };
