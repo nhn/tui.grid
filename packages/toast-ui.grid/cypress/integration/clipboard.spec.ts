@@ -55,6 +55,7 @@ function pressDeleteKey() {
   cy.getByCls('clipboard').type('{del}', { force: true });
 }
 
+// @TODO move to keymap test
 ['API', 'UI'].forEach(method => {
   it(`selection and delete (by ${method})`, () => {
     cy.createGrid(defaultOptions);
@@ -75,4 +76,13 @@ function pressDeleteKey() {
   });
 });
 
-export {}
+// @TODO if cypress issue is resolved, should change to validate clipboard data.
+// https://github.com/cypress-io/cypress/issues/2386
+// describe('copy to clipboard', () => {
+//   it('basic value', () => {});
+//   it('formatted value', () => {});
+//   it('custom value', () => {});
+// });
+// it('paste', () => {});
+
+export {};
