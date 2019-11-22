@@ -330,13 +330,17 @@ describe('rowHeight', () => {
     const columns = [{ name: 'c1' }];
     const data = [{ c1: 'test' }];
     cy.createGrid({ data, columns, bodyHeight: 300, rowHeight: 70 });
-    cy.get('.tui-grid-row-odd').should('have.css', 'height', '70px');
+    cy.get('.tui-grid-row-odd').within($el => {
+      expect($el.height()).to.eql(70);
+    });
   });
 
   it('rowHeight: custom', () => {
     const columns = [{ name: 'c1' }];
     const data = [{ c1: 'test', _attributes: { height: 70 } }];
     cy.createGrid({ data, columns, bodyHeight: 300 });
-    cy.get('.tui-grid-row-odd').should('have.css', 'height', '70px');
+    cy.get('.tui-grid-row-odd').within($el => {
+      expect($el.height()).to.eql(70);
+    });
   });
 });

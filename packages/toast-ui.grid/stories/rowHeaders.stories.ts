@@ -1,7 +1,7 @@
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
+import { data as sampleData } from '../samples/basic';
 import { CellRendererProps } from '../src/renderer/types';
 import '../src/css/grid.css';
 import '../samples/css/rowHeaders.css';
@@ -11,6 +11,7 @@ export default {
 };
 
 const columns = [{ name: 'name', minWidth: 150 }];
+const data = sampleData.slice(0, 5);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
