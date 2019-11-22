@@ -1,0 +1,215 @@
+import { AlignType, VAlignType } from '@/types';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '@/renderer/types';
+
+export {};
+
+class CustomRenderer implements HeaderRenderer {
+  private el: HTMLElement;
+
+  private columnInfo: ColumnHeaderInfo;
+
+  public constructor(props: HeaderRendererProps) {
+    this.columnInfo = props.columnInfo;
+    const el = document.createElement('div');
+
+    el.className = 'custom';
+    el.textContent = `custom_${this.columnInfo.name}`;
+    el.style.fontSize = '18px';
+    el.style.fontStyle = 'italic';
+
+    this.el = el;
+  }
+
+  public getElement() {
+    return this.el;
+  }
+}
+
+function assertAlign(columnName: string, align: AlignType, valign: VAlignType) {
+  cy.getHeaderCell(columnName)
+    .should('have.css', 'vertical-align', valign)
+    .and('have.css', 'text-align', align);
+}
+
+const data = [
+  { id: 1, name: 'Kim', score: 90, grade: 'A' },
+  { id: 2, name: 'Lee', score: 80, grade: 'B' }
+];
+
+before(() => {
+  cy.visit('/dist');
+});
+
+beforeEach(() => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+});
+
+describe('header align', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        align: 'left',
+        valign: 'top',
+        columns: [{ name: 'grade', valign: 'bottom' }]
+      }
+    });
+  });
+
+  it('should apply align, valign', () => {
+    assertAlign('id', 'left', 'top');
+    assertAlign('name', 'left', 'top');
+  });
+
+  it('should apply align, valign after calling setColumns()', () => {
+    cy.gridInstance().invoke('setColumns', [{ name: 'grade' }]);
+
+    assertAlign('grade', 'left', 'bottom');
+  });
+});
+
+describe('complex column header', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        complexColumns: [
+          {
+            header: 'name',
+            name: 'nameHeader',
+            childNames: ['id', 'name'],
+            hideChildHeaders: true
+          },
+          {
+            header: 'scoreInfo',
+            name: 'complexColumn',
+            childNames: ['score', 'grade']
+          }
+        ]
+      }
+    });
+  });
+
+  it('should render merged header and complex column header properly', () => {
+    // merged header
+    cy.getHeaderCell('nameHeader').should('exist');
+    cy.getCell(0, 'id').should('exist');
+    cy.getCell(0, 'name').should('exist');
+    // complex column header
+    cy.getHeaderCell('complexColumn').should('exist');
+  });
+
+  it('hideColumn(), showColumn() with merged header', () => {
+    cy.gridInstance().invoke('hideColumn', 'nameHeader');
+
+    cy.getHeaderCell('nameHeader').should('not.exist');
+    cy.getCell(0, 'id').should('not.exist');
+    cy.getCell(0, 'name').should('not.exist');
+
+    cy.gridInstance().invoke('showColumn', 'nameHeader');
+
+    cy.getHeaderCell('nameHeader').should('exist');
+    cy.getCell(0, 'id').should('exist');
+    cy.getCell(0, 'name').should('exist');
+  });
+
+  it('should replace complexColumns after calling setHeader()', () => {
+    cy.gridInstance().invoke('setHeader', {
+      complexColumns: [
+        {
+          header: 'nameInformation',
+          name: 'complexColumn',
+          childNames: ['id', 'name']
+        }
+      ]
+    });
+
+    cy.getHeaderCell('complexColumn').should('exist');
+    cy.getHeaderCell('nameHeader').should('not.exist');
+    cy.getHeaderCell('scoreInfo').should('not.exist');
+  });
+
+  it('setColumnHeaders()', () => {
+    cy.gridInstance().invoke('setColumnHeaders', {
+      score: '_score',
+      grade: '_grade',
+      complexColumn: '_scoreInfo'
+    });
+
+    cy.getHeaderCell('score').should('have.text', '_score');
+    cy.getHeaderCell('grade').should('have.text', '_grade');
+    cy.getHeaderCell('complexColumn').should('have.text', '_scoreInfo');
+  });
+});
+
+it('should change the header height after calling setHeader()', () => {
+  const cellBorderWidth = 1;
+  const paddingHorizontal = 8;
+  const columns = [{ name: 'id' }, { name: 'name' }, { name: 'age' }];
+  const height = 300;
+
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('setHeader', { height });
+
+  cy.getByCls('cell-header').each($headers => {
+    expect($headers.height()).eq(height - cellBorderWidth - paddingHorizontal);
+  });
+});
+
+describe('header customizing', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'id' }, { name: 'name' }];
+
+    cy.createGrid({
+      data,
+      columns,
+      header: {
+        height: 100,
+        complexColumns: [
+          {
+            header: 'info',
+            name: 'mergeColumn1',
+            childNames: ['id', 'name'],
+            renderer: CustomRenderer
+          }
+        ],
+        columns: [
+          {
+            name: 'id',
+            renderer: CustomRenderer
+          }
+        ]
+      }
+    });
+  });
+
+  it('should render custom header renderer properly', () => {
+    cy.getHeaderCell('mergeColumn1').should('have.text', 'custom_mergeColumn1');
+    cy.getHeaderCell('id').should('have.text', 'custom_id');
+  });
+
+  // @TODO should move to selection
+  it('should header selection is operated properly', () => {
+    cy.getHeaderCell('mergeColumn1').within(() => {
+      cy.root()
+        .get('.custom')
+        .click();
+
+      cy.gridInstance()
+        .invoke('getFocusedCell')
+        .should('eql', {
+          rowKey: 0,
+          columnName: 'id',
+          value: 1
+        });
+    });
+  });
+});
