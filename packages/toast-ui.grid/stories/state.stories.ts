@@ -24,3 +24,10 @@ export const noData = () => {
 
   return el;
 };
+
+const noDataNote = `
+## State
+
+- If there is no data, the "no data" text is shown. 
+`;
+noData.story = { parameters: { notes: noDataNote } };

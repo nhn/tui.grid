@@ -24,7 +24,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
 }
 
 function createDataWithRowSpanAttr(): OptRow[] {
-  const optRows: OptRow[] = data.slice();
+  const optRows: OptRow[] = data.slice(0, 8);
   optRows[0]._attributes = {
     rowSpan: {
       name: 2,

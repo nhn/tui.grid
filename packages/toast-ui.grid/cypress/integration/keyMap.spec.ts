@@ -27,11 +27,11 @@ beforeEach(() => {
 });
 
 function assertEditFinished() {
-  cy.get(`.${cls('content-text')}`).should('not.exist');
+  cy.getByCls('content-text').should('not.exist');
 }
 
 function clipboardType(key: string) {
-  cy.get(`.${cls('clipboard')}`).type(key);
+  cy.getByCls('clipboard').type(key);
 }
 
 function assertFocusedCell(columnName: string, rowKey: number) {
@@ -50,37 +50,31 @@ describe('editor', () => {
   it('start and finish editing by pressing enter', () => {
     cy.getCellByIdx(1, 0).click();
     clipboardType('{enter}');
-    cy.get(`.${cls('content-text')}`).should('exist');
 
-    cy.getCellByIdx(0, 0)
-      .click()
-      .trigger('dblclick');
-    cy.get(`.${cls('content-text')}`).type('test{enter}');
+    cy.getByCls('content-text').should('exist');
 
-    cy.getCellByIdx(0, 0).should('have.text', 'test');
+    cy.getByCls('content-text').type('test{enter}');
+
+    cy.getCellByIdx(1, 0).should('have.text', 'test');
     assertEditFinished();
   });
 
   it('Stop editing by pressing esc', () => {
-    cy.getCellByIdx(0, 0)
-      .click()
-      .trigger('dblclick');
+    cy.gridInstance().invoke('startEditing', 0, 'name');
 
-    cy.get(`.${cls('content-text')}`).type('test{esc}');
+    cy.getByCls('content-text').type('test{esc}');
 
     cy.getCellByIdx(0, 0).should('not.have.text', 'test');
     assertEditFinished();
   });
 
-  it('delete content by pressing backspace or del key ', () => {
-    cy.getCellByIdx(0, 0).click();
-    clipboardType('{backspace}');
+  ['backspace', 'del'].forEach(key => {
+    it(`delete content by pressing ${key}`, () => {
+      cy.getCellByIdx(0, 0).click();
+      clipboardType(`{${key}}`);
 
-    cy.getCellByIdx(1, 0).click();
-    clipboardType('{del}');
-
-    cy.getCellByIdx(0, 0).should('have.text', '');
-    cy.getCellByIdx(1, 0).should('have.text', '');
+      cy.getCellByIdx(0, 0).should('have.text', '');
+    });
   });
 });
 
@@ -112,12 +106,10 @@ describe('Focus', () => {
   });
 
   it('Move to the last cell in row by pressing end key', () => {
-    cy.getCellByIdx(0, 0)
-      .click()
-      .then(() => {
-        clipboardType('{end}');
-        assertFocusedCell('value', 0);
-      });
+    cy.getCellByIdx(0, 0).click();
+    clipboardType('{end}');
+
+    assertFocusedCell('value', 0);
   });
 
   it('Move to the previous page cell in column by pressing pageup key', () => {

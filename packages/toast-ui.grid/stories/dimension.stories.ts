@@ -70,9 +70,3 @@ export const rowHeightAuto = () => {
 
   return createGrid({ data: myData, columns: myColumns, rowHeight: 'auto' }).el;
 };
-
-export const columnResizeable = () => {
-  const myColumns = columns.map(column => ({ ...column, resizable: true }));
-
-  return createGrid({ data, columns: myColumns }).el;
-};

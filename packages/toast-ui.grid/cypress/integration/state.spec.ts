@@ -27,9 +27,6 @@ it('should show "Loading data." text when fetch data.', () => {
   runMockServer();
   cy.createGrid({ columns, data });
 
-  cy.gridInstance()
-    .invoke('readData')
-    .then(() => {
-      cy.get(`.${cls('layer-state-content')}`).should('have.text', 'Loading data.');
-    });
+  cy.gridInstance().invoke('readData');
+  cy.get(`.${cls('layer-state-content')}`).should('have.text', 'Loading data.');
 });

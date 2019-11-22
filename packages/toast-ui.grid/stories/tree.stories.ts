@@ -20,18 +20,10 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-function clickCheckbox() {
-  setTimeout(() => {
-    const input = document.querySelectorAll('[data-column-name=_checked] input')[3] as HTMLElement;
-    input.click();
-  });
-}
-
 export const basic = () => {
   const { el } = createGrid({
     data,
     columns,
-    rowHeaders: ['rowNum', 'checkbox'],
     treeColumnOptions: {
       name: 'name',
       useCascadingCheckbox: true
@@ -39,8 +31,6 @@ export const basic = () => {
   });
   const rootEl = document.createElement('div');
   rootEl.appendChild(el);
-
-  clickCheckbox();
 
   return rootEl;
 };
