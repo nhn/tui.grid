@@ -4,31 +4,17 @@ export function createCustomLayerEditor(stub: Function) {
   class CustomLayerEditor implements CellEditor {
     public el: HTMLDivElement;
 
-    public layer: HTMLDivElement | null;
-
     public value: string;
 
     public constructor(props: CellEditorProps) {
       const el = document.createElement('div');
-      const layer = document.createElement('div');
-      const { grid, rowKey, columnInfo, value: cellValue } = props;
+      const { value: cellValue } = props;
       const value = String(cellValue) || '';
 
-      el.textContent = value;
-
-      layer.className = 'custom-editor-layer';
-      layer.textContent = 'Test';
-
-      el.addEventListener('click', () => {
-        el.appendChild(layer);
-      });
-
-      layer.addEventListener('click', () => {
-        grid.finishEditing(rowKey, columnInfo.name, this.getValue());
-      });
+      el.className = 'custom-editor-layer';
+      el.textContent = 'Test';
 
       this.el = el;
-      this.layer = layer;
       this.value = value;
     }
 
@@ -41,7 +27,6 @@ export function createCustomLayerEditor(stub: Function) {
     }
 
     public beforeDestroy() {
-      this.layer = null;
       stub();
     }
   }
