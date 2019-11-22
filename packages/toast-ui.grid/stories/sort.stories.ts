@@ -1,56 +1,33 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
-import { sortData } from '../samples/basic';
 import '../src/css/grid.css';
 
-const stories = storiesOf('Sort', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Sort'
+};
+
+const data = [{ A: 'A', B: 'B', C: 'C' }, { A: 'B', B: 'A', C: 'C' }, { A: 'C', B: 'B', C: 'A' }];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
-  const data = sortData.slice();
   const columns: OptColumn[] = [
     {
-      name: 'alphabetA',
-      header: 'alphabetA(desc)',
+      name: 'A',
+      header: 'Default Sort Button',
       minWidth: 150,
-      sortable: true,
-      sortingType: 'desc',
-      editor: 'text'
+      sortable: true
     },
     {
-      name: 'alphabetB',
-      header: 'alphabetB(asc)',
+      name: 'B',
+      header: 'ASC Button(Multi First)',
       minWidth: 150,
-      sortable: true,
-      sortingType: 'asc',
-      editor: 'text'
+      sortable: true
     },
     {
-      name: 'alphabetC',
-      header: 'alphabetC(desc)',
+      name: 'C',
+      header: 'DESC Button(Multi Second)',
       minWidth: 150,
-      sortable: true,
-      sortingType: 'desc',
-      editor: 'text'
-    },
-    {
-      name: 'numberA',
-      header: 'numberA(asc)',
-      minWidth: 150,
-      sortable: true,
-      sortingType: 'asc',
-      editor: 'text'
-    },
-    {
-      name: 'numberB',
-      header: 'numberB(desc)',
-      minWidth: 150,
-      sortable: true,
-      sortingType: 'desc',
-      editor: 'text'
+      sortable: true
     }
   ];
 
@@ -68,12 +45,22 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   return { el, grid };
 }
 
-stories.add(
-  'sort',
-  () => {
-    const { el } = createGrid();
+export const basic = () => {
+  const { el, grid } = createGrid();
 
-    return el;
-  },
-  { html: { preventForcedRender: true } }
-);
+  grid.sort('B', true);
+  grid.sort('C', false, true);
+
+  return el;
+};
+
+const basicNote = `
+## Sort Buttons
+- Basic (Both Sides Arrow Icon) : Sort is not Activated
+- Ascending (Up Arrow Icon) : Ascending Sort is Activated 
+- Descending (Down Arrow Icon) : Descending Sort is Activated
+
+## Sort Number
+The number next to the sort button indicates the order in which the multi sort is applied.
+`;
+basic.story = { parameters: { notes: basicNote } };

@@ -60,7 +60,8 @@
       "example21-header-align": "21. Header Align",
       "example22-setting-width-height": "22. Setting Width, Height",
       "example23-client-pagination": "23. Client Pagination",
-      "example24-filter": "24. Filter"
+      "example24-filter": "24. Filter",
+      "example24-large-data-performance": "25. Large Data Performance"
     }
   },
   "pathPrefix": "tui.grid"

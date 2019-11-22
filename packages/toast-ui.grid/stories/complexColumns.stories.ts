@@ -1,7 +1,7 @@
 import Grid from '../src/grid';
 import { OptGrid, OptColumn } from '../src/types';
 import { Omit } from 'utility-types';
-import { data } from '../samples/tree';
+import { data } from '../samples/basic';
 import '../src/css/grid.css';
 
 export default {

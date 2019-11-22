@@ -1,34 +1,17 @@
-import { OptPreset, OptRow } from '@/types';
-import { ThemeOptionPresetNames } from '@/theme/manager';
-import Grid from '@/grid';
+import { OptRow } from '@/types';
+import { cls } from '@/helper/dom';
 
 const data = [
   {
     name: 'Kim',
-    age: 30,
-    location: 'seoul'
+    age: 30
   },
   {
     name: 'Lee',
-    age: 40,
-    location: 'busan'
-  },
-  {
-    name: 'Han',
-    age: 28,
-    location: 'Bundang'
+    age: 40
   }
 ] as OptRow[];
-const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
-
-const CONTENT_WIDTH = 700;
-// @TODO: Retrieve scrollbar-width from real browser
-const SCROLLBAR_WIDTH = 17;
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
+const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
 before(() => {
   cy.visit('/dist');
@@ -40,35 +23,86 @@ beforeEach(() => {
   });
 });
 
-function createGridWithTheme(preset?: ThemeOptionPresetNames, extOptions?: OptPreset) {
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const defaultOptions = { columns, data };
-    const options = { ...defaultOptions };
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
+function assertBackgroundColor($el: JQuery<HTMLElement>, color: string) {
+  expect($el.css('background-color')).to.eql(color);
+}
 
-    if (preset) {
-      tui!.Grid.applyTheme(preset, extOptions);
-    }
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
+function assertBorderColor($el: JQuery<HTMLElement>, color: string) {
+  expect($el.css('border-color')).to.eql(color);
 }
 
 it('should have background color when mouse hover. And The background color disappears when the mouse leaves the row.', () => {
   const TEST_BG_COLOR = 'rgb(206, 147, 216)';
-  createGridWithTheme('clean', {
-    row: { hover: { background: TEST_BG_COLOR } }
+  const extOptions = { row: { hover: { background: TEST_BG_COLOR } } };
+  cy.createGrid({
+    data,
+    columns,
+    theme: { preset: 'clean', extOptions }
   });
+
   cy.getCell(0, 'name').trigger('mouseover');
   cy.get('[data-row-key=0]').each($el => {
-    expect($el.css('background-color')).to.eql(TEST_BG_COLOR);
+    assertBackgroundColor($el, TEST_BG_COLOR);
   });
   cy.getCell(0, 'name').trigger('mouseout');
   cy.get('[data-row-key=0]').each($el => {
     expect($el.css('background-color')).not.to.eql(TEST_BG_COLOR);
   });
+});
+
+it('should apply custom theme properly', () => {
+  const extOptions = {
+    cell: {
+      normal: {
+        background: 'rgb(232, 237, 255)',
+        border: 'rgb(255, 255, 255)'
+      },
+      header: {
+        background: 'rgb(185, 201, 254)',
+        border: 'rgb(170, 188, 254)',
+        text: 'rgb(0, 51, 153)'
+      },
+      editable: {
+        background: 'rgb(251, 251, 251)'
+      },
+      selectedHeader: {
+        background: 'rgb(216, 216, 216)'
+      },
+      focused: {
+        border: 'rgb(255, 155, 125)'
+      }
+    }
+  };
+
+  cy.createGrid({
+    data,
+    columns,
+    theme: { preset: 'clean', extOptions }
+  });
+
+  cy.get(`.${cls('cell-header')}`).each($el => {
+    assertBackgroundColor($el, 'rgb(185, 201, 254)');
+    assertBorderColor($el, 'rgb(170, 188, 254)');
+    expect($el.css('color')).to.eql('rgb(0, 51, 153)');
+  });
+
+  cy.get(`td.${cls('cell')}`).each($el => {
+    assertBorderColor($el, 'rgb(255, 255, 255)');
+  });
+
+  cy.getColumnCells('name').each($el => {
+    assertBackgroundColor($el, 'rgb(251, 251, 251)');
+  });
+
+  cy.getColumnCells('age').each($el => {
+    assertBackgroundColor($el, 'rgb(232, 237, 255)');
+  });
+
+  cy.getHeaderCell('name').click();
+  cy.getHeaderCell('name').should('have.css', 'background-color', 'rgb(216, 216, 216)');
+  cy.get(`.${cls('layer-focus-border')}`).should(
+    'have.css',
+    'background-color',
+    'rgb(255, 155, 125)'
+  );
 });

@@ -44,21 +44,21 @@ before(() => {
   cy.visit('/dist');
 });
 
+const data = createDataWithRowSpanAttr();
+const columns = [
+  { name: 'name', editor: 'text', sortable: true },
+  { name: 'artist', editor: 'text' },
+  { name: 'type', editor: 'text' }
+];
+
 beforeEach(() => {
   cy.document().then(doc => {
     doc.body.innerHTML = '';
   });
-  const data = createDataWithRowSpanAttr();
-  const columns = [
-    { name: 'name', editor: 'text', sortable: true },
-    { name: 'artist', editor: 'text' },
-    { name: 'type', editor: 'text' }
-  ];
-
-  cy.createGrid({ data, columns });
 });
 
 it('render rowSpan cell properly', () => {
+  cy.createGrid({ data, columns });
   cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
   cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
   cy.getCell(3, 'name').should('have.attr', 'rowSpan', '3');
@@ -66,6 +66,10 @@ it('render rowSpan cell properly', () => {
 });
 
 describe('getRowSpanData()', () => {
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
   it('getRowSpanData(0, name)', () => {
     assertRowSpanData(0, 'name', { mainRow: true, mainRowKey: 0, count: 2, spanCount: 2 });
   });
@@ -76,6 +80,10 @@ describe('getRowSpanData()', () => {
 });
 
 describe('appendRow()', () => {
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
   it('appendRow at 1 with extendPrevRowSpan options: true', () => {
     cy.gridInstance().invoke(
       'appendRow',
@@ -194,75 +202,112 @@ describe('appendRow()', () => {
 });
 
 describe('removeRow()', () => {
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
   it('removeRow at 0', () => {
-    cy.gridInstance().invoke('removeRow', 0, { keepRowSpanData: true });
+    cy.gridInstance().invoke('removeRow', 0, {
+      keepRowSpanData: true
+    });
 
     cy.getCell(1, 'artist').should('have.attr', 'rowSpan', '2');
 
-    assertRowSpanData(1, 'artist', { mainRow: true, mainRowKey: 1, count: 2, spanCount: 2 });
-    assertRowSpanData(2, 'artist', { mainRow: false, mainRowKey: 1, count: -1, spanCount: 2 });
+    assertRowSpanData(1, 'artist', {
+      mainRow: true,
+      mainRowKey: 1,
+      count: 2,
+      spanCount: 2
+    });
+    assertRowSpanData(2, 'artist', {
+      mainRow: false,
+      mainRowKey: 1,
+      count: -1,
+      spanCount: 2
+    });
   });
 
   it('removeRow at 1', () => {
-    cy.gridInstance().invoke('removeRow', 1, { keepRowSpanData: true });
+    cy.gridInstance().invoke('removeRow', 1, {
+      keepRowSpanData: true
+    });
 
     cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '2');
 
-    assertRowSpanData(0, 'artist', { mainRow: true, mainRowKey: 0, count: 2, spanCount: 2 });
-    assertRowSpanData(2, 'artist', { mainRow: false, mainRowKey: 0, count: -1, spanCount: 2 });
+    assertRowSpanData(0, 'artist', {
+      mainRow: true,
+      mainRowKey: 0,
+      count: 2,
+      spanCount: 2
+    });
+    assertRowSpanData(2, 'artist', {
+      mainRow: false,
+      mainRowKey: 0,
+      count: -1,
+      spanCount: 2
+    });
   });
 
   it('removeRow at 2', () => {
-    cy.gridInstance().invoke('removeRow', 2, { keepRowSpanData: true });
+    cy.gridInstance().invoke('removeRow', 2, {
+      keepRowSpanData: true
+    });
 
     cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
     cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '2');
 
-    assertRowSpanData(0, 'name', { mainRow: true, mainRowKey: 0, count: 2, spanCount: 2 });
-    assertRowSpanData(1, 'name', { mainRow: false, mainRowKey: 0, count: -1, spanCount: 2 });
+    assertRowSpanData(0, 'name', {
+      mainRow: true,
+      mainRowKey: 0,
+      count: 2,
+      spanCount: 2
+    });
+    assertRowSpanData(1, 'name', {
+      mainRow: false,
+      mainRowKey: 0,
+      count: -1,
+      spanCount: 2
+    });
 
-    assertRowSpanData(0, 'artist', { mainRow: true, mainRowKey: 0, count: 2, spanCount: 2 });
-    assertRowSpanData(1, 'artist', { mainRow: false, mainRowKey: 0, count: -1, spanCount: 2 });
+    assertRowSpanData(0, 'artist', {
+      mainRow: true,
+      mainRowKey: 0,
+      count: 2,
+      spanCount: 2
+    });
+    assertRowSpanData(1, 'artist', {
+      mainRow: false,
+      mainRowKey: 0,
+      count: -1,
+      spanCount: 2
+    });
   });
 
   it('removeRow at 3', () => {
-    cy.gridInstance().invoke('removeRow', 3, { keepRowSpanData: true });
+    cy.gridInstance().invoke('removeRow', 3, {
+      keepRowSpanData: true
+    });
 
     cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');
     cy.getCell(0, 'artist').should('have.attr', 'rowSpan', '3');
     cy.getCell(4, 'name').should('have.attr', 'rowSpan', '2');
 
-    assertRowSpanData(4, 'name', { mainRow: true, mainRowKey: 4, count: 2, spanCount: 2 });
-    assertRowSpanData(5, 'name', { mainRow: false, mainRowKey: 4, count: -1, spanCount: 2 });
+    assertRowSpanData(4, 'name', {
+      mainRow: true,
+      mainRowKey: 4,
+      count: 2,
+      spanCount: 2
+    });
+    assertRowSpanData(5, 'name', {
+      mainRow: false,
+      mainRowKey: 4,
+      count: -1,
+      spanCount: 2
+    });
   });
 });
 
 it('render rowSpan cell properly by calling resetData API', () => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-  const data = [
-    {
-      id: 549731,
-      name: 'Beautiful Lies',
-      artist: 'Birdy',
-      release: '2016.03.26',
-      type: 'Deluxe',
-      typeCode: '1',
-      genre: 'Pop',
-      genreCode: '1',
-      grade: '4',
-      price: 10000,
-      downloadCount: 1000,
-      listenCount: 5000
-    }
-  ];
-  const columns = [
-    { name: 'name', editor: 'text', sortable: true },
-    { name: 'artist', editor: 'text' },
-    { name: 'type', editor: 'text' }
-  ];
-
   cy.createGrid({ data, columns });
   cy.gridInstance().invoke('resetData', createDataWithRowSpanAttr());
 
@@ -273,15 +318,6 @@ it('render rowSpan cell properly by calling resetData API', () => {
 });
 
 it('render rowSpan cell properly by calling setColumns API', () => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-  const columns = [
-    { name: 'name', editor: 'text', sortable: true },
-    { name: 'artist', editor: 'text' },
-    { name: 'type', editor: 'text' }
-  ];
-
   cy.createGrid({ data: createDataWithRowSpanAttr(), columns: columns.slice(0, 1) });
   cy.gridInstance().invoke('setColumns', columns);
 

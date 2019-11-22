@@ -1,4 +1,3 @@
-import { storiesOf } from '@storybook/html';
 import Grid from '../src/grid';
 import { OptGrid, OptRow } from '../src/types';
 import { Omit } from 'utility-types';
@@ -6,49 +5,42 @@ import { data } from '../samples/basic';
 import '../src/css/grid.css';
 import { range } from '../src/helper/common';
 
-const stories = storiesOf('Dimension', module);
+export default {
+  title: 'Dimension'
+};
 
-const columns = [
-  { name: 'name' },
-  { name: 'artist' },
-  { name: 'type' },
-  { name: 'release' },
-  { name: 'genre' }
-];
+const columns = [{ name: 'name' }, { name: 'artist' }];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
-
   const grid = new Grid({ el, ...options });
-
-  (window as any).grid = grid;
 
   return { el, grid };
 }
 
-stories.add('bodyHeight: fitToParent', () => {
+export const bodyHeightFitToParent = () => {
   const { el } = createGrid({ data, columns, bodyHeight: 'fitToParent' });
   const rootEl = document.createElement('div');
-  rootEl.style.height = '400px';
+  rootEl.style.height = '200px';
   rootEl.appendChild(el);
 
   return rootEl;
-});
+};
 
-stories.add('bodyHeight: auto', () => {
+export const bodyHeightAuto = () => {
   return createGrid({ data, columns }).el;
-});
+};
 
-stories.add('bodyHeight: 500', () => {
+export const bodyHeight500 = () => {
   return createGrid({ data, columns, bodyHeight: 500 }).el;
-});
+};
 
-stories.add('rowHeight: 70', () => {
-  return createGrid({ data, columns, bodyHeight: 500, rowHeight: 70 }).el;
-});
+export const rowHeight70 = () => {
+  return createGrid({ data, columns, rowHeight: 70 }).el;
+};
 
-stories.add('rowHeight: custom', () => {
+export const rowHeightCustom = () => {
   const myData: OptRow[] = data.map(row => ({ ...row })).slice(0, 5);
   myData[0]._attributes = {
     height: 100
@@ -58,18 +50,14 @@ stories.add('rowHeight: custom', () => {
   };
 
   return createGrid({ data: myData, columns, bodyHeight: 500 }).el;
-});
+};
 
-stories.add('rowHeight: auto', () => {
+export const rowHeightAuto = () => {
   const myColumns: OptGrid['columns'] = [
-    { name: 'col1', whiteSpace: 'pre', editor: 'text' },
-    { name: 'col2', whiteSpace: 'normal', editor: 'text' }
+    { name: 'col1', whiteSpace: 'pre' },
+    { name: 'col2', whiteSpace: 'normal' }
   ];
   const myData = [
-    {
-      col1: 'Short',
-      col2: 'Short'
-    },
     {
       col1: 'Long\n\n\n\n\n\nSeven new lines',
       col2: 'Short'
@@ -77,18 +65,8 @@ stories.add('rowHeight: auto', () => {
     {
       col1: 'Short',
       col2: range(100).join('-')
-    },
-    {
-      col1: 'Short',
-      col2: 'Short'
     }
   ];
 
-  return createGrid({ data: myData, columns: myColumns, rowHeight: 'auto', bodyHeight: 'auto' }).el;
-});
-
-stories.add('column resizeable', () => {
-  const myColumns = columns.map(column => ({ ...column, resizable: true }));
-
-  return createGrid({ data, columns: myColumns, bodyHeight: 500 }).el;
-});
+  return createGrid({ data: myData, columns: myColumns, rowHeight: 'auto' }).el;
+};

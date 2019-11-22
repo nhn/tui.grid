@@ -1,24 +1,17 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
+import { data as sampleData } from '../samples/basic';
 import { CellRendererProps } from '../src/renderer/types';
-
 import '../src/css/grid.css';
 import '../samples/css/rowHeaders.css';
 
-const stories = storiesOf('Row Headers', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Row Headers'
+};
 
-const columns = [
-  { name: 'name', minWidth: 150 },
-  { name: 'artist', minWidth: 150 },
-  { name: 'type', minWidth: 150 },
-  { name: 'release', minWidth: 150 },
-  { name: 'genre', minWidth: 150 }
-];
+const columns = [{ name: 'name', minWidth: 150 }];
+const data = sampleData.slice(0, 5);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -29,7 +22,7 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-export class RowNumberRenderer {
+class RowNumberRenderer {
   private el: HTMLElement;
 
   public constructor(props: CellRendererProps) {
@@ -45,7 +38,7 @@ export class RowNumberRenderer {
   }
 
   public render(props: CellRendererProps) {
-    this.el.innerHTML = props.formattedValue;
+    this.el.innerHTML = `No.${props.value}`;
   }
 }
 
@@ -95,7 +88,7 @@ class SingleCheckRenderer {
   }
 }
 
-stories.add('row number, checkbox', () => {
+export const basic = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -105,104 +98,49 @@ stories.add('row number, checkbox', () => {
   rootEl.appendChild(el);
 
   return rootEl;
-});
+};
 
-stories.add(
-  'set object type option',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'rowNum',
-          header: 'row number',
-          width: 100,
-          align: 'left'
-        },
-        {
-          type: 'checkbox',
-          header: 'checkbox',
-          width: 100,
-          align: 'left'
+const basicNote = `
+## Row Header
+
+- Basic UI for \`rowNum\` and \`checkbox\` type
+`;
+basic.story = { parameters: { notes: basicNote } };
+
+export const customRowHeader = () => {
+  const { el } = createGrid({
+    data,
+    columns,
+    rowHeaders: [
+      {
+        type: 'rowNum',
+        renderer: {
+          type: RowNumberRenderer
         }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'use custom renderer - row number',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'rowNum',
-          renderer: {
-            type: RowNumberRenderer
-          }
-        }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'use custom renderer - checkbox',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: [
-        {
-          type: 'checkbox',
-          header: `
+      },
+      {
+        type: 'checkbox',
+        header: `
             <label for="all-checkbox" class="checkbox">
               <input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />
               <span class="custom-input"></span>
             </label>
           `,
-          renderer: {
-            type: SingleCheckRenderer
-          }
+        renderer: {
+          type: SingleCheckRenderer
         }
-      ]
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
-
-stories.add(
-  'use frozen columns',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      rowHeaders: ['rowNum', 'checkbox'],
-      columnOptions: {
-        frozenCount: 2
       }
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
+    ]
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  return rootEl;
+};
+
+const customRowHeaderNote = `
+## Custom Row Header
+
+Customizing Row Headers with header and renderer.
+`;
+customRowHeader.story = { parameters: { notes: customRowHeaderNote } };

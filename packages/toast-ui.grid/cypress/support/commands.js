@@ -34,6 +34,13 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
     Object.assign(el.style, styles);
     document.body.appendChild(el);
 
+    if (gridOptions.theme) {
+      const { preset, extOptions } = gridOptions.theme;
+
+      tui.Grid.applyTheme(preset, extOptions);
+      delete gridOptions.theme;
+    }
+
     win.grid = new tui.Grid({ el, ...gridOptions });
 
     return new Promise(resolve => {
