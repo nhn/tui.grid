@@ -31,9 +31,9 @@ export const dummyRows = () => {
 
   return rootEl;
 };
+
 const dummyRowsNote = `
 ## Dummy Rows
 - Show the dummy rows to fill remaining area in grid
 `;
-
 dummyRows.story = { parameters: { notes: dummyRowsNote } };

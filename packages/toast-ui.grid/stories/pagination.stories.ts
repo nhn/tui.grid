@@ -60,17 +60,29 @@ export const firstPageBasic = () => {
   return el;
 };
 
+const pageBasicNote = `
+## Pagination UI
+- UI for basic pagination
+- UI for exceeded range of pagination
+`;
+
+firstPageBasic.story = { parameters: { notes: pageBasicNote } };
+
 export const lastPageBasic = () => {
   const { el } = createGrid();
   clickLastPageBtnAsync(el);
   return el;
 };
 
+lastPageBasic.story = { parameters: { notes: pageBasicNote } };
+
 export const FirstPageInExceededRange = () => {
   const { el, grid } = createGrid();
   grid.appendRow(appendData);
   return el;
 };
+
+FirstPageInExceededRange.story = { parameters: { notes: pageBasicNote } };
 
 export const lastPageInExceededRange = () => {
   const { el, grid } = createGrid();
@@ -79,66 +91,4 @@ export const lastPageInExceededRange = () => {
   return el;
 };
 
-// export const basic = () => {
-//   const { el, grid } = createGrid();
-//   grid.appendRow(appendData);
-
-//   return el;
-// };
-
-// stories.add(
-//   'client pagination',
-//   () => {
-//     const { el, grid } = createGrid({
-//       data: data.slice(0, 100),
-//       columns,
-//       bodyHeight: 'fitToParent',
-//       rowHeaders: ['rowNum'],
-//       columnOptions: {
-//         frozenCount: 2,
-//         minWidth: 150
-//       },
-//       pageOptions: {
-//         useClient: true,
-//         perPage: 10
-//       }
-//     });
-//     const rootEl = document.createElement('div');
-//     rootEl.appendChild(el);
-//     rootEl.style.height = '400px';
-
-//     const appendBtn = document.createElement('button');
-//     const prependBtn = document.createElement('button');
-//     const removeBtn = document.createElement('button');
-//     const clearAllBtn = document.createElement('button');
-
-//     appendBtn.textContent = 'appendRow';
-//     prependBtn.textContent = 'prependRow';
-//     removeBtn.textContent = 'removeRow';
-//     clearAllBtn.textContent = 'clearAllBtn';
-
-//     appendBtn.addEventListener('click', () => {
-//       grid.appendRow(appendData, { at: 3 });
-//     });
-
-//     prependBtn.addEventListener('click', () => {
-//       grid.prependRow(appendData);
-//     });
-
-//     removeBtn.addEventListener('click', () => {
-//       grid.removeRow(5);
-//     });
-
-//     clearAllBtn.addEventListener('click', () => {
-//       grid.clear();
-//     });
-
-//     rootEl.appendChild(appendBtn);
-//     rootEl.appendChild(prependBtn);
-//     rootEl.appendChild(removeBtn);
-//     rootEl.appendChild(clearAllBtn);
-
-//     return rootEl;
-//   },
-//   { html: { preventForcedRender: true } }
-// );
+lastPageInExceededRange.story = { parameters: { notes: pageBasicNote } };

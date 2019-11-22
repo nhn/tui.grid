@@ -107,6 +107,12 @@ export const text = () => {
 
   return el;
 };
+const textNote = `
+## Text Editing Layer
+- The editing layer UI for \`text\` type
+- Using native input-text
+`;
+text.story = { parameters: { notes: textNote } };
 
 export const checkbox = () => {
   const { el, grid } = createGrid();
@@ -115,6 +121,12 @@ export const checkbox = () => {
 
   return el;
 };
+const checkboxNote = `
+## Checkbox Editing Layer
+- The editing layer UI for \`checkbox\` type
+- Using native input-checkbox
+`;
+checkbox.story = { parameters: { notes: checkboxNote } };
 
 export const radio = () => {
   const { el, grid } = createGrid();
@@ -123,6 +135,12 @@ export const radio = () => {
 
   return el;
 };
+const radioNote = `
+## Radio Editing Layer
+- The editing layer UI for \`radio\` type
+- Using native input-radio
+`;
+radio.story = { parameters: { notes: radioNote } };
 
 export const select = () => {
   const { el, grid } = createGrid();
@@ -131,6 +149,12 @@ export const select = () => {
 
   return el;
 };
+const selectNote = `
+## Select Editing Layer
+- The editing layer UI for \`select\` type
+- Using native input-select
+`;
+select.story = { parameters: { notes: selectNote } };
 
 export const datepicker = () => {
   const { el, grid } = createGrid();
@@ -139,3 +163,9 @@ export const datepicker = () => {
 
   return el;
 };
+const datepickerNote = `
+## Datepicker Editing Layer
+- The editing layer UI for \`datepicker\` type
+- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+`;
+datepicker.story = { parameters: { notes: datepickerNote } };

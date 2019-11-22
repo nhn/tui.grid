@@ -93,6 +93,12 @@ export const layerWithButtons = () => {
   return el;
 };
 
+const layerWithButtonsNote = `
+## Filter Layer With Buttons
+- Displaying the filter layer with \`Clear\` and \`Apply\` buttons
+`;
+layerWithButtons.story = { parameters: { notes: layerWithButtonsNote } };
+
 export const layerWithOperator = () => {
   const columns: OptColumn[] = [{ name: 'age', filter: { type: 'number', operator: 'AND' } }];
 
@@ -107,6 +113,12 @@ export const layerWithOperator = () => {
 
   return el;
 };
+
+const layerWithOperatorNote = `
+## Filter Layer With Operator
+- Displaying the filter layer with operater(\`AND\`,\`OR\` radio type)
+`;
+layerWithOperator.story = { parameters: { notes: layerWithOperatorNote } };
 
 export const layerSelect = () => {
   const columns: OptColumn[] = [{ name: 'type', filter: 'select' }];
@@ -143,6 +155,11 @@ export const layerSelect = () => {
 
   return el;
 };
+const layerSelectNote = `
+## Select Filter Layer
+- Displaying the select filter layer
+`;
+layerSelect.story = { parameters: { notes: layerSelectNote } };
 
 export const layerDatePicker = () => {
   const columns: OptColumn[] = [{ name: 'date', filter: 'date' }];
@@ -153,3 +170,9 @@ export const layerDatePicker = () => {
 
   return el;
 };
+const layerDatePickerNote = `
+## Datepicker Filter Layer
+- UI for \`datepicker\` filter type
+- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+`;
+layerDatePicker.story = { parameters: { notes: layerDatePickerNote } };

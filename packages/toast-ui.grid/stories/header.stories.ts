@@ -71,6 +71,21 @@ export const alignAndVerticalAlign = () => {
 
   return rootEl;
 };
+const alignAndVerticalAlignNote = `
+## Header Align and Vertical Align
+- It's possible to specify align, valign in each column header
+- name
+  - align: \`center\`(default)
+  - vertical align: \`middle\`(default)
+- name
+  - align: \`left\`
+  - vertical align: \`top\`
+- name
+  - align: \`right\`
+  - vertical align: \`bottom\`
+`;
+
+alignAndVerticalAlign.story = { parameters: { notes: alignAndVerticalAlignNote } };
 
 export const complexColumnHeader = () => {
   const columns = [
@@ -116,11 +131,6 @@ export const complexColumnHeader = () => {
         childNames: ['type', 'release', 'genre']
       },
       {
-        header: 'Detail',
-        name: 'mergeColumn3',
-        childNames: ['mergeColumn6', 'mergeColumn2']
-      },
-      {
         header: 'Count',
         name: 'mergeColumn4',
         childNames: ['downloadCount', 'listenCount']
@@ -128,7 +138,7 @@ export const complexColumnHeader = () => {
       {
         header: 'Album Info',
         name: 'mergeColumn5',
-        childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+        childNames: ['price', 'mergeColumn2', 'mergeColumn4']
       }
     ]
   };
@@ -139,6 +149,16 @@ export const complexColumnHeader = () => {
 
   return rootEl;
 };
+const complexColumnHeaderNote = `
+## Complex Column Headers
+- Create the merged parent header
+- Extra: Parent of \`Type\`, \`Release\`, \`Genre\`
+- Count: Parent of \`Download\`, \`Listen\`
+- Album Info: Parent of \`Extra\`, \`Price\`, \`Count\`
+
+`;
+
+complexColumnHeader.story = { parameters: { notes: complexColumnHeaderNote } };
 
 export const mergedColumnHeader = () => {
   const data = [{ name: 'P.D.A', artist: 'John legend', type: 'Deluxe' }];
@@ -159,6 +179,14 @@ export const mergedColumnHeader = () => {
 
   return rootEl;
 };
+const mergedColumnHeaderNote = `
+## Merged Column Header
+- Merge the column headers without creating merged parent header
+- UI for displaying the seperated data in one column header
+- name: merged \`name\` and \`artist\`
+`;
+
+mergedColumnHeader.story = { parameters: { notes: mergedColumnHeaderNote } };
 
 export const customColumnHeader = () => {
   const header = {
@@ -184,3 +212,9 @@ export const customColumnHeader = () => {
 
   return rootEl;
 };
+const customColumnHeaderNote = `
+## Custom Column Header
+- Customizing the column header
+`;
+
+customColumnHeader.story = { parameters: { notes: customColumnHeaderNote } };

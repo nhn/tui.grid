@@ -52,6 +52,14 @@ export const activeFocus = () => {
   return rootEl;
 };
 
+const focusBasicNote = `
+## Focus Layer
+- Active focus layer(background-color: \`#00a9ff\`)
+- Inactive focus layer(background-color:  \`#aaa\`)
+`;
+
+activeFocus.story = { parameters: { notes: focusBasicNote } };
+
 export const inactiveFocus = () => {
   const { el, grid } = createGrid();
   const rootEl = document.createElement('div');
@@ -63,6 +71,8 @@ export const inactiveFocus = () => {
 
   return rootEl;
 };
+
+inactiveFocus.story = { parameters: { notes: focusBasicNote } };
 
 export const focusWithWhitespace = () => {
   const options = {
@@ -87,3 +97,10 @@ export const focusWithWhitespace = () => {
 
   return rootEl;
 };
+
+const focusWithWhitespaceNote = `
+## Focus Layer(**whitespace: pre**)
+- UI for focus layer on dynamic row height
+`;
+
+focusWithWhitespace.story = { parameters: { notes: focusWithWhitespaceNote } };

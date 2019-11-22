@@ -90,9 +90,22 @@ export const defaultRenderer = () => {
 
   return el;
 };
+const defaultRendererNote = `
+## Default Renderer
+- Display the value in the \`div\` block cell
+`;
+
+defaultRenderer.story = { parameters: { notes: defaultRendererNote } };
 
 export const customRenderer = () => {
   const { el } = createGrid();
 
   return el;
 };
+
+const customRendererNote = `
+## Custom Renderer
+- Customizing cell renderer with slider.
+`;
+
+customRenderer.story = { parameters: { notes: customRendererNote } };
