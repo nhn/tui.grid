@@ -160,7 +160,9 @@ it('should change the header height after calling setHeader()', () => {
   cy.gridInstance().invoke('setHeader', { height });
 
   cy.getByCls('cell-header').each($headers => {
-    expect($headers.height()).eq(height - cellBorderWidth - paddingHorizontal);
+    cy.wrap($headers)
+      .invoke('height')
+      .should('eq', height - cellBorderWidth - paddingHorizontal);
   });
 });
 

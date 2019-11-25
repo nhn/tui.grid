@@ -76,13 +76,13 @@ describe('className', () => {
     cy.gridInstance().invoke('addColumnClassName', 'age', 'column-test-d');
 
     cy.getColumnCells('age').each($el => {
-      expect($el).have.class('column-test-d');
+      cy.wrap($el).should('have.class', 'column-test-d');
     });
 
     cy.gridInstance().invoke('removeColumnClassName', 'age', 'column-test-d');
 
     cy.getColumnCells('age').each($el => {
-      expect($el).have.not.class('column-test-d');
+      cy.wrap($el).should('have.not.class', 'column-test-d');
     });
   });
 
@@ -143,24 +143,24 @@ describe('row, checkbox disable', () => {
     cy.getRow(0).each(($el, index) => {
       if (!index) {
         // checkbox
-        expect($el).have.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.class', cls('cell-disabled'));
       } else {
-        expect($el).have.not.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.not.class', cls('cell-disabled'));
       }
     });
 
     // second row
     cy.getRow(1).each($el => {
-      expect($el).have.class(cls('cell-disabled'));
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     // third row
     cy.getRow(2).each(($el, index) => {
       if (!index) {
         // checkbox
-        expect($el).have.not.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.not.class', cls('cell-disabled'));
       } else {
-        expect($el).have.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.class', cls('cell-disabled'));
       }
     });
   });
@@ -169,13 +169,13 @@ describe('row, checkbox disable', () => {
     cy.gridInstance().invoke('disable');
 
     cy.getRow(0).each($el => {
-      expect($el).have.class(cls('cell-disabled'));
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
     cy.getRow(1).each($el => {
-      expect($el).have.class(cls('cell-disabled'));
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
     cy.getRow(2).each($el => {
-      expect($el).have.class(cls('cell-disabled'));
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
 
@@ -183,7 +183,7 @@ describe('row, checkbox disable', () => {
     cy.gridInstance().invoke('disableRow', 1);
 
     cy.getRow(1).each($el => {
-      expect($el).have.class(cls('cell-disabled'));
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     cy.gridInstance().invoke('enableRow', 1, false);
@@ -191,9 +191,9 @@ describe('row, checkbox disable', () => {
     cy.getRow(1).each(($el, index) => {
       if (!index) {
         // checkbox disabled
-        expect($el).have.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.class', cls('cell-disabled'));
       } else {
-        expect($el).have.not.class(cls('cell-disabled'));
+        cy.wrap($el).should('have.not.class', cls('cell-disabled'));
       }
     });
   });

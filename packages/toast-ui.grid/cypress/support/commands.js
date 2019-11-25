@@ -31,13 +31,12 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl =
     const el = document.createElement('div');
     const styles = { width: '800px', ...containerStyle };
 
-    Object.assign(el.style, styles);
-
     if (parentEl) {
       parentEl.appendChild(el);
       document.body.appendChild(parentEl);
       cy.wait(10);
     } else {
+      Object.assign(el.style, styles);
       document.body.appendChild(el);
     }
 

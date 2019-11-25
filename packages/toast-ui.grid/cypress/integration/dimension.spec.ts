@@ -351,7 +351,7 @@ describe('row height', () => {
     createGridWithRowHeight({ rowHeight: 70 });
 
     getRsideBody()
-      .children('tr')
+      .find('tr')
       .each($el => {
         expect($el.height()).to.eql(70);
       });
