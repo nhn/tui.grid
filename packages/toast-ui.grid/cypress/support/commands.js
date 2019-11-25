@@ -75,10 +75,14 @@ Cypress.Commands.add('getHeaderCell', columnName => {
   return cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`);
 });
 
-Cypress.Commands.add('getRowNumCell', rowKey => {
+Cypress.Commands.add('getRowHeaderCell', rowKey => {
   return cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"]`);
 });
 
 Cypress.Commands.add('getColumnCells', columnName => {
   return cy.get(`td[data-column-name=${columnName}]`);
+});
+
+Cypress.Commands.add('getRow', rowKey => {
+  return cy.get(`td[data-row-key=${rowKey}]`);
 });
