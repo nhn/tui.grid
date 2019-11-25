@@ -350,13 +350,11 @@ describe('row height', () => {
   it('rowHeight: 70', () => {
     createGridWithRowHeight({ rowHeight: 70 });
 
-    getRsideBody().within(() => {
-      cy.root()
-        .get('tr')
-        .each($el => {
-          expect($el.height()).to.eql(70);
-        });
-    });
+    getRsideBody()
+      .children('tr')
+      .each($el => {
+        expect($el.height()).to.eql(70);
+      });
   });
 
   it('rowHeight: custom', () => {
