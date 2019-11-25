@@ -62,6 +62,6 @@ There are some options in `appendRow` and `removeRow` API that only work properl
 | `appendRow`| `extendPrevRowSpan` | If the row immediately before (above) the newly appended row is at the bottom of the merged cell, the `extendPrevRowSpan` option determines whether or not to extend the merge range to the previous row. If the row is appended into the middle of the merged cells, the cell is merged regardless of this option's value.  |
 | `removeRow`| `keepRowSpanData` | If the row that is at the top of the merged cells is deleted, `keepRowSpanData` determines whether or not to maintain the row span feature. If the row is deleted from the middle of the merged cells, the cell is deleted regardless of this option's value. |
 
-## Examples
+## Example
 
 More examples with Row Span can be found [here](http://nhn.github.io/tui.grid/latest/tutorial-example06-attributes).

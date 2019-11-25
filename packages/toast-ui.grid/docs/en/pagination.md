@@ -72,6 +72,6 @@ console.log(currentPage);
 grid.setPerPage(10);
 ```
 
-## Examples
+## Example
 
 More examples with Client Pagination can be found [here](http://nhn.github.io/tui.grid/latest/tutorial-example23-client-pagination), and those regarding Data Source synced pagination can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example10-data-source).

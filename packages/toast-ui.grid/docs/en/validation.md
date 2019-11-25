@@ -218,6 +218,6 @@ grid.validate();
 ]
 ```
 
-## Examples
+## Example
 
 More examples with validation can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example20-validation).

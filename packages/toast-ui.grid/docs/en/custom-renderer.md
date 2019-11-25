@@ -92,6 +92,6 @@ class CustomTextECustomSliderRendererditor {
 }
 ```
 
-## Examples
+## Example
 
 More examples with Custom Renderer can be found [here](https://nhn.github.io/tui.grid/latest/tutorial-example04-custom-renderer).
