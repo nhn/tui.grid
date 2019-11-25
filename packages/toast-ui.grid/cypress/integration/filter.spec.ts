@@ -1,574 +1,713 @@
-import { Omit } from 'utility-types';
-import { cls } from '../../src/helper/dom';
-import { sortData as sampleData } from '../../samples/basic';
-import Grid from '../../src/grid';
-import { OptGrid, OptColumn, CellValue } from '../../src/types';
-import { getUnixTime } from '@/helper/filter';
-
-interface GridGlobal {
-  tui: { Grid: typeof Grid };
-  grid: Grid;
-}
-
-const CONTENT_WIDTH = 700;
-// @TODO: Retrieve scrollbar-width from real browser
-const SCROLLBAR_WIDTH = 17;
-
-const columns: OptColumn[] = [
-  { name: 'alphabetA', minWidth: 100, editor: 'text', filter: { type: 'text', operator: 'AND' } },
-  { name: 'alphabetB', minWidth: 100, filter: 'select' },
-  {
-    name: 'date',
-    minWidth: 150,
-    filter: { type: 'date', options: { date: new Date(2019, 9, 19) } }
-  },
-  {
-    name: 'numberA',
-    minWidth: 150,
-    editor: 'text',
-    filter: { type: 'number', showClearBtn: true, showApplyBtn: true }
-  },
-  {
-    name: 'value'
-  },
-  { name: 'alphabetC', minWidth: 100, filter: 'text' }
-];
-
-function createDefaultOptions(): Omit<OptGrid, 'el'> {
-  const data = sampleData.slice();
-
-  return { data, columns };
-}
-
-function createGrid(customOptions: Record<string, unknown> = {}) {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
-  cy.window().then((win: Window & Partial<GridGlobal>) => {
-    const { document, tui } = win;
-    const defaultOptions = createDefaultOptions();
-    const options = { ...defaultOptions, ...customOptions };
-    const el = document.createElement('div');
-    el.style.width = `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px`;
-    document.body.appendChild(el);
-
-    win.grid = new tui!.Grid({ el, ...options });
-    cy.wait(10);
-  });
-  cy.get(`.${cls('btn-filter')}`)
-    .first()
-    .as('firstFilter');
-
-  cy.get(`.${cls('btn-filter')}`)
-    .eq(1)
-    .as('secondFilter');
-
-  cy.get(`.${cls('btn-filter')}`)
-    .eq(2)
-    .as('thirdFilter');
-
-  cy.get(`.${cls('btn-filter')}`)
-    .eq(3)
-    .as('fourthFilter');
-}
-
-function equalColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
-    $el.each((index, elem) => {
-      expect(elem.textContent).to.eql(expectValues);
-    });
-  });
-}
-
-function includeColumnData(columnName: string, expectValues: CellValue[]) {
-  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
-    $el.each((index, elem) => {
-      expect(expectValues.includes(elem.textContent)).to.be.true;
-    });
-  });
-}
-
-function notEqualColumnData(columnName: string, expectValues: CellValue) {
-  cy.get(`td[data-column-name=${columnName}].${cls('cell')}`).should($el => {
-    $el.each((index, elem) => {
-      expect(elem.textContent).not.to.eql(expectValues);
-    });
-  });
-}
-
-function compareColumnCellLength(length: number) {
-  if (length) {
-    const columnLength = 6;
-    cy.get(`td.${cls('cell')}`)
-      .its('length')
-      .should('be.eq', length * columnLength);
-  } else {
-    cy.get(`td.${cls('cell')}`).should('not.exist');
-  }
-}
+import { cls } from '@/helper/dom';
 
 before(() => {
   cy.visit('/dist');
 });
 
-describe('common', () => {
+beforeEach(() => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
+});
+
+function invokeFilter(columnName: string, states: any) {
+  cy.gridInstance().invoke('filter', columnName, states);
+}
+
+function clickFilterBtn() {
+  cy.getByCls('btn-filter').click();
+}
+
+function selectFilterCode(option: any) {
+  cy.getByCls('filter-container')
+    .find('select')
+    .select(option);
+}
+
+function clickCloseBtn() {
+  cy.getByCls('filter-container', 'btn-close').click();
+}
+
+function getFilterLayer() {
+  return cy.getByCls('filter-container');
+}
+
+function getRsideBody() {
+  return cy.getByCls('rside-area', 'body-area');
+}
+
+function getFilterListItem() {
+  return cy.get(`.${cls('filter-list-item')} label`);
+}
+
+function getHeaderCheckbox() {
+  return cy.get('th input[type=checkbox]');
+}
+
+function getCellCheckbox() {
+  return cy.get('td input[type=checkbox]');
+}
+
+function inputFilterValue(value: string) {
+  cy.getByCls('filter-container', 'filter-input').type(value);
+}
+
+function applyFilterByUI(option: any, value: string) {
+  clickFilterBtn();
+  selectFilterCode(option);
+  inputFilterValue(value);
+}
+
+function toggleSelectFilter(index: number) {
+  getFilterListItem()
+    .eq(index)
+    .click();
+}
+
+function applyFilterBySelectUI(index: number) {
+  clickFilterBtn();
+  toggleSelectFilter(index);
+}
+
+function assertFilterBtnClass(columnName: string, active = false) {
+  if (active) {
+    cy.getByCls('btn-filter').should('have.class', cls('btn-filter-active'));
+  } else {
+    cy.getByCls('btn-filter').should('not.have.class', cls('btn-filter-active'));
+  }
+}
+
+describe('UI: Layer', () => {
+  const columns = [{ name: 'id' }, { name: 'score', filter: 'number' }];
   beforeEach(() => {
-    createGrid();
+    cy.createGrid({ data: [], columns });
   });
 
-  it('If the filter is not active, it has a gray button. In the filter active case, it has a blue button.', () => {
-    cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
-
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-
-    cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
-
-    compareColumnCellLength(4);
+  it('click filter button -> show layer', () => {
+    clickFilterBtn();
+    getFilterLayer().should('be.visible');
   });
 
-  it('After editing, the filtering result is applied immediately.', () => {
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
-
-    cy.getCell(3, 'alphabetA')
-      .click()
-      .trigger('dblclick');
-
-    cy.get(`.${cls('content-text')}`)
-      .type('B')
-      .then(() => {
-        cy.getCell(4, 'alphabetB').click();
-        compareColumnCellLength(3);
-      });
+  it('click close button -> hide layer', () => {
+    clickFilterBtn();
+    clickCloseBtn();
+    getFilterLayer().should('not.be.visible');
   });
 
-  it('If click the clear button, filtering is initialized.', () => {
-    compareColumnCellLength(9);
-    cy.get('@fourthFilter').click();
-    cy.get(`.${cls('filter-input')}`).type('20');
-    cy.get(`.${cls('filter-btn-apply')}`).click();
-
-    compareColumnCellLength(1);
-
-    cy.get(`.${cls('filter-btn-clear')}`).click();
-
-    compareColumnCellLength(9);
+  it('click inside of the layer -> hide layer', () => {
+    clickFilterBtn();
+    getFilterLayer().click();
+    getFilterLayer().should('be.visible');
   });
 
-  it('If apply button exists, the condition is not immediately applied. But It is applied when click the button.', () => {
-    cy.get('@fourthFilter').click();
-    cy.get(`.${cls('filter-input')}`).type('20');
+  it('click outside of the layer -> hide layer', () => {
+    clickFilterBtn();
+    cy.getByCls('container').click();
+    getFilterLayer().should('not.be.visible');
+  });
+});
 
-    compareColumnCellLength(9);
+describe('UI: Button', () => {
+  const columns = [
+    { name: 'id', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
+    { name: 'age' }
+  ];
+  const data = [
+    { id: 'player1', age: 10 },
+    { id: 'player2', age: 20 },
+    { id: 'player3', age: 30 },
+    { id: 'player4', age: 35 },
+    { id: 'player5', age: 40 },
+    { id: 'player6', age: 20 },
+    { id: 'player7', age: 30 }
+  ];
 
-    cy.get(`.${cls('filter-btn-apply')}`).click();
-
-    compareColumnCellLength(1);
-    equalColumnData('numberA', '20');
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
   });
 
-  it('Duplicate filters are applied correctly.', () => {
-    cy.gridInstance()
-      .invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }])
-      .get('@secondFilter')
-      .click()
-      .get(`.${cls('filter-list-item')} label`)
-      .eq(1)
-      .click();
-    cy.wait(150);
-
-    compareColumnCellLength(2);
-    equalColumnData('alphabetA', 'A');
-    equalColumnData('alphabetB', 'A');
+  it('Inactive filter button does not have active className', () => {
+    assertFilterBtnClass('id');
   });
 
-  it('The operator and the second filter appear when the first condition value exists.', () => {
-    cy.get('@firstFilter').click();
-    cy.get(`.${cls('filter-input')}`).type('B');
-
-    cy.get(`.${cls('filter-comparator-container')}`).should('exist');
-    cy.get(`.${cls('filter-input')}`).should('have.length', 2);
+  it('active filter button has active className', () => {
+    cy.gridInstance().invoke('filter', 'id', [{ code: 'eq', value: 'player1' }]);
+    assertFilterBtnClass('id', true);
   });
 
-  it('If an operator exists, it combines the values of the two filters and outputs them accordingly.', () => {
-    cy.get('@firstFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('start');
-    cy.get(`.${cls('filter-input')}`).type('B');
-    cy.get(`.${cls('filter-dropdown')} select`)
-      .eq(1)
-      .select('end');
-    cy.get(`.${cls('filter-input')}`)
-      .eq(1)
-      .type('CA');
-
-    equalColumnData('alphabetA', 'BCA');
+  it('If filter has showClearBtn option, clear button exists', () => {
+    clickFilterBtn();
+    cy.getByCls('filter-btn-clear').should('exist');
   });
 
-  it('should not work filter for hidden column.', () => {
-    cy.gridInstance().invoke('hideColumn', 'alphabetA');
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+  it('If filter has showApplyBtn option, apply button exists', () => {
+    clickFilterBtn();
+    cy.getByCls('filter-btn-apply').should('exist');
+  });
+});
 
-    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+describe('apply filter (type: number)', () => {
+  const columns = [{ name: 'id' }, { name: 'score', filter: 'number' }];
+  const data = [
+    { id: 'player1', score: 80 },
+    { id: 'player2', score: 70 },
+    { id: 'player3', score: 60 },
+    { id: 'player4', score: 65 },
+    { id: 'player5', score: 50 },
+    { id: 'player6', score: 90 },
+    { id: 'player7', score: 90 }
+  ];
 
-    cy.gridInstance().invoke('unfilter', 'alphabetA');
-
-    cy.get('td[data-column-name=alphabetB]').should('have.length', 9);
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
   });
 
-  it('should update row number after filtering', () => {
-    createGrid({ rowHeaders: ['rowNum'] });
-    cy.get('@fourthFilter').click();
+  ['API', 'UI'].forEach(method => {
+    it(`code:gt by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'gt', value: 70 }]);
+      } else {
+        applyFilterByUI('>', '70');
+      }
 
-    cy.get(`.${cls('filter-input')}`).type('1');
+      getRsideBody().should('have.cellData', [
+        ['player1', '80'],
+        ['player6', '90'],
+        ['player7', '90']
+      ]);
+    });
 
-    cy.get(`.${cls('filter-btn-apply')}`).click();
+    it(`code:gte by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'gte', value: 70 }]);
+      } else {
+        applyFilterByUI('>=', '70');
+      }
 
-    cy.get('td[data-column-name=_number]').each(($el, idx) => {
-      cy.wrap($el).should('to.have.text', `${idx + 1}`);
+      getRsideBody().should('have.cellData', [
+        ['player1', '80'],
+        ['player2', '70'],
+        ['player6', '90'],
+        ['player7', '90']
+      ]);
+    });
+
+    it(`code:lt by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'lt', value: 70 }]);
+      } else {
+        applyFilterByUI('<', '70');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player3', '60'],
+        ['player4', '65'],
+        ['player5', '50']
+      ]);
+    });
+
+    it(`code:lte by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'lte', value: 70 }]);
+      } else {
+        applyFilterByUI('<=', '70');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player2', '70'],
+        ['player3', '60'],
+        ['player4', '65'],
+        ['player5', '50']
+      ]);
+    });
+
+    it(`code:eq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'eq', value: 90 }]);
+      } else {
+        applyFilterByUI('=', '90');
+      }
+
+      getRsideBody().should('have.cellData', [['player6', '90'], ['player7', '90']]);
+    });
+
+    it(`code:ne by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('score', [{ code: 'ne', value: 90 }]);
+      } else {
+        applyFilterByUI('!=', '90');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player1', '80'],
+        ['player2', '70'],
+        ['player3', '60'],
+        ['player4', '65'],
+        ['player5', '50']
+      ]);
+    });
+  });
+});
+
+describe('apply filter (type: text)', () => {
+  const columns = [{ name: 'id' }, { name: 'name', filter: 'text' }];
+  const data = [
+    { id: 'player1', name: 'Choi' },
+    { id: 'player2', name: 'Kim' },
+    { id: 'player3', name: 'Ryu' },
+    { id: 'player4', name: 'Han' },
+    { id: 'player5', name: 'Park' },
+    { id: 'player6', name: 'Lee' },
+    { id: 'player7', name: 'Yoo' },
+    { id: 'player8', name: 'Lim' }
+  ];
+
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
+  ['API', 'UI'].forEach(method => {
+    it(`code:eq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
+      } else {
+        applyFilterByUI('eq', 'Lee');
+      }
+
+      getRsideBody().should('have.cellData', [['player6', 'Lee']]);
+    });
+
+    it(`code:ne by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('name', [{ code: 'ne', value: 'Lee' }]);
+      } else {
+        applyFilterByUI('ne', 'Lee');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player1', 'Choi'],
+        ['player2', 'Kim'],
+        ['player3', 'Ryu'],
+        ['player4', 'Han'],
+        ['player5', 'Park'],
+        ['player7', 'Yoo'],
+        ['player8', 'Lim']
+      ]);
+    });
+
+    it(`code:contain by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('name', [{ code: 'contain', value: 'a' }]);
+      } else {
+        applyFilterByUI('contain', 'a');
+      }
+
+      getRsideBody().should('have.cellData', [['player4', 'Han'], ['player5', 'Park']]);
+    });
+
+    it(`code:start by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('name', [{ code: 'start', value: 'L' }]);
+      } else {
+        applyFilterByUI('start', 'L');
+      }
+
+      getRsideBody().should('have.cellData', [['player6', 'Lee'], ['player8', 'Lim']]);
+    });
+
+    it(`code:end by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('name', [{ code: 'end', value: 'm' }]);
+      } else {
+        applyFilterByUI('end', 'm');
+      }
+
+      getRsideBody().should('have.cellData', [['player2', 'Kim'], ['player8', 'Lim']]);
+    });
+  });
+});
+
+describe('apply filter (type: select)', () => {
+  const columns = [{ name: 'id', filter: 'select' }, { name: 'name' }];
+  const data = [
+    { id: 'player1', name: 'Choi' },
+    { id: 'player2', name: 'Kim' },
+    { id: 'player3', name: 'Ryu' },
+    { id: 'player4', name: 'Han' },
+    { id: 'player5', name: 'Park' },
+    { id: 'player6', name: 'Lee' },
+    { id: 'player7', name: 'Yoo' },
+    { id: 'player8', name: 'Lim' }
+  ];
+
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
+  ['API', 'UI'].forEach(method => {
+    it(`code:eq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('id', [
+          { code: 'eq', value: 'player2' },
+          { code: 'eq', value: 'player3' },
+          { code: 'eq', value: 'player4' },
+          { code: 'eq', value: 'player5' },
+          { code: 'eq', value: 'player6' },
+          { code: 'eq', value: 'player7' },
+          { code: 'eq', value: 'player8' }
+        ]);
+      } else {
+        applyFilterBySelectUI(1);
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player2', 'Kim'],
+        ['player3', 'Ryu'],
+        ['player4', 'Han'],
+        ['player5', 'Park'],
+        ['player6', 'Lee'],
+        ['player7', 'Yoo'],
+        ['player8', 'Lim']
+      ]);
     });
   });
 
-  it('should check only filtered rows when clicking the checkAll button.', () => {
-    createGrid({ rowHeaders: ['checkbox'] });
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+  it('When searching, the items contained text are listed.', () => {
+    clickFilterBtn();
+    inputFilterValue('player3');
+    getFilterListItem()
+      .its('length')
+      .should('eq', 2);
+  });
 
-    cy.get('th input[type=checkbox]').click();
+  it('When clicking selectAll checkbox, apply all list item checkbox and filtering.', () => {
+    applyFilterBySelectUI(0);
 
-    cy.get('th input[type=checkbox]').should('be.checked');
+    getRsideBody().should('have.cellData', []);
 
-    cy.gridInstance().invoke('unfilter', 'alphabetA');
+    toggleSelectFilter(0);
 
-    cy.get('td input[type=checkbox]:checked').should('have.length', 4);
-    cy.get('th input[type=checkbox]').should('not.be.checked');
+    getRsideBody().should('have.cellData', [
+      ['player1', 'Choi'],
+      ['player2', 'Kim'],
+      ['player3', 'Ryu'],
+      ['player4', 'Han'],
+      ['player5', 'Park'],
+      ['player6', 'Lee'],
+      ['player7', 'Yoo'],
+      ['player8', 'Lim']
+    ]);
+  });
+});
+
+describe('apply filter (type: datepicker)', () => {
+  const columns = [{ name: 'id' }, { name: 'date', filter: 'date' }];
+  const data = [
+    { id: 'player1', date: '2019.11.25' },
+    { id: 'player2', date: '2019.09.18' },
+    { id: 'player3', date: '2020.01.03' },
+    { id: 'player4', date: '2017.07.27' },
+    { id: 'player5', date: '2016.06.27' },
+    { id: 'player6', date: '2018.11.02' },
+    { id: 'player7', date: '2019.12.25' },
+    { id: 'player8', date: '2020.03.03' }
+  ];
+
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
+  ['API', 'UI'].forEach(method => {
+    it(`code:eq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'eq', value: '2019.09.18' }]);
+      } else {
+        applyFilterByUI('eq', '2019.09.18');
+      }
+
+      getRsideBody().should('have.cellData', [['player2', '2019.09.18']]);
+    });
+
+    it(`code:ne by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'ne', value: '2019.11.25' }]);
+      } else {
+        applyFilterByUI('ne', '2019.11.25');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player2', '2019.09.18'],
+        ['player3', '2020.01.03'],
+        ['player4', '2017.07.27'],
+        ['player5', '2016.06.27'],
+        ['player6', '2018.11.02'],
+        ['player7', '2019.12.25'],
+        ['player8', '2020.03.03']
+      ]);
+    });
+
+    it(`code:after by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'after', value: '2019.12.25' }]);
+      } else {
+        applyFilterByUI('after', '2019.12.25');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player3', '2020.01.03'],
+        ['player8', '2020.03.03']
+      ]);
+    });
+
+    it(`code:afterEq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'afterEq', value: '2019.12.25' }]);
+      } else {
+        applyFilterByUI('afterEq', '2019.12.25');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player3', '2020.01.03'],
+        ['player7', '2019.12.25'],
+        ['player8', '2020.03.03']
+      ]);
+    });
+
+    it(`code:before by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'before', value: '2017.07.27' }]);
+      } else {
+        applyFilterByUI('before', '2017.07.27');
+      }
+
+      getRsideBody().should('have.cellData', [['player5', '2016.06.27']]);
+    });
+
+    it(`code:beforeEq by ${method}`, () => {
+      if (method === 'API') {
+        invokeFilter('date', [{ code: 'beforeEq', value: '2017.07.27' }]);
+      } else {
+        applyFilterByUI('beforeEq', '2017.07.27');
+      }
+
+      getRsideBody().should('have.cellData', [
+        ['player4', '2017.07.27'],
+        ['player5', '2016.06.27']
+      ]);
+    });
   });
 });
 
 describe('filter API', () => {
+  const columns = [{ name: 'id' }, { name: 'age', filter: 'number' }];
+  const data = [
+    { id: 'player1', age: 10 },
+    { id: 'player2', age: 20 },
+    { id: 'player3', age: 30 },
+    { id: 'player4', age: 35 },
+    { id: 'player5', age: 40 },
+    { id: 'player6', age: 20 },
+    { id: 'player7', age: 30 }
+  ];
+
   beforeEach(() => {
-    createGrid();
+    cy.createGrid({ data, columns });
   });
 
-  it('filter(), unfilter()', () => {
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+  it('unfilter()', () => {
+    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 30 }]);
 
-    cy.get('@firstFilter').should('have.class', cls('btn-filter-active'));
+    getRsideBody().should('have.cellData', [['player3', '30'], ['player7', '30']]);
 
-    equalColumnData('alphabetA', 'A');
+    cy.gridInstance().invoke('unfilter', 'age');
 
-    cy.gridInstance().invoke('unfilter', 'alphabetA');
-
-    cy.get('@firstFilter').should('not.have.class', cls('btn-filter-active'));
-
-    compareColumnCellLength(9);
-  });
-
-  it('filter() with select type filter', () => {
-    cy.gridInstance().invoke('filter', 'alphabetB', [
-      { code: 'eq', value: 'A' },
-      { code: 'eq', value: 'E' }
+    getRsideBody().should('have.cellData', [
+      ['player1', '10'],
+      ['player2', '20'],
+      ['player3', '30'],
+      ['player4', '35'],
+      ['player5', '40'],
+      ['player6', '20'],
+      ['player7', '30']
     ]);
-
-    includeColumnData('alphabetB', ['A', 'E']);
   });
 
-  it('getFilterState() return current filter state', () => {
-    cy.gridInstance().invoke('filter', 'alphabetA', [{ code: 'eq', value: 'A' }]);
+  it('getFilterState()', () => {
+    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 30 }]);
     cy.gridInstance()
       .invoke('getFilterState')
-      .should(filterState => {
-        expect(filterState).to.contain.subset([
-          {
-            columnName: 'alphabetA',
-            state: [{ code: 'eq', value: 'A' }],
-            type: 'text'
-          }
-        ]);
-      });
-    cy.gridInstance().invoke('filter', 'alphabetA', [
-      { code: 'eq', value: 'A' },
-      { code: 'ne', value: 'B' }
+      .should('have.subset', [
+        {
+          columnName: 'age',
+          state: [{ code: 'eq', value: 30 }],
+          type: 'number'
+        }
+      ]);
+  });
+
+  it('setFilter()', () => {
+    cy.getHeaderCell('id')
+      .children(`.${cls('btn-filter')}`)
+      .should('not.exist');
+
+    cy.gridInstance().invoke('setFilter', 'id', { type: 'text' });
+
+    cy.getHeaderCell('id')
+      .children(`.${cls('btn-filter')}`)
+      .should('exist');
+  });
+});
+
+describe('filtering data with button option', () => {
+  const columns = [
+    { name: 'id', filter: { type: 'text', showApplyBtn: true, showClearBtn: true } },
+    { name: 'age' }
+  ];
+  const data = [
+    { id: 'player1', age: 10 },
+    { id: 'player2', age: 20 },
+    { id: 'player3', age: 30 },
+    { id: 'player4', age: 35 },
+    { id: 'player5', age: 40 },
+    { id: 'player6', age: 20 },
+    { id: 'player7', age: 30 }
+  ];
+
+  beforeEach(() => {
+    cy.createGrid({ data, columns });
+  });
+
+  it('Clear Button -> initialize the filtering when clicking the clear button', () => {
+    cy.gridInstance().invoke('filter', 'id', [{ code: 'eq', value: 'player1' }]);
+
+    getRsideBody().should('have.cellData', [['player1', '10']]);
+
+    clickFilterBtn();
+    cy.getByCls('filter-btn-clear').click();
+
+    getRsideBody().should('have.cellData', [
+      ['player1', '10'],
+      ['player2', '20'],
+      ['player3', '30'],
+      ['player4', '35'],
+      ['player5', '40'],
+      ['player6', '20'],
+      ['player7', '30']
     ]);
-    cy.gridInstance()
-      .invoke('getFilterState')
-      .should(filterState => {
-        expect(filterState).to.contain.subset([
-          {
-            columnName: 'alphabetA',
-            state: [{ code: 'eq', value: 'A' }, { code: 'ne', value: 'B' }],
-            type: 'text',
-            operator: 'AND'
-          }
-        ]);
-      });
   });
 
-  it('setFilter() set filter to column', () => {
-    cy.get(`[data-column-name=value] .${cls('btn-filter')}`).should('not.exist');
+  it('Apply Button -> only apply the filtering when clicking the apply button', () => {
+    applyFilterByUI('eq', 'player1');
 
-    cy.gridInstance().invoke('setFilter', 'value', { type: 'number' });
+    getRsideBody().should('have.cellData', [
+      ['player1', '10'],
+      ['player2', '20'],
+      ['player3', '30'],
+      ['player4', '35'],
+      ['player5', '40'],
+      ['player6', '20'],
+      ['player7', '30']
+    ]);
 
-    cy.get(`[data-column-name=value] .${cls('btn-filter')}`).should('exist');
+    cy.getByCls('filter-btn-apply').click();
+
+    getRsideBody().should('have.cellData', [['player1', '10']]);
   });
 });
 
-describe('number', () => {
-  beforeEach(() => {
-    createGrid();
-  });
+it('filtering data with operator option', () => {
+  const columns = [{ name: 'id' }, { name: 'age', filter: { type: 'text', operator: 'OR' } }];
+  const data = [
+    { id: 'player1', age: 10 },
+    { id: 'player2', age: 20 },
+    { id: 'player3', age: 30 },
+    { id: 'player4', age: 35 },
+    { id: 'player5', age: 40 },
+    { id: 'player6', age: 20 },
+    { id: 'player7', age: 30 }
+  ];
 
-  it('Equal', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'eq', value: 1 }]);
+  cy.createGrid({ data, columns });
+  clickFilterBtn();
+  cy.getByCls('filter-input').type('10');
+  cy.getByCls('filter-input')
+    .eq(1)
+    .type('30');
 
-    equalColumnData('numberA', '1');
-    compareColumnCellLength(4);
-  });
-
-  it('Not Equal', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'ne', value: 1 }]);
-
-    notEqualColumnData('numberA', '1');
-    compareColumnCellLength(5);
-  });
-
-  it('Less than', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'lt', value: 10 }]);
-
-    cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(Number(elem.textContent) < 10).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(5);
-  });
-  it('Less than Equal', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'lte', value: 10 }]);
-
-    cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(Number(elem.textContent) <= 10).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(6);
-  });
-  it('Greater than', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'gt', value: 10 }]);
-
-    cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(Number(elem.textContent) > 10).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(3);
-  });
-  it('Greater than Equal', () => {
-    cy.gridInstance().invoke('filter', 'numberA', [{ code: 'gte', value: 10 }]);
-
-    cy.get(`[data-column-name=numberA]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(Number(elem.textContent) >= 10).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(4);
-  });
+  getRsideBody().should('have.cellData', [['player1', '10'], ['player3', '30'], ['player7', '30']]);
 });
 
-describe('text', () => {
-  beforeEach(() => {
-    createGrid();
-  });
+it('multiple filters are applied correctly.', () => {
+  const columns = [{ name: 'name', filter: 'text' }, { name: 'age', filter: 'number' }];
+  const data = [
+    { name: 'player1', age: 10 },
+    { name: 'player2', age: 20 },
+    { name: 'player2', age: 30 },
+    { name: 'player3', age: 35 },
+    { name: 'player4', age: 40 },
+    { name: 'player5', age: 20 },
+    { name: 'player4', age: 30 },
+    { name: 'player4', age: 40 }
+  ];
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'player4' }]);
 
-  it('Equal', () => {
-    cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'eq', value: 'ACC' }]);
+  getRsideBody().should('have.cellData', [['player4', '40'], ['player4', '30'], ['player4', '40']]);
 
-    equalColumnData('alphabetC', 'ACC');
-    compareColumnCellLength(2);
-  });
+  cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: '40' }]);
 
-  it('Not Equal', () => {
-    cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'ne', value: 'ACC' }]);
-
-    notEqualColumnData('alphabetC', 'ACC');
-    compareColumnCellLength(7);
-  });
-
-  it('Contain', () => {
-    cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'contain', value: 'A' }]);
-
-    cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(elem.textContent!.includes('A')).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(5);
-  });
-
-  it('start', () => {
-    cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'start', value: 'A' }]);
-
-    cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(elem.textContent!.startsWith('A')).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(4);
-  });
-
-  it('end', () => {
-    cy.gridInstance().invoke('filter', 'alphabetC', [{ code: 'end', value: 'A' }]);
-
-    cy.get(`[data-column-name=alphabetC]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(elem.textContent!.endsWith('A')).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(3);
-  });
+  getRsideBody().should('have.cellData', [['player4', '40'], ['player4', '40']]);
 });
 
-describe('select', () => {
+describe('check other option when filtering', () => {
   beforeEach(() => {
-    createGrid();
+    const columns = [{ name: 'name', filter: 'text' }, { name: 'age', filter: 'number' }];
+    const data = [
+      { id: 'player1', age: 10 },
+      { id: 'player2', age: 20 },
+      { id: 'player3', age: 30 },
+      { id: 'player4', age: 35 },
+      { id: 'player5', age: 40 },
+      { id: 'player6', age: 20 },
+      { id: 'player7', age: 30 }
+    ];
+    cy.createGrid({ data, columns, rowHeaders: ['rowNum', 'checkbox'] });
   });
 
-  it('Only the row of the selected checkbox is displayed.', () => {
-    cy.get('@secondFilter').click();
-    cy.get(`.${cls('filter-list-item')} label`)
-      .eq(1)
-      .click();
+  it('should not work filter for hidden column.', () => {
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'player1' }]);
 
-    notEqualColumnData('alphabetB', 'B');
-    compareColumnCellLength(6);
+    getRsideBody().should('have.cellData', [
+      ['10'],
+      ['20'],
+      ['30'],
+      ['35'],
+      ['40'],
+      ['20'],
+      ['30']
+    ]);
   });
 
-  it('When searching, the items contained text are listed.', () => {
-    cy.get('@secondFilter').click();
-    cy.get(`.${cls('filter-input')}`).type('B');
-    cy.get(`.${cls('filter-list-item')} label`)
-      .its('length')
-      .should('be.eq', 2);
-  });
+  it('should update row number after filtering', () => {
+    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
 
-  it('When click selectAll checkbox, apply all list item checkbox and filtering.', () => {
-    cy.get('@secondFilter').click();
-    cy.get(`.${cls('filter-list-item')} label`)
-      .eq(0)
-      .click();
-    compareColumnCellLength(0);
-
-    cy.get(`.${cls('filter-list-item')} label`)
-      .eq(0)
-      .click();
-
-    compareColumnCellLength(9);
-  });
-});
-
-describe('date', () => {
-  beforeEach(() => {
-    createGrid();
-  });
-
-  it('Equal', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
-
-    equalColumnData('date', '2019.09.18');
-    compareColumnCellLength(3);
-  });
-
-  it('Not Equal', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('ne');
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
-
-    notEqualColumnData('date', '2019.09.18');
-    compareColumnCellLength(6);
-  });
-
-  it('After', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('after');
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
-
-    cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(getUnixTime(elem.textContent) > getUnixTime('2019/09/18')).to.be.true;
-      });
+    cy.getColumnCells('_number').each(($el, idx) => {
+      expect($el.text()).to.eq(`${idx + 1}`);
     });
-
-    compareColumnCellLength(2);
   });
 
-  it('After Equal', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('afterEq');
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
+  it('should check only filtered rows when clicking the checkAll button.', () => {
+    cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
+    getHeaderCheckbox().click();
 
-    cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(getUnixTime(elem.textContent) >= getUnixTime('2019/09/18')).to.be.true;
-      });
-    });
+    getHeaderCheckbox().should('be.checked');
 
-    compareColumnCellLength(5);
-  });
+    cy.gridInstance().invoke('unfilter', 'age');
 
-  it('Before', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('before');
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
-
-    cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(getUnixTime(elem.textContent) < getUnixTime('2019/09/18')).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(4);
-  });
-
-  it('Before Equal', () => {
-    cy.get('@thirdFilter').click();
-    cy.get(`.${cls('filter-dropdown')} select`).select('beforeEq');
-    cy.get(`.${cls('filter-input')}`)
-      .focus()
-      .click();
-    // 2019.09.18 timestamp
-    cy.get(`.${cls('datepicker-input')}`).type('2019-09-18{Enter}');
-
-    cy.get(`[data-column-name=date]td.${cls('cell')}`).should($el => {
-      $el.each((index, elem) => {
-        expect(getUnixTime(elem.textContent) <= getUnixTime('2019/09/18')).to.be.true;
-      });
-    });
-
-    compareColumnCellLength(7);
+    getCellCheckbox()
+      .filter('input[type=checkbox]:checked')
+      .should('have.length', 2);
+    getHeaderCheckbox().should('not.be.checked');
   });
 });
