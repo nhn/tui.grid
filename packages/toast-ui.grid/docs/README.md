@@ -22,7 +22,7 @@
 - [📐 Setting width, height](./en/setting-width-height.md)
 - [🗂 Sort](./en/sort.md)
 - [📖 Pagination](./en/pagination.md)
-- [🔍 필터](./en/filter.md)
+- [🔍 Filter](./en/filter.md)
 
 ### Migration Guide
 - [✈️ v4.0 Migration Guide](v4.0-migration-guide.md)
