@@ -14,6 +14,10 @@ beforeEach(() => {
   cy.createGrid({ data, columns });
 });
 
+function getFocusLayer(inactive = false) {
+  return cy.getByCls(inactive ? 'layer-focus-deactive' : 'layer-focus');
+}
+
 function makeInactiveFocusLayer() {
   cy.getByCls('clipboard').focus();
   cy.getByCls('clipboard').blur();
@@ -21,44 +25,36 @@ function makeInactiveFocusLayer() {
 
 describe('API', () => {
   it('focus()', () => {
-    cy.getByCls('layer-focus').should('not.exist');
+    getFocusLayer().should('not.exist');
 
     cy.gridInstance().invoke('focus', 0, 'name');
 
-    cy.getByCls('layer-focus').should('exist');
+    getFocusLayer().should('exist');
   });
 
   it('focusAt()', () => {
-    cy.getByCls('layer-focus').should('not.exist');
+    getFocusLayer().should('not.exist');
 
     cy.gridInstance().invoke('focusAt', 0, 1);
 
-    cy.getByCls('layer-focus').should('exist');
-  });
-
-  it('focusAt()', () => {
-    cy.getByCls('layer-focus').should('not.exist');
-
-    cy.gridInstance().invoke('focusAt', 0, 1);
-
-    cy.getByCls('layer-focus').should('exist');
+    getFocusLayer().should('exist');
   });
 
   it('blur()', () => {
     cy.gridInstance().invoke('focusAt', 0, 1);
     cy.gridInstance().invoke('blur');
 
-    cy.getByCls('layer-focus').should('not.exist');
+    getFocusLayer().should('not.exist');
   });
 
   it('activateFocus()', () => {
     cy.gridInstance().invoke('focusAt', 0, 1);
     makeInactiveFocusLayer();
 
-    cy.getByCls('layer-focus-deactive').should('exist');
+    getFocusLayer(false).should('exist');
 
     cy.gridInstance().invoke('activateFocus');
-    cy.getByCls('layer-focus-deactive').should('not.exist');
+    getFocusLayer(false).should('not.exist');
   });
 
   it('getFocusedCell()', () => {
