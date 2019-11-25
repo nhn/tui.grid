@@ -1,4 +1,5 @@
 import { OptColumn } from '@/types';
+import { FormatterProps } from '@/store/types';
 
 export {};
 
@@ -20,11 +21,6 @@ function setSelection(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
 }
 
-const data = [
-  { id: 1, name: 'Kim', score: 90, grade: 'A' },
-  { id: 2, name: 'Lee', score: 80, grade: 'B' }
-];
-
 before(() => {
   cy.visit('/dist');
 });
@@ -37,6 +33,10 @@ beforeEach(() => {
 
 describe('setColumns()', () => {
   beforeEach(() => {
+    const data = [
+      { id: 1, name: 'Kim', score: 90, grade: 'A' },
+      { id: 2, name: 'Lee', score: 80, grade: 'B' }
+    ];
     const columns = [{ name: 'id' }, { name: 'name' }];
     cy.createGrid({ data, columns });
   });
@@ -76,6 +76,10 @@ describe('setColumns()', () => {
 
 describe('API', () => {
   beforeEach(() => {
+    const data = [
+      { id: 1, name: 'Kim', score: 90, grade: 'A' },
+      { id: 2, name: 'Lee', score: 80, grade: 'B' }
+    ];
     const columns = [{ name: 'name' }, { name: 'score' }];
     cy.createGrid({ data, columns });
   });
@@ -108,5 +112,171 @@ describe('API', () => {
     cy.gridInstance().invoke('showColumn', 'name');
 
     cy.getHeaderCell('name').should('exist');
+  });
+});
+
+describe('formatter', () => {
+  const data = [{ name: 'Kim', age: 30 }, { name: 'Lee', age: 40 }];
+
+  const ageFormatterProps1 = {
+    column: { name: 'age' },
+    row: data[0],
+    value: 30
+  };
+
+  const ageFormatterProps2 = {
+    column: { name: 'age' },
+    row: data[1],
+    value: 40
+  };
+
+  function assertAgeFormatterCallProps(formatterStub: any) {
+    cy.wrap(formatterStub)
+      .should('be.calledWithMatch', ageFormatterProps1)
+      .and('be.calledWithMatch', ageFormatterProps2);
+  }
+
+  it('formatter should be applied to the value', () => {
+    const formatterStub = cy.stub();
+    const columns = [
+      {
+        name: 'name',
+        formatter: ({ value }: FormatterProps) => `Mr. ${value}`
+      },
+      {
+        name: 'age',
+        formatter: formatterStub.returns('AGE')
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+
+    cy.getCell(0, 'name').should('have.text', 'Mr. Kim');
+    cy.getCell(1, 'name').should('have.text', 'Mr. Lee');
+    cy.getCell(0, 'age').should('have.text', 'AGE');
+    cy.getCell(1, 'age').should('have.text', 'AGE');
+
+    assertAgeFormatterCallProps(formatterStub);
+  });
+});
+
+describe('escapeHTML', () => {
+  it('if escapeHTML is true, HTML Entities should be escaped', () => {
+    const data = [{ name: '<b>Kim</b>', age: 10 }];
+    const columns = [
+      {
+        name: 'name',
+        escapeHTML: true
+      },
+      {
+        name: 'age',
+        formatter: ({ value }: FormatterProps) => `${value}<br/>`,
+        escapeHTML: true
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+
+    cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
+    cy.getCell(0, 'age').should('to.have.text', '10<br/>');
+  });
+});
+
+describe('defaultValue', () => {
+  it('if the vlaue is empty, defaultValue should be applied', () => {
+    const data = [{ name: 'Lee', age: 20 }, {}];
+    const columns = [
+      {
+        name: 'name',
+        defaultValue: 'Kim'
+      },
+      {
+        name: 'age',
+        defaultValue: '30'
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+
+    cy.getCell(0, 'name').should('have.text', 'Lee');
+    cy.getCell(0, 'age').should('have.text', '20');
+    cy.getCell(1, 'name').should('have.text', 'Kim');
+    cy.getCell(1, 'age').should('have.text', '30');
+  });
+});
+
+describe('cell align styles', () => {
+  it('align/valign should be applied to the cell element', () => {
+    const data = [
+      {
+        col1: '1',
+        col2: '2'
+      }
+    ];
+    const columns = [
+      {
+        name: 'col1',
+        align: 'right'
+      },
+      {
+        name: 'col2',
+        valign: 'bottom'
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+
+    cy.getCell(0, 'col1').should('have.css', 'text-align', 'right');
+    cy.getCell(0, 'col2').should('have.css', 'vertical-align', 'bottom');
+  });
+});
+
+describe('cell content ellipsis/whitespace', () => {
+  it('ellipsis and whitespace style should be applied to the cell-content', () => {
+    const data = [
+      {
+        col1: 'something very long text to exceed with of the cell',
+        col2: 'something very long text to\nexceed with of the cell'
+      }
+    ];
+    const columns = [
+      {
+        name: 'col1',
+        ellipsis: true
+      },
+      {
+        name: 'col2',
+        whiteSpace: 'pre'
+      }
+    ];
+
+    cy.createGrid({ data, columns, rowHeight: 'auto' }, { width: '400px' });
+
+    cy.getCellContent(0, 'col1').should('have.css', 'text-overflow', 'ellipsis');
+    cy.getCellContent(0, 'col2').should('have.css', 'white-space', 'pre');
+  });
+});
+
+describe('column className', () => {
+  beforeEach(() => {
+    const data = [
+      {
+        name: 'Kim',
+        age: 30
+      },
+      {
+        name: 'Lee',
+        age: 40
+      }
+    ];
+    const columns = [{ name: 'name', className: 'column-test-c' }, { name: 'age' }];
+
+    cy.createGrid({ data, columns });
+  });
+
+  it('add class by column options', () => {
+    cy.getColumnCells('name').each($el => {
+      expect($el).to.have.class('column-test-c');
+    });
   });
 });
