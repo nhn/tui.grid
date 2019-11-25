@@ -18,7 +18,7 @@ declare namespace Cypress {
 
     getCellData(): Chainable<any>;
 
-    createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
+    createGrid(gridOptions: any, elementStyles?: any, parentEl?: HTMLElement): Chainable<any>;
 
     createStyle(style: string): Chainable<any>;
 

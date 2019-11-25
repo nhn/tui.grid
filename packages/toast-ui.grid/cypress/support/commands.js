@@ -25,14 +25,21 @@ Cypress.Commands.add('getByTestId', testId => {
   return cy.get(`[data-testid="${testId}"]`);
 });
 
-Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}) => {
+Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl = null) => {
   return cy.window().then(win => {
     const { document, tui } = win;
     const el = document.createElement('div');
     const styles = { width: '800px', ...containerStyle };
 
     Object.assign(el.style, styles);
-    document.body.appendChild(el);
+
+    if (parentEl) {
+      parentEl.appendChild(el);
+      document.body.appendChild(parentEl);
+      cy.wait(10);
+    } else {
+      document.body.appendChild(el);
+    }
 
     if (gridOptions.theme) {
       const { preset, extOptions } = gridOptions.theme;
