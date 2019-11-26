@@ -72,16 +72,26 @@ it('should not add the created row to updatedRows, regardless of modifying it', 
   assertModifiedRowsContainsObject({ createdRows: [{ name: 'RYU', age: 30 }] });
 });
 
-it('should add updated row to updateRows property once, regardless of modifying it in many times', () => {
-  cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
-  cy.gridInstance().invoke('setValue', 2, 'age', 20);
-  cy.gridInstance().invoke('setValue', 0, 'name', 'RYU');
-  cy.gridInstance().invoke('setValue', 0, 'name', 'JIN');
+describe('update rows', () => {
+  it('should add updated row to updateRows property once, when modified by setValue API in multiple times', () => {
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
+    cy.gridInstance().invoke('setValue', 2, 'age', 20);
+    cy.gridInstance().invoke('setValue', 0, 'name', 'RYU');
+    cy.gridInstance().invoke('setValue', 0, 'name', 'JIN');
 
-  assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 0 });
-  assertModifiedRowsContainsObject({
-    createdRows: [{ name: 'Park', age: 20 }],
-    updatedRows: [{ name: 'JIN', age: 10 }]
+    assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 0 });
+    assertModifiedRowsContainsObject({
+      createdRows: [{ name: 'Park', age: 20 }],
+      updatedRows: [{ name: 'JIN', age: 10 }]
+    });
+  });
+
+  it('should add updated row to updateRows property once, when modified by setRow API in multiple times', () => {
+    cy.gridInstance().invoke('setRow', 0, { name: 'Park', age: 30 });
+    cy.gridInstance().invoke('setRow', 0, { name: 'JIN', age: 10 });
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 1, deletedRows: 0 });
+    assertModifiedRowsContainsObject({ updatedRows: [{ name: 'JIN', age: 10 }] });
   });
 });
 
