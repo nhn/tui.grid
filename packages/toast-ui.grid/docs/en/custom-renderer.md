@@ -6,7 +6,7 @@ We can apply the Custom Renderer based on the `CellRenderer` constructor functio
 
 The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer` interface can be found at [types.d.ts](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/src/renderer/types.d.ts).)
 * `constructor`
-    The constructor function is called when the cell element (`TD`) is added to the DOM. Generally, it serves the purpose of storing the root element as the instance member, and such members can be accessed using `getElement()` and `getValue()` methods. The object passed ino the constructor function as parameter is identical to that of `CellEditor` interface, and is as follows. 
+    The constructor function is called when the cell element (`<td>`) is added to the DOM. Generally, it serves the purpose of storing the root element as the instance member, and such members can be accessed using `getElement()` and `getValue()` methods. The object passed ino the constructor function as parameter is identical to that of `CellEditor` interface, and is as follows. 
 
 | Property | Type | Return Type |
 |--------|--------|--------|
@@ -16,7 +16,7 @@ The interface of a `CellRenderer` is as follows. (The structure of `CellRenderer
 | `value` | `string \| number \| boolean` | The cell's current value |
 
 * `getElement`
-    Returns the cell's root DOM element. The returned element is automatically inserted as a child when the cell (`TD` element) is newly added.
+    Returns the cell's root DOM element. The returned element is automatically inserted as a child when the cell (`<td>` element) is newly added.
 * `mounted`
     This method is `optional`, and is used to initialize the input element. This method is called immediately after the root element returned from `getElement()` has been mounted to the DOM. 
 * ` render`
