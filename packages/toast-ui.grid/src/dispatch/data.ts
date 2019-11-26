@@ -794,7 +794,7 @@ export function updateRowNumber({ data }: Store, startIndex: number) {
 }
 
 export function setRow(store: Store, rowIndex: number, row: OptRow) {
-  const { data, id, focus } = store;
+  const { data, id } = store;
   const { rawData, viewData, sortState } = data;
   const orgRow = rawData[rowIndex];
 
@@ -803,14 +803,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   }
 
   row.sortKey = orgRow.sortKey;
-  const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row);
-  // @TODO: should change to create rowKey
-  rawRow.rowKey = orgRow.rowKey;
-  viewRow.rowKey = orgRow.rowKey;
-
-  if (someProp('rowKey', focus.rowKey, rawData)) {
-    initFocus(store);
-  }
+  const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
   viewData.splice(rowIndex, 1, viewRow);
   rawData.splice(rowIndex, 1, rawRow);
