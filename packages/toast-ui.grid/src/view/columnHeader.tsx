@@ -67,6 +67,12 @@ export class ColumnHeader extends Component<Props> {
     }
   }
 
+  public componentWillReceiveProps(nextProps: Props) {
+    if (this.renderer) {
+      this.renderer.render({ columnInfo: nextProps.columnInfo, grid: nextProps.grid });
+    }
+  }
+
   public componentWillUnmount() {
     if (this.renderer && isFunction(this.renderer.beforeDestroy)) {
       this.renderer.beforeDestroy();

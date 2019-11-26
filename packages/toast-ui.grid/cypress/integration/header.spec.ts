@@ -23,6 +23,11 @@ class CustomRenderer implements HeaderRenderer {
   public getElement() {
     return this.el;
   }
+
+  public render(props: HeaderRendererProps) {
+    this.columnInfo = props.columnInfo;
+    this.el.textContent = `custom_${this.columnInfo.name}`;
+  }
 }
 
 function assertAlign(columnName: string, align: AlignType, valign: VAlignType) {
