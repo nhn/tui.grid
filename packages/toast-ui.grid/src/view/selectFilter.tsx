@@ -34,9 +34,9 @@ class SelectFilterComp extends Component<Props> {
     searchInput: ''
   };
 
-  private handleChange = debounce((ev: Event) => {
+  private handleChange = debounce((ev: Event, id: string) => {
     const { dispatch } = this.props;
-    const { id, checked } = ev.target as HTMLInputElement;
+    const { checked } = ev.target as HTMLInputElement;
 
     dispatch('setActiveSelectFilterState', id, checked);
   }, FILTER_DEBOUNCE_TIME);
@@ -67,16 +67,15 @@ class SelectFilterComp extends Component<Props> {
           onKeyUp={this.searchColumnData}
           value={searchInput ? String(searchInput) : ''}
         />
-        <li className={cls('filter-list-item')}>
-          <input
-            type="checkbox"
-            id="filter_select_all"
-            value="select_all"
-            onChange={this.toggleAllColumnCheckbox}
-            checked={isAllSelected}
-          />
-          <label for="filter_select_all" />
-          <span>Select All</span>
+        <li className={cls('filter-list-item', [isAllSelected, 'filter-list-item-checked'])}>
+          <label>
+            <input
+              type="checkbox"
+              onChange={this.toggleAllColumnCheckbox}
+              checked={isAllSelected}
+            />
+            <span>Select All</span>
+          </label>
         </li>
         <ul className={cls('filter-list')}>
           {data.map(item => {
@@ -88,9 +87,14 @@ class SelectFilterComp extends Component<Props> {
                 className={cls('filter-list-item', [checked, 'filter-list-item-checked'])}
                 key={text}
               >
-                <input type="checkbox" id={text} checked={checked} onChange={this.handleChange} />
-                <label for={text} />
-                <span>{value}</span>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={ev => this.handleChange(ev, text)}
+                  />
+                  <span>{value}</span>
+                </label>
               </li>
             );
           })}
