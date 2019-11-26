@@ -75,7 +75,7 @@ const grid = new Grid({
 다중 컬럼 정렬은 `v4.2.0` 이상부터 사용할 수 있는 기능이다.
 
 ## 데이터 소스 연동
-Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/docs/ko/data-source.md)를 이용하여 원격 데이터를 사용하는 경우, 정렬 기능을 사용하기 위해 아래와 같이 `useClientSort` 옵션 설정이 필요하다. 
+Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)를 이용하여 원격 데이터를 사용하는 경우, 정렬 기능을 사용하기 위해 아래와 같이 `useClientSort` 옵션 설정이 필요하다. 
 
 ```js
 const grid = new Grid({

@@ -17,7 +17,7 @@ import 'tui-pagination/dist/tui-pagination.css';
 
 ## 데이터 소스 연동
 
-일반적으로 페이지네이션 기능과 함께 벡엔드와의 통신을 통해 원격 데이터를 사용하는 경우가 많다. 이런 경우, TOAST UI Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/docs/ko/data-source.md)와 페이지네이션 기능을 연동하여 사용할 수 있다. 옵션 설정은 아래 예제와 같다.
+일반적으로 페이지네이션 기능과 함께 벡엔드와의 통신을 통해 원격 데이터를 사용하는 경우가 많다. 이런 경우, TOAST UI Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)와 페이지네이션 기능을 연동하여 사용할 수 있다. 옵션 설정은 아래 예제와 같다.
 
 ```js
 const grid = new Grid({
@@ -26,7 +26,7 @@ const grid = new Grid({
 });
 ```
 
-위 예제처럼 `pageOptions.perPage`에 한 페이지에 보여줄 데이터 수를 설정한 후, 요청 데이터와 응답 데이터의 규격만 데이터 소스에서 정의한 규격에 맞춘다면 연동하여 사용할 수 있다. 관련된 내용은 [여기](https://github.com/nhn/tui.grid/blob/master/docs/ko/data-source.md)서 더 자세하게 확인할 수 있다.
+위 예제처럼 `pageOptions.perPage`에 한 페이지에 보여줄 데이터 수를 설정한 후, 요청 데이터와 응답 데이터의 규격만 데이터 소스에서 정의한 규격에 맞춘다면 연동하여 사용할 수 있다. 관련된 내용은 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)서 더 자세하게 확인할 수 있다.
 
 
 ## 클라이언트 페이지네이션

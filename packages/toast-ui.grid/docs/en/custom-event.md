@@ -30,6 +30,35 @@ grid.off('click');
 grid.off('click', onClickHandler);
 ```
 
+## Adding Event Handlers Using Option Configurations
+
+You can also directly set up the event handlers using the Grid's options. Such event handlers cannot be added using the `on()` instance method, and does not need to be removed using the `off()`. The event handlers that can be added using the option configurations are `onBeforeChange()`, `onAfterChange()`, `onGridMounted()`, and `onGridBeforeDestroy()`, and respective configurations are further detailed in examples below.
+
+```javascript
+const grid = new Grid({
+  // options...
+  columns: [
+    {
+      header: 'Name',
+      name: 'name',
+      onBeforeChange(ev) {
+        console.log('Before change:' + ev);
+      },
+      onAfterChange(ev) {
+        console.log('After change:' + ev);
+      },
+      editor: 'text',
+    }
+  ],
+  onGridMounted(ev) {
+    console.log('mounted' + ev);
+  },
+  onGridBeforeDestroy(ev) {
+    console.log('before destroy' + ev);
+  }
+});
+```
+
 ## GridEvent
 When an event occurs, an instance of the `GridEvent` instance is passed to the handler attached to the event. It has useful information which can be used by event handler. For example, if the `click` event occurs, `rowKey`, `targetType` and `columnName` value is set to the `GridEvent` instance so that user can figure out the address of the target cell.
 
@@ -89,6 +118,12 @@ Also, the following events are available when the tree column is enabled.
 - `expand` : When the expand / collapse button is changed to the expanded state by clicking or calling the `expand()` and `expandAll()` methods.
 - `collapse` : When the expand / collapse button is changed to the collapsed state by clicking or calling the `collapse()` and `collapseAll()` methods.
 
+The following events can be added using option configurations.
+
+- `onBeforeChange`: Before the value of the cell is changed
+- `onAfterChange`: After the value of the cell is changed
+- `onGridMounted`: When the Gird has successfully rendered onto the DOM
+- `onGridBeforeDestroy`: Before the Grid is removed from the DOM
 
 You can see the detail information of these events at the [API page](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest).
 

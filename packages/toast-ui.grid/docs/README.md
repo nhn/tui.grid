@@ -20,6 +20,9 @@
 - [🖖 Row Span](./en/row-span.md)
 - [✔️ Validation](./en/validation.md)
 - [📐 Setting width, height](./en/setting-width-height.md)
+- [🗂 Sort](./en/sort.md)
+- [📖 Pagination](./en/pagination.md)
+- [🔍 Filter](./en/filter.md)
 
 ### Migration Guide
 - [✈️ v4.0 Migration Guide](v4.0-migration-guide.md)
