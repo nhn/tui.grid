@@ -74,11 +74,15 @@ function createEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
   }
   return null;
 }
+
 function createRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
+  let cellRenderer = { type: isFunction(renderer) ? renderer : DefaultRenderer };
+
   if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
-    return renderer as CellRendererOptions;
+    cellRenderer = renderer as CellRendererOptions;
   }
-  return { type: DefaultRenderer };
+
+  return cellRenderer;
 }
 
 function createTreeInfo(treeColumnOptions: OptTree, name: string) {
