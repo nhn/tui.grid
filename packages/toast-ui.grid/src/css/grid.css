@@ -663,6 +663,7 @@
   color: #333;
   border: none;
   background-color: #fff;
+  cursor: pointer;
 }
 
 .tui-grid-filter-dropdown select:focus {
@@ -785,6 +786,7 @@
   width: 50px;
   border-radius: 2px;
   margin-left: 4px;
+  cursor: pointer;
 }
 
 .tui-grid-filter-btn-apply {
