@@ -763,7 +763,7 @@
   vertical-align: middle;
 }
 
-.tui-grid-filter-list-item-checked {
+.tui-grid-filter-list .tui-grid-filter-list-item-checked {
   background-color: #e5f6ff;
 }
 
