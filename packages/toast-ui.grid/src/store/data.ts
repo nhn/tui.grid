@@ -224,7 +224,7 @@ function createRelationViewCell(
     const targetListItems = getListItems(listItemsCallback, relationCbParams) || [];
     const targetValue = row[targetName];
     const targetEditor = columnMap[targetName].editor;
-    const targetEditorOptions = targetEditor && targetEditor.options;
+    const targetEditorOptions = targetEditor?.options;
 
     const relationMatched = isFunction(listItemsCallback)
       ? someProp('value', targetValue, targetListItems)
