@@ -26,30 +26,28 @@ class FilterOperatorComp extends Component<Props> {
 
     return (
       <div className={cls('filter-comparator-container')}>
-        <div className={cls('filter-comparator')}>
-          <input
-            type="radio"
-            name="filterOperator"
-            value="AND"
-            id="AND"
-            checked={operator === 'AND'}
-            onChange={this.handleChangeOperator}
-          />
-          <label for="AND" />
-          <span>AND</span>
-        </div>
-        <div className={cls('filter-comparator')}>
-          <input
-            type="radio"
-            id="OR"
-            name="filterOperator"
-            value="OR"
-            checked={operator === 'OR'}
-            onChange={this.handleChangeOperator}
-          />
-          <label for="OR" />
-          <span>OR</span>
-        </div>
+        {['AND', 'OR'].map(value => {
+          return (
+            <div
+              key={value}
+              className={cls('filter-comparator', [
+                operator === value,
+                'filter-comparator-checked'
+              ])}
+            >
+              <label>
+                <input
+                  type="radio"
+                  name="filterOperator"
+                  value={value}
+                  checked={operator === value}
+                  onChange={this.handleChangeOperator}
+                />
+                <span>{value}</span>
+              </label>
+            </div>
+          );
+        })}
       </div>
     );
   }
