@@ -127,7 +127,7 @@ export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, ob
     }
   });
 
-  return resultObj as (T1 & T2);
+  return resultObj as T1 & T2;
 }
 
 export function assign(targetObj: Obj, obj: Obj) {

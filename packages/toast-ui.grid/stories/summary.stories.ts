@@ -29,7 +29,10 @@ function createDefaultSummaryOption() {
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const data = sampleData.slice();
-  const columns = [{ name: 'price', minWidth: 150 }, { name: 'downloadCount', minWidth: 150 }];
+  const columns = [
+    { name: 'price', minWidth: 150 },
+    { name: 'downloadCount', minWidth: 150 }
+  ];
   const summary = createDefaultSummaryOption();
 
   return { data, columns, summary };

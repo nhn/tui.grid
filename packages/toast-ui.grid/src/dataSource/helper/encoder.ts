@@ -60,13 +60,10 @@ export function encodeParams(params: Params, hasBody = false) {
   if (!params) {
     return '';
   }
-  const encodedDataList = Object.keys(params).reduce(
-    (acc, name) => {
-      const value = params[name];
-      return value !== '' ? acc.concat(encodeFormData(name, value, hasBody)) : acc;
-    },
-    [] as string[]
-  );
+  const encodedDataList = Object.keys(params).reduce((acc, name) => {
+    const value = params[name];
+    return value !== '' ? acc.concat(encodeFormData(name, value, hasBody)) : acc;
+  }, [] as string[]);
 
   return encodedDataList.join('&');
 }
