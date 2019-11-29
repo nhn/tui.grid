@@ -5,12 +5,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 describe('validate changed value', () => {
   it('empty', () => {
     cy.createGrid({
@@ -188,7 +182,10 @@ it('validate changed value using editor by resetData API', () => {
 });
 
 it('validate changed value using editor by setColumns API', () => {
-  const columns = [{ name: 'name', editor: 'text' }, { name: 'price', editor: 'text' }];
+  const columns = [
+    { name: 'name', editor: 'text' },
+    { name: 'price', editor: 'text' }
+  ];
   const columnsWithValidation = columns.map(column => ({
     ...column,
     validation: { required: true }

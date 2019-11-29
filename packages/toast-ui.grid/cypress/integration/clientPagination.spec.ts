@@ -19,10 +19,6 @@ const appendedData = {
 };
 
 function createGrid(newData?: OptRow[]) {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({
     data: newData || data.slice(0, 80),
     pageOptions: {

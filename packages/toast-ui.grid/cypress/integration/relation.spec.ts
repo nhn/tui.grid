@@ -13,9 +13,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
   cy.createGrid({ data, columns });
 });
 

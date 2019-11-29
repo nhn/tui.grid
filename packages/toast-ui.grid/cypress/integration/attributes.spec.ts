@@ -4,12 +4,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 describe('className', () => {
   beforeEach(() => {
     const data = [

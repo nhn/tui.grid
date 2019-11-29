@@ -30,9 +30,7 @@ function createSummaryOption(
       price: {
         template(valueMap: OptSummaryValueMap) {
           const { filtered, max, min } = valueMap;
-          return `MAX: ${max} FilteredMax: ${filtered.max}<br>MIN: ${min} FilteredMin: ${
-            filtered.min
-          }`;
+          return `MAX: ${max} FilteredMax: ${filtered.max}<br>MIN: ${min} FilteredMin: ${filtered.min}`;
         }
       },
       downloadCount: {
@@ -104,19 +102,7 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 describe('summary', () => {
-  beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-  });
-
   it('no render when height is 0', () => {
     const defaultOptions = createDefaultOptions();
     const summary = createSummaryOption({ height: 0 });

@@ -4,12 +4,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 function createGridInHiddenParent(parentWidth: number, parentHeight: number, gridOptions: any) {
   const parentEl = document.createElement('div');
 
@@ -22,7 +16,10 @@ function createGridInHiddenParent(parentWidth: number, parentHeight: number, gri
 
 describe('getElement()', () => {
   it('should returns the HTMLElement of the given cell address', () => {
-    const data = [{ c1: 10, c2: 20 }, { c1: 20, c2: 30 }];
+    const data = [
+      { c1: 10, c2: 20 },
+      { c1: 20, c2: 30 }
+    ];
     const columns = [{ name: 'c1' }, { name: 'c2' }];
 
     cy.createGrid({ data, columns });
@@ -41,7 +38,10 @@ describe('getElement()', () => {
 
 describe('refreshLayout()', () => {
   it('should re-calculate width and height', () => {
-    const data = [{ c1: 10, c2: 20 }, { c1: 20, c2: 30 }];
+    const data = [
+      { c1: 10, c2: 20 },
+      { c1: 20, c2: 30 }
+    ];
     const columns = [{ name: 'c1' }, { name: 'c2' }];
     const bodyHeight = 'fitToParent';
 

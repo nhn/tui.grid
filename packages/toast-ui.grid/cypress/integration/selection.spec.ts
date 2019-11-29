@@ -1,7 +1,14 @@
 import { OptColumn } from '../../src/types';
 
-const columns: OptColumn[] = [{ name: 'A', minWidth: 150 }, { name: 'B', minWidth: 150 }];
-const data = [{ A: 1, B: 2 }, { A: 3, B: 2 }, { A: 4, B: 2 }];
+const columns: OptColumn[] = [
+  { name: 'A', minWidth: 150 },
+  { name: 'B', minWidth: 150 }
+];
+const data = [
+  { A: 1, B: 2 },
+  { A: 3, B: 2 },
+  { A: 4, B: 2 }
+];
 
 type Address = [number, number];
 
@@ -21,12 +28,6 @@ before(() => {
 });
 
 describe('getSelectionRange', () => {
-  beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-  });
-
   ['API', 'UI'].forEach(type => {
     it(`selection by ${type}`, () => {
       cy.createGrid({ data, columns });

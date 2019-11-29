@@ -6,7 +6,7 @@ import { data } from '../samples/tree';
 import '../src/css/grid.css';
 
 export default {
-  title: 'tree'
+  title: 'Tree'
 };
 
 const columns = [{ name: 'name' }, { name: 'artist' }];

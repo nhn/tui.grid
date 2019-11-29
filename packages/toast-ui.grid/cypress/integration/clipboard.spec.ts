@@ -2,12 +2,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 const columns = [
   { name: 'c1', editor: { type: 'text' } },
   { name: 'c2', editor: { type: 'text' } },
@@ -31,10 +25,6 @@ const defaultOptions = {
 };
 
 type Address = [number, number];
-
-function getRsideBody() {
-  return cy.getByCls('rside-area', 'body-area');
-}
 
 function setSelectionByAPI(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
@@ -67,7 +57,7 @@ function pressDeleteKey() {
 
     pressDeleteKey();
 
-    getRsideBody().should('have.cellData', [
+    cy.getRsideBody().should('have.cellData', [
       ['c1', 'c2', 'c3'],
       ['c1', '', ''],
       ['c1', '', ''],

@@ -17,18 +17,20 @@ interface ModifiedRowsMap {
   deletedRows?: Data[];
 }
 
-const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
-const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+const data = [
+  { name: 'Kim', age: 10 },
+  { name: 'Lee', age: 20 }
+];
+const columns = [
+  { name: 'name', editor: 'text' },
+  { name: 'age', editor: 'text' }
+];
 
 before(() => {
   cy.visit('/dist');
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({ data, columns });
 });
 

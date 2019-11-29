@@ -26,6 +26,9 @@ Cypress.Commands.add('getByTestId', testId => {
 });
 
 Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl = null) => {
+  cy.document().then(doc => {
+    doc.body.innerHTML = '';
+  });
   return cy.window().then(win => {
     const { document, tui } = win;
     const el = document.createElement('div');
@@ -84,4 +87,8 @@ Cypress.Commands.add('getColumnCells', columnName => {
 
 Cypress.Commands.add('getRow', rowKey => {
   return cy.get(`td[data-row-key=${rowKey}]`);
+});
+
+Cypress.Commands.add('getRsideBody', () => {
+  return cy.getByCls('rside-area', 'body-area');
 });

@@ -94,9 +94,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
   runMockServer();
 });
 

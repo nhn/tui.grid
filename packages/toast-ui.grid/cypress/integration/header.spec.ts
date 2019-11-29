@@ -40,12 +40,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 describe('header align', () => {
   beforeEach(() => {
     const columns = [{ name: 'id' }, { name: 'name' }];

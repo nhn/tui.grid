@@ -56,12 +56,6 @@ before(() => {
 });
 
 describe('sort', () => {
-  beforeEach(() => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-  });
-
   it('sort button is rendered with proper class names', () => {
     cy.createGrid({ data, columns });
     createSortButtonAlias();

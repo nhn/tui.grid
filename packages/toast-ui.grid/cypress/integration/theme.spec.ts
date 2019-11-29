@@ -17,12 +17,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 function assertBackgroundColor($el: JQuery<HTMLElement>, color: string) {
   expect($el.css('background-color')).to.eql(color);
 }

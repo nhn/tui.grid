@@ -5,14 +5,11 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 function createGridWithCallback(beforeCallback: Function, afterCallback: Function) {
-  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 }
+  ];
   const columns = [
     {
       name: 'name',
@@ -26,8 +23,15 @@ function createGridWithCallback(beforeCallback: Function, afterCallback: Functio
 }
 
 function createGridWithEditingFinishEvent(stub: Function) {
-  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
-  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 },
+    { name: 'Ryu', age: 22 }
+  ];
+  const columns = [
+    { name: 'name', editor: 'text' },
+    { name: 'age', editor: 'text' }
+  ];
 
   cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
   cy.gridInstance().invoke('on', 'editingFinish', stub);
@@ -35,7 +39,11 @@ function createGridWithEditingFinishEvent(stub: Function) {
 
 function createGridWithCustomEditor(stub: Function) {
   const CustomLayerEditor = createCustomLayerEditor(stub);
-  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 },
+    { name: 'Ryu', age: 22 }
+  ];
   const columns = [
     {
       name: 'name',
@@ -45,27 +53,15 @@ function createGridWithCustomEditor(stub: Function) {
     },
     { name: 'age' }
   ];
-
-  cy.createStyle(`
-  .custom-editor-layer {
-    width: 300px;
-    height: 300px;
-    left: 55%;
-    top: 50%;
-    position: absolute;
-    border: 1px solid #000;
-    z-index: 25;
-    text-align: center;
-    line-height: 300px;
-    background-color: #fff;
-  }
-`);
   cy.createGrid({ data, columns });
 }
 
 describe('with interaction', () => {
   beforeEach(() => {
-    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
+    const data = [
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 28 }
+    ];
     const columns = [
       {
         name: 'name',
@@ -176,7 +172,11 @@ describe('API', () => {
   ];
 
   beforeEach(() => {
-    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+    const data = [
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 28 },
+      { name: 'Ryu', age: 22 }
+    ];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
     cy.createGrid({ data, columns });
@@ -216,7 +216,11 @@ describe('API', () => {
 
 describe('editable, disable, hidden', () => {
   beforeEach(() => {
-    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+    const data = [
+      { name: 'Lee', age: 20 },
+      { name: 'Han', age: 28 },
+      { name: 'Ryu', age: 22 }
+    ];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
     cy.createGrid({ data, columns });

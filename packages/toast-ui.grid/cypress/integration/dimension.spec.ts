@@ -13,11 +13,7 @@ function getRside() {
   return cy.getByCls('rside-area');
 }
 
-function getRsideBody() {
-  return cy.getByCls('rside-area', 'body-area');
-}
-
-function getHeader() {
+function getRsideHeader() {
   return cy.getByCls('rside-area', 'header-area');
 }
 
@@ -34,21 +30,21 @@ function assertWidth(width: number) {
     .invoke('width')
     .should('eql', width);
 
-  getRsideBody()
-    .invoke('width')
-    .should('eql', width);
-
-  getHeader()
+  getRsideHeader()
     .invoke('width')
     .should('eql', width - 17);
+
+  cy.getRsideBody()
+    .invoke('width')
+    .should('eql', width);
 }
 
 function assertColumnWidth(widths: number[]) {
-  getHeader()
+  getRsideHeader()
     .get('th')
     .as('headCols');
 
-  getRsideBody()
+  cy.getRsideBody()
     .get('tr:first-child td')
     .as('bodyCols');
 
@@ -135,12 +131,6 @@ function createGridWithRowHeight(rowHeightInfo: RowHeightInfo) {
 
 before(() => {
   cy.visit('/dist');
-});
-
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
 });
 
 describe('container width', () => {
@@ -350,7 +340,7 @@ describe('row height', () => {
   it('rowHeight: 70', () => {
     createGridWithRowHeight({ rowHeight: 70 });
 
-    getRsideBody()
+    cy.getRsideBody()
       .find('tr')
       .each($el => {
         expect($el.height()).to.eql(70);
@@ -394,12 +384,16 @@ describe('row height', () => {
 
     cy.createGrid({ data, columns, rowHeight: 'auto' });
 
-    cy.getByCls('row-odd').should('have.css', 'height', '69px');
+    cy.getByCls('row-odd')
+      .invoke('height')
+      .should('eq', 69);
 
     cy.gridInstance().invoke('startEditing', 0, 'col3');
     cy.getByCls('content-text').type('Kim');
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getByCls('row-odd').should('have.css', 'height', '40px');
+    cy.getByCls('row-odd')
+      .invoke('height')
+      .should('eq', 40);
   });
 });

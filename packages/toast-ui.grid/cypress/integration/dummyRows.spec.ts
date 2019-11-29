@@ -3,9 +3,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
   const columns = [{ name: 'id', editor: 'text' }, { name: 'name' }];
   const data = [
     { id: 1, name: 'Kim', score: 90, grade: 'A' },

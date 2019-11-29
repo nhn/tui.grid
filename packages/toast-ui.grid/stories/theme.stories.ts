@@ -3,7 +3,7 @@ import '../src/css/grid.css';
 import { OptColumn } from '../src/types';
 
 export default {
-  title: 'theme'
+  title: 'Theme'
 };
 
 function createGridWithTheme(options) {

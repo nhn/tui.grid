@@ -4,7 +4,7 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 
 export default {
-  title: 'state layer'
+  title: 'State layer'
 };
 
 function createGrid(options: Omit<OptGrid, 'el'>) {

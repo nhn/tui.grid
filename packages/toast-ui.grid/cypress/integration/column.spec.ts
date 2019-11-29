@@ -5,10 +5,6 @@ export {};
 
 type Address = [number, number];
 
-function getRsideBody() {
-  return cy.getByCls('rside-area', 'body-area');
-}
-
 function startEditingAt(rowInedx: number, columnIndex: number) {
   cy.gridInstance().invoke('startEditingAt', rowInedx, columnIndex);
 }
@@ -25,12 +21,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 describe('setColumns()', () => {
   beforeEach(() => {
     const data = [
@@ -45,7 +35,10 @@ describe('setColumns()', () => {
     const columns = [{ name: 'id' }, { name: 'score' }, { name: 'grade' }];
     setColumns(columns);
 
-    getRsideBody().should('have.cellData', [['1', '90', 'A'], ['2', '80', 'B']]);
+    cy.getRsideBody().should('have.cellData', [
+      ['1', '90', 'A'],
+      ['2', '80', 'B']
+    ]);
   });
 
   it('focus, editing layer is removed', () => {
@@ -116,7 +109,10 @@ describe('API', () => {
 });
 
 describe('formatter', () => {
-  const data = [{ name: 'Kim', age: 30 }, { name: 'Lee', age: 40 }];
+  const data = [
+    { name: 'Kim', age: 30 },
+    { name: 'Lee', age: 40 }
+  ];
 
   const ageFormatterProps1 = {
     column: { name: 'age' },
@@ -177,8 +173,7 @@ describe('escapeHTML', () => {
 
     cy.createGrid({ data, columns });
 
-    cy.getCell(0, 'name').should('to.have.text', '<b>Kim</b>');
-    cy.getCell(0, 'age').should('to.have.text', '10<br/>');
+    cy.getRsideBody().should('have.cellData', [['<b>Kim</b>', '10<br/>']]);
   });
 });
 
@@ -198,10 +193,10 @@ describe('defaultValue', () => {
 
     cy.createGrid({ data, columns });
 
-    cy.getCell(0, 'name').should('have.text', 'Lee');
-    cy.getCell(0, 'age').should('have.text', '20');
-    cy.getCell(1, 'name').should('have.text', 'Kim');
-    cy.getCell(1, 'age').should('have.text', '30');
+    cy.getRsideBody().should('have.cellData', [
+      ['Lee', '20'],
+      ['Kim', '30']
+    ]);
   });
 });
 

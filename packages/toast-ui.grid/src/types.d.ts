@@ -56,8 +56,6 @@ export interface OptGrid {
   onGridBeforeDestroy?: Function;
 }
 
-export type CellValue = number | string | boolean | null | undefined;
-
 export type SummaryPosition = 'top' | 'bottom';
 
 type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };

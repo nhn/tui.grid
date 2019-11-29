@@ -2,7 +2,10 @@ import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
 import { Row } from '@/store/types';
 
-const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
+const data = [
+  { name: 'Kim', age: 10 },
+  { name: 'Lee', age: 20 }
+];
 const largeData = [
   { name: 'Kim', age: 10 },
   { name: 'Lee', age: 20 },
@@ -23,12 +26,6 @@ function checkGridHasRightRowNumber() {
 
 before(() => {
   cy.visit('/dist');
-});
-
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
 });
 
 describe('appendRow()', () => {
@@ -302,7 +299,10 @@ describe('resetData()', () => {
   });
 
   it('focus, editing cell is removed when resets all data', () => {
-    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
+    cy.gridInstance().invoke('resetData', [
+      { name: 'Park', age: 30 },
+      { name: 'Han', age: 40 }
+    ]);
     cy.gridInstance()
       .invoke('getFocusedCell')
       .should('eql', {
@@ -321,7 +321,10 @@ describe('resetData()', () => {
 
     cy.get(`.${cls('rside-area')} .${cls('body-area')}`).scrollTo(0, 800);
 
-    cy.gridInstance().invoke('resetData', [{ name: 'Park', age: 30 }, { name: 'Han', age: 40 }]);
+    cy.gridInstance().invoke('resetData', [
+      { name: 'Park', age: 30 },
+      { name: 'Han', age: 40 }
+    ]);
 
     cy.get(`.${cls('rside-area')} .${cls('body-container')}`).should($container => {
       expect($container.height()).to.lessThan(800);
