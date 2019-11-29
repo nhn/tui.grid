@@ -27,20 +27,19 @@ class FilterOperatorComp extends Component<Props> {
     return (
       <div className={cls('filter-comparator-container')}>
         {['AND', 'OR'].map(value => {
+          const checked = operator === value;
+
           return (
             <div
               key={value}
-              className={cls('filter-comparator', [
-                operator === value,
-                'filter-comparator-checked'
-              ])}
+              className={cls('filter-comparator', [checked, 'filter-comparator-checked'])}
             >
               <label>
                 <input
                   type="radio"
                   name="filterOperator"
                   value={value}
-                  checked={operator === value}
+                  checked={checked}
                   onChange={this.handleChangeOperator}
                 />
                 <span>{value}</span>
