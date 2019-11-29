@@ -133,7 +133,7 @@ class ComplexHeaderComp extends Component<Props> {
         height = rowHeight * rowspan;
 
         if (j === length - 1) {
-          height = headerHeight - curHeight - 2;
+          height = headerHeight - curHeight - 1;
         } else {
           curHeight += height + 1;
         }
