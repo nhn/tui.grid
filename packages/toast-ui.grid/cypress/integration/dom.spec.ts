@@ -62,7 +62,7 @@ describe('refreshLayout()', () => {
       const bodyAreaHeight = $el.find(`.${cls('body-area')}`).height()!;
 
       expect($el.width()).to.eq(817);
-      expect(headerAreaHeight + bodyAreaHeight).to.eq(600);
+      expect(headerAreaHeight + bodyAreaHeight).to.eq(599);
     });
 
     cy.getCell(0, 'c1')
