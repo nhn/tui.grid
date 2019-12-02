@@ -3,10 +3,37 @@ import Grid from '../src/grid';
 import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
+import { CellEditor, CellEditorProps } from '../src/editor/types';
 
 export default {
   title: 'Editor'
 };
+
+class ColorPickerEditor implements CellEditor {
+  el: HTMLInputElement;
+
+  public constructor(props: CellEditorProps) {
+    const el = document.createElement('input');
+    const { grid, rowKey, columnInfo } = props;
+
+    el.type = 'color';
+    el.value = String(props.value);
+
+    el.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(el.value));
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+
+  getValue() {
+    return String(this.el.value);
+  }
+}
 
 const data = [
   {
@@ -14,21 +41,24 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '4',
-    release: '2016.03.26'
+    release: '2016.03.26',
+    albumColor: '#F294A4'
   },
   {
     artist: 'Ed Sheeran',
     typeCode: '1',
     genreCode: '1',
     grade: '5',
-    release: '2014.06.24'
+    release: '2014.06.24',
+    albumColor: '#ED6510'
   },
   {
     artist: 'Maroon5',
     typeCode: '3',
     genreCode: '1,2',
     grade: '2',
-    release: '2011.08.08'
+    release: '2011.08.08',
+    albumColor: '#1286DB'
   }
 ];
 
@@ -64,7 +94,10 @@ const columns: OptColumn[] = [
     editor: {
       type: 'radio',
       options: {
-        listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+        listItems: [
+          { text: 'Delux', value: '1' },
+          { text: 'Single', value: '2' }
+        ]
       }
     }
   },
@@ -89,6 +122,13 @@ const columns: OptColumn[] = [
     header: 'Release',
     name: 'release',
     editor: 'datePicker'
+  },
+  {
+    header: 'Album Color',
+    name: 'albumColor',
+    editor: {
+      type: ColorPickerEditor
+    }
   }
 ];
 
@@ -169,3 +209,17 @@ const datepickerNote = `
 - Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
 `;
 datepicker.story = { parameters: { notes: datepickerNote } };
+
+export const customEditor = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 5);
+
+  return el;
+};
+const customEditorNote = `
+## Datepicker Editing Layer
+- The editing layer UI for \`datepicker\` type
+- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+`;
+customEditor.story = { parameters: { notes: customEditorNote } };

@@ -16,6 +16,7 @@ class SliderRenderer implements CellRenderer {
     const { min, max } = props.columnInfo.renderer.options;
 
     el.type = 'range';
+    el.style.width = '98%';
     el.min = String(min);
     el.max = String(max);
 
@@ -40,19 +41,6 @@ class SliderRenderer implements CellRenderer {
   }
 }
 
-const columns: OptColumn[] = [
-  { name: 'name' },
-
-  { name: 'vip' },
-  {
-    name: 'score',
-    renderer: {
-      type: SliderRenderer,
-      options: { min: 10, max: 30 }
-    }
-  }
-];
-
 const data = [
   {
     name: 'John',
@@ -75,7 +63,7 @@ const data = [
     vip: 'N'
   }
 ];
-function createGrid() {
+function createGrid(columns: OptColumn[]) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
@@ -85,8 +73,8 @@ function createGrid() {
 }
 
 export const defaultRenderer = () => {
-  const { el, grid } = createGrid();
-  grid.hideColumn('score');
+  const columns: OptColumn[] = [{ name: 'name' }, { name: 'vip' }];
+  const { el } = createGrid(columns);
 
   return el;
 };
@@ -98,7 +86,16 @@ const defaultRendererNote = `
 defaultRenderer.story = { parameters: { notes: defaultRendererNote } };
 
 export const customRenderer = () => {
-  const { el } = createGrid();
+  const columns: OptColumn[] = [
+    {
+      name: 'score',
+      renderer: {
+        type: SliderRenderer,
+        options: { min: 10, max: 30 }
+      }
+    }
+  ];
+  const { el } = createGrid(columns);
 
   return el;
 };
