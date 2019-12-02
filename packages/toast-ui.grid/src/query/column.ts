@@ -1,5 +1,8 @@
-import { ComplexColumnInfo, Column } from '../store/types';
-import { includes, some } from '../helper/common';
+import { ComplexColumnInfo, Column, ColumnInfo } from '../store/types';
+import { findIndex, findProp, findPropIndex, includes, some } from '../helper/common';
+import { cell } from '../theme/styleGenerator';
+
+export type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
 
 export function isParentColumnHeader(complexColumnHeaders: ComplexColumnInfo[], name: string) {
   return !!complexColumnHeaders.length && some(item => item.name === name, complexColumnHeaders);
@@ -15,4 +18,86 @@ export function isComplexHeader(column: Column, columnName: string) {
       !!(name === columnName || (hideChildHeaders && includes(childNames, columnName))),
     column.complexColumnHeaders
   );
+}
+
+export function getColumnHierarchy(
+  column: ColumnInfo | ComplexColumnInfo,
+  complexColumnHeaders: ComplexColumnInfo[],
+  mergedComplexColumns?: MergedComplexColumns
+) {
+  const complexColumns: MergedComplexColumns = mergedComplexColumns || [];
+
+  if (column) {
+    complexColumns.push(column);
+
+    if (complexColumnHeaders) {
+      complexColumnHeaders.forEach(complexColumnHeader => {
+        const index = findIndex(name => column.name === name, complexColumnHeader.childNames);
+
+        if (index !== -1) {
+          getColumnHierarchy(complexColumnHeader, complexColumnHeaders, complexColumns);
+        }
+      });
+    }
+  }
+
+  return complexColumns;
+}
+
+export function getRemovedHiddenChildColumns(hierarchies: MergedComplexColumns[]) {
+  return hierarchies.map(columns => {
+    if (columns.length > 1) {
+      // The hideChildHeaders option always exists in the second column to last.
+      const { hideChildHeaders } = columns[columns.length - 2] as ComplexColumnInfo;
+      if (hideChildHeaders) {
+        columns.pop();
+      }
+    }
+
+    return columns;
+  });
+}
+
+export function getComplexColumnsHierarchy(
+  columns: ColumnInfo[],
+  complexColumnHeaders: ComplexColumnInfo[]
+) {
+  return getRemovedHiddenChildColumns(
+    columns.map(column => getColumnHierarchy(column, complexColumnHeaders).reverse())
+  );
+}
+
+export function getHierarchyMaxRowCount(hierarchies: MergedComplexColumns[]) {
+  const lengths = [0, ...hierarchies.map(value => value.length)];
+
+  return Math.max(...lengths);
+}
+
+function getChildHeaderCount(
+  columns: ColumnInfo[],
+  complexColumns: ComplexColumnInfo[],
+  name: string
+) {
+  let count = 0;
+  const leafColumn = some(({ name: columnName }) => columnName === name, columns);
+  if (!leafColumn) {
+    const { childNames } = findProp('name', name, complexColumns)!;
+    childNames.forEach(childName => {
+      const leafChildColumn = some(({ name: columnName }) => columnName === childName, columns);
+      count += leafChildColumn ? 1 : getChildHeaderCount(columns, complexColumns, childName);
+    });
+  }
+
+  return count;
+}
+
+export function getCellBorder(
+  columns: ColumnInfo[],
+  complexColumns: ComplexColumnInfo[],
+  name: string,
+  cellBorderWidth: number
+) {
+  const count = getChildHeaderCount(columns, complexColumns, name);
+
+  return count === 0 ? cellBorderWidth : count * cellBorderWidth;
 }

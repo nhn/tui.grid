@@ -298,7 +298,7 @@
   left: -99px;
   width: 7px;
   background: #000;
-  opacity: 0;
+  opacity: 1;
   filter: alpha(opacity=0);
   cursor: col-resize;
 }

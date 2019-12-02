@@ -505,6 +505,7 @@ export interface ComplexColumnInfo {
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
   hideChildHeaders?: boolean;
+  resizable?: boolean;
 }
 
 export interface RawRowOptions {
