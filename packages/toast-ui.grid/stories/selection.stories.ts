@@ -3,6 +3,7 @@ import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import { data } from '../samples/basic';
 import { OptGrid } from '../src/types';
+import { cls } from '../src/helper/dom';
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -13,8 +14,8 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-function getByTestId(el, testId) {
-  return el.querySelector(`[data-testid="${testId}"]`);
+function getRsideBody(el) {
+  return el.querySelector(`.${cls('rside-area')} .${cls('body-area')}`);
 }
 
 const columns = [
@@ -69,7 +70,7 @@ export const scrolled = () => {
 
   grid.setSelectionRange({ start: [1, 1], end: [5, 3] });
   setTimeout(() => {
-    const rsideBody = getByTestId(el, 'rside-body');
+    const rsideBody = getRsideBody(el);
     rsideBody.scrollTop = 70;
     rsideBody.scrollLeft = 100;
   });

@@ -28,10 +28,6 @@ function assertModifiedRowsLength(type: ModifiedType, length: number) {
 }
 
 function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'>) {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({
     data: [
       {

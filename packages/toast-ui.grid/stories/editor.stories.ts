@@ -1,33 +1,70 @@
-import { storiesOf } from '@storybook/html';
-import { OptColumn, OptGrid } from '../src/types';
-import { Omit } from 'utility-types';
-import { withKnobs } from '@storybook/addon-knobs';
+import { OptColumn } from '../src/types';
 import Grid from '../src/grid';
-import { data } from '../samples/basic';
 import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
+import { CellEditor, CellEditorProps } from '../src/editor/types';
 
-const stories = storiesOf('Cell Editor', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Editor'
+};
 
-function createGrid(options: Omit<OptGrid, 'el'>) {
-  const el = document.createElement('div');
-  el.style.width = '800px';
+class ColorPickerEditor implements CellEditor {
+  el: HTMLInputElement;
 
-  const grid = new Grid({ el, ...options });
+  public constructor(props: CellEditorProps) {
+    const el = document.createElement('input');
+    const { grid, rowKey, columnInfo } = props;
 
-  return { el, grid };
+    el.type = 'color';
+    el.value = String(props.value);
+
+    el.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(el.value));
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+
+  getValue() {
+    return String(this.el.value);
+  }
 }
 
-let columns: OptColumn[] = [
+const data = [
   {
-    name: 'name',
-    width: 150
+    artist: 'Birdy',
+    typeCode: '1',
+    genreCode: '1',
+    grade: '4',
+    release: '2016.03.26',
+    albumColor: '#F294A4'
   },
   {
+    artist: 'Ed Sheeran',
+    typeCode: '1',
+    genreCode: '1',
+    grade: '5',
+    release: '2014.06.24',
+    albumColor: '#ED6510'
+  },
+  {
+    artist: 'Maroon5',
+    typeCode: '3',
+    genreCode: '1,2',
+    grade: '2',
+    release: '2011.08.08',
+    albumColor: '#1286DB'
+  }
+];
+
+const columns: OptColumn[] = [
+  {
     name: 'artist',
-    width: 200,
     editor: {
       type: 'text',
       options: {
@@ -38,7 +75,6 @@ let columns: OptColumn[] = [
   {
     header: 'Genre',
     name: 'genreCode',
-    width: 200,
     formatter: 'listItemText',
     editor: {
       type: 'checkbox',
@@ -54,19 +90,20 @@ let columns: OptColumn[] = [
   {
     header: 'Type',
     name: 'typeCode',
-    width: 200,
     formatter: 'listItemText',
     editor: {
       type: 'radio',
       options: {
-        listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+        listItems: [
+          { text: 'Delux', value: '1' },
+          { text: 'Single', value: '2' }
+        ]
       }
     }
   },
   {
     header: 'Grade',
     name: 'grade',
-    width: 200,
     formatter: 'listItemText',
     editor: {
       type: 'select',
@@ -80,120 +117,109 @@ let columns: OptColumn[] = [
         ]
       }
     }
+  },
+  {
+    header: 'Release',
+    name: 'release',
+    editor: 'datePicker'
+  },
+  {
+    header: 'Album Color',
+    name: 'albumColor',
+    editor: {
+      type: ColorPickerEditor
+    }
   }
 ];
 
-stories.add(
-  'Text / Checkbox',
-  () => {
-    const { el } = createGrid({
-      data,
-      columns,
-      columnOptions: { frozenCount: 1 },
-      bodyHeight: 400
-    });
+function createGrid() {
+  const el = document.createElement('div');
 
-    return el;
-  },
-  { html: { preventForcedRender: true } }
-);
+  const grid = new Grid({ el, data, columns });
 
-stories.add('with editingEvent:click options', () => {
-  const { el } = createGrid({
-    data,
-    columns,
-    columnOptions: { frozenCount: 1 },
-    bodyHeight: 400,
-    editingEvent: 'click'
-  });
+  return { el, grid };
+}
+
+export const text = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 0);
 
   return el;
-});
+};
+const textNote = `
+## Text Editing Layer
+- The editing layer UI for \`text\` type
+- Using native input-text
+`;
+text.story = { parameters: { notes: textNote } };
 
-stories.add(
-  'Datepicker',
-  () => {
-    columns = [
-      {
-        name: 'default',
-        editor: 'datePicker'
-      },
-      {
-        name: 'options',
-        editor: {
-          type: 'datePicker',
-          options: {
-            format: 'yyyy/MM/dd',
-            selectableRanges: [[new Date(1992, 2, 25), new Date(1992, 2, 29)]]
-          }
-        }
-      },
-      {
-        name: 'timePicker',
-        editor: {
-          type: 'datePicker',
-          options: {
-            format: 'yyyy-MM-dd HH:mm A',
-            timepicker: true,
-            showIcon: false
-          }
-        }
-      },
-      {
-        name: 'timePickerWithTab',
-        editor: {
-          type: 'datePicker',
-          options: {
-            format: 'yyyy-MM-dd HH:mm A',
-            timepicker: {
-              layoutType: 'tab',
-              inputType: 'spinbox'
-            }
-          }
-        }
-      },
-      {
-        name: 'monthPicker',
-        editor: {
-          type: 'datePicker',
-          options: {
-            format: 'yyyy-MM',
-            type: 'month'
-          }
-        }
-      },
-      {
-        name: 'yearPicker',
-        editor: {
-          type: 'datePicker',
-          options: {
-            format: 'yyyy',
-            type: 'year'
-          }
-        }
-      }
-    ];
+export const checkbox = () => {
+  const { el, grid } = createGrid();
 
-    const { el } = createGrid({
-      data: [
-        {
-          id: 549731,
-          default: '2019-11-11',
-          options: '1992/03/25',
-          timePicker: '2019-11-11 11:11 AM',
-          timePickerWithTab: '2019-11-11 11:11 AM',
-          monthPicker: '2019-11',
-          yearPicker: '2019'
-        }
-      ],
-      columns,
-      columnOptions: { frozenCount: 1 },
-      showDummyRows: true,
-      bodyHeight: 200,
-      width: 1200
-    });
+  grid.startEditingAt(1, 1);
 
-    return el;
-  },
-  { html: { preventForcedRender: true } }
-);
+  return el;
+};
+const checkboxNote = `
+## Checkbox Editing Layer
+- The editing layer UI for \`checkbox\` type
+- Using native input-checkbox
+`;
+checkbox.story = { parameters: { notes: checkboxNote } };
+
+export const radio = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 2);
+
+  return el;
+};
+const radioNote = `
+## Radio Editing Layer
+- The editing layer UI for \`radio\` type
+- Using native input-radio
+`;
+radio.story = { parameters: { notes: radioNote } };
+
+export const select = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 3);
+
+  return el;
+};
+const selectNote = `
+## Select Editing Layer
+- The editing layer UI for \`select\` type
+- Using native input-select
+`;
+select.story = { parameters: { notes: selectNote } };
+
+export const datepicker = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 4);
+
+  return el;
+};
+const datepickerNote = `
+## Datepicker Editing Layer
+- The editing layer UI for \`datepicker\` type
+- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+`;
+datepicker.story = { parameters: { notes: datepickerNote } };
+
+export const customEditor = () => {
+  const { el, grid } = createGrid();
+
+  grid.startEditingAt(1, 5);
+
+  return el;
+};
+const customEditorNote = `
+## Datepicker Editing Layer
+- The editing layer UI for \`datepicker\` type
+- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+`;
+customEditor.story = { parameters: { notes: customEditorNote } };

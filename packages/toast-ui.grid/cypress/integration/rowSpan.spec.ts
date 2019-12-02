@@ -51,12 +51,6 @@ const columns = [
   { name: 'type', editor: 'text' }
 ];
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 it('render rowSpan cell properly', () => {
   cy.createGrid({ data, columns });
   cy.getCell(0, 'name').should('have.attr', 'rowSpan', '2');

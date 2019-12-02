@@ -1,7 +1,10 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
 
-const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
+const data = [
+  { name: 'Kim', age: 10 },
+  { name: 'Lee', age: 20 }
+];
 const columns = [
   { name: 'name', editor: 'text', resizable: true, sortable: true },
   { name: 'age', filter: 'number' }
@@ -12,10 +15,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({
     data,
     columns,
@@ -266,10 +265,6 @@ it('sort', () => {
 it('gridMounted', () => {
   const callback = cy.stub();
 
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({
     data,
     columns,
@@ -284,10 +279,6 @@ it('gridMounted', () => {
 
 it('gridBeforeDestroy', () => {
   const callback = cy.stub();
-
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
 
   cy.createGrid({
     data,

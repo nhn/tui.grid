@@ -21,9 +21,6 @@ it('should show "No data." text when there is no data.', () => {
 });
 
 it('should show "Loading data." text when fetch data.', () => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
   runMockServer();
   cy.createGrid({ columns, data });
 

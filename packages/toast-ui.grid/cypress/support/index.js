@@ -35,6 +35,16 @@ chai.use(_chai => {
 
     new _chai.Assertion(actual).to.be.eql(cellData);
   });
+
+  _chai.Assertion.addMethod('sameColumnData', function(columnData) {
+    new _chai.Assertion(columnData).to.be.exist;
+    const cells = this._obj;
+
+    const actual = [...cells].map(cell => cell.textContent);
+    const values = [...cells].map(() => columnData);
+
+    new _chai.Assertion(actual).to.be.eql(values);
+  });
 });
 
 // Alternatively you can use CommonJS syntax:

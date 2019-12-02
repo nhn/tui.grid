@@ -1,8 +1,9 @@
-import { cls, dataAttr } from '../../src/helper/dom';
 import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
 import { Dictionary } from '@/store/types';
+import { DataSource } from '@/dataSource/types';
+import GridEvent from '@/event/gridEvent';
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true },
@@ -22,7 +23,7 @@ const data = {
 };
 
 function createSortButonAlias() {
-  cy.get(`.${cls('btn-sorting')}`)
+  cy.getByCls('btn-sorting')
     .first()
     .as('first');
 }
@@ -55,23 +56,12 @@ function assertModifiedRowsContainsObject(type: string, obj: object) {
     });
 }
 
-function assertModifiedRowsNotContainsObject(type: string, obj: object) {
-  cy.gridInstance()
-    .invoke('getModifiedRows')
-    .its(type)
-    .should(rows => {
-      expect(rows[0]).to.not.contain(obj);
-    });
-}
-
 function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
   const testData = (sortedData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
-    $el.each((index, elem) => {
-      expect(elem.textContent).to.eql(testData[index]);
-    });
+  cy.getColumnCells(columnName).each(($el, index) => {
+    cy.wrap($el).should('have.text', testData[index]);
   });
 }
 
@@ -79,24 +69,24 @@ function assertPagingData(columnName: string, page = 1, perPage = 10) {
   const pagingData = page === 1 ? sampleData.slice(0, perPage) : sampleData.slice(perPage);
   const testData = (pagingData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
-  cy.get(`td[${dataAttr.COLUMN_NAME}=${columnName}]`).should($el => {
-    $el
-      .filter(index => index < perPage)
-      .each((index, elem) => {
-        expect(elem.textContent).to.eql(testData[index]);
-      });
+  cy.getColumnCells(columnName)
+    .filter(index => index < perPage)
+    .each(($el, index) => {
+      cy.wrap($el).should('have.text', testData[index]);
+    });
+}
+
+function createGridWithDataSource(dataSource?: DataSource) {
+  cy.createGrid({
+    data: { ...(dataSource || data) },
+    columns,
+    useClientSort: false,
+    pageOptions: { perPage: 10 }
   });
 }
 
-function assertRequestCallArgs(requestStub: any, args?: any) {
-  const defaultArgs = {
-    xhr: {
-      response: '{"result":true,"data":{}}',
-      responseText: '{"result":true,"data":{}}',
-      status: 200
-    }
-  };
-  expect(requestStub.args[0][0]).to.contain.subset(args || defaultArgs);
+function getPageBtn() {
+  return cy.get('.tui-page-btn');
 }
 
 before(() => {
@@ -104,66 +94,44 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
   runMockServer();
-
-  cy.createGrid({
-    data,
-    columns,
-    rowHeaders: ['rowNum', 'checkbox'],
-    useClientSort: false,
-    pageOptions: { perPage: 10 }
-  });
 });
 
 it('initialize grid with server side data', () => {
-  const testData = sampleData.map(sample => String(sample.name));
-  cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
-    expect($el.text()).to.eql(testData[index]);
-  });
+  createGridWithDataSource();
+
+  assertDataLength(10);
+  assertPagingData('name');
 });
 
 it('render grid with server side data when calls readData method', () => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-  cy.createGrid({
-    data: { ...data, initialRequest: false },
-    columns,
-    useClientSort: false,
-    pageOptions: { perPage: 10 }
-  });
-  const testData = sampleData.map(sample => String(sample.name));
+  createGridWithDataSource({ ...data, initialRequest: false });
 
   assertDataLength(0);
 
-  cy.gridInstance()
-    .invoke('readData', 1)
-    .then(() => {
-      cy.get(`td[${dataAttr.COLUMN_NAME}=name]`).each(($el, index) => {
-        expect($el.text()).to.eql(testData[index]);
-      });
-    });
+  cy.gridInstance().invoke('readData', 1);
 
   assertDataLength(10);
+  assertPagingData('name');
 });
 
 describe('sort()', () => {
+  beforeEach(() => {
+    createGridWithDataSource();
+    cy.wait('@readPage1');
+  });
+
   it('check useClient is false', () => {
     cy.gridInstance()
       .invoke('getSortState')
-      .should(sortState => {
-        expect(sortState).to.eql({
-          columns: [
-            {
-              columnName: 'sortKey',
-              ascending: true
-            }
-          ],
-          useClient: false
-        });
+      .should('be.deep.equal', {
+        useClient: false,
+        columns: [
+          {
+            columnName: 'sortKey',
+            ascending: true
+          }
+        ]
       });
   });
 
@@ -171,71 +139,184 @@ describe('sort()', () => {
     createSortButonAlias();
     cy.get('@first').click();
     cy.wait('@readAscData');
+
     assertSortedData('id');
   });
 
   it('server side data is sorted properly when calls readData method', () => {
-    cy.gridInstance().invoke(
-      'readData',
-      1,
-      {
-        sortColumn: 'id',
-        sortAscending: true
-      },
-      true
-    );
+    const params = { sortColumn: 'id', sortAscending: true };
+    cy.gridInstance().invoke('readData', 1, params, true);
     cy.wait('@readAscData');
-    assertSortedData('id');
-  });
 
-  it('server side data is sorted properly when moves page', () => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-    cy.createGrid({
-      data: { ...data, initialRequest: false },
-      columns,
-      useClientSort: false,
-      pageOptions: { perPage: 10 }
-    });
-    cy.gridInstance().invoke('readData', 2);
-    cy.wait('@readPage2');
-
-    createSortButonAlias();
-    cy.get('@first').click();
-    cy.wait('@readAscData');
     assertSortedData('id');
   });
 });
 
-it('reloadData()', () => {
-  cy.wait('@readPage1');
-  cy.gridInstance().invoke('removeRow', 1);
-  cy.gridInstance().invoke('reloadData');
+describe('API', () => {
+  beforeEach(() => {
+    createGridWithDataSource();
+    cy.wait('@readPage1');
+  });
 
-  cy.wait('@readPage1');
-  assertIsModified(false);
+  it('reloadData()', () => {
+    cy.gridInstance().invoke('removeRow', 1);
+    cy.gridInstance().invoke('reloadData');
+
+    cy.wait('@readPage1');
+
+    assertIsModified(false);
+  });
+
+  it('restore()', () => {
+    cy.gridInstance().invoke('removeRow', 1);
+    cy.gridInstance().invoke('restore');
+
+    assertPagingData('id', 1);
+    assertModifiedRowsLength('deletedRows', 0);
+  });
+
+  it('setPerPage()', () => {
+    getPageBtn().should('have.length', 6);
+    assertPagingData('id', 1, 10);
+
+    cy.gridInstance().invoke('setPerPage', 5);
+
+    cy.wait('@perPage5');
+
+    getPageBtn().should('have.length', 8);
+    assertPagingData('id', 1, 5);
+  });
 });
 
-it('restore()', () => {
-  cy.wait('@readPage1');
-  cy.gridInstance().invoke('removeRow', 1);
-  cy.gridInstance().invoke('restore');
+it('server side data is sorted properly when moves page', () => {
+  createGridWithDataSource({ ...data, initialRequest: false });
 
-  assertPagingData('id', 1);
-  assertModifiedRowsLength('deletedRows', 0);
+  cy.gridInstance().invoke('readData', 2);
+  cy.wait('@readPage2');
+
+  createSortButonAlias();
+  cy.get('@first').click();
+  cy.wait('@readAscData');
+
+  assertSortedData('id');
 });
 
-it('setPerPage()', () => {
-  cy.wait('@readPage1');
+describe('getModifiedRows(), request()', () => {
+  beforeEach(() => {
+    createGridWithDataSource();
+    cy.wait('@readPage1');
+  });
 
-  cy.get('.tui-page-btn').should('have.length', 6);
-  assertPagingData('id', 1, 10);
+  it('check createdRow after calling appendRow method, createData request', () => {
+    cy.gridInstance().invoke('appendRow', { id: 21, name: 'JS test', artist: 'JS' });
 
-  cy.gridInstance().invoke('setPerPage', 5);
+    assertModifiedRowsContainsObject('createdRows', {
+      id: 21,
+      name: 'JS test',
+      artist: 'JS'
+    });
+    assertIsModified(true);
 
-  cy.wait('@perPage5');
+    cy.gridInstance().invoke('request', 'createData', { showConfirm: false });
+    cy.wait('@createData');
 
-  cy.get('.tui-page-btn').should('have.length', 8);
-  assertPagingData('id', 1, 5);
+    assertModifiedRowsLength('createdRows', 0);
+  });
+
+  it('check updatedRow after calling setValue method, updateData request', () => {
+    cy.gridInstance().invoke('setValue', 2, 'name', 'JS');
+
+    assertIsModified(true);
+
+    cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
+    cy.wait('@updateData');
+
+    assertModifiedRowsLength('updatedRows', 0);
+  });
+
+  it('check modifyData after calling modifyData request', () => {
+    const targetData = { id: 21, name: 'JS test', artist: 'JS' };
+    cy.gridInstance().invoke('appendRow', targetData);
+    cy.gridInstance().invoke('setValue', 2, 'name', 'JS');
+    cy.gridInstance().invoke('removeRow', 1);
+
+    cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
+    cy.wait('@modifyData');
+
+    assertModifiedRowsLength('createdRows', 0);
+    assertModifiedRowsLength('updatedRows', 0);
+    assertModifiedRowsLength('deletedRows', 0);
+    assertIsModified(false);
+  });
+});
+
+describe('request()', () => {
+  beforeEach(() => {
+    createGridWithDataSource();
+    cy.wait('@readPage1');
+  });
+
+  it('check request body when modifiedOnly is false', () => {
+    cy.gridInstance().invoke('request', 'modifyData', { modifiedOnly: false, showConfirm: false });
+
+    cy.wait('@modifyData')
+      .its('requestBody')
+      .should('contain', 'rows%5B0%5D%5Bid%5D=20&rows%5B0%5D%5Bname%5D=Chaos+And+The+Calm');
+  });
+
+  it('check request body when checkedOnly is true', () => {
+    cy.gridInstance().invoke('setValue', 2, 'name', 'JS test');
+    cy.gridInstance().invoke('request', 'modifyData', { checkedOnly: true, showConfirm: false });
+
+    cy.wait('@modifyData')
+      .its('requestBody')
+      .should('eq', '');
+
+    cy.gridInstance().invoke('check', 2);
+    cy.gridInstance().invoke('request', 'modifyData', { checkedOnly: true, showConfirm: false });
+
+    cy.wait('@modifyData')
+      .its('requestBody')
+      .should('be.not.eq', '');
+  });
+
+  it('check confirm message', () => {
+    const stub = cy.stub();
+    const targetData = { id: 21, name: 'JS test', artist: 'JS' };
+
+    cy.on('window:confirm', stub);
+    cy.gridInstance().invoke('appendRow', targetData);
+    cy.gridInstance().invoke('request', 'modifyData', { showConfirm: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', 'Are you sure you want to modify 1 data?');
+  });
+
+  it('check alert message', () => {
+    const stub = cy.stub();
+
+    cy.on('window:alert', stub);
+    cy.gridInstance().invoke('request', 'createData', { showConfirm: true });
+
+    cy.wrap(stub).should('be.calledWithMatch', 'No data to create.');
+  });
+
+  it('stopping custom event prevents default.', () => {
+    const onBeforeRequest = cy.stub();
+    const onResponse = (ev: GridEvent) => {
+      ev.stop();
+    };
+    const onSuccessResponse = cy.stub();
+
+    cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
+    cy.gridInstance().invoke('on', 'response', onResponse);
+    cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
+    cy.gridInstance().invoke('removeRow', 10);
+
+    cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
+
+    cy.wait('@modifyData');
+
+    cy.wrap(onBeforeRequest).should('be.called');
+    cy.wrap(onSuccessResponse).should('be.not.called');
+  });
 });

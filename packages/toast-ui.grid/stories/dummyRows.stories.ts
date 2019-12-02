@@ -1,17 +1,14 @@
 import Grid from '../src/grid';
 import { OptGrid } from '../src/types';
 import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
-
 import '../src/css/grid.css';
 
 export default {
   title: 'Dummy Rows'
 };
 
+const data = [{ name: 'Beautiful Lies', artist: 'Birdy' }, { name: 'X', artist: 'Ed Sheeran' }];
 const columns = [{ name: 'name', minWidth: 150 }, { name: 'artist', minWidth: 150 }];
-
-const slicedData = data.slice(0, 5);
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
@@ -22,9 +19,9 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   return { el, grid };
 }
 
-export const showDummyRows = () => {
+export const dummyRows = () => {
   const { el } = createGrid({
-    data: slicedData,
+    data,
     columns,
     bodyHeight: 400,
     showDummyRows: true
@@ -35,16 +32,8 @@ export const showDummyRows = () => {
   return rootEl;
 };
 
-export const useRowHeaders = () => {
-  const { el } = createGrid({
-    data: slicedData,
-    columns,
-    showDummyRows: true,
-    bodyHeight: 400,
-    rowHeaders: ['rowNum', 'checkbox']
-  });
-  const rootEl = document.createElement('div');
-  rootEl.appendChild(el);
-
-  return rootEl;
-};
+const dummyRowsNote = `
+## Dummy Rows
+- Show the dummy rows to fill remaining area in grid
+`;
+dummyRows.story = { parameters: { notes: dummyRowsNote } };

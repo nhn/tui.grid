@@ -1,67 +1,106 @@
-import { storiesOf } from '@storybook/html';
-import { withKnobs, button } from '@storybook/addon-knobs';
 import Grid from '../src/grid';
-import { OptGrid } from '../src/types';
-import { Omit } from 'utility-types';
-import { data } from '../samples/basic';
 import '../src/css/grid.css';
+import { OptColumn, OptRow } from '../src/types';
 
-const stories = storiesOf('Focus', module);
-stories.addDecorator(withKnobs);
+export default {
+  title: 'Focus'
+};
 
-const columns = [
+type Options = {
+  data?: OptRow[];
+  rowHeight?: number | 'auto';
+};
+
+function blur(el: HTMLElement) {
+  setTimeout(() => {
+    (el.querySelector('.tui-grid-clipboard') as HTMLElement).focus();
+    (el.querySelector('.tui-grid-clipboard') as HTMLElement).blur();
+  });
+}
+
+const data = [
+  { name: 'Beautiful Lies', artist: 'Birdy', type: 'Deluxe' },
+  { name: 'X', artist: 'Ed Sheeran', type: 'Deluxe' },
+  {
+    name: 'Moves Like Jagger',
+    artist: 'Maroon5',
+    type: 'Single'
+  }
+];
+const columns: OptColumn[] = [
   { name: 'name' },
   { name: 'artist' },
-  { name: 'type' },
-  { name: 'release' },
-  { name: 'genre' },
-  { name: 'genreCode' },
-  { name: 'grade' },
-  { name: 'price' },
-  { name: 'downloadCount' },
-  { name: 'listenCount' }
+  { name: 'type', whiteSpace: 'pre' }
 ];
 
-function createGrid(options: Omit<OptGrid, 'el'>) {
+function createGrid(options?: Options) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, ...options });
+  const grid = new Grid({ el, data, columns, ...options });
 
   return { el, grid };
 }
 
-stories.add(
-  'Focus Activation',
-  () => {
-    const { el, grid } = createGrid({
-      data,
-      columns,
-      bodyHeight: 'fitToParent',
-      columnOptions: {
-        frozenCount: 2,
-        minWidth: 150
+export const activeFocus = () => {
+  const { el, grid } = createGrid();
+  grid.focusAt(2, 2);
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+  rootEl.style.height = '400px';
+
+  return rootEl;
+};
+
+const focusBasicNote = `
+## Focus Layer
+- Active focus layer(background-color: \`#00a9ff\`)
+- Inactive focus layer(background-color:  \`#aaa\`)
+`;
+
+activeFocus.story = { parameters: { notes: focusBasicNote } };
+
+export const inactiveFocus = () => {
+  const { el, grid } = createGrid();
+  const rootEl = document.createElement('div');
+
+  rootEl.appendChild(el);
+
+  grid.focusAt(2, 2);
+  blur(el);
+
+  return rootEl;
+};
+
+inactiveFocus.story = { parameters: { notes: focusBasicNote } };
+
+export const focusWithWhitespace = () => {
+  const options = {
+    data: [
+      { name: 'Beautiful Lies', artist: 'Birdy', type: 'Deluxe' },
+      { name: 'X', artist: 'Ed Sheeran', type: 'Deluxe' },
+      {
+        name: 'Moves Like Jagger',
+        artist: 'Maroon5',
+        type: 'grid         example\ngrid newline and clipboard example\n\ngrid example'
       }
-    });
-    const rootEl = document.createElement('div');
-    rootEl.appendChild(el);
-    rootEl.style.height = '400px';
+    ],
+    rowHeight: 'auto'
+  };
+  // @ts-ignore
+  const { el, grid } = createGrid(options);
+  const rootEl = document.createElement('div');
 
-    button('getFocusedCell()', () => {
-      alert(`
-        ${grid.getFocusedCell().columnName}, 
-        ${grid.getFocusedCell().rowKey},
-        ${grid.getFocusedCell().value}
-        `);
-    });
-    button('activateFocus()', () => grid.activateFocus());
-    button('blur()', () => grid.blur());
-    button(`focus(1, 'type')`, () => grid.focus(1, 'type'));
-    button(`focus(2, 'release')`, () => grid.focus(2, 'release'));
-    button(`focusAt(0, 0)`, () => grid.focusAt(0, 0));
-    button(`focusAt(1, 1)`, () => grid.focusAt(1, 1));
+  rootEl.appendChild(el);
 
-    return rootEl;
-  },
-  { html: { preventForcedRender: true } }
-);
+  grid.focusAt(2, 2);
+
+  return rootEl;
+};
+
+const focusWithWhitespaceNote = `
+## Focus Layer(**whitespace: pre**)
+- UI for focus layer on dynamic row height
+`;
+
+focusWithWhitespace.story = { parameters: { notes: focusWithWhitespaceNote } };

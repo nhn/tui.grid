@@ -18,7 +18,7 @@ declare namespace Cypress {
 
     getCellData(): Chainable<any>;
 
-    createGrid(gridOptions: any, elementStyles?: any): Chainable<any>;
+    createGrid(gridOptions: any, elementStyles?: any, parentEl?: HTMLElement): Chainable<any>;
 
     createStyle(style: string): Chainable<any>;
 
@@ -28,9 +28,13 @@ declare namespace Cypress {
 
     getHeaderCell(column: string): Chainable<any>;
 
-    getRowNumCell(rowKey: number | string): Chainable<any>;
+    getRowHeaderCell(rowKey: number | string): Chainable<any>;
 
     getColumnCells(columnName: string): Chainable<any>;
+
+    getRow(rowKey: RowKey): Chainable<any>;
+
+    getRsideBody(): Chainable<any>;
   }
 }
 

@@ -2,12 +2,6 @@ before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-});
-
 const columns = [
   { name: 'c1', editor: { type: 'text' } },
   { name: 'c2', editor: { type: 'text' } },
@@ -32,10 +26,6 @@ const defaultOptions = {
 
 type Address = [number, number];
 
-function getRsideBody() {
-  return cy.getByCls('rside-area', 'body-area');
-}
-
 function setSelectionByAPI(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
 }
@@ -55,6 +45,7 @@ function pressDeleteKey() {
   cy.getByCls('clipboard').type('{del}', { force: true });
 }
 
+// @TODO move to keymap test
 ['API', 'UI'].forEach(method => {
   it(`selection and delete (by ${method})`, () => {
     cy.createGrid(defaultOptions);
@@ -66,7 +57,7 @@ function pressDeleteKey() {
 
     pressDeleteKey();
 
-    getRsideBody().should('have.cellData', [
+    cy.getRsideBody().should('have.cellData', [
       ['c1', 'c2', 'c3'],
       ['c1', '', ''],
       ['c1', '', ''],
@@ -75,4 +66,13 @@ function pressDeleteKey() {
   });
 });
 
-export {}
+// @TODO if cypress issue is resolved, should change to validate clipboard data.
+// https://github.com/cypress-io/cypress/issues/2386
+// describe('copy to clipboard', () => {
+//   it('basic value', () => {});
+//   it('formatted value', () => {});
+//   it('custom value', () => {});
+// });
+// it('paste', () => {});
+
+export {};

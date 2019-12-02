@@ -22,10 +22,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   const columns = [
     { name: 'name', editor: 'text' },
     { name: 'artist', editor: 'text' },
@@ -213,10 +209,6 @@ describe('API test on lazy observable data', () => {
   });
 
   it('expandAll, focusAt api', () => {
-    cy.document().then(doc => {
-      doc.body.innerHTML = '';
-    });
-
     const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
 
     cy.createGrid({

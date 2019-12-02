@@ -1,4 +1,4 @@
-import { cls } from '@/helper/dom';
+export {};
 
 const columns = [
   {
@@ -66,10 +66,6 @@ before(() => {
 });
 
 beforeEach(() => {
-  cy.document().then(doc => {
-    doc.body.innerHTML = '';
-  });
-
   cy.createGrid({
     data,
     columns
@@ -92,7 +88,8 @@ describe('default datePicker', () => {
     cy.get('.tui-calendar-date')
       .contains('14')
       .click();
-    cy.getCell(0, 'timePicker').click();
+
+    cy.gridInstance().invoke('finishEditing');
 
     cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
   });
@@ -108,7 +105,8 @@ describe('timepicker', () => {
       .get('select')
       .eq(2)
       .select('PM');
-    cy.getCell(0, 'default').click();
+
+    cy.gridInstance().invoke('finishEditing');
 
     cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
   });
@@ -117,14 +115,15 @@ describe('timepicker', () => {
     cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:11 AM');
 
     cy.gridInstance().invoke('startEditing', 0, 'timePickerWithTab');
+
     cy.get('.tui-datepicker-selector-button')
       .eq(1)
       .click();
-
     cy.get('.tui-timepicker-btn-up')
       .eq(1)
       .click();
-    cy.getCell(0, 'default').click();
+
+    cy.gridInstance().invoke('finishEditing');
 
     cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:12 AM');
   });
@@ -139,7 +138,8 @@ describe('month picker', () => {
     cy.get('.tui-calendar-month')
       .contains('Mar')
       .click();
-    cy.getCell(0, 'default').click();
+
+    cy.gridInstance().invoke('finishEditing');
 
     cy.getCellContent(0, 'monthPicker').should('have.text', '2019-03');
   });
@@ -150,10 +150,12 @@ describe('year picker', () => {
     cy.getCellContent(0, 'yearPicker').should('have.text', '2019');
 
     cy.gridInstance().invoke('startEditing', 0, 'yearPicker');
+
     cy.get('.tui-calendar-year')
       .contains('2020')
       .click();
-    cy.getCell(0, 'default').click();
+
+    cy.gridInstance().invoke('finishEditing');
 
     cy.getCellContent(0, 'yearPicker').should('have.text', '2020');
   });
@@ -163,8 +165,7 @@ describe('show icon', () => {
   it("can't see the icon, when showIcon field false.", () => {
     cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
-    cy.get(`.${cls('date-icon')}`).should('not.visible');
-    cy.get(`.${cls('layer-datepicker')} input`).should('have.class', cls('content-text'));
+    cy.getByCls('date-icon').should('not.exist');
   });
 });
 
