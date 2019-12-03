@@ -13,7 +13,7 @@ type Options = {
 
 function blur(el: HTMLElement) {
   setTimeout(() => {
-    (el.querySelector('.tui-grid-clipboard') as HTMLElement).focus();
+    (el.querySelector('.tui-grid-clipboard') as HTMLElement).focus({ preventScroll: true });
     (el.querySelector('.tui-grid-clipboard') as HTMLElement).blur();
   });
 }

@@ -212,7 +212,7 @@ class ClipboardComp extends Component<Props> {
         !this.isClipboardFocused() &&
         !isMobile()
       ) {
-        this.el.focus();
+        this.el.focus({ preventScroll: true });
       }
     });
   }
