@@ -1,5 +1,5 @@
 import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
-import { CellValue, Filter, RowKey, SelectionRange, SortState } from '../store/types';
+import { CellValue, Filter, ResizeState, RowKey, SelectionRange, SortState } from '../store/types';
 import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
@@ -20,6 +20,7 @@ interface GridEventProps {
   sortState?: SortState;
   filterState?: Filter[] | null;
   width?: number;
+  resizeState?: ResizeState[];
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {
@@ -82,7 +83,7 @@ export default class GridEvent {
     return this.stopped;
   }
 
-  public assignData(data: GridEventProps) {
+  public assignData(data: GridEventProps | GridEventProps[]) {
     assign(this, data);
   }
 

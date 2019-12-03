@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, ColumnInfo, ComplexColumnInfo } from '../store/types';
+import { Side, ColumnInfo, ComplexColumnInfo, Range } from '../store/types';
 import { findProp, findPropIndex, includes, some } from '../helper/common';
 import {
   getCellBorder,
@@ -37,19 +37,28 @@ const WIDTH = 7;
 const HALF_WIDTH = 3;
 
 class ColumnResizerComp extends Component<Props> {
-  // @TODO: 지울거야
-  private isClick = -1;
-
   private dragStartX = -1;
 
   private draggingWidth = -1;
 
-  private draggingIndex = -1;
+  private draggingRange: Range = [-1, -1];
 
-  private handleMouseDown = (ev: MouseEvent, index: number) => {
-    this.isClick = index;
-    this.draggingIndex = index;
-    this.draggingWidth = this.props.widths[index];
+  private getWidthInRange = (range: Range) => {
+    const { widths } = this.props;
+    let width = 0;
+    const [startIdx, endIdx] = range;
+
+    for (let idx = startIdx; idx <= endIdx; idx += 1) {
+      width += widths[idx];
+    }
+
+    return width;
+  };
+
+  private handleMouseDown = (ev: MouseEvent, name: string) => {
+    const range = this.getComplexHeaderRange(name);
+    this.draggingRange = range;
+    this.draggingWidth = this.getWidthInRange(range);
     this.dragStartX = ev.pageX;
 
     setCursorStyle('col-resize');
@@ -66,11 +75,10 @@ class ColumnResizerComp extends Component<Props> {
     const width = this.draggingWidth + ev.pageX - this.dragStartX;
     const { side } = this.props;
 
-    this.props.dispatch('setColumnWidth', side, this.draggingIndex, width);
+    this.props.dispatch('setColumnWidth', side, this.draggingRange, width);
   };
 
   private clearDocumentEvents = () => {
-    this.isClick = -1;
     setCursorStyle('');
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.clearDocumentEvents);
@@ -98,10 +106,9 @@ class ColumnResizerComp extends Component<Props> {
           height,
           width: WIDTH,
           left: offsetX + width - HALF_WIDTH,
-          bottom: offsetY,
-          backgroundColor: this.isClick === index && '#00ff66'
+          bottom: offsetY
         }}
-        onMouseDown={ev => this.handleMouseDown(ev, index)}
+        onMouseDown={ev => this.handleMouseDown(ev, name)}
       />
     );
   }
@@ -138,7 +145,7 @@ class ColumnResizerComp extends Component<Props> {
     return idx;
   }
 
-  private getComplexHeaderRange(name: string) {
+  private getComplexHeaderRange(name: string): Range {
     const { columns, complexColumns } = this.props;
     const index = findPropIndex('name', name, columns);
     if (index === -1) {

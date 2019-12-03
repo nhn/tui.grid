@@ -1,4 +1,14 @@
-import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary, Column } from '../store/types';
+import {
+  Store,
+  Side,
+  ComplexColumnInfo,
+  ViewRow,
+  Dictionary,
+  Column,
+  Range,
+  ColumnInfo,
+  ResizeState
+} from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -16,10 +26,58 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
 }
 
-export function setColumnWidth({ column, id }: Store, side: Side, index: number, width: number) {
-  const columnItem = column.visibleColumnsBySideWithRowHeader[side][index];
+function getEachCellWidthInRange(columns: ColumnInfo[], range: Range, totalWidth: number) {
+  const widths = [];
+  const unsetWidthIndexes = [];
+  const [startIdx, endIdx] = range;
+  const rangeLength = endIdx - startIdx + 1;
+  let restWidth = totalWidth;
+  let columnWidth = totalWidth / rangeLength;
+  let countSetWidth = 0;
+
+  for (let idx = 0; idx < rangeLength; idx += 1) {
+    const columnIdx = startIdx + idx;
+    const { minWidth } = columns[columnIdx];
+    if (minWidth > columnWidth) {
+      widths[idx] = minWidth;
+      countSetWidth += 1;
+      restWidth -= minWidth;
+    } else {
+      unsetWidthIndexes.push(columnIdx);
+    }
+  }
+
+  if (rangeLength - countSetWidth) {
+    columnWidth = restWidth / (rangeLength - countSetWidth);
+    unsetWidthIndexes.forEach(columnIdx => {
+      const { minWidth } = columns[columnIdx];
+      widths[columnIdx - startIdx] = columnWidth > minWidth ? columnWidth : minWidth;
+    });
+  }
+
+  return widths;
+}
+
+export function setColumnWidth(
+  { column, id }: Store,
+  side: Side,
+  range: Range,
+  totalWidth: number
+) {
   const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ columnName: columnItem.name, width });
+  const columns = column.visibleColumnsBySideWithRowHeader[side];
+  const [startIdx, endIdx] = range;
+  const resizeState: ResizeState[] = [];
+  const widths = getEachCellWidthInRange(columns, range, totalWidth);
+
+  for (let idx = startIdx; idx <= endIdx; idx += 1) {
+    resizeState.push({
+      columnName: columns[idx].name,
+      width: widths[idx - startIdx]
+    });
+  }
+
+  const gridEvent = new GridEvent({ resizeState });
 
   /**
    * Occurs when column is resized
@@ -31,8 +89,12 @@ export function setColumnWidth({ column, id }: Store, side: Side, index: number,
   eventBus.trigger('columnResize', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    columnItem.baseWidth = width;
-    columnItem.fixedWidth = true;
+    widths.forEach((width, idx) => {
+      const columnIdx = startIdx + idx;
+      const item = columns[columnIdx];
+      item.baseWidth = width;
+      item.fixedWidth = true;
+    });
   }
 }
 

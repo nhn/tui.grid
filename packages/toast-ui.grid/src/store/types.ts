@@ -227,6 +227,11 @@ export interface FilterState {
   value: string;
 }
 
+export interface ResizeState {
+  columnName: string;
+  width: number;
+}
+
 export interface Filter {
   columnName: string;
   type: FilterOptionType;
@@ -450,7 +455,7 @@ export type RangeBySide = {
   [key in Side]: {
     row: Range;
     column: Range | null;
-  }
+  };
 };
 
 export interface Selection {
