@@ -258,7 +258,12 @@ export function cellDisabled(options: OptBasicCellStyle): string {
 }
 
 export function cellInvalid(options: OptBasicCellStyle): string {
-  return bgTextRuleString('cell-invalid', options);
+  const { background, text } = options;
+
+  return createNestedClassRule('.', ['cell-invalid', 'cell'])
+    .bg(background)
+    .text(text)
+    .build();
 }
 
 export function cellCurrentRow(options: OptBasicCellStyle): string {
