@@ -33,6 +33,11 @@ class CustomRenderer implements HeaderRenderer {
   public getElement() {
     return this.el;
   }
+
+  public render(props: HeaderRendererProps) {
+    this.columnInfo = props.columnInfo;
+    this.el.textContent = `custom_${this.columnInfo.name}`;
+  }
 }
 
 function createGrid(options: Options) {
@@ -189,7 +194,7 @@ const mergedColumnHeaderNote = `
 mergedColumnHeader.story = { parameters: { notes: mergedColumnHeaderNote } };
 
 export const customColumnHeader = () => {
-  const header = {
+  const header: OptHeader = {
     columns: [
       {
         name: 'name',

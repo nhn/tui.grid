@@ -58,10 +58,10 @@ const styleGenCellMethodMap = {
 };
 
 function buildCssString(options: OptPreset): string {
-  type KeyType = keyof (typeof styleGenMethodMap);
-  type AreaKeyType = keyof (typeof styleGenAreaMethodMap);
-  type RowKeyType = keyof (typeof styleGenRowMethodMap);
-  type CellKeyType = keyof (typeof styleGenCellMethodMap);
+  type KeyType = keyof typeof styleGenMethodMap;
+  type AreaKeyType = keyof typeof styleGenAreaMethodMap;
+  type RowKeyType = keyof typeof styleGenRowMethodMap;
+  type CellKeyType = keyof typeof styleGenCellMethodMap;
 
   const { area, cell, row } = options;
   const styles: string[] = [];

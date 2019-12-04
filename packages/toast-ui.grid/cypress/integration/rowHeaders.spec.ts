@@ -53,7 +53,6 @@ describe('row header API', () => {
   it('getCheckedRows', () => {
     cy.gridInstance().invoke('check', 0);
     cy.gridInstance().invoke('check', 2);
-
     cy.gridInstance()
       .invoke('getCheckedRows')
       .should(result => {

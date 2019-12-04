@@ -94,8 +94,8 @@ export const keyStrokeCommandMap: {
 export type KeyCodeType = keyof typeof keyNameMap;
 export type KeyNameType = $Values<typeof keyNameMap>;
 export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
-export type KeyboardEventType = keyof (typeof keyboardEventTypeMap);
-export type KeyboardEventCommandType = keyof (typeof keyboardEventCommandMap);
+export type KeyboardEventType = keyof typeof keyboardEventTypeMap;
+export type KeyboardEventCommandType = keyof typeof keyboardEventCommandMap;
 export type TabCommandType = 'nextCell' | 'prevCell';
 
 /**

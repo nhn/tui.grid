@@ -1,4 +1,3 @@
-import { cls } from '../../src/helper/dom';
 import { Range } from '@/store/types';
 
 // unable to test clipboard

@@ -7,8 +7,14 @@ export default {
   title: 'Dummy Rows'
 };
 
-const data = [{ name: 'Beautiful Lies', artist: 'Birdy' }, { name: 'X', artist: 'Ed Sheeran' }];
-const columns = [{ name: 'name', minWidth: 150 }, { name: 'artist', minWidth: 150 }];
+const data = [
+  { name: 'Beautiful Lies', artist: 'Birdy' },
+  { name: 'X', artist: 'Ed Sheeran' }
+];
+const columns = [
+  { name: 'name', minWidth: 150 },
+  { name: 'artist', minWidth: 150 }
+];
 
 function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');

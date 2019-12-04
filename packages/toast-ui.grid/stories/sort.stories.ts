@@ -7,7 +7,11 @@ export default {
   title: 'Sort'
 };
 
-const data = [{ A: 'A', B: 'B', C: 'C' }, { A: 'B', B: 'A', C: 'C' }, { A: 'C', B: 'B', C: 'A' }];
+const data = [
+  { A: 'A', B: 'B', C: 'C' },
+  { A: 'B', B: 'A', C: 'C' },
+  { A: 'C', B: 'B', C: 'A' }
+];
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
   const columns: OptColumn[] = [
