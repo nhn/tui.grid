@@ -25,7 +25,8 @@ export class TextEditor implements CellEditor {
   }
 
   public getValue() {
-    return this.el.value;
+    const numericVal = Number(this.el.value);
+    return isNaN(numericVal) ? this.el.value : numericVal;
   }
 
   public mounted() {

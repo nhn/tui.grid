@@ -14,7 +14,7 @@ export interface CellEditorProps {
 
 export interface CellEditor {
   getElement(): HTMLElement | undefined;
-  getValue(): string;
+  getValue(): CellValue;
   mounted?(): void;
   beforeDestroy?(): void;
   el?: HTMLElement;

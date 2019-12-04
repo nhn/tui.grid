@@ -1,4 +1,4 @@
-import { Store, RowKey } from '../store/types';
+import { Store, RowKey, CellValue } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { isEditableCell, findIndexByRowKey, findRowByRowKey } from '../query/data';
@@ -84,7 +84,7 @@ export function finishEditing(
   { focus, id }: Store,
   rowKey: RowKey,
   columnName: string,
-  value: string
+  value: CellValue
 ) {
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey, columnName, value });
