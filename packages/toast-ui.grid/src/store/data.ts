@@ -19,7 +19,8 @@ import {
   ViewRow,
   Range,
   Filter,
-  RowSpan
+  RowSpan,
+  RawRowOptions
 } from './types';
 import { observable, observe, Observable } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
@@ -49,12 +50,6 @@ interface DataOption {
   useClientSort: boolean;
   disabled: boolean;
   id: number;
-}
-
-interface RawRowOptions {
-  keyColumnName?: string;
-  prevRow?: Row;
-  lazyObservable?: boolean;
 }
 
 let dataCreationKey = '';
@@ -395,6 +390,7 @@ export function createRawRow(
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
   }
+
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
   row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;

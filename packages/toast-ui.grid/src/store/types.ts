@@ -506,3 +506,9 @@ export interface ComplexColumnInfo {
   headerRenderer?: HeaderRendererClass | null;
   hideChildHeaders?: boolean;
 }
+
+export interface RawRowOptions {
+  keyColumnName?: string;
+  prevRow?: Row;
+  lazyObservable?: boolean;
+}

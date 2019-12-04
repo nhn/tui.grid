@@ -1,4 +1,13 @@
-import { Store, RowKey, Data, Row, Dictionary, Column, SortState } from '../store/types';
+import {
+  Store,
+  RowKey,
+  Data,
+  Row,
+  Dictionary,
+  Column,
+  SortState,
+  RawRowOptions
+} from '../store/types';
 import {
   isFunction,
   findPropIndex,
@@ -174,17 +183,23 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
   return removedClassNames;
 }
 
-export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow) {
+export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, rowKey?: RowKey) {
   const { data, column } = store;
   const { rawData } = data;
   const { defaultValues, allColumnMap } = column;
   const prevRow = rawData[rowIndex - 1];
+  const options: RawRowOptions = { prevRow };
+
+  if (!isUndefined(rowKey)) {
+    row.rowKey = rowKey;
+    options.keyColumnName = 'rowKey';
+  }
 
   const emptyData = column.allColumns
     .filter(({ name }) => !isRowHeader(name))
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
-  const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues);
+  const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues, options);
   const viewRow = createViewRow(rawRow, allColumnMap, rawData);
 
   return { rawRow, viewRow, prevRow };
