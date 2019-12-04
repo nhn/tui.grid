@@ -45,6 +45,7 @@ export type HeaderRendererProps = {
 
 export interface HeaderRenderer {
   getElement(): HTMLElement;
+  render(props: HeaderRendererProps): void;
   mounted?(parent: HTMLElement): void;
   beforeDestroy?(): void;
 }
