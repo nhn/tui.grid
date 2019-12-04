@@ -6,10 +6,7 @@ before(() => {
 });
 
 function createGridWithCallback(beforeCallback: Function, afterCallback: Function) {
-  const data = [
-    { name: 'Lee', age: 20 },
-    { name: 'Han', age: 28 }
-  ];
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
   const columns = [
     {
       name: 'name',
@@ -23,15 +20,8 @@ function createGridWithCallback(beforeCallback: Function, afterCallback: Functio
 }
 
 function createGridWithEditingFinishEvent(stub: Function) {
-  const data = [
-    { name: 'Lee', age: 20 },
-    { name: 'Han', age: 28 },
-    { name: 'Ryu', age: 22 }
-  ];
-  const columns = [
-    { name: 'name', editor: 'text' },
-    { name: 'age', editor: 'text' }
-  ];
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
+  const columns = [{ name: 'name', editor: 'text' }, { name: 'age', editor: 'text' }];
 
   cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
   cy.gridInstance().invoke('on', 'editingFinish', stub);
@@ -39,11 +29,7 @@ function createGridWithEditingFinishEvent(stub: Function) {
 
 function createGridWithCustomEditor(stub: Function) {
   const CustomLayerEditor = createCustomLayerEditor(stub);
-  const data = [
-    { name: 'Lee', age: 20 },
-    { name: 'Han', age: 28 },
-    { name: 'Ryu', age: 22 }
-  ];
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
   const columns = [
     {
       name: 'name',
@@ -58,10 +44,7 @@ function createGridWithCustomEditor(stub: Function) {
 
 describe('with interaction', () => {
   beforeEach(() => {
-    const data = [
-      { name: 'Lee', age: 20 },
-      { name: 'Han', age: 28 }
-    ];
+    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
     const columns = [
       {
         name: 'name',
@@ -172,11 +155,7 @@ describe('API', () => {
   ];
 
   beforeEach(() => {
-    const data = [
-      { name: 'Lee', age: 20 },
-      { name: 'Han', age: 28 },
-      { name: 'Ryu', age: 22 }
-    ];
+    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
     cy.createGrid({ data, columns });
@@ -216,11 +195,7 @@ describe('API', () => {
 
 describe('editable, disable, hidden', () => {
   beforeEach(() => {
-    const data = [
-      { name: 'Lee', age: 20 },
-      { name: 'Han', age: 28 },
-      { name: 'Ryu', age: 22 }
-    ];
+    const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
     cy.createGrid({ data, columns });
@@ -302,6 +277,24 @@ it('should do syncronous renering of the editing cell', () => {
       .should('be.calledOnce')
       .and('calledWithMatch', { rowKey: 1, columnName: 'name' });
   });
+});
+
+it('should maintain the type of value in case of finishing editing without any modification', () => {
+  const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }];
+  const columns = [
+    {
+      name: 'name',
+      editor: 'text'
+    },
+    { name: 'age', editor: 'text' }
+  ];
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 0, 'age');
+  cy.gridInstance().invoke('finishEditing', 0, 'age');
+
+  cy.gridInstance()
+    .invoke('getValue', 0, 'age')
+    .should('eq', 20);
 });
 
 // @TODO: cannot pass the test in headless mode, need to ask this issue
