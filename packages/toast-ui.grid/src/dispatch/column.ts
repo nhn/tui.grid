@@ -26,33 +26,22 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
 }
 
-function getEachCellWidthInRange(columns: ColumnInfo[], range: Range, totalWidth: number) {
+function getEachCellWidthInRange(
+  columns: ColumnInfo[],
+  range: Range,
+  resizeAmount: number,
+  startWidths: number[]
+) {
   const widths = [];
-  const unsetWidthIndexes = [];
   const [startIdx, endIdx] = range;
   const rangeLength = endIdx - startIdx + 1;
-  let restWidth = totalWidth;
-  let columnWidth = totalWidth / rangeLength;
-  let countSetWidth = 0;
+  const delta = resizeAmount / rangeLength;
 
   for (let idx = 0; idx < rangeLength; idx += 1) {
     const columnIdx = startIdx + idx;
     const { minWidth } = columns[columnIdx];
-    if (minWidth > columnWidth) {
-      widths[idx] = minWidth;
-      countSetWidth += 1;
-      restWidth -= minWidth;
-    } else {
-      unsetWidthIndexes.push(columnIdx);
-    }
-  }
-
-  if (rangeLength - countSetWidth) {
-    columnWidth = restWidth / (rangeLength - countSetWidth);
-    unsetWidthIndexes.forEach(columnIdx => {
-      const { minWidth } = columns[columnIdx];
-      widths[columnIdx - startIdx] = columnWidth > minWidth ? columnWidth : minWidth;
-    });
+    const width = Math.max(startWidths[idx] + delta, minWidth);
+    widths.push(width);
   }
 
   return widths;
@@ -62,13 +51,14 @@ export function setColumnWidth(
   { column, id }: Store,
   side: Side,
   range: Range,
-  totalWidth: number
+  resizeAmount: number,
+  startWidths: number[]
 ) {
   const eventBus = getEventBus(id);
   const columns = column.visibleColumnsBySideWithRowHeader[side];
   const [startIdx, endIdx] = range;
   const resizeState: ResizeState[] = [];
-  const widths = getEachCellWidthInRange(columns, range, totalWidth);
+  const widths = getEachCellWidthInRange(columns, range, resizeAmount, startWidths);
 
   for (let idx = startIdx; idx <= endIdx; idx += 1) {
     resizeState.push({

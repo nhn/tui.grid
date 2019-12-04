@@ -39,27 +39,15 @@ const HALF_WIDTH = 3;
 class ColumnResizerComp extends Component<Props> {
   private dragStartX = -1;
 
-  private draggingWidth = -1;
-
   private draggingRange: Range = [-1, -1];
 
-  private getWidthInRange = (range: Range) => {
-    const { widths } = this.props;
-    let width = 0;
-    const [startIdx, endIdx] = range;
-
-    for (let idx = startIdx; idx <= endIdx; idx += 1) {
-      width += widths[idx];
-    }
-
-    return width;
-  };
+  private draggingWidths: number[] = [];
 
   private handleMouseDown = (ev: MouseEvent, name: string) => {
     const range = this.getComplexHeaderRange(name);
     this.draggingRange = range;
-    this.draggingWidth = this.getWidthInRange(range);
     this.dragStartX = ev.pageX;
+    this.draggingWidths = this.props.widths.slice(range[0], range[1] + 1);
 
     setCursorStyle('col-resize');
     document.addEventListener('mousemove', this.handleMouseMove);
@@ -72,10 +60,16 @@ class ColumnResizerComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const width = this.draggingWidth + ev.pageX - this.dragStartX;
     const { side } = this.props;
+    const resizeAmount = ev.pageX - this.dragStartX;
 
-    this.props.dispatch('setColumnWidth', side, this.draggingRange, width);
+    this.props.dispatch(
+      'setColumnWidth',
+      side,
+      this.draggingRange,
+      resizeAmount,
+      this.draggingWidths
+    );
   };
 
   private clearDocumentEvents = () => {
