@@ -1,8 +1,7 @@
 import { ComplexColumnInfo, Column, ColumnInfo } from '../store/types';
-import { findIndex, findProp, findPropIndex, includes, some } from '../helper/common';
-import { cell } from '../theme/styleGenerator';
+import { findProp, includes, some } from '../helper/common';
 
-export type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
+type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
 
 export function isParentColumnHeader(complexColumnHeaders: ComplexColumnInfo[], name: string) {
   return !!complexColumnHeaders.length && some(item => item.name === name, complexColumnHeaders);
@@ -32,9 +31,7 @@ export function getColumnHierarchy(
 
     if (complexColumnHeaders) {
       complexColumnHeaders.forEach(complexColumnHeader => {
-        const index = findIndex(name => column.name === name, complexColumnHeader.childNames);
-
-        if (index !== -1) {
+        if (some(name => column.name === name, complexColumnHeader.childNames)) {
           getColumnHierarchy(complexColumnHeader, complexColumnHeaders, complexColumns);
         }
       });

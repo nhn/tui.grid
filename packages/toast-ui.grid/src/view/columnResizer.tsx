@@ -143,7 +143,6 @@ class ColumnResizerComp extends Component<Props> {
     const { columns, complexColumns } = this.props;
     const index = findPropIndex('name', name, columns);
     if (index === -1) {
-      // @TODO: complex column 순회하면서 최솟값 갱신. childNames가 순서대로 되어있을 거란 보장이 없음.
       let startIndex = Number.MAX_VALUE;
       let endIndex = Number.MIN_VALUE;
       const { childNames } = findProp('name', name, complexColumns)!;
@@ -173,7 +172,6 @@ class ColumnResizerComp extends Component<Props> {
     const hierarchies = getComplexColumnsHierarchy(columns, complexColumns);
     const maxLen = getHierarchyMaxRowCount(hierarchies);
     const defaultHeight = headerHeight / maxLen;
-    // @TODO: 타입 분리 필요
     const nameMap = {} as { [key: string]: boolean };
     const resizerInfo = [] as ResizerInfo[];
 
@@ -204,7 +202,7 @@ class ColumnResizerComp extends Component<Props> {
     return (
       <div
         class={cls('column-resize-container')}
-        style={`display: block; margin-top: -35px; height: 35px;`}
+        style="display: block; margin-top: -35px; height: 35px;"
       >
         {this.getResizableColumnsInfo().map((info, index) => this.renderHandle(info, index))}
       </div>

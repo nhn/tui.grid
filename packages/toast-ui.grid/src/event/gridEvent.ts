@@ -19,7 +19,6 @@ interface GridEventProps {
   options?: XHROptions;
   sortState?: SortState;
   filterState?: Filter[] | null;
-  width?: number;
   resizeState?: ResizeState[];
 }
 
@@ -83,7 +82,7 @@ export default class GridEvent {
     return this.stopped;
   }
 
-  public assignData(data: GridEventProps | GridEventProps[]) {
+  public assignData(data: GridEventProps) {
     assign(this, data);
   }
 
