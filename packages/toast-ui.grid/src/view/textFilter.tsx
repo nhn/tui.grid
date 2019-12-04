@@ -103,7 +103,7 @@ class TextFilterComp extends Component<Props> {
           }}
           type="text"
           className={cls('filter-input')}
-          onKeyUp={this.handleChange}
+          onInput={this.handleChange}
           value={value}
         />
       </div>
