@@ -218,8 +218,7 @@ export const customEditor = () => {
   return el;
 };
 const customEditorNote = `
-## Datepicker Editing Layer
-- The editing layer UI for \`datepicker\` type
-- Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+## Custom Editor
+- Customizing cell editor with color picker.
 `;
 customEditor.story = { parameters: { notes: customEditorNote } };
