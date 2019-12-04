@@ -4,14 +4,8 @@ before(() => {
 
 describe('frozenCount / frozenBorderWidth', () => {
   beforeEach(() => {
-    const data = [
-      { name: 'Kim', age: 30 },
-      { name: 'Lee', age: 40 }
-    ];
-    const columns = [
-      { header: 'name', name: 'name' },
-      { header: 'age', name: 'age' }
-    ];
+    const data = [{ name: 'Kim', age: 30 }, { name: 'Lee', age: 40 }];
+    const columns = [{ header: 'name', name: 'name' }, { header: 'age', name: 'age' }];
     cy.createGrid({
       data,
       columns,
@@ -32,14 +26,8 @@ describe('frozenCount / frozenBorderWidth', () => {
 
 describe('minWidth', () => {
   beforeEach(() => {
-    const data = [
-      { name: 'Kim', age: 30 },
-      { name: 'Lee', age: 40 }
-    ];
-    const columns = [
-      { header: 'name', name: 'name' },
-      { header: 'age', name: 'age' }
-    ];
+    const data = [{ name: 'Kim', age: 30 }, { name: 'Lee', age: 40 }];
+    const columns = [{ header: 'name', name: 'name' }, { header: 'age', name: 'age' }];
     cy.createGrid({
       data,
       columns,

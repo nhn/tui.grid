@@ -1,10 +1,7 @@
 import { cls } from '@/helper/dom';
 import GridEvent from '@/event/gridEvent';
 
-const data = [
-  { name: 'Kim', age: 10 },
-  { name: 'Lee', age: 20 }
-];
+const data = [{ name: 'Kim', age: 10 }, { name: 'Lee', age: 20 }];
 const columns = [
   { name: 'name', editor: 'text', resizable: true, sortable: true },
   { name: 'age', filter: 'number' }
@@ -304,7 +301,9 @@ it('columnResize', () => {
     .trigger('mousemove', { pageX: 400 })
     .trigger('mouseup')
     .should(() => {
-      expect(callback.args[0][0]).to.contain.subset({ columnName: 'name', width: 311 });
+      expect(callback.args[0][0]).to.contain.subset({
+        resizeState: [{ columnName: 'name', width: 311 }]
+      });
     });
 });
 

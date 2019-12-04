@@ -92,3 +92,17 @@ Cypress.Commands.add('getRow', rowKey => {
 Cypress.Commands.add('getRsideBody', () => {
   return cy.getByCls('rside-area', 'body-area');
 });
+
+Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
+  cy.getByCls('column-resize-handle')
+    .eq(index)
+    .trigger('mousedown')
+    .then($el => {
+      const { left, top } = $el.offset();
+      const pageX = left + distance + 4;
+      const pageY = top;
+
+      cy.root().trigger('mousemove', { pageX, pageY });
+    })
+    .trigger('mouseup');
+});
