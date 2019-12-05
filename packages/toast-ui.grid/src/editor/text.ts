@@ -1,6 +1,6 @@
 import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
-import { isUndefined, isNull } from '../helper/common';
+import { isUndefined, isNull, convertToNumber } from '../helper/common';
 
 interface Options {
   type: 'text' | 'password';
@@ -25,8 +25,7 @@ export class TextEditor implements CellEditor {
   }
 
   public getValue() {
-    const numericVal = Number(this.el.value);
-    return isNaN(numericVal) ? this.el.value : numericVal;
+    return convertToNumber(this.el.value);
   }
 
   public mounted() {
