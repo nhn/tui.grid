@@ -302,7 +302,7 @@ it('columnResize', () => {
     .trigger('mouseup')
     .should(() => {
       expect(callback.args[0][0]).to.contain.subset({
-        resizedColumns: [{ columnName: 'name', width: 312 }]
+        resizedColumns: [{ columnName: 'name', width: 311 }]
       });
     });
 });

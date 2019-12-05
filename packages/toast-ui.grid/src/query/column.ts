@@ -96,5 +96,5 @@ export function getCellBorder(
 ) {
   const count = getChildHeaderCount(columns, complexColumns, name);
 
-  return count ? cellBorderWidth : count * cellBorderWidth;
+  return count ? count * cellBorderWidth : cellBorderWidth;
 }
