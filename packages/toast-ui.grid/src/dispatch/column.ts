@@ -7,7 +7,7 @@ import {
   Column,
   Range,
   ColumnInfo,
-  ResizeState
+  ResizedColumns
 } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
@@ -26,7 +26,7 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
 }
 
-function getEachCellWidthInRange(
+function getCellWidthToBeResized(
   columns: ColumnInfo[],
   range: Range,
   resizeAmount: number,
@@ -57,23 +57,24 @@ export function setColumnWidth(
   const eventBus = getEventBus(id);
   const columns = column.visibleColumnsBySideWithRowHeader[side];
   const [startIdx, endIdx] = range;
-  const resizeState: ResizeState[] = [];
-  const widths = getEachCellWidthInRange(columns, range, resizeAmount, startWidths);
+  const resizedColumns: ResizedColumns[] = [];
+  const widths = getCellWidthToBeResized(columns, range, resizeAmount, startWidths);
 
   for (let idx = startIdx; idx <= endIdx; idx += 1) {
-    resizeState.push({
+    resizedColumns.push({
       columnName: columns[idx].name,
       width: widths[idx - startIdx]
     });
   }
 
-  const gridEvent = new GridEvent({ resizeState });
+  const gridEvent = new GridEvent({ resizedColumns });
 
   /**
    * Occurs when column is resized
    * @event Grid#columnResize
-   * @property {number} columnName - columnName of the target cell
-   * @property {number} width - width of the resized column
+   * @property {Array} resizedColumns - state about resized columns
+   * @property {number} resizedColumns.columnName - columnName of the target cell
+   * @property {number} resizedColumns.width - width of the resized column
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('columnResize', gridEvent);

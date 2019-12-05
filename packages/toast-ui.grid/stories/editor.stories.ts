@@ -94,7 +94,10 @@ const columns: OptColumn[] = [
     editor: {
       type: 'radio',
       options: {
-        listItems: [{ text: 'Delux', value: '1' }, { text: 'Single', value: '2' }]
+        listItems: [
+          { text: 'Delux', value: '1' },
+          { text: 'Single', value: '2' }
+        ]
       }
     }
   },

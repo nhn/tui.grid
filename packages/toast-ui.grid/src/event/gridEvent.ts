@@ -1,5 +1,12 @@
 import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
-import { CellValue, Filter, ResizeState, RowKey, SelectionRange, SortState } from '../store/types';
+import {
+  CellValue,
+  Filter,
+  ResizedColumns,
+  RowKey,
+  SelectionRange,
+  SortState
+} from '../store/types';
 import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
@@ -19,7 +26,7 @@ interface GridEventProps {
   options?: XHROptions;
   sortState?: SortState;
   filterState?: Filter[] | null;
-  resizeState?: ResizeState[];
+  resizedColumns?: ResizedColumns[];
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {

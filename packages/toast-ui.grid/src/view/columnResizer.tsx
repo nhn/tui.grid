@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, ColumnInfo, ComplexColumnInfo, Range } from '../store/types';
+import { Side, ColumnInfo, ComplexColumnInfo, Range, Dictionary } from '../store/types';
 import { findProp, findPropIndex, includes, some } from '../helper/common';
 import {
   getCellBorder,
@@ -60,16 +60,10 @@ class ColumnResizerComp extends Component<Props> {
   };
 
   private handleMouseMove = (ev: MouseEvent) => {
-    const { side } = this.props;
+    const { side, dispatch } = this.props;
     const resizeAmount = ev.pageX - this.dragStartX;
 
-    this.props.dispatch(
-      'setColumnWidth',
-      side,
-      this.draggingRange,
-      resizeAmount,
-      this.draggingWidths
-    );
+    dispatch('setColumnWidth', side, this.draggingRange, resizeAmount, this.draggingWidths);
   };
 
   private clearDocumentEvents = () => {
@@ -94,7 +88,7 @@ class ColumnResizerComp extends Component<Props> {
     return (
       <div
         class={cls('column-resize-handle')}
-        title={''}
+        title={name}
         {...attrs}
         style={{
           height,
@@ -108,11 +102,10 @@ class ColumnResizerComp extends Component<Props> {
   }
 
   private isHideChildColumns(name: string) {
-    const { complexColumns } = this.props;
-
-    return some(item => {
-      return includes(item.childNames, name) && !!item.hideChildHeaders;
-    }, complexColumns);
+    return some(
+      item => includes(item.childNames, name) && !!item.hideChildHeaders,
+      this.props.complexColumns
+    );
   }
 
   private findComplexColumnStartIndex(name: string): number {
@@ -172,8 +165,8 @@ class ColumnResizerComp extends Component<Props> {
     const hierarchies = getComplexColumnsHierarchy(columns, complexColumns);
     const maxLen = getHierarchyMaxRowCount(hierarchies);
     const defaultHeight = headerHeight / maxLen;
-    const nameMap = {} as { [key: string]: boolean };
-    const resizerInfo = [] as ResizerInfo[];
+    const nameMap: Dictionary<boolean> = {};
+    const resizerInfo: ResizerInfo[] = [];
 
     hierarchies.forEach(cols => {
       const len = cols.length;

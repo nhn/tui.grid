@@ -30,12 +30,9 @@ class CustomRenderer implements HeaderRenderer {
   }
 }
 
-function assertSameWidthColumn(firstColumnName: string, secondColumnName: string) {
-  cy.get(`td[data-column-name=${firstColumnName}]`).each($el => {
-    const width = $el.width();
-    cy.get(`td[data-column-name=${secondColumnName}]`).each($col => {
-      expect($col.width()).to.eql(width);
-    });
+function assertColumnWidth(firstColumnName: string, width: number) {
+  cy.getColumnCells(firstColumnName).each($el => {
+    expect($el.width()).to.eql(width);
   });
 }
 
@@ -81,7 +78,7 @@ describe('header align', () => {
   });
 });
 
-describe('complex column header', () => {
+describe.only('complex column header', () => {
   beforeEach(() => {
     const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
     cy.createGrid({
@@ -100,7 +97,8 @@ describe('complex column header', () => {
           {
             header: 'scoreInfo',
             name: 'complexColumn',
-            childNames: ['score', 'grade']
+            childNames: ['score', 'grade'],
+            resizable: true
           }
         ]
       }
@@ -158,18 +156,24 @@ describe('complex column header', () => {
     cy.getHeaderCell('complexColumn').should('have.text', '_scoreInfo');
   });
 
-  it('should change child column width to the same resize amount when move complex column resizer.', () => {
-    assertSameWidthColumn('id', 'name');
-    cy.get('[data-column-name=id]')
-      .eq(0)
-      .invoke('width')
-      .should('be.eq', 196);
+  it('should resize width to child column width equally when move hide child complex column resizer.', () => {
+    assertColumnWidth('id', 196);
+    assertColumnWidth('name', 196);
+
     cy.dragColumnResizeHandle(0, -19);
-    assertSameWidthColumn('id', 'name');
-    cy.get('[data-column-name=id]')
-      .eq(0)
-      .invoke('width')
-      .should('be.eq', 186);
+
+    assertColumnWidth('id', 186);
+    assertColumnWidth('name', 186);
+  });
+
+  it('should resize width to child column width equally when move complex column resizer.', () => {
+    assertColumnWidth('score', 196);
+    assertColumnWidth('grade', 195);
+
+    cy.dragColumnResizeHandle(1, -19);
+
+    assertColumnWidth('score', 186);
+    assertColumnWidth('grade', 185);
   });
 });
 
