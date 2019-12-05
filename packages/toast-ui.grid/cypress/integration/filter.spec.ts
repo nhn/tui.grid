@@ -327,6 +327,14 @@ describe('apply filter (type: text)', () => {
       ]);
     });
   });
+
+  it(`code:contain type with multiple key`, () => {
+    clickFilterBtn();
+    selectFilterCode('contain');
+    cy.getByCls('filter-container', 'filter-input').type('{shift}C');
+
+    cy.getRsideBody().should('have.cellData', [['player1', 'Choi']]);
+  });
 });
 
 describe('apply filter (type: select)', () => {
