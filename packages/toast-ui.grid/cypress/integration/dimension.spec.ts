@@ -1,11 +1,9 @@
-import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
 import { data as sampleData } from '../../samples/basic';
 
 const CONTENT_WIDTH = 600;
 // @TODO: Retrieve scrollbar-width from real browser
 const SCROLLBAR_WIDTH = 17;
-const CELL_BORDER_WIDTH = 1;
 const containerStyle = { width: `${CONTENT_WIDTH + SCROLLBAR_WIDTH}px` };
 const HALF_WIDTH = 3;
 
@@ -247,20 +245,6 @@ describe('auto calculate column widths (container: 600)', () => {
   });
 
   context('Resize handle', () => {
-    function dragColumnResizeHandle(index: number, distance: number) {
-      getColumnResizeHandle()
-        .eq(index)
-        .trigger('mousedown')
-        .then($el => {
-          const { left, top } = $el.offset()!;
-          const pageX = left + distance + CELL_BORDER_WIDTH + HALF_WIDTH;
-          const pageY = top;
-
-          cy.root().trigger('mousemove', { pageX, pageY });
-        })
-        .trigger('mouseup');
-    }
-
     it('show resize handle if resizable: true', () => {
       createGridWithWidths([{ resizable: true }, { resizable: true }, {}]);
 
@@ -272,7 +256,7 @@ describe('auto calculate column widths (container: 600)', () => {
     it('recalculate column width when dragging resize handle', () => {
       createGridWithWidths([{ resizable: true }, { resizable: true, minWidth: 200 }, {}]);
 
-      dragColumnResizeHandle(0, 50);
+      cy.dragColumnResizeHandle(0, 50);
 
       assertHandleOffset(0, 250);
       assertHandleOffset(1, 450);

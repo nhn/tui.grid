@@ -30,6 +30,12 @@ class CustomRenderer implements HeaderRenderer {
   }
 }
 
+function assertColumnWidth(firstColumnName: string, width: number) {
+  cy.getColumnCells(firstColumnName).each($el => {
+    expect($el.width()).to.eql(width);
+  });
+}
+
 function assertAlign(columnName: string, align: AlignType, valign: VAlignType) {
   cy.getHeaderCell(columnName)
     .should('have.css', 'vertical-align', valign)
@@ -85,12 +91,14 @@ describe('complex column header', () => {
             header: 'name',
             name: 'nameHeader',
             childNames: ['id', 'name'],
-            hideChildHeaders: true
+            hideChildHeaders: true,
+            resizable: true
           },
           {
             header: 'scoreInfo',
             name: 'complexColumn',
-            childNames: ['score', 'grade']
+            childNames: ['score', 'grade'],
+            resizable: true
           }
         ]
       }
@@ -146,6 +154,26 @@ describe('complex column header', () => {
     cy.getHeaderCell('score').should('have.text', '_score');
     cy.getHeaderCell('grade').should('have.text', '_grade');
     cy.getHeaderCell('complexColumn').should('have.text', '_scoreInfo');
+  });
+
+  it('should resize width to child column width equally when move hide child complex column resizer.', () => {
+    assertColumnWidth('id', 196);
+    assertColumnWidth('name', 196);
+
+    cy.dragColumnResizeHandle(0, -19);
+
+    assertColumnWidth('id', 186);
+    assertColumnWidth('name', 186);
+  });
+
+  it('should resize width to child column width equally when move complex column resizer.', () => {
+    assertColumnWidth('score', 196);
+    assertColumnWidth('grade', 195);
+
+    cy.dragColumnResizeHandle(1, -19);
+
+    assertColumnWidth('score', 186);
+    assertColumnWidth('grade', 185);
   });
 });
 

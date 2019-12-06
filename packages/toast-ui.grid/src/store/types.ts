@@ -227,6 +227,11 @@ export interface FilterState {
   value: string;
 }
 
+export interface ResizedColumn {
+  columnName: string;
+  width: number;
+}
+
 export interface Filter {
   columnName: string;
   type: FilterOptionType;
@@ -450,7 +455,7 @@ export type RangeBySide = {
   [key in Side]: {
     row: Range;
     column: Range | null;
-  }
+  };
 };
 
 export interface Selection {
@@ -505,6 +510,7 @@ export interface ComplexColumnInfo {
   headerVAlign?: VAlignType;
   headerRenderer?: HeaderRendererClass | null;
   hideChildHeaders?: boolean;
+  resizable?: boolean;
 }
 
 export interface RawRowOptions {

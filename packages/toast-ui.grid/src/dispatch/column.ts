@@ -1,4 +1,14 @@
-import { Store, Side, ComplexColumnInfo, ViewRow, Dictionary, Column } from '../store/types';
+import {
+  Store,
+  Side,
+  ComplexColumnInfo,
+  ViewRow,
+  Dictionary,
+  Column,
+  Range,
+  ColumnInfo,
+  ResizedColumn
+} from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
@@ -16,23 +26,66 @@ export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
 }
 
-export function setColumnWidth({ column, id }: Store, side: Side, index: number, width: number) {
-  const columnItem = column.visibleColumnsBySideWithRowHeader[side][index];
+function getCellWidthToBeResized(
+  columns: ColumnInfo[],
+  range: Range,
+  resizeAmount: number,
+  startWidths: number[]
+) {
+  const widths = [];
+  const [startIdx, endIdx] = range;
+  const rangeLength = endIdx - startIdx + 1;
+  const delta = resizeAmount / rangeLength;
+
+  for (let idx = 0; idx < rangeLength; idx += 1) {
+    const columnIdx = startIdx + idx;
+    const { minWidth } = columns[columnIdx];
+    const width = Math.max(startWidths[idx] + delta, minWidth);
+    widths.push(width);
+  }
+
+  return widths;
+}
+
+export function setColumnWidth(
+  { column, id }: Store,
+  side: Side,
+  range: Range,
+  resizeAmount: number,
+  startWidths: number[]
+) {
   const eventBus = getEventBus(id);
-  const gridEvent = new GridEvent({ columnName: columnItem.name, width });
+  const columns = column.visibleColumnsBySideWithRowHeader[side];
+  const [startIdx, endIdx] = range;
+  const resizedColumns: ResizedColumn[] = [];
+  const widths = getCellWidthToBeResized(columns, range, resizeAmount, startWidths);
+
+  for (let idx = startIdx; idx <= endIdx; idx += 1) {
+    resizedColumns.push({
+      columnName: columns[idx].name,
+      width: widths[idx - startIdx]
+    });
+  }
+
+  const gridEvent = new GridEvent({ resizedColumns });
 
   /**
    * Occurs when column is resized
    * @event Grid#columnResize
-   * @property {number} columnName - columnName of the target cell
-   * @property {number} width - width of the resized column
+   * @property {Array} resizedColumns - state about resized columns
+   * @property {number} resizedColumns.columnName - columnName of the target cell
+   * @property {number} resizedColumns.width - width of the resized column
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('columnResize', gridEvent);
 
   if (!gridEvent.isStopped()) {
-    columnItem.baseWidth = width;
-    columnItem.fixedWidth = true;
+    widths.forEach((width, idx) => {
+      const columnIdx = startIdx + idx;
+      const item = columns[columnIdx];
+      item.baseWidth = width;
+      item.fixedWidth = true;
+    });
   }
 }
 
