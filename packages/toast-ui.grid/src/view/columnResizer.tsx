@@ -3,9 +3,9 @@ import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { Side, ColumnInfo, ComplexColumnInfo, Range, Dictionary } from '../store/types';
-import { findProp, findPropIndex, includes, some } from '../helper/common';
+import { findProp, findPropIndex, includes, some, sum } from '../helper/common';
 import {
-  getCellBorder,
+  getChildHeaderCount,
   getComplexColumnsHierarchy,
   getHierarchyMaxRowCount
 } from '../query/column';
@@ -153,10 +153,12 @@ class ColumnResizerComp extends Component<Props> {
   private getResizerCoords(name: string) {
     const { offsets, widths, columns, cellBorderWidth, complexColumns } = this.props;
     const [startIndex, endIndex] = this.getComplexHeaderRange(name);
+    const count = getChildHeaderCount(columns, complexColumns, name);
+    const cellBorder = count ? count * cellBorderWidth : cellBorderWidth;
 
     return {
-      width: widths.slice(startIndex, endIndex + 1).reduce((a, b) => a + b),
-      offsetX: offsets[startIndex] + getCellBorder(columns, complexColumns, name, cellBorderWidth)
+      width: sum(widths.slice(startIndex, endIndex + 1)),
+      offsetX: offsets[startIndex] + cellBorder
     };
   }
 

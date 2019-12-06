@@ -78,7 +78,7 @@ describe('header align', () => {
   });
 });
 
-describe.only('complex column header', () => {
+describe('complex column header', () => {
   beforeEach(() => {
     const columns = [{ name: 'id' }, { name: 'name' }, { name: 'score' }, { name: 'grade' }];
     cy.createGrid({

@@ -1,5 +1,8 @@
 import { cls, dataAttr } from '@/helper/dom';
 
+const RESIZER_HALF_WIDTH = 3;
+const CELL_BORDER_WIDTH = 1;
+
 Cypress.Commands.add('getCell', (rowKey, columnName) => {
   return cy.get(
     `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
@@ -99,7 +102,7 @@ Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
     .trigger('mousedown')
     .then($el => {
       const { left, top } = $el.offset();
-      const pageX = left + distance + 4;
+      const pageX = left + distance + CELL_BORDER_WIDTH + RESIZER_HALF_WIDTH;
       const pageY = top;
 
       cy.root().trigger('mousemove', { pageX, pageY });

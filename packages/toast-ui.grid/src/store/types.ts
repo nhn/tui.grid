@@ -227,7 +227,7 @@ export interface FilterState {
   value: string;
 }
 
-export interface ResizedColumns {
+export interface ResizedColumn {
   columnName: string;
   width: number;
 }

@@ -2,7 +2,7 @@ import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
 import {
   CellValue,
   Filter,
-  ResizedColumns,
+  ResizedColumn,
   RowKey,
   SelectionRange,
   SortState
@@ -26,7 +26,7 @@ interface GridEventProps {
   options?: XHROptions;
   sortState?: SortState;
   filterState?: Filter[] | null;
-  resizedColumns?: ResizedColumns[];
+  resizedColumns?: ResizedColumn[];
 }
 
 function getTargetInfo(nativeEvent: MouseEvent) {

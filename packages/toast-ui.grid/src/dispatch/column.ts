@@ -7,7 +7,7 @@ import {
   Column,
   Range,
   ColumnInfo,
-  ResizedColumns
+  ResizedColumn
 } from '../store/types';
 import { OptColumn } from '../types';
 import { createColumn, createRelationColumns } from '../store/column';
@@ -57,7 +57,7 @@ export function setColumnWidth(
   const eventBus = getEventBus(id);
   const columns = column.visibleColumnsBySideWithRowHeader[side];
   const [startIdx, endIdx] = range;
-  const resizedColumns: ResizedColumns[] = [];
+  const resizedColumns: ResizedColumn[] = [];
   const widths = getCellWidthToBeResized(columns, range, resizeAmount, startWidths);
 
   for (let idx = startIdx; idx <= endIdx; idx += 1) {

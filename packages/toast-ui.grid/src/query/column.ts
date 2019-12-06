@@ -1,5 +1,5 @@
 import { ComplexColumnInfo, Column, ColumnInfo } from '../store/types';
-import { findProp, includes, some } from '../helper/common';
+import { findProp, includes, mapProp, some, someProp } from '../helper/common';
 
 type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];
 
@@ -31,7 +31,7 @@ export function getColumnHierarchy(
 
     if (complexColumnHeaders) {
       complexColumnHeaders.forEach(complexColumnHeader => {
-        if (some(name => column.name === name, complexColumnHeader.childNames)) {
+        if (includes(complexColumnHeader.childNames, column.name)) {
           getColumnHierarchy(complexColumnHeader, complexColumnHeaders, complexColumns);
         }
       });
@@ -65,36 +65,23 @@ export function getComplexColumnsHierarchy(
 }
 
 export function getHierarchyMaxRowCount(hierarchies: MergedComplexColumns[]) {
-  const lengths = [0, ...hierarchies.map(value => value.length)];
-
-  return Math.max(...lengths);
+  return Math.max(0, ...mapProp('length', hierarchies));
 }
 
-function getChildHeaderCount(
+export function getChildHeaderCount(
   columns: ColumnInfo[],
   complexColumns: ComplexColumnInfo[],
   name: string
 ) {
   let count = 0;
-  const leafColumn = some(({ name: columnName }) => columnName === name, columns);
+  const leafColumn = someProp('name', name, columns);
   if (!leafColumn) {
     const { childNames } = findProp('name', name, complexColumns)!;
     childNames.forEach(childName => {
-      const leafChildColumn = some(({ name: columnName }) => columnName === childName, columns);
+      const leafChildColumn = someProp('name', childName, columns);
       count += leafChildColumn ? 1 : getChildHeaderCount(columns, complexColumns, childName);
     });
   }
 
   return count;
-}
-
-export function getCellBorder(
-  columns: ColumnInfo[],
-  complexColumns: ComplexColumnInfo[],
-  name: string,
-  cellBorderWidth: number
-) {
-  const count = getChildHeaderCount(columns, complexColumns, name);
-
-  return count ? count * cellBorderWidth : cellBorderWidth;
 }
