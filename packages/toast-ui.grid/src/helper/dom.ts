@@ -68,6 +68,7 @@ export type ClassNameType =
   | 'filter-dropdown'
   | 'filter-input'
   | 'filter-comparator-container'
+  | 'filter-comparator-checked'
   | 'filter-comparator'
   | 'filter-list-container'
   | 'filter-list'
