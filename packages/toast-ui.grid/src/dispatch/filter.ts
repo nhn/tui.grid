@@ -181,6 +181,8 @@ export function filter(
   const { type } = columnFilterInfo;
   const filterIndex = findPropIndex('columnName', columnName, filters);
 
+  updatePageOptions(data, data.pageOptions.totalCount, 1);
+
   if (filterIndex >= 0) {
     const columnFilter = filters[filterIndex];
     filters.splice(filterIndex, 1, { ...columnFilter, conditionFn, state });
