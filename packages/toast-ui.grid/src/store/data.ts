@@ -495,12 +495,10 @@ export function create({
     },
 
     get filteredIndex(this: Data) {
-      if (this.filters) {
-        return this.filteredRawData.map(row =>
-          findIndexByRowKey(this, column, id, row.rowKey, false)
-        );
-      }
-      return null;
+      const filteredRawData = this.filteredRawData;
+      return this.filters
+        ? filteredRawData.map(row => findIndexByRowKey(this, column, id, row.rowKey, false))
+        : null;
     },
 
     get filteredViewData(this: Data) {
