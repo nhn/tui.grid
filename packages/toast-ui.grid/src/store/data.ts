@@ -495,8 +495,8 @@ export function create({
     },
 
     get filteredIndex(this: Data) {
-      const filteredRawData = this.filteredRawData;
-      return this.filters
+      const { filteredRawData, filters } = this;
+      return filters
         ? filteredRawData.map(row => findIndexByRowKey(this, column, id, row.rowKey, false))
         : null;
     },
