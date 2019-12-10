@@ -33,7 +33,7 @@ function assertActiveFilterBtn() {
 }
 
 function moveNextPage() {
-  cy.get('.tui-page-btn.tui-next').click();
+  cy.get('.tui-page-btn.tui-next').click({ force: true });
 }
 
 before(() => {
@@ -63,7 +63,7 @@ describe('pagination + sort', () => {
     ]);
   });
 
-  it('should sort the data after moveing the next page', () => {
+  it('should sort the data after moving the next page', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
     moveNextPage();
 
@@ -92,9 +92,9 @@ describe('pagination + filter', () => {
     assertColumnData('deliveryType', 'Parcel');
   });
 
-  it('should filter the paginated data after moveing the next page', () => {
+  it('should filter the paginated data after moving the next page', () => {
     createGrid(data.slice(0, 80));
-    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
+    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'contain', value: 'P' }]);
     moveNextPage();
 
     assertActiveFilterBtn();
