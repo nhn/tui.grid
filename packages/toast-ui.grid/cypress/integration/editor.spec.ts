@@ -304,6 +304,27 @@ it('should do syncronous renering of the editing cell', () => {
   });
 });
 
+it('should maintain the type of value in case of finishing editing without any modification', () => {
+  const data = [
+    { name: 'Lee', age: 20 },
+    { name: 'Han', age: 28 }
+  ];
+  const columns = [
+    {
+      name: 'name',
+      editor: 'text'
+    },
+    { name: 'age', editor: 'text' }
+  ];
+  cy.createGrid({ data, columns });
+  cy.gridInstance().invoke('startEditing', 0, 'age');
+  cy.gridInstance().invoke('finishEditing', 0, 'age');
+
+  cy.gridInstance()
+    .invoke('getValue', 0, 'age')
+    .should('eq', 20);
+});
+
 // @TODO: cannot pass the test in headless mode, need to ask this issue
 // it('should not copy prev value as moving the editing cell by tab keyMap', () => {
 //   const data = [{ name: 'Lee', age: 20 }, { name: 'Han', age: 28 }, { name: 'Ryu', age: 22 }];
