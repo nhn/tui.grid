@@ -72,21 +72,6 @@ it('should displayed page according to the number of data.', () => {
   cy.get(`.tui-last-child`).should('have.text', '8');
 });
 
-it('should maintain sorting even if move the page.', () => {
-  createGrid();
-  cy.getByCls('btn-sorting').click();
-  cy.get('.tui-page-btn.tui-next').click();
-
-  cy.getByCls('btn-sorting').should('have.class', cls('btn-sorting-down'));
-});
-
-it('should reflect actual page data after filtering.', () => {
-  createGrid();
-  cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
-
-  checkLastPage('3');
-});
-
 it('should reflect actual page data after appendRow API.', () => {
   createGrid();
   cy.gridInstance().invoke('appendRow', appendedData);
