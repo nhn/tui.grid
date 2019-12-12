@@ -76,13 +76,10 @@ function createEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
 }
 
 function createRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
-  let cellRenderer = { type: isFunction(renderer) ? renderer : DefaultRenderer };
-
   if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
-    cellRenderer = renderer as CellRendererOptions;
+    return renderer as CellRendererOptions;
   }
-
-  return cellRenderer;
+  return { type: DefaultRenderer };
 }
 
 function createTreeInfo(treeColumnOptions: OptTree, name: string) {
