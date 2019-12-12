@@ -1,7 +1,6 @@
 import Grid from '../src/grid';
 import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../src/types';
 import { Omit } from 'utility-types';
-import { data as sampleData } from '../samples/basic';
 import '../src/css/grid.css';
 
 export default {
@@ -28,7 +27,28 @@ function createDefaultSummaryOption() {
 }
 
 function createDefaultOptions(): Omit<OptGrid, 'el'> {
-  const data = sampleData.slice();
+  const data = [
+    {
+      price: 10000,
+      downloadCount: 1000
+    },
+    {
+      price: 20000,
+      downloadCount: 1000
+    },
+    {
+      price: 7000,
+      downloadCount: 1000
+    },
+    {
+      price: 25000,
+      downloadCount: 200
+    },
+    {
+      price: 15000,
+      downloadCount: 1000
+    }
+  ];
   const columns = [
     { name: 'price', minWidth: 150 },
     { name: 'downloadCount', minWidth: 150 }
