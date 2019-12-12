@@ -196,7 +196,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
     return state;
   }
 
-  const { cellBorderWidth, tableBorderWidth, headerHeight, width, frozenBorderWidth } = dimension;
+  const { cellBorderWidth, headerHeight, width, frozenBorderWidth } = dimension;
   const { scrollLeft, scrollTop } = viewport;
   const { areaWidth } = columnCoords;
   const { allColumnMap, rowHeaderCount } = column;
@@ -205,7 +205,7 @@ export const EditingLayerInner = connect<StoreProps, OwnProps>((store, { rowKey,
   const diffForRowHeader = rowHeaderCount ? (rowHeaderCount - 1) * cellBorderWidth : 0;
   const cellWidth = right - left + cellBorderWidth;
   const cellHeight = bottom - top + cellBorderWidth - diffForTopCell;
-  const offsetTop = headerHeight - scrollTop + tableBorderWidth + diffForTopCell;
+  const offsetTop = headerHeight - scrollTop + diffForTopCell;
   const offsetLeft = Math.min(areaWidth.L - scrollLeft, width - right);
   const targetRow = filteredViewData[findIndexByRowKey(data, column, id, rowKey)];
   const borderWidth = frozenBorderWidth - diffForRowHeader;

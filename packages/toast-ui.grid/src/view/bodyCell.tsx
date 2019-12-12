@@ -8,7 +8,7 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { isEmpty } from '../helper/common';
+import { isEmpty, isFunction } from '../helper/common';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -74,6 +74,12 @@ export class BodyCellComp extends Component<Props> {
         allDisabled
       });
       this.calculateRowHeight(nextProps);
+    }
+  }
+
+  public componentWillUnmount() {
+    if (this.renderer && isFunction(this.renderer.beforeDestroy)) {
+      this.renderer.beforeDestroy();
     }
   }
 
