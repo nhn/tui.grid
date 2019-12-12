@@ -52,9 +52,9 @@ export const StateLayer = connect(({ data, dimension }) => {
   } = dimension;
   return {
     loadingState: data.loadingState,
-    top: headerHeight + cellBorderWidth + 1,
+    top: headerHeight + cellBorderWidth,
     height: bodyHeight - scrollXHeight - tableBorderWidth,
     left: 0,
-    right: scrollYWidth
+    right: scrollYWidth + tableBorderWidth
   };
 })(StateLayerComp);
