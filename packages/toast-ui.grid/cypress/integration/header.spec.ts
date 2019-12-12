@@ -178,8 +178,7 @@ describe('complex column header', () => {
 });
 
 it('should change the header height after calling setHeader()', () => {
-  const cellBorderWidth = 1;
-  const paddingHorizontal = 8;
+  const paddingHorizontal = 10;
   const columns = [{ name: 'id' }, { name: 'name' }, { name: 'age' }];
   const height = 300;
 
@@ -189,7 +188,7 @@ it('should change the header height after calling setHeader()', () => {
   cy.getByCls('cell-header').each($headers => {
     cy.wrap($headers)
       .invoke('height')
-      .should('eq', height - cellBorderWidth - paddingHorizontal);
+      .should('eq', height - paddingHorizontal);
   });
 });
 

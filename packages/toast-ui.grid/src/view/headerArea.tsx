@@ -99,8 +99,8 @@ class HeaderAreaComp extends Component<Props> {
   }
 
   public render() {
-    const { columns, headerHeight, cellBorderWidth, side, complexColumnHeaders, grid } = this.props;
-    const headerHeightStyle = { height: headerHeight + cellBorderWidth };
+    const { columns, headerHeight, side, complexColumnHeaders, grid } = this.props;
+    const headerHeightStyle = { height: headerHeight };
 
     return (
       <div
