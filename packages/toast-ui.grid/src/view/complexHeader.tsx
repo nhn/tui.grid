@@ -133,9 +133,9 @@ class ComplexHeaderComp extends Component<Props> {
         height = rowHeight * rowspan;
 
         if (j === length - 1) {
-          height = headerHeight - curHeight - 1;
+          height = headerHeight - curHeight - cellBorderWidth;
         } else {
-          curHeight += height + 1;
+          curHeight += height + cellBorderWidth;
         }
 
         if (columnNames[j] === columnName) {
