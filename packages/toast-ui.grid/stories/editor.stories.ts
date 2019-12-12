@@ -151,6 +151,9 @@ const textNote = `
 ## Text Editing Layer
 - The editing layer UI for \`text\` type
 - Using native input-text
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`0\`
 `;
 text.story = { parameters: { notes: textNote } };
 
@@ -165,6 +168,9 @@ const checkboxNote = `
 ## Checkbox Editing Layer
 - The editing layer UI for \`checkbox\` type
 - Using native input-checkbox
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`1\`
 `;
 checkbox.story = { parameters: { notes: checkboxNote } };
 
@@ -179,6 +185,9 @@ const radioNote = `
 ## Radio Editing Layer
 - The editing layer UI for \`radio\` type
 - Using native input-radio
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`2\`
 `;
 radio.story = { parameters: { notes: radioNote } };
 
@@ -193,6 +202,9 @@ const selectNote = `
 ## Select Editing Layer
 - The editing layer UI for \`select\` type
 - Using native input-select
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`3\`
 `;
 select.story = { parameters: { notes: selectNote } };
 
@@ -207,6 +219,9 @@ const datepickerNote = `
 ## Datepicker Editing Layer
 - The editing layer UI for \`datepicker\` type
 - Using [TOAST UI DatePicker](https://github.com/nhn/tui.date-picker) dependency
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`4\`
 `;
 datepicker.story = { parameters: { notes: datepickerNote } };
 
@@ -220,5 +235,8 @@ export const customEditor = () => {
 const customEditorNote = `
 ## Custom Editor
 - Customizing cell editor with color picker.
+- The Editing Cell
+  - Row Index: \`1\`
+  - Column Index: \`5\`
 `;
 customEditor.story = { parameters: { notes: customEditorNote } };
