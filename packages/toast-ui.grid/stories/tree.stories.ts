@@ -117,7 +117,8 @@ export const expandedAndCollapsed = () => {
 const expandedAndCollapsedNote = `
 ## Expanded, Collpased Tree Node
 
-- Expanded Tree Node: The folder icon is displayed as an \`opened\` and arrow icon points \`downward\` direction. 
-- Collpased Tree Node: The folder icon is displayed as a \`closed\` and arrow icon points \`rightward\` direction. 
+- Expanded Tree Node: The folder icon is displayed as an \`opened\` and arrow icon points \`downward\` direction.
+- Collpased Tree Node: The folder icon is displayed as a \`closed\` and arrow icon points \`rightward\` direction.
+- The indentation is added for children nodes
 `;
 expandedAndCollapsed.story = { parameters: { notes: expandedAndCollapsedNote } };
