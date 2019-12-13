@@ -1,5 +1,5 @@
-// Type definitions for TOAST UI Grid v4.7.0
-// TypeScript Version: 3.6.4
+// Type definitions for TOAST UI Grid v4.8.0
+// TypeScript Version: 3.7.2
 
 declare namespace tuiGrid {
   type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
