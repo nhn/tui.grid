@@ -36,12 +36,14 @@ function sortData(store: Store) {
   eventBus.trigger('sort', gridEvent);
 }
 
-function notifySortState(data: Data) {
+function setInitialSortState(data: Data) {
+  data.sortState.columns = [{ columnName: 'sortKey', ascending: true }];
+}
+
+function setSortStateForEmptyState(data: Data) {
   if (!data.sortState.columns.length) {
-    initSortState(data);
-    return;
+    setInitialSortState(data);
   }
-  notify(data, 'sortState');
 }
 
 function toggleSortAscending(
@@ -78,7 +80,7 @@ function changeSingleSortState(
   } else {
     data.sortState.columns = [sortedColumn];
   }
-  notifySortState(data);
+  setSortStateForEmptyState(data);
 }
 
 function changeMultiSortState(
@@ -100,7 +102,6 @@ function changeMultiSortState(
   } else {
     toggleSortAscending(data, columnName, ascending, sortingType, cancelable);
   }
-  notifySortState(data);
 }
 
 export function changeSortState(
@@ -111,7 +112,7 @@ export function changeSortState(
   cancelable = true
 ) {
   if (columnName === 'sortKey') {
-    initSortState(data);
+    setInitialSortState(data);
   } else {
     const { sortingType } = column.allColumnMap[columnName];
 
@@ -123,8 +124,9 @@ export function changeSortState(
   }
 }
 
-function updateRowInfoAfterSorting(store: Store) {
+function applySortedData(store: Store) {
   sortData(store);
+  notify(store.data, 'sortState');
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
 }
@@ -144,7 +146,7 @@ export function sort(
   }
 
   changeSortState(store, columnName, ascending, withCtrl, cancelable);
-  updateRowInfoAfterSorting(store);
+  applySortedData(store);
 }
 
 export function unsort(store: Store, columnName = 'sortKey') {
@@ -156,20 +158,19 @@ export function unsort(store: Store, columnName = 'sortKey') {
   }
 
   if (columnName === 'sortKey') {
-    initSortState(data);
+    setInitialSortState(data);
   } else {
     const index = findPropIndex('columnName', columnName, data.sortState.columns);
 
     if (index !== -1) {
       data.sortState.columns.splice(index, 1);
-      notifySortState(data);
+      setSortStateForEmptyState(data);
     }
   }
-
-  updateRowInfoAfterSorting(store);
+  applySortedData(store);
 }
 
 export function initSortState(data: Data) {
-  data.sortState.columns = [{ columnName: 'sortKey', ascending: true }];
+  setInitialSortState(data);
   notify(data, 'sortState');
 }
