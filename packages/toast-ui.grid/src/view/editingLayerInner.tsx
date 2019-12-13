@@ -7,7 +7,7 @@ import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { getInstance } from '../instance';
 import Grid from '../grid';
-import { isFunction, isNull, findProp, convertToNumber } from '../helper/common';
+import { isFunction, isNull, findProp } from '../helper/common';
 import { findIndexByRowKey } from '../query/data';
 
 interface StoreProps {
@@ -103,7 +103,7 @@ export class EditingLayerInnerComp extends Component<Props> {
   private finishEditing(save: boolean) {
     if (this.editor) {
       const { dispatch, rowKey, columnName } = this.props;
-      const value = convertToNumber(this.editor.getValue());
+      const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
       }
