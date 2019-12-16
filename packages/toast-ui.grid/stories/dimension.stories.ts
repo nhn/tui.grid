@@ -44,44 +44,6 @@ const bodyHeightAutoNote = `
 
 bodyHeightAuto.story = { parameters: { notes: bodyHeightAutoNote } };
 
-export const bodyHeight500 = () => {
-  return createGrid({ data, columns, bodyHeight: 500 }).el;
-};
-const bodyHeight500Note = `
-## Body Height: \`500\`
-- Render the body height with fixed height(\`500\`)
-`;
-
-bodyHeight500.story = { parameters: { notes: bodyHeight500Note } };
-
-export const rowHeight70 = () => {
-  return createGrid({ data, columns, rowHeight: 70 }).el;
-};
-const rowHeight70Note = `
-## Row Height: \`70\`
-- Render the common row height with fixed height(\`70\`)
-`;
-
-rowHeight70.story = { parameters: { notes: rowHeight70Note } };
-
-export const rowHeightCustom = () => {
-  const myData: OptRow[] = data.map(row => ({ ...row })).slice(0, 5);
-  myData[0]._attributes = {
-    height: 100
-  };
-  myData[2]._attributes = {
-    height: 200
-  };
-
-  return createGrid({ data: myData, columns, bodyHeight: 500 }).el;
-};
-const rowHeightCustomNote = `
-## Custom Row Height
-- Render the row height with individual custom height
-`;
-
-rowHeightCustom.story = { parameters: { notes: rowHeightCustomNote } };
-
 export const rowHeightAuto = () => {
   const myColumns: OptGrid['columns'] = [
     { name: 'col1', whiteSpace: 'pre' },
@@ -103,6 +65,10 @@ export const rowHeightAuto = () => {
 const rowHeightAutoNote = `
 ## Row Height: \`auto\`
 - Render row height for length of the content dynamically
+- col1 
+  - whiteSpace: \`pre\`
+- col2 
+  - whiteSpace: \`normal\`
 `;
 
 rowHeightAuto.story = { parameters: { notes: rowHeightAutoNote } };
