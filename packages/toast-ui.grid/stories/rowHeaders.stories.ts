@@ -143,7 +143,7 @@ export const checkedRowHeader = () => {
 const checkedRowHeaderNote = `
 ## Row Header
 
-- UI for \`checked checkbox\` type
+- UI for **checked** \`checkbox\` type
 `;
 checkedRowHeader.story = { parameters: { notes: checkedRowHeaderNote } };
 
