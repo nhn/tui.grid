@@ -428,6 +428,19 @@ export function create({
       return this.allColumns.filter(({ ignored }) => ignored).map(({ name }) => name);
     },
 
+    get columnMapWithRelation() {
+      // copy the array to prevent to affect allColumns property
+      const copiedColumns = [...this.allColumns];
+      copiedColumns.sort((columnA, columnB) => {
+        if (columnA.relationMap![columnB.name]) {
+          return -1;
+        }
+        return columnB.relationMap![columnA.name] ? 1 : 0;
+      });
+
+      return createMapFromArray(copiedColumns, 'name');
+    },
+
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
   });
 }
