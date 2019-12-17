@@ -14,7 +14,7 @@ import { isHiddenColumn } from '../query/column';
 function makeObservable(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
-  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
   const foundIndex = findIndexByRowKey(data, column, id, rowKey, false);
   const rawRow = rawData[foundIndex];
 
@@ -27,14 +27,14 @@ function makeObservable(store: Store, rowKey: RowKey) {
     rawData[foundIndex] = createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
     viewData[foundIndex] = createViewRow(
       rawData[foundIndex],
-      allColumnMap,
+      columnMapWithRelation,
       rawData,
       treeColumnName,
       treeIcon
     );
   } else {
     rawData[foundIndex] = createRawRow(rawRow, foundIndex, column.defaultValues);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], allColumnMap, rawData);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], columnMapWithRelation, rawData);
   }
   notify(data, 'rawData');
   notify(data, 'viewData');

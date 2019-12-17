@@ -210,7 +210,7 @@ function createRelationViewCell(
   valueMap: Dictionary<CellRenderData>
 ) {
   const { editable, disabled, value } = valueMap[name];
-  const { relationMap = {} } = columnMap[name];
+  const relationMap = columnMap[name].relationMap!;
 
   Object.keys(relationMap).forEach(targetName => {
     const {
@@ -256,7 +256,6 @@ export function createViewRow(
   treeIcon?: boolean
 ) {
   const { rowKey, sortKey, rowSpanMap, uniqueKey } = row;
-
   const initValueMap: Dictionary<CellRenderData | null> = {};
 
   Object.keys(columnMap).forEach(name => {
@@ -412,7 +411,7 @@ export function createData(
   prevRows?: Row[]
 ) {
   generateDataCreationKey();
-  const { defaultValues, allColumnMap, treeColumnName = '', treeIcon = true } = column;
+  const { defaultValues, columnMapWithRelation, treeColumnName = '', treeIcon = true } = column;
   const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
   let rawData: Row[];
 
@@ -431,7 +430,7 @@ export function createData(
   const viewData = rawData.map((row: Row) =>
     lazyObservable
       ? ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
-      : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon)
+      : createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon)
   );
 
   return { rawData, viewData };

@@ -186,7 +186,7 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
 export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, rowKey?: RowKey) {
   const { data, column } = store;
   const { rawData } = data;
-  const { defaultValues, allColumnMap } = column;
+  const { defaultValues, columnMapWithRelation } = column;
   const prevRow = rawData[rowIndex - 1];
   const options: RawRowOptions = { prevRow };
 
@@ -200,7 +200,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
   const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues, options);
-  const viewRow = createViewRow(rawRow, allColumnMap, rawData);
+  const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData);
 
   return { rawRow, viewRow, prevRow };
 }
