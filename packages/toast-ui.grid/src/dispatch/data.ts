@@ -283,6 +283,13 @@ export function check(store: Store, rowKey: RowKey) {
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
+  setRowAttribute(store, rowKey, 'checked', true);
+  setCheckedAllRows(store);
+
+  if (allColumnMap[treeColumnName]) {
+    changeTreeRowsCheckedState(store, rowKey, true);
+  }
+
   /**
    * Occurs when a checkbox in row header is checked
    * @event Grid#check
@@ -290,13 +297,6 @@ export function check(store: Store, rowKey: RowKey) {
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('check', gridEvent);
-
-  setRowAttribute(store, rowKey, 'checked', true);
-  setCheckedAllRows(store);
-
-  if (allColumnMap[treeColumnName]) {
-    changeTreeRowsCheckedState(store, rowKey, true);
-  }
 }
 
 export function uncheck(store: Store, rowKey: RowKey) {
@@ -305,6 +305,13 @@ export function uncheck(store: Store, rowKey: RowKey) {
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ rowKey });
 
+  setRowAttribute(store, rowKey, 'checked', false);
+  setCheckedAllRows(store);
+
+  if (allColumnMap[treeColumnName]) {
+    changeTreeRowsCheckedState(store, rowKey, false);
+  }
+
   /**
    * Occurs when a checkbox in row header is unchecked
    * @event Grid#uncheck
@@ -312,13 +319,6 @@ export function uncheck(store: Store, rowKey: RowKey) {
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('uncheck', gridEvent);
-
-  setRowAttribute(store, rowKey, 'checked', false);
-  setCheckedAllRows(store);
-
-  if (allColumnMap[treeColumnName]) {
-    changeTreeRowsCheckedState(store, rowKey, false);
-  }
 }
 
 export function checkAll(store: Store, allPage = true) {
