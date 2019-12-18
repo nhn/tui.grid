@@ -112,11 +112,11 @@ export const SelectFilter = connect<StoreProps, OwnProps>(
     const { state } = filterState;
     const { name: columnName } = columnAddress;
 
-    const uniqueColumnData = getUniqColumnData(rawData, columnName);
+    const uniqueColumnData = getUniqColumnData(rawData, column, columnName);
     const columnData = uniqueColumnData.map(value => ({
       value,
       checked: some(item => value === item.value, state)
-    })) as ColumnData[];
+    }));
 
     return {
       grid: getInstance(id),

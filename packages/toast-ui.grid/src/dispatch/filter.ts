@@ -47,7 +47,7 @@ export function toggleSelectAllCheckbox(store: Store, checked: boolean) {
   const columnInfo = column.allColumnMap[columnName];
 
   if (checked) {
-    const columnData = getUniqColumnData(data.rawData, columnName);
+    const columnData = getUniqColumnData(data.rawData, column, columnName);
     activeFilterState!.state = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
   } else {
     activeFilterState!.state = [];
@@ -101,7 +101,7 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
   }
 
   if (type === 'select' && !initialState.length) {
-    const columnData = getUniqColumnData(filteredRawData, columnName);
+    const columnData = getUniqColumnData(filteredRawData, column, columnName);
     initialState = columnData.map(value => ({ code: 'eq', value })) as FilterState[];
   }
 
@@ -127,7 +127,7 @@ export function applyActiveFilterState(store: Store) {
   filterLayerState.activeFilterState!.state = validState;
 
   if (type === 'select') {
-    const columnData = getUniqColumnData(data.rawData, columnName);
+    const columnData = getUniqColumnData(data.rawData, store.column, columnName);
     if (columnData.length === state.length) {
       unfilter(store, columnName);
       return;
