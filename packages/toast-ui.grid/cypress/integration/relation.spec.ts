@@ -1,5 +1,6 @@
 import { cls } from '../../src/helper/dom';
 import { data, sortedColumns, unsortedColumns } from '../../samples/relations';
+import Grid from '@/grid';
 
 function changeCellValues(rowKey: number) {
   // changed fixed value to remove unnecessary paramter for values
@@ -23,7 +24,8 @@ before(() => {
 
 ['sorted', 'unsorted'].forEach(type => {
   const columns = type === 'sorted' ? sortedColumns : unsortedColumns;
-  describe(`In case of ${type} column with relation`, () => {
+
+  describe(`in case of ${type} column with relation`, () => {
     beforeEach(() => {
       cy.createGrid({ data, columns });
     });
@@ -127,6 +129,30 @@ before(() => {
       changeCellValues(0);
 
       assertRelationData(0, ['Overseas', 'Pop', 'Youth']);
+    });
+  });
+});
+
+describe(`throw error`, () => {
+  it('should throw error when sets own column name as relation column', () => {
+    const columns = [
+      {
+        header: 'Category1',
+        name: 'category1',
+        relations: [{ targetNames: ['category1'] }]
+      },
+      {
+        header: 'Category2',
+        name: 'category2'
+      }
+    ];
+    cy.window().then(win => {
+      const { document, tui } = win as Window & { tui: { Grid: typeof Grid } };
+      const el = document.createElement('div');
+
+      expect(() => new tui.Grid({ el, data, columns })).to.throw(
+        'Cannot set own column name to relation column option'
+      );
     });
   });
 });
