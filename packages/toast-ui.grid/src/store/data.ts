@@ -210,7 +210,7 @@ function createRelationViewCell(
   valueMap: Dictionary<CellRenderData>
 ) {
   const { editable, disabled, value } = valueMap[name];
-  const relationMap = columnMap[name].relationMap!;
+  const { relationMap = {} } = columnMap[name];
 
   Object.keys(relationMap).forEach(targetName => {
     const {

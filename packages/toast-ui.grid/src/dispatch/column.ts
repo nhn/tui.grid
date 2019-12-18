@@ -99,8 +99,8 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   } = column.dataForColumnCreation;
 
   const relationColumns = optColumns.reduce(
-    (acc: string[], { relations = [] }) =>
-      acc.concat(createRelationColumns(relations)).filter((columnName, index) => {
+    (acc: string[], { relations = [], name }) =>
+      acc.concat(createRelationColumns(relations, name)).filter((columnName, index) => {
         const foundIndex = acc.indexOf(columnName);
         return foundIndex === -1 || foundIndex === index;
       }),

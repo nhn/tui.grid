@@ -148,11 +148,14 @@ export function createColumnFilterOption(filter: FilterOptionType | FilterOpt): 
   return defaultOption;
 }
 
-export function createRelationColumns(relations: Relations[]) {
+export function createRelationColumns(relations: Relations[], name: string) {
   const relationColumns: string[] = [];
   relations.forEach(relation => {
     const { targetNames = [] } = relation;
     targetNames.forEach(targetName => {
+      if (targetName === name) {
+        throw new Error('Cannot set own column name to relation column option');
+      }
       relationColumns.push(targetName);
     });
   });
@@ -333,8 +336,8 @@ export function create({
   valign,
   columnHeaders
 }: ColumnOption): Column {
-  const relationColumns = columns.reduce((acc: string[], { relations }) => {
-    acc = acc.concat(createRelationColumns(relations || []));
+  const relationColumns = columns.reduce((acc: string[], { relations, name }) => {
+    acc = acc.concat(createRelationColumns(relations || [], name));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
 
@@ -432,10 +435,10 @@ export function create({
       // copy the array to prevent to affect allColumns property
       const copiedColumns = [...this.allColumns];
       copiedColumns.sort((columnA, columnB) => {
-        if (columnA.relationMap![columnB.name]) {
+        if ((columnA.relationMap || {})[columnB.name]) {
           return -1;
         }
-        return columnB.relationMap![columnA.name] ? 1 : 0;
+        return (columnB.relationMap || {})[columnA.name] ? 1 : 0;
       });
 
       return createMapFromArray(copiedColumns, 'name');
