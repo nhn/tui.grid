@@ -65,7 +65,7 @@ function getCellDisplayValue(value: CellValue) {
   return String(value);
 }
 
-function getFormattedValue(
+export function getFormattedValue(
   props: FormatterProps,
   formatter?: Formatter,
   defaultValue?: CellValue,
@@ -330,6 +330,31 @@ function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   return lazyObservable ? attributes : observable(attributes);
 }
 
+function getCellRelationListItems(name: string, row: Row, columnMap: Dictionary<ColumnInfo>) {
+  const { relationMap = {}, editor } = columnMap[name];
+  const { checkDisabled, disabled: rowDisabled } = row._attributes;
+  const editable = !!editor;
+  const disabled = isCheckboxColumn(name) ? checkDisabled : rowDisabled;
+  const value = row[name];
+  const relationCbParams = { value, editable, disabled, row };
+  const relationListItemMap: Dictionary<ListItem[]> = {};
+
+  Object.keys(relationMap).forEach(targetName => {
+    const listItems = getListItems(relationMap[targetName].listItems, relationCbParams) || [];
+    relationListItemMap[targetName] = listItems;
+  });
+  return relationListItemMap;
+}
+
+export function setRowRelationListItems(row: Row, allColumnMap: Dictionary<ColumnInfo>) {
+  Object.keys(allColumnMap).forEach(name => {
+    row._relationListItemMap = {
+      ...row._relationListItemMap,
+      ...getCellRelationListItems(name, row, allColumnMap)
+    };
+  });
+}
+
 function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
   const mainRowSpanMap: RowSpanMap = {};
 
@@ -380,6 +405,7 @@ export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
+  allColumnMap: Dictionary<ColumnInfo>,
   options: RawRowOptions = {}
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
@@ -400,6 +426,7 @@ export function createRawRow(
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
   });
+  setRowRelationListItems(row as Row, allColumnMap);
 
   return (lazyObservable ? row : observable(row)) as Row;
 }
@@ -416,10 +443,10 @@ export function createData(
   let rawData: Row[];
 
   if (treeColumnName) {
-    rawData = createTreeRawData(data, defaultValues, keyColumnName, lazyObservable);
+    rawData = createTreeRawData(data, defaultValues, allColumnMap, keyColumnName, lazyObservable);
   } else {
     rawData = data.map((row, index, rows) =>
-      createRawRow(row, index, defaultValues, {
+      createRawRow(row, index, defaultValues, allColumnMap, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable
@@ -436,13 +463,27 @@ export function createData(
   return { rawData, viewData };
 }
 
-function applyFilterToRawData(rawData: Row[], filters: Filter[] | null) {
+function applyFilterToRawData(
+  rawData: Row[],
+  filters: Filter[] | null,
+  columnMap: Dictionary<ColumnInfo>
+) {
   let data = rawData;
 
   if (filters) {
     data = filters.reduce((acc: Row[], filter: Filter) => {
       const { conditionFn, columnName } = filter;
-      return acc.filter(row => conditionFn!(row[columnName]));
+      const { formatter, defaultValue } = columnMap[columnName];
+
+      return acc.filter(row => {
+        const value = row[columnName];
+        const relationListItems = row._relationListItemMap[columnName];
+        const formatterProps = { row, column: columnMap[columnName], value };
+
+        return conditionFn!(
+          getFormattedValue(formatterProps, formatter, defaultValue, relationListItems)
+        );
+      });
     }, rawData);
   }
 
@@ -490,7 +531,9 @@ export function create({
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
     get filteredRawData(this: Data) {
-      return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
+      return this.filters
+        ? applyFilterToRawData(this.rawData, this.filters, column.allColumnMap)
+        : this.rawData;
     },
 
     get filteredIndex(this: Data) {

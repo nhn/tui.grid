@@ -54,6 +54,7 @@ export type Row = Dictionary<CellValue> & {
   uniqueKey: string;
   rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
+  _relationListItemMap: Dictionary<ListItem[]>;
 };
 
 export type RowSpanMap = Dictionary<RowSpan>;
