@@ -85,7 +85,7 @@ class ClipboardComp extends Component<Props> {
         this.el.innerHTML = getText(store);
 
         if (isSupportWindowClipboardData()) {
-          setClipboardSelection(this.el[0].childNodes[0]);
+          setClipboardSelection(this.el.childNodes[0]);
         }
         break;
       }
