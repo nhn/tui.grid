@@ -1,4 +1,5 @@
 import { cls } from '@/helper/dom';
+import { FormatterProps } from '@/store/types';
 
 before(() => {
   cy.visit('/dist');
@@ -369,7 +370,6 @@ describe('apply filter (type: select)', () => {
       } else {
         applyFilterBySelectUI(1);
       }
-
       cy.getRsideBody().should('have.cellData', [
         ['player2', 'Kim'],
         ['player3', 'Ryu'],
@@ -385,6 +385,7 @@ describe('apply filter (type: select)', () => {
   it('When searching, the items contained text are listed.', () => {
     clickFilterBtn();
     inputFilterValue('player3');
+
     getFilterListItem()
       .its('length')
       .should('eq', 2);
@@ -739,5 +740,174 @@ describe('check other option when filtering', () => {
       .filter('input[type=checkbox]:checked')
       .should('have.length', 2);
     getHeaderCheckbox().should('not.be.checked');
+  });
+});
+
+describe('apply filter with formatted value', () => {
+  context('apply filter (type: select)', () => {
+    beforeEach(() => {
+      const columns = [
+        {
+          name: 'id',
+          filter: 'select',
+          formatter: ({ value }: FormatterProps) => `formatted_${value}`
+        },
+        { name: 'name' }
+      ];
+      const data = [
+        { id: 'player1', name: 'Choi' },
+        { id: 'player2', name: 'Kim' },
+        { id: 'player3', name: 'Ryu' },
+        { id: 'player4', name: 'Han' },
+        { id: 'player5', name: 'Park' },
+        { id: 'player6', name: 'Lee' },
+        { id: 'player7', name: 'Yoo' },
+        { id: 'player8', name: 'Lim' }
+      ];
+      cy.createGrid({ data, columns });
+    });
+
+    it(`should display formatted value in select filter list`, () => {
+      clickFilterBtn();
+
+      getFilterListItem()
+        .filter(index => index > 0)
+        .each($el => {
+          cy.wrap($el).should('contain.text', 'formatted');
+        });
+    });
+
+    it('When searching, the items contained text are listed.', () => {
+      clickFilterBtn();
+      inputFilterValue('formatted');
+
+      getFilterListItem()
+        .its('length')
+        .should('eq', 9);
+    });
+
+    it('When clicking selectAll checkbox, apply all list item checkbox and filtering.', () => {
+      applyFilterBySelectUI(0);
+
+      cy.getRsideBody().should('have.cellData', []);
+
+      toggleSelectFilter(0);
+
+      cy.getRsideBody().should('have.cellData', [
+        ['formatted_player1', 'Choi'],
+        ['formatted_player2', 'Kim'],
+        ['formatted_player3', 'Ryu'],
+        ['formatted_player4', 'Han'],
+        ['formatted_player5', 'Park'],
+        ['formatted_player6', 'Lee'],
+        ['formatted_player7', 'Yoo'],
+        ['formatted_player8', 'Lim']
+      ]);
+    });
+
+    ['API', 'UI'].forEach(method => {
+      it(`code:eq by ${method}`, () => {
+        if (method === 'API') {
+          invokeFilter('id', [
+            { code: 'eq', value: 'formatted_player2' },
+            { code: 'eq', value: 'formatted_player3' },
+            { code: 'eq', value: 'formatted_player4' },
+            { code: 'eq', value: 'formatted_player5' },
+            { code: 'eq', value: 'formatted_player6' },
+            { code: 'eq', value: 'formatted_player7' },
+            { code: 'eq', value: 'formatted_player8' }
+          ]);
+        } else {
+          applyFilterBySelectUI(1);
+        }
+
+        cy.getRsideBody().should('have.cellData', [
+          ['formatted_player2', 'Kim'],
+          ['formatted_player3', 'Ryu'],
+          ['formatted_player4', 'Han'],
+          ['formatted_player5', 'Park'],
+          ['formatted_player6', 'Lee'],
+          ['formatted_player7', 'Yoo'],
+          ['formatted_player8', 'Lim']
+        ]);
+      });
+    });
+  });
+
+  context('apply filter (type: text)', () => {
+    beforeEach(() => {
+      const columns = [
+        {
+          name: 'id',
+          filter: 'text',
+          formatter: ({ value }: FormatterProps) => `formatted_${value}`
+        },
+        { name: 'name' }
+      ];
+      const data = [
+        { id: 'player1', name: 'Choi' },
+        { id: 'player2', name: 'Kim' },
+        { id: 'player3', name: 'Ryu' },
+        { id: 'player4', name: 'Han' },
+        { id: 'player5', name: 'Park' },
+        { id: 'player6', name: 'Lee' },
+        { id: 'player7', name: 'Yoo' },
+        { id: 'player8', name: 'Lim' }
+      ];
+      cy.createGrid({ data, columns });
+    });
+
+    ['API', 'UI'].forEach(method => {
+      it(`code:eq by ${method}`, () => {
+        if (method === 'API') {
+          invokeFilter('id', [{ code: 'eq', value: 'formatted_player1' }]);
+        } else {
+          applyFilterByUI('eq', 'formatted_player1');
+        }
+
+        cy.getRsideBody().should('have.cellData', [['formatted_player1', 'Choi']]);
+      });
+    });
+  });
+
+  context('apply filter (type: number)', () => {
+    beforeEach(() => {
+      const columns = [
+        {
+          name: 'id'
+        },
+        {
+          name: 'age',
+          filter: 'number',
+          formatter: ({ value }: FormatterProps) => Number(value) - 1
+        }
+      ];
+      const data = [
+        { id: 'player1', age: 20 },
+        { id: 'player2', age: 30 },
+        { id: 'player3', age: 10 },
+        { id: 'player4', age: 30 },
+        { id: 'player5', age: 50 },
+        { id: 'player6', age: 40 },
+        { id: 'player7', age: 30 },
+        { id: 'player8', age: 20 }
+      ];
+      cy.createGrid({ data, columns });
+    });
+
+    ['API', 'UI'].forEach(method => {
+      it(`code:eq by ${method}`, () => {
+        if (method === 'API') {
+          invokeFilter('age', [{ code: 'eq', value: 19 }]);
+        } else {
+          applyFilterByUI('eq', '19');
+        }
+
+        cy.getRsideBody().should('have.cellData', [
+          ['player1', '19'],
+          ['player8', '19']
+        ]);
+      });
+    });
   });
 });
