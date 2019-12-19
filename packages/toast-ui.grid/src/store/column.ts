@@ -34,7 +34,9 @@ import {
   isObject,
   isUndefined,
   isNumber,
-  findProp
+  findProp,
+  uniq,
+  isEmpty
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';
@@ -47,6 +49,33 @@ const rowHeadersMap = {
   rowNum: '_number',
   checkbox: '_checked'
 };
+
+export function validateRelationColumn(columnInfos: ColumnInfo[]) {
+  const checked: Dictionary<boolean> = {};
+
+  function checkCircularRelation(column: ColumnInfo, relations: string[]) {
+    relations.push(column.name);
+    checked[column.name] = true;
+
+    if (uniq(relations).length !== relations.length) {
+      throw new Error('Cannot create circular reference between relation columns');
+    }
+
+    if (!isEmpty(column.relationMap)) {
+      Object.keys(column.relationMap!).forEach(targetName => {
+        const targetColumn = findProp('name', targetName, columnInfos)!;
+        // copy the 'relation' array to prevent to push all relation column into same array
+        checkCircularRelation(targetColumn, [...relations]);
+      });
+    }
+  }
+
+  columnInfos.forEach(column => {
+    if (!checked[column.name]) {
+      checkCircularRelation(column, []);
+    }
+  });
+}
 
 function createBuiltInEditorOptions(editorType: string, options?: Dictionary<any>) {
   const editInfo = editorMap[editorType];
@@ -148,14 +177,11 @@ export function createColumnFilterOption(filter: FilterOptionType | FilterOpt): 
   return defaultOption;
 }
 
-export function createRelationColumns(relations: Relations[], name: string) {
+export function createRelationColumns(relations: Relations[]) {
   const relationColumns: string[] = [];
   relations.forEach(relation => {
     const { targetNames = [] } = relation;
     targetNames.forEach(targetName => {
-      if (targetName === name) {
-        throw new Error('Cannot set own column name to relation column option');
-      }
       relationColumns.push(targetName);
     });
   });
@@ -336,8 +362,8 @@ export function create({
   valign,
   columnHeaders
 }: ColumnOption): Column {
-  const relationColumns = columns.reduce((acc: string[], { relations, name }) => {
-    acc = acc.concat(createRelationColumns(relations || [], name));
+  const relationColumns = columns.reduce((acc: string[], { relations }) => {
+    acc = acc.concat(createRelationColumns(relations || []));
     return acc.filter((columnName, idx) => acc.indexOf(columnName) === idx);
   }, []);
 
@@ -354,6 +380,9 @@ export function create({
       columnHeaderInfo
     )
   );
+
+  validateRelationColumn(columnInfos);
+
   const allColumns = rowHeaderInfos.concat(columnInfos);
 
   const {
