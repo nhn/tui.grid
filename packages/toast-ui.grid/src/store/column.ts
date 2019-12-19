@@ -54,15 +54,17 @@ export function validateRelationColumn(columnInfos: ColumnInfo[]) {
   const checked: Dictionary<boolean> = {};
 
   function checkCircularRelation(column: ColumnInfo, relations: string[]) {
-    relations.push(column.name);
-    checked[column.name] = true;
+    const { name, relationMap } = column;
+
+    relations.push(name);
+    checked[name] = true;
 
     if (uniq(relations).length !== relations.length) {
       throw new Error('Cannot create circular reference between relation columns');
     }
 
-    if (!isEmpty(column.relationMap)) {
-      Object.keys(column.relationMap!).forEach(targetName => {
+    if (!isUndefined(relationMap)) {
+      Object.keys(relationMap).forEach(targetName => {
         const targetColumn = findProp('name', targetName, columnInfos)!;
         // copy the 'relation' array to prevent to push all relation column into same array
         checkCircularRelation(targetColumn, [...relations]);
