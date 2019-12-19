@@ -134,25 +134,46 @@ before(() => {
 });
 
 describe(`throw error`, () => {
-  it('should throw error when sets own column name as relation column', () => {
-    const columns = [
-      {
-        header: 'Category1',
-        name: 'category1',
-        relations: [{ targetNames: ['category1'] }]
-      },
-      {
-        header: 'Category2',
-        name: 'category2'
-      }
-    ];
-    cy.window().then(win => {
-      const { document, tui } = win as Window & { tui: { Grid: typeof Grid } };
-      const el = document.createElement('div');
+  ['self circular', 'circular'].forEach(type => {
+    const columns =
+      type === 'circular'
+        ? [
+            {
+              header: 'Category1',
+              name: 'category1',
+              relations: [{ targetNames: ['category2'] }]
+            },
+            {
+              header: 'Category2',
+              name: 'category2',
+              relations: [{ targetNames: ['category3'] }]
+            },
+            {
+              header: 'Category3',
+              name: 'category3',
+              relations: [{ targetNames: ['category1'] }]
+            }
+          ]
+        : [
+            {
+              header: 'Category1',
+              name: 'category1',
+              relations: [{ targetNames: ['category1'] }]
+            },
+            {
+              header: 'Category2',
+              name: 'category2'
+            }
+          ];
+    it(`should throw error when creates ${type} reference on configuring relation column`, () => {
+      cy.window().then(win => {
+        const { document, tui } = win as Window & { tui: { Grid: typeof Grid } };
+        const el = document.createElement('div');
 
-      expect(() => new tui.Grid({ el, data, columns })).to.throw(
-        'Cannot set own column name to relation column option'
-      );
+        expect(() => new tui.Grid({ el, data, columns })).to.throw(
+          'Cannot create circular reference between relation columns'
+        );
+      });
     });
   });
 });
