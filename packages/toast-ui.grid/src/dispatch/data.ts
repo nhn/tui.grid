@@ -721,9 +721,10 @@ function createFilteredOriginData(data: Data, rowRange: Range, treeColumnName?: 
 export function createObservableData({ column, data, viewport, id }: Store, allRowRange = false) {
   const rowRange: Range = allRowRange ? [0, data.rawData.length] : viewport.rowRange;
   const { treeColumnName } = column;
-  const originData = data.filters
-    ? createFilteredOriginData(data, rowRange, treeColumnName)
-    : createOriginData(data, rowRange, treeColumnName);
+  const originData =
+    data.filters && !allRowRange
+      ? createFilteredOriginData(data, rowRange, treeColumnName)
+      : createOriginData(data, rowRange, treeColumnName);
 
   if (!originData.rows.length) {
     return;
