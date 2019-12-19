@@ -44,7 +44,7 @@ function createGrid(customOptions: Record<string, unknown> = {}) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  const grid = new Grid({ el, bodyHeight: 170, ...options });
+  const grid = new Grid({ el, ...options });
 
   return { el, grid };
 }

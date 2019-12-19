@@ -88,7 +88,66 @@ class SingleCheckRenderer {
   }
 }
 
-export const basic = () => {
+export const rowNum = () => {
+  const { el } = createGrid({
+    data,
+    columns,
+    rowHeaders: ['rowNum']
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  return rootEl;
+};
+
+const rowNumNote = `
+## Row Header
+
+- UI for \`rowNum\` type
+`;
+rowNum.story = { parameters: { notes: rowNumNote } };
+
+export const checkboxRowHeader = () => {
+  const { el } = createGrid({
+    data,
+    columns,
+    rowHeaders: ['checkbox']
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  return rootEl;
+};
+
+const checkboxRowHeaderNote = `
+## Row Header
+
+- UI for \`checkbox\` type
+`;
+checkboxRowHeader.story = { parameters: { notes: checkboxRowHeaderNote } };
+
+export const checkedRowHeader = () => {
+  const { el, grid } = createGrid({
+    data,
+    columns,
+    rowHeaders: ['checkbox']
+  });
+  const rootEl = document.createElement('div');
+  rootEl.appendChild(el);
+
+  grid.checkAll();
+
+  return rootEl;
+};
+
+const checkedRowHeaderNote = `
+## Row Header
+
+- UI for **checked** \`checkbox\` type
+`;
+checkedRowHeader.story = { parameters: { notes: checkedRowHeaderNote } };
+
+export const rowNumAndCheckboxRowHeaders = () => {
   const { el } = createGrid({
     data,
     columns,
@@ -100,12 +159,12 @@ export const basic = () => {
   return rootEl;
 };
 
-const basicNote = `
+const rowNumAndCheckboxRowHeadersNote = `
 ## Row Header
 
-- Basic UI for \`rowNum\` and \`checkbox\` type
+- UI for \`rowNum\` and \`checkbox\` type
 `;
-basic.story = { parameters: { notes: basicNote } };
+rowNumAndCheckboxRowHeaders.story = { parameters: { notes: rowNumAndCheckboxRowHeadersNote } };
 
 export const customRowHeader = () => {
   const { el } = createGrid({
@@ -141,6 +200,6 @@ export const customRowHeader = () => {
 const customRowHeaderNote = `
 ## Custom Row Header
 
-Customizing Row Headers with header and renderer.
+Customizing Row Headers(\`rowNum\`, \`checkbox\`) with header and renderer.
 `;
 customRowHeader.story = { parameters: { notes: customRowHeaderNote } };

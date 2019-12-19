@@ -56,6 +56,9 @@ const focusBasicNote = `
 ## Focus Layer
 - Active focus layer(background-color: \`#00a9ff\`)
 - Inactive focus layer(background-color:  \`#aaa\`)
+- The Focused Cell
+  - Row Index: \`2\`
+  - Column Index: \`2\`
 `;
 
 activeFocus.story = { parameters: { notes: focusBasicNote } };
@@ -101,6 +104,9 @@ export const focusWithWhitespace = () => {
 const focusWithWhitespaceNote = `
 ## Focus Layer(**whitespace: pre**)
 - UI for focus layer on dynamic row height
+- The Focused Cell
+  - Row Index: \`2\`
+  - Column Index: \`2\`
 `;
 
 focusWithWhitespace.story = { parameters: { notes: focusWithWhitespaceNote } };

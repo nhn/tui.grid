@@ -11,7 +11,6 @@ function createGrid(options: Omit<OptGrid, 'el'>) {
   const el = document.createElement('div');
   el.style.width = '800px';
 
-  Grid.setLanguage('en');
   const grid = new Grid({ el, ...options });
 
   return { el, grid };
