@@ -475,16 +475,14 @@ function applyFilterToRawData(
   if (filters) {
     data = filters.reduce((acc: Row[], filter: Filter) => {
       const { conditionFn, columnName } = filter;
-      const { formatter, defaultValue } = columnMap[columnName];
+      const { formatter } = columnMap[columnName];
 
       return acc.filter(row => {
         const value = row[columnName];
         const relationListItems = row._relationListItemMap[columnName];
         const formatterProps = { row, column: columnMap[columnName], value };
 
-        return conditionFn!(
-          getFormattedValue(formatterProps, formatter, defaultValue, relationListItems)
-        );
+        return conditionFn!(getFormattedValue(formatterProps, formatter, value, relationListItems));
       });
     }, rawData);
   }
