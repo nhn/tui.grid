@@ -330,7 +330,7 @@ function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   return lazyObservable ? attributes : observable(attributes);
 }
 
-function getCellRelationListItems(name: string, row: Row, columnMap: Dictionary<ColumnInfo>) {
+function createRelationListItems(name: string, row: Row, columnMap: Dictionary<ColumnInfo>) {
   const { relationMap = {}, editor } = columnMap[name];
   const { checkDisabled, disabled: rowDisabled } = row._attributes;
   const editable = !!editor;
@@ -347,12 +347,14 @@ function getCellRelationListItems(name: string, row: Row, columnMap: Dictionary<
 }
 
 export function setRowRelationListItems(row: Row, allColumnMap: Dictionary<ColumnInfo>) {
+  let relationListItemMap = { ...row._relationListItemMap };
   Object.keys(allColumnMap).forEach(name => {
-    row._relationListItemMap = {
-      ...row._relationListItemMap,
-      ...getCellRelationListItems(name, row, allColumnMap)
+    relationListItemMap = {
+      ...relationListItemMap,
+      ...createRelationListItems(name, row, allColumnMap)
     };
   });
+  row._relationListItemMap = relationListItemMap;
 }
 
 function createMainRowSpanMap(rowSpan: RowSpanAttributeValue, rowKey: RowKey) {
