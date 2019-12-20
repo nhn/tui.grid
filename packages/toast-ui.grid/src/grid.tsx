@@ -1226,11 +1226,12 @@ export default class Grid {
     const pagination = this.getPagination();
     if (pagination) {
       const { pageOptions } = this.store.data;
-      if (pageOptions.useClient) {
-        this.dispatch('setPagination', { ...pageOptions, perPage, page: 1 });
-      } else {
+      if (!pageOptions.useClient) {
         this.readData(1, { perPage });
+        return;
       }
+      this.dispatch('updatePageOptions', { perPage, page: 1 });
+      this.dispatch('updateHeights');
     }
   }
 
