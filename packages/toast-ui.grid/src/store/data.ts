@@ -347,7 +347,7 @@ function createRelationListItems(name: string, row: Row, columnMap: Dictionary<C
 }
 
 export function setRowRelationListItems(row: Row, allColumnMap: Dictionary<ColumnInfo>) {
-  let relationListItemMap = { ...row._relationListItemMap };
+  let relationListItemMap = row._relationListItemMap;
   Object.keys(allColumnMap).forEach(name => {
     relationListItemMap = {
       ...relationListItemMap,

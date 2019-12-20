@@ -114,7 +114,7 @@ export function setActiveColumnAddress(store: Store, address: ActiveColumnAddres
 }
 
 export function applyActiveFilterState(store: Store) {
-  const { filterLayerState, data } = store;
+  const { filterLayerState, data, column } = store;
   const columnName = filterLayerState.activeColumnAddress!.name;
   const { state, type, operator } = filterLayerState.activeFilterState!;
   const validState = state.filter(item => String(item.value).length);
@@ -127,7 +127,7 @@ export function applyActiveFilterState(store: Store) {
   filterLayerState.activeFilterState!.state = validState;
 
   if (type === 'select') {
-    const columnData = getUniqColumnData(data.rawData, store.column, columnName);
+    const columnData = getUniqColumnData(data.rawData, column, columnName);
     if (columnData.length === state.length) {
       unfilter(store, columnName);
       return;

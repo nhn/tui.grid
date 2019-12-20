@@ -141,7 +141,6 @@ export function getFilterStateWithOperator(data: Data, column: Column) {
 
 export function getUniqColumnData(targetData: Row[], column: Column, columnName: string) {
   const columnInfo = column.allColumnMap[columnName];
-  const { formatter } = columnInfo;
   const uniqColumnData = uniqByProp(columnName, targetData);
 
   return uniqColumnData.map(row => {
@@ -153,7 +152,7 @@ export function getUniqColumnData(targetData: Row[], column: Column, columnName:
     };
     const relationListItems = row._relationListItemMap[columnName];
 
-    return getFormattedValue(formatterProps, formatter, value, relationListItems);
+    return getFormattedValue(formatterProps, columnInfo.formatter, value, relationListItems);
   });
 }
 
