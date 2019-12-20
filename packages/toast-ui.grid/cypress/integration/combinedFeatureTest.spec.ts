@@ -171,6 +171,7 @@ describe('pagination + sort', () => {
 describe('pagination + filter', () => {
   it('should filter the paginated data', () => {
     createGridWithPagination();
+
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
 
     assertActiveFilterBtn();
@@ -181,6 +182,7 @@ describe('pagination + filter', () => {
 
   it('should maintain the filtered data after moving the next page', () => {
     createGridWithPagination(data.slice(0, 80));
+
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'contain', value: 'P' }]);
     moveNextPage();
 
@@ -191,12 +193,23 @@ describe('pagination + filter', () => {
 
   it('should move the first page after filtering the data with movded the page', () => {
     createGridWithPagination();
+
     moveNextPage();
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
 
     assertActiveFilterBtn();
     assertCurrentPage(1);
     assertColumnData('deliveryType', 'Parcel');
+  });
+
+  it('should move the first page after unfiltering the data with movded the page', () => {
+    createGridWithPagination(data.slice(0, 80));
+
+    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'contain', value: 'P' }]);
+    moveNextPage();
+    cy.gridInstance().invoke('unfilter', 'deliveryType');
+
+    assertCurrentPage(1);
   });
 });
 
@@ -262,6 +275,7 @@ describe('filter + sort', () => {
 describe('pagination + filter + sort', () => {
   it('The functionality of filtering and sorting should be operated with pagination properly', () => {
     createGridWithPagination();
+
     cy.gridInstance().invoke('sort', 'orderName', true);
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Visit' }]);
 
