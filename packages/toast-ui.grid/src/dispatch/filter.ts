@@ -17,7 +17,7 @@ import { updateAllSummaryValues } from './summary';
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;
 
-  updatePageOptions(data, data.filteredRawData.length);
+  updatePageOptions(store, { totalCount: data.filteredRawData.length, page: 1 });
   updateHeights(store);
   setScrollTop(store, 0);
   initSelection(store);
@@ -181,7 +181,7 @@ export function filter(
   const { type } = columnFilterInfo;
   const filterIndex = findPropIndex('columnName', columnName, filters);
 
-  updatePageOptions(data, data.pageOptions.totalCount, 1);
+  updatePageOptions(store, { page: 1 });
 
   if (filterIndex >= 0) {
     const columnFilter = filters[filterIndex];
