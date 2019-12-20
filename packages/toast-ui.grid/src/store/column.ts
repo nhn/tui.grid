@@ -76,6 +76,9 @@ function createEditorOptions(editor?: OptCellEditor): CellEditorOptions | null {
 }
 
 function createRendererOptions(renderer?: OptCellRenderer): CellRendererOptions {
+  if (isFunction(renderer)) {
+    return { type: renderer };
+  }
   if (isObject(renderer) && !isFunction(renderer) && isFunction(renderer.type)) {
     return renderer as CellRendererOptions;
   }
