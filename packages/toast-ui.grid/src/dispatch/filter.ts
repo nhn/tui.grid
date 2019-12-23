@@ -17,11 +17,11 @@ import { updateAllSummaryValues } from './summary';
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;
 
+  initSelection(store);
+  initFocus(store);
   updatePageOptions(store, { totalCount: data.filteredRawData.length, page: 1 });
   updateHeights(store);
   setScrollTop(store, 0);
-  initSelection(store);
-  initFocus(store);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
 }
