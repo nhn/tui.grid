@@ -2,7 +2,6 @@ import { h, Component } from 'preact';
 import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
-import { EditingLayer } from './editingLayer';
 import { FilterLayer } from './filterLayer';
 import { HeightResizeHandle } from './heightResizeHandle';
 import { Clipboard } from './clipboard';
@@ -367,7 +366,6 @@ export class ContainerComp extends Component<Props> {
         </div>
         {heightResizable && <HeightResizeHandle />}
         <StateLayer />
-        <EditingLayer />
         <Clipboard />
         <Pagination />
         <FilterLayer />

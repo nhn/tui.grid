@@ -2,20 +2,22 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { EditingLayerInner } from './editingLayerInner';
-import { RowKey } from '../store/types';
+import { EditingAddress, Side } from '../store/types';
 
 interface StoreProps {
-  editingAddress: {
-    rowKey: RowKey;
-    columnName: string;
-  } | null;
+  editingAddress: EditingAddress;
+  active: boolean;
 }
 
-type Props = StoreProps & DispatchProps;
+interface OwnProps {
+  side: Side;
+}
+
+type Props = StoreProps & OwnProps & DispatchProps;
 
 export class EditingLayerComp extends Component<Props> {
-  public render({ editingAddress }: Props) {
-    if (!editingAddress) {
+  public render({ editingAddress, active }: Props) {
+    if (!editingAddress || !active) {
       return null;
     }
 
@@ -24,6 +26,9 @@ export class EditingLayerComp extends Component<Props> {
   }
 }
 
-export const EditingLayer = connect<StoreProps>(({ focus: { editingAddress } }) => ({
-  editingAddress
-}))(EditingLayerComp);
+export const EditingLayer = connect<StoreProps, OwnProps>(
+  ({ focus: { editingAddress, side: focusSide } }, { side }) => ({
+    editingAddress,
+    active: focusSide === side
+  })
+)(EditingLayerComp);

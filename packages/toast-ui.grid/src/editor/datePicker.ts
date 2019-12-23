@@ -7,6 +7,8 @@ import { Dictionary } from '../store/types';
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
 
+  private calendarWrapper: HTMLDivElement;
+
   private inputEl: HTMLInputElement;
 
   private datePickerEl: TuiDatePicker;
@@ -31,6 +33,7 @@ export class DatePickerEditor implements CellEditor {
   private createCalendarWrapper() {
     const calendarWrapper = document.createElement('div');
     calendarWrapper.style.marginTop = '-4px';
+    calendarWrapper.style.position = 'fixed';
     this.el.appendChild(calendarWrapper);
 
     return calendarWrapper;
@@ -63,6 +66,7 @@ export class DatePickerEditor implements CellEditor {
     this.el.appendChild(datepickerInputContainer);
 
     const calendarWrapper = this.createCalendarWrapper();
+    this.calendarWrapper = calendarWrapper;
     const {
       grid: { usageStatistics },
       columnInfo,
@@ -118,6 +122,7 @@ export class DatePickerEditor implements CellEditor {
   public mounted() {
     this.inputEl.select();
     this.datePickerEl.open();
+    this.calendarWrapper.style.top = `${this.el.getBoundingClientRect().bottom}px`;
   }
 
   public beforeDestroy() {

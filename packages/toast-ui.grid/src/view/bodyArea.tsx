@@ -2,12 +2,19 @@ import { h, Component } from 'preact';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import { Side, PagePosition, DragStartData } from '../store/types';
-import { cls, getCoordinateWithOffset, setCursorStyle, hasClass } from '../helper/dom';
+import {
+  cls,
+  getCoordinateWithOffset,
+  setCursorStyle,
+  hasClass,
+  isCalendarElement
+} from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
 import { some } from '../helper/common';
+import { EditingLayer } from './editingLayer';
 
 interface OwnProps {
   side: Side;
@@ -82,11 +89,13 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    dispatch(
-      'mouseDownBody',
-      { scrollTop, scrollLeft, side, ...this.boundingRect },
-      { pageX, pageY, shiftKey }
-    );
+    if (!isCalendarElement(ev.target as HTMLElement)) {
+      dispatch(
+        'mouseDownBody',
+        { scrollTop, scrollLeft, side, ...this.boundingRect },
+        { pageX, pageY, shiftKey }
+      );
+    }
 
     this.dragStartData = { pageX, pageY };
     setCursorStyle('default');
@@ -193,6 +202,7 @@ class BodyAreaComp extends Component<Props> {
           <div class={cls('layer-selection')} style="display: none;" />
           <FocusLayer side={side} />
           <SelectionLayer side={side} />
+          <EditingLayer side={side} />
         </div>
       </div>
     );

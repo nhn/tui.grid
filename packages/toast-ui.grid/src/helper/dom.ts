@@ -148,6 +148,16 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   return result.join(' ');
 }
 
+export function isCalendarElement(el: HTMLElement) {
+  let currentEl: HTMLElement | null = el;
+
+  while (currentEl && currentEl.className.split(' ').indexOf('tui-calendar') === -1) {
+    currentEl = currentEl.parentElement;
+  }
+
+  return !!currentEl;
+}
+
 export function hasClass(el: HTMLElement, className: ClassNameType) {
   return el.className.split(' ').indexOf(cls(className)) !== -1;
 }
