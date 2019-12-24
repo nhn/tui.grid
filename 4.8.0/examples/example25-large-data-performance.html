@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>25. Large Data Performance</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  <body>
+    <div class="code-html contents">
+      <div id="grid" style="width: 800px"></div>
+    </div>
+  </body>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" class="code-js">
+    const ROW_COUNT = 100000;
+    const COL_COUNT = 10;
+
+    const data = [];
+    const columns = [];
+
+    for (let i = 0; i < ROW_COUNT; i += 1) {
+      const row = { id: i };
+      for (let j = 0; j < COL_COUNT; j += 1) {
+        row[`c${j}`] = (Math.random() * 100000000000).toFixed();
+      }
+      data.push(row);
+    }
+
+    for (let i = 0; i < COL_COUNT; i += 1) {
+      const name = `c${i}`;
+      columns.push({ name, header: name });
+    }
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: data,
+      bodyHeight: 500,
+      columns: columns
+    });
+  </script>
+</html>
