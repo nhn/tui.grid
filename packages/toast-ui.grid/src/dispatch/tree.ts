@@ -246,7 +246,7 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
 
-  const rawRows = flattenTreeData([row], defaultValues, parentRow!, allColumnMap, {
+  const rawRows = flattenTreeData([row], defaultValues, parentRow!, columnMapWithRelation, {
     keyColumnName: column.keyColumnName,
     offset
   });

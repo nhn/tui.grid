@@ -58,7 +58,7 @@ export function createTreeRawRow(
   row: OptRow,
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  allColumnMap: Dictionary<ColumnInfo>,
+  columnMap: Dictionary<ColumnInfo>,
   options = { lazyObservable: false } as TreeDataOptions
 ) {
   let childRowKeys = [] as RowKey[];
@@ -68,7 +68,7 @@ export function createTreeRawRow(
   const { keyColumnName, offset, lazyObservable = false } = options;
   // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
-  const rawRow = createRawRow(row, targetTreeRowKey, defaultValues, allColumnMap, {
+  const rawRow = createRawRow(row, targetTreeRowKey, defaultValues, columnMap, {
     keyColumnName,
     lazyObservable
   });
@@ -103,20 +103,20 @@ export function flattenTreeData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
-  allColumnMap: Dictionary<ColumnInfo>,
+  columnMap: Dictionary<ColumnInfo>,
   options: TreeDataOptions
 ) {
   const flattenedRows: Row[] = [];
 
   data.forEach(row => {
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow, allColumnMap, options);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow, columnMap, options);
 
     flattenedRows.push(rawRow);
 
     if (Array.isArray(row._children)) {
       if (row._children.length) {
         flattenedRows.push(
-          ...flattenTreeData(row._children, defaultValues, rawRow, allColumnMap, options)
+          ...flattenTreeData(row._children, defaultValues, rawRow, columnMap, options)
         );
       }
     }
@@ -128,7 +128,7 @@ export function flattenTreeData(
 export function createTreeRawData(
   data: OptRow[],
   defaultValues: ColumnDefaultValues,
-  allColumnMap: Dictionary<ColumnInfo>,
+  columnMap: Dictionary<ColumnInfo>,
   keyColumnName?: string,
   lazyObservable = false
 ) {
@@ -137,10 +137,7 @@ export function createTreeRawData(
     treeRowKey = -1;
   }
 
-  return flattenTreeData(data, defaultValues, null, allColumnMap, {
-    keyColumnName,
-    lazyObservable
-  });
+  return flattenTreeData(data, defaultValues, null, columnMap, { keyColumnName, lazyObservable });
 }
 
 export function createTreeCellInfo(

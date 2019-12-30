@@ -759,14 +759,14 @@ function changeToObservableTreeData(
 ) {
   const { rows } = originData;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues, allColumnMap } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues } = column;
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
 
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow || null, allColumnMap);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow || null, columnMapWithRelation);
     const viewRow = createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 

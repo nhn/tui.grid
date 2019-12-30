@@ -36,7 +36,8 @@ import {
   isString,
   isNumber,
   isFunction,
-  convertToNumber
+  convertToNumber,
+  assign
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -106,8 +107,8 @@ function getDisabled(fn: any, relationParams: Dictionary<any>): boolean {
   return result === null ? false : result;
 }
 
-function getListItems(fn: any, relationParams: Dictionary<any>): ListItem[] | null {
-  return getRelationCbResult(fn, relationParams);
+function getListItems(fn: any, relationParams: Dictionary<any>): ListItem[] {
+  return getRelationCbResult(fn, relationParams) || [];
 }
 
 function getRowHeaderValue(row: Row, columnName: string) {
@@ -221,7 +222,7 @@ function createRelationViewCell(
     const relationCbParams = { value, editable, disabled, row };
     const targetEditable = getEditable(editableCallback, relationCbParams);
     const targetDisabled = getDisabled(disabledCallback, relationCbParams);
-    const targetListItems = getListItems(listItemsCallback, relationCbParams) || [];
+    const targetListItems = getListItems(listItemsCallback, relationCbParams);
     const targetValue = row[targetName];
     const targetEditor = columnMap[targetName].editor;
     const targetEditorOptions = targetEditor?.options;
@@ -340,19 +341,18 @@ function createRelationListItems(name: string, row: Row, columnMap: Dictionary<C
   const relationListItemMap: Dictionary<ListItem[]> = {};
 
   Object.keys(relationMap).forEach(targetName => {
-    const listItems = getListItems(relationMap[targetName].listItems, relationCbParams) || [];
-    relationListItemMap[targetName] = listItems;
+    relationListItemMap[targetName] = getListItems(
+      relationMap[targetName].listItems,
+      relationCbParams
+    );
   });
   return relationListItemMap;
 }
 
-export function setRowRelationListItems(row: Row, allColumnMap: Dictionary<ColumnInfo>) {
-  let relationListItemMap = row._relationListItemMap;
-  Object.keys(allColumnMap).forEach(name => {
-    relationListItemMap = {
-      ...relationListItemMap,
-      ...createRelationListItems(name, row, allColumnMap)
-    };
+export function setRowRelationListItems(row: Row, columnMap: Dictionary<ColumnInfo>) {
+  const relationListItemMap = { ...row._relationListItemMap };
+  Object.keys(columnMap).forEach(name => {
+    assign(relationListItemMap, createRelationListItems(name, row, columnMap));
   });
   row._relationListItemMap = relationListItemMap;
 }
@@ -407,7 +407,7 @@ export function createRawRow(
   row: OptRow,
   index: number,
   defaultValues: ColumnDefaultValues,
-  allColumnMap: Dictionary<ColumnInfo>,
+  columnMap: Dictionary<ColumnInfo>,
   options: RawRowOptions = {}
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
@@ -428,7 +428,7 @@ export function createRawRow(
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
   });
-  setRowRelationListItems(row as Row, allColumnMap);
+  setRowRelationListItems(row as Row, columnMap);
 
   return (lazyObservable ? row : observable(row)) as Row;
 }
@@ -445,10 +445,16 @@ export function createData(
   let rawData: Row[];
 
   if (treeColumnName) {
-    rawData = createTreeRawData(data, defaultValues, allColumnMap, keyColumnName, lazyObservable);
+    rawData = createTreeRawData(
+      data,
+      defaultValues,
+      columnMapWithRelation,
+      keyColumnName,
+      lazyObservable
+    );
   } else {
     rawData = data.map((row, index, rows) =>
-      createRawRow(row, index, defaultValues, allColumnMap, {
+      createRawRow(row, index, defaultValues, columnMapWithRelation, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable
