@@ -85,7 +85,7 @@ class ServerSideDataProvider implements DataProvider {
     }
     this.dispatch('resetData', data.contents);
     if (data.pagination && !isEmpty(this.store.data.pageOptions)) {
-      this.dispatch('setPagination', {
+      this.dispatch('updatePageOptions', {
         ...data.pagination,
         perPage: this.lastRequiredData.perPage
       });

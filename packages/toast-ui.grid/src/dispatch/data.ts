@@ -8,9 +8,9 @@ import {
   Row,
   Column,
   Range,
-  PageOptions,
   PagePosition,
-  LoadingState
+  LoadingState,
+  PageOptions
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -163,14 +163,11 @@ export function updateHeights(store: Store) {
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
 }
 
-export function updatePageOptions(data: Data, totalCount: number, page?: number) {
-  if (data.pageOptions.useClient) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      totalCount,
-      page: page || data.pageOptions.page
-    };
-  }
+export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
+  data.pageOptions = {
+    ...data.pageOptions,
+    ...pageOptions
+  };
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
@@ -456,7 +453,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
 
   viewData.splice(at, 0, viewRow);
   rawData.splice(at, 0, rawRow);
-  updatePageOptions(data, pageOptions.useClient ? pageOptions.totalCount! + 1 : 0);
+  updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
 
   if (at !== rawData.length) {
@@ -488,16 +485,16 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   const nextRow = rawData[rowIdx + 1];
+  const { perPage, totalCount, page } = pageOptions;
+  let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
 
-  if (pageOptions.useClient) {
-    const { perPage, totalCount, page } = pageOptions;
-    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
-
-    if ((totalCount - 1) % perPage) {
-      modifiedLastPage += 1;
-    }
-    updatePageOptions(data, totalCount - 1, modifiedLastPage < page ? modifiedLastPage : page);
+  if ((totalCount - 1) % perPage) {
+    modifiedLastPage += 1;
   }
+  updatePageOptions(store, {
+    totalCount: totalCount - 1,
+    page: modifiedLastPage < page ? modifiedLastPage : page
+  });
 
   viewData.splice(rowIdx, 1);
   const [removedRow] = rawData.splice(rowIdx, 1);
@@ -534,7 +531,7 @@ export function clearData(store: Store) {
   rowCoords.heights = [];
   data.viewData = [];
   data.rawData = [];
-  updatePageOptions(data, 0);
+  updatePageOptions(store, { totalCount: 0, page: 1 });
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
@@ -548,10 +545,10 @@ export function resetData(store: Store, inputData: OptRow[]) {
   initSelection(store);
   initSortState(data);
   initFilter(store);
+  updatePageOptions(store, { totalCount: rawData.length, page: 1 });
   data.viewData = viewData;
   data.rawData = rawData;
-  updatePageOptions(data, rawData.length);
-  updateHeightsWithFilteredData(store);
+  updateHeights(store);
   updateAllSummaryValues(store);
   setLoadingState(store, getLoadingState(rawData));
   setCheckedAllRows(store);
@@ -659,10 +656,6 @@ export function removeColumnClassName({ data }: Store, columnName: string, class
   rawData.forEach(row => {
     removeClassNameToAttribute(row, columnName, className);
   });
-}
-
-export function setPagination({ data }: Store, pageOptions: PageOptions) {
-  data.pageOptions = pageOptions as Required<PageOptions>;
 }
 
 export function movePage(store: Store, page: number) {

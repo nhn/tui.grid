@@ -30,6 +30,10 @@ function createGrid(newData?: OptRow[]) {
   });
 }
 
+function moveToNextPage() {
+  cy.get('.tui-page-btn.tui-next').click({ force: true });
+}
+
 function compareColumnCellLength(length: number) {
   if (length) {
     // rowHeader cell length
@@ -88,17 +92,38 @@ it('should reflect actual page data after prependRow API.', () => {
   compareColumnCellLength(PER_PAGE_COUNT);
 });
 
-it('should reflect actual page data after resetData API.', () => {
+it('should display page data after calling resetData API.', () => {
   createGrid();
   cy.gridInstance().invoke('resetData', [appendedData]);
+
   cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
 
   checkLastPage('1');
   compareColumnCellLength(1);
 });
 
-it('should reflect actual page data after clear API.', () => {
+it('should display page data with moved page after calling resetData API.', () => {
   createGrid();
+  moveToNextPage();
+  cy.gridInstance().invoke('resetData', [appendedData]);
+
+  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+
+  checkLastPage('1');
+  compareColumnCellLength(1);
+});
+
+it('should display page data after calling clear API.', () => {
+  createGrid();
+  cy.gridInstance().invoke('clear');
+
+  checkLastPage('1');
+  compareColumnCellLength(0);
+});
+
+it('should display page data with moved page after calling clear API.', () => {
+  createGrid();
+  moveToNextPage();
   cy.gridInstance().invoke('clear');
 
   checkLastPage('1');
@@ -129,4 +154,12 @@ it('should go to the previous page, If the page disappeared as a result of remov
   checkLastPage('6');
   checkSelectedPage('6');
   compareColumnCellLength(PER_PAGE_COUNT);
+});
+
+it('should change page data after calling setPerPage API.', () => {
+  createGrid();
+  cy.gridInstance().invoke('setPerPage', 20);
+
+  checkLastPage('4');
+  compareColumnCellLength(20);
 });

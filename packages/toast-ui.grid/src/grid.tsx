@@ -1227,7 +1227,8 @@ export default class Grid {
     if (pagination) {
       const { pageOptions } = this.store.data;
       if (pageOptions.useClient) {
-        this.dispatch('setPagination', { ...pageOptions, perPage, page: 1 });
+        this.dispatch('updatePageOptions', { perPage, page: 1 });
+        this.dispatch('updateHeights');
       } else {
         this.readData(1, { perPage });
       }
