@@ -1,6 +1,6 @@
 import { Dictionary, ListItem } from '../src/store/types';
 
-const twoDepthData: Dictionary<ListItem[]> = {
+export const twoDepthData: Dictionary<ListItem[]> = {
   '01': [
     { text: '', value: '' },
     { text: 'Balad/Dance/Pop', value: '01_01' },
@@ -21,7 +21,7 @@ const twoDepthData: Dictionary<ListItem[]> = {
   ]
 };
 
-const threeDepthData: Dictionary<ListItem[]> = {
+export const threeDepthData: Dictionary<ListItem[]> = {
   '01_01': [
     { text: '', value: '' },
     { text: 'I Miss You', value: '01_01_0001' },

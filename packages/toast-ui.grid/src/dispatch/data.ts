@@ -23,7 +23,13 @@ import {
   findPropIndex
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
-import { createViewRow, createData, generateDataCreationKey, createRowSpan } from '../store/data';
+import {
+  createViewRow,
+  createData,
+  generateDataCreationKey,
+  createRowSpan,
+  setRowRelationListItems
+} from '../store/data';
 import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
@@ -164,22 +170,25 @@ export function updateHeights(store: Store) {
 }
 
 export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
-  data.pageOptions = {
-    ...data.pageOptions,
-    ...pageOptions
-  };
+  if (!isEmpty(data.pageOptions)) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      ...pageOptions
+    };
+  }
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
   const { column, data, id } = store;
   const { rawData, sortState } = data;
+  const { visibleColumns, allColumnMap } = column;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
   const targetRow = rawData[rowIdx];
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
 
-  const targetColumn = findProp('name', columnName, column.visibleColumns);
+  const targetColumn = findProp('name', columnName, visibleColumns);
   let gridEvent = new GridEvent({ rowKey, columnName, value });
 
   if (targetColumn && targetColumn.onBeforeChange) {
@@ -196,6 +205,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   const index = findPropIndex('columnName', columnName, columns);
 
   targetRow[columnName] = value;
+  setRowRelationListItems(targetRow, allColumnMap);
 
   if (index !== -1) {
     sort(store, columnName, columns[index].ascending, true, false);
@@ -485,16 +495,20 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   const nextRow = rawData[rowIdx + 1];
-  const { perPage, totalCount, page } = pageOptions;
-  let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
 
-  if ((totalCount - 1) % perPage) {
-    modifiedLastPage += 1;
+  if (!isEmpty(pageOptions)) {
+    const { perPage, totalCount, page } = pageOptions;
+    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+
+    if ((totalCount - 1) % perPage) {
+      modifiedLastPage += 1;
+    }
+
+    updatePageOptions(store, {
+      totalCount: totalCount - 1,
+      page: modifiedLastPage < page ? modifiedLastPage : page
+    });
   }
-  updatePageOptions(store, {
-    totalCount: totalCount - 1,
-    page: modifiedLastPage < page ? modifiedLastPage : page
-  });
 
   viewData.splice(rowIdx, 1);
   const [removedRow] = rawData.splice(rowIdx, 1);
@@ -751,14 +765,14 @@ function changeToObservableTreeData(
 ) {
   const { rows } = originData;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues } = column;
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
 
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
-    const rawRow = createTreeRawRow(row, column.defaultValues, parentRow || null);
+    const rawRow = createTreeRawRow(row, defaultValues, parentRow || null, columnMapWithRelation);
     const viewRow = createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 

@@ -338,6 +338,10 @@ export function uniq<T extends unknown>(arr: T[]) {
   return arr.filter((name, index) => arr.indexOf(name) === index);
 }
 
+export function uniqByProp<T extends unknown>(propName: keyof T, arr: T[]) {
+  return arr.filter((obj, index) => findPropIndex(propName, obj[propName], arr) === index);
+}
+
 export function startsWith(str: string, targetStr: string) {
   return targetStr.slice(0, str.length) === str;
 }

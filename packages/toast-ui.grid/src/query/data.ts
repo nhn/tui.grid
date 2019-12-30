@@ -16,13 +16,14 @@ import {
   uniq,
   mapProp,
   isNumber,
-  removeArrayItem
+  removeArrayItem,
+  uniqByProp
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { isRowHeader } from '../helper/column';
-import { createRawRow, createViewRow } from '../store/data';
+import { createRawRow, createViewRow, getFormattedValue } from '../store/data';
 import { OptRow } from '../types';
 
 export function getCellAddressByIndex(
@@ -138,8 +139,21 @@ export function getFilterStateWithOperator(data: Data, column: Column) {
   return filters;
 }
 
-export function getUniqColumnData(targetData: Row[], columnName: string) {
-  return uniq(mapProp(columnName, targetData));
+export function getUniqColumnData(targetData: Row[], column: Column, columnName: string) {
+  const columnInfo = column.allColumnMap[columnName];
+  const uniqColumnData = uniqByProp(columnName, targetData);
+
+  return uniqColumnData.map(row => {
+    const value = row[columnName];
+    const formatterProps = {
+      row,
+      value,
+      column: columnInfo
+    };
+    const relationListItems = row._relationListItemMap[columnName];
+
+    return getFormattedValue(formatterProps, columnInfo.formatter, value, relationListItems);
+  });
 }
 
 export function isSortable(sortState: SortState, column: Column, columnName: string) {
@@ -186,7 +200,7 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
 export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, rowKey?: RowKey) {
   const { data, column } = store;
   const { rawData } = data;
-  const { defaultValues, columnMapWithRelation } = column;
+  const { defaultValues, columnMapWithRelation, allColumns } = column;
   const prevRow = rawData[rowIndex - 1];
   const options: RawRowOptions = { prevRow };
 
@@ -195,11 +209,17 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
     options.keyColumnName = 'rowKey';
   }
 
-  const emptyData = column.allColumns
+  const emptyData = allColumns
     .filter(({ name }) => !isRowHeader(name))
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
-  const rawRow = createRawRow({ ...emptyData, ...row }, index, defaultValues, options);
+  const rawRow = createRawRow(
+    { ...emptyData, ...row },
+    index,
+    defaultValues,
+    columnMapWithRelation,
+    options
+  );
   const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData);
 
   return { rawRow, viewRow, prevRow };
