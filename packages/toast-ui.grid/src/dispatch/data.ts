@@ -170,10 +170,12 @@ export function updateHeights(store: Store) {
 }
 
 export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
-  data.pageOptions = {
-    ...data.pageOptions,
-    ...pageOptions
-  };
+  if (!isEmpty(data.pageOptions)) {
+    data.pageOptions = {
+      ...data.pageOptions,
+      ...pageOptions
+    };
+  }
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
