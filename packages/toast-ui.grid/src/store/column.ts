@@ -466,10 +466,10 @@ export function create({
       // copy the array to prevent to affect allColumns property
       const copiedColumns = [...this.allColumns];
       copiedColumns.sort((columnA, columnB) => {
-        if ((columnA.relationMap || {})[columnB.name]) {
+        if (columnA.relationMap?.[columnB.name]) {
           return -1;
         }
-        return (columnB.relationMap || {})[columnA.name] ? 1 : 0;
+        return columnB.relationMap?.[columnA.name] ? 1 : 0;
       });
 
       return createMapFromArray(copiedColumns, 'name');
