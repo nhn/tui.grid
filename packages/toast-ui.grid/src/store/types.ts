@@ -314,6 +314,7 @@ export interface Column {
   readonly defaultValues: { name: string; value: CellValue }[];
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
+  readonly columnMapWithRelation: Dictionary<ColumnInfo>;
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;

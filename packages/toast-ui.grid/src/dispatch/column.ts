@@ -124,7 +124,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
-  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
 
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
@@ -137,7 +137,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   });
   data.viewData = data.rawData.map(row =>
     isObservable(row)
-      ? createViewRow(row, allColumnMap, data.rawData, treeColumnName, treeIcon)
+      ? createViewRow(row, columnMapWithRelation, data.rawData, treeColumnName, treeIcon)
       : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
 

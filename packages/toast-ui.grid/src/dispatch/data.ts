@@ -758,7 +758,7 @@ function changeToObservableTreeData(
 ) {
   const { rows } = originData;
   const { rawData, viewData } = data;
-  const { allColumnMap, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
@@ -766,7 +766,7 @@ function changeToObservableTreeData(
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
     const rawRow = createTreeRawRow(row, column.defaultValues, parentRow || null);
-    const viewRow = createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
+    const viewRow = createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
     viewData.splice(foundIndex, 1, viewRow);
