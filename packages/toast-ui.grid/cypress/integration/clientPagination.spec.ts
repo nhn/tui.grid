@@ -30,7 +30,7 @@ function createGrid(newData?: OptRow[]) {
   });
 }
 
-function moveNextPage() {
+function moveToNextPage() {
   cy.get('.tui-page-btn.tui-next').click({ force: true });
 }
 
@@ -104,7 +104,7 @@ it('should display page data after calling resetData API.', () => {
 
 it('should display page data with moved page after calling resetData API.', () => {
   createGrid();
-  moveNextPage();
+  moveToNextPage();
   cy.gridInstance().invoke('resetData', [appendedData]);
 
   cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
@@ -123,7 +123,7 @@ it('should display page data after calling clear API.', () => {
 
 it('should display page data with moved page after calling clear API.', () => {
   createGrid();
-  moveNextPage();
+  moveToNextPage();
   cy.gridInstance().invoke('clear');
 
   checkLastPage('1');
