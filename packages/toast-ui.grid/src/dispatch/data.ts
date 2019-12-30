@@ -495,16 +495,20 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
   }
 
   const nextRow = rawData[rowIdx + 1];
-  const { perPage, totalCount, page } = pageOptions;
-  let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
 
-  if ((totalCount - 1) % perPage) {
-    modifiedLastPage += 1;
+  if (!isEmpty(pageOptions)) {
+    const { perPage, totalCount, page } = pageOptions;
+    let modifiedLastPage = Math.floor((totalCount - 1) / perPage);
+
+    if ((totalCount - 1) % perPage) {
+      modifiedLastPage += 1;
+    }
+
+    updatePageOptions(store, {
+      totalCount: totalCount - 1,
+      page: modifiedLastPage < page ? modifiedLastPage : page
+    });
   }
-  updatePageOptions(store, {
-    totalCount: totalCount - 1,
-    page: modifiedLastPage < page ? modifiedLastPage : page
-  });
 
   viewData.splice(rowIdx, 1);
   const [removedRow] = rawData.splice(rowIdx, 1);
