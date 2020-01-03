@@ -175,47 +175,59 @@ export class EditingLayerComp extends Component<Props> {
 
 export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
   const { data, column, id, focus, dimension } = store;
+  const grid = getInstance(id);
   const {
     editingAddress,
     side: focusSide,
     rowKey: focusedRowKey,
     columnName: focusedColumnName,
-    forcedDestroyEditing
+    forcedDestroyEditing,
+    cellPosRect
   } = focus;
-  const active = side === focusSide && !isNull(editingAddress);
-  const cellBorderWidth = dimension.cellBorderWidth;
 
+  const active = side === focusSide && !isNull(editingAddress);
   const state = {
-    id,
+    grid,
     active,
-    focus,
-    cellBorderWidth,
     focusedRowKey,
-    focusedColumnName,
-    forcedDestroyEditing
+    focusedColumnName
   };
 
   if (!active) {
     return state;
   }
 
+  const { cellBorderWidth } = dimension;
+  const { top, left, right, bottom } = cellPosRect!;
+  const diffForTopCell = !top ? cellBorderWidth : 0;
+
+  const width = right - left + cellBorderWidth;
+  const height = bottom - top + cellBorderWidth - diffForTopCell;
+  const lineHeight = `${height - 2 * cellBorderWidth}px`;
+
+  const editorStyles = { top, left, width, height, lineHeight };
+
   const { filteredViewData, sortState } = data;
   const { rowKey, columnName } = editingAddress!;
-
   const targetRow = filteredViewData[findIndexByRowKey(data, column, id, rowKey)];
   let value, filter;
+
   if (targetRow) {
     value = targetRow.valueMap[columnName].value;
   }
+
   if (data.filters) {
     filter = findProp('columnName', columnName, data.filters);
   }
 
   return {
     ...state,
-    columnInfo: column.allColumnMap[columnName],
     value,
     filter,
-    sortState
+    sortState,
+    editorStyles,
+    editingAddress,
+    forcedDestroyEditing,
+    columnInfo: column.allColumnMap[columnName]
   };
 })(EditingLayerComp);
