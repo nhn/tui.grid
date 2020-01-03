@@ -1,26 +1,43 @@
 import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { CellValue, ColumnInfo, Filter, Focus, RowKey, Side, SortState } from '../store/types';
+import {
+  CellValue,
+  ColumnInfo,
+  EditingAddress,
+  Filter,
+  RowKey,
+  Side,
+  SortState
+} from '../store/types';
 import { cls } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
 import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
 import { findIndexByRowKey } from '../query/data';
 import { findProp, isFunction, isNull } from '../helper/common';
 import { getInstance } from '../instance';
+import Grid from '../grid';
+
+interface EditorStyles {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  lineHeight: string;
+}
 
 interface StoreProps {
-  id: number;
   active: boolean;
-  focus: Focus;
-  cellBorderWidth: number;
+  grid: Grid;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
-  forcedDestroyEditing: boolean;
+  editingAddress?: EditingAddress;
+  forcedDestroyEditing?: boolean;
   value?: CellValue;
   sortState?: SortState;
   filter?: Filter;
   columnInfo?: ColumnInfo;
+  editorStyles?: EditorStyles;
 }
 
 interface OwnProps {
@@ -40,19 +57,6 @@ export class EditingLayerComp extends Component<Props> {
     ev.preventDefault();
     dispatch('moveTabFocus', command);
     dispatch('setScrollToFocus');
-  }
-
-  private getEditingLayerStyle() {
-    const { focus, cellBorderWidth } = this.props;
-
-    const { top, left, right, bottom } = focus.cellPosRect!;
-    const diffForTopCell = !top ? cellBorderWidth : 0;
-
-    const width = right - left + cellBorderWidth;
-    const height = bottom - top + cellBorderWidth - diffForTopCell;
-    const lineHeight = `${height - 2 * cellBorderWidth}px`;
-
-    return { top, left, width, height, lineHeight };
   }
 
   private handleKeyDown = (ev: KeyboardEvent) => {
@@ -77,9 +81,9 @@ export class EditingLayerComp extends Component<Props> {
   };
 
   private finishEditing(save: boolean) {
-    const { dispatch, focus } = this.props;
-    if (this.editor && focus.editingAddress) {
-      const { rowKey, columnName } = focus.editingAddress;
+    const { dispatch, editingAddress } = this.props;
+    if (this.editor && editingAddress) {
+      const { rowKey, columnName } = editingAddress;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
@@ -89,15 +93,12 @@ export class EditingLayerComp extends Component<Props> {
   }
 
   private createEditor() {
-    const { width } = this.getEditingLayerStyle();
-    const { columnInfo, value, focus, id } = this.props;
-    const grid = getInstance(id);
-    const { rowKey } = focus.editingAddress!;
+    const { columnInfo, value, editingAddress, grid, editorStyles } = this.props;
 
     const EditorClass: CellEditorClass = columnInfo!.editor!.type;
     const editorProps: CellEditorProps = {
       grid,
-      rowKey,
+      rowKey: editingAddress!.rowKey,
       columnInfo: columnInfo!,
       value
     };
@@ -109,8 +110,9 @@ export class EditingLayerComp extends Component<Props> {
       this.editor = cellEditor;
 
       const editorWidth = editorEl.getBoundingClientRect().width;
+      const { width } = editorStyles!;
 
-      if (editorWidth > width!) {
+      if (editorWidth > width) {
         const CELL_PADDING_WIDTH = 10;
         (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
       }
@@ -153,16 +155,14 @@ export class EditingLayerComp extends Component<Props> {
     }
   }
 
-  public render(props: Props) {
-    const { active } = props;
-
+  public render({ active, editorStyles }: Props) {
     if (!active) {
       return null;
     }
 
     return (
       <div
-        style={this.getEditingLayerStyle()}
+        style={editorStyles}
         className={cls('layer-editing', 'cell-content', 'cell-content-editor')}
         onKeyDown={this.handleKeyDown}
         ref={el => {
