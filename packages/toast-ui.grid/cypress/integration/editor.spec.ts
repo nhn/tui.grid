@@ -37,25 +37,6 @@ function createGridWithEditingFinishEvent(stub: Function) {
   cy.gridInstance().invoke('on', 'editingFinish', stub);
 }
 
-function createGridWithCustomEditor(stub: Function) {
-  const CustomLayerEditor = createCustomLayerEditor(stub);
-  const data = [
-    { name: 'Lee', age: 20 },
-    { name: 'Han', age: 28 },
-    { name: 'Ryu', age: 22 }
-  ];
-  const columns = [
-    {
-      name: 'name',
-      editor: {
-        type: CustomLayerEditor
-      }
-    },
-    { name: 'age' }
-  ];
-  cy.createGrid({ data, columns });
-}
-
 describe('with interaction', () => {
   beforeEach(() => {
     const data = [
@@ -134,18 +115,35 @@ describe('onBeforeChange, onAfterChange', () => {
 });
 
 describe('custom editor', () => {
-  it('should render custom editor properly', () => {
-    const stub = cy.stub();
-    createGridWithCustomEditor(stub);
+  ['editor', 'editor type'].forEach(option => {
+    it(`create custom editor by ${option} property`, () => {
+      const stub = cy.stub();
+      const CustomLayerEditor = createCustomLayerEditor(stub);
 
-    cy.gridInstance().invoke('startEditing', 0, 'name');
+      const data = [
+        { name: 'Lee', age: 20 },
+        { name: 'Han', age: 28 },
+        { name: 'Ryu', age: 22 }
+      ];
+      const columns = [
+        {
+          name: 'name',
+          editor: option === 'editor' ? CustomLayerEditor : { type: CustomLayerEditor }
+        },
+        { name: 'age' }
+      ];
 
-    cy.get('.custom-editor-layer').should('be.visible');
+      cy.createGrid({ data, columns });
 
-    cy.getCell(1, 'name').click();
+      cy.gridInstance().invoke('startEditing', 0, 'name');
 
-    cy.get('.custom-editor-layer').should('be.not.visible');
-    cy.wrap(stub).should('be.calledOnce');
+      cy.get('.custom-editor-layer').should('be.visible');
+
+      cy.getCell(1, 'name').click();
+
+      cy.get('.custom-editor-layer').should('be.not.visible');
+      cy.wrap(stub).should('be.calledOnce');
+    });
   });
 });
 
@@ -262,7 +260,7 @@ describe('editable, disable, hidden', () => {
   });
 });
 
-it('should do syncronous renering of the editing cell', () => {
+it('should do synchronous rendering of the editing cell', () => {
   const stub = cy.stub();
   createGridWithEditingFinishEvent(stub);
 
