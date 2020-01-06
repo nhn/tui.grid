@@ -14,15 +14,12 @@ describe('CREATE TYPE', () => {
 
   ['renderer', 'renderer type'].forEach(option => {
     it(`create custom renderer by ${option} property`, () => {
-      if (option === 'TYPE') {
-        const columns = [{ name: 'name' }, { name: 'age', renderer: CustomRenderer }];
+      const columns = [
+        { name: 'name' },
+        { name: 'age', renderer: option === 'renderer' ? CustomRenderer : { type: CustomRenderer } }
+      ];
 
-        cy.createGrid({ data, columns });
-      } else {
-        const columns = [{ name: 'name' }, { name: 'age', renderer: { type: CustomRenderer } }];
-
-        cy.createGrid({ data, columns });
-      }
+      cy.createGrid({ data, columns });
 
       cy.get('input[type=range]').should('have.length', data.length);
     });

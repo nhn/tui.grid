@@ -117,37 +117,23 @@ describe('onBeforeChange, onAfterChange', () => {
 describe('custom editor', () => {
   ['editor', 'editor type'].forEach(option => {
     it(`create custom editor by ${option} property`, () => {
+      const stub = cy.stub();
+      const CustomLayerEditor = createCustomLayerEditor(stub);
+
       const data = [
         { name: 'Lee', age: 20 },
         { name: 'Han', age: 28 },
         { name: 'Ryu', age: 22 }
       ];
-      const stub = cy.stub();
-      const CustomLayerEditor = createCustomLayerEditor(stub);
+      const columns = [
+        {
+          name: 'name',
+          editor: option === 'editor' ? CustomLayerEditor : { type: CustomLayerEditor }
+        },
+        { name: 'age' }
+      ];
 
-      if (option === 'TYPE') {
-        const columns = [
-          {
-            name: 'name',
-            editor: CustomLayerEditor
-          },
-          { name: 'age' }
-        ];
-
-        cy.createGrid({ data, columns });
-      } else {
-        const columns = [
-          {
-            name: 'name',
-            editor: {
-              type: CustomLayerEditor
-            }
-          },
-          { name: 'age' }
-        ];
-
-        cy.createGrid({ data, columns });
-      }
+      cy.createGrid({ data, columns });
 
       cy.gridInstance().invoke('startEditing', 0, 'name');
 
