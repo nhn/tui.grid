@@ -31,8 +31,8 @@ interface StoreProps {
   grid: Grid;
   focusedColumnName: string | null;
   focusedRowKey: RowKey | null;
+  forcedDestroyEditing: boolean;
   editingAddress?: EditingAddress;
-  forcedDestroyEditing?: boolean;
   value?: CellValue;
   sortState?: SortState;
   filter?: Filter;
@@ -138,19 +138,24 @@ export class EditingLayerComp extends Component<Props> {
       focusedRowKey: prevFocusedRowKey,
       active: prevActive
     } = this.props;
-    const { focusedColumnName, focusedRowKey, active } = nextProps;
+    const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
     if (prevActive && !active) {
       if (this.editor && this.editor.beforeDestroy) {
         this.editor.beforeDestroy();
       }
 
-      if (this.props.forcedDestroyEditing) {
+      if (forcedDestroyEditing) {
         this.finishEditing(true);
       }
+
+      return;
     }
 
-    if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
+    if (
+      prevActive &&
+      (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey)
+    ) {
       this.finishEditing(true);
     }
   }
@@ -190,7 +195,8 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     grid,
     active,
     focusedRowKey,
-    focusedColumnName
+    focusedColumnName,
+    forcedDestroyEditing
   };
 
   if (!active) {
@@ -227,7 +233,6 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     sortState,
     editorStyles,
     editingAddress,
-    forcedDestroyEditing,
     columnInfo: column.allColumnMap[columnName]
   };
 })(EditingLayerComp);

@@ -7,7 +7,7 @@ import {
   getCoordinateWithOffset,
   setCursorStyle,
   hasClass,
-  isCalendarElement
+  isDatePickerElement
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -89,7 +89,7 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    if (!isCalendarElement(ev.target as HTMLElement)) {
+    if (!isDatePickerElement(ev.target as HTMLElement)) {
       dispatch(
         'mouseDownBody',
         { scrollTop, scrollLeft, side, ...this.boundingRect },
