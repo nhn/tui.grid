@@ -151,9 +151,9 @@ describe('year picker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'yearPicker');
 
-    cy.get('.tui-calendar-year')
+    cy.get('.tui-calendar-year .tui-is-selectable')
       .contains('2020')
-      .click();
+      .click({ force: true });
 
     cy.gridInstance().invoke('finishEditing');
 
