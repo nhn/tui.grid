@@ -1,19 +1,24 @@
-import { Params } from './types';
-import { encodeParams } from './helper/encoder';
+import { Params, ContentType, AjaxConfig, Serializer } from './types';
+import { serialize } from './helper/serializer';
 import { EventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
+import { Dictionary } from '../store/types';
+import { isObject, isFunction } from '../helper/common';
 
 type CallbackFunction = (...args: any[]) => void;
-export interface Options {
+
+type Options = {
   method: string;
   url: string;
-  withCredentials: boolean;
   params?: Params;
-  callback?: CallbackFunction;
+  success?: CallbackFunction;
   preCallback?: CallbackFunction;
   postCallback?: CallbackFunction;
   eventBus: EventBus;
-}
+} & AjaxConfig;
+
+const ENCODED_SPACE_REGEXP = /%20/g;
+const QS_DELIM_REGEXP = /\?/;
 
 export default class GridAjax {
   private method: string;
@@ -22,7 +27,7 @@ export default class GridAjax {
 
   private params: Params;
 
-  private callback: Function;
+  private success: Function;
 
   private preCallback: Function;
 
@@ -32,35 +37,54 @@ export default class GridAjax {
 
   private xhr: XMLHttpRequest;
 
+  private contentType: ContentType;
+
+  private withCredentials: boolean;
+
+  private headers?: Dictionary<string>;
+
+  private mimeType?: string;
+
+  private serializer?: Serializer;
+
   public constructor(options: Options) {
     const {
       method,
       url,
-      withCredentials,
       params = {},
-      callback = () => {},
+      success = () => {},
       preCallback = () => {},
       postCallback = () => {},
-      eventBus
+      eventBus,
+      contentType = 'application/x-www-form-urlencoded',
+      withCredentials = false,
+      mimeType,
+      headers,
+      serializer
     } = options;
 
     this.method = method.toUpperCase();
     this.url = url;
     this.params = params;
-    this.callback = callback;
+    this.success = success;
     this.preCallback = preCallback;
     this.postCallback = postCallback;
     this.eventBus = eventBus;
+    this.contentType = contentType;
+    this.withCredentials = withCredentials;
+    this.headers = headers;
+    this.mimeType = mimeType;
+    this.serializer = serializer;
+
     this.xhr = new XMLHttpRequest();
-    this.xhr.withCredentials = withCredentials;
   }
 
-  private shouldEncode = () => {
-    return this.method === 'GET' || this.method === 'DELETE';
+  private hasRequestBody = () => {
+    return /^(?:POST|PUT|PATCH)$/.test(this.method);
   };
 
   private handleReadyStateChange = () => {
-    const { xhr, callback, eventBus, preCallback, postCallback } = this;
+    const { xhr, success, eventBus, preCallback, postCallback } = this;
     if (xhr.readyState !== XMLHttpRequest.DONE) {
       return;
     }
@@ -103,7 +127,7 @@ export default class GridAjax {
       if (gridEvent.isStopped()) {
         return;
       }
-      callback(response);
+      success(response);
     } else {
       /**
        * Occurs after the response event, if the response is Error
@@ -117,27 +141,62 @@ export default class GridAjax {
     postCallback();
   };
 
-  public open() {
-    const { method, url, params, xhr, shouldEncode } = this;
-    if (shouldEncode()) {
-      xhr.open(method, `${url}?${encodeParams(params)}`);
-    } else {
-      xhr.open(method, url);
-      // @TODO neeto to application/json content-type options and custom options(authorization, custom header etc..)
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  private applyConfig = () => {
+    const { xhr, contentType, mimeType, withCredentials, headers } = this;
+    // set withCredentials
+    xhr.withCredentials = withCredentials;
+
+    // overide MIME type
+    if (mimeType) {
+      xhr.overrideMimeType(mimeType);
     }
-    xhr.onreadystatechange = this.handleReadyStateChange;
+
+    // set user defined request headers
+    if (isObject(headers)) {
+      Object.keys(headers).forEach(name => {
+        if (headers[name]) {
+          xhr.setRequestHeader(name, headers[name]);
+        }
+      });
+    }
+
+    // set 'x-requested-with' header to prevent CSRF in old browser
+    xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', `${contentType}; charset=UTF-8`);
+  };
+
+  private getSerialized = () => {
+    return isFunction(this.serializer) ? this.serializer(this.params) : serialize(this.params);
+  };
+
+  public open() {
+    const {
+      xhr,
+      url,
+      method,
+      getSerialized,
+      hasRequestBody,
+      applyConfig,
+      handleReadyStateChange
+    } = this;
+
+    let requestUrl = url;
+
+    if (!hasRequestBody()) {
+      // serialize query string
+      const serialized = getSerialized();
+      const qs = (QS_DELIM_REGEXP.test(url) ? '&' : '?') + serialized;
+      requestUrl = `${url}${qs}`;
+    }
+
+    xhr.open(method, requestUrl);
+    applyConfig();
+    xhr.onreadystatechange = handleReadyStateChange;
   }
 
   public send() {
-    const { url, method, xhr, shouldEncode, eventBus, preCallback } = this;
-    const options = {
-      url,
-      method,
-      withCredentials: xhr.withCredentials,
-      params: this.params
-    };
-    const gridEvent = new GridEvent({ options });
+    const { xhr, hasRequestBody, getSerialized, eventBus, preCallback, contentType, params } = this;
+    const gridEvent = new GridEvent({ xhr });
     /**
      * Occurs before the http request is sent
      * @event Grid#beforeRequest
@@ -149,7 +208,15 @@ export default class GridAjax {
       preCallback();
       return;
     }
-    const params = shouldEncode() ? null : encodeParams(this.params, true);
-    xhr.send(params);
+
+    let body = null;
+    if (hasRequestBody()) {
+      // The space character '%20' is replaced to '+', because application/x-www-form-urlencoded follows rfc-1866
+      body =
+        contentType.indexOf('application/x-www-form-urlencoded') !== -1
+          ? getSerialized().replace(ENCODED_SPACE_REGEXP, '+')
+          : JSON.stringify(params);
+    }
+    xhr.send(body);
   }
 }

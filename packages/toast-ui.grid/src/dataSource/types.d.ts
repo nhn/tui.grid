@@ -13,11 +13,28 @@ export type RequestFunction = (url: string, method: string, options: RequestOpti
 
 export type Request = { [type in RequestType]: RequestFunction };
 
+export type Serializer = (params: Params) => string;
+
+export type AjaxConfig = {
+  contentType?: ContentType;
+  mimeType?: string;
+  withCredentials?: boolean;
+  headers?: Dictionary<string>;
+  serializer?: Serializer;
+};
+
 export type DataProvider = Request & {
   request: (requestType: RequestType, options: RequestOptions) => void;
   readData: (page: number, data?: Params, resetData?: boolean) => void;
   reloadData: () => void;
 };
+
+export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
+
+export type DataSource = {
+  api: API;
+  initialRequest?: boolean;
+} & AjaxConfig;
 
 export type Params = {
   rows?: Row[] | RowKey[];
@@ -30,9 +47,12 @@ export type Params = {
   sortAscending?: boolean;
 } & Dictionary<any>;
 
+export type Url = string | (() => string);
+
 export interface APIInfo {
-  url: string;
+  url: Url;
   method: string;
+  initParams?: Dictionary<any>;
 }
 
 export interface API {
@@ -41,12 +61,6 @@ export interface API {
   updateData?: APIInfo;
   deleteData?: APIInfo;
   modifyData?: APIInfo;
-}
-
-export interface DataSource {
-  initialRequest?: boolean;
-  withCredentials?: boolean;
-  api: API;
 }
 
 export interface RequestOptions {
@@ -75,13 +89,6 @@ export interface Response {
     };
   };
   message?: string;
-}
-
-export interface XHROptions {
-  method: string;
-  url: string;
-  withCredentials: boolean;
-  params: Params;
 }
 
 export interface ModifiedDataManager {
