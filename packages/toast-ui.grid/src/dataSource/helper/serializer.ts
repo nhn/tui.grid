@@ -1,4 +1,4 @@
-import { isObject, isUndefined, isNull } from '../../helper/common';
+import { isObject, isUndefined, isNull, isEmpty } from '../../helper/common';
 import { Params } from '../types';
 import { Dictionary } from '../../store/types';
 
@@ -40,7 +40,7 @@ function serializeParams(key: string, value: any, serializedList: string[]) {
 }
 
 export function serialize(params: Params) {
-  if (!params) {
+  if (!params || isEmpty(params)) {
     return '';
   }
   const serializedList: string[] = [];

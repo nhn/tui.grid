@@ -16,7 +16,7 @@ import { Dispatch } from '../dispatch/create';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isObject, isFunction } from '../helper/common';
-import GridAjax from './gridAjax';
+import { gridAjax } from './gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { getDataManager } from '../instance';
 import { getConfirmMessage, getAlertMessage } from './helper/message';
@@ -152,7 +152,7 @@ class ServerSideDataProvider implements DataProvider {
     this.lastRequiredData = params;
 
     const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
-    const request = new GridAjax({
+    gridAjax({
       method,
       url: isFunction(url) ? url() : url,
       params,
@@ -164,8 +164,6 @@ class ServerSideDataProvider implements DataProvider {
     });
 
     dispatch('setLoadingState', 'LOADING');
-    request.open();
-    request.send();
   }
 
   public createData(url: Url, method: string, options: RequestOptions) {
@@ -209,7 +207,7 @@ class ServerSideDataProvider implements DataProvider {
 
     if (!showConfirm || confirm(requestTypeCode, getCount(params))) {
       const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
-      const request = new GridAjax({
+      gridAjax({
         method,
         url: isFunction(url) ? url() : url,
         params,
@@ -221,8 +219,6 @@ class ServerSideDataProvider implements DataProvider {
         withCredentials: isUndefined(withCredentials) ? ajaxConfig.withCredentials : withCredentials
       });
       dispatch('setLoadingState', 'LOADING');
-      request.open();
-      request.send();
     }
   }
 
