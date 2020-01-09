@@ -1,4 +1,4 @@
-import { DataProvider, DataSource, Params, Config } from './types';
+import { DataProvider, DataSource, Params, Config, AjaxConfig } from './types';
 import { Store } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
@@ -10,7 +10,7 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
   let lastRequiredData: Params = { perPage: store.data.pageOptions.perPage };
 
   const configKeys = ['cotentType', 'withCredentials', 'mimeType', 'headers', 'serializer'];
-  const ajaxConfig = extract(dataSource, ...configKeys);
+  const ajaxConfig = extract(dataSource, ...configKeys) as AjaxConfig;
   const getLastRequiredData = () => lastRequiredData;
   const setLastRequiredData = (params: Params) => {
     lastRequiredData = params;
@@ -26,16 +26,20 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
   };
 }
 
-export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[] | DataSource) {
+function createFallbackProvider(): DataProvider {
   // dummy function
   const errorFn = () => {
     throw new Error('Cannot execute server side API. To use this API, DataSource should be set');
   };
-  const provider: DataProvider = {
+  return {
     request: errorFn,
     readData: errorFn,
     reloadData: errorFn
   };
+}
+
+export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[] | DataSource) {
+  const provider = createFallbackProvider();
 
   if (!Array.isArray(data) && isObject(data)) {
     const { api, initialRequest = true } = data;
@@ -45,17 +49,14 @@ export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[]
     }
 
     const config = createConfig(store, dispatch, data);
-    // @ts-ignore
-    const curriedFns = [request, readData, reloadData].map(fn => fn.bind(null, config));
 
-    Object.keys(provider).forEach((key, index) => {
-      provider[key as keyof DataProvider] = curriedFns[index];
-    });
+    provider.request = request.bind(null, config);
+    provider.readData = readData.bind(null, config);
+    provider.reloadData = reloadData.bind(null, config);
 
     if (initialRequest) {
       readData(config, 1, api.readData.initParams);
     }
   }
-
   return provider;
 }
