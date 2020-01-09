@@ -1,4 +1,4 @@
-import { serialize } from '@/dataSource/helper/serializer';
+import { serialize } from '@/dataSource/ajax/serializer';
 
 it('test', () => {
   const obj = {

@@ -1,8 +1,8 @@
-import { Params, AjaxConfig, Serializer } from './types';
-import { serialize } from './helper/serializer';
-import { EventBus } from '../event/eventBus';
-import GridEvent from '../event/gridEvent';
-import { isObject, isFunction } from '../helper/common';
+import { Params, AjaxConfig, Serializer } from '../types';
+import { serialize } from './serializer';
+import { EventBus } from '../../event/eventBus';
+import GridEvent from '../../event/gridEvent';
+import { isObject, isFunction } from '../../helper/common';
 
 type CallbackFunction = (...args: any[]) => void;
 
@@ -21,6 +21,10 @@ const QS_DELIM_REGEXP = /\?/;
 
 function hasRequestBody(method: string) {
   return /^(?:POST|PUT|PATCH)$/.test(method.toUpperCase());
+}
+
+function getSerialized(params: Params, serializer?: Serializer) {
+  return isFunction(serializer) ? serializer(params) : serialize(params);
 }
 
 function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
@@ -81,12 +85,21 @@ function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
      * @property {Grid} instance - Current grid instance
      */
     eventBus.trigger('errorResponse', gridEvent);
+
+    if (gridEvent.isStopped()) {
+      return;
+    }
   }
   postCallback();
-}
 
-function getSerialized(params: Params, serializer?: Serializer) {
-  return isFunction(serializer) ? serializer(params) : serialize(params);
+  /**
+   * Occurs when the response is received from the server
+   * @event Grid#response
+   * @type {module:event/gridEvent}
+   * @property {XmlHttpRequest} xhr - XmlHttpRequest
+   * @property {Grid} instance - Current grid instance
+   */
+  eventBus.trigger('complete', gridEvent);
 }
 
 function open(xhr: XMLHttpRequest, options: Options) {
@@ -136,8 +149,8 @@ function send(xhr: XMLHttpRequest, options: Options) {
     method,
     eventBus,
     serializer,
+    preCallback,
     params = {},
-    preCallback = () => {},
     contentType = 'application/x-www-form-urlencoded'
   } = options;
 
@@ -171,8 +184,5 @@ function send(xhr: XMLHttpRequest, options: Options) {
 
 export function gridAjax(options: Options) {
   const xhr = new XMLHttpRequest();
-
-  open(xhr, options);
-  applyConfig(xhr, options);
-  send(xhr, options);
+  [open, applyConfig, send].forEach((fn: Function) => fn(xhr, options));
 }

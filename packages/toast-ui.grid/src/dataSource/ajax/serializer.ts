@@ -14,6 +14,7 @@ import { Dictionary } from '../../store/types';
  *   { a: [1, 2, [3]] } => a[]=1&a[]=2&a[2][]=3
  *
  * 2. Object format
+ *
  * The default object format to serialize is 'bracket' notation and doesn't allow the 'dot' notation.
  *
  * - basic

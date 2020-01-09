@@ -47,8 +47,8 @@ import {
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
-import { createManager } from './dataSource/modifiedDataManager';
-import { getConfirmMessage } from './dataSource/helper/message';
+import { createManager } from './dataSource/manager/modifiedDataManager';
+import { getConfirmMessage } from './i18n/message';
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
 import {
   RequestOptions,

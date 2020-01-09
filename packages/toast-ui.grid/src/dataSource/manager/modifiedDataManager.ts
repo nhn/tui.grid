@@ -1,13 +1,13 @@
-import { OptRow } from '../types';
-import { Row, RowKey, Dictionary } from '../store/types';
+import { OptRow } from '../../types';
+import { Row, RowKey, Dictionary } from '../../store/types';
 import {
   ModifiedDataMap,
   ModificationTypeCode,
   ModifiedRowsOptions,
   ModifiedDataManager
-} from './types';
-import { someProp, findIndex, isUndefined, isObject, omit } from '../helper/common';
-import { getOriginObject, Observable } from '../helper/observable';
+} from '../types';
+import { someProp, findIndex, isUndefined, isObject, omit } from '../../helper/common';
+import { getOriginObject, Observable } from '../../helper/observable';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
 

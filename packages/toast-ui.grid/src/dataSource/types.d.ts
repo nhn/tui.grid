@@ -1,4 +1,5 @@
-import { Row, RowKey, Dictionary } from '../store/types';
+import { Row, RowKey, Dictionary, Store } from '../store/types';
+import { Dispatch } from '../dispatch/create';
 import { OptRow } from '../types';
 
 export type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
@@ -11,8 +12,6 @@ export type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyDa
 
 export type RequestFunction = (url: string, method: string, options: RequestOptions) => void;
 
-export type Request = { [type in RequestType]: RequestFunction };
-
 export type Serializer = (params: Params) => string;
 
 export type AjaxConfig = {
@@ -23,13 +22,22 @@ export type AjaxConfig = {
   serializer?: Serializer;
 };
 
-export type DataProvider = Request & {
-  request: (requestType: RequestType, options: RequestOptions) => void;
-  readData: (page: number, data?: Params, resetData?: boolean) => void;
-  reloadData: () => void;
+export type DataProvider = {
+  request: (requestType: RequestType, options: RequestOptions) => void | never;
+  readData: (page: number, data?: Params, resetData?: boolean) => void | never;
+  reloadData: () => void | never;
 };
 
 export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
+
+export type Config = {
+  api: API;
+  ajaxConfig: AjaxConfig;
+  store: Store;
+  dispatch: Dispatch;
+  setLastRequiredData: (params: Params) => void;
+  getLastRequiredData: () => Params;
+};
 
 export type DataSource = {
   api: API;

@@ -334,6 +334,16 @@ export function omit<T extends object>(obj: T, ...propNames: string[]) {
   return resultMap;
 }
 
+export function extract<T extends object>(obj: T, ...propNames: string[]) {
+  const resultMap = {} as T;
+  for (const key in obj) {
+    if (hasOwnProp(obj, key) && includes(propNames, key)) {
+      resultMap[key] = obj[key];
+    }
+  }
+  return resultMap;
+}
+
 export function uniq<T extends unknown>(arr: T[]) {
   return arr.filter((name, index) => arr.indexOf(name) === index);
 }
