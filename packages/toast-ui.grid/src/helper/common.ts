@@ -2,6 +2,9 @@ interface Obj {
   [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+type OmitedKeys<T, K extends Array<keyof T>> = Exclude<keyof T, K[number]>;
+type ExtractedKeys<T, K extends Array<keyof T>> = K[number];
+
 const CUSTOM_LF_SUBCHAR = '___tui_grid_lf___';
 const CUSTOM_CR_SUBCHAR = '___tui_grid_cr___';
 const LF = '\n';
@@ -324,23 +327,23 @@ export function pruneObject<T>(obj: T) {
   return pruned;
 }
 
-export function omit<T extends object>(obj: T, ...propNames: string[]) {
-  const resultMap = {} as T;
-  for (const key in obj) {
-    if (hasOwnProp(obj, key) && !includes(propNames, key)) {
-      resultMap[key] = obj[key];
+export function omit<T extends object, K extends Array<keyof T>>(obj: T, ...propNames: K) {
+  const resultMap = {} as Omit<T, K[number]>;
+  Object.keys(obj).forEach(key => {
+    if (!includes(propNames, key as OmitedKeys<T, K>)) {
+      resultMap[key as OmitedKeys<T, K>] = obj[key as OmitedKeys<T, K>];
     }
-  }
+  });
   return resultMap;
 }
 
-export function extract<T extends object>(obj: T, ...propNames: string[]) {
-  const resultMap = {} as T;
-  for (const key in obj) {
-    if (hasOwnProp(obj, key) && includes(propNames, key)) {
-      resultMap[key] = obj[key];
+export function extract<T extends object, K extends Array<keyof T>>(obj: T, ...propNames: K) {
+  const resultMap = {} as Pick<T, K[number]>;
+  Object.keys(obj).forEach(key => {
+    if (includes(propNames, key as ExtractedKeys<T, K>)) {
+      resultMap[key as ExtractedKeys<T, K>] = obj[key as ExtractedKeys<T, K>];
     }
-  }
+  });
   return resultMap;
 }
 
