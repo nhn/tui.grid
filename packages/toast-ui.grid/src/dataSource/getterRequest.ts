@@ -1,4 +1,4 @@
-import { Params, Response, Config } from './types';
+import { Params, Response, Config, ResponseData } from './types';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isFunction } from '../helper/common';
@@ -6,13 +6,18 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState } from '../query/data';
 
+function validateResponse(responseData?: ResponseData): asserts responseData {
+  if (isUndefined(responseData)) {
+    throw new Error('The response data is empty to rerender grid');
+  }
+}
+
 function handleSuccessReadData(config: Config, response: Response) {
   const { dispatch, getLastRequiredData } = config;
-  const { result, data: responseData } = response;
+  const { data: responseData } = response;
 
-  if (!result || isUndefined(responseData)) {
-    return;
-  }
+  validateResponse(responseData);
+
   dispatch('resetData', responseData.contents);
   if (responseData.pagination) {
     dispatch('updatePageOptions', {
@@ -24,10 +29,10 @@ function handleSuccessReadData(config: Config, response: Response) {
 
 function handleSuccessReadTreeData(config: Config, response: Response) {
   const { dispatch, store, getLastRequiredData } = config;
-  const { result, data: responseData } = response;
-  if (!result || isUndefined(responseData)) {
-    return;
-  }
+  const { data: responseData } = response;
+
+  validateResponse(responseData);
+
   const { parentRowKey } = getLastRequiredData();
   const { column, id, data } = store;
 
@@ -52,25 +57,24 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
   const { perPage } = store.data.pageOptions;
   const { method, url } = api.readData;
   const params = resetData ? { perPage, ...data, page } : { ...lastRequiredData, ...data, page };
+  const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
 
-  let success = handleSuccessReadData;
+  let successCallback = handleSuccessReadData;
 
   if (treeColumnName && !isUndefined(data.parentRowKey)) {
-    success = handleSuccessReadTreeData;
+    successCallback = handleSuccessReadTreeData;
     delete params.page;
     delete params.perPage;
   }
 
   setLastRequiredData(params);
-  const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
-
   dispatch('setLoadingState', 'LOADING');
 
   gridAjax({
     method,
     url: isFunction(url) ? url() : url,
     params,
-    success: success.bind(null, config),
+    success: successCallback.bind(null, config),
     preCallback: callback,
     postCallback: callback,
     eventBus: getEventBus(store.id),

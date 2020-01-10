@@ -1,4 +1,4 @@
-import { DataProvider, DataSource, Params, Config, AjaxConfig } from './types';
+import { DataProvider, DataSource, Params, Config, AjaxConfigKeys } from './types';
 import { Store } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
@@ -9,8 +9,14 @@ import { readData, reloadData } from './getterRequest';
 function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource): Config {
   let lastRequiredData: Params = { perPage: store.data.pageOptions.perPage };
 
-  const configKeys = ['cotentType', 'withCredentials', 'mimeType', 'headers', 'serializer'];
-  const ajaxConfig = extract(dataSource, ...configKeys) as AjaxConfig;
+  const configKeys: AjaxConfigKeys[] = [
+    'contentType',
+    'withCredentials',
+    'mimeType',
+    'headers',
+    'serializer'
+  ];
+  const ajaxConfig = extract(dataSource, ...configKeys);
   const getLastRequiredData = () => lastRequiredData;
   const setLastRequiredData = (params: Params) => {
     lastRequiredData = params;
@@ -50,6 +56,7 @@ export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[]
 
     const config = createConfig(store, dispatch, data);
 
+    // set curried function
     provider.request = request.bind(null, config);
     provider.readData = readData.bind(null, config);
     provider.reloadData = reloadData.bind(null, config);

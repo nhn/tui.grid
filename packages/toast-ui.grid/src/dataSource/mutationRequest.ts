@@ -1,4 +1,12 @@
-import { RequestOptions, RequestTypeCode, RequestType, AjaxConfig, Url, Config } from './types';
+import {
+  RequestOptions,
+  RequestTypeCode,
+  RequestType,
+  AjaxConfig,
+  Url,
+  Config,
+  MutationParams
+} from './types';
 import { Store } from '../store/types';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
@@ -12,6 +20,7 @@ interface SendOptions {
   url: Url;
   method: string;
   options: RequestOptions;
+  params: MutationParams;
   requestTypeCode: RequestTypeCode;
 }
 
@@ -22,19 +31,9 @@ const requestTypeCodeMap = {
   modifyData: 'MODIFY'
 } as const;
 
-function createRequestOptions(ajaxConfig: AjaxConfig, options = {}): RequestOptions {
-  const defaultOptions = {
-    checkedOnly: false,
-    modifiedOnly: true,
-    showConfirm: true,
-    withCredentials: ajaxConfig.withCredentials
-  };
-  return { ...defaultOptions, ...options };
-}
-
-function createRequestParams(store: Store, type: RequestTypeCode, options: RequestOptions) {
+function createRequestParams(store: Store, type: RequestTypeCode, requestOptions: RequestOptions) {
   const { column, data, id } = store;
-  const { checkedOnly, modifiedOnly } = options;
+  const { checkedOnly, modifiedOnly } = requestOptions;
   const modifiedOptions = { checkedOnly, ignoredColumns: column.ignoredColumns };
 
   if (modifiedOnly) {
@@ -47,12 +46,21 @@ function createRequestParams(store: Store, type: RequestTypeCode, options: Reque
   return { rows: getDataWithOptions(data.rawData, modifiedOptions) };
 }
 
+function createRequestOptions(ajaxConfig: AjaxConfig, requestOptions = {}) {
+  const defaultOptions = {
+    checkedOnly: false,
+    modifiedOnly: true,
+    showConfirm: true,
+    withCredentials: ajaxConfig.withCredentials
+  };
+  return { ...defaultOptions, ...requestOptions };
+}
+
 function send(config: Config, sendOptions: SendOptions) {
   const { store, dispatch, ajaxConfig } = config;
   const { id } = store;
-  const { url, method, options, requestTypeCode } = sendOptions;
   const manager = getDataManager(id);
-  const params = createRequestParams(store, requestTypeCode, options);
+  const { url, method, options, params, requestTypeCode } = sendOptions;
   const { showConfirm, withCredentials } = options;
 
   if (!showConfirm || confirmMutation(requestTypeCode, params)) {
@@ -74,21 +82,18 @@ function send(config: Config, sendOptions: SendOptions) {
   }
 }
 
-export function request(config: Config, requestType: RequestType, options: RequestOptions) {
-  const { api, ajaxConfig } = config;
-  const url = options.url || api[requestType]?.url;
-  const method = options.method || api[requestType]?.method;
+export function request(config: Config, requestType: RequestType, requestOptions: RequestOptions) {
+  const { store, api, ajaxConfig } = config;
+  const url = requestOptions.url || api[requestType]?.url;
+  const method = requestOptions.method || api[requestType]?.method;
 
   if (!url || !method) {
     throw new Error('url and method should be essential for request.');
   }
 
-  const sendOptions = {
-    url,
-    method,
-    options: createRequestOptions(ajaxConfig, options),
-    requestTypeCode: requestTypeCodeMap[requestType]
-  };
+  const requestTypeCode = requestTypeCodeMap[requestType];
+  const options = createRequestOptions(ajaxConfig, requestOptions);
+  const params = createRequestParams(store, requestTypeCode, options);
 
-  send(config, sendOptions);
+  send(config, { url, method, options, params, requestTypeCode });
 }

@@ -1,8 +1,10 @@
-import { RequestTypeCode } from '../types';
-import { Dictionary, Row, RowKey } from '../../store/types';
+import { RequestTypeCode, MutationParams } from '../types';
 import { getConfirmMessage, getAlertMessage } from '../../i18n/message';
 
-export function confirmMutation(type: RequestTypeCode, params: Dictionary<Row[] | RowKey[]>) {
-  const count = Object.keys(params).reduce((acc, key) => acc + params[key].length, 0);
+export function confirmMutation(type: RequestTypeCode, params: MutationParams) {
+  const count = Object.keys(params).reduce(
+    (acc, key) => acc + params[key as keyof MutationParams]!.length,
+    0
+  );
   return count ? confirm(getConfirmMessage(type, count)) : alert(getAlertMessage(type));
 }
