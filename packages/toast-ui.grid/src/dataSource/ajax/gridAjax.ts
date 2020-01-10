@@ -5,7 +5,6 @@ import GridEvent from '../../event/gridEvent';
 import { isObject, isFunction } from '../../helper/common';
 
 type CallbackFunction = (...args: any[]) => void;
-
 type Options = {
   method: string;
   url: string;
@@ -15,6 +14,7 @@ type Options = {
   eventBus: EventBus;
   params?: Params;
 } & AjaxConfig;
+type AjaxProcessFunction = (xhr: XMLHttpRequest, options: Options) => void;
 
 const ENCODED_SPACE_REGEXP = /%20/g;
 const QS_DELIM_REGEXP = /\?/;
@@ -60,6 +60,12 @@ function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
        * @property {Grid} instance - Current grid instance
        */
       eventBus.trigger('successResponse', gridEvent);
+
+      if (gridEvent.isStopped()) {
+        return;
+      }
+
+      success(response);
     } else if (!response.result) {
       /**
        * Occurs after the response event, if the result is false
@@ -69,13 +75,11 @@ function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
        * @property {Grid} instance - Current grid instance
        */
       eventBus.trigger('failResponse', gridEvent);
-    }
 
-    if (gridEvent.isStopped()) {
-      return;
+      if (gridEvent.isStopped()) {
+        return;
+      }
     }
-
-    success(response);
   } else {
     /**
      * Occurs after the response event, if the response is Error
@@ -184,5 +188,5 @@ function send(xhr: XMLHttpRequest, options: Options) {
 
 export function gridAjax(options: Options) {
   const xhr = new XMLHttpRequest();
-  [open, applyConfig, send].forEach((fn: Function) => fn(xhr, options));
+  [open, applyConfig, send].forEach((fn: AjaxProcessFunction) => fn(xhr, options));
 }
