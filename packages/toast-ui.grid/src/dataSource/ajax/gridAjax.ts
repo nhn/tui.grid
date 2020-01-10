@@ -95,15 +95,6 @@ function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
     }
   }
   postCallback();
-
-  /**
-   * Occurs when the response is received from the server
-   * @event Grid#response
-   * @type {module:event/gridEvent}
-   * @property {XmlHttpRequest} xhr - XmlHttpRequest
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('complete', gridEvent);
 }
 
 function open(xhr: XMLHttpRequest, options: Options) {
