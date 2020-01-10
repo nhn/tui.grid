@@ -1,10 +1,12 @@
 import { OptRow } from '../../types';
-import { Row, RowKey, Dictionary } from '../../store/types';
+import { Row, RowKey } from '../../store/types';
 import {
   ModifiedDataMap,
   ModificationTypeCode,
   ModifiedRowsOptions,
-  ModifiedDataManager
+  ModifiedDataManager,
+  ModifiedRows,
+  MutationParams
 } from '../types';
 import { someProp, findIndex, isUndefined, isObject, omit } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
@@ -17,6 +19,7 @@ const paramNameMap: ParamNameMap = {
   DELETE: 'deletedRows'
 };
 
+// @TODO: fix 'Row' type with record(Dictionary) type to use negate type or other type utility
 export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptions = {}) {
   const {
     checkedOnly = false,
@@ -30,9 +33,11 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
     rows = rows.filter(row => row._attributes.checked);
   }
   if (ignoredColumns.length) {
+    // @ts-ignore
     rows = rows.map(row => omit(row, ...ignoredColumns));
   }
   if (!withRawData) {
+    // @ts-ignore
     rows = rows.map(row => omit(row, '_attributes'));
   }
   if (rowKeyOnly) {
@@ -81,7 +86,7 @@ export function createManager(): ModifiedDataManager {
     getAllModifiedData(options: ModifiedRowsOptions) {
       return Object.keys(dataMap)
         .map(key => this.getModifiedData(key as ModificationTypeCode, options))
-        .reduce((acc, data) => ({ ...acc, ...data }), {} as Dictionary<Row[] | RowKey[]>);
+        .reduce((acc, data) => ({ ...acc, ...data }), {} as ModifiedRows);
     },
 
     isModified() {
@@ -113,10 +118,10 @@ export function createManager(): ModifiedDataManager {
       }
     },
 
-    clear(rowsMap: Dictionary<Row[] | RowKey[]>) {
+    clear(rowsMap: MutationParams) {
       Object.keys(rowsMap).forEach(key => {
-        const rows = rowsMap[key];
-        rows.forEach((row: Row | RowKey) => {
+        const rows = rowsMap[key as keyof MutationParams];
+        rows!.forEach((row: Row | RowKey) => {
           spliceAll(isObject(row) ? row.rowKey : row);
         });
       });

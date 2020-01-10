@@ -22,6 +22,8 @@ export type AjaxConfig = {
   serializer?: Serializer;
 };
 
+export type AjaxConfigKeys = keyof AjaxConfig;
+
 export type DataProvider = {
   request: (requestType: RequestType, options: RequestOptions) => void | never;
   readData: (page: number, data?: Params, resetData?: boolean) => void | never;
@@ -44,24 +46,30 @@ export type DataSource = {
   initialRequest?: boolean;
 } & AjaxConfig;
 
-export type Params = {
-  rows?: Row[] | RowKey[];
+export type ModifiedRows = {
   createdRows?: Row[] | RowKey[];
   updatedRows?: Row[] | RowKey[];
   deletedRows?: Row[] | RowKey[];
+};
+
+export type MutationParams = ModifiedRows & { rows?: Row[] | RowKey[] };
+
+export type Params = {
+  rows?: Row[] | RowKey[];
   page?: number;
   perPage?: number;
   sortColumn?: string;
   sortAscending?: boolean;
-} & Dictionary<any>;
+} & ModifiedRows &
+  Dictionary<any>;
 
 export type Url = string | (() => string);
 
-export interface APIInfo {
+export type APIInfo = {
   url: Url;
   method: string;
   initParams?: Dictionary<any>;
-}
+} & AjaxConfig;
 
 export interface API {
   createData?: APIInfo;
@@ -87,29 +95,28 @@ export interface ModifiedRowsOptions {
   ignoredColumns?: string[];
 }
 
+export interface ResponseData {
+  contents: OptRow[];
+  pagination: {
+    page: number;
+    totalCount: number;
+  };
+}
+
 export interface Response {
   result: boolean;
-  data?: {
-    contents: OptRow[];
-    pagination: {
-      page: number;
-      totalCount: number;
-    };
-  };
+  data?: ResponseData;
   message?: string;
 }
 
 export interface ModifiedDataManager {
   setOriginData: (data: OptRow[]) => void;
   getOriginData: () => OptRow[];
-  getModifiedData: (
-    type: ModificationTypeCode,
-    options: ModifiedRowsOptions
-  ) => Dictionary<Row[] | RowKey[]>;
-  getAllModifiedData: (options: ModifiedRowsOptions) => Dictionary<Row[] | RowKey[]>;
+  getModifiedData: (type: ModificationTypeCode, options: ModifiedRowsOptions) => ModifiedRows;
+  getAllModifiedData: (options: ModifiedRowsOptions) => ModifiedRows;
   isModified: () => boolean;
   isModifiedByType: (type: ModificationTypeCode) => boolean;
   push: (type: ModificationTypeCode, row: Row) => void;
-  clear: (type: Dictionary<Row[] | RowKey[]>) => void;
+  clear: (rowMap: MutationParams) => void;
   clearAll: () => void;
 }
