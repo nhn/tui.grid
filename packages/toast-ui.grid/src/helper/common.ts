@@ -115,29 +115,54 @@ export function mapProp<T, K extends keyof T>(propName: K, arr: T[]) {
 }
 
 export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
-  const resultObj: Obj = { ...targetObj };
+  const resultObj = { ...targetObj } as T1 & T2;
 
-  Object.keys(obj).forEach(prop => {
-    if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
+  Object.keys(obj).forEach((prop: keyof T2) => {
+    if (resultObj.hasOwnProperty(prop) && isObject(resultObj[prop])) {
       if (Array.isArray(obj[prop])) {
-        // https://github.com/microsoft/TypeScript/issues/31661
-        resultObj[prop] = obj[prop];
+        resultObj[prop as keyof T1 & T2] = deepCopyArray(obj[prop]);
       } else {
         resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+      }
+    } else {
+      resultObj[prop as keyof T1 & T2] = isObject(obj[prop]) ? deepCopy(obj[prop]) : obj[prop];
+    }
+  });
+
+  return resultObj;
+}
+
+export function deepCopyArray<T extends any[]>(items: T): T {
+  return items.map(item => {
+    if (isObject(item)) {
+      return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
+    }
+    return item;
+  }) as T;
+}
+
+export function deepCopy<T extends Obj>(obj: T) {
+  const resultObj = {} as T;
+
+  Object.keys(obj).forEach((prop: keyof T) => {
+    if (isObject(obj[prop])) {
+      if (Array.isArray(obj[prop])) {
+        resultObj[prop] = deepCopyArray(obj[prop]);
+      } else {
+        resultObj[prop] = deepCopy(obj[prop]);
       }
     } else {
       resultObj[prop] = obj[prop];
     }
   });
 
-  return resultObj as T1 & T2;
+  return resultObj as T;
 }
 
 export function assign(targetObj: Obj, obj: Obj) {
   Object.keys(obj).forEach(prop => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
-        // https://github.com/microsoft/TypeScript/issues/31661
         targetObj[prop] = obj[prop];
       } else {
         assign(targetObj[prop], obj[prop]);
