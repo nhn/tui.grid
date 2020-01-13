@@ -34,7 +34,7 @@ export type ContentType = 'application/x-www-form-urlencoded' | 'application/jso
 
 export type Config = {
   api: API;
-  ajaxConfig: AjaxConfig;
+  hideLoadingBar: boolean;
   store: Store;
   dispatch: Dispatch;
   setLastRequiredData: (params: Params) => void;
@@ -44,6 +44,7 @@ export type Config = {
 export type DataSource = {
   api: API;
   initialRequest?: boolean;
+  hideLoadingBar?: boolean;
 } & AjaxConfig;
 
 export type ModifiedRows = {
