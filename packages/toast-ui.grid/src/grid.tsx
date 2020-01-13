@@ -1280,7 +1280,7 @@ export default class Grid {
    * @param {object} options - Options
    *      @param {String} [options.url] - URL to send the request
    *      @param {String} [options.method] - method to send the request
-   *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+   *      @param {boolean} [options.checkedOnly=false] - Whether the request param only contains checked rows
    *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
    *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
    *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
