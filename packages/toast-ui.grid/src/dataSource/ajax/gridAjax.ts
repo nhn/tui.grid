@@ -30,7 +30,8 @@ function getSerialized(params: Params, serializer?: Serializer) {
 function handleReadyStateChange(xhr: XMLHttpRequest, options: Options) {
   const { eventBus, success, preCallback, postCallback } = options;
 
-  if (xhr.readyState !== XMLHttpRequest.DONE) {
+  // eslint-disable-next-line eqeqeq
+  if (xhr.readyState != XMLHttpRequest.DONE) {
     return;
   }
 
