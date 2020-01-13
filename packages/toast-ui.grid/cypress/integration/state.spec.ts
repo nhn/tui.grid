@@ -27,7 +27,6 @@ function runMockServer() {
 }
 
 const data = {
-  initialRequest: false,
   api: {
     readData: { url: '/api/read', method: 'GET' }
   }
@@ -35,13 +34,12 @@ const data = {
 
 it('should show "No data." text when there is no data.', () => {
   cy.createGrid({ columns });
-  cy.get(`.${cls('layer-state-content')}`).should('have.text', 'No data.');
+  cy.getByCls('layer-state-content').should('have.text', 'No data.');
 });
 
 it('should show "Loading data." text when fetch data.', () => {
   runMockServer();
   cy.createGrid({ columns, data });
 
-  cy.gridInstance().invoke('readData');
-  cy.get(`.${cls('layer-state-content')}`).should('have.text', 'Loading data.');
+  cy.getByCls('layer-state-content').should('have.text', 'Loading data.');
 });

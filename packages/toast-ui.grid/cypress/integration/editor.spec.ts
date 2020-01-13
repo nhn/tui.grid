@@ -293,7 +293,7 @@ it('should do syncronous renering of the editing cell', () => {
     if (type === 'columnHeader') {
       cy.getHeaderCell('name').as('targetCell');
     } else {
-      cy.getRowHeaderCell(1).as('targetCell');
+      cy.getRowHeaderCell(0).as('targetCell');
     }
 
     cy.get('@targetCell').click();

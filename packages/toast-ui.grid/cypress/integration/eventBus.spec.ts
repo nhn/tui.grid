@@ -98,11 +98,8 @@ it('dblclick', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'dblclick', callback);
 
-  cy.get(`.${cls('container')}`)
-    .dblclick()
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({ targetType: 'etc' });
-    });
+  cy.getByCls('container').dblclick();
+  cy.wrap(callback).should('be.calledWithMatch', { targetType: 'cell' });
 });
 
 it('focus change', () => {
