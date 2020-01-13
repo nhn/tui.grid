@@ -15,6 +15,7 @@ import { getDataManager } from '../instance';
 import { getDataWithOptions } from './manager/modifiedDataManager';
 import { getLoadingState } from '../query/data';
 import { confirmMutation } from './helper/confirm';
+import { createAjaxConfig } from './helper/ajaxConfig';
 
 interface SendOptions {
   url: Url;
@@ -22,6 +23,7 @@ interface SendOptions {
   options: RequestOptions;
   params: MutationParams;
   requestTypeCode: RequestTypeCode;
+  ajaxConfig: AjaxConfig;
 }
 
 const requestTypeCodeMap = {
@@ -57,16 +59,18 @@ function createRequestOptions(ajaxConfig: AjaxConfig, requestOptions = {}) {
 }
 
 function send(config: Config, sendOptions: SendOptions) {
-  const { store, dispatch, ajaxConfig } = config;
+  const { store, dispatch, hideLoadingBar } = config;
   const { id } = store;
   const manager = getDataManager(id);
-  const { url, method, options, params, requestTypeCode } = sendOptions;
+  const { url, method, options, params, requestTypeCode, ajaxConfig } = sendOptions;
   const { showConfirm, withCredentials } = options;
 
   if (!showConfirm || confirmMutation(requestTypeCode, params)) {
     const callback = () => dispatch('setLoadingState', getLoadingState(store.data.rawData));
 
-    dispatch('setLoadingState', 'LOADING');
+    if (!hideLoadingBar) {
+      dispatch('setLoadingState', 'LOADING');
+    }
 
     gridAjax({
       method,
@@ -83,7 +87,7 @@ function send(config: Config, sendOptions: SendOptions) {
 }
 
 export function request(config: Config, requestType: RequestType, requestOptions: RequestOptions) {
-  const { store, api, ajaxConfig } = config;
+  const { store, api } = config;
   const url = requestOptions.url || api[requestType]?.url;
   const method = requestOptions.method || api[requestType]?.method;
 
@@ -92,8 +96,9 @@ export function request(config: Config, requestType: RequestType, requestOptions
   }
 
   const requestTypeCode = requestTypeCodeMap[requestType];
+  const ajaxConfig = createAjaxConfig(api[requestType] || {});
   const options = createRequestOptions(ajaxConfig, requestOptions);
   const params = createRequestParams(store, requestTypeCode, options);
 
-  send(config, { url, method, options, params, requestTypeCode });
+  send(config, { url, method, options, params, requestTypeCode, ajaxConfig });
 }

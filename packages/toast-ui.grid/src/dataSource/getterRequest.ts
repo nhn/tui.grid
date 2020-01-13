@@ -5,6 +5,7 @@ import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState } from '../query/data';
+import { createAjaxConfig } from './helper/ajaxConfig';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {
@@ -46,13 +47,14 @@ function handleSuccessReadTreeData(config: Config, response: Response) {
 }
 
 export function readData(config: Config, page: number, data: Params = {}, resetData = false) {
-  const { store, dispatch, api, ajaxConfig, getLastRequiredData, setLastRequiredData } = config;
+  const { store, dispatch, api, getLastRequiredData, setLastRequiredData, hideLoadingBar } = config;
   const lastRequiredData = getLastRequiredData();
 
   if (!api) {
     return;
   }
 
+  const ajaxConfig = createAjaxConfig(api.readData);
   const { treeColumnName } = store.column;
   const { perPage } = store.data.pageOptions;
   const { method, url } = api.readData;
@@ -68,7 +70,10 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
   }
 
   setLastRequiredData(params);
-  dispatch('setLoadingState', 'LOADING');
+
+  if (!hideLoadingBar) {
+    dispatch('setLoadingState', 'LOADING');
+  }
 
   gridAjax({
     method,

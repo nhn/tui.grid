@@ -1,32 +1,31 @@
-import { DataProvider, DataSource, Params, Config, AjaxConfigKeys } from './types';
+import { DataProvider, DataSource, Params, Config, API } from './types';
 import { Store } from '../store/types';
 import { OptRow } from '../types';
 import { Dispatch } from '../dispatch/create';
-import { isObject, extract } from '../helper/common';
+import { isObject, deepMergedCopy } from '../helper/common';
 import { request } from './mutationRequest';
 import { readData, reloadData } from './getterRequest';
+import { createAjaxConfig } from './helper/ajaxConfig';
 
 function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource): Config {
   let lastRequiredData: Params = { perPage: store.data.pageOptions.perPage };
 
-  const configKeys: AjaxConfigKeys[] = [
-    'contentType',
-    'withCredentials',
-    'mimeType',
-    'headers',
-    'serializer'
-  ];
-  const ajaxConfig = extract(dataSource, ...configKeys);
+  const { api, hideLoadingBar = false } = dataSource;
+  const ajaxConfig = createAjaxConfig(dataSource);
+  Object.keys(api).forEach(key => {
+    api[key as keyof API] = deepMergedCopy(ajaxConfig, api[key as keyof API]!);
+  });
+
   const getLastRequiredData = () => lastRequiredData;
   const setLastRequiredData = (params: Params) => {
     lastRequiredData = params;
   };
 
   return {
-    api: dataSource.api,
+    api,
+    hideLoadingBar,
     store,
     dispatch,
-    ajaxConfig,
     setLastRequiredData,
     getLastRequiredData
   };
