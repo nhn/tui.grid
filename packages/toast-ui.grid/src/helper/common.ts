@@ -132,8 +132,8 @@ export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, ob
   return resultObj;
 }
 
-export function deepCopyArray<T extends any[]>(items: T): T {
-  return items.map(item => {
+export function deepCopyArray<T extends Array<any>>(items: T): T {
+  return items.map((item: T[number]) => {
     if (isObject(item)) {
       return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
     }
