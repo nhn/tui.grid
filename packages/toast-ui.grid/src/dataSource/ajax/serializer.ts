@@ -20,7 +20,7 @@ import { Dictionary } from '../../store/types';
  * - basic
  *   { a: { b: 1, c: 2 } } => a[b]=1&a[c]=2
  */
-function encodePairs(key: string, value: string) {
+function encodePairs(key: string, value: any) {
   return `${encodeURIComponent(key)}=${encodeURIComponent(
     isNull(value) || isUndefined(value) ? '' : value
   )}`;

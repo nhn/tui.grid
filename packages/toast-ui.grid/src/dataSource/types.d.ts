@@ -10,8 +10,6 @@ export type RequestTypeCode = ModificationTypeCode | 'MODIFY';
 
 export type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyData';
 
-export type RequestFunction = (url: string, method: string, options: RequestOptions) => void;
-
 export type Serializer = (params: Params) => string;
 
 export type AjaxConfig = {
