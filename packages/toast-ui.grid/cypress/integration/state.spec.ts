@@ -1,5 +1,4 @@
 import { OptColumn } from '../../src/types';
-import { cls } from '@/helper/dom';
 
 const columns: OptColumn[] = [{ name: 'A' }, { name: 'B' }];
 
