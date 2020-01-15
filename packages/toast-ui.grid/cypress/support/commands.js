@@ -96,6 +96,10 @@ Cypress.Commands.add('getRsideBody', () => {
   return cy.getByCls('rside-area', 'body-area');
 });
 
+Cypress.Commands.add('getNumberRowHeaderCells', () => {
+  return cy.get('td[data-column-name=_number]');
+});
+
 Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
   cy.getByCls('column-resize-handle')
     .eq(index)

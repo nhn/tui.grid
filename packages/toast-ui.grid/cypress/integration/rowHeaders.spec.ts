@@ -134,7 +134,7 @@ it('rowHeader with custom options.', () => {
     columns
   });
 
-  cy.get('td[data-column-name=_number]').within($el => {
+  cy.getNumberRowHeaderCells().within($el => {
     cy.wrap($el)
       .should('have.css', 'width', '100px')
       .and('have.css', 'text-align', 'right');

@@ -58,7 +58,7 @@ describe('getSelectionRange', () => {
   it('select row by clicking row header', () => {
     cy.createGrid({ data, columns, rowHeaders: ['rowNum'] });
 
-    cy.get('td[data-column-name=_number]')
+    cy.getNumberRowHeaderCells()
       .eq(0)
       .click();
 
