@@ -1,5 +1,5 @@
-import { RequestTypeCode } from '../types';
-import i18n from '../../i18n';
+import { RequestTypeCode } from '../dataSource/types';
+import i18n from '.';
 
 type MessageMap = { [key in RequestTypeCode]: string };
 

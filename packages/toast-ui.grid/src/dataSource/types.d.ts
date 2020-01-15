@@ -1,4 +1,5 @@
-import { Row, RowKey, Dictionary } from '../store/types';
+import { Row, RowKey, Dictionary, Store } from '../store/types';
+import { Dispatch } from '../dispatch/create';
 import { OptRow } from '../types';
 
 export type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
@@ -9,31 +10,65 @@ export type RequestTypeCode = ModificationTypeCode | 'MODIFY';
 
 export type RequestType = 'createData' | 'updateData' | 'deleteData' | 'modifyData';
 
-export type RequestFunction = (url: string, method: string, options: RequestOptions) => void;
+export type Serializer = (params: Params) => string;
 
-export type Request = { [type in RequestType]: RequestFunction };
-
-export type DataProvider = Request & {
-  request: (requestType: RequestType, options: RequestOptions) => void;
-  readData: (page: number, data?: Params, resetData?: boolean) => void;
-  reloadData: () => void;
+export type AjaxConfig = {
+  contentType?: ContentType;
+  mimeType?: string;
+  withCredentials?: boolean;
+  headers?: Dictionary<string>;
+  serializer?: Serializer;
 };
 
-export type Params = {
-  rows?: Row[] | RowKey[];
+export type AjaxConfigKeys = keyof AjaxConfig;
+
+export type DataProvider = {
+  request: (requestType: RequestType, options: RequestOptions) => void | never;
+  readData: (page: number, data?: Params, resetData?: boolean) => void | never;
+  reloadData: () => void | never;
+};
+
+export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
+
+export type Config = {
+  api: API;
+  hideLoadingBar: boolean;
+  store: Store;
+  dispatch: Dispatch;
+  setLastRequiredData: (params: Params) => void;
+  getLastRequiredData: () => Params;
+};
+
+export type DataSource = {
+  api: API;
+  initialRequest?: boolean;
+  hideLoadingBar?: boolean;
+} & AjaxConfig;
+
+export type ModifiedRows = {
   createdRows?: Row[] | RowKey[];
   updatedRows?: Row[] | RowKey[];
   deletedRows?: Row[] | RowKey[];
+};
+
+export type MutationParams = ModifiedRows & { rows?: Row[] | RowKey[] };
+
+export type Params = {
+  rows?: Row[] | RowKey[];
   page?: number;
   perPage?: number;
   sortColumn?: string;
   sortAscending?: boolean;
-} & Dictionary<any>;
+} & ModifiedRows &
+  Dictionary<any>;
 
-export interface APIInfo {
-  url: string;
+export type Url = string | (() => string);
+
+export type APIInfo = {
+  url: Url;
   method: string;
-}
+  initParams?: Dictionary<any>;
+} & AjaxConfig;
 
 export interface API {
   createData?: APIInfo;
@@ -41,12 +76,6 @@ export interface API {
   updateData?: APIInfo;
   deleteData?: APIInfo;
   modifyData?: APIInfo;
-}
-
-export interface DataSource {
-  initialRequest?: boolean;
-  withCredentials?: boolean;
-  api: API;
 }
 
 export interface RequestOptions {
@@ -65,36 +94,28 @@ export interface ModifiedRowsOptions {
   ignoredColumns?: string[];
 }
 
-export interface Response {
-  result: boolean;
-  data?: {
-    contents: OptRow[];
-    pagination: {
-      page: number;
-      totalCount: number;
-    };
+export interface ResponseData {
+  contents: OptRow[];
+  pagination: {
+    page: number;
+    totalCount: number;
   };
-  message?: string;
 }
 
-export interface XHROptions {
-  method: string;
-  url: string;
-  withCredentials: boolean;
-  params: Params;
+export interface Response {
+  result: boolean;
+  data?: ResponseData;
+  message?: string;
 }
 
 export interface ModifiedDataManager {
   setOriginData: (data: OptRow[]) => void;
   getOriginData: () => OptRow[];
-  getModifiedData: (
-    type: ModificationTypeCode,
-    options: ModifiedRowsOptions
-  ) => Dictionary<Row[] | RowKey[]>;
-  getAllModifiedData: (options: ModifiedRowsOptions) => Dictionary<Row[] | RowKey[]>;
+  getModifiedData: (type: ModificationTypeCode, options: ModifiedRowsOptions) => ModifiedRows;
+  getAllModifiedData: (options: ModifiedRowsOptions) => ModifiedRows;
   isModified: () => boolean;
   isModifiedByType: (type: ModificationTypeCode) => boolean;
   push: (type: ModificationTypeCode, row: Row) => void;
-  clear: (type: Dictionary<Row[] | RowKey[]>) => void;
+  clear: (rowMap: MutationParams) => void;
   clearAll: () => void;
 }

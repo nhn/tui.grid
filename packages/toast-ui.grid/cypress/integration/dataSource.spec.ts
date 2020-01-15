@@ -2,13 +2,14 @@ import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
 import { Dictionary } from '@/store/types';
-import { DataSource } from '@/dataSource/types';
+import { DataSource, Params, AjaxConfig } from '@/dataSource/types';
 import GridEvent from '@/event/gridEvent';
+import { deepCopy } from '@/helper/common';
+import { cls } from '@/helper/dom';
 
 const columns = [
-  { name: 'id', minWidth: 150, sortable: true },
-  { name: 'name', minWidth: 150 },
-  { name: 'price', minWidth: 150 }
+  { name: 'id', minWidth: 150, sortable: true, editor: 'text' },
+  { name: 'name', minWidth: 150, editor: 'text' }
 ];
 
 const data = {
@@ -76,13 +77,44 @@ function assertPagingData(columnName: string, page = 1, perPage = 10) {
     });
 }
 
-function createGridWithDataSource(dataSource?: DataSource) {
+function createGrid(dataSource?: DataSource) {
   cy.createGrid({
     data: { ...(dataSource || data) },
     columns,
     useClientSort: false,
     pageOptions: { perPage: 10 }
   });
+}
+
+function createGridWithConfig(optionType: string, stub: Function) {
+  const config: AjaxConfig = {
+    contentType: 'application/json',
+    headers: { 'x-custom-header': 'x-custom-header' },
+    serializer(params: Params) {
+      stub();
+      return Cypress.$.param(params);
+    }
+  };
+
+  if (optionType === 'dataSource') {
+    createGrid({ ...config, ...deepCopy(data) });
+  } else {
+    createGrid({
+      contentType: 'application/x-www-form-urlencoded',
+      api: {
+        readData: {
+          url: '/api/read',
+          method: 'GET',
+          ...config
+        },
+        updateData: {
+          url: '/api/update',
+          method: 'PUT',
+          ...config
+        }
+      }
+    });
+  }
 }
 
 function getPageBtn() {
@@ -98,14 +130,69 @@ beforeEach(() => {
 });
 
 it('initialize grid with server side data', () => {
-  createGridWithDataSource();
+  createGrid();
 
   assertDataLength(10);
   assertPagingData('name');
 });
 
+describe('create grid with dataSource config', () => {
+  ['dataSource', 'api'].forEach(optionType => {
+    it(`The ${optionType} config for ajax is applied properly`, () => {
+      const stub = cy.stub();
+      createGridWithConfig(optionType, stub);
+
+      cy.wait('@readPage1')
+        .its('requestHeaders')
+        .should('contain', { 'x-custom-header': 'x-custom-header' });
+      cy.wrap(stub).should('be.calledOnce');
+
+      stub.reset();
+
+      cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
+
+      cy.wait('@updateData')
+        .its('requestHeaders')
+        .should('contain', {
+          'x-custom-header': 'x-custom-header',
+          'Content-Type': 'application/json; charset=UTF-8'
+        });
+      cy.wrap(stub).should('be.calledOnce');
+    });
+  });
+
+  it('calling readData should be successful with initParams option', () => {
+    createGrid({
+      api: { readData: { url: '/api/read', method: 'GET', initParams: { a: '1' } } }
+    });
+    cy.wait('@readPageWithInitParams');
+
+    assertDataLength(10);
+    assertPagingData('name');
+  });
+
+  it('request should be successful with url function type option', () => {
+    createGrid({
+      api: { readData: { url: () => '/api/read', method: 'GET' } }
+    });
+    cy.wait('@readPage1');
+
+    assertDataLength(10);
+    assertPagingData('name');
+  });
+
+  it('hideLoadingBar option should be applied properly', () => {
+    createGrid({
+      api: { readData: { url: '/api/read', method: 'GET', initParams: { a: '1' } } },
+      hideLoadingBar: true
+    });
+
+    cy.get(`.${cls('layer-state-loading')}`, { timeout: 500 }).should('not.exist');
+  });
+});
+
 it('render grid with server side data when calls readData method', () => {
-  createGridWithDataSource({ ...data, initialRequest: false });
+  createGrid({ ...data, initialRequest: false });
 
   assertDataLength(0);
 
@@ -117,7 +204,7 @@ it('render grid with server side data when calls readData method', () => {
 
 describe('sort()', () => {
   beforeEach(() => {
-    createGridWithDataSource();
+    createGrid();
     cy.wait('@readPage1');
   });
 
@@ -154,7 +241,7 @@ describe('sort()', () => {
 
 describe('API', () => {
   beforeEach(() => {
-    createGridWithDataSource();
+    createGrid();
     cy.wait('@readPage1');
   });
 
@@ -189,7 +276,7 @@ describe('API', () => {
 });
 
 it('server side data is sorted properly when moves page', () => {
-  createGridWithDataSource({ ...data, initialRequest: false });
+  createGrid({ ...data, initialRequest: false });
 
   cy.gridInstance().invoke('readData', 2);
   cy.wait('@readPage2');
@@ -203,7 +290,7 @@ it('server side data is sorted properly when moves page', () => {
 
 describe('getModifiedRows(), request()', () => {
   beforeEach(() => {
-    createGridWithDataSource();
+    createGrid();
     cy.wait('@readPage1');
   });
 
@@ -252,7 +339,7 @@ describe('getModifiedRows(), request()', () => {
 
 describe('request()', () => {
   beforeEach(() => {
-    createGridWithDataSource();
+    createGrid();
     cy.wait('@readPage1');
   });
 
@@ -261,7 +348,7 @@ describe('request()', () => {
 
     cy.wait('@modifyData')
       .its('requestBody')
-      .should('contain', 'rows%5B0%5D%5Bid%5D=20&rows%5B0%5D%5Bname%5D=Chaos+And+The+Calm');
+      .should('contain', 'rows');
   });
 
   it('check request body when checkedOnly is true', () => {
@@ -299,8 +386,38 @@ describe('request()', () => {
 
     cy.wrap(stub).should('be.calledWithMatch', 'No data to create.');
   });
+});
 
-  it('stopping custom event prevents default.', () => {
+describe('custom request event', () => {
+  beforeEach(() => {
+    createGrid();
+  });
+
+  it('xhr instance is included as custom event parameter', () => {
+    const onBeforeRequest = cy.stub();
+    const onResponse = cy.stub();
+    const onSuccessResponse = cy.stub();
+
+    cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
+    cy.gridInstance().invoke('on', 'response', onResponse);
+    cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
+
+    setTimeout(() => {
+      cy.wait('@readPage1');
+
+      const xhr = {
+        url: 'http://localhost:8000/api/read?perPage=10&page=1'
+      };
+
+      cy.wrap(onBeforeRequest).should('be.calledWithMatch', { xhr });
+      cy.wrap(onResponse).should('be.calledWithMatch', { xhr });
+      cy.wrap(onSuccessResponse).should('be.calledWithMatch', { xhr });
+    });
+  });
+
+  it('stop custom event if prev event is prevented.', () => {
+    cy.wait('@readPage1');
+
     const onBeforeRequest = cy.stub();
     const onResponse = (ev: GridEvent) => {
       ev.stop();

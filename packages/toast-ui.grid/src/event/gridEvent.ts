@@ -7,7 +7,6 @@ import {
   SelectionRange,
   SortState
 } from '../store/types';
-import { XHROptions } from '../dataSource/types';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import Grid from '../grid';
@@ -23,7 +22,6 @@ interface GridEventProps {
   prevColumnName?: string | null;
   range?: SelectionRange | null;
   xhr?: XMLHttpRequest;
-  options?: XHROptions;
   sortState?: SortState;
   filterState?: Filter[] | null;
   resizedColumns?: ResizedColumn[];
