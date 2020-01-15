@@ -1,11 +1,16 @@
 import { CellValue, Row, SortedColumn, ViewRow } from '../store/types';
-import { isBlank, convertToNumber } from './common';
+import { isBlank, isNumber, convertToNumber } from './common';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);
   const isBlankB = isBlank(valueB);
-  const numberA = convertToNumber(valueA);
-  const numberB = convertToNumber(valueB);
+  let convertedA = convertToNumber(valueA);
+  let convertedB = convertToNumber(valueB);
+
+  if (!isNumber(convertedA) || !isNumber(convertedB)) {
+    convertedA = String(valueA);
+    convertedB = String(valueB);
+  }
 
   let result = 0;
 
@@ -13,9 +18,9 @@ export function compare(valueA: CellValue, valueB: CellValue) {
     result = -1;
   } else if (!isBlankA && isBlankB) {
     result = 1;
-  } else if (numberA < numberB) {
+  } else if (convertedA < convertedB) {
     result = -1;
-  } else if (numberA > numberB) {
+  } else if (convertedA > convertedB) {
     result = 1;
   }
 
