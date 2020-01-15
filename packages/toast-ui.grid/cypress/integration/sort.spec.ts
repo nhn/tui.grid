@@ -29,26 +29,20 @@ function assertHaveNotSortingBtnClass(target: string, className: ClassNameType) 
 }
 
 function assertOriginData(columnName: string) {
-  const testData = (data as Dictionary<any>[]).map(col => String(col[columnName]));
+  const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
 
-  cy.getColumnCells(columnName).each(($el, index) => {
-    cy.wrap($el).should('have.text', testData[index]);
-  });
+  cy.getColumnCells(columnName).should('columnData', expectValues);
 }
 
 function assertSortedData(columnName: string, ascending = true) {
-  const testData = (data as Dictionary<any>[]).map(col => String(col[columnName]));
-  testData.sort((a, b) => (ascending ? compare(a, b) : -compare(a, b)));
+  const expectValues = (data as Dictionary<any>[]).map(col => String(col[columnName]));
+  expectValues.sort((a, b) => (ascending ? compare(a, b) : -compare(a, b)));
 
-  cy.getColumnCells(columnName).each(($el, index) => {
-    cy.wrap($el).should('have.text', testData[index]);
-  });
+  cy.getColumnCells(columnName).should('columnData', expectValues);
 }
 
 function compareColumnData(columnName: string, expectValues: string[] | number[]) {
-  cy.getColumnCells(columnName).each(($el, index) => {
-    cy.wrap($el).should('have.text', expectValues[index]);
-  });
+  cy.getColumnCells(columnName).should('columnData', expectValues);
 }
 
 before(() => {
@@ -192,7 +186,7 @@ describe('basic sort', () => {
       compareColumnData('alphabetB', ['F', 'A', 'C', 'B', 'B', 'E', 'B', 'A', 'A']);
     });
 
-    it('multiple sorting is canceld by unsort API', () => {
+    it('multiple sorting is canceld', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('unsort', 'numberA');
       } else {
