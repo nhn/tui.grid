@@ -26,45 +26,39 @@ it('click', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'click', callback);
 
-  cy.getCell(1, 'name')
-    .click()
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'name',
-        targetType: 'cell'
-      });
-    });
+  cy.getCell(1, 'name').click();
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'name',
+    targetType: 'cell'
+  });
 });
 
 it('mouseover', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseover', callback);
 
-  cy.getCell(1, 'name')
-    .trigger('mouseover')
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'name',
-        targetType: 'cell'
-      });
-    });
+  cy.getCell(1, 'name').trigger('mouseover');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'name',
+    targetType: 'cell'
+  });
 });
 
 it('mousedown', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mousedown', callback);
 
-  cy.getCell(1, 'name')
-    .trigger('mousedown')
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'name',
-        targetType: 'cell'
-      });
-    });
+  cy.getCell(1, 'name').trigger('mousedown');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'name',
+    targetType: 'cell'
+  });
 });
 
 it('mousedown stop', () => {
@@ -72,94 +66,77 @@ it('mousedown stop', () => {
     ev.stop();
   });
 
-  cy.getCell(1, 'age')
-    .trigger('mousedown')
-    .then(() => {
-      cy.get(`${cls('layer-focus')}`).should('not.exist');
-    });
+  cy.getCell(1, 'age').trigger('mousedown');
+
+  cy.getByCls('layer-focus').should('have.class', cls('layer-focus-deactive'));
 });
 
 it('mouseout', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'mouseout', callback);
 
-  cy.getCell(1, 'name')
-    .trigger('mouseout')
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'name',
-        targetType: 'cell'
-      });
-    });
+  cy.getCell(1, 'name').trigger('mouseout');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'name',
+    targetType: 'cell'
+  });
 });
 
 it('dblclick', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'dblclick', callback);
 
-  cy.get(`.${cls('container')}`)
-    .dblclick()
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'name',
-        targetType: 'cell'
-      });
-    });
+  cy.getByCls('container').dblclick();
+
+  cy.wrap(callback).should('be.calledWithMatch', { targetType: 'cell' });
 });
 
 it('focus change', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'focusChange', callback);
 
-  cy.getCell(0, 'name')
-    .click()
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 0,
-        columnName: 'name',
-        prevRowKey: null,
-        prevColumnName: null
-      });
-    });
-  cy.getCell(1, 'age')
-    .click()
-    .then(() => {
-      expect(callback.args[1][0]).to.contain.subset({
-        rowKey: 1,
-        columnName: 'age',
-        prevRowKey: 0,
-        prevColumnName: 'name'
-      });
-    });
+  cy.getCell(0, 'name').click();
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 0,
+    columnName: 'name',
+    prevRowKey: null,
+    prevColumnName: null
+  });
+
+  cy.getCell(1, 'age').click();
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 1,
+    columnName: 'age',
+    prevRowKey: 0,
+    prevColumnName: 'name'
+  });
 });
 
 it('focus change by api', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'focusChange', callback);
 
-  cy.gridInstance()
-    .invoke('focus', 0, 'name')
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 0,
-        columnName: 'name',
-        prevRowKey: null,
-        prevColumnName: null
-      });
-    });
+  cy.gridInstance().invoke('focus', 0, 'name');
 
-  cy.gridInstance()
-    .invoke('blur')
-    .then(() => {
-      expect(callback.args[1][0]).to.contain.subset({
-        rowKey: null,
-        columnName: null,
-        prevRowKey: 0,
-        prevColumnName: 'name'
-      });
-    });
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 0,
+    columnName: 'name',
+    prevRowKey: null,
+    prevColumnName: null
+  });
+
+  cy.gridInstance().invoke('blur');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: null,
+    columnName: null,
+    prevRowKey: 0,
+    prevColumnName: 'name'
+  });
 });
 
 it('focus stop', () => {
@@ -167,54 +144,51 @@ it('focus stop', () => {
     ev.stop();
   });
 
-  cy.getCell(0, 'name')
-    .click()
-    .then(() => {
-      cy.get(`${cls('layer-focus')}`).should('not.exist');
-    });
+  cy.getCell(0, 'name').click();
+
+  cy.getByCls('layer-focus').should('not.exist');
 });
 
 it('check / uncheck', () => {
   const checkCallback = cy.stub();
   const uncheckCallback = cy.stub();
 
+  cy.getByCls('cell-row-header')
+    .get('input')
+    .eq(1)
+    .as('checkbox');
+
   cy.gridInstance().invoke('on', 'check', checkCallback);
   cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
 
-  cy.get(`.${cls('cell-row-header')}`)
-    .get('input')
-    .eq(1)
-    .click()
-    .then(() => {
-      expect(checkCallback.args[0][0]).to.contain.subset({ rowKey: 0 });
-    })
-    .click()
-    .then(() => {
-      expect(uncheckCallback.args[0][0]).to.contain.subset({ rowKey: 0 });
-    });
+  cy.get('@checkbox').click();
+
+  cy.wrap(checkCallback).should('be.calledWithMatch', { rowKey: 0 });
+
+  cy.get('@checkbox').click();
+
+  cy.wrap(uncheckCallback).should('be.calledWithMatch', { rowKey: 0 });
 });
 
 it('checkAll / uncheckAll', () => {
   const checkCallback = cy.stub();
   const uncheckCallback = cy.stub();
 
+  cy.getByCls('cell-row-header')
+    .get('input')
+    .eq(0)
+    .as('checkbox');
+
   cy.gridInstance().invoke('on', 'checkAll', checkCallback);
   cy.gridInstance().invoke('on', 'uncheckAll', uncheckCallback);
 
-  cy.get(`.${cls('cell-row-header')}`)
-    .get('input')
-    .eq(0)
-    .click()
-    .then(() => {
-      expect(checkCallback).to.be.called;
-    });
-  cy.get(`.${cls('cell-row-header')}`)
-    .get('input')
-    .eq(0)
-    .click()
-    .then(() => {
-      expect(uncheckCallback).to.be.called;
-    });
+  cy.get('@checkbox').click();
+
+  cy.wrap(checkCallback).should('be.calledOnce');
+
+  cy.get('@checkbox').click();
+
+  cy.wrap(uncheckCallback).should('be.calledOnce');
 });
 
 it('selection by api', () => {
@@ -222,11 +196,9 @@ it('selection by api', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'selection', callback);
 
-  cy.gridInstance()
-    .invoke('setSelectionRange', { start: [0, 0], end: [1, 1] })
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({ range: { column: [0, 1], row: [0, 1] } });
-    });
+  cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 1] });
+
+  cy.wrap(callback).should('be.calledWithMatch', { range: { column: [0, 1], row: [0, 1] } });
 });
 
 it('off', () => {
@@ -237,19 +209,18 @@ it('off', () => {
   cy.gridInstance().invoke('on', 'click', callback2);
   cy.gridInstance().invoke('off', 'click', callback1);
 
-  cy.get(`.${cls('container')}`)
-    .click()
-    .then(() => {
-      expect(callback1).not.to.be.called;
-      expect(callback2).to.be.called;
-    });
+  cy.getByCls('container').click();
+
+  cy.wrap(callback2).should('not.be.calledTwice');
+
+  cy.wrap(callback1).should('not.be.called');
+  cy.wrap(callback2).should('be.calledOnce');
 
   cy.gridInstance().invoke('off', 'click');
-  cy.get(`.${cls('container')}`)
-    .click()
-    .then(() => {
-      expect(callback2).not.to.be.calledTwice;
-    });
+
+  cy.getByCls('container').click();
+
+  cy.wrap(callback2).should('not.be.calledTwice');
 });
 
 it('sort', () => {
@@ -257,16 +228,14 @@ it('sort', () => {
 
   cy.gridInstance().invoke('on', 'sort', callback);
 
-  cy.gridInstance()
-    .invoke('sort', 'name', false)
-    .then(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true }
-      });
-    });
+  cy.gridInstance().invoke('sort', 'name', false);
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true }
+  });
 });
 
-it('gridMounted', () => {
+it('onGridMounted', () => {
   const callback = cy.stub();
 
   cy.createGrid({
@@ -274,14 +243,26 @@ it('gridMounted', () => {
     columns,
     rowHeaders: ['rowNum', 'checkbox'],
     onGridMounted: callback
-  }).then(() => {
-    setTimeout(() => {
-      expect(callback).to.be.calledOnce;
-    });
   });
+
+  cy.wrap(callback).should('be.calledOnce');
 });
 
-it('gridBeforeDestroy', () => {
+it('onGridUpdated', () => {
+  const callback = cy.stub();
+  const newData = [{ name: 'Lee', age: 20 }];
+
+  cy.createGrid({
+    data,
+    columns,
+    onGridUpdated: callback
+  });
+  cy.gridInstance().invoke('resetData', newData);
+
+  cy.wrap(callback).should('be.calledOnce');
+});
+
+it('onGridBeforeDestroy', () => {
   const callback = cy.stub();
 
   cy.createGrid({
@@ -290,11 +271,9 @@ it('gridBeforeDestroy', () => {
     rowHeaders: ['rowNum', 'checkbox'],
     onGridBeforeDestroy: callback
   });
-  cy.gridInstance()
-    .invoke('destroy')
-    .should(() => {
-      expect(callback).to.be.calledOnce;
-    });
+  cy.gridInstance().invoke('destroy');
+
+  cy.wrap(callback).should('be.calledOnce');
 });
 
 it('columnResize', () => {
@@ -306,12 +285,11 @@ it('columnResize', () => {
     .first()
     .trigger('mousedown')
     .trigger('mousemove', { pageX: 400 })
-    .trigger('mouseup')
-    .should(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        resizedColumns: [{ columnName: 'name', width: 311 }]
-      });
-    });
+    .trigger('mouseup');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    resizedColumns: [{ columnName: 'name', width: 311 }]
+  });
 });
 
 ['API', 'UI'].forEach(method => {
@@ -326,12 +304,10 @@ it('columnResize', () => {
       cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
     }
 
-    cy.should(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 0,
-        columnName: 'name',
-        value: 'Kim'
-      });
+    cy.wrap(callback).should('be.calledWithMatch', {
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim'
     });
   });
 });
@@ -342,15 +318,13 @@ it('editingFinish', () => {
   cy.gridInstance().invoke('on', 'editingFinish', callback);
 
   cy.gridInstance().invoke('startEditing', 0, 'name');
-  cy.gridInstance()
-    .invoke('finishEditing', 0, 'name', 'Ryu')
-    .should(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        rowKey: 0,
-        columnName: 'name',
-        value: 'Ryu'
-      });
-    });
+  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Ryu');
+
+  cy.wrap(callback).should('be.calledWithMatch', {
+    rowKey: 0,
+    columnName: 'name',
+    value: 'Ryu'
+  });
 });
 
 it('filter', () => {
@@ -358,13 +332,13 @@ it('filter', () => {
 
   cy.gridInstance().invoke('on', 'filter', callback);
 
-  cy.gridInstance()
-    .invoke('filter', 'age', [{ code: 'eq', value: 20 }])
-    .should(() => {
-      expect(callback.args[0][0]).to.contain.subset({
-        filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
-      });
+  cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
+
+  cy.wrap(callback).should(() => {
+    expect(callback.args[0][0]).to.contain.subset({
+      filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
     });
+  });
 });
 
 it('when calling editingStart and editingFinish by API, both callback execute.', () => {
