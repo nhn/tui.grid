@@ -26,6 +26,7 @@ export type DataProvider = {
   request: (requestType: RequestType, options: RequestOptions) => void | never;
   readData: (page: number, data?: Params, resetData?: boolean) => void | never;
   reloadData: () => void | never;
+  setRequestParams: (params: Record<string, any>) => void | never;
 };
 
 export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
@@ -37,6 +38,8 @@ export type Config = {
   dispatch: Dispatch;
   setLastRequiredData: (params: Params) => void;
   getLastRequiredData: () => Params;
+  setRequestParams: (params: Record<string, any>) => void;
+  getRequestParams: () => Record<string, any>;
 };
 
 export type DataSource = {
