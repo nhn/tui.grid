@@ -70,13 +70,14 @@ class BodyAreaComp extends Component<Props> {
   };
 
   private handleMouseDown = (ev: MouseEvent) => {
-    if (!this.el || ev.target === this.el) {
+    const targetElement = ev.target as HTMLElement;
+    if (!this.el || targetElement === this.el) {
       return;
     }
 
     const { side, dispatch } = this.props;
 
-    if (hasClass(ev.target as HTMLElement, 'cell-dummy')) {
+    if (hasClass(targetElement, 'cell-dummy')) {
       dispatch('initFocus');
       dispatch('initSelection');
       return;
@@ -89,7 +90,7 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    if (!isDatePickerElement(ev.target as HTMLElement)) {
+    if (!isDatePickerElement(targetElement)) {
       dispatch(
         'mouseDownBody',
         { scrollTop, scrollLeft, side, ...this.boundingRect },
