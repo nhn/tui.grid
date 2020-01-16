@@ -17,6 +17,7 @@ import { CellRendererClass, HeaderRendererClass } from './renderer/types';
 import { CellEditorClass } from './editor/types';
 import { DataSource } from './dataSource/types';
 import { keyNameMap } from './helper/keyboard';
+import GridEvent from './event/gridEvent';
 
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
@@ -24,6 +25,10 @@ export type AlignType = 'left' | 'center' | 'right';
 export type KeyNameMap = typeof keyNameMap & {
   [keyCode: number]: string | undefined;
 };
+
+export type LifeCycleEventNames = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
+
+export type CustomEventFunction = (ev: GridEvent) => void;
 
 export interface OptGrid {
   el: HTMLElement;
@@ -52,8 +57,9 @@ export interface OptGrid {
   header?: OptHeader;
   usageStatistics?: boolean;
   disabled?: boolean;
-  onGridMounted?: Function;
-  onGridBeforeDestroy?: Function;
+  onGridMounted?: CustomEventFunction;
+  onGridUpdated?: CustomEventFunction;
+  onGridBeforeDestroy?: CustomEventFunction;
 }
 
 export type SummaryPosition = 'top' | 'bottom';

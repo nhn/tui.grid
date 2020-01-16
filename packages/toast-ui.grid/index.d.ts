@@ -607,8 +607,9 @@ declare namespace tuiGrid {
     treeColumnOptions?: ITree;
     header?: IHeader;
     usageStatistics?: boolean;
-    onGridMounted?: Function;
-    onGridBeforeDestroy?: Function;
+    onGridMounted?: (ev: GridEvent) => void;
+    onGridUpdated?: (ev: GridEvent) => void;
+    onGridBeforeDestroy?: (ev: GridEvent) => void;
     tabMode?: TabMode;
     disabled?: boolean;
   }
@@ -629,6 +630,42 @@ declare namespace tuiGrid {
     on(eventType: string, callback: (evt: any) => void): void;
 
     off(eventType: string): void;
+  }
+
+  type Range = [number, number];
+
+  interface SelectionRange {
+    row: Range;
+    column: Range;
+  }
+
+  interface ResizedColumn {
+    columnName: string;
+    width: number;
+  }
+
+  interface GridEventProps {
+    value?: CellValue;
+    event?: MouseEvent;
+    rowKey?: RowKey | null;
+    columnName?: string | null;
+    prevRowKey?: RowKey | null;
+    prevColumnName?: string | null;
+    range?: SelectionRange | null;
+    xhr?: XMLHttpRequest;
+    sortState?: SortState;
+    filterState?: IFilter[] | null;
+    resizedColumns?: ResizedColumn[];
+  }
+
+  class GridEvent {
+    constructor(props: GridEventProps);
+
+    public stop(): void;
+
+    public isStopped(): boolean;
+
+    public assignData(data: GridEventProps): void;
   }
 
   class Grid {
