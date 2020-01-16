@@ -71,9 +71,9 @@ export class EditingLayerComp extends Component<Props> {
   };
 
   private finishEditing(save: boolean) {
-    const { dispatch, editingAddress } = this.props;
-    if (this.editor && editingAddress) {
-      const { rowKey, columnName } = editingAddress;
+    const { dispatch, editingAddress, active } = this.props;
+    if (this.editor && active) {
+      const { rowKey, columnName } = editingAddress!;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
@@ -126,23 +126,21 @@ export class EditingLayerComp extends Component<Props> {
     } = this.props;
     const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
-    if (prevActive && !active) {
-      if (this.editor && this.editor.beforeDestroy) {
-        this.editor.beforeDestroy();
+    if (prevActive) {
+      if (!active) {
+        if (this.editor && this.editor.beforeDestroy) {
+          this.editor.beforeDestroy();
+        }
+
+        if (forcedDestroyEditing) {
+          this.finishEditing(true);
+          return;
+        }
       }
 
-      if (forcedDestroyEditing) {
+      if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
         this.finishEditing(true);
       }
-
-      return;
-    }
-
-    if (
-      prevActive &&
-      (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey)
-    ) {
-      this.finishEditing(true);
     }
   }
 
@@ -156,7 +154,7 @@ export class EditingLayerComp extends Component<Props> {
     const width = right - left;
 
     const editorStyles = {
-      top,
+      top: top ? top : cellBorderWidth,
       left,
       width: width + cellBorderWidth,
       height: height + cellBorderWidth,
@@ -199,4 +197,4 @@ export const EditingLayer = connect<StoreProps, OwnProps>((store, { side }) => {
     filteredViewData: data.filteredViewData,
     allColumnMap: column.allColumnMap
   };
-})(EditingLayerComp);
+}, true)(EditingLayerComp);

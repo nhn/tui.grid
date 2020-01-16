@@ -191,8 +191,8 @@ export function saveAndFinishEditing(store: Store, value?: string) {
 
   // if value is 'undefined', editing result is saved and finished.
   if (isUndefined(value)) {
-    focus.editingAddress = null;
     focus.forcedDestroyEditing = true;
+    focus.editingAddress = null;
     focus.navigating = true;
     return;
   }
