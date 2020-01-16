@@ -9,6 +9,7 @@ import { createAjaxConfig } from './helper/ajaxConfig';
 
 function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource): Config {
   let lastRequiredData: Params = { perPage: store.data.pageOptions.perPage };
+  let requestParams: Record<string, any> = {};
 
   const { api, hideLoadingBar = false } = dataSource;
   const ajaxConfig = createAjaxConfig(dataSource);
@@ -20,6 +21,10 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
   const setLastRequiredData = (params: Params) => {
     lastRequiredData = params;
   };
+  const getRequestParams = () => requestParams;
+  const setRequestParams = (params: Params) => {
+    requestParams = params;
+  };
 
   return {
     api,
@@ -27,7 +32,9 @@ function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource):
     store,
     dispatch,
     setLastRequiredData,
-    getLastRequiredData
+    getLastRequiredData,
+    setRequestParams,
+    getRequestParams
   };
 }
 
@@ -39,7 +46,8 @@ function createFallbackProvider(): DataProvider {
   return {
     request: errorFn,
     readData: errorFn,
-    reloadData: errorFn
+    reloadData: errorFn,
+    setRequestParams: errorFn
   };
 }
 
@@ -59,6 +67,7 @@ export function createProvider(store: Store, dispatch: Dispatch, data?: OptRow[]
     provider.request = request.bind(null, config);
     provider.readData = readData.bind(null, config);
     provider.reloadData = reloadData.bind(null, config);
+    provider.setRequestParams = config.setRequestParams;
 
     if (initialRequest) {
       readData(config, 1, api.readData.initParams);
