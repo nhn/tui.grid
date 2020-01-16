@@ -273,6 +273,26 @@ describe('API', () => {
     getPageBtn().should('have.length', 8);
     assertPagingData('id', 1, 5);
   });
+
+  context('setRequestParams()', () => {
+    it('with readData API', () => {
+      cy.gridInstance().invoke('setRequestParams', { a: 2 });
+      cy.gridInstance().invoke('readData', 1);
+
+      cy.wait('@readPageWithRequestParams')
+        .its('status')
+        .should('eq', 200);
+    });
+
+    it('with request API', () => {
+      cy.gridInstance().invoke('setRequestParams', { a: 2 });
+      cy.gridInstance().invoke('request', 'updateData', { showConfirm: false });
+
+      cy.wait('@updateData')
+        .its('requestBody')
+        .should('eq', 'a=2');
+    });
+  });
 });
 
 it('server side data is sorted properly when moves page', () => {
