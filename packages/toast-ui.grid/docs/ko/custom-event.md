@@ -123,6 +123,7 @@ grid.on('mousedown', (ev) => {
 - `onBeforeChange` : 셀의 값이 변경되기 전
 - `onAfterChange` : 셀의 값이 변경된 후
 - `onGridMounted` : Grid가 DOM에 렌더링된 후
+- `onGridUpdated` : Grid의 모든 데이터가 변경되고 Grid가 DOM에 렌더링 된 후
 - `onGridBeforeDestroy` : Grid가 DOM에서 사라지기 전
 
 이벤트에 대한 자세한 정보는 [API 문서](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest)에서 살펴볼 수 있다.

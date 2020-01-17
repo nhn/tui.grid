@@ -122,7 +122,8 @@ The following events can be added using option configurations.
 
 - `onBeforeChange`: Before the value of the cell is changed
 - `onAfterChange`: After the value of the cell is changed
-- `onGridMounted`: When the Gird has successfully rendered onto the DOM
+- `onGridMounted`: When the Grid has successfully rendered onto the DOM
+- `onGridUpdated`: When the Grid data has updated and the Grid has rendered onto the DOM
 - `onGridBeforeDestroy`: Before the Grid is removed from the DOM
 
 You can see the detail information of these events at the [API page](https://nhn.github.io/tui.grid/latest/Grid#event-beforeRequest).
