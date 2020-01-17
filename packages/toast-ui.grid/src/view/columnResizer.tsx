@@ -113,8 +113,11 @@ class ColumnResizerComp extends Component<Props> {
     const idx = findPropIndex('name', name, columns);
 
     if (idx === -1) {
-      const { childNames } = findProp('name', name, complexColumns)!;
-      return this.findComplexColumnStartIndex(childNames[0]);
+      const complexColumn = findProp('name', name, complexColumns);
+      if (complexColumn) {
+        return this.findComplexColumnStartIndex(complexColumn.childNames[0]);
+      }
+      return Number.MAX_VALUE;
     }
 
     return idx;
@@ -125,8 +128,12 @@ class ColumnResizerComp extends Component<Props> {
     const idx = findPropIndex('name', name, columns);
 
     if (idx === -1) {
-      const { childNames } = findProp('name', name, complexColumns)!;
-      return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
+      const complexColumn = findProp('name', name, complexColumns);
+      if (complexColumn) {
+        const { childNames } = complexColumn;
+        return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
+      }
+      return Number.MIN_VALUE;
     }
 
     return idx;

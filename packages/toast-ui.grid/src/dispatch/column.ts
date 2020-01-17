@@ -161,10 +161,10 @@ function setColumnsHiddenValue(column: Column, columnName: string, hidden: boole
       complexColumn.childNames.forEach(childName => {
         allColumnMap[childName].hidden = hidden;
       });
+      return;
     }
-  } else if (allColumnMap[columnName]) {
-    allColumnMap[columnName].hidden = hidden;
   }
+  allColumnMap[columnName].hidden = hidden;
 }
 
 export function hideColumn(store: Store, columnName: string) {

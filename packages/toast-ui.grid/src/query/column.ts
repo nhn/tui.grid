@@ -76,11 +76,13 @@ export function getChildHeaderCount(
   let count = 0;
   const leafColumn = someProp('name', name, columns);
   if (!leafColumn) {
-    const { childNames } = findProp('name', name, complexColumns)!;
-    childNames.forEach(childName => {
-      const leafChildColumn = someProp('name', childName, columns);
-      count += leafChildColumn ? 1 : getChildHeaderCount(columns, complexColumns, childName);
-    });
+    const complexColumn = findProp('name', name, complexColumns);
+    if (complexColumn) {
+      complexColumn.childNames.forEach(childName => {
+        const leafChildColumn = someProp('name', childName, columns);
+        count += leafChildColumn ? 1 : getChildHeaderCount(columns, complexColumns, childName);
+      });
+    }
   }
 
   return count;
