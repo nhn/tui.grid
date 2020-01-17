@@ -573,12 +573,14 @@ export function resetData(store: Store, inputData: OptRow[]) {
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
 
-  /**
-   * Occurs when a checkbox in row header is checked
-   * @event Grid#check
-   * @property {Grid} instance - Current grid instance
-   */
-  eventBus.trigger('onGridUpdated', gridEvent);
+  setTimeout(() => {
+    /**
+     * Occurs when a checkbox in row header is checked
+     * @event Grid#check
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('onGridUpdated', gridEvent);
+  });
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {
