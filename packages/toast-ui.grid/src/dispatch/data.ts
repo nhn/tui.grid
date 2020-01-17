@@ -575,7 +575,9 @@ export function resetData(store: Store, inputData: OptRow[]) {
 
   setTimeout(() => {
     /**
-     * Occurs when a checkbox in row header is checked
+     * Occurs when the grid data is updated and the grid is rendered onto the DOM
+     * The event occurs only in the following API as below.
+     * `resetData`, `restore`, `reloadData`, `readData`, `setPerPage` with `dataSource`, using `dataSource`
      * @event Grid#check
      * @property {Grid} instance - Current grid instance
      */
