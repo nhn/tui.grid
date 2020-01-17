@@ -1,8 +1,6 @@
 import { AlignType, VAlignType } from '@/types';
 import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '@/renderer/types';
 
-export {};
-
 class CustomRenderer implements HeaderRenderer {
   private el: HTMLElement;
 
@@ -112,6 +110,16 @@ describe('complex column header', () => {
     cy.getCell(0, 'name').should('exist');
     // complex column header
     cy.getHeaderCell('complexColumn').should('exist');
+  });
+
+  it('hideColumn(), showColumn() with normal header included in complex column', () => {
+    cy.gridInstance().invoke('hideColumn', 'grade');
+
+    cy.getColumnCells('grade').should('not.exist');
+
+    cy.gridInstance().invoke('showColumn', 'grade');
+
+    cy.getColumnCells('grade').should('exist');
   });
 
   it('hideColumn(), showColumn() with merged header', () => {
