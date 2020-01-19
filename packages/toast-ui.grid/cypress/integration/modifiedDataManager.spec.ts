@@ -38,8 +38,8 @@ function assertModifiedRowsLength(lengthMap: ModifiedRowsLengthMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
     .should(rows => {
-      Cypress.$.each(rows, (type: keyof ModifiedRowsLengthMap) => {
-        expect(rows[type]).to.have.length(lengthMap[type]);
+      Object.keys(rows).forEach(type => {
+        expect(rows[type]).to.have.length(lengthMap[type as keyof ModifiedRowsLengthMap]);
       });
     });
 }
@@ -48,11 +48,8 @@ function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
   cy.gridInstance()
     .invoke('getModifiedRows')
     .should(rows => {
-      Cypress.$.each(modifiedRowsMap, (type: keyof ModifiedRowsMap) => {
-        const targetModifiedRows = rows[type];
-        modifiedRowsMap[type]!.forEach((row, index) => {
-          expect(targetModifiedRows[index]).to.contain(row);
-        });
+      Object.keys(modifiedRowsMap).forEach(type => {
+        expect(rows[type][0]).to.contain(modifiedRowsMap[type as keyof ModifiedRowsMap]![0]);
       });
     });
 }
@@ -105,4 +102,36 @@ it('should add deleted row to only deletedRows property, regardless of modifying
 
   assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 1 });
   assertModifiedRowsContainsObject({ deletedRows: [{ name: 'JIN', age: 10 }] });
+});
+
+describe('clearModifiedData API', () => {
+  beforeEach(() => {
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
+    cy.gridInstance().invoke('setValue', 0, 'name', 'JIN');
+    cy.gridInstance().invoke('removeRow', 1);
+  });
+
+  it('should clear the specific modified data', () => {
+    assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 1 });
+
+    cy.gridInstance().invoke('clearModifiedData', 'CREATE');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 1, deletedRows: 1 });
+
+    cy.gridInstance().invoke('clearModifiedData', 'UPDATE');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 1 });
+
+    cy.gridInstance().invoke('clearModifiedData', 'DELETE');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 0 });
+  });
+
+  it('should clear the all modified data', () => {
+    assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 1 });
+
+    cy.gridInstance().invoke('clearModifiedData');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 0 });
+  });
 });
