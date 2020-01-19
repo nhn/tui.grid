@@ -5,7 +5,13 @@ import { RowKey } from '@/store/types';
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
-    cy.get(`.${cls('tree-extra-content')}`).should('have.class', cls('tree-button-expand'));
+    cy.getByCls('tree-extra-content').should('have.class', cls('tree-button-expand'));
+  });
+}
+
+function assertToggleButtonCollapsed(rowKey: RowKey, columnName: string) {
+  cy.getCell(rowKey, columnName).within(() => {
+    cy.getByCls('tree-extra-content').should('not.have.class', cls('tree-button-expand'));
   });
 }
 
@@ -17,64 +23,56 @@ function assertCheckedState(checked: boolean) {
   });
 }
 
+function assertDisabledState(disabled: boolean) {
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.disabled).eq(disabled);
+    });
+  });
+}
+
+function scrollToBottom() {
+  // sometimes cypress scrollTo is not worked
+  // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 400);
+
+  // to move scroll position
+  cy.gridInstance().invoke('focus', 18, 'name');
+}
+
 before(() => {
   cy.visit('/dist');
 });
 
-beforeEach(() => {
-  const columns = [
-    { name: 'name', editor: 'text' },
-    { name: 'artist', editor: 'text' },
-    { name: 'type', editor: 'text' }
-  ];
+describe('should API is executed properly on lazy observable data', () => {
+  beforeEach(() => {
+    const columns = [
+      { name: 'name', editor: 'text' },
+      { name: 'artist', editor: 'text' },
+      { name: 'type', editor: 'text' }
+    ];
 
-  cy.createGrid({ data, columns, rowHeaders: ['checkbox'], bodyHeight: 400 });
-});
-
-function scrollToBottom() {
-  cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 400);
-}
-
-describe('API test on lazy observable data', () => {
-  it('focus / blur api', () => {
-    cy.gridInstance().invoke('focus', 18, 'name');
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { rowKey: 18, columnName: 'name', value: 'The Magic Whip' });
-
-    cy.gridInstance().invoke('blur');
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { rowKey: null, columnName: null, value: null });
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'], bodyHeight: 400 });
   });
 
-  it('startEditing api', () => {
+  it('startEditing()', () => {
     cy.gridInstance().invoke('startEditing', 18, 'name', 'Lee');
-    cy.get(`.${cls('content-text')}`).type('Lee{enter}');
 
-    cy.gridInstance()
-      .invoke('getValue', 18, 'name')
-      .should('eql', 'Lee');
-
-    scrollToBottom();
-
-    cy.getCell(18, 'name').contains('Lee');
+    cy.getByCls('content-text').should('be.visible');
   });
 
-  it('finishEditing api', () => {
+  it('finishEditing()', () => {
     cy.gridInstance().invoke('startEditing', 18, 'name');
     cy.gridInstance().invoke('finishEditing', 18, 'name', 'Kim');
+
     cy.gridInstance()
       .invoke('getValue', 18, 'name')
-      .should('eql', 'Kim');
-
-    scrollToBottom();
-
-    cy.getCell(18, 'name').contains('Kim');
+      .should('eq', 'Kim');
+    cy.getCell(18, 'name').should('have.text', 'Kim');
   });
 
-  it('checkAll / uncheckAll api', () => {
+  it('checkAll() / uncheckAll()', () => {
     cy.gridInstance().invoke('checkAll');
+
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
       .should('have.length', 20);
@@ -84,6 +82,7 @@ describe('API test on lazy observable data', () => {
     assertCheckedState(true);
 
     cy.gridInstance().invoke('uncheckAll');
+
     cy.gridInstance()
       .invoke('getCheckedRowKeys')
       .should('have.length', 0);
@@ -91,124 +90,116 @@ describe('API test on lazy observable data', () => {
     assertCheckedState(false);
   });
 
-  it('check / uncheck api', () => {
+  it('check() / uncheck()', () => {
     cy.gridInstance().invoke('checkAll');
-    cy.gridInstance()
-      .invoke('getCheckedRowKeys')
-      .should('have.length', 20);
-
-    assertCheckedState(true);
-
     cy.gridInstance().invoke('uncheck', 18);
 
     scrollToBottom();
 
-    cy.getCell(18, '_checked').within(() => {
-      cy.get('input').should('be.not.checked');
-    });
+    cy.getCell(18, '_checked')
+      .find('input')
+      .should('be.not.checked');
 
     cy.gridInstance().invoke('check', 18);
 
     assertCheckedState(true);
   });
 
-  it('findRow api', () => {
-    cy.gridInstance().invoke('startEditing', 18, 'name');
-    cy.gridInstance().invoke('finishEditing', 18, 'name', 'Lee');
+  it('findRow()', () => {
     cy.gridInstance()
-      .invoke('findRows', { name: 'Lee' })
+      .invoke('findRows', { name: '21' })
       .should('have.length', 1);
   });
 
-  it('disable api', () => {
+  it('disable()', () => {
     cy.gridInstance().invoke('disable');
 
     scrollToBottom();
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.disabled).to.be.true;
-      });
-    });
-
-    cy.get(`td.${cls('cell')}`).should($el => {
-      $el.each((_, elem) => {
-        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
-      });
+    assertDisabledState(true);
+    cy.get(`td.${cls('cell')}`).each($el => {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
 
-  it('disableRowCheck / disableRow api', () => {
+  it('disableRow()', () => {
     cy.gridInstance().invoke('disableRow', 17);
+
+    scrollToBottom();
+
+    cy.getCell(17, 'name').should('have.class', cls('cell-disabled'));
+    cy.getCell(17, 'artist').should('have.class', cls('cell-disabled'));
+    cy.getCell(17, 'type').should('have.class', cls('cell-disabled'));
+
+    cy.getCell(17, '_checked').should('have.class', cls('cell-disabled'));
+    cy.getCell(17, '_checked')
+      .find('input')
+      .should('be.disabled');
+  });
+
+  it('disableRowCheck()', () => {
     cy.gridInstance().invoke('disableRowCheck', 18);
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('have.class', `${cls('cell-disabled')}`);
-    cy.getCell(17, 'artist').should('have.class', `${cls('cell-disabled')}`);
-    cy.getCell(17, 'type').should('have.class', `${cls('cell-disabled')}`);
+    cy.getCell(17, 'name').should('not.have.class', `${cls('cell-disabled')}`);
+    cy.getCell(17, 'artist').should('not.have.class', `${cls('cell-disabled')}`);
+    cy.getCell(17, 'type').should('not.have.class', `${cls('cell-disabled')}`);
 
-    cy.getCell(18, '_checked').within(() => {
-      cy.get('input').should('have.attr', 'disabled');
-    });
+    cy.getCell(18, '_checked').should('have.class', cls('cell-disabled'));
+    cy.getCell(18, '_checked')
+      .find('input')
+      .should('be.disabled');
   });
 
-  it('addCellClassName / removeCellClassName api', () => {
+  it('addCellClassName() / removeCellClassName()', () => {
     cy.gridInstance().invoke('addCellClassName', 17, 'name', 'tui-grid-cell-test');
     cy.gridInstance().invoke('removeCellClassName', 17, 'name', 'tui-grid-cell-test');
     cy.gridInstance().invoke('addCellClassName', 18, 'name', 'tui-grid-cell-test');
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('have.not.class', 'tui-grid-cell-test');
+    cy.getCell(17, 'name').should('not.have.class', 'tui-grid-cell-test');
     cy.getCell(18, 'name').should('have.class', 'tui-grid-cell-test');
   });
 
-  it('addRowClassName / removeRowClassName api', () => {
+  it('addRowClassName() / removeRowClassName()', () => {
     cy.gridInstance().invoke('addRowClassName', 17, 'tui-grid-cell-test');
     cy.gridInstance().invoke('removeRowClassName', 17, 'tui-grid-cell-test');
     cy.gridInstance().invoke('addRowClassName', 18, 'tui-grid-cell-test');
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('have.not.class', 'tui-grid-cell-test');
-    cy.getCell(17, 'artist').should('have.not.class', 'tui-grid-cell-test');
-    cy.getCell(17, 'type').should('have.not.class', 'tui-grid-cell-test');
+    cy.getCell(17, 'name').should('not.have.class', 'tui-grid-cell-test');
+    cy.getCell(17, 'artist').should('not.have.class', 'tui-grid-cell-test');
+    cy.getCell(17, 'type').should('not.have.class', 'tui-grid-cell-test');
 
     cy.getCell(18, 'name').should('have.class', 'tui-grid-cell-test');
     cy.getCell(18, 'artist').should('have.class', 'tui-grid-cell-test');
     cy.getCell(18, 'type').should('have.class', 'tui-grid-cell-test');
   });
 
-  it('appendRow api', () => {
-    cy.gridInstance().invoke('appendRow', { name: 'Lee', artist: 'Lee', type: 'test' });
-    cy.gridInstance()
-      .invoke('getRowCount')
-      .should('eq', 21);
-    cy.gridInstance()
-      .invoke('getRow', 20)
-      .should(row => {
-        expect(row).to.contain({ name: 'Lee', artist: 'Lee', type: 'test' });
-      });
+  it('appendRow()', () => {
+    cy.gridInstance().invoke(
+      'appendRow',
+      { name: 'Lee', artist: 'Lee', type: 'test' },
+      { focus: true }
+    );
 
-    cy.gridInstance().invoke('focus', 20, 'name', true);
-    cy.getCell(20, 'name').should($el => {
-      expect($el.text()).to.be.eq('Lee');
-    });
+    cy.getCell(20, 'name').should('have.text', 'Lee');
   });
 
-  it('resetData api', () => {
+  it('resetData()', () => {
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', artist: 'Lee', type: 'test' }]);
-    cy.gridInstance()
-      .invoke('getRowCount')
-      .should('eq', 1);
-    cy.getCell(0, 'name').should($el => {
-      expect($el.text()).to.be.eq('Lee');
-    });
-  });
 
-  it('expandAll, focusAt api', () => {
+    cy.getCell(0, 'name').should('have.text', 'Lee');
+    cy.getCell(0, 'artist').should('have.text', 'Lee');
+    cy.getCell(0, 'type').should('have.text', 'test');
+  });
+});
+
+describe('should API is executed properly on lazy observable data(tree)', () => {
+  beforeEach(() => {
     const columns = [{ name: 'name' }, { name: 'artist' }, { name: 'type' }];
 
     cy.createGrid({
@@ -220,16 +211,40 @@ describe('API test on lazy observable data', () => {
         useIcon: false
       }
     });
+  });
 
+  it('expandAll()', () => {
     cy.gridInstance().invoke('expandAll');
-    cy.gridInstance().invoke('focusAt', 16, 0, true);
 
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { rowKey: 16, columnName: 'name', value: 'This Is Acting' });
+    scrollToBottom();
+
     assertToggleButtonExpanded(12, 'name');
     assertToggleButtonExpanded(13, 'name');
     assertToggleButtonExpanded(14, 'name');
     assertToggleButtonExpanded(15, 'name');
+  });
+
+  it('collapseAll()', () => {
+    cy.gridInstance().invoke('expandAll');
+    cy.gridInstance().invoke('collapseAll');
+
+    scrollToBottom();
+
+    assertToggleButtonCollapsed(12, 'name');
+    cy.getCell(13, 'name').should('be.not.exist');
+    cy.getCell(14, 'name').should('be.not.exist');
+    cy.getCell(15, 'name').should('be.not.exist');
+  });
+
+  it('expand(), collapse()', () => {
+    cy.gridInstance().invoke('expand', 12);
+    cy.gridInstance().invoke('expand', 14);
+    cy.gridInstance().invoke('collapse', 14);
+
+    scrollToBottom();
+
+    assertToggleButtonExpanded(12, 'name');
+    assertToggleButtonCollapsed(14, 'name');
+    cy.getCell(15, 'name').should('be.not.exist');
   });
 });
