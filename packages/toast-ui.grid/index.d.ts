@@ -566,6 +566,8 @@ declare namespace tuiGrid {
     columnInfo: ColumnHeaderInfo;
   };
 
+  type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
+
   interface HeaderRenderer {
     getElement(): HTMLElement;
     render(props: HeaderRendererProps): void;
@@ -676,7 +678,7 @@ declare namespace tuiGrid {
     range?: SelectionRange | null;
     xhr?: XMLHttpRequest;
     sortState?: SortState;
-    filterState?: IFilter[] | null;
+    filterState?: Filter[] | null;
     resizedColumns?: ResizedColumn[];
   }
 
@@ -893,6 +895,8 @@ declare namespace tuiGrid {
     public moveRow(rowKey: RowKey, targetIndex: number): void;
 
     public setRequestParams(params: Dictionary<any>): void;
+
+    public clearModifiedData(type?: ModificationTypeCode): void;
   }
 }
 
