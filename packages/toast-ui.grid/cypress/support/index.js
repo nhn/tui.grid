@@ -45,6 +45,17 @@ chai.use(_chai => {
 
     new _chai.Assertion(actual).to.be.eql(values);
   });
+
+  _chai.Assertion.addMethod('columnData', function(columnData) {
+    new _chai.Assertion(columnData).to.be.exist;
+    const cells = this._obj;
+
+    new _chai.Assertion(cells.length).to.be.eql(columnData.length);
+
+    const actual = [...cells].map(cell => cell.textContent);
+
+    new _chai.Assertion(actual).to.be.eql(columnData);
+  });
 });
 
 // Alternatively you can use CommonJS syntax:

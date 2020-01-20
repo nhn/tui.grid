@@ -19,7 +19,7 @@ const columns = [
 const defaultGridOptions = { data, columns, scrollY: true, bodyHeight: 400 };
 
 function checkGridHasRightRowNumber() {
-  cy.get('td[data-column-name=_number]').each(($el, idx) => {
+  cy.getNumberRowHeaderCells().each(($el, idx) => {
     expect($el.text()).to.contain(`${idx + 1}`);
   });
 }
