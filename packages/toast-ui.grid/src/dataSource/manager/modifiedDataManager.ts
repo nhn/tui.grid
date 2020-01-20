@@ -6,9 +6,10 @@ import {
   ModifiedRowsOptions,
   ModifiedDataManager,
   ModifiedRows,
-  RequestTypeCode
+  RequestTypeCode,
+  MutationParams
 } from '../types';
-import { someProp, findIndex, isUndefined, omit } from '../../helper/common';
+import { someProp, findIndex, isUndefined, omit, isObject } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
@@ -65,6 +66,11 @@ export function createManager(): ModifiedDataManager {
       }
     }
   };
+  const spliceAll = (rowKey: RowKey, row?: Row) => {
+    splice('CREATE', rowKey, row);
+    splice('UPDATE', rowKey, row);
+    splice('DELETE', rowKey, row);
+  };
 
   return {
     // only for restore
@@ -113,6 +119,14 @@ export function createManager(): ModifiedDataManager {
       if (!someProp('rowKey', rowKey, dataMap[type])) {
         dataMap[type].push(row);
       }
+    },
+
+    clearSpecificRows(rowsMap: MutationParams) {
+      Object.keys(rowsMap).forEach(key => {
+        rowsMap[key as keyof MutationParams]!.forEach((row: Row | RowKey) => {
+          spliceAll(isObject(row) ? row.rowKey : row);
+        });
+      });
     },
 
     clear(requestTypeCode: RequestTypeCode) {

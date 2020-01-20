@@ -119,6 +119,7 @@ export interface ModifiedDataManager {
   isModified: () => boolean;
   isModifiedByType: (type: ModificationTypeCode) => boolean;
   push: (type: ModificationTypeCode, row: Row) => void;
-  clear: (rowMap: RequestTypeCode) => void;
+  clearSpecificRows: (rowMap: MutationParams) => void;
+  clear: (type: RequestTypeCode) => void;
   clearAll: () => void;
 }
