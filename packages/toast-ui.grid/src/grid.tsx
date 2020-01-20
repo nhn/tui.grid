@@ -35,7 +35,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, extract } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -307,8 +307,7 @@ export default class Grid {
       this.dataManager.setOriginData(options.data);
     }
 
-    // eslint-disable-next-line prettier/prettier
-    const lifeCycleEvent = extract(options, 'onGridMounted', 'onGridBeforeDestroy','onGridUpdated');
+    const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
     Object.keys(lifeCycleEvent).forEach(eventName => {
       this.eventBus.on(eventName, lifeCycleEvent[eventName as LifeCycleEventNames]);
     });

@@ -362,7 +362,7 @@ export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: 
   return resultMap;
 }
 
-export function extract<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
+export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Pick<T, K>;
   Object.keys(obj).forEach(key => {
     if (includes(propNames, key as K)) {

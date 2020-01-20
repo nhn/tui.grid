@@ -20,8 +20,7 @@ export class Root extends Component<Props> {
   }
 
   public componentDidMount() {
-    const { store } = this.props;
-    const eventBus = getEventBus(store.id);
+    const eventBus = getEventBus(this.props.store.id);
     const gridEvent = new GridEvent();
 
     setTimeout(() => {
@@ -35,8 +34,7 @@ export class Root extends Component<Props> {
   }
 
   public componentWillUnmount() {
-    const { store } = this.props;
-    const eventBus = getEventBus(store.id);
+    const eventBus = getEventBus(this.props.store.id);
     const gridEvent = new GridEvent();
 
     /**
