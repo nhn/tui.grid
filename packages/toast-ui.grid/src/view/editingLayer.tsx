@@ -72,7 +72,12 @@ export class EditingLayerComp extends Component<Props> {
 
   private finishEditing(save: boolean) {
     const { dispatch, editingAddress, active } = this.props;
+
     if (this.editor && active) {
+      if (isFunction(this.editor.beforeDestroy)) {
+        this.editor.beforeDestroy();
+      }
+
       const { rowKey, columnName } = editingAddress!;
       const value = this.editor.getValue();
       if (save) {
@@ -126,21 +131,12 @@ export class EditingLayerComp extends Component<Props> {
     } = this.props;
     const { focusedColumnName, focusedRowKey, active, forcedDestroyEditing } = nextProps;
 
-    if (prevActive) {
-      if (!active) {
-        if (this.editor && this.editor.beforeDestroy) {
-          this.editor.beforeDestroy();
-        }
-
-        if (forcedDestroyEditing) {
-          this.finishEditing(true);
-          return;
-        }
-      }
-
-      if (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey) {
-        this.finishEditing(true);
-      }
+    if (
+      (prevActive && !active && forcedDestroyEditing) ||
+      (prevActive &&
+        (focusedColumnName !== prevFocusedColumnName || focusedRowKey !== prevFocusedRowKey))
+    ) {
+      this.finishEditing(true);
     }
   }
 

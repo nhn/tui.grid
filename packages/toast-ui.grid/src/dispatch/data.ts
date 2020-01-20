@@ -179,6 +179,7 @@ export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
 }
 
 export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
+  let gridEvent;
   const { column, data, id } = store;
   const { rawData, sortState } = data;
   const { visibleColumns, allColumnMap } = column;
@@ -187,16 +188,15 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
-
   const targetColumn = findProp('name', columnName, visibleColumns);
-  let gridEvent = new GridEvent({ rowKey, columnName, value });
 
   if (targetColumn && targetColumn.onBeforeChange) {
+    gridEvent = new GridEvent({ rowKey, columnName, value: targetRow[columnName] });
     targetColumn.onBeforeChange(gridEvent);
-  }
 
-  if (!targetRow || gridEvent.isStopped()) {
-    return;
+    if (gridEvent.isStopped()) {
+      return;
+    }
   }
 
   const { rowSpanMap } = targetRow;

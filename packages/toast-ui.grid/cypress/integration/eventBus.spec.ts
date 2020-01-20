@@ -98,8 +98,15 @@ it('dblclick', () => {
   const callback = cy.stub();
   cy.gridInstance().invoke('on', 'dblclick', callback);
 
-  cy.getByCls('container').dblclick();
-  cy.wrap(callback).should('be.calledWithMatch', { targetType: 'cell' });
+  cy.get(`.${cls('container')}`)
+    .dblclick()
+    .then(() => {
+      expect(callback.args[0][0]).to.contain.subset({
+        rowKey: 1,
+        columnName: 'name',
+        targetType: 'cell'
+      });
+    });
 });
 
 it('focus change', () => {
@@ -358,4 +365,28 @@ it('filter', () => {
         filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
       });
     });
+});
+
+it('when calling editingStart and editingFinish by API, both callback execute.', () => {
+  const startCallback = cy.stub();
+  const finishCallback = cy.stub();
+
+  cy.gridInstance().invoke('on', 'editingStart', startCallback);
+  cy.gridInstance().invoke('on', 'editingFinish', finishCallback);
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.gridInstance().invoke('finishEditing');
+
+  cy.should(() => {
+    expect(startCallback.args[0][0]).to.contain.subset({
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim'
+    });
+
+    expect(finishCallback.args[0][0]).to.contain.subset({
+      rowKey: 0,
+      columnName: 'name',
+      value: 'Kim'
+    });
+  });
 });

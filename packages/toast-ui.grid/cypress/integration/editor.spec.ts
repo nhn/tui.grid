@@ -95,7 +95,7 @@ describe('onBeforeChange, onAfterChange', () => {
 
     cy.wrap(beforeCallback)
       .should('be.calledOnce')
-      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Kim' });
+      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Lee' });
     cy.wrap(afterCallback)
       .should('be.calledOnce')
       .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Kim' });
