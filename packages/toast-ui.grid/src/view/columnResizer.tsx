@@ -21,6 +21,7 @@ interface StoreProps {
   cellBorderWidth: number;
   complexColumns: ComplexColumnInfo[];
   headerHeight: number;
+  allColumnMap: Dictionary<ColumnInfo>;
 }
 
 interface ResizerInfo {
@@ -109,31 +110,27 @@ class ColumnResizerComp extends Component<Props> {
   }
 
   private findComplexColumnStartIndex(name: string): number {
-    const { columns, complexColumns } = this.props;
+    const { columns, complexColumns, allColumnMap } = this.props;
+    const { hidden } = allColumnMap[name];
     const idx = findPropIndex('name', name, columns);
 
-    if (idx === -1) {
-      const complexColumn = findProp('name', name, complexColumns);
-      if (complexColumn) {
-        return this.findComplexColumnStartIndex(complexColumn.childNames[0]);
-      }
-      return Number.MAX_VALUE;
+    if (idx === -1 && !hidden) {
+      const complexColumn = findProp('name', name, complexColumns)!;
+      return this.findComplexColumnStartIndex(complexColumn.childNames[0]);
     }
 
     return idx;
   }
 
   private findComplexColumnEndIndex(name: string): number {
-    const { columns, complexColumns } = this.props;
+    const { columns, complexColumns, allColumnMap } = this.props;
+    const { hidden } = allColumnMap[name];
     const idx = findPropIndex('name', name, columns);
 
-    if (idx === -1) {
-      const complexColumn = findProp('name', name, complexColumns);
-      if (complexColumn) {
-        const { childNames } = complexColumn;
-        return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
-      }
-      return Number.MIN_VALUE;
+    if (idx === -1 && !hidden) {
+      const complexColumn = findProp('name', name, complexColumns)!;
+      const { childNames } = complexColumn;
+      return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
     }
 
     return idx;
@@ -219,6 +216,7 @@ export const ColumnResizer = connect<StoreProps, OwnProps>(
     headerHeight: dimension.headerHeight,
     cellBorderWidth: dimension.cellBorderWidth,
     columns: column.visibleColumnsBySideWithRowHeader[side],
-    complexColumns: column.complexColumnHeaders
+    complexColumns: column.complexColumnHeaders,
+    allColumnMap: column.allColumnMap
   })
 )(ColumnResizerComp);
