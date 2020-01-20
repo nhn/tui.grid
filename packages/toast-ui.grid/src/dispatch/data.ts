@@ -10,7 +10,8 @@ import {
   Range,
   PagePosition,
   LoadingState,
-  PageOptions
+  PageOptions,
+  ColumnInfo
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -744,6 +745,12 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 }
 
+const fillData = (allColumns: ColumnInfo[]) =>  <T>(row: T) => allColumns.reduce((ret, column) => {
+  // @ts-ignore
+  ret[column.name] = ret[column.name] || column.defaultValue;
+  return ret;
+}, row);
+
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
   // prevRows is needed to create rowSpan
@@ -753,7 +760,7 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
     data.viewData.splice(targetIndex, 1, viewData[index]);
-    data.rawData.splice(targetIndex, 1, rawData[index]);
+    data.rawData.splice(targetIndex, 1, fillData(column.allColumns)(rawData[index]));
   }
 }
 
