@@ -3,11 +3,11 @@ import { cls, dataAttr } from '@/helper/dom';
 const RESIZER_HALF_WIDTH = 3;
 const CELL_BORDER_WIDTH = 1;
 
-Cypress.Commands.add('getCell', (rowKey, columnName) => {
-  return cy.get(
+Cypress.Commands.add('getCell', (rowKey, columnName) =>
+  cy.get(
     `.${cls('cell')}[${dataAttr.ROW_KEY}="${rowKey}"][${dataAttr.COLUMN_NAME}="${columnName}"]`
-  );
-});
+  )
+);
 
 Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx, side = 'R') => {
   const sideCls = cls(side === 'R' ? 'rside-area' : 'lside-area');
@@ -16,17 +16,15 @@ Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx, side = 'R') => {
   );
 });
 
-Cypress.Commands.add('getCellContent', (rowKey, columnName) => {
-  return cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`);
-});
+Cypress.Commands.add('getCellContent', (rowKey, columnName) =>
+  cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`)
+);
 
-Cypress.Commands.add('getByCls', (...names) => {
-  return cy.get(names.map(name => `.${cls(name)}`).join(' '));
-});
+Cypress.Commands.add('getByCls', (...names) =>
+  cy.get(names.map(name => `.${cls(name)}`).join(' '))
+);
 
-Cypress.Commands.add('getByTestId', testId => {
-  return cy.get(`[data-testid="${testId}"]`);
-});
+Cypress.Commands.add('getByTestId', testId => cy.get(`[data-testid="${testId}"]`));
 
 Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl = null) => {
   cy.document().then(doc => {
@@ -63,9 +61,7 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl =
   });
 });
 
-Cypress.Commands.add('gridInstance', () => {
-  return cy.window().its('grid');
-});
+Cypress.Commands.add('gridInstance', () => cy.window().its('grid'));
 
 Cypress.Commands.add('createStyle', (style = '') => {
   return cy.window().then(win => {
@@ -76,25 +72,19 @@ Cypress.Commands.add('createStyle', (style = '') => {
   });
 });
 
-Cypress.Commands.add('getHeaderCell', columnName => {
-  return cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`);
-});
+Cypress.Commands.add('getHeaderCell', columnName =>
+  cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`)
+);
 
-Cypress.Commands.add('getRowHeaderCell', rowKey => {
-  return cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"]`);
-});
+Cypress.Commands.add('getRowHeaderCell', rowKey =>
+  cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"]`)
+);
 
-Cypress.Commands.add('getColumnCells', columnName => {
-  return cy.get(`td[data-column-name=${columnName}]`);
-});
+Cypress.Commands.add('getColumnCells', columnName => cy.get(`td[data-column-name=${columnName}]`));
 
-Cypress.Commands.add('getRow', rowKey => {
-  return cy.get(`td[data-row-key=${rowKey}]`);
-});
+Cypress.Commands.add('getRow', rowKey => cy.get(`td[data-row-key=${rowKey}]`));
 
-Cypress.Commands.add('getRsideBody', () => {
-  return cy.getByCls('rside-area', 'body-area');
-});
+Cypress.Commands.add('getRsideBody', () => cy.getByCls('rside-area', 'body-area'));
 
 Cypress.Commands.add('getNumberRowHeaderCells', () => {
   return cy.get('td[data-column-name=_number]');
@@ -113,3 +103,5 @@ Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
     })
     .trigger('mouseup');
 });
+
+Cypress.Commands.add('getBodyCells', () => cy.get(`td.${cls('cell')}`));

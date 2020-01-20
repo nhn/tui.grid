@@ -117,7 +117,7 @@ describe('should API is executed properly on lazy observable data', () => {
     scrollToBottom();
 
     assertDisabledState(true);
-    cy.get(`td.${cls('cell')}`).each($el => {
+    cy.getBodyCells().each($el => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
