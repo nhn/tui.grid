@@ -1585,8 +1585,8 @@ export default class Grid {
   public clearModifiedData(type?: ModificationTypeCode) {
     if (type) {
       this.dataManager.clear(type);
-      return;
+    } else {
+      this.dataManager.clearAll();
     }
-    this.dataManager.clearAll();
   }
 }
