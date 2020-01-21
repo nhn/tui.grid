@@ -74,14 +74,13 @@ export class EditingLayerComp extends Component<Props> {
     const { dispatch, editingAddress, active } = this.props;
 
     if (this.editor && active) {
-      if (isFunction(this.editor.beforeDestroy)) {
-        this.editor.beforeDestroy();
-      }
-
       const { rowKey, columnName } = editingAddress!;
       const value = this.editor.getValue();
       if (save) {
         dispatch('setValue', rowKey, columnName, value);
+      }
+      if (isFunction(this.editor.beforeDestroy)) {
+        this.editor.beforeDestroy();
       }
       dispatch('finishEditing', rowKey, columnName, value);
     }
