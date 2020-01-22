@@ -4,7 +4,8 @@ import { Store } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 export function connect<SelectedProps = {}, OwnProps = {}>(
-  selector?: (store: Store, props: OwnProps) => SelectedProps
+  selector?: (store: Store, props: OwnProps) => SelectedProps,
+  forceUpdate?: boolean
 ) {
   type Props = OwnProps & SelectedProps & DispatchProps;
 
@@ -17,6 +18,9 @@ export function connect<SelectedProps = {}, OwnProps = {}>(
       private setStateUsingSelector(ownProps: OwnProps) {
         if (selector) {
           this.setState(selector(this.context.store, ownProps as OwnProps));
+          if (forceUpdate) {
+            this.forceUpdate();
+          }
         }
       }
 
