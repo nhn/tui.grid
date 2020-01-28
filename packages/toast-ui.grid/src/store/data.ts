@@ -50,9 +50,11 @@ interface DataOption {
   pageOptions: PageOptions;
   useClientSort: boolean;
   id: number;
+  disabled: boolean;
 }
 
 let dataCreationKey = '';
+let initAllDisabled = false;
 export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
   return dataCreationKey;
@@ -186,6 +188,8 @@ function createViewCell(
 
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
+  const columnDisabled = !!column.disabled;
+  const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
   const classList = [...classNameAttr.row, ...columnClassName];
   const className = (isEmpty(row.rowSpanMap[name])
@@ -193,22 +197,17 @@ function createViewCell(
     : classList.filter(clsName => clsName !== cls('row-hover'))
   ).join(' ');
 
-  const columnDisabled = column.disabled;
-  const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
-
-  let result = false;
+  let cellDisabled = rowDisabled || columnDisabled;
   if (row._disabledPrecedence[name] === 'ROW') {
-    result = rowDisabled;
+    cellDisabled = rowDisabled;
   } else if (row._disabledPrecedence[name] === 'COLUMN') {
-    result = columnDisabled;
-  } else if (!row._disabledPrecedence[name]) {
-    result = rowDisabled || columnDisabled;
+    cellDisabled = columnDisabled;
   }
 
   return {
     editable: !!editor,
     className,
-    disabled: result,
+    disabled: cellDisabled,
     invalidStates: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
@@ -317,8 +316,8 @@ function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   const defaultAttr = {
     rowNum: index + 1,
     checked: false,
-    disabled: false,
-    checkDisabled: false,
+    disabled: initAllDisabled,
+    checkDisabled: initAllDisabled,
     className: {
       row: [],
       column: {}
@@ -435,13 +434,13 @@ export function createRawRow(
   row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
   row._attributes = getAttributes(row, index, lazyObservable);
   row._attributes.rowSpan = rowSpan;
+  row._disabledPrecedence = row._disabledPrecedence || {};
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   defaultValues.forEach(({ name, value }) => {
     setDefaultProp(row, name, value);
   });
   setRowRelationListItems(row as Row, columnMap);
-  (row as Row)._disabledPrecedence = {};
 
   return (lazyObservable ? row : observable(row)) as Row;
 }
@@ -514,8 +513,10 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  id
+  id,
+  disabled
 }: DataOption): Observable<Data> {
+  initAllDisabled = disabled;
   const { rawData, viewData } = createData(data, column, true);
 
   const sortState: SortState = {
@@ -537,6 +538,7 @@ export function create({
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
       };
+  initAllDisabled = false;
 
   return observable({
     rawData,

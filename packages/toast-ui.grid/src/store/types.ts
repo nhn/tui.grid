@@ -48,7 +48,7 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
-export type DisabledPrecedence = Dictionary<'ROW' | 'COLUMN' | null>;
+export type DisabledPrecedence = Dictionary<'ROW' | 'COLUMN'>;
 
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
@@ -274,7 +274,7 @@ export interface ColumnInfo {
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
   className?: string;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export interface SortedColumn {
@@ -319,6 +319,7 @@ export interface Column {
   readonly validationColumns: ColumnInfo[];
   readonly ignoredColumns: string[];
   readonly columnMapWithRelation: Dictionary<ColumnInfo>;
+  readonly columnsWithoutRowHeader: ColumnInfo[];
   readonly treeColumnName?: string;
   readonly treeIcon?: boolean;
   readonly treeCascadingCheckbox?: boolean;
