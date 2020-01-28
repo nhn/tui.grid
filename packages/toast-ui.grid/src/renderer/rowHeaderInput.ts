@@ -9,12 +9,12 @@ export class RowHeaderInputRenderer implements CellRenderer {
   public constructor(props: CellRendererProps) {
     const el = document.createElement('div');
     const input = document.createElement('input');
-    const { grid, rowKey, disabled, allDisabled } = props;
+    const { grid, rowKey, disabled } = props;
 
     el.className = cls('row-header-checkbox');
     input.type = 'checkbox';
     input.name = '_checked';
-    input.disabled = allDisabled || disabled;
+    input.disabled = disabled;
 
     input.addEventListener('change', () => {
       if (input.checked) {
@@ -36,9 +36,9 @@ export class RowHeaderInputRenderer implements CellRenderer {
   }
 
   public render(props: CellRendererProps) {
-    const { value, allDisabled, disabled } = props;
+    const { value, disabled } = props;
 
     this.input.checked = Boolean(value);
-    this.input.disabled = allDisabled || disabled;
+    this.input.disabled = disabled;
   }
 }
