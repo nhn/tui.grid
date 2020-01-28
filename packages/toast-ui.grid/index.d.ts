@@ -521,7 +521,6 @@ declare namespace tuiGrid {
     grid: Grid;
     rowKey: RowKey;
     columnInfo: ColumnInfo;
-    allDisabled: boolean;
   };
 
   interface CellRenderData {
@@ -797,6 +796,10 @@ declare namespace tuiGrid {
     public disableRow(rowKey: RowKey, withCheckbox?: boolean): void;
 
     public enableRow(rowKey: RowKey, withCheckbox?: boolean): void;
+
+    public disableColumn(columnName: string): void;
+
+    public enableColumn(columnName: string): void;
 
     public disableRowCheck(rowKey: RowKey): void;
 
