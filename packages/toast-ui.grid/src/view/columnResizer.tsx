@@ -126,8 +126,7 @@ class ColumnResizerComp extends Component<Props> {
     const idx = findPropIndex('name', name, columns);
 
     if (idx === -1 && !allColumnMap[name].hidden) {
-      const complexColumn = findProp('name', name, complexColumns)!;
-      const { childNames } = complexColumn;
+      const { childNames } = findProp('name', name, complexColumns)!;
       return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
     }
 
