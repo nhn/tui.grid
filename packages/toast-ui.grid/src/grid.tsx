@@ -1567,4 +1567,12 @@ export default class Grid {
   public moveRow(rowKey: RowKey, targetIndex: number) {
     this.dispatch('moveRow', rowKey, targetIndex);
   }
+
+  /**
+   * Set parameters to be sent with the request to communicate with the server.
+   * @param {Object} params - parameters to send to the server
+   */
+  public setRequestParams(params: Dictionary<any>) {
+    this.dataProvider.setRequestParams(params);
+  }
 }

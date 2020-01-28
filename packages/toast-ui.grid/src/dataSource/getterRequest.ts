@@ -47,8 +47,17 @@ function handleSuccessReadTreeData(config: Config, response: Response) {
 }
 
 export function readData(config: Config, page: number, data: Params = {}, resetData = false) {
-  const { store, dispatch, api, getLastRequiredData, setLastRequiredData, hideLoadingBar } = config;
+  const {
+    store,
+    dispatch,
+    api,
+    getLastRequiredData,
+    setLastRequiredData,
+    hideLoadingBar,
+    getRequestParams
+  } = config;
   const lastRequiredData = getLastRequiredData();
+  const commonRequestParams = getRequestParams();
 
   if (!api) {
     return;
@@ -78,7 +87,7 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
   gridAjax({
     method,
     url: isFunction(url) ? url() : url,
-    params,
+    params: { ...commonRequestParams, ...params },
     success: successCallback.bind(null, config),
     preCallback: callback,
     postCallback: callback,

@@ -100,6 +100,21 @@ export function runMockServer() {
   }).as('readPageWithInitParams');
 
   cy.route({
+    method: 'GET',
+    url: '/api/read?a=2&perPage=10&page=1',
+    response: {
+      result: true,
+      data: {
+        contents: data.slice(0, 10),
+        pagination: {
+          page: 1,
+          totalCount: 20
+        }
+      }
+    }
+  }).as('readPageWithRequestParams');
+
+  cy.route({
     method: 'POST',
     url: '/api/create',
     response: successResponse
