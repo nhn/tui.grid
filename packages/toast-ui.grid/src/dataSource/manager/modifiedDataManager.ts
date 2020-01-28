@@ -9,7 +9,15 @@ import {
   RequestTypeCode,
   MutationParams
 } from '../types';
-import { someProp, findIndex, isUndefined, omit, isObject } from '../../helper/common';
+import {
+  someProp,
+  findIndex,
+  isUndefined,
+  omit,
+  isObject,
+  forEachObject,
+  assign
+} from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
 
 type ParamNameMap = { [type in ModificationTypeCode]: string };
@@ -122,11 +130,11 @@ export function createManager(): ModifiedDataManager {
     },
 
     clearSpecificRows(rowsMap: MutationParams) {
-      Object.keys(rowsMap).forEach(key => {
-        rowsMap[key as keyof MutationParams]!.forEach((row: Row | RowKey) => {
+      forEachObject((_, key) => {
+        rowsMap[key]!.forEach((row: Row | RowKey) => {
           spliceAll(isObject(row) ? row.rowKey : row);
         });
-      });
+      }, rowsMap);
     },
 
     clear(requestTypeCode: RequestTypeCode) {
