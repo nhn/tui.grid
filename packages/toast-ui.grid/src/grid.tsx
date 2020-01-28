@@ -604,10 +604,10 @@ export default class Grid {
    * Focus to the cell identified by given rowKey and columnName.
    * @param {Number|String} rowKey - rowKey
    * @param {String} columnName - columnName
-   * @param {Boolean} [setScroll=false] - if set to true, move scroll position to focused position
+   * @param {Boolean} [setScroll=true] - if set to true, move scroll position to focused position
    * @returns {Boolean} true if focused cell is changed
    */
-  public focus(rowKey: RowKey, columnName: string, setScroll?: boolean) {
+  public focus(rowKey: RowKey, columnName: string, setScroll = true) {
     this.dispatch('setFocusInfo', rowKey, columnName, true);
 
     if (setScroll) {
@@ -627,14 +627,14 @@ export default class Grid {
    * Focus to the cell identified by given rowIndex and columnIndex.
    * @param {Number} rowIndex - rowIndex
    * @param {Number} columnIndex - columnIndex
-   * @param {boolean} [setScroll=false] - if set to true, scroll to focused cell
+   * @param {boolean} [setScroll=true] - if set to true, scroll to focused cell
    * @returns {Boolean} true if success
    */
-  public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean) {
+  public focusAt(rowIndex: number, columnIndex: number, setScroll?: boolean) {
     const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);
 
     if (!isUndefined(rowKey) && columnName) {
-      return this.focus(rowKey, columnName, isScrollable);
+      return this.focus(rowKey, columnName, setScroll);
     }
     return false;
   }
@@ -650,7 +650,7 @@ export default class Grid {
    * Set focus on the cell at the specified index of row and column and starts to edit.
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
-   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
+   * @param {boolean} [setScroll=true] - If set to true, the view will scroll to the cell element.
    */
   public startEditing(rowKey: RowKey, columnName: string, setScroll?: boolean) {
     if (this.focus(rowKey, columnName, setScroll)) {
@@ -662,7 +662,7 @@ export default class Grid {
    * Set focus on the cell at the specified index of row and column and starts to edit.
    * @param {number|string} rowIndex - The index of the row
    * @param {string} columnIndex - The index of the column
-   * @param {boolean} [setScroll=false] - If set to true, the view will scroll to the cell element.
+   * @param {boolean} [setScroll=true] - If set to true, the view will scroll to the cell element.
    */
   public startEditingAt(rowIndex: number, columnIndex: number, setScroll?: boolean) {
     const { rowKey, columnName } = getCellAddressByIndex(this.store, rowIndex, columnIndex);

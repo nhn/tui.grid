@@ -80,7 +80,7 @@ it('should apply custom theme properly', () => {
     expect($el.css('color')).to.eql('rgb(0, 51, 153)');
   });
 
-  cy.get(`td.${cls('cell')}`).each($el => {
+  cy.getBodyCells().each($el => {
     assertBorderColor($el, 'rgb(255, 255, 255)');
   });
 
