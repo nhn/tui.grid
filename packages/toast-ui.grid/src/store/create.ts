@@ -60,14 +60,14 @@ export function createStore(id: number, options: OptGrid): Store {
     complexColumns,
     align,
     valign,
-    columnHeaders
+    columnHeaders,
+    disabled
   });
   const data = createData({
     data: Array.isArray(options.data) ? options.data : [],
     column,
     pageOptions,
     useClientSort,
-    disabled,
     id
   });
   const dimension = createDimension({

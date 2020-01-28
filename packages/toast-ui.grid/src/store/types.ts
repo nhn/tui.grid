@@ -48,6 +48,8 @@ export interface Dictionary<T> {
   [index: string]: T;
 }
 
+export type DisabledPrecedence = Dictionary<'ROW' | 'COLUMN' | null>;
+
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   sortKey: number;
@@ -55,6 +57,7 @@ export type Row = Dictionary<CellValue> & {
   rowSpanMap: RowSpanMap;
   _attributes: RowAttributes;
   _relationListItemMap: Dictionary<ListItem[]>;
+  _disabledPrecedence: DisabledPrecedence;
 };
 
 export type RowSpanMap = Dictionary<RowSpan>;
@@ -185,7 +188,6 @@ export interface Data {
   filteredIndex: number[] | null;
   filteredRawData: Row[];
   filteredViewData: ViewRow[];
-  disabled: boolean;
   checkedAllRows: boolean;
   pageOptions: Required<PageOptions>;
   pageRowRange: Range;
@@ -272,6 +274,7 @@ export interface ColumnInfo {
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
   className?: string;
+  disabled: boolean;
 }
 
 export interface SortedColumn {
