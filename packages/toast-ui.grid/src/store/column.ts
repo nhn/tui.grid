@@ -275,11 +275,7 @@ export function createColumn(
   });
 }
 
-function createRowHeader(
-  data: OptRowHeader,
-  columnHeaderInfo: ColumnHeaderInfo,
-  disabled: boolean
-): ColumnInfo {
+function createRowHeader(data: OptRowHeader, columnHeaderInfo: ColumnHeaderInfo): ColumnInfo {
   const rowHeader: OptColumn = isString(data)
     ? { name: rowHeadersMap[data] }
     : { name: rowHeadersMap[data.type], ...omit(data, 'type') };
@@ -312,8 +308,7 @@ function createRowHeader(
     minWidth: baseMinWith,
     headerAlign,
     headerVAlign,
-    headerRenderer,
-    disabled
+    headerRenderer
   });
 }
 
@@ -381,9 +376,7 @@ export function create({
   }, []);
 
   const columnHeaderInfo = { columnHeaders, align, valign };
-  const rowHeaderInfos = rowHeaders.map(rowHeader =>
-    createRowHeader(rowHeader, columnHeaderInfo, disabled)
-  );
+  const rowHeaderInfos = rowHeaders.map(rowHeader => createRowHeader(rowHeader, columnHeaderInfo));
 
   const columnInfos = columns.map(column =>
     createColumn(
@@ -487,6 +480,10 @@ export function create({
       });
 
       return createMapFromArray(copiedColumns, 'name');
+    },
+
+    get columnsWithoutRowHeader() {
+      return this.allColumns.slice(this.rowHeaderCount);
     },
 
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
