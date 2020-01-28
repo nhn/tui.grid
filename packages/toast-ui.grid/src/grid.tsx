@@ -57,7 +57,8 @@ import {
   DataProvider,
   ModifiedRowsOptions,
   Params,
-  ModifiedDataManager
+  ModifiedDataManager,
+  ModificationTypeCode
 } from './dataSource/types';
 import {
   getParentRow,
@@ -1574,5 +1575,18 @@ export default class Grid {
    */
   public setRequestParams(params: Dictionary<any>) {
     this.dataProvider.setRequestParams(params);
+  }
+
+  /**
+   * clear the modified data that is returned as the result of 'getModifiedRows' method.
+   * If the 'type' parameter is undefined, all modified data is cleared.
+   * @param {string} type - The modified type
+   */
+  public clearModifiedData(type?: ModificationTypeCode) {
+    if (type) {
+      this.dataManager.clear(type);
+    } else {
+      this.dataManager.clearAll();
+    }
   }
 }

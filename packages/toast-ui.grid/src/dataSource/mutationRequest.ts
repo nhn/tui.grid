@@ -77,7 +77,7 @@ function send(config: Config, sendOptions: SendOptions) {
       method,
       url: isFunction(url) ? url() : url,
       params: { ...commonRequestParams, ...params },
-      success: () => manager.clear(params),
+      success: () => manager.clearSpecificRows(params),
       preCallback: callback,
       postCallback: callback,
       eventBus: getEventBus(id),
