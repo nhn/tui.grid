@@ -1041,6 +1041,22 @@ export default class Grid {
   }
 
   /**
+   * Disable the column identified by the column name.
+   * @param {string} columnName - column name
+   */
+  public disableColumn(columnName: string) {
+    this.dispatch('setColumnDisabled', true, columnName);
+  }
+
+  /**
+   * Enable the column identified by the column name.
+   * @param {string} columnName - column name
+   */
+  public enableColumn(columnName: string) {
+    this.dispatch('setColumnDisabled', false, columnName);
+  }
+
+  /**
    * Insert the new row with specified data to the end of table.
    * @param {Object} [row] - The data for the new row
    * @param {Object} [options] - Options
