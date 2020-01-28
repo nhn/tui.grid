@@ -38,9 +38,9 @@ export function getCellAddressByIndex(
 }
 
 export function isEditableCell(data: Data, column: Column, rowIndex: number, columnName: string) {
-  const { disabled, filteredViewData } = data;
-  const { disabled: rowDisabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
-  return !isHiddenColumn(column, columnName) && editable && !disabled && !rowDisabled;
+  const { filteredViewData } = data;
+  const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+  return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
 
 export function getCheckedRows({ data }: Store) {

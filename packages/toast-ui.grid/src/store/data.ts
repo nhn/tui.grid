@@ -49,7 +49,6 @@ interface DataOption {
   column: Column;
   pageOptions: PageOptions;
   useClientSort: boolean;
-  disabled: boolean;
   id: number;
 }
 
@@ -194,10 +193,22 @@ function createViewCell(
     : classList.filter(clsName => clsName !== cls('row-hover'))
   ).join(' ');
 
+  const columnDisabled = column.disabled;
+  const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
+
+  let result = false;
+  if (row._disabledPrecedence[name] === 'ROW') {
+    result = rowDisabled;
+  } else if (row._disabledPrecedence[name] === 'COLUMN') {
+    result = columnDisabled;
+  } else if (!row._disabledPrecedence[name]) {
+    result = rowDisabled || columnDisabled;
+  }
+
   return {
     editable: !!editor,
     className,
-    disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
+    disabled: result,
     invalidStates: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
@@ -249,6 +260,7 @@ function createRelationViewCell(
   });
 }
 
+// eslint-disable-next-line max-params
 export function createViewRow(
   row: Row,
   columnMap: Dictionary<ColumnInfo>,
@@ -303,7 +315,7 @@ export function createViewRow(
 
 function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
   const defaultAttr = {
-    rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
+    rowNum: index + 1,
     checked: false,
     disabled: false,
     checkDisabled: false,
@@ -429,6 +441,7 @@ export function createRawRow(
     setDefaultProp(row, name, value);
   });
   setRowRelationListItems(row as Row, columnMap);
+  (row as Row)._disabledPrecedence = {};
 
   return (lazyObservable ? row : observable(row)) as Row;
 }
@@ -501,7 +514,6 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  disabled,
   id
 }: DataOption): Observable<Data> {
   const { rawData, viewData } = createData(data, column, true);
@@ -527,7 +539,6 @@ export function create({
       };
 
   return observable({
-    disabled,
     rawData,
     viewData,
     sortState,

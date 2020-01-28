@@ -138,15 +138,15 @@ function collapse(store: Store, row: Row, recursive?: boolean) {
   notify(rowCoords, 'heights');
 }
 
-function setCheckedState(disabled: boolean, row: Row, state: boolean) {
-  if (row && isUpdatableRowAttr('checked', row._attributes.checkDisabled, disabled)) {
+function setCheckedState(row: Row, state: boolean) {
+  if (row && isUpdatableRowAttr('checked', row._attributes.checkDisabled)) {
     row._attributes.checked = state;
   }
 }
 
 function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
   const { data, column, id } = store;
-  const { rawData, disabled } = data;
+  const { rawData } = data;
   const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
@@ -159,19 +159,19 @@ function changeAncestorRowsCheckedState(store: Store, rowKey: RowKey) {
       });
       const checked = childRowKeys.length === checkedChildRows.length;
 
-      setCheckedState(disabled, parentRow, checked);
+      setCheckedState(parentRow, checked);
     });
   }
 }
 
 function changeDescendantRowsCheckedState(store: Store, rowKey: RowKey, state: boolean) {
   const { data, column, id } = store;
-  const { rawData, disabled } = data;
+  const { rawData } = data;
   const row = findRowByRowKey(data, column, id, rowKey);
 
   if (row) {
     traverseDescendantRows(rawData, row, (childRow: Row) => {
-      setCheckedState(disabled, childRow, state);
+      setCheckedState(childRow, state);
     });
   }
 }

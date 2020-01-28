@@ -231,12 +231,8 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   }
 }
 
-export function isUpdatableRowAttr(
-  name: keyof RowAttributes,
-  checkDisabled: boolean,
-  allDisabled: boolean
-) {
-  return !(name === 'checked' && (checkDisabled || allDisabled));
+export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
+  return !(name === 'checked' && checkDisabled);
 }
 
 export function setRowAttribute<K extends keyof RowAttributes>(
@@ -245,11 +241,10 @@ export function setRowAttribute<K extends keyof RowAttributes>(
   attrName: K,
   value: RowAttributes[K]
 ) {
-  const { disabled } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey, false);
 
   // https://github.com/microsoft/TypeScript/issues/34293
-  if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
+  if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled)) {
     targetRow._attributes[attrName] = value;
   }
 }
@@ -264,7 +259,7 @@ export function setAllRowAttribute<K extends keyof RowAttributes>(
   const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
 
   filteredRawData.slice(...range).forEach(row => {
-    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
+    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
       // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
     }
@@ -405,7 +400,14 @@ export function paste(store: Store, pasteData: string[][]) {
 }
 
 export function setDisabled(store: Store, disabled: boolean) {
-  store.data.disabled = disabled;
+  store.data.rawData.forEach(row => {
+    row._disabledPrecedence = {};
+    row._attributes.checkDisabled = disabled;
+    row._attributes.disabled = disabled;
+  });
+  store.column.allColumns.forEach(columnInfo => {
+    columnInfo.disabled = disabled;
+  });
 }
 
 export function setRowDisabled(
@@ -417,10 +419,29 @@ export function setRowDisabled(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
-    row._attributes.disabled = disabled;
+    column.allColumns.forEach(columnInfo => {
+      row._disabledPrecedence[columnInfo.name] = 'ROW';
+    });
+    if (row._attributes.disabled === disabled) {
+      notify(row._attributes, 'disabled');
+    } else {
+      row._attributes.disabled = disabled;
+    }
+
     if (withCheckbox) {
       row._attributes.checkDisabled = disabled;
     }
+  }
+}
+
+export function setColumnDisabled(store: Store, disabled: boolean, columnName: string) {
+  store.data.rawData.forEach(row => {
+    row._disabledPrecedence[columnName] = 'COLUMN';
+  });
+  if (store.column.allColumnMap[columnName].disabled === disabled) {
+    notify(store.column.allColumnMap[columnName], 'disabled');
+  } else {
+    store.column.allColumnMap[columnName].disabled = disabled;
   }
 }
 

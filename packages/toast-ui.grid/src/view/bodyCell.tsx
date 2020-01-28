@@ -24,7 +24,6 @@ interface StoreProps {
   defaultRowHeight: number;
   columnInfo: ColumnInfo;
   renderData: CellRenderData;
-  disabled: boolean;
   treeInfo?: TreeCellInfo;
   selectedRow: boolean;
   cellBorderWidth: number;
@@ -38,15 +37,14 @@ export class BodyCellComp extends Component<Props> {
   private el!: HTMLElement;
 
   public componentDidMount() {
-    const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = this.props;
+    const { grid, rowKey, renderData, columnInfo } = this.props;
 
     // eslint-disable-next-line new-cap
     this.renderer = new columnInfo.renderer.type({
       grid,
       rowKey,
       columnInfo,
-      ...renderData,
-      allDisabled
+      ...renderData
     });
     const rendererEl = this.renderer.getElement();
     this.el.appendChild(rendererEl);
@@ -58,20 +56,14 @@ export class BodyCellComp extends Component<Props> {
   }
 
   public componentWillReceiveProps(nextProps: Props) {
-    if (
-      (this.props.renderData !== nextProps.renderData ||
-        this.props.disabled !== nextProps.disabled) &&
-      this.renderer &&
-      this.renderer.render
-    ) {
-      const { grid, rowKey, renderData, columnInfo, disabled: allDisabled } = nextProps;
+    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
+      const { grid, rowKey, renderData, columnInfo } = nextProps;
 
       this.renderer.render({
         grid,
         rowKey,
         columnInfo,
-        ...renderData,
-        allDisabled
+        ...renderData
       });
       this.calculateRowHeight(nextProps);
     }
@@ -143,7 +135,6 @@ export class BodyCellComp extends Component<Props> {
       rowKey,
       renderData: { disabled, editable, invalidStates, className },
       columnInfo: { align, valign, name, validation = {} },
-      disabled: allDisabled,
       treeInfo,
       selectedRow,
       rowSpanAttr
@@ -164,7 +155,7 @@ export class BodyCellComp extends Component<Props> {
       [isRowHeader(name), 'cell-row-header'],
       [validation.required || false, 'cell-required'],
       [!!invalidStates.length, 'cell-invalid'],
-      [disabled || allDisabled, 'cell-disabled'],
+      [disabled, 'cell-disabled'],
       [!!treeInfo, 'cell-has-tree'],
       [isRowHeader(name) && selectedRow, 'cell-selected']
     )} ${className}`;
@@ -202,7 +193,7 @@ export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
-    const { disabled, pageOptions } = data;
+    const { pageOptions } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
@@ -212,7 +203,6 @@ export const BodyCell = connect<StoreProps, OwnProps>(
     return {
       grid,
       rowKey,
-      disabled,
       columnInfo,
       defaultRowHeight,
       renderData: (valueMap && valueMap[columnName]) || { invalidStates: [] },
