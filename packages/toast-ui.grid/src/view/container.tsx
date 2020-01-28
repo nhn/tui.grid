@@ -34,7 +34,6 @@ interface StoreProps {
   summaryHeight: number;
   summaryPosition: SummaryPosition;
   showLeftSide: boolean;
-  disabled: boolean;
   viewData: ViewRow[];
   eventBus: EventBus;
   scrollX: boolean;
@@ -387,7 +386,6 @@ export const Container = connect<StoreProps, OwnProps>(
     summaryPosition: dimension.summaryPosition,
     heightResizable: dimension.heightResizable,
     showLeftSide: !!columnCoords.areaWidth.L,
-    disabled: data.disabled,
     editingEvent: focus.editingEvent,
     viewData: data.viewData,
     eventBus: getEventBus(id),
