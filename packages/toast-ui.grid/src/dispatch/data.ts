@@ -554,6 +554,8 @@ export function clearData(store: Store) {
 export function resetData(store: Store, inputData: OptRow[]) {
   const { data, column, id } = store;
   const { rawData, viewData } = createData(inputData, column, true);
+  const eventBus = getEventBus(id);
+  const gridEvent = new GridEvent();
 
   initFocus(store);
   initSelection(store);
@@ -570,6 +572,17 @@ export function resetData(store: Store, inputData: OptRow[]) {
   // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
+
+  setTimeout(() => {
+    /**
+     * Occurs when the grid data is updated and the grid is rendered onto the DOM
+     * The event occurs only in the following API as below.
+     * `resetData`, `restore`, `reloadData`, `readData`, `setPerPage` with `dataSource`, using `dataSource`
+     * @event Grid#check
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('onGridUpdated', gridEvent);
+  });
 }
 
 export function addRowClassName(store: Store, rowKey: RowKey, className: string) {

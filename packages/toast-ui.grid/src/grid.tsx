@@ -11,7 +11,8 @@ import {
   OptColumn,
   OptHeader,
   FilterOpt,
-  FilterOptionType
+  FilterOptionType,
+  LifeCycleEventNames
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -34,7 +35,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -252,6 +253,7 @@ if ((module as any).hot) {
  *      @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
  *          If you do not want to send the hostname, this option set to false.
  *      @param {function} [options.onGridMounted] - The function that will be called after rendering the grid.
+ *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
 export default class Grid {
@@ -274,7 +276,7 @@ export default class Grid {
   public usageStatistics: boolean;
 
   public constructor(options: OptGrid) {
-    const { el, usageStatistics = true, onGridMounted, onGridBeforeDestroy } = options;
+    const { el, usageStatistics = true } = options;
     const id = register(this);
     const store = createStore(id, options);
     const dispatch = createDispatcher(store);
@@ -305,16 +307,12 @@ export default class Grid {
       this.dataManager.setOriginData(options.data);
     }
 
-    this.gridEl = render(
-      <Root
-        store={store}
-        dispatch={dispatch}
-        rootElement={el}
-        onGridMounted={onGridMounted}
-        onGridBeforeDestroy={onGridBeforeDestroy}
-      />,
-      el
-    );
+    const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
+    Object.keys(lifeCycleEvent).forEach(eventName => {
+      this.eventBus.on(eventName, lifeCycleEvent[eventName as LifeCycleEventNames]);
+    });
+
+    this.gridEl = render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
   }
 
   /**

@@ -1,5 +1,5 @@
 import { AjaxConfig, AjaxConfigKeys } from '../types';
-import { extract } from '../../helper/common';
+import { pick } from '../../helper/common';
 
 export function createAjaxConfig(target: AjaxConfig) {
   const configKeys: AjaxConfigKeys[] = [
@@ -9,5 +9,5 @@ export function createAjaxConfig(target: AjaxConfig) {
     'headers',
     'serializer'
   ];
-  return extract(target, ...configKeys);
+  return pick(target, ...configKeys);
 }
