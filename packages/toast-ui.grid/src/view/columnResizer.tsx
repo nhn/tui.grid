@@ -21,6 +21,7 @@ interface StoreProps {
   cellBorderWidth: number;
   complexColumns: ComplexColumnInfo[];
   headerHeight: number;
+  allColumnMap: Dictionary<ColumnInfo>;
 }
 
 interface ResizerInfo {
@@ -109,22 +110,22 @@ class ColumnResizerComp extends Component<Props> {
   }
 
   private findComplexColumnStartIndex(name: string): number {
-    const { columns, complexColumns } = this.props;
+    const { columns, complexColumns, allColumnMap } = this.props;
     const idx = findPropIndex('name', name, columns);
 
-    if (idx === -1) {
-      const { childNames } = findProp('name', name, complexColumns)!;
-      return this.findComplexColumnStartIndex(childNames[0]);
+    if (idx === -1 && !allColumnMap[name].hidden) {
+      const complexColumn = findProp('name', name, complexColumns)!;
+      return this.findComplexColumnStartIndex(complexColumn.childNames[0]);
     }
 
     return idx;
   }
 
   private findComplexColumnEndIndex(name: string): number {
-    const { columns, complexColumns } = this.props;
+    const { columns, complexColumns, allColumnMap } = this.props;
     const idx = findPropIndex('name', name, columns);
 
-    if (idx === -1) {
+    if (idx === -1 && !allColumnMap[name].hidden) {
       const { childNames } = findProp('name', name, complexColumns)!;
       return this.findComplexColumnEndIndex(childNames[childNames.length - 1]);
     }
@@ -212,6 +213,7 @@ export const ColumnResizer = connect<StoreProps, OwnProps>(
     headerHeight: dimension.headerHeight,
     cellBorderWidth: dimension.cellBorderWidth,
     columns: column.visibleColumnsBySideWithRowHeader[side],
-    complexColumns: column.complexColumnHeaders
+    complexColumns: column.complexColumnHeaders,
+    allColumnMap: column.allColumnMap
   })
 )(ColumnResizerComp);

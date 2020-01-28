@@ -436,13 +436,13 @@ describe('custom request event', () => {
   });
 
   it('stop custom event if prev event is prevented.', () => {
-    cy.wait('@readPage1');
-
     const onBeforeRequest = cy.stub();
     const onResponse = (ev: GridEvent) => {
       ev.stop();
     };
     const onSuccessResponse = cy.stub();
+
+    cy.wait('@readPage1');
 
     cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
     cy.gridInstance().invoke('on', 'response', onResponse);
