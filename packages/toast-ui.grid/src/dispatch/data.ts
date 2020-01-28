@@ -65,6 +65,7 @@ import { findRowIndexByPosition } from '../query/mouse';
 import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
+import { isRowHeader } from '../helper/column';
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -400,12 +401,13 @@ export function paste(store: Store, pasteData: string[][]) {
 }
 
 export function setDisabled(store: Store, disabled: boolean) {
-  store.data.rawData.forEach(row => {
-    row._disabledPrecedence = {};
-    row._attributes.checkDisabled = disabled;
-    row._attributes.disabled = disabled;
-  });
-  store.column.allColumns.forEach(columnInfo => {
+  const { data, column } = store;
+  for (let i = data.rawData.length - 1; i >= 0; i -= 1) {
+    data.rawData[i]._disabledPrecedence = {};
+    data.rawData[i]._attributes.checkDisabled = disabled;
+    data.rawData[i]._attributes.disabled = disabled;
+  }
+  column.columnsWithoutRowHeader.forEach(columnInfo => {
     columnInfo.disabled = disabled;
   });
 }
@@ -419,29 +421,40 @@ export function setRowDisabled(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
+    const { _attributes, _disabledPrecedence } = row;
+
     column.allColumns.forEach(columnInfo => {
-      row._disabledPrecedence[columnInfo.name] = 'ROW';
+      _disabledPrecedence[columnInfo.name] = 'ROW';
     });
-    if (row._attributes.disabled === disabled) {
-      notify(row._attributes, 'disabled');
-    } else {
-      row._attributes.disabled = disabled;
-    }
 
     if (withCheckbox) {
-      row._attributes.checkDisabled = disabled;
+      _attributes.checkDisabled = disabled;
+    }
+
+    if (_attributes.disabled === disabled) {
+      notify(_attributes, 'disabled');
+    } else {
+      _attributes.disabled = disabled;
     }
   }
 }
 
 export function setColumnDisabled(store: Store, disabled: boolean, columnName: string) {
-  store.data.rawData.forEach(row => {
+  if (isRowHeader(columnName)) {
+    return;
+  }
+
+  const { data, column } = store;
+  const { allColumnMap } = column;
+
+  data.rawData.forEach(row => {
     row._disabledPrecedence[columnName] = 'COLUMN';
   });
-  if (store.column.allColumnMap[columnName].disabled === disabled) {
-    notify(store.column.allColumnMap[columnName], 'disabled');
+
+  if (allColumnMap[columnName].disabled === disabled) {
+    notify(allColumnMap[columnName], 'disabled');
   } else {
-    store.column.allColumnMap[columnName].disabled = disabled;
+    allColumnMap[columnName].disabled = disabled;
   }
 }
 
@@ -829,7 +842,10 @@ export function setCheckedAllRows({ data }: Store) {
 
   data.checkedAllRows =
     !!filteredRawData.length &&
-    filteredRawData.slice(...pageRowRange).every(row => row._attributes.checked);
+    filteredRawData
+      .slice(...pageRowRange)
+      .filter(row => !row._attributes.checkDisabled)
+      .every(row => row._attributes.checked);
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {
