@@ -1,5 +1,6 @@
 import { OptColumn } from '@/types';
 import { FormatterProps } from '@/store/types';
+import { cls } from '@/helper/dom';
 
 export {};
 
@@ -220,6 +221,53 @@ describe('column className', () => {
   it('add class by column options', () => {
     cy.getColumnCells('name').each($el => {
       expect($el).to.have.class('column-test-c');
+    });
+  });
+});
+
+describe('column disable', () => {
+  beforeEach(() => {
+    const data = [
+      {
+        name: 'Kim',
+        age: 30,
+        location: 'seoul'
+      },
+      {
+        name: 'Lee',
+        age: 40,
+        location: 'busan'
+      },
+      {
+        name: 'Han',
+        age: 28,
+        location: 'Bundang'
+      }
+    ];
+    const columns = [{ name: 'name', disabled: true }, { name: 'age' }, { name: 'location' }];
+
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+  });
+
+  it('column disable disable by column options', () => {
+    cy.getColumnCells('name').each($el => {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
+    });
+
+    cy.getColumnCells('age').each($el => {
+      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
+    });
+
+    cy.getColumnCells('location').each($el => {
+      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
+    });
+  });
+
+  it('enableColumn() / disableColumn()', () => {
+    cy.gridInstance().invoke('disableColumn', 'age');
+
+    cy.getColumnCells('age').each($el => {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
 });
