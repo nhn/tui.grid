@@ -30,9 +30,9 @@ module.exports = on => {
         rules: [
           {
             test: /\.tsx?$/,
-            loader: 'awesome-typescript-loader',
+            loader: 'ts-loader',
             options: {
-              configFileName: './cypress/tsconfig.json'
+              transpileOnly: true
             }
           }
         ]
