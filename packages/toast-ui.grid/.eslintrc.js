@@ -32,6 +32,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 0,
     '@typescript-eslint/no-useless-constructor': 2,
     '@typescript-eslint/ban-ts-ignore': 0,
+    '@typescript-eslint/no-unused-vars': 2,
     'react/no-unknown-property': 0,
     'accessor-pairs': 0,
     'require-jsdoc': 0,
