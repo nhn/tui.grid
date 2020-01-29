@@ -115,17 +115,9 @@ describe('should API is executed properly on lazy observable data', () => {
   it('disable()', () => {
     cy.gridInstance().invoke('disable');
 
-    cy.get(`.${cls('table')} tr .${cls('cell-row-header')} input`).should($el => {
-      $el.each((_, input) => {
-        const inputWithType = input as HTMLInputElement;
-        expect(inputWithType.disabled).to.be.true;
-      });
-    });
-
-    cy.get(`td.${cls('cell')}`).should($el => {
-      $el.each((_, elem) => {
-        expect(elem.classList.contains(`${cls('cell-disabled')}`)).to.be.true;
-      });
+    assertDisabledState(true);
+    cy.getBodyCells().each($el => {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     scrollToBottom();
@@ -141,14 +133,9 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('have.class', cls('cell-disabled'));
-    cy.getCell(17, 'artist').should('have.class', cls('cell-disabled'));
-    cy.getCell(17, 'type').should('have.class', cls('cell-disabled'));
-
-    cy.getCell(17, '_checked').should('have.class', cls('cell-disabled'));
-    cy.getCell(17, '_checked')
-      .find('input')
-      .should('be.disabled');
+    cy.getRow(17).each($el => {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
+    });
   });
 
   it('disableRowCheck()', () => {
@@ -156,14 +143,14 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('not.have.class', `${cls('cell-disabled')}`);
-    cy.getCell(17, 'artist').should('not.have.class', `${cls('cell-disabled')}`);
-    cy.getCell(17, 'type').should('not.have.class', `${cls('cell-disabled')}`);
-
-    cy.getCell(18, '_checked').should('have.class', cls('cell-disabled'));
-    cy.getCell(18, '_checked')
-      .find('input')
-      .should('be.disabled');
+    cy.getRow(18).each(($el, index) => {
+      if (!index) {
+        // checkbox
+        cy.wrap($el).should('have.class', cls('cell-disabled'));
+      } else {
+        cy.wrap($el).should('not.have.class', cls('cell-disabled'));
+      }
+    });
   });
 
   it('addCellClassName() / removeCellClassName()', () => {
@@ -184,13 +171,12 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCell(17, 'name').should('not.have.class', 'tui-grid-cell-test');
-    cy.getCell(17, 'artist').should('not.have.class', 'tui-grid-cell-test');
-    cy.getCell(17, 'type').should('not.have.class', 'tui-grid-cell-test');
-
-    cy.getCell(18, 'name').should('have.class', 'tui-grid-cell-test');
-    cy.getCell(18, 'artist').should('have.class', 'tui-grid-cell-test');
-    cy.getCell(18, 'type').should('have.class', 'tui-grid-cell-test');
+    cy.getRow(17).each($el => {
+      cy.wrap($el).should('not.have.class', 'tui-grid-cell-test');
+    });
+    cy.getRow(18).each($el => {
+      cy.wrap($el).should('have.class', 'tui-grid-cell-test');
+    });
   });
 
   it('appendRow()', () => {
