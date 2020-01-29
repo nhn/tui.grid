@@ -59,13 +59,13 @@ class HeaderCheckboxComp extends Component<Props> {
 
 export const HeaderCheckbox = connect<StoreProps>(store => {
   const {
-    data: { checkedAllRows, filteredRawData },
+    data: { checkedAllRows, disabledAllCheckbox },
     column: { allColumnMap }
   } = store;
 
   return {
     header: allColumnMap._checked.header,
     checkedAllRows,
-    disabled: filteredRawData.every(row => row._attributes.checkDisabled)
+    disabled: disabledAllCheckbox
   };
 })(HeaderCheckboxComp);
