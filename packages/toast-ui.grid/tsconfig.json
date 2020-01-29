@@ -12,6 +12,7 @@
     "jsx": "react",
     "jsxFactory": "h",
     "baseUrl": ".",
+    "noEmit": true,
     "typeRoots": ["./types"],
     "types": ["node", "tui-pagination", "tui-date-picker"],
     "lib": ["esnext", "dom", "dom.iterable"]
