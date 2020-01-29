@@ -1,5 +1,15 @@
 import { cls } from '@/helper/dom';
 
+function assertDisabledBodyCells(disabled: boolean) {
+  cy.getBodyCells().each($el => {
+    if (disabled) {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
+    } else {
+      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
+    }
+  });
+}
+
 before(() => {
   cy.visit('/dist');
 });
@@ -86,7 +96,7 @@ describe('className', () => {
   });
 });
 
-describe('row disable', () => {
+describe('row disabled', () => {
   beforeEach(() => {
     const data = [
       {
@@ -113,7 +123,7 @@ describe('row disable', () => {
     cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
   });
 
-  it('row disable, checkbox disable by attributes options', () => {
+  it('row, checkbox disabled by attributes options', () => {
     // first row
     cy.getRow(0).each(($el, index) => {
       if (!index) {
@@ -137,22 +147,6 @@ describe('row disable', () => {
       } else {
         cy.wrap($el).should('have.class', cls('cell-disabled'));
       }
-    });
-  });
-
-  it('disable()', () => {
-    cy.gridInstance().invoke('disable');
-
-    cy.getRow(0).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
-
-    cy.getRow(1).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
-
-    cy.getRow(2).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
 
@@ -186,7 +180,7 @@ describe('row disable', () => {
   });
 });
 
-describe('disable precedence', () => {
+describe('disabled precedence', () => {
   beforeEach(() => {
     const data = [
       {
@@ -228,15 +222,7 @@ describe('disable precedence', () => {
   it('in case of applying `disabled` by API, applying order should be precedence', () => {
     cy.gridInstance().invoke('enable');
 
-    cy.getRow(0).each($el => {
-      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
-    });
-    cy.getRow(1).each($el => {
-      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
-    });
-    cy.getRow(2).each($el => {
-      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
-    });
+    assertDisabledBodyCells(false);
 
     cy.gridInstance().invoke('disableRow', 0);
 
@@ -250,7 +236,7 @@ describe('disable precedence', () => {
   });
 });
 
-describe('all disable', () => {
+describe('all disabled', () => {
   beforeEach(() => {
     const data = [
       {
@@ -275,14 +261,51 @@ describe('all disable', () => {
   });
 
   it('all disabled by data option', () => {
-    cy.getRow(0).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
-    cy.getRow(1).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
-    cy.getRow(2).each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
+    assertDisabledBodyCells(true);
+  });
+
+  it('enable() / disable()', () => {
+    cy.gridInstance().invoke('enable');
+
+    assertDisabledBodyCells(false);
+
+    cy.gridInstance().invoke('disable');
+
+    assertDisabledBodyCells(true);
+  });
+});
+
+describe('disabled + checked', () => {
+  beforeEach(() => {
+    const data = [
+      {
+        name: 'Kim',
+        age: 30,
+        location: 'seoul'
+      },
+      {
+        name: 'Lee',
+        age: 40,
+        location: 'busan',
+        _attributes: { checkDisabled: true }
+      },
+      {
+        name: 'Han',
+        age: 28,
+        location: 'Bundang'
+      }
+    ];
+    const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
+
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+  });
+
+  it('header checkbox should be checked when all checkboxed is checked except disabled checkbox', () => {
+    cy.gridInstance().invoke('check', 0);
+    cy.gridInstance().invoke('check', 2);
+
+    cy.getHeaderCell('_checked')
+      .find('input')
+      .should('be.checked');
   });
 });
