@@ -13,7 +13,7 @@
     "test:ci": "start-server-and-test start http://localhost:8000 cy:run",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
-    "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015",
+    "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
     "doc:dev": "npm run ts2js && tuidoc --dev",
     "doc": "npm run ts2js && tuidoc",
     "tuie": "tuie"
