@@ -4,9 +4,11 @@
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
   "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
     "check-types": "tsc --project ./cypress/tsconfig.json",
-    "start": "npm run check-types && webpack-dev-server",
-    "build": "npm run check-types && (webpack --mode=production & webpack --mode=production --minify) && node tsBannerGenerator.ts",
+    "validate": "npm run check-types && npm run lint",
+    "start": "npm run validate && webpack-dev-server",
+    "build": "npm run validate && (webpack --mode=production & webpack --mode=production --minify) && node tsBannerGenerator.ts",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test": "start-server-and-test start http://localhost:8000 cy:open",
