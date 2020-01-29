@@ -420,6 +420,7 @@ function setRowOrColumnDisabled(target: RowAttributes | ColumnInfo, disabled: bo
   }
 }
 
+// @TODO consider the client pagination with disabled
 export function setDisabled(store: Store, disabled: boolean) {
   const { data, column } = store;
   data.rawData.forEach(row => {
