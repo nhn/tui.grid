@@ -275,37 +275,32 @@ describe('all disabled', () => {
   });
 });
 
-describe('disabled + checked', () => {
-  beforeEach(() => {
-    const data = [
-      {
-        name: 'Kim',
-        age: 30,
-        location: 'seoul'
-      },
-      {
-        name: 'Lee',
-        age: 40,
-        location: 'busan',
-        _attributes: { checkDisabled: true }
-      },
-      {
-        name: 'Han',
-        age: 28,
-        location: 'Bundang'
-      }
-    ];
-    const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
+it('header checkbox should be checked when all checkbox is checked except disabled checkbox', () => {
+  const data = [
+    {
+      name: 'Kim',
+      age: 30,
+      location: 'seoul'
+    },
+    {
+      name: 'Lee',
+      age: 40,
+      location: 'busan',
+      _attributes: { checkDisabled: true }
+    },
+    {
+      name: 'Han',
+      age: 28,
+      location: 'Bundang'
+    }
+  ];
+  const columns = [{ name: 'name' }, { name: 'age' }, { name: 'location' }];
 
-    cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
-  });
+  cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
+  cy.gridInstance().invoke('check', 0);
+  cy.gridInstance().invoke('check', 2);
 
-  it('header checkbox should be checked when all checkboxed is checked except disabled checkbox', () => {
-    cy.gridInstance().invoke('check', 0);
-    cy.gridInstance().invoke('check', 2);
-
-    cy.getHeaderCell('_checked')
-      .find('input')
-      .should('be.checked');
-  });
+  cy.getHeaderCell('_checked')
+    .find('input')
+    .should('be.checked');
 });

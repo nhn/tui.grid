@@ -38,8 +38,7 @@ export function getCellAddressByIndex(
 }
 
 export function isEditableCell(data: Data, column: Column, rowIndex: number, columnName: string) {
-  const { filteredViewData } = data;
-  const { disabled, editable } = filteredViewData[rowIndex].valueMap[columnName];
+  const { disabled, editable } = data.filteredViewData[rowIndex].valueMap[columnName];
   return !isHiddenColumn(column, columnName) && editable && !disabled;
 }
 

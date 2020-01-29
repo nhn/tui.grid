@@ -404,11 +404,11 @@ export function paste(store: Store, pasteData: string[][]) {
 function setDisabledAllCheckbox({ data }: Store, disabled: boolean) {
   const { rawData } = data;
 
-  if (!disabled) {
-    data.disabledAllCheckbox = false;
-  } else {
+  if (disabled) {
     data.disabledAllCheckbox =
       !!rawData.length && rawData.every(row => row._attributes.checkDisabled);
+  } else {
+    data.disabledAllCheckbox = false;
   }
 }
 
@@ -457,12 +457,10 @@ export function setRowDisabled(
   }
 }
 
-export function setColumnDisabled(store: Store, disabled: boolean, columnName: string) {
+export function setColumnDisabled({ data, column }: Store, disabled: boolean, columnName: string) {
   if (isRowHeader(columnName)) {
     return;
   }
-
-  const { data, column } = store;
 
   data.rawData.forEach(row => {
     row._disabledPriority[columnName] = 'COLUMN';

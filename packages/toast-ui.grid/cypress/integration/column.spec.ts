@@ -18,6 +18,22 @@ function setSelection(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
 }
 
+function assertDisabledColumn(columnName: string, disabled = true) {
+  cy.getColumnCells(columnName).each($el => {
+    if (disabled) {
+      cy.wrap($el).should('have.class', cls('cell-disabled'));
+    } else {
+      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
+    }
+  });
+}
+
+function assertColumnClassName(columnName: string, className: string) {
+  cy.getColumnCells(columnName).each($el => {
+    cy.wrap($el).should('have.class', className);
+  });
+}
+
 before(() => {
   cy.visit('/dist');
 });
@@ -219,9 +235,7 @@ describe('column className', () => {
   });
 
   it('add class by column options', () => {
-    cy.getColumnCells('name').each($el => {
-      expect($el).to.have.class('column-test-c');
-    });
+    assertColumnClassName('name', 'column-test-c');
   });
 });
 
@@ -249,25 +263,15 @@ describe('column disable', () => {
     cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
   });
 
-  it('column disable disable by column options', () => {
-    cy.getColumnCells('name').each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
-
-    cy.getColumnCells('age').each($el => {
-      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
-    });
-
-    cy.getColumnCells('location').each($el => {
-      cy.wrap($el).should('not.have.class', cls('cell-disabled'));
-    });
+  it('column disable by column options', () => {
+    assertDisabledColumn('name');
+    assertDisabledColumn('age', false);
+    assertDisabledColumn('location', false);
   });
 
   it('enableColumn() / disableColumn()', () => {
     cy.gridInstance().invoke('disableColumn', 'age');
 
-    cy.getColumnCells('age').each($el => {
-      cy.wrap($el).should('have.class', cls('cell-disabled'));
-    });
+    assertDisabledColumn('age');
   });
 });
