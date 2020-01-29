@@ -275,6 +275,7 @@ export function setColumnValues(
   store: Store,
   columnName: string,
   value: CellValue,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   checkCellState = false
 ) {
   // @TODO Check Cell State
