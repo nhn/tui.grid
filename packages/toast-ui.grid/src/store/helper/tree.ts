@@ -7,10 +7,20 @@ import { observable, observe } from '../../helper/observable';
 import { includes } from '../../helper/common';
 import { TREE_INDENT_WIDTH } from '../../helper/constant';
 
-interface TreeDataOptions {
+interface TreeDataOption {
   keyColumnName?: string;
   lazyObservable?: boolean;
   offset?: number;
+  disabled?: boolean;
+}
+
+interface TreeDataCreationOption {
+  data: OptRow[];
+  defaultValues: ColumnDefaultValues;
+  columnMap: Dictionary<ColumnInfo>;
+  keyColumnName?: string;
+  lazyObservable?: boolean;
+  disabled?: boolean;
 }
 
 let treeRowKey = -1;
@@ -59,18 +69,19 @@ export function createTreeRawRow(
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
   columnMap: Dictionary<ColumnInfo>,
-  options = { lazyObservable: false } as TreeDataOptions
+  options = {} as TreeDataOption
 ) {
   let childRowKeys = [] as RowKey[];
   if (row._attributes && row._attributes.tree) {
     childRowKeys = row._attributes.tree.childRowKeys as RowKey[];
   }
-  const { keyColumnName, offset, lazyObservable = false } = options;
+  const { keyColumnName, offset, lazyObservable = false, disabled = false } = options;
   // generate new tree rowKey when row doesn't have rowKey
   const targetTreeRowKey = isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
   const rawRow = createRawRow(row, targetTreeRowKey, defaultValues, columnMap, {
     keyColumnName,
-    lazyObservable
+    lazyObservable,
+    disabled
   });
   const { rowKey } = rawRow;
   const defaultAttributes = {
@@ -104,7 +115,7 @@ export function flattenTreeData(
   defaultValues: ColumnDefaultValues,
   parentRow: Row | null,
   columnMap: Dictionary<ColumnInfo>,
-  options: TreeDataOptions
+  options: TreeDataOption
 ) {
   const flattenedRows: Row[] = [];
 
@@ -125,19 +136,24 @@ export function flattenTreeData(
   return flattenedRows;
 }
 
-export function createTreeRawData(
-  data: OptRow[],
-  defaultValues: ColumnDefaultValues,
-  columnMap: Dictionary<ColumnInfo>,
-  keyColumnName?: string,
-  lazyObservable = false
-) {
+export function createTreeRawData({
+  data,
+  defaultValues,
+  columnMap,
+  keyColumnName,
+  lazyObservable = false,
+  disabled = false
+}: TreeDataCreationOption) {
   // only reset the rowKey on lazy observable data
   if (lazyObservable) {
     treeRowKey = -1;
   }
 
-  return flattenTreeData(data, defaultValues, null, columnMap, { keyColumnName, lazyObservable });
+  return flattenTreeData(data, defaultValues, null, columnMap, {
+    keyColumnName,
+    lazyObservable,
+    disabled
+  });
 }
 
 export function createTreeCellInfo(
