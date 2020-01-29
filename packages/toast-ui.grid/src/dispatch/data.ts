@@ -10,7 +10,8 @@ import {
   Range,
   PagePosition,
   LoadingState,
-  PageOptions
+  PageOptions,
+  ColumnInfo
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -254,7 +255,7 @@ export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
   value: RowAttributes[K],
-  allPage: boolean
+  allPage = true
 ) {
   const { filteredRawData } = data;
   const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
@@ -325,7 +326,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 }
 
-export function checkAll(store: Store, allPage = true) {
+export function checkAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', true, allPage);
   setCheckedAllRows(store);
@@ -340,7 +341,7 @@ export function checkAll(store: Store, allPage = true) {
   eventBus.trigger('checkAll', gridEvent);
 }
 
-export function uncheckAll(store: Store, allPage = true) {
+export function uncheckAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', false, allPage);
   setCheckedAllRows(store);
@@ -400,16 +401,36 @@ export function paste(store: Store, pasteData: string[][]) {
   changeSelectionRange(selection, getSelectionRange(rangeToPaste, pageOptions), id);
 }
 
+function setDisabledAllCheckbox({ data }: Store, disabled: boolean) {
+  const { rawData } = data;
+
+  if (!disabled) {
+    data.disabledAllCheckbox = false;
+  } else {
+    data.disabledAllCheckbox =
+      !!rawData.length && rawData.every(row => row._attributes.checkDisabled);
+  }
+}
+
+function setRowOrColumnDisabled(target: RowAttributes | ColumnInfo, disabled: boolean) {
+  if (target.disabled === disabled) {
+    notify(target, 'disabled');
+  } else {
+    target.disabled = disabled;
+  }
+}
+
 export function setDisabled(store: Store, disabled: boolean) {
   const { data, column } = store;
-  for (let i = data.rawData.length - 1; i >= 0; i -= 1) {
-    data.rawData[i]._disabledPrecedence = {};
-    data.rawData[i]._attributes.checkDisabled = disabled;
-    data.rawData[i]._attributes.disabled = disabled;
-  }
+  data.rawData.forEach(row => {
+    row._disabledPriority = {};
+    setAllRowAttribute(store, 'disabled', disabled);
+    setAllRowAttribute(store, 'checkDisabled', disabled);
+  });
   column.columnsWithoutRowHeader.forEach(columnInfo => {
     columnInfo.disabled = disabled;
   });
+  data.disabledAllCheckbox = disabled;
 }
 
 export function setRowDisabled(
@@ -421,21 +442,17 @@ export function setRowDisabled(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
-    const { _attributes, _disabledPrecedence } = row;
+    const { _attributes, _disabledPriority } = row;
 
     column.allColumns.forEach(columnInfo => {
-      _disabledPrecedence[columnInfo.name] = 'ROW';
+      _disabledPriority[columnInfo.name] = 'ROW';
     });
 
     if (withCheckbox) {
       _attributes.checkDisabled = disabled;
+      setDisabledAllCheckbox(store, disabled);
     }
-
-    if (_attributes.disabled === disabled) {
-      notify(_attributes, 'disabled');
-    } else {
-      _attributes.disabled = disabled;
-    }
+    setRowOrColumnDisabled(_attributes, disabled);
   }
 }
 
@@ -445,17 +462,11 @@ export function setColumnDisabled(store: Store, disabled: boolean, columnName: s
   }
 
   const { data, column } = store;
-  const { allColumnMap } = column;
 
   data.rawData.forEach(row => {
-    row._disabledPrecedence[columnName] = 'COLUMN';
+    row._disabledPriority[columnName] = 'COLUMN';
   });
-
-  if (allColumnMap[columnName].disabled === disabled) {
-    notify(allColumnMap[columnName], 'disabled');
-  } else {
-    allColumnMap[columnName].disabled = disabled;
-  }
+  setRowOrColumnDisabled(column.allColumnMap[columnName], disabled);
 }
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
@@ -463,6 +474,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     row._attributes.checkDisabled = disabled;
+    setDisabledAllCheckbox(store, disabled);
   }
 }
 
@@ -589,7 +601,7 @@ export function clearData(store: Store) {
 
 export function resetData(store: Store, inputData: OptRow[]) {
   const { data, column, id } = store;
-  const { rawData, viewData } = createData(inputData, column, true);
+  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -800,7 +812,7 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   const { targetIndexes, rows } = originData;
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
-  const { rawData, viewData } = createData(rows, column, false, prevRows);
+  const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
