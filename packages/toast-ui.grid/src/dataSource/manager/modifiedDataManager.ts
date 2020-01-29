@@ -47,7 +47,7 @@ export function getDataWithOptions(targetRows: Row[], options: ModifiedRowsOptio
   if (!withRawData) {
     // @ts-ignore
     rows = rows.map(row =>
-      omit(row, 'sortKey', 'uniqueKey', '_attributes', '_relationListItemMap')
+      omit(row, 'sortKey', 'uniqueKey', '_attributes', '_relationListItemMap', '_disabledPriority')
     );
   }
   if (rowKeyOnly) {
