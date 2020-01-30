@@ -160,6 +160,7 @@ export interface OptColumn {
   validation?: Validation;
   filter?: FilterOptionType | FilterOpt;
   className?: string;
+  disabled?: boolean;
 }
 
 export interface OptColumnOptions {

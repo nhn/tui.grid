@@ -12,7 +12,6 @@ export type CellRendererProps = CellRenderData & {
   grid: Grid;
   rowKey: RowKey;
   columnInfo: ColumnInfo;
-  allDisabled: boolean;
 };
 
 export interface CellRenderer {

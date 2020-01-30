@@ -49,11 +49,20 @@ interface DataOption {
   column: Column;
   pageOptions: PageOptions;
   useClientSort: boolean;
-  disabled: boolean;
   id: number;
+  disabled: boolean;
+}
+
+interface DataCreationOption {
+  data: OptRow[];
+  column: Column;
+  lazyObservable?: boolean;
+  prevRows?: Row[];
+  disabled?: boolean;
 }
 
 let dataCreationKey = '';
+
 export function generateDataCreationKey() {
   dataCreationKey = `@dataKey${Date.now()}`;
   return dataCreationKey;
@@ -187,6 +196,8 @@ function createViewCell(
 
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
+  const columnDisabled = !!column.disabled;
+  const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
   const classList = [...classNameAttr.row, ...columnClassName];
   const className = (isEmpty(row.rowSpanMap[name])
@@ -194,10 +205,15 @@ function createViewCell(
     : classList.filter(clsName => clsName !== cls('row-hover'))
   ).join(' ');
 
+  let cellDisabled = rowDisabled || columnDisabled;
+  if (!isUndefined(row._disabledPriority[name])) {
+    cellDisabled = row._disabledPriority[name] === 'COLUMN' ? columnDisabled : rowDisabled;
+  }
+
   return {
     editable: !!editor,
     className,
-    disabled: isCheckboxColumn(name) ? checkDisabled : disabled,
+    disabled: cellDisabled,
     invalidStates: getValidationCode(value, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
@@ -301,12 +317,12 @@ export function createViewRow(
   };
 }
 
-function getAttributes(row: OptRow, index: number, lazyObservable: boolean) {
+function getAttributes(row: OptRow, index: number, lazyObservable: boolean, disabled: boolean) {
   const defaultAttr = {
-    rowNum: index + 1, // @TODO append, remove 할 때 인덱스 변경 처리 필요
+    rowNum: index + 1,
     checked: false,
-    disabled: false,
-    checkDisabled: false,
+    disabled,
+    checkDisabled: disabled,
     className: {
       row: [],
       column: {}
@@ -412,7 +428,7 @@ export function createRawRow(
 ) {
   // this rowSpan variable is attribute option before creating rowSpanDataMap
   let rowSpan: RowSpanAttributeValue;
-  const { keyColumnName, prevRow, lazyObservable = false } = options;
+  const { keyColumnName, prevRow, lazyObservable = false, disabled = false } = options;
 
   if (row._attributes) {
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
@@ -421,8 +437,9 @@ export function createRawRow(
   row.rowKey = keyColumnName ? row[keyColumnName] : index;
   row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
   row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
-  row._attributes = getAttributes(row, index, lazyObservable);
+  row._attributes = getAttributes(row, index, lazyObservable, disabled);
   row._attributes.rowSpan = rowSpan;
+  row._disabledPriority = row._disabledPriority || {};
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
   defaultValues.forEach(({ name, value }) => {
@@ -433,31 +450,34 @@ export function createRawRow(
   return (lazyObservable ? row : observable(row)) as Row;
 }
 
-export function createData(
-  data: OptRow[],
-  column: Column,
+export function createData({
+  data,
+  column,
   lazyObservable = false,
-  prevRows?: Row[]
-) {
+  prevRows,
+  disabled = false
+}: DataCreationOption) {
   generateDataCreationKey();
   const { defaultValues, columnMapWithRelation, treeColumnName = '', treeIcon = true } = column;
   const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
   let rawData: Row[];
 
   if (treeColumnName) {
-    rawData = createTreeRawData(
+    rawData = createTreeRawData({
       data,
       defaultValues,
-      columnMapWithRelation,
+      columnMap: columnMapWithRelation,
       keyColumnName,
-      lazyObservable
-    );
+      lazyObservable,
+      disabled
+    });
   } else {
     rawData = data.map((row, index, rows) =>
       createRawRow(row, index, defaultValues, columnMapWithRelation, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
-        lazyObservable
+        lazyObservable,
+        disabled
       })
     );
   }
@@ -501,10 +521,10 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  disabled,
-  id
+  id,
+  disabled
 }: DataOption): Observable<Data> {
-  const { rawData, viewData } = createData(data, column, true);
+  const { rawData, viewData } = createData({ data, column, lazyObservable: true, disabled });
 
   const sortState: SortState = {
     useClient: useClientSort,
@@ -527,12 +547,12 @@ export function create({
       };
 
   return observable({
-    disabled,
     rawData,
     viewData,
     sortState,
     pageOptions,
     checkedAllRows: rawData.length ? !rawData.some(row => !row._attributes.checked) : false,
+    disabledAllCheckbox: disabled,
     filters: null,
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 

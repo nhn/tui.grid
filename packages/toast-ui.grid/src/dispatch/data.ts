@@ -10,7 +10,8 @@ import {
   Range,
   PagePosition,
   LoadingState,
-  PageOptions
+  PageOptions,
+  ColumnInfo
 } from '../store/types';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
@@ -65,6 +66,7 @@ import { findRowIndexByPosition } from '../query/mouse';
 import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
+import { isRowHeader } from '../helper/column';
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -231,12 +233,8 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   }
 }
 
-export function isUpdatableRowAttr(
-  name: keyof RowAttributes,
-  checkDisabled: boolean,
-  allDisabled: boolean
-) {
-  return !(name === 'checked' && (checkDisabled || allDisabled));
+export function isUpdatableRowAttr(name: keyof RowAttributes, checkDisabled: boolean) {
+  return !(name === 'checked' && checkDisabled);
 }
 
 export function setRowAttribute<K extends keyof RowAttributes>(
@@ -245,11 +243,10 @@ export function setRowAttribute<K extends keyof RowAttributes>(
   attrName: K,
   value: RowAttributes[K]
 ) {
-  const { disabled } = data;
   const targetRow = findRowByRowKey(data, column, id, rowKey, false);
 
   // https://github.com/microsoft/TypeScript/issues/34293
-  if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled, disabled)) {
+  if (targetRow && isUpdatableRowAttr(attrName, targetRow._attributes.checkDisabled)) {
     targetRow._attributes[attrName] = value;
   }
 }
@@ -258,13 +255,13 @@ export function setAllRowAttribute<K extends keyof RowAttributes>(
   { data }: Store,
   attrName: K,
   value: RowAttributes[K],
-  allPage: boolean
+  allPage = true
 ) {
   const { filteredRawData } = data;
   const range = allPage ? [0, filteredRawData.length] : data.pageRowRange;
 
   filteredRawData.slice(...range).forEach(row => {
-    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled, data.disabled)) {
+    if (isUpdatableRowAttr(attrName, row._attributes.checkDisabled)) {
       // https://github.com/microsoft/TypeScript/issues/34293
       row._attributes[attrName] = value;
     }
@@ -329,7 +326,7 @@ export function uncheck(store: Store, rowKey: RowKey) {
   eventBus.trigger('uncheck', gridEvent);
 }
 
-export function checkAll(store: Store, allPage = true) {
+export function checkAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', true, allPage);
   setCheckedAllRows(store);
@@ -344,7 +341,7 @@ export function checkAll(store: Store, allPage = true) {
   eventBus.trigger('checkAll', gridEvent);
 }
 
-export function uncheckAll(store: Store, allPage = true) {
+export function uncheckAll(store: Store, allPage?: boolean) {
   const { id } = store;
   setAllRowAttribute(store, 'checked', false, allPage);
   setCheckedAllRows(store);
@@ -404,8 +401,37 @@ export function paste(store: Store, pasteData: string[][]) {
   changeSelectionRange(selection, getSelectionRange(rangeToPaste, pageOptions), id);
 }
 
+function setDisabledAllCheckbox({ data }: Store, disabled: boolean) {
+  const { rawData } = data;
+
+  if (disabled) {
+    data.disabledAllCheckbox =
+      !!rawData.length && rawData.every(row => row._attributes.checkDisabled);
+  } else {
+    data.disabledAllCheckbox = false;
+  }
+}
+
+function setRowOrColumnDisabled(target: RowAttributes | ColumnInfo, disabled: boolean) {
+  if (target.disabled === disabled) {
+    notify(target, 'disabled');
+  } else {
+    target.disabled = disabled;
+  }
+}
+
+// @TODO consider the client pagination with disabled
 export function setDisabled(store: Store, disabled: boolean) {
-  store.data.disabled = disabled;
+  const { data, column } = store;
+  data.rawData.forEach(row => {
+    row._disabledPriority = {};
+    setAllRowAttribute(store, 'disabled', disabled);
+    setAllRowAttribute(store, 'checkDisabled', disabled);
+  });
+  column.columnsWithoutRowHeader.forEach(columnInfo => {
+    columnInfo.disabled = disabled;
+  });
+  data.disabledAllCheckbox = disabled;
 }
 
 export function setRowDisabled(
@@ -417,11 +443,29 @@ export function setRowDisabled(
   const { data, column, id } = store;
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
-    row._attributes.disabled = disabled;
+    const { _attributes, _disabledPriority } = row;
+
+    column.allColumns.forEach(columnInfo => {
+      _disabledPriority[columnInfo.name] = 'ROW';
+    });
+
     if (withCheckbox) {
-      row._attributes.checkDisabled = disabled;
+      _attributes.checkDisabled = disabled;
+      setDisabledAllCheckbox(store, disabled);
     }
+    setRowOrColumnDisabled(_attributes, disabled);
   }
+}
+
+export function setColumnDisabled({ data, column }: Store, disabled: boolean, columnName: string) {
+  if (isRowHeader(columnName)) {
+    return;
+  }
+
+  data.rawData.forEach(row => {
+    row._disabledPriority[columnName] = 'COLUMN';
+  });
+  setRowOrColumnDisabled(column.allColumnMap[columnName], disabled);
 }
 
 export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: RowKey) {
@@ -429,6 +473,7 @@ export function setRowCheckDisabled(store: Store, disabled: boolean, rowKey: Row
   const row = findRowByRowKey(data, column, id, rowKey, false);
   if (row) {
     row._attributes.checkDisabled = disabled;
+    setDisabledAllCheckbox(store, disabled);
   }
 }
 
@@ -555,7 +600,7 @@ export function clearData(store: Store) {
 
 export function resetData(store: Store, inputData: OptRow[]) {
   const { data, column, id } = store;
-  const { rawData, viewData } = createData(inputData, column, true);
+  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
@@ -766,7 +811,7 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   const { targetIndexes, rows } = originData;
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
-  const { rawData, viewData } = createData(rows, column, false, prevRows);
+  const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
@@ -808,7 +853,10 @@ export function setCheckedAllRows({ data }: Store) {
 
   data.checkedAllRows =
     !!filteredRawData.length &&
-    filteredRawData.slice(...pageRowRange).every(row => row._attributes.checked);
+    filteredRawData
+      .slice(...pageRowRange)
+      .filter(row => !row._attributes.checkDisabled)
+      .every(row => row._attributes.checked);
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {

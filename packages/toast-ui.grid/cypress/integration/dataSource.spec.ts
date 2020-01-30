@@ -442,18 +442,20 @@ describe('custom request event', () => {
     };
     const onSuccessResponse = cy.stub();
 
-    cy.wait('@readPage1');
+    setTimeout(() => {
+      cy.wait('@readPage1');
 
-    cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
-    cy.gridInstance().invoke('on', 'response', onResponse);
-    cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
-    cy.gridInstance().invoke('removeRow', 10);
+      cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
+      cy.gridInstance().invoke('on', 'response', onResponse);
+      cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
+      cy.gridInstance().invoke('removeRow', 10);
 
-    cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
+      cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
 
-    cy.wait('@modifyData');
+      cy.wait('@modifyData');
 
-    cy.wrap(onBeforeRequest).should('be.called');
-    cy.wrap(onSuccessResponse).should('be.not.called');
+      cy.wrap(onBeforeRequest).should('be.called');
+      cy.wrap(onSuccessResponse).should('be.not.called');
+    });
   });
 });

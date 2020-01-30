@@ -200,7 +200,8 @@ export function createColumn(
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
-  columnHeaderInfo: ColumnHeaderInfo
+  columnHeaderInfo: ColumnHeaderInfo,
+  disabled: boolean
 ): ColumnInfo {
   const {
     name,
@@ -269,7 +270,8 @@ export function createColumn(
     headerVAlign,
     filter: filterOptions,
     headerRenderer,
-    className
+    className,
+    disabled
   });
 }
 
@@ -352,6 +354,7 @@ interface ColumnOption {
   align: AlignType;
   valign: VAlignType;
   columnHeaders: OptColumnHeaderInfo[];
+  disabled: boolean;
 }
 
 export function create({
@@ -364,7 +367,8 @@ export function create({
   complexColumns,
   align,
   valign,
-  columnHeaders
+  columnHeaders,
+  disabled
 }: ColumnOption): Column {
   const relationColumns = columns.reduce((acc: string[], { relations }) => {
     acc = acc.concat(createRelationColumns(relations || []));
@@ -381,7 +385,8 @@ export function create({
       relationColumns,
       copyOptions,
       treeColumnOptions,
-      columnHeaderInfo
+      columnHeaderInfo,
+      !!(disabled || column.disabled)
     )
   );
 
@@ -475,6 +480,10 @@ export function create({
       });
 
       return createMapFromArray(copiedColumns, 'name');
+    },
+
+    get columnsWithoutRowHeader() {
+      return this.allColumns.slice(this.rowHeaderCount);
     },
 
     ...(treeColumnName && { treeColumnName, treeIcon, treeCascadingCheckbox })
