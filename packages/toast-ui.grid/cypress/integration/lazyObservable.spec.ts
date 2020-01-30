@@ -33,10 +33,11 @@ function assertDisabledState(disabled: boolean) {
 
 function scrollToBottom() {
   // sometimes cypress scrollTo is not worked
-  // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 400);
+  // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 300);
 
   // to move scroll position
-  cy.gridInstance().invoke('focus', 18, 'name');
+  cy.gridInstance().invoke('focus', 19, 'name');
+  cy.wait(10);
 }
 
 before(() => {
@@ -51,7 +52,7 @@ describe('should API is executed properly on lazy observable data', () => {
       { name: 'type', editor: 'text' }
     ];
 
-    cy.createGrid({ data, columns, rowHeaders: ['checkbox'], bodyHeight: 400 });
+    cy.createGrid({ data, columns, rowHeaders: ['checkbox'], bodyHeight: 300 });
   });
 
   it('startEditing()', () => {
@@ -190,11 +191,39 @@ describe('should API is executed properly on lazy observable data', () => {
   });
 
   it('resetData()', () => {
+    scrollToBottom();
+
     cy.gridInstance().invoke('resetData', [{ name: 'Lee', artist: 'Lee', type: 'test' }]);
 
-    cy.getCell(0, 'name').should('have.text', 'Lee');
-    cy.getCell(0, 'artist').should('have.text', 'Lee');
-    cy.getCell(0, 'type').should('have.text', 'test');
+    cy.getRsideBody()
+      .invoke('scrollTop')
+      .should('eq', 0);
+    cy.getRsideBody().should('have.cellData', [['Lee', 'Lee', 'test']]);
+  });
+
+  it('clear()', () => {
+    scrollToBottom();
+
+    cy.gridInstance().invoke('clear');
+
+    cy.getRsideBody()
+      .invoke('scrollTop')
+      .should('eq', 0);
+    cy.getBodyCells().should('not.exist');
+  });
+
+  it('setColumns()', () => {
+    scrollToBottom();
+
+    cy.gridInstance().invoke('setColumns', [
+      { name: 'name' },
+      { name: 'artist' },
+      { name: 'type' }
+    ]);
+
+    cy.getRsideBody()
+      .invoke('scrollTop')
+      .should('eq', 0);
   });
 });
 

@@ -65,3 +65,8 @@ export function setScrollLeft({ viewport }: Store, scrollLeft: number) {
 export function setScrollTop({ viewport }: Store, scrollTop: number) {
   viewport.scrollTop = scrollTop;
 }
+
+export function initScrollPosition({ viewport }: Store) {
+  viewport.scrollLeft = 0;
+  viewport.scrollTop = 0;
+}

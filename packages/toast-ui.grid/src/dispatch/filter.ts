@@ -5,7 +5,7 @@ import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { getUniqColumnData } from '../query/data';
 import { FilterOpt, OperatorType, FilterOptionType } from '../types';
 import { createColumnFilterOption } from '../store/column';
-import { setScrollTop } from './viewport';
+import { initScrollPosition } from './viewport';
 import { initSelection } from './selection';
 import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
@@ -17,11 +17,11 @@ import { updateAllSummaryValues } from './summary';
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;
 
+  initScrollPosition(store);
   initSelection(store);
   initFocus(store);
   updatePageOptions(store, { totalCount: data.filteredRawData.length, page: 1 });
   updateHeights(store);
-  setScrollTop(store, 0);
   updateRowNumber(store, 0);
   setCheckedAllRows(store);
 }
