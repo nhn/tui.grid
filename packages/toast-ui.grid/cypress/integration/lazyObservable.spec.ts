@@ -33,7 +33,7 @@ function assertDisabledState(disabled: boolean) {
 
 function scrollToBottom() {
   // sometimes cypress scrollTo is not worked
-  // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 400);
+  // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 300);
 
   // to move scroll position
   cy.gridInstance().invoke('focus', 19, 'name');
