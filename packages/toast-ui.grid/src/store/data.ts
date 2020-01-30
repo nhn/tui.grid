@@ -206,10 +206,8 @@ function createViewCell(
   ).join(' ');
 
   let cellDisabled = rowDisabled || columnDisabled;
-  if (row._disabledPriority[name] === 'ROW') {
-    cellDisabled = rowDisabled;
-  } else if (row._disabledPriority[name] === 'COLUMN') {
-    cellDisabled = columnDisabled;
+  if (!isUndefined(row._disabledPriority[name])) {
+    cellDisabled = row._disabledPriority[name] === 'COLUMN' ? columnDisabled : rowDisabled;
   }
 
   return {

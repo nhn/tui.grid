@@ -118,14 +118,16 @@ export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, ob
   const resultObj = { ...targetObj } as T1 & T2;
 
   Object.keys(obj).forEach((prop: keyof T2) => {
-    if (resultObj.hasOwnProperty(prop) && isObject(resultObj[prop])) {
+    if (isObject(resultObj[prop])) {
       if (Array.isArray(obj[prop])) {
         resultObj[prop as keyof T1 & T2] = deepCopyArray(obj[prop]);
-      } else {
+      } else if (resultObj.hasOwnProperty(prop)) {
         resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+      } else {
+        resultObj[prop as keyof T1 & T2] = deepCopy(obj[prop]);
       }
     } else {
-      resultObj[prop as keyof T1 & T2] = isObject(obj[prop]) ? deepCopy(obj[prop]) : obj[prop];
+      resultObj[prop as keyof T1 & T2] = obj[prop];
     }
   });
 
@@ -143,14 +145,15 @@ export function deepCopyArray<T extends Array<any>>(items: T): T {
 
 export function deepCopy<T extends Obj>(obj: T) {
   const resultObj = {} as T;
+  const keys = Object.keys(obj);
 
-  Object.keys(obj).forEach((prop: keyof T) => {
+  if (!keys.length) {
+    return obj;
+  }
+
+  keys.forEach((prop: keyof T) => {
     if (isObject(obj[prop])) {
-      if (Array.isArray(obj[prop])) {
-        resultObj[prop] = deepCopyArray(obj[prop]);
-      } else {
-        resultObj[prop] = deepCopy(obj[prop]);
-      }
+      resultObj[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
     } else {
       resultObj[prop] = obj[prop];
     }

@@ -18,7 +18,7 @@ function setSelection(start: Address, end: Address) {
   cy.gridInstance().invoke('setSelectionRange', { start, end });
 }
 
-function assertDisabledColumn(columnName: string, disabled = true) {
+function assertDisabledColumn(columnName: string, disabled: boolean) {
   cy.getColumnCells(columnName).each($el => {
     if (disabled) {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
@@ -264,7 +264,7 @@ describe('column disable', () => {
   });
 
   it('column disable by column options', () => {
-    assertDisabledColumn('name');
+    assertDisabledColumn('name', true);
     assertDisabledColumn('age', false);
     assertDisabledColumn('location', false);
   });
@@ -272,6 +272,6 @@ describe('column disable', () => {
   it('enableColumn() / disableColumn()', () => {
     cy.gridInstance().invoke('disableColumn', 'age');
 
-    assertDisabledColumn('age');
+    assertDisabledColumn('age', true);
   });
 });
