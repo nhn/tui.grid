@@ -35,8 +35,7 @@ import {
   isUndefined,
   isNumber,
   findProp,
-  uniq,
-  isEmpty
+  uniq
 } from '../helper/common';
 import { DefaultRenderer } from '../renderer/default';
 import { editorMap } from '../editor/manager';

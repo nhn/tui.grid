@@ -15,8 +15,7 @@ import {
   isUndefined,
   omit,
   isObject,
-  forEachObject,
-  assign
+  forEachObject
 } from '../../helper/common';
 import { getOriginObject, Observable } from '../../helper/observable';
 

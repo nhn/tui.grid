@@ -1,5 +1,4 @@
 import { data } from '../../samples/pagination';
-import { cls } from '@/helper/dom';
 import { OptRow } from '@/types';
 
 const PER_PAGE_COUNT = 10;

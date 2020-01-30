@@ -16,7 +16,14 @@ const commonConfig = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'awesome-typescript-loader',
+        use: [
+          {
+            loader: require.resolve('ts-loader'),
+            options: {
+              transpileOnly: true
+            }
+          }
+        ],
         exclude: /node_modules/
       }
     ]

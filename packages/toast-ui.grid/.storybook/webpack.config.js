@@ -7,7 +7,7 @@ module.exports = ({ config, mode }) => {
       exclude: /node_modules/,
       use: [
         {
-          loader: require.resolve('awesome-typescript-loader'),
+          loader: require.resolve('ts-loader'),
           options: {
             transpileOnly: true
           }
