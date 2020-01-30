@@ -21,6 +21,7 @@ import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
 import { findProp } from '../helper/common';
+import { initScrollPosition } from './viewport';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
   column.frozenCount = count;
@@ -120,6 +121,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   const dataCreationKey = generateDataCreationKey();
 
+  initScrollPosition(store);
   initFocus(store);
   initSelection(store);
 

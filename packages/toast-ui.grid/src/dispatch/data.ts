@@ -64,7 +64,7 @@ import { setHoveredRowKey } from './renderState';
 import { findRowIndexByPosition } from '../query/mouse';
 import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
-import { setScrollTop } from './viewport';
+import { initScrollPosition } from './viewport';
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -538,6 +538,7 @@ export function clearData(store: Store) {
     getDataManager(id).push('DELETE', row);
   });
 
+  initScrollPosition(store);
   initFocus(store);
   initSelection(store);
   initSortState(data);
@@ -557,6 +558,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent();
 
+  initScrollPosition(store);
   initFocus(store);
   initSelection(store);
   initSortState(data);
@@ -688,12 +690,14 @@ export function removeColumnClassName({ data }: Store, columnName: string, class
 export function movePage(store: Store, page: number) {
   const { data } = store;
 
+  initScrollPosition(store);
+
   data.pageOptions.page = page;
   notify(data, 'pageOptions');
+
   updateHeights(store);
   initSelection(store);
   initFocus(store);
-  setScrollTop(store, 0);
   setCheckedAllRows(store);
   updateAllSummaryValues(store);
 }
