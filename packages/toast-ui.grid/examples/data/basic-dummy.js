@@ -9,7 +9,7 @@ const gridData = [
     typeCode: '1',
     genre: 'Pop',
     genreCode: '1',
-    grade: '4',
+    grade: '2',
     price: 10000,
     downloadCount: 1000,
     listenCount: 5000
@@ -23,7 +23,7 @@ const gridData = [
     typeCode: '1',
     genre: 'Pop',
     genreCode: '1',
-    grade: '5',
+    grade: '3',
     price: 20000,
     downloadCount: 1000,
     listenCount: 5000
@@ -65,7 +65,7 @@ const gridData = [
     typeCode: '1',
     genre: 'Pop,R&B',
     genreCode: '1,3',
-    grade: '5',
+    grade: '3',
     price: 15000,
     downloadCount: 1000,
     listenCount: 5000
@@ -79,7 +79,7 @@ const gridData = [
     typeCode: '1',
     genre: 'R&B,Electronic',
     genreCode: '3,4',
-    grade: '4',
+    grade: '2',
     price: 11000,
     downloadCount: 1000,
     listenCount: 5000
@@ -135,7 +135,7 @@ const gridData = [
     typeCode: '3',
     genre: 'Rock',
     genreCode: '2',
-    grade: '5',
+    grade: '3',
     price: 10000,
     downloadCount: 1000,
     listenCount: 5000
@@ -149,14 +149,14 @@ const gridData = [
     typeCode: '2',
     genre: 'Hiphop',
     genreCode: '5',
-    grade: '5',
+    grade: '3',
     price: 18000,
     downloadCount: 1000,
     listenCount: 5000
   },
   {
     id: 294574,
-    name: '4',
+    name: '2',
     artist: 'Beyoncé',
     release: '2011.07.26',
     type: 'Deluxe',
@@ -191,7 +191,7 @@ const gridData = [
     typeCode: '1',
     genre: 'R&B,Electronic',
     genreCode: '3,4',
-    grade: '5',
+    grade: '3',
     price: 15000,
     downloadCount: 1000,
     listenCount: 5000
@@ -205,7 +205,7 @@ const gridData = [
     typeCode: '3',
     genre: 'Pop,Rock',
     genreCode: '1,2',
-    grade: '5',
+    grade: '3',
     price: 6000,
     downloadCount: 1000,
     listenCount: 5000
@@ -247,7 +247,7 @@ const gridData = [
     typeCode: '3',
     genre: 'Pop,R&B',
     genreCode: '1,3',
-    grade: '4',
+    grade: '2',
     price: 8000,
     downloadCount: 1000,
     listenCount: 5000
@@ -275,7 +275,7 @@ const gridData = [
     typeCode: '2',
     genre: 'Pop,Rock',
     genreCode: '1,2',
-    grade: '5',
+    grade: '3',
     price: 12000,
     downloadCount: 1000,
     listenCount: 5000
