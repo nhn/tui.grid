@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Grid v4.8.1
+// Type definitions for TOAST UI Grid v4.9.0
 // TypeScript Version: 3.7.2
 
 declare namespace tuiGrid {
@@ -724,7 +724,7 @@ declare namespace tuiGrid {
 
     public focus(rowKey: RowKey, columnName: string, setScroll?: boolean): boolean;
 
-    public focusAt(rowIndex: number, columnIndex: number, isScrollable?: boolean): boolean;
+    public focusAt(rowIndex: number, columnIndex: number, setScroll?: boolean): boolean;
 
     public activateFocus(): void;
 
