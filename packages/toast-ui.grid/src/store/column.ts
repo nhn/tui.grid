@@ -261,7 +261,7 @@ export function createColumn(
     onAfterChange,
     whiteSpace,
     ellipsis,
-    valign,
+    valign: valign || 'middle',
     defaultValue,
     ignored,
     ...(!!editorOptions && { editor: editorOptions }),

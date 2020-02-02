@@ -1,12 +1,11 @@
 import { h, Component } from 'preact';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { Side, AreaInfo, RowKey } from '../store/types';
+import { Side, AreaInfo } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {
   styles: AreaInfo | null;
-  hoveredRowKey: RowKey | null;
 }
 
 interface OwnProps {
@@ -33,10 +32,9 @@ class SelectionLayerComp extends Component<Props> {
 }
 
 export const SelectionLayer = connect<StoreProps, OwnProps>(
-  ({ selection: { rangeAreaInfo }, renderState }, { side }) => {
+  ({ selection: { rangeAreaInfo } }, { side }) => {
     const styles = rangeAreaInfo && rangeAreaInfo[side];
-    const { hoveredRowKey } = renderState;
 
-    return { styles, hoveredRowKey };
+    return { styles };
   }
 )(SelectionLayerComp);

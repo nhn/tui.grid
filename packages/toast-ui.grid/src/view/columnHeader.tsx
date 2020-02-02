@@ -80,7 +80,7 @@ export class ColumnHeader extends Component<Props> {
   }
 
   public render() {
-    const { columnInfo, colspan, rowspan, selected, height } = this.props;
+    const { columnInfo, colspan, rowspan, selected, height = '' } = this.props;
     const {
       name,
       headerAlign: textAlign,
@@ -94,7 +94,7 @@ export class ColumnHeader extends Component<Props> {
           this.el = el;
         }}
         data-column-name={name}
-        style={{ textAlign, verticalAlign, padding: headerRenderer ? 0 : null, height }}
+        style={{ textAlign, verticalAlign, padding: headerRenderer ? 0 : '', height }}
         class={cls(
           'cell',
           'cell-header',

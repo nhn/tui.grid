@@ -200,7 +200,6 @@ class BodyAreaComp extends Component<Props> {
               <BodyRows side={side} />
             </table>
           </div>
-          <div class={cls('layer-selection')} style="display: none;" />
           <FocusLayer side={side} />
           <SelectionLayer side={side} />
           <EditingLayer side={side} />
