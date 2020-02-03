@@ -30,6 +30,7 @@ bower_components
 
 #JSDOC
 doc
+packages
 
 # IDEA
 .idea
