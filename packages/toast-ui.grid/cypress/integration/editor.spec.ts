@@ -95,20 +95,29 @@ describe('onBeforeChange, onAfterChange', () => {
 
     cy.wrap(beforeCallback)
       .should('be.calledOnce')
-      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Lee' });
+      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Lee', newValue: 'Kim' });
     cy.wrap(afterCallback)
       .should('be.calledOnce')
-      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Kim' });
+      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Kim', oldValue: 'Lee' });
   });
 
   it('If gridEvent "stop" occurs in beforeChange, setValue does not occur.', () => {
+    const stub = cy.stub();
     const beforeCallback = (ev: GridEvent) => {
+      stub(ev);
       ev.stop();
     };
     const afterCallback = cy.stub();
 
     createGridWithCallback(beforeCallback, afterCallback);
 
+    cy.gridInstance().invoke('startEditing', 0, 'name');
+    cy.getByCls('content-text').type('Kim');
+    cy.gridInstance().invoke('finishEditing', 0, 'name');
+
+    cy.wrap(stub)
+      .should('be.calledOnce')
+      .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Lee', newValue: 'Kim' });
     cy.wrap(afterCallback).should('be.not.called');
     cy.getCellContent(0, 'name').should('have.text', 'Lee');
   });
