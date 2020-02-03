@@ -1,5 +1,5 @@
 import { cls } from '../../src/helper/dom';
-import { OptGrid } from '@/types';
+import { OptGrid, OptRow } from '@/types';
 import { Row, RowKey } from '@/store/types';
 import GridEvent from '@/event/gridEvent';
 import { Omit } from 'utility-types';
@@ -414,10 +414,13 @@ describe('appendTreeRow()', () => {
   });
 
   context('appends internal row to', () => {
-    const appendedData = {
-      c1: 'a',
-      _children: [{ c1: 'b' }, { c1: 'c' }]
-    };
+    let appendedData: OptRow;
+    beforeEach(() => {
+      appendedData = {
+        c1: 'a',
+        _children: [{ c1: 'b' }, { c1: 'c' }]
+      };
+    });
 
     it('root.', () => {
       cy.gridInstance().invoke('appendRow', appendedData);
