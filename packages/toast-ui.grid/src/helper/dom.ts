@@ -118,7 +118,9 @@ export type ClassNameType =
   | 'tree-depth'
   | 'tree-button-expand'
   | 'tree-button-collapse'
-  | 'tree-icon';
+  | 'tree-icon'
+  | 'editing-layer-content'
+  | 'editing-layer-content-item';
 
 const CLS_PREFIX = 'tui-grid-';
 
@@ -148,10 +150,10 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   return result.join(' ');
 }
 
-export function isDatePickerElement(el: HTMLElement) {
+export function isParentHasClass(el: HTMLElement, className: string) {
   let currentEl: HTMLElement | null = el;
 
-  while (currentEl && currentEl.className.split(' ').indexOf('tui-datepicker') === -1) {
+  while (currentEl && currentEl.className.split(' ').indexOf(className) === -1) {
     currentEl = currentEl.parentElement;
   }
 

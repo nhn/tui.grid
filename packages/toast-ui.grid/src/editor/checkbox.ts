@@ -1,49 +1,58 @@
 import { CellEditor, CellEditorProps, CheckboxOptions } from './types';
 import { CellValue } from '../store/types';
 import { getListItems } from '../helper/editor';
+import { cls, hasClass } from '../helper/dom';
+
+const ID_PREFIX = 'tui-grid-check-input';
 
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;
 
+  private inputType: 'checkbox' | 'radio';
+
   public constructor(props: CellEditorProps) {
-    const name = 'tui-grid-check-input';
-    const el = document.createElement('fieldset');
+    const el = document.createElement('div');
+    el.className = cls('editing-layer-content');
+
     const { type } = props.columnInfo.editor!.options as CheckboxOptions;
+    this.inputType = type;
     const listItems = getListItems(props);
 
     listItems.forEach(({ text, value }) => {
-      const id = `${name}-${value}`;
-      el.appendChild(this.createCheckbox(value, name, id, type));
-      el.appendChild(this.createLabel(text, id));
+      const id = `${ID_PREFIX}-${value}`;
+      const listItemEl = document.createElement('div');
+      listItemEl.className = cls('editing-layer-content-item');
+      listItemEl.appendChild(this.createCheckbox(value, ID_PREFIX, id, text));
+      el.appendChild(listItemEl);
     });
-    this.el = el;
 
+    this.el = el;
     this.setValue(props.value);
   }
 
-  private createLabel(text: string, id: string) {
-    const label = document.createElement('label');
-    label.innerText = text;
-    label.setAttribute('for', id);
+  private onChangeInput = (ev: MouseEvent) => {
+    this.setLabelClass((ev.target as HTMLInputElement).value);
+  };
 
-    return label;
-  }
-
-  private createCheckbox(
-    value: CellValue,
-    name: string,
-    id: string,
-    inputType: 'checkbox' | 'radio'
-  ) {
+  private createCheckbox(value: CellValue, name: string, id: string, text: string) {
     const input = document.createElement('input');
+    const label = document.createElement('label');
+    label.setAttribute('for', id);
+    label.className = cls(`editing-layer-content-item-${this.inputType}`);
+    input.addEventListener('change', this.onChangeInput);
 
-    input.type = inputType;
+    input.type = this.inputType;
     input.id = id;
     input.name = name;
     input.value = String(value);
     input.setAttribute('data-value-type', 'string');
 
-    return input;
+    const textEl = document.createElement('span');
+    textEl.innerText = text;
+    label.appendChild(input);
+    label.appendChild(textEl);
+
+    return label;
   }
 
   private getFirstInput() {
@@ -54,6 +63,29 @@ export class CheckboxEditor implements CellEditor {
     return this.el;
   }
 
+  private setLabelClass(inputValue: CellValue) {
+    const label = this.el.querySelector(
+      `label[for=${ID_PREFIX}-${inputValue}]`
+    ) as HTMLLabelElement;
+    if (this.inputType === 'checkbox') {
+      if (hasClass(label, 'editing-layer-content-item-checkbox-checked')) {
+        label.className = cls('editing-layer-content-item-checkbox');
+      } else {
+        label.className = cls('editing-layer-content-item-checkbox-checked');
+      }
+    } else {
+      const checkedLabel = this.el.querySelector(
+        `.${cls('editing-layer-content-item-radio-checked')}`
+      ) as HTMLLabelElement;
+
+      if (checkedLabel) {
+        checkedLabel.className = cls('editing-layer-content-item-radio');
+      }
+
+      label.className = cls('editing-layer-content-item-radio-checked');
+    }
+  }
+
   private setValue(value: CellValue) {
     String(value)
       .split(',')
@@ -61,6 +93,7 @@ export class CheckboxEditor implements CellEditor {
         const input = this.el.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
         if (input) {
           input.checked = true;
+          this.setLabelClass(inputValue);
         }
       });
   }
@@ -80,5 +113,10 @@ export class CheckboxEditor implements CellEditor {
     if (firstInput) {
       firstInput.focus();
     }
+  }
+
+  public beforeDestroy() {
+    // @TODO: label element 이벤트 해제
+    this.el.querySelector('input')!.removeEventListener('change', this.onChangeInput);
   }
 }
