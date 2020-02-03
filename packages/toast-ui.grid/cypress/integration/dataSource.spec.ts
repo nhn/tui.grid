@@ -434,28 +434,4 @@ describe('custom request event', () => {
       cy.wrap(onSuccessResponse).should('be.calledWithMatch', { xhr });
     });
   });
-
-  it('stop custom event if prev event is prevented.', () => {
-    const onBeforeRequest = cy.stub();
-    const onResponse = (ev: GridEvent) => {
-      ev.stop();
-    };
-    const onSuccessResponse = cy.stub();
-
-    setTimeout(() => {
-      cy.wait('@readPage1');
-
-      cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
-      cy.gridInstance().invoke('on', 'response', onResponse);
-      cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
-      cy.gridInstance().invoke('removeRow', 10);
-
-      cy.gridInstance().invoke('request', 'modifyData', { showConfirm: false });
-
-      cy.wait('@modifyData');
-
-      cy.wrap(onBeforeRequest).should('be.called');
-      cy.wrap(onSuccessResponse).should('be.not.called');
-    });
-  });
 });
