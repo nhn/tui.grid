@@ -17,7 +17,55 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/javascript">
+    var grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ],
+      header: {
+        align: 'left',
+        valign: 'top',
+        columns: [
+          {
+            name: 'name',
+            valign: 'middle'
+          },
+          {
+            name: 'type',
+            valign: 'bottom'
+          },
+          {
+            name: 'artist',
+            align: 'right'
+          }
+        ]
+      }
+    });
+  </script>
+  <script type="x-example" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,

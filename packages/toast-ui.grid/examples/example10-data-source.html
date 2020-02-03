@@ -73,11 +73,50 @@
 		})
 	});
   </script>
-  <script type="text/javascript" class="code-js">
-  const grid = new tui.Grid({
+  <script type="text/javascript">
+		var grid = new tui.Grid({
+			el: document.getElementById('grid'),
+			data: {
+				api: {
+					readData: { url: '/api/readData', method: 'GET' }
+				}
+			},
+			scrollX: false,
+			scrollY: false,
+			minBodyHeight: 30,
+			rowHeaders: ['rowNum'],
+			pageOptions: {
+				perPage: 5
+			},
+			columns: [
+				{
+					header: 'Name',
+					name: 'name'
+				},
+				{
+					header: 'Artist',
+					name: 'artist'
+				},
+				{
+					header: 'Type',
+					name: 'type'
+				},
+				{
+					header: 'Release',
+					name: 'release'
+				},
+				{
+					header: 'Genre',
+					name: 'genre'
+				}
+			]
+		});
+	</script>
+	<script type="x-example" class="code-js">
+	const grid = new tui.Grid({
 		el: document.getElementById('grid'),
 		data: {
-      api: {
+			api: {
 				readData: { url: '/api/readData', method: 'GET' }
 			}
 		},
@@ -111,5 +150,5 @@
 			}
 		]
 	});
-  </script>
+	</script>
 </html>

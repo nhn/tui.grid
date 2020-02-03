@@ -24,7 +24,79 @@
     </div>
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/javascript">
+    var grid;
+    var columnMap = {
+      en: {
+        'name': 'Name',
+        'artist': 'Artist',
+        'type': 'Type',
+        'release': 'Release',
+        'genre': 'Genre'
+      },
+      ko: {
+        'name': '제목',
+        'artist': '가수',
+        'type': '종류',
+        'release': '발매일',
+        'genre': '장르'
+      },
+      'ja-JP': {
+        'name': '曲のタイトル',
+        'artist': 'アーティスト名',
+        'type': '歌の種類',
+        'release': '発売日',
+        'genre': 'ジャンル'
+      }
+    };
+    var messageMap = {
+      'ja-JP': {
+        display: {
+          noData: 'データが存在していません。'
+        }
+      }
+    };
+
+    function createGrid(localeCode) {
+      return new tui.Grid({
+        el: document.getElementById('grid'),
+        data: [],
+        scrollX: false,
+        scrollY: false,
+        columns: createColumns(localeCode)
+      });
+    }
+
+    function createColumns(localeCode) {
+      const columnData = columnMap[localeCode];
+      const columns = [];
+
+      Object.keys(columnData).forEach(function(key) {
+        columns.push(({
+          header: columnData[key],
+          name: key
+        }))
+      });
+
+      return columns;
+    }
+
+    grid = createGrid('en'); // Set default language to English ('en')
+
+    document.getElementById('locale-code').addEventListener('change', function(ev) {
+      const localeCode = ev.target.value;
+      const messages = messageMap[localeCode];
+
+      if (grid) {
+        document.getElementById('grid').innerHTML = '';
+      }
+
+      tui.Grid.setLanguage(localeCode, messages); // Change language by locale code
+
+      grid = createGrid(localeCode);
+    });
+  </script>
+  <script type="x-example" class="code-js">
     let grid;
     const columnMap = {
       en: {
@@ -71,7 +143,7 @@
       const columnData = columnMap[localeCode];
       const columns = [];
 
-      Object.keys(columnData).forEach(function(key) {
+      Object.keys(columnData).forEach((key) => {
         columns.push(({
           header: columnData[key],
           name: key
@@ -83,7 +155,7 @@
 
     grid = createGrid('en'); // Set default language to English ('en')
 
-    document.getElementById('locale-code').addEventListener('change', function(ev) {
+    document.getElementById('locale-code').addEventListener('change', (ev) => {
       const localeCode = ev.target.value;
       const messages = messageMap[localeCode];
 

@@ -17,7 +17,59 @@
 	</body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-	<script type="text/javascript" class="code-js">
+	<script type="text/javascript">
+		function CustomSliderRenderer(props) {
+			var el = document.createElement('input');
+			var min = props.columnInfo.renderer.options.min;
+			var max = props.columnInfo.renderer.options.max;
+
+			el.type = 'range';
+			el.min = String(min);
+			el.max = String(max);
+			el.disabled = true;
+
+			this.el = el;
+			this.render(props);
+		}
+
+		CustomSliderRenderer.prototype.getElement = function() {
+			return this.el;
+		}
+
+		CustomSliderRenderer.prototype.render = function(props) {
+			this.el.value = String(props.value);
+		}
+
+		var grid = new tui.Grid({
+			el: document.getElementById('grid'),
+			scrollX: false,
+			scrollY: false,
+			columns: [
+				{
+					header: 'Name',
+					name: 'name'
+				},
+				{
+					header: 'Artist',
+					name: 'artist'
+				},
+				{
+					header: 'Grade',
+					name: 'grade',
+					renderer: {
+						type: CustomSliderRenderer,
+						options: {
+							min: 1,
+							max: 5
+						}
+					}
+				}
+			]
+		});
+
+		grid.resetData(gridData);
+	</script>
+	<script type="x-example" class="code-js">
 	class CustomSliderRenderer {
 		constructor(props) {
 			const el = document.createElement('input');
@@ -41,7 +93,7 @@
 		}
 	}
 
-  const grid = new tui.Grid({
+	const grid = new tui.Grid({
 		el: document.getElementById('grid'),
 		scrollX: false,
 		scrollY: false,
@@ -66,8 +118,8 @@
 				}
 			}
 		]
-  });
+	});
 
-  grid.resetData(gridData);
-  </script>
+	grid.resetData(gridData);
+	</script>
 </html>

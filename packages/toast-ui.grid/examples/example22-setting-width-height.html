@@ -39,7 +39,105 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/javascript">
+    var columnData = [
+      {
+        header: 'Name',
+        name: 'name'
+      },
+      {
+        header: 'Artist',
+        name: 'artist'
+      },
+      {
+        header: 'Type',
+        name: 'type'
+      },
+      {
+        header: 'Release',
+        name: 'release'
+      },
+      {
+        header: 'Genre',
+        name: 'genre'
+      }
+    ];
+
+    function createGrid(width, height) {
+      var heightOptions = createRowHeight(height);
+      var rowHeight = createRowHeight(height).rowHeight;
+      var minRowHeight = createRowHeight(height).minRowHeight;
+
+      return new tui.Grid({
+        el: document.getElementById('grid'),
+        data: gridData,
+        columns: createColumns(width),
+        rowHeight: rowHeight,
+        minRowHeight: minRowHeight ? minRowHeight : rowHeight
+      });
+    }
+
+    function createColumns(width) {
+      var columns = [];
+
+      columnData.forEach(function(columnInfo) {
+        var header = columnInfo.header;
+        var name = columnInfo.name;
+        var column = {
+          header: header,
+          name: name,
+          width: width
+        };
+        // If the width is less than 50, minWidth should be set.
+        if (width < 50) {
+          column.minWidth = width;
+        }
+        columns.push(column);
+      });
+
+      console.log('columns option', columns)
+      return columns;
+    }
+
+    function createRowHeight(height) {
+      var option = { rowHeight: height };
+
+      // If the height is less than 40, minRowHeight should be set.
+      if (height < 40) {
+        option.minRowHeight = height;
+      }
+
+      console.log('rowHeight option', option)
+      return option;
+    }
+
+    var width = 150;
+    var height = 70;
+    var grid = createGrid(width, height);
+
+    document.getElementById('width').addEventListener('change', function(ev) {
+      width = Number(ev.target.value);
+
+      if (grid) {
+        grid.destroy();
+        document.getElementById('grid').style.width = width * 5 + 18 + 'px';
+      }
+
+      grid = createGrid(width, height);
+    });
+
+    document.getElementById('height').addEventListener('change', function(ev) {
+      height = Number(ev.target.value);
+
+      if (grid) {
+        grid.destroy();
+        document.getElementById('grid').style.height = height * 20 + 17 + 'px';
+      }
+
+      grid = createGrid(width, height);
+    });
+  </script>
+  <script type="x-example" class="code-js">
     const columnData = [
       {
         header: 'Name',

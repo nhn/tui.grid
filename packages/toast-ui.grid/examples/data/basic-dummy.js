@@ -1,5 +1,5 @@
 /* eslint-disable */
-const gridData = [
+var gridData = [
   {
     id: 549731,
     name: 'Beautiful Lies',

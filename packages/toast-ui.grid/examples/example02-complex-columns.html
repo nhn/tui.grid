@@ -17,76 +17,148 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
-  const grid = new tui.Grid({
-    el: document.getElementById('grid'),
-    scrollX: false,
-    scrollY: false,
-    data: gridData,
-    header: {
-      height: 160,
-      complexColumns: [
+  <script type="text/javascript">
+    var grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      data: gridData,
+      header: {
+        height: 160,
+        complexColumns: [
+          {
+            header: 'Basic',
+            name: 'mergeColumn1',
+            childNames: ['name', 'artist']
+          },
+          {
+            header: 'Extra',
+            name: 'mergeColumn2',
+            childNames: ['type', 'release', 'genre']
+          },
+          {
+            header: 'Detail',
+            name: 'mergeColumn3',
+            childNames: ['mergeColumn1', 'mergeColumn2']
+          },
+          {
+            header: 'Count',
+            name: 'mergeColumn4',
+            childNames: ['downloadCount', 'listenCount']
+          },
+          {
+            header: 'Album Info',
+            name: 'mergeColumn5',
+            childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+          }
+        ]
+      },
+      columns: [
         {
-          header: 'Basic',
-          name: 'mergeColumn1',
-          childNames: ['name', 'artist']
+          header: 'Name',
+          name: 'name'
         },
         {
-          header: 'Extra',
-          name: 'mergeColumn2',
-          childNames: ['type', 'release', 'genre']
+          header: 'Artist',
+          name: 'artist'
         },
         {
-          header: 'Detail',
-          name: 'mergeColumn3',
-          childNames: ['mergeColumn1', 'mergeColumn2']
+          header: 'Type',
+          name: 'type'
         },
         {
-          header: 'Count',
-          name: 'mergeColumn4',
-          childNames: ['downloadCount', 'listenCount']
+          header: 'Release',
+          name: 'release'
         },
         {
-          header: 'Album Info',
-          name: 'mergeColumn5',
-          childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+          header: 'Genre',
+          name: 'genre'
+        },
+        {
+          header: 'Price',
+          name: 'price'
+        },
+        {
+          header: 'Download',
+          name: 'downloadCount'
+        },
+        {
+          header: 'Listen',
+          name: 'listenCount'
         }
       ]
-    },
-    columns: [
-      {
-        header: 'Name',
-        name: 'name'
+    });
+  </script>
+  <script type="x-example" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      data: gridData,
+      header: {
+        height: 160,
+        complexColumns: [
+          {
+            header: 'Basic',
+            name: 'mergeColumn1',
+            childNames: ['name', 'artist']
+          },
+          {
+            header: 'Extra',
+            name: 'mergeColumn2',
+            childNames: ['type', 'release', 'genre']
+          },
+          {
+            header: 'Detail',
+            name: 'mergeColumn3',
+            childNames: ['mergeColumn1', 'mergeColumn2']
+          },
+          {
+            header: 'Count',
+            name: 'mergeColumn4',
+            childNames: ['downloadCount', 'listenCount']
+          },
+          {
+            header: 'Album Info',
+            name: 'mergeColumn5',
+            childNames: ['price', 'mergeColumn3', 'mergeColumn4']
+          }
+        ]
       },
-      {
-        header: 'Artist',
-        name: 'artist'
-      },
-      {
-        header: 'Type',
-        name: 'type'
-      },
-      {
-        header: 'Release',
-        name: 'release'
-      },
-      {
-        header: 'Genre',
-        name: 'genre'
-      },
-      {
-        header: 'Price',
-        name: 'price'
-      },
-      {
-        header: 'Download',
-        name: 'downloadCount'
-      },
-      {
-        header: 'Listen',
-        name: 'listenCount'
-      }
-    ]
-  });
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        },
+        {
+          header: 'Price',
+          name: 'price'
+        },
+        {
+          header: 'Download',
+          name: 'downloadCount'
+        },
+        {
+          header: 'Listen',
+          name: 'listenCount'
+        }
+      ]
+    });
   </script>
 </html>

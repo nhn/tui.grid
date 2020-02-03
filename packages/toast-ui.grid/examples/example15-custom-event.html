@@ -18,8 +18,8 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
-    const grid = new tui.Grid({
+  <script type="text/javascript">
+    var grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,
       rowHeaders: ['checkbox'],
@@ -50,14 +50,57 @@
     });
 
     grid.on('check', function(ev) {
-      onsole.log('check!', ev);
+      console.log('check!', ev);
     });
 
     grid.on('uncheck', function(ev) {
-      onsole.log('uncheck!', ev);
+      console.log('uncheck!', ev);
     });
 
     grid.on('focusChange', function(ev) {
+      console.log('change focused cell!', ev);
+    });
+  </script>
+  <script type="x-example" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      rowHeaders: ['checkbox'],
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+        },
+        {
+          header: 'Type',
+          name: 'type',
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        }
+      ]
+    });
+
+    grid.on('check', (ev) => {
+      console.log('check!', ev);
+    });
+
+    grid.on('uncheck', (ev) => {
+      console.log('uncheck!', ev);
+    });
+
+    grid.on('focusChange', (ev) => {
       console.log('change focused cell!', ev);
     });
   </script>

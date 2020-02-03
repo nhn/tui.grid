@@ -11,13 +11,40 @@
     </div>
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/javascript">
+    var ROW_COUNT = 100000;
+    var COL_COUNT = 10;
+
+    var data = [];
+    var columns = [];
+
+    for (var i = 0; i < ROW_COUNT; i += 1) {
+      var row = { id: i };
+      for (var j = 0; j < COL_COUNT; j += 1) {
+        row['c' + j] = (Math.random() * 100000000000).toFixed();
+      }
+      data.push(row);
+    }
+
+    for (var i = 0; i < COL_COUNT; i += 1) {
+      var name = 'c' + i;
+      columns.push({ name, header: name });
+    }
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: data,
+      bodyHeight: 500,
+      columns: columns
+    });
+  </script>
+  <script type="x-example" class="code-js">
     const ROW_COUNT = 100000;
     const COL_COUNT = 10;
-
+  
     const data = [];
     const columns = [];
-
+  
     for (let i = 0; i < ROW_COUNT; i += 1) {
       const row = { id: i };
       for (let j = 0; j < COL_COUNT; j += 1) {
@@ -25,12 +52,12 @@
       }
       data.push(row);
     }
-
+  
     for (let i = 0; i < COL_COUNT; i += 1) {
       const name = `c${i}`;
       columns.push({ name, header: name });
     }
-
+  
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: data,
