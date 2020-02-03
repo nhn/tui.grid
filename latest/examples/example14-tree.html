@@ -9,7 +9,6 @@
 
   <body>
     <div class="description">
-    See the 'tree-dummy.js' file for tree data.<br />
     You can check for custom events in the console.<br />
     You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/tree.md" target="_blank">here</a>.
     </div>
@@ -21,39 +20,106 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/tree-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
-  const grid = new tui.Grid({
-    el: document.getElementById('grid'),
-    data: treeData,
-    rowHeaders: ['checkbox'],
-    bodyHeight: 500,
-    treeColumnOptions: {
-      name: 'name',
-      useCascadingCheckbox: true
-    },
-    columns: [
-      {
-        header: 'Name',
+  <script type="text/javascript">
+    var grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: treeData,
+      rowHeaders: ['checkbox'],
+      bodyHeight: 500,
+      treeColumnOptions: {
         name: 'name',
-        width: 300
+        useCascadingCheckbox: true
       },
-      {
-        header: 'Artist',
-        name: 'artist'
-      },
-      {
-        header: 'Type',
-        name: 'type'
-      },
-      {
-        header: 'Release',
-        name: 'release'
-      },
-      {
-        header: 'Genre',
-        name: 'genre'
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          width: 300
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ]
+    });
+
+    grid.on('expand', function(ev) {
+      var rowKey = ev.rowKey;
+      var descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('descendantRows: ' + descendantRows);
+
+      if (!descendantRows.length) {
+        grid.appendRow({
+          name: 'dynamic loading data',
+          _children: [
+            {
+              name: 'leaf row'
+            },
+            {
+              name: 'internal row',
+              _children: []
+            }
+          ]
+        }, { parentRowKey: rowKey });
       }
-    ]});
+    });
+
+    grid.on('collapse', function(ev) {
+      var rowKey = ev.rowKey;
+      var descendantRows = grid.getDescendantRows(rowKey);
+
+      console.log('rowKey: ' + rowKey);
+      console.log('descendantRows: ' + descendantRows);
+    });
+  </script>
+  <script type="x-example" class="code-js">
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: treeData,
+      rowHeaders: ['checkbox'],
+      bodyHeight: 500,
+      treeColumnOptions: {
+        name: 'name',
+        useCascadingCheckbox: true
+      },
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          width: 300
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Type',
+          name: 'type'
+        },
+        {
+          header: 'Release',
+          name: 'release'
+        },
+        {
+          header: 'Genre',
+          name: 'genre'
+        }
+      ]
+    });
 
     grid.on('expand', (ev) => {
       const {rowKey} = ev;

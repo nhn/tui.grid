@@ -15,13 +15,14 @@
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
-  </body>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
 	<script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
 	<script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
 	<script type="text/javascript" src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript">
+	<script type="text/javascript">
 	XHRMock.setup();
 	XHRMock.get('/api/readData?perPage=5&page=1', {
 		status: 200,

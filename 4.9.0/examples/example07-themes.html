@@ -217,7 +217,7 @@
     });
 
 
-    document.querySelectorAll('.btn-theme').forEach((el) => {
+    Array.prototype.forEach.call(document.querySelectorAll('.btn-theme'), function(el) {
       el.addEventListener('click', function(ev) {
         var preset = ev.target.getAttribute('data-preset');
         tui.Grid.applyTheme(preset);

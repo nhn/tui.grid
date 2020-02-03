@@ -17,7 +17,140 @@
   </body>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-	<script type="text/javascript" class="code-js">
+	<script type="text/javascript">
+		function CustomTextEditor(props) {
+			var el = document.createElement('input');
+			var maxLength = props.columnInfo.editor.options.maxLength;
+
+			el.type = 'text';
+			el.maxLength = maxLength;
+			el.value = String(props.value);
+
+			this.el = el;
+		}
+
+		CustomTextEditor.prototype.getElement = function() {
+			return this.el;
+		}
+
+		CustomTextEditor.prototype.getValue = function() {
+			return this.el.value;
+		}
+
+		CustomTextEditor.prototype.mounted = function() {
+			this.el.select();
+		}
+
+		var grid = new tui.Grid({
+			el: document.getElementById('grid'),
+			scrollX: false,
+			scrollY: false,
+			columns: [
+				{
+					header: 'Name',
+					name: 'name',
+					onBeforeChange: function(ev) {
+						console.log('Before change:' + ev);
+						ev.stop();
+					},
+					onAfterChange: function(ev) {
+						console.log('After change:' + ev);
+					},
+					editor: 'text'
+				},
+				{
+					header: 'Artist',
+					name: 'artist',
+					onBeforeChange: function(ev) {
+						console.log('Before change:' + ev);
+					},
+					onAfterChange: function(ev) {
+						console.log('After change:' + ev);
+					},
+					editor: {
+						type: CustomTextEditor,
+						options: {
+							maxLength: 10
+						}
+					}
+				},
+				{
+					header: 'Type',
+					name: 'typeCode',
+					onBeforeChange: function(ev) {
+						console.log('Before change:' + ev);
+					},
+					onAfterChange: function(ev) {
+						console.log('After change:' + ev);
+					},
+					formatter: 'listItemText',
+					editor: {
+						type: 'select',
+						options: {
+							listItems: [
+								{ text: 'Deluxe', value: '1' },
+								{ text: 'EP', value: '2' },
+								{ text: 'Single', value: '3' }
+							]
+						}
+					}
+				},
+				{
+					header: 'Genre',
+					name: 'genreCode',
+					onBeforeChange: function(ev) {
+						console.log('Before change:' + ev);
+					},
+					onAfterChange: function(ev) {
+						console.log('After change:' + ev);
+					},
+					formatter: 'listItemText',
+					editor: {
+						type: 'checkbox',
+						options: {
+							listItems: [
+								{ text: 'Pop', value: '1' },
+								{ text: 'Rock', value: '2' },
+								{ text: 'R&B', value: '3' },
+								{ text: 'Electronic', value: '4' },
+								{ text: 'etc.', value: '5' }
+							]
+						}
+					},
+					copyOptions: {
+						useListItemText: true // when this option is used, the copy value is concatenated text
+					}
+				},
+				{
+					header: 'Grade',
+					name: 'grade',
+					onBeforeChange: function(ev) {
+						console.log('Before change:' + ev);
+					},
+					onAfterChange: function(ev) {
+						console.log('After change:' + ev);
+					},
+					copyOptions: {
+						useListItemText: true
+					},
+					formatter: 'listItemText',
+					editor: {
+						type: 'radio',
+						options: {
+							listItems: [
+								{ text: '★☆☆', value: '1' },
+								{ text: '★★☆', value: '2' },
+								{ text: '★★★', value: '3' },
+							]
+						}
+					}
+				}
+			]
+		});
+
+		grid.resetData(gridData);
+	</script>
+	<script type="x-example" class="code-js">
 	class CustomTextEditor {
 		constructor(props) {
 			const el = document.createElement('input');
@@ -43,7 +176,7 @@
 		}
 	}
 
-  const grid = new tui.Grid({
+	const grid = new tui.Grid({
 		el: document.getElementById('grid'),
 		scrollX: false,
 		scrollY: false,
@@ -126,10 +259,10 @@
 			{
 				header: 'Grade',
 				name: 'grade',
-				onBeforeChange: function(ev){
+				onBeforeChangeev) {
 					console.log('Before change:' + ev);
 				},
-				onAfterChange: function(ev){
+				onAfterChange(ev) {
 					console.log('After change:' + ev);
 				},
 				copyOptions: {
@@ -140,18 +273,16 @@
 					type: 'radio',
 					options: {
 						listItems: [
-							{ text: '★☆☆☆☆', value: '1' },
-							{ text: '★★☆☆☆', value: '2' },
-							{ text: '★★★☆☆', value: '3' },
-							{ text: '★★★★☆', value: '4' },
-							{ text: '★★★★★', value: '5' }
+							{ text: '★☆☆', value: '1' },
+							{ text: '★★☆', value: '2' },
+							{ text: '★★★', value: '3' },
 						]
 					}
 				}
 			}
 		]
-  });
+	});
 
-  grid.resetData(gridData);
-  </script>
+	grid.resetData(gridData);
+	</script>
 </html>

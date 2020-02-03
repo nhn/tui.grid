@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Grid
- * @version 4.8.0 | Tue Dec 24 2019
+ * @version 4.8.1 | Mon Jan 20 2020
  * @author NHN. FE Development Lab
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["Grid"] = factory(require("tui-date-picker"), require("tui-pagination"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["Grid"] = factory(root["tui"]["DatePicker"], root["tui"]["Pagination"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE__33__, __WEBPACK_EXTERNAL_MODULE__105__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__34__, __WEBPACK_EXTERNAL_MODULE__107__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -97,7 +97,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -445,13 +445,39 @@ exports.mapProp = mapProp;
 function deepMergedCopy(targetObj, obj) {
     var resultObj = tslib_1.__assign({}, targetObj);
     Object.keys(obj).forEach(function (prop) {
-        if (resultObj.hasOwnProperty(prop) && typeof resultObj[prop] === 'object') {
+        if (resultObj.hasOwnProperty(prop) && isObject(resultObj[prop])) {
             if (Array.isArray(obj[prop])) {
-                // https://github.com/microsoft/TypeScript/issues/31661
-                resultObj[prop] = obj[prop];
+                resultObj[prop] = deepCopyArray(obj[prop]);
             }
             else {
                 resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+            }
+        }
+        else {
+            resultObj[prop] = isObject(obj[prop]) ? deepCopy(obj[prop]) : obj[prop];
+        }
+    });
+    return resultObj;
+}
+exports.deepMergedCopy = deepMergedCopy;
+function deepCopyArray(items) {
+    return items.map(function (item) {
+        if (isObject(item)) {
+            return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
+        }
+        return item;
+    });
+}
+exports.deepCopyArray = deepCopyArray;
+function deepCopy(obj) {
+    var resultObj = {};
+    Object.keys(obj).forEach(function (prop) {
+        if (isObject(obj[prop])) {
+            if (Array.isArray(obj[prop])) {
+                resultObj[prop] = deepCopyArray(obj[prop]);
+            }
+            else {
+                resultObj[prop] = deepCopy(obj[prop]);
             }
         }
         else {
@@ -460,12 +486,11 @@ function deepMergedCopy(targetObj, obj) {
     });
     return resultObj;
 }
-exports.deepMergedCopy = deepMergedCopy;
+exports.deepCopy = deepCopy;
 function assign(targetObj, obj) {
     Object.keys(obj).forEach(function (prop) {
         if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
             if (Array.isArray(obj[prop])) {
-                // https://github.com/microsoft/TypeScript/issues/31661
                 targetObj[prop] = obj[prop];
             }
             else {
@@ -653,18 +678,36 @@ function omit(obj) {
         propNames[_i - 1] = arguments[_i];
     }
     var resultMap = {};
-    for (var key in obj) {
-        if (hasOwnProp(obj, key) && !includes(propNames, key)) {
+    Object.keys(obj).forEach(function (key) {
+        if (!includes(propNames, key)) {
             resultMap[key] = obj[key];
         }
-    }
+    });
     return resultMap;
 }
 exports.omit = omit;
+function extract(obj) {
+    var propNames = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        propNames[_i - 1] = arguments[_i];
+    }
+    var resultMap = {};
+    Object.keys(obj).forEach(function (key) {
+        if (includes(propNames, key)) {
+            resultMap[key] = obj[key];
+        }
+    });
+    return resultMap;
+}
+exports.extract = extract;
 function uniq(arr) {
     return arr.filter(function (name, index) { return arr.indexOf(name) === index; });
 }
 exports.uniq = uniq;
+function uniqByProp(propName, arr) {
+    return arr.filter(function (obj, index) { return findPropIndex(propName, obj[propName], arr) === index; });
+}
+exports.uniqByProp = uniqByProp;
 function startsWith(str, targetStr) {
     return targetStr.slice(0, str.length) === str;
 }
@@ -1645,7 +1688,7 @@ exports.connect = connect;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
-var array_1 = __webpack_require__(49);
+var array_1 = __webpack_require__(51);
 var generateObserverId = (function () {
     var lastId = 0;
     return function () {
@@ -1816,7 +1859,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
 var instance_1 = __webpack_require__(7);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 var column_1 = __webpack_require__(12);
 var column_2 = __webpack_require__(8);
 var data_1 = __webpack_require__(13);
@@ -1909,8 +1952,19 @@ function getFilterStateWithOperator(data, column) {
     return filters;
 }
 exports.getFilterStateWithOperator = getFilterStateWithOperator;
-function getUniqColumnData(targetData, columnName) {
-    return common_1.uniq(common_1.mapProp(columnName, targetData));
+function getUniqColumnData(targetData, column, columnName) {
+    var columnInfo = column.allColumnMap[columnName];
+    var uniqColumnData = common_1.uniqByProp(columnName, targetData);
+    return uniqColumnData.map(function (row) {
+        var value = row[columnName];
+        var formatterProps = {
+            row: row,
+            value: value,
+            column: columnInfo
+        };
+        var relationListItems = row._relationListItemMap[columnName];
+        return data_1.getFormattedValue(formatterProps, columnInfo.formatter, value, relationListItems);
+    });
 }
 exports.getUniqColumnData = getUniqColumnData;
 function isSortable(sortState, column, columnName) {
@@ -1954,14 +2008,14 @@ exports.getRemovedClassName = getRemovedClassName;
 function getCreatedRowInfo(store, rowIndex, row, rowKey) {
     var data = store.data, column = store.column;
     var rawData = data.rawData;
-    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap;
+    var defaultValues = column.defaultValues, columnMapWithRelation = column.columnMapWithRelation, allColumns = column.allColumns;
     var prevRow = rawData[rowIndex - 1];
     var options = { prevRow: prevRow };
     if (!common_1.isUndefined(rowKey)) {
         row.rowKey = rowKey;
         options.keyColumnName = 'rowKey';
     }
-    var emptyData = column.allColumns
+    var emptyData = allColumns
         .filter(function (_a) {
         var name = _a.name;
         return !column_2.isRowHeader(name);
@@ -1972,8 +2026,8 @@ function getCreatedRowInfo(store, rowIndex, row, rowKey) {
         return (tslib_1.__assign(tslib_1.__assign({}, acc), (_b = {}, _b[name] = '', _b)));
     }, {});
     var index = Math.max.apply(Math, tslib_1.__spreadArrays([-1], common_1.mapProp('rowKey', rawData))) + 1;
-    var rawRow = data_1.createRawRow(tslib_1.__assign(tslib_1.__assign({}, emptyData), row), index, defaultValues, options);
-    var viewRow = data_1.createViewRow(rawRow, allColumnMap, rawData);
+    var rawRow = data_1.createRawRow(tslib_1.__assign(tslib_1.__assign({}, emptyData), row), index, defaultValues, columnMapWithRelation, options);
+    var viewRow = data_1.createViewRow(rawRow, columnMapWithRelation, rawData);
     return { rawRow: rawRow, viewRow: viewRow, prevRow: prevRow };
 }
 exports.getCreatedRowInfo = getCreatedRowInfo;
@@ -2057,6 +2111,54 @@ exports.isCheckboxColumn = isCheckboxColumn;
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var common_1 = __webpack_require__(1);
+var instance_1 = __webpack_require__(7);
+var eventBusMap = {};
+function createEventBus(id) {
+    var listenersMap = {};
+    eventBusMap[id] = {
+        on: function (eventName, func) {
+            var listeners = listenersMap[eventName];
+            listenersMap[eventName] = listeners ? tslib_1.__spreadArrays(listeners, [func]) : [func];
+        },
+        off: function (eventName, func) {
+            var listeners = listenersMap[eventName];
+            if (listeners) {
+                if (func) {
+                    listenersMap[eventName] = common_1.removeArrayItem(func, listeners);
+                }
+                else {
+                    delete listenersMap[eventName];
+                }
+            }
+        },
+        trigger: function (eventName, gridEvent) {
+            if (listenersMap[eventName]) {
+                var instance = instance_1.getInstance(id);
+                gridEvent.setInstance(instance);
+                listenersMap[eventName].forEach(function (func) {
+                    func(gridEvent);
+                });
+            }
+        }
+    };
+    return eventBusMap[id];
+}
+exports.createEventBus = createEventBus;
+function getEventBus(id) {
+    return eventBusMap[id];
+}
+exports.getEventBus = getEventBus;
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2182,54 +2284,6 @@ function isRowSpanEnabled(sortState) {
     return sortState.columns[0].columnName === 'sortKey';
 }
 exports.isRowSpanEnabled = isRowSpanEnabled;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var common_1 = __webpack_require__(1);
-var instance_1 = __webpack_require__(7);
-var eventBusMap = {};
-function createEventBus(id) {
-    var listenersMap = {};
-    eventBusMap[id] = {
-        on: function (eventName, func) {
-            var listeners = listenersMap[eventName];
-            listenersMap[eventName] = listeners ? tslib_1.__spreadArrays(listeners, [func]) : [func];
-        },
-        off: function (eventName, func) {
-            var listeners = listenersMap[eventName];
-            if (listeners) {
-                if (func) {
-                    listenersMap[eventName] = common_1.removeArrayItem(func, listeners);
-                }
-                else {
-                    delete listenersMap[eventName];
-                }
-            }
-        },
-        trigger: function (eventName, gridEvent) {
-            if (listenersMap[eventName]) {
-                var instance = instance_1.getInstance(id);
-                gridEvent.setInstance(instance);
-                listenersMap[eventName].forEach(function (func) {
-                    func(gridEvent);
-                });
-            }
-        }
-    };
-    return eventBusMap[id];
-}
-exports.createEventBus = createEventBus;
-function getEventBus(id) {
-    return eventBusMap[id];
-}
-exports.getEventBus = getEventBus;
 
 
 /***/ }),
@@ -2397,7 +2451,7 @@ var tslib_1 = __webpack_require__(0);
 var observable_1 = __webpack_require__(5);
 var column_1 = __webpack_require__(8);
 var common_1 = __webpack_require__(1);
-var listItemText_1 = __webpack_require__(50);
+var listItemText_1 = __webpack_require__(52);
 var tree_1 = __webpack_require__(20);
 var dom_1 = __webpack_require__(2);
 var data_1 = __webpack_require__(6);
@@ -2433,6 +2487,7 @@ function getFormattedValue(props, formatter, defaultValue, relationListItems) {
     }
     return strValue;
 }
+exports.getFormattedValue = getFormattedValue;
 function getRelationCbResult(fn, relationParams) {
     var result = common_1.isFunction(fn) ? fn(relationParams) : null;
     return common_1.isUndefined(result) ? null : result;
@@ -2446,7 +2501,7 @@ function getDisabled(fn, relationParams) {
     return result === null ? false : result;
 }
 function getListItems(fn, relationParams) {
-    return getRelationCbResult(fn, relationParams);
+    return getRelationCbResult(fn, relationParams) || [];
 }
 function getRowHeaderValue(row, columnName) {
     if (column_1.isRowNumColumn(columnName)) {
@@ -2523,7 +2578,7 @@ function createRelationViewCell(name, row, columnMap, valueMap) {
         var relationCbParams = { value: value, editable: editable, disabled: disabled, row: row };
         var targetEditable = getEditable(editableCallback, relationCbParams);
         var targetDisabled = getDisabled(disabledCallback, relationCbParams);
-        var targetListItems = getListItems(listItemsCallback, relationCbParams) || [];
+        var targetListItems = getListItems(listItemsCallback, relationCbParams);
         var targetValue = row[targetName];
         var targetEditor = columnMap[targetName].editor;
         var targetEditorOptions = (_a = targetEditor) === null || _a === void 0 ? void 0 : _a.options;
@@ -2600,6 +2655,27 @@ function getAttributes(row, index, lazyObservable) {
     var attributes = tslib_1.__assign(tslib_1.__assign({}, defaultAttr), row._attributes);
     return lazyObservable ? attributes : observable_1.observable(attributes);
 }
+function createRelationListItems(name, row, columnMap) {
+    var _a = columnMap[name], _b = _a.relationMap, relationMap = _b === void 0 ? {} : _b, editor = _a.editor;
+    var _c = row._attributes, checkDisabled = _c.checkDisabled, rowDisabled = _c.disabled;
+    var editable = !!editor;
+    var disabled = column_1.isCheckboxColumn(name) ? checkDisabled : rowDisabled;
+    var value = row[name];
+    var relationCbParams = { value: value, editable: editable, disabled: disabled, row: row };
+    var relationListItemMap = {};
+    Object.keys(relationMap).forEach(function (targetName) {
+        relationListItemMap[targetName] = getListItems(relationMap[targetName].listItems, relationCbParams);
+    });
+    return relationListItemMap;
+}
+function setRowRelationListItems(row, columnMap) {
+    var relationListItemMap = tslib_1.__assign({}, row._relationListItemMap);
+    Object.keys(columnMap).forEach(function (name) {
+        common_1.assign(relationListItemMap, createRelationListItems(name, row, columnMap));
+    });
+    row._relationListItemMap = relationListItemMap;
+}
+exports.setRowRelationListItems = setRowRelationListItems;
 function createMainRowSpanMap(rowSpan, rowKey) {
     var mainRowSpanMap = {};
     if (!rowSpan) {
@@ -2638,7 +2714,7 @@ function createRowSpanMap(row, rowSpan, prevRow) {
     }
     return tslib_1.__assign(tslib_1.__assign({}, mainRowSpanMap), subRowSpanMap);
 }
-function createRawRow(row, index, defaultValues, options) {
+function createRawRow(row, index, defaultValues, columnMap, options) {
     if (options === void 0) { options = {}; }
     // this rowSpan variable is attribute option before creating rowSpanDataMap
     var rowSpan;
@@ -2656,21 +2732,22 @@ function createRawRow(row, index, defaultValues, options) {
         var name = _a.name, value = _a.value;
         common_1.setDefaultProp(row, name, value);
     });
+    setRowRelationListItems(row, columnMap);
     return (lazyObservable ? row : observable_1.observable(row));
 }
 exports.createRawRow = createRawRow;
 function createData(data, column, lazyObservable, prevRows) {
     if (lazyObservable === void 0) { lazyObservable = false; }
     generateDataCreationKey();
-    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap, _a = column.treeColumnName, treeColumnName = _a === void 0 ? '' : _a, _b = column.treeIcon, treeIcon = _b === void 0 ? true : _b;
+    var defaultValues = column.defaultValues, columnMapWithRelation = column.columnMapWithRelation, _a = column.treeColumnName, treeColumnName = _a === void 0 ? '' : _a, _b = column.treeIcon, treeIcon = _b === void 0 ? true : _b;
     var keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
     var rawData;
     if (treeColumnName) {
-        rawData = tree_1.createTreeRawData(data, defaultValues, keyColumnName, lazyObservable);
+        rawData = tree_1.createTreeRawData(data, defaultValues, columnMapWithRelation, keyColumnName, lazyObservable);
     }
     else {
         rawData = data.map(function (row, index, rows) {
-            return createRawRow(row, index, defaultValues, {
+            return createRawRow(row, index, defaultValues, columnMapWithRelation, {
                 keyColumnName: keyColumnName,
                 prevRow: prevRows ? prevRows[index] : rows[index - 1],
                 lazyObservable: lazyObservable
@@ -2680,17 +2757,23 @@ function createData(data, column, lazyObservable, prevRows) {
     var viewData = rawData.map(function (row) {
         return lazyObservable
             ? { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey }
-            : createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
+            : createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     });
     return { rawData: rawData, viewData: viewData };
 }
 exports.createData = createData;
-function applyFilterToRawData(rawData, filters) {
+function applyFilterToRawData(rawData, filters, columnMap) {
     var data = rawData;
     if (filters) {
         data = filters.reduce(function (acc, filter) {
             var conditionFn = filter.conditionFn, columnName = filter.columnName;
-            return acc.filter(function (row) { return conditionFn(row[columnName]); });
+            var formatter = columnMap[columnName].formatter;
+            return acc.filter(function (row) {
+                var value = row[columnName];
+                var relationListItems = row._relationListItemMap[columnName];
+                var formatterProps = { row: row, column: columnMap[columnName], value: value };
+                return conditionFn(getFormattedValue(formatterProps, formatter, value, relationListItems));
+            });
         }, rawData);
     }
     return data;
@@ -2720,7 +2803,9 @@ function create(_a) {
         filters: null,
         loadingState: rawData.length ? 'DONE' : 'EMPTY',
         get filteredRawData() {
-            return this.filters ? applyFilterToRawData(this.rawData, this.filters) : this.rawData;
+            return this.filters
+                ? applyFilterToRawData(this.rawData, this.filters, column.allColumnMap)
+                : this.rawData;
         },
         get filteredIndex() {
             var _this = this;
@@ -2835,11 +2920,11 @@ var common_1 = __webpack_require__(1);
 var data_1 = __webpack_require__(13);
 var observable_1 = __webpack_require__(5);
 var selection_1 = __webpack_require__(16);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var instance_1 = __webpack_require__(7);
 var tree_1 = __webpack_require__(26);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 var focus_1 = __webpack_require__(17);
 var tree_2 = __webpack_require__(20);
 var sort_1 = __webpack_require__(27);
@@ -2847,8 +2932,8 @@ var data_2 = __webpack_require__(6);
 var summary_1 = __webpack_require__(22);
 var filter_1 = __webpack_require__(28);
 var dom_1 = __webpack_require__(2);
-var renderState_1 = __webpack_require__(36);
-var mouse_1 = __webpack_require__(37);
+var renderState_1 = __webpack_require__(37);
+var mouse_1 = __webpack_require__(38);
 var selection_2 = __webpack_require__(14);
 var viewport_1 = __webpack_require__(29);
 function updateRowSpanWhenAppend(data, prevRow, extendPrevRowSpan) {
@@ -2930,21 +3015,23 @@ function updateHeights(store) {
         : filteredRawData.map(function (row) { return data_2.getRowHeight(row, rowHeight); });
 }
 exports.updateHeights = updateHeights;
-function updatePageOptions(data, totalCount, page) {
-    if (data.pageOptions.useClient) {
-        data.pageOptions = tslib_1.__assign(tslib_1.__assign({}, data.pageOptions), { totalCount: totalCount, page: page || data.pageOptions.page });
+function updatePageOptions(_a, pageOptions) {
+    var data = _a.data;
+    if (!common_1.isEmpty(data.pageOptions)) {
+        data.pageOptions = tslib_1.__assign(tslib_1.__assign({}, data.pageOptions), pageOptions);
     }
 }
 exports.updatePageOptions = updatePageOptions;
 function setValue(store, rowKey, columnName, value) {
     var column = store.column, data = store.data, id = store.id;
     var rawData = data.rawData, sortState = data.sortState;
+    var visibleColumns = column.visibleColumns, allColumnMap = column.allColumnMap;
     var rowIdx = data_2.findIndexByRowKey(data, column, id, rowKey, false);
     var targetRow = rawData[rowIdx];
     if (!targetRow || targetRow[columnName] === value) {
         return;
     }
-    var targetColumn = common_1.findProp('name', columnName, column.visibleColumns);
+    var targetColumn = common_1.findProp('name', columnName, visibleColumns);
     var gridEvent = new gridEvent_1.default({ rowKey: rowKey, columnName: columnName, value: value });
     if (targetColumn && targetColumn.onBeforeChange) {
         targetColumn.onBeforeChange(gridEvent);
@@ -2957,6 +3044,7 @@ function setValue(store, rowKey, columnName, value) {
     var orgValue = targetRow[columnName];
     var index = common_1.findPropIndex('columnName', columnName, columns);
     targetRow[columnName] = value;
+    data_1.setRowRelationListItems(targetRow, allColumnMap);
     if (index !== -1) {
         sort_1.sort(store, columnName, columns[index].ascending, true, false);
     }
@@ -3166,7 +3254,7 @@ function appendRow(store, row, options) {
     var _b = data_2.getCreatedRowInfo(store, at, row), rawRow = _b.rawRow, viewRow = _b.viewRow, prevRow = _b.prevRow;
     viewData.splice(at, 0, viewRow);
     rawData.splice(at, 0, rawRow);
-    updatePageOptions(data, pageOptions.useClient ? pageOptions.totalCount + 1 : 0);
+    updatePageOptions(store, { totalCount: pageOptions.totalCount + 1 });
     updateHeights(store);
     if (at !== rawData.length) {
         updateSortKey(data, at);
@@ -3192,13 +3280,16 @@ function removeRow(store, rowKey, options) {
         return;
     }
     var nextRow = rawData[rowIdx + 1];
-    if (pageOptions.useClient) {
+    if (!common_1.isEmpty(pageOptions)) {
         var perPage = pageOptions.perPage, totalCount = pageOptions.totalCount, page = pageOptions.page;
         var modifiedLastPage = Math.floor((totalCount - 1) / perPage);
         if ((totalCount - 1) % perPage) {
             modifiedLastPage += 1;
         }
-        updatePageOptions(data, totalCount - 1, modifiedLastPage < page ? modifiedLastPage : page);
+        updatePageOptions(store, {
+            totalCount: totalCount - 1,
+            page: modifiedLastPage < page ? modifiedLastPage : page
+        });
     }
     viewData.splice(rowIdx, 1);
     var removedRow = rawData.splice(rowIdx, 1)[0];
@@ -3230,7 +3321,7 @@ function clearData(store) {
     rowCoords.heights = [];
     data.viewData = [];
     data.rawData = [];
-    updatePageOptions(data, 0);
+    updatePageOptions(store, { totalCount: 0, page: 1 });
     summary_1.updateAllSummaryValues(store);
     setLoadingState(store, 'EMPTY');
     setCheckedAllRows(store);
@@ -3243,10 +3334,10 @@ function resetData(store, inputData) {
     selection_1.initSelection(store);
     sort_1.initSortState(data);
     filter_1.initFilter(store);
+    updatePageOptions(store, { totalCount: rawData.length, page: 1 });
     data.viewData = viewData;
     data.rawData = rawData;
-    updatePageOptions(data, rawData.length);
-    updateHeightsWithFilteredData(store);
+    updateHeights(store);
     summary_1.updateAllSummaryValues(store);
     setLoadingState(store, data_2.getLoadingState(rawData));
     setCheckedAllRows(store);
@@ -3333,11 +3424,6 @@ function removeColumnClassName(_a, columnName, className) {
     });
 }
 exports.removeColumnClassName = removeColumnClassName;
-function setPagination(_a, pageOptions) {
-    var data = _a.data;
-    data.pageOptions = pageOptions;
-}
-exports.setPagination = setPagination;
 function movePage(store, page) {
     var data = store.data;
     data.pageOptions.page = page;
@@ -3412,13 +3498,13 @@ function changeToObservableData(column, data, originData) {
 function changeToObservableTreeData(column, data, originData, id) {
     var rows = originData.rows;
     var rawData = data.rawData, viewData = data.viewData;
-    var allColumnMap = column.allColumnMap, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
+    var columnMapWithRelation = column.columnMapWithRelation, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon, defaultValues = column.defaultValues;
     // create new creation key for updating the observe function of hoc component
     data_1.generateDataCreationKey();
     rows.forEach(function (row) {
         var parentRow = data_2.findRowByRowKey(data, column, id, row._attributes.tree.parentRowKey);
-        var rawRow = tree_2.createTreeRawRow(row, column.defaultValues, parentRow || null);
-        var viewRow = data_1.createViewRow(row, allColumnMap, rawData, treeColumnName, treeIcon);
+        var rawRow = tree_2.createTreeRawRow(row, defaultValues, parentRow || null, columnMapWithRelation);
+        var viewRow = data_1.createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
         var foundIndex = data_2.findIndexByRowKey(data, column, id, rawRow.rowKey);
         viewData.splice(foundIndex, 1, viewRow);
         rawData.splice(foundIndex, 1, rawRow);
@@ -3500,10 +3586,10 @@ exports.moveRow = moveRow;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var selection_1 = __webpack_require__(14);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 function changeSelectionRange(selection, inputRange, id) {
     if (!selection_1.isSameInputRange(selection.inputRange, inputRange)) {
         selection.inputRange = inputRange;
@@ -3554,10 +3640,10 @@ exports.initSelection = initSelection;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var data_1 = __webpack_require__(6);
-var focus_1 = __webpack_require__(70);
-var rowSpan_1 = __webpack_require__(9);
+var focus_1 = __webpack_require__(72);
+var rowSpan_1 = __webpack_require__(10);
 var data_2 = __webpack_require__(13);
 var observable_1 = __webpack_require__(5);
 var data_3 = __webpack_require__(15);
@@ -3567,7 +3653,7 @@ var column_1 = __webpack_require__(12);
 function makeObservable(store, rowKey) {
     var data = store.data, column = store.column, id = store.id;
     var rawData = data.rawData, viewData = data.viewData;
-    var allColumnMap = column.allColumnMap, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
+    var columnMapWithRelation = column.columnMapWithRelation, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon, defaultValues = column.defaultValues;
     var foundIndex = data_1.findIndexByRowKey(data, column, id, rowKey, false);
     var rawRow = rawData[foundIndex];
     if (observable_1.isObservable(rawRow)) {
@@ -3575,12 +3661,12 @@ function makeObservable(store, rowKey) {
     }
     if (treeColumnName) {
         var parentRow = data_1.findRowByRowKey(data, column, id, rawRow._attributes.tree.parentRowKey);
-        rawData[foundIndex] = tree_1.createTreeRawRow(rawRow, column.defaultValues, parentRow || null);
-        viewData[foundIndex] = data_2.createViewRow(rawData[foundIndex], allColumnMap, rawData, treeColumnName, treeIcon);
+        rawData[foundIndex] = tree_1.createTreeRawRow(rawRow, column.defaultValues, parentRow || null, columnMapWithRelation);
+        viewData[foundIndex] = data_2.createViewRow(rawData[foundIndex], columnMapWithRelation, rawData, treeColumnName, treeIcon);
     }
     else {
-        rawData[foundIndex] = data_2.createRawRow(rawRow, foundIndex, column.defaultValues);
-        viewData[foundIndex] = data_2.createViewRow(rawData[foundIndex], allColumnMap, rawData);
+        rawData[foundIndex] = data_2.createRawRow(rawRow, foundIndex, defaultValues, columnMapWithRelation);
+        viewData[foundIndex] = data_2.createViewRow(rawData[foundIndex], columnMapWithRelation, rawData);
     }
     observable_1.notify(data, 'rawData');
     observable_1.notify(data, 'viewData');
@@ -3882,7 +3968,7 @@ exports.isNonPrintableKey = isNonPrintableKey;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var util_1 = __webpack_require__(51);
+var util_1 = __webpack_require__(53);
 var data_1 = __webpack_require__(13);
 var tree_1 = __webpack_require__(21);
 var observable_1 = __webpack_require__(5);
@@ -3919,7 +4005,7 @@ function getTreeCellInfo(rawData, row, useIcon) {
         expanded: tree_1.isExpanded(row)
     };
 }
-function createTreeRawRow(row, defaultValues, parentRow, options) {
+function createTreeRawRow(row, defaultValues, parentRow, columnMap, options) {
     if (options === void 0) { options = { lazyObservable: false }; }
     var childRowKeys = [];
     if (row._attributes && row._attributes.tree) {
@@ -3928,7 +4014,7 @@ function createTreeRawRow(row, defaultValues, parentRow, options) {
     var keyColumnName = options.keyColumnName, offset = options.offset, _a = options.lazyObservable, lazyObservable = _a === void 0 ? false : _a;
     // generate new tree rowKey when row doesn't have rowKey
     var targetTreeRowKey = util_1.isUndefined(row.rowKey) ? generateTreeRowKey() : Number(row.rowKey);
-    var rawRow = data_1.createRawRow(row, targetTreeRowKey, defaultValues, {
+    var rawRow = data_1.createRawRow(row, targetTreeRowKey, defaultValues, columnMap, {
         keyColumnName: keyColumnName,
         lazyObservable: lazyObservable
     });
@@ -3953,27 +4039,27 @@ function createTreeRawRow(row, defaultValues, parentRow, options) {
     return rawRow;
 }
 exports.createTreeRawRow = createTreeRawRow;
-function flattenTreeData(data, defaultValues, parentRow, options) {
+function flattenTreeData(data, defaultValues, parentRow, columnMap, options) {
     var flattenedRows = [];
     data.forEach(function (row) {
-        var rawRow = createTreeRawRow(row, defaultValues, parentRow, options);
+        var rawRow = createTreeRawRow(row, defaultValues, parentRow, columnMap, options);
         flattenedRows.push(rawRow);
         if (Array.isArray(row._children)) {
             if (row._children.length) {
-                flattenedRows.push.apply(flattenedRows, flattenTreeData(row._children, defaultValues, rawRow, options));
+                flattenedRows.push.apply(flattenedRows, flattenTreeData(row._children, defaultValues, rawRow, columnMap, options));
             }
         }
     });
     return flattenedRows;
 }
 exports.flattenTreeData = flattenTreeData;
-function createTreeRawData(data, defaultValues, keyColumnName, lazyObservable) {
+function createTreeRawData(data, defaultValues, columnMap, keyColumnName, lazyObservable) {
     if (lazyObservable === void 0) { lazyObservable = false; }
     // only reset the rowKey on lazy observable data
     if (lazyObservable) {
         treeRowKey = -1;
     }
-    return flattenTreeData(data, defaultValues, null, { keyColumnName: keyColumnName, lazyObservable: lazyObservable });
+    return flattenTreeData(data, defaultValues, null, columnMap, { keyColumnName: keyColumnName, lazyObservable: lazyObservable });
 }
 exports.createTreeRawData = createTreeRawData;
 function createTreeCellInfo(rawData, row, useIcon, lazyObservable) {
@@ -4162,9 +4248,9 @@ exports.getRootParentRow = getRootParentRow;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var summary_1 = __webpack_require__(35);
+var summary_1 = __webpack_require__(36);
 var common_1 = __webpack_require__(1);
-var summary_2 = __webpack_require__(34);
+var summary_2 = __webpack_require__(35);
 function setSummaryColumnContent(_a, columnName, columnContent) {
     var summary = _a.summary, data = _a.data;
     var castedColumnContent = summary_1.castToSummaryColumnContent(columnContent);
@@ -4415,9 +4501,9 @@ var tslib_1 = __webpack_require__(0);
 var observable_1 = __webpack_require__(5);
 var column_1 = __webpack_require__(8);
 var common_1 = __webpack_require__(1);
-var default_1 = __webpack_require__(55);
-var manager_1 = __webpack_require__(56);
-var rowHeaderInput_1 = __webpack_require__(61);
+var default_1 = __webpack_require__(57);
+var manager_1 = __webpack_require__(58);
+var rowHeaderInput_1 = __webpack_require__(63);
 var DEF_ROW_HEADER_INPUT = '<input type="checkbox" name="_checked" />';
 var ROW_HEADER = 40;
 var COLUMN = 50;
@@ -4425,6 +4511,30 @@ var rowHeadersMap = {
     rowNum: '_number',
     checkbox: '_checked'
 };
+function validateRelationColumn(columnInfos) {
+    var checked = {};
+    function checkCircularRelation(column, relations) {
+        var name = column.name, relationMap = column.relationMap;
+        relations.push(name);
+        checked[name] = true;
+        if (common_1.uniq(relations).length !== relations.length) {
+            throw new Error('Cannot create circular reference between relation columns');
+        }
+        if (!common_1.isUndefined(relationMap)) {
+            Object.keys(relationMap).forEach(function (targetName) {
+                var targetColumn = common_1.findProp('name', targetName, columnInfos);
+                // copy the 'relation' array to prevent to push all relation column into same array
+                checkCircularRelation(targetColumn, tslib_1.__spreadArrays(relations));
+            });
+        }
+    }
+    columnInfos.forEach(function (column) {
+        if (!checked[column.name]) {
+            checkCircularRelation(column, []);
+        }
+    });
+}
+exports.validateRelationColumn = validateRelationColumn;
 function createBuiltInEditorOptions(editorType, options) {
     var editInfo = manager_1.editorMap[editorType];
     return {
@@ -4447,6 +4557,9 @@ function createEditorOptions(editor) {
     return null;
 }
 function createRendererOptions(renderer) {
+    if (common_1.isFunction(renderer)) {
+        return { type: renderer };
+    }
     if (common_1.isObject(renderer) && !common_1.isFunction(renderer) && common_1.isFunction(renderer.type)) {
         return renderer;
     }
@@ -4592,6 +4705,7 @@ function create(_a) {
     var columnInfos = columns.map(function (column) {
         return createColumn(column, columnOptions, relationColumns, copyOptions, treeColumnOptions, columnHeaderInfo);
     });
+    validateRelationColumn(columnInfos);
     var allColumns = rowHeaderInfos.concat(columnInfos);
     var treeColumnName = treeColumnOptions.name, _b = treeColumnOptions.useIcon, treeIcon = _b === void 0 ? true : _b, _c = treeColumnOptions.useCascadingCheckbox, treeCascadingCheckbox = _c === void 0 ? true : _c;
     var complexColumnHeaders = complexColumns.map(function (column) {
@@ -4665,6 +4779,18 @@ function create(_a) {
                 var name = _a.name;
                 return name;
             });
+        },
+        get columnMapWithRelation() {
+            // copy the array to prevent to affect allColumns property
+            var copiedColumns = tslib_1.__spreadArrays(this.allColumns);
+            copiedColumns.sort(function (columnA, columnB) {
+                var _a, _b;
+                if ((_a = columnA.relationMap) === null || _a === void 0 ? void 0 : _a[columnB.name]) {
+                    return -1;
+                }
+                return ((_b = columnB.relationMap) === null || _b === void 0 ? void 0 : _b[columnA.name]) ? 1 : 0;
+            });
+            return common_1.createMapFromArray(copiedColumns, 'name');
         } }, (treeColumnName && { treeColumnName: treeColumnName, treeIcon: treeIcon, treeCascadingCheckbox: treeCascadingCheckbox })));
 }
 exports.create = create;
@@ -4810,7 +4936,7 @@ var observable_1 = __webpack_require__(5);
 var instance_1 = __webpack_require__(7);
 var data_3 = __webpack_require__(15);
 var tree_1 = __webpack_require__(21);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var tree_2 = __webpack_require__(20);
 var common_1 = __webpack_require__(1);
@@ -4994,18 +5120,18 @@ exports.changeTreeRowsCheckedState = changeTreeRowsCheckedState;
 function appendTreeRow(store, row, options) {
     var data = store.data, column = store.column, rowCoords = store.rowCoords, dimension = store.dimension, id = store.id;
     var rawData = data.rawData, viewData = data.viewData;
-    var defaultValues = column.defaultValues, allColumnMap = column.allColumnMap, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
+    var defaultValues = column.defaultValues, columnMapWithRelation = column.columnMapWithRelation, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
     var heights = rowCoords.heights;
     var parentRowKey = options.parentRowKey, offset = options.offset;
     var parentRow = data_2.findRowByRowKey(data, column, id, parentRowKey);
     var startIdx = tree_1.getStartIndexToAppendRow(store, parentRow, offset);
-    var rawRows = tree_2.flattenTreeData([row], defaultValues, parentRow, {
+    var rawRows = tree_2.flattenTreeData([row], defaultValues, parentRow, columnMapWithRelation, {
         keyColumnName: column.keyColumnName,
         offset: offset
     });
     rawData.splice.apply(rawData, tslib_1.__spreadArrays([startIdx, 0], rawRows));
     var viewRows = rawRows.map(function (rawRow) {
-        return data_1.createViewRow(rawRow, allColumnMap, rawData, treeColumnName, treeIcon);
+        return data_1.createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     });
     viewData.splice.apply(viewData, tslib_1.__spreadArrays([startIdx, 0], viewRows));
     var rowHeights = rawRows.map(function (rawRow) { return data_2.getRowHeight(rawRow, dimension.rowHeight); });
@@ -5048,8 +5174,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var common_1 = __webpack_require__(1);
 var observable_1 = __webpack_require__(5);
-var sort_1 = __webpack_require__(71);
-var eventBus_1 = __webpack_require__(10);
+var sort_1 = __webpack_require__(73);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var data_1 = __webpack_require__(15);
 var data_2 = __webpack_require__(6);
@@ -5200,18 +5326,18 @@ var column_1 = __webpack_require__(24);
 var viewport_1 = __webpack_require__(29);
 var selection_1 = __webpack_require__(16);
 var focus_1 = __webpack_require__(17);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var column_2 = __webpack_require__(12);
 var data_2 = __webpack_require__(15);
 var summary_1 = __webpack_require__(22);
 function initLayerAndScrollAfterFiltering(store) {
     var data = store.data;
-    data_2.updatePageOptions(data, data.filteredRawData.length);
-    data_2.updateHeights(store);
-    viewport_1.setScrollTop(store, 0);
     selection_1.initSelection(store);
     focus_1.initFocus(store);
+    data_2.updatePageOptions(store, { totalCount: data.filteredRawData.length, page: 1 });
+    data_2.updateHeights(store);
+    viewport_1.setScrollTop(store, 0);
     data_2.updateRowNumber(store, 0);
     data_2.setCheckedAllRows(store);
 }
@@ -5233,7 +5359,7 @@ function toggleSelectAllCheckbox(store, checked) {
     var columnName = activeFilterState.columnName;
     var columnInfo = column.allColumnMap[columnName];
     if (checked) {
-        var columnData = data_1.getUniqColumnData(data.rawData, columnName);
+        var columnData = data_1.getUniqColumnData(data.rawData, column, columnName);
         activeFilterState.state = columnData.map(function (value) { return ({ code: 'eq', value: value }); });
     }
     else {
@@ -5282,7 +5408,7 @@ function setActiveColumnAddress(store, address) {
         }
     }
     if (type === 'select' && !initialState.length) {
-        var columnData = data_1.getUniqColumnData(filteredRawData, columnName);
+        var columnData = data_1.getUniqColumnData(filteredRawData, column, columnName);
         initialState = columnData.map(function (value) { return ({ code: 'eq', value: value }); });
     }
     filterLayerState.activeFilterState = {
@@ -5294,7 +5420,7 @@ function setActiveColumnAddress(store, address) {
 }
 exports.setActiveColumnAddress = setActiveColumnAddress;
 function applyActiveFilterState(store) {
-    var filterLayerState = store.filterLayerState, data = store.data;
+    var filterLayerState = store.filterLayerState, data = store.data, column = store.column;
     var columnName = filterLayerState.activeColumnAddress.name;
     var _a = filterLayerState.activeFilterState, state = _a.state, type = _a.type, operator = _a.operator;
     var validState = state.filter(function (item) { return String(item.value).length; });
@@ -5304,7 +5430,7 @@ function applyActiveFilterState(store) {
     }
     filterLayerState.activeFilterState.state = validState;
     if (type === 'select') {
-        var columnData = data_1.getUniqColumnData(data.rawData, columnName);
+        var columnData = data_1.getUniqColumnData(data.rawData, column, columnName);
         if (columnData.length === state.length) {
             unfilter(store, columnName);
             return;
@@ -5348,7 +5474,7 @@ function filter(store, columnName, conditionFn, state) {
     var filters = data.filters || [];
     var type = columnFilterInfo.type;
     var filterIndex = common_1.findPropIndex('columnName', columnName, filters);
-    data_2.updatePageOptions(data, data.pageOptions.totalCount, 1);
+    data_2.updatePageOptions(store, { page: 1 });
     if (filterIndex >= 0) {
         var columnFilter = filters[filterIndex];
         filters.splice(filterIndex, 1, tslib_1.__assign(tslib_1.__assign({}, columnFilter), { conditionFn: conditionFn, state: state }));
@@ -5419,7 +5545,7 @@ exports.initFilter = initFilter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var viewport_1 = __webpack_require__(72);
+var viewport_1 = __webpack_require__(74);
 function setScrollPosition(viewport, changedScrollTop, changedScrollLeft) {
     if (changedScrollLeft !== null) {
         viewport.scrollLeft = changedScrollLeft;
@@ -5629,6 +5755,28 @@ exports.default = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var common_1 = __webpack_require__(1);
+function createAjaxConfig(target) {
+    var configKeys = [
+        'contentType',
+        'withCredentials',
+        'mimeType',
+        'headers',
+        'serializer'
+    ];
+    return common_1.extract.apply(void 0, tslib_1.__spreadArrays([target], configKeys));
+}
+exports.createAjaxConfig = createAjaxConfig;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
 function getListItems(props) {
     var _a = props.columnInfo.editor.options, listItems = _a.listItems, relationListItemMap = _a.relationListItemMap;
@@ -5641,20 +5789,20 @@ exports.getListItems = getListItems;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__33__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__34__;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
-var summary_1 = __webpack_require__(35);
+var summary_1 = __webpack_require__(36);
 var common_1 = __webpack_require__(1);
 function createSummaryValue(content, columnName, data) {
     if (content && content.useAutoSummary) {
@@ -5701,7 +5849,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5784,7 +5932,7 @@ exports.extractSummaryColumnContent = extractSummaryColumnContent;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5826,7 +5974,7 @@ exports.refreshRowHeight = refreshRowHeight;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5922,7 +6070,7 @@ exports.findRowIndexByPosition = findRowIndexByPosition;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5983,7 +6131,7 @@ exports.setAutoBodyHeight = setAutoBodyHeight;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5994,11 +6142,11 @@ var preact_1 = __webpack_require__(3);
 var colGroup_1 = __webpack_require__(30);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var columnResizer_1 = __webpack_require__(76);
+var columnResizer_1 = __webpack_require__(78);
 var instance_1 = __webpack_require__(7);
 var column_1 = __webpack_require__(12);
-var complexHeader_1 = __webpack_require__(77);
-var columnHeader_1 = __webpack_require__(40);
+var complexHeader_1 = __webpack_require__(79);
+var columnHeader_1 = __webpack_require__(41);
 var HeaderAreaComp = /** @class */ (function (_super) {
     tslib_1.__extends(HeaderAreaComp, _super);
     function HeaderAreaComp() {
@@ -6087,7 +6235,7 @@ exports.HeaderArea = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6096,10 +6244,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var dom_1 = __webpack_require__(2);
-var headerCheckbox_1 = __webpack_require__(78);
-var sortingButton_1 = __webpack_require__(79);
-var sortingOrder_1 = __webpack_require__(80);
-var filterButton_1 = __webpack_require__(81);
+var headerCheckbox_1 = __webpack_require__(80);
+var sortingButton_1 = __webpack_require__(81);
+var sortingOrder_1 = __webpack_require__(82);
+var filterButton_1 = __webpack_require__(83);
 var column_1 = __webpack_require__(8);
 var common_1 = __webpack_require__(1);
 var ColumnHeader = /** @class */ (function (_super) {
@@ -6165,7 +6313,7 @@ exports.ColumnHeader = ColumnHeader;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6173,12 +6321,12 @@ exports.ColumnHeader = ColumnHeader;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var bodyRows_1 = __webpack_require__(82);
+var bodyRows_1 = __webpack_require__(84);
 var colGroup_1 = __webpack_require__(30);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var focusLayer_1 = __webpack_require__(88);
-var selectionLayer_1 = __webpack_require__(89);
+var focusLayer_1 = __webpack_require__(90);
+var selectionLayer_1 = __webpack_require__(91);
 var common_1 = __webpack_require__(1);
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
@@ -6322,7 +6470,7 @@ exports.BodyArea = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6331,7 +6479,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var colGroup_1 = __webpack_require__(30);
-var summaryBodyRow_1 = __webpack_require__(90);
+var summaryBodyRow_1 = __webpack_require__(92);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var SummaryAreaComp = /** @class */ (function (_super) {
@@ -6379,7 +6527,7 @@ exports.SummaryArea = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6397,38 +6545,155 @@ exports.isMobile = isMobile;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var i18n_1 = tslib_1.__importDefault(__webpack_require__(31));
-var confirmMessageMap = {
-    CREATE: 'net.confirmCreate',
-    UPDATE: 'net.confirmUpdate',
-    DELETE: 'net.confirmDelete',
-    MODIFY: 'net.confirmModify'
-};
-var alertMessageMap = {
-    CREATE: 'net.noDataToCreate',
-    UPDATE: 'net.noDataToUpdate',
-    DELETE: 'net.noDataToDelete',
-    MODIFY: 'net.noDataToModify'
-};
-function getConfirmMessage(type, count) {
-    return i18n_1.default.get(confirmMessageMap[type], { count: String(count) });
+var serializer_1 = __webpack_require__(120);
+var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
+var common_1 = __webpack_require__(1);
+var ENCODED_SPACE_REGEXP = /%20/g;
+var QS_DELIM_REGEXP = /\?/;
+function hasRequestBody(method) {
+    return /^(?:POST|PUT|PATCH)$/.test(method.toUpperCase());
 }
-exports.getConfirmMessage = getConfirmMessage;
-function getAlertMessage(type) {
-    return i18n_1.default.get(alertMessageMap[type]);
+function getSerialized(params, serializer) {
+    return common_1.isFunction(serializer) ? serializer(params) : serializer_1.serialize(params);
 }
-exports.getAlertMessage = getAlertMessage;
+function handleReadyStateChange(xhr, options) {
+    var eventBus = options.eventBus, success = options.success, preCallback = options.preCallback, postCallback = options.postCallback;
+    // eslint-disable-next-line eqeqeq
+    if (xhr.readyState != XMLHttpRequest.DONE) {
+        return;
+    }
+    preCallback();
+    var gridEvent = new gridEvent_1.default({ xhr: xhr });
+    /**
+     * Occurs when the response is received from the server
+     * @event Grid#response
+     * @type {module:event/gridEvent}
+     * @property {XmlHttpRequest} xhr - XmlHttpRequest
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('response', gridEvent);
+    if (gridEvent.isStopped()) {
+        return;
+    }
+    if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        if (response.result) {
+            /**
+             * Occurs after the response event, if the result is true
+             * @event Grid#successResponse
+             * @type {module:event/gridEvent}
+             * @property {XmlHttpRequest} xhr - XmlHttpRequest
+             * @property {Grid} instance - Current grid instance
+             */
+            eventBus.trigger('successResponse', gridEvent);
+            if (gridEvent.isStopped()) {
+                return;
+            }
+            success(response);
+        }
+        else if (!response.result) {
+            /**
+             * Occurs after the response event, if the result is false
+             * @event Grid#failResponse
+             * @type {module:event/gridEvent}
+             * @property {XmlHttpRequest} xhr - XmlHttpRequest
+             * @property {Grid} instance - Current grid instance
+             */
+            eventBus.trigger('failResponse', gridEvent);
+            if (gridEvent.isStopped()) {
+                return;
+            }
+        }
+    }
+    else {
+        /**
+         * Occurs after the response event, if the response is Error
+         * @event Grid#errorResponse
+         * @type {module:event/gridEvent}
+         * @property {XmlHttpRequest} xhr - XmlHttpRequest
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('errorResponse', gridEvent);
+        if (gridEvent.isStopped()) {
+            return;
+        }
+    }
+    postCallback();
+}
+function open(xhr, options) {
+    var url = options.url, method = options.method, serializer = options.serializer, _a = options.params, params = _a === void 0 ? {} : _a;
+    var requestUrl = url;
+    if (!hasRequestBody(method)) {
+        // serialize query string
+        var qs = (QS_DELIM_REGEXP.test(url) ? '&' : '?') + getSerialized(params, serializer);
+        requestUrl = "" + url + qs;
+    }
+    xhr.open(method, requestUrl);
+}
+function applyConfig(xhr, options) {
+    var method = options.method, contentType = options.contentType, mimeType = options.mimeType, headers = options.headers, _a = options.withCredentials, withCredentials = _a === void 0 ? false : _a;
+    // set withCredentials
+    xhr.withCredentials = withCredentials;
+    // overide MIME type
+    if (mimeType) {
+        xhr.overrideMimeType(mimeType);
+    }
+    // set user defined request headers
+    if (common_1.isObject(headers)) {
+        Object.keys(headers).forEach(function (name) {
+            if (headers[name]) {
+                xhr.setRequestHeader(name, headers[name]);
+            }
+        });
+    }
+    // set 'Content-Type' when request has body
+    if (hasRequestBody(method)) {
+        xhr.setRequestHeader('Content-Type', contentType + "; charset=UTF-8");
+    }
+    // set 'x-requested-with' header to prevent CSRF in old browser
+    xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+}
+function send(xhr, options) {
+    var method = options.method, eventBus = options.eventBus, serializer = options.serializer, preCallback = options.preCallback, _a = options.params, params = _a === void 0 ? {} : _a, _b = options.contentType, contentType = _b === void 0 ? 'application/x-www-form-urlencoded' : _b;
+    var body = null;
+    if (hasRequestBody(method)) {
+        // The space character '%20' is replaced to '+', because application/x-www-form-urlencoded follows rfc-1866
+        body =
+            contentType.indexOf('application/x-www-form-urlencoded') !== -1
+                ? getSerialized(params, serializer).replace(ENCODED_SPACE_REGEXP, '+')
+                : JSON.stringify(params);
+    }
+    xhr.onreadystatechange = function () { return handleReadyStateChange(xhr, options); };
+    var gridEvent = new gridEvent_1.default({ xhr: xhr });
+    /**
+     * Occurs before the http request is sent
+     * @event Grid#beforeRequest
+     * @type {module:event/gridEvent}
+     * @property {Grid} instance - Current grid instance
+     */
+    eventBus.trigger('beforeRequest', gridEvent);
+    if (gridEvent.isStopped()) {
+        preCallback();
+        return;
+    }
+    xhr.send(body);
+}
+function gridAjax(options) {
+    var xhr = new XMLHttpRequest();
+    [open, applyConfig, send].forEach(function (fn) { return fn(xhr, options); });
+}
+exports.gridAjax = gridAjax;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6442,6 +6707,7 @@ var paramNameMap = {
     UPDATE: 'updatedRows',
     DELETE: 'deletedRows'
 };
+// @TODO: fix 'Row' type with record(Dictionary) type to use negate type or other type utility
 function getDataWithOptions(targetRows, options) {
     if (options === void 0) { options = {}; }
     var _a = options.checkedOnly, checkedOnly = _a === void 0 ? false : _a, _b = options.withRawData, withRawData = _b === void 0 ? false : _b, _c = options.rowKeyOnly, rowKeyOnly = _c === void 0 ? false : _c, _d = options.ignoredColumns, ignoredColumns = _d === void 0 ? [] : _d;
@@ -6450,9 +6716,11 @@ function getDataWithOptions(targetRows, options) {
         rows = rows.filter(function (row) { return row._attributes.checked; });
     }
     if (ignoredColumns.length) {
+        // @ts-ignore
         rows = rows.map(function (row) { return common_1.omit.apply(void 0, tslib_1.__spreadArrays([row], ignoredColumns)); });
     }
     if (!withRawData) {
+        // @ts-ignore
         rows = rows.map(function (row) { return common_1.omit(row, '_attributes'); });
     }
     if (rowKeyOnly) {
@@ -6547,19 +6815,6 @@ exports.createManager = createManager;
 
 
 /***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var tslib_1 = __webpack_require__(0);
-var grid_1 = tslib_1.__importDefault(__webpack_require__(47));
-__webpack_require__(121);
-grid_1.default.setLanguage('en');
-module.exports = grid_1.default;
-
-
-/***/ }),
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6567,28 +6822,72 @@ module.exports = grid_1.default;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var create_1 = __webpack_require__(48);
-var root_1 = __webpack_require__(73);
+var _1 = tslib_1.__importDefault(__webpack_require__(31));
+var confirmMessageMap = {
+    CREATE: 'net.confirmCreate',
+    UPDATE: 'net.confirmUpdate',
+    DELETE: 'net.confirmDelete',
+    MODIFY: 'net.confirmModify'
+};
+var alertMessageMap = {
+    CREATE: 'net.noDataToCreate',
+    UPDATE: 'net.noDataToUpdate',
+    DELETE: 'net.noDataToDelete',
+    MODIFY: 'net.noDataToModify'
+};
+function getConfirmMessage(type, count) {
+    return _1.default.get(confirmMessageMap[type], { count: String(count) });
+}
+exports.getConfirmMessage = getConfirmMessage;
+function getAlertMessage(type) {
+    return _1.default.get(alertMessageMap[type]);
+}
+exports.getAlertMessage = getAlertMessage;
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var tslib_1 = __webpack_require__(0);
+var grid_1 = tslib_1.__importDefault(__webpack_require__(49));
+__webpack_require__(125);
+grid_1.default.setLanguage('en');
+module.exports = grid_1.default;
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var create_1 = __webpack_require__(50);
+var root_1 = __webpack_require__(75);
 var preact_1 = __webpack_require__(3);
-var create_2 = __webpack_require__(106);
-var manager_1 = tslib_1.__importDefault(__webpack_require__(111));
+var create_2 = __webpack_require__(108);
+var manager_1 = tslib_1.__importDefault(__webpack_require__(113));
 var instance_1 = __webpack_require__(7);
 var i18n_1 = tslib_1.__importDefault(__webpack_require__(31));
 var clipboard_1 = __webpack_require__(25);
-var validation_1 = __webpack_require__(115);
+var validation_1 = __webpack_require__(117);
 var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
 var observable_1 = __webpack_require__(5);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var data_1 = __webpack_require__(6);
 var column_1 = __webpack_require__(8);
-var serverSideDataProvider_1 = __webpack_require__(116);
-var modifiedDataManager_1 = __webpack_require__(45);
-var message_1 = __webpack_require__(44);
-var paginationManager_1 = __webpack_require__(119);
+var serverSideDataProvider_1 = __webpack_require__(118);
+var modifiedDataManager_1 = __webpack_require__(46);
+var message_1 = __webpack_require__(47);
+var paginationManager_1 = __webpack_require__(123);
 var tree_1 = __webpack_require__(21);
-var rowSpan_1 = __webpack_require__(9);
-var googleAnalytics_1 = __webpack_require__(120);
+var rowSpan_1 = __webpack_require__(10);
+var googleAnalytics_1 = __webpack_require__(124);
 var filter_1 = __webpack_require__(23);
 /* eslint-disable global-require */
 if (false) {}
@@ -7639,7 +7938,8 @@ var Grid = /** @class */ (function () {
         if (pagination) {
             var pageOptions = this.store.data.pageOptions;
             if (pageOptions.useClient) {
-                this.dispatch('setPagination', tslib_1.__assign(tslib_1.__assign({}, pageOptions), { perPage: perPage, page: 1 }));
+                this.dispatch('updatePageOptions', { perPage: perPage, page: 1 });
+                this.dispatch('updateHeights');
             }
             else {
                 this.readData(1, { perPage: perPage });
@@ -7688,8 +7988,8 @@ var Grid = /** @class */ (function () {
      * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
      * @param {object} options - Options
      *      @param {String} [options.url] - URL to send the request
-     *      @param {boolean} [options.hasDataParam=true] - Whether the row-data to be included in the request param
-     *      @param {boolean} [options.checkedOnly=true] - Whether the request param only contains checked rows
+     *      @param {String} [options.method] - method to send the request
+     *      @param {boolean} [options.checkedOnly=false] - Whether the request param only contains checked rows
      *      @param {boolean} [options.modifiedOnly=true] - Whether the request param only contains modified rows
      *      @param {boolean} [options.showConfirm=true] - Whether to show confirm dialog before sending request
      *      @param {boolean} [options.withCredentials=false] - Use withCredentials flag of XMLHttpRequest for ajax requests if true
@@ -7954,7 +8254,7 @@ exports.default = Grid;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7963,17 +8263,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var data_1 = __webpack_require__(13);
 var column_1 = __webpack_require__(24);
-var dimension_1 = __webpack_require__(62);
-var viewport_1 = __webpack_require__(63);
-var columnCoords_1 = __webpack_require__(64);
-var rowCoords_1 = __webpack_require__(65);
-var focus_1 = __webpack_require__(66);
-var summary_1 = __webpack_require__(34);
-var selection_1 = __webpack_require__(67);
-var renderState_1 = __webpack_require__(68);
-var filterLayerState_1 = __webpack_require__(69);
+var dimension_1 = __webpack_require__(64);
+var viewport_1 = __webpack_require__(65);
+var columnCoords_1 = __webpack_require__(66);
+var rowCoords_1 = __webpack_require__(67);
+var focus_1 = __webpack_require__(68);
+var summary_1 = __webpack_require__(35);
+var selection_1 = __webpack_require__(69);
+var renderState_1 = __webpack_require__(70);
+var filterLayerState_1 = __webpack_require__(71);
 var data_2 = __webpack_require__(15);
-var dimension_2 = __webpack_require__(38);
+var dimension_2 = __webpack_require__(39);
 function createStore(id, options) {
     var el = options.el, width = options.width, rowHeight = options.rowHeight, bodyHeight = options.bodyHeight, heightResizable = options.heightResizable, minRowHeight = options.minRowHeight, minBodyHeight = options.minBodyHeight, _a = options.columnOptions, columnOptions = _a === void 0 ? {} : _a, keyColumnName = options.keyColumnName, _b = options.rowHeaders, rowHeaders = _b === void 0 ? [] : _b, _c = options.copyOptions, copyOptions = _c === void 0 ? {} : _c, _d = options.summary, summaryOptions = _d === void 0 ? {} : _d, _e = options.selectionUnit, selectionUnit = _e === void 0 ? 'cell' : _e, _f = options.showDummyRows, showDummyRows = _f === void 0 ? false : _f, _g = options.editingEvent, editingEvent = _g === void 0 ? 'dblclick' : _g, _h = options.tabMode, tabMode = _h === void 0 ? 'moveAndEdit' : _h, scrollX = options.scrollX, scrollY = options.scrollY, _j = options.useClientSort, useClientSort = _j === void 0 ? true : _j, _k = options.pageOptions, pageOptions = _k === void 0 ? {} : _k, _l = options.treeColumnOptions, treeColumnOptions = _l === void 0 ? { name: '' } : _l, _m = options.header, header = _m === void 0 ? {} : _m, _o = options.disabled, disabled = _o === void 0 ? false : _o;
     var frozenBorderWidth = columnOptions.frozenBorderWidth;
@@ -8074,7 +8374,7 @@ exports.createStore = createStore;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8102,7 +8402,7 @@ exports.patchArrayMethods = patchArrayMethods;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8133,7 +8433,7 @@ exports.listItemText = listItemText;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -8671,7 +8971,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(53);
+exports.isBuffer = __webpack_require__(55);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -8715,7 +9015,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(54);
+exports.inherits = __webpack_require__(56);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -8840,10 +9140,10 @@ function callbackify(original) {
 }
 exports.callbackify = callbackify;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(52)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(54)))
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -9033,7 +9333,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -9044,7 +9344,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -9073,7 +9373,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9106,16 +9406,16 @@ exports.DefaultRenderer = DefaultRenderer;
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var text_1 = __webpack_require__(57);
-var checkbox_1 = __webpack_require__(58);
-var select_1 = __webpack_require__(59);
-var datePicker_1 = __webpack_require__(60);
+var text_1 = __webpack_require__(59);
+var checkbox_1 = __webpack_require__(60);
+var select_1 = __webpack_require__(61);
+var datePicker_1 = __webpack_require__(62);
 exports.editorMap = {
     text: [text_1.TextEditor, { type: 'text' }],
     password: [text_1.TextEditor, { type: 'password' }],
@@ -9127,7 +9427,7 @@ exports.editorMap = {
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9159,13 +9459,13 @@ exports.TextEditor = TextEditor;
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var editor_1 = __webpack_require__(32);
+var editor_1 = __webpack_require__(33);
 var CheckboxEditor = /** @class */ (function () {
     function CheckboxEditor(props) {
         var _this = this;
@@ -9234,13 +9534,13 @@ exports.CheckboxEditor = CheckboxEditor;
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var editor_1 = __webpack_require__(32);
+var editor_1 = __webpack_require__(33);
 var SelectEditor = /** @class */ (function () {
     function SelectEditor(props) {
         var _this = this;
@@ -9274,14 +9574,14 @@ exports.SelectEditor = SelectEditor;
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var tui_date_picker_1 = tslib_1.__importDefault(__webpack_require__(33));
+var tui_date_picker_1 = tslib_1.__importDefault(__webpack_require__(34));
 var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
 var DatePickerEditor = /** @class */ (function () {
@@ -9377,7 +9677,7 @@ exports.DatePickerEditor = DatePickerEditor;
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9420,7 +9720,7 @@ exports.RowHeaderInputRenderer = RowHeaderInputRenderer;
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9474,7 +9774,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9482,7 +9782,7 @@ exports.create = create;
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 function findIndexByPosition(offsets, position) {
     var rowOffset = common_1.findIndex(function (offset) { return offset > position; }, offsets);
     return rowOffset === -1 ? offsets.length - 1 : rowOffset - 1;
@@ -9569,7 +9869,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9698,7 +9998,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9733,7 +10033,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9741,7 +10041,7 @@ exports.create = create;
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = __webpack_require__(5);
 var common_1 = __webpack_require__(1);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 var data_1 = __webpack_require__(6);
 function create(_a) {
     var column = _a.column, data = _a.data, dimension = _a.dimension, rowCoords = _a.rowCoords, columnCoords = _a.columnCoords, editingEvent = _a.editingEvent, tabMode = _a.tabMode, id = _a.id;
@@ -9819,7 +10119,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9954,7 +10254,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9967,7 +10267,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9981,7 +10281,7 @@ exports.create = create;
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10001,7 +10301,7 @@ exports.isEditingCell = isEditingCell;
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10011,8 +10311,12 @@ var common_1 = __webpack_require__(1);
 function compare(valueA, valueB) {
     var isBlankA = common_1.isBlank(valueA);
     var isBlankB = common_1.isBlank(valueB);
-    var numberA = common_1.convertToNumber(valueA);
-    var numberB = common_1.convertToNumber(valueB);
+    var convertedA = common_1.convertToNumber(valueA);
+    var convertedB = common_1.convertToNumber(valueB);
+    if (!common_1.isNumber(convertedA) || !common_1.isNumber(convertedB)) {
+        convertedA = String(valueA);
+        convertedB = String(valueB);
+    }
     var result = 0;
     if (isBlankA && !isBlankB) {
         result = -1;
@@ -10020,10 +10324,10 @@ function compare(valueA, valueB) {
     else if (!isBlankA && isBlankB) {
         result = 1;
     }
-    else if (numberA < numberB) {
+    else if (convertedA < convertedB) {
         result = -1;
     }
-    else if (numberA > numberB) {
+    else if (convertedA > convertedB) {
         result = 1;
     }
     return result;
@@ -10077,7 +10381,7 @@ exports.sortViewData = sortViewData;
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10117,7 +10421,7 @@ exports.getChangedScrollPosition = getChangedScrollPosition;
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10125,7 +10429,7 @@ exports.getChangedScrollPosition = getChangedScrollPosition;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var container_1 = __webpack_require__(74);
+var container_1 = __webpack_require__(76);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
 var common_1 = __webpack_require__(1);
 var instance_1 = __webpack_require__(7);
@@ -10177,7 +10481,7 @@ exports.Root = Root;
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10185,19 +10489,19 @@ exports.Root = Root;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var leftSide_1 = __webpack_require__(75);
-var rightSide_1 = __webpack_require__(92);
-var stateLayer_1 = __webpack_require__(93);
-var editingLayer_1 = __webpack_require__(94);
-var filterLayer_1 = __webpack_require__(96);
-var heightResizeHandle_1 = __webpack_require__(102);
-var clipboard_1 = __webpack_require__(103);
-var pagination_1 = __webpack_require__(104);
+var leftSide_1 = __webpack_require__(77);
+var rightSide_1 = __webpack_require__(94);
+var stateLayer_1 = __webpack_require__(95);
+var editingLayer_1 = __webpack_require__(96);
+var filterLayer_1 = __webpack_require__(98);
+var heightResizeHandle_1 = __webpack_require__(104);
+var clipboard_1 = __webpack_require__(105);
+var pagination_1 = __webpack_require__(106);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var browser_1 = __webpack_require__(43);
+var browser_1 = __webpack_require__(44);
 var common_1 = __webpack_require__(1);
 var keyboard_1 = __webpack_require__(19);
 var DOUBLE_TAP_DURATION = 200;
@@ -10471,7 +10775,7 @@ exports.Container = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10479,9 +10783,9 @@ exports.Container = hoc_1.connect(function (_a) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var headerArea_1 = __webpack_require__(39);
-var bodyArea_1 = __webpack_require__(41);
-var summaryArea_1 = __webpack_require__(42);
+var headerArea_1 = __webpack_require__(40);
+var bodyArea_1 = __webpack_require__(42);
+var summaryArea_1 = __webpack_require__(43);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var LeftSideComp = /** @class */ (function (_super) {
@@ -10513,7 +10817,7 @@ exports.LeftSide = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10671,7 +10975,7 @@ exports.ColumnResizer = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10681,7 +10985,7 @@ var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
 var selection_1 = __webpack_require__(14);
-var columnHeader_1 = __webpack_require__(40);
+var columnHeader_1 = __webpack_require__(41);
 var column_1 = __webpack_require__(12);
 var ComplexHeaderComp = /** @class */ (function (_super) {
     tslib_1.__extends(ComplexHeaderComp, _super);
@@ -10759,7 +11063,7 @@ exports.ComplexHeader = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10817,7 +11121,7 @@ exports.HeaderCheckbox = hoc_1.connect(function (store) {
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10885,7 +11189,7 @@ exports.SortingButton = hoc_1.connect(function (store, props) {
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10919,7 +11223,7 @@ exports.SortingOrder = hoc_1.connect(function (store, props) {
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10969,7 +11273,7 @@ exports.FilterButton = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10977,8 +11281,8 @@ exports.FilterButton = hoc_1.connect(function (store, _a) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var bodyRow_1 = __webpack_require__(83);
-var bodyDummyRow_1 = __webpack_require__(87);
+var bodyRow_1 = __webpack_require__(85);
+var bodyDummyRow_1 = __webpack_require__(89);
 var common_1 = __webpack_require__(1);
 var hoc_1 = __webpack_require__(4);
 var BodyRowsComp = /** @class */ (function (_super) {
@@ -11014,7 +11318,7 @@ exports.BodyRows = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11025,7 +11329,7 @@ var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
 var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
-var rowSpanCell_1 = __webpack_require__(84);
+var rowSpanCell_1 = __webpack_require__(86);
 var ROW_HEIGHT_DEBOUNCE_TIME = 10;
 var BodyRowComp = /** @class */ (function (_super) {
     tslib_1.__extends(BodyRowComp, _super);
@@ -11070,7 +11374,7 @@ exports.BodyRow = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11079,7 +11383,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var bodyCell_1 = __webpack_require__(85);
+var bodyCell_1 = __webpack_require__(87);
 var RowSpanCellComp = /** @class */ (function (_super) {
     tslib_1.__extends(RowSpanCellComp, _super);
     function RowSpanCellComp() {
@@ -11110,7 +11414,7 @@ exports.RowSpanCell = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11118,7 +11422,7 @@ exports.RowSpanCell = hoc_1.connect(function (_a, _b) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var treeCellContents_1 = __webpack_require__(86);
+var treeCellContents_1 = __webpack_require__(88);
 var dom_1 = __webpack_require__(2);
 var hoc_1 = __webpack_require__(4);
 var instance_1 = __webpack_require__(7);
@@ -11244,7 +11548,7 @@ exports.BodyCell = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11307,7 +11611,7 @@ exports.TreeCellContents = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11336,7 +11640,7 @@ exports.BodyDummyRow = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11404,7 +11708,7 @@ exports.FocusLayer = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11441,7 +11745,7 @@ exports.SelectionLayer = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11449,7 +11753,7 @@ exports.SelectionLayer = hoc_1.connect(function (_a, _b) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var summaryBodyCell_1 = __webpack_require__(91);
+var summaryBodyCell_1 = __webpack_require__(93);
 var common_1 = __webpack_require__(1);
 var SummaryBodyRow = /** @class */ (function (_super) {
     tslib_1.__extends(SummaryBodyRow, _super);
@@ -11477,7 +11781,7 @@ exports.SummaryBodyRow = SummaryBodyRow;
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11530,7 +11834,7 @@ exports.SummaryBodyCell = hoc_1.connect(function (_a, _b) {
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11539,9 +11843,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var dom_1 = __webpack_require__(2);
-var bodyArea_1 = __webpack_require__(41);
-var headerArea_1 = __webpack_require__(39);
-var summaryArea_1 = __webpack_require__(42);
+var bodyArea_1 = __webpack_require__(42);
+var headerArea_1 = __webpack_require__(40);
+var summaryArea_1 = __webpack_require__(43);
 var hoc_1 = __webpack_require__(4);
 var RightSideComp = /** @class */ (function (_super) {
     tslib_1.__extends(RightSideComp, _super);
@@ -11642,7 +11946,7 @@ exports.RightSide = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11694,7 +11998,7 @@ exports.StateLayer = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11703,7 +12007,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var editingLayerInner_1 = __webpack_require__(95);
+var editingLayerInner_1 = __webpack_require__(97);
 var EditingLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(EditingLayerComp, _super);
     function EditingLayerComp() {
@@ -11729,7 +12033,7 @@ exports.EditingLayer = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11904,7 +12208,7 @@ exports.EditingLayerInner = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11913,7 +12217,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
-var filterLayerInner_1 = __webpack_require__(97);
+var filterLayerInner_1 = __webpack_require__(99);
 var FilterLayerComp = /** @class */ (function (_super) {
     tslib_1.__extends(FilterLayerComp, _super);
     function FilterLayerComp() {
@@ -11935,7 +12239,7 @@ exports.FilterLayer = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11945,10 +12249,10 @@ var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
 var dom_1 = __webpack_require__(2);
-var textFilter_1 = __webpack_require__(98);
-var datePickerFilter_1 = __webpack_require__(99);
-var filterOperator_1 = __webpack_require__(100);
-var selectFilter_1 = __webpack_require__(101);
+var textFilter_1 = __webpack_require__(100);
+var datePickerFilter_1 = __webpack_require__(101);
+var filterOperator_1 = __webpack_require__(102);
+var selectFilter_1 = __webpack_require__(103);
 var common_1 = __webpack_require__(1);
 var FilterLayerInnerComp = /** @class */ (function (_super) {
     tslib_1.__extends(FilterLayerInnerComp, _super);
@@ -12016,7 +12320,7 @@ exports.FilterLayerInner = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12099,7 +12403,7 @@ exports.TextFilter = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12107,7 +12411,7 @@ exports.TextFilter = hoc_1.connect(function (store, _a) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var tui_date_picker_1 = tslib_1.__importDefault(__webpack_require__(33));
+var tui_date_picker_1 = tslib_1.__importDefault(__webpack_require__(34));
 var hoc_1 = __webpack_require__(4);
 var instance_1 = __webpack_require__(7);
 var dom_1 = __webpack_require__(2);
@@ -12229,7 +12533,7 @@ exports.DatePickerFilter = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12271,7 +12575,7 @@ exports.FilterOperator = hoc_1.connect(function (_, _a) {
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12338,7 +12642,7 @@ exports.SelectFilter = hoc_1.connect(function (store, _a) {
     var allColumnMap = column.allColumnMap;
     var state = filterState.state;
     var columnName = columnAddress.name;
-    var uniqueColumnData = data_1.getUniqColumnData(rawData, columnName);
+    var uniqueColumnData = data_1.getUniqColumnData(rawData, column, columnName);
     var columnData = uniqueColumnData.map(function (value) { return ({
         value: value,
         checked: common_1.some(function (item) { return value === item.value; }, state)
@@ -12355,7 +12659,7 @@ exports.SelectFilter = hoc_1.connect(function (store, _a) {
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12410,7 +12714,7 @@ exports.HeightResizeHandle = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12421,7 +12725,7 @@ var preact_1 = __webpack_require__(3);
 var hoc_1 = __webpack_require__(4);
 var dom_1 = __webpack_require__(2);
 var keyboard_1 = __webpack_require__(19);
-var browser_1 = __webpack_require__(43);
+var browser_1 = __webpack_require__(44);
 var clipboard_1 = __webpack_require__(25);
 var common_1 = __webpack_require__(1);
 var KEYDOWN_LOCK_TIME = 10;
@@ -12618,7 +12922,7 @@ exports.Clipboard = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12626,7 +12930,7 @@ exports.Clipboard = hoc_1.connect(function (_a) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var preact_1 = __webpack_require__(3);
-var tui_pagination_1 = tslib_1.__importDefault(__webpack_require__(105));
+var tui_pagination_1 = tslib_1.__importDefault(__webpack_require__(107));
 var hoc_1 = __webpack_require__(4);
 var dom_1 = __webpack_require__(2);
 var common_1 = __webpack_require__(1);
@@ -12719,13 +13023,13 @@ exports.Pagination = hoc_1.connect(function (_a) {
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__105__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__107__;
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12733,15 +13037,15 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__105__;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var viewport = tslib_1.__importStar(__webpack_require__(29));
-var dimension = tslib_1.__importStar(__webpack_require__(38));
+var dimension = tslib_1.__importStar(__webpack_require__(39));
 var data = tslib_1.__importStar(__webpack_require__(15));
-var column = tslib_1.__importStar(__webpack_require__(107));
-var keyboard = tslib_1.__importStar(__webpack_require__(108));
-var mouse = tslib_1.__importStar(__webpack_require__(110));
+var column = tslib_1.__importStar(__webpack_require__(109));
+var keyboard = tslib_1.__importStar(__webpack_require__(110));
+var mouse = tslib_1.__importStar(__webpack_require__(112));
 var focus = tslib_1.__importStar(__webpack_require__(17));
 var summary = tslib_1.__importStar(__webpack_require__(22));
 var selection = tslib_1.__importStar(__webpack_require__(16));
-var renderState = tslib_1.__importStar(__webpack_require__(36));
+var renderState = tslib_1.__importStar(__webpack_require__(37));
 var tree = tslib_1.__importStar(__webpack_require__(26));
 var sort = tslib_1.__importStar(__webpack_require__(27));
 var filter = tslib_1.__importStar(__webpack_require__(28));
@@ -12760,7 +13064,7 @@ exports.createDispatcher = createDispatcher;
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12770,7 +13074,7 @@ var tslib_1 = __webpack_require__(0);
 var column_1 = __webpack_require__(24);
 var data_1 = __webpack_require__(13);
 var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var eventBus_1 = __webpack_require__(10);
+var eventBus_1 = __webpack_require__(9);
 var focus_1 = __webpack_require__(17);
 var summary_1 = __webpack_require__(22);
 var observable_1 = __webpack_require__(5);
@@ -12846,7 +13150,7 @@ function setColumns(store, optColumns) {
     focus_1.initFocus(store);
     selection_1.initSelection(store);
     column.allColumns = tslib_1.__spreadArrays(rowHeaders, columnInfos);
-    var allColumnMap = column.allColumnMap, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
+    var columnMapWithRelation = column.columnMapWithRelation, treeColumnName = column.treeColumnName, treeIcon = column.treeIcon;
     data.viewData.forEach(function (viewRow) {
         if (Array.isArray(viewRow.__unobserveFns__)) {
             viewRow.__unobserveFns__.forEach(function (fn) { return fn(); });
@@ -12858,7 +13162,7 @@ function setColumns(store, optColumns) {
     });
     data.viewData = data.rawData.map(function (row) {
         return observable_1.isObservable(row)
-            ? data_1.createViewRow(row, allColumnMap, data.rawData, treeColumnName, treeIcon)
+            ? data_1.createViewRow(row, columnMapWithRelation, data.rawData, treeColumnName, treeIcon)
             : { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
     });
     filter_1.initFilter(store);
@@ -12928,17 +13232,17 @@ exports.changeColumnHeadersByName = changeColumnHeadersByName;
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var keyboard_1 = __webpack_require__(109);
+var keyboard_1 = __webpack_require__(111);
 var focus_1 = __webpack_require__(17);
 var selection_1 = __webpack_require__(16);
 var column_1 = __webpack_require__(8);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 function moveFocus(store, command) {
     var focus = store.focus, data = store.data, visibleColumnsWithRowHeader = store.column.visibleColumnsWithRowHeader, id = store.id;
     var filteredViewData = data.filteredViewData;
@@ -13064,14 +13368,14 @@ exports.removeContent = removeContent;
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var common_1 = __webpack_require__(1);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 var selection_1 = __webpack_require__(14);
 function getPrevRowIndex(rowIndex, heights) {
     var index = rowIndex;
@@ -13214,7 +13518,7 @@ exports.getNextCellIndexWithRowSpan = getNextCellIndexWithRowSpan;
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13224,10 +13528,10 @@ var common_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(8);
 var focus_1 = __webpack_require__(17);
 var selection_1 = __webpack_require__(16);
-var rowSpan_1 = __webpack_require__(9);
+var rowSpan_1 = __webpack_require__(10);
 var selection_2 = __webpack_require__(14);
 var data_1 = __webpack_require__(6);
-var mouse_1 = __webpack_require__(37);
+var mouse_1 = __webpack_require__(38);
 function stopAutoScroll(selection) {
     var intervalIdForAutoScroll = selection.intervalIdForAutoScroll;
     if (intervalIdForAutoScroll !== null) {
@@ -13463,17 +13767,17 @@ exports.dragMoveRowHeader = dragMoveRowHeader;
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var preset_1 = __webpack_require__(112);
+var preset_1 = __webpack_require__(114);
 var common_1 = __webpack_require__(1);
 var dom_1 = __webpack_require__(2);
-var styleGen = tslib_1.__importStar(__webpack_require__(113));
+var styleGen = tslib_1.__importStar(__webpack_require__(115));
 var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 var presetOptions = {
     default: preset_1.presetDefault,
@@ -13597,7 +13901,7 @@ exports.default = {
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13799,7 +14103,7 @@ exports.striped = common_1.deepMergedCopy(exports.presetDefault, {
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13807,7 +14111,7 @@ exports.striped = common_1.deepMergedCopy(exports.presetDefault, {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var dom_1 = __webpack_require__(2);
-var cssRuleBuilder_1 = __webpack_require__(114);
+var cssRuleBuilder_1 = __webpack_require__(116);
 function bgTextRuleString(className, options) {
     var background = options.background, text = options.text;
     return cssRuleBuilder_1.createClassRule(className)
@@ -14042,7 +14346,7 @@ exports.cellCurrentRow = cellCurrentRow;
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14217,7 +14521,7 @@ exports.buildAll = buildAll;
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14252,7 +14556,218 @@ exports.getInvalidRows = getInvalidRows;
 
 
 /***/ }),
-/* 116 */
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+var mutationRequest_1 = __webpack_require__(119);
+var getterRequest_1 = __webpack_require__(122);
+var ajaxConfig_1 = __webpack_require__(32);
+function createConfig(store, dispatch, dataSource) {
+    var lastRequiredData = { perPage: store.data.pageOptions.perPage };
+    var api = dataSource.api, _a = dataSource.hideLoadingBar, hideLoadingBar = _a === void 0 ? false : _a;
+    var ajaxConfig = ajaxConfig_1.createAjaxConfig(dataSource);
+    Object.keys(api).forEach(function (key) {
+        api[key] = common_1.deepMergedCopy(ajaxConfig, api[key]);
+    });
+    var getLastRequiredData = function () { return lastRequiredData; };
+    var setLastRequiredData = function (params) {
+        lastRequiredData = params;
+    };
+    return {
+        api: api,
+        hideLoadingBar: hideLoadingBar,
+        store: store,
+        dispatch: dispatch,
+        setLastRequiredData: setLastRequiredData,
+        getLastRequiredData: getLastRequiredData
+    };
+}
+function createFallbackProvider() {
+    // dummy function
+    var errorFn = function () {
+        throw new Error('Cannot execute server side API. To use this API, DataSource should be set');
+    };
+    return {
+        request: errorFn,
+        readData: errorFn,
+        reloadData: errorFn
+    };
+}
+function createProvider(store, dispatch, data) {
+    var _a;
+    var provider = createFallbackProvider();
+    if (!Array.isArray(data) && common_1.isObject(data)) {
+        var api = data.api, _b = data.initialRequest, initialRequest = _b === void 0 ? true : _b;
+        if (!common_1.isObject((_a = api) === null || _a === void 0 ? void 0 : _a.readData)) {
+            throw new Error('GET API should be configured in DataSource to get data');
+        }
+        var config = createConfig(store, dispatch, data);
+        // set curried function
+        provider.request = mutationRequest_1.request.bind(null, config);
+        provider.readData = getterRequest_1.readData.bind(null, config);
+        provider.reloadData = getterRequest_1.reloadData.bind(null, config);
+        if (initialRequest) {
+            getterRequest_1.readData(config, 1, api.readData.initParams);
+        }
+    }
+    return provider;
+}
+exports.createProvider = createProvider;
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var common_1 = __webpack_require__(1);
+var gridAjax_1 = __webpack_require__(45);
+var eventBus_1 = __webpack_require__(9);
+var instance_1 = __webpack_require__(7);
+var modifiedDataManager_1 = __webpack_require__(46);
+var data_1 = __webpack_require__(6);
+var confirm_1 = __webpack_require__(121);
+var ajaxConfig_1 = __webpack_require__(32);
+var requestTypeCodeMap = {
+    createData: 'CREATE',
+    updateData: 'UPDATE',
+    deleteData: 'DELETE',
+    modifyData: 'MODIFY'
+};
+function createRequestParams(store, type, requestOptions) {
+    var column = store.column, data = store.data, id = store.id;
+    var checkedOnly = requestOptions.checkedOnly, modifiedOnly = requestOptions.modifiedOnly;
+    var modifiedOptions = { checkedOnly: checkedOnly, ignoredColumns: column.ignoredColumns };
+    if (modifiedOnly) {
+        var manager = instance_1.getDataManager(id);
+        return type === 'MODIFY'
+            ? manager.getAllModifiedData(modifiedOptions)
+            : manager.getModifiedData(type, modifiedOptions);
+    }
+    return { rows: modifiedDataManager_1.getDataWithOptions(data.rawData, modifiedOptions) };
+}
+function createRequestOptions(ajaxConfig, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    var defaultOptions = {
+        checkedOnly: false,
+        modifiedOnly: true,
+        showConfirm: true,
+        withCredentials: ajaxConfig.withCredentials
+    };
+    return tslib_1.__assign(tslib_1.__assign({}, defaultOptions), requestOptions);
+}
+function send(config, sendOptions) {
+    var store = config.store, dispatch = config.dispatch, hideLoadingBar = config.hideLoadingBar;
+    var id = store.id;
+    var manager = instance_1.getDataManager(id);
+    var url = sendOptions.url, method = sendOptions.method, options = sendOptions.options, params = sendOptions.params, requestTypeCode = sendOptions.requestTypeCode, ajaxConfig = sendOptions.ajaxConfig;
+    var showConfirm = options.showConfirm, withCredentials = options.withCredentials;
+    if (!showConfirm || confirm_1.confirmMutation(requestTypeCode, params)) {
+        var callback = function () { return dispatch('setLoadingState', data_1.getLoadingState(store.data.rawData)); };
+        if (!hideLoadingBar) {
+            dispatch('setLoadingState', 'LOADING');
+        }
+        gridAjax_1.gridAjax(tslib_1.__assign(tslib_1.__assign({ method: method, url: common_1.isFunction(url) ? url() : url, params: params, success: function () { return manager.clear(params); }, preCallback: callback, postCallback: callback, eventBus: eventBus_1.getEventBus(id) }, ajaxConfig), { withCredentials: common_1.isUndefined(withCredentials) ? ajaxConfig.withCredentials : withCredentials }));
+    }
+}
+function request(config, requestType, requestOptions) {
+    var _a, _b;
+    var store = config.store, api = config.api;
+    var url = requestOptions.url || ((_a = api[requestType]) === null || _a === void 0 ? void 0 : _a.url);
+    var method = requestOptions.method || ((_b = api[requestType]) === null || _b === void 0 ? void 0 : _b.method);
+    if (!url || !method) {
+        throw new Error('url and method should be essential for request.');
+    }
+    var requestTypeCode = requestTypeCodeMap[requestType];
+    var ajaxConfig = ajaxConfig_1.createAjaxConfig(api[requestType] || {});
+    var options = createRequestOptions(ajaxConfig, requestOptions);
+    var params = createRequestParams(store, requestTypeCode, options);
+    send(config, { url: url, method: method, options: options, params: params, requestTypeCode: requestTypeCode, ajaxConfig: ajaxConfig });
+}
+exports.request = request;
+
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var common_1 = __webpack_require__(1);
+/**
+ * 1. Array format
+ *
+ * The default array format to serialize is 'bracket'.
+ * However in case of nested array, only the deepest format follows the 'bracket', the rest follow 'indice' format.
+ *
+ * - basic
+ *   { a: [1, 2, 3] } => a[]=1&a[]=2&a[]=3
+ * - nested
+ *   { a: [1, 2, [3]] } => a[]=1&a[]=2&a[2][]=3
+ *
+ * 2. Object format
+ *
+ * The default object format to serialize is 'bracket' notation and doesn't allow the 'dot' notation.
+ *
+ * - basic
+ *   { a: { b: 1, c: 2 } } => a[b]=1&a[c]=2
+ */
+function encodePairs(key, value) {
+    return encodeURIComponent(key) + "=" + encodeURIComponent(common_1.isNull(value) || common_1.isUndefined(value) ? '' : value);
+}
+function serializeParams(key, value, serializedList) {
+    if (Array.isArray(value)) {
+        value.forEach(function (arrVal, index) {
+            serializeParams(key + "[" + (common_1.isObject(arrVal) ? index : '') + "]", arrVal, serializedList);
+        });
+    }
+    else if (common_1.isObject(value)) {
+        Object.keys(value).forEach(function (objKey) {
+            serializeParams(key + "[" + objKey + "]", value[objKey], serializedList);
+        });
+    }
+    else {
+        serializedList.push(encodePairs(key, value));
+    }
+}
+function serialize(params) {
+    if (!params || common_1.isEmpty(params)) {
+        return '';
+    }
+    var serializedList = [];
+    Object.keys(params).forEach(function (key) {
+        serializeParams(key, params[key], serializedList);
+    });
+    return serializedList.join('&');
+}
+exports.serialize = serialize;
+
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var message_1 = __webpack_require__(47);
+function confirmMutation(type, params) {
+    var count = Object.keys(params).reduce(function (acc, key) { return acc + params[key].length; }, 0);
+    return count ? confirm(message_1.getConfirmMessage(type, count)) : alert(message_1.getAlertMessage(type));
+}
+exports.confirmMutation = confirmMutation;
+
+
+/***/ }),
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14262,386 +14777,71 @@ var tslib_1 = __webpack_require__(0);
 var tree_1 = __webpack_require__(26);
 var tree_2 = __webpack_require__(21);
 var common_1 = __webpack_require__(1);
-var gridAjax_1 = tslib_1.__importDefault(__webpack_require__(117));
-var eventBus_1 = __webpack_require__(10);
-var instance_1 = __webpack_require__(7);
-var message_1 = __webpack_require__(44);
-var modifiedDataManager_1 = __webpack_require__(45);
+var gridAjax_1 = __webpack_require__(45);
+var eventBus_1 = __webpack_require__(9);
 var data_1 = __webpack_require__(6);
-var ServerSideDataProvider = /** @class */ (function () {
-    function ServerSideDataProvider(store, dispatch, dataSource) {
-        var _this = this;
-        this.handleSuccessReadData = function (response) {
-            var result = response.result, data = response.data;
-            if (!result || common_1.isUndefined(data)) {
-                return;
-            }
-            _this.dispatch('resetData', data.contents);
-            if (data.pagination && !common_1.isEmpty(_this.store.data.pageOptions)) {
-                _this.dispatch('setPagination', tslib_1.__assign(tslib_1.__assign({}, data.pagination), { perPage: _this.lastRequiredData.perPage }));
-            }
-        };
-        this.handleSuccessReadTreeData = function (response) {
-            var result = response.result, data = response.data;
-            if (!result || common_1.isUndefined(data)) {
-                return;
-            }
-            var parentRowKey = _this.lastRequiredData.parentRowKey;
-            var _a = _this.store, column = _a.column, id = _a.id;
-            data.contents.forEach(function (row) {
-                _this.dispatch('appendTreeRow', row, {
-                    parentRowKey: parentRowKey
-                });
-            });
-            var row = data_1.findRowByRowKey(_this.store.data, column, id, parentRowKey);
-            if (row && !tree_2.getChildRowKeys(row).length) {
-                tree_1.removeExpandedAttr(row);
-            }
-        };
-        var api = dataSource.api, _a = dataSource.initialRequest, initialRequest = _a === void 0 ? true : _a, _b = dataSource.withCredentials, withCredentials = _b === void 0 ? false : _b;
-        this.initialRequest = initialRequest;
-        this.api = api;
-        this.withCredentials = withCredentials;
-        this.lastRequiredData = { perPage: store.data.pageOptions.perPage };
-        this.store = store;
-        this.dispatch = dispatch;
-        if (this.initialRequest) {
-            this.readData(1);
-        }
+var ajaxConfig_1 = __webpack_require__(32);
+function validateResponse(responseData) {
+    if (common_1.isUndefined(responseData)) {
+        throw new Error('The response data is empty to rerender grid');
     }
-    ServerSideDataProvider.prototype.createRequestOptions = function (options) {
-        if (options === void 0) { options = {}; }
-        var defaultOptions = {
-            checkedOnly: false,
-            modifiedOnly: true,
-            showConfirm: true,
-            withCredentials: this.withCredentials
-        };
-        return tslib_1.__assign(tslib_1.__assign({}, defaultOptions), options);
-    };
-    ServerSideDataProvider.prototype.createRequestParams = function (type, options) {
-        var checkedOnly = options.checkedOnly, modifiedOnly = options.modifiedOnly;
-        var ignoredColumns = this.store.column.ignoredColumns;
-        var manager = instance_1.getDataManager(this.store.id);
-        if (modifiedOnly) {
-            return type === 'MODIFY'
-                ? manager.getAllModifiedData({ checkedOnly: checkedOnly, ignoredColumns: ignoredColumns })
-                : manager.getModifiedData(type, { checkedOnly: checkedOnly, ignoredColumns: ignoredColumns });
-        }
-        return { rows: modifiedDataManager_1.getDataWithOptions(this.store.data.rawData, { checkedOnly: checkedOnly, ignoredColumns: ignoredColumns }) };
-    };
-    ServerSideDataProvider.prototype.readData = function (page, data, resetData) {
-        var _this = this;
-        if (data === void 0) { data = {}; }
-        if (resetData === void 0) { resetData = false; }
-        if (!this.api) {
-            return;
-        }
-        var _a = this, api = _a.api, withCredentials = _a.withCredentials, store = _a.store;
-        var treeColumnName = store.column.treeColumnName;
-        var pageOptions = store.data.pageOptions;
-        var perPage = pageOptions.perPage;
-        var _b = api.readData, method = _b.method, url = _b.url;
-        var dataWithType = data;
-        // assign request params
-        var params = resetData
-            ? tslib_1.__assign(tslib_1.__assign({ perPage: perPage }, dataWithType), { page: page }) : tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, this.lastRequiredData), dataWithType), { page: page });
-        var handleSuccessReadData = this.handleSuccessReadData;
-        if (treeColumnName && !common_1.isUndefined(dataWithType.parentRowKey)) {
-            handleSuccessReadData = this.handleSuccessReadTreeData;
-            delete params.page;
-            delete params.perPage;
-        }
-        this.lastRequiredData = params;
-        var callback = function () { return _this.dispatch('setLoadingState', data_1.getLoadingState(store.data.rawData)); };
-        var request = new gridAjax_1.default({
-            method: method,
-            url: url,
-            params: params,
-            callback: handleSuccessReadData,
-            preCallback: callback,
-            postCallback: callback,
-            withCredentials: withCredentials,
-            eventBus: eventBus_1.getEventBus(this.store.id)
-        });
-        this.dispatch('setLoadingState', 'LOADING');
-        request.open();
-        request.send();
-    };
-    ServerSideDataProvider.prototype.createData = function (url, method, options) {
-        this.send({ url: url, method: method, options: options, requestTypeCode: 'CREATE' });
-    };
-    ServerSideDataProvider.prototype.updateData = function (url, method, options) {
-        this.send({ url: url, method: method, options: options, requestTypeCode: 'UPDATE' });
-    };
-    ServerSideDataProvider.prototype.deleteData = function (url, method, options) {
-        this.send({ url: url, method: method, options: options, requestTypeCode: 'DELETE' });
-    };
-    ServerSideDataProvider.prototype.modifyData = function (url, method, options) {
-        this.send({ url: url, method: method, options: options, requestTypeCode: 'MODIFY' });
-    };
-    ServerSideDataProvider.prototype.request = function (requestType, options) {
-        var url = options.url, method = options.method;
-        if (this.api && common_1.isObject(this.api[requestType])) {
-            url = url || this.api[requestType].url;
-            method = method || this.api[requestType].method;
-        }
-        if (!url || !method) {
-            throw new Error('url and method should be essential for request.');
-        }
-        var requestOptions = this.createRequestOptions(options);
-        this[requestType](url, method, requestOptions);
-    };
-    ServerSideDataProvider.prototype.reloadData = function () {
-        this.readData(this.lastRequiredData.page || 1);
-    };
-    ServerSideDataProvider.prototype.send = function (sendOptions) {
-        var _this = this;
-        var url = sendOptions.url, method = sendOptions.method, options = sendOptions.options, requestTypeCode = sendOptions.requestTypeCode;
-        var _a = this.store, id = _a.id, data = _a.data;
-        var manager = instance_1.getDataManager(id);
-        var params = this.createRequestParams(requestTypeCode, options);
-        if (!options.showConfirm || this.confirm(requestTypeCode, this.getCount(params))) {
-            var withCredentials = options.withCredentials;
-            var callback = function () { return _this.dispatch('setLoadingState', data_1.getLoadingState(data.rawData)); };
-            var request = new gridAjax_1.default({
-                method: method,
-                url: url,
-                params: params,
-                callback: function () { return manager.clear(params); },
-                preCallback: callback,
-                postCallback: callback,
-                withCredentials: common_1.isUndefined(withCredentials) ? this.withCredentials : withCredentials,
-                eventBus: eventBus_1.getEventBus(id)
-            });
-            this.dispatch('setLoadingState', 'LOADING');
-            request.open();
-            request.send();
-        }
-    };
-    ServerSideDataProvider.prototype.getCount = function (rowsMap) {
-        return Object.keys(rowsMap).reduce(function (acc, key) { return acc + rowsMap[key].length; }, 0);
-    };
-    // @TODO need to options for custom conrifm UI
-    ServerSideDataProvider.prototype.confirm = function (type, count) {
-        return count ? confirm(message_1.getConfirmMessage(type, count)) : alert(message_1.getAlertMessage(type));
-    };
-    return ServerSideDataProvider;
-}());
-function createProvider(store, dispatch, data) {
-    if (!Array.isArray(data) && common_1.isObject(data)) {
-        return new ServerSideDataProvider(store, dispatch, data);
-    }
-    // dummy instance
-    var providerErrorFn = function () {
-        throw new Error('cannot execute server side API. for using this API, have to set dataSource');
-    };
-    return {
-        createData: providerErrorFn,
-        updateData: providerErrorFn,
-        deleteData: providerErrorFn,
-        modifyData: providerErrorFn,
-        request: providerErrorFn,
-        readData: providerErrorFn,
-        reloadData: providerErrorFn
-    };
 }
-exports.createProvider = createProvider;
+function handleSuccessReadData(config, response) {
+    var dispatch = config.dispatch, getLastRequiredData = config.getLastRequiredData;
+    var responseData = response.data;
+    validateResponse(responseData);
+    dispatch('resetData', responseData.contents);
+    if (responseData.pagination) {
+        dispatch('updatePageOptions', tslib_1.__assign(tslib_1.__assign({}, responseData.pagination), { perPage: getLastRequiredData().perPage }));
+    }
+}
+function handleSuccessReadTreeData(config, response) {
+    var dispatch = config.dispatch, store = config.store, getLastRequiredData = config.getLastRequiredData;
+    var responseData = response.data;
+    validateResponse(responseData);
+    var parentRowKey = getLastRequiredData().parentRowKey;
+    var column = store.column, id = store.id, data = store.data;
+    responseData.contents.forEach(function (row) { return dispatch('appendTreeRow', row, { parentRowKey: parentRowKey }); });
+    var row = data_1.findRowByRowKey(data, column, id, parentRowKey);
+    if (row && !tree_2.getChildRowKeys(row).length) {
+        tree_1.removeExpandedAttr(row);
+    }
+}
+function readData(config, page, data, resetData) {
+    if (data === void 0) { data = {}; }
+    if (resetData === void 0) { resetData = false; }
+    var store = config.store, dispatch = config.dispatch, api = config.api, getLastRequiredData = config.getLastRequiredData, setLastRequiredData = config.setLastRequiredData, hideLoadingBar = config.hideLoadingBar;
+    var lastRequiredData = getLastRequiredData();
+    if (!api) {
+        return;
+    }
+    var ajaxConfig = ajaxConfig_1.createAjaxConfig(api.readData);
+    var treeColumnName = store.column.treeColumnName;
+    var perPage = store.data.pageOptions.perPage;
+    var _a = api.readData, method = _a.method, url = _a.url;
+    var params = resetData ? tslib_1.__assign(tslib_1.__assign({ perPage: perPage }, data), { page: page }) : tslib_1.__assign(tslib_1.__assign(tslib_1.__assign({}, lastRequiredData), data), { page: page });
+    var callback = function () { return dispatch('setLoadingState', data_1.getLoadingState(store.data.rawData)); };
+    var successCallback = handleSuccessReadData;
+    if (treeColumnName && !common_1.isUndefined(data.parentRowKey)) {
+        successCallback = handleSuccessReadTreeData;
+        delete params.page;
+        delete params.perPage;
+    }
+    setLastRequiredData(params);
+    if (!hideLoadingBar) {
+        dispatch('setLoadingState', 'LOADING');
+    }
+    gridAjax_1.gridAjax(tslib_1.__assign({ method: method, url: common_1.isFunction(url) ? url() : url, params: params, success: successCallback.bind(null, config), preCallback: callback, postCallback: callback, eventBus: eventBus_1.getEventBus(store.id) }, ajaxConfig));
+}
+exports.readData = readData;
+function reloadData(config) {
+    readData(config, config.getLastRequiredData().page || 1);
+}
+exports.reloadData = reloadData;
 
 
 /***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var encoder_1 = __webpack_require__(118);
-var gridEvent_1 = tslib_1.__importDefault(__webpack_require__(11));
-var GridAjax = /** @class */ (function () {
-    function GridAjax(options) {
-        var _this = this;
-        this.shouldEncode = function () {
-            return _this.method === 'GET' || _this.method === 'DELETE';
-        };
-        this.handleReadyStateChange = function () {
-            var _a = _this, xhr = _a.xhr, callback = _a.callback, eventBus = _a.eventBus, preCallback = _a.preCallback, postCallback = _a.postCallback;
-            if (xhr.readyState !== XMLHttpRequest.DONE) {
-                return;
-            }
-            preCallback();
-            var gridEvent = new gridEvent_1.default({ xhr: xhr });
-            /**
-             * Occurs when the response is received from the server
-             * @event Grid#response
-             * @type {module:event/gridEvent}
-             * @property {XmlHttpRequest} xhr - XmlHttpRequest
-             * @property {Grid} instance - Current grid instance
-             */
-            eventBus.trigger('response', gridEvent);
-            if (gridEvent.isStopped()) {
-                return;
-            }
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                if (response.result) {
-                    /**
-                     * Occurs after the response event, if the result is true
-                     * @event Grid#successResponse
-                     * @type {module:event/gridEvent}
-                     * @property {XmlHttpRequest} xhr - XmlHttpRequest
-                     * @property {Grid} instance - Current grid instance
-                     */
-                    eventBus.trigger('successResponse', gridEvent);
-                }
-                else if (!response.result) {
-                    /**
-                     * Occurs after the response event, if the result is false
-                     * @event Grid#failResponse
-                     * @type {module:event/gridEvent}
-                     * @property {XmlHttpRequest} xhr - XmlHttpRequest
-                     * @property {Grid} instance - Current grid instance
-                     */
-                    eventBus.trigger('failResponse', gridEvent);
-                }
-                if (gridEvent.isStopped()) {
-                    return;
-                }
-                callback(response);
-            }
-            else {
-                /**
-                 * Occurs after the response event, if the response is Error
-                 * @event Grid#errorResponse
-                 * @type {module:event/gridEvent}
-                 * @property {XmlHttpRequest} xhr - XmlHttpRequest
-                 * @property {Grid} instance - Current grid instance
-                 */
-                eventBus.trigger('errorResponse', gridEvent);
-            }
-            postCallback();
-        };
-        var method = options.method, url = options.url, withCredentials = options.withCredentials, _a = options.params, params = _a === void 0 ? {} : _a, _b = options.callback, callback = _b === void 0 ? function () { } : _b, _c = options.preCallback, preCallback = _c === void 0 ? function () { } : _c, _d = options.postCallback, postCallback = _d === void 0 ? function () { } : _d, eventBus = options.eventBus;
-        this.method = method.toUpperCase();
-        this.url = url;
-        this.params = params;
-        this.callback = callback;
-        this.preCallback = preCallback;
-        this.postCallback = postCallback;
-        this.eventBus = eventBus;
-        this.xhr = new XMLHttpRequest();
-        this.xhr.withCredentials = withCredentials;
-    }
-    GridAjax.prototype.open = function () {
-        var _a = this, method = _a.method, url = _a.url, params = _a.params, xhr = _a.xhr, shouldEncode = _a.shouldEncode;
-        if (shouldEncode()) {
-            xhr.open(method, url + "?" + encoder_1.encodeParams(params));
-        }
-        else {
-            xhr.open(method, url);
-            // @TODO neeto to application/json content-type options and custom options(authorization, custom header etc..)
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        }
-        xhr.onreadystatechange = this.handleReadyStateChange;
-    };
-    GridAjax.prototype.send = function () {
-        var _a = this, url = _a.url, method = _a.method, xhr = _a.xhr, shouldEncode = _a.shouldEncode, eventBus = _a.eventBus, preCallback = _a.preCallback;
-        var options = {
-            url: url,
-            method: method,
-            withCredentials: xhr.withCredentials,
-            params: this.params
-        };
-        var gridEvent = new gridEvent_1.default({ options: options });
-        /**
-         * Occurs before the http request is sent
-         * @event Grid#beforeRequest
-         * @type {module:event/gridEvent}
-         * @property {Grid} instance - Current grid instance
-         */
-        eventBus.trigger('beforeRequest', gridEvent);
-        if (gridEvent.isStopped()) {
-            preCallback();
-            return;
-        }
-        var params = shouldEncode() ? null : encoder_1.encodeParams(this.params, true);
-        xhr.send(params);
-    };
-    return GridAjax;
-}());
-exports.default = GridAjax;
-
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var common_1 = __webpack_require__(1);
-var ENCODED_SPACE = '%20';
-var ENCODED_LEFT_BRACKET = '%5B';
-function encodeWithSpace(value, hasBody) {
-    var regExp = new RegExp(ENCODED_SPACE, 'g');
-    return hasBody ? encodeURIComponent(value).replace(regExp, '+') : encodeURIComponent(value);
-}
-function encodeParamKey(key, hasBody) {
-    return key.indexOf(ENCODED_LEFT_BRACKET) !== -1 ? key : encodeWithSpace(key, hasBody);
-}
-function encodeObjParamKey(key, subKey, hasBody) {
-    var encodedKey = encodeParamKey(key, hasBody);
-    return "" + encodedKey + encodeURIComponent('[') + subKey + encodeURIComponent(']');
-}
-function getEncodedData(name, subKey, value, hasBody) {
-    var encodedKey = encodeObjParamKey(name, subKey, hasBody);
-    var valueWithType = Array.isArray(value) ? value[subKey] : value[subKey];
-    return encodeFormData(encodedKey, valueWithType, hasBody);
-}
-function encodeFormData(key, value, hasBody) {
-    if (common_1.isUndefined(value) || common_1.isNull(value) || value === '') {
-        return '';
-    }
-    var encodedDataList = [];
-    if (Array.isArray(value)) {
-        for (var index = 0; index < value.length; index += 1) {
-            var encodedData = getEncodedData(key, index, value, hasBody);
-            encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
-        }
-    }
-    else if (common_1.isObject(value)) {
-        Object.keys(value).forEach(function (subKey) {
-            var valueWithType = value;
-            var encodedData = getEncodedData(key, subKey, valueWithType, hasBody);
-            encodedDataList = encodedData !== '' ? encodedDataList.concat(encodedData) : encodedDataList;
-        });
-    }
-    else {
-        var encodedKey = encodeParamKey(key, hasBody);
-        var encodedValue = common_1.isString(value) ? encodeWithSpace(value, hasBody) : value;
-        if (encodedValue !== '') {
-            encodedDataList.push(encodedKey + "=" + encodedValue);
-        }
-    }
-    return encodedDataList;
-}
-function encodeParams(params, hasBody) {
-    if (hasBody === void 0) { hasBody = false; }
-    if (!params) {
-        return '';
-    }
-    var encodedDataList = Object.keys(params).reduce(function (acc, name) {
-        var value = params[name];
-        return value !== '' ? acc.concat(encodeFormData(name, value, hasBody)) : acc;
-    }, []);
-    return encodedDataList.join('&');
-}
-exports.encodeParams = encodeParams;
-
-
-/***/ }),
-/* 119 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14662,7 +14862,7 @@ exports.createPaginationManager = createPaginationManager;
 
 
 /***/ }),
-/* 120 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14714,7 +14914,7 @@ exports.sendHostname = sendHostname;
 
 
 /***/ }),
-/* 121 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin

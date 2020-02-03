@@ -10,11 +10,6 @@
       type="text/css"
       href="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.css"
     />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.css"
-    />
   </head>
 
   <body>
@@ -39,7 +34,47 @@
   ></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/javascript">
+    var grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      bodyHeight: 500,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          filter: { type: 'text', showApplyBtn: true, showClearBtn: true }
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+          filter: 'select'
+        },
+        {
+          header: 'Price',
+          name: 'price',
+          filter: 'number'
+        },
+        {
+          header: 'Release',
+          name: 'release',
+          filter: {
+            type: 'date',
+            format: 'yyyy.MM.dd'
+          }
+        },
+        {
+          header: 'Genre',
+          name: 'genre',
+          filter: {
+            type: 'text',
+            operator: 'OR'
+          }
+        }
+      ]
+    });
+  </script>
+  <script type="x-example" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,
