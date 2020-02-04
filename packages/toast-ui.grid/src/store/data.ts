@@ -542,6 +542,7 @@ export function create({
         useClient: false,
         page: 1,
         perPage: 20,
+        type: 'pagination',
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
       };
@@ -580,7 +581,9 @@ export function create({
       if (this.pageOptions.useClient) {
         const { page, perPage } = this.pageOptions;
         const pageRowLastIndex = page * perPage;
-        start = (page - 1) * perPage;
+        if (this.pageOptions.type === 'pagination') {
+          start = (page - 1) * perPage;
+        }
         end = pageRowLastIndex < end ? pageRowLastIndex : end;
       }
 
