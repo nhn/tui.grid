@@ -2,6 +2,7 @@ import { data } from '../../samples/basic';
 import { lazyObserbableTestdata as treeData } from '../../samples/tree';
 import { cls } from '@/helper/dom';
 import { RowKey } from '@/store/types';
+import { deepCopyArray } from '@/helper/common';
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
@@ -52,7 +53,12 @@ describe('should API is executed properly on lazy observable data', () => {
       { name: 'type', editor: 'text' }
     ];
 
-    cy.createGrid({ data, columns, rowHeaders: ['checkbox'], bodyHeight: 300 });
+    cy.createGrid({
+      data: deepCopyArray(data),
+      columns,
+      rowHeaders: ['checkbox'],
+      bodyHeight: 300
+    });
   });
 
   it('startEditing()', () => {

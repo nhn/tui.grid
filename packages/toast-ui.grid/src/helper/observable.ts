@@ -139,6 +139,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
 
     Object.defineProperty(resultObj, key, {
       configurable: true,
+      enumerable: true,
       get() {
         const observerId = last(observerIdStack);
         if (observerId && !observerIdSet[observerId]) {
