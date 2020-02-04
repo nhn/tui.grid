@@ -5,13 +5,18 @@
     <title>25. Large Data Performance</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
   <body>
+    <div class="description">
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
     <div class="code-html contents">
       <div id="grid" style="width: 800px"></div>
     </div>
   </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/babel" class="code-js">
     const ROW_COUNT = 100000;
     const COL_COUNT = 10;
 

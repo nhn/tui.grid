@@ -1,4 +1,5 @@
-const treeData = [
+/* eslint-disable */
+var treeData = [
   {
     id: 549731,
     name: 'Beautiful Lies',

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>15. Custom Event</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
@@ -9,15 +9,24 @@
 
   <body>
     <div class="description">
-    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-event.md" target="_blank">here</a>.
+      You can check for custom events in the console.<br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-event.md"
+        target="_blank"
+        >here</a
+      >.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
   </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/babel" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,
@@ -27,85 +36,37 @@
       columns: [
         {
           header: 'Name',
-          name: 'name',
-          onBeforeChange: function(ev) {
-            console.log('Before change:' + ev);
-          },
-          onAfterChange: function(ev) {
-            console.log('After change:' + ev);
-          },
-          editor: 'text',
+          name: 'name'
         },
         {
           header: 'Artist',
-          name: 'artist',
-          onBeforeChange: function(ev) {
-            console.log('Before change:' + ev);
-            ev.stop();
-          },
-          onAfterChange: function(ev) {
-            console.log('After change:' + ev);
-          },
-          editor: 'text',
+          name: 'artist'
         },
         {
           header: 'Type',
-          name: 'typeCode',
-          editor: {
-            type: 'select',
-            options: {
-              listItems: [
-                { text: 'Deluxe', value: '1' },
-                { text: 'EP', value: '2' },
-                { text: 'Single', value: '3' }
-              ]
-            }
-          }
+          name: 'type'
         },
         {
           header: 'Genre',
-          name: 'genreCode',
-          editor: {
-            type: 'checkbox',
-            options: {
-              listItems: [
-                { text: 'Pop', value: '1' },
-                { text: 'Rock', value: '2' },
-                { text: 'R&B', value: '3' },
-                { text: 'Electronic', value: '4' },
-                { text: 'etc.', value: '5' }
-              ]
-            }
-          }
+          name: 'genre'
         },
         {
-          header: 'Grade',
-          name: 'grade',
-          copyOptions: {
-            useListItemText: true
-          },
-          editor: {
-            type: 'radio',
-            options: {
-              listItems: [
-                { text: '★☆☆☆☆', value: '1' },
-                { text: '★★☆☆☆', value: '2' },
-                { text: '★★★☆☆', value: '3' },
-                { text: '★★★★☆', value: '4' },
-                { text: '★★★★★', value: '5' }
-              ]
-            }
-          }
+          header: 'Release',
+          name: 'release'
         }
       ]
     });
 
-    grid.on('check', function() {
-      alert('check!');
+    grid.on('check', ev => {
+      console.log('check!', ev);
     });
 
-    grid.on('uncheck', function() {
-      alert('uncheck!');
+    grid.on('uncheck', ev => {
+      console.log('uncheck!', ev);
+    });
+
+    grid.on('focusChange', ev => {
+      console.log('change focused cell!', ev);
     });
   </script>
 </html>

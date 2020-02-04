@@ -10,36 +10,30 @@
       type="text/css"
       href="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.css"
     />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.css"
-    />
   </head>
 
   <body>
     <div class="description">
-      You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/filter.md" target="_blank">here</a>
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/filter.md"
+        target="_blank"
+        >here</a
+      >
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div id="grid" style="width: 800px"></div>
     </div>
   </body>
-  <script
-    type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.js"
-  ></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+  <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+  <script src="https://uicdn.toast.com/tui.date-picker/v3.2.1/tui-date-picker.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript" class="code-js">
+  <script type="text/babel" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,

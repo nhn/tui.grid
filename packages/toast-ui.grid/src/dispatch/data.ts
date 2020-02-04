@@ -625,8 +625,8 @@ export function resetData(store: Store, inputData: OptRow[]) {
     /**
      * Occurs when the grid data is updated and the grid is rendered onto the DOM
      * The event occurs only in the following API as below.
-     * `resetData`, `restore`, `reloadData`, `readData`, `setPerPage` with `dataSource`, using `dataSource`
-     * @event Grid#check
+     * 'resetData', 'restore', 'reloadData', 'readData', 'setPerPage' with 'dataSource', using 'dataSource'
+     * @event Grid#onGridUpdated
      * @property {Grid} instance - Current grid instance
      */
     eventBus.trigger('onGridUpdated', gridEvent);
