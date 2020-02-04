@@ -14,12 +14,16 @@ function validateResponse(responseData?: ResponseData): asserts responseData {
 }
 
 function handleSuccessReadData(config: Config, response: Response) {
-  const { dispatch, getLastRequiredData } = config;
+  const { dispatch, getLastRequiredData, store } = config;
   const { data: responseData } = response;
 
   validateResponse(responseData);
 
-  dispatch('resetData', responseData.contents);
+  if (store.data.pageOptions.type === 'scroll') {
+    dispatch('makeInfiniteData', responseData.contents);
+  } else {
+    dispatch('resetData', responseData.contents);
+  }
   if (responseData.pagination) {
     dispatch('updatePageOptions', {
       ...responseData.pagination,
