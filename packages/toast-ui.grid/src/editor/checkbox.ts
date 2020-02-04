@@ -3,59 +3,75 @@ import { CellValue } from '../store/types';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 
-const ID_PREFIX = 'tui-grid-check-input';
+const NAME = 'tui-grid-check-input';
+const classNameMap = {
+  WRAPPER: cls('editor-checkbox-wrapper'),
+  LIST_ITEM: cls('editor-checkbox'),
+  UNCHECKED_RADIO_LABEL: cls('editor-label-icon-radio'),
+  CHECKED_RADIO_LABEL: cls('editor-label-icon-radio-checked'),
+  UNCHECKED_CHECKBOX_LABEL: cls('editor-label-icon-checkbox'),
+  CHECKED_CHECKBOX_LABEL: cls('editor-label-icon-checkbox-checked')
+};
 
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;
 
-  private inputType: 'checkbox' | 'radio';
+  private readonly inputType: 'checkbox' | 'radio';
 
   public constructor(props: CellEditorProps) {
+    const { columnInfo, width } = props;
     const el = document.createElement('div');
-    el.className = cls('editing-layer-inner');
+    el.className = cls('editor-layer-inner');
 
     const wrapper = document.createElement('ul');
-    wrapper.className = cls('editor-checkbox-wrapper');
+    wrapper.className = classNameMap.WRAPPER;
+    wrapper.style.width = `${width - 15}px`;
 
-    const { type } = props.columnInfo.editor!.options as CheckboxOptions;
+    const { type } = columnInfo.editor!.options as CheckboxOptions;
     this.inputType = type;
-    const listItems = getListItems(props);
 
-    listItems.forEach(({ text, value }) => {
-      const id = `${ID_PREFIX}-${value}`;
+    getListItems(props).forEach(({ text, value }) => {
+      const id = `${NAME}-${value}`;
       const listItemEl = document.createElement('li');
-      listItemEl.className = cls('editor-checkbox');
-      listItemEl.appendChild(this.createCheckbox(value, ID_PREFIX, id, text));
+
+      listItemEl.className = classNameMap.LIST_ITEM;
+      listItemEl.appendChild(this.createCheckboxLabel(value, id, text, width));
+
       wrapper.appendChild(listItemEl);
     });
 
     el.appendChild(wrapper);
-
     this.el = el;
     this.setValue(props.value);
   }
 
-  private onChangeInput = (ev: MouseEvent) => {
+  private onChangeInput = (ev: Event) => {
     this.setLabelClass((ev.target as HTMLInputElement).value);
   };
 
-  private createCheckbox(value: CellValue, name: string, id: string, text: string) {
+  private createCheckboxLabel(value: CellValue, id: string, text: string, width: number) {
     const input = document.createElement('input');
     const label = document.createElement('label');
+    const span = document.createElement('span');
+
     label.setAttribute('for', id);
-    label.className = cls(`editor-label-icon-${this.inputType}`);
-    input.addEventListener('change', this.onChangeInput);
+    label.className =
+      this.inputType === 'radio'
+        ? classNameMap.UNCHECKED_RADIO_LABEL
+        : cls('editor-label-icon-checkbox');
 
     input.type = this.inputType;
     input.id = id;
-    input.name = name;
+    input.name = NAME;
     input.value = String(value);
     input.setAttribute('data-value-type', 'string');
 
-    const textEl = document.createElement('span');
-    textEl.innerText = text;
+    span.innerText = text;
+    span.style.width = `${width - 50}px`;
+
     label.appendChild(input);
-    label.appendChild(textEl);
+    label.appendChild(span);
+    input.addEventListener('change', this.onChangeInput);
 
     return label;
   }
@@ -69,25 +85,18 @@ export class CheckboxEditor implements CellEditor {
   }
 
   private setLabelClass(inputValue: CellValue) {
-    const label = this.el.querySelector(
-      `label[for=${ID_PREFIX}-${inputValue}]`
-    ) as HTMLLabelElement;
+    const label = this.el.querySelector(`label[for=${NAME}-${inputValue}]`) as HTMLLabelElement;
     if (this.inputType === 'checkbox') {
-      if (hasClass(label, 'editor-label-icon-checkbox-checked')) {
-        label.className = cls('editor-label-icon-checkbox');
-      } else {
-        label.className = cls('editor-label-icon-checkbox-checked');
-      }
+      label.className = hasClass(label, 'editor-label-icon-checkbox-checked')
+        ? classNameMap.UNCHECKED_CHECKBOX_LABEL
+        : classNameMap.CHECKED_CHECKBOX_LABEL;
     } else {
-      const checkedLabel = this.el.querySelector(
-        `.${cls('editor-label-icon-radio-checked')}`
-      ) as HTMLLabelElement;
-
+      const checkedLabel = this.el.querySelector(`.${classNameMap.CHECKED_RADIO_LABEL}`);
       if (checkedLabel) {
-        checkedLabel.className = cls('editor-label-icon-radio');
+        checkedLabel.className = classNameMap.UNCHECKED_RADIO_LABEL;
       }
 
-      label.className = cls('editor-label-icon-radio-checked');
+      label.className = classNameMap.CHECKED_RADIO_LABEL;
     }
   }
 
@@ -121,7 +130,6 @@ export class CheckboxEditor implements CellEditor {
   }
 
   public beforeDestroy() {
-    // @TODO: label element 이벤트 해제
     this.el.querySelector('input')!.removeEventListener('change', this.onChangeInput);
   }
 }

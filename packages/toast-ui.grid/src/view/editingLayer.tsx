@@ -94,7 +94,7 @@ export class EditingLayerComp extends Component<Props> {
     const columnInfo = allColumnMap[columnName];
     const value = findProp('rowKey', rowKey, filteredViewData)!.valueMap[columnName].value;
     const EditorClass: CellEditorClass = columnInfo.editor!.type;
-    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
+    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value, width: right - left };
     const cellEditor: CellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
 

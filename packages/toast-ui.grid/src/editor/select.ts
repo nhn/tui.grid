@@ -11,16 +11,20 @@ export class SelectEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('div');
-    el.className = cls('editing-layer-inner');
+    el.className = cls('editor-layer-inner');
 
     const wrapper = document.createElement('div');
-    wrapper.className = cls('editor-select-box');
+    wrapper.className = cls('editor-select-box-wrapper');
+    wrapper.style.width = `${props.width - 15}px`;
 
     const data = getListItems(props).map(val => ({ ...val, label: val.text })) as IItemData[];
     el.appendChild(wrapper);
 
     this.selectBoxEl = new SelectBox(wrapper, { data });
-    this.selectBoxEl.select(props.value);
+
+    if (props.value) {
+      this.selectBoxEl.select(props.value as string | number);
+    }
 
     this.el = el;
   }

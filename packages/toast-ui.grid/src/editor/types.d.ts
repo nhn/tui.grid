@@ -10,6 +10,7 @@ export interface CellEditorProps {
   rowKey: RowKey;
   columnInfo: ColumnInfo;
   value: CellValue;
+  width: number;
 }
 
 export interface CellEditor {

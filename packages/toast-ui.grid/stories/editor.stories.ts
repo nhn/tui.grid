@@ -160,7 +160,9 @@ text.story = { parameters: { notes: textNote } };
 export const checkbox = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 1);
+  setTimeout(() => {
+    grid.startEditingAt(1, 1);
+  });
 
   return el;
 };
@@ -177,7 +179,9 @@ checkbox.story = { parameters: { notes: checkboxNote } };
 export const radio = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 2);
+  setTimeout(() => {
+    grid.startEditingAt(1, 2);
+  });
 
   return el;
 };
@@ -193,8 +197,9 @@ radio.story = { parameters: { notes: radioNote } };
 
 export const select = () => {
   const { el, grid } = createGrid();
-
-  grid.startEditingAt(1, 3);
+  setTimeout(() => {
+    grid.startEditingAt(1, 3);
+  });
 
   return el;
 };
@@ -211,7 +216,6 @@ select.story = { parameters: { notes: selectNote } };
 export const datepicker = () => {
   const { el, grid } = createGrid();
 
-  // @TODO: date picker 위치 제대로 잡는지 테스트
   setTimeout(() => {
     grid.startEditingAt(1, 4);
   });
