@@ -10,7 +10,12 @@
 
   <body>
     <div class="description">
-      You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/row-header.md" target="_blank">here</a>
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/row-header.md"
+        target="_blank"
+        >here</a
+      >
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
@@ -27,11 +32,11 @@
 
     RowNumberRenderer.prototype.getElement = function() {
       return this.el;
-    }
+    };
 
     RowNumberRenderer.prototype.render = function(props) {
       this.el.innerHTML = 'No.' + props.formattedValue;
-    }
+    };
 
     function CheckboxRenderer(props) {
       var grid = props.grid;
@@ -67,14 +72,14 @@
 
     CheckboxRenderer.prototype.getElement = function() {
       return this.el;
-    }
+    };
 
     CheckboxRenderer.prototype.render = function(props) {
       var hiddenInput = this.el.querySelector('.hidden-input');
       var checked = Boolean(props.value);
 
       hiddenInput.checked = checked;
-    }
+    };
 
     var grid = new tui.Grid({
       el: document.getElementById('grid'),
@@ -88,11 +93,11 @@
         },
         {
           type: 'checkbox',
-          header: 
-          '<label for="all-checkbox" class="checkbox">' +
+          header:
+            '<label for="all-checkbox" class="checkbox">' +
             '<input type="checkbox" id="all-checkbox" class="hidden-input" name="_checked" />' +
             '<span class="custom-input"></span>' +
-          '</label>',
+            '</label>',
           renderer: {
             type: CheckboxRenderer
           }

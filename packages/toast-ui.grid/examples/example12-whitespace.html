@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-      <meta charset="utf-8">
-      <title>12. WhiteSpace</title>
-      <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
-      <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <meta charset="utf-8" />
+    <title>12. WhiteSpace</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
   </head>
 
   <body>
     <div class="description">
-    Adjust the row size to compare the differences.
+      Adjust the row size to compare the differences.
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
@@ -19,7 +19,7 @@
   <script type="text/javascript">
     var gridData = [];
     (function() {
-      for(var i = 0; i < 10; i += 1) {
+      for (var i = 0; i < 10; i += 1) {
         var text = 'grid         example\ngrid newline and clipboard example\n\ngrid example';
         gridData.push({
           nowrap: text,
@@ -38,33 +38,33 @@
       rowHeight: 'auto',
       columns: [
         {
-          header: 'whiteSpace: \'nowrap\'',
+          header: "whiteSpace: 'nowrap'",
           name: 'nowrap',
-          editor: 'text',
+          editor: 'text'
         },
         {
-          header: 'whiteSpace: \'normal\'',
+          header: "whiteSpace: 'normal'",
           name: 'normal',
           whiteSpace: 'normal',
-          editor: 'text',
+          editor: 'text'
         },
         {
-          header: 'whiteSpace: \'pre\'',
+          header: "whiteSpace: 'pre'",
           name: 'pre',
           whiteSpace: 'pre',
-          editor: 'text',
+          editor: 'text'
         },
         {
-          header: 'whiteSpace: \'pre-wrap\'',
+          header: "whiteSpace: 'pre-wrap'",
           name: 'preWrap',
           whiteSpace: 'pre-wrap',
-          editor: 'text',
+          editor: 'text'
         },
         {
-          header: 'whiteSpace: \'pre-line\'',
+          header: "whiteSpace: 'pre-line'",
           name: 'preLine',
           whiteSpace: 'pre-line',
-          editor: 'text',
+          editor: 'text'
         }
       ]
     });

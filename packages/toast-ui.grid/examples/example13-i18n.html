@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-      <meta charset="utf-8">
-      <title>13. Internationalization (i18n)</title>
-      <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
-      <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <meta charset="utf-8" />
+    <title>13. Internationalization (i18n)</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
   </head>
 
   <body>
     <div class="description">
-    Change the message in the locale language when there is no data.
-    Select the locale code on the select box below.
+      Change the message in the locale language when there is no data. Select the locale code on the
+      select box below.
     </div>
     <div class="contents">
       <select id="locale-code" style="margin-bottom:10px;">
@@ -28,25 +28,25 @@
     var grid;
     var columnMap = {
       en: {
-        'name': 'Name',
-        'artist': 'Artist',
-        'type': 'Type',
-        'release': 'Release',
-        'genre': 'Genre'
+        name: 'Name',
+        artist: 'Artist',
+        type: 'Type',
+        release: 'Release',
+        genre: 'Genre'
       },
       ko: {
-        'name': '제목',
-        'artist': '가수',
-        'type': '종류',
-        'release': '발매일',
-        'genre': '장르'
+        name: '제목',
+        artist: '가수',
+        type: '종류',
+        release: '발매일',
+        genre: '장르'
       },
       'ja-JP': {
-        'name': '曲のタイトル',
-        'artist': 'アーティスト名',
-        'type': '歌の種類',
-        'release': '発売日',
-        'genre': 'ジャンル'
+        name: '曲のタイトル',
+        artist: 'アーティスト名',
+        type: '歌の種類',
+        release: '発売日',
+        genre: 'ジャンル'
       }
     };
     var messageMap = {
@@ -72,10 +72,10 @@
       const columns = [];
 
       Object.keys(columnData).forEach(function(key) {
-        columns.push(({
+        columns.push({
           header: columnData[key],
           name: key
-        }))
+        });
       });
 
       return columns;

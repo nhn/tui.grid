@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>7. Themes</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
     <style>
-    #grid {width: 600px; float:left; margin-right:20px;}
-    #theme {width: 200px; float:left;}
-    #custom-text {width: 300px; height:520px; font-size:12px;}
-    h4 {margin: 5px 0;}
-    .preset {margin-bottom:15px;}
-    .custom p {margin: 5px 0}
+      #grid {
+        width: 600px;
+        float: left;
+        margin-right: 20px;
+      }
+      #theme {
+        width: 200px;
+        float: left;
+      }
+      #custom-text {
+        width: 300px;
+        height: 520px;
+        font-size: 12px;
+      }
+      h4 {
+        margin: 5px 0;
+      }
+      .preset {
+        margin-bottom: 15px;
+      }
+      .custom p {
+        margin: 5px 0;
+      }
     </style>
   </head>
   <body>
     <div class="description">
-    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/themes.md" target="_blank">here</a>.
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/themes.md"
+        target="_blank"
+        >here</a
+      >.
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
@@ -201,27 +223,26 @@
       columns: [
         {
           header: 'ID',
-          name: 'c1',
+          name: 'c1'
         },
         {
           header: 'Name',
           defaultValue: 2,
-          name: 'c2',
+          name: 'c2'
         },
         {
           header: 'Score',
-          name: 'c3',
+          name: 'c3'
         }
       ],
       data: gridData
     });
 
-
     Array.prototype.forEach.call(document.querySelectorAll('.btn-theme'), function(el) {
       el.addEventListener('click', function(ev) {
         var preset = ev.target.getAttribute('data-preset');
         tui.Grid.applyTheme(preset);
-      })
+      });
     });
 
     document.querySelector('.btn-custom').addEventListener('click', function() {

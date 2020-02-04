@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>20. Validation</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
@@ -9,7 +9,12 @@
 
   <body>
     <div class="description">
-      You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/validation.md" target="_blank">here</a>
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/validation.md"
+        target="_blank"
+        >here</a
+      >
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
@@ -47,8 +52,8 @@
           validation: {
             min: 10000,
             max: 10500,
-            validatorFn: function(value) { 
-              return value !== 11000 
+            validatorFn: function(value) {
+              return value !== 11000;
             }
           }
         },
@@ -58,7 +63,7 @@
           validation: {
             regExp: /[a-z]+_[a-z]/
           }
-        },
+        }
       ]
     });
   </script>

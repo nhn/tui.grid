@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>14. Tree</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
@@ -9,8 +9,13 @@
 
   <body>
     <div class="description">
-    You can check for custom events in the console.<br />
-    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/tree.md" target="_blank">here</a>.
+      You can check for custom events in the console.<br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/tree.md"
+        target="_blank"
+        >here</a
+      >.
     </div>
     <div class="contents">
       <div class="code-html">
@@ -63,18 +68,21 @@
       console.log('descendantRows: ' + descendantRows);
 
       if (!descendantRows.length) {
-        grid.appendRow({
-          name: 'dynamic loading data',
-          _children: [
-            {
-              name: 'leaf row'
-            },
-            {
-              name: 'internal row',
-              _children: []
-            }
-          ]
-        }, { parentRowKey: rowKey });
+        grid.appendRow(
+          {
+            name: 'dynamic loading data',
+            _children: [
+              {
+                name: 'leaf row'
+              },
+              {
+                name: 'internal row',
+                _children: []
+              }
+            ]
+          },
+          { parentRowKey: rowKey }
+        );
       }
     });
 
