@@ -492,6 +492,7 @@ export interface PageOptions {
   perPage?: number;
   page?: number;
   totalCount?: number;
+  type?: 'scroll' | 'pagination';
 }
 
 export interface Store {
