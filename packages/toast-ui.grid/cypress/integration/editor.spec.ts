@@ -311,6 +311,70 @@ it('should do synchronous rendering of the editing cell', () => {
   });
 });
 
+describe('select, checkbox, radio editor UI test', () => {
+  function createGridWithType(type: string) {
+    const data = [{ name: '1' }, { name: '2' }, { name: '3' }];
+    const columns = [
+      {
+        name: 'name',
+        formatter: 'listItemText',
+        editor: {
+          type,
+          options: {
+            listItems: [
+              { text: 'A', value: '1' },
+              { text: 'B', value: '2' },
+              { text: 'C', value: '3' }
+            ]
+          }
+        }
+      }
+    ];
+
+    cy.createGrid({ data, columns });
+  }
+  ['radio', 'select', 'select'].forEach(type => {
+    it(`initial value applied in ${type} editor`, () => {
+      createGridWithType(type);
+
+      cy.gridInstance().invoke('startEditing', 1, 'name');
+
+      if (type === 'select') {
+        cy.get('.tui-select-box-placeholder').should('have.text', 'B');
+      } else {
+        cy.getByCls(`editor-label-icon-${type}-checked`).within($el => {
+          cy.wrap($el).should('have.text', 'B');
+        });
+      }
+    });
+
+    it(`selected value is applied properly in the cell(${type})`, () => {
+      createGridWithType(type);
+
+      cy.gridInstance().invoke('startEditing', 1, 'name');
+
+      if (type === 'select') {
+        cy.get('.tui-select-box-dropdown')
+          .eq(0)
+          .click();
+        cy.getCellByIdx(0, 0).click();
+        cy.getCellByIdx(0, 0).should('have.text', 'A');
+      } else {
+        cy.getByCls(`editor-label-icon-${type}`)
+          .eq(0)
+          .click();
+        cy.getCellByIdx(0, 0).click();
+
+        if (type === 'radio') {
+          cy.getCellByIdx(1, 0).should('have.text', 'A');
+        } else {
+          cy.getCellByIdx(1, 0).should('have.text', 'A,B');
+        }
+      }
+    });
+  });
+});
+
 // @TODO: should rewrite test case after modifying casting editing value
 // it('should maintain the type of value in case of finishing editing without any modification', () => {
 //   const data = [
