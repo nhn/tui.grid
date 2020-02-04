@@ -15,8 +15,8 @@ type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 
 interface GridEventProps {
   value?: CellValue;
-  oldValue?: CellValue;
-  newValue?: CellValue;
+  prevValue?: CellValue;
+  nextValue?: CellValue;
   event?: MouseEvent;
   rowKey?: RowKey | null;
   columnName?: string | null;

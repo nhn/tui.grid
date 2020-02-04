@@ -194,7 +194,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   const orgValue = targetRow[columnName];
 
   if (targetColumn && targetColumn.onBeforeChange) {
-    gridEvent = new GridEvent({ rowKey, columnName, value: orgValue, newValue: value });
+    gridEvent = new GridEvent({ rowKey, columnName, value: orgValue, nextValue: value });
     targetColumn.onBeforeChange(gridEvent);
 
     if (gridEvent.isStopped()) {
@@ -228,7 +228,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   }
 
   if (targetColumn && targetColumn.onAfterChange) {
-    gridEvent = new GridEvent({ rowKey, columnName, value, oldValue: orgValue });
+    gridEvent = new GridEvent({ rowKey, columnName, value, prevValue: orgValue });
     targetColumn.onAfterChange(gridEvent);
   }
 }
