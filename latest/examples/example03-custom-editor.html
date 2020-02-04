@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>3. Custom Editor</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
     <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
@@ -9,280 +9,155 @@
 
   <body>
     <div class="description">
-    You can see the tutorial <a href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-editor.md" target="_blank">here</a>.
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-editor.md"
+        target="_blank"
+        >here</a
+      >.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
   </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-	<script type="text/javascript">
-		function CustomTextEditor(props) {
-			var el = document.createElement('input');
-			var maxLength = props.columnInfo.editor.options.maxLength;
+  <script type="text/babel" class="code-js">
+    class CustomTextEditor {
+      constructor(props) {
+        const el = document.createElement('input');
+        const { maxLength } = props.columnInfo.editor.options;
 
-			el.type = 'text';
-			el.maxLength = maxLength;
-			el.value = String(props.value);
+        el.type = 'text';
+        el.maxLength = maxLength;
+        el.value = String(props.value);
 
-			this.el = el;
-		}
+        this.el = el;
+      }
 
-		CustomTextEditor.prototype.getElement = function() {
-			return this.el;
-		}
+      getElement() {
+        return this.el;
+      }
 
-		CustomTextEditor.prototype.getValue = function() {
-			return this.el.value;
-		}
+      getValue() {
+        return this.el.value;
+      }
 
-		CustomTextEditor.prototype.mounted = function() {
-			this.el.select();
-		}
+      mounted() {
+        this.el.select();
+      }
+    }
 
-		var grid = new tui.Grid({
-			el: document.getElementById('grid'),
-			scrollX: false,
-			scrollY: false,
-			columns: [
-				{
-					header: 'Name',
-					name: 'name',
-					onBeforeChange: function(ev) {
-						console.log('Before change:' + ev);
-						ev.stop();
-					},
-					onAfterChange: function(ev) {
-						console.log('After change:' + ev);
-					},
-					editor: 'text'
-				},
-				{
-					header: 'Artist',
-					name: 'artist',
-					onBeforeChange: function(ev) {
-						console.log('Before change:' + ev);
-					},
-					onAfterChange: function(ev) {
-						console.log('After change:' + ev);
-					},
-					editor: {
-						type: CustomTextEditor,
-						options: {
-							maxLength: 10
-						}
-					}
-				},
-				{
-					header: 'Type',
-					name: 'typeCode',
-					onBeforeChange: function(ev) {
-						console.log('Before change:' + ev);
-					},
-					onAfterChange: function(ev) {
-						console.log('After change:' + ev);
-					},
-					formatter: 'listItemText',
-					editor: {
-						type: 'select',
-						options: {
-							listItems: [
-								{ text: 'Deluxe', value: '1' },
-								{ text: 'EP', value: '2' },
-								{ text: 'Single', value: '3' }
-							]
-						}
-					}
-				},
-				{
-					header: 'Genre',
-					name: 'genreCode',
-					onBeforeChange: function(ev) {
-						console.log('Before change:' + ev);
-					},
-					onAfterChange: function(ev) {
-						console.log('After change:' + ev);
-					},
-					formatter: 'listItemText',
-					editor: {
-						type: 'checkbox',
-						options: {
-							listItems: [
-								{ text: 'Pop', value: '1' },
-								{ text: 'Rock', value: '2' },
-								{ text: 'R&B', value: '3' },
-								{ text: 'Electronic', value: '4' },
-								{ text: 'etc.', value: '5' }
-							]
-						}
-					},
-					copyOptions: {
-						useListItemText: true // when this option is used, the copy value is concatenated text
-					}
-				},
-				{
-					header: 'Grade',
-					name: 'grade',
-					onBeforeChange: function(ev) {
-						console.log('Before change:' + ev);
-					},
-					onAfterChange: function(ev) {
-						console.log('After change:' + ev);
-					},
-					copyOptions: {
-						useListItemText: true
-					},
-					formatter: 'listItemText',
-					editor: {
-						type: 'radio',
-						options: {
-							listItems: [
-								{ text: '★☆☆', value: '1' },
-								{ text: '★★☆', value: '2' },
-								{ text: '★★★', value: '3' },
-							]
-						}
-					}
-				}
-			]
-		});
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          onBeforeChange(ev) {
+            console.log('Before change:' + ev);
+            ev.stop();
+          },
+          onAfterChange(ev) {
+            console.log('After change:' + ev);
+          },
+          editor: 'text'
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+          onBeforeChange(ev) {
+            console.log('Before change:' + ev);
+          },
+          onAfterChange(ev) {
+            console.log('After change:' + ev);
+          },
+          editor: {
+            type: CustomTextEditor,
+            options: {
+              maxLength: 10
+            }
+          }
+        },
+        {
+          header: 'Type',
+          name: 'typeCode',
+          onBeforeChange(ev) {
+            console.log('Before change:' + ev);
+          },
+          onAfterChange(ev) {
+            console.log('After change:' + ev);
+          },
+          formatter: 'listItemText',
+          editor: {
+            type: 'select',
+            options: {
+              listItems: [
+                { text: 'Deluxe', value: '1' },
+                { text: 'EP', value: '2' },
+                { text: 'Single', value: '3' }
+              ]
+            }
+          }
+        },
+        {
+          header: 'Genre',
+          name: 'genreCode',
+          onBeforeChange(ev) {
+            console.log('Before change:' + ev);
+          },
+          onAfterChange(ev) {
+            console.log('After change:' + ev);
+          },
+          formatter: 'listItemText',
+          editor: {
+            type: 'checkbox',
+            options: {
+              listItems: [
+                { text: 'Pop', value: '1' },
+                { text: 'Rock', value: '2' },
+                { text: 'R&B', value: '3' },
+                { text: 'Electronic', value: '4' },
+                { text: 'etc.', value: '5' }
+              ]
+            }
+          },
+          copyOptions: {
+            useListItemText: true // when this option is used, the copy value is concatenated text
+          }
+        },
+        {
+          header: 'Grade',
+          name: 'grade',
+          onBeforeChange(ev) {
+            console.log('Before change:' + ev);
+          },
+          onAfterChange(ev) {
+            console.log('After change:' + ev);
+          },
+          copyOptions: {
+            useListItemText: true
+          },
+          formatter: 'listItemText',
+          editor: {
+            type: 'radio',
+            options: {
+              listItems: [
+                { text: '★☆☆', value: '1' },
+                { text: '★★☆', value: '2' },
+                { text: '★★★', value: '3' }
+              ]
+            }
+          }
+        }
+      ]
+    });
 
-		grid.resetData(gridData);
-	</script>
-	<script type="x-example" class="code-js">
-	class CustomTextEditor {
-		constructor(props) {
-			const el = document.createElement('input');
-			const { maxLength } = props.columnInfo.editor.options;
-
-			el.type = 'text';
-			el.maxLength = maxLength;
-			el.value = String(props.value);
-
-			this.el = el;
-		}
-
-		getElement() {
-			return this.el;
-		}
-
-		getValue() {
-			return this.el.value;
-		}
-
-		mounted() {
-			this.el.select();
-		}
-	}
-
-	const grid = new tui.Grid({
-		el: document.getElementById('grid'),
-		scrollX: false,
-		scrollY: false,
-		columns: [
-			{
-				header: 'Name',
-				name: 'name',
-				onBeforeChange(ev){
-					console.log('Before change:' + ev);
-					ev.stop();
-				},
-				onAfterChange(ev){
-					console.log('After change:' + ev);
-				},
-				editor: 'text'
-			},
-			{
-				header: 'Artist',
-				name: 'artist',
-				onBeforeChange(ev){
-					console.log('Before change:' + ev);
-				},
-				onAfterChange(ev){
-					console.log('After change:' + ev);
-				},
-				editor: {
-					type: CustomTextEditor,
-					options: {
-						maxLength: 10
-					}
-				}
-			},
-			{
-				header: 'Type',
-				name: 'typeCode',
-				onBeforeChange(ev){
-					console.log('Before change:' + ev);
-				},
-				onAfterChange(ev){
-					console.log('After change:' + ev);
-				},
-				formatter: 'listItemText',
-				editor: {
-					type: 'select',
-					options: {
-						listItems: [
-							{ text: 'Deluxe', value: '1' },
-							{ text: 'EP', value: '2' },
-							{ text: 'Single', value: '3' }
-						]
-					}
-				}
-			},
-			{
-				header: 'Genre',
-				name: 'genreCode',
-				onBeforeChange(ev){
-					console.log('Before change:' + ev);
-				},
-				onAfterChange(ev){
-					console.log('After change:' + ev);
-				},
-				formatter: 'listItemText',
-				editor: {
-					type: 'checkbox',
-					options: {
-						listItems: [
-							{ text: 'Pop', value: '1' },
-							{ text: 'Rock', value: '2' },
-							{ text: 'R&B', value: '3' },
-							{ text: 'Electronic', value: '4' },
-							{ text: 'etc.', value: '5' }
-						]
-					}
-				},
-				copyOptions: {
-					useListItemText: true // when this option is used, the copy value is concatenated text
-				}
-			},
-			{
-				header: 'Grade',
-				name: 'grade',
-				onBeforeChangeev) {
-					console.log('Before change:' + ev);
-				},
-				onAfterChange(ev) {
-					console.log('After change:' + ev);
-				},
-				copyOptions: {
-					useListItemText: true
-				},
-				formatter: 'listItemText',
-				editor: {
-					type: 'radio',
-					options: {
-						listItems: [
-							{ text: '★☆☆', value: '1' },
-							{ text: '★★☆', value: '2' },
-							{ text: '★★★', value: '3' },
-						]
-					}
-				}
-			}
-		]
-	});
-
-	grid.resetData(gridData);
-	</script>
+    grid.resetData(gridData);
+  </script>
 </html>
