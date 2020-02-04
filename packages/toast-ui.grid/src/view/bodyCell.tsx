@@ -142,7 +142,7 @@ export class BodyCellComp extends Component<Props> {
 
     const style = {
       textAlign: align,
-      ...(valign && { verticalAlign: valign })
+      verticalAlign: valign
     };
     const attrs = {
       [dataAttr.ROW_KEY]: String(rowKey),

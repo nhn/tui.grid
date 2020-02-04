@@ -80,7 +80,7 @@ export class ColumnHeader extends Component<Props> {
   }
 
   public render() {
-    const { columnInfo, colspan, rowspan, selected, height } = this.props;
+    const { columnInfo, colspan, rowspan, selected, height = null } = this.props;
     const {
       name,
       headerAlign: textAlign,

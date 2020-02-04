@@ -258,8 +258,8 @@ export interface ColumnInfo {
   fixedWidth: boolean;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
-  align?: AlignType;
-  valign?: VAlignType;
+  align: AlignType;
+  valign: VAlignType;
   whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   escapeHTML?: boolean;
