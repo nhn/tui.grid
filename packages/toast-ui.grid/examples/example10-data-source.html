@@ -20,21 +20,27 @@
         target="_blank"
         >here</a
       >.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
   </body>
+  <script>
+    // polyfill for below IE11
+    Object.setPrototypeOf =
+      Object.setPrototypeOf ||
+      function(obj, proto) {
+        obj.__proto__ = proto;
+        return obj;
+      };
+  </script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
   <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"
-  ></script>
+  <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+  <script src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
   <script type="text/javascript">
@@ -92,8 +98,8 @@
         })
       });
   </script>
-  <script type="text/javascript">
-    var grid = new tui.Grid({
+  <script type="text/babel" class="code-js">
+    const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: {
         api: {
@@ -129,45 +135,6 @@
           name: 'genre'
         }
       ]
-    });
-  </script>
-  <script type="x-example" class="code-js">
-    const grid = new tui.Grid({
-    	el: document.getElementById('grid'),
-    	data: {
-    		api: {
-    			readData: { url: '/api/readData', method: 'GET' }
-    		}
-    	},
-    	scrollX: false,
-    	scrollY: false,
-    	minBodyHeight: 30,
-    	rowHeaders: ['rowNum'],
-    	pageOptions: {
-    		perPage: 5
-    	},
-    	columns: [
-    		{
-    			header: 'Name',
-    			name: 'name'
-    		},
-    		{
-    			header: 'Artist',
-    			name: 'artist'
-    		},
-    		{
-    			header: 'Type',
-    			name: 'type'
-    		},
-    		{
-    			header: 'Release',
-    			name: 'release'
-    		},
-    		{
-    			header: 'Genre',
-    			name: 'genre'
-    		}
-    	]
     });
   </script>
 </html>

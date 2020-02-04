@@ -14,38 +14,42 @@
         href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-renderer.md"
         target="_blank"
         >here</a
-      >.
+			>.
+			<br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
   </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript">
-    function CustomSliderRenderer(props) {
-      var el = document.createElement('input');
-      var min = props.columnInfo.renderer.options.min;
-      var max = props.columnInfo.renderer.options.max;
+  <script type="text/babel" class="code-js">
+    class CustomSliderRenderer {
+      constructor(props) {
+        const el = document.createElement('input');
+        const { min, max } = props.columnInfo.renderer.options;
 
-      el.type = 'range';
-      el.min = String(min);
-      el.max = String(max);
-      el.disabled = true;
+        el.type = 'range';
+        el.min = String(min);
+        el.max = String(max);
+        el.disabled = true;
 
-      this.el = el;
-      this.render(props);
+        this.el = el;
+        this.render(props);
+      }
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props) {
+        this.el.value = String(props.value);
+      }
     }
 
-    CustomSliderRenderer.prototype.getElement = function() {
-      return this.el;
-    };
-
-    CustomSliderRenderer.prototype.render = function(props) {
-      this.el.value = String(props.value);
-    };
-
-    var grid = new tui.Grid({
+    const grid = new tui.Grid({
       el: document.getElementById('grid'),
       scrollX: false,
       scrollY: false,
@@ -70,59 +74,6 @@
           }
         }
       ]
-    });
-
-    grid.resetData(gridData);
-  </script>
-  <script type="x-example" class="code-js">
-    class CustomSliderRenderer {
-    	constructor(props) {
-    		const el = document.createElement('input');
-    		const { min, max } = props.columnInfo.renderer.options;
-
-    		el.type = 'range';
-    		el.min = String(min);
-    		el.max = String(max);
-    		el.disabled = true;
-
-    		this.el = el;
-    		this.render(props);
-    	}
-
-    	getElement() {
-    		return this.el;
-    	}
-
-    	render(props) {
-    		this.el.value = String(props.value);
-    	}
-    }
-
-    const grid = new tui.Grid({
-    	el: document.getElementById('grid'),
-    	scrollX: false,
-    	scrollY: false,
-    	columns: [
-    		{
-    			header: 'Name',
-    			name: 'name'
-    		},
-    		{
-    			header: 'Artist',
-    			name: 'artist'
-    		},
-    		{
-    			header: 'Grade',
-    			name: 'grade',
-    			renderer: {
-    				type: CustomSliderRenderer,
-    				options: {
-    					min: 1,
-    					max: 5
-    				}
-    			}
-    		}
-    	]
     });
 
     grid.resetData(gridData);

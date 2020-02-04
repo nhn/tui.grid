@@ -25,6 +25,8 @@
         target="_blank"
         >here</a
       >
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
     <div class="code-html contents">
       <div class="btn-wrapper">
@@ -34,69 +36,12 @@
       <div id="grid"></div>
     </div>
   </body>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"
-  ></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.js"></script>
+  <script src="https://uicdn.toast.com/tui.pagination/v3.3.0/tui-pagination.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript">
-    var grid = new tui.Grid({
-      el: document.getElementById('grid'),
-      data: gridData,
-      columns: [
-        {
-          header: 'Name',
-          name: 'name'
-        },
-        {
-          header: 'Artist',
-          name: 'artist'
-        },
-        {
-          header: 'Type',
-          name: 'type'
-        },
-        {
-          header: 'Release',
-          name: 'release'
-        },
-        {
-          header: 'Genre',
-          name: 'genre'
-        }
-      ],
-      rowHeaders: ['rowNum'],
-      pageOptions: {
-        useClient: true,
-        perPage: 5
-      }
-    });
-
-    var appendBtn = document.getElementById('appendBtn');
-    var prependBtn = document.getElementById('prependBtn');
-
-    var appendedData = {
-      name: 'Music',
-      artist: 'Lee',
-      type: 'Deluxe',
-      release: '2019.09.09',
-      genre: 'Pop'
-    };
-
-    appendBtn.addEventListener('click', function() {
-      grid.appendRow(appendedData);
-    });
-
-    prependBtn.addEventListener('click', function() {
-      grid.prependRow(appendedData);
-    });
-  </script>
-  <script type="x-example" class="code-js">
+  <script type="text/babel" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,

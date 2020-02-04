@@ -15,44 +15,18 @@
         target="_blank"
         >here</a
       >
+      <br>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
     </div>
+    
     <div class="code-html contents">
       <div id="grid"></div>
     </div>
   </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
   <script type="text/javascript" src="../dist/tui-grid.js"></script>
   <script type="text/javascript" src="./data/basic-dummy.js"></script>
-  <script type="text/javascript">
-    var grid = new tui.Grid({
-      el: document.getElementById('grid'),
-      data: gridData,
-      scrollX: false,
-      scrollY: false,
-      columns: [
-        {
-          header: 'Name',
-          name: 'name'
-        },
-        {
-          header: 'Artist',
-          name: 'artist'
-        },
-        {
-          header: 'Type',
-          name: 'type'
-        },
-        {
-          header: 'Release',
-          name: 'release'
-        },
-        {
-          header: 'Genre',
-          name: 'genre'
-        }
-      ]
-    });
-  </script>
-  <script type="x-example" class="code-js">
+  <script type="text/babel" class="code-js">
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
       data: gridData,
