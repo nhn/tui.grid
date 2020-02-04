@@ -211,7 +211,10 @@ select.story = { parameters: { notes: selectNote } };
 export const datepicker = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 4);
+  // @TODO: date picker 위치 제대로 잡는지 테스트
+  setTimeout(() => {
+    grid.startEditingAt(1, 4);
+  });
 
   return el;
 };

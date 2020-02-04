@@ -12,7 +12,10 @@ export class CheckboxEditor implements CellEditor {
 
   public constructor(props: CellEditorProps) {
     const el = document.createElement('div');
-    el.className = cls('editing-layer-content');
+    el.className = cls('editing-layer-inner');
+
+    const wrapper = document.createElement('ul');
+    wrapper.className = cls('editor-checkbox-wrapper');
 
     const { type } = props.columnInfo.editor!.options as CheckboxOptions;
     this.inputType = type;
@@ -20,11 +23,13 @@ export class CheckboxEditor implements CellEditor {
 
     listItems.forEach(({ text, value }) => {
       const id = `${ID_PREFIX}-${value}`;
-      const listItemEl = document.createElement('div');
-      listItemEl.className = cls('editing-layer-content-item');
+      const listItemEl = document.createElement('li');
+      listItemEl.className = cls('editor-checkbox');
       listItemEl.appendChild(this.createCheckbox(value, ID_PREFIX, id, text));
-      el.appendChild(listItemEl);
+      wrapper.appendChild(listItemEl);
     });
+
+    el.appendChild(wrapper);
 
     this.el = el;
     this.setValue(props.value);
@@ -38,7 +43,7 @@ export class CheckboxEditor implements CellEditor {
     const input = document.createElement('input');
     const label = document.createElement('label');
     label.setAttribute('for', id);
-    label.className = cls(`editing-layer-content-item-${this.inputType}`);
+    label.className = cls(`editor-label-icon-${this.inputType}`);
     input.addEventListener('change', this.onChangeInput);
 
     input.type = this.inputType;
@@ -68,21 +73,21 @@ export class CheckboxEditor implements CellEditor {
       `label[for=${ID_PREFIX}-${inputValue}]`
     ) as HTMLLabelElement;
     if (this.inputType === 'checkbox') {
-      if (hasClass(label, 'editing-layer-content-item-checkbox-checked')) {
-        label.className = cls('editing-layer-content-item-checkbox');
+      if (hasClass(label, 'editor-label-icon-checkbox-checked')) {
+        label.className = cls('editor-label-icon-checkbox');
       } else {
-        label.className = cls('editing-layer-content-item-checkbox-checked');
+        label.className = cls('editor-label-icon-checkbox-checked');
       }
     } else {
       const checkedLabel = this.el.querySelector(
-        `.${cls('editing-layer-content-item-radio-checked')}`
+        `.${cls('editor-label-icon-radio-checked')}`
       ) as HTMLLabelElement;
 
       if (checkedLabel) {
-        checkedLabel.className = cls('editing-layer-content-item-radio');
+        checkedLabel.className = cls('editor-label-icon-radio');
       }
 
-      label.className = cls('editing-layer-content-item-radio-checked');
+      label.className = cls('editor-label-icon-radio-checked');
     }
   }
 

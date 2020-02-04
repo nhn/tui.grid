@@ -1,28 +1,28 @@
+import SelectBox, { IItemData } from '@toast-ui/select-box';
+import '@toast-ui/select-box/dist/toastui-select-box.css';
 import { CellEditor, CellEditorProps } from './types';
-import { CellValue } from '../store/types';
 import { getListItems } from '../helper/editor';
+import { cls } from '../helper/dom';
 
 export class SelectEditor implements CellEditor {
-  public el: HTMLSelectElement;
+  public el: HTMLDivElement;
+
+  public selectBoxEl: SelectBox;
 
   public constructor(props: CellEditorProps) {
-    const el = document.createElement('select');
-    const listItems = getListItems(props);
+    const el = document.createElement('div');
+    el.className = cls('editing-layer-inner');
 
-    listItems.forEach(({ text, value }) => {
-      el.appendChild(this.createOptions(text, value));
-    });
-    el.value = String(props.value);
+    const wrapper = document.createElement('div');
+    wrapper.className = cls('editor-select-box');
+
+    const data = getListItems(props).map(val => ({ ...val, label: val.text })) as IItemData[];
+    el.appendChild(wrapper);
+
+    this.selectBoxEl = new SelectBox(wrapper, { data });
+    this.selectBoxEl.select(props.value);
 
     this.el = el;
-  }
-
-  private createOptions(text: string, value: CellValue) {
-    const option = document.createElement('option');
-    option.setAttribute('value', String(value));
-    option.innerText = text;
-
-    return option;
   }
 
   public getElement() {
@@ -30,10 +30,10 @@ export class SelectEditor implements CellEditor {
   }
 
   public getValue() {
-    return this.el.value;
+    return this.selectBoxEl.getSelectedItem().getValue();
   }
 
   public mounted() {
-    this.el.focus();
+    this.selectBoxEl.open();
   }
 }
