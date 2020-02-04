@@ -35,7 +35,7 @@ import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { getDataManager } from '../instance';
+import { getDataManager, getDataProvider } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { isRowSpanEnabled } from '../query/rowSpan';
 import { initFocus } from './focus';
@@ -922,4 +922,29 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
   getDataManager(id).push('UPDATE', rawRow);
+}
+
+export function inifiniteScroll(store: Store) {
+  if (store.data.pageOptions.useClient) {
+    store.data.pageOptions.page += 1;
+    notify(store.data, 'pageOptions');
+    updateHeights(store);
+  } else {
+    const { page, totalCount, perPage } = store.data.pageOptions;
+    if (page * perPage < totalCount) {
+      store.data.pageOptions.page += 1;
+      notify(store.data, 'pageOptions');
+      getDataProvider(store.id).readData(store.data.pageOptions.page);
+    }
+  }
+}
+
+export function makeInfiniteData(store: Store, inputData: OptRow[]) {
+  const { data, column } = store;
+  const startIndex = data.rawData.length;
+  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
+  data.rawData = data.rawData.concat(rawData);
+  data.viewData = data.viewData.concat(viewData);
+  updateRowNumber(store, startIndex);
+  updateHeights(store);
 }

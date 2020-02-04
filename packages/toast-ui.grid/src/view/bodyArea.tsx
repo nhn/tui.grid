@@ -13,7 +13,7 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
-import { some } from '../helper/common';
+import { some, debounce } from '../helper/common';
 import { EditingLayer } from './editingLayer';
 
 interface OwnProps {
@@ -59,13 +59,23 @@ class BodyAreaComp extends Component<Props> {
     pageY: null
   };
 
+  private debouncedInfiniteScroll = debounce(
+    (scrollTop: number, scrollHeight: number, clientHeight: number) => {
+      if (scrollHeight - scrollTop === clientHeight) {
+        this.props.dispatch('inifiniteScroll');
+      }
+    },
+    200
+  );
+
   private handleScroll = (ev: UIEvent) => {
-    const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
+    const { scrollLeft, scrollTop, scrollHeight, clientHeight } = ev.srcElement as HTMLElement;
     const { dispatch } = this.props;
 
     dispatch('setScrollTop', scrollTop);
     if (this.props.side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
+      this.debouncedInfiniteScroll(scrollTop, scrollHeight, clientHeight);
     }
   };
 
