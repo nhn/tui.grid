@@ -191,9 +191,10 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
     return;
   }
   const targetColumn = findProp('name', columnName, visibleColumns);
+  const orgValue = targetRow[columnName];
 
   if (targetColumn && targetColumn.onBeforeChange) {
-    gridEvent = new GridEvent({ rowKey, columnName, value: targetRow[columnName] });
+    gridEvent = new GridEvent({ rowKey, columnName, value: orgValue, nextValue: value });
     targetColumn.onBeforeChange(gridEvent);
 
     if (gridEvent.isStopped()) {
@@ -203,7 +204,6 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
 
   const { rowSpanMap } = targetRow;
   const { columns } = sortState;
-  const orgValue = targetRow[columnName];
   const index = findPropIndex('columnName', columnName, columns);
 
   targetRow[columnName] = value;
@@ -228,7 +228,7 @@ export function setValue(store: Store, rowKey: RowKey, columnName: string, value
   }
 
   if (targetColumn && targetColumn.onAfterChange) {
-    gridEvent = new GridEvent({ rowKey, columnName, value });
+    gridEvent = new GridEvent({ rowKey, columnName, value, prevValue: orgValue });
     targetColumn.onAfterChange(gridEvent);
   }
 }
