@@ -311,7 +311,7 @@ it('should do synchronous rendering of the editing cell', () => {
   });
 });
 
-describe('select, checkbox, radio editor UI test', () => {
+describe('select, checkbox, radio editor UI', () => {
   function createGridWithType(type: string) {
     const data = [{ name: '1' }, { name: '2' }, { name: '3' }];
     const columns = [

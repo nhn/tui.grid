@@ -7,7 +7,8 @@ import {
   getCoordinateWithOffset,
   setCursorStyle,
   hasClass,
-  isParentHasClass
+  isDatePickerElement,
+  findParent
 } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
@@ -90,10 +91,7 @@ class BodyAreaComp extends Component<Props> {
     const { top, left } = el.getBoundingClientRect();
     this.boundingRect = { top, left };
 
-    if (
-      !isParentHasClass(targetElement, 'tui-datepicker') &&
-      !isParentHasClass(targetElement, cls('layer-editing'))
-    ) {
+    if (!isDatePickerElement(targetElement) && !findParent(targetElement, 'layer-editing')) {
       dispatch(
         'mouseDownBody',
         { scrollTop, scrollLeft, side, ...this.boundingRect },

@@ -102,14 +102,6 @@ export class EditingLayerComp extends Component<Props> {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
 
-      const editorWidth = editorEl.getBoundingClientRect().width;
-      const width = right - left;
-
-      if (editorWidth > width) {
-        const CELL_PADDING_WIDTH = 10;
-        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
-      }
-
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
       }

@@ -156,10 +156,9 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
   return result.join(' ');
 }
 
-export function isParentHasClass(el: HTMLElement, className: string) {
+export function isDatePickerElement(el: HTMLElement) {
   let currentEl: HTMLElement | null = el;
-
-  while (currentEl && currentEl.className.split(' ').indexOf(className) === -1) {
+  while (currentEl && currentEl.className.split(' ').indexOf('tui-datepicker') === -1) {
     currentEl = currentEl.parentElement;
   }
 
