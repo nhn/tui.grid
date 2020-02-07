@@ -467,6 +467,26 @@ describe('setRow', () => {
     cy.getCellByIdx(1, 1).should('have.text', '30');
   });
 
+  it('should sort state is maintained when calls setRow API', () => {
+    cy.createGrid(defaultGridOptions);
+
+    cy.gridInstance().invoke('sort', 'name', true);
+    cy.gridInstance().invoke('sort', 'age', false, true);
+    cy.gridInstance().invoke('setRow', 1, {
+      name: 'Ryu',
+      age: '20'
+    });
+
+    cy.gridInstance()
+      .invoke('getSortState')
+      .should('have.subset', {
+        columns: [
+          { columnName: 'name', ascending: true },
+          { columnName: 'age', ascending: false }
+        ]
+      });
+  });
+
   it('should replaced row is ordered properly even if sorted the data', () => {
     createGrid();
 
