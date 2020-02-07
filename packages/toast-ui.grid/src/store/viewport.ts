@@ -32,7 +32,7 @@ function calculateRange(
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
   const { filteredRawData, sortState, pageOptions, pageRowRange } = data;
 
-  if (rowCalculation && pageOptions.useClient) {
+  if (rowCalculation && pageOptions.useClient && pageOptions.type === 'pagination') {
     [start, end] = pageRowRange;
   }
 
