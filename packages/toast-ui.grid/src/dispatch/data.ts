@@ -172,9 +172,13 @@ export function updateHeights(store: Store) {
 }
 
 export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
-  if (!isEmpty(data.pageOptions)) {
+  const { pageOptions: orgPageOptions } = data;
+  if (!isEmpty(orgPageOptions)) {
+    if (orgPageOptions.type === 'scroll') {
+      delete pageOptions.page;
+    }
     data.pageOptions = {
-      ...data.pageOptions,
+      ...orgPageOptions,
       ...pageOptions
     };
   }
@@ -860,10 +864,10 @@ export function setCheckedAllRows({ data }: Store) {
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {
-  const { filteredRawData } = data;
+  const { rawData } = data;
 
-  for (let idx = startIndex; idx < filteredRawData.length; idx += 1) {
-    filteredRawData[idx]._attributes.rowNum = idx + 1;
+  for (let idx = startIndex; idx < rawData.length; idx += 1) {
+    rawData[idx]._attributes.rowNum = idx + 1;
   }
 }
 
@@ -884,7 +888,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
 
   if (isSorted(data)) {
     const { columnName, ascending } = sortState.columns[0];
-    sort(store, columnName, ascending, false, false);
+    sort(store, columnName, ascending, true, false);
   }
 
   if (prevRow && isRowSpanEnabled(sortState)) {
@@ -924,27 +928,35 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   getDataManager(id).push('UPDATE', rawRow);
 }
 
-export function inifiniteScroll(store: Store) {
-  if (store.data.pageOptions.useClient) {
-    store.data.pageOptions.page += 1;
-    notify(store.data, 'pageOptions');
-    updateHeights(store);
-  } else {
-    const { page, totalCount, perPage } = store.data.pageOptions;
-    if (page * perPage < totalCount) {
-      store.data.pageOptions.page += 1;
-      notify(store.data, 'pageOptions');
-      getDataProvider(store.id).readData(store.data.pageOptions.page);
+export function scrollToNext(store: Store) {
+  const { data, id } = store;
+  const { page, totalCount, perPage, useClient, type } = data.pageOptions;
+
+  if (type === 'scroll') {
+    if (useClient) {
+      data.pageOptions.page += 1;
+      notify(data, 'pageOptions');
+      updateHeights(store);
+    } else if (page * perPage < totalCount) {
+      data.pageOptions.page += 1;
+      getDataProvider(id).readData(data.pageOptions.page);
     }
   }
 }
 
-export function makeInfiniteData(store: Store, inputData: OptRow[]) {
+export function addNextData(store: Store, inputData: OptRow[]) {
   const { data, column } = store;
   const startIndex = data.rawData.length;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
-  data.rawData = data.rawData.concat(rawData);
+
   data.viewData = data.viewData.concat(viewData);
+  data.rawData = data.rawData.concat(rawData);
+
+  if (isSorted(data)) {
+    const { columnName, ascending } = data.sortState.columns[0];
+    sort(store, columnName, ascending, true, false);
+  }
+
   updateRowNumber(store, startIndex);
   updateHeights(store);
 }

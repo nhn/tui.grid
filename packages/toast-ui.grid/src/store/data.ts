@@ -558,9 +558,15 @@ export function create({
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
     get filteredRawData(this: Data) {
-      return this.filters
-        ? applyFilterToRawData(this.rawData, this.filters, column.allColumnMap)
-        : this.rawData;
+      const { useClient, page, perPage, type } = this.pageOptions;
+
+      if (this.filters) {
+        const targetData =
+          useClient && type === 'scroll' ? this.rawData.slice(0, page * perPage) : this.rawData;
+        return applyFilterToRawData(targetData, this.filters, column.allColumnMap);
+      }
+
+      return this.rawData;
     },
 
     get filteredIndex(this: Data) {
@@ -575,13 +581,13 @@ export function create({
     },
 
     get pageRowRange() {
+      const { useClient, type, page, perPage } = this.pageOptions;
       let start = 0;
       let end = this.filteredRawData.length;
 
-      if (this.pageOptions.useClient) {
-        const { page, perPage } = this.pageOptions;
+      if (useClient) {
         const pageRowLastIndex = page * perPage;
-        if (this.pageOptions.type === 'pagination') {
+        if (type === 'pagination') {
           start = (page - 1) * perPage;
         }
         end = pageRowLastIndex < end ? pageRowLastIndex : end;

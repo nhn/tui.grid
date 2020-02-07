@@ -11,7 +11,7 @@ import { initFocus } from './focus';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isHiddenColumn, isComplexHeader } from '../query/column';
-import { updateRowNumber, setCheckedAllRows, updateHeights, updatePageOptions } from './data';
+import { setCheckedAllRows, updateHeights, updatePageOptions } from './data';
 import { updateAllSummaryValues } from './summary';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
@@ -22,7 +22,6 @@ function initLayerAndScrollAfterFiltering(store: Store) {
   initFocus(store);
   updatePageOptions(store, { totalCount: data.filteredRawData.length, page: 1 });
   updateHeights(store);
-  updateRowNumber(store, 0);
   setCheckedAllRows(store);
 }
 
