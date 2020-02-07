@@ -104,7 +104,7 @@ export type TabCommandType = 'nextCell' | 'prevCell';
  * @returns {String}
  * @ignore
  */
-export function getKeyStrokeString(ev: KeyboardEvent): KeyStrokeCommandType {
+export function getKeyStrokeString(ev: KeyboardEvent): string {
   const keys = [];
   const { keyCode, ctrlKey, metaKey, shiftKey } = ev;
 

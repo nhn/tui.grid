@@ -159,9 +159,9 @@
 }
 .tui-grid-layer-editing {
   position: absolute;
-  background: #fff;
+  background: transparent;
   z-index: 15;
-  padding: 0 5px;
+  padding: 0 4px;
   border-style: solid;
   border-width: 1px;
   white-space: nowrap;
@@ -865,13 +865,15 @@
   line-height: 32px;
 }
 
-.tui-grid-editor-checkbox-wrapper .tui-grid-editor-checkbox:hover {
+.tui-grid-editor-checkbox-hovered {
   background-color: #e5f6ff;
 }
 
 .tui-grid-editor-checkbox input[type='checkbox'],
 input[type='radio'] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .tui-grid-editor-checkbox label {

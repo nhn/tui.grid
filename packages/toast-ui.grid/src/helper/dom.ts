@@ -123,6 +123,7 @@ export type ClassNameType =
   | 'editor-checkbox-wrapper'
   | 'editor-select-box-wrapper'
   | 'editor-checkbox'
+  | 'editor-checkbox-hovered'
   | 'editor-label-icon-checkbox'
   | 'editor-label-icon-checkbox-checked'
   | 'editor-label-icon-radio'

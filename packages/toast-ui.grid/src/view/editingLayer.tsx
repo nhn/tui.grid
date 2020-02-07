@@ -144,7 +144,7 @@ export class EditingLayerComp extends Component<Props> {
       top: top ? top : cellBorderWidth,
       left,
       width: width + cellBorderWidth,
-      height: height + cellBorderWidth,
+      height: top ? height + cellBorderWidth : height,
       lineHeight: `${height}px`
     };
 

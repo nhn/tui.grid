@@ -2,13 +2,21 @@ import { CellEditor, CellEditorProps, CheckboxOptions } from './types';
 import { CellValue, ListItem } from '../store/types';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
+import { getKeyStrokeString } from '../helper/keyboard';
+import { findPropIndex, includes } from '../helper/common';
 
 const WRAPPER_CLASSNAME = cls('editor-checkbox-wrapper');
 const LIST_ITEM_CLASSNAME = cls('editor-checkbox');
+const HOVERED_LIST_ITEM_CLASSNAME = `${cls('editor-checkbox-hovered')} ${LIST_ITEM_CLASSNAME}`;
 const UNCHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio');
 const CHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio-checked');
 const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
-const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked');
+const CHECKED_CHECKBOX_LABEL_CLASSNAME = `${cls('editor-label-icon-checkbox-checked')}`;
+
+interface InputElement {
+  value: string;
+  input: HTMLInputElement;
+}
 
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;
@@ -16,6 +24,10 @@ export class CheckboxEditor implements CellEditor {
   private wrapper: HTMLUListElement;
 
   private readonly inputType: 'checkbox' | 'radio';
+
+  private hoveredItemId = '';
+
+  private inputElements: InputElement[] = [];
 
   public constructor(props: CellEditorProps) {
     const { columnInfo, width } = props;
@@ -34,10 +46,6 @@ export class CheckboxEditor implements CellEditor {
     this.setValue(props.value);
   }
 
-  private onChangeInput = (ev: Event) => {
-    this.setLabelClass((ev.target as HTMLInputElement).value);
-  };
-
   private createWrapper(listItems: ListItem[], width: number) {
     const wrapper = document.createElement('ul');
     wrapper.className = WRAPPER_CLASSNAME;
@@ -52,7 +60,9 @@ export class CheckboxEditor implements CellEditor {
       wrapper.appendChild(listItemEl);
     });
 
-    wrapper.addEventListener('change', this.onChangeInput);
+    wrapper.addEventListener('change', this.onChange);
+    wrapper.addEventListener('mouseover', this.onMouseover);
+    wrapper.addEventListener('keydown', this.onKeydown);
 
     return wrapper;
   }
@@ -72,6 +82,11 @@ export class CheckboxEditor implements CellEditor {
     input.name = 'checkbox';
     input.value = String(value);
 
+    this.inputElements.push({
+      value: String(value),
+      input
+    });
+
     span.innerText = text;
 
     label.appendChild(input);
@@ -80,13 +95,53 @@ export class CheckboxEditor implements CellEditor {
     return label;
   }
 
-  private getFirstInput() {
-    return this.el.querySelector('input');
-  }
+  private getLabelId = (target: HTMLElement) => {
+    const targetId = target.id;
+    return targetId ? targetId : target.parentElement!.id;
+  };
 
-  public getElement() {
-    return this.el;
-  }
+  private onMouseover = (ev: MouseEvent) => {
+    const targetId = this.getLabelId(ev.target as HTMLElement);
+    this.highlightItem(targetId);
+  };
+
+  private onChange = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value;
+    this.setLabelClass(value);
+    this.highlightItem(`checkbox-${value}`);
+  };
+
+  private isArrowKey = (keyName: string) => {
+    return includes(['up', 'down', 'left', 'right'], keyName);
+  };
+
+  private onKeydown = (ev: KeyboardEvent) => {
+    const keyName = getKeyStrokeString(ev);
+    if (this.isArrowKey(keyName)) {
+      ev.preventDefault();
+      const { value } = ev.target as HTMLInputElement;
+      const elementIdx = findPropIndex('value', value, this.inputElements);
+      const elementLen = this.inputElements.length;
+      const offset = elementLen + (keyName === 'down' || keyName === 'right' ? 1 : -1);
+      const nextInput = this.inputElements[(elementIdx + offset) % elementLen];
+
+      this.highlightItem(`checkbox-${nextInput.value}`);
+      nextInput.input.focus();
+    }
+  };
+
+  private highlightItem = (targetId: string) => {
+    if (targetId.length) {
+      if (this.hoveredItemId) {
+        this.el.querySelector(
+          `#${this.hoveredItemId}`
+        )!.parentElement!.className = LIST_ITEM_CLASSNAME;
+      }
+
+      this.el.querySelector(`#${targetId}`)!.parentElement!.className = HOVERED_LIST_ITEM_CLASSNAME;
+      this.hoveredItemId = targetId;
+    }
+  };
 
   private setLabelClass(inputValue: CellValue) {
     const label = this.el.querySelector(`#checkbox-${inputValue}`) as HTMLLabelElement;
@@ -112,8 +167,21 @@ export class CheckboxEditor implements CellEditor {
         if (input) {
           input.checked = true;
           this.setLabelClass(inputValue);
+
+          if (!this.hoveredItemId) {
+            this.highlightItem(`checkbox-${inputValue}`);
+          }
         }
       });
+  }
+
+  private getFirstInput() {
+    const checkedInput = this.el.querySelector('input:checked') as HTMLInputElement | null;
+    return checkedInput ? checkedInput : this.el.querySelector('input');
+  }
+
+  public getElement() {
+    return this.el;
   }
 
   public getValue() {
@@ -135,6 +203,7 @@ export class CheckboxEditor implements CellEditor {
   }
 
   public beforeDestroy() {
-    this.wrapper.removeEventListener('change', this.onChangeInput);
+    this.wrapper.removeEventListener('change', this.onChange);
+    this.wrapper.removeEventListener('mouseover', this.onMouseover);
   }
 }
