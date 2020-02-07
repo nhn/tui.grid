@@ -10,19 +10,27 @@ export default {
 };
 
 class ColorPickerEditor implements CellEditor {
-  el: HTMLInputElement;
+  el: HTMLDivElement;
+
+  input: HTMLInputElement;
 
   public constructor(props: CellEditorProps) {
-    const el = document.createElement('input');
+    const el = document.createElement('div');
+    const input = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
 
-    el.type = 'color';
-    el.value = String(props.value);
+    el.style.backgroundColor = '#fff';
 
-    el.addEventListener('change', () => {
-      grid.setValue(rowKey, columnInfo.name, Number(el.value));
+    input.type = 'color';
+    input.value = String(props.value);
+
+    input.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(input.value));
     });
 
+    el.appendChild(input);
+
+    this.input = input;
     this.el = el;
   }
 
@@ -31,7 +39,11 @@ class ColorPickerEditor implements CellEditor {
   }
 
   getValue() {
-    return String(this.el.value);
+    return String(this.input.value);
+  }
+
+  mounted() {
+    this.input.focus();
   }
 }
 
