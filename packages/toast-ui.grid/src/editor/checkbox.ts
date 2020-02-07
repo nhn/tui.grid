@@ -14,7 +14,7 @@ const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
 const CHECKED_CHECKBOX_LABEL_CLASSNAME = `${cls('editor-label-icon-checkbox-checked')}`;
 
 interface InputElement {
-  value: string;
+  labelId: string;
   input: HTMLInputElement;
 }
 
@@ -49,7 +49,7 @@ export class CheckboxEditor implements CellEditor {
   private createWrapper(listItems: ListItem[], width: number) {
     const wrapper = document.createElement('ul');
     wrapper.className = WRAPPER_CLASSNAME;
-    wrapper.style.minWidth = `${width - 15}px`;
+    wrapper.style.minWidth = `${width - 10}px`;
 
     listItems.forEach(({ text, value }) => {
       const listItemEl = document.createElement('li');
@@ -71,8 +71,9 @@ export class CheckboxEditor implements CellEditor {
     const input = document.createElement('input');
     const label = document.createElement('label');
     const span = document.createElement('span');
+    const labelId = `checkbox-${value}`;
 
-    label.id = `checkbox-${value}`;
+    label.id = labelId;
     label.className =
       this.inputType === 'radio'
         ? UNCHECKED_RADIO_LABEL_CLASSNAME
@@ -82,12 +83,9 @@ export class CheckboxEditor implements CellEditor {
     input.name = 'checkbox';
     input.value = String(value);
 
-    this.inputElements.push({
-      value: String(value),
-      input
-    });
-
     span.innerText = text;
+
+    this.inputElements.push({ labelId, input });
 
     label.appendChild(input);
     label.appendChild(span);
@@ -119,14 +117,12 @@ export class CheckboxEditor implements CellEditor {
     const keyName = getKeyStrokeString(ev);
     if (this.isArrowKey(keyName)) {
       ev.preventDefault();
-      const { value } = ev.target as HTMLInputElement;
-      const elementIdx = findPropIndex('value', value, this.inputElements);
+      const elementIdx = findPropIndex('labelId', this.hoveredItemId, this.inputElements);
       const elementLen = this.inputElements.length;
       const offset = elementLen + (keyName === 'down' || keyName === 'right' ? 1 : -1);
-      const nextInput = this.inputElements[(elementIdx + offset) % elementLen];
+      const { labelId } = this.inputElements[(elementIdx + offset) % elementLen];
 
-      this.highlightItem(`checkbox-${nextInput.value}`);
-      nextInput.input.focus();
+      this.highlightItem(labelId);
     }
   };
 
@@ -138,7 +134,9 @@ export class CheckboxEditor implements CellEditor {
         )!.parentElement!.className = LIST_ITEM_CLASSNAME;
       }
 
-      this.el.querySelector(`#${targetId}`)!.parentElement!.className = HOVERED_LIST_ITEM_CLASSNAME;
+      const label = this.el.querySelector(`#${targetId}`) as HTMLLabelElement;
+      label.parentElement!.className = HOVERED_LIST_ITEM_CLASSNAME;
+      label.querySelector('input')!.focus();
       this.hoveredItemId = targetId;
     }
   };
@@ -167,10 +165,6 @@ export class CheckboxEditor implements CellEditor {
         if (input) {
           input.checked = true;
           this.setLabelClass(inputValue);
-
-          if (!this.hoveredItemId) {
-            this.highlightItem(`checkbox-${inputValue}`);
-          }
         }
       });
   }
@@ -187,6 +181,7 @@ export class CheckboxEditor implements CellEditor {
   public getValue() {
     const checkedInputs = this.el.querySelectorAll('input:checked');
     const checkedValues = [];
+
     for (let i = 0, len = checkedInputs.length; i < len; i += 1) {
       checkedValues.push((checkedInputs[i] as HTMLInputElement).value);
     }
@@ -198,7 +193,7 @@ export class CheckboxEditor implements CellEditor {
     this.wrapper.style.top = `${this.el.getBoundingClientRect().bottom}px`;
     const firstInput = this.getFirstInput();
     if (firstInput) {
-      firstInput.focus();
+      this.highlightItem(`checkbox-${firstInput.value}`);
     }
   }
 

@@ -195,7 +195,7 @@
   filter: alpha(opacity=10);
 }
 .tui-grid-layer-datepicker {
-  width: calc(100% - 10px);
+  width: calc(100% - 7px);
   position: absolute;
   z-index: 100;
   box-sizing: border-box;
