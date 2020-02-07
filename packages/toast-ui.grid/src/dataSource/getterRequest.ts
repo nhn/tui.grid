@@ -19,14 +19,17 @@ function handleSuccessReadData(config: Config, response: Response) {
 
   validateResponse(responseData);
 
+  const { contents, pagination } = responseData;
+
   if (store.data.pageOptions.type === 'scroll') {
-    dispatch('makeInfiniteData', responseData.contents);
+    dispatch('addNextData', contents);
   } else {
-    dispatch('resetData', responseData.contents);
+    dispatch('resetData', contents);
   }
-  if (responseData.pagination) {
+
+  if (pagination) {
     dispatch('updatePageOptions', {
-      ...responseData.pagination,
+      ...pagination,
       perPage: getLastRequiredData().perPage
     });
   }
