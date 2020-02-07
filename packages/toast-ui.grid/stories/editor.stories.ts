@@ -53,7 +53,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '4',
-    release: '2016.03.26',
+    release: '2016-03-26',
     albumColor: '#F294A4'
   },
   {
@@ -61,7 +61,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '5',
-    release: '2014.06.24',
+    release: '2014-06-24',
     albumColor: '#ED6510'
   },
   {
@@ -69,7 +69,7 @@ const data = [
     typeCode: '3',
     genreCode: '1,2',
     grade: '2',
-    release: '2011.08.08',
+    release: '2011-08-08',
     albumColor: '#1286DB'
   }
 ];

@@ -197,7 +197,6 @@
 .tui-grid-layer-datepicker {
   width: calc(100% - 7px);
   position: absolute;
-  z-index: 100;
   box-sizing: border-box;
 }
 .tui-grid-layer-datepicker * {
