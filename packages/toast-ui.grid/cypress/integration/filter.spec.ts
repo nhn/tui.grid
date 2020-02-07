@@ -721,10 +721,11 @@ describe('check other option when filtering', () => {
   });
 
   it('should update row number after filtering', () => {
+    const filteredRowNum = ['2', '6'];
     cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
 
-    cy.getColumnCells('_number').each(($el, idx) => {
-      expect($el.text()).to.eq(`${idx + 1}`);
+    cy.getNumberRowHeaderCells().each(($el, idx) => {
+      expect($el.text()).to.eq(filteredRowNum[idx]);
     });
   });
 
