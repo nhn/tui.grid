@@ -902,6 +902,8 @@ declare namespace tuiGrid {
     public setRequestParams(params: Dictionary<any>): void;
 
     public clearModifiedData(type?: ModificationTypeCode): void;
+
+    public addData(data: RowData[]): void;
   }
 }
 

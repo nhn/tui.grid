@@ -924,7 +924,13 @@ export default class Grid {
    * @param {boolean} [multiple] - Whether using multiple sort
    */
   public sort(columnName: string, ascending: boolean, multiple?: boolean) {
-    this.dispatch('sort', columnName, ascending, multiple, false);
+    if (this.store.data.sortState.useClient) {
+      this.dispatch('sort', columnName, ascending, multiple, false);
+    } else {
+      // @TODO: apply multi sort to dataSource
+      const data = { sortColumn: columnName, sortAscending: ascending };
+      this.dataProvider.readData(1, data, true);
+    }
   }
 
   /**
@@ -932,7 +938,11 @@ export default class Grid {
    * @param {string} [columnName] - The name of the column to be used to compare the rows
    */
   public unsort(columnName?: string) {
-    this.dispatch('unsort', columnName);
+    if (this.store.data.sortState.useClient) {
+      this.dispatch('unsort', columnName);
+    } else {
+      this.dataProvider.readData(1, {}, true);
+    }
   }
 
   /**
@@ -1604,5 +1614,13 @@ export default class Grid {
     } else {
       this.dataManager.clearAll();
     }
+  }
+
+  /**
+   * add rows.
+   * @param {Array} data - A list of new rows
+   */
+  public addData(data: OptRow[]) {
+    this.dispatch('addNextData', data);
   }
 }
