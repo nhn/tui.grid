@@ -5,7 +5,10 @@ import { Dictionary } from '@/store/types';
 import { DataSource, Params, AjaxConfig } from '@/dataSource/types';
 import GridEvent from '@/event/gridEvent';
 import { deepCopy } from '@/helper/common';
-import { cls } from '@/helper/dom';
+import { cls, ClassNameType } from '@/helper/dom';
+
+const PER_PAGE = 10;
+const ROW_HEIGHT = 40;
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true, editor: 'text' },
@@ -57,6 +60,14 @@ function assertModifiedRowsContainsObject(type: string, obj: object) {
     });
 }
 
+function assertHaveSortingBtnClass(className: ClassNameType) {
+  cy.getByCls('btn-sorting').should('have.class', cls(className));
+}
+
+function assertHaveNotSortingBtnClass(className: ClassNameType) {
+  cy.getByCls('btn-sorting').should('not.have.class', cls(className));
+}
+
 function assertSortedData(columnName: string, ascending = true) {
   const sortedData = ascending ? sortedSampleData : sampleData;
   const testData = (sortedData as Dictionary<any>[]).map(sample => String(sample[columnName]));
@@ -66,7 +77,7 @@ function assertSortedData(columnName: string, ascending = true) {
   });
 }
 
-function assertPagingData(columnName: string, page = 1, perPage = 10) {
+function assertPagingData(columnName: string, page = 1, perPage = PER_PAGE) {
   const pagingData = page === 1 ? sampleData.slice(0, perPage) : sampleData.slice(perPage);
   const testData = (pagingData as Dictionary<any>[]).map(sample => String(sample[columnName]));
 
@@ -82,7 +93,7 @@ function createGrid(dataSource?: DataSource) {
     data: { ...(dataSource || data) },
     columns,
     useClientSort: false,
-    pageOptions: { perPage: 10 }
+    pageOptions: { perPage: PER_PAGE }
   });
 }
 
@@ -115,6 +126,16 @@ function createGridWithConfig(optionType: string, stub: Function) {
       }
     });
   }
+}
+
+function createGridWithScrollType(dataSource?: DataSource) {
+  cy.createGrid({
+    data: { ...(dataSource || data) },
+    bodyHeight: 300,
+    columns,
+    useClientSort: true,
+    pageOptions: { perPage: PER_PAGE, type: 'scroll' }
+  });
 }
 
 function getPageBtn() {
@@ -211,7 +232,7 @@ describe('sort()', () => {
   it('check useClient is false', () => {
     cy.gridInstance()
       .invoke('getSortState')
-      .should('be.deep.equal', {
+      .should('eql', {
         useClient: false,
         columns: [
           {
@@ -222,12 +243,40 @@ describe('sort()', () => {
       });
   });
 
-  it('server side data is sorted properly', () => {
-    createSortButonAlias();
-    cy.get('@first').click();
-    cy.wait('@readAscData');
+  ['UI', 'API'].forEach(type => {
+    it(`server side data is sorted by ${type}`, () => {
+      createSortButonAlias();
 
-    assertSortedData('id');
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('sort', 'id', true);
+      }
+
+      cy.wait('@readAscData');
+
+      assertHaveSortingBtnClass('btn-sorting-up');
+      assertSortedData('id');
+    });
+
+    it(`server side data is unsorted by ${type}`, () => {
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('sort', 'id', true);
+      cy.wait('@readAscData');
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+        cy.wait('@readDescData');
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('unsort', 'id');
+      }
+      cy.wait('@readPage1');
+
+      assertHaveNotSortingBtnClass('btn-sorting-up');
+      assertHaveNotSortingBtnClass('btn-sorting-down');
+    });
   });
 
   it('server side data is sorted properly when calls readData method', () => {
@@ -235,6 +284,7 @@ describe('sort()', () => {
     cy.gridInstance().invoke('readData', 1, params, true);
     cy.wait('@readAscData');
 
+    assertHaveSortingBtnClass('btn-sorting-up');
     assertSortedData('id');
   });
 });
@@ -461,4 +511,40 @@ it('stop custom event if prev event is prevented.', () => {
 
   cy.wrap(onBeforeRequest).should('be.called');
   cy.wrap(onSuccessResponse).should('be.not.called');
+});
+
+describe('type: scroll', () => {
+  beforeEach(() => {
+    createGridWithScrollType();
+  });
+
+  it('should add next data on scrolling at the bottommost', () => {
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', PER_PAGE * ROW_HEIGHT + 1);
+
+    // scroll at the bottommost
+    cy.gridInstance().invoke('focus', 9, 'name');
+
+    cy.getCell(10, 'id').should('have.text', '10');
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', PER_PAGE * ROW_HEIGHT * 2 + 1);
+  });
+
+  it('should not change page data after calling setPerPage API', () => {
+    createGridWithScrollType();
+
+    const initialHeight = cy.getByCls('body-container').invoke('height');
+
+    cy.gridInstance().invoke('setPerPage', 30);
+
+    setTimeout(() => {
+      cy.getByCls('body-container')
+        .invoke('height')
+        .then(height => {
+          initialHeight.should('be.eq', height);
+        });
+    });
+  });
 });

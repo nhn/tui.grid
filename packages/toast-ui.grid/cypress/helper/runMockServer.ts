@@ -59,7 +59,7 @@ export function runMockServer() {
     response: {
       result: true,
       data: {
-        contents: data.slice(0, 10),
+        contents: sortedData.slice(0, 10).reverse(),
         pagination: {
           page: 1,
           totalCount: 20
