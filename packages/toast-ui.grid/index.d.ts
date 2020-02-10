@@ -356,7 +356,7 @@ declare namespace tuiGrid {
     min?: number;
     max?: number;
     regExp?: RegExp;
-    validatorFn?: (value: CellValue, rowKey: RowKey, columnName: string) => boolean;
+    validatorFn?: (value: CellValue, row: Row, columnName: string) => boolean;
   }
 
   interface InvalidColumn {
