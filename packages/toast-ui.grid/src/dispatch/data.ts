@@ -51,7 +51,9 @@ import {
   getRemovedClassName,
   getCreatedRowInfo,
   isSorted,
-  isFiltered
+  isFiltered,
+  getMaxRowKey,
+  isScrollPagination
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -174,7 +176,7 @@ export function updateHeights(store: Store) {
 export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
   const { pageOptions: orgPageOptions } = data;
   if (!isEmpty(orgPageOptions)) {
-    if (orgPageOptions.type === 'scroll') {
+    if (isScrollPagination(data)) {
       delete pageOptions.page;
     }
     data.pageOptions = {
@@ -505,6 +507,14 @@ function resetSortKey(data: Data, start: number) {
   }
 }
 
+function sortByCurrentState(store: Store) {
+  const { data } = store;
+  if (isSorted(data)) {
+    const { columnName, ascending } = data.sortState.columns[0];
+    sort(store, columnName, ascending, true, false);
+  }
+}
+
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
@@ -520,10 +530,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (isSorted(data)) {
-    const { columnName, ascending } = sortState.columns[0];
-    sort(store, columnName, ascending, false, false);
-  }
+  sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
@@ -611,7 +618,11 @@ export function resetData(store: Store, inputData: OptRow[]) {
   initScrollPosition(store);
   initFocus(store);
   initSelection(store);
-  initSortState(data);
+
+  if (data.sortState.useClient) {
+    initSortState(data);
+  }
+
   initFilter(store);
   updatePageOptions(store, { totalCount: rawData.length, page: 1 });
   data.viewData = viewData;
@@ -886,10 +897,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   viewData.splice(rowIndex, 1, viewRow);
   rawData.splice(rowIndex, 1, rawRow);
 
-  if (isSorted(data)) {
-    const { columnName, ascending } = sortState.columns[0];
-    sort(store, columnName, ascending, true, false);
-  }
+  sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenAppend(rawData, prevRow, false);
@@ -930,12 +938,14 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
 
 export function scrollToNext(store: Store) {
   const { data, id } = store;
-  const { page, totalCount, perPage, useClient, type } = data.pageOptions;
+  const { page, totalCount, perPage, useClient } = data.pageOptions;
 
-  if (type === 'scroll') {
+  if (isScrollPagination(data)) {
     if (useClient) {
       data.pageOptions.page += 1;
       notify(data, 'pageOptions');
+
+      sortByCurrentState(store);
       updateHeights(store);
     } else if (page * perPage < totalCount) {
       data.pageOptions.page += 1;
@@ -946,17 +956,22 @@ export function scrollToNext(store: Store) {
 
 export function addNextData(store: Store, inputData: OptRow[]) {
   const { data, column } = store;
+
+  if (!column.keyColumnName) {
+    const rowKey = getMaxRowKey(data);
+    inputData.forEach((row, index) => {
+      row.rowKey = rowKey + index;
+    });
+  }
+
   const startIndex = data.rawData.length;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
 
   data.viewData = data.viewData.concat(viewData);
   data.rawData = data.rawData.concat(rawData);
 
-  if (isSorted(data)) {
-    const { columnName, ascending } = data.sortState.columns[0];
-    sort(store, columnName, ascending, true, false);
-  }
-
+  resetSortKey(data, startIndex);
+  sortByCurrentState(store);
   updateRowNumber(store, startIndex);
   updateHeights(store);
 }

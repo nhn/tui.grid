@@ -4,7 +4,7 @@ import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
-import { findRowByRowKey, getLoadingState } from '../query/data';
+import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
@@ -16,12 +16,15 @@ function validateResponse(responseData?: ResponseData): asserts responseData {
 function handleSuccessReadData(config: Config, response: Response) {
   const { dispatch, getLastRequiredData, store } = config;
   const { data: responseData } = response;
+  const { perPage, sortColumn, sortAscending = true } = getLastRequiredData();
 
   validateResponse(responseData);
 
   const { contents, pagination } = responseData;
 
-  if (store.data.pageOptions.type === 'scroll') {
+  dispatch('changeSortState', sortColumn || 'sortKey', sortAscending, true);
+
+  if (isScrollPagination(store.data)) {
     dispatch('addNextData', contents);
   } else {
     dispatch('resetData', contents);
@@ -30,7 +33,7 @@ function handleSuccessReadData(config: Config, response: Response) {
   if (pagination) {
     dispatch('updatePageOptions', {
       ...pagination,
-      perPage: getLastRequiredData().perPage
+      perPage
     });
   }
 }
