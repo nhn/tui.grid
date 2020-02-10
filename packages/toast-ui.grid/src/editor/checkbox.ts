@@ -2,7 +2,7 @@ import { CellEditor, CellEditorProps, CheckboxOptions } from './types';
 import { CellValue, ListItem } from '../store/types';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
-import { getKeyStrokeString } from '../helper/keyboard';
+import { getKeyStrokeString, KeyStrokeCommandType } from '../helper/keyboard';
 import { findPropIndex, includes } from '../helper/common';
 
 const WRAPPER_CLASSNAME = cls('editor-checkbox-wrapper');
@@ -94,22 +94,22 @@ export class CheckboxEditor implements CellEditor {
   }
 
   private getLabelId = (target: HTMLElement) => {
-    const targetId = target.id;
-    return targetId ? targetId : target.parentElement!.id;
+    return target.id || target.parentElement!.id;
   };
 
   private onMouseover = (ev: MouseEvent) => {
     const targetId = this.getLabelId(ev.target as HTMLElement);
-    this.highlightItem(targetId);
+    if (targetId !== this.hoveredItemId) {
+      this.highlightItem(targetId);
+    }
   };
 
   private onChange = (ev: Event) => {
     const value = (ev.target as HTMLInputElement).value;
     this.setLabelClass(value);
-    this.highlightItem(`checkbox-${value}`);
   };
 
-  private isArrowKey = (keyName: string) => {
+  private isArrowKey = (keyName: KeyStrokeCommandType) => {
     return includes(['up', 'down', 'left', 'right'], keyName);
   };
 
@@ -127,18 +127,16 @@ export class CheckboxEditor implements CellEditor {
   };
 
   private highlightItem = (targetId: string) => {
-    if (targetId.length) {
-      if (this.hoveredItemId) {
-        this.el.querySelector(
-          `#${this.hoveredItemId}`
-        )!.parentElement!.className = LIST_ITEM_CLASSNAME;
-      }
-
-      const label = this.el.querySelector(`#${targetId}`) as HTMLLabelElement;
-      label.parentElement!.className = HOVERED_LIST_ITEM_CLASSNAME;
-      label.querySelector('input')!.focus();
-      this.hoveredItemId = targetId;
+    if (this.hoveredItemId) {
+      this.el.querySelector(
+        `#${this.hoveredItemId}`
+      )!.parentElement!.className = LIST_ITEM_CLASSNAME;
     }
+
+    const label = this.el.querySelector(`#${targetId}`) as HTMLLabelElement;
+    label.parentElement!.className = HOVERED_LIST_ITEM_CLASSNAME;
+    label.querySelector('input')!.focus();
+    this.hoveredItemId = targetId;
   };
 
   private setLabelClass(inputValue: CellValue) {
@@ -169,9 +167,8 @@ export class CheckboxEditor implements CellEditor {
       });
   }
 
-  private getFirstInput() {
-    const checkedInput: HTMLInputElement | null = this.el.querySelector('input:checked');
-    return checkedInput ? checkedInput : this.el.querySelector('input');
+  private getFirstInput(): HTMLInputElement | null {
+    return this.el.querySelector('input:checked') || this.el.querySelector('input');
   }
 
   public getElement() {

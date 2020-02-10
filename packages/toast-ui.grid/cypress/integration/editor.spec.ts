@@ -1,7 +1,6 @@
 import GridEvent from '@/event/gridEvent';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
 import { CellValue } from '@/store/types';
-import { cls } from '@/helper/dom';
 
 before(() => {
   cy.visit('/dist');
@@ -346,9 +345,7 @@ describe('select, checkbox, radio editor', () => {
         if (type === 'select') {
           cy.get('.tui-select-box-placeholder').should('have.text', 'B');
         } else {
-          cy.getByCls(`editor-label-icon-${type}-checked`).within($el => {
-            cy.wrap($el).should('have.text', 'B');
-          });
+          cy.getByCls(`editor-label-icon-${type}-checked`).should('have.text', 'B');
         }
       });
 
@@ -362,6 +359,7 @@ describe('select, checkbox, radio editor', () => {
             .eq(0)
             .click();
           cy.getCellByIdx(0, 0).click();
+
           cy.getCellByIdx(0, 0).should('have.text', 'A');
         } else {
           cy.getByCls(`editor-label-icon-${type}`)
@@ -386,11 +384,9 @@ describe('select, checkbox, radio editor', () => {
     }
 
     function assertOptionHighlighted(value: CellValue) {
-      cy.getByCls('editor-checkbox-hovered').within($el => {
-        cy.wrap($el)
-          .find('label')
-          .should('have.id', `checkbox-${value}`);
-      });
+      cy.getByCls('editor-checkbox-hovered')
+        .find('label')
+        .should('have.id', `checkbox-${value}`);
     }
 
     it('typing the arrow key changes the current option focus and hover style', () => {
@@ -415,7 +411,7 @@ describe('select, checkbox, radio editor', () => {
       createGridWithType('radio');
       cy.gridInstance().invoke('startEditing', 1, 'name');
 
-      cy.get(`.${cls('editor-checkbox')}`)
+      cy.getByCls('editor-checkbox')
         .eq(2)
         .trigger('mouseover');
 
