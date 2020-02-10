@@ -1,83 +1,99 @@
 import { cls } from '../../src/helper/dom';
-import { data } from '../../samples/basic';
 
 before(() => {
   cy.visit('/dist');
 });
 
-describe('validate changed value', () => {
-  it('empty', () => {
-    cy.createGrid({
-      data,
-      columns: [{ name: 'name', validation: { required: true } }]
-    });
+const data = [
+  { name: 'note', price: 10000 },
+  { name: 'pen', price: 4000 }
+];
 
-    cy.gridInstance().invoke('setValue', 0, 'name', '');
-    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+it('should check the validation of cell - required', () => {
+  cy.createGrid({
+    data,
+    columns: [{ name: 'name', validation: { required: true } }]
   });
 
-  it('data type is string', () => {
+  cy.gridInstance().invoke('setValue', 0, 'name', '');
+
+  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+});
+
+it('should check the validation of cell - regExp', () => {
+  cy.createGrid({
+    data,
+    columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
+  });
+
+  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+
+  cy.gridInstance().invoke('setValue', 0, 'name', '9:9');
+
+  cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
+});
+
+describe('should check the validation of cell - dataType: string', () => {
+  it('check `string` type validation', () => {
     cy.createGrid({
       data,
       columns: [{ name: 'name', validation: { dataType: 'string' } }]
     });
 
     cy.gridInstance().invoke('setValue', 0, 'name', 123);
+
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
-  it('data type is number', () => {
+  it('min and max work if the value is a string type number.', () => {
+    cy.createGrid({
+      data,
+      columns: [{ name: 'price', validation: { dataType: 'string', min: 10, max: 20 } }]
+    });
+
+    cy.gridInstance().invoke('setValue', 0, 'price', '21');
+
+    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
+  });
+});
+
+describe('should check the validation of cell - dataType: number', () => {
+  it('check `number` type validation', () => {
     cy.createGrid({
       data,
       columns: [{ name: 'price', validation: { dataType: 'number' } }]
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 'test');
+
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
 
-  it('value is greater than min value', () => {
+  it('check `min` value validation', () => {
     cy.createGrid({
       data,
       columns: [{ name: 'price', validation: { dataType: 'number', min: 10 } }]
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 0);
+
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
 
-  it('value is greater than max value', () => {
+  it('check `max` value validation', () => {
     cy.createGrid({
       data,
       columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }]
     });
 
     cy.gridInstance().invoke('setValue', 0, 'price', 25);
+
     cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
   });
+});
 
-  it('min and max only work if the value is a number.', () => {
-    cy.createGrid({
-      data,
-      columns: [{ name: 'price', validation: { dataType: 'number', max: 20 } }]
-    });
-
-    cy.gridInstance().invoke('setValue', 0, 'price', 'not number');
-    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
-  });
-
-  it('value is meet regExp', () => {
-    cy.createGrid({
-      data,
-      columns: [{ name: 'name', validation: { regExp: /[0-9]+:[0-9]/ } }]
-    });
-
-    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
-    cy.gridInstance().invoke('setValue', 0, 'name', '9:9');
-    cy.getCell(0, 'name').should('not.have.class', cls('cell-invalid'));
-  });
-
-  it('value is meet validatorFn', () => {
+describe('should check the validation of cell - validatorFn', () => {
+  it('check `validatorFn` validation', () => {
     cy.createGrid({
       data,
       columns: [
@@ -91,97 +107,91 @@ describe('validate changed value', () => {
     });
 
     cy.gridInstance().invoke('setValue', 0, 'name', 19);
+
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
-  it('value is meet all condition', () => {
+  it('`value`, `rowKey`, `columnName` should be passed as the parameters of validatorFn ', () => {
+    const callback = cy.stub();
+
     cy.createGrid({
       data,
       columns: [
         {
-          name: 'price',
+          name: 'name',
           validation: {
-            min: 10,
-            max: 30,
-            validatorFn: (value: number) => value !== 25
+            validatorFn: callback
           }
         }
       ]
     });
 
-    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
-    cy.gridInstance().invoke('setValue', 0, 'price', 27);
-    cy.getCell(0, 'price').should('not.have.class', cls('cell-invalid'));
+    cy.wrap(callback).should('be.calledWithMatch', 'note', 0, 'name');
+    cy.wrap(callback).should('be.calledWithMatch', 'pen', 1, 'name');
   });
 });
 
-describe('validate changed value using editor', () => {
-  it('empty', () => {
-    cy.createGrid({
-      data: data.slice(2),
-      columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
-    });
-
-    cy.getCell(0, 'name')
-      .trigger('mousedown')
-      .trigger('dblclick');
-
-    cy.get(`.${cls('layer-editing')} input`)
-      .invoke('val', '')
-      .type('{enter}');
-    cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
+it('should check the validation of cell - combined', () => {
+  cy.createGrid({
+    data,
+    columns: [
+      {
+        name: 'price',
+        validation: {
+          min: 10,
+          max: 30,
+          validatorFn: (value: number) => value !== 25
+        }
+      }
+    ]
   });
 
-  it('data type is number', () => {
-    cy.createGrid({
-      data: data.slice(2),
-      columns: [{ name: 'price', editor: 'text', validation: { dataType: 'number' } }]
-    });
+  cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
 
-    cy.getCell(0, 'price')
-      .trigger('mousedown')
-      .trigger('dblclick');
+  cy.gridInstance().invoke('setValue', 0, 'price', 27);
 
-    cy.get(`.${cls('layer-editing')} input`).type('foo{enter}');
-    cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
-  });
+  cy.getCell(0, 'price').should('not.have.class', cls('cell-invalid'));
 });
 
-describe('get data that failed validation result by validate api', () => {
-  it('empty', () => {
-    cy.createGrid({
-      data: data.slice(2),
-      columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
-    });
-
-    cy.getCell(0, 'name')
-      .trigger('mousedown')
-      .trigger('dblclick');
-
-    cy.get(`.${cls('layer-editing')} input`)
-      .invoke('val', '')
-      .type('{enter}');
-
-    cy.gridInstance()
-      .invoke('validate')
-      .should(result => {
-        expect(result).to.include.deep.members([
-          { errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }
-        ]);
-      });
+it('should check the validation of cell after editing', () => {
+  cy.createGrid({
+    data,
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
   });
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.getByCls('content-text').invoke('val', '');
+  cy.gridInstance().invoke('finishEditing');
+
+  cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
 });
 
-it('validate changed value using editor by resetData API', () => {
+it('get failed validation result by validate api', () => {
+  cy.createGrid({
+    data,
+    columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
+  });
+
+  cy.gridInstance().invoke('startEditing', 0, 'name');
+  cy.getByCls('content-text').invoke('val', '');
+  cy.gridInstance().invoke('finishEditing');
+
+  cy.gridInstance()
+    .invoke('validate')
+    .should('eql', [{ errors: [{ columnName: 'name', errorCode: ['REQUIRED'] }], rowKey: 0 }]);
+});
+
+it('validate changed value after calling resetData API', () => {
   cy.createGrid({
     data: [],
     columns: [{ name: 'name', editor: 'text', validation: { required: true } }]
   });
   cy.gridInstance().invoke('resetData', [{ name: '' }]);
+
   cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
 });
 
-it('validate changed value using editor by setColumns API', () => {
+it('validate changed value after calling setColumns API', () => {
   const columns = [
     { name: 'name', editor: 'text' },
     { name: 'price', editor: 'text' }
@@ -192,6 +202,8 @@ it('validate changed value using editor by setColumns API', () => {
   }));
 
   cy.createGrid({ data: [{ name: 'name', price: '' }], columns });
+
   cy.gridInstance().invoke('setColumns', columnsWithValidation);
+
   cy.getCell(0, 'price').should('have.class', cls('cell-invalid'));
 });
