@@ -11,7 +11,7 @@ const HOVERED_LIST_ITEM_CLASSNAME = `${cls('editor-checkbox-hovered')} ${LIST_IT
 const UNCHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio');
 const CHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio-checked');
 const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
-const CHECKED_CHECKBOX_LABEL_CLASSNAME = `${cls('editor-label-icon-checkbox-checked')}`;
+const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked');
 
 interface InputElement {
   labelId: string;
@@ -118,9 +118,9 @@ export class CheckboxEditor implements CellEditor {
     if (this.isArrowKey(keyName)) {
       ev.preventDefault();
       const elementIdx = findPropIndex('labelId', this.hoveredItemId, this.inputElements);
-      const elementLen = this.inputElements.length;
-      const offset = elementLen + (keyName === 'down' || keyName === 'right' ? 1 : -1);
-      const { labelId } = this.inputElements[(elementIdx + offset) % elementLen];
+      const totalCount = this.inputElements.length;
+      const offset = totalCount + (keyName === 'down' || keyName === 'right' ? 1 : -1);
+      const { labelId } = this.inputElements[(elementIdx + offset) % totalCount];
 
       this.highlightItem(labelId);
     }
@@ -170,7 +170,7 @@ export class CheckboxEditor implements CellEditor {
   }
 
   private getFirstInput() {
-    const checkedInput = this.el.querySelector('input:checked') as HTMLInputElement | null;
+    const checkedInput: HTMLInputElement | null = this.el.querySelector('input:checked');
     return checkedInput ? checkedInput : this.el.querySelector('input');
   }
 
@@ -200,5 +200,6 @@ export class CheckboxEditor implements CellEditor {
   public beforeDestroy() {
     this.wrapper.removeEventListener('change', this.onChange);
     this.wrapper.removeEventListener('mouseover', this.onMouseover);
+    this.wrapper.removeEventListener('keydown', this.onKeydown);
   }
 }

@@ -31,7 +31,7 @@ export class SelectEditor implements CellEditor {
     wrapper.className = cls('editor-select-box-wrapper');
     wrapper.style.minWidth = `${width - 10}px`;
 
-    const data = listItems.map(val => ({ value: String(val.value), label: val.text }));
+    const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(wrapper, { data });
 
     if (value) {

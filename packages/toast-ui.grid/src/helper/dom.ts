@@ -159,6 +159,7 @@ export function cls(...names: (ClassNameType | [boolean, ClassNameType])[]) {
 
 export function isDatePickerElement(el: HTMLElement) {
   let currentEl: HTMLElement | null = el;
+
   while (currentEl && currentEl.className.split(' ').indexOf('tui-datepicker') === -1) {
     currentEl = currentEl.parentElement;
   }
