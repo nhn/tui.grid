@@ -1,5 +1,6 @@
 import GridEvent from '@/event/gridEvent';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
+import '@toast-ui/select-box/dist/toastui-select-box.css';
 import { CellValue } from '@/store/types';
 
 before(() => {
