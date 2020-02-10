@@ -1,9 +1,14 @@
 import { data } from '../../samples/pagination';
 import { twoDepthData, threeDepthData } from '../../samples/relations';
 import { cls, ClassNameType } from '@/helper/dom';
+import { compare } from '@/helper/sort';
 import { OptRow } from '@/types';
+import { Row } from '@/store/types';
+import { isBoolean } from '@/helper/common';
 
 const PER_PAGE_COUNT = 10;
+const SCROLL_PER_PAGE_COUNT = 50;
+
 const columns = [
   { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
   { name: 'orderName', sortable: true }
@@ -16,6 +21,20 @@ function createGridWithPagination(newData?: OptRow[]) {
       useClient: true,
       perPage: PER_PAGE_COUNT
     },
+    columns
+  });
+}
+
+function createGridWithScrollType(newData?: OptRow[]) {
+  cy.createGrid({
+    data: newData || data.slice(0, 200),
+    bodyHeight: 300,
+    pageOptions: {
+      useClient: true,
+      perPage: SCROLL_PER_PAGE_COUNT,
+      type: 'scroll'
+    },
+    rowHeaders: ['rowNum'],
     columns
   });
 }
@@ -97,12 +116,40 @@ function assertColumnData(column: string, text: string) {
   cy.getColumnCells(column).should('sameColumnData', text);
 }
 
-function assertHaveSortingBtnClass(className: ClassNameType) {
-  cy.getByCls('btn-sorting').should('have.class', cls(className));
+function assertHaveSortingBtnClass(columnName: string, className: ClassNameType) {
+  cy.get(`th[data-column-name=${columnName}] .${cls('btn-sorting')}`).should(
+    'have.class',
+    cls(className)
+  );
 }
 
-function assertHaveNotSortingBtnClass(className: ClassNameType) {
-  cy.getByCls('btn-sorting').should('have.not.class', cls(className));
+function assertHaveNotSortingBtnClass(columnName: string, className: ClassNameType) {
+  cy.get(`th[data-column-name=${columnName}] .${cls('btn-sorting')}`).should(
+    'have.not.class',
+    cls(className)
+  );
+}
+
+function assertSortedData(page: number, columnName: string, ascending?: boolean) {
+  cy.gridInstance()
+    .invoke('getData')
+    .should((rows: OptRow[]) => {
+      const length = SCROLL_PER_PAGE_COUNT * page;
+      const actualValues = rows.slice(0, length).map(row => row[columnName]) as string[];
+      const expectValues = ([...data] as OptRow[])
+        .slice(0, length)
+        .map(row => row[columnName]) as string[];
+
+      if (isBoolean(ascending)) {
+        if (ascending) {
+          expectValues.sort((a, b) => compare(a, b));
+        } else {
+          expectValues.sort((a, b) => -compare(a, b));
+        }
+      }
+
+      expect(actualValues).eql(expectValues);
+    });
 }
 
 function assertActiveFilterBtn() {
@@ -133,7 +180,7 @@ describe('pagination + sort', () => {
   it('should sort the paginated data', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
 
-    assertHaveSortingBtnClass('btn-sorting-down');
+    assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
       ['Visit', 'Hanjung'],
       ['Visit', 'KimDongWoo'],
@@ -152,7 +199,7 @@ describe('pagination + sort', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
     moveNextPage();
 
-    assertHaveSortingBtnClass('btn-sorting-down');
+    assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
       ['Parcel', 'KimSungHo'],
       ['Parcel', 'RyuSeonIm'],
@@ -224,8 +271,8 @@ describe('filter + sort', () => {
     cy.gridInstance().invoke('unsort', 'orderName');
 
     assertActiveFilterBtn();
-    assertHaveNotSortingBtnClass('btn-sorting-up');
-    assertHaveNotSortingBtnClass('btn-sorting-down');
+    assertHaveNotSortingBtnClass('deliveryType', 'btn-sorting-up');
+    assertHaveNotSortingBtnClass('deliveryType', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
       ['Visit', 'Hanjung'],
       ['Visit', 'KimDongWoo'],
@@ -240,7 +287,7 @@ describe('filter + sort', () => {
     cy.gridInstance().invoke('sort', 'orderName', false);
 
     assertActiveFilterBtn();
-    assertHaveSortingBtnClass('btn-sorting-down');
+    assertHaveSortingBtnClass('orderName', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
       ['Visit', 'RyuSeonIm'],
       ['Visit', 'RyuJinKyung'],
@@ -258,7 +305,7 @@ describe('filter + sort', () => {
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Visit' }]);
 
     assertActiveFilterBtn();
-    assertHaveSortingBtnClass('btn-sorting-down');
+    assertHaveSortingBtnClass('orderName', 'btn-sorting-down');
     cy.getRsideBody().should('have.cellData', [
       ['Visit', 'RyuSeonIm'],
       ['Visit', 'RyuJinKyung'],
@@ -280,7 +327,7 @@ describe('pagination + filter + sort', () => {
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Visit' }]);
 
     assertActiveFilterBtn();
-    assertHaveSortingBtnClass('btn-sorting-up');
+    assertHaveSortingBtnClass('orderName', 'btn-sorting-up');
     assertCurrentPage(1);
     cy.getRsideBody().should('have.cellData', [
       ['Visit', 'Hanjung'],
@@ -329,5 +376,99 @@ describe('formatter + filter + relation', () => {
 
     assertActiveFilterBtn();
     cy.getRsideBody().should('have.cellData', [['Overseas', 'R&B', 'Marry You']]);
+  });
+});
+
+describe('pagination(infinite scroll) + sort', () => {
+  beforeEach(() => {
+    createGridWithScrollType();
+  });
+
+  it('should sort the data after adding next data', () => {
+    cy.gridInstance().invoke('sort', 'deliveryType', false);
+
+    assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
+    assertSortedData(1, 'deliveryType', false);
+
+    cy.gridInstance().invoke('focusAt', 49, 1);
+
+    assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
+    assertSortedData(2, 'deliveryType', false);
+  });
+
+  it('should change the row number after sorting', () => {
+    cy.gridInstance().invoke('sort', 'deliveryType', false);
+
+    cy.gridInstance().invoke('focus', 46, 'orderName');
+
+    cy.gridInstance()
+      .invoke('getData')
+      .should((rows: Row[]) => {
+        const actualValues = rows.map(row => row._attributes.rowNum);
+        const expectValues = rows.map((_, index) => index + 1);
+        expect(actualValues).eql(expectValues);
+      });
+  });
+
+  it('should unsort the data properly', () => {
+    cy.gridInstance().invoke('sort', 'deliveryType', false);
+    cy.gridInstance().invoke('focusAt', 49, 1);
+    cy.wait(100);
+    cy.gridInstance().invoke('unsort', 'deliveryType');
+
+    assertHaveNotSortingBtnClass('deliveryType', 'btn-sorting-up');
+    assertHaveNotSortingBtnClass('deliveryType', 'btn-sorting-down');
+    assertSortedData(2, 'deliveryType');
+  });
+});
+
+describe('pagination(infinite scroll) + filter', () => {
+  beforeEach(() => {
+    createGridWithScrollType();
+  });
+
+  it('should filter the paginated data properly', () => {
+    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
+
+    assertActiveFilterBtn();
+    assertColumnData('deliveryType', 'Parcel');
+
+    cy.gridInstance().invoke('focus', 46, 'orderName');
+
+    assertActiveFilterBtn();
+    assertColumnData('deliveryType', 'Parcel');
+  });
+
+  it('should maintain the row number after filtering', () => {
+    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
+
+    cy.gridInstance().invoke('focus', 46, 'orderName');
+
+    cy.gridInstance()
+      .invoke('getData')
+      .should((rows: Row[]) => {
+        const actualValues = rows.map(row => row._attributes.rowNum);
+        const expectValues = rows.map((_, index) => index + 1);
+        expect(actualValues).eql(expectValues);
+      });
+  });
+});
+
+describe('pagination(infinite scroll) + filter + sort', () => {
+  it('The functionality of filtering and sorting should be operated with pagination properly', () => {
+    createGridWithScrollType();
+
+    cy.gridInstance().invoke('sort', 'orderName', true);
+    cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Visit' }]);
+
+    assertActiveFilterBtn();
+    assertHaveSortingBtnClass('orderName', 'btn-sorting-up');
+    assertSortedData(1, 'orderName', true);
+    assertColumnData('deliveryType', 'Visit');
+
+    cy.gridInstance().invoke('focus', 49, 'orderName');
+
+    assertSortedData(2, 'orderName', true);
+    assertColumnData('deliveryType', 'Visit');
   });
 });
