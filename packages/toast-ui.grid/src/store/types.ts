@@ -149,7 +149,7 @@ export interface Validation {
   min?: number;
   max?: number;
   regExp?: RegExp;
-  validatorFn?: (value: CellValue) => boolean;
+  validatorFn?: (value: CellValue, rowKey: RowKey, columnName: string) => boolean;
 }
 
 export interface InvalidColumn {

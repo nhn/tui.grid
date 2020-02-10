@@ -130,7 +130,12 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
-function getValidationCode(value: CellValue, validation?: Validation): ValidationType[] {
+function getValidationCode(
+  value: CellValue,
+  rowKey: RowKey,
+  columnName: string,
+  validation?: Validation
+) {
   const invalidStates: ValidationType[] = [];
 
   if (!validation) {
@@ -143,7 +148,7 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
     invalidStates.push('REQUIRED');
   }
 
-  if (validatorFn && !validatorFn(value)) {
+  if (validatorFn && !validatorFn(value, rowKey, columnName)) {
     invalidStates.push('VALIDATOR_FN');
   }
 
@@ -214,7 +219,7 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode(value, validation),
+    invalidStates: getValidationCode(value, row.rowKey, name, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
   };
