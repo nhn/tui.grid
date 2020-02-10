@@ -172,11 +172,11 @@ describe('row disabled', () => {
   it('enableRowCheck() / disableRowCheck()', () => {
     cy.gridInstance().invoke('disableRowCheck', 1);
 
-    cy.getRowHeaderCell(1).should('have.class', cls('cell-disabled'));
+    cy.getRowHeaderCell(1, '_checked').should('have.class', cls('cell-disabled'));
 
     cy.gridInstance().invoke('enableRowCheck', 1);
 
-    cy.getRowHeaderCell(1).should('not.have.class', cls('cell-disabled'));
+    cy.getRowHeaderCell(1, '_checked').should('not.have.class', cls('cell-disabled'));
   });
 });
 
@@ -207,7 +207,7 @@ describe('disabled precedence', () => {
   });
 
   it('`disabled: true` option is precedence between initial disabled options(column disabled, row disabled, grid disabled)', () => {
-    cy.getRowHeaderCell(0).should('have.class', cls('cell-disabled'));
+    cy.getRowHeaderCell(0, '_checked').should('have.class', cls('cell-disabled'));
     cy.getColumnCells('age').should('have.class', cls('cell-disabled'));
     cy.getRow(2).each(($el, index) => {
       if (!index) {

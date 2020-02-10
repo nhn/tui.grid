@@ -327,7 +327,7 @@ it('should update row number after sorting', () => {
 
   cy.gridInstance().invoke('sort', 'alphabetA', true);
 
-  cy.getNumberRowHeaderCells().each(($el, idx) => {
+  cy.getRowHeaderCells('_number').each(($el, idx) => {
     cy.wrap($el).should('have.text', `${idx + 1}`);
   });
 });

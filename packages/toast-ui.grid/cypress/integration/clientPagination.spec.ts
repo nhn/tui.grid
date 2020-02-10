@@ -1,9 +1,9 @@
 import { data } from '../../samples/pagination';
 import { OptRow } from '@/types';
-import { deepCopyArray } from '@/helper/common';
 
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;
+const ROW_HEIGHT = 40;
 
 const columns = [
   { name: 'deliveryType' },
@@ -21,7 +21,7 @@ const appendedData = {
 
 function createGrid(newData?: OptRow[]) {
   cy.createGrid({
-    data: deepCopyArray(newData || data.slice(0, 80)),
+    data: newData || data.slice(0, 80),
     pageOptions: {
       useClient: true,
       perPage: PER_PAGE_COUNT
@@ -33,7 +33,7 @@ function createGrid(newData?: OptRow[]) {
 
 function createGridWithScrollType(newData?: OptRow[]) {
   cy.createGrid({
-    data: deepCopyArray(newData || data.slice(0, 200)),
+    data: newData || data.slice(0, 200),
     bodyHeight: 300,
     pageOptions: {
       useClient: true,
@@ -187,16 +187,15 @@ describe('type: scroll', () => {
 
     cy.getByCls('body-container')
       .invoke('height')
-      .should('eq', 2001);
+      .should('eq', SCROLL_PER_PAGE_COUNT * ROW_HEIGHT + 1);
 
     // scroll at the bottommost
     cy.gridInstance().invoke('focusAt', 49, 2);
 
-    setTimeout(() => {
-      cy.getByCls('body-container')
-        .invoke('height')
-        .should('eq', 4001);
-    });
+    cy.getRowHeaderCell(50, '_number').should('have.text', '51');
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', SCROLL_PER_PAGE_COUNT * ROW_HEIGHT * 2 + 1);
   });
 
   it('should not change page data after calling setPerPage API', () => {
