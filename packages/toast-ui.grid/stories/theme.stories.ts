@@ -1,10 +1,15 @@
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 import { OptColumn } from '../src/types';
+import { cls } from '../src/helper/dom';
 
 export default {
   title: 'Theme'
 };
+
+function getRsideBody(el) {
+  return el.querySelector(`.${cls('rside-area')} .${cls('body-area')}`);
+}
 
 function createGridWithTheme(options) {
   const { preset, extOptions } = options;
@@ -95,12 +100,18 @@ export const cleanTheme = () => {
 };
 
 export const rowHoverWithCustomTheme = () => {
-  const { el } = createGridWithTheme({
+  const { el, grid } = createGridWithTheme({
     preset: 'clean',
     extOptions: {
       row: { hover: { background: '#0ed4ff' }, even: { background: '#feffab' } },
       cell: { oddRow: { background: '#fefff3' } }
     }
+  });
+  grid.setSelectionRange({ start: [1, 1], end: [3, 2] });
+
+  setTimeout(() => {
+    const row: HTMLElement = getRsideBody(el).querySelector(`.${cls('row-even')}`);
+    row.className = `${cls('row-even')} ${cls('row-hover')}`;
   });
 
   return el;
@@ -110,5 +121,6 @@ const rowHoverWithCustomThemeNote = `
 ## Custom Theme
 
 - You can customize the theme or specify a row hover style by \`extOptions\`.
+- The row hover style has priority than selection style
 `;
 rowHoverWithCustomTheme.story = { parameters: { notes: rowHoverWithCustomThemeNote } };
