@@ -208,7 +208,7 @@ export function rowOdd(options: OptBasicCellStyle): string {
 }
 
 export function rowHover(options: OptRowHoverStyle): string {
-  return createNestedClassRule('.', ['row-hover', 'cell'])
+  return create('.tui-grid-row-hover>.tui-grid-cell')
     .bg(options.background)
     .build();
 }

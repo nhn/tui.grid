@@ -1,9 +1,9 @@
 import { h, Component } from 'preact';
-import { ViewRow, ColumnInfo } from '../store/types';
+import { ViewRow, ColumnInfo, RowKey } from '../store/types';
 import { connect } from './hoc';
 import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
-import { debounce } from '../helper/common';
+import { debounce, isNull } from '../helper/common';
 import { RowSpanCell } from './rowSpanCell';
 
 interface OwnProps {
@@ -16,6 +16,7 @@ interface StoreProps {
   rowHeight: number;
   autoRowHeight: boolean;
   cellBorderWidth: number;
+  hoveredRowKey: RowKey | null;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -40,14 +41,18 @@ class BodyRowComp extends Component<Props> {
     dispatch('refreshRowHeight', rowIndex, rowHeight);
   }, ROW_HEIGHT_DEBOUNCE_TIME);
 
-  public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight }: Props) {
+  public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight, hoveredRowKey }: Props) {
     const isOddRow = rowIndex % 2 === 0;
 
     return (
       rowHeight > 0 && (
         <tr
           style={{ height: rowHeight }}
-          class={cls([isOddRow, 'row-odd'], [!isOddRow, 'row-even'], [!rowHeight, 'row-hidden'])}
+          class={cls(
+            [isOddRow, 'row-odd'],
+            [!isOddRow, 'row-even'],
+            [!isNull(hoveredRowKey) && hoveredRowKey === viewRow.rowKey, 'row-hover']
+          )}
         >
           {columns.map(columnInfo => {
             // Pass row object directly instead of passing value of it only,
@@ -68,8 +73,11 @@ class BodyRowComp extends Component<Props> {
   }
 }
 
-export const BodyRow = connect<StoreProps, OwnProps>(({ rowCoords, dimension }, { rowIndex }) => ({
-  rowHeight: rowCoords.heights[rowIndex],
-  autoRowHeight: dimension.autoRowHeight,
-  cellBorderWidth: dimension.cellBorderWidth
-}))(BodyRowComp);
+export const BodyRow = connect<StoreProps, OwnProps>(
+  ({ rowCoords, dimension, renderState }, { rowIndex }) => ({
+    rowHeight: rowCoords.heights[rowIndex],
+    autoRowHeight: dimension.autoRowHeight,
+    cellBorderWidth: dimension.cellBorderWidth,
+    hoveredRowKey: renderState.hoveredRowKey
+  })
+)(BodyRowComp);
