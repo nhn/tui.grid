@@ -111,7 +111,7 @@ describe('should check the validation of cell - validatorFn', () => {
     cy.getCell(0, 'name').should('have.class', cls('cell-invalid'));
   });
 
-  it.only('`value`, `rowKey`, `columnName` should be passed as the parameters of validatorFn ', () => {
+  it('`value`, `row`, `columnName` should be passed as the parameters of validatorFn ', () => {
     const callback = cy.stub();
 
     cy.createGrid({
@@ -127,7 +127,7 @@ describe('should check the validation of cell - validatorFn', () => {
     });
 
     cy.wrap(callback).should('be.calledWithMatch', 'note', { rowKey: 0, name: 'note' }, 'name');
-    cy.wrap(callback).should('be.calledWithMatch', 'pen', 1, { rowKey: 1, name: 'pen' }, 'name');
+    cy.wrap(callback).should('be.calledWithMatch', 'pen', { rowKey: 1, name: 'pen' }, 'name');
   });
 });
 

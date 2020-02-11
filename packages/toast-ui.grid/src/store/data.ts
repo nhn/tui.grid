@@ -144,20 +144,22 @@ function getValidationCode(
   }
 
   const { required, dataType, min, max, regExp, validatorFn } = validation;
-  const originRow = omit(
-    getOriginObject(row as Observable<Row>),
-    'sortKey',
-    'uniqueKey',
-    '_relationListItemMap',
-    '_disabledPriority'
-  ) as Row;
 
   if (required && isBlank(value)) {
     invalidStates.push('REQUIRED');
   }
 
-  if (validatorFn && !validatorFn(value, originRow, columnName)) {
-    invalidStates.push('VALIDATOR_FN');
+  if (isFunction(validatorFn)) {
+    const originRow = omit(
+      getOriginObject(row as Observable<Row>),
+      'sortKey',
+      'uniqueKey',
+      '_relationListItemMap',
+      '_disabledPriority'
+    ) as Row;
+    if (!validatorFn(value, originRow, columnName)) {
+      invalidStates.push('VALIDATOR_FN');
+    }
   }
 
   if (dataType === 'string' && !isString(value)) {
