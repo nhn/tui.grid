@@ -10,19 +10,27 @@ export default {
 };
 
 class ColorPickerEditor implements CellEditor {
-  el: HTMLInputElement;
+  el: HTMLDivElement;
+
+  input: HTMLInputElement;
 
   public constructor(props: CellEditorProps) {
-    const el = document.createElement('input');
+    const el = document.createElement('div');
+    const input = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
 
-    el.type = 'color';
-    el.value = String(props.value);
+    el.style.backgroundColor = '#fff';
 
-    el.addEventListener('change', () => {
-      grid.setValue(rowKey, columnInfo.name, Number(el.value));
+    input.type = 'color';
+    input.value = String(props.value);
+
+    input.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(input.value));
     });
 
+    el.appendChild(input);
+
+    this.input = input;
     this.el = el;
   }
 
@@ -31,7 +39,11 @@ class ColorPickerEditor implements CellEditor {
   }
 
   getValue() {
-    return String(this.el.value);
+    return String(this.input.value);
+  }
+
+  mounted() {
+    this.input.focus();
   }
 }
 
@@ -41,7 +53,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '4',
-    release: '2016.03.26',
+    release: '2016-03-26',
     albumColor: '#F294A4'
   },
   {
@@ -49,7 +61,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '5',
-    release: '2014.06.24',
+    release: '2014-06-24',
     albumColor: '#ED6510'
   },
   {
@@ -57,7 +69,7 @@ const data = [
     typeCode: '3',
     genreCode: '1,2',
     grade: '2',
-    release: '2011.08.08',
+    release: '2011-08-08',
     albumColor: '#1286DB'
   }
 ];
@@ -160,7 +172,9 @@ text.story = { parameters: { notes: textNote } };
 export const checkbox = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 1);
+  setTimeout(() => {
+    grid.startEditingAt(1, 1);
+  });
 
   return el;
 };
@@ -177,7 +191,9 @@ checkbox.story = { parameters: { notes: checkboxNote } };
 export const radio = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 2);
+  setTimeout(() => {
+    grid.startEditingAt(1, 2);
+  });
 
   return el;
 };
@@ -193,8 +209,9 @@ radio.story = { parameters: { notes: radioNote } };
 
 export const select = () => {
   const { el, grid } = createGrid();
-
-  grid.startEditingAt(1, 3);
+  setTimeout(() => {
+    grid.startEditingAt(1, 3);
+  });
 
   return el;
 };
@@ -211,7 +228,9 @@ select.story = { parameters: { notes: selectNote } };
 export const datepicker = () => {
   const { el, grid } = createGrid();
 
-  grid.startEditingAt(1, 4);
+  setTimeout(() => {
+    grid.startEditingAt(1, 4);
+  });
 
   return el;
 };

@@ -73,6 +73,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "@toast-ui/select-box": "^1.0.0",
     "preact": "^8.4.2",
     "tslib": "^1.10.0",
     "tui-date-picker": "^3.3.3",
