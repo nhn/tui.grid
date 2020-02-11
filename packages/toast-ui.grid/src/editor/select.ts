@@ -1,4 +1,5 @@
 import SelectBox from '@toast-ui/select-box';
+import '@toast-ui/select-box/dist/toastui-select-box.css';
 import { CellEditor, CellEditorProps } from './types';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
