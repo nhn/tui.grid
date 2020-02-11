@@ -390,7 +390,8 @@ describe('pagination(infinite scroll) + sort', () => {
     assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     assertSortedData(1, 'deliveryType', false);
 
-    cy.gridInstance().invoke('focusAt', 49, 1);
+    // scroll at the bottommost
+    cy.focusToBottomCell(45, 'orderName');
 
     assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     assertSortedData(2, 'deliveryType', false);
@@ -399,7 +400,8 @@ describe('pagination(infinite scroll) + sort', () => {
   it('should change the row number after sorting', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
 
-    cy.gridInstance().invoke('focus', 46, 'orderName');
+    // scroll at the bottommost
+    cy.focusToBottomCell(46, 'orderName');
 
     cy.gridInstance()
       .invoke('getData')
@@ -412,8 +414,10 @@ describe('pagination(infinite scroll) + sort', () => {
 
   it('should unsort the data properly', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
-    cy.gridInstance().invoke('focusAt', 49, 1);
-    cy.wait(100);
+
+    // scroll at the bottommost
+    cy.focusToBottomCell(49, 'orderName');
+
     cy.gridInstance().invoke('unsort', 'deliveryType');
 
     assertHaveNotSortingBtnClass('deliveryType', 'btn-sorting-up');
@@ -433,7 +437,8 @@ describe('pagination(infinite scroll) + filter', () => {
     assertActiveFilterBtn();
     assertColumnData('deliveryType', 'Parcel');
 
-    cy.gridInstance().invoke('focus', 46, 'orderName');
+    // scroll at the bottommost
+    cy.focusToBottomCell(46, 'orderName');
 
     assertActiveFilterBtn();
     assertColumnData('deliveryType', 'Parcel');
@@ -442,7 +447,8 @@ describe('pagination(infinite scroll) + filter', () => {
   it('should maintain the row number after filtering', () => {
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
 
-    cy.gridInstance().invoke('focus', 46, 'orderName');
+    // scroll at the bottommost
+    cy.focusToBottomCell(46, 'orderName');
 
     cy.gridInstance()
       .invoke('getData')
@@ -466,7 +472,8 @@ describe('pagination(infinite scroll) + filter + sort', () => {
     assertSortedData(1, 'orderName', true);
     assertColumnData('deliveryType', 'Visit');
 
-    cy.gridInstance().invoke('focus', 49, 'orderName');
+    // scroll at the bottommost
+    cy.focusToBottomCell(49, 'orderName');
 
     assertSortedData(2, 'orderName', true);
     assertColumnData('deliveryType', 'Visit');

@@ -36,8 +36,7 @@ function scrollToBottom() {
   // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 300);
 
   // to move scroll position
-  cy.gridInstance().invoke('focus', 19, 'name');
-  cy.wait(10);
+  cy.focusToBottomCell(19, 'name');
 }
 
 before(() => {

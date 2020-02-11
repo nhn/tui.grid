@@ -524,7 +524,7 @@ describe('type: scroll', () => {
       .should('eq', PER_PAGE * ROW_HEIGHT + 1);
 
     // scroll at the bottommost
-    cy.gridInstance().invoke('focus', 9, 'name');
+    cy.focusToBottomCell(9, 'name');
 
     cy.getCell(10, 'id').should('have.text', '10');
     cy.getByCls('body-container')

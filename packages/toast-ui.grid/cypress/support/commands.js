@@ -110,3 +110,8 @@ Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
 });
 
 Cypress.Commands.add('getBodyCells', () => cy.get(`td.${cls('cell')}`));
+
+Cypress.Commands.add('focusToBottomCell', (rowKey, columnName) => {
+  cy.gridInstance().invoke('focus', rowKey, columnName);
+  cy.wait(100);
+});

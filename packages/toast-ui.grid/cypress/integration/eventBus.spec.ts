@@ -194,7 +194,7 @@ it('scrollEnd', () => {
   cy.gridInstance().invoke('resetData', newData);
 
   // scroll at the bottommost
-  cy.gridInstance().invoke('focus', 19, 'age');
+  cy.focusToBottomCell(19, 'age');
 
   cy.wrap(callback).should('be.calledOnce');
 });

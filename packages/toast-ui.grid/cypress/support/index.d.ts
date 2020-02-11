@@ -41,6 +41,8 @@ declare namespace Cypress {
     dragColumnResizeHandle(index: number, distance: number): Chainable<any>;
 
     getBodyCells(): Chainable<any>;
+
+    focusToBottomCell(rowKey: RowKey, columnName: string): Chainable<any>;
   }
 }
 
