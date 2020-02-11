@@ -1,8 +1,27 @@
-import { Store, RowKey } from '../store/types';
+import { Store, RowKey, PagePosition } from '../store/types';
 import { notify } from '../helper/observable';
+import { findRowIndexByPosition } from '../query/mouse';
 
 export function setHoveredRowKey({ renderState }: Store, rowKey: RowKey | null) {
   renderState.hoveredRowKey = rowKey;
+}
+
+export function setHoveredRowKeyByPosition(store: Store, viewInfo: PagePosition) {
+  const {
+    renderState: { hoveredRowKey },
+    data: { filteredRawData },
+    viewport: { scrollLeft, scrollTop }
+  } = store;
+  const rowIndex = findRowIndexByPosition(store, {
+    ...viewInfo,
+    scrollLeft,
+    scrollTop
+  });
+  const rowKey = filteredRawData[rowIndex].rowKey;
+
+  if (hoveredRowKey !== rowKey) {
+    setHoveredRowKey(store, rowKey);
+  }
 }
 
 export function setCellHeight(
