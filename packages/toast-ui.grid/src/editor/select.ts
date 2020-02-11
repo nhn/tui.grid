@@ -5,8 +5,6 @@ import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { CellValue, ListItem } from '../store/types';
 import { getKeyStrokeString } from '../helper/keyboard';
-import Grid from '../grid';
-import { includes } from '../helper/common';
 
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -15,14 +13,10 @@ export class SelectEditor implements CellEditor {
 
   private selectBoxEl!: SelectBox;
 
-  private grid: Grid;
-
-  private editFinish = false;
-
   private selectFinish = false;
 
   public constructor(props: CellEditorProps) {
-    const { width, value, grid } = props;
+    const { width, value } = props;
     const el = document.createElement('div');
     el.className = cls('editor-layer-inner');
 
@@ -33,31 +27,21 @@ export class SelectEditor implements CellEditor {
 
     this.wrapper = wrapper;
     this.wrapper.addEventListener('keydown', this.onKeydown);
-    this.wrapper.addEventListener('click', this.setEditFinish);
     this.el = el;
-    this.grid = grid;
   }
 
   private onKeydown = (ev: KeyboardEvent) => {
     const keyName = getKeyStrokeString(ev);
 
-    if (keyName === 'enter') {
+    if (keyName === 'enter' && !this.selectFinish) {
       ev.stopPropagation();
-
-      if (this.editFinish) {
-        this.grid.finishEditing(true);
-        return;
-      }
-
-      this.setEditFinish();
-    } else if (includes(['up', 'down'], keyName)) {
-      this.selectFinish = false;
-      this.setEditFinish();
     }
   };
 
-  private setEditFinish = () => {
-    this.editFinish = this.selectFinish;
+  private setSelectFinish = (val: boolean) => {
+    setTimeout(() => {
+      this.selectFinish = val;
+    });
   };
 
   private createWrapper(listItems: ListItem[], width: number, value: CellValue) {
@@ -68,16 +52,20 @@ export class SelectEditor implements CellEditor {
     const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(wrapper, { data });
 
+    this.selectBoxEl.on('close', () => {
+      // https://github.com/nhn/toast-ui.select-box/issues/3
+      // @TODO: need to change after apply this issue
+      // @ts-ignore
+      this.selectBoxEl.input.focus();
+      this.setSelectFinish(true);
+    });
+
+    this.selectBoxEl.on('open', () => {
+      this.setSelectFinish(false);
+    });
+
     if (value) {
       this.selectBoxEl.select(value as string | number);
-
-      this.selectBoxEl.on('close', () => {
-        // https://github.com/nhn/toast-ui.select-box/issues/3
-        // @TODO: need to change after apply this issue
-        // @ts-ignore
-        this.selectBoxEl.input.focus();
-        this.selectFinish = true;
-      });
     }
 
     return wrapper;
@@ -99,6 +87,5 @@ export class SelectEditor implements CellEditor {
   public beforeDestroy() {
     this.selectBoxEl.destroy();
     this.wrapper.removeEventListener('keydown', this.onKeydown);
-    this.wrapper.removeEventListener('click', this.setEditFinish);
   }
 }
