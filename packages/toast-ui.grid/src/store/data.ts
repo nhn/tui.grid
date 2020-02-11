@@ -42,7 +42,6 @@ import {
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
-import { cls } from '../helper/dom';
 import { findIndexByRowKey, isScrollPagination } from '../query/data';
 
 interface DataOption {
