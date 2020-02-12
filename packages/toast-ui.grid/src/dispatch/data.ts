@@ -179,10 +179,7 @@ export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
     if (isScrollPagination(data)) {
       delete pageOptions.page;
     }
-    data.pageOptions = {
-      ...orgPageOptions,
-      ...pageOptions
-    };
+    data.pageOptions = { ...orgPageOptions, ...pageOptions };
   }
 }
 
@@ -954,7 +951,7 @@ export function scrollToNext(store: Store) {
   }
 }
 
-export function addNextData(store: Store, inputData: OptRow[]) {
+export function appendRows(store: Store, inputData: OptRow[]) {
   const { data, column } = store;
 
   if (!column.keyColumnName) {

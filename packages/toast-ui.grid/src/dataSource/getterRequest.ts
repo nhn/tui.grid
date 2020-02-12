@@ -25,16 +25,13 @@ function handleSuccessReadData(config: Config, response: Response) {
   dispatch('changeSortState', sortColumn || 'sortKey', sortAscending, true);
 
   if (isScrollPagination(store.data)) {
-    dispatch('addNextData', contents);
+    dispatch('appendRows', contents);
   } else {
     dispatch('resetData', contents);
   }
 
   if (pagination) {
-    dispatch('updatePageOptions', {
-      ...pagination,
-      perPage
-    });
+    dispatch('updatePageOptions', { ...pagination, perPage });
   }
 }
 

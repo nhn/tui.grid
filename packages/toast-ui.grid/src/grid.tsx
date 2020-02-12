@@ -1617,10 +1617,10 @@ export default class Grid {
   }
 
   /**
-   * add rows.
+   * append rows.
    * @param {Array} data - A list of new rows
    */
-  public addData(data: OptRow[]) {
-    this.dispatch('addNextData', data);
+  public appendRows(data: OptRow[]) {
+    this.dispatch('appendRows', data);
   }
 }
