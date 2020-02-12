@@ -82,6 +82,15 @@ describe('setColumns()', () => {
 
     cy.getByCls('layer-selection').should('not.be.visible');
   });
+
+  it('After setColumn() not observable column, the value is properly reflected at setValue()', () => {
+    const columns = [{ name: 'newColumn', defaultValue: 100 }];
+
+    setColumns(columns);
+    cy.gridInstance().invoke('setValue', 0, 'newColumn', 1000);
+
+    cy.getRsideBody().should('have.cellData', [['1000'], ['100']]);
+  });
 });
 
 describe('API', () => {
@@ -195,7 +204,7 @@ describe('escapeHTML', () => {
 });
 
 describe('defaultValue', () => {
-  it('if the vlaue is empty, defaultValue should be applied', () => {
+  it('if the value is empty, defaultValue should be applied', () => {
     const data = [{ name: 'Lee', age: 20 }, {}];
     const columns = [
       {
