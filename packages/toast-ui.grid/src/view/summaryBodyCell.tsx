@@ -19,10 +19,7 @@ type Props = OwnProps & StoreProps & DispatchProps;
 
 export class SummaryBodyCellComp extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
-    if (shallowEqual(nextProps, this.props)) {
-      return false;
-    }
-    return true;
+    return !shallowEqual(nextProps, this.props);
   }
 
   private getTemplate = () => {
