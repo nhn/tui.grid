@@ -21,7 +21,8 @@ import {
   includes,
   isEmpty,
   someProp,
-  findPropIndex
+  findPropIndex,
+  shallowEqual
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import {
@@ -173,13 +174,22 @@ export function updateHeights(store: Store) {
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
 }
 
-export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
+export function updatePageOptions(
+  { data }: Store,
+  pageOptions: PageOptions,
+  forceUpdatePage = false
+) {
   const { pageOptions: orgPageOptions } = data;
   if (!isEmpty(orgPageOptions)) {
-    if (isScrollPagination(data)) {
+    // if infinite scrolling is applied, page number should be not reset to know the last loaded page
+    if (!forceUpdatePage && isScrollPagination(data)) {
       delete pageOptions.page;
     }
-    data.pageOptions = { ...orgPageOptions, ...pageOptions };
+    const newPageOptions = { ...orgPageOptions, ...pageOptions };
+
+    if (!shallowEqual(newPageOptions, data.pageOptions)) {
+      data.pageOptions = newPageOptions;
+    }
   }
 }
 
@@ -558,10 +568,14 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
       modifiedLastPage += 1;
     }
 
-    updatePageOptions(store, {
-      totalCount: totalCount - 1,
-      page: modifiedLastPage < page ? modifiedLastPage : page
-    });
+    updatePageOptions(
+      store,
+      {
+        totalCount: totalCount - 1,
+        page: modifiedLastPage < page ? modifiedLastPage : page
+      },
+      true
+    );
   }
 
   viewData.splice(rowIdx, 1);
@@ -600,7 +614,7 @@ export function clearData(store: Store) {
   rowCoords.heights = [];
   data.viewData = [];
   data.rawData = [];
-  updatePageOptions(store, { totalCount: 0, page: 1 });
+  updatePageOptions(store, { totalCount: 0, page: 1 }, true);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
@@ -621,7 +635,7 @@ export function resetData(store: Store, inputData: OptRow[]) {
   }
 
   initFilter(store);
-  updatePageOptions(store, { totalCount: rawData.length, page: 1 });
+  updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;
   updateHeights(store);
