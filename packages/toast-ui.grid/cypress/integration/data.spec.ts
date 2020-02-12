@@ -569,11 +569,11 @@ it('row._attributes should be maintained on calling resetData', () => {
     .should('be.checked');
 });
 
-describe('addData', () => {
-  it('should add data to existing data', () => {
+describe('appendRows', () => {
+  it('should append rows to existing data', () => {
     createGrid();
 
-    cy.gridInstance().invoke('addData', [
+    cy.gridInstance().invoke('appendRows', [
       { name: 'Han', age: 21 },
       { name: 'Ryu', age: 25 }
     ]);
@@ -586,11 +586,11 @@ describe('addData', () => {
     ]);
   });
 
-  it('should maintain the sort state after calling addData()', () => {
+  it('should maintain the sort state after calling appendRows()', () => {
     createGrid();
 
     cy.gridInstance().invoke('sort', 'name', true);
-    cy.gridInstance().invoke('addData', [
+    cy.gridInstance().invoke('appendRows', [
       { name: 'Han', age: 21 },
       { name: 'Ryu', age: 25 }
     ]);
@@ -603,11 +603,11 @@ describe('addData', () => {
     ]);
   });
 
-  it('should maintain the filter state after calling addData()', () => {
+  it('should maintain the filter state after calling appendRows()', () => {
     createGrid();
 
     cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
-    cy.gridInstance().invoke('addData', [
+    cy.gridInstance().invoke('appendRows', [
       { name: 'Lee', age: 30 },
       { name: 'Lee', age: 40 }
     ]);

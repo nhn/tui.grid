@@ -13,8 +13,7 @@ import {
 } from './types';
 import { Observable, observable } from '../helper/observable';
 import { getSortedRange } from '../query/selection';
-import { isEmpty } from '../helper/common';
-import { isScrollPagination, isClientPagination } from '../query/data';
+import { isClientPagination } from '../query/data';
 
 type ColumnWidths = { [key in Side]: number[] };
 
