@@ -16,7 +16,7 @@ import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
 import { addColumnSummaryValues } from './summary';
-import { isObservable, notify } from '../helper/observable';
+import { isObservable, notify, partialObservable } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
@@ -134,10 +134,20 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
       viewRow.__unobserveFns__.forEach(fn => fn());
     }
   });
+
   data.rawData = data.rawData.map(row => {
     row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
+
+    columnInfos.forEach(({ name, defaultValue }) => {
+      if (!row[name]) {
+        partialObservable(row, name);
+      }
+      row[name] = row[name] || defaultValue;
+    });
+
     return row;
   });
+
   data.viewData = data.rawData.map(row =>
     isObservable(row)
       ? createViewRow(row, columnMapWithRelation, data.rawData, treeColumnName, treeIcon)

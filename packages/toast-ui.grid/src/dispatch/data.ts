@@ -809,14 +809,18 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 }
 
-const fillData = (allColumns: ColumnInfo[]) =>  <T>(row: T) => allColumns.reduce((ret, column) => {
-  // @ts-ignore
-  ret[column.name] = ret[column.name] || column.defaultValue;
-  return ret;
-}, row);
+export function fillMissingData(allColumns: ColumnInfo[], rawData: Row[]) {
+  allColumns.forEach(({ name, defaultValue }) => {
+    rawData.forEach(row => {
+      row[name] = row[name] || defaultValue;
+    });
+  });
+}
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
+  fillMissingData(column.allColumns, data.rawData);
+
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
   const { rawData, viewData } = createData({ data: rows, column, lazyObservable: false, prevRows });
@@ -824,7 +828,7 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
     data.viewData.splice(targetIndex, 1, viewData[index]);
-    data.rawData.splice(targetIndex, 1, fillData(column.allColumns)(rawData[index]));
+    data.rawData.splice(targetIndex, 1, rawData[index]);
   }
 }
 
@@ -837,6 +841,7 @@ function changeToObservableTreeData(
   const { rows } = originData;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues } = column;
+  fillMissingData(column.allColumns, data.rawData);
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
