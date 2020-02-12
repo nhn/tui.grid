@@ -159,7 +159,7 @@
 }
 .tui-grid-layer-editing {
   position: absolute;
-  background: #fff;
+  background: transparent;
   z-index: 15;
   padding: 0 5px;
   border-style: solid;
