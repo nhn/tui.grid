@@ -14,6 +14,7 @@ import {
 import { Observable, observable } from '../helper/observable';
 import { getSortedRange } from '../query/selection';
 import { isEmpty } from '../helper/common';
+import { isScrollPagination, isClientPagination } from '../query/data';
 
 type ColumnWidths = { [key in Side]: number[] };
 
@@ -189,7 +190,7 @@ export function create({
       const { pageOptions } = data;
       const { row, column } = this.range;
 
-      if (!isEmpty(pageOptions)) {
+      if (isClientPagination(data)) {
         const { perPage, page } = pageOptions;
         const prevPageRowCount = perPage * (page - 1);
         return {

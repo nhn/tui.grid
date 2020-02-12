@@ -2,6 +2,7 @@ import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } fro
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 import { getMaxRowSpanCount, isRowSpanEnabled } from '../query/rowSpan';
+import { isClientPagination } from '../query/data';
 
 interface ViewportOption {
   data: Data;
@@ -30,9 +31,9 @@ function calculateRange(
 
   let start = findIndexByPosition(offsets, scrollPos);
   let end = findIndexByPosition(offsets, scrollPos + totalSize) + 1;
-  const { filteredRawData, sortState, pageOptions, pageRowRange } = data;
+  const { filteredRawData, sortState, pageRowRange } = data;
 
-  if (rowCalculation && pageOptions.useClient && pageOptions.type === 'pagination') {
+  if (rowCalculation && isClientPagination(data)) {
     [start, end] = pageRowRange;
   }
 

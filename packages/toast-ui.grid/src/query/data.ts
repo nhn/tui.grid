@@ -17,7 +17,8 @@ import {
   mapProp,
   isNumber,
   removeArrayItem,
-  uniqByProp
+  uniqByProp,
+  isEmpty
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -240,4 +241,12 @@ export function isScrollPagination({ pageOptions }: Data, useClient?: boolean) {
     return pageOptions.type === 'scroll';
   }
   return useClient && pageOptions.type === 'scroll';
+}
+
+export function isClientPagination({ pageOptions }: Data) {
+  return !isEmpty(pageOptions) && pageOptions.useClient && pageOptions.type === 'pagination';
+}
+
+export function getRowIndexWithPage(data: Data, rowIndex: number) {
+  return isClientPagination(data) ? rowIndex % data.pageOptions.perPage : rowIndex;
 }
