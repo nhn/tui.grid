@@ -23,12 +23,7 @@ function handleSuccessReadData(config: Config, response: Response) {
   const { contents, pagination } = responseData;
 
   dispatch('changeSortState', sortColumn || 'sortKey', sortAscending, true);
-
-  if (isScrollPagination(store.data)) {
-    dispatch('appendRows', contents);
-  } else {
-    dispatch('resetData', contents);
-  }
+  dispatch(isScrollPagination(store.data) ? 'appendRows' : 'resetData', contents);
 
   if (pagination) {
     dispatch('updatePageOptions', { ...pagination, perPage });
