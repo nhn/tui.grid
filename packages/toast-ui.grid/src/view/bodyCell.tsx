@@ -56,10 +56,21 @@ export class BodyCellComp extends Component<Props> {
     this.calculateRowHeight(this.props);
   }
 
-  public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
-      const { grid, rowKey, renderData, columnInfo } = nextProps;
+  public shouldComponentUpdate(nextProps: Props) {
+    const { viewRow, renderData } = nextProps;
+    const { viewRow: prevViewRow, renderData: prevRenderData } = this.props;
+    return prevRenderData !== renderData || viewRow.uniqueKey !== prevViewRow.uniqueKey;
+  }
 
+  public componentWillReceiveProps(nextProps: Props) {
+    const { viewRow, renderData, columnInfo, rowKey, grid } = nextProps;
+    const { viewRow: prevViewRow, renderData: prevRenderData } = this.props;
+
+    if (
+      (prevRenderData !== renderData || viewRow.uniqueKey !== prevViewRow.uniqueKey) &&
+      this.renderer &&
+      isFunction(this.renderer.render)
+    ) {
       this.renderer.render({
         grid,
         rowKey,
