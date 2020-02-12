@@ -21,7 +21,8 @@ import {
   isEmpty,
   someProp,
   findPropIndex,
-  shallowEqual
+  shallowEqual,
+  isUndefined
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import {
@@ -812,7 +813,9 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
 export function fillMissingData(allColumns: ColumnInfo[], rawData: Row[]) {
   allColumns.forEach(({ name, defaultValue }) => {
     rawData.forEach(row => {
-      row[name] = row[name] || defaultValue;
+      if (isUndefined(row[name])) {
+        row[name] = defaultValue;
+      }
     });
   });
 }

@@ -20,7 +20,7 @@ import { isObservable, notify, partialObservable } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
-import { findProp } from '../helper/common';
+import { findProp, isUndefined } from '../helper/common';
 import { initScrollPosition } from './viewport';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
@@ -139,10 +139,10 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
     row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
     columnInfos.forEach(({ name, defaultValue }) => {
-      if (!row[name]) {
+      if (isUndefined(row[name])) {
         partialObservable(row, name);
+        row[name] = row[name] || defaultValue;
       }
-      row[name] = row[name] || defaultValue;
     });
 
     return row;
