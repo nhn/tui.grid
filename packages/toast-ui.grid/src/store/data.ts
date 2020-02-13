@@ -22,7 +22,7 @@ import {
   RowSpan,
   RawRowOptions
 } from './types';
-import { observable, observe, Observable } from '../helper/observable';
+import { observable, observe, Observable, getOriginObject } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import { OptRow, RowSpanAttributeValue } from '../types';
 import {
@@ -37,7 +37,8 @@ import {
   isNumber,
   isFunction,
   convertToNumber,
-  assign
+  assign,
+  omit
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -130,7 +131,12 @@ function getRowHeaderValue(row: Row, columnName: string) {
   return '';
 }
 
-function getValidationCode(value: CellValue, validation?: Validation): ValidationType[] {
+function getValidationCode(
+  value: CellValue,
+  row: Row,
+  columnName: string,
+  validation?: Validation
+) {
   const invalidStates: ValidationType[] = [];
 
   if (!validation) {
@@ -143,8 +149,17 @@ function getValidationCode(value: CellValue, validation?: Validation): Validatio
     invalidStates.push('REQUIRED');
   }
 
-  if (validatorFn && !validatorFn(value)) {
-    invalidStates.push('VALIDATOR_FN');
+  if (isFunction(validatorFn)) {
+    const originRow = omit(
+      getOriginObject(row as Observable<Row>),
+      'sortKey',
+      'uniqueKey',
+      '_relationListItemMap',
+      '_disabledPriority'
+    ) as Row;
+    if (!validatorFn(value, originRow, columnName)) {
+      invalidStates.push('VALIDATOR_FN');
+    }
   }
 
   if (dataType === 'string' && !isString(value)) {
@@ -214,7 +229,7 @@ function createViewCell(
     editable: !!editor,
     className,
     disabled: cellDisabled,
-    invalidStates: getValidationCode(value, validation),
+    invalidStates: getValidationCode(value, row, name, validation),
     formattedValue: getFormattedValue(formatterProps, formatter, value, relationListItems),
     value
   };
