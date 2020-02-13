@@ -7,19 +7,12 @@ export function setHoveredRowKey({ renderState }: Store, rowKey: RowKey | null) 
 }
 
 export function setHoveredRowKeyByPosition(store: Store, viewInfo: PagePosition) {
-  const {
-    renderState: { hoveredRowKey },
-    data: { filteredRawData },
-    viewport: { scrollLeft, scrollTop }
-  } = store;
-  const rowIndex = findRowIndexByPosition(store, {
-    ...viewInfo,
-    scrollLeft,
-    scrollTop
-  });
-  const rowKey = filteredRawData[rowIndex].rowKey;
+  const { renderState, data, viewport } = store;
+  const { scrollLeft, scrollTop } = viewport;
+  const rowIndex = findRowIndexByPosition(store, { ...viewInfo, scrollLeft, scrollTop });
+  const { rowKey } = data.filteredRawData[rowIndex];
 
-  if (hoveredRowKey !== rowKey) {
+  if (renderState.hoveredRowKey !== rowKey) {
     setHoveredRowKey(store, rowKey);
   }
 }

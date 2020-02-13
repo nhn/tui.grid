@@ -213,8 +213,7 @@ function createViewCell(
   const columnDisabled = !!column.disabled;
   const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
-  const classList = [...classNameAttr.row, ...columnClassName];
-  const className = classList.join(' ');
+  const className = [...classNameAttr.row, ...columnClassName].join(' ');
 
   let cellDisabled = rowDisabled || columnDisabled;
   if (!isUndefined(row._disabledPriority[name])) {

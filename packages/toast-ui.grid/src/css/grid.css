@@ -159,7 +159,7 @@
 }
 .tui-grid-layer-editing {
   position: absolute;
-  background: transparent;
+  background: #fff;
   z-index: 15;
   padding: 0 5px;
   border-style: solid;
@@ -221,11 +221,6 @@
   padding: 0;
   overflow: hidden;
 }
-
-td[rowspan].tui-grid-cell {
-  background-color: inherit;
-}
-
 .tui-grid-cell .tui-grid-cell-content {
   padding: 12px 12px 11px;
   overflow: hidden;
