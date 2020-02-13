@@ -29,6 +29,7 @@ export class TextEditor implements CellEditor {
   }
 
   public mounted() {
+    this.el.parentElement!.style.backgroundColor = '#fff';
     this.el.select();
   }
 }
