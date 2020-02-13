@@ -187,7 +187,7 @@ export function updatePageOptions(
     }
     const newPageOptions = { ...orgPageOptions, ...pageOptions };
 
-    if (!shallowEqual(newPageOptions, data.pageOptions)) {
+    if (!shallowEqual(newPageOptions, orgPageOptions)) {
       data.pageOptions = newPageOptions;
     }
   }
