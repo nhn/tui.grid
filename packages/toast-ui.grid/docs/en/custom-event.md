@@ -104,6 +104,8 @@ grid.on('mousedown', function(ev) {
 - `editingStart`: When the editing of cell is started
 - `editingFinish`: When the editing of cell is finished
 - `sort` : when the data is sorted
+- `filter` : when the data is filtered
+- `scrollEnd` : when scroll at the bottommost
 
 There are other events that can be used when using `DataSource`.
 

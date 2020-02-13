@@ -104,6 +104,8 @@ grid.on('mousedown', (ev) => {
 - `editingStart`: 테이블에서 셀 편집을 시작한 경우
 - `editingFinish`: 테이블에서 셀 편집을 종료한 경우
 - `sort` : 데이터를 정렬했을 경우 
+- `filter` : 데이터를 필터링했을 경우 
+- `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.
 
