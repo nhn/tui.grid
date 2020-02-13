@@ -2,12 +2,38 @@
 
 일반적으로 TOAST UI Grid는 로컬 데이터를 이용한 프론트 엔드 환경에서 작동한다. 하지만 `dataSource`라고 하는 간단한 객체를 쓰면 원격 데이터도 이용할 수 있다. 이를 위해 아래의 예시처럼 `dataSource` 객체를 정의하고 `data` 옵션을 설정한다.
 
-```javascript
+## 데이터 소스 옵션
+
+`dataSource`에는 다음과 같은 속성들이 있다.
+
+- **initialRequest** `{boolean}` : 초기 데이터 조회를 위한 `readData` API 요청 여부
+- **api**
+    - **readData** `{object}` : 데이터 조회 요청을 위한 `url`과 `method`를 나타낸다.
+    - **createData** `{object}` : 데이터 추가 요청을 위한 `url`과 `method`를 나타낸다.
+    - **updateData** `{object}` : 데이터 수정 요청을 위한 `url`과 `method`를 나타낸다.
+    - **deleteData** `{object}` : 데이터 삭제 요청을 위한 `url`과 `method`를 나타낸다.
+    - **modifyData** `{object}` : 데이터 추가, 수정, 삭제 요청을 위한 `url`과 `method`를 나타낸다.
+- **hideLoadingBar** `{boolean}` : 로딩바를 숨김 여부를 설정한다.
+- **withCredentials** `{boolean}` : ajax 요청 시 적용될 `withCredentials` 옵션을 설정한다.    
+- **contentType** `{string}` : ajax 요청 시 공통으로 사용할 `content-type` header 를 설정한다.
+- **headers** `{object}` : ajax 요청 시 `content-type` 외에 공통으로 사용할 header 를 설정한다.
+- **serializer** `{function}` : ajax 요청 시 파라미터의 직렬화를 커스터마이징 하고 싶은 경우 사용한다.
+- **mimeType** `{string}` : MIME type을 재지정하고 싶은 경우 설정한다.
+
+각 속성의 자세한 내용은 아래에서 볼 수 있다.
+
+## 데이터 조회
+
+### 옵션 설정
+
+`dataSource`에서 데이터 조회를 위한 `api.readData` 옵션은 필수 옵션이며 아래처럼 간단하게 설정할 수 있다.
+
+```js
 import Grid from 'tui-grid';
 
 const dataSource = {
   api: {
-    readData: { url: '/api/read', method: 'GET' }
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
   }
 };
 
@@ -16,18 +42,12 @@ const grid = new Grid({
   data: dataSource
 });
 ```
+`grid` 인스턴스는 설정한 `url`과 `method`를 보고 요청을 보낸다. 만약 `initParams` 속성이 설정된 경우 해당 파라미터를 `query string`에 추가하여 요청한다.
 
-`dataSource`에는 다음과 같은 속성들이 있다.
+#### 참조
+`initParams` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
 
-- **initialRequest** `{boolean}` : 초기 데이터 조회를 위한 `readData` API 요청 여부
-- **api**
-    - **readData** `{object}` : 데이터 조회 요청을 위한 `URL`과 `method`를 나타낸다.
-
-이 옵션에 사용할 수 있는 또 다른 속성들은 [API 문서](http://nhn.github.io/tui.grid/latest/)의 `dataSource` 부분에서 살펴볼 수 있다.
-
-이것이 원격 서버에서 데이터를 가져오는데 필요한 전부이다. 이제 `grid` 인스턴스는 `URL`과 `method`로 요청을 보내고 응답 데이터를 분석하여 화면에 표시한다. `api.readData`는 `dataSource`옵션에서 반드시 설정해야 하는 속성으로, 페이지가 변경되어 데이터를 새롭게 불러와야 하거나 인스턴스가 초기화되었을 때 사용된다.
-
-## `readData`의 프로토콜
+### `readData`의 프로토콜
 
 `readData`의 프로토콜에 대해 살펴보자. Grid가 특정 `URL`과 `method`로 요청을 보냈을 때 문자열 매개변수는 다음과 같다.
 
@@ -77,21 +97,7 @@ page=1&perPage=10&sortColumn=XXX&sortAscending=true
 }
 ```
 
-## 페이지네이션
-
-원격 서버로 요청을 보내는 경우 대개 `Pagination`이 필요하다. `Pagination`은 다음과 같이 `pageOptions`로 정의할 수 있다.
-
-```javascript
-const grid = new Grid({
-  // ... another options
-  data: dataSource,
-  pageOptions: {
-    perPage: 10
-  }
-});
-```
-
-## 변경된 데이터 저장하기
+## 변경 데이터 저장
 
 원격 서버에 변경된 데이터를 저장하고 싶은 경우, 다음 API를 사용할 수 있다.
 
@@ -100,9 +106,9 @@ const grid = new Grid({
 - **deleteData** : 삭제된 데이터만 보내는 경우
 - **modifyData** : 추가, 수정, 삭제된 모든 데이터를 보내는 경우
 
-위 API를 사용하기 위해, 각 요청에 대한 `URL`과 `method`를 미리 등록해야한다.
+위 API를 사용하기 위해, 각 요청에 대한 `url`과 `method`를 미리 등록해야한다.
 
-```javascript
+```js
 const dataSource = {
   api: {
     readData: { url: '/api/readData', method: 'GET' },
@@ -122,7 +128,7 @@ const grid = new Grid({
 그 후 아래의 예시처럼 각 요청을 보내는 `request()` 메서드를 사용할 수 있다.
 (아래의 예시는 단순한 예시로, 더 많은 정보는 [API 문서](http://nhn.github.io/tui.grid/latest/)에서 찾을 수 있다.)
 
-```javascript
+```js
 grid.request('createData'); // 'GET' 방식으로 '/api/createData'에 요청을 보낸다.
 grid.request('updateData'); // 'PUT' 방식으로 '/api/updateData'에 요청을 보낸다.
 ```
@@ -153,23 +159,158 @@ updatedRows=[{"c1":"data1-1","c2":"data1-2,"rowKey":1},{"c1":"data2-1","c2":data
 }
 ```
 
+## ajax 옵션
+
+TOAST UI Grid는 원격 서버와 ajax 통신을 할 때 사용할 수 있는 다양한 옵션들을 제공한다. 옵션은 아래와 같다.
+
+- **withCredentials** : 쿠키 또는 `Authorization` 헤더와 같은 보안에 민감한 정보를 CORS 요청 시 함께 보내기 위한 옵션이다. 기본값은 `false` 이다.
+- **contentType** : ajax 요청 시 사용할 `content-type` header를 설정한다. 기본값은 `application/x-www-form-urlencoded`이며 JSON 타입을 사용하고 싶은 경우 `application/json` 로 설정한다.
+- **headers** : `content-type` 외에 요청에 필요한 header를 설정한다.
+- **serializer** : 파라미터의 직렬화를 커스터마이징 하고 싶은 경우 사용한다. 특정 문자의 인코딩 또는 직렬화 형태를 변경하고 싶은 경우 사용한다. 기본 직렬화 형식은 아래와 같다.
+  1. Array format
+      - basic
+        ```js
+        // 직렬화 전
+        { a: [1, 2, 3] } 
+        
+        // 직렬화 후
+        a[]=1&a[]=2&a[]=3
+        ```
+      - nested
+        ```js
+        // 직렬화 전
+        { a: [1, 2, [3]] }
+
+        // 직렬화 후
+        a[]=1&a[]=2&a[2][]=3
+        ```
+  2. Object format
+      - basic
+        ```js
+        // 직렬화 전
+        { a: { b: 1, c: 2 } }
+
+        // 직렬화 후
+        a[b]=1&a[c]=2
+        ```
+- **mimeType** : MIME type을 재지정하고 싶은 경우 설정한다.
+
+ajax 옵션을 공통으로 사용하고 싶은 경우에 아래 예제처럼 설정할 수 있다.
+
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/readData/', method: 'get' },
+    createData: { url: '/api/createData', method: 'POST' }
+  },
+  contentType: 'application/json',
+  headers: { 'x-custom-header': 'custom-header' },
+  serializer(params) {
+    return Qs.stringify(params);
+  }
+}
+
+const grid = new Grid({
+  // ... another options
+  data: dataSource
+});
+```
+API별로 다른 ajax 옵션을 사용하고 싶은 경우 개별로 지정할 수 있으며, 이 옵션은 공통으로 설정된 ajax 옵션보다 우선순위를 가진다.
+
+```js
+const dataSource = {
+  api: {
+    readData: { 
+      url: '/api/readData/',
+      method: 'get',
+      headers: { 'x-custom-header': 'custom-header' },
+      // 아래에 설정된 serializer 옵션이 공통 serializer 옵션보다 우선순위를 가진다.
+      serializer(params) {
+        return Qs.stringify(params);
+      }
+    }
+  },
+  serializer(params) {
+    return params
+  }
+}
+
+const grid = new Grid({
+  // ... another options
+  data: dataSource
+});
+```
+
+### 참조
+`withCredentials` 외에 모든 ajax 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
+
+## 페이지네이션
+
+원격 서버로 요청을 보내는 경우 대개 `Pagination`이 필요하다. `Pagination`은 다음과 같이 `pageOptions`로 정의할 수 있다.
+
+```js
+const grid = new Grid({
+  // ... another options
+  data: dataSource,
+  pageOptions: {
+    perPage: 10
+  }
+});
+```
+
 ## 콜백 사용하기
 
-Grid 인스턴스의 `on()` 메서드를 사용하여 처리 상태에 따른 콜백 함수를 등록할 수 있다. 사용 가능한 이벤트는 다음과 같다.
+Grid 인스턴스의 `on()` 메서드를 사용하여 처리 상태에 따른 콜백 함수를 등록할 수 있다. 사용 가능한 이벤트는 다음과 같다. 각 이벤트 핸들러 함수의 인자로 Grid 인스턴스와 `XMLHttpRequest` 인스턴스가 넘어간다.
 
-```javascript
-grid.on('beforeRequest', function(data) {
+```js
+grid.on('beforeRequest', function(ev) {
   // 요청을 보내기 전
-}).on('response', function(data) {
+}).on('response', function(ev) {
   // 성공/실패와 관계 없이 응답을 받았을 경우
-}).on('successResponse', function(data) {
+}).on('successResponse', function(ev) {
   // 결과가 true인 경우
-}).on('failResponse', function(data) {
+}).on('failResponse', function(ev) {
   // 결과가 false인 경우
-}).on('errorResponse', function(data) {
+}).on('errorResponse', function(ev) {
   // 오류가 발생한 경우
 });
 ```
+
+## RESTful URI
+
+API의 각 `url` 옵션을 RESTful하게 정의하고 싶은 경우, 아래 예제처럼 함수 형태로 `url` 옵션을 지정할 수 있다.
+
+```js
+let applicationId = 'id';
+
+const dataSource = {
+  api: {
+    readData: { url: () => `/${applicationId}/api/readData`, method: 'GET' },
+    deleteData: { url: () => `/${applicationId}/api/deleteData`, method: 'DELETE' }
+  }
+};
+```
+
+### 참조
+RESTful URI 설정은 `v4.9.0` 이상부터 사용할 수 있다.
+
+## 로딩바 숨김 옵션
+`hideLoadingBar`옵션을 설정하여 기본 로딩바를 숨길 수 있다. 기본값은 `true`이다.
+
+```js
+const grid = new Grid({
+  // ... another options
+  data: {
+    api: {
+      readData: { url: '/api/readData/', method: 'get' }
+    },
+    hideLoadingBar: true
+  }
+});
+```
+
+### 참조
+`hideLoadingBar` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ## 예제
 

@@ -167,6 +167,7 @@ function send(xhr: XMLHttpRequest, options: Options) {
    * Occurs before the http request is sent
    * @event Grid#beforeRequest
    * @type {module:event/gridEvent}
+   * @property {XMLHttpRequest} xhr - Current XMLHttpRequest instance
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('beforeRequest', gridEvent);
