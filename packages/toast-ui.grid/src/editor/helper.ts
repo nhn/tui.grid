@@ -1,7 +1,7 @@
 const INDENT = 5;
-const EDITOR_TOP_DIFF = 7;
-const SCROLL_BAR_WIDTH = 17;
-const SCROLL_BAR_HEIGHT = 17;
+const EDITOR_TOP_DIFF = 4;
+const SCROLL_BAR_Y_WIDTH = 17;
+const SCROLL_BAR_X_HEIGHT = 17;
 
 export function setWrapperPosition(
   el: HTMLElement,
@@ -11,8 +11,8 @@ export function setWrapperPosition(
 ) {
   const { innerHeight, innerWidth } = window;
   const { left, top, bottom } = el.getBoundingClientRect();
+  const wrapperTop = startBottom ? bottom : top + EDITOR_TOP_DIFF;
   const { height: wrapperHeight, width: wrapperWidth } = wrapper.getBoundingClientRect();
-  const wrapperTop = startBottom ? bottom : top - EDITOR_TOP_DIFF;
   let childElHeight = 0;
   let childElWidth = 0;
 
@@ -23,14 +23,15 @@ export function setWrapperPosition(
   }
 
   wrapper.style.top = `${
-    wrapperTop + wrapperHeight + childElHeight > innerHeight - SCROLL_BAR_WIDTH
-      ? innerHeight - wrapperHeight - childElHeight - INDENT - SCROLL_BAR_WIDTH
+    wrapperTop + wrapperHeight + childElHeight > innerHeight - SCROLL_BAR_X_HEIGHT
+      ? innerHeight - wrapperHeight - childElHeight - INDENT - SCROLL_BAR_X_HEIGHT
       : wrapperTop
   }px`;
 
+  const layerWidth = wrapperWidth || childElWidth;
   wrapper.style.left = `${
-    left + wrapperWidth + childElWidth > innerWidth - SCROLL_BAR_HEIGHT
-      ? innerWidth - wrapperWidth - childElWidth - INDENT - SCROLL_BAR_HEIGHT
+    left + layerWidth > innerWidth - SCROLL_BAR_Y_WIDTH
+      ? innerWidth - layerWidth - INDENT - SCROLL_BAR_Y_WIDTH
       : left
   }px`;
 }

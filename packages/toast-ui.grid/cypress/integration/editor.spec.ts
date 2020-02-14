@@ -310,7 +310,6 @@ it('should do synchronous rendering of the editing cell', () => {
       .and('calledWithMatch', { rowKey: 1, columnName: 'name' });
   });
 });
-
 // @TODO: should rewrite test case after modifying casting editing value
 // it('should maintain the type of value in case of finishing editing without any modification', () => {
 //   const data = [

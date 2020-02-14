@@ -73,7 +73,10 @@ export function scrollbar(options: OptScrollbarStyle): string {
   const { border, emptySpace } = options;
   const webkitScrollbarRules = createWebkitScrollbarRules(`.${cls('container')}`, options);
   const ieScrollbarRule = createIEScrollbarRule(`.${cls('container')}`, options);
-  const xInnerBorderRule = createClassRule('border-line-bottom').bg(border);
+  const xInnerBorderRule = createClassRule('border-line-bottom').add(
+    'border-bottom',
+    `1px solid ${border}`
+  );
   const xOuterBorderRule = createClassRule('content-area').border(border);
   const yInnerBorderRule = createClassRule('scrollbar-y-inner-border').bg(border);
   const yOuterBorderRule = createClassRule('scrollbar-y-outer-border').bg(border);
