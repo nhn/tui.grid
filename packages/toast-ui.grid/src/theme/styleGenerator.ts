@@ -44,15 +44,19 @@ function bgBorderRuleString(className: ClassNameType, options: OptPaginationStyl
 
 export function outline(options: OptTableOutlineStyle): string {
   const { border, showVerticalBorder } = options;
-  const borderTopRule = createClassRule('border-line-top').bg(border);
-  const borderBottomRule = createNestedClassRule(' .', ['no-scroll-x', 'border-line-bottom']).bg(
-    border
+  const borderTopRule = createClassRule('border-line-top').add('border-top', `1px solid ${border}`);
+  const borderBottomRule = createNestedClassRule(' .', ['no-scroll-x', 'border-line-bottom']).add(
+    'border-bottom',
+    `1px solid ${border}`
   );
   let rules = [borderTopRule, borderBottomRule];
   let borderLeftRule, borderRightRule;
   if (showVerticalBorder) {
-    borderLeftRule = createClassRule('border-line-left').bg(border);
-    borderRightRule = createNestedClassRule(' .', ['no-scroll-y', 'border-line-right']).bg(border);
+    borderLeftRule = createClassRule('border-line-left').add('border-left', `1px solid ${border}`);
+    borderRightRule = createNestedClassRule(' .', ['no-scroll-y', 'border-line-right']).add(
+      'border-right',
+      `1px solid ${border}`
+    );
     rules = rules.concat([borderLeftRule, borderRightRule]);
   }
 
