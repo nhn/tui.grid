@@ -8,7 +8,6 @@ import { deepCopy } from '@/helper/common';
 import { cls, ClassNameType } from '@/helper/dom';
 
 const PER_PAGE = 10;
-const ROW_HEIGHT = 40;
 
 const columns = [
   { name: 'id', minWidth: 150, sortable: true, editor: 'text' },
@@ -126,16 +125,6 @@ function createGridWithConfig(optionType: string, stub: Function) {
       }
     });
   }
-}
-
-function createGridWithScrollType(dataSource?: DataSource) {
-  cy.createGrid({
-    data: { ...(dataSource || data) },
-    bodyHeight: 300,
-    columns,
-    useClientSort: true,
-    pageOptions: { perPage: PER_PAGE, type: 'scroll' }
-  });
 }
 
 function getPageBtn() {
@@ -514,6 +503,15 @@ it('stop custom event if prev event is prevented.', () => {
 });
 
 // @TODO solve the intermittent broken problem
+// function createGridWithScrollType(dataSource?: DataSource) {
+//   cy.createGrid({
+//     data: { ...(dataSource || data) },
+//     bodyHeight: 300,
+//     columns,
+//     useClientSort: true,
+//     pageOptions: { perPage: PER_PAGE, type: 'scroll' }
+//   });
+// }
 // describe('type: scroll', () => {
 //   beforeEach(() => {
 //     createGridWithScrollType();
