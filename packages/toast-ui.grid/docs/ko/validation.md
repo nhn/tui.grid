@@ -130,7 +130,7 @@ const grid = new Grid({
 
 ## validatorFn 옵션
 
-`v4.5.0` 이상부터 사용할 수 있는 옵션이다. `validatorFn` 옵션에 함수를 지정하면 셀 데이터를 매개변수로 함수 결과를 검사할 수 있다. 이 때 함수 결과가 `truthy`가 아닌 경우에는 빨간색으로 표시된다.
+`v4.5.0` 이상부터 사용할 수 있는 옵션이다. `validatorFn` 옵션에 함수를 지정하면 셀 데이터(`value`)를 인자로 받아 함수 결과를 검사할 수 있다. 이 때 함수 결과가 `truthy`가 아닌 경우에는 빨간색으로 표시된다.
 
 ```js
 import Grid from 'tui-grid';
@@ -142,6 +142,24 @@ const grid = new Grid({
       name: 'price',
       validation: {
         validatorFn: value => value !== 10000
+      }
+    }
+  ]
+});
+```
+
+`v4.10.0` 이상부터는 셀 데이터 외에 로우 데이터, 컬럼 명도 함께 인자로 받기 때문에, 로우의 다른 셀 데이터와 연산하여 데이터 검증이 필요한 경우 활용할 수 있다.
+
+```js
+import Grid from 'tui-grid';
+
+const grid = new Grid({
+  // ...
+  columns: [
+    {
+      name: 'price',
+      validation: {
+        validatorFn: (value, row, columnName) => value + row['anotherColumn'] > 10000
       }
     }
   ]

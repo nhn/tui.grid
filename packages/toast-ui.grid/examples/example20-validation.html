@@ -55,7 +55,7 @@
           validation: {
             min: 10000,
             max: 10500,
-            validatorFn: value => value !== 11000
+            validatorFn: (value, row, columnName) => value !== 11000
           }
         },
         {
