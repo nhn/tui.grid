@@ -25,7 +25,7 @@ export function setWrapperPosition(
       .querySelector(`.${cls('scrollbar-right-bottom')}`)!
       .getBoundingClientRect();
     const { left: frozenLeft } = document
-      .querySelector('.tui-grid-frozen-border')!
+      .querySelector(`.${cls('frozen-border')}`)!
       .getBoundingClientRect();
     const { left, top, bottom } = el.getBoundingClientRect();
 
