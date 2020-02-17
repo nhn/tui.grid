@@ -9,6 +9,9 @@ export function setWrapperPosition(
   childEl?: HTMLElement,
   startBottom = false
 ) {
+  // To prevent display the layer before calculating the position
+  wrapper.style.opacity = '0';
+
   // Use setTimeout to wait until the DOM element is actually mounted or updated.
   // For example, when start editing the cell with scroll,
   // grid needs to wait for detecting the accurate scrolling position.
@@ -37,5 +40,7 @@ export function setWrapperPosition(
         ? innerWidth - layerWidth - INDENT - SCROLL_BAR_Y_WIDTH
         : left
     }px`;
+
+    wrapper.style.opacity = '1';
   });
 }

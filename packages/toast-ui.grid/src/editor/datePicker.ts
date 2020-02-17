@@ -35,6 +35,7 @@ export class DatePickerEditor implements CellEditor {
     const calendarWrapper = document.createElement('div');
     calendarWrapper.style.marginTop = '-4px';
     calendarWrapper.style.position = 'fixed';
+    calendarWrapper.style.zIndex = '100';
     this.el.appendChild(calendarWrapper);
 
     return calendarWrapper;
