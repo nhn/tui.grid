@@ -1,7 +1,11 @@
+import { cls } from '../helper/dom';
+
 const INDENT = 5;
 const EDITOR_TOP_DIFF = 4;
-const SCROLL_BAR_Y_WIDTH = 17;
-const SCROLL_BAR_X_HEIGHT = 17;
+
+function getTopPos(totalHeight: number, topDiff: number, baseHeight: number, wrapperTop: number) {
+  return totalHeight > baseHeight ? baseHeight - topDiff : wrapperTop;
+}
 
 export function setWrapperPosition(
   el: HTMLElement,
@@ -16,8 +20,15 @@ export function setWrapperPosition(
   // For example, when start editing the cell with scroll,
   // grid needs to wait for detecting the accurate scrolling position.
   setTimeout(() => {
-    const { innerHeight, innerWidth } = window;
+    const { innerWidth, innerHeight } = window;
+    const { top: bottomScrollTop } = document
+      .querySelector(`.${cls('scrollbar-right-bottom')}`)!
+      .getBoundingClientRect();
+    const { left: frozenLeft } = document
+      .querySelector('.tui-grid-frozen-border')!
+      .getBoundingClientRect();
     const { left, top, bottom } = el.getBoundingClientRect();
+
     const wrapperTop = startBottom ? bottom : top + EDITOR_TOP_DIFF;
     const { height: wrapperHeight, width: wrapperWidth } = wrapper.getBoundingClientRect();
     let childElHeight = 0;
@@ -28,18 +39,26 @@ export function setWrapperPosition(
       childElHeight = height;
       childElWidth = width;
     }
+
+    // To prevent editing layer to be cut by bottom line or summary area,
+    // compare the calulated top position with `window.innerHeight` and the calulated top position with scroll bottom line
+    const totalHeight = wrapperTop + wrapperHeight + childElHeight;
+    const topDiff = wrapperHeight + childElHeight + INDENT;
+    const topPosWithInnerHeight = getTopPos(totalHeight, topDiff, innerHeight, wrapperTop);
+    const topPosWithBottomScrollTop = getTopPos(totalHeight, topDiff, bottomScrollTop, wrapperTop);
+
     wrapper.style.top = `${
-      wrapperTop + wrapperHeight + childElHeight > innerHeight - SCROLL_BAR_X_HEIGHT
-        ? innerHeight - wrapperHeight - childElHeight - INDENT - SCROLL_BAR_X_HEIGHT
-        : wrapperTop
+      topPosWithInnerHeight > topPosWithBottomScrollTop
+        ? topPosWithBottomScrollTop
+        : topPosWithInnerHeight
     }px`;
 
     const layerWidth = wrapperWidth || childElWidth;
-    wrapper.style.left = `${
-      left + layerWidth > innerWidth - SCROLL_BAR_Y_WIDTH
-        ? innerWidth - layerWidth - INDENT - SCROLL_BAR_Y_WIDTH
-        : left
-    }px`;
+    // To prevent editing layer to be cut by left area or frozen border,
+    // compare the calulated left position with `window.innerWidth` and the calulated left position with frozen border
+    const leftPos = left + layerWidth > innerWidth ? innerWidth - layerWidth - INDENT : left;
+
+    wrapper.style.left = `${leftPos < frozenLeft ? frozenLeft : leftPos}px`;
 
     wrapper.style.opacity = '1';
   });
