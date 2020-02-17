@@ -24,6 +24,16 @@ interface OwnProps {
 type Props = StoreProps & OwnProps & DispatchProps;
 
 export class FilterLayerInnerComp extends Component<Props> {
+  private calculateLeft() {
+    const { width } = this.context.store.dimension;
+    const { left } = this.props.columnAddress;
+
+    if (left + 230 > width) {
+      return width - 230;
+    }
+    return left;
+  }
+
   private renderFilter = (index: number) => {
     const { columnAddress, filterState, columnInfo } = this.props;
     const type = columnInfo.filter!.type;
@@ -51,7 +61,6 @@ export class FilterLayerInnerComp extends Component<Props> {
 
   public render() {
     const {
-      columnAddress,
       columnInfo,
       renderSecondFilter,
       dispatch,
@@ -59,10 +68,9 @@ export class FilterLayerInnerComp extends Component<Props> {
       filterState
     } = this.props;
     const { showApplyBtn, showClearBtn } = columnInfo.filter!;
-    const { left } = columnAddress;
 
     return (
-      <div className={cls('filter-container')} style={{ left }}>
+      <div className={cls('filter-container')} style={{ left: this.calculateLeft() }}>
         <div>
           <span
             className={cls('btn-filter', [currentColumnActive, 'btn-filter-active'], 'filter-icon')}
