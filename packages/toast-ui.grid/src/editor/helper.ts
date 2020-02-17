@@ -46,12 +46,12 @@ export function setWrapperPosition(
     const topDiff = wrapperHeight + childElHeight + INDENT;
     const topPosWithInnerHeight = getTopPos(totalHeight, topDiff, innerHeight, wrapperTop);
     const topPosWithBottomScrollTop = getTopPos(totalHeight, topDiff, bottomScrollTop, wrapperTop);
-
-    wrapper.style.top = `${
+    const topPos =
       topPosWithInnerHeight > topPosWithBottomScrollTop
         ? topPosWithBottomScrollTop
-        : topPosWithInnerHeight
-    }px`;
+        : topPosWithInnerHeight;
+
+    wrapper.style.top = `${topPos < 0 ? INDENT : topPos}px`;
 
     const layerWidth = wrapperWidth || childElWidth;
     // To prevent editing layer to be cut by left area or frozen border,
