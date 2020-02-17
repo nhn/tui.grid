@@ -7,12 +7,12 @@
 // @TODO: remove the 'skipLibCheck' option in cypress/tsconfig.json
 // related issue: https://github.com/cypress-io/cypress/issues/5065
 declare namespace Cypress {
+  type RowHeaderType = '_checked' | '_number';
+
   interface Chainable<Subject> {
     getCell(rowKey: number | string, column: string): Chainable<any>;
 
     getCellByIdx(rowIdx: number, columnIdx: number): Chainable<any>;
-
-    getCellContent(rowKey: number | string, column: string): Chainable<any>;
 
     getByCls(...classNames: string[]): Chainable<any>;
 
@@ -28,7 +28,9 @@ declare namespace Cypress {
 
     getHeaderCell(column: string): Chainable<any>;
 
-    getRowHeaderCell(rowKey: number | string): Chainable<any>;
+    getRowHeaderCell(rowKey: number | string, columnName: RowHeaderType): Chainable<any>;
+
+    getRowHeaderCells(columnName: RowHeaderType): Chainable<any>;
 
     getColumnCells(columnName: string): Chainable<any>;
 
@@ -38,9 +40,9 @@ declare namespace Cypress {
 
     dragColumnResizeHandle(index: number, distance: number): Chainable<any>;
 
-    getNumberRowHeaderCells(): Chainable<any>;
-
     getBodyCells(): Chainable<any>;
+
+    focusToBottomCell(rowKey: RowKey, columnName: string): Chainable<any>;
   }
 }
 

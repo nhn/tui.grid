@@ -102,7 +102,8 @@ class PaginationComp extends Component<Props> {
 
   public render({ pageOptions }: Props) {
     return (
-      !isEmpty(pageOptions) && (
+      !isEmpty(pageOptions) &&
+      pageOptions.type === 'pagination' && (
         <div
           ref={el => {
             this.el = el;

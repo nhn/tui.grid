@@ -30,25 +30,24 @@ class SortingButtonComp extends Component<Props> {
       return;
     }
 
-    const { dispatch, sortState, dataProvider } = this.props;
+    const { dispatch, sortState, dataProvider, defaultAscending } = this.props;
+    const { columns } = sortState;
     const th = findParent(target, 'cell');
-    const targetColumnName = th!.getAttribute('data-column-name')!;
-    let { defaultAscending: targetAscending } = this.props;
-
-    if (sortState) {
-      const { columns } = sortState;
-      const index = findPropIndex('columnName', targetColumnName, columns);
-      targetAscending = index !== -1 ? !columns[index].ascending : targetAscending;
-    }
+    const columnName = th!.getAttribute('data-column-name')!;
+    const index = findPropIndex('columnName', columnName, columns);
+    const ascending = index !== -1 ? !columns[index].ascending : defaultAscending;
 
     if (sortState.useClient) {
-      dispatch('sort', targetColumnName, targetAscending, withCtrl);
+      dispatch('sort', columnName, ascending, withCtrl);
     } else {
-      dispatch('changeSortState', targetColumnName, targetAscending, withCtrl);
-      const data = {
-        sortColumn: targetColumnName,
-        sortAscending: targetAscending
-      };
+      // @TODO: apply multi sort to dataSource
+      const data =
+        ascending === defaultAscending && index !== -1
+          ? {}
+          : {
+              sortColumn: columnName,
+              sortAscending: ascending
+            };
       dataProvider.readData(1, data, true);
     }
   };

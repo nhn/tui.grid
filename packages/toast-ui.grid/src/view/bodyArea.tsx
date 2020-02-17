@@ -14,8 +14,10 @@ import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
 import { FocusLayer } from './focusLayer';
 import { SelectionLayer } from './selectionLayer';
-import { some } from '../helper/common';
+import { some, debounce } from '../helper/common';
 import { EditingLayer } from './editingLayer';
+import GridEvent from '../event/gridEvent';
+import { getEventBus, EventBus } from '../event/eventBus';
 
 interface OwnProps {
   side: Side;
@@ -34,6 +36,7 @@ interface StoreProps {
   scrollX: boolean;
   scrollY: boolean;
   cellBorderWidth: number;
+  eventBus: EventBus;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -60,13 +63,28 @@ class BodyAreaComp extends Component<Props> {
     pageY: null
   };
 
+  private scrollToNextDebounced = debounce(() => {
+    this.props.dispatch('scrollToNext');
+  }, 200);
+
   private handleScroll = (ev: UIEvent) => {
-    const { scrollLeft, scrollTop } = ev.srcElement as HTMLElement;
-    const { dispatch } = this.props;
+    const { scrollLeft, scrollTop, scrollHeight, clientHeight } = ev.srcElement as HTMLElement;
+    const { dispatch, eventBus } = this.props;
 
     dispatch('setScrollTop', scrollTop);
     if (this.props.side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
+      if (scrollHeight - scrollTop === clientHeight) {
+        const gridEvent = new GridEvent();
+        /**
+         * Occurs when scroll at the bottommost
+         * @event Grid#scrollEnd
+         * @property {Grid} instance - Current grid instance
+         */
+        eventBus.trigger('scrollEnd', gridEvent);
+
+        this.scrollToNextDebounced();
+      }
     }
   };
 
@@ -211,7 +229,7 @@ class BodyAreaComp extends Component<Props> {
 }
 
 export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
-  const { columnCoords, rowCoords, dimension, viewport } = store;
+  const { columnCoords, rowCoords, dimension, viewport, id } = store;
   const { totalRowHeight } = rowCoords;
   const { totalColumnWidth } = columnCoords;
   const { bodyHeight, scrollXHeight, scrollX, scrollY, cellBorderWidth } = dimension;
@@ -229,6 +247,7 @@ export const BodyArea = connect<StoreProps, OwnProps>((store, { side }) => {
     dummyRowCount,
     scrollX,
     scrollY,
-    cellBorderWidth
+    cellBorderWidth,
+    eventBus: getEventBus(id)
   };
 })(BodyAreaComp);

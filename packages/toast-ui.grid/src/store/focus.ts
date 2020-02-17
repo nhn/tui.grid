@@ -9,9 +9,9 @@ import {
   Dimension
 } from './types';
 import { Observable, observable } from '../helper/observable';
-import { someProp, findPropIndex, isEmpty } from '../helper/common';
+import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';
-import { findIndexByRowKey } from '../query/data';
+import { findIndexByRowKey, isClientPagination, getRowIndexWithPage } from '../query/data';
 
 interface FocusOption {
   data: Data;
@@ -88,7 +88,7 @@ export function create({
         return null;
       }
 
-      if (!isEmpty(pageOptions)) {
+      if (isClientPagination(data)) {
         const { perPage, page } = pageOptions;
 
         return rowIndex + (page - 1) * perPage;
@@ -106,12 +106,13 @@ export function create({
         return null;
       }
 
+      const targetRowIndex = getRowIndexWithPage(data, rowIndex);
       const { widths, offsets } = columnCoords;
       const borderWidth = widths[side].length - 1 === columnIndex ? 0 : cellBorderWidth;
       const left = offsets[side][columnIndex];
       const right = left + widths[side][columnIndex] + borderWidth;
-      const top = rowCoords.offsets[rowIndex];
-      const bottom = top + rowCoords.heights[rowIndex];
+      const top = rowCoords.offsets[targetRowIndex];
+      const bottom = top + rowCoords.heights[targetRowIndex];
       const rowSpan = getRowSpanByRowKey(rowKey!, columnName, filteredRawData);
 
       if (isRowSpanEnabled(sortState) && rowSpan) {

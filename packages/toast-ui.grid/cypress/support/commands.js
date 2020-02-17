@@ -1,4 +1,5 @@
 import { cls, dataAttr } from '@/helper/dom';
+import { deepCopyArray } from '@/helper/common';
 
 const RESIZER_HALF_WIDTH = 3;
 const CELL_BORDER_WIDTH = 1;
@@ -15,10 +16,6 @@ Cypress.Commands.add('getCellByIdx', (rowIdx, columnIdx, side = 'R') => {
     `.${sideCls} .${cls('body-area')} tr:nth-child(${rowIdx + 1}) td:nth-child(${columnIdx + 1})`
   );
 });
-
-Cypress.Commands.add('getCellContent', (rowKey, columnName) =>
-  cy.getCell(rowKey, columnName).find(`> .${cls('cell-content')}`)
-);
 
 Cypress.Commands.add('getByCls', (...names) =>
   cy.get(names.map(name => `.${cls(name)}`).join(' '))
@@ -51,6 +48,10 @@ Cypress.Commands.add('createGrid', (gridOptions, containerStyle = {}, parentEl =
       delete gridOptions.theme;
     }
 
+    if (Array.isArray(gridOptions.data)) {
+      gridOptions.data = deepCopyArray(gridOptions.data);
+    }
+
     win.grid = new tui.Grid({ el, ...gridOptions });
 
     return new Promise(resolve => {
@@ -76,19 +77,23 @@ Cypress.Commands.add('getHeaderCell', columnName =>
   cy.get(`.${cls('cell-header')}[${dataAttr.COLUMN_NAME}="${columnName}"]`)
 );
 
-Cypress.Commands.add('getRowHeaderCell', rowKey =>
-  cy.get(`.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"]`)
+Cypress.Commands.add('getRowHeaderCell', (rowKey, columnName) =>
+  cy.get(
+    `.${cls('cell-row-header')}[${dataAttr.ROW_KEY}="${rowKey}"][${
+      dataAttr.COLUMN_NAME
+    }="${columnName}"]`
+  )
 );
+
+Cypress.Commands.add('getRowHeaderCells', columnName => {
+  return cy.get(`td[data-column-name=${columnName}]`);
+});
 
 Cypress.Commands.add('getColumnCells', columnName => cy.get(`td[data-column-name=${columnName}]`));
 
 Cypress.Commands.add('getRow', rowKey => cy.get(`td[data-row-key=${rowKey}]`));
 
 Cypress.Commands.add('getRsideBody', () => cy.getByCls('rside-area', 'body-area'));
-
-Cypress.Commands.add('getNumberRowHeaderCells', () => {
-  return cy.get('td[data-column-name=_number]');
-});
 
 Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
   cy.getByCls('column-resize-handle')
@@ -105,3 +110,8 @@ Cypress.Commands.add('dragColumnResizeHandle', (index, distance) => {
 });
 
 Cypress.Commands.add('getBodyCells', () => cy.get(`td.${cls('cell')}`));
+
+Cypress.Commands.add('focusToBottomCell', (rowKey, columnName) => {
+  cy.gridInstance().invoke('focus', rowKey, columnName);
+  cy.wait(100);
+});

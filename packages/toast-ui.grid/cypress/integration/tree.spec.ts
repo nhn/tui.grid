@@ -117,7 +117,7 @@ describe('treeColumnOptions', () => {
 
   context('useCascading', () => {
     function assertCheckedRow(rowKey: RowKey, checked: boolean) {
-      cy.getCell(rowKey, '_checked').within(() => {
+      cy.getRowHeaderCell(rowKey, '_checked').within(() => {
         cy.get('[type="checkbox"]').should(checked ? 'be.checked' : 'not.be.checked');
       });
     }

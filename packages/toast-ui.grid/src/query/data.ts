@@ -17,7 +17,8 @@ import {
   mapProp,
   isNumber,
   removeArrayItem,
-  uniqByProp
+  uniqByProp,
+  isEmpty
 } from '../helper/common';
 import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
@@ -205,13 +206,12 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
 
   if (!isUndefined(rowKey)) {
     row.rowKey = rowKey;
-    options.keyColumnName = 'rowKey';
   }
 
   const emptyData = allColumns
     .filter(({ name }) => !isRowHeader(name))
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
-  const index = Math.max(-1, ...(mapProp('rowKey', rawData) as number[])) + 1;
+  const index = getMaxRowKey(data);
   const rawRow = createRawRow(
     { ...emptyData, ...row },
     index,
@@ -230,4 +230,23 @@ export function isSorted(data: Data) {
 
 export function isFiltered(data: Data) {
   return !isNull(data.filters);
+}
+
+export function getMaxRowKey(data: Data) {
+  return Math.max(-1, ...(mapProp('rowKey', data.rawData) as number[])) + 1;
+}
+
+export function isScrollPagination({ pageOptions }: Data, useClient?: boolean) {
+  if (isUndefined(useClient)) {
+    return pageOptions.type === 'scroll';
+  }
+  return useClient && pageOptions.type === 'scroll';
+}
+
+export function isClientPagination({ pageOptions }: Data) {
+  return !isEmpty(pageOptions) && pageOptions.useClient && pageOptions.type === 'pagination';
+}
+
+export function getRowIndexWithPage(data: Data, rowIndex: number) {
+  return isClientPagination(data) ? rowIndex % data.pageOptions.perPage : rowIndex;
 }

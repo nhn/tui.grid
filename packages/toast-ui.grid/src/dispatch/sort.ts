@@ -5,14 +5,14 @@ import { sortRawData, sortViewData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { createObservableData, updateRowNumber, setCheckedAllRows } from './data';
-import { isSortable, isInitialSortState } from '../query/data';
+import { isSortable, isInitialSortState, isScrollPagination } from '../query/data';
 import { isComplexHeader } from '../query/column';
 
 function sortData(store: Store) {
   // makes all data observable to sort the data properly;
   createObservableData(store, true);
   const { data, id } = store;
-  const { sortState, rawData, viewData } = data;
+  const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
 
@@ -21,8 +21,19 @@ function sortData(store: Store) {
     options.push({ columnName: 'sortKey', ascending: true });
   }
 
-  rawData.sort(sortRawData(options));
-  viewData.sort(sortViewData(options));
+  if (isScrollPagination(data, true)) {
+    // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
+    const targetRawData = rawData.slice(...pageRowRange);
+    const targetViewData = viewData.slice(...pageRowRange);
+    targetRawData.sort(sortRawData(options));
+    targetViewData.sort(sortViewData(options));
+
+    data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
+    data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
+  } else {
+    rawData.sort(sortRawData(options));
+    viewData.sort(sortViewData(options));
+  }
 
   const eventBus = getEventBus(id);
   const gridEvent = new GridEvent({ sortState: data.sortState });
@@ -122,6 +133,10 @@ export function changeSortState(
       changeSingleSortState(data, columnName, ascending, sortingType!, cancelable);
     }
   }
+
+  if (!data.sortState.useClient) {
+    notify(data, 'sortState');
+  }
 }
 
 function applySortedData(store: Store) {
@@ -144,7 +159,6 @@ export function sort(
   if (isComplexHeader(column, columnName) || !isSortable(sortState, column, columnName)) {
     return;
   }
-
   changeSortState(store, columnName, ascending, withCtrl, cancelable);
   applySortedData(store);
 }

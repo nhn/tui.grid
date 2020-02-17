@@ -1,6 +1,7 @@
 import { cls } from '../../src/helper/dom';
 import { data, sortedColumns, unsortedColumns } from '../../samples/relations';
 import Grid from '@/grid';
+import { deepCopyArray } from '@/helper/common';
 
 function changeCellValues(rowKey: number) {
   // changed fixed value to remove unnecessary paramter for values
@@ -122,7 +123,7 @@ before(() => {
               ['R&B', 'Overseas', 'no', 'Marry You'],
               ['OST', 'Etc', 'relation', 'City Of Stars']
             ];
-      cy.gridInstance().invoke('resetData', data.slice(1, 3));
+      cy.gridInstance().invoke('resetData', deepCopyArray(data.slice(1, 3)));
 
       cy.getRsideBody().should('have.cellData', expected);
 

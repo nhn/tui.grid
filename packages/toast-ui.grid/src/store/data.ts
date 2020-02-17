@@ -43,7 +43,7 @@ import {
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
 import { cls } from '../helper/dom';
-import { findIndexByRowKey } from '../query/data';
+import { findIndexByRowKey, isScrollPagination } from '../query/data';
 
 interface DataOption {
   data: OptRow[];
@@ -449,7 +449,12 @@ export function createRawRow(
     rowSpan = row._attributes.rowSpan as RowSpanAttributeValue;
   }
 
-  row.rowKey = keyColumnName ? row[keyColumnName] : index;
+  if (keyColumnName) {
+    row.rowKey = row[keyColumnName];
+  } else if (isUndefined(row.rowKey)) {
+    row.rowKey = index;
+  }
+
   row.sortKey = isNumber(row.sortKey) ? row.sortKey : index;
   row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
   row._attributes = getAttributes(row, index, lazyObservable, disabled);
@@ -473,8 +478,13 @@ export function createData({
   disabled = false
 }: DataCreationOption) {
   generateDataCreationKey();
-  const { defaultValues, columnMapWithRelation, treeColumnName = '', treeIcon = true } = column;
-  const keyColumnName = lazyObservable ? column.keyColumnName : 'rowKey';
+  const {
+    keyColumnName,
+    defaultValues,
+    columnMapWithRelation,
+    treeColumnName = '',
+    treeIcon = true
+  } = column;
   let rawData: Row[];
 
   if (treeColumnName) {
@@ -557,6 +567,7 @@ export function create({
         useClient: false,
         page: 1,
         perPage: 20,
+        type: 'pagination',
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
       };
@@ -572,9 +583,15 @@ export function create({
     loadingState: rawData.length ? 'DONE' : 'EMPTY',
 
     get filteredRawData(this: Data) {
-      return this.filters
-        ? applyFilterToRawData(this.rawData, this.filters, column.allColumnMap)
-        : this.rawData;
+      if (this.filters) {
+        // should filter the sliced data which is displayed in viewport in case of client infinite scrolling
+        const targetData = isScrollPagination(this, true)
+          ? this.rawData.slice(...this.pageRowRange)
+          : this.rawData;
+        return applyFilterToRawData(targetData, this.filters, column.allColumnMap);
+      }
+
+      return this.rawData;
     },
 
     get filteredIndex(this: Data) {
@@ -588,14 +605,17 @@ export function create({
       return this.filters ? this.filteredIndex!.map(index => this.viewData[index]) : this.viewData;
     },
 
-    get pageRowRange() {
+    get pageRowRange(this: Data) {
+      const { useClient, type, page, perPage } = this.pageOptions;
       let start = 0;
-      let end = this.filteredRawData.length;
+      // should calculate the range through all rawData in case of client infinite scrolling
+      let end = isScrollPagination(this, true) ? this.rawData.length : this.filteredViewData.length;
 
-      if (this.pageOptions.useClient) {
-        const { page, perPage } = this.pageOptions;
+      if (useClient) {
         const pageRowLastIndex = page * perPage;
-        start = (page - 1) * perPage;
+        if (type === 'pagination') {
+          start = (page - 1) * perPage;
+        }
         end = pageRowLastIndex < end ? pageRowLastIndex : end;
       }
 

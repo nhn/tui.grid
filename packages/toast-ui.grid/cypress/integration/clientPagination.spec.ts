@@ -2,9 +2,11 @@ import { data } from '../../samples/pagination';
 import { OptRow } from '@/types';
 
 const PER_PAGE_COUNT = 10;
+const SCROLL_PER_PAGE_COUNT = 50;
+const ROW_HEIGHT = 40;
 
 const columns = [
-  { name: 'deliveryType', sortable: true, sortingType: 'desc', filter: 'text' },
+  { name: 'deliveryType' },
   { name: 'productOrderNo' },
   { name: 'orderName' },
   { name: 'orderId' }
@@ -29,37 +31,53 @@ function createGrid(newData?: OptRow[]) {
   });
 }
 
+function createGridWithScrollType(newData?: OptRow[]) {
+  cy.createGrid({
+    data: newData || data.slice(0, 200),
+    bodyHeight: 300,
+    pageOptions: {
+      useClient: true,
+      perPage: SCROLL_PER_PAGE_COUNT,
+      type: 'scroll'
+    },
+    rowHeaders: ['rowNum'],
+    columns
+  });
+}
+
 function moveToNextPage() {
   cy.get('.tui-page-btn.tui-next').click({ force: true });
 }
 
-function compareColumnCellLength(length: number) {
+function assertRowLength(length: number) {
   if (length) {
-    // rowHeader cell length
-    const columnLength = columns.length + 1;
-    cy.getBodyCells().should('have.length', length * columnLength);
+    cy.getRsideBody()
+      .find('tr')
+      .should('have.length', length);
   } else {
-    cy.getBodyCells().should('not.exist');
+    cy.getRsideBody()
+      .find('tr')
+      .should('not.exist');
   }
 }
 
-function checkLastPage(page: string) {
+function assertLastPage(page: string) {
   cy.get('.tui-last-child').should('have.text', page);
 }
 
-function checkSelectedPage(page: string) {
+function assertSelectedPage(page: string) {
   cy.get('.tui-is-selected').should('have.text', page);
 }
 
-function checkedAllRows() {
-  cy.get('td input[type=checkbox]').within($el => {
-    expect($el).to.be.checked;
+function assertCheckedAllRows() {
+  cy.get('td input[type=checkbox]').each($el => {
+    cy.wrap($el).should('be.checked');
   });
 }
 
-function notCheckedAllRows(start: number, end: number) {
+function assertNotCheckedAllRows(start: number, end: number) {
   for (let i = start; i <= end; i += 1) {
-    cy.get(`.tui-page-btn.tui-next`).click();
+    moveToNextPage();
     cy.get('td input[type=checkbox]').within($el => {
       expect($el).not.to.be.checked;
     });
@@ -70,95 +88,131 @@ before(() => {
   cy.visit('/dist');
 });
 
-it('should displayed page according to the number of data.', () => {
-  createGrid();
-  cy.get(`.tui-last-child`).should('have.text', '8');
+describe('type: pagination', () => {
+  it('should displayed page according to the number of data.', () => {
+    createGrid();
+    cy.get(`.tui-last-child`).should('have.text', '8');
+  });
+
+  it('should reflect actual page data after appendRow API.', () => {
+    createGrid();
+    cy.gridInstance().invoke('appendRow', appendedData);
+
+    assertLastPage('9');
+  });
+
+  it('should reflect actual page data after prependRow API.', () => {
+    createGrid();
+    cy.gridInstance().invoke('prependRow', appendedData);
+
+    assertLastPage('9');
+    assertRowLength(PER_PAGE_COUNT);
+    cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+  });
+
+  it('should display page data after calling resetData API.', () => {
+    createGrid();
+    cy.gridInstance().invoke('resetData', [appendedData]);
+
+    cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+
+    assertLastPage('1');
+    assertRowLength(1);
+  });
+
+  it('should display page data with moved page after calling resetData API.', () => {
+    createGrid();
+    moveToNextPage();
+    cy.gridInstance().invoke('resetData', [appendedData]);
+
+    cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+
+    assertLastPage('1');
+    assertRowLength(1);
+  });
+
+  it('should display page data after calling clear API.', () => {
+    createGrid();
+    cy.gridInstance().invoke('clear');
+
+    assertLastPage('1');
+    assertRowLength(0);
+  });
+
+  it('should display page data with moved page after calling clear API.', () => {
+    createGrid();
+    moveToNextPage();
+    cy.gridInstance().invoke('clear');
+
+    assertLastPage('1');
+    assertRowLength(0);
+  });
+
+  it('should check only the rows of that page when clicking the checkAll button.', () => {
+    createGrid();
+    cy.get('th input[type=checkbox]').click();
+
+    assertCheckedAllRows();
+    assertNotCheckedAllRows(1, 7);
+  });
+
+  it('should reflect actual page data after removeRow API.', () => {
+    createGrid(data.slice(0, 61));
+    cy.gridInstance().invoke('removeRow', 0);
+
+    assertLastPage('6');
+    assertRowLength(PER_PAGE_COUNT);
+  });
+
+  it('should go to the previous page, If the page disappeared as a result of removeRow', () => {
+    createGrid(data.slice(0, 61));
+    cy.get(`.tui-last-child`).click();
+    cy.gridInstance().invoke('removeRow', 60);
+
+    assertLastPage('6');
+    assertSelectedPage('6');
+    assertRowLength(PER_PAGE_COUNT);
+  });
+
+  it('should change page data after calling setPerPage API.', () => {
+    createGrid();
+    cy.gridInstance().invoke('setPerPage', 20);
+
+    assertLastPage('4');
+    assertRowLength(20);
+  });
 });
 
-it('should reflect actual page data after appendRow API.', () => {
-  createGrid();
-  cy.gridInstance().invoke('appendRow', appendedData);
+describe('type: scroll', () => {
+  it('should add next data on scrolling at the bottommost', () => {
+    createGridWithScrollType();
 
-  checkLastPage('9');
-});
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', SCROLL_PER_PAGE_COUNT * ROW_HEIGHT + 1);
 
-it('should reflect actual page data after prependRow API.', () => {
-  createGrid();
-  cy.gridInstance().invoke('prependRow', appendedData);
+    // scroll at the bottommost
+    cy.focusToBottomCell(49, 'productOrderNo');
 
-  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
-  checkLastPage('9');
-  compareColumnCellLength(PER_PAGE_COUNT);
-});
+    cy.getRowHeaderCell(50, '_number').should('have.text', '51');
+    cy.getByCls('body-container')
+      .invoke('height')
+      .should('eq', SCROLL_PER_PAGE_COUNT * ROW_HEIGHT * 2 + 1);
+  });
 
-it('should display page data after calling resetData API.', () => {
-  createGrid();
-  cy.gridInstance().invoke('resetData', [appendedData]);
+  it('should not change page data after calling setPerPage API', () => {
+    createGridWithScrollType();
 
-  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
+    const initialHeight = cy.getByCls('body-container').invoke('height');
 
-  checkLastPage('1');
-  compareColumnCellLength(1);
-});
+    cy.gridInstance().invoke('setPerPage', 30);
 
-it('should display page data with moved page after calling resetData API.', () => {
-  createGrid();
-  moveToNextPage();
-  cy.gridInstance().invoke('resetData', [appendedData]);
-
-  cy.getCellByIdx(0, 2).should('have.text', 'hanjung');
-
-  checkLastPage('1');
-  compareColumnCellLength(1);
-});
-
-it('should display page data after calling clear API.', () => {
-  createGrid();
-  cy.gridInstance().invoke('clear');
-
-  checkLastPage('1');
-  compareColumnCellLength(0);
-});
-
-it('should display page data with moved page after calling clear API.', () => {
-  createGrid();
-  moveToNextPage();
-  cy.gridInstance().invoke('clear');
-
-  checkLastPage('1');
-  compareColumnCellLength(0);
-});
-
-it('should check only the rows of that page when clicking the checkAll button.', () => {
-  createGrid();
-  cy.get('th input[type=checkbox]').click();
-
-  checkedAllRows();
-  notCheckedAllRows(1, 7);
-});
-
-it('should reflect actual page data after removeRow API.', () => {
-  createGrid(data.slice(0, 61));
-  cy.gridInstance().invoke('removeRow', 0);
-
-  checkLastPage('6');
-  compareColumnCellLength(PER_PAGE_COUNT);
-});
-
-it('should go to the previous page, If the page disappeared as a result of removeRow', () => {
-  createGrid(data.slice(0, 61));
-  cy.get(`.tui-last-child`).click();
-  cy.gridInstance().invoke('removeRow', 60);
-
-  checkLastPage('6');
-  checkSelectedPage('6');
-  compareColumnCellLength(PER_PAGE_COUNT);
-});
-
-it('should change page data after calling setPerPage API.', () => {
-  createGrid();
-  cy.gridInstance().invoke('setPerPage', 20);
-
-  checkLastPage('4');
-  compareColumnCellLength(20);
+    setTimeout(() => {
+      cy.getByCls('body-container')
+        .invoke('height')
+        .then(height => {
+          initialHeight.should('eq', height);
+        });
+    });
+  });
 });

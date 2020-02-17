@@ -8,7 +8,8 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { isEmpty, isFunction } from '../helper/common';
+import { isFunction } from '../helper/common';
+import { getRowIndexWithPage } from '../query/data';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -193,12 +194,11 @@ export const BodyCell = connect<StoreProps, OwnProps>(
   ({ id, column, data, selection, dimension }, { viewRow, columnInfo, rowIndex }) => {
     const { rowKey, valueMap, treeInfo } = viewRow;
     const { treeColumnName } = column;
-    const { pageOptions } = data;
     const grid = getInstance(id);
     const { range } = selection;
     const columnName = columnInfo.name;
     const { rowHeight: defaultRowHeight, cellBorderWidth } = dimension;
-    const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
+    const rowIndexWithPage = getRowIndexWithPage(data, rowIndex);
 
     return {
       grid,

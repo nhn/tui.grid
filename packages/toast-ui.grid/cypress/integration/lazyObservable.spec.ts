@@ -2,7 +2,6 @@ import { data } from '../../samples/basic';
 import { lazyObserbableTestdata as treeData } from '../../samples/tree';
 import { cls } from '@/helper/dom';
 import { RowKey } from '@/store/types';
-import { deepCopyArray } from '@/helper/common';
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
@@ -37,8 +36,7 @@ function scrollToBottom() {
   // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 300);
 
   // to move scroll position
-  cy.gridInstance().invoke('focus', 19, 'name');
-  cy.wait(10);
+  cy.focusToBottomCell(19, 'name');
 }
 
 before(() => {
@@ -54,7 +52,7 @@ describe('should API is executed properly on lazy observable data', () => {
     ];
 
     cy.createGrid({
-      data: deepCopyArray(data),
+      data,
       columns,
       rowHeaders: ['checkbox'],
       bodyHeight: 300
@@ -103,7 +101,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getCell(18, '_checked')
+    cy.getRowHeaderCell(18, '_checked')
       .find('input')
       .should('be.not.checked');
 

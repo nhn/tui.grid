@@ -1,4 +1,4 @@
-import { findOffsetIndex, findPropIndex, isEmpty, isNull } from '../helper/common';
+import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus, saveAndFinishEditing } from './focus';
 import { changeSelectionRange } from './selection';
@@ -13,7 +13,7 @@ import {
 } from '../store/types';
 import { getRowRangeWithRowSpan } from '../query/rowSpan';
 import { getChildColumnRange } from '../query/selection';
-import { findIndexByRowKey } from '../query/data';
+import { findIndexByRowKey, getRowIndexWithPage } from '../query/data';
 import {
   findColumnIndexByPosition,
   findRowIndexByPosition,
@@ -276,9 +276,8 @@ export function dragMoveHeader(store: Store, dragData: PagePosition, startSelect
 export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
   const { selection, id, column, data } = store;
   const { visibleColumnsWithRowHeader, rowHeaderCount } = column;
-  const { pageOptions } = data;
   const rowIndex = findIndexByRowKey(data, column, id, rowKey);
-  const rowIndexWithPage = isEmpty(pageOptions) ? rowIndex : rowIndex % pageOptions.perPage;
+  const rowIndexWithPage = getRowIndexWithPage(data, rowIndex);
 
   const endColumnIndex = visibleColumnsWithRowHeader.length - 1;
   const [startRowIndex, endRowIndex] = getRowRangeWithRowSpan(
@@ -293,7 +292,7 @@ export function mouseDownRowHeader(store: Store, rowKey: RowKey) {
     row: [startRowIndex, endRowIndex],
     column: [rowHeaderCount, endColumnIndex]
   };
-  const editingRowKey = data.rawData[rowIndex].rowKey;
+  const editingRowKey = data.filteredRawData[rowIndex].rowKey;
   const editingColumnName = visibleColumnsWithRowHeader[rowHeaderCount].name;
 
   finishEditingByHeaderSelection(store, editingRowKey, editingColumnName);

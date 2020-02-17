@@ -21,7 +21,8 @@ import {
   includes,
   isEmpty,
   someProp,
-  findPropIndex
+  findPropIndex,
+  shallowEqual
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
 import {
@@ -35,7 +36,7 @@ import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { getDataManager } from '../instance';
+import { getDataManager, getDataProvider } from '../instance';
 import { changeTreeRowsCheckedState } from './tree';
 import { isRowSpanEnabled } from '../query/rowSpan';
 import { initFocus } from './focus';
@@ -51,7 +52,9 @@ import {
   getRemovedClassName,
   getCreatedRowInfo,
   isSorted,
-  isFiltered
+  isFiltered,
+  getMaxRowKey,
+  isScrollPagination
 } from '../query/data';
 import {
   updateSummaryValueByCell,
@@ -171,12 +174,22 @@ export function updateHeights(store: Store) {
     : filteredRawData.map(row => getRowHeight(row, rowHeight));
 }
 
-export function updatePageOptions({ data }: Store, pageOptions: PageOptions) {
-  if (!isEmpty(data.pageOptions)) {
-    data.pageOptions = {
-      ...data.pageOptions,
-      ...pageOptions
-    };
+export function updatePageOptions(
+  { data }: Store,
+  pageOptions: PageOptions,
+  forceUpdatePage = false
+) {
+  const { pageOptions: orgPageOptions } = data;
+  if (!isEmpty(orgPageOptions)) {
+    // if infinite scrolling is applied, page number should be not reset to know the last loaded page
+    if (!forceUpdatePage && isScrollPagination(data)) {
+      delete pageOptions.page;
+    }
+    const newPageOptions = { ...orgPageOptions, ...pageOptions };
+
+    if (!shallowEqual(newPageOptions, orgPageOptions)) {
+      data.pageOptions = newPageOptions;
+    }
   }
 }
 
@@ -501,6 +514,14 @@ function resetSortKey(data: Data, start: number) {
   }
 }
 
+function sortByCurrentState(store: Store) {
+  const { data } = store;
+  if (isSorted(data)) {
+    const { columnName, ascending } = data.sortState.columns[0];
+    sort(store, columnName, ascending, true, false);
+  }
+}
+
 export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { data, id } = store;
   const { rawData, viewData, sortState, pageOptions } = data;
@@ -516,10 +537,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
     updateSortKey(data, at);
   }
 
-  if (isSorted(data)) {
-    const { columnName, ascending } = sortState.columns[0];
-    sort(store, columnName, ascending, false, false);
-  }
+  sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenAppend(rawData, prevRow, options.extendPrevRowSpan || false);
@@ -550,10 +568,14 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
       modifiedLastPage += 1;
     }
 
-    updatePageOptions(store, {
-      totalCount: totalCount - 1,
-      page: modifiedLastPage < page ? modifiedLastPage : page
-    });
+    updatePageOptions(
+      store,
+      {
+        totalCount: totalCount - 1,
+        page: modifiedLastPage < page ? modifiedLastPage : page
+      },
+      true
+    );
   }
 
   viewData.splice(rowIdx, 1);
@@ -592,7 +614,7 @@ export function clearData(store: Store) {
   rowCoords.heights = [];
   data.viewData = [];
   data.rawData = [];
-  updatePageOptions(store, { totalCount: 0, page: 1 });
+  updatePageOptions(store, { totalCount: 0, page: 1 }, true);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
@@ -607,9 +629,13 @@ export function resetData(store: Store, inputData: OptRow[]) {
   initScrollPosition(store);
   initFocus(store);
   initSelection(store);
-  initSortState(data);
+
+  if (data.sortState.useClient) {
+    initSortState(data);
+  }
+
   initFilter(store);
-  updatePageOptions(store, { totalCount: rawData.length, page: 1 });
+  updatePageOptions(store, { totalCount: rawData.length, page: 1 }, true);
   data.viewData = viewData;
   data.rawData = rawData;
   updateHeights(store);
@@ -860,10 +886,10 @@ export function setCheckedAllRows({ data }: Store) {
 }
 
 export function updateRowNumber({ data }: Store, startIndex: number) {
-  const { filteredRawData } = data;
+  const { rawData } = data;
 
-  for (let idx = startIndex; idx < filteredRawData.length; idx += 1) {
-    filteredRawData[idx]._attributes.rowNum = idx + 1;
+  for (let idx = startIndex; idx < rawData.length; idx += 1) {
+    rawData[idx]._attributes.rowNum = idx + 1;
   }
 }
 
@@ -882,10 +908,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   viewData.splice(rowIndex, 1, viewRow);
   rawData.splice(rowIndex, 1, rawRow);
 
-  if (isSorted(data)) {
-    const { columnName, ascending } = sortState.columns[0];
-    sort(store, columnName, ascending, false, false);
-  }
+  sortByCurrentState(store);
 
   if (prevRow && isRowSpanEnabled(sortState)) {
     updateRowSpanWhenAppend(rawData, prevRow, false);
@@ -922,4 +945,44 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
   getDataManager(id).push('UPDATE', rawRow);
+}
+
+export function scrollToNext(store: Store) {
+  const { data, id } = store;
+  const { page, totalCount, perPage, useClient } = data.pageOptions;
+
+  if (isScrollPagination(data)) {
+    if (useClient) {
+      data.pageOptions.page += 1;
+      notify(data, 'pageOptions');
+
+      sortByCurrentState(store);
+      updateHeights(store);
+    } else if (page * perPage < totalCount) {
+      data.pageOptions.page += 1;
+      getDataProvider(id).readData(data.pageOptions.page);
+    }
+  }
+}
+
+export function appendRows(store: Store, inputData: OptRow[]) {
+  const { data, column } = store;
+
+  if (!column.keyColumnName) {
+    const rowKey = getMaxRowKey(data);
+    inputData.forEach((row, index) => {
+      row.rowKey = rowKey + index;
+    });
+  }
+
+  const startIndex = data.rawData.length;
+  const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
+
+  data.viewData = data.viewData.concat(viewData);
+  data.rawData = data.rawData.concat(rawData);
+
+  resetSortKey(data, startIndex);
+  sortByCurrentState(store);
+  updateRowNumber(store, startIndex);
+  updateHeights(store);
 }

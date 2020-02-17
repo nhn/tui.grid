@@ -74,7 +74,7 @@ beforeEach(() => {
 
 describe('default datePicker', () => {
   it('Cell value is applied correctly in the datePicker.', () => {
-    cy.getCellContent(0, 'default').should('have.text', '2019-11-11');
+    cy.getCell(0, 'default').should('have.text', '2019-11-11');
 
     cy.gridInstance().invoke('startEditing', 0, 'default');
 
@@ -91,13 +91,13 @@ describe('default datePicker', () => {
 
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getCellContent(0, 'default').should('have.text', '2019-11-14');
+    cy.getCell(0, 'default').should('have.text', '2019-11-14');
   });
 });
 
 describe('timepicker', () => {
   it('use time picker to pick a time.', () => {
-    cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 AM');
+    cy.getCell(0, 'timePicker').should('have.text', '2019-11-11 11:11 AM');
 
     cy.gridInstance().invoke('startEditing', 0, 'timePicker');
 
@@ -108,11 +108,11 @@ describe('timepicker', () => {
 
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getCellContent(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
+    cy.getCell(0, 'timePicker').should('have.text', '2019-11-11 11:11 PM');
   });
 
   it('use time picker tab', () => {
-    cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:11 AM');
+    cy.getCell(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:11 AM');
 
     cy.gridInstance().invoke('startEditing', 0, 'timePickerWithTab');
 
@@ -125,13 +125,13 @@ describe('timepicker', () => {
 
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getCellContent(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:12 AM');
+    cy.getCell(0, 'timePickerWithTab').should('have.text', '2019-11-11 11:12 AM');
   });
 });
 
 describe('month picker', () => {
   it('You can choose the month, year excluding date.', () => {
-    cy.getCellContent(0, 'monthPicker').should('have.text', '2019-11');
+    cy.getCell(0, 'monthPicker').should('have.text', '2019-11');
 
     cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
@@ -141,13 +141,13 @@ describe('month picker', () => {
 
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getCellContent(0, 'monthPicker').should('have.text', '2019-03');
+    cy.getCell(0, 'monthPicker').should('have.text', '2019-03');
   });
 });
 
 describe('year picker', () => {
   it('You can only choose the year.', () => {
-    cy.getCellContent(0, 'yearPicker').should('have.text', '2019');
+    cy.getCell(0, 'yearPicker').should('have.text', '2019');
 
     cy.gridInstance().invoke('startEditing', 0, 'yearPicker');
 
@@ -157,7 +157,7 @@ describe('year picker', () => {
 
     cy.gridInstance().invoke('finishEditing');
 
-    cy.getCellContent(0, 'yearPicker').should('have.text', '2020');
+    cy.getCell(0, 'yearPicker').should('have.text', '2020');
   });
 });
 

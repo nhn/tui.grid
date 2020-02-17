@@ -3,7 +3,7 @@ import { OptGrid } from '@/types';
 import { Row } from '@/store/types';
 
 function checkGridHasRightRowNumber() {
-  cy.getNumberRowHeaderCells().each(($el, idx) => {
+  cy.getRowHeaderCells('_number').each(($el, idx) => {
     cy.wrap($el).should('have.text', `${idx + 1}`);
   });
 }
@@ -112,7 +112,7 @@ describe('appendRow()', () => {
       .should('have.subset', { name: '', age: '' });
   });
 
-  it('should update row number when calling appendRow()', () => {
+  it('should update row number after calling appendRow()', () => {
     createGridWithLargeData({ rowHeaders: ['rowNum'] });
 
     cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
@@ -120,7 +120,7 @@ describe('appendRow()', () => {
     checkGridHasRightRowNumber();
   });
 
-  it('should maintain the sort state when calling appendRow()', () => {
+  it('should maintain the sort state after calling appendRow()', () => {
     createGridWithLargeData();
 
     cy.gridInstance().invoke('sort', 'name', true);
@@ -467,6 +467,26 @@ describe('setRow', () => {
     cy.getCellByIdx(1, 1).should('have.text', '30');
   });
 
+  it('should sort state is maintained when calls setRow API', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('sort', 'name', true);
+    cy.gridInstance().invoke('sort', 'age', false, true);
+    cy.gridInstance().invoke('setRow', 1, {
+      name: 'Ryu',
+      age: '20'
+    });
+
+    cy.gridInstance()
+      .invoke('getSortState')
+      .should('have.subset', {
+        columns: [
+          { columnName: 'name', ascending: true },
+          { columnName: 'age', ascending: false }
+        ]
+      });
+  });
+
   it('should replaced row is ordered properly even if sorted the data', () => {
     createGrid();
 
@@ -544,8 +564,58 @@ it('row._attributes should be maintained on calling resetData', () => {
   cy.createGrid({ data, columns, rowHeaders: ['checkbox'] });
   cy.gridInstance().invoke('resetData', data);
 
-  cy.getColumnCells('_checked')
+  cy.getRowHeaderCell(0, '_checked')
     .find('input')
-    .eq(0)
     .should('be.checked');
+});
+
+describe('appendRows', () => {
+  it('should append rows to existing data', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Han', age: 21 },
+      { name: 'Ryu', age: 25 }
+    ]);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Lee', '20'],
+      ['Han', '21'],
+      ['Ryu', '25']
+    ]);
+  });
+
+  it('should maintain the sort state after calling appendRows()', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('sort', 'name', true);
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Han', age: 21 },
+      { name: 'Ryu', age: 25 }
+    ]);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Han', '21'],
+      ['Kim', '10'],
+      ['Lee', '20'],
+      ['Ryu', '25']
+    ]);
+  });
+
+  it('should maintain the filter state after calling appendRows()', () => {
+    createGrid();
+
+    cy.gridInstance().invoke('filter', 'name', [{ code: 'eq', value: 'Lee' }]);
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Lee', age: 30 },
+      { name: 'Lee', age: 40 }
+    ]);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Lee', '20'],
+      ['Lee', '30'],
+      ['Lee', '40']
+    ]);
+  });
 });

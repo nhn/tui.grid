@@ -120,7 +120,7 @@ describe('onBeforeChange, onAfterChange', () => {
       .should('be.calledOnce')
       .and('calledWithMatch', { rowKey: 0, columnName: 'name', value: 'Lee', nextValue: 'Kim' });
     cy.wrap(afterCallback).should('be.not.called');
-    cy.getCellContent(0, 'name').should('have.text', 'Lee');
+    cy.getCell(0, 'name').should('have.text', 'Lee');
   });
 });
 
@@ -301,7 +301,7 @@ it('should do synchronous rendering of the editing cell', () => {
     if (type === 'columnHeader') {
       cy.getHeaderCell('name').as('targetCell');
     } else {
-      cy.getRowHeaderCell(0).as('targetCell');
+      cy.getRowHeaderCell(0, '_number').as('targetCell');
     }
 
     cy.get('@targetCell').click();

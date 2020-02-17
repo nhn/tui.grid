@@ -18,6 +18,7 @@ beforeEach(() => {
   cy.createGrid({
     data,
     columns,
+    bodyHeight: 150,
     rowHeaders: ['rowNum', 'checkbox']
   });
 });
@@ -93,104 +94,6 @@ it('dblclick', () => {
   cy.wrap(callback).should('be.calledWithMatch', { targetType: 'cell' });
 });
 
-it('focus change', () => {
-  const callback = cy.stub();
-  cy.gridInstance().invoke('on', 'focusChange', callback);
-
-  cy.getCell(0, 'name').click();
-
-  cy.wrap(callback).should('be.calledWithMatch', {
-    rowKey: 0,
-    columnName: 'name',
-    prevRowKey: null,
-    prevColumnName: null
-  });
-
-  cy.getCell(1, 'age').click();
-
-  cy.wrap(callback).should('be.calledWithMatch', {
-    rowKey: 1,
-    columnName: 'age',
-    prevRowKey: 0,
-    prevColumnName: 'name'
-  });
-});
-
-it('focus change by api', () => {
-  const callback = cy.stub();
-  cy.gridInstance().invoke('on', 'focusChange', callback);
-
-  cy.gridInstance().invoke('focus', 0, 'name');
-
-  cy.wrap(callback).should('be.calledWithMatch', {
-    rowKey: 0,
-    columnName: 'name',
-    prevRowKey: null,
-    prevColumnName: null
-  });
-
-  cy.gridInstance().invoke('blur');
-
-  cy.wrap(callback).should('be.calledWithMatch', {
-    rowKey: null,
-    columnName: null,
-    prevRowKey: 0,
-    prevColumnName: 'name'
-  });
-});
-
-it('focus stop', () => {
-  cy.gridInstance().invoke('on', 'focusChange', (ev: GridEvent) => {
-    ev.stop();
-  });
-
-  cy.getCell(0, 'name').click();
-
-  cy.getByCls('layer-focus').should('not.exist');
-});
-
-it('check / uncheck', () => {
-  const checkCallback = cy.stub();
-  const uncheckCallback = cy.stub();
-
-  cy.getByCls('cell-row-header')
-    .get('input')
-    .eq(1)
-    .as('checkbox');
-
-  cy.gridInstance().invoke('on', 'check', checkCallback);
-  cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
-
-  cy.get('@checkbox').click();
-
-  cy.wrap(checkCallback).should('be.calledWithMatch', { rowKey: 0 });
-
-  cy.get('@checkbox').click();
-
-  cy.wrap(uncheckCallback).should('be.calledWithMatch', { rowKey: 0 });
-});
-
-it('checkAll / uncheckAll', () => {
-  const checkCallback = cy.stub();
-  const uncheckCallback = cy.stub();
-
-  cy.getByCls('cell-row-header')
-    .get('input')
-    .eq(0)
-    .as('checkbox');
-
-  cy.gridInstance().invoke('on', 'checkAll', checkCallback);
-  cy.gridInstance().invoke('on', 'uncheckAll', uncheckCallback);
-
-  cy.get('@checkbox').click();
-
-  cy.wrap(checkCallback).should('be.calledOnce');
-
-  cy.get('@checkbox').click();
-
-  cy.wrap(uncheckCallback).should('be.calledOnce');
-});
-
 it('selection by api', () => {
   // keyboard, mouse event untestable
   const callback = cy.stub();
@@ -221,18 +124,6 @@ it('off', () => {
   cy.getByCls('container').click();
 
   cy.wrap(callback2).should('not.be.calledTwice');
-});
-
-it('sort', () => {
-  const callback = cy.stub();
-
-  cy.gridInstance().invoke('on', 'sort', callback);
-
-  cy.gridInstance().invoke('sort', 'name', false);
-
-  cy.wrap(callback).should('be.calledWithMatch', {
-    sortState: { columns: [{ columnName: 'name', ascending: false }], useClient: true }
-  });
 });
 
 it('onGridMounted', () => {
@@ -281,7 +172,7 @@ it('columnResize', () => {
 
   cy.gridInstance().invoke('on', 'columnResize', callback);
 
-  cy.get(`.${cls('column-resize-handle')}`)
+  cy.getByCls('column-resize-handle')
     .first()
     .trigger('mousedown')
     .trigger('mousemove', { pageX: 400 })
@@ -292,75 +183,228 @@ it('columnResize', () => {
   });
 });
 
-['API', 'UI'].forEach(method => {
-  it(`editingStart by ${method}`, () => {
-    const callback = cy.stub();
-    cy.gridInstance().invoke('on', 'editingStart', callback);
+it('scrollEnd', () => {
+  const newData = Array.from({ length: 20 }).map((_, index) => ({
+    name: `name${index}`,
+    age: index
+  }));
+  const callback = cy.stub();
 
-    if (method === 'API') {
+  cy.gridInstance().invoke('on', 'scrollEnd', callback);
+  cy.gridInstance().invoke('resetData', newData);
+
+  // scroll at the bottommost
+  cy.focusToBottomCell(19, 'age');
+
+  cy.wrap(callback).should('be.calledOnce');
+});
+
+describe('focus', () => {
+  ['UI', 'API'].forEach(type => {
+    it(`focus change by ${type}`, () => {
+      const callback = cy.stub();
+      cy.gridInstance().invoke('on', 'focusChange', callback);
+
+      if (type === 'UI') {
+        cy.getCell(0, 'name').click();
+      } else {
+        cy.gridInstance().invoke('focus', 0, 'name');
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        rowKey: 0,
+        columnName: 'name',
+        prevRowKey: null,
+        prevColumnName: null
+      });
+
+      if (type === 'UI') {
+        cy.getCell(1, 'age').click();
+      } else {
+        cy.gridInstance().invoke('focus', 1, 'age');
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        rowKey: 1,
+        columnName: 'age',
+        prevRowKey: 0,
+        prevColumnName: 'name'
+      });
+    });
+
+    it(`focus stop by ${type}`, () => {
+      cy.gridInstance().invoke('on', 'focusChange', (ev: GridEvent) => {
+        ev.stop();
+      });
+
+      if (type === 'UI') {
+        cy.getCell(0, 'name').click();
+      } else {
+        cy.gridInstance().invoke('focus', 0, 'name');
+      }
+
+      cy.getByCls('layer-focus').should('not.exist');
+    });
+  });
+});
+
+describe('rowHeader: checkbox', () => {
+  ['UI', 'API'].forEach(type => {
+    it(`check / uncheck by ${type}`, () => {
+      const checkCallback = cy.stub();
+      const uncheckCallback = cy.stub();
+
+      cy.getByCls('cell-row-header')
+        .get('input')
+        .eq(1)
+        .as('checkbox');
+
+      cy.gridInstance().invoke('on', 'check', checkCallback);
+      cy.gridInstance().invoke('on', 'uncheck', uncheckCallback);
+
+      if (type === 'UI') {
+        cy.get('@checkbox').click();
+      } else {
+        cy.gridInstance().invoke('check', 0);
+      }
+
+      cy.wrap(checkCallback).should('be.calledWithMatch', { rowKey: 0 });
+
+      if (type === 'UI') {
+        cy.get('@checkbox').click();
+      } else {
+        cy.gridInstance().invoke('uncheck', 0);
+      }
+
+      cy.wrap(uncheckCallback).should('be.calledWithMatch', { rowKey: 0 });
+    });
+
+    it(`checkAll / uncheckAll by ${type}`, () => {
+      const checkCallback = cy.stub();
+      const uncheckCallback = cy.stub();
+
+      cy.getByCls('cell-row-header')
+        .get('input')
+        .eq(0)
+        .as('checkbox');
+
+      cy.gridInstance().invoke('on', 'checkAll', checkCallback);
+      cy.gridInstance().invoke('on', 'uncheckAll', uncheckCallback);
+
+      if (type === 'UI') {
+        cy.get('@checkbox').click();
+      } else {
+        cy.gridInstance().invoke('checkAll');
+      }
+
+      cy.wrap(checkCallback).should('be.calledOnce');
+
+      if (type === 'UI') {
+        cy.get('@checkbox').click();
+      } else {
+        cy.gridInstance().invoke('uncheckAll');
+      }
+
+      cy.wrap(uncheckCallback).should('be.calledOnce');
+    });
+  });
+});
+
+describe('sort', () => {
+  ['UI', 'API'].forEach(type => {
+    it(`sort by ${type}`, () => {
+      const callback = cy.stub();
+
+      cy.gridInstance().invoke('on', 'sort', callback);
+
+      if (type === 'UI') {
+        cy.getByCls('btn-sorting').click();
+      } else {
+        cy.gridInstance().invoke('sort', 'name', true);
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'name', ascending: true }], useClient: true }
+      });
+    });
+  });
+});
+
+describe('editing', () => {
+  ['API', 'UI'].forEach(type => {
+    it(`editingStart by ${type}`, () => {
+      const callback = cy.stub();
+      cy.gridInstance().invoke('on', 'editingStart', callback);
+
+      if (type === 'UI') {
+        cy.gridInstance().invoke('focus', 0, 'name');
+        cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
+      } else {
+        cy.gridInstance().invoke('startEditing', 0, 'name');
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        rowKey: 0,
+        columnName: 'name',
+        value: 'Kim'
+      });
+    });
+
+    it(`editingFinish by ${type}`, () => {
+      const callback = cy.stub();
+
+      cy.gridInstance().invoke('on', 'editingFinish', callback);
+
       cy.gridInstance().invoke('startEditing', 0, 'name');
-    } else {
-      cy.gridInstance().invoke('focus', 0, 'name');
-      cy.getByCls('clipboard').trigger('keydown', { keyCode: 13, which: 13, force: true });
-    }
 
-    cy.wrap(callback).should('be.calledWithMatch', {
-      rowKey: 0,
-      columnName: 'name',
-      value: 'Kim'
+      if (type === 'UI') {
+        cy.gridInstance().invoke('focus', 1, 'name');
+      } else {
+        cy.gridInstance().invoke('finishEditing');
+      }
+
+      cy.wrap(callback).should('be.calledWithMatch', {
+        rowKey: 0,
+        columnName: 'name',
+        value: 'Kim'
+      });
     });
   });
 });
 
-it('editingFinish', () => {
-  const callback = cy.stub();
+describe('filter', () => {
+  function inputFilterValue(value: string) {
+    cy.getByCls('filter-container', 'filter-input').type(value);
+  }
 
-  cy.gridInstance().invoke('on', 'editingFinish', callback);
+  function clickFilterBtn() {
+    cy.getByCls('btn-filter').click();
+  }
 
-  cy.gridInstance().invoke('startEditing', 0, 'name');
-  cy.gridInstance().invoke('finishEditing', 0, 'name', 'Ryu');
+  function applyFilterByUI(value: string) {
+    clickFilterBtn();
+    inputFilterValue(value);
+  }
 
-  cy.wrap(callback).should('be.calledWithMatch', {
-    rowKey: 0,
-    columnName: 'name',
-    value: 'Ryu'
-  });
-});
+  ['API', 'UI'].forEach(type => {
+    it(`filter by ${type}`, () => {
+      const callback = cy.stub();
 
-it('filter', () => {
-  const callback = cy.stub();
+      cy.gridInstance().invoke('on', 'filter', callback);
 
-  cy.gridInstance().invoke('on', 'filter', callback);
+      if (type === 'UI') {
+        applyFilterByUI('20');
+      } else {
+        cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
+      }
 
-  cy.gridInstance().invoke('filter', 'age', [{ code: 'eq', value: 20 }]);
-
-  cy.wrap(callback).should(() => {
-    expect(callback.args[0][0]).to.contain.subset({
-      filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
-    });
-  });
-});
-
-it('when calling editingStart and editingFinish by API, both callback execute.', () => {
-  const startCallback = cy.stub();
-  const finishCallback = cy.stub();
-
-  cy.gridInstance().invoke('on', 'editingStart', startCallback);
-  cy.gridInstance().invoke('on', 'editingFinish', finishCallback);
-  cy.gridInstance().invoke('startEditing', 0, 'name');
-  cy.gridInstance().invoke('finishEditing');
-
-  cy.should(() => {
-    expect(startCallback.args[0][0]).to.contain.subset({
-      rowKey: 0,
-      columnName: 'name',
-      value: 'Kim'
-    });
-
-    expect(finishCallback.args[0][0]).to.contain.subset({
-      rowKey: 0,
-      columnName: 'name',
-      value: 'Kim'
+      cy.wrap(callback).should(() => {
+        setTimeout(() => {
+          expect(callback.args[0][0]).to.contain.subset({
+            filterState: [{ columnName: 'age', state: [{ code: 'eq', value: 20 }], type: 'number' }]
+          });
+        });
+      });
     });
   });
 });

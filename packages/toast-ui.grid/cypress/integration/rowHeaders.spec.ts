@@ -134,7 +134,7 @@ it('rowHeader with custom options.', () => {
     columns
   });
 
-  cy.getNumberRowHeaderCells().within($el => {
+  cy.getRowHeaderCells('_number').within($el => {
     cy.wrap($el)
       .should('have.css', 'width', '100px')
       .and('have.css', 'text-align', 'right');
