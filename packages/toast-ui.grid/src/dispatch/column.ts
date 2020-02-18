@@ -138,10 +138,10 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   data.rawData = data.rawData.map(row => {
     row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
-    columnInfos.forEach(({ name, defaultValue }) => {
+    columnInfos.forEach(({ name }) => {
       if (isUndefined(row[name])) {
         partialObservable(row, name);
-        row[name] = row[name] || defaultValue;
+        row[name] = null;
       }
     });
 

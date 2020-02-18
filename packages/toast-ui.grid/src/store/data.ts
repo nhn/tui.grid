@@ -38,7 +38,8 @@ import {
   isFunction,
   convertToNumber,
   assign,
-  omit
+  omit,
+  isNull
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -201,11 +202,15 @@ function createViewCell(
   relationMatched = true,
   relationListItems?: ListItem[]
 ): CellRenderData {
-  const { name, formatter, editor, validation } = column;
+  const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
   if (!relationMatched) {
     value = '';
+  }
+
+  if (isNull(value) || isUndefined(value)) {
+    value = defaultValue;
   }
 
   const formatterProps = { row, column, value };

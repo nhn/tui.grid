@@ -810,11 +810,11 @@ export function createObservableData({ column, data, viewport, id }: Store, allR
   }
 }
 
-export function fillMissingData(allColumns: ColumnInfo[], rawData: Row[]) {
-  allColumns.forEach(({ name, defaultValue }) => {
+function fillMissingColumnData(allColumns: ColumnInfo[], rawData: Row[]) {
+  allColumns.forEach(({ name }) => {
     rawData.forEach(row => {
       if (isUndefined(row[name])) {
-        row[name] = defaultValue;
+        row[name] = null;
       }
     });
   });
@@ -822,7 +822,7 @@ export function fillMissingData(allColumns: ColumnInfo[], rawData: Row[]) {
 
 function changeToObservableData(column: Column, data: Data, originData: OriginData) {
   const { targetIndexes, rows } = originData;
-  fillMissingData(column.allColumns, data.rawData);
+  fillMissingColumnData(column.allColumns, data.rawData);
 
   // prevRows is needed to create rowSpan
   const prevRows = targetIndexes.map(targetIndex => data.rawData[targetIndex - 1]);
@@ -844,7 +844,7 @@ function changeToObservableTreeData(
   const { rows } = originData;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues } = column;
-  fillMissingData(column.allColumns, data.rawData);
+  fillMissingColumnData(column.allColumns, data.rawData);
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
