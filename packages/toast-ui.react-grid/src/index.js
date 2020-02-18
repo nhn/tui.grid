@@ -13,15 +13,12 @@ export default class Grid extends React.Component {
 
   gridInst = null;
 
-  bindEventHandlers(props, prevProps) {
+  bindEventHandlers(props) {
     Object.keys(props)
-      .filter(key => /on[A-Z][a-zA-Z]+/.test(key))
+      .filter(key => /^on[A-Z][a-zA-Z]+/.test(key))
       .forEach(key => {
         const eventName = key[2].toLowerCase() + key.slice(3);
-        // For <Grid onFocus={condition ? onFocus1 : onFocus2} />
-        if (prevProps && prevProps[key] === props[key]) {
-          this.gridInst.off(eventName);
-        }
+        this.gridInst.off(eventName);
         this.gridInst.on(eventName, props[key]);
       });
   }
