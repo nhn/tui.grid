@@ -3,7 +3,6 @@ import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
 import { Dictionary } from '../store/types';
-import { setWrapperPosition } from './helper';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -35,7 +34,6 @@ export class DatePickerEditor implements CellEditor {
     const calendarWrapper = document.createElement('div');
     calendarWrapper.style.marginTop = '-4px';
     calendarWrapper.style.position = 'fixed';
-    calendarWrapper.style.zIndex = '100';
     this.el.appendChild(calendarWrapper);
 
     return calendarWrapper;
@@ -124,12 +122,7 @@ export class DatePickerEditor implements CellEditor {
   public mounted() {
     this.inputEl.select();
     this.datePickerEl.open();
-    setWrapperPosition(
-      this.el,
-      this.calendarWrapper,
-      this.calendarWrapper.firstElementChild! as HTMLElement,
-      true
-    );
+    this.calendarWrapper.style.top = `${this.el.getBoundingClientRect().bottom}px`;
   }
 
   public beforeDestroy() {
