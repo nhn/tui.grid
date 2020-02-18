@@ -38,8 +38,7 @@ import {
   isFunction,
   convertToNumber,
   assign,
-  omit,
-  isNull
+  omit
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -209,9 +208,7 @@ function createViewCell(
     value = '';
   }
 
-  if (isNull(value) || isUndefined(value)) {
-    value = defaultValue;
-  }
+  setDefaultProp(row, name, defaultValue);
 
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
@@ -462,9 +459,6 @@ export function createRawRow(
   row._disabledPriority = row._disabledPriority || {};
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
-  defaultValues.forEach(({ name, value }) => {
-    setDefaultProp(row, name, value);
-  });
   setRowRelationListItems(row as Row, columnMap);
 
   return (lazyObservable ? row : observable(row)) as Row;
