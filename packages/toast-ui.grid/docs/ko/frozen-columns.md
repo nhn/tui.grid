@@ -47,7 +47,7 @@ Grid.applyTheme('striped', {
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
 });
 
 grid.setFrozenColumnCount(2); // 고정하고자 하는 컬럼의 갯수

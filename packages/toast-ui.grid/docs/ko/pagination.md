@@ -21,7 +21,7 @@ import 'tui-pagination/dist/tui-pagination.css';
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   pageOptions: { perPage: 10 }
 });
 ```
@@ -35,7 +35,7 @@ TOAST UI Grid는 백엔드와의 연동없이 Grid내의 데이터를 페이지 
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   pageOptions: {
     useClient: true,
     perPage: 10

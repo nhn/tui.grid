@@ -16,7 +16,7 @@ Use the `_attributes.rowSpan` option to configure the target columns to span and
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: [
     {
       name: 'Beautiful Lies',

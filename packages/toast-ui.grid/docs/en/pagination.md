@@ -21,7 +21,7 @@ It is a common practice to use remote data with backend communications and the p
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   pageOptions: { perPage: 10 }
 });
 ```
@@ -34,7 +34,7 @@ TOAST UI Grid provides a Client Pagination feature that enables the users to vie
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   pageOptions: {
     useClient: true,
     perPage: 10

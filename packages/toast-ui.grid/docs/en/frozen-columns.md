@@ -48,7 +48,7 @@ The grid below is the result of running the code above.
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
 });
 
 grid.setFrozenColumnCount(2); // The number of columns to fix

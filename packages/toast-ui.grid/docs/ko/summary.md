@@ -50,7 +50,7 @@ const grid = new Grid({
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: {
@@ -92,7 +92,7 @@ const grid = new Grid({
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: {
@@ -117,7 +117,7 @@ const grid = new Grid({
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: 'col1 content'

@@ -53,7 +53,7 @@ class CustomTextEditor {
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'Custom',
@@ -62,12 +62,12 @@ const grid = new Grid({
         type: CustomTextEditor,
         options: {
           customTextEditorOptions: {
-            // ...
+            // ...,
           }
         }
       }        
     }
-    // ...
+    // ...,
   ]
 });
 ```
@@ -78,9 +78,9 @@ const grid = new Grid({
 class CustomTextEditor {
   constructor(props) {
     const customOptions = props.columnInfo.editor.options.customTextEditorOptions;
-    // ...
+    // ...,
   }
-  // ...
+  // ...,
 }
 ```
 
@@ -93,7 +93,7 @@ TOAST UI Grid에는 다양한 에디터가 내장되어 있으며, `columns` 배
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'ID',
@@ -141,7 +141,7 @@ const columns = [
       }
     }        
   }
-  // ...
+  // ...,
 ];
 
 const grid = new Grid({

@@ -14,7 +14,7 @@ const dataSource = {
 };
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```
@@ -86,7 +86,7 @@ Usually when sending a request to a remote server, `Pagination` is required. `Pa
 
 ```javascript
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource,
   pageOptions: {
     perPage: 10
@@ -115,7 +115,7 @@ const dataSource = {
 };
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```

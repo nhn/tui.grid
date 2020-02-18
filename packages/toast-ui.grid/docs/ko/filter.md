@@ -88,7 +88,7 @@ const grid = new tui.Grid({
         showClearBtn: true
       }
     }
-    // ...
+    // ...,
   ]
 });
 ```

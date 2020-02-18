@@ -60,7 +60,7 @@ As in the example above, the `Custom Renderer` can be configured using the `rend
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'Custom',
@@ -73,7 +73,7 @@ const grid = new Grid({
         }
       }        
     }
-    // ...
+    // ...,
   ]
 });
 ```
@@ -86,9 +86,9 @@ class CustomTextECustomSliderRendererditor {
     const el = document.createElement('input');
     // As you can see, we can access the renderer's custom option as such. 
     const { min, max } = props.columnInfo.renderer.options;
-    // ...
+    // ...,
   }
-  // ...
+  // ...,
 }
 ```
 

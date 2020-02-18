@@ -12,7 +12,7 @@ CopyOptions can be specified by grid option or by column. You can modify which v
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  //...options
+  // ...,
   copyOptions: {
     useFormattedValue: true,
     useListItemText: true,
@@ -23,7 +23,7 @@ const grid = new Grid({
 // or
 
 const grid = new Grid({
-  //...options
+  // ...,
   columns: [
     {
       name: 'type',
@@ -60,12 +60,12 @@ const columns = [
       customValue: (value, rowAttrs, column) => `Column name is ${column.name}`
     }
   },
-  //...
+  // ...,
 ];
 const grid = new Grid({
   el: document.getElementById('wrapper'),
   columns,
-  //... options
+  // ...,
 });
 ```
 

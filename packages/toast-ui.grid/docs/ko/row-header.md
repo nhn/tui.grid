@@ -11,7 +11,7 @@ TOAST UI Grid는 `rowHeaders` 옵션을 이용하여 각 로우에 쉽게 체크
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   rowHeaders: ['rowNum', 'checkbox']
   // or rowHeaders: [{ type: 'rowNum' }, { type: 'checkbox' }]
 });
@@ -29,7 +29,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   rowHeaders: [
     { type: 'rowNum', width: 100, align: 'left', valign: 'bottom' },
     { type: 'checkbox' }
@@ -43,7 +43,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  //... another options
+  // ...,
   rowHeaders: [
     {
       type: 'checkbox',
@@ -173,7 +173,7 @@ const data = [
     name: 'X',
     artist: 'Ed Sheeran',
   }
-  ...
+  // ...,
 ];
 
 const grid = new Grid({

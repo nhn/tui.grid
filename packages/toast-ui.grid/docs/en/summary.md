@@ -50,7 +50,7 @@ If you designate an object to be a `columnContent` property of a certain column,
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: {
@@ -95,7 +95,7 @@ If you were to use the `template` function without using auto summary feature, s
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: {
@@ -120,7 +120,7 @@ If the HTML string is assigned as a property to the `columnContent` or `defaultC
 
 ```javascript
 const grid = new Grid({
-  //...options
+  // ...,
   summary: {
     columnContent: {
       col1: 'col1 content'
