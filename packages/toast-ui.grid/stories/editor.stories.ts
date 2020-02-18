@@ -19,8 +19,6 @@ class ColorPickerEditor implements CellEditor {
     const input = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
 
-    el.style.backgroundColor = '#fff';
-
     input.type = 'color';
     input.value = String(props.value);
 
@@ -172,9 +170,7 @@ text.story = { parameters: { notes: textNote } };
 export const checkbox = () => {
   const { el, grid } = createGrid();
 
-  setTimeout(() => {
-    grid.startEditingAt(1, 1);
-  });
+  grid.startEditingAt(1, 1);
 
   return el;
 };
@@ -191,9 +187,7 @@ checkbox.story = { parameters: { notes: checkboxNote } };
 export const radio = () => {
   const { el, grid } = createGrid();
 
-  setTimeout(() => {
-    grid.startEditingAt(1, 2);
-  });
+  grid.startEditingAt(1, 2);
 
   return el;
 };
@@ -209,9 +203,7 @@ radio.story = { parameters: { notes: radioNote } };
 
 export const select = () => {
   const { el, grid } = createGrid();
-  setTimeout(() => {
-    grid.startEditingAt(1, 3);
-  });
+  grid.startEditingAt(1, 3);
 
   return el;
 };

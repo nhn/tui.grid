@@ -903,7 +903,7 @@ declare namespace tuiGrid {
 
     public clearModifiedData(type?: ModificationTypeCode): void;
 
-    public addData(data: RowData[]): void;
+    public appendRows(data: RowData[]): void;
   }
 }
 
