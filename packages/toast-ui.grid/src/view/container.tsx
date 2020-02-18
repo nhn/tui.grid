@@ -131,11 +131,8 @@ export class ContainerComp extends Component<Props> {
     const rowKey = this.getCellRowKey(event.target as HTMLElement);
 
     if (!isNull(rowKey)) {
-      dispatch('removeRowClassName', hoveredRowKey!, cls('row-hover'));
-
       if (hoveredRowKey !== rowKey) {
         dispatch('setHoveredRowKey', rowKey);
-        dispatch('addRowClassName', rowKey, cls('row-hover'));
       }
     }
 
@@ -181,7 +178,6 @@ export class ContainerComp extends Component<Props> {
     const gridEvent = new GridEvent({ event });
 
     if (!isNull(hoveredRowKey)) {
-      dispatch('removeRowClassName', hoveredRowKey, cls('row-hover'));
       dispatch('setHoveredRowKey', null);
     }
 

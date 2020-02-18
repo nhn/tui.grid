@@ -44,15 +44,19 @@ function bgBorderRuleString(className: ClassNameType, options: OptPaginationStyl
 
 export function outline(options: OptTableOutlineStyle): string {
   const { border, showVerticalBorder } = options;
-  const borderTopRule = createClassRule('border-line-top').bg(border);
-  const borderBottomRule = createNestedClassRule(' .', ['no-scroll-x', 'border-line-bottom']).bg(
-    border
+  const borderTopRule = createClassRule('border-line-top').add('border-top', `1px solid ${border}`);
+  const borderBottomRule = createNestedClassRule(' .', ['no-scroll-x', 'border-line-bottom']).add(
+    'border-bottom',
+    `1px solid ${border}`
   );
   let rules = [borderTopRule, borderBottomRule];
   let borderLeftRule, borderRightRule;
   if (showVerticalBorder) {
-    borderLeftRule = createClassRule('border-line-left').bg(border);
-    borderRightRule = createNestedClassRule(' .', ['no-scroll-y', 'border-line-right']).bg(border);
+    borderLeftRule = createClassRule('border-line-left').add('border-left', `1px solid ${border}`);
+    borderRightRule = createNestedClassRule(' .', ['no-scroll-y', 'border-line-right']).add(
+      'border-right',
+      `1px solid ${border}`
+    );
     rules = rules.concat([borderLeftRule, borderRightRule]);
   }
 
@@ -69,7 +73,10 @@ export function scrollbar(options: OptScrollbarStyle): string {
   const { border, emptySpace } = options;
   const webkitScrollbarRules = createWebkitScrollbarRules(`.${cls('container')}`, options);
   const ieScrollbarRule = createIEScrollbarRule(`.${cls('container')}`, options);
-  const xInnerBorderRule = createClassRule('border-line-bottom').bg(border);
+  const xInnerBorderRule = createClassRule('border-line-bottom').add(
+    'border-bottom',
+    `1px solid ${border}`
+  );
   const xOuterBorderRule = createClassRule('content-area').border(border);
   const yInnerBorderRule = createClassRule('scrollbar-y-inner-border').bg(border);
   const yOuterBorderRule = createClassRule('scrollbar-y-outer-border').bg(border);
@@ -208,7 +215,7 @@ export function rowOdd(options: OptBasicCellStyle): string {
 }
 
 export function rowHover(options: OptRowHoverStyle): string {
-  return createNestedClassRule('.', ['row-hover', 'cell'])
+  return create('.tui-grid-row-hover>.tui-grid-cell')
     .bg(options.background)
     .build();
 }

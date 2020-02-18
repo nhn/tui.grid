@@ -8,8 +8,8 @@ import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';
-import { isFunction } from '../helper/common';
 import { getRowIndexWithPage } from '../query/data';
+import { isFunction, shallowEqual } from '../helper/common';
 
 interface OwnProps {
   viewRow: ViewRow;
@@ -56,10 +56,19 @@ export class BodyCellComp extends Component<Props> {
     this.calculateRowHeight(this.props);
   }
 
-  public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.renderData !== nextProps.renderData && this.renderer && this.renderer.render) {
-      const { grid, rowKey, renderData, columnInfo } = nextProps;
+  public shouldComponentUpdate(nextProps: Props) {
+    return !shallowEqual(this.props, nextProps);
+  }
 
+  public componentWillReceiveProps(nextProps: Props) {
+    const { viewRow, renderData, columnInfo, rowKey, grid } = nextProps;
+    const { viewRow: prevViewRow, renderData: prevRenderData } = this.props;
+
+    if (
+      (prevRenderData !== renderData || viewRow.uniqueKey !== prevViewRow.uniqueKey) &&
+      this.renderer &&
+      isFunction(this.renderer.render)
+    ) {
       this.renderer.render({
         grid,
         rowKey,

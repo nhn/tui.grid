@@ -42,7 +42,6 @@ import {
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
-import { cls } from '../helper/dom';
 import { findIndexByRowKey, isScrollPagination } from '../query/data';
 
 interface DataOption {
@@ -214,11 +213,7 @@ function createViewCell(
   const columnDisabled = !!column.disabled;
   const rowDisabled = isCheckboxColumn(name) ? checkDisabled : disabled;
   const columnClassName = isUndefined(classNameAttr.column[name]) ? [] : classNameAttr.column[name];
-  const classList = [...classNameAttr.row, ...columnClassName];
-  const className = (isEmpty(row.rowSpanMap[name])
-    ? classList
-    : classList.filter(clsName => clsName !== cls('row-hover'))
-  ).join(' ');
+  const className = [...classNameAttr.row, ...columnClassName].join(' ');
 
   let cellDisabled = rowDisabled || columnDisabled;
   if (!isUndefined(row._disabledPriority[name])) {

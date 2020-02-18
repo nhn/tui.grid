@@ -11,11 +11,7 @@ type Props = OwnProps;
 
 export class SummaryBodyRow extends Component<Props> {
   public shouldComponentUpdate(nextProps: Props) {
-    if (shallowEqual(nextProps, this.props)) {
-      return false;
-    }
-
-    return true;
+    return !shallowEqual(nextProps, this.props);
   }
 
   public render({ columns }: Props) {

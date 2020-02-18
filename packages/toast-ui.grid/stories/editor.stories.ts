@@ -10,25 +10,19 @@ export default {
 };
 
 class ColorPickerEditor implements CellEditor {
-  el: HTMLDivElement;
-
-  input: HTMLInputElement;
+  el: HTMLInputElement;
 
   public constructor(props: CellEditorProps) {
-    const el = document.createElement('div');
-    const input = document.createElement('input');
+    const el = document.createElement('input');
     const { grid, rowKey, columnInfo } = props;
 
-    input.type = 'color';
-    input.value = String(props.value);
+    el.type = 'color';
+    el.value = String(props.value);
 
-    input.addEventListener('change', () => {
-      grid.setValue(rowKey, columnInfo.name, Number(input.value));
+    el.addEventListener('change', () => {
+      grid.setValue(rowKey, columnInfo.name, Number(el.value));
     });
 
-    el.appendChild(input);
-
-    this.input = input;
     this.el = el;
   }
 
@@ -37,11 +31,7 @@ class ColorPickerEditor implements CellEditor {
   }
 
   getValue() {
-    return String(this.input.value);
-  }
-
-  mounted() {
-    this.input.focus();
+    return String(this.el.value);
   }
 }
 
@@ -51,7 +41,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '4',
-    release: '2016-03-26',
+    release: '2016.03.26',
     albumColor: '#F294A4'
   },
   {
@@ -59,7 +49,7 @@ const data = [
     typeCode: '1',
     genreCode: '1',
     grade: '5',
-    release: '2014-06-24',
+    release: '2014.06.24',
     albumColor: '#ED6510'
   },
   {
@@ -67,7 +57,7 @@ const data = [
     typeCode: '3',
     genreCode: '1,2',
     grade: '2',
-    release: '2011-08-08',
+    release: '2011.08.08',
     albumColor: '#1286DB'
   }
 ];
@@ -203,6 +193,7 @@ radio.story = { parameters: { notes: radioNote } };
 
 export const select = () => {
   const { el, grid } = createGrid();
+
   grid.startEditingAt(1, 3);
 
   return el;

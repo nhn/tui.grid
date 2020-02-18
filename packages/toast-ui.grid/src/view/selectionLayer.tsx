@@ -18,7 +18,7 @@ class SelectionLayerComp extends Component<Props> {
   private handleMouseMove = (ev: MouseEvent) => {
     const { dispatch } = this.props;
     const { pageX, pageY } = ev;
-    dispatch('addRowHoverClassByPosition', { pageX, pageY });
+    dispatch('setHoveredRowKeyByPosition', { pageX, pageY });
   };
 
   public render() {

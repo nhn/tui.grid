@@ -4,7 +4,6 @@ import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import i18n from '../i18n';
 import { LoadingState } from '../store/types';
-import { shallowEqual } from '../helper/common';
 
 interface StoreProps {
   loadingState: LoadingState;
@@ -17,10 +16,6 @@ interface StoreProps {
 type Props = StoreProps & DispatchProps;
 
 class StateLayerComp extends Component<Props> {
-  public shouldComponentUpdate(nextProps: Props) {
-    return !shallowEqual(nextProps, this.props);
-  }
-
   public render({ loadingState, top, height, left, right }: Props) {
     const display = loadingState === 'DONE' ? 'none' : 'block';
     const layerStyle = { display, top, height, left, right };
