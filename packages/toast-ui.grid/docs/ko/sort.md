@@ -8,7 +8,7 @@ Grid에서 컬럼의 정렬 버튼을 눌렀을 경우, 해당 컬럼 기준으�
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -22,7 +22,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ]
 });
 ```
@@ -44,7 +43,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -58,7 +57,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ]
 });
 ```
@@ -79,7 +77,7 @@ Grid의 [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -93,7 +91,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ],
   useClientSort: false
 });

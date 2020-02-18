@@ -8,7 +8,7 @@ When you press the column's *sort button* in Grid, the data in the corresponding
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -22,7 +22,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ]
 });
 ```
@@ -44,7 +43,7 @@ You can also sort data found in multiple column at once. In order to use the *mu
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -58,7 +57,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ]
 });
 ```
@@ -79,7 +77,7 @@ If you decide to use the Grid's [Data Source](https://github.com/nhn/tui.grid/bl
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       name: 'alphabetA',
@@ -93,7 +91,6 @@ const grid = new Grid({
       sortable: true,
       sortingType: 'asc'
     }
-    // more columns...
   ],
   useClientSort: false
 });

@@ -15,7 +15,7 @@ TOAST UI Grid는 셀 데이터의 유효성을 검사하는 기능을 제공한�
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -36,7 +36,7 @@ const grid = new Grid({
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -67,7 +67,7 @@ grid.setValue(1, 'downloadCount', 'foo');
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -91,7 +91,7 @@ grid.setValue(3, 'artist', '');
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'price',
@@ -114,7 +114,7 @@ const grid = new Grid({
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -136,7 +136,7 @@ const grid = new Grid({
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'price',
@@ -154,7 +154,7 @@ const grid = new Grid({
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'price',
@@ -176,7 +176,7 @@ const grid = new Grid({
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',

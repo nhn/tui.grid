@@ -36,7 +36,7 @@ You can also directly set up the event handlers using the Grid's options. Such e
 
 ```javascript
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       header: 'Name',
@@ -105,7 +105,7 @@ grid.on('mousedown', function(ev) {
 - `editingFinish`: When the editing of cell is finished
 - `sort` : when the data is sorted
 - `filter` : when the data is filtered
-- `scrollEnd` : when scroll at the bottommost
+- `scrollEnd` : when scrolling at the bottommost
 
 There are other events that can be used when using `DataSource`.
 

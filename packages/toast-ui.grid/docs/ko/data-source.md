@@ -13,12 +13,12 @@
     - **updateData** `{object}` : 데이터 수정 요청을 위한 `url`과 `method`를 나타낸다.
     - **deleteData** `{object}` : 데이터 삭제 요청을 위한 `url`과 `method`를 나타낸다.
     - **modifyData** `{object}` : 데이터 추가, 수정, 삭제 요청을 위한 `url`과 `method`를 나타낸다.
-- **hideLoadingBar** `{boolean}` : 로딩바를 숨김 여부를 설정한다.
+- **hideLoadingBar** `{boolean}` : 로딩바 숨김 여부를 설정한다.
 - **withCredentials** `{boolean}` : ajax 요청 시 적용될 `withCredentials` 옵션을 설정한다.    
-- **contentType** `{string}` : ajax 요청 시 공통으로 사용할 `content-type` header 를 설정한다.
-- **headers** `{object}` : ajax 요청 시 `content-type` 외에 공통으로 사용할 header 를 설정한다.
+- **contentType** `{string}` : ajax 요청 시 공통으로 사용할 `content-type` header를 설정한다.
+- **headers** `{object}` : ajax 요청 시 `content-type` 외에 공통으로 사용할 header를 설정한다.
 - **serializer** `{function}` : ajax 요청 시 파라미터의 직렬화를 커스터마이징 하고 싶은 경우 사용한다.
-- **mimeType** `{string}` : MIME type을 재지정하고 싶은 경우 설정한다.
+- **mimeType** `{string}` : MIME type을 지정하고 싶은 경우 설정한다.
 
 각 속성의 자세한 내용은 아래에서 볼 수 있다.
 
@@ -38,11 +38,42 @@ const dataSource = {
 };
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```
-`grid` 인스턴스는 설정한 `url`과 `method`를 보고 요청을 보낸다. 만약 `initParams` 속성이 설정된 경우 해당 파라미터를 `query string`에 추가하여 요청한다.
+`grid` 인스턴스는 설정한 `url`과 `method`를 보고 인스턴트 생성 시 또는 페이지를 이동하는 경우 해당 옵션을 보고 데이터 조회 요청을 한다. 만약 `initialRequest` 옵션이 `false` 라면 인스턴스만 생성하고 요청은 보내지 않으므로, 이런 경우는 [readData](https://nhn.github.io/tui.grid/latest/Grid#readData) API를 이용하여 명시적으로 데이터를 가져올 수 있다.
+
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
+  },
+  initialRequest: false // 디폴트 값은 true
+};
+
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
+
+grid.readData(1);
+```
+
+api 옵션 정의 시 초기 요청 파라미터를 추가하고 싶은 경우, `initParams` 속성을 설정하면 해당 파라미터를 `query string`에 추가하여 요청한다. `initParams` 속성은 `GET` api에 대해서만 유효하다.
+
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
+  }
+};
+
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
+```
 
 #### 참조
 `initParams` 옵션은 `v4.9.0` 이상부터 사용할 수 있다.
@@ -120,7 +151,7 @@ const dataSource = {
 };
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```
@@ -200,7 +231,7 @@ ajax 옵션을 공통으로 사용하고 싶은 경우에 아래 예제처럼 �
 ```js
 const dataSource = {
   api: {
-    readData: { url: '/api/readData/', method: 'get' },
+    readData: { url: '/api/readData/', method: 'GET' },
     createData: { url: '/api/createData', method: 'POST' }
   },
   contentType: 'application/json',
@@ -211,7 +242,7 @@ const dataSource = {
 }
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```
@@ -222,7 +253,7 @@ const dataSource = {
   api: {
     readData: { 
       url: '/api/readData/',
-      method: 'get',
+      method: 'GET',
       headers: { 'x-custom-header': 'custom-header' },
       // 아래에 설정된 serializer 옵션이 공통 serializer 옵션보다 우선순위를 가진다.
       serializer(params) {
@@ -236,7 +267,7 @@ const dataSource = {
 }
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource
 });
 ```
@@ -250,7 +281,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: dataSource,
   pageOptions: {
     perPage: 10
@@ -281,25 +312,25 @@ grid.on('beforeRequest', function(ev) {
 API의 각 `url` 옵션을 RESTful하게 정의하고 싶은 경우, 아래 예제처럼 함수 형태로 `url` 옵션을 지정할 수 있다.
 
 ```js
-let applicationId = 'id';
+let shopId = '1000';
 
 const dataSource = {
   api: {
-    readData: { url: () => `/${applicationId}/api/readData`, method: 'GET' },
-    deleteData: { url: () => `/${applicationId}/api/deleteData`, method: 'DELETE' }
+    readData: { `/company/${shopId}/sales`, method: 'GET' },
+    deleteDate: { `/company/${shopId}/sales`, method: 'DELETE' }
   }
-};
+}
 ```
 
 ### 참조
 RESTful URI 설정은 `v4.9.0` 이상부터 사용할 수 있다.
 
 ## 로딩바 숨김 옵션
-`hideLoadingBar`옵션을 설정하여 기본 로딩바를 숨길 수 있다. 기본값은 `true`이다.
+`hideLoadingBar`옵션을 설정하여 기본 로딩바를 숨길 수 있다. 기본값은 `false`이다.
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: {
     api: {
       readData: { url: '/api/readData/', method: 'get' }

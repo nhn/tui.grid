@@ -81,9 +81,9 @@ import Grid from 'tui-grid';
 const grid = new Grid({
   el: document.getElementById('wrapper'), // Container element
   columns: [ 
-    //... 
+    // ...,
   ],
-  // ...
+  // ...,
 });
 ```
 
@@ -125,7 +125,7 @@ const grid = new Grid({
   columns: [
     // ... same array as above example
   ],
-  // another options ...
+  // ...,
 });
 ```
 

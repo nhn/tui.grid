@@ -60,7 +60,7 @@ class CustomSliderRenderer {
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'Custom',
@@ -73,7 +73,7 @@ const grid = new Grid({
         }
       }        
     }
-    // ...
+    // ...,
   ]
 });
 ```
@@ -87,9 +87,9 @@ class CustomTextECustomSliderRendererditor {
     const el = document.createElement('input');
     // 다음과 같이 렌더러 커스텀 옵션에 접근할 수 있다.
     const { min, max } = props.columnInfo.renderer.options;
-    // ...
+    // ...,
   }
-  // ...
+  // ...,
 }
 ```
 

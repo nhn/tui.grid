@@ -10,7 +10,7 @@ TOAST UI Grid는 내장 기능 외에도 커스텀 기능을 확장할 수 있�
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // options...
+  // ...,
 });
 
 grid.on('click', () => {
@@ -36,7 +36,7 @@ Grid 옵션에서 이벤트 핸들러를 직접 넘겨 설정하는 경우도 �
 
 ```javascript
 const grid = new Grid({
-  // options...
+  // ...,
   columns: [
     {
       header: 'Name',
@@ -103,8 +103,8 @@ grid.on('mousedown', (ev) => {
 - `selection`: 테이블에서 선택 영역을 변경한 경우
 - `editingStart`: 테이블에서 셀 편집을 시작한 경우
 - `editingFinish`: 테이블에서 셀 편집을 종료한 경우
-- `sort` : 데이터를 정렬했을 경우 
-- `filter` : 데이터를 필터링했을 경우 
+- `sort` : 데이터를 정렬한 경우 
+- `filter` : 데이터를 필터링한 경우 
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 
 `DataSource`를 이용할 때 사용할 수 있는 이벤트는 다음과 같다.

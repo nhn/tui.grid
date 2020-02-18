@@ -77,9 +77,9 @@ import Grid from 'tui-grid';
 const grid = new Grid({
   el: document.getElementById('wrapper'), // 컨테이너 엘리먼트
   columns: [ 
-    //... 
+    // ...,
   ],
-  // ...
+  // ...,
 });
 ```
 
@@ -124,9 +124,9 @@ const grid = new Grid({
       header: 'ID',
       name: 'id'
     },
-    // ... 
+    // ...,
   ],
-  // 다른 옵션들 ...
+  // ...,
 });
 ```
 

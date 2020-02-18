@@ -11,7 +11,7 @@ TOAST UI Grid provides a validation feature to test for validity of a cell's dat
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -32,7 +32,7 @@ We can use the `dataType` option to check whether the Grid's initial data or the
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -62,7 +62,7 @@ If we set `required` option to `true`, we can determine whether the cell data ha
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -85,7 +85,7 @@ This option can be implemented in `v4.5.0` and above. If you set a numerical val
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'price',
@@ -108,7 +108,7 @@ This option can be implemented in `v4.5.0` and above. You can validate whether t
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -130,7 +130,7 @@ This option can be implemented in `v4.5.0` and above. You can validate the cell 
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'price',
@@ -152,7 +152,7 @@ We can retrieve the column's validation information in row units by configuring 
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',

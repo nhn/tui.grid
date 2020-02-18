@@ -11,7 +11,7 @@ In rowHeaders, there are two types available: `rowNum` that displays the row num
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   rowHeaders: ['rowNum', 'checkbox']
   // or rowHeaders: [{ type: 'rowNum' }, { type: 'checkbox' }]
 });
@@ -28,7 +28,7 @@ The code above, when executed, displays the row numbers and checkboxes like the 
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   rowHeaders: [
     { type: 'rowNum', width: 100, align: 'left', valign: 'bottom' },
     { type: 'checkbox' }
@@ -42,7 +42,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  //... another options
+  // ...,
   rowHeaders: [
     {
       type: 'checkbox',
@@ -170,7 +170,7 @@ const data = [
     name: 'X',
     artist: 'Ed Sheeran',
   }
-  ...
+  // ...,
 ];
 
 const grid = new Grid({

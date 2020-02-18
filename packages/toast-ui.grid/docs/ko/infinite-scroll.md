@@ -1,6 +1,6 @@
 # 무한 스크롤 📜
 
-TOAST UI Grid는 스크롤이 최하단 위치에 도달하면 다음 데이터를 가져올 수 있도록 무한 스크롤 기능을 제공한다. 클라이언트 무한 스크롤, [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)와의 연동, `scrollEnd` 커스텀 이벤트를 이용한 구현 세 가지 방식으로 사용할 수 있다. 한 가지 중요한 점은 무한 스크롤을 사용하기 위해 반드시 적합한 `bodyHeight` 값을 설정하여 그리드 내부에 스크롤이 생기도록 해야한다.
+TOAST UI Grid는 스크롤이 최하단 위치에 도달하면 다음 데이터를 가져올 수 있도록 무한 스크롤 기능을 제공한다. 클라이언트 무한 스크롤, [데이터 소스](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/ko/data-source.md)와의 연동, `scrollEnd` 커스텀 이벤트를 이용한 구현 세 가지 방식으로 사용할 수 있다. 한 가지 중요한 점은 무한 스크롤을 사용하기 위해 반드시 적합한 `bodyHeight` 값을 설정하여 그리드 내부에 스크롤이 생기도록 해야한다. 무한 스크롤 기능은 `v4.10.0` 이상부터 사용할 수 있다.
 
 ## 클라이언트 무한 스크롤
 
@@ -8,7 +8,7 @@ TOAST UI Grid는 스크롤이 최하단 위치에 도달하면 다음 데이터�
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   bodyHeight: 300,
   pageOptions: {
     useClient: true,
@@ -24,7 +24,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   data: {
     api: {
       readData: { url: '/api/readData', method: 'GET' }
@@ -43,7 +43,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // options...
+  // ...,
   data: {
     api: {
       readData: { url: '/api/readData', method: 'GET' }

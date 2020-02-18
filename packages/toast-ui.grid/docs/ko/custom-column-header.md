@@ -50,7 +50,7 @@ class CustomColumnHeader {
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   header: {
     height: 100,
     complexColumns: [

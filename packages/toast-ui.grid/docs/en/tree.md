@@ -31,10 +31,10 @@ const data = [
         c1: 'baz',
         c2: 'qux'
       },
-      // ...
+      // ...,
     ]
   },
-  // ...
+  // ...,
 ];
 ```
 
@@ -58,7 +58,7 @@ Aforementioned options can be configured using the Grid constructor option.
 import Grid from 'tui-grid';
 
 const options = {
-  // ...
+  // ...,
   treeColumnOptions: {
     name: 'c1',
     useIcon: true,

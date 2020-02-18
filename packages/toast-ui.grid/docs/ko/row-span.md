@@ -16,7 +16,7 @@ TOAST UI Grid는 연속되는 로우들의 데이터를 컬럼 단위로 병합�
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   data: [
     {
       name: 'Beautiful Lies',

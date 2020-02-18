@@ -31,10 +31,10 @@ const data = [
         c1: 'baz',
         c2: 'qux'
       },
-      // ...
+      // ...,
     ]
   },
-  // ...
+  // ...,
 ];
 ```
 
@@ -58,7 +58,7 @@ Grid 인스턴스 생성 옵션으로 설정할 수 있다.
 import Grid from 'tui-grid';
 
 const options = {
-  // ...
+  // ...,
   treeColumnOptions: {
     name: 'c1',
     useIcon: true,

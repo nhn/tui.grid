@@ -25,7 +25,7 @@ Grid 각 컬럼의 넓이는 최초 브라우저의 뷰포트 또는 부모 엘�
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name'
@@ -59,7 +59,7 @@ const grid = new Grid({
 ```
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -84,7 +84,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -116,7 +116,7 @@ const grid = new Grid({
 ```
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columnOptions: {
     minWidth: 180
   },
@@ -173,7 +173,7 @@ Grid 뷰포트 영역에 그려지는 각 행 높이는 `rowHeight` 옵션으로
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 'auto'
 });
 ```
@@ -186,7 +186,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 40
 });
 ```
@@ -198,7 +198,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   minRowHeight: 70
 });
 ```
@@ -209,7 +209,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 20,
   minRowHeight: 10
 });
@@ -223,7 +223,7 @@ Grid는 테이블 형태로 구성되어 있는데, 행이 그려지는 바디(b
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 'auto'
 });
 ```
@@ -235,7 +235,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 300
 });
 ```
@@ -247,7 +247,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 'fitToParent'
 });
 ```
@@ -263,7 +263,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 50,
   minBodyHeight: 50
 });
@@ -278,7 +278,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   header: {
     height: 160
   }
@@ -293,7 +293,7 @@ const grid = new Grid({
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   summary: {
     height: 60
   }

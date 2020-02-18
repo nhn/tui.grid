@@ -26,7 +26,7 @@ The area of each column encompassed in the Grid depends on the initial browser's
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name'
@@ -60,7 +60,7 @@ Individual columns can be assigned different widths by using the `columns[].widt
 ```
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -85,7 +85,7 @@ Although the minimum value for the `columns[].width` is set to be `50px`, if a u
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columns: [
     {
       name: 'name',
@@ -117,7 +117,7 @@ The `columnOptions.minWidth` option can be used to configure a general width for
 ```
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   columnOptions: {
     minWidth: 180
   },
@@ -173,7 +173,7 @@ The height of columns represented on Grid viewport area is configured using the 
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 'auto'
 });
 ```
@@ -188,7 +188,7 @@ Setting the `rowHeight` to be some numerical value instead of `'auto'` will fix 
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 40
 });
 ```
@@ -199,7 +199,7 @@ The aforementioned default row height internally set within the Grid is affected
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   minRowHeight: 70
 });
 ```
@@ -210,7 +210,7 @@ When trying to fix the `rowHeight` to a value that is smaller than the default r
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   rowHeight: 20,
   minRowHeight: 10
 });
@@ -224,7 +224,7 @@ The Grid has a tabular form, and the body area that the rows are rendered upon i
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 'auto'
 });
 ```
@@ -235,7 +235,7 @@ If a numerical value is given for the `bodyHeight` option, the height of the Gri
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 300
 });
 ```
@@ -247,7 +247,7 @@ The `bodyHeight` option can also take the value of `'fitToParent'`, and this val
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 'fitToParent'
 });
 ```
@@ -263,7 +263,7 @@ The minimum height of the viewport is `130px`, and when trying to use an even sm
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   bodyHeight: 50,
   minBodyHeight: 50
 });
@@ -278,7 +278,7 @@ The height for header area can be configured using the `header.height`. The defa
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   header: {
     height: 160
   }
@@ -293,7 +293,7 @@ The height for summary area can be configured using `summary.height` option. Whi
 
 ```js
 const grid = new Grid({
-  // ...
+  // ...,
   summary: {
     height: 60
   }

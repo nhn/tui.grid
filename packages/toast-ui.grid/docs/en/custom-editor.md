@@ -55,7 +55,7 @@ As the example above demonstrates, the user defined `Custom Editor` can be confi
 
 ```js
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'Custom',
@@ -64,12 +64,12 @@ const grid = new Grid({
         type: CustomTextEditor,
         options: {
           customTextEditorOptions: {
-            // ...
+            // ...,
           }
         }
       }        
     }
-    // ...
+    // ...,
   ]
 });
 ```
@@ -80,9 +80,9 @@ The configured user defined options can be implemented using `Custom Editor`'s c
 class CustomTextEditor {
   constructor(props) {
     const customOptions = props.columnInfo.editor.options.customTextEditorOptions;
-    // ...
+    // ...,
   }
-  // ...
+  // ...,
 }
 ```
 
@@ -94,7 +94,7 @@ There are numerous built-in editors ready to be used with TOAST UI Grid, and it 
 import Grid from 'tui-grid';
 
 const grid = new Grid({
-  // ... another options
+  // ...,
   columns: [
     {
       header: 'ID',
@@ -141,11 +141,11 @@ const columns = [
       }
     }        
   }
-  // ...
+  // ...,
 ];
 
 const grid = new Grid({
-  //...options
+  // ...,
   columns  
 });
 ```
