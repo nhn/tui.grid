@@ -60,7 +60,7 @@ module.exports = (env, { mode = 'development' }) => {
         rules: [
           {
             test: /\.css$/,
-            exclude: /node_modules(?!\/@toast-ui\/select-box)/,
+            exclude: /node_modules/,
             use: [MiniCssExtractPlugin.loader, 'css-loader']
           }
         ]

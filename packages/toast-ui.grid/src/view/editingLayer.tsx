@@ -94,13 +94,21 @@ export class EditingLayerComp extends Component<Props> {
     const columnInfo = allColumnMap[columnName];
     const value = findProp('rowKey', rowKey, filteredViewData)!.valueMap[columnName].value;
     const EditorClass: CellEditorClass = columnInfo.editor!.type;
-    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value, width: right - left };
+    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
     const cellEditor: CellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
 
     if (editorEl && this.contentEl) {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
+
+      const editorWidth = editorEl.getBoundingClientRect().width;
+      const width = right - left;
+
+      if (editorWidth > width) {
+        const CELL_PADDING_WIDTH = 10;
+        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
+      }
 
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
@@ -144,8 +152,8 @@ export class EditingLayerComp extends Component<Props> {
       top: top ? top : cellBorderWidth,
       left,
       width: width + cellBorderWidth,
-      height: top ? height + cellBorderWidth : height,
-      lineHeight: top ? `${height - cellBorderWidth}px` : `${height - cellBorderWidth * 2}px`
+      height: height + cellBorderWidth,
+      lineHeight: `${height}px`
     };
 
     return (
