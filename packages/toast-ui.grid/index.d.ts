@@ -502,7 +502,6 @@ declare namespace tuiGrid {
     rowKey: RowKey;
     columnInfo: ColumnInfo;
     value: CellValue;
-    formattedValue: string;
   }
 
   interface CellEditorOptions {
