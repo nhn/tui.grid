@@ -115,6 +115,63 @@ export function observe(fn: Function, sync = false) {
   };
 }
 
+// eslint-disable-next-line max-params
+function makeObservableData<T extends Dictionary<any>>(
+  obj: T,
+  resultObj: T,
+  key: string,
+  storage: T,
+  propObserverIdSetMap: Dictionary<BooleanSet>,
+  sync?: boolean
+) {
+  const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
+  const observerIdSet: BooleanSet = (propObserverIdSetMap[key] = {});
+
+  Object.defineProperty(resultObj, key, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      const observerId = last(observerIdStack);
+      if (observerId && !observerIdSet[observerId]) {
+        observerIdSet[observerId] = true;
+        observerInfoMap[observerId].targetObserverIdSets.push(observerIdSet);
+      }
+      return storage[key];
+    }
+  });
+
+  if (isFunction(getter)) {
+    observe(() => {
+      const value = getter.call(resultObj);
+      setValue(storage, resultObj, observerIdSet, key, value);
+    }, sync);
+  } else {
+    // has to add 'as' type assertion and refer the below typescript issue
+    // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
+    // it merely ensures that the properties of the argument are assignable to type XXX.
+    // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
+    // https://github.com/microsoft/TypeScript/issues/31661
+    (storage[key] as T) = obj[key];
+
+    if (Array.isArray(storage[key])) {
+      patchArrayMethods(storage[key], resultObj, key);
+    }
+
+    Object.defineProperty(resultObj, key, {
+      set(value) {
+        setValue(storage, resultObj, observerIdSet, key, value);
+      }
+    });
+  }
+}
+
+export function partialObservable<T extends Dictionary<any>>(obj: T, key: string) {
+  const storage = obj.__storage__;
+  const propObserverIdSetMap = obj.__propObserverIdSetMap__;
+
+  makeObservableData(obj, obj, key, storage, propObserverIdSetMap);
+}
+
 export function observable<T extends Dictionary<any>>(obj: T, sync = false): Observable<T> {
   if (isObservable(obj)) {
     throw new Error('Target object is already Reactive');
@@ -134,45 +191,7 @@ export function observable<T extends Dictionary<any>>(obj: T, sync = false): Obs
   });
 
   Object.keys(obj).forEach(key => {
-    const getter = (Object.getOwnPropertyDescriptor(obj, key) || {}).get;
-    const observerIdSet: BooleanSet = (propObserverIdSetMap[key] = {});
-
-    Object.defineProperty(resultObj, key, {
-      configurable: true,
-      enumerable: true,
-      get() {
-        const observerId = last(observerIdStack);
-        if (observerId && !observerIdSet[observerId]) {
-          observerIdSet[observerId] = true;
-          observerInfoMap[observerId].targetObserverIdSets.push(observerIdSet);
-        }
-        return storage[key];
-      }
-    });
-
-    if (isFunction(getter)) {
-      observe(() => {
-        const value = getter.call(resultObj);
-        setValue(storage, resultObj, observerIdSet, key, value);
-      }, sync);
-    } else {
-      // has to add 'as' type assertion and refer the below typescript issue
-      // In general, the constraint Record<string, XXX> doesn't actually ensure that an argument has a string index signature,
-      // it merely ensures that the properties of the argument are assignable to type XXX.
-      // So, in the example above you could effectively pass any object and the function could write to any property without any checks.
-      // https://github.com/microsoft/TypeScript/issues/31661
-      (storage[key] as T) = obj[key];
-
-      if (Array.isArray(storage[key])) {
-        patchArrayMethods(storage[key], resultObj, key);
-      }
-
-      Object.defineProperty(resultObj, key, {
-        set(value) {
-          setValue(storage, resultObj, observerIdSet, key, value);
-        }
-      });
-    }
+    makeObservableData(obj, resultObj, key, storage, propObserverIdSetMap, sync);
   });
 
   return resultObj as Observable<T>;

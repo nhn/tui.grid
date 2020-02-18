@@ -280,3 +280,20 @@ describe('should API is executed properly on lazy observable data(tree)', () => 
     cy.getCell(15, 'name').should('be.not.exist');
   });
 });
+
+it('columns are observable even if not specify value', () => {
+  const columns = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
+  const smallData = [
+    { A: 10, B: 20 },
+    { A: 20, B: 30 }
+  ];
+
+  cy.createGrid({
+    data: smallData,
+    columns,
+    bodyHeight: 400
+  });
+
+  cy.gridInstance().invoke('setValue', 0, 'C', 100);
+  cy.getCell(0, 'C').should('have.text', '100');
+});

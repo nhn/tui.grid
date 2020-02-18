@@ -232,7 +232,7 @@ export function encodeHTMLEntity(html: string) {
 }
 
 export function setDefaultProp<T>(obj: T, key: keyof T, defValue: any): void {
-  if (typeof obj[key] === 'undefined') {
+  if (isUndefined(obj[key]) || isNull(obj[key])) {
     obj[key] = defValue;
   }
 }

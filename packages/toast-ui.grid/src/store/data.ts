@@ -201,12 +201,14 @@ function createViewCell(
   relationMatched = true,
   relationListItems?: ListItem[]
 ): CellRenderData {
-  const { name, formatter, editor, validation } = column;
+  const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
   if (!relationMatched) {
     value = '';
   }
+
+  setDefaultProp(row, name, defaultValue);
 
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
@@ -457,9 +459,6 @@ export function createRawRow(
   row._disabledPriority = row._disabledPriority || {};
   (row as Row).rowSpanMap = createRowSpanMap(row, rowSpan, prevRow);
 
-  defaultValues.forEach(({ name, value }) => {
-    setDefaultProp(row, name, value);
-  });
   setRowRelationListItems(row as Row, columnMap);
 
   return (lazyObservable ? row : observable(row)) as Row;
