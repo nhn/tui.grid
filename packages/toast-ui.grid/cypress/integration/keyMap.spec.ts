@@ -29,7 +29,7 @@ function assertEditFinished() {
 }
 
 function clipboardType(key: string) {
-  cy.getByCls('clipboard').type(key);
+  cy.getByCls('clipboard').type(key, { force: true });
 }
 
 function assertFocusedCell(columnName: string, rowKey: number) {
@@ -67,7 +67,7 @@ describe('editor', () => {
   });
 
   ['backspace', 'del'].forEach(key => {
-    it(`delete content by pressing ${key}`, () => {
+    it(`delete focused content by pressing ${key}`, () => {
       cy.getCellByIdx(0, 0).click();
       clipboardType(`{${key}}`);
 
@@ -206,5 +206,20 @@ describe('Selection', () => {
     clipboardType('{ctrl}A');
 
     assertSelectedRange({ start: [0, 0], end: [3, 1] });
+  });
+
+  ['backspace', 'del'].forEach(key => {
+    it(`delete selection content by pressing ${key}`, () => {
+      const range = { start: [0, 0], end: [1, 1] };
+      cy.gridInstance().invoke('setSelectionRange', range);
+      clipboardType(`{${key}}`);
+
+      cy.getRsideBody().should('have.cellData', [
+        ['', ''],
+        ['', ''],
+        ['Ryu', '3'],
+        ['Lee', '4']
+      ]);
+    });
   });
 });
