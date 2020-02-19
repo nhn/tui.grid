@@ -5,11 +5,16 @@ export type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';
 };
 
+export type HandleEditingKeyDown = (ev: KeyboardEvent) => void;
+
 export interface CellEditorProps {
   grid: Grid;
   rowKey: RowKey;
   columnInfo: ColumnInfo;
   value: CellValue;
+  formattedValue: string;
+  width: number;
+  handleEditingKeyDown: HandleEditingKeyDown;
 }
 
 export interface CellEditor {

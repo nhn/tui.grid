@@ -12,7 +12,7 @@ import {
 } from '../store/types';
 import { cls } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { CellEditor, CellEditorClass, CellEditorProps } from '../editor/types';
+import { CellEditor } from '../editor/types';
 import { findProp, isFunction, isNull } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';
@@ -92,10 +92,20 @@ export class EditingLayerComp extends Component<Props> {
     const { rowKey, columnName } = editingAddress!;
     const { right, left } = cellPosRect!;
     const columnInfo = allColumnMap[columnName];
-    const value = findProp('rowKey', rowKey, filteredViewData)!.valueMap[columnName].value;
-    const EditorClass: CellEditorClass = columnInfo.editor!.type;
-    const editorProps: CellEditorProps = { grid, rowKey, columnInfo, value };
-    const cellEditor: CellEditor = new EditorClass(editorProps);
+    const { value, formattedValue } = findProp('rowKey', rowKey, filteredViewData)!.valueMap[
+      columnName
+    ]!;
+    const EditorClass = columnInfo.editor!.type;
+    const editorProps = {
+      grid,
+      rowKey,
+      columnInfo,
+      value,
+      formattedValue,
+      width: right - left,
+      handleEditingKeyDown: this.handleKeyDown
+    };
+    const cellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
 
     if (editorEl && this.contentEl) {
@@ -117,7 +127,11 @@ export class EditingLayerComp extends Component<Props> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    if (!prevProps.active && this.props.active) {
+    if (
+      !prevProps.active &&
+      this.props.active &&
+      this.props.editingAddress?.columnName === this.props.focusedColumnName
+    ) {
       this.createEditor();
     }
   }
@@ -152,8 +166,8 @@ export class EditingLayerComp extends Component<Props> {
       top: top ? top : cellBorderWidth,
       left,
       width: width + cellBorderWidth,
-      height: height + cellBorderWidth,
-      lineHeight: `${height}px`
+      height: top ? height + cellBorderWidth : height,
+      lineHeight: top ? `${height - cellBorderWidth}px` : `${height - cellBorderWidth * 2}px`
     };
 
     return (
