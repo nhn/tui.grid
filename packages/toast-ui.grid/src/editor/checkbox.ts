@@ -1,53 +1,160 @@
-import { CellEditor, CellEditorProps, CheckboxOptions } from './types';
-import { CellValue } from '../store/types';
+import { CellEditor, CellEditorProps, HandleEditingKeyDown } from './types';
+import { CellValue, ListItem } from '../store/types';
 import { getListItems } from '../helper/editor';
+import { cls, hasClass } from '../helper/dom';
+import { getKeyStrokeString, KeyStrokeCommandType } from '../helper/keyboard';
+import { includes, findIndex } from '../helper/common';
+import { getContainerElement, setLayerPosition } from './helper';
+
+const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
+const LIST_ITEM_CLASSNAME = cls('editor-checkbox');
+const HOVERED_LIST_ITEM_CLASSNAME = `${cls('editor-checkbox-hovered')} ${LIST_ITEM_CLASSNAME}`;
+const UNCHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio');
+const CHECKED_RADIO_LABEL_CLASSNAME = cls('editor-label-icon-radio-checked');
+const UNCHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox');
+const CHECKED_CHECKBOX_LABEL_CLASSNAME = cls('editor-label-icon-checkbox-checked');
 
 export class CheckboxEditor implements CellEditor {
   public el: HTMLElement;
 
+  private layer: HTMLUListElement;
+
+  private readonly inputType: 'checkbox' | 'radio';
+
+  private hoveredItemId = '';
+
+  private handleEditingKeyDown: HandleEditingKeyDown;
+
+  private elementIds: string[] = [];
+
   public constructor(props: CellEditorProps) {
-    const name = 'tui-grid-check-input';
-    const el = document.createElement('fieldset');
-    const { type } = props.columnInfo.editor!.options as CheckboxOptions;
+    const { columnInfo, width, value, formattedValue, handleEditingKeyDown } = props;
+    const el = document.createElement('div');
+    el.className = cls('layer-editing-inner');
+    el.innerText = formattedValue;
+
+    this.inputType = columnInfo.editor!.options!.type;
+
     const listItems = getListItems(props);
+    const layer = this.createLayer(listItems, width);
 
-    listItems.forEach(({ text, value }) => {
-      const id = `${name}-${value}`;
-      el.appendChild(this.createCheckbox(value, name, id, type));
-      el.appendChild(this.createLabel(text, id));
-    });
+    this.handleEditingKeyDown = handleEditingKeyDown;
     this.el = el;
+    this.layer = layer;
 
-    this.setValue(props.value);
+    this.setValue(value);
   }
 
-  private createLabel(text: string, id: string) {
+  private createLayer(listItems: ListItem[], width: number) {
+    const layer = document.createElement('ul');
+    layer.className = LAYER_CLASSNAME;
+    layer.style.minWidth = `${width - 10}px`;
+
+    listItems.forEach(({ text, value }) => {
+      const id = `checkbox-${value}`;
+      const listItemEl = document.createElement('li');
+
+      listItemEl.id = id;
+      listItemEl.className = LIST_ITEM_CLASSNAME;
+      listItemEl.appendChild(this.createCheckboxLabel(value, text));
+
+      this.elementIds.push(id);
+
+      layer.appendChild(listItemEl);
+    });
+
+    layer.addEventListener('change', this.onChange);
+    layer.addEventListener('mouseover', this.onMouseover);
+    layer.addEventListener('keydown', this.onKeydown);
+
+    return layer;
+  }
+
+  private createCheckboxLabel(value: CellValue, text: string) {
+    const input = document.createElement('input');
     const label = document.createElement('label');
-    label.innerText = text;
-    label.setAttribute('for', id);
+    const span = document.createElement('span');
+
+    label.className =
+      this.inputType === 'radio'
+        ? UNCHECKED_RADIO_LABEL_CLASSNAME
+        : UNCHECKED_CHECKBOX_LABEL_CLASSNAME;
+
+    input.type = this.inputType;
+    input.name = 'checkbox';
+    input.value = String(value);
+
+    span.innerText = text;
+
+    label.appendChild(input);
+    label.appendChild(span);
 
     return label;
   }
 
-  private createCheckbox(
-    value: CellValue,
-    name: string,
-    id: string,
-    inputType: 'checkbox' | 'radio'
-  ) {
-    const input = document.createElement('input');
-
-    input.type = inputType;
-    input.id = id;
-    input.name = name;
-    input.value = String(value);
-    input.setAttribute('data-value-type', 'string');
-
-    return input;
+  private getItemId(target: HTMLElement) {
+    return target.id || target.parentElement!.id;
   }
 
-  private getFirstInput() {
-    return this.el.querySelector('input');
+  private onMouseover = (ev: MouseEvent) => {
+    const targetId = this.getItemId(ev.target as HTMLElement);
+    if (targetId && targetId !== this.hoveredItemId) {
+      this.highlightItem(targetId);
+    }
+  };
+
+  private onChange = (ev: Event) => {
+    const value = (ev.target as HTMLInputElement).value;
+    this.setLabelClass(value);
+  };
+
+  private isArrowKey = (keyName: KeyStrokeCommandType) => {
+    return includes(['up', 'down', 'left', 'right'], keyName);
+  };
+
+  private onKeydown = (ev: KeyboardEvent) => {
+    const keyName = getKeyStrokeString(ev);
+    if (this.isArrowKey(keyName)) {
+      const elementIdx = findIndex(id => id === this.hoveredItemId, this.elementIds);
+      const totalCount = this.elementIds.length;
+      const offset = totalCount + (keyName === 'down' || keyName === 'right' ? 1 : -1);
+      const id = this.elementIds[(elementIdx + offset) % totalCount];
+
+      this.highlightItem(id);
+    } else {
+      this.handleEditingKeyDown(ev);
+    }
+  };
+
+  private highlightItem(targetId: string) {
+    if (this.hoveredItemId) {
+      this.layer.querySelector(`#${this.hoveredItemId}`)!.className = LIST_ITEM_CLASSNAME;
+    }
+
+    this.hoveredItemId = targetId;
+    const item = this.layer.querySelector(`#${targetId}`)!;
+    item.className = HOVERED_LIST_ITEM_CLASSNAME;
+    item.querySelector('input')!.focus();
+  }
+
+  private setLabelClass(inputValue: CellValue) {
+    const label = this.layer.querySelector(`#checkbox-${inputValue} label`) as HTMLLabelElement;
+    if (this.inputType === 'checkbox') {
+      label.className = hasClass(label, 'editor-label-icon-checkbox-checked')
+        ? UNCHECKED_CHECKBOX_LABEL_CLASSNAME
+        : CHECKED_CHECKBOX_LABEL_CLASSNAME;
+    } else {
+      const checkedLabel = this.layer.querySelector(`.${CHECKED_RADIO_LABEL_CLASSNAME}`);
+      if (checkedLabel) {
+        checkedLabel.className = UNCHECKED_RADIO_LABEL_CLASSNAME;
+      }
+
+      label.className = CHECKED_RADIO_LABEL_CLASSNAME;
+    }
+  }
+
+  private getCheckedInput() {
+    return this.layer.querySelectorAll('input:checked')[0] || this.layer.querySelector('input');
   }
 
   public getElement() {
@@ -58,15 +165,16 @@ export class CheckboxEditor implements CellEditor {
     String(value)
       .split(',')
       .forEach(inputValue => {
-        const input = this.el.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
+        const input = this.layer.querySelector(`input[value="${inputValue}"]`) as HTMLInputElement;
         if (input) {
           input.checked = true;
+          this.setLabelClass(inputValue);
         }
       });
   }
 
   public getValue() {
-    const checkedInputs = this.el.querySelectorAll('input:checked');
+    const checkedInputs = this.layer.querySelectorAll('input:checked');
     const checkedValues = [];
     for (let i = 0, len = checkedInputs.length; i < len; i += 1) {
       checkedValues.push((checkedInputs[i] as HTMLInputElement).value);
@@ -76,9 +184,19 @@ export class CheckboxEditor implements CellEditor {
   }
 
   public mounted() {
-    const firstInput = this.getFirstInput();
-    if (firstInput) {
-      firstInput.focus();
+    getContainerElement(this.el).appendChild(this.layer);
+
+    const checkedInput = this.getCheckedInput();
+    if (checkedInput) {
+      this.highlightItem(`checkbox-${checkedInput.value}`);
     }
+    setLayerPosition(this.el, this.layer);
+  }
+
+  public beforeDestroy() {
+    this.layer.removeEventListener('change', this.onChange);
+    this.layer.removeEventListener('mouseover', this.onMouseover);
+    this.layer.removeEventListener('keydown', this.onKeydown);
+    getContainerElement(this.el).removeChild(this.layer);
   }
 }
