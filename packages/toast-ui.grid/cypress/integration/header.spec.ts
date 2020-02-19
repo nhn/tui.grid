@@ -232,7 +232,6 @@ describe('header customizing', () => {
     cy.getHeaderCell('id').should('have.text', 'custom_id');
   });
 
-  // @TODO should move to selection
   it('should header selection is operated properly', () => {
     cy.getHeaderCell('mergeColumn1').within(() => {
       cy.root()

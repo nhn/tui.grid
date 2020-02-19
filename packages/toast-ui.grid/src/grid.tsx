@@ -597,7 +597,6 @@ export default class Grid {
    * Remove focus from the focused cell.
    */
   public blur() {
-    // @TODO: save previous 이후 추가 필요.
     this.dispatch('setFocusInfo', null, null, false);
   }
 
@@ -620,7 +619,6 @@ export default class Grid {
       });
     }
 
-    // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
   }
 
