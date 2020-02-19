@@ -4,7 +4,6 @@ import {
   Dictionary,
   Column,
   ColumnInfo,
-  ColumnDefaultValues,
   Formatter,
   CellRenderData,
   FormatterProps,
@@ -28,7 +27,6 @@ import { OptRow, RowSpanAttributeValue } from '../types';
 import {
   someProp,
   encodeHTMLEntity,
-  setDefaultProp,
   isBlank,
   isUndefined,
   isBoolean,
@@ -38,7 +36,8 @@ import {
   isFunction,
   convertToNumber,
   assign,
-  omit
+  omit,
+  isNull
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
@@ -204,11 +203,13 @@ function createViewCell(
   const { name, formatter, editor, validation, defaultValue } = column;
   let value = isRowHeader(name) ? getRowHeaderValue(row, name) : row[name];
 
+  if (isUndefined(value) || isNull(value)) {
+    value = defaultValue || '';
+  }
+
   if (!relationMatched) {
     value = '';
   }
-
-  setDefaultProp(row, name, defaultValue);
 
   const formatterProps = { row, column, value };
   const { disabled, checkDisabled, className: classNameAttr } = row._attributes;
@@ -434,7 +435,6 @@ function createRowSpanMap(row: OptRow, rowSpan: RowSpanAttributeValue, prevRow?:
 export function createRawRow(
   row: OptRow,
   index: number,
-  defaultValues: ColumnDefaultValues,
   columnMap: Dictionary<ColumnInfo>,
   options: RawRowOptions = {}
 ) {
@@ -472,19 +472,12 @@ export function createData({
   disabled = false
 }: DataCreationOption) {
   generateDataCreationKey();
-  const {
-    keyColumnName,
-    defaultValues,
-    columnMapWithRelation,
-    treeColumnName = '',
-    treeIcon = true
-  } = column;
+  const { keyColumnName, columnMapWithRelation, treeColumnName = '', treeIcon = true } = column;
   let rawData: Row[];
 
   if (treeColumnName) {
     rawData = createTreeRawData({
       data,
-      defaultValues,
       columnMap: columnMapWithRelation,
       keyColumnName,
       lazyObservable,
@@ -492,7 +485,7 @@ export function createData({
     });
   } else {
     rawData = data.map((row, index, rows) =>
-      createRawRow(row, index, defaultValues, columnMapWithRelation, {
+      createRawRow(row, index, columnMapWithRelation, {
         keyColumnName,
         prevRow: prevRows ? prevRows[index] : (rows[index - 1] as Row),
         lazyObservable,
