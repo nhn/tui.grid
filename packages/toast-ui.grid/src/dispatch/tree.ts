@@ -240,13 +240,13 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
   const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData } = data;
-  const { defaultValues, columnMapWithRelation, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
   const { heights } = rowCoords;
   const { parentRowKey, offset } = options;
   const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
 
-  const rawRows = flattenTreeData([row], defaultValues, parentRow!, columnMapWithRelation, {
+  const rawRows = flattenTreeData([row], parentRow!, columnMapWithRelation, {
     keyColumnName: column.keyColumnName,
     offset
   });
