@@ -1,10 +1,10 @@
-import { CellEditor, CellEditorProps, HandleEditingKeyDown } from './types';
+import { CellEditor, CellEditorProps, PortalEditingkeyDown } from './types';
 import { CellValue, ListItem } from '../store/types';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
-import { getKeyStrokeString, KeyStrokeCommandType } from '../helper/keyboard';
-import { includes, findIndex } from '../helper/common';
-import { getContainerElement, setLayerPosition } from './helper';
+import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';
+import { findIndex } from '../helper/common';
+import { getContainerElement, setLayerPosition } from './dom';
 
 const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
 const LIST_ITEM_CLASSNAME = cls('editor-checkbox');
@@ -23,12 +23,12 @@ export class CheckboxEditor implements CellEditor {
 
   private hoveredItemId = '';
 
-  private handleEditingKeyDown: HandleEditingKeyDown;
+  private portalEditingkeyDown: PortalEditingkeyDown;
 
   private elementIds: string[] = [];
 
   public constructor(props: CellEditorProps) {
-    const { columnInfo, width, value, formattedValue, handleEditingKeyDown } = props;
+    const { columnInfo, width, value, formattedValue, portalEditingkeyDown } = props;
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
@@ -38,7 +38,7 @@ export class CheckboxEditor implements CellEditor {
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width);
 
-    this.handleEditingKeyDown = handleEditingKeyDown;
+    this.portalEditingkeyDown = portalEditingkeyDown;
     this.el = el;
     this.layer = layer;
 
@@ -108,13 +108,10 @@ export class CheckboxEditor implements CellEditor {
     this.setLabelClass(value);
   };
 
-  private isArrowKey = (keyName: KeyStrokeCommandType) => {
-    return includes(['up', 'down', 'left', 'right'], keyName);
-  };
-
   private onKeydown = (ev: KeyboardEvent) => {
     const keyName = getKeyStrokeString(ev);
-    if (this.isArrowKey(keyName)) {
+    if (isArrowKey(keyName)) {
+      ev.preventDefault();
       const elementIdx = findIndex(id => id === this.hoveredItemId, this.elementIds);
       const totalCount = this.elementIds.length;
       const offset = totalCount + (keyName === 'down' || keyName === 'right' ? 1 : -1);
@@ -122,7 +119,8 @@ export class CheckboxEditor implements CellEditor {
 
       this.highlightItem(id);
     } else {
-      this.handleEditingKeyDown(ev);
+      // Without arrow key, pass the event to editing layer for using existing editing keyMap
+      this.portalEditingkeyDown(ev);
     }
   };
 
@@ -154,7 +152,8 @@ export class CheckboxEditor implements CellEditor {
   }
 
   private getCheckedInput() {
-    return this.layer.querySelectorAll('input:checked')[0] || this.layer.querySelector('input');
+    return (this.layer.querySelector('input:checked') ||
+      this.layer.querySelector('input')) as HTMLInputElement;
   }
 
   public getElement() {
@@ -184,6 +183,7 @@ export class CheckboxEditor implements CellEditor {
   }
 
   public mounted() {
+    // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
 
     const checkedInput = this.getCheckedInput();

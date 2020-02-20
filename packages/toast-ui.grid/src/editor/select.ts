@@ -1,10 +1,12 @@
 import SelectBox from '@toast-ui/select-box';
 import '@toast-ui/select-box/dist/toastui-select-box.css';
-import { CellEditor, CellEditorProps, HandleEditingKeyDown } from './types';
+import { CellEditor, CellEditorProps, PortalEditingkeyDown } from './types';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { CellValue, ListItem } from '../store/types';
-import { setLayerPosition, getContainerElement } from './helper';
+import { setLayerPosition, getContainerElement } from './dom';
+import { getKeyStrokeString } from '../helper/keyboard';
+import { includes } from '../helper/common';
 
 export class SelectEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -15,10 +17,10 @@ export class SelectEditor implements CellEditor {
 
   private selectFinish = false;
 
-  private handleEditingKeyDown: HandleEditingKeyDown;
+  private portalEditingkeyDown: PortalEditingkeyDown;
 
   public constructor(props: CellEditorProps) {
-    const { width, value, formattedValue, handleEditingKeyDown } = props;
+    const { width, value, formattedValue, portalEditingkeyDown } = props;
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
@@ -26,15 +28,20 @@ export class SelectEditor implements CellEditor {
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width, value);
 
-    this.handleEditingKeyDown = handleEditingKeyDown;
+    this.portalEditingkeyDown = portalEditingkeyDown;
     this.el = el;
     this.layer = layer;
     this.layer.addEventListener('keydown', this.onKeydown);
   }
 
   private onKeydown = (ev: KeyboardEvent) => {
-    if (this.selectFinish) {
-      this.handleEditingKeyDown(ev);
+    const passingKeyNames = ['esc', 'shift-tab', 'tab'];
+    const keyName = getKeyStrokeString(ev);
+    if (this.selectFinish || includes(passingKeyNames, keyName)) {
+      // With passingKeyNames, pass the event to editing layer for using existing editing keyMap
+      this.portalEditingkeyDown(ev);
+    } else {
+      ev.preventDefault();
     }
   };
 
@@ -80,7 +87,9 @@ export class SelectEditor implements CellEditor {
   }
 
   public mounted() {
+    // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
+
     this.selectBoxEl.open();
 
     // @ts-ignore
