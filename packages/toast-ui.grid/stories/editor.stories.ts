@@ -207,7 +207,6 @@ function createGrid() {
     bodyHeight: 300,
     columnOptions: {
       frozenCount: 1,
-      frozenBorderWidth: 2,
       minWidth: 200
     }
   });
