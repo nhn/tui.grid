@@ -86,7 +86,6 @@ const MyComponent = () => (
     columns={columns}
     rowHeight={25}
     bodyHeight={100}
-    virtualScrolling={true}
     heightResizable={true}
     rowHeaders={['rowNum']}
   />
