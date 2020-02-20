@@ -96,6 +96,7 @@ grid.on('mousedown', (ev) => {
 - `mouseover` : 테이블 셀에 마우스 포인터가 들어간 경우
 - `mouseout` : 테이블 셀에서 마우스 포인터가 벗어난 경우
 - `focusChange` : 테이블 셀 포커스를 선택한 경우
+- `columnResize` : 컬럼의 너비를 조정한 경우
 - `check`: 로우 헤더의 체크 박스를 선택한 경우
 - `uncheck`: 로우 헤더의 체크 박스를 해제한 경우
 - `checkAll`: 헤더의 체크 박스를 선택하여 로우 헤더의 모든 체크 박스가 선택된 경우
