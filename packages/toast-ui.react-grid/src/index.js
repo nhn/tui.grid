@@ -60,6 +60,10 @@ export default class Grid extends React.Component {
     return false;
   }
 
+  componentWillUnmount() {
+    this.gridInst.destroy();
+  }
+
   render() {
     return <div ref={this.rootEl} />;
   }
