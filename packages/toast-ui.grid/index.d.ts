@@ -422,6 +422,7 @@ declare namespace tuiGrid {
     perPage?: number;
     page?: number;
     totalCount?: number;
+    type?: 'scroll' | 'pagination';
   }
 
   type Serializer = (params: Params) => string;
