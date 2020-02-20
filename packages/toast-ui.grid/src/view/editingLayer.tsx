@@ -103,7 +103,7 @@ export class EditingLayerComp extends Component<Props> {
       value,
       formattedValue,
       width: right - left,
-      handleEditingKeyDown: this.handleKeyDown
+      portalEditingkeyDown: this.handleKeyDown
     };
     const cellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();
@@ -111,14 +111,6 @@ export class EditingLayerComp extends Component<Props> {
     if (editorEl && this.contentEl) {
       this.contentEl.appendChild(editorEl);
       this.editor = cellEditor;
-
-      const editorWidth = editorEl.getBoundingClientRect().width;
-      const width = right - left;
-
-      if (editorWidth > width) {
-        const CELL_PADDING_WIDTH = 10;
-        (this.contentEl as HTMLElement).style.width = `${editorWidth + CELL_PADDING_WIDTH}px`;
-      }
 
       if (isFunction(cellEditor.mounted)) {
         cellEditor.mounted();
