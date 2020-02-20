@@ -152,3 +152,7 @@ export function isNonPrintableKey(keyCode: number) {
 
   return includes(keys, key);
 }
+
+export function isArrowKey(keyName: KeyStrokeCommandType) {
+  return includes(['up', 'down', 'left', 'right'], keyName);
+}
