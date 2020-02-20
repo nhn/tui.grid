@@ -1,13 +1,13 @@
-import {HTMLAttributes, Component} from "react";
-import TuiGrid, {GridOptions, EventCallback} from 'tui-grid';
+import { HTMLAttributes, Component } from 'react';
+import TuiGrid, { GridOptions, EventCallback } from 'tui-grid';
 
 type EventNameMapping = {
   onClick: 'click';
-  onDblclick : 'dblclick';
-  onMousedown :  'mousedown';
-  onMouseover : 'mouseover';
-  onMouseout : 'mouseout';
-  onFocusChange : 'focusChange';
+  onDblclick: 'dblclick';
+  onMousedown: 'mousedown';
+  onMouseover: 'mouseover';
+  onMouseout: 'mouseout';
+  onFocusChange: 'focusChange';
   onColumnResize: 'columnResize';
   onCheck: 'check';
   onUncheck: 'uncheck';
@@ -16,14 +16,14 @@ type EventNameMapping = {
   onSelection: 'selection';
   onEditingStart: 'editingStart';
   onEditingFinish: 'editingFinish';
-  onSort : 'sort';
-  onFilter : 'filter';
-  onScrollEnd : 'scrollEnd';
-  onBeforeRequest : 'beforeRequest';
-  onResponse : 'response';
-  onSuccessResponse : 'successResponse';
-  onFailResponse : 'failResponse';
-  onErrorResponse : 'errorResponse';
+  onSort: 'sort';
+  onFilter: 'filter';
+  onScrollEnd: 'scrollEnd';
+  onBeforeRequest: 'beforeRequest';
+  onResponse: 'response';
+  onSuccessResponse: 'successResponse';
+  onFailResponse: 'failResponse';
+  onErrorResponse: 'errorResponse';
 };
 
 type EventMaps = {
