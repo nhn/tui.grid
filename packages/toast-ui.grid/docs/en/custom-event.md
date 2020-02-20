@@ -96,6 +96,7 @@ grid.on('mousedown', function(ev) {
 - `mouseover` : When a mouse pointer is moved onto a table cell
 - `mouseout` : When a mouse pointer is moved off a table cell
 - `focusChange` : When a table cell focus is selected
+- `columnResize` : When a width of specific column is resized
 - `check`: When a row header checkbox is filled
 - `uncheck`: When a row header checkbox is cleared
 - `checkAll`: When a header checkbox is filled, all the checkboxes in the row headers are filled
