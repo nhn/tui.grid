@@ -28,8 +28,6 @@ export type KeyNameMap = typeof keyNameMap & {
 
 export type LifeCycleEventNames = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
 
-export type CustomEventFunction = (ev: GridEvent) => void;
-
 export interface OptGrid {
   el: HTMLElement;
   data?: OptRow[] | DataSource;
@@ -57,9 +55,9 @@ export interface OptGrid {
   header?: OptHeader;
   usageStatistics?: boolean;
   disabled?: boolean;
-  onGridMounted?: CustomEventFunction;
-  onGridUpdated?: CustomEventFunction;
-  onGridBeforeDestroy?: CustomEventFunction;
+  onGridMounted?: EventCallback;
+  onGridUpdated?: EventCallback;
+  onGridBeforeDestroy?: EventCallback;
 }
 
 export type SummaryPosition = 'top' | 'bottom';
@@ -470,3 +468,30 @@ export interface OptComplexColumnInfo {
   hideChildHeaders?: boolean;
   resizable?: boolean;
 }
+
+export type EventName =
+  | 'click'
+  | 'dblclick'
+  | 'mousedown'
+  | 'mouseover'
+  | 'mouseout'
+  | 'focusChange'
+  | 'columnResize'
+  | 'check'
+  | 'uncheck'
+  | 'checkAll'
+  | 'uncheckAll'
+  | 'selection'
+  | 'editingStart'
+  | 'editingFinish'
+  | 'sort'
+  | 'filter'
+  | 'scrollEnd'
+  | 'beforeRequest'
+  | 'response'
+  | 'successResponse'
+  | 'failResponse'
+  | 'errorResponse'
+  | 'expand'
+  | 'collapse';
+export type EventCallback = (gridEvent: GridEvent) => void;

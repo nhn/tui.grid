@@ -341,7 +341,7 @@ declare namespace tuiGrid {
     row?: Row;
   }
 
-  export type ValidationType =
+  type ValidationType =
     | 'REQUIRED'
     | 'TYPE_STRING'
     | 'TYPE_NUMBER'
@@ -605,6 +605,32 @@ declare namespace tuiGrid {
   type SelectionUnit = 'cell' | 'row';
   type EditingEvent = 'click' | 'dblclick';
   type TabMode = 'move' | 'moveAndEdit';
+  type EventName =
+    | 'click'
+    | 'dblclick'
+    | 'mousedown'
+    | 'mouseover'
+    | 'mouseout'
+    | 'focusChange'
+    | 'columnResize'
+    | 'check'
+    | 'uncheck'
+    | 'checkAll'
+    | 'uncheckAll'
+    | 'selection'
+    | 'editingStart'
+    | 'editingFinish'
+    | 'sort'
+    | 'filter'
+    | 'scrollEnd'
+    | 'beforeRequest'
+    | 'response'
+    | 'successResponse'
+    | 'failResponse'
+    | 'errorResponse'
+    | 'expand'
+    | 'collapse';
+  type EventCallback = (gridEvent: GridEvent) => void;
 
   interface GridOptions {
     el: HTMLElement;
@@ -631,9 +657,9 @@ declare namespace tuiGrid {
     treeColumnOptions?: Tree;
     header?: IHeader;
     usageStatistics?: boolean;
-    onGridMounted?: (ev: GridEvent) => void;
-    onGridUpdated?: (ev: GridEvent) => void;
-    onGridBeforeDestroy?: (ev: GridEvent) => void;
+    onGridMounted?: EventCallback;
+    onGridUpdated?: EventCallback;
+    onGridBeforeDestroy?: EventCallback;
     tabMode?: TabMode;
     disabled?: boolean;
   }
@@ -836,9 +862,9 @@ declare namespace tuiGrid {
 
     public removeRowClassName(rowKey: RowKey, className: string): void;
 
-    public on(eventName: string, fn: Function): void;
+    public on(eventName: EventName, fn: EventCallback): void;
 
-    public off(eventName: string, fn?: Function): void;
+    public off(eventName: EventName, fn?: EventCallback): void;
 
     public getPagination(): Pagination | null;
 
@@ -909,5 +935,7 @@ declare namespace tuiGrid {
 }
 
 declare module 'tui-grid' {
+  export type GridOptions = tuiGrid.GridOptions;
+  export type EventCallback = tuiGrid.EventCallback;
   export default tuiGrid.Grid;
 }

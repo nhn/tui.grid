@@ -12,7 +12,9 @@ import {
   OptHeader,
   FilterOpt,
   FilterOptionType,
-  LifeCycleEventNames
+  LifeCycleEventNames,
+  EventName,
+  EventCallback
 } from './types';
 import { createStore } from './store/create';
 import { Root } from './view/root';
@@ -310,7 +312,10 @@ export default class Grid {
 
     const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
     Object.keys(lifeCycleEvent).forEach(eventName => {
-      this.eventBus.on(eventName, lifeCycleEvent[eventName as LifeCycleEventNames]);
+      this.eventBus.on(
+        eventName as LifeCycleEventNames,
+        lifeCycleEvent[eventName as LifeCycleEventNames]!
+      );
     });
 
     this.gridEl = render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
@@ -1222,7 +1227,7 @@ export default class Grid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public on(eventName: string, fn: Function) {
+  public on(eventName: EventName, fn: EventCallback) {
     this.eventBus.on(eventName, fn);
   }
 
@@ -1231,7 +1236,7 @@ export default class Grid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public off(eventName: string, fn?: Function) {
+  public off(eventName: EventName, fn?: EventCallback) {
     this.eventBus.off(eventName, fn);
   }
 
