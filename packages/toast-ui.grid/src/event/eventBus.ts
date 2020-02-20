@@ -2,13 +2,15 @@ import { removeArrayItem } from '../helper/common';
 import GridEvent from './gridEvent';
 import { getInstance } from '../instance';
 import { GridId } from '../store/types';
+import { EventName, EventCallback } from '../types';
 
+type TargetEventName = EventName | 'onGridMounted' | 'onGridBeforeDestroy' | 'onGridUpdated';
 const eventBusMap: { [id: number]: EventBus } = {};
 
 export interface EventBus {
-  on: Function;
-  off: Function;
-  trigger: Function;
+  on: (eventName: TargetEventName, fn: EventCallback) => void;
+  off: (eventName: TargetEventName, fn?: EventCallback) => void;
+  trigger: (eventName: TargetEventName, gridEvent: GridEvent) => void;
 }
 
 export function createEventBus(id: GridId) {
