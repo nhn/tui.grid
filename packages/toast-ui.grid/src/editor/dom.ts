@@ -14,7 +14,9 @@ export function setLayerPosition(
   childEl?: HTMLElement,
   startBottom = false
 ) {
+  // To hide the initial layer which is having the position which is not calculated properly
   layerEl.style.opacity = '0';
+
   setTimeout(() => {
     const { innerHeight, innerWidth } = window;
     const { left, top, bottom } = innerEl.getBoundingClientRect();
