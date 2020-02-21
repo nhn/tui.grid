@@ -1,0 +1,48 @@
+import { CellRenderData, RowKey } from './store/data';
+import { ColumnInfo, AlignType, VAlignType, SortingType, ColumnFilterOption } from './store/column';
+import Grid from './grid';
+
+export type CellRendererProps = CellRenderData & {
+  grid: Grid;
+  rowKey: RowKey;
+  columnInfo: ColumnInfo;
+};
+
+export interface CellRenderer {
+  getElement(): HTMLElement;
+  focused?(): void;
+  mounted?(parent: HTMLElement): void;
+  render(props: CellRendererProps): void;
+  beforeDestroy?(): void;
+}
+
+export interface CellRendererClass {
+  new (params: CellRendererProps, options?: any): CellRenderer;
+}
+
+export interface ColumnHeaderInfo {
+  name: string;
+  header: string;
+  headerAlign?: AlignType;
+  headerVAlign?: VAlignType;
+  sortable?: boolean;
+  sortingType?: SortingType;
+  filter?: ColumnFilterOption | null;
+  headerRenderer?: HeaderRendererClass | null;
+}
+
+export type HeaderRendererProps = {
+  grid: Grid;
+  columnInfo: ColumnHeaderInfo;
+};
+
+export interface HeaderRenderer {
+  getElement(): HTMLElement;
+  render(props: HeaderRendererProps): void;
+  mounted?(parent: HTMLElement): void;
+  beforeDestroy?(): void;
+}
+
+export interface HeaderRendererClass {
+  new (params: HeaderRendererProps, options?: any): HeaderRenderer;
+}

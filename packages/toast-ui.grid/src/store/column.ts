@@ -174,7 +174,10 @@ export function createColumnFilterOption(filter: FilterOptionType | FilterOpt): 
   if (isObject(filter)) {
     return {
       ...defaultOption,
-      ...filter
+      // @ts-ignore
+      ...(filter.type === 'select'
+        ? omit(filter, 'showApplyBtn', 'showClearBtn', 'operator', 'options')
+        : filter)
     };
   }
 
