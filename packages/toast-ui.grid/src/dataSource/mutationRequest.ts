@@ -4,10 +4,11 @@ import {
   RequestType,
   AjaxConfig,
   Url,
-  Config,
-  MutationParams
+  MutationParams,
+  API,
+  Params
 } from './types';
-import { Store } from '../store/types';
+import { Store, Dictionary } from '../store/types';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
@@ -16,6 +17,18 @@ import { getDataWithOptions } from './manager/modifiedDataManager';
 import { getLoadingState } from '../query/data';
 import { confirmMutation } from './helper/confirm';
 import { createAjaxConfig } from './helper/ajaxConfig';
+import { Dispatch } from 'src/dispatch/create';
+
+export type Config = {
+  api: API;
+  hideLoadingBar: boolean;
+  store: Store;
+  dispatch: Dispatch;
+  setLastRequiredData: (params: Params) => void;
+  getLastRequiredData: () => Params;
+  setRequestParams: (params: Dictionary<any>) => void;
+  getRequestParams: () => Dictionary<any>;
+};
 
 interface SendOptions {
   url: Url;
