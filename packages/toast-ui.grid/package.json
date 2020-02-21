@@ -67,7 +67,6 @@
     "ts-loader": "^6.2.1",
     "tui-release-notes": "git+https://github.com/nhnent/tui.release-notes.git",
     "typescript": "^3.7.2",
-    "utility-types": "^3.4.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1",
