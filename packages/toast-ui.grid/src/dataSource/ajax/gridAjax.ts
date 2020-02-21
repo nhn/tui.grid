@@ -1,4 +1,4 @@
-import { Params, AjaxConfig, Serializer } from '../types';
+import { Params, AjaxConfig, Serializer } from '../../../types/dataSource/dataSource';
 import { serialize } from './serializer';
 import { EventBus } from '../../event/eventBus';
 import GridEvent from '../../event/gridEvent';

@@ -1,4 +1,10 @@
-import { Column, Range, Viewport, Dimension, Data, RowCoords, ColumnCoords } from './types';
+import { Data } from '../../types/store/data';
+import { Column } from '../../types/store/column';
+import { Dimension } from '../../types/store/dimension';
+import { RowCoords } from '../../types/store/rowCoords';
+import { ColumnCoords } from '../../types/store/columnCoords';
+import { Range } from '../../types/store/selection';
+import { Viewport } from '../../types/store/viewport';
 import { observable, Observable } from '../helper/observable';
 import { arrayEqual, findIndex } from '../helper/common';
 import { getMaxRowSpanCount, isRowSpanEnabled } from '../query/rowSpan';

@@ -1,7 +1,8 @@
 import Pagination from 'tui-pagination';
 import { CellValue, RowKey, Row, SortState, RowSpan, InvalidRow } from './store/data';
 import { SummaryColumnContentMap, SummaryValueMap } from './store/summary';
-import { ColumnInfo, Column } from './store/column';
+import { ColumnInfo } from './store/column';
+import { Range } from './store/selection';
 import {
   Dictionary,
   EventName,
@@ -10,11 +11,12 @@ import {
   OptPreset,
   OptI18nData,
   OptGrid,
-  OptRow,
   OptAppendRow,
   OptPrependRow,
   OptRemoveRow,
-  OptHeader
+  OptHeader,
+  OptRow,
+  OptColumn
 } from './options';
 import {
   ModifiedRowsOptions,
@@ -23,10 +25,12 @@ import {
   RequestType,
   ModificationTypeCode,
   RequestOptions
-} from './dataSource';
+} from './dataSource/dataSource';
 import { FilterOptionType, Filter, FilterState } from './store/filterLayerState';
 
-export default class Grid {
+export class Grid {
+  public usageStatistics: boolean;
+
   public static applyTheme(presetName: OptThemePresetNames, extOptions?: OptPreset): void;
 
   public static setLanguage(localeCode: string, data?: OptI18nData): void;
@@ -90,7 +94,7 @@ export default class Grid {
 
   public getColumns(): ColumnInfo[];
 
-  public setColumns(columns: Column[]): void;
+  public setColumns(columns: OptColumn[]): void;
 
   public setColumnHeaders(columnsMap: Dictionary<string>): void;
 

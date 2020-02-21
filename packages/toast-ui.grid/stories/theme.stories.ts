@@ -1,6 +1,6 @@
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import { OptColumn } from '../src/types';
+import { OptColumn } from '../types/options';
 import { cls } from '../src/helper/dom';
 
 export default {

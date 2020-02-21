@@ -1,13 +1,9 @@
-import {
-  Focus,
-  ColumnCoords,
-  RowCoords,
-  Column,
-  Data,
-  EditingEvent,
-  TabMode,
-  Dimension
-} from './types';
+import { Data } from '../../types/store/data';
+import { Column } from '../../types/store/column';
+import { Dimension } from '../../types/store/dimension';
+import { RowCoords } from '../../types/store/rowCoords';
+import { ColumnCoords } from '../../types/store/columnCoords';
+import { EditingEvent, TabMode, Focus } from '../../types/store/focus';
 import { Observable, observable } from '../helper/observable';
 import { someProp, findPropIndex } from '../helper/common';
 import { isRowSpanEnabled, getVerticalPosWithRowSpan, getRowSpanByRowKey } from '../query/rowSpan';

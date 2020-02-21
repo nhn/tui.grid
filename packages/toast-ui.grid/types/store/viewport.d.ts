@@ -1,5 +1,6 @@
 import { ViewRow } from './data';
 import { ColumnInfo } from './column';
+import { Range } from './selection';
 
 export interface Viewport {
   scrollLeft: number;

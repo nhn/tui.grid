@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
+import { Filter, ActiveColumnAddress } from '../../types/store/filterLayerState';
+import { ColumnInfo } from '../../types/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActiveColumnAddress, ColumnInfo, Filter } from '../store/types';
 import { cls } from '../helper/dom';
 import { TextFilter } from './textFilter';
 import { DatePickerFilter } from './datePickerFilter';

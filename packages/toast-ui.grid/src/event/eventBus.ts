@@ -1,8 +1,8 @@
+import { EventName, EventCallback } from '../../types/options';
+import { GridId } from '../../types/store/store';
 import { removeArrayItem } from '../helper/common';
 import GridEvent from './gridEvent';
 import { getInstance } from '../instance';
-import { GridId } from '../store/types';
-import { EventName, EventCallback } from '../types';
 
 type TargetEventName = EventName | 'onGridMounted' | 'onGridBeforeDestroy' | 'onGridUpdated';
 const eventBusMap: { [id: number]: EventBus } = {};

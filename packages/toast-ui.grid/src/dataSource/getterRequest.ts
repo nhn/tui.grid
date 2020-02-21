@@ -1,4 +1,6 @@
-import { Params, Response, ResponseData, API } from './types';
+import { Params, Response, ResponseData, API } from '../../types/dataSource/dataSource';
+import { Store } from '../../types/store/store';
+import { Dictionary } from '../../types/options';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isFunction } from '../helper/common';
@@ -6,8 +8,7 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
-import { Store, Dictionary } from 'src/store/types';
-import { Dispatch } from 'src/dispatch/create';
+import { Dispatch } from '../dispatch/create';
 
 export type Config = {
   api: API;

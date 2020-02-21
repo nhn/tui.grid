@@ -1,5 +1,7 @@
-import { OptGrid } from '../types';
-import { Dimension, Column, SummaryPosition } from './types';
+import { OptGrid } from '../../types/options';
+import { Column } from '../../types/store/column';
+import { SummaryPosition } from '../../types/store/summary';
+import { Dimension } from '../../types/store/dimension';
 import { observable } from '../helper/observable';
 import { isNumber } from '../helper/common';
 

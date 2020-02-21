@@ -1,18 +1,17 @@
 import { h, Component } from 'preact';
+import {
+  NumberFilterCode,
+  TextFilterCode,
+  Filter,
+  ActiveColumnAddress
+} from '../../types/store/filterLayerState';
+import { ColumnInfo } from '../../types/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import {
-  ActiveColumnAddress,
-  ColumnInfo,
-  Filter,
-  NumberFilterCode,
-  TextFilterCode
-} from '../store/types';
 import { filterSelectOption } from '../helper/filter';
 import { debounce } from '../helper/common';
-import { keyNameMap, isNonPrintableKey } from '../helper/keyboard';
-import { KeyNameMap } from '../types';
+import { keyNameMap, isNonPrintableKey, KeyNameMap } from '../helper/keyboard';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
 
 type SelectOption = { [key in NumberFilterCode | TextFilterCode]: string };

@@ -1,11 +1,12 @@
+import { OptRow, OptColumn } from '../types/options';
+import { ColumnOptions } from '../types/store/column';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import { OptColumnOptions, OptColumn, OptRow } from '../src/types';
 
 type Options = {
   data?: OptRow[];
   columns?: OptColumn[];
-  columnOptions?: OptColumnOptions;
+  columnOptions?: ColumnOptions;
 };
 
 export default {

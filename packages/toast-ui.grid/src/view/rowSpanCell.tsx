@@ -1,5 +1,6 @@
 import { h, Component } from 'preact';
-import { ViewRow, RowSpan, ColumnInfo } from '../store/types';
+import { ViewRow, RowSpan } from '../../types/store/data';
+import { ColumnInfo } from '../../types/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { BodyCell } from './bodyCell';

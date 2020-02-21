@@ -1,10 +1,12 @@
 import { Dictionary } from '../options';
 import { Filter } from './filterLayerState';
 import { ValidationType, InvalidColumn } from './column';
+import { Range } from './selection';
 
 export type CellValue = number | string | boolean | null | undefined;
 export type RowKey = number | string;
 export type RowSpanMap = Dictionary<RowSpan>;
+
 export type Row = Dictionary<CellValue> & {
   rowKey: RowKey;
   sortKey: number;
@@ -17,7 +19,14 @@ export type Row = Dictionary<CellValue> & {
 export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
 export type DisabledPriority = Dictionary<'ROW' | 'COLUMN'>;
 export type LoadingState = 'DONE' | 'EMPTY' | 'LOADING';
-export type RowHeaderType = 'rowNum' | 'checkbox';
+export type ColumnDefaultValues = { name: string; value: CellValue }[];
+
+export interface RawRowOptions {
+  keyColumnName?: string;
+  prevRow?: Row;
+  lazyObservable?: boolean;
+  disabled?: boolean;
+}
 
 export interface TreeRowInfo {
   parentRowKey: RowKey | null;

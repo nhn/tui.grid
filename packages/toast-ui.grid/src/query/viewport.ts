@@ -1,4 +1,5 @@
-import { Rect, Store, Side } from '../store/types';
+import { Rect, Side } from '../../types/store/focus';
+import { Store } from '../../types/store/store';
 
 function getHorizontalScrollPosition(
   rightSideWidth: number,

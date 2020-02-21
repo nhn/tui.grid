@@ -1,4 +1,4 @@
-export type SummaryPosition = 'top' | 'bottom';
+import { SummaryPosition } from './summary';
 
 export interface Dimension {
   offsetLeft: number;

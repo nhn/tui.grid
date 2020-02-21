@@ -1,7 +1,7 @@
+import { RowKey } from '../../types/store/data';
 import { data } from '../../samples/basic';
 import { lazyObserbableTestdata as treeData } from '../../samples/tree';
 import { cls } from '@/helper/dom';
-import { RowKey } from '@/store/types';
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {

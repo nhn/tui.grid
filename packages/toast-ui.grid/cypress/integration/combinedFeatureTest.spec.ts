@@ -1,9 +1,9 @@
+import { OptRow } from '../../types/options';
+import { Row } from '../../types/store/data';
 import { data } from '../../samples/pagination';
 import { twoDepthData, threeDepthData } from '../../samples/relations';
 import { cls, ClassNameType } from '@/helper/dom';
 import { compare } from '@/helper/sort';
-import { OptRow } from '@/types';
-import { Row } from '@/store/types';
 import { isBoolean } from '@/helper/common';
 
 const PER_PAGE_COUNT = 10;

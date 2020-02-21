@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
-import { SortState, SortingType } from '../store/types';
+import { SortingType } from '../../types/store/column';
+import { SortState } from '../../types/store/data';
+import { DataProvider } from '../../types/dataSource/dataSource';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';
 import { DispatchProps } from '../dispatch/create';
-import { DataProvider } from '../dataSource/types';
 import { findPropIndex } from '../helper/common';
 
 interface OwnProps {

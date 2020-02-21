@@ -1,8 +1,7 @@
+import { Row, RowKey } from '../../types/store/data';
+import { OptGrid, OptRow } from '../../types/options';
 import { cls } from '../../src/helper/dom';
-import { OptGrid, OptRow } from '@/types';
-import { Row, RowKey } from '@/store/types';
 import GridEvent from '@/event/gridEvent';
-import { Omit } from 'utility-types';
 
 type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 

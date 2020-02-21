@@ -7,8 +7,9 @@ import {
   MutationParams,
   API,
   Params
-} from './types';
-import { Store, Dictionary } from '../store/types';
+} from '../../types/dataSource/dataSource';
+import { Store } from '../../types/store/store';
+import { Dictionary } from '../../types/options';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';

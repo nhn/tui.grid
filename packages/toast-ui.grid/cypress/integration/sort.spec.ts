@@ -1,8 +1,7 @@
+import { OptColumn, Dictionary } from '../../types/options';
 import { cls, ClassNameType } from '../../src/helper/dom';
 import { sortData as data } from '../../samples/basic';
-import { OptColumn } from '../../src/types';
 import { compare } from '@/helper/sort';
-import { Dictionary } from '@/store/types';
 
 const columns: OptColumn[] = [
   { name: 'alphabetA', minWidth: 150, sortable: true },

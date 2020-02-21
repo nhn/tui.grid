@@ -1,6 +1,6 @@
 import Grid from './grid';
-import { GridId } from './store/types';
-import { DataProvider, ModifiedDataManager } from './dataSource/types';
+import { GridId } from '../types/store/store';
+import { DataProvider, ModifiedDataManager } from '../types/dataSource/dataSource';
 import { PaginationManager } from './pagination/paginationManager';
 import { isObject } from './helper/common';
 

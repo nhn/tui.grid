@@ -1,8 +1,10 @@
-import { Store, SummaryColumnContentMap, Row } from '../store/types';
+import { Store } from '../../types/store/store';
+import { SummaryColumnContentMap } from '../../types/store/summary';
+import { Row } from '../../types/store/data';
+import { UpdateType, Options } from '../../types/dispatch/dispatch';
 import { castToSummaryColumnContent, extractSummaryColumnContent } from '../helper/summary';
 import { isEmpty, findProp, isFunction } from '../helper/common';
 import { createSummaryValue } from '../store/summary';
-import { Options, UpdateType } from './types';
 
 export function setSummaryColumnContent(
   { summary, data }: Store,

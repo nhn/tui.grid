@@ -1,7 +1,7 @@
-import { OptColumn } from '../src/types';
+import { OptColumn } from '../types/options';
+import { CellRenderer, CellRendererProps } from '../types/renderer/renderer';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import { CellRenderer, CellRendererProps } from '../src/renderer/types';
 
 export default {
   title: 'Renderer'

@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
+import { AreaInfo } from '../../types/store/selection';
+import { Side } from '../../types/store/focus';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { Side, AreaInfo } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {

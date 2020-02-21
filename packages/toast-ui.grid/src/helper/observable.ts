@@ -1,5 +1,5 @@
+import { Dictionary } from '../../types/options';
 import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction } from './common';
-import { Dictionary } from '../store/types';
 import { patchArrayMethods } from './array';
 
 type BooleanSet = Dictionary<boolean>;

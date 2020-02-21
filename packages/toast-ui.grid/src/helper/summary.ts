@@ -1,12 +1,15 @@
-import {
-  CellValue,
-  SummaryColumnContent,
-  SummaryColumnContentMap,
-  Row,
-  SummaryValue
-} from '../store/types';
+import { Row, CellValue } from '../../types/store/data';
+import { SummaryColumnContentMap, SummaryColumnContent } from '../../types/store/summary';
 
 type ColumnContentType = string | SummaryColumnContentMap;
+
+interface SummaryValue {
+  sum: number;
+  avg: number;
+  min: number;
+  max: number;
+  cnt: number;
+}
 
 function assignFilteredSummaryValue(summaryValue: SummaryValue) {
   const { sum, min, max, avg, cnt } = summaryValue;

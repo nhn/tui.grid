@@ -1,4 +1,4 @@
-import { OptRow } from '@/types';
+import { OptRow } from '../../types/options';
 import { cls } from '@/helper/dom';
 
 const data = [

@@ -1,6 +1,6 @@
+import { OptRow, OptColumn } from '../types/options';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
-import { OptColumn, OptRow } from '../src/types';
 
 export default {
   title: 'Focus'

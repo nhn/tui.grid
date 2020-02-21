@@ -1,18 +1,13 @@
 import { h, Component } from 'preact';
+import { RowKey, ViewRow } from '../../types/store/data';
+import { Dictionary } from '../../types/options';
+import { ColumnInfo } from '../../types/store/column';
+import { EditingAddress, Rect, Side } from '../../types/store/focus';
+import { CellEditor } from '../../types/editor/editor';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import {
-  ColumnInfo,
-  Dictionary,
-  EditingAddress,
-  Rect,
-  RowKey,
-  Side,
-  ViewRow
-} from '../store/types';
 import { cls } from '../helper/dom';
 import { getKeyStrokeString, TabCommandType } from '../helper/keyboard';
-import { CellEditor } from '../editor/types';
 import { findProp, isFunction, isNull } from '../helper/common';
 import { getInstance } from '../instance';
 import Grid from '../grid';

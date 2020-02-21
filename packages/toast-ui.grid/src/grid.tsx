@@ -1,8 +1,9 @@
+import { h, render } from 'preact';
+import { Grid as GridType } from '../types/grid';
 import {
   OptGrid,
   OptPreset,
   OptI18nData,
-  OptSummaryColumnContentMap,
   OptRow,
   OptAppendRow,
   OptPrependRow,
@@ -10,27 +11,30 @@ import {
   OptAppendTreeRow,
   OptColumn,
   OptHeader,
-  FilterOpt,
-  FilterOptionType,
-  LifeCycleEventNames,
   EventName,
-  EventCallback
-} from './types';
+  EventCallback,
+  Dictionary,
+  OptFilter,
+  LifeCycleEventName
+} from '../types/options';
+import { Store } from '../types/store/store';
+import { RowKey, CellValue, Row, InvalidRow } from '../types/store/data';
+import { ColumnInfo } from '../types/store/column';
+import { Range } from '../types/store/selection';
+import { FilterOptionType, FilterState } from '../types/store/filterLayerState';
+import { SummaryColumnContentMapOnlyFn } from '../types/store/summary';
+import {
+  RequestOptions,
+  RequestType,
+  DataProvider,
+  ModifiedRowsOptions,
+  Params,
+  ModifiedDataManager,
+  ModificationTypeCode
+} from '../types/dataSource/dataSource';
 import { createStore } from './store/create';
 import { Root } from './view/root';
-import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import {
-  Store,
-  CellValue,
-  RowKey,
-  Range,
-  Row,
-  InvalidRow,
-  ColumnInfo,
-  Dictionary,
-  FilterState
-} from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
 import i18n from './i18n';
@@ -53,15 +57,6 @@ import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/manager/modifiedDataManager';
 import { getConfirmMessage } from './i18n/message';
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
-import {
-  RequestOptions,
-  RequestType,
-  DataProvider,
-  ModifiedRowsOptions,
-  Params,
-  ModifiedDataManager,
-  ModificationTypeCode
-} from './dataSource/types';
 import {
   getParentRow,
   getChildRows,
@@ -259,7 +254,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
-export default class Grid {
+export default class Grid implements GridType {
   private el: HTMLElement;
 
   private gridEl: Element;
@@ -313,8 +308,8 @@ export default class Grid {
     const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
     Object.keys(lifeCycleEvent).forEach(eventName => {
       this.eventBus.on(
-        eventName as LifeCycleEventNames,
-        lifeCycleEvent[eventName as LifeCycleEventNames]!
+        eventName as LifeCycleEventName,
+        lifeCycleEvent[eventName as LifeCycleEventName]!
       );
     });
 
@@ -754,7 +749,7 @@ export default class Grid {
    */
   public setSummaryColumnContent(
     columnName: string,
-    columnContent: string | OptSummaryColumnContentMap
+    columnContent: string | SummaryColumnContentMapOnlyFn
   ) {
     this.dispatch('setSummaryColumnContent', columnName, columnContent);
   }
@@ -1521,7 +1516,7 @@ export default class Grid {
    * @param {string} columnName - columnName
    * @param {string | FilterOpt} filterOpt - filter type
    */
-  public setFilter(columnName: string, filterOpt: FilterOpt | FilterOptionType) {
+  public setFilter(columnName: string, filterOpt: OptFilter | FilterOptionType) {
     this.dispatch('setFilter', columnName, filterOpt);
   }
 

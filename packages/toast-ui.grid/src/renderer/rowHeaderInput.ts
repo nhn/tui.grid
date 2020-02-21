@@ -1,4 +1,4 @@
-import { CellRenderer, CellRendererProps } from './types';
+import { CellRenderer, CellRendererProps } from '../../types/renderer/renderer';
 import { cls } from '../helper/dom';
 
 export class RowHeaderInputRenderer implements CellRenderer {

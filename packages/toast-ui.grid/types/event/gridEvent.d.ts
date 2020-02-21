@@ -1,7 +1,7 @@
-import { CellValue, RowKey, SortState } from './store/data';
-import { SelectionRange } from './store/Selection';
-import { Filter } from './store/filterLayerState';
-import { ResizedColumn } from './store/column';
+import { CellValue, RowKey, SortState } from '../store/data';
+import { SelectionRange } from '../store/Selection';
+import { Filter } from '../store/filterLayerState';
+import { ResizedColumn } from '../store/column';
 
 export type TargetType = 'rowHeader' | 'columnHeader' | 'dummy' | 'cell' | 'etc';
 

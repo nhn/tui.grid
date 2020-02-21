@@ -1,4 +1,6 @@
-import { Data, Dimension, RowCoords } from './types';
+import { Data } from '../../types/store/data';
+import { Dimension } from '../../types/store/dimension';
+import { RowCoords } from '../../types/store/rowCoords';
 import { observable } from '../helper/observable';
 import { last } from '../helper/common';
 import { getRowHeight } from '../query/data';

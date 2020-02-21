@@ -1,4 +1,4 @@
-import { OptRow } from '@/types';
+import { OptRow } from '../../types/options';
 import { data as sampleData } from '../../samples/basic';
 
 const CONTENT_WIDTH = 600;

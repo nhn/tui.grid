@@ -1,8 +1,7 @@
-import { Omit } from 'utility-types';
 import { cls, dataAttr } from '../../src/helper/dom';
-import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../../src/types';
+import { OptGrid, OptSummaryData, Dictionary } from '../../types/options';
+import { SummaryValueMap } from '../../types/store/summary';
 import { deepMergedCopy } from '../../src/helper/common';
-import { Dictionary } from '@/store/types';
 
 const CONTENT_WIDTH = 700;
 
@@ -28,13 +27,13 @@ function createSummaryOption(
     height: 40,
     columnContent: {
       price: {
-        template(valueMap: OptSummaryValueMap) {
+        template(valueMap: SummaryValueMap) {
           const { filtered, max, min } = valueMap;
           return `MAX: ${max} FilteredMax: ${filtered.max}<br>MIN: ${min} FilteredMin: ${filtered.min}`;
         }
       },
       downloadCount: {
-        template(valueMap: OptSummaryValueMap) {
+        template(valueMap: SummaryValueMap) {
           const { filtered, sum, avg } = valueMap;
           return `TOTAL: ${sum} FilteredSum: ${filtered.sum}<br>AVG: ${avg.toFixed(
             2
@@ -138,7 +137,7 @@ describe('summary', () => {
     it('auto calculate summary when default content with template function', () => {
       const summary = createSummaryOption({
         defaultContent: {
-          template(valueMap: OptSummaryValueMap) {
+          template(valueMap: SummaryValueMap) {
             return `total row count: ${valueMap.cnt}`;
           }
         }
@@ -197,7 +196,7 @@ describe('summary', () => {
         {
           columnContent: {
             price: {
-              template(valueMap: OptSummaryValueMap) {
+              template(valueMap: SummaryValueMap) {
                 return `no auto calculate: ${valueMap.sum}`;
               },
               useAutoSummary: false
@@ -245,14 +244,14 @@ describe('summary', () => {
     assertSummaryContent('price', 'static content');
 
     cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
-      template(valueMap: OptSummaryValueMap) {
+      template(valueMap: SummaryValueMap) {
         return `auto calculate: ${valueMap.max}`;
       }
     });
     assertSummaryContent('price', 'auto calculate: 5');
 
     cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
-      template(valueMap: OptSummaryValueMap) {
+      template(valueMap: SummaryValueMap) {
         return `no auto calculate: ${valueMap.max}`;
       },
       useAutoSummary: false
@@ -260,7 +259,7 @@ describe('summary', () => {
     assertSummaryContent('price', 'no auto calculate: 0');
 
     cy.gridInstance().invoke('setSummaryColumnContent', 'name', {
-      template(valueMap: OptSummaryValueMap) {
+      template(valueMap: SummaryValueMap) {
         return `auto calculate: ${valueMap.sum}`;
       }
     });
@@ -419,7 +418,7 @@ describe('summary', () => {
     const summary = {
       height: 40,
       defaultContent: {
-        template(valueMap: OptSummaryValueMap) {
+        template(valueMap: SummaryValueMap) {
           return `DEFAULT_MAX: ${valueMap.max}<br>DEFAULT_MIN: ${valueMap.min}`;
         }
       }
@@ -427,7 +426,7 @@ describe('summary', () => {
     const defaultOptions = createDefaultOptions();
     cy.createGrid({ ...defaultOptions, summary });
     cy.gridInstance().invoke('setSummaryColumnContent', 'price', {
-      template(valueMap: OptSummaryValueMap) {
+      template(valueMap: SummaryValueMap) {
         return `auto calculate: ${valueMap.max}`;
       }
     });

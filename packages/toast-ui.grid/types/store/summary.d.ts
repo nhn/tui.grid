@@ -1,10 +1,10 @@
-import { OptSummaryColumnContentMap, Dictionary } from '../options';
+import { Dictionary } from '../options';
 
+export type SummaryPosition = 'top' | 'bottom';
 export type SummaryColumnContent = SummaryColumnContentMap | null;
-
 export type SummaryColumnContents = Dictionary<SummaryColumnContent>;
-
 export type SummaryValues = Dictionary<SummaryValueMap>;
+export type SummaryTemplateFn = (valueMap: SummaryValueMap) => string;
 
 export interface SummaryValueMap {
   sum: number;
@@ -23,11 +23,15 @@ export interface SummaryValueMap {
 
 export interface SummaryColumnContentMap {
   useAutoSummary?: boolean;
-  template?: string | ((valueMap: SummaryValueMap) => string);
+  template?: string | SummaryTemplateFn;
+}
+
+export interface SummaryColumnContentMapOnlyFn extends SummaryColumnContentMap {
+  template?: SummaryTemplateFn;
 }
 
 export interface Summary {
   summaryColumnContents: SummaryColumnContents;
   summaryValues: SummaryValues;
-  defaultContent?: string | OptSummaryColumnContentMap;
+  defaultContent?: string | SummaryColumnContentMapOnlyFn;
 }

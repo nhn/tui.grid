@@ -1,13 +1,7 @@
-import {
-  Store,
-  RowKey,
-  Data,
-  Row,
-  Dictionary,
-  Column,
-  SortState,
-  RawRowOptions
-} from '../store/types';
+import { OptRow, Dictionary } from '../../types/options';
+import { Store } from '../../types/store/store';
+import { Data, Row, RowKey, SortState, RawRowOptions } from '../../types/store/data';
+import { Column } from '../../types/store/column';
 import {
   isFunction,
   findPropIndex,
@@ -25,7 +19,6 @@ import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { isRowHeader } from '../helper/column';
 import { createRawRow, createViewRow, getFormattedValue } from '../store/data';
-import { OptRow } from '../types';
 
 export function getCellAddressByIndex(
   { data, column }: Store,

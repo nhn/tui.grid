@@ -1,8 +1,11 @@
-import { CellIndex, Store, Range } from '../store/types';
+import { Store } from '../../types/store/store';
+import { Range } from '../../types/store/selection';
 import { clamp, isNull } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from './rowSpan';
 import { getSortedRange } from './selection';
+
+type CellIndex = [number, number];
 
 function getPrevRowIndex(rowIndex: number, heights: number[]) {
   let index = rowIndex;

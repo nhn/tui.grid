@@ -1,11 +1,11 @@
 import { h, Component } from 'preact';
+import { SummaryPosition } from '../../types/store/summary';
 import { HeaderArea } from './headerArea';
 import { BodyArea } from './bodyArea';
 import { SummaryArea } from './summaryArea';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { SummaryPosition } from '../store/types';
 
 interface StoreProps {
   width: number;

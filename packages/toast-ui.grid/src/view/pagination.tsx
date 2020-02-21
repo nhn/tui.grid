@@ -1,13 +1,13 @@
 import { Component, h } from 'preact';
-import Grid from '../grid';
 import TuiPagination from 'tui-pagination';
+import { PageOptions } from '../../types/store/data';
+import { DataProvider } from '../../types/dataSource/dataSource';
+import Grid from '../grid';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
 import { shallowEqual, isNumber, isEmpty } from '../helper/common';
 import { getDataProvider, getPaginationManager, getInstance } from '../instance';
-import { PageOptions } from '../store/types';
-import { DataProvider } from '../dataSource/types';
 import { PaginationManager } from '../pagination/paginationManager';
 
 interface StoreProps {

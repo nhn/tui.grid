@@ -1,16 +1,16 @@
+import { Side } from '../../types/store/focus';
 import {
-  Column,
-  ColumnCoords,
-  Data,
-  Dimension,
-  Range,
-  RowCoords,
-  Selection,
-  SelectionRange,
-  SelectionType,
   SelectionUnit,
-  Side
-} from './types';
+  SelectionType,
+  SelectionRange,
+  Selection,
+  Range
+} from '../../types/store/selection';
+import { ColumnCoords } from '../../types/store/columnCoords';
+import { Column } from '../../types/store/column';
+import { Dimension } from '../../types/store/dimension';
+import { RowCoords } from '../../types/store/rowCoords';
+import { Data } from '../../types/store/data';
 import { Observable, observable } from '../helper/observable';
 import { getSortedRange } from '../query/selection';
 import { isClientPagination } from '../query/data';

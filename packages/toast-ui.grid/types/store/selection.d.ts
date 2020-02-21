@@ -23,6 +23,16 @@ export interface SelectionRange {
   column: Range;
 }
 
+export interface DragStartData {
+  pageX: number | null;
+  pageY: number | null;
+}
+
+export interface PagePosition {
+  pageX: number;
+  pageY: number;
+}
+
 export interface Selection {
   type: SelectionType;
   unit: SelectionUnit;

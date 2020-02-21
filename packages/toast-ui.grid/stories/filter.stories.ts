@@ -1,7 +1,7 @@
+import { OptColumn, OptRow } from '../types/options';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
-import { OptColumn, OptRow } from '../src/types';
 
 function createGrid(columns: OptColumn[], data: OptRow[] = []) {
   const options = { data, columns };

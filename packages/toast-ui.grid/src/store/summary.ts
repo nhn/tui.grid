@@ -1,13 +1,13 @@
+import { OptSummaryData } from '../../types/options';
+import { Column } from '../../types/store/column';
+import { Data } from '../../types/store/data';
 import {
-  Column,
-  Data,
+  SummaryColumnContentMap,
   Summary,
   SummaryColumnContents,
-  SummaryValues,
-  SummaryColumnContentMap
-} from './types';
+  SummaryValues
+} from '../../types/store/summary';
 import { observable } from '../helper/observable';
-import { OptSummaryData } from '../types';
 import {
   castToSummaryColumnContent,
   extractSummaryColumnContent,

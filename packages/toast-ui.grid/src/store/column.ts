@@ -1,28 +1,28 @@
 import {
-  Column,
-  ColumnInfo,
-  Dictionary,
-  Relations,
-  ClipboardCopyOptions,
-  CellEditorOptions,
-  CellRendererOptions,
-  ColumnFilterOption,
-  ColumnHeaderInfo
-} from './types';
-import {
   OptColumn,
-  OptColumnOptions,
   OptRowHeader,
   OptTree,
   OptCellEditor,
   OptCellRenderer,
+  OptColumnHeaderInfo,
+  OptComplexColumnInfo,
+  Dictionary,
+  OptFilter
+} from '../../types/options';
+import {
+  ColumnOptions,
   AlignType,
   VAlignType,
-  FilterOpt,
-  FilterOptionType,
-  OptColumnHeaderInfo,
-  OptComplexColumnInfo
-} from '../types';
+  Relations,
+  ColumnInfo,
+  CellRendererOptions,
+  CellEditorOptions,
+  ClipboardCopyOptions,
+  ColumnFilterOption,
+  Column,
+  ColumnHeaderInfo
+} from '../../types/store/column';
+import { FilterOptionType } from '../../types/store/filterLayerState';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
 import {
@@ -155,7 +155,7 @@ function createColumnHeaderInfo(name: string, columnHeaderInfo: ColumnHeaderInfo
   };
 }
 
-export function createColumnFilterOption(filter: FilterOptionType | FilterOpt): ColumnFilterOption {
+export function createColumnFilterOption(filter: FilterOptionType | OptFilter): ColumnFilterOption {
   const defaultOption = {
     type: isObject(filter) ? filter.type : filter!,
     showApplyBtn: false,
@@ -199,7 +199,7 @@ export function createRelationColumns(relations: Relations[]) {
 // eslint-disable-next-line max-params
 export function createColumn(
   column: OptColumn,
-  columnOptions: OptColumnOptions,
+  columnOptions: ColumnOptions,
   relationColumns: string[],
   gridCopyOptions: ClipboardCopyOptions,
   treeColumnOptions: OptTree,
@@ -319,16 +319,7 @@ function createComplexColumnHeaders(
   column: OptComplexColumnInfo,
   columnHeaderInfo: ColumnHeaderInfo
 ) {
-  const {
-    header,
-    name,
-    childNames,
-    sortable,
-    sortingType,
-    renderer,
-    hideChildHeaders,
-    resizable = false
-  } = column;
+  const { header, name, childNames, renderer, hideChildHeaders, resizable = false } = column;
   const headerAlign = column.headerAlign || columnHeaderInfo.align;
   const headerVAlign = column.headerVAlign || columnHeaderInfo.valign;
 
@@ -336,8 +327,6 @@ function createComplexColumnHeaders(
     header,
     name,
     childNames,
-    sortable,
-    sortingType,
     headerAlign,
     headerVAlign,
     headerRenderer: renderer || null,
@@ -348,7 +337,7 @@ function createComplexColumnHeaders(
 
 interface ColumnOption {
   columns: OptColumn[];
-  columnOptions: OptColumnOptions;
+  columnOptions: ColumnOptions;
   rowHeaders: OptRowHeader[];
   copyOptions: ClipboardCopyOptions;
   keyColumnName?: string;

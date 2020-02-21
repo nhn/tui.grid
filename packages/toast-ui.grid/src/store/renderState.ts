@@ -1,4 +1,4 @@
-import { CellHeightMap } from './types';
+import { CellHeightMap } from '../../types/store/renderState';
 import { observable } from '../helper/observable';
 
 export function create() {

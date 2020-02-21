@@ -1,15 +1,9 @@
-import {
-  Store,
-  Side,
-  ComplexColumnInfo,
-  ViewRow,
-  Dictionary,
-  Column,
-  Range,
-  ColumnInfo,
-  ResizedColumn
-} from '../store/types';
-import { OptColumn } from '../types';
+import { Store } from '../../types/store/store';
+import { ColumnInfo, ResizedColumn, Column, ComplexColumnInfo } from '../../types/store/column';
+import { Side } from '../../types/store/focus';
+import { Range } from '../../types/store/selection';
+import { ViewRow } from '../../types/store/data';
+import { OptColumn, Dictionary } from '../../types/options';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';

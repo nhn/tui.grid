@@ -1,4 +1,5 @@
-import { Dictionary, ListItem } from '../src/store/types';
+import { Dictionary } from '../types/options';
+import { ListItem } from '../types/store/column';
 
 export const twoDepthData: Dictionary<ListItem[]> = {
   '01': [

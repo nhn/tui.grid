@@ -1,6 +1,6 @@
+import { RowKey, RowSpan } from '../../types/store/data';
 import { data as sample } from '../../samples/basic';
-import { OptRow } from '@/types';
-import { RowKey, RowSpan } from '@/store/types';
+import { OptRow } from '../../types/options';
 
 function createDataWithRowSpanAttr(): OptRow[] {
   const optRows: OptRow[] = sample.slice();

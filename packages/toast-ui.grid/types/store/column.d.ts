@@ -1,8 +1,8 @@
 import { Side } from './focus';
 import { CellValue, Row } from './data';
-import { OptTree, Dictionary } from '../options';
-import { HeaderRendererClass, ColumnHeaderInfo, CellRendererClass } from '../renderer';
-import { CellEditorClass } from '../editor';
+import { OptTree, Dictionary, OptColumnHeaderInfo } from '../options';
+import { HeaderRendererClass, CellRendererClass } from '../renderer/renderer';
+import { CellEditorClass } from '../editor/editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
@@ -12,6 +12,7 @@ export type CustomValue =
 export type VAlignType = 'top' | 'middle' | 'bottom';
 export type AlignType = 'left' | 'center' | 'right';
 export type Formatter = ((props: FormatterProps) => string) | string;
+export type RowHeaderType = 'rowNum' | 'checkbox';
 export type SortingType = 'asc' | 'desc';
 export type ValidationType =
   | 'REQUIRED'
@@ -106,10 +107,11 @@ export interface InvalidColumn {
 }
 
 export interface CommonColumnInfo {
-  header?: string;
+  header: string;
   hidden: boolean;
   align: AlignType;
   valign: VAlignType;
+  minWidth: number;
   whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
@@ -122,23 +124,22 @@ export interface CommonColumnInfo {
   defaultValue?: CellValue;
   resizable?: boolean;
   formatter?: Formatter;
-  minWidth: number;
+  sortingType?: SortingType;
   // @todo gridevent
   onBeforeChange?: Function;
   onAfterChange?: Function;
 }
 
-export interface ColumnInfo {
+export interface ColumnInfo extends CommonColumnInfo {
   readonly name: string;
-  editor?: CellEditorOptions;
-  renderer: CellRendererOptions;
-  baseWidth: number;
-  fixedWidth: boolean;
-  relationMap?: Dictionary<Relations>;
-  related?: boolean;
-  sortingType?: SortingType;
   headerAlign: AlignType;
   headerVAlign: VAlignType;
+  baseWidth: number;
+  fixedWidth: boolean;
+  renderer: CellRendererOptions;
+  editor?: CellEditorOptions;
+  relationMap?: Dictionary<Relations>;
+  related?: boolean;
   filter?: ColumnFilterOption | null;
   headerRenderer?: HeaderRendererClass | null;
 }
@@ -152,6 +153,12 @@ export interface ComplexColumnInfo {
   headerRenderer?: HeaderRendererClass | null;
   hideChildHeaders?: boolean;
   resizable?: boolean;
+}
+
+export interface ColumnHeaderInfo {
+  columnHeaders: OptColumnHeaderInfo[];
+  align: AlignType;
+  valign: VAlignType;
 }
 
 export interface Column {

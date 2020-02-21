@@ -1,30 +1,23 @@
-import { CellRendererClass, HeaderRendererClass } from './renderer';
-import { DataSource } from './dataSource';
-import { CellEditorClass } from './editor';
+import { DataSource } from './dataSource/dataSource';
 import { EditingEvent, TabMode } from './store/focus';
+import { PageOptions, RowKey, CellValue, RowAttributes, RowSpanAttribute } from './store/data';
 import {
-  PageOptions,
-  CellValue,
-  RowAttributes,
-  RowKey,
-  RowSpanAttribute,
-  RowHeaderType
-} from './store/data';
-import { FilterOptionType } from './store/filterLayerState';
-import { SummaryPosition } from './store/dimension';
-import {
+  ColumnOptions,
+  ClipboardCopyOptions,
   CommonColumnInfo,
   Relations,
-  ColumnFilterOption,
-  ClipboardCopyOptions,
   AlignType,
   VAlignType,
-  ComplexColumnInfo,
-  ColumnOptions
+  RowHeaderType,
+  ColumnFilterOption,
+  ComplexColumnInfo
 } from './store/column';
 import { SelectionUnit } from './store/selection';
-import { GridEvent } from './gridEvent';
-import { SummaryValueMap } from './store/summary';
+import { GridEvent } from './event/gridEvent';
+import { HeaderRendererClass, CellRendererClass } from './renderer/renderer';
+import { CellEditorClass } from './editor/editor';
+import { FilterOptionType } from './store/filterLayerState';
+import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -39,6 +32,7 @@ export type TypeObjectOptions<T> =
 
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
+export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
 export type EventName =
   | 'click'
   | 'dblclick'
@@ -126,23 +120,10 @@ export interface OptAppendTreeRow {
   focus?: boolean;
 }
 
-interface OptRowHeaderColumn extends Partial<OptColumn> {
-  type: RowHeaderType;
-}
-
-export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
-
-interface OptTree {
+export interface OptTree {
   name: string;
   useIcon?: boolean;
   useCascadingCheckbox?: boolean;
-}
-
-export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
-export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
-
-export interface OptFilter extends Partial<ColumnFilterOption> {
-  type: Exclude<FilterOptionType, 'select'>;
 }
 
 export interface OptColumn extends Partial<CommonColumnInfo> {
@@ -154,25 +135,21 @@ export interface OptColumn extends Partial<CommonColumnInfo> {
   filter?: FilterOptionType | OptFilter;
 }
 
-export interface OptSummaryData {
-  height?: number;
-  position?: SummaryPosition;
-  defaultContent?: string | OptSummaryColumnContentMap;
-  columnContent?: {
-    [propName: string]: string | OptSummaryColumnContentMap;
-  };
-}
-
-export interface OptSummaryColumnContentMap {
-  useAutoSummary?: boolean;
-  template?: (valueMap: SummaryValueMap) => string;
-}
-
 export interface OptColumnHeaderInfo {
   name: string;
   align?: AlignType;
   valign?: VAlignType;
   renderer?: HeaderRendererClass;
+}
+
+export interface OptRowHeaderColumn extends Partial<OptColumn> {
+  type: RowHeaderType;
+}
+
+export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
+
+export interface OptFilter extends Partial<ColumnFilterOption> {
+  type: Exclude<FilterOptionType, 'select'>;
 }
 
 export interface OptHeader {
@@ -185,6 +162,18 @@ export interface OptHeader {
 
 export interface OptComplexColumnInfo extends Omit<ComplexColumnInfo, 'headerRenderer'> {
   renderer?: HeaderRendererClass;
+}
+
+export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
+export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
+
+export interface OptSummaryData {
+  height?: number;
+  position?: SummaryPosition;
+  defaultContent?: string | SummaryColumnContentMapOnlyFn;
+  columnContent?: {
+    [propName: string]: string | SummaryColumnContentMapOnlyFn;
+  };
 }
 
 /* theme type */

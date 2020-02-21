@@ -1,5 +1,5 @@
-import { Row, RowKey } from './store/data';
-import { Dictionary, OptRow } from './options';
+import { Row, RowKey } from '../store/data';
+import { Dictionary, OptRow } from '../options';
 
 export type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
 

@@ -1,6 +1,6 @@
-import { DataProvider, DataSource, Params, API } from './types';
-import { Store, Dictionary } from '../store/types';
-import { OptRow } from '../types';
+import { API, Params, DataSource, DataProvider } from '../../types/dataSource/dataSource';
+import { Store } from '../../types/store/store';
+import { Dictionary, OptRow } from '../../types/options';
 import { Dispatch } from '../dispatch/create';
 import { isObject, deepMergedCopy } from '../helper/common';
 import { request } from './mutationRequest';

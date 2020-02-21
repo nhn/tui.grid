@@ -1,4 +1,4 @@
-import { OptI18nLanguage, OptI18nData } from './../types.d';
+import { OptI18nLanguage, OptI18nData } from '../../types/options';
 
 interface MapType<T> {
   [propName: string]: T;

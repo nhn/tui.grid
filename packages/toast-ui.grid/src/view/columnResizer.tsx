@@ -1,8 +1,11 @@
 import { h, Component } from 'preact';
+import { Side } from '../../types/store/focus';
+import { ColumnInfo, ComplexColumnInfo } from '../../types/store/column';
+import { Range } from '../../types/store/selection';
+import { Dictionary } from '../../types/options';
 import { cls, setCursorStyle, dataAttr } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { Side, ColumnInfo, ComplexColumnInfo, Range, Dictionary } from '../store/types';
 import { findProp, findPropIndex, includes, some, sum } from '../helper/common';
 import {
   getChildHeaderCount,

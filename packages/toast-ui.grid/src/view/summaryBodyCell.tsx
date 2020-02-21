@@ -1,9 +1,9 @@
 import { h, Component } from 'preact';
+import { SummaryColumnContentMap, SummaryValueMap } from '../../types/store/summary';
 import { cls, dataAttr } from '../helper/dom';
 import { shallowEqual } from '../helper/common';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { SummaryColumnContentMap, SummaryValueMap } from '../store/types';
 import { isRowHeader } from '../helper/column';
 
 interface OwnProps {

@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
+import { Rect, Side } from '../../types/store/focus';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
-import { Rect, Side } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 interface StoreProps {

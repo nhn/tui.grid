@@ -1,4 +1,4 @@
-import { RequestTypeCode, MutationParams } from '../types';
+import { RequestTypeCode, MutationParams } from '../../../types/dataSource/dataSource';
 import { getConfirmMessage, getAlertMessage } from '../../i18n/message';
 
 export function confirmMutation(type: RequestTypeCode, params: MutationParams) {

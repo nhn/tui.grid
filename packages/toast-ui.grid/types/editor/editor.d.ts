@@ -1,5 +1,7 @@
-import { CellValue, RowKey, ColumnInfo, ListItem, Dictionary } from '../store/types';
-import Grid from '../grid';
+import { RowKey, CellValue, ListItem } from '../store/data';
+import { ColumnInfo } from '../store/column';
+import { Dictionary } from '../options';
+import { Grid } from '../grid';
 
 export type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';

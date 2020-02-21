@@ -1,4 +1,4 @@
-import { CellRenderer, CellRendererProps } from '@/renderer/types';
+import { CellRenderer, CellRendererProps } from '../../types/renderer/renderer';
 
 export function createCustomLayerRenderer() {
   class CustomLayerRenderer implements CellRenderer {

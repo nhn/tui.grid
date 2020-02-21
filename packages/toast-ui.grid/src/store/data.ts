@@ -1,29 +1,31 @@
 import {
-  Data,
-  Row,
-  Dictionary,
-  Column,
-  ColumnInfo,
-  Formatter,
-  CellRenderData,
-  FormatterProps,
-  CellValue,
-  ValidationType,
-  Validation,
+  RowSpanAttributeValue,
   PageOptions,
-  RowKey,
-  RowSpanMap,
+  Row,
+  CellValue,
   ListItem,
-  SortState,
-  ViewRow,
-  Range,
-  Filter,
+  RowKey,
   RowSpan,
+  CellRenderData,
+  RowSpanMap,
+  ViewRow,
+  Data,
+  SortState,
   RawRowOptions
-} from './types';
+} from '../../types/store/data';
+import {
+  Column,
+  FormatterProps,
+  Formatter,
+  Validation,
+  ValidationType,
+  ColumnInfo
+} from '../../types/store/column';
+import { Filter } from '../../types/store/filterLayerState';
+import { OptRow, Dictionary } from '../../types/options';
+import { Range } from '../../types/store/selection';
 import { observable, observe, Observable, getOriginObject } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
-import { OptRow, RowSpanAttributeValue } from '../types';
 import {
   someProp,
   encodeHTMLEntity,

@@ -1,9 +1,9 @@
-import { OptColumn } from '../src/types';
+import { CellEditor, CellEditorProps } from '../types/editor/editor';
+import { OptColumn } from '../types/options';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-import { CellEditor, CellEditorProps } from '../src/editor/types';
 
 export default {
   title: 'Editor'

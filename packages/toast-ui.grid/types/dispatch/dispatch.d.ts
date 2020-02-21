@@ -1,4 +1,6 @@
-import { Side, PagePosition, CellValue, Row } from '../store/types';
+import { Side } from '../store/focus';
+import { PagePosition } from '../store/selection';
+import { CellValue, Row } from '../store/data';
 
 export type ElementInfo = {
   side: Side;

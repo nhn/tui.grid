@@ -1,4 +1,4 @@
-import { AjaxConfig, AjaxConfigKeys } from '../types';
+import { AjaxConfig, AjaxConfigKeys } from '../../../types/dataSource/dataSource';
 import { pick } from '../../helper/common';
 
 export function createAjaxConfig(target: AjaxConfig) {

@@ -1,8 +1,8 @@
 import { h, Component } from 'preact';
+import { Filter, ActiveColumnAddress } from '../../types/store/filterLayerState';
 import { cls, hasClass } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { ActiveColumnAddress, Filter } from '../store/types';
 import { someProp } from '../helper/common';
 
 interface OwnProps {

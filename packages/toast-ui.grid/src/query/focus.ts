@@ -1,4 +1,5 @@
-import { RowKey, Focus } from '../store/types';
+import { RowKey } from '../../types/store/data';
+import { Focus } from '../../types/store/focus';
 
 export function isFocusedCell(focus: Focus, rowKey: RowKey | null, columnName: string | null) {
   return rowKey === focus.rowKey && columnName === focus.columnName;
