@@ -4,9 +4,10 @@ import { storiesOf } from '@storybook/react';
 import Grid from '../src/index';
 import TuiGrid from 'tui-grid';
 import { actions } from '@storybook/addon-actions';
-import { withKnobs, number, radios, button, object, array } from '@storybook/addon-knobs';
+import { withKnobs, number, radios, button, array, select } from '@storybook/addon-knobs';
 import { data } from './dummy-data';
 import 'tui-grid/dist/tui-grid.css';
+import 'tui-pagination/dist/tui-pagination.css';
 
 const columns = [
   { header: 'Name', name: 'name' },
@@ -117,8 +118,12 @@ stories.add('Events', () => {
 });
 
 stories.add('Reactive Props', () => {
-  const dataValue = object('data', data.slice(0, 5));
-  const columnsValue = object('columns', columns);
+  const dataRange = radios('data range', { 5: '5', 10: '10' }, '5');
+  const hidingColumn = select(
+    'hiding column',
+    { none: '', name: 'name', artist: 'artist', type: 'type', release: 'release', genre: 'genre' },
+    ''
+  );
   const bodyHeightValue = number('bodyHeight', 300, {
     range: true,
     min: 100,
@@ -133,11 +138,10 @@ stories.add('Reactive Props', () => {
 
   return (
     <Grid
-      columns={columnsValue}
-      data={dataValue}
-      frozenColumnCount={frozenColumnCountValue}
-      pagination={false}
+      columns={columns.filter(({ name }) => name !== hidingColumn)}
+      data={data.slice(0, Number(dataRange))}
       bodyHeight={bodyHeightValue}
+      frozenColumnCount={frozenColumnCountValue}
       oneTimeBindingProps={oneTimeBindingProps}
     />
   );
@@ -208,7 +212,12 @@ stories.add('dataSource', () => {
   };
 
   return (
-    <Grid columns={columns} pagination={true} data={dataSource} pageOptions={{ perPage: 3 }} />
+    <Grid
+      oneTimeBindingProps={['data']}
+      columns={columns}
+      data={dataSource}
+      pageOptions={{ perPage: 3 }}
+    />
   );
 });
 
