@@ -1,4 +1,4 @@
-import { DataSource } from './dataSource/dataSource';
+import { DataSource } from './dataSource';
 import { EditingEvent, TabMode } from './store/focus';
 import { PageOptions, RowKey, CellValue, RowAttributes, RowSpanAttribute } from './store/data';
 import {
@@ -13,11 +13,11 @@ import {
   ComplexColumnInfo
 } from './store/column';
 import { SelectionUnit } from './store/selection';
-import { GridEvent } from './event/gridEvent';
-import { HeaderRendererClass, CellRendererClass } from './renderer/renderer';
-import { CellEditorClass } from './editor/editor';
 import { FilterOptionType } from './store/filterLayerState';
 import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
+import { TuiGridEvent } from './event';
+import { HeaderRendererClass, CellRendererClass } from './renderer';
+import { CellEditorClass } from './editor';
 
 export interface Dictionary<T> {
   [index: string]: T;
@@ -58,7 +58,7 @@ export type EventName =
   | 'errorResponse'
   | 'expand'
   | 'collapse';
-export type EventCallback = (gridEvent: GridEvent) => void;
+export type EventCallback = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
   el: HTMLElement;

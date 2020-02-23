@@ -1,8 +1,8 @@
 import { Side } from './focus';
 import { CellValue, Row } from './data';
-import { OptTree, Dictionary, OptColumnHeaderInfo } from '../options';
-import { HeaderRendererClass, CellRendererClass } from '../renderer/renderer';
-import { CellEditorClass } from '../editor/editor';
+import { OptTree, Dictionary, OptColumnHeaderInfo, EventCallback } from '../options';
+import { HeaderRendererClass, CellRendererClass } from '../renderer';
+import { CellEditorClass } from '../editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
@@ -125,9 +125,8 @@ export interface CommonColumnInfo {
   resizable?: boolean;
   formatter?: Formatter;
   sortingType?: SortingType;
-  // @todo gridevent
-  onBeforeChange?: Function;
-  onAfterChange?: Function;
+  onBeforeChange?: EventCallback;
+  onAfterChange?: EventCallback;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {

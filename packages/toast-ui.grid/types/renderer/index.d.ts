@@ -1,3 +1,4 @@
+import TuiGrid from '../index';
 import { CellRenderData, RowKey } from '../store/data';
 import {
   ColumnInfo,
@@ -6,10 +7,9 @@ import {
   SortingType,
   ColumnFilterOption
 } from '../store/column';
-import { Grid } from '../grid';
 
 export type CellRendererProps = CellRenderData & {
-  grid: Grid;
+  grid: TuiGrid;
   rowKey: RowKey;
   columnInfo: ColumnInfo;
 };
@@ -38,7 +38,7 @@ export interface ColumnHeaderInfo {
 }
 
 export type HeaderRendererProps = {
-  grid: Grid;
+  grid: TuiGrid;
   columnInfo: ColumnHeaderInfo;
 };
 

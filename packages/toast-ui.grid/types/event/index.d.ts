@@ -1,3 +1,4 @@
+import TuiGrid from '../index';
 import { CellValue, RowKey, SortState } from '../store/data';
 import { SelectionRange } from '../store/Selection';
 import { Filter } from '../store/filterLayerState';
@@ -21,7 +22,7 @@ export interface GridEventProps {
   resizedColumns?: ResizedColumn[];
 }
 
-export class GridEvent {
+export class TuiGridEvent {
   constructor(props: GridEventProps);
 
   public stop(): void;
@@ -29,4 +30,6 @@ export class GridEvent {
   public isStopped(): boolean;
 
   public assignData(data: GridEventProps): void;
+
+  public setInstance(instance: TuiGrid): void;
 }
