@@ -1,6 +1,6 @@
 import Grid from '../src/grid';
 import { OptGrid } from '../types/options';
-import { CellRendererProps } from '../types/renderer/renderer';
+import { CellRendererProps } from '../types/renderer';
 import { data as sampleData } from '../samples/basic';
 import '../src/css/grid.css';
 import '../samples/css/rowHeaders.css';

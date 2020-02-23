@@ -1,5 +1,5 @@
 import { OptRow, Dictionary } from '../../types/options';
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { Data, Row, RowKey, SortState, RawRowOptions } from '../../types/store/data';
 import { Column } from '../../types/store/column';
 import {

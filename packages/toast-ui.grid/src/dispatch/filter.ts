@@ -5,6 +5,7 @@ import {
   ActiveColumnAddress
 } from '../../types/store/filterLayerState';
 import { OptFilter } from '../../types/options';
+import { Store } from '../../types/store';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
@@ -18,7 +19,6 @@ import GridEvent from '../event/gridEvent';
 import { isHiddenColumn, isComplexHeader } from '../query/column';
 import { setCheckedAllRows, updateHeights, updatePageOptions } from './data';
 import { updateAllSummaryValues } from './summary';
-import { Store } from 'types/store/store';
 
 function initLayerAndScrollAfterFiltering(store: Store) {
   const { data } = store;

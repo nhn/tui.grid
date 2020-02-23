@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { SelectionRange } from '../../types/store/selection';
 import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange, getNextCellIndexWithRowSpan } from '../query/keyboard';

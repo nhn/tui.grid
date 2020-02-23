@@ -1,4 +1,4 @@
-import { CellRenderer, CellRendererProps } from '../../types/renderer/renderer';
+import { CellRenderer, CellRendererProps } from '../../types/renderer';
 import { cls } from '../helper/dom';
 
 export class DefaultRenderer implements CellRenderer {

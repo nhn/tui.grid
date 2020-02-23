@@ -7,6 +7,7 @@ import {
   TextFilterCode,
   DateFilterCode
 } from '../../types/store/filterLayerState';
+import { ColumnInfo } from '../../types/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
@@ -16,7 +17,6 @@ import { filterSelectOption } from '../helper/filter';
 import { debounce, deepMergedCopy, isString } from '../helper/common';
 import { keyNameMap, isNonPrintableKey, KeyNameMap } from '../helper/keyboard';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';
-import { ColumnInfo } from 'types/store/column';
 
 interface StoreProps {
   grid: Grid;

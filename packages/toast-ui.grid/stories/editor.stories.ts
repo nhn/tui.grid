@@ -1,4 +1,4 @@
-import { CellEditor, CellEditorProps } from '../types/editor/editor';
+import { CellEditor, CellEditorProps } from '../types/editor';
 import { OptColumn } from '../types/options';
 import Grid from '../src/grid';
 import '../src/css/grid.css';

@@ -1,5 +1,5 @@
 import { OptColumn, OptRow, OptHeader } from '../types/options';
-import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '../types/renderer/renderer';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '../types/renderer';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 

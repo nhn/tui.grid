@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { ColumnInfo, ResizedColumn, Column, ComplexColumnInfo } from '../../types/store/column';
 import { Side } from '../../types/store/focus';
 import { Range } from '../../types/store/selection';

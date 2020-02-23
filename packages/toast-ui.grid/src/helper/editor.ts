@@ -1,4 +1,4 @@
-import { CellEditorProps, ListItemOptions } from '../../types/editor/editor';
+import { CellEditorProps, ListItemOptions } from '../../types/editor';
 import { isEmpty } from './common';
 
 export function getListItems(props: CellEditorProps) {

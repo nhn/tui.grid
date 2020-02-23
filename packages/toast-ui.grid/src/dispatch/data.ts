@@ -7,10 +7,10 @@ import {
   Data,
   LoadingState
 } from '../../types/store/data';
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { SelectionRange, Range } from '../../types/store/selection';
 import { ColumnInfo, Column } from '../../types/store/column';
-import { OriginData } from '../../types/dispatch/dispatch';
+import { OriginData } from '../../types/dispatch';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,

@@ -1,4 +1,4 @@
-import { CellEditorClass } from '../../types/editor/editor';
+import { CellEditorClass } from '../../types/editor';
 import { Dictionary } from '../../types/options';
 import { TextEditor } from './text';
 import { CheckboxEditor } from './checkbox';

@@ -1,5 +1,5 @@
 import { h, render } from 'preact';
-import { Grid as GridType } from '../types/grid';
+import TuiGrid from '../types';
 import {
   OptGrid,
   OptPreset,
@@ -17,7 +17,7 @@ import {
   OptFilter,
   LifeCycleEventName
 } from '../types/options';
-import { Store } from '../types/store/store';
+import { Store } from '../types/store';
 import { RowKey, CellValue, Row, InvalidRow } from '../types/store/data';
 import { ColumnInfo } from '../types/store/column';
 import { Range } from '../types/store/selection';
@@ -31,7 +31,7 @@ import {
   Params,
   ModifiedDataManager,
   ModificationTypeCode
-} from '../types/dataSource/dataSource';
+} from '../types/dataSource';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { createDispatcher, Dispatch } from './dispatch/create';
@@ -254,7 +254,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
-export default class Grid implements GridType {
+export default class Grid implements TuiGrid {
   private el: HTMLElement;
 
   private gridEl: Element;

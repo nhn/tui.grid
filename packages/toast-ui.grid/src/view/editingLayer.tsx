@@ -3,7 +3,7 @@ import { RowKey, ViewRow } from '../../types/store/data';
 import { Dictionary } from '../../types/options';
 import { ColumnInfo } from '../../types/store/column';
 import { EditingAddress, Rect, Side } from '../../types/store/focus';
-import { CellEditor } from '../../types/editor/editor';
+import { CellEditor } from '../../types/editor';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';

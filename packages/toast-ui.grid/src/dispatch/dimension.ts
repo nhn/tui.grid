@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 
 export function setWidth({ dimension }: Store, width: number, autoWidth: boolean) {
   dimension.autoWidth = autoWidth;

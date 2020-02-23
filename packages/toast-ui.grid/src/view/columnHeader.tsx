@@ -5,7 +5,7 @@ import { SortingButton } from './sortingButton';
 import { SortingOrder } from './sortingOrder';
 import { FilterButton } from './filterButton';
 import { isRowHeader, isCheckboxColumn } from '../helper/column';
-import { HeaderRenderer, ColumnHeaderInfo } from '../../types/renderer/renderer';
+import { HeaderRenderer, ColumnHeaderInfo } from '../../types/renderer';
 import Grid from '../grid';
 import { isFunction } from '../helper/common';
 

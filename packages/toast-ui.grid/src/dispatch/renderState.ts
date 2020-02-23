@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { RowKey } from '../../types/store/data';
 import { PagePosition } from '../../types/store/selection';
 import { notify } from '../helper/observable';

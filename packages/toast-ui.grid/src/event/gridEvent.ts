@@ -1,8 +1,8 @@
-import { TargetType, GridEventProps, GridEvent as Event } from '../../types/event/gridEvent';
+import TuiGrid from '../../types';
+import { TargetType, GridEventProps, TuiGridEvent } from '../../types/event';
 import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';
-import Grid from '../grid';
 
 function getTargetInfo(nativeEvent: MouseEvent) {
   let targetType: TargetType = 'etc';
@@ -40,7 +40,7 @@ function getTargetInfo(nativeEvent: MouseEvent) {
  * @module event/gridEvent
  * @param {Object} data - Event data for handler
  */
-export default class GridEvent implements Event {
+export default class GridEvent implements TuiGridEvent {
   private stopped = false;
 
   public constructor({ event, ...props }: GridEventProps = {}) {
@@ -68,7 +68,7 @@ export default class GridEvent implements Event {
     assign(this, data);
   }
 
-  public setInstance(instance: Grid) {
+  public setInstance(instance: TuiGrid) {
     assign(this, { instance });
   }
 }

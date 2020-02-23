@@ -1,7 +1,7 @@
 import { EventName, EventCallback } from '../../types/options';
-import { GridId } from '../../types/store/store';
-import { removeArrayItem } from '../helper/common';
+import { GridId } from '../../types/store';
 import GridEvent from './gridEvent';
+import { removeArrayItem } from '../helper/common';
 import { getInstance } from '../instance';
 
 type TargetEventName = EventName | 'onGridMounted' | 'onGridBeforeDestroy' | 'onGridUpdated';

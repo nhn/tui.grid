@@ -1,22 +1,12 @@
-import { API, Params, DataSource, DataProvider } from '../../types/dataSource/dataSource';
-import { Store } from '../../types/store/store';
-import { Dictionary, OptRow } from '../../types/options';
+import { Config } from './type';
+import { API, Params, DataSource, DataProvider } from '../../types/dataSource';
+import { Store } from '../../types/store';
+import { OptRow } from '../../types/options';
 import { Dispatch } from '../dispatch/create';
 import { isObject, deepMergedCopy } from '../helper/common';
 import { request } from './mutationRequest';
 import { readData, reloadData } from './getterRequest';
 import { createAjaxConfig } from './helper/ajaxConfig';
-
-export type Config = {
-  api: API;
-  hideLoadingBar: boolean;
-  store: Store;
-  dispatch: Dispatch;
-  setLastRequiredData: (params: Params) => void;
-  getLastRequiredData: () => Params;
-  setRequestParams: (params: Dictionary<any>) => void;
-  getRequestParams: () => Dictionary<any>;
-};
 
 function createConfig(store: Store, dispatch: Dispatch, dataSource: DataSource): Config {
   let lastRequiredData: Params = { perPage: store.data.pageOptions.perPage };

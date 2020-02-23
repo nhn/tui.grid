@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { OptGrid } from '../../types/options';
 import { observable, observe } from '../helper/observable';
 import { create as createData } from './data';

@@ -1,6 +1,5 @@
-import { Params, Response, ResponseData, API } from '../../types/dataSource/dataSource';
-import { Store } from '../../types/store/store';
-import { Dictionary } from '../../types/options';
+import { Config } from './type';
+import { Params, Response, ResponseData } from '../../types/dataSource';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isFunction } from '../helper/common';
@@ -8,18 +7,6 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
-import { Dispatch } from '../dispatch/create';
-
-export type Config = {
-  api: API;
-  hideLoadingBar: boolean;
-  store: Store;
-  dispatch: Dispatch;
-  setLastRequiredData: (params: Params) => void;
-  getLastRequiredData: () => Params;
-  setRequestParams: (params: Dictionary<any>) => void;
-  getRequestParams: () => Dictionary<any>;
-};
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {

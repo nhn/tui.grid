@@ -1,4 +1,4 @@
-import { Params } from '../../../types/dataSource/dataSource';
+import { Params } from '../../../types/dataSource';
 import { Dictionary } from '../../../types/options';
 import { isObject, isUndefined, isNull, isEmpty } from '../../helper/common';
 

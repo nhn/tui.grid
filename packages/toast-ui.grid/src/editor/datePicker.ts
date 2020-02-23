@@ -1,6 +1,6 @@
 import TuiDatePicker from 'tui-date-picker';
 import { Dictionary } from '../../types/options';
-import { CellEditor, CellEditorProps } from '../../types/editor/editor';
+import { CellEditor, CellEditorProps } from '../../types/editor';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
 import { setLayerPosition, getContainerElement } from './dom';

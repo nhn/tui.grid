@@ -5,7 +5,7 @@ import {
   TextFilterCode,
   DateFilterCode
 } from '../../types/store/filterLayerState';
-import { CellValue } from 'types/store/data';
+import { CellValue } from '../../types/store/data';
 import { isString, endsWith, startsWith } from './common';
 
 interface FilterSelectOption {

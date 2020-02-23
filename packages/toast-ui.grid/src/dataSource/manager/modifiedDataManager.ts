@@ -6,7 +6,7 @@ import {
   ModifiedRows,
   RequestTypeCode,
   MutationParams
-} from '../../../types/dataSource/dataSource';
+} from '../../../types/dataSource';
 import { OptRow } from '../../../types/options';
 import { Row, RowKey } from '../../../types/store/data';
 import {

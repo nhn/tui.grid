@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { Range } from '../../types/store/selection';
 import { clamp, isNull } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';

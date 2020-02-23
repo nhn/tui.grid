@@ -1,4 +1,4 @@
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { SortedColumn, Data } from '../../types/store/data';
 import { SortingType } from '../../types/store/column';
 import { findPropIndex } from '../helper/common';

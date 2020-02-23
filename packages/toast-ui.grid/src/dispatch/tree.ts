@@ -1,5 +1,5 @@
 import { Row, RowKey } from '../../types/store/data';
-import { Store } from '../../types/store/store';
+import { Store } from '../../types/store';
 import { OptRow, OptAppendTreeRow } from '../../types/options';
 import { createViewRow } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';

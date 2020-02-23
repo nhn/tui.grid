@@ -1,7 +1,7 @@
 import { CustomValue, ColumnInfo } from '../../types/store/column';
 import { CellValue, Row, CellRenderData } from '../../types/store/data';
-import { ListItemOptions } from '../../types/editor/editor';
-import { Store } from '../../types/store/store';
+import { ListItemOptions } from '../../types/editor';
+import { Store } from '../../types/store';
 import { SelectionRange } from '../../types/store/selection';
 import { find } from '../helper/common';
 

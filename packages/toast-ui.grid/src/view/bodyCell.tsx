@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import { ViewRow, RowKey, CellRenderData, TreeCellInfo } from '../../types/store/data';
 import { ColumnInfo } from '../../types/store/column';
-import { CellRenderer } from '../../types/renderer/renderer';
+import { CellRenderer } from '../../types/renderer';
 import { TreeCellContents } from './treeCellContents';
 import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';

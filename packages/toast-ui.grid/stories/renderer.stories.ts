@@ -1,5 +1,5 @@
 import { OptColumn } from '../types/options';
-import { CellRenderer, CellRendererProps } from '../types/renderer/renderer';
+import { CellRenderer, CellRendererProps } from '../types/renderer';
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 
