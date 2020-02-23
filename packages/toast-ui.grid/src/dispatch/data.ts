@@ -282,12 +282,20 @@ export function setColumnValues(
   store: Store,
   columnName: string,
   value: CellValue,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // @TODO: need checkCellState in setValue API?
   checkCellState = false
 ) {
-  // @TODO Check Cell State
-  store.data.rawData.forEach(targetRow => {
-    targetRow[columnName] = value;
+  if (checkCellState) {
+    // @TODO: find more practical way to make observable
+    createObservableData(store, true);
+  }
+  const { id, data } = store;
+  data.rawData.forEach((targetRow, index) => {
+    const { disabled, editable } = data.viewData[index].valueMap[columnName];
+    if (targetRow[columnName] !== value && (!checkCellState || (!disabled && editable))) {
+      targetRow[columnName] = value;
+      getDataManager(id).push('UPDATE', targetRow);
+    }
   });
   updateSummaryValueByColumn(store, columnName, { value });
 }
