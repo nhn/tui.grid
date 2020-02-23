@@ -90,6 +90,19 @@ describe('update rows', () => {
     assertModifiedRowsLength({ createdRows: 0, updatedRows: 1, deletedRows: 0 });
     assertModifiedRowsContainsObject({ updatedRows: [{ name: 'JIN', age: 10 }] });
   });
+
+  it('should add updated row to updateRows property once, when modified by setColumnValues API', () => {
+    cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
+    cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 2, deletedRows: 0 });
+    assertModifiedRowsContainsObject({
+      updatedRows: [
+        { name: 'Park', age: 10 },
+        { name: 'Park', age: 20 }
+      ]
+    });
+  });
 });
 
 it('should add deleted row to only deletedRows property, regardless of modifying it before', () => {
