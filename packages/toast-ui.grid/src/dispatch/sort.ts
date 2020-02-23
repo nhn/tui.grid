@@ -9,6 +9,7 @@ import { isSortable, isInitialSortState, isScrollPagination } from '../query/dat
 import { isComplexHeader } from '../query/column';
 
 function sortData(store: Store) {
+  // @TODO: find more practical way to make observable
   // makes all data observable to sort the data properly;
   createObservableData(store, true);
   const { data, id } = store;
