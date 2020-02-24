@@ -1,5 +1,5 @@
-import { Store } from '../../types/store';
-import { InvalidRow } from '../../types/store/data';
+import { Store } from '@t/store';
+import { InvalidRow } from '@t/store/data';
 import { createObservableData } from '../dispatch/data';
 
 export function getInvalidRows(store: Store) {

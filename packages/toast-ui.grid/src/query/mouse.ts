@@ -1,7 +1,7 @@
-import { Side } from '../../types/store/focus';
-import { Dimension } from '../../types/store/dimension';
-import { Store } from '../../types/store';
-import { PagePosition } from '../../types/store/selection';
+import { Side } from '@t/store/focus';
+import { Dimension } from '@t/store/dimension';
+import { Store } from '@t/store';
+import { PagePosition } from '@t/store/selection';
 import {
   ViewInfo,
   ContainerPosition,
@@ -9,7 +9,7 @@ import {
   OverflowInfo,
   OverflowType,
   ElementInfo
-} from '../../types/dispatch';
+} from '@t/dispatch';
 import { findOffsetIndex } from '../helper/common';
 
 function getTotalColumnOffsets(widths: { [key in Side]: number[] }, cellBorderWidth: number) {

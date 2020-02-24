@@ -1,7 +1,7 @@
 import SelectBox from '@toast-ui/select-box';
 import '@toast-ui/select-box/dist/toastui-select-box.css';
-import { CellEditor, CellEditorProps, PortalEditingKeydown } from '../../types/editor';
-import { CellValue, ListItem } from '../../types/store/data';
+import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
+import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { setLayerPosition, getContainerElement } from './dom';

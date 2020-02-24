@@ -1,16 +1,12 @@
 /// <reference path="../../node_modules/cypress/types/sinon/index.d.ts" />
 /// <reference path="../../node_modules/cypress-plugin-tab/src/index.d.ts" />
-/// <reference path="../../types/tui-pagination/index.d.ts" />
-/// <reference path="../../types/tui-date-picker/index.d.ts" />
-/// <reference types="cypress" />
 
-// @TODO: remove the 'skipLibCheck' option in cypress/tsconfig.json
-// related issue: https://github.com/cypress-io/cypress/issues/5065
 declare namespace Cypress {
   type RowHeaderType = '_checked' | '_number';
+  type RowKey = number | string;
 
   interface Chainable<Subject> {
-    getCell(rowKey: number | string, column: string): Chainable<any>;
+    getCell(rowKey: RowKey, column: string): Chainable<any>;
 
     getCellByIdx(rowIdx: number, columnIdx: number): Chainable<any>;
 
@@ -28,7 +24,7 @@ declare namespace Cypress {
 
     getHeaderCell(column: string): Chainable<any>;
 
-    getRowHeaderCell(rowKey: number | string, columnName: RowHeaderType): Chainable<any>;
+    getRowHeaderCell(rowKey: RowKey, columnName: RowHeaderType): Chainable<any>;
 
     getRowHeaderCells(columnName: RowHeaderType): Chainable<any>;
 

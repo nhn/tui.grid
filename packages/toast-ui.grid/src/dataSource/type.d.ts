@@ -1,6 +1,6 @@
-import { Dictionary } from '../../types/options';
-import { API, Params } from '../../types/dataSource';
-import { Store } from '../../types/store';
+import { Dictionary } from '@t/options';
+import { API, Params } from '@t/dataSource';
+import { Store } from '@t/store';
 import { Dispatch } from '../dispatch/create';
 
 export type Config = {

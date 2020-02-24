@@ -1,4 +1,4 @@
-import { FormatterProps } from '../../types/store/column';
+import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
 
 before(() => {

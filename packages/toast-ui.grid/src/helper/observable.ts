@@ -1,4 +1,4 @@
-import { Dictionary } from '../../types/options';
+import { Dictionary } from '@t/options';
 import { hasOwnProp, isObject, forEachObject, last, isEmpty, isFunction } from './common';
 import { patchArrayMethods } from './array';
 

@@ -6,11 +6,11 @@ import {
   RowAttributes,
   Data,
   LoadingState
-} from '../../types/store/data';
-import { Store } from '../../types/store';
-import { SelectionRange, Range } from '../../types/store/selection';
-import { ColumnInfo, Column } from '../../types/store/column';
-import { OriginData } from '../../types/dispatch';
+} from '@t/store/data';
+import { Store } from '@t/store';
+import { SelectionRange, Range } from '@t/store/selection';
+import { ColumnInfo, Column } from '@t/store/column';
+import { OriginData } from '@t/dispatch';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
@@ -23,7 +23,7 @@ import {
   shallowEqual,
   isUndefined
 } from '../helper/common';
-import { OptRow, OptAppendRow, OptRemoveRow } from '../../types/options';
+import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
 import {
   createViewRow,
   createData,

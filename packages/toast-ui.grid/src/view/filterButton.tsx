@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Filter, ActiveColumnAddress } from '../../types/store/filterLayerState';
+import { Filter, ActiveColumnAddress } from '@t/store/filterLayerState';
 import { cls, hasClass } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

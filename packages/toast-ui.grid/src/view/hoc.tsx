@@ -1,5 +1,5 @@
 import { h, AnyComponent, Component } from 'preact';
-import { Store } from '../../types/store';
+import { Store } from '@t/store';
 import { observe } from '../helper/observable';
 import { DispatchProps } from '../dispatch/create';
 

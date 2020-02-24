@@ -1,5 +1,5 @@
-import { Row, RowKey } from '../../types/store/data';
-import { OptGrid, OptRow } from '../../types/options';
+import { Row, RowKey } from '@t/store/data';
+import { OptGrid, OptRow } from '@t/options';
 import { cls } from '../../src/helper/dom';
 import GridEvent from '@/event/gridEvent';
 

@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';
-import { OperatorType, Filter } from '../../types/store/filterLayerState';
+import { OperatorType, Filter } from '@t/store/filterLayerState';
 
 interface StoreProps {
   operator: OperatorType;

@@ -6,8 +6,8 @@ import {
   AjaxConfig,
   Url,
   MutationParams
-} from '../../types/dataSource';
-import { Store } from '../../types/store';
+} from '@t/dataSource';
+import { Store } from '@t/store';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';

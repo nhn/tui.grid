@@ -1,4 +1,4 @@
-import { RowKey } from '../../types/store/data';
+import { RowKey } from '@t/store/data';
 import { data } from '../../samples/basic';
 import { lazyObserbableTestdata as treeData } from '../../samples/tree';
 import { cls } from '@/helper/dom';

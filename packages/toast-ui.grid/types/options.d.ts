@@ -33,7 +33,7 @@ export type TypeObjectOptions<T> =
 export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
 export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
-export type EventName =
+export type GridEventName =
   | 'click'
   | 'dblclick'
   | 'mousedown'
@@ -58,7 +58,7 @@ export type EventName =
   | 'errorResponse'
   | 'expand'
   | 'collapse';
-export type EventCallback = (gridEvent: TuiGridEvent) => void;
+export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
   el: HTMLElement;
@@ -87,9 +87,9 @@ export interface OptGrid {
   header?: OptHeader;
   usageStatistics?: boolean;
   disabled?: boolean;
-  onGridMounted?: EventCallback;
-  onGridUpdated?: EventCallback;
-  onGridBeforeDestroy?: EventCallback;
+  onGridMounted?: GridEventListener;
+  onGridUpdated?: GridEventListener;
+  onGridBeforeDestroy?: GridEventListener;
 }
 
 export interface OptRow {

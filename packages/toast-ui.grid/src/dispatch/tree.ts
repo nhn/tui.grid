@@ -1,6 +1,6 @@
-import { Row, RowKey } from '../../types/store/data';
-import { Store } from '../../types/store';
-import { OptRow, OptAppendTreeRow } from '../../types/options';
+import { Row, RowKey } from '@t/store/data';
+import { Store } from '@t/store';
+import { OptRow, OptAppendTreeRow } from '@t/options';
 import { createViewRow } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { notify } from '../helper/observable';

@@ -3,19 +3,20 @@
   "compilerOptions": {
     "baseUrl": "..",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"],
+      "@t/*": ["types/*"]
     },
-    "skipLibCheck": true,
     "types": [
       "cypress",
-      "node"
+      "node",
+      "tui-pagination", 
+      "tui-date-picker"
     ]
   },
   "include": [
     "../src/**/*.ts",
     "../src/**/*.tsx",
+    "../types/**/*",
     "**/*.ts"
   ]
 }

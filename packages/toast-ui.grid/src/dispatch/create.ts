@@ -11,7 +11,7 @@ import * as renderState from './renderState';
 import * as tree from './tree';
 import * as sort from './sort';
 import * as filter from './filter';
-import { Store } from '../../types/store';
+import { Store } from '@t/store';
 
 const dispatchMap = {
   ...viewport,

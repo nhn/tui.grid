@@ -1,5 +1,5 @@
-import { OptRow } from '../../types/options';
-import { Row } from '../../types/store/data';
+import { OptRow } from '@t/options';
+import { Row } from '@t/store/data';
 import { data } from '../../samples/pagination';
 import { twoDepthData, threeDepthData } from '../../samples/relations';
 import { cls, ClassNameType } from '@/helper/dom';

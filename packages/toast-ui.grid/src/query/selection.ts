@@ -1,6 +1,6 @@
-import { ColumnInfo, ComplexColumnInfo } from '../../types/store/column';
-import { SelectionRange, Range } from '../../types/store/selection';
-import { PageOptions } from '../../types/store/data';
+import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
+import { SelectionRange, Range } from '@t/store/selection';
+import { PageOptions } from '@t/store/data';
 import { findProp, findPropIndex, includes, isNull, isEmpty } from '../helper/common';
 import { isParentColumnHeader } from './column';
 

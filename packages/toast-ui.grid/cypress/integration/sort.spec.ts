@@ -1,4 +1,4 @@
-import { OptColumn, Dictionary } from '../../types/options';
+import { OptColumn, Dictionary } from '@t/options';
 import { cls, ClassNameType } from '../../src/helper/dom';
 import { sortData as data } from '../../samples/basic';
 import { compare } from '@/helper/sort';

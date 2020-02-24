@@ -1,5 +1,5 @@
-import { SelectionRange, Selection, Range } from '../../types/store/selection';
-import { Store } from '../../types/store';
+import { SelectionRange, Selection, Range } from '@t/store/selection';
+import { Store } from '@t/store';
 import { clamp } from '../helper/common';
 import { getEventBus } from '../event/eventBus';
 import { isSameInputRange } from '../query/selection';

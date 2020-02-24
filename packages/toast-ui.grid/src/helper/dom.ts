@@ -1,5 +1,5 @@
 import { fromArray, isNull } from './common';
-import { Range } from '../../types/store/selection';
+import { Range } from '@t/store/selection';
 
 export interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;

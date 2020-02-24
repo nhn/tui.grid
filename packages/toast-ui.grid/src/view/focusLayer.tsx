@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Rect, Side } from '../../types/store/focus';
+import { Rect, Side } from '@t/store/focus';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

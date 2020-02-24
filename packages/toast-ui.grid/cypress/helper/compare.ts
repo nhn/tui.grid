@@ -1,4 +1,4 @@
-import { Dictionary } from '../../types/options';
+import { Dictionary } from '@t/options';
 
 export function isSubsetOf(obj: Dictionary<any>, target: any) {
   for (const key in obj) {

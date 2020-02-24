@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { Side } from '../../types/store/focus';
-import { ViewRow } from '../../types/store/data';
-import { ColumnInfo } from '../../types/store/column';
+import { Side } from '@t/store/focus';
+import { ViewRow } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
 import { BodyRow } from './bodyRow';
 import { BodyDummyRow } from './bodyDummyRow';
 import { shallowEqual, range } from '../helper/common';

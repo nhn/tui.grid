@@ -12,11 +12,14 @@
     "jsx": "react",
     "jsxFactory": "h",
     "baseUrl": ".",
+    "paths": {
+      "@t/*": ["types/*"]
+    },
     "noEmit": true,
     "typeRoots": ["./types"],
     "types": ["node", "tui-pagination", "tui-date-picker"],
     "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*"],
   "exclude": ["node_modules"]
 }

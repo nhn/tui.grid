@@ -1,5 +1,5 @@
-import { Row, CellValue } from '../../types/store/data';
-import { SummaryColumnContentMap, SummaryColumnContent } from '../../types/store/summary';
+import { Row, CellValue } from '@t/store/data';
+import { SummaryColumnContentMap, SummaryColumnContent } from '@t/store/summary';
 
 type ColumnContentType = string | SummaryColumnContentMap;
 

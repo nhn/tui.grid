@@ -1,5 +1,5 @@
-import { Store } from '../../types/store';
-import { SelectionRange } from '../../types/store/selection';
+import { Store } from '@t/store';
+import { SelectionRange } from '@t/store/selection';
 import { KeyboardEventCommandType, TabCommandType } from '../helper/keyboard';
 import { getNextCellIndex, getRemoveRange, getNextCellIndexWithRowSpan } from '../query/keyboard';
 import { changeFocus, startEditing } from './focus';

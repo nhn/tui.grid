@@ -1,8 +1,8 @@
 import { h, Component } from 'preact';
-import { EditingEvent } from '../../types/store/focus';
-import { SummaryPosition } from '../../types/store/summary';
-import { ViewRow } from '../../types/store/data';
-import { RenderState } from '../../types/store/renderState';
+import { EditingEvent } from '@t/store/focus';
+import { SummaryPosition } from '@t/store/summary';
+import { ViewRow } from '@t/store/data';
+import { RenderState } from '@t/store/renderState';
 import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';

@@ -1,5 +1,5 @@
-import { OptGrid } from '../../types/options';
-import { Row } from '../../types/store/data';
+import { OptGrid } from '@t/options';
+import { Row } from '@t/store/data';
 import { cls } from '@/helper/dom';
 
 function checkGridHasRightRowNumber() {

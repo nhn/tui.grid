@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
-import { AreaInfo } from '../../types/store/selection';
-import { Side } from '../../types/store/focus';
+import { AreaInfo } from '@t/store/selection';
+import { Side } from '@t/store/focus';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

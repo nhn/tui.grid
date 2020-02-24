@@ -1,9 +1,9 @@
-import { Viewport } from '../../types/store/viewport';
-import { Dimension } from '../../types/store/dimension';
-import { Store } from '../../types/store';
-import { SelectionRange, Selection, PagePosition } from '../../types/store/selection';
-import { RowKey } from '../../types/store/data';
-import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from '../../types/dispatch';
+import { Viewport } from '@t/store/viewport';
+import { Dimension } from '@t/store/dimension';
+import { Store } from '@t/store';
+import { SelectionRange, Selection, PagePosition } from '@t/store/selection';
+import { RowKey } from '@t/store/data';
+import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from '@t/dispatch';
 import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus, saveAndFinishEditing } from './focus';

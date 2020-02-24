@@ -8,7 +8,7 @@ import {
   OptComplexColumnInfo,
   Dictionary,
   OptFilter
-} from '../../types/options';
+} from '@t/options';
 import {
   ColumnOptions,
   AlignType,
@@ -21,8 +21,8 @@ import {
   ColumnFilterOption,
   Column,
   ColumnHeaderInfo
-} from '../../types/store/column';
-import { FilterOptionType } from '../../types/store/filterLayerState';
+} from '@t/store/column';
+import { FilterOptionType } from '@t/store/filterLayerState';
 import { observable } from '../helper/observable';
 import { isRowNumColumn } from '../helper/column';
 import {

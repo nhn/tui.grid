@@ -1,8 +1,8 @@
-import { CustomValue, ColumnInfo } from '../../types/store/column';
-import { CellValue, Row, CellRenderData } from '../../types/store/data';
-import { ListItemOptions } from '../../types/editor';
-import { Store } from '../../types/store';
-import { SelectionRange } from '../../types/store/selection';
+import { CustomValue, ColumnInfo } from '@t/store/column';
+import { CellValue, Row, CellRenderData } from '@t/store/data';
+import { ListItemOptions } from '@t/editor';
+import { Store } from '@t/store';
+import { SelectionRange } from '@t/store/selection';
 import { find } from '../helper/common';
 
 function getCustomValue(

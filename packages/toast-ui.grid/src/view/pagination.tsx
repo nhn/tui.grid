@@ -1,7 +1,7 @@
 import { Component, h } from 'preact';
 import TuiPagination from 'tui-pagination';
-import { PageOptions } from '../../types/store/data';
-import { DataProvider } from '../../types/dataSource';
+import { PageOptions } from '@t/store/data';
+import { DataProvider } from '@t/dataSource';
 import Grid from '../grid';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

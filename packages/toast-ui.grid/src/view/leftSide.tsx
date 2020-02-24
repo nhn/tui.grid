@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { SummaryPosition } from '../../types/store/summary';
+import { SummaryPosition } from '@t/store/summary';
 import { HeaderArea } from './headerArea';
 import { BodyArea } from './bodyArea';
 import { SummaryArea } from './summaryArea';

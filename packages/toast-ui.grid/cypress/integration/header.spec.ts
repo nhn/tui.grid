@@ -1,5 +1,5 @@
-import { AlignType, VAlignType } from '../../types/store/column';
-import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '../../types/renderer';
+import { AlignType, VAlignType } from '@t/store/column';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '@t/renderer';
 
 class CustomRenderer implements HeaderRenderer {
   private el: HTMLElement;

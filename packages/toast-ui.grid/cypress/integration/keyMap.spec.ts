@@ -1,4 +1,4 @@
-import { Range } from '../../types/store/selection';
+import { Range } from '@t/store/selection';
 
 // unable to test clipboard
 // https://github.com/cypress-io/cypress/issues/2386

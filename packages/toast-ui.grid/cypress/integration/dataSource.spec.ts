@@ -1,5 +1,5 @@
-import { Dictionary } from '../../types/options';
-import { DataSource, Params, AjaxConfig } from '../../types/dataSource';
+import { Dictionary } from '@t/options';
+import { DataSource, Params, AjaxConfig } from '@t/dataSource';
 import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';

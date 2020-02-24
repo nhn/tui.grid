@@ -1,5 +1,5 @@
 import { isBlank, isNumber, convertToNumber } from './common';
-import { CellValue, SortedColumn, Row, ViewRow } from '../../types/store/data';
+import { CellValue, SortedColumn, Row, ViewRow } from '@t/store/data';
 
 export function compare(valueA: CellValue, valueB: CellValue) {
   const isBlankA = isBlank(valueA);

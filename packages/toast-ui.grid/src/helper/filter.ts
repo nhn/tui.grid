@@ -4,8 +4,8 @@ import {
   NumberFilterCode,
   TextFilterCode,
   DateFilterCode
-} from '../../types/store/filterLayerState';
-import { CellValue } from '../../types/store/data';
+} from '@t/store/filterLayerState';
+import { CellValue } from '@t/store/data';
 import { isString, endsWith, startsWith } from './common';
 
 interface FilterSelectOption {

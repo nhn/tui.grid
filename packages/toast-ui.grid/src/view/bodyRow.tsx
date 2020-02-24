@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
-import { ViewRow, RowKey } from '../../types/store/data';
-import { ColumnInfo } from '../../types/store/column';
+import { ViewRow, RowKey } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { cls } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';

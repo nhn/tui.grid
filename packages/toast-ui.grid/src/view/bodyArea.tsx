@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
-import { Side } from '../../types/store/focus';
-import { PagePosition, DragStartData } from '../../types/store/selection';
+import { Side } from '@t/store/focus';
+import { PagePosition, DragStartData } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
 import {

@@ -3,9 +3,9 @@ import {
   FilterOptionType,
   FilterState,
   ActiveColumnAddress
-} from '../../types/store/filterLayerState';
-import { OptFilter } from '../../types/options';
-import { Store } from '../../types/store';
+} from '@t/store/filterLayerState';
+import { OptFilter } from '@t/options';
+import { Store } from '@t/store';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';

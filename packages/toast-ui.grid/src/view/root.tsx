@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { Store } from '../../types/store';
+import { Store } from '@t/store';
 import { Dispatch } from '../dispatch/create';
 import { Container } from './container';
 import GridEvent from '../event/gridEvent';

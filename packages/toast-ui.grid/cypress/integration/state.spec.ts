@@ -1,4 +1,4 @@
-import { OptColumn } from '../../types/options';
+import { OptColumn } from '@t/options';
 
 const columns: OptColumn[] = [{ name: 'A' }, { name: 'B' }];
 

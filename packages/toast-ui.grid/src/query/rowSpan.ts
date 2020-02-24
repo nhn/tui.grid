@@ -1,7 +1,7 @@
-import { RowSpan, Row, Data, RowKey, SortState } from '../../types/store/data';
-import { ColumnInfo } from '../../types/store/column';
-import { RowCoords } from '../../types/store/rowCoords';
-import { Range } from '../../types/store/selection';
+import { RowSpan, Row, Data, RowKey, SortState } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { RowCoords } from '@t/store/rowCoords';
+import { Range } from '@t/store/selection';
 import { findPropIndex, isEmpty, isNull } from '../helper/common';
 import { getSortedRange } from './selection';
 

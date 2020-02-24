@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { LoadingState } from '../../types/store/data';
+import { LoadingState } from '@t/store/data';
 import { cls } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

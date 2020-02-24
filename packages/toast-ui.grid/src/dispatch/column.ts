@@ -1,9 +1,9 @@
-import { Store } from '../../types/store';
-import { ColumnInfo, ResizedColumn, Column, ComplexColumnInfo } from '../../types/store/column';
-import { Side } from '../../types/store/focus';
-import { Range } from '../../types/store/selection';
-import { ViewRow } from '../../types/store/data';
-import { OptColumn, Dictionary } from '../../types/options';
+import { Store } from '@t/store';
+import { ColumnInfo, ResizedColumn, Column, ComplexColumnInfo } from '@t/store/column';
+import { Side } from '@t/store/focus';
+import { Range } from '@t/store/selection';
+import { ViewRow } from '@t/store/data';
+import { OptColumn, Dictionary } from '@t/options';
 import { createColumn, createRelationColumns } from '../store/column';
 import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';

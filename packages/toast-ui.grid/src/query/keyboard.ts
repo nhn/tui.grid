@@ -1,5 +1,5 @@
-import { Store } from '../../types/store';
-import { Range } from '../../types/store/selection';
+import { Store } from '@t/store';
+import { Range } from '@t/store/selection';
 import { clamp, isNull } from '../helper/common';
 import { KeyboardEventCommandType } from '../helper/keyboard';
 import { getRowSpanTopIndex, getRowSpanBottomIndex, isRowSpanEnabled } from './rowSpan';

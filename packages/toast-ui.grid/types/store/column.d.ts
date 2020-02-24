@@ -1,6 +1,6 @@
 import { Side } from './focus';
 import { CellValue, Row } from './data';
-import { OptTree, Dictionary, OptColumnHeaderInfo, EventCallback } from '../options';
+import { OptTree, Dictionary, OptColumnHeaderInfo, GridEventListener } from '../options';
 import { HeaderRendererClass, CellRendererClass } from '../renderer';
 import { CellEditorClass } from '../editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
@@ -125,8 +125,8 @@ export interface CommonColumnInfo {
   resizable?: boolean;
   formatter?: Formatter;
   sortingType?: SortingType;
-  onBeforeChange?: EventCallback;
-  onAfterChange?: EventCallback;
+  onBeforeChange?: GridEventListener;
+  onAfterChange?: GridEventListener;
 }
 
 export interface ColumnInfo extends CommonColumnInfo {

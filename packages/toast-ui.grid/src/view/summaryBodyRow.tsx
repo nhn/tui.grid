@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { ColumnInfo } from '../../types/store/column';
+import { ColumnInfo } from '@t/store/column';
 import { SummaryBodyCell } from './summaryBodyCell';
 import { shallowEqual } from '../helper/common';
 

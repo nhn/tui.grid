@@ -1,5 +1,5 @@
-import { CellEditorClass } from '../../types/editor';
-import { Dictionary } from '../../types/options';
+import { CellEditorClass } from '@t/editor';
+import { Dictionary } from '@t/options';
 import { TextEditor } from './text';
 import { CheckboxEditor } from './checkbox';
 import { SelectEditor } from './select';

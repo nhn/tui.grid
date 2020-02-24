@@ -1,9 +1,9 @@
 import { h, Component } from 'preact';
-import { RowKey, ViewRow } from '../../types/store/data';
-import { Dictionary } from '../../types/options';
-import { ColumnInfo } from '../../types/store/column';
-import { EditingAddress, Rect, Side } from '../../types/store/focus';
-import { CellEditor } from '../../types/editor';
+import { RowKey, ViewRow } from '@t/store/data';
+import { Dictionary } from '@t/options';
+import { ColumnInfo } from '@t/store/column';
+import { EditingAddress, Rect, Side } from '@t/store/focus';
+import { CellEditor } from '@t/editor';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';

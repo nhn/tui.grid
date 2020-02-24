@@ -1,5 +1,5 @@
 import { data } from '../../samples/pagination';
-import { OptRow } from '../../types/options';
+import { OptRow } from '@t/options';
 
 const PER_PAGE_COUNT = 10;
 const SCROLL_PER_PAGE_COUNT = 50;

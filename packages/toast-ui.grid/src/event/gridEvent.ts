@@ -1,5 +1,5 @@
-import TuiGrid from '../../types';
-import { TargetType, GridEventProps, TuiGridEvent } from '../../types/event';
+import TuiGrid from '@t/index';
+import { TargetType, GridEventProps, TuiGridEvent } from '@t/event';
 import { findParentByTagName, getCellAddress, dataAttr } from '../helper/dom';
 import { assign, pruneObject } from '../helper/common';
 import { isRowHeader } from '../helper/column';

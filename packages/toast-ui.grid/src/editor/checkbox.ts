@@ -1,5 +1,5 @@
-import { CellEditor, CellEditorProps, PortalEditingKeydown } from '../../types/editor';
-import { CellValue, ListItem } from '../../types/store/data';
+import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
+import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';

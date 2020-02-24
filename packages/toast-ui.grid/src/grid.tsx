@@ -1,5 +1,5 @@
 import { h, render } from 'preact';
-import TuiGrid from '../types';
+import TuiGrid from '@t/index';
 import {
   OptGrid,
   OptPreset,
@@ -11,18 +11,18 @@ import {
   OptAppendTreeRow,
   OptColumn,
   OptHeader,
-  EventName,
-  EventCallback,
+  GridEventName,
+  GridEventListener,
   Dictionary,
   OptFilter,
   LifeCycleEventName
-} from '../types/options';
-import { Store } from '../types/store';
-import { RowKey, CellValue, Row, InvalidRow } from '../types/store/data';
-import { ColumnInfo } from '../types/store/column';
-import { Range } from '../types/store/selection';
-import { FilterOptionType, FilterState } from '../types/store/filterLayerState';
-import { SummaryColumnContentMapOnlyFn } from '../types/store/summary';
+} from '@t/options';
+import { Store } from '@t/store';
+import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
+import { FilterOptionType, FilterState } from '@t/store/filterLayerState';
+import { SummaryColumnContentMapOnlyFn } from '@t/store/summary';
 import {
   RequestOptions,
   RequestType,
@@ -31,7 +31,7 @@ import {
   Params,
   ModifiedDataManager,
   ModificationTypeCode
-} from '../types/dataSource';
+} from '@t/dataSource';
 import { createStore } from './store/create';
 import { Root } from './view/root';
 import { createDispatcher, Dispatch } from './dispatch/create';
@@ -1219,7 +1219,7 @@ export default class Grid implements TuiGrid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public on(eventName: EventName, fn: EventCallback) {
+  public on(eventName: GridEventName, fn: GridEventListener) {
     this.eventBus.on(eventName, fn);
   }
 
@@ -1228,7 +1228,7 @@ export default class Grid implements TuiGrid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public off(eventName: EventName, fn?: EventCallback) {
+  public off(eventName: GridEventName, fn?: GridEventListener) {
     this.eventBus.off(eventName, fn);
   }
 

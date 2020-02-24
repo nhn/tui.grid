@@ -1,6 +1,6 @@
-import { Store } from '../../types/store';
-import { SortedColumn, Data } from '../../types/store/data';
-import { SortingType } from '../../types/store/column';
+import { Store } from '@t/store';
+import { SortedColumn, Data } from '@t/store/data';
+import { SortingType } from '@t/store/column';
 import { findPropIndex } from '../helper/common';
 import { notify } from '../helper/observable';
 import { sortRawData, sortViewData } from '../helper/sort';

@@ -1,4 +1,4 @@
-import { OptScrollbarStyle, OptCellStyle } from '../../types/options';
+import { OptScrollbarStyle, OptCellStyle } from '@t/options';
 import { cls, ClassNameType } from '../helper/dom';
 import { isBoolean } from '../helper/common';
 

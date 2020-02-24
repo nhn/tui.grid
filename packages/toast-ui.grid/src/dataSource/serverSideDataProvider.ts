@@ -1,7 +1,7 @@
 import { Config } from './type';
-import { API, Params, DataSource, DataProvider } from '../../types/dataSource';
-import { Store } from '../../types/store';
-import { OptRow } from '../../types/options';
+import { API, Params, DataSource, DataProvider } from '@t/dataSource';
+import { Store } from '@t/store';
+import { OptRow } from '@t/options';
 import { Dispatch } from '../dispatch/create';
 import { isObject, deepMergedCopy } from '../helper/common';
 import { request } from './mutationRequest';

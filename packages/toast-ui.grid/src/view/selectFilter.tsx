@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { CellValue } from '../../types/store/data';
-import { ColumnInfo } from '../../types/store/column';
-import { Filter, ActiveColumnAddress } from '../../types/store/filterLayerState';
+import { CellValue } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { Filter, ActiveColumnAddress } from '@t/store/filterLayerState';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';

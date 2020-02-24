@@ -4,8 +4,8 @@ import {
   TextFilterCode,
   Filter,
   ActiveColumnAddress
-} from '../../types/store/filterLayerState';
-import { ColumnInfo } from '../../types/store/column';
+} from '@t/store/filterLayerState';
+import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { cls } from '../helper/dom';

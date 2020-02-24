@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { SortingType } from '../../types/store/column';
-import { SortState } from '../../types/store/data';
-import { DataProvider } from '../../types/dataSource';
+import { SortingType } from '@t/store/column';
+import { SortState } from '@t/store/data';
+import { DataProvider } from '@t/dataSource';
 import { cls, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { getDataProvider } from '../instance';

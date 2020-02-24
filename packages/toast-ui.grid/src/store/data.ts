@@ -12,7 +12,7 @@ import {
   Data,
   SortState,
   RawRowOptions
-} from '../../types/store/data';
+} from '@t/store/data';
 import {
   Column,
   FormatterProps,
@@ -20,10 +20,10 @@ import {
   Validation,
   ValidationType,
   ColumnInfo
-} from '../../types/store/column';
-import { Filter } from '../../types/store/filterLayerState';
-import { OptRow, Dictionary } from '../../types/options';
-import { Range } from '../../types/store/selection';
+} from '@t/store/column';
+import { Filter } from '@t/store/filterLayerState';
+import { OptRow, Dictionary } from '@t/options';
+import { Range } from '@t/store/selection';
 import { observable, observe, Observable, getOriginObject } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {

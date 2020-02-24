@@ -1,7 +1,7 @@
 import { presetDefault, clean, striped } from './preset';
 import { deepMergedCopy } from '../helper/common';
 import { appendStyleElement } from '../helper/dom';
-import { OptPreset } from '../../types/options';
+import { OptPreset } from '@t/options';
 import * as styleGen from './styleGenerator';
 
 export type ThemeOptionPresetNames = 'default' | 'striped' | 'clean';

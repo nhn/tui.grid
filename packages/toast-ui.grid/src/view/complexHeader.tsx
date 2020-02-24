@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
-import { Side } from '../../types/store/focus';
-import { ColumnInfo, ComplexColumnInfo } from '../../types/store/column';
-import { Range } from '../../types/store/selection';
+import { Side } from '@t/store/focus';
+import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { getChildColumnRange } from '../query/selection';

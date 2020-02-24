@@ -1,4 +1,4 @@
-import { ComplexColumnInfo, ColumnInfo, Column } from '../../types/store/column';
+import { ComplexColumnInfo, ColumnInfo, Column } from '@t/store/column';
 import { findProp, includes, mapProp, some, someProp } from '../helper/common';
 
 type MergedComplexColumns = (ComplexColumnInfo | ColumnInfo)[];

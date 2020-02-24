@@ -1,7 +1,7 @@
-import { OptRow, Dictionary } from '../../types/options';
-import { Store } from '../../types/store';
-import { Data, Row, RowKey, SortState, RawRowOptions } from '../../types/store/data';
-import { Column } from '../../types/store/column';
+import { OptRow, Dictionary } from '@t/options';
+import { Store } from '@t/store';
+import { Data, Row, RowKey, SortState, RawRowOptions } from '@t/store/data';
+import { Column } from '@t/store/column';
 import {
   isFunction,
   findPropIndex,

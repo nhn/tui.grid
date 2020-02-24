@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { RowKey, TreeCellInfo } from '../../types/store/data';
+import { RowKey, TreeCellInfo } from '@t/store/data';
 import { cls, findParent } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';

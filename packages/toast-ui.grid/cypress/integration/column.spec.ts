@@ -1,5 +1,5 @@
-import { OptColumn } from '../../types/options';
-import { FormatterProps } from '../../types/store/column';
+import { OptColumn } from '@t/options';
+import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
 
 export {};

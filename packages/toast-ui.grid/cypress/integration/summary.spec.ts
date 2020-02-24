@@ -1,6 +1,6 @@
 import { cls, dataAttr } from '../../src/helper/dom';
-import { OptGrid, OptSummaryData, Dictionary } from '../../types/options';
-import { SummaryValueMap } from '../../types/store/summary';
+import { OptGrid, OptSummaryData, Dictionary } from '@t/options';
+import { SummaryValueMap } from '@t/store/summary';
 import { deepMergedCopy } from '../../src/helper/common';
 
 const CONTENT_WIDTH = 700;

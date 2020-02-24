@@ -1,7 +1,7 @@
-import { Store } from '../../types/store';
-import { SummaryColumnContentMap } from '../../types/store/summary';
-import { Row } from '../../types/store/data';
-import { UpdateType, Options } from '../../types/dispatch';
+import { Store } from '@t/store';
+import { SummaryColumnContentMap } from '@t/store/summary';
+import { Row } from '@t/store/data';
+import { UpdateType, Options } from '@t/dispatch';
 import { castToSummaryColumnContent, extractSummaryColumnContent } from '../helper/summary';
 import { isEmpty, findProp, isFunction } from '../helper/common';
 import { createSummaryValue } from '../store/summary';

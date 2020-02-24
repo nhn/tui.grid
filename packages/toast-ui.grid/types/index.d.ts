@@ -7,8 +7,8 @@ import { ColumnInfo } from './store/column';
 import { Range } from './store/selection';
 import {
   Dictionary,
-  EventName,
-  EventCallback,
+  GridEventName,
+  GridEventListener,
   OptThemePresetNames,
   OptPreset,
   OptI18nData,
@@ -189,9 +189,9 @@ declare namespace tui {
 
     public removeRowClassName(rowKey: RowKey, className: string): void;
 
-    public on(eventName: EventName, fn: EventCallback): void;
+    public on(eventName: GridEventName, fn: GridEventListener): void;
 
-    public off(eventName: EventName, fn?: EventCallback): void;
+    public off(eventName: GridEventName, fn?: GridEventListener): void;
 
     public getPagination(): Pagination | null;
 
@@ -279,8 +279,8 @@ export {
   ColumnInfo,
   Range,
   Dictionary,
-  EventName,
-  EventCallback,
+  GridEventName,
+  GridEventListener,
   OptThemePresetNames,
   OptPreset,
   OptI18nData,
