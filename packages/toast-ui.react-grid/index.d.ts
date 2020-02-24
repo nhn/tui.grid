@@ -1,5 +1,5 @@
 import { HTMLAttributes, Component } from 'react';
-import TuiGrid,{ OptGrid, EventName, EventCallback } from 'tui-grid';
+import TuiGrid,{ GridOptions, GridEventListener } from 'tui-grid';
 
 type EventNameMapping = {
   onClick: 'click';
@@ -27,10 +27,10 @@ type EventNameMapping = {
 };
 
 type EventMaps = {
-  [K in keyof EventNameMapping]?: EventCallback;
+  [K in keyof EventNameMapping]?: GridEventListener;
 };
 
-type Props = OptGrid & EventMaps & HTMLAttributes<HTMLElement>;
+type Props = GridOptions & EventMaps & HTMLAttributes<HTMLElement>;
 
 export default class Grid extends Component<Props> {
   public getInstance(): TuiGrid;
