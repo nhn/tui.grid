@@ -1,6 +1,6 @@
 import GridEvent from '@/event/gridEvent';
+import { CellValue } from '@t/store/data';
 import { createCustomLayerEditor } from '../helper/customLayerEditor';
-import { CellValue } from '@/store/types';
 
 before(() => {
   cy.visit('/dist');
