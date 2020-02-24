@@ -30,7 +30,8 @@ import {
   createData,
   generateDataCreationKey,
   createRowSpan,
-  setRowRelationListItems
+  setRowRelationListItems,
+  createRawRow
 } from '../store/data';
 import { notify, isObservable } from '../helper/observable';
 import { changeSelectionRange, initSelection } from './selection';
@@ -190,16 +191,61 @@ export function updatePageOptions(
   }
 }
 
-export function setValue(store: Store, rowKey: RowKey, columnName: string, value: CellValue) {
+export function makeObservable(store: Store, rowKey: RowKey) {
+  const { data, column, id } = store;
+  const { rawData, viewData } = data;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
+  const foundIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const rawRow = rawData[foundIndex];
+
+  if (isObservable(rawRow)) {
+    return;
+  }
+
+  if (treeColumnName) {
+    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
+    rawData[foundIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
+    viewData[foundIndex] = createViewRow(
+      rawData[foundIndex],
+      columnMapWithRelation,
+      rawData,
+      treeColumnName,
+      treeIcon
+    );
+  } else {
+    rawData[foundIndex] = createRawRow(rawRow, foundIndex, columnMapWithRelation);
+    viewData[foundIndex] = createViewRow(rawData[foundIndex], columnMapWithRelation, rawData);
+  }
+  notify(data, 'rawData');
+  notify(data, 'viewData');
+}
+
+export function setValue(
+  store: Store,
+  rowKey: RowKey,
+  columnName: string,
+  value: CellValue,
+  checkCellState = false
+) {
   let gridEvent;
   const { column, data, id } = store;
-  const { rawData, sortState } = data;
+  const { rawData, viewData, sortState } = data;
   const { visibleColumns, allColumnMap } = column;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
   const targetRow = rawData[rowIdx];
+
   if (!targetRow || targetRow[columnName] === value) {
     return;
   }
+  if (checkCellState) {
+    makeObservable(store, rowKey);
+    const { disabled, editable } = viewData[rowIdx].valueMap[columnName];
+
+    if (disabled || !editable) {
+      return;
+    }
+  }
+
   const targetColumn = findProp('name', columnName, visibleColumns);
   const orgValue = targetRow[columnName];
 
@@ -282,12 +328,19 @@ export function setColumnValues(
   store: Store,
   columnName: string,
   value: CellValue,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   checkCellState = false
 ) {
-  // @TODO Check Cell State
-  store.data.rawData.forEach(targetRow => {
-    targetRow[columnName] = value;
+  if (checkCellState) {
+    // @TODO: find more practical way to make observable
+    createObservableData(store, true);
+  }
+  const { id, data } = store;
+  data.rawData.forEach((targetRow, index) => {
+    const { disabled, editable } = data.viewData[index].valueMap[columnName];
+    if (targetRow[columnName] !== value && (!checkCellState || (!disabled && editable))) {
+      targetRow[columnName] = value;
+      getDataManager(id).push('UPDATE', targetRow);
+    }
   });
   updateSummaryValueByColumn(store, columnName, { value });
 }

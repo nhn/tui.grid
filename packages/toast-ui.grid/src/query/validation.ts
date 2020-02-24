@@ -2,7 +2,7 @@ import { Store, InvalidRow } from '../store/types';
 import { createObservableData } from '../dispatch/data';
 
 export function getInvalidRows(store: Store) {
-  // makes all data observable to sort the data properly;
+  // @TODO: find more practical way to make observable
   createObservableData(store, true);
 
   const { data, column } = store;

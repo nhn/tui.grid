@@ -696,9 +696,10 @@ export default class Grid {
    * @param {number|string} rowKey - The unique key of the row
    * @param {string} columnName - The name of the column
    * @param {number|string} value - The value to be set
+   * @param {boolean} [checkCellState=false] - If set to true, only editable and not disabled cells will be affected.
    */
-  public setValue(rowKey: RowKey, columnName: string, value: CellValue) {
-    this.dispatch('setValue', rowKey, columnName, value);
+  public setValue(rowKey: RowKey, columnName: string, value: CellValue, checkCellState?: boolean) {
+    this.dispatch('setValue', rowKey, columnName, value, checkCellState);
   }
 
   /**
@@ -722,7 +723,7 @@ export default class Grid {
    * Set the all values in the specified column.
    * @param {string} columnName - The name of the column
    * @param {number|string} columnValue - The value to be set
-   * @param {boolean} [checkCellState=true] - If set to true, only editable and not disabled cells will be affected.
+   * @param {boolean} [checkCellState=false] - If set to true, only editable and not disabled cells will be affected.
    */
   public setColumnValues(columnName: string, columnValue: CellValue, checkCellState?: boolean) {
     this.dispatch('setColumnValues', columnName, columnValue, checkCellState);

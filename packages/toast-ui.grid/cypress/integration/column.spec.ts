@@ -99,7 +99,7 @@ describe('API', () => {
       { id: 1, name: 'Kim', score: 90, grade: 'A' },
       { id: 2, name: 'Lee', score: 80, grade: 'B' }
     ];
-    const columns = [{ name: 'name' }, { name: 'score' }];
+    const columns = [{ name: 'name' }, { name: 'score', disabled: true }];
     cy.createGrid({ data, columns });
   });
 
@@ -109,10 +109,19 @@ describe('API', () => {
       .should('eql', ['Kim', 'Lee']);
   });
 
-  it('setColumnValues()', () => {
-    cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
+  context('setColumnValues()', () => {
+    it('should change values of specific column', () => {
+      cy.gridInstance().invoke('setColumnValues', 'name', 'Park');
 
-    cy.getColumnCells('name').should('sameColumnData', 'Park');
+      cy.getColumnCells('name').should('sameColumnData', 'Park');
+    });
+
+    it('should not change values of disabled cell with checkCellState: true', () => {
+      cy.gridInstance().invoke('setColumnValues', 'score', '100', true);
+
+      cy.getCell(0, 'score').should('have.text', '90');
+      cy.getCell(1, 'score').should('have.text', '80');
+    });
   });
 
   it('getIndexOfColumn()', () => {
