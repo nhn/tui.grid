@@ -640,7 +640,6 @@ export function resetData(store: Store, inputData: OptRow[]) {
   setLoadingState(store, getLoadingState(rawData));
   setCheckedAllRows(store);
 
-  // @TODO need to execute logic by condition
   getDataManager(id).setOriginData(inputData);
   getDataManager(id).clearAll();
 
@@ -843,7 +842,7 @@ function changeToObservableTreeData(
 ) {
   const { rows } = originData;
   const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon, defaultValues } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
   fillMissingColumnData(column.allColumns, data.rawData);
 
   // create new creation key for updating the observe function of hoc component
@@ -851,7 +850,7 @@ function changeToObservableTreeData(
 
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
-    const rawRow = createTreeRawRow(row, defaultValues, parentRow || null, columnMapWithRelation);
+    const rawRow = createTreeRawRow(row, parentRow || null, columnMapWithRelation);
     const viewRow = createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 

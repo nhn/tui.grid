@@ -249,7 +249,7 @@ export function createColumn(
     fixedWidth: typeof width === 'number',
     copyOptions: { ...gridCopyOptions, ...copyOptions },
     baseWidth: (width === 'auto' ? 0 : width) || 0,
-    minWidth: minWidth || columnOptions.minWidth || COLUMN, // @TODO meta tag 체크 여부
+    minWidth: minWidth || columnOptions.minWidth || COLUMN,
     relationMap: createRelationMap(relations || []),
     related: includes(relationColumns, name),
     sortable,

@@ -203,8 +203,6 @@ const grid = new Grid({
 grid.validate();
 ```
 
-<!-- @TODO: 결과값 다시 노출 -->
-
 ![03-validation-validate](https://user-images.githubusercontent.com/18183560/61283085-81ec0480-a7f7-11e9-8ef2-d84aa1652649.png)
 
 ```js

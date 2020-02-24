@@ -597,7 +597,6 @@ export default class Grid {
    * Remove focus from the focused cell.
    */
   public blur() {
-    // @TODO: save previous 이후 추가 필요.
     this.dispatch('setFocusInfo', null, null, false);
   }
 
@@ -620,7 +619,6 @@ export default class Grid {
       });
     }
 
-    // @TODO: radio button인지 확인, radio 버튼인 경우 체크해주기
     return true;
   }
 
@@ -707,14 +705,12 @@ export default class Grid {
    * Return the value of the cell identified by the rowKey and columnName.
    * @param {number|string} rowKey - The unique key of the target row.
    * @param {string} columnName - The name of the column
-   * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-   * @returns {number|string} - The value of the cell
+   * @returns {number|string|boolean|null} - The value of the cell
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
     const { data, column, id } = this.store;
     const targetRow = findRowByRowKey(data, column, id, rowKey);
 
-    // @TODO: isOriginal 처리 original 개념 추가되면 필요(getOriginal)
     if (targetRow) {
       return targetRow[columnName];
     }
