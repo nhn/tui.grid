@@ -3,24 +3,18 @@ import { CellEditor, CellEditorProps } from './types';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
 import { Dictionary } from '../store/types';
+import { setLayerPosition, getContainerElement } from './dom';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
 
-  private calendarWrapper: HTMLDivElement;
+  private layer: HTMLDivElement;
 
   private inputEl: HTMLInputElement;
 
   private datePickerEl: TuiDatePicker;
 
   private iconEl?: HTMLElement;
-
-  private createWrapper() {
-    const el = document.createElement('div');
-    el.className = cls('layer-datepicker');
-
-    return el;
-  }
 
   private createInputElement() {
     const inputEl = document.createElement('input');
@@ -30,13 +24,11 @@ export class DatePickerEditor implements CellEditor {
     return inputEl;
   }
 
-  private createCalendarWrapper() {
-    const calendarWrapper = document.createElement('div');
-    calendarWrapper.style.marginTop = '-4px';
-    calendarWrapper.style.position = 'fixed';
-    this.el.appendChild(calendarWrapper);
+  private createLayer() {
+    const layer = document.createElement('div');
+    layer.className = cls('editor-datepicker-layer');
 
-    return calendarWrapper;
+    return layer;
   }
 
   private openDatePicker() {
@@ -46,9 +38,7 @@ export class DatePickerEditor implements CellEditor {
   private createIcon() {
     const icon = document.createElement('i');
     icon.className = cls('date-icon');
-    icon.addEventListener('click', () => {
-      this.openDatePicker();
-    });
+    icon.addEventListener('click', () => this.openDatePicker());
 
     return icon;
   }
@@ -58,25 +48,26 @@ export class DatePickerEditor implements CellEditor {
   }
 
   public constructor(props: CellEditorProps) {
-    this.el = this.createWrapper();
-    this.inputEl = this.createInputElement();
-    const datepickerInputContainer = document.createElement('div');
-    datepickerInputContainer.className = cls('datepicker-input-container');
-    datepickerInputContainer.appendChild(this.inputEl);
-    this.el.appendChild(datepickerInputContainer);
-
-    const calendarWrapper = this.createCalendarWrapper();
-    this.calendarWrapper = calendarWrapper;
     const {
       grid: { usageStatistics },
       columnInfo,
       value
     } = props;
+    const el = document.createElement('div');
+    el.className = cls('layer-editing-inner');
 
-    const options: Dictionary<any> = {
-      showIcon: true,
-      ...columnInfo.editor!.options
-    };
+    this.el = el;
+    this.inputEl = this.createInputElement();
+
+    const datepickerInputContainer = document.createElement('div');
+    datepickerInputContainer.className = cls('datepicker-input-container');
+    datepickerInputContainer.appendChild(this.inputEl);
+    this.el.appendChild(datepickerInputContainer);
+
+    const layer = this.createLayer();
+    this.layer = layer;
+
+    const options: Dictionary<any> = { showIcon: true, ...columnInfo.editor!.options };
 
     if (options.showIcon) {
       const icon = this.createIcon();
@@ -105,10 +96,8 @@ export class DatePickerEditor implements CellEditor {
       usageStatistics
     };
 
-    this.datePickerEl = new TuiDatePicker(calendarWrapper, deepMergedCopy(defaultOptions, options));
-    this.datePickerEl.on('close', () => {
-      this.focus();
-    });
+    this.datePickerEl = new TuiDatePicker(layer, deepMergedCopy(defaultOptions, options));
+    this.datePickerEl.on('close', () => this.focus());
   }
 
   public getElement() {
@@ -120,9 +109,14 @@ export class DatePickerEditor implements CellEditor {
   }
 
   public mounted() {
+    // To prevent wrong stacked z-index context, layer append to grid container
+    getContainerElement(this.el).appendChild(this.layer);
+
     this.inputEl.select();
     this.datePickerEl.open();
-    this.calendarWrapper.style.top = `${this.el.getBoundingClientRect().bottom}px`;
+
+    // `this.layer.firstElementChild` is real datePicker layer(it is need to get total height)
+    setLayerPosition(this.el, this.layer, this.layer.firstElementChild as HTMLElement, true);
   }
 
   public beforeDestroy() {
@@ -130,5 +124,6 @@ export class DatePickerEditor implements CellEditor {
       this.iconEl.removeEventListener('click', this.openDatePicker);
     }
     this.datePickerEl.destroy();
+    getContainerElement(this.el).removeChild(this.layer);
   }
 }

@@ -118,7 +118,17 @@ export type ClassNameType =
   | 'tree-depth'
   | 'tree-button-expand'
   | 'tree-button-collapse'
-  | 'tree-icon';
+  | 'tree-icon'
+  | 'layer-editing-inner'
+  | 'editor-checkbox-list-layer'
+  | 'editor-select-box-layer'
+  | 'editor-checkbox'
+  | 'editor-checkbox-hovered'
+  | 'editor-label-icon-checkbox'
+  | 'editor-label-icon-checkbox-checked'
+  | 'editor-label-icon-radio'
+  | 'editor-label-icon-radio-checked'
+  | 'editor-datepicker-layer';
 
 const CLS_PREFIX = 'tui-grid-';
 
