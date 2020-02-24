@@ -1,6 +1,5 @@
-import { Row, RowKey, Dictionary, Store } from '../store/types';
-import { Dispatch } from '../dispatch/create';
-import { OptRow } from '../types';
+import { Row, RowKey } from '../store/data';
+import { Dictionary, OptRow } from '../options';
 
 export type ModificationTypeCode = 'CREATE' | 'UPDATE' | 'DELETE';
 
@@ -30,17 +29,6 @@ export type DataProvider = {
 };
 
 export type ContentType = 'application/x-www-form-urlencoded' | 'application/json';
-
-export type Config = {
-  api: API;
-  hideLoadingBar: boolean;
-  store: Store;
-  dispatch: Dispatch;
-  setLastRequiredData: (params: Params) => void;
-  getLastRequiredData: () => Params;
-  setRequestParams: (params: Dictionary<any>) => void;
-  getRequestParams: () => Dictionary<any>;
-};
 
 export type DataSource = {
   api: API;

@@ -1,4 +1,6 @@
-import { Store, RowKey, PagePosition } from '../store/types';
+import { Store } from '@t/store';
+import { RowKey } from '@t/store/data';
+import { PagePosition } from '@t/store/selection';
 import { notify } from '../helper/observable';
 import { findRowIndexByPosition } from '../query/mouse';
 

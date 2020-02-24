@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
+import { ColumnInfo } from '@t/store/column';
 import { SummaryBodyCell } from './summaryBodyCell';
 import { shallowEqual } from '../helper/common';
-import { ColumnInfo } from '../store/types';
 
 interface OwnProps {
   columns: ColumnInfo[];

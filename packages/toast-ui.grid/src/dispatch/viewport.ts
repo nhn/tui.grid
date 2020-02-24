@@ -1,4 +1,5 @@
-import { Store, Viewport } from '../store/types';
+import { Viewport } from '@t/store/viewport';
+import { Store } from '@t/store';
 import { getChangedScrollPosition } from '../query/viewport';
 
 function setScrollPosition(

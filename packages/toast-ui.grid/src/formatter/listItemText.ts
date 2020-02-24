@@ -1,4 +1,5 @@
-import { FormatterProps, CellValue, ListItem } from '../store/types';
+import { ListItem, FormatterProps } from '@t/store/column';
+import { CellValue } from '@t/store/data';
 import { findProp } from '../helper/common';
 
 interface ListItemOptions {

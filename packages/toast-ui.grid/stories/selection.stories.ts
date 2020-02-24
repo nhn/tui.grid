@@ -1,8 +1,8 @@
 import Grid from '../src/grid';
 import '../src/css/grid.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
+import { OptGrid } from '../types/options';
 import { data } from '../samples/basic';
-import { OptGrid } from '../src/types';
 import { cls } from '../src/helper/dom';
 
 function createGrid(options: Omit<OptGrid, 'el'>) {

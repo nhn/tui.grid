@@ -21,6 +21,7 @@ module.exports = ({ config, mode }) => {
     }
   );
 
+  config.resolve.alias = { '@t': path.resolve('types') };
   config.resolve.extensions.push('.ts', '.tsx');
 
   return config;

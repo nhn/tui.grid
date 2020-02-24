@@ -1,40 +1,70 @@
+import { DataSource } from './dataSource';
+import { EditingEvent, TabMode } from './store/focus';
+import { PageOptions, RowKey, CellValue, RowAttributes, RowSpanAttribute } from './store/data';
 import {
-  CellValue,
-  Dictionary,
-  Relations,
-  SelectionUnit,
-  Formatter,
+  ColumnOptions,
   ClipboardCopyOptions,
-  RowAttributes,
-  EditingEvent,
-  PageOptions,
-  Validation,
-  RowKey,
-  SortingType,
-  TabMode
-} from './store/types';
-import { CellRendererClass, HeaderRendererClass } from './renderer/types';
-import { CellEditorClass } from './editor/types';
-import { DataSource } from './dataSource/types';
-import { keyNameMap } from './helper/keyboard';
-import GridEvent from './event/gridEvent';
+  CommonColumnInfo,
+  Relations,
+  AlignType,
+  VAlignType,
+  RowHeaderType,
+  ColumnFilterOption,
+  ComplexColumnInfo
+} from './store/column';
+import { SelectionUnit } from './store/selection';
+import { FilterOptionType } from './store/filterLayerState';
+import { SummaryPosition, SummaryColumnContentMapOnlyFn } from './store/summary';
+import { TuiGridEvent } from './event';
+import { HeaderRendererClass, CellRendererClass } from './renderer';
+import { CellEditorClass } from './editor';
 
-export type VAlignType = 'top' | 'middle' | 'bottom';
-export type AlignType = 'left' | 'center' | 'right';
+export interface Dictionary<T> {
+  [index: string]: T;
+}
 
-export type KeyNameMap = typeof keyNameMap & {
-  [keyCode: number]: string | undefined;
-};
+export type TypeObjectOptions<T> =
+  | T
+  | {
+      type: T;
+      options?: Dictionary<any>;
+    };
 
-export type LifeCycleEventNames = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
+export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
-export type CustomEventFunction = (ev: GridEvent) => void;
+export type LifeCycleEventName = 'onGridMounted' | 'onGridUpdated' | 'onGridBeforeDestroy';
+export type GridEventName =
+  | 'click'
+  | 'dblclick'
+  | 'mousedown'
+  | 'mouseover'
+  | 'mouseout'
+  | 'focusChange'
+  | 'columnResize'
+  | 'check'
+  | 'uncheck'
+  | 'checkAll'
+  | 'uncheckAll'
+  | 'selection'
+  | 'editingStart'
+  | 'editingFinish'
+  | 'sort'
+  | 'filter'
+  | 'scrollEnd'
+  | 'beforeRequest'
+  | 'response'
+  | 'successResponse'
+  | 'failResponse'
+  | 'errorResponse'
+  | 'expand'
+  | 'collapse';
+export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
   el: HTMLElement;
   data?: OptRow[] | DataSource;
   columns: OptColumn[];
-  columnOptions?: OptColumnOptions;
+  columnOptions?: ColumnOptions;
   keyColumnName?: string;
   width?: number | 'auto';
   bodyHeight?: number | 'fitToParent' | 'auto';
@@ -57,18 +87,9 @@ export interface OptGrid {
   header?: OptHeader;
   usageStatistics?: boolean;
   disabled?: boolean;
-  onGridMounted?: CustomEventFunction;
-  onGridUpdated?: CustomEventFunction;
-  onGridBeforeDestroy?: CustomEventFunction;
-}
-
-export type SummaryPosition = 'top' | 'bottom';
-
-type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
-
-export type RowSpanAttributeValue = RowSpanAttribute[keyof RowSpanAttribute];
-export interface RowSpanAttribute {
-  rowSpan?: Dictionary<number>;
+  onGridMounted?: GridEventListener;
+  onGridUpdated?: GridEventListener;
+  onGridBeforeDestroy?: GridEventListener;
 }
 
 export interface OptRow {
@@ -99,76 +120,64 @@ export interface OptAppendTreeRow {
   focus?: boolean;
 }
 
-type RowHeaderType = 'rowNum' | 'checkbox';
-
-interface OptRowHeaderColumn extends Partial<OptColumn> {
-  type: RowHeaderType;
-}
-
-export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
-
-interface OptTree {
+export interface OptTree {
   name: string;
   useIcon?: boolean;
   useCascadingCheckbox?: boolean;
 }
 
-type TypeObjectOptions<T> =
-  | T
-  | {
-      type: T;
-      options?: Dictionary<any>;
-    };
+export interface OptColumn extends Partial<CommonColumnInfo> {
+  name: string;
+  width?: number | 'auto';
+  renderer?: OptCellRenderer;
+  editor?: OptCellEditor;
+  relations?: Relations[];
+  filter?: FilterOptionType | OptFilter;
+}
+
+export interface OptColumnHeaderInfo {
+  name: string;
+  align?: AlignType;
+  valign?: VAlignType;
+  renderer?: HeaderRendererClass;
+}
+
+export interface OptRowHeaderColumn extends Partial<OptColumn> {
+  type: RowHeaderType;
+}
+
+export type OptRowHeader = RowHeaderType | OptRowHeaderColumn;
+
+export interface OptFilter extends Partial<ColumnFilterOption> {
+  type: Exclude<FilterOptionType, 'select'>;
+}
+
+export interface OptHeader {
+  height?: number;
+  complexColumns?: OptComplexColumnInfo[];
+  align?: AlignType;
+  valign?: VAlignType;
+  columns?: OptColumnHeaderInfo[];
+}
+
+export interface OptComplexColumnInfo extends Omit<ComplexColumnInfo, 'headerRenderer'> {
+  renderer?: HeaderRendererClass;
+}
 
 export type OptCellEditor = TypeObjectOptions<string | CellEditorClass>;
 export type OptCellRenderer = TypeObjectOptions<string | CellRendererClass>;
 
-export type FilterOptionType = 'text' | 'number' | 'date' | 'select';
-export type OperatorType = 'AND' | 'OR';
-
-export interface FilterOpt {
-  type: Exclude<FilterOptionType, 'select'>;
-  options?: Dictionary<any>;
-  operator?: OperatorType;
-  showApplyBtn?: boolean;
-  showClearBtn?: boolean;
+export interface OptSummaryData {
+  height?: number;
+  position?: SummaryPosition;
+  defaultContent?: string | SummaryColumnContentMapOnlyFn;
+  columnContent?: {
+    [propName: string]: string | SummaryColumnContentMapOnlyFn;
+  };
 }
 
-export interface OptColumn {
-  name: string;
-  header?: string;
-  hidden?: boolean;
-  width?: number | 'auto';
-  renderer?: OptCellRenderer;
-  editor?: OptCellEditor;
-  formatter?: Formatter;
-  defaultValue?: CellValue;
-  resizable?: boolean;
-  minWidth?: number;
-  escapeHTML?: false;
-  relations?: Relations[];
-  align?: AlignType;
-  valign?: VAlignType;
-  whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
-  ellipsis?: boolean;
-  sortable?: boolean;
-  sortingType?: SortingType;
-  copyOptions?: ClipboardCopyOptions;
-  onBeforeChange?: Function;
-  onAfterChange?: Function;
-  ignored?: boolean;
-  validation?: Validation;
-  filter?: FilterOptionType | FilterOpt;
-  className?: string;
-  disabled?: boolean;
-}
-
-export interface OptColumnOptions {
-  minWidth?: number;
-  frozenCount?: number;
-  frozenBorderWidth?: number;
-  resizable?: boolean;
-}
+/* theme type */
+export type OptThemePresetNames = 'default' | 'striped' | 'clean';
 
 export interface OptHeightResizeHandleStyle {
   background?: string;
@@ -391,6 +400,7 @@ export interface OptPreset {
   pagination?: OptPaginationStyle;
 }
 
+/* i18n */
 export interface OptI18nLanguage {
   [propName: string]: OptI18nData;
 }
@@ -412,61 +422,4 @@ export interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
-}
-
-export interface OptSummaryData {
-  height?: number;
-  position?: SummaryPosition;
-  defaultContent?: string | OptSummaryColumnContentMap;
-  columnContent?: {
-    [propName: string]: string | OptSummaryColumnContentMap;
-  };
-}
-
-export interface OptSummaryColumnContentMap {
-  useAutoSummary?: boolean;
-  template?: (valueMap: OptSummaryValueMap) => string;
-}
-
-export interface OptSummaryValueMap {
-  sum: number;
-  avg: number;
-  min: number;
-  max: number;
-  cnt: number;
-  filtered: {
-    sum: number;
-    avg: number;
-    min: number;
-    max: number;
-    cnt: number;
-  };
-}
-
-export interface OptColumnHeaderInfo {
-  name: string;
-  align?: AlignType;
-  valign?: VAlignType;
-  renderer?: HeaderRendererClass;
-}
-
-export interface OptHeader {
-  height?: number;
-  complexColumns?: OptComplexColumnInfo[];
-  align?: AlignType;
-  valign?: VAlignType;
-  columns?: OptColumnHeaderInfo[];
-}
-
-export interface OptComplexColumnInfo {
-  header: string;
-  name: string;
-  childNames: string[];
-  sortable?: boolean;
-  sortingType?: SortingType;
-  headerAlign?: AlignType;
-  headerVAlign?: VAlignType;
-  renderer?: HeaderRendererClass;
-  hideChildHeaders?: boolean;
-  resizable?: boolean;
 }

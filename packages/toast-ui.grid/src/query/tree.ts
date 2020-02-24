@@ -1,4 +1,5 @@
-import { Store, Row, RowKey } from '../store/types';
+import { Store } from '@t/store';
+import { RowKey, Row } from '@t/store/data';
 import { Observable, getOriginObject } from '../helper/observable';
 import { findRowByRowKey, findIndexByRowKey } from './data';
 import { isUndefined, isNull, findProp } from '../helper/common';

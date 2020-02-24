@@ -22,7 +22,7 @@ import {
   OptBasicCellStyle,
   OptCellDummyStyle,
   OptRowHoverStyle
-} from './../types.d';
+} from '@t/options';
 
 function bgTextRuleString(className: ClassNameType, options: OptBasicCellStyle): string {
   const { background, text } = options;

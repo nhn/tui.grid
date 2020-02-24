@@ -1,7 +1,7 @@
+import { OptColumn, OptRow, OptHeader } from '../types/options';
+import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '../types/renderer';
 import Grid from '../src/grid';
-import { OptHeader, OptColumn, OptRow } from '../src/types';
 import '../src/css/grid.css';
-import { HeaderRenderer, ColumnHeaderInfo, HeaderRendererProps } from '../src/renderer/types';
 
 export default {
   title: 'Header'

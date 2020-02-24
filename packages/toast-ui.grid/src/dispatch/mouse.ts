@@ -1,16 +1,13 @@
+import { Viewport } from '@t/store/viewport';
+import { Dimension } from '@t/store/dimension';
+import { Store } from '@t/store';
+import { SelectionRange, Selection, PagePosition } from '@t/store/selection';
+import { RowKey } from '@t/store/data';
+import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from '@t/dispatch';
 import { findOffsetIndex, findPropIndex, isNull } from '../helper/common';
 import { isRowHeader } from '../helper/column';
 import { changeFocus, saveAndFinishEditing } from './focus';
 import { changeSelectionRange } from './selection';
-import {
-  Store,
-  Dimension,
-  Selection,
-  Viewport,
-  SelectionRange,
-  PagePosition,
-  RowKey
-} from '../store/types';
 import { getRowRangeWithRowSpan } from '../query/rowSpan';
 import { getChildColumnRange } from '../query/selection';
 import { findIndexByRowKey, getRowIndexWithPage } from '../query/data';
@@ -20,7 +17,6 @@ import {
   getColumnNameRange,
   getOverflowFromMousePosition
 } from '../query/mouse';
-import { OverflowType, OverflowInfo, ElementInfo, EventInfo } from './types';
 
 function stopAutoScroll(selection: Selection) {
   const { intervalIdForAutoScroll } = selection;

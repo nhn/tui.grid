@@ -1,6 +1,6 @@
+import { Params } from '../../../types/dataSource';
+import { Dictionary } from '../../../types/options';
 import { isObject, isUndefined, isNull, isEmpty } from '../../helper/common';
-import { Params } from '../types';
-import { Dictionary } from '../../store/types';
 
 /**
  * 1. Array format

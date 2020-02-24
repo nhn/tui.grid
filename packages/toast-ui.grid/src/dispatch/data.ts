@@ -1,17 +1,16 @@
 import {
-  Store,
-  CellValue,
+  Row,
+  PageOptions,
   RowKey,
-  SelectionRange,
+  CellValue,
   RowAttributes,
   Data,
-  Row,
-  Column,
-  Range,
-  LoadingState,
-  PageOptions,
-  ColumnInfo
-} from '../store/types';
+  LoadingState
+} from '@t/store/data';
+import { Store } from '@t/store';
+import { SelectionRange, Range } from '@t/store/selection';
+import { ColumnInfo, Column } from '@t/store/column';
+import { OriginData } from '@t/dispatch';
 import { copyDataToRange, getRangeToPaste } from '../query/clipboard';
 import {
   findProp,
@@ -24,7 +23,7 @@ import {
   shallowEqual,
   isUndefined
 } from '../helper/common';
-import { OptRow, OptAppendRow, OptRemoveRow } from '../types';
+import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
 import {
   createViewRow,
   createData,
@@ -64,7 +63,6 @@ import {
   updateAllSummaryValues
 } from './summary';
 import { initFilter } from './filter';
-import { OriginData } from './types';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';

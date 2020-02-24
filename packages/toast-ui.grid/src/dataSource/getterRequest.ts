@@ -1,4 +1,5 @@
-import { Params, Response, Config, ResponseData } from './types';
+import { Config } from './type';
+import { Params, Response, ResponseData } from '@t/dataSource';
 import { removeExpandedAttr } from '../dispatch/tree';
 import { getChildRowKeys } from '../query/tree';
 import { isUndefined, isFunction } from '../helper/common';

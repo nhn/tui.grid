@@ -1,4 +1,4 @@
-import { CellEditor, CellEditorProps } from './types';
+import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
 import { isUndefined, isNull } from '../helper/common';
 

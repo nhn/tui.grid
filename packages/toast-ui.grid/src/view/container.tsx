@@ -1,4 +1,8 @@
 import { h, Component } from 'preact';
+import { EditingEvent } from '@t/store/focus';
+import { SummaryPosition } from '@t/store/summary';
+import { ViewRow } from '@t/store/data';
+import { RenderState } from '@t/store/renderState';
 import { LeftSide } from './leftSide';
 import { RightSide } from './rightSide';
 import { StateLayer } from './stateLayer';
@@ -9,13 +13,11 @@ import { Pagination } from './pagination';
 import { cls, getCellAddress, dataAttr, findParent } from '../helper/dom';
 import { DispatchProps } from '../dispatch/create';
 import { connect } from './hoc';
-import { SummaryPosition, ViewRow, EditingEvent, RenderState } from '../store/types';
 import { EventBus, getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { isMobile } from '../helper/browser';
 import { isNull } from '../helper/common';
-import { keyNameMap } from '../helper/keyboard';
-import { KeyNameMap } from '../types';
+import { keyNameMap, KeyNameMap } from '../helper/keyboard';
 
 interface OwnProps {
   rootElement: HTMLElement;

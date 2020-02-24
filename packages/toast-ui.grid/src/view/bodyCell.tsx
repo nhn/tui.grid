@@ -1,10 +1,11 @@
 import { h, Component } from 'preact';
+import { ViewRow, RowKey, CellRenderData, TreeCellInfo } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { CellRenderer } from '@t/renderer';
 import { TreeCellContents } from './treeCellContents';
-import { ColumnInfo, ViewRow, CellRenderData, RowKey, TreeCellInfo } from '../store/types';
 import { cls, setCursorStyle, getCoordinateWithOffset, dataAttr } from '../helper/dom';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
-import { CellRenderer } from '../renderer/types';
 import { getInstance } from '../instance';
 import { isRowHeader, isRowNumColumn } from '../helper/column';
 import Grid from '../grid';

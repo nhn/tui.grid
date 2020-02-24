@@ -1,6 +1,5 @@
 import Grid from '../src/grid';
-import { OptGrid, OptColumn } from '../src/types';
-import { Omit } from 'utility-types';
+import { OptGrid, OptColumn } from '../types/options';
 import '../src/css/grid.css';
 
 export default {

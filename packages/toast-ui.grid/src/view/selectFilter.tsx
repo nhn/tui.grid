@@ -1,10 +1,12 @@
 import { h, Component } from 'preact';
+import { CellValue } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { Filter, ActiveColumnAddress } from '@t/store/filterLayerState';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import Grid from '../grid';
 import { getInstance } from '../instance';
 import { cls } from '../helper/dom';
-import { ActiveColumnAddress, CellValue, ColumnInfo, Filter } from '../store/types';
 import { some, debounce } from '../helper/common';
 import { getUniqColumnData } from '../query/data';
 import { FILTER_DEBOUNCE_TIME } from '../helper/constant';

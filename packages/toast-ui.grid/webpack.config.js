@@ -29,7 +29,10 @@ const commonConfig = {
     ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@t': path.resolve('types')
+    }
   },
   output: {
     library: ['tui', 'Grid'],

@@ -3,6 +3,7 @@
   "version": "4.10.0",
   "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
   "main": "dist/tui-grid.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "check-types": "tsc --project ./cypress/tsconfig.json",
     "lint": "eslint src --ext .ts,.tsx",
@@ -34,7 +35,7 @@
   ],
   "files": [
     "dist",
-    "index.d.ts"
+    "types"
   ],
   "author": "NHN. FE Development Lab",
   "license": "MIT",
@@ -67,7 +68,6 @@
     "ts-loader": "^6.2.1",
     "tui-release-notes": "git+https://github.com/nhnent/tui.release-notes.git",
     "typescript": "^3.7.2",
-    "utility-types": "^3.4.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1",

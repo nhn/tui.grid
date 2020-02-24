@@ -1,8 +1,10 @@
 import { h, Component } from 'preact';
+import { Side } from '@t/store/focus';
+import { ViewRow } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
 import { BodyRow } from './bodyRow';
 import { BodyDummyRow } from './bodyDummyRow';
 import { shallowEqual, range } from '../helper/common';
-import { Side, ColumnInfo, ViewRow } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 

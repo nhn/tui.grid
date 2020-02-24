@@ -1,6 +1,8 @@
+import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
+import { SelectionRange, Range } from '@t/store/selection';
+import { PageOptions } from '@t/store/data';
 import { findProp, findPropIndex, includes, isNull, isEmpty } from '../helper/common';
 import { isParentColumnHeader } from './column';
-import { ColumnInfo, ComplexColumnInfo, Range, SelectionRange, PageOptions } from '../store/types';
 
 function sortByVisibleColumns(visibleColumnsWithRowHeader: ColumnInfo[], childNames: string[]) {
   const result: string[] = [];

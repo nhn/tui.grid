@@ -1,5 +1,3 @@
-import { OptRow } from '../../types';
-import { Row, RowKey } from '../../store/types';
 import {
   ModifiedDataMap,
   ModificationTypeCode,
@@ -8,7 +6,9 @@ import {
   ModifiedRows,
   RequestTypeCode,
   MutationParams
-} from '../types';
+} from '../../../types/dataSource';
+import { OptRow } from '../../../types/options';
+import { Row, RowKey } from '../../../types/store/data';
 import {
   someProp,
   findIndex,

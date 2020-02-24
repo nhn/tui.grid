@@ -1,8 +1,9 @@
+import { h, render } from 'preact';
+import TuiGrid from '@t/index';
 import {
   OptGrid,
   OptPreset,
   OptI18nData,
-  OptSummaryColumnContentMap,
   OptRow,
   OptAppendRow,
   OptPrependRow,
@@ -10,25 +11,30 @@ import {
   OptAppendTreeRow,
   OptColumn,
   OptHeader,
-  FilterOpt,
-  FilterOptionType,
-  LifeCycleEventNames
-} from './types';
+  GridEventName,
+  GridEventListener,
+  Dictionary,
+  OptFilter,
+  LifeCycleEventName
+} from '@t/options';
+import { Store } from '@t/store';
+import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
+import { ColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
+import { FilterOptionType, FilterState } from '@t/store/filterLayerState';
+import { SummaryColumnContentMapOnlyFn } from '@t/store/summary';
+import {
+  RequestOptions,
+  RequestType,
+  DataProvider,
+  ModifiedRowsOptions,
+  Params,
+  ModifiedDataManager,
+  ModificationTypeCode
+} from '@t/dataSource';
 import { createStore } from './store/create';
 import { Root } from './view/root';
-import { h, render } from 'preact';
 import { createDispatcher, Dispatch } from './dispatch/create';
-import {
-  Store,
-  CellValue,
-  RowKey,
-  Range,
-  Row,
-  InvalidRow,
-  ColumnInfo,
-  Dictionary,
-  FilterState
-} from './store/types';
 import themeManager, { ThemeOptionPresetNames } from './theme/manager';
 import { register, registerDataSources } from './instance';
 import i18n from './i18n';
@@ -51,15 +57,6 @@ import { createProvider } from './dataSource/serverSideDataProvider';
 import { createManager } from './dataSource/manager/modifiedDataManager';
 import { getConfirmMessage } from './i18n/message';
 import { PaginationManager, createPaginationManager } from './pagination/paginationManager';
-import {
-  RequestOptions,
-  RequestType,
-  DataProvider,
-  ModifiedRowsOptions,
-  Params,
-  ModifiedDataManager,
-  ModificationTypeCode
-} from './dataSource/types';
 import {
   getParentRow,
   getChildRows,
@@ -257,7 +254,7 @@ if ((module as any).hot) {
  *      @param {function} [options.onGridUpdated] - The function that will be called after updating the all data of the grid and rendering the grid.
  *      @param {function} [options.onGridBeforeDestroy] - The function that will be called before destroying the grid.
  */
-export default class Grid {
+export default class Grid implements TuiGrid {
   private el: HTMLElement;
 
   private gridEl: Element;
@@ -310,7 +307,10 @@ export default class Grid {
 
     const lifeCycleEvent = pick(options, 'onGridMounted', 'onGridBeforeDestroy', 'onGridUpdated');
     Object.keys(lifeCycleEvent).forEach(eventName => {
-      this.eventBus.on(eventName, lifeCycleEvent[eventName as LifeCycleEventNames]);
+      this.eventBus.on(
+        eventName as LifeCycleEventName,
+        lifeCycleEvent[eventName as LifeCycleEventName]!
+      );
     });
 
     this.gridEl = render(<Root store={store} dispatch={dispatch} rootElement={el} />, el);
@@ -749,7 +749,7 @@ export default class Grid {
    */
   public setSummaryColumnContent(
     columnName: string,
-    columnContent: string | OptSummaryColumnContentMap
+    columnContent: string | SummaryColumnContentMapOnlyFn
   ) {
     this.dispatch('setSummaryColumnContent', columnName, columnContent);
   }
@@ -1219,7 +1219,7 @@ export default class Grid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public on(eventName: string, fn: Function) {
+  public on(eventName: GridEventName, fn: GridEventListener) {
     this.eventBus.on(eventName, fn);
   }
 
@@ -1228,7 +1228,7 @@ export default class Grid {
    * @param {string} eventName - custom event name
    * @param {Function} fn - event handler
    */
-  public off(eventName: string, fn?: Function) {
+  public off(eventName: GridEventName, fn?: GridEventListener) {
     this.eventBus.off(eventName, fn);
   }
 
@@ -1516,7 +1516,7 @@ export default class Grid {
    * @param {string} columnName - columnName
    * @param {string | FilterOpt} filterOpt - filter type
    */
-  public setFilter(columnName: string, filterOpt: FilterOpt | FilterOptionType) {
+  public setFilter(columnName: string, filterOpt: OptFilter | FilterOptionType) {
     this.dispatch('setFilter', columnName, filterOpt);
   }
 

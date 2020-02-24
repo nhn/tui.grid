@@ -1,4 +1,4 @@
-import { CellEditorProps, CellEditor } from '@/editor/types';
+import { CellEditor, CellEditorProps } from '@t/editor';
 
 export function createCustomLayerEditor(stub: Function) {
   class CustomLayerEditor implements CellEditor {

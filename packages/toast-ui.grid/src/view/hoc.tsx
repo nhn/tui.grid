@@ -1,6 +1,6 @@
 import { h, AnyComponent, Component } from 'preact';
+import { Store } from '@t/store';
 import { observe } from '../helper/observable';
-import { Store } from '../store/types';
 import { DispatchProps } from '../dispatch/create';
 
 export function connect<SelectedProps = {}, OwnProps = {}>(

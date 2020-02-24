@@ -1,6 +1,4 @@
-import { $Values } from 'utility-types';
 import { includes } from './common';
-import { KeyNameMap } from '../types';
 
 export const keyNameMap = {
   8: 'backspace',
@@ -91,8 +89,12 @@ export const keyStrokeCommandMap: {
   'ctrl-shift-home': ['select', 'firstCell'],
   'ctrl-shift-end': ['select', 'lastCell']
 };
-export type KeyCodeType = keyof typeof keyNameMap;
-export type KeyNameType = $Values<typeof keyNameMap>;
+export type KeyNameMapType = typeof keyNameMap;
+export type KeyNameMap = KeyNameMapType & {
+  [keyCode: number]: string | undefined;
+};
+export type KeyCodeType = keyof KeyNameMapType;
+export type KeyNameType = KeyNameMapType[KeyCodeType];
 export type KeyStrokeCommandType = keyof typeof keyStrokeCommandMap;
 export type KeyboardEventType = keyof typeof keyboardEventTypeMap;
 export type KeyboardEventCommandType = keyof typeof keyboardEventCommandMap;

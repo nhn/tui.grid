@@ -1,5 +1,5 @@
+import { FormatterProps } from '@t/store/column';
 import { cls } from '@/helper/dom';
-import { FormatterProps } from '@/store/types';
 
 before(() => {
   cy.visit('/dist');

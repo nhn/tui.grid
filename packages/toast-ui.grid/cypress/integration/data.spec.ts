@@ -1,6 +1,6 @@
+import { OptGrid } from '@t/options';
+import { Row } from '@t/store/data';
 import { cls } from '@/helper/dom';
-import { OptGrid } from '@/types';
-import { Row } from '@/store/types';
 
 function checkGridHasRightRowNumber() {
   cy.getRowHeaderCells('_number').each(($el, idx) => {

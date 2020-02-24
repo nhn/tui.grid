@@ -1,13 +1,13 @@
+import { Config } from './type';
 import {
   RequestOptions,
   RequestTypeCode,
   RequestType,
   AjaxConfig,
   Url,
-  Config,
   MutationParams
-} from './types';
-import { Store } from '../store/types';
+} from '@t/dataSource';
+import { Store } from '@t/store';
 import { isUndefined, isFunction } from '../helper/common';
 import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';

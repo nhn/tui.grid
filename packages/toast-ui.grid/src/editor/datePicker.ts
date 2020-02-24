@@ -1,8 +1,8 @@
 import TuiDatePicker from 'tui-date-picker';
-import { CellEditor, CellEditorProps } from './types';
+import { Dictionary } from '@t/options';
+import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
-import { Dictionary } from '../store/types';
 import { setLayerPosition, getContainerElement } from './dom';
 
 export class DatePickerEditor implements CellEditor {

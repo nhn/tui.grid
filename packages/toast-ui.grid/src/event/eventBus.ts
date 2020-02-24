@@ -1,14 +1,16 @@
-import { removeArrayItem } from '../helper/common';
+import { GridEventName, GridEventListener } from '@t/options';
+import { GridId } from '@t/store';
 import GridEvent from './gridEvent';
+import { removeArrayItem } from '../helper/common';
 import { getInstance } from '../instance';
-import { GridId } from '../store/types';
 
+type TargetEventName = GridEventName | 'onGridMounted' | 'onGridBeforeDestroy' | 'onGridUpdated';
 const eventBusMap: { [id: number]: EventBus } = {};
 
 export interface EventBus {
-  on: Function;
-  off: Function;
-  trigger: Function;
+  on: (eventName: TargetEventName, fn: GridEventListener) => void;
+  off: (eventName: TargetEventName, fn?: GridEventListener) => void;
+  trigger: (eventName: TargetEventName, gridEvent: GridEvent) => void;
 }
 
 export function createEventBus(id: GridId) {

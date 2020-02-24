@@ -1,5 +1,7 @@
 import { h, Component } from 'preact';
-import { ColumnInfo, Side, Range, ComplexColumnInfo } from '../store/types';
+import { Side } from '@t/store/focus';
+import { ColumnInfo, ComplexColumnInfo } from '@t/store/column';
+import { Range } from '@t/store/selection';
 import { ColGroup } from './colGroup';
 import { cls, setCursorStyle, getCoordinateWithOffset, hasClass, findParent } from '../helper/dom';
 import { connect } from './hoc';

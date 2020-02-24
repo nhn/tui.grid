@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
+import { RowKey, TreeCellInfo } from '@t/store/data';
 import { cls, findParent } from '../helper/dom';
-import { RowKey, TreeCellInfo } from '../store/types';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { TREE_INDENT_WIDTH } from '../helper/constant';

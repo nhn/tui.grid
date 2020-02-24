@@ -1,5 +1,7 @@
-import { CellValue, RowKey, ColumnInfo, ListItem, Dictionary } from '../store/types';
-import Grid from '../grid';
+import TuiGrid from '../index';
+import { RowKey, CellValue, ListItem } from '../store/data';
+import { ColumnInfo } from '../store/column';
+import { Dictionary } from '../options';
 
 export type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';
@@ -8,7 +10,7 @@ export type CheckboxOptions = ListItemOptions & {
 export type PortalEditingKeydown = (ev: KeyboardEvent) => void;
 
 export interface CellEditorProps {
-  grid: Grid;
+  grid: TuiGrid & { usageStatistics: boolean };
   rowKey: RowKey;
   columnInfo: ColumnInfo;
   value: CellValue;

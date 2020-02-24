@@ -1,15 +1,15 @@
+import TuiGrid from '../index';
+import { CellRenderData, RowKey } from '../store/data';
 import {
-  CellRenderData,
   ColumnInfo,
-  RowKey,
-  ColumnFilterOption,
-  SortingType
-} from '../store/types';
-import Grid from '../grid';
-import { AlignType, VAlignType } from '../types';
+  AlignType,
+  VAlignType,
+  SortingType,
+  ColumnFilterOption
+} from '../store/column';
 
 export type CellRendererProps = CellRenderData & {
-  grid: Grid;
+  grid: TuiGrid;
   rowKey: RowKey;
   columnInfo: ColumnInfo;
 };
@@ -38,7 +38,7 @@ export interface ColumnHeaderInfo {
 }
 
 export type HeaderRendererProps = {
-  grid: Grid;
+  grid: TuiGrid;
   columnInfo: ColumnHeaderInfo;
 };
 

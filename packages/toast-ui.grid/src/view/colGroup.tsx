@@ -1,5 +1,6 @@
 import { h, Component } from 'preact';
-import { Side, ColumnInfo } from '../store/types';
+import { Side } from '@t/store/focus';
+import { ColumnInfo } from '@t/store/column';
 import { connect } from './hoc';
 import { DispatchProps } from '../dispatch/create';
 import { dataAttr } from '../helper/dom';

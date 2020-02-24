@@ -1,8 +1,8 @@
+import { Dictionary } from '@t/options';
+import { DataSource, Params, AjaxConfig } from '@t/dataSource';
 import { data as sampleData } from '../../samples/dataSource/data';
 import { data as sortedSampleData } from '../../samples/dataSource/sortedData';
 import { runMockServer } from '../helper/runMockServer';
-import { Dictionary } from '@/store/types';
-import { DataSource, Params, AjaxConfig } from '@/dataSource/types';
 import GridEvent from '@/event/gridEvent';
 import { deepCopy } from '@/helper/common';
 import { cls, ClassNameType } from '@/helper/dom';

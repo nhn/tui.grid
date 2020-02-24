@@ -1,4 +1,6 @@
-import { ColumnCoords, Column, Dimension, ColumnInfo } from './types';
+import { ColumnInfo, Column } from '@t/store/column';
+import { Dimension } from '@t/store/dimension';
+import { ColumnCoords } from '@t/store/columnCoords';
 import { observable } from '../helper/observable';
 import { sum, findIndexes, pipe, mapProp, last } from '../helper/common';
 

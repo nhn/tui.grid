@@ -1,6 +1,6 @@
 import Grid from '../src/grid';
-import { OptGrid, OptSummaryData, OptSummaryValueMap } from '../src/types';
-import { Omit } from 'utility-types';
+import { OptGrid, OptSummaryData } from '../types/options';
+import { SummaryValueMap } from '../types/store/summary';
 import '../src/css/grid.css';
 
 export default {
@@ -12,12 +12,12 @@ function createDefaultSummaryOption() {
     height: 40,
     columnContent: {
       price: {
-        template(valueMap: OptSummaryValueMap) {
+        template(valueMap: SummaryValueMap) {
           return `MAX: ${valueMap.max}<br>MIN: ${valueMap.min}`;
         }
       },
       downloadCount: {
-        template(valueMap: OptSummaryValueMap) {
+        template(valueMap: SummaryValueMap) {
           return `TOTAL: ${valueMap.sum}<br>AVG: ${valueMap.avg.toFixed(2)}`;
         }
       }

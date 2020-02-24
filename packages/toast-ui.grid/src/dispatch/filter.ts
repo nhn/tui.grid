@@ -1,9 +1,15 @@
-import { ActiveColumnAddress, FilterState, Store } from '../store/types';
+import {
+  OperatorType,
+  FilterOptionType,
+  FilterState,
+  ActiveColumnAddress
+} from '@t/store/filterLayerState';
+import { OptFilter } from '@t/options';
+import { Store } from '@t/store';
 import { notify } from '../helper/observable';
 import { findProp, findPropIndex } from '../helper/common';
 import { composeConditionFn, getFilterConditionFn } from '../helper/filter';
 import { getUniqColumnData } from '../query/data';
-import { FilterOpt, OperatorType, FilterOptionType } from '../types';
 import { createColumnFilterOption } from '../store/column';
 import { initScrollPosition } from './viewport';
 import { initSelection } from './selection';
@@ -228,7 +234,7 @@ export function unfilter(store: Store, columnName: string) {
 export function setFilter(
   store: Store,
   columnName: string,
-  filterOpt: FilterOptionType | FilterOpt
+  filterOpt: FilterOptionType | OptFilter
 ) {
   const { column } = store;
   const filterOptions = createColumnFilterOption(filterOpt);

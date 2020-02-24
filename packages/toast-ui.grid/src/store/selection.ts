@@ -1,16 +1,10 @@
-import {
-  Column,
-  ColumnCoords,
-  Data,
-  Dimension,
-  Range,
-  RowCoords,
-  Selection,
-  SelectionRange,
-  SelectionType,
-  SelectionUnit,
-  Side
-} from './types';
+import { Side } from '@t/store/focus';
+import { SelectionUnit, SelectionType, SelectionRange, Selection, Range } from '@t/store/selection';
+import { ColumnCoords } from '@t/store/columnCoords';
+import { Column } from '@t/store/column';
+import { Dimension } from '@t/store/dimension';
+import { RowCoords } from '@t/store/rowCoords';
+import { Data } from '@t/store/data';
 import { Observable, observable } from '../helper/observable';
 import { getSortedRange } from '../query/selection';
 import { isClientPagination } from '../query/data';

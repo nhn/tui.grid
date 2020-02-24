@@ -1,6 +1,12 @@
-import { CellValue, DateFilterCode, NumberFilterCode, TextFilterCode } from '../store/types';
+import {
+  OperatorType,
+  FilterOptionType,
+  NumberFilterCode,
+  TextFilterCode,
+  DateFilterCode
+} from '@t/store/filterLayerState';
+import { CellValue } from '@t/store/data';
 import { isString, endsWith, startsWith } from './common';
-import { OperatorType, FilterOptionType } from '../types';
 
 interface FilterSelectOption {
   number: { [key in NumberFilterCode]: string };

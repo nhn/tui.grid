@@ -1,8 +1,8 @@
-import { CellEditorClass } from './types';
+import { CellEditorClass } from '@t/editor';
+import { Dictionary } from '@t/options';
 import { TextEditor } from './text';
 import { CheckboxEditor } from './checkbox';
 import { SelectEditor } from './select';
-import { Dictionary } from '../store/types';
 import { DatePickerEditor } from './datePicker';
 
 export interface EditorMap {

@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
+import { Side } from '@t/store/focus';
+import { PagePosition, DragStartData } from '@t/store/selection';
 import { BodyRows } from './bodyRows';
 import { ColGroup } from './colGroup';
-import { Side, PagePosition, DragStartData } from '../store/types';
 import {
   cls,
   getCoordinateWithOffset,
