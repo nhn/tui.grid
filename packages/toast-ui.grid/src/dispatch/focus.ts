@@ -1,44 +1,12 @@
 import { Store, RowKey, CellValue } from '../store/types';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
-import { isEditableCell, findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { isEditableCell, findIndexByRowKey } from '../query/data';
 import { isFocusedCell, isEditingCell } from '../query/focus';
 import { getRowSpanByRowKey, isRowSpanEnabled } from '../query/rowSpan';
-import { createRawRow, createViewRow } from '../store/data';
-import { isObservable, notify } from '../helper/observable';
-import { setValue } from './data';
+import { setValue, makeObservable } from './data';
 import { isUndefined } from '../helper/common';
-import { createTreeRawRow } from '../store/helper/tree';
 import { isHiddenColumn } from '../query/column';
-
-function makeObservable(store: Store, rowKey: RowKey) {
-  const { data, column, id } = store;
-  const { rawData, viewData } = data;
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey, false);
-  const rawRow = rawData[foundIndex];
-
-  if (isObservable(rawRow)) {
-    return;
-  }
-
-  if (treeColumnName) {
-    const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[foundIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
-    viewData[foundIndex] = createViewRow(
-      rawData[foundIndex],
-      columnMapWithRelation,
-      rawData,
-      treeColumnName,
-      treeIcon
-    );
-  } else {
-    rawData[foundIndex] = createRawRow(rawRow, foundIndex, columnMapWithRelation);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], columnMapWithRelation, rawData);
-  }
-  notify(data, 'rawData');
-  notify(data, 'viewData');
-}
 
 export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   const { data, focus, column, id } = store;

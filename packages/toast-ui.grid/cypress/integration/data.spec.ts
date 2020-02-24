@@ -425,30 +425,7 @@ describe('rows', () => {
   });
 });
 
-describe('focus', () => {
-  beforeEach(() => {
-    createGrid();
-  });
-
-  it('should destroy the focusing layer, when hide the column', () => {
-    cy.gridInstance().invoke('focus', 1, 'name', true);
-    cy.gridInstance().invoke('hideColumn', 'name');
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { columnName: null, rowKey: null, value: null });
-  });
-
-  it('cannot focus the cell on hidden cell', () => {
-    cy.gridInstance().invoke('hideColumn', 'name');
-    cy.gridInstance().invoke('focus', 1, 'name');
-
-    cy.gridInstance()
-      .invoke('getFocusedCell')
-      .should('eql', { columnName: null, rowKey: null, value: null });
-  });
-});
-
-describe('setRow', () => {
+describe('setRow()', () => {
   it('should not replace the row when target rowKey does not exist in grid', () => {
     createGrid();
 
@@ -508,7 +485,7 @@ describe('setRow', () => {
   });
 });
 
-describe('moveRow', () => {
+describe('moveRow()', () => {
   beforeEach(() => {
     createGridWithLargeData();
   });
@@ -569,7 +546,7 @@ it('row._attributes should be maintained on calling resetData', () => {
     .should('be.checked');
 });
 
-describe('appendRows', () => {
+describe('appendRows()', () => {
   it('should append rows to existing data', () => {
     createGrid();
 
@@ -616,6 +593,32 @@ describe('appendRows', () => {
       ['Lee', '20'],
       ['Lee', '30'],
       ['Lee', '40']
+    ]);
+  });
+});
+
+describe('setValue()', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'name' }, { name: 'age' }];
+    // @ts-ignore
+    createGrid({ columns });
+  });
+
+  it('should change the value of the cell', () => {
+    cy.gridInstance().invoke('setValue', 0, 'name', 'Han');
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Han', '10'],
+      ['Lee', '20']
+    ]);
+  });
+
+  it('should not change the value of the cell with checkCellState', () => {
+    cy.gridInstance().invoke('setValue', 0, 'name', 'Han', true);
+
+    cy.getRsideBody().should('have.cellData', [
+      ['Kim', '10'],
+      ['Lee', '20']
     ]);
   });
 });

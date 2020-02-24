@@ -113,3 +113,35 @@ describe('scroll position following focused cell', () => {
     });
   });
 });
+
+describe('should not display the focus layer', () => {
+  beforeEach(() => {
+    const data = [
+      { name: 'Kim', age: 10 },
+      { name: 'Lee', age: 20 }
+    ];
+    const columns = [
+      { name: 'name', editor: 'text' },
+      { name: 'age', editor: 'text' }
+    ];
+
+    cy.createGrid({ data, columns });
+  });
+
+  it('should destroy the focusing layer, when hide the column', () => {
+    cy.gridInstance().invoke('focus', 1, 'name', true);
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { columnName: null, rowKey: null, value: null });
+  });
+
+  it('cannot focus the cell on hidden cell', () => {
+    cy.gridInstance().invoke('hideColumn', 'name');
+    cy.gridInstance().invoke('focus', 1, 'name');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { columnName: null, rowKey: null, value: null });
+  });
+});
