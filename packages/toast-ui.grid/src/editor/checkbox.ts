@@ -1,4 +1,4 @@
-import { CellEditor, CellEditorProps, PortalEditingkeyDown } from './types';
+import { CellEditor, CellEditorProps, PortalEditingKeydown } from './types';
 import { CellValue, ListItem } from '../store/types';
 import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
@@ -23,12 +23,12 @@ export class CheckboxEditor implements CellEditor {
 
   private hoveredItemId = '';
 
-  private portalEditingkeyDown: PortalEditingkeyDown;
+  private portalEditingKeydown: PortalEditingKeydown;
 
   private elementIds: string[] = [];
 
   public constructor(props: CellEditorProps) {
-    const { columnInfo, width, value, formattedValue, portalEditingkeyDown } = props;
+    const { columnInfo, width, value, formattedValue, portalEditingKeydown } = props;
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
@@ -38,7 +38,7 @@ export class CheckboxEditor implements CellEditor {
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width);
 
-    this.portalEditingkeyDown = portalEditingkeyDown;
+    this.portalEditingKeydown = portalEditingKeydown;
     this.el = el;
     this.layer = layer;
 
@@ -119,8 +119,8 @@ export class CheckboxEditor implements CellEditor {
 
       this.highlightItem(id);
     } else {
-      // Without arrow key, pass the event to editing layer for using existing editing keyMap
-      this.portalEditingkeyDown(ev);
+      // except arrow key, pass the event to editing layer for using existing editing keyMap
+      this.portalEditingKeydown(ev);
     }
   };
 

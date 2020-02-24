@@ -1,6 +1,6 @@
 import SelectBox from '@toast-ui/select-box';
 import '@toast-ui/select-box/dist/toastui-select-box.css';
-import { CellEditor, CellEditorProps, PortalEditingkeyDown } from './types';
+import { CellEditor, CellEditorProps, PortalEditingKeydown } from './types';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
 import { CellValue, ListItem } from '../store/types';
@@ -17,10 +17,10 @@ export class SelectEditor implements CellEditor {
 
   private selectFinish = false;
 
-  private portalEditingkeyDown: PortalEditingkeyDown;
+  private portalEditingKeydown: PortalEditingKeydown;
 
   public constructor(props: CellEditorProps) {
-    const { width, value, formattedValue, portalEditingkeyDown } = props;
+    const { width, value, formattedValue, portalEditingKeydown } = props;
     const el = document.createElement('div');
     el.className = cls('layer-editing-inner');
     el.innerText = formattedValue;
@@ -28,7 +28,7 @@ export class SelectEditor implements CellEditor {
     const listItems = getListItems(props);
     const layer = this.createLayer(listItems, width, value);
 
-    this.portalEditingkeyDown = portalEditingkeyDown;
+    this.portalEditingKeydown = portalEditingKeydown;
     this.el = el;
     this.layer = layer;
     this.layer.addEventListener('keydown', this.onKeydown);
@@ -38,8 +38,8 @@ export class SelectEditor implements CellEditor {
     const passingKeyNames = ['esc', 'shift-tab', 'tab'];
     const keyName = getKeyStrokeString(ev);
     if (this.selectFinish || includes(passingKeyNames, keyName)) {
-      // With passingKeyNames, pass the event to editing layer for using existing editing keyMap
-      this.portalEditingkeyDown(ev);
+      // with passingKeyNames, pass the event to editing layer for using existing editing keyMap
+      this.portalEditingKeydown(ev);
     } else {
       ev.preventDefault();
     }

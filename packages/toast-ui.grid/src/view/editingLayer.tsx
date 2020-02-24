@@ -103,7 +103,7 @@ export class EditingLayerComp extends Component<Props> {
       value,
       formattedValue,
       width: right - left,
-      portalEditingkeyDown: this.handleKeyDown
+      portalEditingKeydown: this.handleKeyDown
     };
     const cellEditor = new EditorClass(editorProps);
     const editorEl = cellEditor.getElement();

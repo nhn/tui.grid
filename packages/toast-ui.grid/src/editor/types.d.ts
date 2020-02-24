@@ -5,7 +5,7 @@ export type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';
 };
 
-export type PortalEditingkeyDown = (ev: KeyboardEvent) => void;
+export type PortalEditingKeydown = (ev: KeyboardEvent) => void;
 
 export interface CellEditorProps {
   grid: Grid;
@@ -14,7 +14,7 @@ export interface CellEditorProps {
   value: CellValue;
   formattedValue: string;
   width: number;
-  portalEditingkeyDown: PortalEditingkeyDown;
+  portalEditingKeydown: PortalEditingKeydown;
 }
 
 export interface CellEditor {
