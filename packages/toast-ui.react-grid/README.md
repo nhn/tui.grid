@@ -71,7 +71,7 @@ const Grid = require('@toast-ui/react-grid');
 ```js
 const data = [
   {id: 1, name: 'Editor'},
-  {id: 2, name: 'Grid'}
+  {id: 2, name: 'Grid'},
   {id: 3, name: 'Chart'}
 ];
 
