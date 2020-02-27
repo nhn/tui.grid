@@ -140,3 +140,22 @@ it('rowHeader with custom options.', () => {
       .and('have.css', 'text-align', 'right');
   });
 });
+
+it('All checkbox automatically changes depending on the state of the rowHeader checkbox.', () => {
+  cy.getByCls('cell-row-header')
+    .get('input')
+    .eq(0)
+    .as('checkbox');
+
+  cy.get('@checkbox').should('not.be.checked');
+
+  cy.gridInstance().invoke('check', 0);
+  cy.gridInstance().invoke('check', 1);
+  cy.gridInstance().invoke('check', 2);
+
+  cy.get('@checkbox').should('be.checked');
+
+  cy.gridInstance().invoke('uncheck', 2);
+
+  cy.get('@checkbox').should('not.be.checked');
+});

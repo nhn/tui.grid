@@ -957,6 +957,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   updateHeightsWithFilteredData(store);
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   updateRowNumber(store, rowIndex);
+  setDisabledAllCheckbox(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
