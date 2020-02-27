@@ -1,5 +1,18 @@
 const columns = [{ name: 'name', minWidth: 150 }];
 
+function assertHeaderCheckboxStatus(disable: boolean) {
+  cy.getByCls('cell-row-header')
+    .get('input')
+    .eq(0)
+    .as('checkbox');
+
+  if (disable) {
+    cy.get('@checkbox').should('be.checked');
+  } else {
+    cy.get('@checkbox').should('not.be.checked');
+  }
+}
+
 before(() => {
   cy.visit('/dist');
 });
@@ -142,20 +155,15 @@ it('rowHeader with custom options.', () => {
 });
 
 it('All checkbox automatically changes depending on the state of the rowHeader checkbox.', () => {
-  cy.getByCls('cell-row-header')
-    .get('input')
-    .eq(0)
-    .as('checkbox');
-
-  cy.get('@checkbox').should('not.be.checked');
+  assertHeaderCheckboxStatus(false);
 
   cy.gridInstance().invoke('check', 0);
   cy.gridInstance().invoke('check', 1);
   cy.gridInstance().invoke('check', 2);
 
-  cy.get('@checkbox').should('be.checked');
+  assertHeaderCheckboxStatus(true);
 
   cy.gridInstance().invoke('uncheck', 2);
 
-  cy.get('@checkbox').should('not.be.checked');
+  assertHeaderCheckboxStatus(false);
 });
