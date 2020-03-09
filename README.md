@@ -140,6 +140,7 @@ Before starting development, you should check to haveany errors.
 
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.grid.git
+$ npm install
 $ cd packages/toast-ui.grid
 $ npm install
 $ npm run test
