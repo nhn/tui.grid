@@ -557,6 +557,7 @@ export function create({
         page: 1,
         perPage: 20,
         type: 'pagination',
+        position: 'bottom',
         ...userPageOptions,
         totalCount: userPageOptions.useClient ? rawData.length : userPageOptions.totalCount!
       };
