@@ -1,4 +1,4 @@
-import { Row, RowKey } from '@t/store/data';
+import { Row, RowKey, ViewRow } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
 import { createViewRow } from '../store/data';
@@ -20,7 +20,10 @@ import {
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
 import { flattenTreeData } from '../store/helper/tree';
-import { removeArrayItem } from '../helper/common';
+import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/common';
+import { Column, VisibleColumnsBySide } from '@t/store/column';
+import { cls } from '../helper/dom';
+import { ColumnCoords } from '@t/store/columnCoords';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -37,6 +40,10 @@ function changeHiddenAttr(row: Row, hidden: boolean) {
   if (tree) {
     tree.hidden = hidden;
   }
+}
+
+function getColumnSide(columnName: string, visibleColumns: VisibleColumnsBySide) {
+  return someProp('name', columnName, visibleColumns.R) ? 'R' : 'L';
 }
 
 function expand(store: Store, row: Row, recursive?: boolean) {
@@ -57,12 +64,18 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
-  const { data, rowCoords, dimension, column, id, viewport } = store;
+  const { data, rowCoords, dimension, column, id, viewport, columnCoords } = store;
+
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, true);
 
   const childRowKeys = getChildRowKeys(row);
+
+  // need to update after making viewData
+  setTimeout(() => {
+    updateTreeColumnWidth(childRowKeys, column, columnCoords, data.viewData);
+  });
 
   childRowKeys.forEach(childRowKey => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
@@ -85,6 +98,76 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     notify(rowCoords, 'heights');
     notify(viewport, 'rowRange');
   }
+}
+
+function updateTreeColumnWidth(
+  childRowKeys: RowKey[],
+  column: Column,
+  columnCoords: ColumnCoords,
+  viewData: ViewRow[]
+) {
+  const { treeColumnName, visibleColumnsBySideWithRowHeader } = column;
+
+  const treeColumnSide = getColumnSide(treeColumnName!, visibleColumnsBySideWithRowHeader);
+  const treeColumnIndex = findPropIndex(
+    'name',
+    treeColumnName!,
+    column.visibleColumnsBySide[treeColumnSide]
+  );
+
+  const { resizable } = visibleColumnsBySideWithRowHeader[treeColumnSide][treeColumnIndex];
+
+  if (resizable) {
+    const maxWidth = getChildTreeNodeMaxWidth(childRowKeys, treeColumnName!, viewData);
+    const prevWidth = columnCoords.widths[treeColumnSide][treeColumnIndex];
+
+    columnCoords.widths[treeColumnSide][treeColumnIndex] = Math.max(maxWidth, prevWidth);
+
+    notify(columnCoords, 'widths');
+  }
+}
+
+function getTextWidth(text: string, font: string) {
+  const context = document.createElement('canvas').getContext('2d')!;
+  context.font = font;
+  const { width } = context.measureText(String(text));
+
+  return width;
+}
+
+function getComputedFontStyle() {
+  const firstTreeNode = document.querySelector(
+    `.${cls('tree-wrapper-relative')} .${cls('cell-content')}`
+  )!;
+
+  const compStyle = getComputedStyle(firstTreeNode); // window method
+  const fontSize = compStyle.getPropertyValue('font-size');
+  const fontWeight = compStyle.getPropertyValue('font-weight');
+  const fontFamily = compStyle.getPropertyValue('font-family');
+
+  return `${fontWeight} ${fontSize} ${fontFamily}`;
+}
+
+function getChildTreeNodeMaxWidth(
+  childRowKeys: RowKey[],
+  treeColumnName: string,
+  viewData: ViewRow[]
+) {
+  const fontStyle = getComputedFontStyle();
+
+  return Math.max(
+    ...childRowKeys.map(rowKey => {
+      const { treeInfo, valueMap } = findProp('rowKey', rowKey, viewData)!;
+      const { formattedValue } = valueMap[treeColumnName];
+
+      return (
+        getTextWidth(formattedValue, fontStyle) +
+        treeInfo!.indentWidth! +
+        14 + // cell content padding left
+        5 // cell content padding right
+      );
+    })
+  );
 }
 
 function collapse(store: Store, row: Row, recursive?: boolean) {
