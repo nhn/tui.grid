@@ -193,6 +193,21 @@ describe('should API is executed properly on lazy observable data', () => {
     cy.getCell(20, 'name').should('have.text', 'Lee');
   });
 
+  it('moveRow()', () => {
+    cy.gridInstance().invoke('moveRow', 0, 7);
+
+    cy.getCellByIdx(0, 0).should('have.text', 'X');
+    cy.getCellByIdx(0, 1).should('have.text', 'Ed Sheeran');
+    cy.getCellByIdx(0, 2).should('have.text', 'Deluxe');
+
+    cy.gridInstance().invoke('focus', 8, 'type');
+
+    // should check next row(have not undefined text)
+    cy.getCellByIdx(7, 0).should('have.text', 'Get Lucky');
+    cy.getCellByIdx(7, 1).should('have.text', 'Daft Punk');
+    cy.getCellByIdx(7, 2).should('have.text', 'Single');
+  });
+
   it('resetData()', () => {
     scrollToBottom();
 
