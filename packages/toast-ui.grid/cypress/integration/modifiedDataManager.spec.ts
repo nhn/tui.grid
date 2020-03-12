@@ -54,6 +54,10 @@ function assertModifiedRowsContainsObject(modifiedRowsMap: ModifiedRowsMap) {
     });
 }
 
+function clipboardType(key: string) {
+  cy.getByCls('clipboard').type(key, { force: true });
+}
+
 it('should add new row to createdRows property after appending a row', () => {
   cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
 
@@ -122,6 +126,30 @@ describe('update rows', () => {
         { name: 'Kim', age: 10 },
         { name: 'Kim', age: 20 }
       ]
+    });
+  });
+
+  ['backspace', 'del'].forEach(key => {
+    it(`should add updated row, when focused row is modified by ${key} keyMap`, () => {
+      cy.getCellByIdx(0, 0).click();
+      clipboardType(`{${key}}`);
+
+      assertModifiedRowsLength({ createdRows: 0, updatedRows: 1, deletedRows: 0 });
+      assertModifiedRowsContainsObject({ updatedRows: [{ name: '', age: 10 }] });
+    });
+
+    it(`should add updated row, when rows in selection are modified by ${key} keyMap`, () => {
+      cy.gridInstance().invoke('setSelectionRange', { start: [0, 0], end: [1, 1] });
+      clipboardType(`{${key}}`);
+
+      assertModifiedRowsLength({ createdRows: 0, updatedRows: 2, deletedRows: 0 });
+      assertModifiedRowsContainsObject({
+        // @ts-ignore
+        updatedRows: [
+          { name: '', age: '' },
+          { name: '', age: '' }
+        ]
+      });
     });
   });
 });
