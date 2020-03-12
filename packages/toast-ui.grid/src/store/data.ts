@@ -24,7 +24,14 @@ import {
 import { Filter } from '@t/store/filterLayerState';
 import { OptRow, Dictionary } from '@t/options';
 import { Range } from '@t/store/selection';
-import { observable, observe, Observable, getOriginObject } from '../helper/observable';
+import {
+  observable,
+  observe,
+  Observable,
+  getOriginObject,
+  pauseObservation,
+  continueObservation
+} from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {
   someProp,
@@ -157,9 +164,11 @@ function getValidationCode(
       '_relationListItemMap',
       '_disabledPriority'
     ) as Row;
+    pauseObservation();
     if (!validatorFn(value, originRow, columnName)) {
       invalidStates.push('VALIDATOR_FN');
     }
+    continueObservation();
   }
 
   if (dataType === 'string' && !isString(value)) {
