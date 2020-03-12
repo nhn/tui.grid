@@ -135,7 +135,7 @@ describe('month picker', () => {
 
     cy.gridInstance().invoke('startEditing', 0, 'monthPicker');
 
-    cy.get('.tui-calendar-month')
+    cy.get('.tui-calendar-month .tui-is-selectable')
       .contains('Mar')
       .click();
 
