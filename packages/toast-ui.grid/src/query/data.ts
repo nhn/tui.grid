@@ -18,7 +18,12 @@ import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { isRowHeader } from '../helper/column';
-import { createRawRow, createViewRow, getFormattedValue } from '../store/data';
+import {
+  createRawRow,
+  createViewRow,
+  generateDataCreationKey,
+  getFormattedValue
+} from '../store/data';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -191,6 +196,8 @@ export function getRemovedClassName(className: string, prevClassNames: string[])
 }
 
 export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, rowKey?: RowKey) {
+  generateDataCreationKey();
+
   const { data, column } = store;
   const { rawData } = data;
   const { columnMapWithRelation, allColumns } = column;
