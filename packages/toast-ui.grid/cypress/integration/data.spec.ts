@@ -51,12 +51,10 @@ function assertHeaderCheckboxStatus(checked: boolean) {
 }
 
 function assertCheckboxStatus(checked: boolean) {
-  cy.get('input').each($el => {
-    if (checked) {
-      cy.wrap($el).should('be.checked');
-    } else {
-      cy.wrap($el).should('not.be.checked');
-    }
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.checked).eq(checked);
+    });
   });
 }
 
