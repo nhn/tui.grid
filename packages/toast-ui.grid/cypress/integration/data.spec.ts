@@ -678,6 +678,22 @@ describe('appendRows()', () => {
 
     assertHeaderCheckboxStatus(false);
   });
+
+  it('should check the checkbox of added data after calling appendRows()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Lee', age: 30 },
+      { name: 'Lee', age: 40 }
+    ]);
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem).to.have.checked;
+      });
+    });
+  });
 });
 
 describe('setValue()', () => {
