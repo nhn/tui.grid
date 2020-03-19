@@ -1,6 +1,6 @@
 import TuiGrid from '../index';
 import { CellValue, RowKey, SortState } from '../store/data';
-import { SelectionRange } from '../store/Selection';
+import { SelectionRange } from '../store/selection';
 import { Filter } from '../store/filterLayerState';
 import { ResizedColumn } from '../store/column';
 

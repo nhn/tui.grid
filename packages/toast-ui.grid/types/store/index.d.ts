@@ -2,7 +2,7 @@ import { Focus } from './focus';
 import { RenderState } from './renderState';
 import { Summary } from './summary';
 import { FilterLayerState } from './filterLayerState';
-import { Selection } from './Selection';
+import { Selection } from './selection';
 import { RowCoords } from './rowCoords';
 import { ColumnCoords } from './columnCoords';
 import { Viewport } from './viewport';
