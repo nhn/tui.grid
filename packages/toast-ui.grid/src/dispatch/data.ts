@@ -1025,4 +1025,7 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   updateRowNumber(store, startIndex);
   updateHeights(store);
   setDisabledAllCheckbox(store);
+  if (data.checkedAllRows) {
+    checkAll(store);
+  }
 }
