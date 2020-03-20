@@ -29,8 +29,7 @@ import {
   observe,
   Observable,
   getOriginObject,
-  pauseObservation,
-  continueObservation
+  unobservedInvoke
 } from '../helper/observable';
 import { isRowHeader, isRowNumColumn, isCheckboxColumn } from '../helper/column';
 import {
@@ -164,11 +163,12 @@ function getValidationCode(
       '_relationListItemMap',
       '_disabledPriority'
     ) as Row;
-    pauseObservation();
-    if (!validatorFn(value, originRow, columnName)) {
-      invalidStates.push('VALIDATOR_FN');
-    }
-    continueObservation();
+
+    unobservedInvoke(() => {
+      if (!validatorFn(value, originRow, columnName)) {
+        invalidStates.push('VALIDATOR_FN');
+      }
+    });
   }
 
   if (dataType === 'string' && !isString(value)) {

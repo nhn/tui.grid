@@ -221,10 +221,8 @@ export function getOriginObject<T>(obj: Observable<T>) {
   return isEmpty(result) ? obj : result;
 }
 
-export function pauseObservation() {
+export function unobservedInvoke(fn: Function) {
   paused = true;
-}
-
-export function continueObservation() {
+  fn();
   paused = false;
 }
