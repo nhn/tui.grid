@@ -6,6 +6,8 @@ import { changeFocus, startEditing } from './focus';
 import { changeSelectionRange } from './selection';
 import { isRowHeader } from '../helper/column';
 import { getRowRangeWithRowSpan, isRowSpanEnabled } from '../query/rowSpan';
+import { getDataManager } from '../instance';
+import { Row, RowKey } from '@t/store/data';
 
 export function moveFocus(store: Store, command: KeyboardEventCommandType) {
   const {
@@ -144,10 +146,7 @@ export function moveSelection(store: Store, command: KeyboardEventCommandType) {
 }
 
 export function removeContent(store: Store) {
-  const {
-    column: { visibleColumnsWithRowHeader },
-    data
-  } = store;
+  const { column, data, id } = store;
   const { rawData } = data;
   const removeRange = getRemoveRange(store);
 
@@ -159,13 +158,19 @@ export function removeContent(store: Store) {
     column: [columnStart, columnEnd],
     row: [rowStart, rowEnd]
   } = removeRange;
+  const modifiedRowMap: { [key in RowKey]: Row } = {};
+  const manager = getDataManager(id);
 
-  visibleColumnsWithRowHeader
+  column.visibleColumnsWithRowHeader
     .slice(columnStart, columnEnd + 1)
     .filter(({ editor }) => !!editor)
     .forEach(({ name }) => {
       rawData.slice(rowStart, rowEnd + 1).forEach(row => {
         row[name] = '';
+        modifiedRowMap[row.rowKey] = row;
       });
     });
+  Object.keys(modifiedRowMap).forEach((key: RowKey) => {
+    manager.push('UPDATE', modifiedRowMap[key]);
+  });
 }
