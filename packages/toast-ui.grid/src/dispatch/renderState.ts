@@ -3,6 +3,7 @@ import { RowKey } from '@t/store/data';
 import { PagePosition } from '@t/store/selection';
 import { notify } from '../helper/observable';
 import { findRowIndexByPosition } from '../query/mouse';
+import { isUndefined } from '../helper/common';
 
 export function setHoveredRowKey({ renderState }: Store, rowKey: RowKey | null) {
   renderState.hoveredRowKey = rowKey;
@@ -44,6 +45,11 @@ export function refreshRowHeight(store: Store, rowIndex: number, rowHeight: numb
   const { data, rowCoords, renderState } = store;
   const { cellHeightMap } = renderState;
   const cellHeights = cellHeightMap[rowIndex];
+
+  if (isUndefined(cellHeights)) {
+    return;
+  }
+
   const highestHeight = Object.keys(cellHeights).reduce(
     (acc, columnName) => Math.max(acc, cellHeights[columnName]),
     -1
