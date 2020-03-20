@@ -160,6 +160,12 @@ function updateHeightsWithFilteredData(store: Store) {
   updateHeights(store);
 }
 
+function checkAllAfterManipulatingRow(store: Store) {
+  if (store.data.checkedAllRows) {
+    checkAll(store);
+  }
+}
+
 export function updateHeights(store: Store) {
   const { data, rowCoords, dimension } = store;
   const { pageOptions, pageRowRange, filteredRawData } = data;
@@ -592,9 +598,7 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   setLoadingState(store, 'DONE');
   updateRowNumber(store, at);
   setDisabledAllCheckbox(store);
-  if (data.checkedAllRows) {
-    checkAll(store);
-  }
+  checkAllAfterManipulatingRow(store);
 }
 
 export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
@@ -962,9 +966,7 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   updateSummaryValueByRow(store, rawRow, { type: 'SET', orgRow });
   updateRowNumber(store, rowIndex);
   setDisabledAllCheckbox(store);
-  if (data.checkedAllRows) {
-    checkAll(store);
-  }
+  checkAllAfterManipulatingRow(store);
 }
 
 export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
@@ -1032,7 +1034,5 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   updateRowNumber(store, startIndex);
   updateHeights(store);
   setDisabledAllCheckbox(store);
-  if (data.checkedAllRows) {
-    checkAll(store);
-  }
+  checkAllAfterManipulatingRow(store);
 }
