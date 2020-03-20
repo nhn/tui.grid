@@ -159,6 +159,7 @@ export function removeContent(store: Store) {
     row: [rowStart, rowEnd]
   } = removeRange;
   const modifiedRowMap: { [key in RowKey]: Row } = {};
+  const manager = getDataManager(id);
 
   column.visibleColumnsWithRowHeader
     .slice(columnStart, columnEnd + 1)
@@ -170,6 +171,6 @@ export function removeContent(store: Store) {
       });
     });
   Object.keys(modifiedRowMap).forEach((key: RowKey) => {
-    getDataManager(id).push('UPDATE', modifiedRowMap[key]);
+    manager.push('UPDATE', modifiedRowMap[key]);
   });
 }
