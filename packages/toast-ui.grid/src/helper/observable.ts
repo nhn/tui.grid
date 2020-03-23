@@ -35,6 +35,8 @@ let observerIdMap: Dictionary<boolean> = {};
 
 let pending = false;
 
+let paused = false;
+
 function batchUpdate(observerId: string) {
   if (!observerIdMap[observerId]) {
     observerIdMap[observerId] = true;
@@ -132,7 +134,7 @@ function makeObservableData<T extends Dictionary<any>>(
     enumerable: true,
     get() {
       const observerId = last(observerIdStack);
-      if (observerId && !observerIdSet[observerId]) {
+      if (!paused && observerId && !observerIdSet[observerId]) {
         observerIdSet[observerId] = true;
         observerInfoMap[observerId].targetObserverIdSets.push(observerIdSet);
       }
@@ -217,4 +219,10 @@ export function getOriginObject<T>(obj: Observable<T>) {
   }, obj.__storage__);
 
   return isEmpty(result) ? obj : result;
+}
+
+export function unobservedInvoke(fn: Function) {
+  paused = true;
+  fn();
+  paused = false;
 }

@@ -1,8 +1,13 @@
 import { cls } from '../../src/helper/dom';
+import Grid from '@t/index';
 
 before(() => {
   cy.visit('/dist');
 });
+
+interface WindowWithGrid extends Window {
+  grid?: Grid;
+}
 
 const data = [
   { name: 'note', price: 10000 },
@@ -128,6 +133,33 @@ describe('should check the validation of cell - validatorFn', () => {
 
     cy.wrap(callback).should('be.calledWithMatch', 'note', { rowKey: 0, name: 'note' }, 'name');
     cy.wrap(callback).should('be.calledWithMatch', 'pen', { rowKey: 1, name: 'pen' }, 'name');
+  });
+
+  it('should execute `validatorFn` as unobserved function', () => {
+    const stub = cy.stub();
+    cy.window().then((win: WindowWithGrid) => {
+      delete win.grid;
+      cy.createGrid({
+        data,
+        columns: [
+          {
+            name: 'name',
+            validation: {
+              validatorFn: () => {
+                if (win.grid) {
+                  win.grid.getData();
+                  stub();
+                }
+              }
+            }
+          }
+        ]
+      });
+
+      cy.gridInstance().invoke('appendRow', {});
+
+      cy.wrap(stub).should('be.calledOnce');
+    });
   });
 });
 
