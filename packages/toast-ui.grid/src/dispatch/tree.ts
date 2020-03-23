@@ -1,7 +1,7 @@
-import { Row, RowKey, ViewRow } from '@t/store/data';
+import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
-import { createViewRow } from '../store/data';
+import { createViewRow, getFormattedValue } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
@@ -15,13 +15,14 @@ import {
   getChildRowKeys,
   isLeaf,
   isExpanded,
-  isRootChildRow
+  isRootChildRow,
+  getDepthByRowKey
 } from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { flattenTreeData } from '../store/helper/tree';
+import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
 import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/common';
-import { Column, VisibleColumnsBySide } from '@t/store/column';
+import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
 import { cls } from '../helper/dom';
 import { ColumnCoords } from '@t/store/columnCoords';
 
@@ -72,10 +73,7 @@ function expand(store: Store, row: Row, recursive?: boolean) {
 
   const childRowKeys = getChildRowKeys(row);
 
-  // need to update after making viewData
-  setTimeout(() => {
-    updateTreeColumnWidth(childRowKeys, column, columnCoords, data.viewData);
-  });
+  updateTreeColumnWidth(childRowKeys, column, columnCoords, data.rawData);
 
   childRowKeys.forEach(childRowKey => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
@@ -104,26 +102,33 @@ function updateTreeColumnWidth(
   childRowKeys: RowKey[],
   column: Column,
   columnCoords: ColumnCoords,
-  viewData: ViewRow[]
+  rawData: Row[]
 ) {
-  const { treeColumnName, visibleColumnsBySideWithRowHeader } = column;
-
-  const treeColumnSide = getColumnSide(treeColumnName!, visibleColumnsBySideWithRowHeader);
+  const { visibleColumnsBySideWithRowHeader, treeIcon } = column;
+  const treeColumnName = column.treeColumnName!;
+  const treeColumnSide = getColumnSide(treeColumnName, visibleColumnsBySideWithRowHeader);
   const treeColumnIndex = findPropIndex(
     'name',
-    treeColumnName!,
+    treeColumnName,
     column.visibleColumnsBySide[treeColumnSide]
   );
 
-  const { resizable } = visibleColumnsBySideWithRowHeader[treeColumnSide][treeColumnIndex];
+  const columnInfo = visibleColumnsBySideWithRowHeader[treeColumnSide][treeColumnIndex];
 
-  if (resizable) {
-    const maxWidth = getChildTreeNodeMaxWidth(childRowKeys, treeColumnName!, viewData);
+  if (columnInfo.resizable) {
+    const maxWidth = getChildTreeNodeMaxWidth(
+      childRowKeys,
+      rawData,
+      columnInfo,
+      treeColumnName,
+      treeIcon
+    );
     const prevWidth = columnCoords.widths[treeColumnSide][treeColumnIndex];
 
-    columnCoords.widths[treeColumnSide][treeColumnIndex] = Math.max(maxWidth, prevWidth);
-
-    notify(columnCoords, 'widths');
+    if (prevWidth < maxWidth) {
+      columnCoords.widths[treeColumnSide][treeColumnIndex] = maxWidth;
+      notify(columnCoords, 'widths');
+    }
   }
 }
 
@@ -132,7 +137,7 @@ function getTextWidth(text: string, font: string) {
   context.font = font;
   const { width } = context.measureText(String(text));
 
-  return width;
+  return Math.ceil(width);
 }
 
 function getComputedFontStyle() {
@@ -150,21 +155,33 @@ function getComputedFontStyle() {
 
 function getChildTreeNodeMaxWidth(
   childRowKeys: RowKey[],
+  rawData: Row[],
+  column: ColumnInfo,
   treeColumnName: string,
-  viewData: ViewRow[]
+  useIcon?: boolean
 ) {
   const fontStyle = getComputedFontStyle();
+  const CELL_CONTENT_LEFT_PADDING = 14;
+  const CELL_CONTENT_RIGHT_PADDING = 5;
 
   return Math.max(
     ...childRowKeys.map(rowKey => {
-      const { treeInfo, valueMap } = findProp('rowKey', rowKey, viewData)!;
-      const { formattedValue } = valueMap[treeColumnName];
+      const row = findProp('rowKey', rowKey, rawData)!;
+      const value = row[treeColumnName];
+      const { formatter, defaultValue } = column;
+      const indentWidth = getTreeIndentWidth(getDepthByRowKey(rawData, rowKey), useIcon);
+
+      const formattedValue = getFormattedValue(
+        { row, column, value },
+        formatter,
+        defaultValue || value
+      );
 
       return (
         getTextWidth(formattedValue, fontStyle) +
-        treeInfo!.indentWidth! +
-        14 + // cell content padding left
-        5 // cell content padding right
+        indentWidth +
+        CELL_CONTENT_LEFT_PADDING +
+        CELL_CONTENT_RIGHT_PADDING
       );
     })
   );
