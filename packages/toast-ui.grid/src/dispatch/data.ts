@@ -975,11 +975,11 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   }
 
   const minIndex = Math.min(currentIndex, targetIndex);
-  const [rawRow] = rawData.splice(currentIndex, 1);
   const [viewRow] = viewData.splice(currentIndex, 1);
+  const [rawRow] = rawData.splice(currentIndex, 1);
 
-  rawData.splice(targetIndex, 0, rawRow);
   viewData.splice(targetIndex, 0, viewRow);
+  rawData.splice(targetIndex, 0, rawRow);
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);

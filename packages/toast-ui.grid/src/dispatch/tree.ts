@@ -251,12 +251,12 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
     keyColumnName: column.keyColumnName,
     offset
   });
-  rawData.splice(startIdx, 0, ...rawRows);
-
   const viewRows = rawRows.map(rawRow =>
     createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon)
   );
+
   viewData.splice(startIdx, 0, ...viewRows);
+  rawData.splice(startIdx, 0, ...rawRows);
 
   const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);
@@ -283,8 +283,8 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const startIdx = findIndexByRowKey(data, column, id, rowKey);
   const endIdx = getDescendantRows(store, rowKey).length + 1;
 
-  const removedRows = rawData.splice(startIdx, endIdx);
   viewData.splice(startIdx, endIdx);
+  const removedRows = rawData.splice(startIdx, endIdx);
   heights.splice(startIdx, endIdx);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
