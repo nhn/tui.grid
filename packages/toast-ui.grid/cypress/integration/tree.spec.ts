@@ -769,8 +769,8 @@ describe('events', () => {
 
 describe('with resizable column options', () => {
   const DEPTH_ONE_MAX_WIDTH = 200;
-  const DEPTH_TWO_MAX_WIDTH = 294;
-  const DEPTH_THREE_MAX_WIDTH = 347;
+  const DEPTH_TWO_MAX_WIDTH = 295;
+  const DEPTH_THREE_MAX_WIDTH = 348;
 
   beforeEach(() => {
     data[0].c1 = 'looooooooooooooong contents';
@@ -858,11 +858,11 @@ describe('with resizable column options', () => {
       }
     });
 
-    assertColumnWidth('c1', 200);
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
     cy.gridInstance().invoke('expandAll');
     cy.wait(500);
 
-    assertColumnWidth('c1', 347);
+    assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
   });
 });
