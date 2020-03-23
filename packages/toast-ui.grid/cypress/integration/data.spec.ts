@@ -9,7 +9,7 @@ function applyAliasHeaderCheckbox() {
     .as('checkbox');
 }
 
-function assertHeaderCheckboxStatus(disable: boolean) {
+function assertHeaderCheckboxDisabled(disable: boolean) {
   applyAliasHeaderCheckbox();
 
   if (disable) {
@@ -19,7 +19,7 @@ function assertHeaderCheckboxStatus(disable: boolean) {
   }
 }
 
-function assertCheckboxStatusAfterClick(status: boolean[]) {
+function assertCheckboxDisabledAfterClick(status: boolean[]) {
   applyAliasHeaderCheckbox();
   cy.get('@checkbox').click();
 
@@ -34,9 +34,27 @@ function assertCheckboxStatusAfterClick(status: boolean[]) {
     });
 }
 
-function checkGridHasRightRowNumber() {
+function assertGridHasRightRowNumber() {
   cy.getRowHeaderCells('_number').each(($el, idx) => {
     cy.wrap($el).should('have.text', `${idx + 1}`);
+  });
+}
+
+function assertHeaderCheckboxStatus(checked: boolean) {
+  applyAliasHeaderCheckbox();
+
+  if (checked) {
+    cy.get('@checkbox').should('be.checked');
+  } else {
+    cy.get('@checkbox').should('not.be.checked');
+  }
+}
+
+function assertCheckboxStatus(checked: boolean) {
+  cy.get('input').should($el => {
+    $el.each((_, elem) => {
+      expect(elem.checked).eq(checked);
+    });
   });
 }
 
@@ -149,7 +167,7 @@ describe('appendRow()', () => {
 
     cy.gridInstance().invoke('appendRow', { name: 'Yoo', age: 50 }, { at: 2 });
 
-    checkGridHasRightRowNumber();
+    assertGridHasRightRowNumber();
   });
 
   it('should maintain the sort state after calling appendRow()', () => {
@@ -166,13 +184,22 @@ describe('appendRow()', () => {
   it('header checkbox state changes after calling appendRow()', () => {
     createGrid({ rowHeaders: ['checkbox'], disabled: true });
 
-    assertHeaderCheckboxStatus(true);
+    assertHeaderCheckboxDisabled(true);
 
     cy.gridInstance().invoke('appendRow', { name: 'han', age: 29 });
 
-    assertHeaderCheckboxStatus(false);
+    assertHeaderCheckboxDisabled(false);
 
-    assertCheckboxStatusAfterClick([true, false, false, true]);
+    assertCheckboxDisabledAfterClick([true, false, false, true]);
+  });
+
+  it('should check the checkbox of added data after calling appendRow()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('appendRow', { name: 'han', age: 29 });
+
+    assertCheckboxStatus(true);
   });
 });
 
@@ -215,7 +242,16 @@ describe('prependRow()', () => {
 
     cy.gridInstance().invoke('prependRow', { name: 'Yoo', age: 50 });
 
-    checkGridHasRightRowNumber();
+    assertGridHasRightRowNumber();
+  });
+
+  it('should check the checkbox of added data after calling prependRow()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('prependRow', { name: 'han', age: 29 });
+
+    assertCheckboxStatus(true);
   });
 });
 
@@ -278,18 +314,30 @@ describe('removeRow()', () => {
 
     cy.gridInstance().invoke('removeRow', 2);
 
-    checkGridHasRightRowNumber();
+    assertGridHasRightRowNumber();
   });
 
-  it('header checkbox state changes after calling removeRow()', () => {
+  it('header checkbox `disabled` state changes after calling removeRow()', () => {
     createGrid({ rowHeaders: ['checkbox'] });
     cy.gridInstance().invoke('disableRowCheck', 0);
+
+    assertHeaderCheckboxDisabled(false);
+
+    cy.gridInstance().invoke('removeRow', 1);
+
+    assertHeaderCheckboxDisabled(true);
+  });
+
+  it('header checkbox `checked` state changes after calling removeRow()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('check', 0);
 
     assertHeaderCheckboxStatus(false);
 
     cy.gridInstance().invoke('removeRow', 1);
 
-    assertHeaderCheckboxStatus(true);
+    assertCheckboxStatus(true);
   });
 });
 
@@ -543,7 +591,7 @@ describe('setRow()', () => {
     createGrid({ rowHeaders: ['checkbox'] });
     cy.gridInstance().invoke('disableRowCheck', 0);
 
-    assertHeaderCheckboxStatus(false);
+    assertHeaderCheckboxDisabled(false);
 
     cy.gridInstance().invoke('setRow', 1, {
       name: 'han',
@@ -551,7 +599,16 @@ describe('setRow()', () => {
       _attributes: { checkDisabled: true }
     });
 
-    assertHeaderCheckboxStatus(true);
+    assertHeaderCheckboxDisabled(true);
+  });
+
+  it('should check the checkbox of added data after calling setRow()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('setRow', 1, { name: 'han', age: 29 });
+
+    assertCheckboxStatus(true);
   });
 });
 
@@ -669,14 +726,26 @@ describe('appendRows()', () => {
   it('header checkbox state changes after calling appendRows()', () => {
     createGrid({ rowHeaders: ['checkbox'], disabled: true });
 
-    assertHeaderCheckboxStatus(true);
+    assertHeaderCheckboxDisabled(true);
 
     cy.gridInstance().invoke('appendRows', [
       { name: 'han', age: 29 },
       { name: 'jung', age: 29 }
     ]);
 
-    assertHeaderCheckboxStatus(false);
+    assertHeaderCheckboxDisabled(false);
+  });
+
+  it('should check the checkbox of added data after calling appendRows()', () => {
+    createGrid({ rowHeaders: ['checkbox'] });
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('appendRows', [
+      { name: 'Lee', age: 30 },
+      { name: 'Lee', age: 40 }
+    ]);
+
+    assertCheckboxStatus(true);
   });
 });
 
