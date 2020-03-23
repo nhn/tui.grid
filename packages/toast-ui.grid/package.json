@@ -19,8 +19,7 @@
     "storybook:build": "build-storybook",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
     "doc:dev": "npm run ts2js && tuidoc --dev",
-    "doc": "npm run ts2js && tuidoc",
-    "tuie": "tuie"
+    "doc": "npm run ts2js && tuidoc"
   },
   "repository": {
     "type": "git",
@@ -66,7 +65,6 @@
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.3",
     "ts-loader": "^6.2.1",
-    "tui-release-notes": "git+https://github.com/nhnent/tui.release-notes.git",
     "typescript": "^3.7.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
