@@ -2,10 +2,16 @@ import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
 import { createViewRow, getFormattedValue } from '../store/data';
-import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';
+import { getRowHeight, findIndexByRowKey, findRowByRowKey, getLoadingState } from '../query/data';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
-import { isUpdatableRowAttr } from '../dispatch/data';
+import {
+  isUpdatableRowAttr,
+  setLoadingState,
+  updateRowNumber,
+  setCheckedAllRows,
+  uncheck
+} from '../dispatch/data';
 import {
   getParentRow,
   getDescendantRows,
@@ -338,6 +344,7 @@ export function changeTreeRowsCheckedState(store: Store, rowKey: RowKey, state: 
   }
 }
 
+// @TODO: consider tree disabled state with cascading
 export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeRow) {
   const { data, column, rowCoords, dimension, id } = store;
   const { rawData, viewData } = data;
@@ -346,31 +353,36 @@ export function appendTreeRow(store: Store, row: OptRow, options: OptAppendTreeR
   const { parentRowKey, offset } = options;
   const parentRow = findRowByRowKey(data, column, id, parentRowKey);
   const startIdx = getStartIndexToAppendRow(store, parentRow!, offset);
-
   const rawRows = flattenTreeData([row], parentRow!, columnMapWithRelation, {
     keyColumnName: column.keyColumnName,
     offset
   });
+
+  rawData.splice(startIdx, 0, ...rawRows);
   const viewRows = rawRows.map(rawRow =>
     createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon)
   );
-
   viewData.splice(startIdx, 0, ...viewRows);
-  rawData.splice(startIdx, 0, ...rawRows);
-
   const rowHeights = rawRows.map(rawRow => getRowHeight(rawRow, dimension.rowHeight));
   heights.splice(startIdx, 0, ...rowHeights);
 
   rawRows.forEach(rawRow => {
+    changeTreeRowsCheckedState(store, rawRow.rowKey, rawRow._attributes.checked);
     getDataManager(id).push('CREATE', rawRow);
   });
+  setLoadingState(store, getLoadingState(rawData));
+  updateRowNumber(store, startIdx);
+  setCheckedAllRows(store);
 }
 
+// @TODO: consider tree disabled state with cascading
 export function removeTreeRow(store: Store, rowKey: RowKey) {
   const { data, rowCoords, id, column } = store;
   const { rawData, viewData } = data;
   const { heights } = rowCoords;
   const parentRow = getParentRow(store, rowKey);
+
+  uncheck(store, rowKey);
 
   if (parentRow) {
     removeChildRowKey(parentRow, rowKey);
@@ -381,13 +393,16 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   }
 
   const startIdx = findIndexByRowKey(data, column, id, rowKey);
-  const endIdx = getDescendantRows(store, rowKey).length + 1;
+  const deleteCount = getDescendantRows(store, rowKey).length + 1;
 
-  viewData.splice(startIdx, endIdx);
-  const removedRows = rawData.splice(startIdx, endIdx);
-  heights.splice(startIdx, endIdx);
+  viewData.splice(startIdx, deleteCount);
+  const removedRows = rawData.splice(startIdx, deleteCount);
+  heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
     getDataManager(id).push('DELETE', removedRows[i]);
   }
+  setLoadingState(store, getLoadingState(rawData));
+  updateRowNumber(store, startIdx);
+  setCheckedAllRows(store);
 }
