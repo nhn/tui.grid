@@ -108,10 +108,10 @@ export interface InvalidColumn {
 
 export interface CommonColumnInfo {
   header: string;
-  hidden: boolean;
-  align: AlignType;
-  valign: VAlignType;
-  minWidth: number;
+  hidden?: boolean;
+  align?: AlignType;
+  valign?: VAlignType;
+  minWidth?: number;
   whiteSpace?: 'pre' | 'normal' | 'nowrap' | 'pre-wrap' | 'pre-line';
   ellipsis?: boolean;
   sortable?: boolean;
@@ -131,11 +131,11 @@ export interface CommonColumnInfo {
 
 export interface ColumnInfo extends CommonColumnInfo {
   readonly name: string;
-  headerAlign: AlignType;
-  headerVAlign: VAlignType;
-  baseWidth: number;
-  fixedWidth: boolean;
-  renderer: CellRendererOptions;
+  headerAlign?: AlignType;
+  headerVAlign?: VAlignType;
+  baseWidth?: number;
+  fixedWidth?: boolean;
+  renderer?: CellRendererOptions;
   editor?: CellEditorOptions;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
