@@ -2,7 +2,7 @@ import { Side } from './focus';
 import { CellValue, Row } from './data';
 import { OptTree, Dictionary, OptColumnHeaderInfo, GridEventListener } from '../options';
 import { HeaderRendererClass, CellRendererClass } from '../renderer';
-import { CellEditorClass } from '../editor';
+import { CellEditorClass, BasicEditor } from '../editor';
 import { FilterOptionType, OperatorType } from './filterLayerState';
 
 export type VisibleColumnsBySide = { [key in Side]: ColumnInfo[] };
@@ -45,7 +45,7 @@ export interface DataForColumnCreation {
 }
 
 export interface CellEditorOptions {
-  type: CellEditorClass;
+  type: BasicEditor | CellEditorClass;
   options?: Dictionary<any>;
 }
 
@@ -136,7 +136,7 @@ export interface ColumnInfo extends CommonColumnInfo {
   baseWidth: number;
   fixedWidth: boolean;
   renderer: CellRendererOptions;
-  editor?: CellEditorOptions;
+  editor?: BasicEditor | CellEditorOptions;
   relationMap?: Dictionary<Relations>;
   related?: boolean;
   filter?: ColumnFilterOption | null;

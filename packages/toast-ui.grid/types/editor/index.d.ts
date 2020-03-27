@@ -3,6 +3,7 @@ import { RowKey, CellValue, ListItem } from '../store/data';
 import { ColumnInfo } from '../store/column';
 import { Dictionary } from '../options';
 
+export type BasicEditor = 'text' | 'password' | 'select' | 'radio' | 'checkbox';
 export type CheckboxOptions = ListItemOptions & {
   type: 'checkbox' | 'radio';
 };
