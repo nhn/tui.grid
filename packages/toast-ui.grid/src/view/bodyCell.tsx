@@ -41,18 +41,20 @@ export class BodyCellComp extends Component<Props> {
   public componentDidMount() {
     const { grid, rowKey, renderData, columnInfo } = this.props;
 
-    // eslint-disable-next-line new-cap
-    this.renderer = new columnInfo.renderer.type({
-      grid,
-      rowKey,
-      columnInfo,
-      ...renderData
-    });
-    const rendererEl = this.renderer.getElement();
-    this.el.appendChild(rendererEl);
+    if (columnInfo.renderer) {
+      // eslint-disable-next-line new-cap
+      this.renderer = new columnInfo.renderer.type({
+        grid,
+        rowKey,
+        columnInfo,
+        ...renderData
+      });
+      const rendererEl = this.renderer.getElement();
+      this.el.appendChild(rendererEl);
 
-    if (this.renderer.mounted) {
-      this.renderer.mounted(this.el);
+      if (this.renderer.mounted) {
+        this.renderer.mounted(this.el);
+      }
     }
     this.calculateRowHeight(this.props);
   }

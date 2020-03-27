@@ -35,7 +35,11 @@ function getCellWidthToBeResized(
   for (let idx = 0; idx < rangeLength; idx += 1) {
     const columnIdx = startIdx + idx;
     const { minWidth } = columns[columnIdx];
-    const width = Math.max(startWidths[idx] + delta, minWidth);
+
+    let width = startWidths[idx] + delta;
+    if (minWidth) {
+      width = Math.max(width, minWidth);
+    }
     widths.push(width);
   }
 

@@ -2,7 +2,7 @@ import { ColumnInfo, Column } from '@t/store/column';
 import { Dimension } from '@t/store/dimension';
 import { ColumnCoords } from '@t/store/columnCoords';
 import { observable } from '../helper/observable';
-import { sum, findIndexes, pipe, mapProp, last } from '../helper/common';
+import { sum, findIndexes, pipe, last } from '../helper/common';
 
 function distributeExtraWidthEqually(extraWidth: number, targetIdxes: number[], widths: number[]) {
   const targetLen = targetIdxes.length;
@@ -86,8 +86,8 @@ function adjustWidths(
 
 function calculateWidths(columns: ColumnInfo[], cellBorderWidth: number, contentsWidth: number) {
   const baseWidths = columns.map(({ baseWidth }) => (baseWidth ? baseWidth - cellBorderWidth : 0));
-  const minWidths = columns.map(({ minWidth }) => minWidth - cellBorderWidth);
-  const fixedFlags = mapProp('fixedWidth', columns);
+  const minWidths = columns.map(({ minWidth }) => (minWidth ? minWidth - cellBorderWidth : 0));
+  const fixedFlags = columns.map(({ fixedWidth }) => fixedWidth ?? false);
 
   return pipe(
     baseWidths,
