@@ -141,18 +141,6 @@ export function getDepth(rawData: Row[], row?: Row) {
   return depth;
 }
 
-export function getDepthByRowKey(rawData: Row[], rowKey: RowKey) {
-  let parentRow = findProp('rowKey', rowKey, rawData);
-  let depth = 0;
-
-  do {
-    depth += 1;
-    parentRow = findProp('rowKey', getParentRowKey(parentRow!), rawData);
-  } while (parentRow);
-
-  return depth;
-}
-
 export function traverseAncestorRows(rawData: Row[], row: Row, iteratee: Function) {
   let parentRowKey = getParentRowKey(row);
   let parentRow;

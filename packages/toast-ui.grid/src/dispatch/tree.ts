@@ -16,7 +16,7 @@ import {
   isLeaf,
   isExpanded,
   isRootChildRow,
-  getDepthByRowKey
+  getDepth
 } from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
@@ -145,7 +145,7 @@ function getComputedFontStyle() {
     `.${cls('tree-wrapper-relative')} .${cls('cell-content')}`
   )!;
 
-  const compStyle = getComputedStyle(firstTreeNode); // window method
+  const compStyle = getComputedStyle(firstTreeNode);
   const fontSize = compStyle.getPropertyValue('font-size');
   const fontWeight = compStyle.getPropertyValue('font-weight');
   const fontFamily = compStyle.getPropertyValue('font-family');
@@ -169,7 +169,7 @@ function getChildTreeNodeMaxWidth(
       const row = findProp('rowKey', rowKey, rawData)!;
       const value = row[treeColumnName];
       const { formatter, defaultValue } = column;
-      const indentWidth = getTreeIndentWidth(getDepthByRowKey(rawData, rowKey), useIcon);
+      const indentWidth = getTreeIndentWidth(getDepth(rawData, row), useIcon);
 
       const formattedValue = getFormattedValue(
         { row, column, value },

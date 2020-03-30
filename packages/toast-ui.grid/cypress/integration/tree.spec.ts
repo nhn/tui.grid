@@ -40,7 +40,9 @@ const data = [
 
 function assertColumnWidth(columnName: string, width: number) {
   cy.getColumnCells(columnName).each($el => {
-    expect($el.width()).to.eql(width);
+    cy.wrap($el)
+      .invoke('width')
+      .should('eq', width);
   });
 }
 
@@ -791,7 +793,6 @@ describe('with resizable column options', () => {
     });
 
     cy.gridInstance().invoke('expand', 0);
-    cy.wait(500);
 
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
   });
@@ -829,7 +830,6 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
     cy.gridInstance().invoke('expand', 0);
-    cy.wait(500);
 
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
   });
@@ -846,7 +846,6 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
     cy.gridInstance().invoke('expand', 0);
-    cy.wait(500);
 
     assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
   });
@@ -861,7 +860,6 @@ describe('with resizable column options', () => {
     assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
 
     cy.gridInstance().invoke('expandAll');
-    cy.wait(500);
 
     assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
   });
