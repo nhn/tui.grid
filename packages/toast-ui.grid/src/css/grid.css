@@ -585,14 +585,10 @@
   width: 14px;
 }
 .tui-grid-tree-wrapper-relative {
-  display: table;
   position: relative;
   margin: -1px 0;
-  height: 100%;
-  width: 100%;
 }
 .tui-grid-tree-wrapper-valign-center {
-  display: table-cell;
   vertical-align: middle;
 }
 .tui-grid-tree-extra-content {

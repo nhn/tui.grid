@@ -1,7 +1,7 @@
 import { Row, RowKey } from '@t/store/data';
 import { Store } from '@t/store';
 import { OptRow, OptAppendTreeRow } from '@t/options';
-import { createViewRow } from '../store/data';
+import { createViewRow, getFormattedValue } from '../store/data';
 import { getRowHeight, findIndexByRowKey, findRowByRowKey } from '../query/data';
 import { notify } from '../helper/observable';
 import { getDataManager } from '../instance';
@@ -15,12 +15,16 @@ import {
   getChildRowKeys,
   isLeaf,
   isExpanded,
-  isRootChildRow
+  isRootChildRow,
+  getDepth
 } from '../query/tree';
 import { getEventBus } from '../event/eventBus';
 import GridEvent from '../event/gridEvent';
-import { flattenTreeData } from '../store/helper/tree';
-import { removeArrayItem } from '../helper/common';
+import { flattenTreeData, getTreeIndentWidth } from '../store/helper/tree';
+import { findProp, findPropIndex, removeArrayItem, someProp } from '../helper/common';
+import { Column, ColumnInfo, VisibleColumnsBySide } from '@t/store/column';
+import { cls } from '../helper/dom';
+import { ColumnCoords } from '@t/store/columnCoords';
 
 function changeExpandedAttr(row: Row, expanded: boolean) {
   const { tree } = row._attributes;
@@ -37,6 +41,10 @@ function changeHiddenAttr(row: Row, hidden: boolean) {
   if (tree) {
     tree.hidden = hidden;
   }
+}
+
+function getColumnSide(columnName: string, visibleColumns: VisibleColumnsBySide) {
+  return someProp('name', columnName, visibleColumns.R) ? 'R' : 'L';
 }
 
 function expand(store: Store, row: Row, recursive?: boolean) {
@@ -57,12 +65,15 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     return;
   }
 
-  const { data, rowCoords, dimension, column, id, viewport } = store;
+  const { data, rowCoords, dimension, column, id, viewport, columnCoords } = store;
+
   const { heights } = rowCoords;
 
   changeExpandedAttr(row, true);
 
   const childRowKeys = getChildRowKeys(row);
+
+  updateTreeColumnWidth(childRowKeys, column, columnCoords, data.rawData);
 
   childRowKeys.forEach(childRowKey => {
     const childRow = findRowByRowKey(data, column, id, childRowKey);
@@ -85,6 +96,95 @@ function expand(store: Store, row: Row, recursive?: boolean) {
     notify(rowCoords, 'heights');
     notify(viewport, 'rowRange');
   }
+}
+
+function updateTreeColumnWidth(
+  childRowKeys: RowKey[],
+  column: Column,
+  columnCoords: ColumnCoords,
+  rawData: Row[]
+) {
+  const { visibleColumnsBySideWithRowHeader, treeIcon } = column;
+  const treeColumnName = column.treeColumnName!;
+  const treeColumnSide = getColumnSide(treeColumnName, visibleColumnsBySideWithRowHeader);
+  const treeColumnIndex = findPropIndex(
+    'name',
+    treeColumnName,
+    column.visibleColumnsBySide[treeColumnSide]
+  );
+
+  const columnInfo = visibleColumnsBySideWithRowHeader[treeColumnSide][treeColumnIndex];
+
+  if (columnInfo.resizable) {
+    const maxWidth = getChildTreeNodeMaxWidth(
+      childRowKeys,
+      rawData,
+      columnInfo,
+      treeColumnName,
+      treeIcon
+    );
+    const prevWidth = columnCoords.widths[treeColumnSide][treeColumnIndex];
+
+    if (prevWidth < maxWidth) {
+      columnCoords.widths[treeColumnSide][treeColumnIndex] = maxWidth;
+      notify(columnCoords, 'widths');
+    }
+  }
+}
+
+function getTextWidth(text: string, font: string) {
+  const context = document.createElement('canvas').getContext('2d')!;
+  context.font = font;
+  const { width } = context.measureText(String(text));
+
+  return Math.ceil(width);
+}
+
+function getComputedFontStyle() {
+  const firstTreeNode = document.querySelector(
+    `.${cls('tree-wrapper-relative')} .${cls('cell-content')}`
+  )!;
+
+  const compStyle = getComputedStyle(firstTreeNode);
+  const fontSize = compStyle.getPropertyValue('font-size');
+  const fontWeight = compStyle.getPropertyValue('font-weight');
+  const fontFamily = compStyle.getPropertyValue('font-family');
+
+  return `${fontWeight} ${fontSize} ${fontFamily}`;
+}
+
+function getChildTreeNodeMaxWidth(
+  childRowKeys: RowKey[],
+  rawData: Row[],
+  column: ColumnInfo,
+  treeColumnName: string,
+  useIcon?: boolean
+) {
+  const fontStyle = getComputedFontStyle();
+  const CELL_CONTENT_LEFT_PADDING = 14;
+  const CELL_CONTENT_RIGHT_PADDING = 5;
+
+  return Math.max(
+    ...childRowKeys.map(rowKey => {
+      const row = findProp('rowKey', rowKey, rawData)!;
+      const value = row[treeColumnName];
+      const { formatter, defaultValue } = column;
+      const indentWidth = getTreeIndentWidth(getDepth(rawData, row), useIcon);
+
+      const formattedValue = getFormattedValue(
+        { row, column, value },
+        formatter,
+        defaultValue || value
+      );
+
+      return (
+        getTextWidth(formattedValue, fontStyle) +
+        indentWidth +
+        CELL_CONTENT_LEFT_PADDING +
+        CELL_CONTENT_RIGHT_PADDING
+      );
+    })
+  );
 }
 
 function collapse(store: Store, row: Row, recursive?: boolean) {

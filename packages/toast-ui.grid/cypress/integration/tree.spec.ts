@@ -1,11 +1,50 @@
 import { Row, RowKey } from '@t/store/data';
-import { OptGrid, OptRow } from '@t/options';
+import { OptColumn, OptGrid, OptRow } from '@t/options';
 import { cls } from '../../src/helper/dom';
 import GridEvent from '@/event/gridEvent';
 
 type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 
-const columns = [{ name: 'c1' }, { name: 'c2' }];
+const columns: OptColumn[] = [{ name: 'c1' }, { name: 'c2' }];
+
+const data = [
+  {
+    c1: 'foo',
+    _children: [
+      {
+        c1: 'bar',
+        _attributes: {
+          expanded: true
+        },
+        _children: [
+          {
+            c1: 'baz',
+            _attributes: {
+              expanded: false
+            },
+            _children: [
+              {
+                c1: 'qux'
+              },
+              {
+                c1: 'quxx',
+                _children: []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+
+function assertColumnWidth(columnName: string, width: number) {
+  cy.getColumnCells(columnName).each($el => {
+    cy.wrap($el)
+      .invoke('width')
+      .should('eq', width);
+  });
+}
 
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
@@ -28,36 +67,7 @@ function assertModifiedRowsLength(type: ModifiedType, length: number) {
 
 function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'>) {
   cy.createGrid({
-    data: [
-      {
-        c1: 'foo',
-        _children: [
-          {
-            c1: 'bar',
-            _attributes: {
-              expanded: true
-            },
-            _children: [
-              {
-                c1: 'baz',
-                _attributes: {
-                  expanded: false
-                },
-                _children: [
-                  {
-                    c1: 'qux'
-                  },
-                  {
-                    c1: 'quxx',
-                    _children: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ],
+    data,
     columns,
     ...options
   });
@@ -756,5 +766,101 @@ describe('events', () => {
       cy.gridInstance().invoke('collapse', 0);
       assertToggleButtonExpanded(0, 'c1');
     });
+  });
+});
+
+describe('with resizable column options', () => {
+  const DEPTH_ONE_MAX_WIDTH = 200;
+  const DEPTH_TWO_MAX_WIDTH = 295;
+  const DEPTH_THREE_MAX_WIDTH = 348;
+
+  beforeEach(() => {
+    data[0].c1 = 'looooooooooooooong contents';
+    data[0]._children[0]._attributes.expanded = false;
+    data[0]._children[0].c1 = 'looooooooooooooong child contents';
+    data[0]._children[0]._children[0].c1 = 'looooooooooooooong child child contents';
+
+    columns[0].width = DEPTH_ONE_MAX_WIDTH;
+    columns[0].resizable = true;
+  });
+
+  it('width not automatically resize when expanded without resizable option', () => {
+    columns[0].resizable = false;
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    cy.gridInstance().invoke('expand', 0);
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+  });
+
+  ['UI', 'API'].forEach(type => {
+    it(`width resize automatically when expand by ${type}`, () => {
+      createGrid({
+        treeColumnOptions: {
+          name: 'c1'
+        }
+      });
+
+      assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+
+      if (type === 'API') {
+        cy.gridInstance().invoke('expand', 0);
+      } else {
+        cy.getByCls('btn-tree').click();
+      }
+      cy.wait(500);
+
+      assertColumnWidth('c1', DEPTH_TWO_MAX_WIDTH);
+    });
+  });
+
+  it('width is not resized when existing width is wider than child node width', () => {
+    data[0]._children[0].c1 = 'short';
+
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+
+    cy.gridInstance().invoke('expand', 0);
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+  });
+
+  it('width resize automatically with child expanded attribute', () => {
+    data[0]._children[0]._attributes.expanded = true;
+
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+
+    cy.gridInstance().invoke('expand', 0);
+
+    assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
+  });
+
+  it('width resize automatically when call expandAll()', () => {
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    assertColumnWidth('c1', DEPTH_ONE_MAX_WIDTH);
+
+    cy.gridInstance().invoke('expandAll');
+
+    assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
   });
 });

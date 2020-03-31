@@ -48,11 +48,7 @@ function insertChildRowKey(row: Row, rowKey: RowKey, offset: number) {
 
 function getTreeCellInfo(rawData: Row[], row: Row, useIcon?: boolean) {
   const depth = getDepth(rawData, row);
-  let indentWidth = depth * TREE_INDENT_WIDTH;
-
-  if (useIcon) {
-    indentWidth += TREE_INDENT_WIDTH;
-  }
+  const indentWidth = getTreeIndentWidth(depth, useIcon);
 
   return {
     depth,
@@ -166,4 +162,8 @@ export function createTreeCellInfo(
   }
 
   return treeInfo;
+}
+
+export function getTreeIndentWidth(depth: number, showIcon?: boolean) {
+  return depth * TREE_INDENT_WIDTH + (showIcon ? TREE_INDENT_WIDTH : 0);
 }
