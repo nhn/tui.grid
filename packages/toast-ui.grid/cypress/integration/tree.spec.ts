@@ -46,6 +46,12 @@ function assertColumnWidth(columnName: string, width: number) {
   });
 }
 
+function assertGridHasRightRowNumber() {
+  cy.getRowHeaderCells('_number').each(($el, idx) => {
+    cy.wrap($el).should('have.text', `${idx + 1}`);
+  });
+}
+
 function assertToggleButtonExpanded(rowKey: RowKey, columnName: string) {
   cy.getCell(rowKey, columnName).within(() => {
     cy.get(`.${cls('tree-extra-content')}`).should('have.class', cls('tree-button-expand'));
@@ -405,7 +411,8 @@ describe('appendTreeRow()', () => {
     createGrid({
       treeColumnOptions: {
         name: 'c1'
-      }
+      },
+      rowHeaders: ['checkbox', 'rowNum']
     });
   });
 
@@ -420,6 +427,43 @@ describe('appendTreeRow()', () => {
 
     cy.gridInstance().invoke('collapse', 0);
     cy.getCell(5, 'c1').should('be.not.visible');
+  });
+
+  it('should check the header checkbox of added data after calling appendTreeRow()', () => {
+    const appendedData = { c1: 'test' };
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
+
+    cy.getHeaderCell('_checked')
+      .find('input')
+      .should('not.be.checked');
+  });
+
+  it('should check the children of added data with checked option', () => {
+    const appendedData = {
+      c1: 'test',
+      _children: [{ c1: 'b' }, { c1: 'c' }],
+      _attributes: { checked: true }
+    };
+
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 0 });
+
+    cy.get('input').should($el => {
+      $el.each((_, elem) => {
+        expect(elem.checked).eq(true);
+      });
+    });
+  });
+
+  it('should update row number after calling appendTreeRow()', () => {
+    const appendedData = { c1: 'test' };
+
+    cy.gridInstance().invoke('appendTreeRow', appendedData, { parentRowKey: 1, offset: 0 });
+    cy.gridInstance().invoke('expandAll');
+
+    assertGridHasRightRowNumber();
   });
 
   context('appends internal row to', () => {
@@ -550,7 +594,8 @@ describe('removeTreeRow()', () => {
     createGrid({
       treeColumnOptions: {
         name: 'c1'
-      }
+      },
+      rowHeaders: ['checkbox', 'rowNum']
     });
     cy.gridInstance().invoke('expand', 0, true);
   });
@@ -591,6 +636,22 @@ describe('removeTreeRow()', () => {
           cy.getCell(rowKey, 'c1').should('not.exist');
         });
       });
+  });
+
+  it('should check the header checkbox of added data after calling removeTreeRow()', () => {
+    cy.gridInstance().invoke('checkAll');
+    cy.gridInstance().invoke('removeTreeRow', 3);
+
+    cy.getHeaderCell('_checked')
+      .find('input')
+      .should('not.be.checked');
+  });
+
+  it('should update row number after calling removeTreeRow()', () => {
+    cy.gridInstance().invoke('removeTreeRow', 3);
+    cy.gridInstance().invoke('expandAll');
+
+    assertGridHasRightRowNumber();
   });
 
   context('parent row', () => {

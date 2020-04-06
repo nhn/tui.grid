@@ -40,7 +40,7 @@ function createGridWithScrollType(newData?: OptRow[]) {
       perPage: SCROLL_PER_PAGE_COUNT,
       type: 'scroll'
     },
-    rowHeaders: ['rowNum'],
+    rowHeaders: ['checkbox', 'rowNum'],
     columns
   });
 }
@@ -214,5 +214,18 @@ describe('type: scroll', () => {
           initialHeight.should('eq', height);
         });
     });
+  });
+
+  it('should check the header checkbox of added data on scrolling at the bottommost', () => {
+    createGridWithScrollType();
+
+    cy.gridInstance().invoke('checkAll', false);
+
+    // scroll at the bottommost
+    cy.focusToBottomCell(49, 'productOrderNo');
+
+    cy.getHeaderCell('_checked')
+      .find('input')
+      .should('not.be.checked');
   });
 });
