@@ -1,13 +1,18 @@
 {
   "name": "root",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.grid.git"
+  },
   "devDependencies": {
+    "@toast-ui/release-notes": "^2.0.1",
     "lerna": "^3.16.4",
     "prettier": "^1.19.1"
   },
   "scripts": {
     "build": "lerna run build --scope tui-grid",
     "build:react": "lerna run build --scope @toast-ui/react-grid",
-    "build:vue": "lerna run build --scope @toast-ui/vue-grid"
+    "build:vue": "lerna run build --scope @toast-ui/vue-grid",
+    "note": "tui-note"
   }
 }
