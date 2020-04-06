@@ -11,7 +11,7 @@ import {
   updateRowNumber,
   setCheckedAllRows,
   uncheck
-} from '../dispatch/data';
+} from './data';
 import {
   getParentRow,
   getDescendantRows,
