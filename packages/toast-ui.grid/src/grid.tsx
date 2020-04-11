@@ -50,7 +50,8 @@ import {
   getCheckedRows,
   findIndexByRowKey,
   findRowByRowKey,
-  getFilterStateWithOperator
+  getFilterStateWithOperator,
+  getRowHeight
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -608,6 +609,12 @@ export default class Grid implements TuiGrid {
    * @returns {Boolean} true if focused cell is changed
    */
   public focus(rowKey: RowKey, columnName: string, setScroll = true) {
+    const row = this.getRow(rowKey);
+
+    if (!row || !getRowHeight(row, this.store.dimension.rowHeight)) {
+      return false;
+    }
+
     this.dispatch('setFocusInfo', rowKey, columnName, true);
 
     if (setScroll) {
