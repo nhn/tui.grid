@@ -227,7 +227,8 @@ describe('editable, disable, hidden', () => {
     const data = [
       { name: 'Lee', age: 20 },
       { name: 'Han', age: 28 },
-      { name: 'Ryu', age: 22 }
+      { name: 'Ryu', age: 22 },
+      { name: 'Kim', age: 30, _attributes: { height: 0 } }
     ];
     const columns = [{ name: 'name', editor: 'text' }, { name: 'age' }];
 
@@ -267,6 +268,18 @@ describe('editable, disable, hidden', () => {
     cy.gridInstance().invoke('finishEditing', 0, 'name', 'Park');
 
     cy.getByCls('layer-editing').should('be.not.visible');
+  });
+
+  it('cannot edit the cell which has `zero` height', () => {
+    cy.gridInstance().invoke('startEditing', 3, 'age');
+
+    cy.getByCls('layer-editing').should('be.not.visible');
+
+    cy.gridInstance().invoke('finishEditing', 3, 'age', 11);
+
+    cy.gridInstance()
+      .invoke('getValue', 3, 'age')
+      .should('eq', 30);
   });
 });
 
