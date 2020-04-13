@@ -222,7 +222,7 @@ describe('type: scroll', () => {
     cy.gridInstance().invoke('checkAll', false);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(49, 'productOrderNo');
+    cy.focusAndWait(49, 'productOrderNo');
 
     cy.getHeaderCell('_checked')
       .find('input')
