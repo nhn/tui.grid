@@ -44,6 +44,7 @@
     "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-notes": "^5.2.5",
     "@storybook/html": "^5.2.5",
+    "@toast-ui/select-box": "^1.0.0",
     "@types/node": "^12.0.0",
     "@types/webpack-env": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
@@ -61,10 +62,12 @@
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.7.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "preact": "^8.4.2",
     "start-server-and-test": "^1.10.0",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.3",
     "ts-loader": "^6.2.1",
+    "tslib": "^1.11.1",
     "typescript": "^3.7.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
@@ -72,9 +75,6 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@toast-ui/select-box": "^1.0.0",
-    "preact": "^8.4.2",
-    "tslib": "^1.10.0",
     "tui-date-picker": "^3.3.3",
     "tui-pagination": "^3.3.2"
   }
