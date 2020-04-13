@@ -523,7 +523,7 @@ it('stop custom event if prev event is prevented.', () => {
 //       .should('eq', PER_PAGE * ROW_HEIGHT + 1);
 
 //     // scroll at the bottommost
-//     cy.focusToBottomCell(9, 'name');
+//     cy.focusAndWait(9, 'name');
 
 //     cy.getCell(10, 'id').should('have.text', '10');
 //     cy.getByCls('body-container')

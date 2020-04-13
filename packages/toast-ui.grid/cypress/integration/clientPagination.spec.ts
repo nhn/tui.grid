@@ -192,7 +192,7 @@ describe('type: scroll', () => {
       .should('eq', SCROLL_PER_PAGE_COUNT * ROW_HEIGHT + 1);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(49, 'productOrderNo');
+    cy.focusAndWait(49, 'productOrderNo');
 
     cy.getRowHeaderCell(50, '_number').should('have.text', '51');
     cy.getByCls('body-container')

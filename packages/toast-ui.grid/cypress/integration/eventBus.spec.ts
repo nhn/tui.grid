@@ -200,7 +200,7 @@ describe('scrollEnd', () => {
     cy.gridInstance().invoke('on', 'scrollEnd', callback);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(19, 'name');
+    cy.focusAndWait(19, 'name');
 
     cy.wrap(callback).should('be.calledOnce');
   });
@@ -211,9 +211,9 @@ describe('scrollEnd', () => {
     cy.gridInstance().invoke('on', 'scrollEnd', callback);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(19, 'name');
+    cy.focusAndWait(19, 'name');
     // scroll horizontally
-    cy.focusToBottomCell(19, 'age');
+    cy.focusAndWait(19, 'age');
 
     cy.wrap(callback).should('be.calledOnce');
   });
