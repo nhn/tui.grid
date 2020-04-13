@@ -334,8 +334,14 @@ export function setColumnValues(
   }
   const { id, data } = store;
   data.rawData.forEach((targetRow, index) => {
-    const { disabled, editable } = data.viewData[index].valueMap[columnName];
-    if (targetRow[columnName] !== value && (!checkCellState || (!disabled && editable))) {
+    let valid = true;
+
+    if (checkCellState) {
+      const { disabled, editable } = data.viewData[index].valueMap[columnName];
+      valid = !disabled && editable;
+    }
+
+    if (targetRow[columnName] !== value && valid) {
       targetRow[columnName] = value;
       getDataManager(id).push('UPDATE', targetRow);
     }
