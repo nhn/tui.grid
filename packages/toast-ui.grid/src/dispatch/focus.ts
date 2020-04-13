@@ -19,7 +19,7 @@ export function startEditing(store: Store, rowKey: RowKey, columnName: string) {
   }
 
   // makes the data observable to judge editable, disable of the cell;
-  makeObservable(store, rowKey);
+  makeObservable(store, findIndexByRowKey(data, column, id, rowKey, false));
 
   if (!isEditableCell(data, column, foundIndex, columnName)) {
     return;
@@ -141,7 +141,7 @@ export function saveAndFinishEditing(store: Store, value?: string) {
   // @TODO: remove 'value' paramter
   // saveAndFinishEditing(store: Store)
 
-  const { focus } = store;
+  const { focus, data, column, id } = store;
   const { editingAddress } = focus;
 
   if (!editingAddress) {
@@ -151,7 +151,7 @@ export function saveAndFinishEditing(store: Store, value?: string) {
   const { rowKey, columnName } = editingAddress;
 
   // makes the data observable to judge editable, disable of the cell.
-  makeObservable(store, rowKey);
+  makeObservable(store, findIndexByRowKey(data, column, id, rowKey, false));
 
   // if value is 'undefined', editing result is saved and finished.
   if (isUndefined(value)) {

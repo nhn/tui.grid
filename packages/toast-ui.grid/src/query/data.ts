@@ -1,6 +1,6 @@
 import { OptRow, Dictionary } from '@t/options';
 import { Store } from '@t/store';
-import { Data, Row, RowKey, SortState, RawRowOptions } from '@t/store/data';
+import { Data, Row, RowKey, SortState, RawRowOptions, ViewRow } from '@t/store/data';
 import { Column } from '@t/store/column';
 import {
   isFunction,
@@ -18,12 +18,7 @@ import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { isRowHeader } from '../helper/column';
-import {
-  createRawRow,
-  createViewRow,
-  generateDataCreationKey,
-  getFormattedValue
-} from '../store/data';
+import { createRawRow, generateDataCreationKey, getFormattedValue } from '../store/data';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -202,7 +197,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
   const { rawData } = data;
   const { columnMapWithRelation, allColumns } = column;
   const prevRow = rawData[rowIndex - 1];
-  const options: RawRowOptions = { prevRow };
+  const options: RawRowOptions = { prevRow, lazyObservable: true };
 
   if (!isUndefined(rowKey)) {
     row.rowKey = rowKey;
@@ -213,7 +208,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = getMaxRowKey(data);
   const rawRow = createRawRow({ ...emptyData, ...row }, index, columnMapWithRelation, options);
-  const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData);
+  const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow;
 
   return { rawRow, viewRow, prevRow };
 }
