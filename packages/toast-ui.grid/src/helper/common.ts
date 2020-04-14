@@ -420,3 +420,7 @@ export function convertTextToData(text: string) {
     )
   );
 }
+
+export function splice<T>(arr: T[], start: number, deleteCount: number, ...items: T[]): T[] {
+  return Array.prototype.splice.call(arr, start, deleteCount, ...items);
+}

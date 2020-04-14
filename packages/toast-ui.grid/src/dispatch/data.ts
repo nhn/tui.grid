@@ -21,7 +21,8 @@ import {
   someProp,
   findPropIndex,
   shallowEqual,
-  isUndefined
+  isUndefined,
+  splice
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
 import {
@@ -66,8 +67,6 @@ import { initFilter } from './filter';
 import { getSelectionRange } from '../query/selection';
 import { initScrollPosition } from './viewport';
 import { isRowHeader } from '../helper/column';
-
-const protoSplice = Array.prototype.splice;
 
 function updateRowSpanWhenAppend(data: Row[], prevRow: Row, extendPrevRowSpan: boolean) {
   const { rowSpanMap: prevRowSpanMap } = prevRow;
@@ -576,8 +575,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
 
-  protoSplice.call(viewData, at, 0, viewRow);
-  protoSplice.call(rawData, at, 0, rawRow);
+  splice(viewData, at, 0, viewRow);
+  splice(rawData, at, 0, rawRow);
   makeObservable(store, at);
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
@@ -950,8 +949,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
-  protoSplice.call(viewData, rowIndex, 1, viewRow);
-  protoSplice.call(rawData, rowIndex, 1, rawRow);
+  splice(viewData, rowIndex, 1, viewRow);
+  splice(rawData, rowIndex, 1, rawRow);
   makeObservable(store, rowIndex);
 
   sortByCurrentState(store);
