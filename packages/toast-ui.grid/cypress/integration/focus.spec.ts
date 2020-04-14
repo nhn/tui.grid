@@ -1,3 +1,5 @@
+import { cls } from '@/helper/dom';
+
 before(() => {
   cy.visit('/dist');
 });
@@ -39,6 +41,7 @@ describe('API', () => {
 
     cy.gridInstance().invoke('focus', 0, 'name');
 
+    cy.getRow(0).should('have.class', cls('cell-current-row'));
     getActiveFocusLayer().should('exist');
   });
 
@@ -47,6 +50,7 @@ describe('API', () => {
 
     cy.gridInstance().invoke('focusAt', 0, 1);
 
+    cy.getRow(0).should('have.class', cls('cell-current-row'));
     getActiveFocusLayer().should('exist');
   });
 
