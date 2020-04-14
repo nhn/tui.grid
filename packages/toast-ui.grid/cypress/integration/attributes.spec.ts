@@ -84,13 +84,13 @@ describe('className', () => {
   it('addRowClassName() / removeRowClassName()', () => {
     cy.gridInstance().invoke('addRowClassName', 1, 'tui-grid-row-test');
 
-    cy.getRow(1).each($el => {
+    cy.getCells(1).each($el => {
       cy.wrap($el).should('have.class', 'tui-grid-row-test');
     });
 
     cy.gridInstance().invoke('removeRowClassName', 1, 'tui-grid-row-test');
 
-    cy.getRow(1).each($el => {
+    cy.getCells(1).each($el => {
       cy.wrap($el).should('not.have.class', 'tui-grid-row-test');
     });
   });
@@ -125,7 +125,7 @@ describe('row disabled', () => {
 
   it('row, checkbox disabled by attributes options', () => {
     // first row
-    cy.getRow(0).each(($el, index) => {
+    cy.getCells(0).each(($el, index) => {
       if (!index) {
         // checkbox
         cy.wrap($el).should('have.class', cls('cell-disabled'));
@@ -135,12 +135,12 @@ describe('row disabled', () => {
     });
 
     // second row
-    cy.getRow(1).each($el => {
+    cy.getCells(1).each($el => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     // third row
-    cy.getRow(2).each(($el, index) => {
+    cy.getCells(2).each(($el, index) => {
       if (!index) {
         // checkbox
         cy.wrap($el).should('not.have.class', cls('cell-disabled'));
@@ -153,13 +153,13 @@ describe('row disabled', () => {
   it('enableRow() / disableRow()', () => {
     cy.gridInstance().invoke('disableRow', 1);
 
-    cy.getRow(1).each($el => {
+    cy.getCells(1).each($el => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 
     cy.gridInstance().invoke('enableRow', 1, false);
 
-    cy.getRow(1).each(($el, index) => {
+    cy.getCells(1).each(($el, index) => {
       if (!index) {
         // checkbox disabled
         cy.wrap($el).should('have.class', cls('cell-disabled'));
@@ -209,7 +209,7 @@ describe('disabled precedence', () => {
   it('`disabled: true` option is precedence between initial disabled options(column disabled, row disabled, grid disabled)', () => {
     cy.getRowHeaderCell(0, '_checked').should('have.class', cls('cell-disabled'));
     cy.getColumnCells('age').should('have.class', cls('cell-disabled'));
-    cy.getRow(2).each(($el, index) => {
+    cy.getCells(2).each(($el, index) => {
       if (!index) {
         // checkbox disabled
         cy.wrap($el).should('not.have.class', cls('cell-disabled'));
@@ -226,7 +226,7 @@ describe('disabled precedence', () => {
 
     cy.gridInstance().invoke('disableRow', 0);
 
-    cy.getRow(0).each($el => {
+    cy.getCells(0).each($el => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
 

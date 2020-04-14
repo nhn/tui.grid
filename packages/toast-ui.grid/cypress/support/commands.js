@@ -91,7 +91,9 @@ Cypress.Commands.add('getRowHeaderCells', columnName => {
 
 Cypress.Commands.add('getColumnCells', columnName => cy.get(`td[data-column-name=${columnName}]`));
 
-Cypress.Commands.add('getRow', rowKey => cy.get(`td[data-row-key=${rowKey}]`));
+Cypress.Commands.add('getRow', rowKey => cy.get(`td[data-row-key=${rowKey}]`).parent());
+
+Cypress.Commands.add('getCells', rowKey => cy.get(`td[data-row-key=${rowKey}]`));
 
 Cypress.Commands.add('getRsideBody', () => cy.getByCls('rside-area', 'body-area'));
 

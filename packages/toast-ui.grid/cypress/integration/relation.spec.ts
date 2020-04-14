@@ -103,7 +103,7 @@ before(() => {
         category4: '01'
       });
 
-      cy.getRow(3).each(($cell, index) => {
+      cy.getCells(3).each(($cell, index) => {
         cy.wrap($cell).should('have.text', expected[index]);
       });
 
