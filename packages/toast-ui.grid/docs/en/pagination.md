@@ -26,7 +26,7 @@ const grid = new Grid({
 });
 ```
 
-As you can see in the example above, in order to sync remote data operations, just define how many pages to show in one page with the `pageOptions.perPage` and determine the outlines of request and response data with Data Source. You can view related information [here](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/data-source.md) in greater detail.
+As you can see in the example above, in order to sync remote data operations, just define how many rows to show in one page with the `pageOptions.perPage` and adapt the request and response parameters with Data Source. You can view related information [here](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/data-source.md) for more information.
 
 ## Client Pagination 
 
