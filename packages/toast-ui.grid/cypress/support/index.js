@@ -19,6 +19,10 @@ import './commands';
 import { isSubsetOf } from '../helper/compare';
 import { cls } from '@/helper/dom';
 
+afterEach(() => {
+  cy.destroyGrid();
+});
+
 chai.use(_chai => {
   _chai.Assertion.addMethod('subset', function(options) {
     new _chai.Assertion(isSubsetOf(options, this._obj)).to.be.true;

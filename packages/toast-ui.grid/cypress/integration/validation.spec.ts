@@ -138,7 +138,6 @@ describe('should check the validation of cell - validatorFn', () => {
   it('should execute `validatorFn` as unobserved function', () => {
     const stub = cy.stub();
     cy.window().then((win: WindowWithGrid) => {
-      delete win.grid;
       cy.createGrid({
         data,
         columns: [
@@ -164,7 +163,6 @@ describe('should check the validation of cell - validatorFn', () => {
   it('should execute `validatorFn` with applying changed data', () => {
     const stub = cy.stub();
     cy.window().then((win: WindowWithGrid) => {
-      delete win.grid;
       cy.createGrid({
         data,
         columns: [

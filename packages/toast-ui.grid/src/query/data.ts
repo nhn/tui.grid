@@ -1,6 +1,6 @@
 import { OptRow, Dictionary } from '@t/options';
 import { Store } from '@t/store';
-import { Data, Row, RowKey, SortState, RawRowOptions, ViewRow } from '@t/store/data';
+import { Data, Row, RowKey, SortState } from '@t/store/data';
 import { Column } from '@t/store/column';
 import {
   isFunction,

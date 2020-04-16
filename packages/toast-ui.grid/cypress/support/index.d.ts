@@ -41,6 +41,8 @@ declare namespace Cypress {
     getBodyCells(): Chainable<any>;
 
     focusAndWait(rowKey: RowKey, columnName: string): Chainable<any>;
+
+    destroyGrid(): Chainable<any>;
   }
 }
 
