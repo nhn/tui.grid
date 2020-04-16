@@ -190,11 +190,11 @@ export function updatePageOptions(
   }
 }
 
-export function makeObservable(store: Store, index: number) {
+export function makeObservable(store: Store, rowIndex: number) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  const rawRow = rawData[index];
+  const rawRow = rawData[rowIndex];
 
   if (isObservable(rawRow)) {
     return;
@@ -202,17 +202,17 @@ export function makeObservable(store: Store, index: number) {
 
   if (treeColumnName) {
     const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[index] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
-    viewData[index] = createViewRow(
-      rawData[index],
+    rawData[rowIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
+    viewData[rowIndex] = createViewRow(
+      rawData[rowIndex],
       columnMapWithRelation,
       rawData,
       treeColumnName,
       treeIcon
     );
   } else {
-    rawData[index] = createRawRow(rawRow, index, columnMapWithRelation);
-    viewData[index] = createViewRow(rawData[index], columnMapWithRelation, rawData);
+    rawData[rowIndex] = createRawRow(rawRow, rowIndex, columnMapWithRelation);
+    viewData[rowIndex] = createViewRow(rawData[rowIndex], columnMapWithRelation, rawData);
   }
   notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }

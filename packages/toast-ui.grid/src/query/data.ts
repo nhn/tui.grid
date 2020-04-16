@@ -197,7 +197,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
   const { rawData } = data;
   const { columnMapWithRelation, allColumns } = column;
   const prevRow = rawData[rowIndex - 1];
-  const options: RawRowOptions = { prevRow, lazyObservable: true };
+  const options = { prevRow, lazyObservable: true };
 
   if (!isUndefined(rowKey)) {
     row.rowKey = rowKey;
@@ -208,7 +208,7 @@ export function getCreatedRowInfo(store: Store, rowIndex: number, row: OptRow, r
     .reduce((acc, { name }) => ({ ...acc, [name]: '' }), {});
   const index = getMaxRowKey(data);
   const rawRow = createRawRow({ ...emptyData, ...row }, index, columnMapWithRelation, options);
-  const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow;
+  const viewRow = { rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey };
 
   return { rawRow, viewRow, prevRow };
 }
