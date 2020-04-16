@@ -36,7 +36,7 @@ function scrollToBottom() {
   // cy.get(`.${cls('lside-area')} .${cls('body-area')}`).scrollTo(0, 300);
 
   // to move scroll position
-  cy.focusToBottomCell(19, 'name');
+  cy.focusAndWait(19, 'name');
 }
 
 before(() => {

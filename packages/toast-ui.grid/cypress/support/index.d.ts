@@ -38,7 +38,7 @@ declare namespace Cypress {
 
     getBodyCells(): Chainable<any>;
 
-    focusToBottomCell(rowKey: RowKey, columnName: string): Chainable<any>;
+    focusAndWait(rowKey: RowKey, columnName: string): Chainable<any>;
   }
 }
 

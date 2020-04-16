@@ -391,7 +391,7 @@ describe('pagination(infinite scroll) + sort', () => {
     assertSortedData(1, 'deliveryType', false);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(45, 'orderName');
+    cy.focusAndWait(45, 'deliveryType');
 
     assertHaveSortingBtnClass('deliveryType', 'btn-sorting-down');
     assertSortedData(2, 'deliveryType', false);
@@ -401,7 +401,7 @@ describe('pagination(infinite scroll) + sort', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(46, 'orderName');
+    cy.focusAndWait(46, 'orderName');
 
     cy.gridInstance()
       .invoke('getData')
@@ -416,7 +416,7 @@ describe('pagination(infinite scroll) + sort', () => {
     cy.gridInstance().invoke('sort', 'deliveryType', false);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(49, 'orderName');
+    cy.focusAndWait(49, 'orderName');
 
     cy.gridInstance().invoke('unsort', 'deliveryType');
 
@@ -438,7 +438,7 @@ describe('pagination(infinite scroll) + filter', () => {
     assertColumnData('deliveryType', 'Parcel');
 
     // scroll at the bottommost
-    cy.focusToBottomCell(46, 'orderName');
+    cy.focusAndWait(46, 'orderName');
 
     assertActiveFilterBtn();
     assertColumnData('deliveryType', 'Parcel');
@@ -448,7 +448,7 @@ describe('pagination(infinite scroll) + filter', () => {
     cy.gridInstance().invoke('filter', 'deliveryType', [{ code: 'eq', value: 'Parcel' }]);
 
     // scroll at the bottommost
-    cy.focusToBottomCell(46, 'orderName');
+    cy.focusAndWait(46, 'orderName');
 
     cy.gridInstance()
       .invoke('getData')
@@ -473,7 +473,7 @@ describe('pagination(infinite scroll) + filter + sort', () => {
     assertColumnData('deliveryType', 'Visit');
 
     // scroll at the bottommost
-    cy.focusToBottomCell(49, 'orderName');
+    cy.focusAndWait(49, 'deliveryType');
 
     assertSortedData(2, 'orderName', true);
     assertColumnData('deliveryType', 'Visit');

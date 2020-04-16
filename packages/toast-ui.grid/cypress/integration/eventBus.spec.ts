@@ -6,8 +6,8 @@ const data = [
   { name: 'Lee', age: 20 }
 ];
 const columns = [
-  { name: 'name', editor: 'text', resizable: true, sortable: true },
-  { name: 'age', filter: 'number' }
+  { name: 'name', editor: 'text', resizable: true, sortable: true, minWidth: 250 },
+  { name: 'age', filter: 'number', minWidth: 250 }
 ];
 
 before(() => {
@@ -19,6 +19,7 @@ beforeEach(() => {
     data,
     columns,
     bodyHeight: 150,
+    width: 500,
     rowHeaders: ['rowNum', 'checkbox']
   });
 });
@@ -183,20 +184,39 @@ it('columnResize', () => {
   });
 });
 
-it('scrollEnd', () => {
-  const newData = Array.from({ length: 20 }).map((_, index) => ({
-    name: `name${index}`,
-    age: index
-  }));
-  const callback = cy.stub();
+describe('scrollEnd', () => {
+  beforeEach(() => {
+    const newData = Array.from({ length: 20 }).map((_, index) => ({
+      name: `name${index}`,
+      age: index
+    }));
 
-  cy.gridInstance().invoke('on', 'scrollEnd', callback);
-  cy.gridInstance().invoke('resetData', newData);
+    cy.gridInstance().invoke('resetData', newData);
+  });
 
-  // scroll at the bottommost
-  cy.focusToBottomCell(19, 'age');
+  it('should occur scrollEnd event at the bottomost', () => {
+    const callback = cy.stub();
 
-  cy.wrap(callback).should('be.calledOnce');
+    cy.gridInstance().invoke('on', 'scrollEnd', callback);
+
+    // scroll at the bottommost
+    cy.focusAndWait(19, 'name');
+
+    cy.wrap(callback).should('be.calledOnce');
+  });
+
+  it('should not occur scrollEnd event after scrolling horizontally ', () => {
+    const callback = cy.stub();
+
+    cy.gridInstance().invoke('on', 'scrollEnd', callback);
+
+    // scroll at the bottommost
+    cy.focusAndWait(19, 'name');
+    // scroll horizontally
+    cy.focusAndWait(19, 'age');
+
+    cy.wrap(callback).should('be.calledOnce');
+  });
 });
 
 describe('focus', () => {
