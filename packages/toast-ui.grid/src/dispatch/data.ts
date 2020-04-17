@@ -648,9 +648,6 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
 export function clearData(store: Store) {
   const { data, id, rowCoords } = store;
-  data.rawData.forEach(row => {
-    getDataManager(id).push('DELETE', row);
-  });
 
   initScrollPosition(store);
   initFocus(store);
@@ -664,6 +661,8 @@ export function clearData(store: Store) {
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
   setCheckedAllRows(store);
+
+  getDataManager(id).clearAll();
 }
 
 export function resetData(store: Store, inputData: OptRow[]) {
