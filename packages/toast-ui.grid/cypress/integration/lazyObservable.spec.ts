@@ -243,6 +243,14 @@ describe('should API is executed properly on lazy observable data', () => {
       .invoke('scrollTop')
       .should('eq', 0);
   });
+
+  it('setColumnValues()', () => {
+    cy.gridInstance().invoke('setColumnValues', 'name', 'anonymous');
+
+    cy.gridInstance()
+      .invoke('getColumnValues', 'name')
+      .should('eql', Array(20).fill('anonymous'));
+  });
 });
 
 describe('should API is executed properly on lazy observable data(tree)', () => {
