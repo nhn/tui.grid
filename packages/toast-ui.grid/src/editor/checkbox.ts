@@ -185,12 +185,13 @@ export class CheckboxEditor implements CellEditor {
   public mounted() {
     // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
+    // @ts-ignore
+    setLayerPosition(this.el, this.layer);
 
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {
       this.highlightItem(`checkbox-${checkedInput.value}`);
     }
-    setLayerPosition(this.el, this.layer);
   }
 
   public beforeDestroy() {

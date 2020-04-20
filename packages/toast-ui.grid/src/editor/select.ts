@@ -60,10 +60,7 @@ export class SelectEditor implements CellEditor {
     this.selectBoxEl = new SelectBox(layer, { data });
 
     this.selectBoxEl.on('close', () => {
-      // https://github.com/nhn/toast-ui.select-box/issues/3
-      // @TODO: need to change after apply this issue
-      // @ts-ignore
-      this.selectBoxEl.input.focus();
+      this.focusSelectBox();
       this.setSelectFinish(true);
     });
 
@@ -78,6 +75,13 @@ export class SelectEditor implements CellEditor {
     return layer;
   }
 
+  private focusSelectBox() {
+    // https://github.com/nhn/toast-ui.select-box/issues/3
+    // @TODO: need to change after apply this issue
+    // @ts-ignore
+    this.selectBoxEl.input.focus();
+  }
+
   public getElement() {
     return this.el;
   }
@@ -87,13 +91,12 @@ export class SelectEditor implements CellEditor {
   }
 
   public mounted() {
-    // To prevent wrong stacked z-index context, layer append to grid container
-    getContainerElement(this.el).appendChild(this.layer);
-
     this.selectBoxEl.open();
-
+    // // To prevent wrong stacked z-index context, layer append to grid container
+    getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+    this.focusSelectBox();
   }
 
   public beforeDestroy() {
