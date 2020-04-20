@@ -826,7 +826,7 @@
 
 
 .tui-grid-editor-select-box-layer {
-  position: fixed;
+  position: absolute;
   z-index: 100;
 }
 
@@ -843,7 +843,7 @@
 }
 
 .tui-grid-editor-checkbox-list-layer {
-  position: fixed;
+  position: absolute;
   background-color: #fff;
   border: 1px solid #aaa;
   z-index: 100;
@@ -915,7 +915,7 @@
 
 .tui-grid-editor-datepicker-layer {
   margin-top: -4px;
-  position: fixed;
+  position: absolute;
   z-index: 100;
 }
 
