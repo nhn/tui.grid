@@ -431,21 +431,21 @@ export const lazyObserbableTestdata = [
         price: 15000,
         downloadCount: 1000,
         listenCount: 5000
-      },
-      {
-        id: 504288,
-        name: 'Blurryface',
-        artist: 'Twenty One Pilots',
-        release: '2015.05.19',
-        type: 'EP',
-        typeCode: '2',
-        genre: 'Rock',
-        genreCode: '2',
-        grade: '1',
-        price: 13000,
-        downloadCount: 1000,
-        listenCount: 5000
       }
     ]
+  },
+  {
+    id: 504288,
+    name: 'Blurryface',
+    artist: 'Twenty One Pilots',
+    release: '2015.05.19',
+    type: 'EP',
+    typeCode: '2',
+    genre: 'Rock',
+    genreCode: '2',
+    grade: '1',
+    price: 13000,
+    downloadCount: 1000,
+    listenCount: 5000
   }
 ];

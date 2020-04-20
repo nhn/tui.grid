@@ -118,7 +118,8 @@ describe('should not display the focus layer', () => {
   beforeEach(() => {
     const data = [
       { name: 'Kim', age: 10 },
-      { name: 'Lee', age: 20 }
+      { name: 'Lee', age: 20 },
+      { name: 'Ryu', age: 30, _attributes: { height: 0 } }
     ];
     const columns = [
       { name: 'name', editor: 'text' },
@@ -131,6 +132,7 @@ describe('should not display the focus layer', () => {
   it('should destroy the focusing layer, when hide the column', () => {
     cy.gridInstance().invoke('focus', 1, 'name', true);
     cy.gridInstance().invoke('hideColumn', 'name');
+
     cy.gridInstance()
       .invoke('getFocusedCell')
       .should('eql', { columnName: null, rowKey: null, value: null });
@@ -139,6 +141,14 @@ describe('should not display the focus layer', () => {
   it('cannot focus the cell on hidden cell', () => {
     cy.gridInstance().invoke('hideColumn', 'name');
     cy.gridInstance().invoke('focus', 1, 'name');
+
+    cy.gridInstance()
+      .invoke('getFocusedCell')
+      .should('eql', { columnName: null, rowKey: null, value: null });
+  });
+
+  it('cannot focus the cell which has `zero` height', () => {
+    cy.gridInstance().invoke('focus', 2, 'age');
 
     cy.gridInstance()
       .invoke('getFocusedCell')

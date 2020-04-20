@@ -1,11 +1,11 @@
-import { Row, RowKey } from '@t/store/data';
+import { Row, RowKey, CellValue } from '@t/store/data';
 import { OptColumn, OptGrid, OptRow } from '@t/options';
 import { cls } from '../../src/helper/dom';
 import GridEvent from '@/event/gridEvent';
 
 type ModifiedType = 'createdRows' | 'updatedRows' | 'deletedRows';
 
-const columns: OptColumn[] = [{ name: 'c1' }, { name: 'c2' }];
+const columns: OptColumn[] = [{ name: 'c1', editor: 'text' }, { name: 'c2' }];
 
 const data = [
   {
@@ -77,6 +77,12 @@ function createGrid(options: Omit<OptGrid, 'el' | 'columns' | 'data'>) {
     columns,
     ...options
   });
+}
+
+function editCell(rowKey: RowKey, columnName: string, value: CellValue) {
+  cy.gridInstance().invoke('startEditing', rowKey, columnName);
+  cy.getByCls('content-text').type(String(value));
+  cy.gridInstance().invoke('finishEditing', rowKey, columnName);
 }
 
 before(() => {
@@ -923,5 +929,31 @@ describe('with resizable column options', () => {
     cy.gridInstance().invoke('expandAll');
 
     assertColumnWidth('c1', DEPTH_THREE_MAX_WIDTH);
+  });
+});
+
+describe('editing tree cell', () => {
+  it('should change the tree cell properly', () => {
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    editCell(0, 'c1', 'FOO');
+
+    cy.getCell(0, 'c1').should('have.text', 'FOO');
+  });
+
+  it('should not be able to edit the collpased tree cell', () => {
+    createGrid({
+      treeColumnOptions: {
+        name: 'c1'
+      }
+    });
+
+    cy.gridInstance().invoke('startEditing', 1, 'c1');
+
+    cy.getByCls('layer-editing').should('not.be.visible');
   });
 });

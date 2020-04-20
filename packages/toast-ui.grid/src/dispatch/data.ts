@@ -892,7 +892,7 @@ function changeToObservableTreeData(
   const { rows } = originData;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  fillMissingColumnData(column.allColumns, data.rawData);
+  fillMissingColumnData(column.allColumns, rawData);
 
   // create new creation key for updating the observe function of hoc component
   generateDataCreationKey();
@@ -900,7 +900,7 @@ function changeToObservableTreeData(
   rows.forEach(row => {
     const parentRow = findRowByRowKey(data, column, id, row._attributes.tree!.parentRowKey);
     const rawRow = createTreeRawRow(row, parentRow || null, columnMapWithRelation);
-    const viewRow = createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon);
+    const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
     viewData.splice(foundIndex, 1, viewRow);
