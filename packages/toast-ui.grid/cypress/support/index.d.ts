@@ -32,6 +32,8 @@ declare namespace Cypress {
 
     getRow(rowKey: RowKey): Chainable<any>;
 
+    getCells(rowKey: RowKey): Chainable<any>;
+
     getRsideBody(): Chainable<any>;
 
     dragColumnResizeHandle(index: number, distance: number): Chainable<any>;

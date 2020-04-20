@@ -137,7 +137,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getRow(17).each($el => {
+    cy.getCells(17).each($el => {
       cy.wrap($el).should('have.class', cls('cell-disabled'));
     });
   });
@@ -147,7 +147,7 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getRow(18).each(($el, index) => {
+    cy.getCells(18).each(($el, index) => {
       if (!index) {
         // checkbox
         cy.wrap($el).should('have.class', cls('cell-disabled'));
@@ -175,10 +175,10 @@ describe('should API is executed properly on lazy observable data', () => {
 
     scrollToBottom();
 
-    cy.getRow(17).each($el => {
+    cy.getCells(17).each($el => {
       cy.wrap($el).should('not.have.class', 'tui-grid-cell-test');
     });
-    cy.getRow(18).each($el => {
+    cy.getCells(18).each($el => {
       cy.wrap($el).should('have.class', 'tui-grid-cell-test');
     });
   });

@@ -18,6 +18,7 @@ interface StoreProps {
   autoRowHeight: boolean;
   cellBorderWidth: number;
   hoveredRowKey: RowKey | null;
+  focusedRowKey: RowKey | null;
 }
 
 type Props = OwnProps & StoreProps & DispatchProps;
@@ -42,7 +43,15 @@ class BodyRowComp extends Component<Props> {
     dispatch('refreshRowHeight', rowIndex, rowHeight);
   }, ROW_HEIGHT_DEBOUNCE_TIME);
 
-  public render({ rowIndex, viewRow, columns, rowHeight, autoRowHeight, hoveredRowKey }: Props) {
+  public render({
+    rowIndex,
+    viewRow,
+    columns,
+    rowHeight,
+    autoRowHeight,
+    hoveredRowKey,
+    focusedRowKey
+  }: Props) {
     const isOddRow = rowIndex % 2 === 0;
 
     return (
@@ -52,7 +61,8 @@ class BodyRowComp extends Component<Props> {
           class={cls(
             [isOddRow, 'row-odd'],
             [!isOddRow, 'row-even'],
-            [!isNull(hoveredRowKey) && hoveredRowKey === viewRow.rowKey, 'row-hover']
+            [!isNull(hoveredRowKey) && hoveredRowKey === viewRow.rowKey, 'row-hover'],
+            [!isNull(focusedRowKey) && focusedRowKey === viewRow.rowKey, 'cell-current-row']
           )}
         >
           {columns.map(columnInfo => {
@@ -75,10 +85,11 @@ class BodyRowComp extends Component<Props> {
 }
 
 export const BodyRow = connect<StoreProps, OwnProps>(
-  ({ rowCoords, dimension, renderState }, { rowIndex }) => ({
+  ({ rowCoords, dimension, renderState, focus }, { rowIndex }) => ({
     rowHeight: rowCoords.heights[rowIndex],
     autoRowHeight: dimension.autoRowHeight,
     cellBorderWidth: dimension.cellBorderWidth,
-    hoveredRowKey: renderState.hoveredRowKey
+    hoveredRowKey: renderState.hoveredRowKey,
+    focusedRowKey: focus.rowKey
   })
 )(BodyRowComp);
