@@ -22,7 +22,7 @@ import {
   findPropIndex,
   shallowEqual,
   isUndefined,
-  splice
+  silentSplice
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
 import {
@@ -575,8 +575,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
 
-  splice(viewData, at, 0, viewRow);
-  splice(rawData, at, 0, rawRow);
+  silentSplice(viewData, at, 0, viewRow);
+  silentSplice(rawData, at, 0, rawRow);
   makeObservable(store, at);
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
@@ -949,8 +949,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
-  splice(viewData, rowIndex, 1, viewRow);
-  splice(rawData, rowIndex, 1, rawRow);
+  silentSplice(viewData, rowIndex, 1, viewRow);
+  silentSplice(rawData, rowIndex, 1, rawRow);
   makeObservable(store, rowIndex);
 
   sortByCurrentState(store);
