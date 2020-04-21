@@ -18,7 +18,12 @@ import { getDataManager } from '../instance';
 import { isRowSpanEnabled } from './rowSpan';
 import { isHiddenColumn } from './column';
 import { isRowHeader } from '../helper/column';
-import { createRawRow, generateDataCreationKey, getFormattedValue } from '../store/data';
+import {
+  createRawRow,
+  generateDataCreationKey,
+  getFormattedValue as formattedValue
+} from '../store/data';
+import { makeObservable } from '../dispatch/data';
 
 export function getCellAddressByIndex(
   { data, column }: Store,
@@ -145,7 +150,7 @@ export function getUniqColumnData(targetData: Row[], column: Column, columnName:
     };
     const relationListItems = row._relationListItemMap[columnName];
 
-    return getFormattedValue(formatterProps, columnInfo.formatter, value, relationListItems);
+    return formattedValue(formatterProps, columnInfo.formatter, value, relationListItems);
   });
 }
 
@@ -238,4 +243,17 @@ export function isClientPagination({ pageOptions }: Data) {
 
 export function getRowIndexWithPage(data: Data, rowIndex: number) {
   return isClientPagination(data) ? rowIndex % data.pageOptions.perPage : rowIndex;
+}
+
+export function getFormattedValue(store: Store, rowKey: RowKey, columnName: string) {
+  const { data, column, id } = store;
+  const rowIndex = findIndexByRowKey(data, column, id, rowKey, false);
+  const { viewData } = data;
+
+  if (rowIndex !== -1) {
+    makeObservable(store, rowIndex);
+    const viewCell = viewData[rowIndex].valueMap[columnName];
+    return viewCell ? viewCell.formattedValue : null;
+  }
+  return null;
 }

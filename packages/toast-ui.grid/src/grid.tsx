@@ -51,7 +51,8 @@ import {
   findIndexByRowKey,
   findRowByRowKey,
   getFilterStateWithOperator,
-  getRowHeight
+  getRowHeight,
+  getFormattedValue
 } from './query/data';
 import { isRowHeader } from './helper/column';
 import { createProvider } from './dataSource/serverSideDataProvider';
@@ -717,10 +718,10 @@ export default class Grid implements TuiGrid {
    */
   public getValue(rowKey: RowKey, columnName: string): CellValue | null {
     const { data, column, id } = this.store;
-    const targetRow = findRowByRowKey(data, column, id, rowKey);
+    const targetRow = findRowByRowKey(data, column, id, rowKey, false);
 
     if (targetRow) {
-      return targetRow[columnName];
+      return targetRow[columnName] || null;
     }
 
     return null;
@@ -1626,5 +1627,15 @@ export default class Grid implements TuiGrid {
    */
   public appendRows(data: OptRow[]) {
     this.dispatch('appendRows', data);
+  }
+
+  /**
+   * Return the formatted value of the cell identified by the rowKey and columnName.
+   * @param {number|string} rowKey - The unique key of the target row.
+   * @param {string} columnName - The name of the column
+   * @returns {number|string|boolean|null} - The value of the cell
+   */
+  public getFormattedValue(rowKey: RowKey, columnName: string): string | null {
+    return getFormattedValue(this.store, rowKey, columnName);
   }
 }

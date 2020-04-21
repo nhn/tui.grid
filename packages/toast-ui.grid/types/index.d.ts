@@ -261,6 +261,8 @@ declare namespace tui {
     public clearModifiedData(type?: ModificationTypeCode): void;
 
     public appendRows(data: OptRow[]): void;
+
+    public getFormattedValue(rowKey: RowKey, columnName: string): string | null;
   }
 }
 
