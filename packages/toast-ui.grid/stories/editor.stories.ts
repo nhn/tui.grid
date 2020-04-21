@@ -33,6 +33,10 @@ class ColorPickerEditor implements CellEditor {
   getValue() {
     return String(this.el.value);
   }
+
+  mounted() {
+    this.el.focus();
+  }
 }
 
 const data = [
