@@ -4,6 +4,10 @@ const INDENT = 5;
 const SCROLL_BAR_WIDTH = 17;
 const SCROLL_BAR_HEIGHT = 17;
 
+export function setOpacity(el: HTMLElement, opacity: number | string) {
+  el.style.opacity = String(opacity);
+}
+
 export function getContainerElement(el: HTMLElement) {
   return findParent(el, 'container')!;
 }
@@ -37,6 +41,4 @@ export function setLayerPosition(
   layerEl.style.left = `${(left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
     ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
     : left) - containerRect.left}px`;
-
-  layerEl.style.opacity = '1';
 }

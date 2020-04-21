@@ -4,7 +4,7 @@ import { getListItems } from '../helper/editor';
 import { cls, hasClass } from '../helper/dom';
 import { getKeyStrokeString, isArrowKey } from '../helper/keyboard';
 import { findIndex } from '../helper/common';
-import { getContainerElement, setLayerPosition } from './dom';
+import { getContainerElement, setLayerPosition, setOpacity } from './dom';
 
 const LAYER_CLASSNAME = cls('editor-checkbox-list-layer');
 const LIST_ITEM_CLASSNAME = cls('editor-checkbox');
@@ -50,7 +50,7 @@ export class CheckboxEditor implements CellEditor {
     layer.className = LAYER_CLASSNAME;
     layer.style.minWidth = `${width - 10}px`;
     // To hide the initial layer which is having the position which is not calculated properly
-    layer.style.opacity = '0';
+    setOpacity(layer, 0);
 
     listItems.forEach(({ text, value }) => {
       const id = `checkbox-${value}`;
@@ -192,9 +192,10 @@ export class CheckboxEditor implements CellEditor {
 
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {
-      // To sync the timing of focus in IE by tab key shortcut
       this.highlightItem(`checkbox-${checkedInput.value}`);
     }
+    // To show the layer which has appropriate position
+    setOpacity(this.layer, 1);
   }
 
   public beforeDestroy() {

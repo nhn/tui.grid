@@ -4,7 +4,7 @@ import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
 import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
-import { setLayerPosition, getContainerElement } from './dom';
+import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 import { getKeyStrokeString } from '../helper/keyboard';
 import { includes } from '../helper/common';
 
@@ -58,7 +58,7 @@ export class SelectEditor implements CellEditor {
     layer.className = cls('editor-select-box-layer');
     layer.style.minWidth = `${width - 10}px`;
     // To hide the initial layer which is having the position which is not calculated properly
-    layer.style.opacity = '0';
+    setOpacity(layer, 0);
 
     const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(layer, { data });
@@ -108,6 +108,8 @@ export class SelectEditor implements CellEditor {
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
     this.focusSelectBox();
     this.isMounted = true;
+    // To show the layer which has appropriate position
+    setOpacity(this.layer, 1);
   }
 
   public beforeDestroy() {
