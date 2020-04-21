@@ -46,7 +46,10 @@ before(() => {
 describe('should API is executed properly on lazy observable data', () => {
   beforeEach(() => {
     const columns = [
-      { name: 'name', editor: 'text' },
+      {
+        name: 'name',
+        editor: 'text'
+      },
       { name: 'artist', editor: 'text' },
       { name: 'type', editor: 'text' }
     ];
@@ -250,6 +253,12 @@ describe('should API is executed properly on lazy observable data', () => {
     cy.gridInstance()
       .invoke('getColumnValues', 'name')
       .should('eql', Array(20).fill('anonymous'));
+  });
+
+  it('getFormattedValue()', () => {
+    cy.gridInstance()
+      .invoke('getFormattedValue', 19, 'name')
+      .should('eq', 'Chaos And The Calm');
   });
 });
 

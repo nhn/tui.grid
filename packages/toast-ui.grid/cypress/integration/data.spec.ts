@@ -1,6 +1,11 @@
 import { OptGrid } from '@t/options';
 import { Row } from '@t/store/data';
 import { cls } from '@/helper/dom';
+import { FormatterProps } from '@t/store/column';
+
+function invokeFilter(columnName: string, states: any) {
+  cy.gridInstance().invoke('filter', columnName, states);
+}
 
 function applyAliasHeaderCheckbox() {
   cy.getByCls('cell-row-header')
@@ -318,7 +323,7 @@ describe('removeRow()', () => {
       .should('eql', { rowKey: null, columnName: null, value: null });
   });
 
-  it('should reduce the height after removing the row', () => {
+  it('should reduce the height after removing the row', () => {
     createGrid({ bodyHeight: 50, minBodyHeight: 50 });
 
     cy.getByCls('body-container')
@@ -849,5 +854,81 @@ it('should change the value of the hidden cell', () => {
     columnName: 'gender',
     value: 'male',
     prevValue: 'female'
+  });
+});
+
+describe('getValue()', () => {
+  beforeEach(() => {
+    const columns = [{ name: 'name', filter: 'text' }, { name: 'age' }];
+    // @ts-ignore
+    createGrid({ columns });
+  });
+
+  it('should get the value of the cell', () => {
+    cy.gridInstance()
+      .invoke('getValue', 0, 'name')
+      .should('eq', 'Kim');
+  });
+
+  it('should get the value of the filtered cell', () => {
+    invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
+
+    cy.gridInstance()
+      .invoke('getValue', 0, 'name')
+      .should('eq', 'Kim');
+  });
+
+  it('should return null when there is no matched rowKey ', () => {
+    cy.gridInstance()
+      .invoke('getValue', 3, 'name')
+      .should('eq', null);
+  });
+
+  it('should return null when there is no matched columnName ', () => {
+    cy.gridInstance()
+      .invoke('getValue', 0, 'none')
+      .should('eq', null);
+  });
+});
+
+describe('getFormattedValue()', () => {
+  beforeEach(() => {
+    const columns = [
+      {
+        name: 'name',
+        formatter({ value }: FormatterProps) {
+          return `formatted${value}`;
+        }
+      },
+      { name: 'age' }
+    ];
+    // @ts-ignore
+    createGrid({ columns });
+  });
+
+  it('should get the formatted value of the cell', () => {
+    cy.gridInstance()
+      .invoke('getFormattedValue', 0, 'name')
+      .should('eq', 'formattedKim');
+  });
+
+  it('should get the formatted value of the filtered cell', () => {
+    invokeFilter('name', [{ code: 'eq', value: 'Lee' }]);
+
+    cy.gridInstance()
+      .invoke('getFormattedValue', 0, 'name')
+      .should('eq', 'formattedKim');
+  });
+
+  it('should return null when there is no matched rowKey ', () => {
+    cy.gridInstance()
+      .invoke('getFormattedValue', 3, 'name')
+      .should('eq', null);
+  });
+
+  it('should return null when there is no matched columnName ', () => {
+    cy.gridInstance()
+      .invoke('getFormattedValue', 0, 'none')
+      .should('eq', null);
   });
 });
