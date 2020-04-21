@@ -27,6 +27,8 @@ export class DatePickerEditor implements CellEditor {
   private createLayer() {
     const layer = document.createElement('div');
     layer.className = cls('editor-datepicker-layer');
+    // To hide the initial layer which is having the position which is not calculated properly
+    layer.style.opacity = '0';
 
     return layer;
   }

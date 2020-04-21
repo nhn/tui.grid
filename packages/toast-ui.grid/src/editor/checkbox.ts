@@ -49,6 +49,8 @@ export class CheckboxEditor implements CellEditor {
     const layer = document.createElement('ul');
     layer.className = LAYER_CLASSNAME;
     layer.style.minWidth = `${width - 10}px`;
+    // To hide the initial layer which is having the position which is not calculated properly
+    layer.style.opacity = '0';
 
     listItems.forEach(({ text, value }) => {
       const id = `checkbox-${value}`;
@@ -190,7 +192,10 @@ export class CheckboxEditor implements CellEditor {
 
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {
-      this.highlightItem(`checkbox-${checkedInput.value}`);
+      // To sync the timing of focus in IE by tab key shortcut
+      setTimeout(() => {
+        this.highlightItem(`checkbox-${checkedInput.value}`);
+      });
     }
   }
 

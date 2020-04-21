@@ -29,6 +29,9 @@ export class TextEditor implements CellEditor {
   }
 
   public mounted() {
-    this.el.select();
+    // To sync the timing of focus in IE by tab key shortcut
+    setTimeout(() => {
+      this.el.select();
+    });
   }
 }

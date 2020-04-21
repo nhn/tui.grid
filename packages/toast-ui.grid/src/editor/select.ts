@@ -17,6 +17,8 @@ export class SelectEditor implements CellEditor {
 
   private selectFinish = false;
 
+  private isMounted = false;
+
   private portalEditingKeydown: PortalEditingKeydown;
 
   public constructor(props: CellEditorProps) {
@@ -55,6 +57,8 @@ export class SelectEditor implements CellEditor {
     const layer = document.createElement('div');
     layer.className = cls('editor-select-box-layer');
     layer.style.minWidth = `${width - 10}px`;
+    // To hide the initial layer which is having the position which is not calculated properly
+    layer.style.opacity = '0';
 
     const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(layer, { data });
@@ -62,10 +66,16 @@ export class SelectEditor implements CellEditor {
     this.selectBoxEl.on('close', () => {
       this.focusSelectBox();
       this.setSelectFinish(true);
+      // @ts-ignore
+      setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
     });
 
     this.selectBoxEl.on('open', () => {
       this.setSelectFinish(false);
+      if (this.isMounted) {
+        // @ts-ignore
+        setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+      }
     });
 
     if (value) {
@@ -92,11 +102,15 @@ export class SelectEditor implements CellEditor {
 
   public mounted() {
     this.selectBoxEl.open();
-    // // To prevent wrong stacked z-index context, layer append to grid container
+    // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
-    this.focusSelectBox();
+    // To sync the timing of focus in IE by tab key shortcut
+    setTimeout(() => {
+      this.focusSelectBox();
+      this.isMounted = true;
+    });
   }
 
   public beforeDestroy() {
