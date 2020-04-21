@@ -117,7 +117,7 @@ describe('should check the validation of cell - validatorFn', () => {
   });
 
   it('`value`, `row`, `columnName` should be passed as the parameters of validatorFn ', () => {
-    const callback = cy.stub();
+    const stub = cy.stub();
 
     cy.createGrid({
       data,
@@ -125,20 +125,19 @@ describe('should check the validation of cell - validatorFn', () => {
         {
           name: 'name',
           validation: {
-            validatorFn: callback
+            validatorFn: stub
           }
         }
       ]
     });
 
-    cy.wrap(callback).should('be.calledWithMatch', 'note', { rowKey: 0, name: 'note' }, 'name');
-    cy.wrap(callback).should('be.calledWithMatch', 'pen', { rowKey: 1, name: 'pen' }, 'name');
+    cy.wrap(stub).should('be.calledWithMatch', 'note', { rowKey: 0, name: 'note' }, 'name');
+    cy.wrap(stub).should('be.calledWithMatch', 'pen', { rowKey: 1, name: 'pen' }, 'name');
   });
 
   it('should execute `validatorFn` as unobserved function', () => {
     const stub = cy.stub();
     cy.window().then((win: WindowWithGrid) => {
-      delete win.grid;
       cy.createGrid({
         data,
         columns: [
@@ -147,7 +146,6 @@ describe('should check the validation of cell - validatorFn', () => {
             validation: {
               validatorFn: () => {
                 if (win.grid) {
-                  win.grid.getData();
                   stub();
                 }
               }
@@ -159,6 +157,35 @@ describe('should check the validation of cell - validatorFn', () => {
       cy.gridInstance().invoke('appendRow', {});
 
       cy.wrap(stub).should('be.calledOnce');
+    });
+  });
+
+  it('should execute `validatorFn` with applying changed data', () => {
+    const stub = cy.stub();
+    cy.window().then((win: WindowWithGrid) => {
+      cy.createGrid({
+        data,
+        columns: [
+          {
+            name: 'name',
+            validation: {
+              validatorFn: () => {
+                if (win.grid) {
+                  stub(win.grid.getColumnValues('name'));
+                }
+              }
+            }
+          }
+        ]
+      });
+
+      cy.gridInstance().invoke('appendRow', { name: 'pencil', price: 100 });
+
+      cy.wrap(stub).should('be.calledWithMatch', ['note', 'pen', 'pencil']);
+
+      cy.gridInstance().invoke('setRow', 0, { name: 'eraser', price: 2000 });
+
+      cy.wrap(stub).should('be.calledWithMatch', ['eraser', 'pen', 'pencil']);
     });
   });
 });

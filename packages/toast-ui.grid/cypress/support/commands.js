@@ -117,3 +117,9 @@ Cypress.Commands.add('focusAndWait', (rowKey, columnName) => {
   cy.gridInstance().invoke('focus', rowKey, columnName);
   cy.wait(100);
 });
+
+Cypress.Commands.add('destroyGrid', () => {
+  return cy.window().then(win => {
+    delete win.grid;
+  });
+});

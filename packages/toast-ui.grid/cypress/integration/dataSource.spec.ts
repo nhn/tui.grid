@@ -449,29 +449,30 @@ describe('request()', () => {
 
 describe('custom request event', () => {
   beforeEach(() => {
-    createGrid();
+    createGrid({
+      api: {
+        readData: { url: () => '/api/read', method: 'GET' }
+      },
+      initialRequest: false
+    });
   });
 
   it('xhr instance is included as custom event parameter', () => {
     const onBeforeRequest = cy.stub();
     const onResponse = cy.stub();
-    const onSuccessResponse = cy.stub();
 
     cy.gridInstance().invoke('on', 'beforeRequest', onBeforeRequest);
     cy.gridInstance().invoke('on', 'response', onResponse);
-    cy.gridInstance().invoke('on', 'successResponse', onSuccessResponse);
 
-    setTimeout(() => {
-      cy.wait('@readPage1');
+    cy.gridInstance().invoke('readData', 1);
+    cy.wait('@readPage1');
 
-      const xhr = {
-        url: 'http://localhost:8000/api/read?perPage=10&page=1'
-      };
+    const xhr = {
+      url: 'http://localhost:8000/api/read?perPage=10&page=1'
+    };
 
-      cy.wrap(onBeforeRequest).should('be.calledWithMatch', { xhr });
-      cy.wrap(onResponse).should('be.calledWithMatch', { xhr });
-      cy.wrap(onSuccessResponse).should('be.calledWithMatch', { xhr });
-    });
+    cy.wrap(onBeforeRequest).should('be.calledWithMatch', { xhr });
+    cy.wrap(onResponse).should('be.calledWithMatch', { xhr });
   });
 });
 

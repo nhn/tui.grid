@@ -21,7 +21,8 @@ import {
   someProp,
   findPropIndex,
   shallowEqual,
-  isUndefined
+  isUndefined,
+  silentSplice
 } from '../helper/common';
 import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
 import {
@@ -189,12 +190,11 @@ export function updatePageOptions(
   }
 }
 
-export function makeObservable(store: Store, rowKey: RowKey) {
+export function makeObservable(store: Store, rowIndex: number) {
   const { data, column, id } = store;
   const { rawData, viewData } = data;
   const { columnMapWithRelation, treeColumnName, treeIcon } = column;
-  const foundIndex = findIndexByRowKey(data, column, id, rowKey, false);
-  const rawRow = rawData[foundIndex];
+  const rawRow = rawData[rowIndex];
 
   if (isObservable(rawRow)) {
     return;
@@ -202,20 +202,19 @@ export function makeObservable(store: Store, rowKey: RowKey) {
 
   if (treeColumnName) {
     const parentRow = findRowByRowKey(data, column, id, rawRow._attributes.tree!.parentRowKey);
-    rawData[foundIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
-    viewData[foundIndex] = createViewRow(
-      rawData[foundIndex],
+    rawData[rowIndex] = createTreeRawRow(rawRow, parentRow || null, columnMapWithRelation);
+    viewData[rowIndex] = createViewRow(
+      rawData[rowIndex],
       columnMapWithRelation,
       rawData,
       treeColumnName,
       treeIcon
     );
   } else {
-    rawData[foundIndex] = createRawRow(rawRow, foundIndex, columnMapWithRelation);
-    viewData[foundIndex] = createViewRow(rawData[foundIndex], columnMapWithRelation, rawData);
+    rawData[rowIndex] = createRawRow(rawRow, rowIndex, columnMapWithRelation);
+    viewData[rowIndex] = createViewRow(rawData[rowIndex], columnMapWithRelation, rawData);
   }
-  notify(data, 'rawData');
-  notify(data, 'viewData');
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 export function setValue(
@@ -236,7 +235,7 @@ export function setValue(
     return;
   }
   if (checkCellState) {
-    makeObservable(store, rowKey);
+    makeObservable(store, rowIdx);
     const { disabled, editable } = viewData[rowIdx].valueMap[columnName];
 
     if (disabled || !editable) {
@@ -576,8 +575,9 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { at = rawData.length } = options;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
 
-  viewData.splice(at, 0, viewRow);
-  rawData.splice(at, 0, rawRow);
+  silentSplice(viewData, at, 0, viewRow);
+  silentSplice(rawData, at, 0, rawRow);
+  makeObservable(store, at);
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
 
@@ -949,8 +949,9 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
-  viewData.splice(rowIndex, 1, viewRow);
-  rawData.splice(rowIndex, 1, rawRow);
+  silentSplice(viewData, rowIndex, 1, viewRow);
+  silentSplice(rawData, rowIndex, 1, rawRow);
+  makeObservable(store, rowIndex);
 
   sortByCurrentState(store);
 
