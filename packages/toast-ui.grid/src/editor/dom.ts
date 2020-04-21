@@ -17,9 +17,8 @@ export function setLayerPosition(
   // To hide the initial layer which is having the position which is not calculated properly
   layerEl.style.opacity = '0';
 
-  const container = getContainerElement(innerEl);
+  const containerRect = getContainerElement(innerEl).getBoundingClientRect();
   const { innerHeight, innerWidth } = window;
-  const { left: containerLeft, top: containerTop } = container.getBoundingClientRect();
   const { left, top, bottom } = innerEl.getBoundingClientRect();
   const { height: layerHeight, width: layerWidth } = layerEl.getBoundingClientRect();
   const layerTop = startBottom ? bottom : top + INDENT;
@@ -36,11 +35,11 @@ export function setLayerPosition(
 
   layerEl.style.top = `${(layerTop + totalHeight > innerHeight - SCROLL_BAR_WIDTH
     ? innerHeight - totalHeight - INDENT - SCROLL_BAR_WIDTH
-    : layerTop) - containerTop}px`;
+    : layerTop) - containerRect.top}px`;
 
   layerEl.style.left = `${(left + totalWidth > innerWidth - SCROLL_BAR_HEIGHT
     ? innerWidth - totalWidth - INDENT - SCROLL_BAR_HEIGHT
-    : left) - containerLeft}px`;
+    : left) - containerRect.left}px`;
 
   layerEl.style.opacity = '1';
 }
