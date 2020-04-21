@@ -193,9 +193,7 @@ export class CheckboxEditor implements CellEditor {
     const checkedInput = this.getCheckedInput();
     if (checkedInput) {
       // To sync the timing of focus in IE by tab key shortcut
-      setTimeout(() => {
-        this.highlightItem(`checkbox-${checkedInput.value}`);
-      });
+      this.highlightItem(`checkbox-${checkedInput.value}`);
     }
   }
 

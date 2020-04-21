@@ -106,11 +106,8 @@ export class SelectEditor implements CellEditor {
     getContainerElement(this.el).appendChild(this.layer);
     // @ts-ignore
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
-    // To sync the timing of focus in IE by tab key shortcut
-    setTimeout(() => {
-      this.focusSelectBox();
-      this.isMounted = true;
-    });
+    this.focusSelectBox();
+    this.isMounted = true;
   }
 
   public beforeDestroy() {
