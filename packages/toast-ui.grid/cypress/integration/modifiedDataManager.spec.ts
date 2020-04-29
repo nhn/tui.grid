@@ -197,3 +197,27 @@ describe('clearModifiedData API', () => {
     assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 0 });
   });
 });
+
+describe('clear all modified data', () => {
+  beforeEach(() => {
+    cy.gridInstance().invoke('appendRow', { name: 'Park', age: 30 });
+    cy.gridInstance().invoke('setValue', 0, 'name', 'JIN');
+    cy.gridInstance().invoke('removeRow', 1);
+  });
+
+  it('should clear all modified data after calling resetData API', () => {
+    assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 1 });
+
+    cy.gridInstance().invoke('resetData', [{ name: 'Lee', age: 30 }]);
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 0 });
+  });
+
+  it('should clear all modified data after calling clear API', () => {
+    assertModifiedRowsLength({ createdRows: 1, updatedRows: 1, deletedRows: 1 });
+
+    cy.gridInstance().invoke('clear');
+
+    assertModifiedRowsLength({ createdRows: 0, updatedRows: 0, deletedRows: 0 });
+  });
+});
