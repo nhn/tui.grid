@@ -46,17 +46,20 @@ export function createSummaryValue(
 }
 
 export function create({ column, data, summary }: SummaryOption): Summary {
-  let summaryColumnContents: SummaryColumnContents = {};
-  let summaryValues: SummaryValues = {};
+  const summaryColumnContents: SummaryColumnContents = {};
+  const summaryValues: SummaryValues = {};
   const { columnContent: orgColumnContent, defaultContent } = summary;
 
   if (Object.keys(summary).length) {
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const columnContent = orgColumnContent || {};
-    const summaryColumns = Object.keys(columnContent).filter(
+    const summaryColumns = Object.keys(columnContent);
+    const filteredSummaryColumns = Object.keys(columnContent).filter(
       columnName => !someProp('name', columnName, column.allColumns)
     );
-    const targetColumns = column.allColumns.map(col => col.name).concat(summaryColumns);
+    const targetColumns = castedDefaultContent
+      ? column.allColumns.map(col => col.name).concat(filteredSummaryColumns)
+      : summaryColumns;
 
     targetColumns.forEach(columnName => {
       const castedColumnContent = castToSummaryColumnContent(columnContent[columnName]);
@@ -65,10 +68,7 @@ export function create({ column, data, summary }: SummaryOption): Summary {
       summaryColumnContents[columnName] = content;
       summaryValues[columnName] = createSummaryValue(content, columnName, data);
     });
-
-    summaryColumnContents = observable(summaryColumnContents);
-    summaryValues = observable(summaryValues);
   }
 
-  return { summaryColumnContents, summaryValues, defaultContent };
+  return observable({ summaryColumnContents, summaryValues, defaultContent });
 }
