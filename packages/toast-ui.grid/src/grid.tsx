@@ -110,7 +110,7 @@ if ((module as any).hot) {
  *          is larger than the body's height, it set to the body's height.
  *      @param {Object} [options.columnOptions] - Option object for all columns
  *      @param {number} [options.columnOptions.minWidth=50] - Minimum width of each columns
- *      @param {boolean} [options.columnOptions.resizable=true] - If set to true, resize-handles of each columns
+ *      @param {boolean} [options.columnOptions.resizable=false] - If set to true, resize-handles of each columns
  *          will be shown.
  *      @param {number} [options.columnOptions.frozenCount=0] - The number of frozen columns.
  *          The columns indexed from 0 to this value will always be shown on the left side.
@@ -181,7 +181,7 @@ if ((module as any).hot) {
  *          @param {function|string} [options.columns.formatter] - The function that formats the value of the cell.
  *              The return value of the function will be shown as the value of the cell. If set to 'listItemText',
  *              the value will be shown the text.
- *          @param {boolean} [options.columns.escapeHTML=true] - If set to true, the value of the cell
+ *          @param {boolean} [options.columns.escapeHTML=false] - If set to true, the value of the cell
  *              will be encoded as HTML entities.
  *          @param {boolean} [options.columns.ignored=false] - If set to true, the value of the column will be
  *               ignored when setting up the list of modified rows.
