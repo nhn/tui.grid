@@ -42,6 +42,12 @@ interface StoreProps {
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
+interface AreaStyle {
+  height: number;
+  overflowX?: 'hidden' | 'scroll' | 'auto';
+  overflowY?: 'hidden' | 'scroll' | 'auto';
+}
+
 // only updates when these props are changed
 // for preventing unnecessary rendering when scroll changes
 const PROPS_FOR_UPDATE: (keyof StoreProps)[] = [
@@ -189,9 +195,13 @@ class BodyAreaComp extends Component<Props> {
     scrollY,
     cellBorderWidth
   }: Props) {
-    const overflowX = scrollX ? 'scroll' : 'hidden';
-    const overflowY = scrollY ? 'scroll' : 'hidden';
-    const areaStyle = { overflowX, overflowY, height: bodyHeight };
+    const areaStyle: AreaStyle = { height: bodyHeight };
+    if (!scrollX) {
+      areaStyle.overflowX = 'hidden';
+    }
+    if (!scrollY && side === 'R') {
+      areaStyle.overflowY = 'hidden';
+    }
     const tableContainerStyle = {
       top: offsetTop,
       left: offsetLeft,
@@ -199,7 +209,7 @@ class BodyAreaComp extends Component<Props> {
       overflow: dummyRowCount ? 'hidden' : 'visible'
     };
     const containerStyle = {
-      width: totalColumnWidth,
+      width: totalColumnWidth + (side === 'R' ? 0 : cellBorderWidth),
       height: totalRowHeight + cellBorderWidth
     };
 
