@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>7. Themes</title>
     <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
-    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" /> -->
     <style>
       #grid {
         width: 600px;
@@ -56,18 +56,9 @@
           <p>
             <textarea id="custom-text">
 {
-  grid: {
-    background: '#fff',
-    border: '#ccc',
-    text: '#444'
-  },
   selection: {
     background: '#4daaf9',
     border: '#004082'
-  },
-  toolbar: {
-    border: '#ccc',
-    background: '#fff'
   },
   scrollbar: {
     background: '#f5f5f5',
@@ -85,16 +76,22 @@
   cell: {
     normal: {
       background: '#fbfbfb',
-      border: '#e0e0e0'
+      border: '#e0e0e0',
+      showVerticalBorder: true
     },
-    head: {
+    header: {
       background: '#eee',
-      border: '#ccc'
+      border: '#ccc',
+      showVerticalBorder: true
+    },
+    rowHeader: {
+      border: '#ccc',
+      showVerticalBorder: true
     },
     editable: {
       background: '#fbfbfb'
     },
-    selectedHead: {
+    selectedHeader: {
       background: '#d8d8d8'
     },
     focused: {
@@ -216,8 +213,9 @@
 
     const grid = new tui.Grid({
       el: document.getElementById('grid'),
-      scrollX: false,
-      scrollY: false,
+      scrollX: true,
+      // scrollY: false,
+      bodyHeight: 500,
       rowHeight: 35,
       rowHeaders: ['rowNum'],
       header: {
@@ -238,7 +236,7 @@
           name: 'c3'
         }
       ],
-      data: gridData
+      data: gridData.slice(0, 10)
     });
 
     Array.prototype.forEach.call(document.querySelectorAll('.btn-theme'), el => {
