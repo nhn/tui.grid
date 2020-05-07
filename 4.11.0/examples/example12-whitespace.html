@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>12. WhiteSpace</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+      Adjust the row size to compare the differences.
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/babel" class="code-js">
+    let gridData = [];
+    (function() {
+      for (let i = 0; i < 10; i += 1) {
+        const text = 'grid         example\ngrid newline and clipboard example\n\ngrid example';
+        gridData.push({
+          nowrap: text,
+          normal: text,
+          pre: text,
+          preWrap: text,
+          preLine: text
+        });
+      }
+    })();
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: true,
+      scrollY: true,
+      rowHeight: 'auto',
+      columns: [
+        {
+          header: "whiteSpace: 'nowrap'",
+          name: 'nowrap',
+          editor: 'text'
+        },
+        {
+          header: "whiteSpace: 'normal'",
+          name: 'normal',
+          whiteSpace: 'normal',
+          editor: 'text'
+        },
+        {
+          header: "whiteSpace: 'pre'",
+          name: 'pre',
+          whiteSpace: 'pre',
+          editor: 'text'
+        },
+        {
+          header: "whiteSpace: 'pre-wrap'",
+          name: 'preWrap',
+          whiteSpace: 'pre-wrap',
+          editor: 'text'
+        },
+        {
+          header: "whiteSpace: 'pre-line'",
+          name: 'preLine',
+          whiteSpace: 'pre-line',
+          editor: 'text'
+        }
+      ]
+    });
+  </script>
+</html>

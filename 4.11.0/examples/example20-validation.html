@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>20. Validation</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/validation.md"
+        target="_blank"
+        >here</a
+      >
+      <br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    gridData[0].name = '';
+    gridData[4].name = '';
+    gridData[0].artist = 100;
+    gridData[5].artist = 100;
+    gridData[0].type = 'a_z';
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      data: gridData,
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name',
+          editor: 'text',
+          validation: { required: true }
+        },
+        {
+          header: 'Artist',
+          name: 'artist',
+          validation: { dataType: 'string' }
+        },
+        {
+          header: 'Price',
+          name: 'price',
+          validation: {
+            min: 10000,
+            max: 10500,
+            validatorFn: (value, row, columnName) => value !== 11000
+          }
+        },
+        {
+          header: 'Type',
+          name: 'type',
+          validation: {
+            regExp: /[a-z]+_[a-z]/
+          }
+        }
+      ]
+    });
+  </script>
+</html>

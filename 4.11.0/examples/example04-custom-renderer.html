@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>4. Custom Renderer</title>
+    <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/tui-grid.css" />
+  </head>
+
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/docs/en/custom-renderer.md"
+        target="_blank"
+        >here</a
+			>.
+			<br/>
+      <strong>The example code can be slower than your environment because the code is transpiled by babel-standalone in runtime.</strong>
+    </div>
+    <div class="code-html contents">
+      <div id="grid"></div>
+    </div>
+  </body>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+  <script type="text/javascript" src="../dist/tui-grid.js"></script>
+  <script type="text/javascript" src="./data/basic-dummy.js"></script>
+  <script type="text/babel" class="code-js">
+    class CustomSliderRenderer {
+      constructor(props) {
+        const el = document.createElement('input');
+        const { min, max } = props.columnInfo.renderer.options;
+
+        el.type = 'range';
+        el.min = String(min);
+        el.max = String(max);
+        el.disabled = true;
+
+        this.el = el;
+        this.render(props);
+      }
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props) {
+        this.el.value = String(props.value);
+      }
+    }
+
+    const grid = new tui.Grid({
+      el: document.getElementById('grid'),
+      scrollX: false,
+      scrollY: false,
+      columns: [
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        },
+        {
+          header: 'Grade',
+          name: 'grade',
+          renderer: {
+            type: CustomSliderRenderer,
+            options: {
+              min: 1,
+              max: 5
+            }
+          }
+        }
+      ]
+    });
+
+    grid.resetData(gridData);
+  </script>
+</html>
