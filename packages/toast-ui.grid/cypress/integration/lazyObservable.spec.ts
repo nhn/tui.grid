@@ -251,6 +251,12 @@ describe('should API is executed properly on lazy observable data', () => {
       .invoke('getColumnValues', 'name')
       .should('eql', Array(20).fill('anonymous'));
   });
+
+  it('getFormattedValue()', () => {
+    cy.gridInstance()
+      .invoke('getFormattedValue', 19, 'name')
+      .should('eq', 'Chaos And The Calm');
+  });
 });
 
 describe('should API is executed properly on lazy observable data(tree)', () => {
