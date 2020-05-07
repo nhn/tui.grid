@@ -60,11 +60,10 @@
           header: 'Name',
           name: 'name',
           onBeforeChange(ev) {
-            console.log('Before change:' + ev);
-            ev.stop();
+            console.log('Name before change:', ev);
           },
           onAfterChange(ev) {
-            console.log('After change:' + ev);
+            console.log('Name after change:', ev);
           },
           editor: 'text'
         },
@@ -72,10 +71,10 @@
           header: 'Artist',
           name: 'artist',
           onBeforeChange(ev) {
-            console.log('Before change:' + ev);
+            console.log('Artist before change:', ev);
           },
           onAfterChange(ev) {
-            console.log('After change:' + ev);
+            console.log('Artist after change:', ev);
           },
           editor: {
             type: CustomTextEditor,
@@ -88,10 +87,10 @@
           header: 'Type',
           name: 'typeCode',
           onBeforeChange(ev) {
-            console.log('Before change:' + ev);
+            console.log('Type before change:' + ev);
           },
           onAfterChange(ev) {
-            console.log('After change:' + ev);
+            console.log('Type after change:' + ev);
           },
           formatter: 'listItemText',
           editor: {
@@ -109,10 +108,10 @@
           header: 'Genre',
           name: 'genreCode',
           onBeforeChange(ev) {
-            console.log('Before change:' + ev);
+            console.log('Genre before change', ev);
           },
           onAfterChange(ev) {
-            console.log('After change:' + ev);
+            console.log('Genre after change:', ev);
           },
           formatter: 'listItemText',
           editor: {
@@ -135,10 +134,10 @@
           header: 'Grade',
           name: 'grade',
           onBeforeChange(ev) {
-            console.log('Before change:' + ev);
+            console.log('Grade before change:' + ev);
           },
           onAfterChange(ev) {
-            console.log('After change:' + ev);
+            console.log('Grade after change:' + ev);
           },
           copyOptions: {
             useListItemText: true

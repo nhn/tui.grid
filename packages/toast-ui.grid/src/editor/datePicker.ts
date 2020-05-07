@@ -3,7 +3,7 @@ import { Dictionary } from '@t/options';
 import { CellEditor, CellEditorProps } from '@t/editor';
 import { cls } from '../helper/dom';
 import { deepMergedCopy, isNumber, isString, isUndefined, isNull } from '../helper/common';
-import { setLayerPosition, getContainerElement } from './dom';
+import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 
 export class DatePickerEditor implements CellEditor {
   public el: HTMLDivElement;
@@ -27,6 +27,8 @@ export class DatePickerEditor implements CellEditor {
   private createLayer() {
     const layer = document.createElement('div');
     layer.className = cls('editor-datepicker-layer');
+    // To hide the initial layer which is having the position which is not calculated properly
+    setOpacity(layer, 0);
 
     return layer;
   }
@@ -117,6 +119,8 @@ export class DatePickerEditor implements CellEditor {
 
     // `this.layer.firstElementChild` is real datePicker layer(it is need to get total height)
     setLayerPosition(this.el, this.layer, this.layer.firstElementChild as HTMLElement, true);
+    // To show the layer which has appropriate position
+    setOpacity(this.layer, 1);
   }
 
   public beforeDestroy() {

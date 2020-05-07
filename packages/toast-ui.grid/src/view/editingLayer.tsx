@@ -108,7 +108,10 @@ export class EditingLayerComp extends Component<Props> {
       this.editor = cellEditor;
 
       if (isFunction(cellEditor.mounted)) {
-        cellEditor.mounted();
+        // To access the actual mounted DOM elements
+        setTimeout(() => {
+          cellEditor.mounted!();
+        });
       }
     }
   }

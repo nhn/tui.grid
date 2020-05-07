@@ -212,7 +212,8 @@ class ClipboardComp extends Component<Props> {
         !this.isClipboardFocused() &&
         !isMobile()
       ) {
-        this.el.focus();
+        // @TODO: apply polifyll or alternative for IE, safari
+        this.el.focus({ preventScroll: true });
       }
     });
   }

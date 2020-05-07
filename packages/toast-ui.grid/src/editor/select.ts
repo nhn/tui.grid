@@ -4,7 +4,7 @@ import { CellEditor, CellEditorProps, PortalEditingKeydown } from '@t/editor';
 import { CellValue, ListItem } from '@t/store/data';
 import { getListItems } from '../helper/editor';
 import { cls } from '../helper/dom';
-import { setLayerPosition, getContainerElement } from './dom';
+import { setLayerPosition, getContainerElement, setOpacity } from './dom';
 import { getKeyStrokeString } from '../helper/keyboard';
 import { includes } from '../helper/common';
 
@@ -16,6 +16,8 @@ export class SelectEditor implements CellEditor {
   private selectBoxEl!: SelectBox;
 
   private selectFinish = false;
+
+  private isMounted = false;
 
   private portalEditingKeydown: PortalEditingKeydown;
 
@@ -55,20 +57,25 @@ export class SelectEditor implements CellEditor {
     const layer = document.createElement('div');
     layer.className = cls('editor-select-box-layer');
     layer.style.minWidth = `${width - 10}px`;
+    // To hide the initial layer which is having the position which is not calculated properly
+    setOpacity(layer, 0);
 
     const data = listItems.map(item => ({ value: String(item.value), label: item.text }));
     this.selectBoxEl = new SelectBox(layer, { data });
 
     this.selectBoxEl.on('close', () => {
-      // https://github.com/nhn/toast-ui.select-box/issues/3
-      // @TODO: need to change after apply this issue
-      // @ts-ignore
-      this.selectBoxEl.input.focus();
+      this.focusSelectBox();
       this.setSelectFinish(true);
+      // @ts-ignore
+      setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
     });
 
     this.selectBoxEl.on('open', () => {
       this.setSelectFinish(false);
+      if (this.isMounted) {
+        // @ts-ignore
+        setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+      }
     });
 
     if (value) {
@@ -76,6 +83,13 @@ export class SelectEditor implements CellEditor {
     }
 
     return layer;
+  }
+
+  private focusSelectBox() {
+    // https://github.com/nhn/toast-ui.select-box/issues/3
+    // @TODO: need to change after apply this issue
+    // @ts-ignore
+    this.selectBoxEl.input.focus();
   }
 
   public getElement() {
@@ -87,13 +101,15 @@ export class SelectEditor implements CellEditor {
   }
 
   public mounted() {
+    this.selectBoxEl.open();
     // To prevent wrong stacked z-index context, layer append to grid container
     getContainerElement(this.el).appendChild(this.layer);
-
-    this.selectBoxEl.open();
-
     // @ts-ignore
     setLayerPosition(this.el, this.layer, this.selectBoxEl.dropdown.el);
+    this.focusSelectBox();
+    this.isMounted = true;
+    // To show the layer which has appropriate position
+    setOpacity(this.layer, 1);
   }
 
   public beforeDestroy() {
