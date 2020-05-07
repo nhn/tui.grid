@@ -316,8 +316,8 @@ let shopId = '1000';
 
 const dataSource = {
   api: {
-    readData: { `/company/${shopId}/sales`, method: 'GET' },
-    deleteDate: { `/company/${shopId}/sales`, method: 'DELETE' }
+    readData: { url: () => `/company/${shopId}/sales`, method: 'GET' },
+    deleteDate: { url: () => `/company/${shopId}/sales`, method: 'DELETE' }
   }
 }
 ```

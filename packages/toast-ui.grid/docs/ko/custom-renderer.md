@@ -4,7 +4,7 @@ TOAST UI Grid는 셀 UI를 사용자가 커스터마이징할 수 있도록 커�
 
 `CellRenderer` 생성자 함수의 인터페이스를 기반으로 커스텀 렌더러를 사용할 수 있다. TOAST UI Grid는 사용자가 등록한 `CellRenderer` 생성자 함수를 이용하여 내부적으로 인스턴스를 생성한 후, 반환된 엘리먼트를 DOM에 추가한다. 커스텀 렌더러는 `class` 키워드를 사용하여 선언하는 것을 권장하지만, 사용할 수 없는 경우 `function`과 `prototype`을 사용해도 무방하다.
 
-`CellRenderer` 인터페이스는 다음과 같다.(`CellRenderer`의 인터페이스 구조는 [types.d.ts](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/src/renderer/types.d.ts)을 참고한다.)
+`CellRenderer` 인터페이스는 다음과 같다.(`CellRenderer`의 인터페이스 구조는 [types/renderer/index.d.ts](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/types/renderer/index.d.ts)을 참고한다.)
 * `constructor`
   생성자 함수는 셀 엘리먼트(`<td>`)가 DOM에 추가될 때 호출된다. 일반적으로 루트 엘리먼트를 인스턴스 멤버로 저장하는 작업을 수행한다. 이렇게 저장된 멤버들은 `getElement()` 와 `getValue()` 메서드를 통해 접근할 수 있다. 생성자 함수의 인자로 넘어오는 객체의 인터페이스는 `CellEditor` 인터페이스와 동일하며, 다음과 같다.
 
@@ -12,7 +12,7 @@ TOAST UI Grid는 셀 UI를 사용자가 커스터마이징할 수 있도록 커�
   |--------|--------|--------|
   | `grid` | `Grid` | `grid` 속성은 Grid 인스턴스를 참조하고 있다. Grid의 특정 데이터를 얻거나 직접 조작할 때 유용하게 사용할 수 있다. |
   | `rowKey` | `string \| number` | 현재 셀을 포함하고 있는 로우의 `rowKey` 값이다. |
-  | `columnInfo` | `ColumnInfo` | `columnInfo` 속성은 타겟 셀이 포함된 컬럼의 모든 정보를 담고 있다. `ColumnInfo`의 인터페이스는 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/src/store/types.ts)에 정의되어 있다. |
+  | `columnInfo` | `ColumnInfo` | `columnInfo` 속성은 타겟 셀이 포함된 컬럼의 모든 정보를 담고 있다. `ColumnInfo`의 인터페이스는 [여기](https://github.com/nhn/tui.grid/blob/master/packages/toast-ui.grid/types/store/column.d.ts)에 정의되어 있다. |
   | `value` | `string \| number \| boolean` | 셀의 현재 값 |
 
 * `getElement`
