@@ -46,10 +46,7 @@ before(() => {
 describe('should API is executed properly on lazy observable data', () => {
   beforeEach(() => {
     const columns = [
-      {
-        name: 'name',
-        editor: 'text'
-      },
+      { name: 'name', editor: 'text' },
       { name: 'artist', editor: 'text' },
       { name: 'type', editor: 'text' }
     ];
