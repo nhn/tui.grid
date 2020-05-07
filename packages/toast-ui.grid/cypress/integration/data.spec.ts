@@ -817,3 +817,37 @@ describe('setValue()', () => {
     ]);
   });
 });
+
+it('should change the value of the hidden cell', () => {
+  const onBeforeChange = cy.stub();
+  const onAfterChange = cy.stub();
+  const columns = [
+    { name: 'name' },
+    { name: 'age' },
+    { name: 'gender', hidden: true, onBeforeChange, onAfterChange }
+  ];
+  const data = [
+    { name: 'Kim', age: 10, gender: 'female' },
+    { name: 'Lee', age: 20, gender: 'male' }
+  ];
+  // @ts-ignore
+  createGrid({ columns, data });
+
+  cy.gridInstance().invoke('setValue', 0, 'gender', 'male');
+
+  cy.gridInstance()
+    .invoke('getValue', 0, 'gender')
+    .should('eq', 'male');
+  cy.wrap(onBeforeChange).should('be.calledWithMatch', {
+    rowKey: 0,
+    columnName: 'gender',
+    value: 'female',
+    nextValue: 'male'
+  });
+  cy.wrap(onAfterChange).should('be.calledWithMatch', {
+    rowKey: 0,
+    columnName: 'gender',
+    value: 'male',
+    prevValue: 'female'
+  });
+});

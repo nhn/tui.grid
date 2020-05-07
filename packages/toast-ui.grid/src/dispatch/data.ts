@@ -227,7 +227,7 @@ export function setValue(
   let gridEvent;
   const { column, data, id } = store;
   const { rawData, viewData, sortState } = data;
-  const { visibleColumns, allColumnMap } = column;
+  const { allColumnMap, columnsWithoutRowHeader } = column;
   const rowIdx = findIndexByRowKey(data, column, id, rowKey, false);
   const targetRow = rawData[rowIdx];
 
@@ -243,7 +243,7 @@ export function setValue(
     }
   }
 
-  const targetColumn = findProp('name', columnName, visibleColumns);
+  const targetColumn = findProp('name', columnName, columnsWithoutRowHeader);
   const orgValue = targetRow[columnName];
 
   if (targetColumn && targetColumn.onBeforeChange) {
