@@ -29,7 +29,7 @@ class SummaryAreaComp extends Component<Props> {
   }
 
   private handleScroll = (ev: UIEvent) => {
-    const { scrollLeft } = ev.srcElement as HTMLElement;
+    const { scrollLeft } = ev.target as HTMLElement;
     const { dispatch, side } = this.props;
     if (side === 'R') {
       dispatch('setScrollLeft', scrollLeft);
