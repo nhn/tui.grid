@@ -9,11 +9,11 @@ import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
-import { isObservable, notify, partialObservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
 import { initSelection } from './selection';
-import { findProp, isUndefined } from '../helper/common';
+import { findProp } from '../helper/common';
 import { initScrollPosition } from './viewport';
 
 export function setFrozenColumnCount({ column }: Store, count: number) {
@@ -120,7 +120,7 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   initSelection(store);
 
   column.allColumns = [...rowHeaders, ...columnInfos];
-  const { columnMapWithRelation, treeColumnName, treeIcon } = column;
+  const { columnMapWithRelation, treeColumnName, treeIcon, emptyRowUsingColumn } = column;
 
   data.viewData.forEach(viewRow => {
     if (Array.isArray(viewRow.__unobserveFns__)) {
@@ -129,16 +129,10 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
   });
 
   data.rawData = data.rawData.map(row => {
-    row.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
+    const newRow = { ...emptyRowUsingColumn, ...row };
+    newRow.uniqueKey = `${dataCreationKey}-${row.rowKey}`;
 
-    columnInfos.forEach(({ name }) => {
-      if (isUndefined(row[name])) {
-        partialObservable(row, name);
-        row[name] = null;
-      }
-    });
-
-    return row;
+    return newRow;
   });
 
   data.viewData = data.rawData.map(row =>
