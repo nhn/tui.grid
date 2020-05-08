@@ -77,7 +77,7 @@ class BodyAreaComp extends Component<Props> {
   }, 200);
 
   private handleScroll = (ev: UIEvent) => {
-    const { scrollLeft, scrollTop, scrollHeight, clientHeight } = ev.srcElement as HTMLElement;
+    const { scrollLeft, scrollTop, scrollHeight, clientHeight } = ev.target as HTMLElement;
     const { dispatch, eventBus, side } = this.props;
 
     dispatch('setScrollTop', scrollTop);
@@ -205,14 +205,14 @@ class BodyAreaComp extends Component<Props> {
       areaStyle.overflowY = 'hidden';
     }
     const tableContainerStyle = {
-      top: offsetTop,
-      left: offsetLeft,
+      top: totalRowHeight ? offsetTop : 0,
+      left: totalRowHeight ? offsetLeft : 0,
       height: dummyRowCount ? bodyHeight - scrollXHeight : '',
       overflow: dummyRowCount ? 'hidden' : 'visible'
     };
     const containerStyle = {
       width: totalColumnWidth + (side === 'R' ? 0 : cellBorderWidth),
-      height: totalRowHeight + cellBorderWidth
+      height: totalRowHeight ? totalRowHeight + cellBorderWidth : '100%'
     };
 
     return (
