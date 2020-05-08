@@ -29,3 +29,22 @@ const noDataNote = `
 - If there is no data, the "no data" text is shown. 
 `;
 noData.story = { parameters: { notes: noDataNote } };
+
+export const noDataWithScroll = () => {
+  const { el } = createGrid({
+    columns,
+    bodyHeight: 'fitToParent',
+    columnOptions: { minWidth: 300 },
+    width: 300
+  });
+
+  return el;
+};
+
+const noDataWithScrollNote = `
+## State
+
+- If there is no data, the "no data" text is shown. 
+- When the total column widths exceed grid width, the scroll should be displayed.
+`;
+noDataWithScroll.story = { parameters: { notes: noDataWithScrollNote } };
