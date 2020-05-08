@@ -1,22 +1,28 @@
 import { Store } from '@t/store';
-import { SortedColumn, Data } from '@t/store/data';
-import { SortingType } from '@t/store/column';
+import { SortedColumn, Data, ViewRow, Row } from '@t/store/data';
+import { SortingType, Column } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
-import { notify } from '../helper/observable';
-import { sortRawData, sortViewData } from '../helper/sort';
+import { notify, isObservable } from '../helper/observable';
+import { sortRawData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import { updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
-import { createObservableData } from './lazyObservable';
+import { createViewRow } from '../store/data';
+
+function createSoretedViewData(rawData: Row[], column: Column) {
+  const { columnMapWithRelation, treeIcon, treeColumnName } = column;
+  return rawData.map(row =>
+    isObservable(row)
+      ? createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon)
+      : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
+  );
+}
 
 function sortData(store: Store) {
-  // @TODO: find more practical way to make observable
-  // makes all data observable to sort the data properly;
-  createObservableData(store, true);
-  const { data } = store;
+  const { data, column } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
@@ -29,15 +35,16 @@ function sortData(store: Store) {
   if (isScrollPagination(data, true)) {
     // should sort the sliced data which is displayed in viewport in case of client infinite scrolling
     const targetRawData = rawData.slice(...pageRowRange);
-    const targetViewData = viewData.slice(...pageRowRange);
+
     targetRawData.sort(sortRawData(options));
-    targetViewData.sort(sortViewData(options));
+
+    const targetViewData = createSoretedViewData(targetRawData, column);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
     rawData.sort(sortRawData(options));
-    viewData.sort(sortViewData(options));
+    data.viewData = createSoretedViewData(rawData, column);
   }
 }
 
