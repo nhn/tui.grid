@@ -3,10 +3,11 @@ import { Column } from '@t/store/column';
 import { Row, Data } from '@t/store/data';
 import { Range } from '@t/store/selection';
 import { OriginData } from '@t/dispatch';
-import { isObservable } from '../helper/observable';
+import { isObservable, notify } from '../helper/observable';
 import { createData, generateDataCreationKey, createViewRow } from '../store/data';
 import { findRowByRowKey, findIndexByRowKey } from '../query/data';
 import { createTreeRawRow } from '../store/helper/tree';
+import { silentSplice } from '../helper/common';
 
 function getDataToBeObservable(acc: OriginData, row: Row, index: number, treeColumnName?: string) {
   if (treeColumnName && row._attributes.tree!.hidden) {
@@ -54,9 +55,10 @@ function changeToObservableData(column: Column, data: Data, originData: OriginDa
 
   for (let index = 0, end = rawData.length; index < end; index += 1) {
     const targetIndex = targetIndexes[index];
-    data.viewData.splice(targetIndex, 1, viewData[index]);
-    data.rawData.splice(targetIndex, 1, rawData[index]);
+    silentSplice(data.viewData, targetIndex, 1, viewData[index]);
+    silentSplice(data.rawData, targetIndex, 1, rawData[index]);
   }
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 function changeToObservableTreeData(
@@ -79,9 +81,10 @@ function changeToObservableTreeData(
     const viewRow = createViewRow(rawRow, columnMapWithRelation, rawData, treeColumnName, treeIcon);
     const foundIndex = findIndexByRowKey(data, column, id, rawRow.rowKey);
 
-    viewData.splice(foundIndex, 1, viewRow);
-    rawData.splice(foundIndex, 1, rawRow);
+    silentSplice(viewData, foundIndex, 1, viewRow);
+    silentSplice(rawData, foundIndex, 1, rawRow);
   });
+  notify(data, 'rawData', 'filteredRawData', 'viewData', 'filteredViewData');
 }
 
 export function fillMissingColumnData(column: Column, rawData: Row[]) {
