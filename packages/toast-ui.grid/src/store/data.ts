@@ -49,7 +49,7 @@ import {
 } from '../helper/common';
 import { listItemText } from '../formatter/listItemText';
 import { createTreeRawData, createTreeCellInfo } from './helper/tree';
-import { findIndexByRowKey, isScrollPagination } from '../query/data';
+import { isScrollPagination } from '../query/data';
 
 interface DataOption {
   data: OptRow[];
@@ -514,24 +514,36 @@ export function createData({
   return { rawData, viewData };
 }
 
+let cachedFilteredIndex: Record<RowKey, number | null> = {};
+
 function applyFilterToRawData(
   rawData: Row[],
   filters: Filter[] | null,
   columnMap: Dictionary<ColumnInfo>
 ) {
   let data = rawData;
+  cachedFilteredIndex = {};
 
   if (filters) {
     data = filters.reduce((acc: Row[], filter: Filter) => {
       const { conditionFn, columnName } = filter;
       const { formatter } = columnMap[columnName];
 
-      return acc.filter(row => {
+      return acc.filter((row, index) => {
         const value = row[columnName];
         const relationListItems = row._relationListItemMap[columnName];
         const formatterProps = { row, column: columnMap[columnName], value };
+        const filtered = conditionFn!(
+          getFormattedValue(formatterProps, formatter, value, relationListItems)
+        );
 
-        return conditionFn!(getFormattedValue(formatterProps, formatter, value, relationListItems));
+        // cache the filtered index for performance
+        if (acc === rawData && filtered) {
+          cachedFilteredIndex[row.rowKey] = index;
+        } else if (!filtered) {
+          cachedFilteredIndex[row.rowKey] = null;
+        }
+        return filtered;
       });
     }, rawData);
   }
@@ -544,7 +556,6 @@ export function create({
   column,
   pageOptions: userPageOptions,
   useClientSort,
-  id,
   disabled
 }: DataOption): Observable<Data> {
   const { rawData, viewData } = createData({ data, column, lazyObservable: true, disabled });
@@ -595,7 +606,9 @@ export function create({
     get filteredIndex(this: Data) {
       const { filteredRawData, filters } = this;
       return filters
-        ? filteredRawData.map(row => findIndexByRowKey(this, column, id, row.rowKey, false))
+        ? filteredRawData
+            .filter(row => !isNull(cachedFilteredIndex[row.rowKey]))
+            .map(row => cachedFilteredIndex[row.rowKey]!)
         : null;
     },
 
