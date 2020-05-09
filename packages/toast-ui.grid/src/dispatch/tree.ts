@@ -397,8 +397,8 @@ export function removeTreeRow(store: Store, rowKey: RowKey) {
   const startIdx = findIndexByRowKey(data, column, id, rowKey);
   const deleteCount = getDescendantRows(store, rowKey).length + 1;
 
-  viewData.splice(startIdx, deleteCount);
   const removedRows = rawData.splice(startIdx, deleteCount);
+  viewData.splice(startIdx, deleteCount);
   heights.splice(startIdx, deleteCount);
 
   for (let i = removedRows.length - 1; i >= 0; i -= 1) {
