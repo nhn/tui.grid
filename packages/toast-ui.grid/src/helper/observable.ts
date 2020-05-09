@@ -175,12 +175,12 @@ export function partialObservable<T extends Dictionary<any>>(obj: T, key: string
 }
 
 export function observable<T extends Dictionary<any>>(obj: T, sync = false): Observable<T> {
-  if (isObservable(obj)) {
-    throw new Error('Target object is already Reactive');
-  }
-
   if (Array.isArray(obj)) {
     throw new Error('Array object cannot be Reactive');
+  }
+
+  if (isObservable(obj)) {
+    return obj;
   }
 
   const storage = {} as T;
