@@ -4,7 +4,7 @@ import { hasOwnProp } from './common';
 type ArrayProtoProps = keyof typeof Array.prototype;
 type Methods = ArrayProtoProps[];
 
-const methods: Methods = ['splice', 'push', 'pop', 'shift', 'unshift', 'sort'];
+const methods: Methods = ['splice', 'push', 'pop', 'shift', 'unshift'];
 
 export function patchArrayMethods<T>(arr: any[], obj: T, key: string) {
   methods.forEach(method => {
