@@ -438,8 +438,8 @@ export function appendRow(store: Store, row: OptRow, options: OptAppendRow) {
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, at, row);
   const inserted = at !== rawData.length;
 
-  silentSplice(viewData, at, 0, viewRow);
   silentSplice(rawData, at, 0, rawRow);
+  silentSplice(viewData, at, 0, viewRow);
   makeObservable(store, at);
   updatePageOptions(store, { totalCount: pageOptions.totalCount! + 1 });
   updateHeights(store);
@@ -472,8 +472,8 @@ export function removeRow(store: Store, rowKey: RowKey, options: OptRemoveRow) {
 
   updatePageWhenRemovingRow(store, 1);
 
-  viewData.splice(rowIndex, 1);
   const [removedRow] = rawData.splice(rowIndex, 1);
+  viewData.splice(rowIndex, 1);
   updateHeights(store);
 
   if (!someProp('rowKey', focus.rowKey, rawData)) {
@@ -503,8 +503,8 @@ export function clearData(store: Store) {
   initSortState(data);
   initFilter(store);
   rowCoords.heights = [];
-  data.viewData = [];
   data.rawData = [];
+  data.viewData = [];
   updatePageOptions(store, { totalCount: 0, page: 1 }, true);
   updateAllSummaryValues(store);
   setLoadingState(store, 'EMPTY');
@@ -528,8 +528,8 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   resetFilterState(store, filterState);
   resetPageState(store, rawData.length, pageState);
 
-  data.viewData = viewData;
   data.rawData = rawData;
+  data.viewData = viewData;
   updateHeights(store);
   updateAllSummaryValues(store);
   setLoadingState(store, getLoadingState(rawData));
@@ -667,8 +667,8 @@ export function setRow(store: Store, rowIndex: number, row: OptRow) {
   row.sortKey = orgRow.sortKey;
   const { rawRow, viewRow, prevRow } = getCreatedRowInfo(store, rowIndex, row, orgRow.rowKey);
 
-  silentSplice(viewData, rowIndex, 1, viewRow);
   silentSplice(rawData, rowIndex, 1, rawRow);
+  silentSplice(viewData, rowIndex, 1, viewRow);
   makeObservable(store, rowIndex);
 
   sortByCurrentState(store);
@@ -699,11 +699,11 @@ export function moveRow(store: Store, rowKey: RowKey, targetIndex: number) {
   }
 
   const minIndex = Math.min(currentIndex, targetIndex);
-  const [viewRow] = viewData.splice(currentIndex, 1);
-  const [rawRow] = rawData.splice(currentIndex, 1);
+  const [rawRow] = silentSplice(rawData, currentIndex, 1);
+  const [viewRow] = silentSplice(viewData, currentIndex, 1);
 
-  viewData.splice(targetIndex, 0, viewRow);
   rawData.splice(targetIndex, 0, rawRow);
+  viewData.splice(targetIndex, 0, viewRow);
 
   resetSortKey(data, minIndex);
   updateRowNumber(store, minIndex);
@@ -742,8 +742,8 @@ export function appendRows(store: Store, inputData: OptRow[]) {
   const startIndex = data.rawData.length;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
 
-  data.viewData = data.viewData.concat(viewData);
   data.rawData = data.rawData.concat(rawData);
+  data.viewData = data.viewData.concat(viewData);
 
   resetSortKey(data, startIndex);
   sortByCurrentState(store);

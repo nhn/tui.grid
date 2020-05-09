@@ -1,28 +1,24 @@
 import { Store } from '@t/store';
 import { SortedColumn, Data, ViewRow, Row } from '@t/store/data';
-import { SortingType, Column } from '@t/store/column';
+import { SortingType } from '@t/store/column';
 import { SortStateResetOption } from '@t/options';
 import { findPropIndex, isUndefined } from '../helper/common';
-import { notify, isObservable } from '../helper/observable';
+import { notify } from '../helper/observable';
 import { sortRawData } from '../helper/sort';
 import { getEventBus } from '../event/eventBus';
 import { updateRowNumber, setCheckedAllRows } from './data';
 import { isSortable, isInitialSortState, isScrollPagination, isSorted } from '../query/data';
 import { isComplexHeader } from '../query/column';
 import { isCancelSort, createSortEvent, EventType, EventParams } from '../query/sort';
-import { createViewRow } from '../store/data';
 
-function createSoretedViewData(rawData: Row[], column: Column) {
-  const { columnMapWithRelation, treeIcon, treeColumnName } = column;
-  return rawData.map(row =>
-    isObservable(row)
-      ? createViewRow(row, columnMapWithRelation, rawData, treeColumnName, treeIcon)
-      : ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
+function createSoretedViewData(rawData: Row[]) {
+  return rawData.map(
+    row => ({ rowKey: row.rowKey, sortKey: row.sortKey, uniqueKey: row.uniqueKey } as ViewRow)
   );
 }
 
 function sortData(store: Store) {
-  const { data, column } = store;
+  const { data } = store;
   const { sortState, rawData, viewData, pageRowRange } = data;
   const { columns } = sortState;
   const options: SortedColumn[] = [...columns];
@@ -38,13 +34,13 @@ function sortData(store: Store) {
 
     targetRawData.sort(sortRawData(options));
 
-    const targetViewData = createSoretedViewData(targetRawData, column);
+    const targetViewData = createSoretedViewData(targetRawData);
 
     data.rawData = targetRawData.concat(rawData.slice(pageRowRange[1]));
     data.viewData = targetViewData.concat(viewData.slice(pageRowRange[1]));
   } else {
     rawData.sort(sortRawData(options));
-    data.viewData = createSoretedViewData(rawData, column);
+    data.viewData = createSoretedViewData(rawData);
   }
 }
 
