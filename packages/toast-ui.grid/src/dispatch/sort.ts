@@ -202,12 +202,8 @@ export function emitBeforeSort(
   const index = findPropIndex('columnName', columnName, sortState.columns);
   const { sortingType } = column.allColumnMap[columnName];
   const defaultAscending = sortingType === 'asc';
-  const nextColumnSortState = {
-    columnName,
-    ascending,
-    multiple,
-    unsorted: cancelable && ascending === defaultAscending && index !== -1
-  };
+  const unsorted = cancelable && ascending === defaultAscending && index !== -1;
+  const nextColumnSortState = { columnName, ascending, multiple, unsorted };
 
   const gridEvent = new GridEvent({
     sortState: deepCopy(sortState),
@@ -219,8 +215,9 @@ export function emitBeforeSort(
    * Occurs before sorting.
    * @event Grid#beforeSort
    * @property {string} columnName - Target column name
-   * @property {object} sortState - Current sort state of the grid
-   * @property {object} columnSortState - Next column sort state
+   * @property {Object} sortState - Current sort state of the grid
+   * @property {Object} nextColumnSortState - The next sort state of a column.
+   * If the event is not stopped this sort state will be applied to grid
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('beforeSort', gridEvent);
@@ -235,14 +232,14 @@ export function emitAfterSort(store: Store) {
   /**
    * Occurs after sorting. This event will be deprecated. Use the 'afterSort' event
    * @event Grid#sort
-   * @property {object} sortState - sort state
+   * @property {Object} sortState - sort state
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('sort', getGridEvent());
   /**
    * Occurs after sorting.
    * @event Grid#afterSort
-   * @property {object} sortState - sort state
+   * @property {Object} sortState - sort state
    * @property {Grid} instance - Current grid instance
    */
   eventBus.trigger('afterSort', getGridEvent());
