@@ -3,8 +3,9 @@ import { SummaryColumnContentMap } from '@t/store/summary';
 import { Row } from '@t/store/data';
 import { UpdateType, Options } from '@t/dispatch';
 import { castToSummaryColumnContent, extractSummaryColumnContent } from '../helper/summary';
-import { isEmpty, findProp, isFunction } from '../helper/common';
+import { findProp, isFunction } from '../helper/common';
 import { createSummaryValue } from '../store/summary';
+import { notify } from '../helper/observable';
 
 export function setSummaryColumnContent(
   { summary, data }: Store,
@@ -16,6 +17,8 @@ export function setSummaryColumnContent(
 
   summary.summaryColumnContents[columnName] = content;
   summary.summaryValues[columnName] = createSummaryValue(content, columnName, data);
+
+  notify(summary, 'summaryValues');
 }
 
 function updateSummaryValue(
@@ -110,6 +113,8 @@ function updateSummaryValue(
       cnt: filteredCnt
     }
   };
+
+  notify(summary, 'summaryValues');
 }
 
 export function updateSummaryValueByCell(store: Store, columnName: string, options: Options) {
@@ -147,21 +152,6 @@ export function updateAllSummaryValues({ summary, data, column }: Store) {
     const content = summary.summaryColumnContents[name];
     summary.summaryValues[name] = createSummaryValue(content, name, data);
   });
-}
 
-export function addColumnSummaryValues({ summary, data, column }: Store) {
-  if (!isEmpty(summary)) {
-    const { defaultContent } = summary;
-    const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
-
-    column.allColumns.forEach(({ name }) => {
-      const orgSummaryContent = summary.summaryColumnContents[name];
-      let content = orgSummaryContent;
-      if (!orgSummaryContent) {
-        content = extractSummaryColumnContent(null, castedDefaultContent);
-        summary.summaryColumnContents[name] = content;
-      }
-      summary.summaryValues[name] = createSummaryValue(content, name, data);
-    });
-  }
+  notify(summary, 'summaryValues');
 }

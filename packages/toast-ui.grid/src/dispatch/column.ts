@@ -9,7 +9,6 @@ import { createViewRow, generateDataCreationKey } from '../store/data';
 import GridEvent from '../event/gridEvent';
 import { getEventBus } from '../event/eventBus';
 import { initFocus } from './focus';
-import { addColumnSummaryValues } from './summary';
 import { isObservable, notify, partialObservable } from '../helper/observable';
 import { unsort } from './sort';
 import { initFilter, unfilter } from './filter';
@@ -150,7 +149,6 @@ export function setColumns(store: Store, optColumns: OptColumn[]) {
 
   initFilter(store);
   unsort(store);
-  addColumnSummaryValues(store);
 }
 
 export function resetColumnWidths({ column }: Store, widths: number[]) {
