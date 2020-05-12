@@ -42,10 +42,12 @@ interface StoreProps {
 
 type Props = OwnProps & StoreProps & DispatchProps;
 
+type Overflow = 'hidden' | 'scroll' | 'auto';
+
 interface AreaStyle {
   height: number;
-  overflowX?: 'hidden' | 'scroll' | 'auto';
-  overflowY?: 'hidden' | 'scroll' | 'auto';
+  overflowX?: Overflow;
+  overflowY?: Overflow;
 }
 
 // only updates when these props are changed
