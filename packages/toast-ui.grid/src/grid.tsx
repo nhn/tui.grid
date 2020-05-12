@@ -42,7 +42,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -70,7 +70,6 @@ import {
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
-import GridEvent from './event/gridEvent';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
