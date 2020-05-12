@@ -7,6 +7,7 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
+import { emitBeforeSort } from '../dispatch/sort';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {
@@ -23,8 +24,13 @@ function handleSuccessReadData(config: Config, response: Response) {
 
   const { contents, pagination } = responseData;
 
-  dispatch('changeSortState', sortColumn, sortAscending, true);
-  dispatch(isScrollPagination(store.data) ? 'appendRows' : 'resetData', contents);
+  if (isScrollPagination(store.data)) {
+    dispatch('appendRows', contents);
+  } else {
+    const sortState = { columnName: sortColumn, ascending: sortAscending, multiple: true };
+    dispatch('resetData', contents, { sortState });
+    dispatch('emitAfterSort');
+  }
 
   if (pagination) {
     dispatch('updatePageOptions', { ...pagination, perPage });
@@ -64,6 +70,20 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
 
   if (!api) {
     return;
+  }
+
+  if (data.sortColumn) {
+    const gridEvent = emitBeforeSort(store, data.sortColumn, data.sortAscending!);
+
+    if (gridEvent.isStopped()) {
+      return;
+    }
+
+    // @ts-ignore
+    if (gridEvent.nextColumnSortState.unsorted) {
+      delete data.sortColumn;
+      delete data.sortAscending;
+    }
   }
 
   const ajaxConfig = createAjaxConfig(api.readData);
