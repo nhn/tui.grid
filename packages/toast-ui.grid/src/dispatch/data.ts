@@ -24,7 +24,7 @@ import {
   isUndefined,
   silentSplice
 } from '../helper/common';
-import { OptRow, OptAppendRow, OptRemoveRow } from '@t/options';
+import { OptRow, OptAppendRow, OptRemoveRow, ResetOptions } from '@t/options';
 import {
   createViewRow,
   createData,
@@ -42,7 +42,7 @@ import { changeTreeRowsCheckedState } from './tree';
 import { isRowSpanEnabled } from '../query/rowSpan';
 import { initFocus } from './focus';
 import { createTreeRawRow } from '../store/helper/tree';
-import { sort, initSortState } from './sort';
+import { sort, initSortState, changeSortState } from './sort';
 import {
   findIndexByRowKey,
   findRowByRowKey,
@@ -671,7 +671,7 @@ export function clearData(store: Store) {
   getDataManager(id).clearAll();
 }
 
-export function resetData(store: Store, inputData: OptRow[]) {
+export function resetData(store: Store, inputData: OptRow[], options: ResetOptions) {
   const { data, column, id } = store;
   const { rawData, viewData } = createData({ data: inputData, column, lazyObservable: true });
   const eventBus = getEventBus(id);
@@ -681,7 +681,11 @@ export function resetData(store: Store, inputData: OptRow[]) {
   initFocus(store);
   initSelection(store);
 
-  if (data.sortState.useClient) {
+  if (options.sortState) {
+    const { columnName, ascending, multiple } = options.sortState;
+    changeSortState(store, columnName, ascending, multiple);
+    notify(data, 'sortState');
+  } else {
     initSortState(data);
   }
 

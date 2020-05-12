@@ -15,7 +15,8 @@ import {
   GridEventListener,
   Dictionary,
   OptFilter,
-  LifeCycleEventName
+  LifeCycleEventName,
+  ResetOptions
 } from '@t/options';
 import { Store } from '@t/store';
 import { RowKey, CellValue, Row, InvalidRow } from '@t/store/data';
@@ -41,7 +42,7 @@ import i18n from './i18n';
 import { getText } from './query/clipboard';
 import { getInvalidRows } from './query/validation';
 import { isSupportWindowClipboardData, setClipboardSelection, cls, dataAttr } from './helper/dom';
-import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick } from './helper/common';
+import { findPropIndex, isUndefined, mapProp, hasOwnProp, pick, deepCopy } from './helper/common';
 import { Observable, getOriginObject } from './helper/observable';
 import { createEventBus, EventBus } from './event/eventBus';
 import {
@@ -69,6 +70,7 @@ import {
 import { getRowSpanByRowKey } from './query/rowSpan';
 import { sendHostname } from './helper/googleAnalytics';
 import { composeConditionFn, getFilterConditionFn } from './helper/filter';
+import GridEvent from './event/gridEvent';
 
 /* eslint-disable global-require */
 if ((module as any).hot) {
@@ -1179,9 +1181,12 @@ export default class Grid implements TuiGrid {
   /**
    * Replace all rows with the specified list. This will not change the original data.
    * @param {Array} data - A list of new rows
+   * @param {Object} [options] - Options
+   * @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
+   * It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
    */
-  public resetData(data: OptRow[]) {
-    this.dispatch('resetData', data);
+  public resetData(data: OptRow[], options: ResetOptions = {}) {
+    this.dispatch('resetData', data, options);
   }
 
   /**
