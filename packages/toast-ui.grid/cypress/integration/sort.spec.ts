@@ -185,7 +185,7 @@ describe('basic sort', () => {
       compareColumnData('alphabetB', ['F', 'A', 'C', 'B', 'B', 'E', 'B', 'A', 'A']);
     });
 
-    it('multiple sorting is canceld', () => {
+    it('multiple sorting is canceled', () => {
       if (type === 'API') {
         cy.gridInstance().invoke('unsort', 'numberA');
       } else {
