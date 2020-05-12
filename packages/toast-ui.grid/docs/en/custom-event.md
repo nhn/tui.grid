@@ -104,7 +104,9 @@ grid.on('mousedown', function(ev) {
 - `selection`: When the selection area of the table is changed
 - `editingStart`: When the editing of cell is started
 - `editingFinish`: When the editing of cell is finished
-- `sort` : when the data is sorted
+- `beforeSort` : Before the data is sorted
+- `afterSort` : After the data is sorted
+- `sort` : After the data is sorted (**this event will be deprecated**, use `afterSort` event)
 - `filter` : when the data is filtered
 - `scrollEnd` : when scrolling at the bottommost
 

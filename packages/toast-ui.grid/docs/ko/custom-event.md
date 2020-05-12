@@ -104,7 +104,9 @@ grid.on('mousedown', (ev) => {
 - `selection`: 테이블에서 선택 영역을 변경한 경우
 - `editingStart`: 테이블에서 셀 편집을 시작한 경우
 - `editingFinish`: 테이블에서 셀 편집을 종료한 경우
-- `sort` : 데이터를 정렬한 경우 
+- `beforeSort` : 데이터를 정렬하기 전
+- `afterSort` : 데이터를 정렬한 후
+- `sort` : 데이터를 정렬하기 후 (**deprecated 예정이니** `afterSort`를 사용)
 - `filter` : 데이터를 필터링한 경우 
 - `scrollEnd` : 스크롤 위치가 가장 하단에 도달한 경우
 
