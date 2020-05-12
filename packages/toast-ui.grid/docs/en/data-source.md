@@ -2,14 +2,38 @@
 
 Generally, the TOAST UI Grid operates with the local data in the Front End environment. However, with the help of a simple object, `dataSource`, TOAST UI Grid can be configured to host remote data as well. 
 
-In order to do so, define the `dataSource` object as shown in the example below and configure the `data` option. 
+## Data Source Options
 
-```javascript
+`dataSource` has the following properties.
+
+- **initialRequest** `{boolean}` : Represents whether or not there has been a request to get the initial data
+- **api** 
+    - **readData** `{object}` : Represents the `url` and `method` needed to request to read data
+    - **createData** `{object}` : Represents the `url` and `method` needed to request to add data
+    - **updateData** `{object}` : Represents the `url` and `method` needed to request to update data
+    - **deleteData** `{object}` : Represents the `url` and `method` needed to request to delete data
+    - **modifyData** `{object}` : Represents the `url` and `method` needed to request to add, update, or remove data
+- **hideLoadingBar** `{boolean}` : Represents whether or not to hide the loading bar
+- **withCredentials** `{boolean}` : Configures the `withCredentials` option that will be applied during an ajax request
+- **contentType** `{string}` : Configures the `content-type` that will be used as a standard during an ajax request
+- **headers** `{object}` : Configures headers aside from the `content-type` that will be used during an ajax request
+- **serializer** `{function}` : Can be used to customize parameter serialization during an ajax request
+- **mimeType** `{string}` : Can be used to configure MIME type
+
+More information regarding each property can be found below. 
+
+## Read Data
+
+### Option Configuration
+
+The `api.readData` is an option that is required in order to read data from the `dataSource`, and it can be configured simply as shown below. 
+
+```js
 import Grid from 'tui-grid';
 
 const dataSource = {
   api: {
-    readData: { url: '/api/read', method: 'GET' }
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
   }
 };
 
@@ -19,15 +43,41 @@ const grid = new Grid({
 });
 ```
 
-`dataSource` has the following properties. 
+The `grid` instance refers to the configured `url` and the `method` during the instantiation or when the page is being navigated to request according to the specified option. If the `initialRequest` option is set to `false`, it just creates an instance without sending a request, so [readData](https://nhn.github.io/tui.grid/latest/Grid#readData) API can be used to directly get data in such cases. 
 
-- **initialRequest** `{boolean}` : Represents whether the `readData` API has been requested in order to get the initial data.
-- **api**
-    - **readData** `{object}`: Represents the `URL` and the `method` required to get data. 
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
+  },
+  initialRequest: false // set to true by default
+};
 
-Other properties for this option are further detailed in the `dataSource` portion of the [API Documentation]. 
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
 
-This is all you need in order to bring in data from a remote server. Now, the `grid` instance sends requests through `URL` and `method` and analyzes the response data to display on the screen. `api.readData` is a mandatory property for the `dataSource` option, and is used when the page has to be reloaded due to changes or when the instance has been reset.
+grid.readData(1);
+```
+
+If you wanted to configure additional initial request parameters during the declaration of api options, use the `initParams` property to add and request corresponding parameter to the `query string`. The `initParams` property is only valid within the `GET` api. 
+
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/read', method: 'GET', initParams: { param: 'param' } }
+  }
+};
+
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
+```
+
+#### Note
+`initParams` option can be used with `v4.9.0` and up. 
 
 ## Protocol Used in `readData`
 
@@ -78,20 +128,6 @@ When an error occurs while processing the request, the `result` is set to `false
   "result": false,
   "message": "Error message from the server"
 }
-```
-
-## Pagination
-
-Usually when sending a request to a remote server, `Pagination` is required. `Pagination` can be defined using the `pageOptions` like in the example below.
-
-```javascript
-const grid = new Grid({
-  // ...,
-  data: dataSource,
-  pageOptions: {
-    perPage: 10
-  }
-});
 ```
 
 ## Storing Modified Data
@@ -156,6 +192,107 @@ The `data` property is optional. If there exists a necessary piece of data in th
 }
 ```
 
+## ajax options
+
+TOAST UI Grid offers variety of different options for ajax communication with a remote server. The options are as follow. 
+
+- **withCredentials** : It is an option used to send sensitive information like cookies and `Authorization` header together upon CORS request. It is set to `false` by default.
+- **contentType** : Configures the `content-type` that will be used as a standard during an ajax request. The default value is `application/x-www-form-urlencoded` and can be set to `application/json` if so desired. 
+- **headers** : Configures headers aside from the `content-type` that will be used during an ajax request.
+- **serializer** : It can be used to customize parameter serialization during an ajax request. It can also be used to change the encoding or the serialization of a particular character. The basic serialization is as follows. 
+
+  1. Array format
+      - basic
+        ```js
+        // before serialization
+        { a: [1, 2, 3] } 
+        
+        // after serialization
+        a[]=1&a[]=2&a[]=3
+        ```
+      - nested
+        ```js
+        // before serialization
+        { a: [1, 2, [3]] }
+
+        // after serialization
+        a[]=1&a[]=2&a[2][]=3
+        ```
+  2. Object format
+      - basic
+        ```js
+        // before serialization
+        { a: { b: 1, c: 2 } }
+
+        // after serialization
+        a[b]=1&a[c]=2
+        ```
+
+- **mimeType** : Can be configured to reassign the MIME type. 
+
+The ajax option can be configured to be the common option by following the example below. 
+
+```js
+const dataSource = {
+  api: {
+    readData: { url: '/api/readData/', method: 'GET' },
+    createData: { url: '/api/createData', method: 'POST' }
+  },
+  contentType: 'application/json',
+  headers: { 'x-custom-header': 'custom-header' },
+  serializer(params) {
+    return Qs.stringify(params);
+  }
+}
+
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
+```
+
+It is possible to use different ajax options for different APIs, and this can be done by assigning options individually. Options configured individually have higher priority than common ajax options. 
+
+```js
+const dataSource = {
+  api: {
+    readData: { 
+      url: '/api/readData/',
+      method: 'GET',
+      headers: { 'x-custom-header': 'custom-header' },
+      // The serializer option below holds higher priority over the common serializer option. 
+      serializer(params) {
+        return Qs.stringify(params);
+      }
+    }
+  },
+  serializer(params) {
+    return params
+  }
+}
+
+const grid = new Grid({
+  // ...,
+  data: dataSource
+});
+```
+
+### Note
+All ajax options except `withCredentials` can be used from `v4.9.0` and up.
+
+## Pagination
+
+Usually when sending a request to a remote server, `Pagination` is required. `Pagination` can be defined using the `pageOptions` like in the example below.
+
+```javascript
+const grid = new Grid({
+  // ...,
+  data: dataSource,
+  pageOptions: {
+    perPage: 10
+  }
+});
+```
 
 ## Using Callbacks
 
@@ -174,6 +311,42 @@ grid.on('beforeRequest', function(data) {
   // When an error occurs
 });
 ```
+
+## RESTful URI
+
+If you want to declare API's each `url` options in a RESTful manner, you can use the `url` option like in the example below.
+
+```js
+let shopId = '1000';
+
+const dataSource = {
+  api: {
+    readData: { url: () => `/company/${shopId}/sales`, method: 'GET' },
+    deleteDate: { url: () => `/company/${shopId}/sales`, method: 'DELETE' }
+  }
+}
+```
+
+### Note
+RESTful URI configurations can be used from `v4.9.0` and up.
+
+## hideLoadingBar Option
+You can use the `hideLoadingBar` option to hide the basic loading bar. By default, it is set to `false`. 
+
+```js
+const grid = new Grid({
+  // ...,
+  data: {
+    api: {
+      readData: { url: '/api/readData/', method: 'get' }
+    },
+    hideLoadingBar: true
+  }
+});
+```
+
+### Note
+`hideLoadingBar` option can be used from `v4.9.0` and up.
 
 ## Example
 
