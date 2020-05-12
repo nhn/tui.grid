@@ -266,6 +266,38 @@ describe('sort()', () => {
       assertHaveNotSortingBtnClass('btn-sorting-up');
       assertHaveNotSortingBtnClass('btn-sorting-down');
     });
+
+    it(`'beforeSort', 'afterSort' event should be triggered by ${type}`, () => {
+      const beforeSortCallback = cy.stub();
+      const afterSortCallback = cy.stub();
+
+      createSortButonAlias();
+
+      cy.gridInstance().invoke('on', 'beforeSort', beforeSortCallback);
+      cy.gridInstance().invoke('on', 'afterSort', afterSortCallback);
+
+      if (type === 'UI') {
+        cy.get('@first').click();
+      } else {
+        cy.gridInstance().invoke('sort', 'id', true);
+      }
+
+      cy.wait('@readAscData');
+
+      cy.wrap(beforeSortCallback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'sortKey', ascending: true }], useClient: false },
+        nextColumnSortState: {
+          columnName: 'id',
+          ascending: true,
+          multiple: false,
+          unsorted: false
+        },
+        columnName: 'id'
+      });
+      cy.wrap(afterSortCallback).should('be.calledWithMatch', {
+        sortState: { columns: [{ columnName: 'id', ascending: true }], useClient: false }
+      });
+    });
   });
 
   it('server side data is sorted properly when calls readData method', () => {
