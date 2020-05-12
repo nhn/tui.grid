@@ -54,11 +54,11 @@ export function create({ column, data, summary }: SummaryOption): Summary {
     const castedDefaultContent = castToSummaryColumnContent(defaultContent || '');
     const columnContent = orgColumnContent || {};
     const summaryColumns = Object.keys(columnContent);
-    const filteredSummaryColumns = Object.keys(columnContent).filter(
+    const filteredSummaryColumns = summaryColumns.filter(
       columnName => !someProp('name', columnName, column.allColumns)
     );
     const targetColumns = castedDefaultContent
-      ? column.allColumns.map(col => col.name).concat(filteredSummaryColumns)
+      ? column.allColumns.map(({ name }) => name).concat(filteredSummaryColumns)
       : summaryColumns;
 
     targetColumns.forEach(columnName => {

@@ -301,7 +301,7 @@ describe('summary', () => {
       assertSummaryContent('downloadCount', 'TOTAL: 15', 'AVG: 3.00');
     });
 
-    it('summaryColumnContent is applied on maniplating the row after calling setColumns API', () => {
+    it('summaryColumnContent is applied on manipulating the row after calling setColumns API', () => {
       const defaultOptions = createDefaultOptions();
       const columns = [
         { name: 'name', minWidth: 150 },
