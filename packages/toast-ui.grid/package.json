@@ -15,6 +15,7 @@
     "cy:run": "cypress run",
     "test": "npm run lint:test && start-server-and-test start http://localhost:8000 cy:open",
     "test:ci": "npm run lint:test && start-server-and-test start http://localhost:8000 cy:run",
+    "test:visual": "eyes-storybook",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
@@ -39,6 +40,7 @@
   "author": "NHN. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
+    "@applitools/eyes-storybook": "^3.5.3",
     "@cypress/watch-preprocessor": "^1.0.0",
     "@cypress/webpack-preprocessor": "^4.0.3",
     "@storybook/addon-knobs": "^5.2.5",
@@ -53,6 +55,7 @@
     "cypress": "^3.8.1",
     "cypress-plugin-tab": "^1.0.3",
     "cypress-promise": "^1.0.2",
+    "dotenv": "^8.2.0",
     "eslint": "^6.7.1",
     "eslint-config-prettier": "^4.3.0",
     "eslint-config-tui": "^3.0.0",
