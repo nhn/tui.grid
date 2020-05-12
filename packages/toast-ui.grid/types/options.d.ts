@@ -57,7 +57,9 @@ export type GridEventName =
   | 'failResponse'
   | 'errorResponse'
   | 'expand'
-  | 'collapse';
+  | 'collapse'
+  | 'beforeSort'
+  | 'afterSort';
 export type GridEventListener = (gridEvent: TuiGridEvent) => void;
 
 export interface OptGrid {
@@ -422,4 +424,8 @@ export interface OptI18nData {
     noDataToModify?: string;
     failResponse?: string;
   };
+}
+
+export interface ResetOptions {
+  sortState?: { columnName: string; ascending: boolean; multiple: boolean };
 }
