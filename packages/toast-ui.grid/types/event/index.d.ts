@@ -22,7 +22,7 @@ export interface GridEventProps {
   resizedColumns?: ResizedColumn[];
   nextColumnSortState?: {
     columnName: string;
-    ascending?: boolean;
+    ascending: boolean;
     multiple: boolean;
     unsorted: boolean;
   };
