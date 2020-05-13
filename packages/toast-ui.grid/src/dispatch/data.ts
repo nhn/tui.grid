@@ -682,8 +682,8 @@ export function resetData(store: Store, inputData: OptRow[], options: ResetOptio
   initSelection(store);
 
   if (options.sortState) {
-    const { columnName, ascending, multiple } = options.sortState;
-    changeSortState(store, columnName, ascending, multiple);
+    const { columnName, ascending, multiple, cancelSort = false } = options.sortState;
+    changeSortState(store, columnName, ascending, multiple, cancelSort);
     notify(data, 'sortState');
   } else {
     initSortState(data);

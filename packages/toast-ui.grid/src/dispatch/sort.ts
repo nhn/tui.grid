@@ -151,7 +151,7 @@ export function sort(
     return;
   }
 
-  const gridEvent = emitBeforeSort(store, columnName, ascending, multiple, cancelable);
+  const gridEvent = getEmittedBeforeSort(store, columnName, ascending, multiple, cancelable);
 
   if (gridEvent.isStopped()) {
     return;
@@ -189,7 +189,7 @@ export function initSortState(data: Data) {
   notify(data, 'sortState');
 }
 
-export function emitBeforeSort(
+export function getEmittedBeforeSort(
   store: Store,
   columnName: string,
   ascending: boolean,
@@ -202,8 +202,8 @@ export function emitBeforeSort(
   const index = findPropIndex('columnName', columnName, sortState.columns);
   const { sortingType } = column.allColumnMap[columnName];
   const defaultAscending = sortingType === 'asc';
-  const unsorted = cancelable && ascending === defaultAscending && index !== -1;
-  const nextColumnSortState = { columnName, ascending, multiple, unsorted };
+  const cancelSort = cancelable && ascending === defaultAscending && index !== -1;
+  const nextColumnSortState = { columnName, ascending, multiple, cancelSort };
 
   const gridEvent = new GridEvent({
     sortState: deepCopy(sortState),

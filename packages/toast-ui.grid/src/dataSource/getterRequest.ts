@@ -7,7 +7,7 @@ import { gridAjax } from './ajax/gridAjax';
 import { getEventBus } from '../event/eventBus';
 import { findRowByRowKey, getLoadingState, isScrollPagination } from '../query/data';
 import { createAjaxConfig } from './helper/ajaxConfig';
-import { emitBeforeSort } from '../dispatch/sort';
+import { getEmittedBeforeSort } from '../dispatch/sort';
 
 function validateResponse(responseData?: ResponseData): asserts responseData {
   if (isUndefined(responseData)) {
@@ -73,14 +73,14 @@ export function readData(config: Config, page: number, data: Params = {}, resetD
   }
 
   if (data.sortColumn) {
-    const gridEvent = emitBeforeSort(store, data.sortColumn, data.sortAscending!);
+    const gridEvent = getEmittedBeforeSort(store, data.sortColumn, data.sortAscending!);
 
     if (gridEvent.isStopped()) {
       return;
     }
 
     // @ts-ignore
-    if (gridEvent.nextColumnSortState.unsorted) {
+    if (gridEvent.nextColumnSortState.cancelSort) {
       delete data.sortColumn;
       delete data.sortAscending;
     }

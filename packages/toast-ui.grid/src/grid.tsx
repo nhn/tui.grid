@@ -1184,7 +1184,7 @@ export default class Grid implements TuiGrid {
    * @param {Object} [options.sortState] - If set the sortState, the sort state will be applied when the new rows are set.
    * It is recommended that you do not use it unless you are getting the sorted data by communicating with the server without DataSource.
    */
-  public resetData(data: OptRow[], options: ResetOptions = {}) {
+  public resetData(data: OptRow[], options: Omit<ResetOptions, 'cancelSort'> = {}) {
     this.dispatch('resetData', data, options);
   }
 

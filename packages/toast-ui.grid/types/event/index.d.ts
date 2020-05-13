@@ -24,7 +24,7 @@ export interface GridEventProps {
     columnName: string;
     ascending: boolean;
     multiple: boolean;
-    unsorted: boolean;
+    cancelSort: boolean;
   };
 }
 

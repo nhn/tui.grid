@@ -427,5 +427,5 @@ export interface OptI18nData {
 }
 
 export interface ResetOptions {
-  sortState?: { columnName: string; ascending: boolean; multiple: boolean };
+  sortState?: { columnName: string; ascending: boolean; multiple: boolean; cancelSort?: boolean };
 }
